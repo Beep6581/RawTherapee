@@ -613,7 +613,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
     switch (event->type) {
 
-    case Gdk::BUTTON_PRESS:
+    case GDK_BUTTON_PRESS:
         if (edited_point == -1) { //curve.type!=FCT_Parametric) {
             if (event->button.button == 1) {
                 buttonPressed = true;
@@ -816,7 +816,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
         break;
 
-    case Gdk::BUTTON_RELEASE:
+    case GDK_BUTTON_RELEASE:
         if (edited_point == -1) { //curve.type!=FCT_Parametric) {
             if (buttonPressed && event->button.button == 1) {
                 buttonPressed = false;
@@ -908,7 +908,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
         break;
 
-    case Gdk::MOTION_NOTIFY:
+    case GDK_MOTION_NOTIFY:
         if (curve.type == FCT_Linear || curve.type == FCT_MinMaxCPoints) {
 
             int previous_lit_point = lit_point;
@@ -1178,7 +1178,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
         retval = true;
         break;
 
-    case Gdk::LEAVE_NOTIFY:
+    case GDK_LEAVE_NOTIFY:
 
         // Pointer can LEAVE even when dragging the point, so we don't modify the cursor in this case
         // The cursor will have to LEAVE another time after the drag...

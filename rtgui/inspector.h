@@ -51,14 +51,14 @@ private:
     sigc::connection delayconn;
     Glib::ustring next_image_path;
 
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     void deleteBuffers();
 
     bool doSwitchImage();
 
 public:
     Inspector();
-    ~Inspector();
+    ~Inspector() override;
 
     /** @brief Mouse movement to a new position
      * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to the full size image ; -1,-1 == out of the image
@@ -92,11 +92,11 @@ public:
         return active;
     };
 
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 };
 

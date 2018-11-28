@@ -35,7 +35,7 @@ protected:
 
 public:
     explicit IndicateClippedPanel(ImageArea* ia);
-    ~IndicateClippedPanel();
+    ~IndicateClippedPanel() override;
 
     void buttonToggled(Gtk::ToggleButton* tb);
     void toggleClipped(bool highlights);  // inverts a toggle programmatically

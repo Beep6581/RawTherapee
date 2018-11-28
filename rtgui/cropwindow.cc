@@ -44,7 +44,7 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
       crop_custom_ratio(0.f)
 {
     initZoomSteps();
-    
+
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
@@ -275,6 +275,10 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     } else {
         delta = deltaY;
     }
+    if (delta == 0.0 && direction == GDK_SCROLL_SMOOTH) {
+        // sometimes this case happens. To avoid zooming into the wrong direction in this case, we just do nothing
+        return;
+    }
     bool isUp = direction == GDK_SCROLL_UP || (direction == GDK_SCROLL_SMOOTH && delta < 0.0);
     if ((state & GDK_CONTROL_MASK) && onArea(ColorPicker, x, y)) {
         // resizing a color picker
@@ -351,7 +355,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     if ((bstate & GDK_SHIFT_MASK) && cropHandler.cropParams.w > 0 && cropHandler.cropParams.h > 0) {
                         crop_custom_ratio = float(cropHandler.cropParams.w) / float(cropHandler.cropParams.h);
                     }
-                    
+
                     if (iarea->getToolMode () == TMColorPicker) {
                         if (hoveredPicker) {
                             if ((bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
@@ -1385,7 +1389,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             }
         }
         bool useBgColor = (state == SNormal || state == SDragPicker || state == SDeletePicker || state == SEditDrag1);
-    
+
         if (cropHandler.cropPixbuf) {
             imgW = cropHandler.cropPixbuf->get_width ();
             imgH = cropHandler.cropPixbuf->get_height ();
@@ -1653,7 +1657,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                     const int shThreshold = options.shadowThreshold;
                     const float ShawdowFac = 64.f / (options.shadowThreshold + 1);
                     const float HighlightFac = 64.f / (256 - options.highlightThreshold);
-                    const bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any (all) of RGB chanels is (shadow) clipped
+                    const bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any (all) of RGB channels is (shadow) clipped
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -1960,7 +1964,7 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY)
                 int x1 = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
                 int y1 = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
                 double cropd = sqrt(cropHandler.cropParams.h * cropHandler.cropParams.h + cropHandler.cropParams.w * cropHandler.cropParams.w) * zoomSteps[cropZoom].zoom;
-                double imd = sqrt(imgW * imgW + imgH + imgH);
+                double imd = sqrt(imgW * imgW + imgH * imgH);
                 double d;
 
                 // the more we can see of the crop, the more gravity towards crop center

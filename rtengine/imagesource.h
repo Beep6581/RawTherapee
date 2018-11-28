@@ -65,7 +65,7 @@ public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
         embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
 
-    virtual ~ImageSource            () {}
+    ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) {};
     virtual void        demosaic    (const RAWParams &raw, bool autoContrast, double &contrastThreshold) {};
@@ -74,7 +74,7 @@ public:
     virtual void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
     virtual void        flushRawData       () {};
     virtual void        flushRGB           () {};
-    virtual void        HLRecovery_Global  (ToneCurveParams hrp) {};
+    virtual void        HLRecovery_Global  (const ToneCurveParams &hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
     virtual void        MSR (LabImage* lab, LUTf & mapcurve, bool &mapcontlutili, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
@@ -119,11 +119,11 @@ public:
 
     virtual void        setProgressListener (ProgressListener* pl) {}
 
-    void        increaseRef ()
+    void        increaseRef () override
     {
         references++;
     }
-    void        decreaseRef ()
+    void        decreaseRef () override
     {
         references--;
 
@@ -151,19 +151,19 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    virtual Glib::ustring getFileName ()
+    Glib::ustring getFileName () override
     {
         return fileName;
     }
-    virtual cmsHPROFILE getEmbeddedProfile ()
+    cmsHPROFILE getEmbeddedProfile () override
     {
         return embProfile;
     }
-    virtual const FramesMetaData* getMetaData ()
+    const FramesMetaData* getMetaData () override
     {
         return idata;
     }
-    virtual ImageSource* getImageSource ()
+    ImageSource* getImageSource () override
     {
         return this;
     }

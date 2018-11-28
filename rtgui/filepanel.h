@@ -40,7 +40,7 @@ class FilePanel final :
 {
 public:
     FilePanel ();
-    ~FilePanel ();
+    ~FilePanel () override;
 
     Gtk::Paned* placespaned;
     Gtk::HPaned* dirpaned;
@@ -58,7 +58,7 @@ public:
         parent = p;
     }
     void init (); // don't call it directly, the constructor calls it as idle source
-    void on_realize ();
+    void on_realize () override;
     void setAspect();
     void open (const Glib::ustring& d); // open a file or a directory
     void refreshEditedState (const std::set<Glib::ustring>& efiles)
@@ -71,8 +71,8 @@ public:
     void saveOptions ();
 
     // interface fileselectionlistener
-    bool fileSelected(Thumbnail* thm);
-    bool addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries);
+    bool fileSelected(Thumbnail* thm) override;
+    bool addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries) override;
 
     void optionsChanged         ();
     bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );

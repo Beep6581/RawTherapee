@@ -164,14 +164,14 @@ public:
     ToolBar* toolBar;
 
     FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel);
-    ~FileCatalog();
+    ~FileCatalog() override;
     void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
     void closeDir    ();
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
 
     // previewloaderlistener interface
-    void previewReady (int dir_id, FileBrowserEntry* fdn);
-    void previewsFinished (int dir_id);
+    void previewReady (int dir_id, FileBrowserEntry* fdn) override;
+    void previewsFinished (int dir_id) override;
     void previewsFinishedUI ();
     void _refreshProgressBar ();
 
@@ -195,10 +195,10 @@ public:
     }
 
     // filterpanel interface
-    void exifFilterChanged ();
+    void exifFilterChanged () override;
 
     // exportpanel interface
-    void exportRequested();
+    void exportRequested() override;
 
     Glib::ustring lastSelectedDir ()
     {
@@ -212,15 +212,15 @@ public:
     void refreshThumbImages ();
     void refreshHeight ();
 
-    void filterApplied();
-    void openRequested(const std::vector<Thumbnail*>& tbe);
-    void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed);
-    void copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested);
-    void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode);
-    void renameRequested(const std::vector<FileBrowserEntry*>& tbe);
-    void selectionChanged(const std::vector<Thumbnail*>& tbe);
-    void clearFromCacheRequested(const std::vector<FileBrowserEntry*>& tbe, bool leavenotrace);
-    bool isInTabMode() const;
+    void filterApplied() override;
+    void openRequested(const std::vector<Thumbnail*>& tbe) override;
+    void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed) override;
+    void copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested) override;
+    void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode) override;
+    void renameRequested(const std::vector<FileBrowserEntry*>& tbe) override;
+    void selectionChanged(const std::vector<Thumbnail*>& tbe) override;
+    void clearFromCacheRequested(const std::vector<FileBrowserEntry*>& tbe, bool leavenotrace) override;
+    bool isInTabMode() const override;
 
     void emptyTrash ();
     bool trashIsEmpty ();
@@ -247,7 +247,7 @@ public:
     void filterChanged ();
     void runFilterDialog ();
 
-    void on_realize();
+    void on_realize() override;
     void reparseDirectory ();
     void _openImage (std::vector<Thumbnail*> tmb);
 

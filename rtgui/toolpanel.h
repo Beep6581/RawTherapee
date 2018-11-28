@@ -148,11 +148,11 @@ public:
 
     FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool useEnabled = false);
 
-    MyExpander* getExpander()
+    MyExpander* getExpander() override
     {
         return exp;
     }
-    void setExpanded (bool expanded)
+    void setExpanded (bool expanded) override
     {
         if (exp) {
             exp->set_expanded( expanded );
@@ -170,7 +170,7 @@ public:
             exp->show();
         }
     }
-    bool getExpanded ()
+    bool getExpanded () override
     {
         if (exp) {
             return exp->get_expanded();
@@ -178,11 +178,11 @@ public:
 
         return false;
     }
-    void setParent (Gtk::Box* parent)
+    void setParent (Gtk::Box* parent) override
     {
         parentContainer = parent;
     }
-    Gtk::Box* getParent ()
+    Gtk::Box* getParent () override
     {
         return parentContainer;
     }

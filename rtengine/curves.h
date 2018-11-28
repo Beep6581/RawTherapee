@@ -455,11 +455,11 @@ protected:
 
 public:
     DiagonalCurve (const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
-    virtual ~DiagonalCurve ();
+    ~DiagonalCurve () override;
 
-    double getVal     (double t) const;
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const;
-    bool   isIdentity () const
+    double getVal     (double t) const override;
+    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const override;
+    bool   isIdentity () const override
     {
         return kind == DCT_Empty;
     };
@@ -480,12 +480,12 @@ private:
 public:
 
     FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
-    virtual ~FlatCurve ();
+    ~FlatCurve () override;
 
-    double getVal     (double t) const;
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const;
+    double getVal     (double t) const override;
+    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const override;
     bool   setIdentityValue (double iVal);
-    bool   isIdentity () const
+    bool   isIdentity () const override
     {
         return kind == FCT_Empty;
     };
@@ -920,7 +920,7 @@ private:
     static float cf_range[2];
     static float cf[1000];
     // for ciecam02
-    static float f, c, nc, yb, la, xw, yw, zw, gamut;
+    static float f, c, nc, yb, la, xw, yw, zw;
     static float n, d, nbb, ncb, cz, aw, wh, pfl, fl, pow1;
 
     static void cubic_spline(const float x[], const float y[], const int len, const float out_x[], float out_y[], const int out_len);

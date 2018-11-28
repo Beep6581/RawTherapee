@@ -618,6 +618,11 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, i
     }
 }
 
+void Thumbnail::getOriginalSize (int& w, int& h)
+{
+    w = tw;
+    h = th;
+}
 
 rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale)
 {

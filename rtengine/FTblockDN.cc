@@ -1748,7 +1748,7 @@ BENCHFUN
 
             }
 
-            for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
+            for (size_t i = 0; i < blox_array_size; ++i) {
                 if (LbloxArray[i]) {
                     fftwf_free(LbloxArray[i]);
                 }

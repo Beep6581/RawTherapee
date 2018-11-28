@@ -50,26 +50,26 @@ public:
     void setPreviewHandler  (PreviewHandler* ph);
     void setImageArea       (ImageArea* ia);
 
-    void on_realize             ();
+    void on_realize             () override;
     void on_resized             (Gtk::Allocation& req);
-    bool on_draw                (const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool on_motion_notify_event (GdkEventMotion* event);
-    bool on_button_press_event  (GdkEventButton* event);
-    bool on_button_release_event(GdkEventButton* event);
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    bool on_draw                (const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_motion_notify_event (GdkEventMotion* event) override;
+    bool on_button_press_event  (GdkEventButton* event) override;
+    bool on_button_release_event(GdkEventButton* event) override;
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
     // PreviewListener interface
-    void previewImageChanged ();
+    void previewImageChanged () override;
 
     // CropWindowListener interface
-    void cropPositionChanged(CropWindow* w);
-    void cropWindowSizeChanged(CropWindow* w);
-    void cropZoomChanged(CropWindow* w);
-    void initialImageArrived();
+    void cropPositionChanged(CropWindow* w) override;
+    void cropWindowSizeChanged(CropWindow* w) override;
+    void cropZoomChanged(CropWindow* w) override;
+    void initialImageArrived() override;
 };
 
 #endif

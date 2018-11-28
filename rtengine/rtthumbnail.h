@@ -156,7 +156,7 @@ public:
         }
 
         return imgPtr;
-    };
+    }
 };
 }
 

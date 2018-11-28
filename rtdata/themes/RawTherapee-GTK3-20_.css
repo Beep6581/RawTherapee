@@ -1037,4 +1037,8 @@ progressbar.vertical trough, progressbar.vertical progress {
     min-width: 10px;
 }
 
-/* */
+/* Add padding to grid cells */
+
+.grid-spacing > * {
+    margin: 2px;
+}

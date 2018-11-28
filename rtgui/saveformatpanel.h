@@ -49,7 +49,7 @@ protected:
 public:
 
     SaveFormatPanel ();
-    ~SaveFormatPanel ();
+    ~SaveFormatPanel () override;
     void        setListener     (FormatChangeListener* l)
     {
         listener = l;
@@ -59,8 +59,8 @@ public:
     SaveFormat  getFormat       ();
 
     void        formatChanged   ();
-    void        adjusterChanged (Adjuster* a, double newval);
-    void        adjusterAutoToggled(Adjuster* a, bool newval);
+    void        adjusterChanged (Adjuster* a, double newval) override;
+    void        adjusterAutoToggled(Adjuster* a, bool newval) override;
 };
 
 #endif

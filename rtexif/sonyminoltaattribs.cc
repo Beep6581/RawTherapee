@@ -1150,7 +1150,7 @@ public:
         };
     }
 
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int lensID = t->toInt();
         Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
@@ -1297,7 +1297,7 @@ public:
         choices.insert (p_t (51507, "Samyang AF 35mm f/1.4"));
     }
 
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int lensID = t->toInt();
         Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
@@ -2091,7 +2091,7 @@ class SAExposureTimeInterpreter : public Interpreter
 {
 public:
     SAExposureTimeInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         double a = t->toDouble();
 
@@ -2103,7 +2103,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (const Tag* t, int ofs)
+    double toDouble (const Tag* t, int ofs) override
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
@@ -2122,7 +2122,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2151,7 +2151,7 @@ class SAFNumberInterpreter : public Interpreter
 {
 public:
     SAFNumberInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         double a = double (t->toDouble());
 
@@ -2163,7 +2163,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (const Tag* t, int ofs)
+    double toDouble (const Tag* t, int ofs) override
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
@@ -2182,7 +2182,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2211,7 +2211,7 @@ class SAISOSettingInterpreter : public Interpreter
 {
 public:
     SAISOSettingInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int a = t->toInt();
 
@@ -2223,7 +2223,7 @@ public:
             return "Auto";
         }
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2252,14 +2252,14 @@ class SAExposureCompSetInterpreter : public Interpreter
 {
 public:
     SAExposureCompSetInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         double a = t->toDouble();
         char buffer[32];
         sprintf (buffer, "%.2f", a );
         return buffer;
     }
-    virtual double toDouble (const Tag* t, int ofs)
+    double toDouble (const Tag* t, int ofs) override
     {
         // Get the value
         int a = t->getValue()[ofs];
@@ -2273,13 +2273,13 @@ class SAAFMicroAdjValueInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjValueInterpreter() {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] - 20);
         return buffer;
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         return t->getValue()[0] - 20;
     }
@@ -2290,7 +2290,7 @@ class SAAFMicroAdjModeInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjModeInterpreter() {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         int a = t->getValue()[0] & 0x80;
 
@@ -2300,7 +2300,7 @@ public:
 
         return "Off";
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         return (t->getValue()[0] & 0x80) == 0x80 ? 1 : 0;
     }
@@ -2312,13 +2312,13 @@ class SAAFMicroAdjRegisteredLensesInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjRegisteredLensesInterpreter() {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
         return buffer;
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         return t->getValue()[0] & 0x7f;
     }
@@ -2329,7 +2329,7 @@ class SAFocusStatusInterpreter : public Interpreter
 {
 public:
     SAFocusStatusInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         std::string retval;
         int a = t->toInt();
@@ -2368,13 +2368,13 @@ class SAColorTemperatureSettingInterpreter : public Interpreter
 {
 public:
     SAColorTemperatureSettingInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->toInt());
         return buffer;
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         int a = 0;
 

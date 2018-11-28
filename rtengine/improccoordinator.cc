@@ -28,7 +28,6 @@
 #include <fstream>
 #include <string>
 #include "color.h"
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -95,7 +94,7 @@ ImProcCoordinator::ImProcCoordinator()
       pW(-1), pH(-1),
       plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), flatFieldAutoClipListener(nullptr), bayerAutoContrastListener(nullptr), xtransAutoContrastListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false)
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false), customTransformIn(nullptr), customTransformOut(nullptr)
 {}
 
 void ImProcCoordinator::assign(ImageSource* imgsrc)
@@ -129,6 +128,17 @@ ImProcCoordinator::~ImProcCoordinator()
     }
 
     imgsrc->decreaseRef();
+
+    if(customTransformIn) {
+        cmsDeleteTransform(customTransformIn);
+        customTransformIn = nullptr;
+    }
+
+    if(customTransformOut) {
+        cmsDeleteTransform(customTransformOut);
+        customTransformOut = nullptr;
+    }
+
     updaterThreadStart.unlock();
 }
 
@@ -173,13 +183,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
-            if (rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) && rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE)) {
+            if (rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) && rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO)) {
                 rp.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
             }
 
             //bayerrp.all_enhance = false;
 
-            if (rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE) && rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE)) {
+            if (rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE) && rp.xtranssensor.method != RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO)) {
                 rp.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
             }
 
@@ -506,41 +516,28 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (todo &  (M_AUTOEXP | M_RGBCURVE)) {
             if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-                Glib::ustring profile;
-                profile = params.icm.workingProfile;
+                if (oprevi == orig_prev) {
+                    oprevi = new Imagefloat(pW, pH);
+                    orig_prev->copyData(oprevi);
+                }
+
+                const Glib::ustring profile = params.icm.workingProfile;
 
                 if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                    int  cw = oprevi->getWidth();
-                    int  ch = oprevi->getHeight();
+                    const int cw = oprevi->getWidth();
+                    const int ch = oprevi->getHeight();
                     // put gamma TRC to 1
-                    Imagefloat* readyImg0 = NULL;
-                    readyImg0 = ipf.workingtrc(oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
-                    #pragma omp parallel for
-
-                    for (int row = 0; row < ch; row++) {
-                        for (int col = 0; col < cw; col++) {
-                            oprevi->r(row, col) = (float)readyImg0->r(row, col);
-                            oprevi->g(row, col) = (float)readyImg0->g(row, col);
-                            oprevi->b(row, col) = (float)readyImg0->b(row, col);
-                        }
+                    if(customTransformIn) {
+                        cmsDeleteTransform(customTransformIn);
+                        customTransformIn = nullptr;
                     }
-
-                    delete readyImg0;
+                    ipf.workingtrc(oprevi, oprevi, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, customTransformIn, true, false, true);
                     //adjust TRC
-                    Imagefloat* readyImg = NULL;
-                    readyImg = ipf.workingtrc(oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
-                    #pragma omp parallel for
-
-                    for (int row = 0; row < ch; row++) {
-                        for (int col = 0; col < cw; col++) {
-                            oprevi->r(row, col) = (float)readyImg->r(row, col);
-                            oprevi->g(row, col) = (float)readyImg->g(row, col);
-                            oprevi->b(row, col) = (float)readyImg->b(row, col);
-                        }
+                    if(customTransformOut) {
+                        cmsDeleteTransform(customTransformOut);
+                        customTransformOut = nullptr;
                     }
-
-                    delete readyImg;
-
+                    ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, customTransformOut, false, true, true);
                 }
             }
         }
@@ -653,10 +650,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (params.colorToning.enabled && params.colorToning.autosat && actListener) {
-                    if (settings->verbose) {
-                        printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi, (int)colourToningSatLimit, (int) colourToningSatLimitOpacity);
-                    }
-
                     actListener->autoColorTonChanged(indi, (int) colourToningSatLimit, (int)colourToningSatLimitOpacity);  //change sliders autosat
                 }
 
@@ -965,10 +958,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 void ImProcCoordinator::freeAll()
 {
 
-    if (settings->verbose) {
-        printf("freeall starts %d\n", (int)allocated);
-    }
-
     if (allocated) {
         if (orig_prev != oprevi) {
             delete oprevi;
@@ -1010,10 +999,6 @@ void ImProcCoordinator::freeAll()
 void ImProcCoordinator::setScale(int prevscale)
 {
 
-    if (settings->verbose) {
-        printf("setscale before lock\n");
-    }
-
     tr = getCoarseBitMask(params.coarse);
 
     int nW, nH;
@@ -1026,10 +1011,6 @@ void ImProcCoordinator::setScale(int prevscale)
         PreviewProps pp(0, 0, fw, fh, prevscale);
         imgsrc->getSize(pp, nW, nH);
     } while (nH < 400 && prevscale > 1 && (nW * nH < 1000000));  // sctually hardcoded values, perhaps a better choice is possible
-
-    if (settings->verbose) {
-        printf("setscale starts (%d, %d)\n", nW, nH);
-    }
 
     if (nW != pW || nH != pH) {
 
@@ -1054,19 +1035,10 @@ void ImProcCoordinator::setScale(int prevscale)
     fullw = fw;
     fullh = fh;
 
-    if (settings->verbose) {
-        printf("setscale ends\n");
-    }
-
     if (!sizeListeners.empty())
         for (size_t i = 0; i < sizeListeners.size(); i++) {
             sizeListeners[i]->sizeChanged(fullw, fullh, fw, fh);
         }
-
-    if (settings->verbose) {
-        printf("setscale ends2\n");
-    }
-
 }
 
 

@@ -91,7 +91,7 @@ public:
                        double defTopLeft, double defBottomRight, double defTopRight, unsigned int precision,
                        bool startAtOne, bool editedCheckBox = false);
 
-    virtual ~ThresholdAdjuster ();
+    ~ThresholdAdjuster () override;
     void setAdjusterListener (ThresholdAdjusterListener* alistener)
     {
         adjusterListener = alistener;

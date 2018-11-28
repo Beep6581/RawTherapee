@@ -26,8 +26,6 @@
 #include <glibmm.h>
 #include <lcms2.h>
 
-#include "coord.h"
-#include "LUT.h"
 #include "noncopyable.h"
 
 class ParamsEdited;
@@ -456,13 +454,18 @@ struct ColorToningParams {
     static const double LABGRID_CORR_SCALE;
 
     struct LabCorrectionRegion {
+        enum { CHAN_ALL = -1, CHAN_R, CHAN_G, CHAN_B };
         double a;
         double b;
         double saturation;
-        double lightness;
+        double slope;
+        double offset;
+        double power;
         std::vector<double> hueMask;
         std::vector<double> chromaticityMask;
         std::vector<double> lightnessMask;
+        double maskBlur;
+        int channel;
 
         LabCorrectionRegion();
         bool operator==(const LabCorrectionRegion &other) const;

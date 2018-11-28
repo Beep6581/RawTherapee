@@ -39,5 +39,5 @@ wavelet_decomposition::~wavelet_decomposition()
     }
 }
 
-};
+}
 

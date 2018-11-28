@@ -1025,7 +1025,7 @@ void ColorAppearance::Set(const Curve &pCurve)
 }
 
 //
-RetinextransmissionCurve::RetinextransmissionCurve() {};
+RetinextransmissionCurve::RetinextransmissionCurve() {}
 
 void RetinextransmissionCurve::Reset()
 {
@@ -1058,7 +1058,7 @@ void RetinextransmissionCurve::Set(const std::vector<double> &curvePoints)
 }
 
 
-RetinexgaintransmissionCurve::RetinexgaintransmissionCurve() {};
+RetinexgaintransmissionCurve::RetinexgaintransmissionCurve() {}
 
 void RetinexgaintransmissionCurve::Reset()
 {
@@ -1168,7 +1168,7 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili)
 }
 
 
-WavCurve::WavCurve() : sum(0.f) {};
+WavCurve::WavCurve() : sum(0.f) {}
 
 void WavCurve::Reset()
 {
@@ -1211,7 +1211,7 @@ void WavCurve::Set(const std::vector<double> &curvePoints)
 }
 
 
-WavOpacityCurveRG::WavOpacityCurveRG() {};
+WavOpacityCurveRG::WavOpacityCurveRG() {}
 
 void WavOpacityCurveRG::Reset()
 {
@@ -1244,7 +1244,7 @@ void WavOpacityCurveRG::Set(const std::vector<double> &curvePoints)
 
 }
 
-WavOpacityCurveBY::WavOpacityCurveBY() {};
+WavOpacityCurveBY::WavOpacityCurveBY() {}
 
 void WavOpacityCurveBY::Reset()
 {
@@ -1276,7 +1276,7 @@ void WavOpacityCurveBY::Set(const std::vector<double> &curvePoints)
     }
 }
 
-WavOpacityCurveW::WavOpacityCurveW() {};
+WavOpacityCurveW::WavOpacityCurveW() {}
 
 void WavOpacityCurveW::Reset()
 {
@@ -1308,7 +1308,7 @@ void WavOpacityCurveW::Set(const std::vector<double> &curvePoints)
     }
 }
 
-WavOpacityCurveWL::WavOpacityCurveWL() {};
+WavOpacityCurveWL::WavOpacityCurveWL() {}
 
 void WavOpacityCurveWL::Reset()
 {
@@ -1341,7 +1341,7 @@ void WavOpacityCurveWL::Set(const std::vector<double> &curvePoints)
 }
 
 
-NoiseCurve::NoiseCurve() : sum(0.f) {};
+NoiseCurve::NoiseCurve() : sum(0.f) {}
 
 void NoiseCurve::Reset()
 {
@@ -2040,7 +2040,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         Ciecam02::jch2xyz_ciecam02float( x, y, z,
                                          J, C, h,
                                          xw, yw,  zw,
-                                         c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw );
+                                         c, nc, pow1, nbb, ncb, fl, cz, d, aw );
 
         if (!isfinite(x) || !isfinite(y) || !isfinite(z)) {
             // can happen for colours on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
@@ -2123,7 +2123,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
 }
 float PerceptualToneCurve::cf_range[2];
 float PerceptualToneCurve::cf[1000];
-float PerceptualToneCurve::f, PerceptualToneCurve::c, PerceptualToneCurve::nc, PerceptualToneCurve::yb, PerceptualToneCurve::la, PerceptualToneCurve::xw, PerceptualToneCurve::yw, PerceptualToneCurve::zw, PerceptualToneCurve::gamut;
+float PerceptualToneCurve::f, PerceptualToneCurve::c, PerceptualToneCurve::nc, PerceptualToneCurve::yb, PerceptualToneCurve::la, PerceptualToneCurve::xw, PerceptualToneCurve::yw, PerceptualToneCurve::zw;
 float PerceptualToneCurve::n, PerceptualToneCurve::d, PerceptualToneCurve::nbb, PerceptualToneCurve::ncb, PerceptualToneCurve::cz, PerceptualToneCurve::aw, PerceptualToneCurve::wh, PerceptualToneCurve::pfl, PerceptualToneCurve::fl, PerceptualToneCurve::pow1;
 
 void PerceptualToneCurve::init()
@@ -2139,7 +2139,7 @@ void PerceptualToneCurve::init()
     c  = 0.69f;
     nc = 1.00f;
 
-    Ciecam02::initcam1float(gamut, yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
+    Ciecam02::initcam1float(yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
                             cz, aw, wh, pfl, fl, c);
     pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
 

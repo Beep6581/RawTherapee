@@ -51,7 +51,7 @@ class CropHandler final :
 {
 public:
     CropHandler ();
-    ~CropHandler ();
+    ~CropHandler () override;
 
     void    setDisplayHandler (CropDisplayHandler* l)
     {
@@ -96,11 +96,11 @@ public:
         int cw,
         int ch,
         int skip
-    );
-    void getWindow(int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
+    ) override;
+    void getWindow(int& cwx, int& cwy, int& cww, int& cwh, int& cskip) override;
 
     // SizeListener interface
-    void    sizeChanged  (int w, int h, int ow, int oh);
+    void    sizeChanged  (int w, int h, int ow, int oh) override;
 
     void    update  ();
 

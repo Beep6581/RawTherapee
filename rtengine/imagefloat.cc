@@ -110,7 +110,7 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
 
 namespace rtengine { extern void filmlike_clip(float *r, float *g, float *b); }
 
-void Imagefloat::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
+void Imagefloat::getScanline (int row, unsigned char* buffer, int bps, bool isFloat) const
 {
 
     if (data == nullptr) {
@@ -159,7 +159,7 @@ void Imagefloat::getScanline (int row, unsigned char* buffer, int bps, bool isFl
     }
 }
 
-Imagefloat* Imagefloat::copy ()
+Imagefloat* Imagefloat::copy () const
 {
 
     Imagefloat* cp = new Imagefloat (width, height);
@@ -168,7 +168,7 @@ Imagefloat* Imagefloat::copy ()
 }
 
 // This is called by the StdImageSource class. We assume that fp images from StdImageSource don't have to deal with gamma
-void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
+void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const
 {
 
     // compute channel multipliers
@@ -330,7 +330,7 @@ void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Prev
 }
 
 Image8*
-Imagefloat::to8()
+Imagefloat::to8() const
 {
     Image8* img8 = new Image8(width, height);
 #ifdef _OPENMP
@@ -349,7 +349,7 @@ Imagefloat::to8()
 }
 
 Image16*
-Imagefloat::to16()
+Imagefloat::to16() const
 {
     Image16* img16 = new Image16(width, height);
 #ifdef _OPENMP
@@ -475,52 +475,6 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
 }
 
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
-void Imagefloat::ExecCMSTransform2(cmsHTRANSFORM hTransform)
-{
-
-    // LittleCMS cannot parallelize planar setups -- Hombre: LCMS2.4 can! But it we use this new feature, memory allocation
-    // have to be modified too to build temporary buffers that allow multi processor execution
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        AlignedBuffer<float> pBuf(width * 3);
-
-#ifdef _OPENMP
-        #pragma omp for schedule(static)
-#endif
-
-        for (int y = 0; y < height; y++)
-        {
-            float *p = pBuf.data, *pR = r(y), *pG = g(y), *pB = b(y);
-
-            for (int x = 0; x < width; x++) {
-                *(p++) = *(pR++)/ 65535.f;
-                *(p++) = *(pG++)/ 65535.f;
-                *(p++) = *(pB++)/ 65535.f;
-				
-            }
-
-            cmsDoTransform (hTransform, pBuf.data, pBuf.data, width);
-
-            p = pBuf.data;
-            pR = r(y);
-            pG = g(y);
-            pB = b(y);
-
-            for (int x = 0; x < width; x++) {
-                *(pR++) = *(p++);
-                *(pG++) = *(p++);
-                *(pB++) = *(p++);
-            }
-        } // End of parallelization
-    }
-}
-
-
-
-
-// Parallelized transformation; create transform with cmsFLAGS_NOCACHE!
 void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform)
 {
 
@@ -533,7 +487,7 @@ void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform)
         AlignedBuffer<float> pBuf(width * 3);
 
 #ifdef _OPENMP
-        #pragma omp for schedule(static)
+        #pragma omp for schedule(dynamic, 16)
 #endif
 
         for (int y = 0; y < height; y++)

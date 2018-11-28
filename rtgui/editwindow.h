@@ -40,9 +40,6 @@ private:
     void restoreWindow();
     bool updateResolution();
     void setAppIcon();
-    bool on_configure_event(GdkEventConfigure* event);
-    bool on_delete_event(GdkEventAny* event);
-    void on_realize ();
 
 public:
     // Check if the system has more than one display and option is set
@@ -62,9 +59,12 @@ public:
 
     void toFront();
     bool keyPressed (GdkEventKey* event);
+    bool on_configure_event(GdkEventConfigure* event) override;
+    bool on_delete_event(GdkEventAny* event) override;
     //bool on_window_state_event(GdkEventWindowState* event);
     void on_mainNB_switch_page(Gtk::Widget* page, guint page_num);
     void set_title_decorated(Glib::ustring fname);
+    void on_realize () override;
 };
 
 #endif

@@ -55,8 +55,8 @@ public:
 
     DarkFrame ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
 
     void darkFrameChanged ();
     void darkFrameReset   ();

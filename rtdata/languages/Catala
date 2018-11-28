@@ -498,7 +498,6 @@ PREFERENCES_CLIPPINGIND;Indicador de pèrdues
 PREFERENCES_CUSTPROFBUILD;Constructor de perfils de procés particulars
 PREFERENCES_CUSTPROFBUILDHINT;Nom del fitxer executable (o script) per a usar un nou perfil de procés en una imatge.\nRep paràmetres en línia d'ordres per a la generació de perfils basats en regles:\n[raw/JPG path] [path per omissió del perfil de procés] [número f] [expos. en segons] [long. focal en mm] [ISO] [objectiu] [càmera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
-PREFERENCES_CUTOVERLAYBRUSH;Cropa màscara color/transparència
 PREFERENCES_DARKFRAMEFOUND;Trobat
 PREFERENCES_DARKFRAMESHOTS;trets
 PREFERENCES_DARKFRAMETEMPLATES;plantilles
@@ -513,7 +512,6 @@ PREFERENCES_DIRSOFTWARE;Instal·lació al directori
 PREFERENCES_EDITORLAYOUT;Sortida d'editor
 PREFERENCES_EXTERNALEDITOR;Editor extern
 PREFERENCES_FBROWSEROPTS;Opcions de navegador i minifotos
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de gestor de fitxers d'una línia (inapropiat en monitors de baixa resolució)
 PREFERENCES_FILEFORMAT;Format de fitxer
 PREFERENCES_FLATFIELDFOUND;Trobat
 PREFERENCES_FLATFIELDSDIR;Carpeta de camps plans
@@ -561,9 +559,7 @@ PREFERENCES_PROFILESAVECACHE;Desa els paràmetres de procés a la memòria cau
 PREFERENCES_PROFILESAVEINPUT;Desa els paràm. de procés juntament amb la imatge
 PREFERENCES_PROPERTY;Propietat
 PREFERENCES_PSPATH;Directori d'instal. d'Adobe Photoshop
-PREFERENCES_SELECTFONT;Selec. font
 PREFERENCES_SELECTLANG;Seleccionar idioma
-PREFERENCES_SELECTTHEME;Seleccionar tema
 PREFERENCES_SET;Fixa
 PREFERENCES_SHOWBASICEXIF;Mostra principals dades Exif
 PREFERENCES_SHOWDATETIME;Indica data i hora
@@ -662,7 +658,6 @@ TP_CROP_GUIDETYPE;Tipus de guia:
 TP_CROP_H;Alt
 TP_CROP_LABEL;Cropa
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;Selecc. cropar
 TP_CROP_W;Ample
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -790,9 +785,6 @@ TP_LENSGEOM_AUTOCROP;Auto cropa
 TP_LENSGEOM_FILL;Auto omple
 TP_LENSGEOM_LABEL;Lent / Geometria
 TP_LENSPROFILE_LABEL;Perfil de correcció de lent
-TP_LENSPROFILE_USECA;Usa correcció AC
-TP_LENSPROFILE_USEDIST;Correcció de distorsió
-TP_LENSPROFILE_USEVIGN;Correcció de vores fosques
 TP_NEUTRAL_TIP;Torna els controls d'exposició a valors neutrals
 TP_PERSPECTIVE_HORIZONTAL;Horitzontal
 TP_PERSPECTIVE_LABEL;Perspectiva
@@ -1324,13 +1316,18 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 !HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 !HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
-!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - C mask
+!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
+!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - region C mask
 !HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
 !HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
 !HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
 !HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
+!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
+!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
+!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
 !HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
-!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - Show mask
+!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
+!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 !HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 !HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
 !HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
@@ -1431,10 +1428,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
-!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1448,8 +1441,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 !MAIN_TAB_INSPECT; Inspect
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>Sharpening Contrast Mask</b>.\nShortcut: <b>None</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
 !MONITOR_PROFILE_SYSTEM;System default
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
@@ -1489,7 +1482,13 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
+!PREFERENCES_APPEARANCE;Appearance
+!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
+!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
+!PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
+!PREFERENCES_APPEARANCE_THEME;Theme
+!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_BEHADDALL;All to 'Add'
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALL;All to 'Set'
@@ -1504,8 +1503,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CROP;Crop editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop area
+!PREFERENCES_CROP;Crop Editing
+!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
@@ -1525,6 +1524,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_D65;6500K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11
@@ -1554,7 +1554,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
@@ -1573,15 +1572,13 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
-!PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
-!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
-!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;When working with folders full of uncompressed tiff files enabling this option can increase performance of thumb generation.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
+!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
+!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
+!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THEME;Theme
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
@@ -1612,7 +1609,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
+!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b>.
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects
@@ -1675,11 +1672,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
-!TP_COLORAPP_ADAPTSCENE;Scene absolute luminance
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environment (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
-!TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m²)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from the Exif data.\nTo set the value manually, uncheck the checkbox first.
+!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -1690,6 +1683,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
 !TP_COLORAPP_BRIGHT;Brightness (Q)
 !TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from L*a*b* and RGB brightness.
+!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 !TP_COLORAPP_CHROMA;Chroma (C)
 !TP_COLORAPP_CHROMA_M;Colorfulness (M)
 !TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from L*a*b* and RGB colorfulness.
@@ -1709,8 +1703,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 !TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
@@ -1722,14 +1714,13 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
+!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 !TP_COLORAPP_MODEL;WP Model
 !TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
-!TP_COLORAPP_SHARPCIE;--unused--
-!TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_AVER;Average
 !TP_COLORAPP_SURROUND_DARK;Dark
@@ -1749,11 +1740,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
+!TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16 cd/m²).
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;If "auto" is enabled, Yb is calculated from the mean value of the actual image's luminance
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
@@ -1767,16 +1756,25 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_LABGRID;L*a*b* color correction grid
 !TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
-!TP_COLORTONING_LABREGIONS;L*a*b* correction regions
+!TP_COLORTONING_LABREGIONS;Color correction regions
 !TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+!TP_COLORTONING_LABREGION_CHANNEL;Channel
+!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
+!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
+!TP_COLORTONING_LABREGION_CHANNEL_G;Green
+!TP_COLORTONING_LABREGION_CHANNEL_R;Red
 !TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
 !TP_COLORTONING_LABREGION_HUEMASK;H
 !TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
 !TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
 !TP_COLORTONING_LABREGION_LIST_TITLE;Correction
 !TP_COLORTONING_LABREGION_MASK;Mask
+!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
+!TP_COLORTONING_LABREGION_OFFSET;Offset
+!TP_COLORTONING_LABREGION_POWER;Power
 !TP_COLORTONING_LABREGION_SATURATION;Saturation
 !TP_COLORTONING_LABREGION_SHOWMASK;Show mask
+!TP_COLORTONING_LABREGION_SLOPE;Slope
 !TP_COLORTONING_LUMA;Luminance
 !TP_COLORTONING_LUMAMODE;Preserve luminance
 !TP_COLORTONING_LUMAMODE_TOOLTIP;If enabled, when you change color (red, green, cyan, blue, etc.) the luminance of each pixel is preserved.
@@ -1805,6 +1803,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
+!TP_CROP_RESETCROP;Reset
+!TP_CROP_SELECTCROP;Select
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
 !TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
@@ -1929,6 +1929,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_USE_CA;Chromatic aberration
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
 !TP_LOCALCONTRAST_LABEL;Local Contrast
@@ -1962,6 +1971,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
@@ -1986,7 +1996,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax/Sony Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the check-box first (reasonable values depend on the image).
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_EAHD;EAHD
 !TP_RAW_FAST;Fast
@@ -2038,10 +2048,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
-!TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
+!TP_RETINEX_CONTEDIT_HSL;HSL histogram
+!TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
+!TP_RETINEX_CONTEDIT_LH;Hue
+!TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
@@ -2079,7 +2089,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_LABEL_MASK;Mask
 !TP_RETINEX_LABSPACE;L*a*b*
 !TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
+!TP_RETINEX_MAP;Method
 !TP_RETINEX_MAP_GAUS;Gaussian mask
 !TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
 !TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
@@ -2295,6 +2305,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_TON;Toning
 !TP_WBALANCE_EQBLUERED;Blue/Red equalizer
 !TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater),\nb) are far from conditions where calibrations were performed,\nc) where the matrices or ICC profiles are unsuitable.
+!TP_WBALANCE_PICKER;Pick
 !TP_WBALANCE_TEMPBIAS;AWB temperature bias
 !TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !TP_WBALANCE_WATER1;UnderWater 1

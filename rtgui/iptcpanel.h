@@ -71,9 +71,9 @@ private:
 public:
     IPTCPanel ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
     void setImageData   (const rtengine::FramesMetaData* id);
 

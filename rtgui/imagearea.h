@@ -59,11 +59,11 @@ protected:
     ImageAreaToolListener* listener;
 
     CropWindow* getCropWindow (int x, int y);
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
     int fullImageWidth, fullImageHeight;
 public:
@@ -75,7 +75,7 @@ public:
     ImageArea* iLinkedImageArea; // used to set a reference to the Before image area, which is set when before/after view is enabled
 
     explicit ImageArea (ImageAreaPanel* p);
-    ~ImageArea ();
+    ~ImageArea () override;
 
     rtengine::StagedImageProcessor* getImProcCoordinator() const;
     void setImProcCoordinator(rtengine::StagedImageProcessor* ipc_);
@@ -97,15 +97,15 @@ public:
     void infoEnabled (bool e);
 
     // widget base events
-    void on_realize ();
-    bool on_draw                 (const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool on_motion_notify_event  (GdkEventMotion* event);
-    bool on_button_press_event   (GdkEventButton* event);
-    bool on_button_release_event (GdkEventButton* event);
-    bool on_scroll_event         (GdkEventScroll* event);
-    bool on_leave_notify_event   (GdkEventCrossing* event);
+    void on_realize () override;
+    bool on_draw                 (const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_motion_notify_event  (GdkEventMotion* event) override;
+    bool on_button_press_event   (GdkEventButton* event) override;
+    bool on_button_release_event (GdkEventButton* event) override;
+    bool on_scroll_event         (GdkEventScroll* event) override;
+    bool on_leave_notify_event   (GdkEventCrossing* event) override;
     void on_resized              (Gtk::Allocation& req);
-    void on_style_updated        ();
+    void on_style_updated        () override;
     void syncBeforeAfterViews    ();
 
     void            setCropGUIListener       (CropGUIListener* l);
@@ -140,18 +140,18 @@ public:
     void   setZoom   (double zoom);
 
     // EditDataProvider interface
-    void subscribe(EditSubscriber *subscriber);
-    void unsubscribe();
-    void getImageSize (int &w, int&h);
+    void subscribe(EditSubscriber *subscriber) override;
+    void unsubscribe() override;
+    void getImageSize (int &w, int&h) override;
 
     // CropWindowListener interface
-    void cropPositionChanged   (CropWindow* cw);
-    void cropWindowSizeChanged (CropWindow* cw);
-    void cropZoomChanged       (CropWindow* cw);
-    void initialImageArrived   ();
+    void cropPositionChanged   (CropWindow* cw) override;
+    void cropWindowSizeChanged (CropWindow* cw) override;
+    void cropZoomChanged       (CropWindow* cw) override;
+    void initialImageArrived   () override;
 
     // LockablePickerToolListener interface
-    void switchPickerVisibility (bool isVisible);
+    void switchPickerVisibility (bool isVisible) override;
 
     CropWindow* getMainCropWindow ()
     {

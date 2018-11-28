@@ -40,32 +40,32 @@ class Wavelet :
 {
 public:
     Wavelet ();
-    ~Wavelet ();
+    ~Wavelet () override;
 
     bool wavComputed_ ();
-    void adjusterChanged(Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
-    void autoOpenCurve ();
-    void curveChanged (CurveEditor* ce);
-    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
+    void autoOpenCurve () override;
+    void curveChanged (CurveEditor* ce) override;
+    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
-    void setBatchMode (bool batchMode);
-    void setDefaults  (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setEditProvider (EditDataProvider *provider);
+    void setBatchMode (bool batchMode) override;
+    void setDefaults  (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setEditProvider (EditDataProvider *provider) override;
     void updateToolState (std::vector<int> &tpOpen);
-    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void writeOptions (std::vector<int> &tpOpen);
 
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override;
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override;
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
 
 private:
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
 
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
     void BAmethodChanged ();
     void NPmethodChanged ();
     void BackmethodChanged ();
@@ -84,7 +84,7 @@ private:
     void contrastMinusPressed ();
     void contrastPlusPressed ();
     void daubcoeffmethodChanged ();
-    void enabledChanged ();
+    void enabledChanged () override;
     void linkedgToggled ();
     void lipstToggled ();
     void medianToggled ();
@@ -94,7 +94,7 @@ private:
     void neutralchPressed ();
     void tmrToggled ();
     void updatewavLabel ();
-    void wavChanged (double nlevel);
+    void wavChanged (double nlevel) override;
 
     void HSmethodUpdateUI();
     void CHmethodUpdateUI();

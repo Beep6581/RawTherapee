@@ -72,7 +72,7 @@ protected:
 public:
 
     explicit ProfilePanel ();
-    virtual ~ProfilePanel ();
+    ~ProfilePanel () override;
 
     void setProfileChangeListener (ProfileChangeListener* ppl)
     {
@@ -81,9 +81,9 @@ public:
 
     static void init (Gtk::Window* parentWindow);
     static void cleanup ();
-    void storeCurrentValue();
-    void updateProfileList ();
-    void restoreValue();
+    void storeCurrentValue() override;
+    void updateProfileList () override;
+    void restoreValue() override;
 
     void initProfile (const Glib::ustring& profileFullPath, rtengine::procparams::ProcParams* lastSaved);
     void setInitialFileName (const Glib::ustring& filename);
@@ -94,8 +94,8 @@ public:
         const rtengine::ProcEvent& ev,
         const Glib::ustring& descr,
         const ParamsEdited* paramsEdited = nullptr
-    );
-    void clearParamChanges();
+    ) override;
+    void clearParamChanges() override;
 
     // gui callbacks
     void save_clicked (GdkEventButton* event);
