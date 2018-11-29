@@ -72,6 +72,7 @@
 #71 28.09.2018 Korrekturen (TooWaBoo) RT 5.5
 #72 05.10.2018 Korrekturen (TooWaBoo) RT 5.5
 #73 21.11.2018 Erweiterung (TooWaBoo) RT 5.5
+#74 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -805,13 +806,18 @@ HISTORY_MSG_493;(L*a*b*)
 HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nauf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbanpassungen)\nL*a*b*-Farbkorrektur
 HISTORY_MSG_COLORTONING_LABREGION_AB;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich
+HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Kanal
 HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - C-Maske
 HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - H-Maske
 HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Helligkeit
 HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - L-Maske
 HISTORY_MSG_COLORTONING_LABREGION_LIST;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Liste
+HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Maskenunschärfe
+HISTORY_MSG_COLORTONING_LABREGION_OFFSET;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Versatz
+HISTORY_MSG_COLORTONING_LABREGION_POWER;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Verstärkung
 HISTORY_MSG_COLORTONING_LABREGION_SATURATION;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Sättigung
 HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Maske anzeigen
+HISTORY_MSG_COLORTONING_LABREGION_SLOPE;(Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich - Steigung
 HISTORY_MSG_DEHAZE_DEPTH;(Bildschleier entfernen)\nTiefe
 HISTORY_MSG_DEHAZE_ENABLED;(Bildschleier entfernen)
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Bildschleier entfernen)\nMaske anzeigen
@@ -1004,7 +1010,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;Vorschau Fokusmaske\nTaste: <b>Umschalt</b> + <b>f
 MAIN_TOOLTIP_PREVIEWG;Vorschau Grün-Kanal\nTaste: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Vorschau Helligkeit\nTaste: <b>v</b>\n\n0.299·R + 0.587·G + 0.114·B
 MAIN_TOOLTIP_PREVIEWR;Vorschau Rot-Kanal\nTaste: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.\nTaste: <b>p</b>
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden.\nTaste: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden.\nTaste: <b>Alt</b> + <b>l</b>
@@ -1544,14 +1550,23 @@ TP_COLORTONING_LABGRID;L*a*b*-Farbkorrektur
 TP_COLORTONING_LABGRID_VALUES;HL: a=%1, b=%2\nS: a=%3, b=%4
 TP_COLORTONING_LABREGIONS;L*a*b*-Farbkorrektur Bereiche
 TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+TP_COLORTONING_LABREGION_CHANNEL;Kanal
+TP_COLORTONING_LABREGION_CHANNEL_ALL;Alle
+TP_COLORTONING_LABREGION_CHANNEL_B;Blau
+TP_COLORTONING_LABREGION_CHANNEL_G;Grün
+TP_COLORTONING_LABREGION_CHANNEL_R;Rot
 TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
 TP_COLORTONING_LABREGION_HUEMASK;H
 TP_COLORTONING_LABREGION_LIGHTNESS;Helligkeit
 TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
 TP_COLORTONING_LABREGION_LIST_TITLE;Farbkorrektur
 TP_COLORTONING_LABREGION_MASK;Maske
+TP_COLORTONING_LABREGION_MASKBLUR;Maskenunschärfe
+TP_COLORTONING_LABREGION_OFFSET;Versatz
+TP_COLORTONING_LABREGION_POWER;Verstärkung
 TP_COLORTONING_LABREGION_SATURATION;Sättigung
 TP_COLORTONING_LABREGION_SHOWMASK;Maske anzeigen
+TP_COLORTONING_LABREGION_SLOPE;Steigung
 TP_COLORTONING_LUMA;Luminanz
 TP_COLORTONING_LUMAMODE;Luminanz schützen
 TP_COLORTONING_LUMAMODE_TOOLTIP;Wenn aktiviert, wird die Luminanz der Farben Rot, Grün, Cyan, Blau... geschützt.
@@ -1591,7 +1606,8 @@ TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;Höhe
 TP_CROP_LABEL;Ausschnitt
 TP_CROP_PPI;PPI =
-TP_CROP_SELECTCROP;Ausschnitt wählen
+TP_CROP_RESETCROP;Zurücksetzen
+TP_CROP_SELECTCROP;Ausschnitt
 TP_CROP_W;Breite
 TP_CROP_X;Links
 TP_CROP_Y;Oben

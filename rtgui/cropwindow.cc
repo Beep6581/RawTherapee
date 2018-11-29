@@ -275,6 +275,10 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     } else {
         delta = deltaY;
     }
+    if (delta == 0.0 && direction == GDK_SCROLL_SMOOTH) {
+        // sometimes this case happens. To avoid zooming into the wrong direction in this case, we just do nothing
+        return;
+    }
     bool isUp = direction == GDK_SCROLL_UP || (direction == GDK_SCROLL_SMOOTH && delta < 0.0);
     if ((state & GDK_CONTROL_MASK) && onArea(ColorPicker, x, y)) {
         // resizing a color picker
@@ -1960,7 +1964,7 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY)
                 int x1 = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
                 int y1 = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
                 double cropd = sqrt(cropHandler.cropParams.h * cropHandler.cropParams.h + cropHandler.cropParams.w * cropHandler.cropParams.w) * zoomSteps[cropZoom].zoom;
-                double imd = sqrt(imgW * imgW + imgH + imgH);
+                double imd = sqrt(imgW * imgW + imgH * imgH);
                 double d;
 
                 // the more we can see of the crop, the more gravity towards crop center

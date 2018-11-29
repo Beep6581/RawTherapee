@@ -172,6 +172,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     // go back to original range
     minOut /= scale;
     minOut += minVal;
+    minOut = rtengine::LIM(minOut, minVal, maxVal);
 
     // find (maxPrct*size) smallest value
     const float threshmax = maxPrct * size;
@@ -190,6 +191,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     // go back to original range
     maxOut /= scale;
     maxOut += minVal;
+    maxOut = rtengine::LIM(maxOut, minVal, maxVal);
 }
 
 void buildBlendMask(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {

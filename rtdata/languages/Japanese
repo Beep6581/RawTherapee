@@ -962,7 +962,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;<b>フォーカス・マスク</b>表示\nショ�
 MAIN_TOOLTIP_PREVIEWG;<b>グリーン チャンネル</b>表示\nショートカット: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;<b>輝度</b>表示\nショートカット: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;<b>レッド チャンネル</b>表示\nショートカット: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;プレビューで見る<b>シャープ化機能のコントラストマスク</b>\nショートカット： <b>なし</b>\n\nこの機能が使えるのはシャープ化機能が有効で、画像が100％以上に拡大されている場合だけ
+MAIN_TOOLTIP_PREVIEWSHARPMASK;プレビューで見る<b>シャープ化機能のコントラストマスク</b>\nショートカット： <b>p</b>\n\nこの機能が使えるのはシャープ化機能が有効で、画像が100％以上に拡大されている場合だけ
 MAIN_TOOLTIP_QINFO;画像の情報\nショートカット: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;表示/非表示 左パネル\nショートカット: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル\nショートカット: <b>Alt-l</b>
@@ -2301,6 +2301,11 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
+!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
+!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
+!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
+!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
 !PREFERENCES_APPEARANCE;Appearance
 !PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
 !PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
@@ -2311,6 +2316,17 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
 !TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 !TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
+!TP_COLORTONING_LABREGION_CHANNEL;Channel
+!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
+!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
+!TP_COLORTONING_LABREGION_CHANNEL_G;Green
+!TP_COLORTONING_LABREGION_CHANNEL_R;Red
+!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
+!TP_COLORTONING_LABREGION_OFFSET;Offset
+!TP_COLORTONING_LABREGION_POWER;Power
+!TP_COLORTONING_LABREGION_SLOPE;Slope
+!TP_CROP_RESETCROP;Reset
+!TP_CROP_SELECTCROP;Select
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually

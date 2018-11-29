@@ -43,7 +43,6 @@ public:
     Image16* copy() const;
 
     Image8* to8() const;
-    Imagefloat* tofloat() const;
 
     void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
 
