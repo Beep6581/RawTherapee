@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChanged (false), editDataProvider (nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChanged (false), editDataProvider (nullptr), favoritePanelSW(nullptr)
 {
 
     favoritePanel   = Gtk::manage (new ToolVBox ());
@@ -155,24 +155,26 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     addfavoritePanel (rawPanel, darkframe);
     addfavoritePanel (rawPanel, flatfield);
 
+    int favoriteCount = 0;
     for(auto it = favorites.begin(); it != favorites.end(); ++it) {
         if (*it) {
             addPanel(favoritePanel, *it);
+            ++favoriteCount;
         }
     }
+
     toolPanels.push_back (coarse);
     toolPanels.push_back(metadata);
 
     toolPanelNotebook = new Gtk::Notebook ();
     toolPanelNotebook->set_name ("ToolPanelNotebook");
 
-    favoritePanelSW        = Gtk::manage (new MyScrolledWindow ());
     exposurePanelSW    = Gtk::manage (new MyScrolledWindow ());
     detailsPanelSW     = Gtk::manage (new MyScrolledWindow ());
     colorPanelSW       = Gtk::manage (new MyScrolledWindow ());
     transformPanelSW   = Gtk::manage (new MyScrolledWindow ());
     rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
-    advancedPanelSW     = Gtk::manage (new MyScrolledWindow ());
+    advancedPanelSW    = Gtk::manage (new MyScrolledWindow ());
     updateVScrollbars (options.hideTPVScrollbar);
 
     // load panel endings
@@ -184,9 +186,12 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
         vbPanelEnd[i]->show_all();
     }
 
-    favoritePanelSW->add  (*favoritePanel);
-    favoritePanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
-    favoritePanel->pack_start (*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
+    if(favoriteCount > 0) {
+        favoritePanelSW = Gtk::manage(new MyScrolledWindow());
+        favoritePanelSW->add(*favoritePanel);
+        favoritePanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+        favoritePanel->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
+    }
 
     exposurePanelSW->add  (*exposurePanel);
     exposurePanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
@@ -221,7 +226,9 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChan
     toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
     toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
 
-    toolPanelNotebook->append_page (*favoritePanelSW,  *toiF);
+    if (favoritePanelSW) {
+        toolPanelNotebook->append_page (*favoritePanelSW,  *toiF);
+    }
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
@@ -882,7 +889,9 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event)
     if (alt) {
         switch (event->keyval) {
             case GDK_KEY_u:
-                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*favoritePanelSW));
+                if (favoritePanelSW) {
+                    toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*favoritePanelSW));
+                }
                 return true;
 
             case GDK_KEY_e:
@@ -922,7 +931,9 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
     Gtk::PolicyType policy = hide ? Gtk::POLICY_NEVER : Gtk::POLICY_AUTOMATIC;
-    favoritePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
+    if (favoritePanelSW) {
+        favoritePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
+    }
     exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
     detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, policy);
