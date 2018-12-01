@@ -95,9 +95,10 @@ private:
         double value;
     };
 
-    const std::vector<CropRatio> crop_ratios;
+    std::vector<CropRatio> crop_ratios;
 
     void adjustCropToRatio();
+    void updateCurrentRatio();
 
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;
@@ -117,6 +118,7 @@ private:
     Gtk::Label* sizein;
     Gtk::Grid* ppigrid;
     Gtk::Grid* methodgrid;
+    Gtk::Label *customRatioLabel;
 
     int maxw, maxh;
     double nx, ny;
