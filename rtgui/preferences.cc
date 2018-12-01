@@ -1002,6 +1002,8 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     Gtk::Label* themeLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_APPEARANCE_THEME") + ":"));
     setExpandAlignProperties(themeLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    Gtk::Label* themeRestartLbl = Gtk::manage ( new Gtk::Label (Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    setExpandAlignProperties(themeRestartLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     themeCBT = Gtk::manage(new Gtk::ComboBoxText());
     themeCBT->set_active(0);
@@ -1048,7 +1050,8 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
-    appearanceGrid->attach(*vSep,               2, 0, 1, 3);
+    appearanceGrid->attach(*themeRestartLbl,    2, 0, 2, 1);
+    appearanceGrid->attach(*vSep,               2, 1, 1, 3);
     appearanceGrid->attach(*mainFontLbl,        0, 1, 1, 1);
     appearanceGrid->attach(*mainFontFB,         1, 1, 1, 1);
     appearanceGrid->attach(*cropMaskColorLbl,   3, 1, 1, 1);
