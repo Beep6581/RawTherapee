@@ -1131,6 +1131,10 @@ Camera constants:
     },
 
 // Canon Powershot
+    { // Quality C, CHDK DNGs, raw frame correction
+        "make_model": "Canon PowerShot A3100 IS",
+        "raw_crop": [ 24, 12, 4032, 3024 ] // full size 4036X3026
+    },
 
     { // Quality C, CHDK DNGs, raw frame corrections, experimental infrared support commented out
         "make_model": "Canon PowerShot A480",
