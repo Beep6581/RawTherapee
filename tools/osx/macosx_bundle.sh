@@ -234,7 +234,7 @@ function CreateDmg {
     fi
 
     msg "Creating disk image:"
-    hdiutil create -format UDBZ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
+    hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
 
     # Sign disk image
     codesign --deep --force -v -s "${CODESIGNID}" "${dmg_name}.dmg"
