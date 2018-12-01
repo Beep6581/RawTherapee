@@ -1352,6 +1352,7 @@ Camera constants:
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
         //"dcraw_matrix": [ 11563,-2891,-3203,-5313,15625,625,-781,2813,5625 ], // DNG A
+        "raw_crop": [ 0, 0, 5312, 2986 ], // cropped last two rows because last row was garbage
         "ranges": { "white": 1000 }
     },
     { // Quality C
