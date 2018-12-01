@@ -1218,6 +1218,11 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": "Canon PowerShot SX150 IS",
+        "raw_crop": [ 26, 10, 4364, 3254 ] // cut 2pix left and right
+    },
+
+    { // Quality C
         "make_model": "Canon PowerShot SX220 HS",
         "raw_crop": [ 92, 16, 4072, 3042 ] // Cut 2pix at lower border because of too high values in blue channel
     },
