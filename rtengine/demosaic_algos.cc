@@ -3083,6 +3083,7 @@ BENCHFUN
     free(buffer0);
 }
 
+    border_interpolate2(W, H, 1, rawData, red, green, blue);
     if(plistener) {
         plistener->setProgress (1.0);
     }
