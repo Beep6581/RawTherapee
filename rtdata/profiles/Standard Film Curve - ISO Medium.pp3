@@ -38,8 +38,8 @@ Redchro=0
 Bluechro=0
 Gamma=1.7
 Passes=1
-LCurve=0
-CCCurve=0
+LCurve=0;
+CCCurve=0;
 
 [LensProfile]
 LcMode=lfauto
