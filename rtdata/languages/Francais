@@ -2298,6 +2298,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!GENERAL_CURRENT;Current
 !HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
 !HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
 !HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset

@@ -1074,6 +1074,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"C3 34 68 98 38 40 4B 4E", "Sigma 100-400mm f/5-6.3 DG OS HSM | C"},
     {"C8 54 62 62 0C 0C 4B 46", "Sigma 85mm f/1.4 DG HSM | A"},
     {"C9 48 37 5C 24 24 4B 4E", "Sigma 24-70mm f/2.8 DG OS HSM | A"},
+    {"CA 48 27 3E 24 24 DF 4E", "Tamron SP 15-30mm f/2.8 Di VC USD G2 (A041)"},
     {"CC 4C 50 68 14 14 4B 06", "Sigma 50-100mm f/1.8 DC HSM | A"},
     {"CD 3D 2D 70 2E 3C 4B 0E", "Sigma 18-125mm f/3.8-5.6 DC OS HSM"},
     {"CE 34 76 A0 38 40 4B 0E", "Sigma 150-500mm f/5-6.3 DG OS APO HSM"},

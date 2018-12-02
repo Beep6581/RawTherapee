@@ -2225,6 +2225,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !DYNPROFILEEDITOR_IMGTYPE_STD;Standard
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!GENERAL_CURRENT;Current
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTORY_MSG_489;DRC - Detail
 !HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
