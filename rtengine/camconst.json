@@ -1694,6 +1694,13 @@ Camera constants:
         "global_green_equilibration" : true
     },
 
+    { // Quality X
+        "make_model": [ "Panasonic DC-LX100M2" ],
+        "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610 ], // Adobe DNG Converter 11.0 ColorMatrix2
+        "raw_crop": [ 0, 0, 0, 0 ],
+        "ranges": { "black": 15 }
+    },
+
     { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574
         "make_model": [ "Panasonic DC-G9" ],
         "dcraw_matrix": [ 7685, -2375, -634, -3687, 11700, 2249, -748, 1546, 5111 ], // Adobe DNG Converter 10.3 ColorMatrix2
