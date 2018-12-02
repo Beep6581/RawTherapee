@@ -1,17 +1,9 @@
-RAWTHERAPEE 5.4-dev RELEASE NOTES
+RAWTHERAPEE 5.5-RC1 RELEASE NOTES
 
-This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
+This is RawTherapee 5.5 Release Candidate 1, released on 2018-12-03.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
-
-While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
-- Development versions only had limited testing, so there may be bugs unknown to us.
-- You should report these bugs so that they get fixed for the next stable release. See
-  www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
-- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
-- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
-
 
 NEWS RELEVANT TO PHOTOGRAPHERS
 
@@ -26,7 +18,52 @@ In order to use RawTherapee efficiently you should know that:
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
 New features since 5.4:
-- TODO.
+- Filter to remove striping and banding artifacts caused by Phase Detection Auto Focus (PDAF), available for any camera which has a PDAF entry in camconst.json, currently:
+    - Nikon Z 6
+    - Nikon Z 7
+    - Sony DSC-RX1RM2
+    - Sony ILCE-6000
+    - Sony ILCE-6300
+    - Sony ILCE-6500
+    - Sony ILCE-7M3
+    - Sony ILCE-7RM2
+    - Sony ILCE-7RM3
+    - Sony ILCE-9
+- Out-of-gamut warning compatible with ICC v2 and v4 profiles.
+- Ability to specify custom working color spaces through workingspaces.json file.
+- Unbounded processing - allows you to decide whether out-of-gamut colors should get clipped.
+- Improved support for Canon mRaw format variants.
+- New Shadows/Highlights tool (replaced previous one).
+- Contrast threshold mask which divides an image into areas of high and low detail, allowing the effect of certain tools to be focused where it matters most and to mitigate the effect on areas where it would be undesirable, for example having the Sharpening tool affect only the in-focus subject without affecting the out-of-focus background. Available for:
+    - Sharpening
+    - Post-Resize Sharpening
+    - Microcontrast
+    - Demosaicing
+- Dual-demosaic algorithms, making use of the new contrast threshold mask, allowing one to use a combination of demosaicing algorithms where one is best for details and the other best for plain areas.
+- New color toning methods:
+    - Grid, allowing you to separately tone the shadows and highlights using two points on a simple color grid.
+    - Regions, allowing you to tone based on any number of masks. Supports functions from the American Society of Cinematographers Color Decision List (ASC CDL).
+- Resizable main histogram with scaling modes:
+    - Linear
+    - Log
+    - Log-log
+- Support for Blackmagic and Canon Magic Lantern lj92 encoded files.
+- Allows you to specify how many border rows/columns to discard during demosaicing - those who shoot raw video at a standard resolution such as 1920x1080 will appreciate being able to preserve the dimensions.
+- New Soft Light tool which enhances contrast and saturation by emulating the effect of blending an image with a copy of itself in "soft light" blending mode in GIMP.
+- New Haze Removal tool to reduce the effects of haze or fog.
+- The Resize tool allows you to specify whether you want it to upscale or only downscale.
+- New icon and cursor theme.
+- ICC profile generator.
+- The bundled profiles have been re-generated, and now include ICC v2 and v4 variants.
+- If your screen's resolution is such that not all icons fit in a toolbar, you can now scroll the toolbar using the mouse scroll-wheel.
+- New tone curve type. One of the characteristics of the "Custom" cubic spline curve used in all previous versions was that editing one node could have a huge impact on what happens to the curve in relation to the other nodes. This curve was replaced by the new centripetal Catmull–Rom spline which allows you to make adjustments to one part of the curve without affecting the other segments as much.
+- Allow saving both floating-point and integer type files at both 16-bit and 32-bit precision from RawTherapee GUI and CLI.
+- Improves lensfun chromatic aberration correction.
+- The raw chromatic aberration correction tool can now run in several iterations, and gained a feature to avoid introducing a color shift which could result from correcting chromatic aberration before demosaicing.
+- Certain sliders now operate on a logarithmic scale, allowing for a meaningful response over large ranges.
+- Dedicated "Reset" button in Crop tool.
+- Support for new cameras, and new input color profiles.
+- Speed enhancements and bug fixes, for a total of over 1300 commits.
 
 RawTherapee and other open-source projects require access to sample raw files from various camera makes and models in order to support those raw formats correctly.
 You can help by submitting raw files to RPU:
@@ -46,7 +83,12 @@ In general:
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
 Changes since 5.4:
-- TODO.
+- Requires libtiff >= 4.0.4.
+- Requires CMake >= 2.8.8.
+- Optional codesigning commands have been added to the CMakeLists.txt and macosx_bundle.sh scripts. If you wish to codesign the built packages (.app and .dmg), add your details to your CMake command flags:
+    -DCODESIGNID:STRING="Developer ID Application: Firstname Lastname (xxx)"
+
+
 
 
 
