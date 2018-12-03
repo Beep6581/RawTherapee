@@ -296,6 +296,7 @@ GENERAL_AUTO;Automatisch
 GENERAL_BEFORE;Vorher
 GENERAL_CANCEL;Abbrechen
 GENERAL_CLOSE;Schließen
+GENERAL_CURRENT;Aktuell
 GENERAL_DISABLE;Deaktivieren
 GENERAL_DISABLED;Deaktiviert
 GENERAL_ENABLE;Aktivieren
@@ -2406,8 +2407,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-GENERAL_CURRENT;Aktuell
