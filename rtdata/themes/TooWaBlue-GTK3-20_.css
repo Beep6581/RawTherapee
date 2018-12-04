@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.98
+  Version 2.99
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1191,7 +1191,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 /*** end ***************************************************************************************/
 
 /*** Context & popups menus *****************************************************************************/
-.popup > decoration {
+.csd.popup > decoration {
     background-image: none;
     border-radius: 0;
     border: none;
@@ -2042,7 +2042,7 @@ entry:focus > selection  {
 /*** end ***************************************************************************************/
 
 /*** Window Layout *****************************************************************************/
-:not(.popup):not(tooltip) > decoration {
+.csd:not(.popup):not(tooltip) > decoration {
     background-color: @winHeaderbar;
     background-image: none;
     border-radius: 0.416666666666666666em 0.416666666666666666em 0 0;
@@ -2076,7 +2076,7 @@ headerbar .title{
 /**/
 
 /* Window in background */
-:not(.popup):not(tooltip) > decoration:backdrop {
+.csd:not(.popup):not(tooltip) > decoration:backdrop {
     box-shadow: 0 0.25em 0.75em 0.083333333333333333em rgba(0, 0, 0, 0.3), 0 0 0 0.083333333333333333em @bg-dark-grey;
 }
 headerbar:backdrop {
