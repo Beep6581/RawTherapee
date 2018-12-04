@@ -207,15 +207,16 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
         if (autoContrast) {
             for (int pass = 0; pass < 2; ++pass) {
                 const int tilesize = 80 / (pass + 1);
-                const int numTilesW = W / tilesize;
-                const int numTilesH = H / tilesize;
+                const int skip = pass < 1 ? tilesize : tilesize / 4;
+                const int numTilesW = W / skip - 3 * pass;
+                const int numTilesH = H / skip - 3 * pass;
                 std::vector<std::vector<std::pair<float, float>>> variances(numTilesH, std::vector<std::pair<float, float>>(numTilesW));
 
                 #pragma omp parallel for
                 for (int i = 0; i < numTilesH; ++i) {
-                    int tileY = i * tilesize;
+                    int tileY = i * skip;
                     for (int j = 0; j < numTilesW; ++j) {
-                        int tileX = j * tilesize;
+                        int tileX = j * skip;
 #ifdef __SSE2__
                         vfloat avgv = ZEROV;
                         for (int y = tileY; y < tileY + tilesize; ++y) {
@@ -268,10 +269,9 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                     }
                 }
 
-                const int minY = tilesize * minI;
-                const int minX = tilesize * minJ;
+                const int minY = skip * minI;
+                const int minX = skip * minJ;
 
-//                std::cout << pass << ": minvar : " << minvar << std::endl;
                 if (minvar <= 1.f || pass == 1) {
                     // a variance <= 1 means we already found a flat region and can skip second pass
                     // in second pass we allow a variance of 2
