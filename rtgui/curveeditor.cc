@@ -38,6 +38,7 @@ DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* 
     curveType->addEntry("curve-spline-small.png", M("CURVEEDITOR_CUSTOM")); // 1 Spline
     curveType->addEntry("curve-parametric-small.png", M("CURVEEDITOR_PARAMETRIC")); // 2 Parametric
     curveType->addEntry("curve-nurbs-small.png", M("CURVEEDITOR_NURBS")); // 3 NURBS
+    curveType->addEntry("curve-spline-small.png", M("CURVEEDITOR_CATMULLROM")); // 4 CatmullRom
     curveType->setSelected(DCT_Linear);
     curveType->show();
 
@@ -64,6 +65,9 @@ std::vector<double> DiagonalCurveEditor::getCurve ()
 
     case (DCT_NURBS):
         return curve = NURBSCurveEd;
+
+    case (DCT_CatumullRom):
+        return curve = catmullRomCurveEd;
 
     default:
         // returning Linear or Unchanged
@@ -96,6 +100,13 @@ void DiagonalCurveEditor::setResetCurve(DiagonalCurveType cType, const std::vect
 
         break;
 
+    case (DCT_CatumullRom):
+        if (resetCurve.size() && DiagonalCurveType(resetCurve.at(0)) == cType) {
+            catmullRomResetCurve = resetCurve;
+        }
+
+        break;
+        
     default:
         break;
     }

@@ -775,7 +775,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
     case GDK_MOTION_NOTIFY:
         snapToElmt = -100;
 
-        if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS) {
+        if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS || curve.type == DCT_CatumullRom) {
 
             snapToMinDistY = snapToMinDistX = 10.;
             snapToValY = snapToValX = 0.;
@@ -1026,7 +1026,7 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
 
     double minDistanceX = double(MIN_DISTANCE) / double(graphW - 1);
 
-    if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS) {
+    if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS || curve.type == DCT_CatumullRom) {
         // get the pointer position
         getCursorPositionFromCurve(pipetteVal);
 
@@ -1415,6 +1415,8 @@ std::vector<double> MyDiagonalCurve::getPoints ()
             result.push_back (double(DCT_Spline));
         } else if (curve.type == DCT_NURBS) {
             result.push_back (double(DCT_NURBS));
+        } else if (curve.type == DCT_CatumullRom) {
+            result.push_back (double(DCT_CatumullRom));
         }
 
         // then we push all the points coordinate
@@ -1552,6 +1554,7 @@ void MyDiagonalCurve::reset(const std::vector<double> &resetCurve, double identi
     switch (curve.type) {
     case DCT_Spline :
     case DCT_NURBS :
+    case DCT_CatumullRom:
         curve.x.resize(2);
         curve.y.resize(2);
         curve.x.at(0) = 0.;
