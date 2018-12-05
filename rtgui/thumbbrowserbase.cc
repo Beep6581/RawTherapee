@@ -1009,9 +1009,6 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn)
     }
 
     redraw ();
-#ifdef WIN32
-    gdk_window_process_updates (get_window()->gobj(), true);
-#endif
 }
 
 void ThumbBrowserBase::refreshThumbImages ()
