@@ -22,8 +22,6 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
-#include <iostream>
-#include <vector>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -206,12 +204,14 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
         if (autoContrast) {
             for (int pass = 0; pass < 2; ++pass) {
                 const int tilesize = 80 / (pass + 1);
-                const int skip = pass < 1 ? tilesize : tilesize / 4;
+                const int skip = pass == 0 ? tilesize : tilesize / 4;
                 const int numTilesW = W / skip - 3 * pass;
                 const int numTilesH = H / skip - 3 * pass;
                 std::vector<std::vector<float>> variances(numTilesH, std::vector<float>(numTilesW));
 
+#ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic)
+#endif
                 for (int i = 0; i < numTilesH; ++i) {
                     const int tileY = i * skip;
                     for (int j = 0; j < numTilesW; ++j) {
