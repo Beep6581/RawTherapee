@@ -103,17 +103,18 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
 void PopUpCommon::entrySelected (int i)
 {
     // Emit a signal if the selected item has changed
-    if (setSelected (i))
-        messageChanged (selected);
+    if (setSelected (posToIndex(i)))
+        messageChanged (posToIndex(selected));
 
     // Emit a signal in all case (i.e. propagate the signal_activate event)
-    messageItemSelected (selected);
+    messageItemSelected (posToIndex(selected));
 }
 
 void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
     const auto items = menu->get_children ();
-    if (size_t(index) < items.size ()) {
-        items[size_t(index)]->set_sensitive (isSensitive);
+    size_t pos = indexToPos(index);
+    if (pos < items.size ()) {
+        items[pos]->set_sensitive (isSensitive);
     }
 }
 
@@ -123,6 +124,8 @@ void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
  */
 bool PopUpCommon::setSelected (int entryNum)
 {
+    entryNum = indexToPos(entryNum);
+    
     if (entryNum < 0 || entryNum > ((int)images.size() - 1) || (int)entryNum == selected) {
         return false;
     } else {

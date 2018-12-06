@@ -48,7 +48,7 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
         bool identity = true;
         kind = (DiagonalCurveType)p[0];
 
-        if (kind == DCT_Linear || kind == DCT_Spline || kind == DCT_NURBS) {
+        if (kind == DCT_Linear || kind == DCT_Spline || kind == DCT_NURBS || kind == DCT_CatumullRom) {
             N = (p.size() - 1) / 2;
             x = new double[N];
             y = new double[N];
@@ -86,11 +86,12 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
 
             if (!identity) {
                 if (kind == DCT_Spline && N > 2) {
-                    //spline_cubic_set ();
-                    catmull_rom_set();
+                    spline_cubic_set ();
                 } else if (kind == DCT_NURBS && N > 2) {
                     NURBS_set ();
                     fillHash();
+                } else if (kind == DCT_CatumullRom && N > 2) {
+                    catmull_rom_set();
                 } else {
                     kind = DCT_Linear;
                 }
@@ -459,7 +460,7 @@ double DiagonalCurve::getVal (double t) const
     }
 
     case DCT_Linear :
-    // case DCT_Spline :
+    case DCT_Spline :
     {
         // values under and over the first and last point
         if (t > x[N - 1]) {
@@ -484,21 +485,21 @@ double DiagonalCurve::getVal (double t) const
         double h = x[k_hi] - x[k_lo];
 
         // linear
-        // if (kind == DCT_Linear) {
+        if (kind == DCT_Linear) {
             return y[k_lo] + (t - x[k_lo]) * ( y[k_hi] - y[k_lo] ) / h;
-        // }
-        // // spline curve
-        // else { // if (kind==Spline) {
-        //     double a = (x[k_hi] - t) / h;
-        //     double b = (t - x[k_lo]) / h;
-        //     double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
-        //     return CLIPD(r);
-        // }
+        }
+        // spline curve
+        else { // if (kind==Spline) {
+            double a = (x[k_hi] - t) / h;
+            double b = (t - x[k_lo]) / h;
+            double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
+            return CLIPD(r);
+        }
 
         break;
     }
 
-    case DCT_Spline: {
+    case DCT_CatumullRom: {
         auto it = std::lower_bound(poly_x.begin(), poly_x.end(), t);
         if (it == poly_x.end()) {
             return poly_y.back();
