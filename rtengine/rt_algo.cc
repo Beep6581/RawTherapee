@@ -51,6 +51,49 @@ vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
     return onev / (onev + xexpf(c16v - c16v * valv / thresholdv));
 }
 #endif
+
+float tileAverage(float **data, size_t tileY, size_t tileX, size_t tilesize) {
+
+#ifdef __SSE2__
+    vfloat avgv = ZEROV;
+    for (size_t y = tileY; y < tileY + tilesize; ++y) {
+        for (size_t x = tileX; x < tileX + tilesize; x += 4) {
+            avgv += LVFU(data[y][x]);
+        }
+    }
+    const float avg = vhadd(avgv);
+#else
+    float avg = 0.f;
+    for (size_t y = tileY; y < tileY + tilesize; ++y) {
+        for (size_t x = tileX; x < tileX + tilesize; ++x) {
+            avg += data[y][x];
+        }
+    }
+#endif
+    return avg / rtengine::SQR(tilesize);
+}
+
+float tileVariance(float **data, size_t tileY, size_t tileX, size_t tilesize, float avg) {
+
+#ifdef __SSE2__
+    vfloat varv = ZEROV;
+    const vfloat avgv = F2V(avg);
+    for (size_t y = tileY; y < tileY + tilesize; ++y) {
+        for (size_t x = tileX; x < tileX + tilesize; x +=4) {
+            varv += SQRV(LVFU(data[y][x]) - avgv);
+        }
+    }
+    const float var = vhadd(varv);
+#else
+    float var = 0.f;
+    for (size_t y = tileY; y < tileY + tilesize; ++y) {
+        for (size_t x = tileX;; x < tileX + tilesize; ++x) {
+            var += rtengine::SQR(data[y][x] - avg);
+        }
+    }
+#endif
+    return var / (rtengine::SQR(tilesize) * avg);
+}
 }
 
 namespace rtengine
@@ -202,6 +245,8 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
         }
     } else {
         if (autoContrast) {
+            constexpr float minLuminance = 2000.f;
+            constexpr float maxLuminance = 20000.f;
             for (int pass = 0; pass < 2; ++pass) {
                 const int tilesize = 80 / (pass + 1);
                 const int skip = pass == 0 ? tilesize : tilesize / 4;
@@ -216,47 +261,14 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                     const int tileY = i * skip;
                     for (int j = 0; j < numTilesW; ++j) {
                         const int tileX = j * skip;
-#ifdef __SSE2__
-                        vfloat avgv = ZEROV;
-                        for (int y = tileY; y < tileY + tilesize; ++y) {
-                            for (int x = tileX; x < tileX + tilesize; x += 4) {
-                                avgv += LVFU(luminance[y][x]);
-                            }
-                        }
-                        float avg = vhadd(avgv);
-#else
-                        float avg = 0.f;
-                        for (int y = tileY; y < tileY + tilesize; ++y) {
-                            for (int x = tileX; x < tileX + tilesize; ++x) {
-                                avg += luminance[y][x];
-                            }
-                        }
-#endif
-                        avg /= SQR(tilesize);
-                        if (avg < 2000.f || avg > 20000.f) {
+                        const float avg = tileAverage(luminance, tileY, tileX, tilesize);
+                        if (avg < minLuminance || avg > maxLuminance) {
                             // too dark or too bright => skip the tile
                             variances[i][j] = RT_INFINITY_F;
                             continue;
+                        } else {
+                            variances[i][j] = tileVariance(luminance, tileY, tileX, tilesize, avg);
                         }
-#ifdef __SSE2__
-                        vfloat varv = ZEROV;
-                        avgv = F2V(avg);
-                        for (int y = tileY; y < tileY + tilesize; ++y) {
-                            for (int x = tileX; x < tileX + tilesize; x +=4) {
-                                varv += SQRV(LVFU(luminance[y][x]) - avgv);
-                            }
-                        }
-                        float var = vhadd(varv);
-#else
-                        float var = 0.f;
-                        for (int y = tileY; y < tileY + tilesize; ++y) {
-                            for (int x = tileX; x < tileX + tilesize; ++x) {
-                                var += SQR(luminance[y][x] - avg);
-                            }
-                        }
-#endif
-                        var /= (SQR(tilesize) * avg);
-                        variances[i][j] = var;
                     }
                 }
 
@@ -276,17 +288,72 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                 const int minX = skip * minJ;
 
                 if (minvar <= 1.f || pass == 1) {
-                    // a variance <= 1 means we already found a flat region and can skip second pass
-                    // in second pass we allow a variance of 2
-                    JaggedArray<float> Lum(tilesize, tilesize);
-                    JaggedArray<float> Blend(tilesize, tilesize);
-                    for (int i = 0; i < tilesize; ++i) {
-                        for (int j = 0; j < tilesize; ++j) {
-                            Lum[i][j] = luminance[i + minY][j + minX];
+                    if (pass == 0) {
+                        // a variance <= 1 means we already found a flat region and can skip second pass
+                        JaggedArray<float> Lum(tilesize, tilesize);
+                        JaggedArray<float> Blend(tilesize, tilesize);
+                        for (int i = 0; i < tilesize; ++i) {
+                            for (int j = 0; j < tilesize; ++j) {
+                                Lum[i][j] = luminance[i + minY][j + minX];
+                            }
+                        }
+                        contrastThreshold = calcContrastThreshold(Lum, Blend, tilesize, tilesize) / 100.f;
+                        break;
+                    } else {
+                        // in second pass we allow a variance of 4
+                        // we additionally scan the tiles +-skip pixels around the best tile from pass 2
+                        // Means we scan (2 * skip + 1)^2 tiles in this step to get a better hit rate
+                        // fortunately the scan is quite fast, so we use only one core and don't parallelize
+                        const int topLeftYStart = std::max(minY - skip, 0);
+                        const int topLeftXStart = std::max(minX - skip, 0);
+                        const int topLeftYEnd = std::min(minY + skip, H - tilesize);
+                        const int topLeftXEnd = std::min(minX + skip, W - tilesize);
+                        const int numTilesH = topLeftYEnd - topLeftYStart + 1;
+                        const int numTilesW = topLeftXEnd - topLeftXStart + 1;
+
+                        std::vector<std::vector<float>> variances(numTilesH, std::vector<float>(numTilesW));
+                        for (int i = 0; i < numTilesH; ++i) {
+                            const int tileY = topLeftYStart + i;
+                            for (int j = 0; j < numTilesW; ++j) {
+                                const int tileX = topLeftXStart + j;
+                                const float avg = tileAverage(luminance, tileY, tileX, tilesize);
+
+                                if (avg < minLuminance || avg > maxLuminance) {
+                                    // too dark or too bright => skip the tile
+                                    variances[i][j] = RT_INFINITY_F;
+                                    continue;
+                                } else {
+                                    variances[i][j] = tileVariance(luminance, tileY, tileX, tilesize, avg);
+                                }
+                            }
+                        }
+
+                        float minvar = RT_INFINITY_F;
+                        int minI = 0, minJ = 0;
+                        for (int i = 0; i < numTilesH; ++i) {
+                            for (int j = 0; j < numTilesW; ++j) {
+                                if (variances[i][j] < minvar) {
+                                    minvar = variances[i][j];
+                                    minI = i;
+                                    minJ = j;
+                                }
+                            }
+                        }
+                        if (minvar <= 4.f) {
+                            JaggedArray<float> Lum(tilesize, tilesize);
+                            JaggedArray<float> Blend(tilesize, tilesize);
+                            const int minY = topLeftYStart + minI;
+                            const int minX = topLeftXStart + minJ;
+                            for (int i = 0; i < tilesize; ++i) {
+                                for (int j = 0; j < tilesize; ++j) {
+                                    Lum[i][j] = luminance[i + minY][j + minX];
+                                }
+                            }
+                            contrastThreshold = calcContrastThreshold(Lum, Blend, tilesize, tilesize) / 100.f;
+                        } else {
+                            contrastThreshold = 0.f;
                         }
                     }
-                    contrastThreshold = (pass == 0 || minvar <= 4.f) ? calcContrastThreshold(Lum, Blend, tilesize, tilesize) / 100.f : 0.f;
-                    break;
                 }
             }
         }
