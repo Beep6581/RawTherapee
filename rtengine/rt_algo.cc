@@ -304,6 +304,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
     if (autoContrast) {
         constexpr float minLuminance = 2000.f;
         constexpr float maxLuminance = 20000.f;
+        constexpr float minTileVariance = 0.5f;
         for (int pass = 0; pass < 2; ++pass) {
             const int tilesize = 80 / (pass + 1);
             const int skip = pass == 0 ? tilesize : tilesize / 4;
@@ -325,6 +326,8 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                         continue;
                     } else {
                         variances[i][j] = tileVariance(luminance, tileY, tileX, tilesize, avg);
+                        // exclude tiles with a variance less than minTileVariance
+                        variances[i][j] = variances[i][j] < minTileVariance ? RT_INFINITY_F : variances[i][j];
                     }
                 }
             }
@@ -341,10 +344,9 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                 }
             }
 
-            const int minY = skip * minI;
-            const int minX = skip * minJ;
-
             if (minvar <= 1.f || pass == 1) {
+                const int minY = skip * minI;
+                const int minX = skip * minJ;
                 if (pass == 0) {
                     // a variance <= 1 means we already found a flat region and can skip second pass
                     contrastThreshold = calcContrastThreshold(luminance, minY, minX, tilesize);
@@ -374,6 +376,8 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                                 continue;
                             } else {
                                 variances[i][j] = tileVariance(luminance, tileY, tileX, tilesize, avg);
+                            // exclude tiles with a variance less than minTileVariance
+                            variances[i][j] = variances[i][j] < minTileVariance ? RT_INFINITY_F : variances[i][j];
                             }
                         }
                     }
