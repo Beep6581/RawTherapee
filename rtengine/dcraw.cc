@@ -3,8 +3,6 @@
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
-#if (__GNUC__ >= 7)
-#endif
 #endif
 #endif
 
