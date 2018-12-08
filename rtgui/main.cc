@@ -342,10 +342,10 @@ RTWindow *create_rt_window()
 
 
                 if (isPix) {
-                    // 1pt =  0.3527mm @ 96 ppi
+                    // 1pt =  1/72in @ 96 ppi
                     double resolution = style->get_screen()->get_resolution();
-                    //             px         >inch >mm    >pt      >"scaled pt"
-                    int pt = (int)(fontSize / 96. * 25.4 / 0.3527 * (96. / resolution) + 0.49);
+                    //             px         >inch >pt      >"scaled pt"
+                    int pt = (int)(fontSize / 96. * 72 * (96. / resolution) + 0.49);
                     // if resolution is lower than 192ppi, we're supposing that it's already expressed in a scale==1 scenario
                     if (resolution >= 192) {
                         // it's already scaled up, no need to set the font size
