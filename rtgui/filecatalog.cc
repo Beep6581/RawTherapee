@@ -459,9 +459,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     }
 
     selectedDirectory = "";
-#ifdef WIN32
-    wdMonitor = NULL;
-#endif
 }
 
 FileCatalog::~FileCatalog()
@@ -540,20 +537,9 @@ void FileCatalog::closeDir ()
         exportPanel->set_sensitive (false);
     }
 
-#ifndef WIN32
-
     if (dirMonitor) {
         dirMonitor->cancel ();
     }
-
-#else
-
-    if (wdMonitor) {
-        delete wdMonitor;
-        wdMonitor = NULL;
-    }
-
-#endif
 
     // ignore old requests
     ++selectedDirectoryId;
@@ -671,12 +657,8 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
             filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"), 0);
         }
 
-#ifdef WIN32
-        wdMonitor = new WinDirMonitor (selectedDirectory, this);
-#else
         dirMonitor = dir->monitor_directory ();
         dirMonitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::on_dir_changed), false));
-#endif
     } catch (Glib::Exception& ex) {
         std::cout << ex.what();
     }
@@ -1748,21 +1730,6 @@ void FileCatalog::reparseDirectory ()
     fileNameList = nfileNameList;
 }
 
-#ifdef WIN32
-
-void FileCatalog::winDirChanged ()
-{
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->reparseDirectory();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
-#else
-
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal)
 {
 
@@ -1776,8 +1743,6 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
         }
     }
 }
-
-#endif
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
 {

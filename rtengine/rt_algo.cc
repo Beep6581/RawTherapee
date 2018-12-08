@@ -22,8 +22,6 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
-#include <iostream>
-#include <vector>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -203,19 +201,21 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
             }
         }
     } else {
-        constexpr float scale = 0.0625f / 327.68f;
         if (autoContrast) {
             for (int pass = 0; pass < 2; ++pass) {
                 const int tilesize = 80 / (pass + 1);
-                const int numTilesW = W / tilesize;
-                const int numTilesH = H / tilesize;
-                std::vector<std::vector<std::pair<float, float>>> variances(numTilesH, std::vector<std::pair<float, float>>(numTilesW));
+                const int skip = pass == 0 ? tilesize : tilesize / 4;
+                const int numTilesW = W / skip - 3 * pass;
+                const int numTilesH = H / skip - 3 * pass;
+                std::vector<std::vector<float>> variances(numTilesH, std::vector<float>(numTilesW));
 
-                #pragma omp parallel for
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic)
+#endif
                 for (int i = 0; i < numTilesH; ++i) {
-                    int tileY = i * tilesize;
+                    const int tileY = i * skip;
                     for (int j = 0; j < numTilesW; ++j) {
-                        int tileX = j * tilesize;
+                        const int tileX = j * skip;
 #ifdef __SSE2__
                         vfloat avgv = ZEROV;
                         for (int y = tileY; y < tileY + tilesize; ++y) {
@@ -225,7 +225,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                         }
                         float avg = vhadd(avgv);
 #else
-                        float avg = 0.;
+                        float avg = 0.f;
                         for (int y = tileY; y < tileY + tilesize; ++y) {
                             for (int x = tileX; x < tileX + tilesize; ++x) {
                                 avg += luminance[y][x];
@@ -233,6 +233,11 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                         }
 #endif
                         avg /= SQR(tilesize);
+                        if (avg < 2000.f || avg > 20000.f) {
+                            // too dark or too bright => skip the tile
+                            variances[i][j] = RT_INFINITY_F;
+                            continue;
+                        }
 #ifdef __SSE2__
                         vfloat varv = ZEROV;
                         avgv = F2V(avg);
@@ -243,16 +248,15 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                         }
                         float var = vhadd(varv);
 #else
-                        float var = 0.0;
+                        float var = 0.f;
                         for (int y = tileY; y < tileY + tilesize; ++y) {
                             for (int x = tileX; x < tileX + tilesize; ++x) {
                                 var += SQR(luminance[y][x] - avg);
                             }
                         }
-    #endif
+#endif
                         var /= (SQR(tilesize) * avg);
-                        variances[i][j].first = var;
-                        variances[i][j].second = avg;
+                        variances[i][j] = var;
                     }
                 }
 
@@ -260,18 +264,17 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                 int minI = 0, minJ = 0;
                 for (int i = 0; i < numTilesH; ++i) {
                     for (int j = 0; j < numTilesW; ++j) {
-                        if (variances[i][j].first < minvar && variances[i][j].second > 2000.f && variances[i][j].second < 20000.f) {
-                            minvar = variances[i][j].first;
+                        if (variances[i][j] < minvar) {
+                            minvar = variances[i][j];
                             minI = i;
                             minJ = j;
                         }
                     }
                 }
 
-                const int minY = tilesize * minI;
-                const int minX = tilesize * minJ;
+                const int minY = skip * minI;
+                const int minX = skip * minJ;
 
-//                std::cout << pass << ": minvar : " << minvar << std::endl;
                 if (minvar <= 1.f || pass == 1) {
                     // a variance <= 1 means we already found a flat region and can skip second pass
                     // in second pass we allow a variance of 2
@@ -295,6 +298,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                 }
             }
         } else {
+            constexpr float scale = 0.0625f / 327.68f;
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
