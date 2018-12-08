@@ -29,6 +29,7 @@ class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, publ
 
 protected:
     Adjuster* contrast;
+    Adjuster* blur;
     MyComboBoxText* method;
     Adjuster* dradius;
     Adjuster* damount;
@@ -55,6 +56,7 @@ protected:
     sigc::connection hcConn;
 
     rtengine::ProcEvent EvSharpenContrast;
+    rtengine::ProcEvent EvSharpenBlur;
 public:
 
     Sharpening ();

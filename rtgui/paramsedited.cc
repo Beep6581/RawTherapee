@@ -147,6 +147,7 @@ void ParamsEdited::set(bool v)
     sharpening.enabled            = v;
     sharpening.contrast           = v;
     sharpening.radius             = v;
+    sharpening.blurradius         = v;
     sharpening.amount             = v;
     sharpening.threshold          = v;
     sharpening.edgesonly          = v;
@@ -719,6 +720,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.enabled = sharpening.enabled && p.sharpening.enabled == other.sharpening.enabled;
         sharpening.contrast = sharpening.contrast && p.sharpening.contrast == other.sharpening.contrast;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
+        sharpening.blurradius = sharpening.blurradius && p.sharpening.blurradius == other.sharpening.blurradius;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
         sharpening.threshold = sharpening.threshold && p.sharpening.threshold == other.sharpening.threshold;
         sharpening.edgesonly = sharpening.edgesonly && p.sharpening.edgesonly == other.sharpening.edgesonly;
@@ -1637,6 +1639,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sharpening.radius) {
         toEdit.sharpening.radius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.radius + mods.sharpening.radius : mods.sharpening.radius;
+    }
+
+    if (sharpening.blurradius) {
+        toEdit.sharpening.blurradius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.blurradius + mods.sharpening.blurradius : mods.sharpening.blurradius;
     }
 
     if (sharpening.amount) {
