@@ -343,7 +343,7 @@ void parse_qt (int end);
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
+   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
    unsigned operator()(int nbits);
    unsigned operator()();
@@ -376,7 +376,6 @@ private:
         }
    }
 
-   DCraw *parent;
    short &order;
    IMFILE* const ifp;
    UINT64 bitbuf;
