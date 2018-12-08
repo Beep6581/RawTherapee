@@ -33,11 +33,13 @@ class RTImage : public Gtk::Image, public RTScalable
 
 protected:
     Cairo::RefPtr<Cairo::ImageSurface> surface;
+    Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
 public:
     RTImage ();
     RTImage (RTImage &other);
     RTImage (Glib::RefPtr<Gdk::Pixbuf> &pixbuf);
+    RTImage(Cairo::RefPtr<Cairo::ImageSurface> other);
     RTImage (Glib::RefPtr<RTImage> &other);
     RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
 
@@ -49,8 +51,7 @@ public:
     static void setDPInScale (const double newDPI, const int newScale);
     static void setScale (const int newScale);
 
-    static Cairo::RefPtr<Cairo::ImageSurface> createFromFile (const Glib::ustring& fileName);
+    static Glib::RefPtr<Gdk::Pixbuf> createPixbufFromFile (const Glib::ustring& fileName);
+    static Cairo::RefPtr<Cairo::ImageSurface> createImgSurfFromFile (const Glib::ustring& fileName);
 
-    void from(RTImage* other);
-    void from(Glib::RefPtr<RTImage> other);
 };

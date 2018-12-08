@@ -22,6 +22,8 @@
 
 double RTScalable::dpi = 0.;
 int RTScalable::scale = 0;
+extern float fontScale;
+extern unsigned char scale;
 Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;
 
 void RTScalable::setDPInScale (const double newDPI, const int newScale)
@@ -30,14 +32,17 @@ void RTScalable::setDPInScale (const double newDPI, const int newScale)
         // reload all images
         scale = newScale;
         // HOMBRE: On windows, if scale = 2, the dpi is non significant, i.e. should be considered = 192 ; don't know for linux/macos
-        dpi = scale == 2 ? 192 : newDPI;
+        dpi = newDPI;
+        if (scale == 2 && newDPI < 192) {
+            dpi *= 2;
+        }
         printf("RTScalable::setDPInScale  /  New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTScalable\n", scale, dpi, newDPI);
     }
 }
 
 double RTScalable::getDPI ()
 {
-    return dpi;
+    return dpi * fontScale;
 }
 
 int RTScalable::getScale ()
@@ -53,11 +58,15 @@ Gtk::TextDirection RTScalable::getDirection()
 void RTScalable::init(Gtk::Window *window)
 {
     printf("RTScalable::init\n");
-    setDPInScale(window->get_screen()->get_resolution(), window->get_scale_factor());
+    setDPInScale(window->get_screen()->get_resolution(), ::scale);
+    direction = window->get_direction();
 }
 
 void RTScalable::resizeImage(Cairo::RefPtr<Cairo::ImageSurface> &surf, double factor)
 {
+    if (options.fontFamily != "default") {
+        factor *= options.fontSize / 9;
+    }
     int newWidth = int((double)surf->get_width() * factor);
     int newHeight = int((double)surf->get_height() * factor);
     printf("Resizing from %dx%d to %dx%d (factor: %.5f)\n", surf->get_width(), surf->get_height(), newWidth, newHeight, factor);

@@ -25,8 +25,9 @@
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
-#include "rtscalable.h"
 #include "../rtengine/icons.h"
+
+extern int scale;
 
 #if defined(__APPLE__)
 static gboolean
@@ -101,11 +102,11 @@ RTWindow::RTWindow ()
 
 #ifndef WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
-        RTImage::createFromFile("rawtherapee-logo-16.png"),
-        RTImage::createFromFile("rawtherapee-logo-24.png"),
-        RTImage::createFromFile("rawtherapee-logo-48.png"),
-        RTImage::createFromFile("rawtherapee-logo-128.png"),
-        RTImage::createFromFile("rawtherapee-logo-256.png")
+        RTImage::createPixbufFromFile("rawtherapee-logo-16.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-24.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-48.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-128.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-256.png")
     };
     try {
         set_default_icon_list(appIcons);
@@ -406,7 +407,8 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
     }
 
     printf("RTWindow::on_configure_event : May update the RTImage and RTSurface\n");
-    int newScale = get_window()->get_scale_factor();
+    int newScale = scale;
+    printf("********** scale = %d / get_window()->get_scale_factor() = %d\n", scale, get_window()->get_scale_factor());
     double newDPI = get_window()->get_screen()->get_resolution();
     RTImage::setDPInScale(newDPI, newScale);   // will update the RTImage   on scale/resolution change
     RTSurface::setDPInScale(newDPI, newScale); // will update the RTSurface on scale/resolution change

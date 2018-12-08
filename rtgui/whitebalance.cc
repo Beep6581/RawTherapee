@@ -34,34 +34,34 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Glib::RefPtr<RTImage> WhiteBalance::wbIcon[toUnderlying(WBEntry::Type::CUSTOM) + 1];
+Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM) + 1];
 /*
-Glib::RefPtr<RTImage> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, WhiteBalance::wbSunPB, WhiteBalance::wbTungstenPB,
+Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, WhiteBalance::wbSunPB, WhiteBalance::wbTungstenPB,
                           WhiteBalance::wbCloudyPB, WhiteBalance::wbShadePB, WhiteBalance::wbFluorescentPB, WhiteBalance::wbLampPB,
                           WhiteBalance::wbFlashPB, WhiteBalance::wbLedPB, WhiteBalance::wbCustomPB;
 */
 
 void WhiteBalance::init ()
 {
-    wbIcon[toUnderlying(WBEntry::Type::CAMERA)]      = Glib::RefPtr<RTImage>( new RTImage("wb-camera-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::AUTO)]        = Glib::RefPtr<RTImage>( new RTImage("wb-auto-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::DAYLIGHT)]    = Glib::RefPtr<RTImage>( new RTImage("wb-sun-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::CLOUDY)]      = Glib::RefPtr<RTImage>( new RTImage("wb-cloudy-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::SHADE)]       = Glib::RefPtr<RTImage>( new RTImage("wb-shade-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::WATER)]       = Glib::RefPtr<RTImage>( new RTImage("wb-water-small.png"));
-  //wbIcon[toUnderlying(WBEntry::Type::WATER2)]      = Glib::RefPtr<RTImage>( new RTImage("wb-water-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::TUNGSTEN)]    = Glib::RefPtr<RTImage>( new RTImage("wb-tungsten-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::FLUORESCENT)] = Glib::RefPtr<RTImage>( new RTImage("wb-fluorescent-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::LAMP)]        = Glib::RefPtr<RTImage>( new RTImage("wb-lamp-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::FLASH)]       = Glib::RefPtr<RTImage>( new RTImage("wb-flash-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::LED)]         = Glib::RefPtr<RTImage>( new RTImage("wb-led-small.png"));
-    wbIcon[toUnderlying(WBEntry::Type::CUSTOM)]      = Glib::RefPtr<RTImage>( new RTImage("wb-custom-small.png"));
+    wbPixbufs[toUnderlying(WBEntry::Type::CAMERA)]      = RTImage::createPixbufFromFile ("wb-camera-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::AUTO)]        = RTImage::createPixbufFromFile ("wb-auto-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::DAYLIGHT)]    = RTImage::createPixbufFromFile ("wb-sun-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CLOUDY)]      = RTImage::createPixbufFromFile ("wb-cloudy-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::SHADE)]       = RTImage::createPixbufFromFile ("wb-shade-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::WATER)]       = RTImage::createPixbufFromFile ("wb-water-small.png");
+  //wbPixbufs[toUnderlying(WBEntry::Type::WATER2)]      = RTImage::createPixbufFromFile ("wb-water-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::TUNGSTEN)]    = RTImage::createPixbufFromFile ("wb-tungsten-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLUORESCENT)] = RTImage::createPixbufFromFile ("wb-fluorescent-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LAMP)]        = RTImage::createPixbufFromFile ("wb-lamp-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLASH)]       = RTImage::createPixbufFromFile ("wb-flash-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LED)]         = RTImage::createPixbufFromFile ("wb-led-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM)]      = RTImage::createPixbufFromFile ("wb-custom-small.png");
 }
 
 void WhiteBalance::cleanup ()
 {
     for (unsigned int i = 0; i < toUnderlying(WBEntry::Type::CUSTOM) + 1; i++) {
-        wbIcon[i].reset();
+        wbPixbufs[i].reset();
     }
 }
 
@@ -175,7 +175,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::FLUORESCENT) {
                 // Creating the Fluorescent subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbIcon[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_FLUO_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -183,7 +183,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::WATER) {
                 // Creating the under water subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbIcon[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_WATER_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -191,7 +191,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::LAMP) {
                 // Creating the Lamp subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbIcon[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_LAMP_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -199,7 +199,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::LED) {
                 // Creating the LED subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbIcon[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_LED_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -207,7 +207,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::FLASH) {
                 // Creating the Flash subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbIcon[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_FLASH_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -220,12 +220,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
                 || currType == WBEntry::Type::LED
            ) {
             childrow = *(refTreeModel->append(row.children()));
-            childrow[methodColumns.colIcon] = wbIcon[toUnderlying(currType)];
+            childrow[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
             childrow[methodColumns.colLabel] = WBParams::getWbEntries()[i].GUILabel;
             childrow[methodColumns.colId] = i;
         } else {
             row = *(refTreeModel->append());
-            row[methodColumns.colIcon] = wbIcon[toUnderlying(currType)];
+            row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
             row[methodColumns.colLabel] = WBParams::getWbEntries()[i].GUILabel;
             row[methodColumns.colId] = i;
         }

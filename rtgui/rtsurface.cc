@@ -33,9 +33,15 @@ std::map<std::string, Cairo::RefPtr<Cairo::ImageSurface>> surfaceCache;
 double RTSurface::dpiBack = 0.;
 int RTSurface::scaleBack = 0;
 
-RTSurface::RTSurface () : RTScalable() {
+RTSurface::RTSurface () : RTScalable()
+{
     Cairo::RefPtr<Cairo::ImageSurface> imgSurf(new Cairo::ImageSurface(nullptr, false));
     surface = imgSurf;
+}
+
+RTSurface::RTSurface(const RTSurface& other) : RTScalable()
+{
+    surface = other.surface;
 }
 
 RTSurface::RTSurface (Glib::ustring fileName, Glib::ustring rtlFileName) : RTScalable()
@@ -84,6 +90,8 @@ void RTSurface::changeImage (Glib::ustring imageName)
             resizeImage(surface, getDPI() / requestedDPI);
         }
 
+        // HOMBRE: As of now, GDK_SCALE is forced to 1, so setting the Cairo::ImageSurface scale is not required
+        /*
         double x=0., y=0.;
         cairo_surface_get_device_scale(surface->cobj(), &x, &y);
         printf("   -> Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surface->get_width(), surface->get_height(), (float)x);
@@ -93,6 +101,7 @@ void RTSurface::changeImage (Glib::ustring imageName)
             surface->flush();
             printf("      Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surface->get_width(), surface->get_height(), (float)x);
         }
+        */
 
         iterator = surfaceCache.emplace (imageName, surface).first;
     }
@@ -100,12 +109,12 @@ void RTSurface::changeImage (Glib::ustring imageName)
     surface = iterator->second;
 }
 
-int RTSurface::getWidth()
+int RTSurface::getWidth() const
 {
     return surface ? surface->get_width() : -1;
 }
 
-int RTSurface::getHeight()
+int RTSurface::getHeight() const
 {
     return surface ? surface->get_height() : -1;
 }
@@ -129,4 +138,9 @@ void RTSurface::updateImages()
 void RTSurface::from(Glib::RefPtr<RTSurface> other)
 {
     surface = other->surface;
+}
+
+bool RTSurface::hasSurface() const
+{
+    return surface ? true : false;
 }

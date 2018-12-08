@@ -32,7 +32,7 @@ class RTScalable
 
 protected:
     static void setDPInScale (const double newDPI, const int newScale);
-    static double getDPI ();
+    static double getDPI ();   // The returned value is tweaked DPI to adapt to main the font size. Maybe not an ideal solution.
     static int getScale ();
     static void resizeImage(Cairo::RefPtr<Cairo::ImageSurface> &surf, double factor);
     Gtk::TextDirection getDirection();

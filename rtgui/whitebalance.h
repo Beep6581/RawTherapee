@@ -45,7 +45,7 @@ protected:
     class MethodColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn< Glib::RefPtr<RTImage> > colIcon;
+        Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > colIcon;
         Gtk::TreeModelColumn<Glib::ustring> colLabel;
         Gtk::TreeModelColumn<int> colId;
         MethodColumns()
@@ -56,7 +56,7 @@ protected:
         }
     };
 
-    static Glib::RefPtr<RTImage> wbIcon[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
+    static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
     MyComboBox* method;

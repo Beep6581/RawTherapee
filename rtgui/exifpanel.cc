@@ -48,12 +48,9 @@ ExifPanel::ExifPanel () : idata (nullptr)
     exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
     exifTree->set_row_separator_func (sigc::mem_fun(*this, &ExifPanel::rowSeperatorFunc));
 
-    Cairo::RefPtr<Cairo::ImageSurface> delicon_ = RTImage::createFromFile ("cancel-small.png");
-    delicon = Gdk::Pixbuf::create(delicon_, 0, 0, delicon_->get_width(), delicon_->get_height());
-    Cairo::RefPtr<Cairo::ImageSurface> keepicon_ = RTImage::createFromFile ("tick-small.png");
-    keepicon = Gdk::Pixbuf::create(keepicon_, 0, 0, keepicon_->get_width(), keepicon_->get_height());
-    Cairo::RefPtr<Cairo::ImageSurface> editicon_ = RTImage::createFromFile ("add-small.png");
-    editicon = Gdk::Pixbuf::create(editicon_, 0, 0, editicon_->get_width(), editicon_->get_height());
+    delicon = RTImage::createPixbufFromFile ("cancel-small.png");
+    keepicon = RTImage::createPixbufFromFile ("tick-small.png");
+    editicon = RTImage::createPixbufFromFile ("add-small.png");
 
     Gtk::TreeView::Column *viewcol = Gtk::manage (new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage (new Gtk::CellRendererPixbuf ());

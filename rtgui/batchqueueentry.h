@@ -43,7 +43,7 @@ class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListen
 
 public:
 
-    static Cairo::RefPtr<Cairo::ImageSurface> savedAsIcon;
+    static Glib::RefPtr<Gdk::Pixbuf> savedAsIcon;
 
     rtengine::ProcessingJob* job;
     rtengine::procparams::ProcParams params;
@@ -65,7 +65,7 @@ public:
 
     void removeButtonSet ();
 
-    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > getIconsOnImageArea () override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
     void getIconSize (int& w, int& h) override;
     Glib::ustring getToolTip (int x, int y) override;
 

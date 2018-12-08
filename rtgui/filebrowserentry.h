@@ -71,11 +71,11 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
 
 public:
 
-    static Cairo::RefPtr<Cairo::ImageSurface> editedIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> recentlySavedIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> enqueuedIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> hdr;
-    static Cairo::RefPtr<Cairo::ImageSurface> ps;
+    static Glib::RefPtr<Gdk::Pixbuf> editedIcon;
+    static Glib::RefPtr<Gdk::Pixbuf> recentlySavedIcon;
+    static Glib::RefPtr<Gdk::Pixbuf> enqueuedIcon;
+    static Glib::RefPtr<Gdk::Pixbuf> hdr;
+    static Glib::RefPtr<Gdk::Pixbuf> ps;
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry () override;
@@ -92,8 +92,8 @@ public:
     void refreshQuickThumbnailImage () override;
     void calcThumbnailSize () override;
 
-    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > getIconsOnImageArea () override;
-    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > getSpecificityIconsOnImageArea () override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea () override;
     void getIconSize (int& w, int& h) override;
 
     // thumbnaillistener interface

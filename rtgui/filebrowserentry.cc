@@ -33,11 +33,11 @@
 //extern Glib::Threads::Thread* mainThread;
 
 bool FileBrowserEntry::iconsLoaded(false);
-Cairo::RefPtr<Cairo::ImageSurface> FileBrowserEntry::editedIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileBrowserEntry::recentlySavedIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileBrowserEntry::enqueuedIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileBrowserEntry::hdr;
-Cairo::RefPtr<Cairo::ImageSurface> FileBrowserEntry::ps;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
@@ -56,11 +56,11 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     scale = 1;
 
     if (!iconsLoaded) {
-        editedIcon = RTImage::createFromFile ("tick-small.png");
-        recentlySavedIcon = RTImage::createFromFile ("save-small.png");
-        enqueuedIcon = RTImage::createFromFile ("gears-small.png");
-        hdr = RTImage::createFromFile ("filetype-hdr.png");
-        ps = RTImage::createFromFile ("filetype-ps.png");
+        editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
+        recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
+        enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
+        hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
+        ps = RTImage::createPixbufFromFile ("filetype-ps.png");
         iconsLoaded = true;
     }
 
@@ -117,10 +117,10 @@ void FileBrowserEntry::calcThumbnailSize ()
     }
 }
 
-std::vector<Cairo::RefPtr<Cairo::ImageSurface> > FileBrowserEntry::getIconsOnImageArea ()
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getIconsOnImageArea ()
 {
 
-    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > ret;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
 
     if (!thumbnail) {
         return ret;
@@ -141,10 +141,10 @@ std::vector<Cairo::RefPtr<Cairo::ImageSurface> > FileBrowserEntry::getIconsOnIma
     return ret;
 }
 
-std::vector<Cairo::RefPtr<Cairo::ImageSurface> > FileBrowserEntry::getSpecificityIconsOnImageArea ()
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getSpecificityIconsOnImageArea ()
 {
 
-    std::vector<Cairo::RefPtr<Cairo::ImageSurface> > ret;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
 
     if (!thumbnail) {
         return ret;

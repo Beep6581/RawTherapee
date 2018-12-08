@@ -36,25 +36,25 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 
 #endif
 
-    Cairo::RefPtr<Cairo::ImageSurface> add           = RTImage::createFromFile("crosshair-small.png");
-    Cairo::RefPtr<Cairo::ImageSurface> colPick       = RTImage::createFromFile("color-picker-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> colPickAdd    = RTImage::createFromFile("color-picker-add-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> cropDraw      = RTImage::createFromFile("crop-point-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> crosshair     = RTImage::createFromFile("crosshair-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> empty         = RTImage::createFromFile("empty.png");
-    Cairo::RefPtr<Cairo::ImageSurface> handClosed    = RTImage::createFromFile("hand-closed-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> handOpen      = RTImage::createFromFile("hand-open-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveBL        = RTImage::createFromFile("node-move-sw-ne-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveBR        = RTImage::createFromFile("node-move-nw-se-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveL         = RTImage::createFromFile("node-move-x-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveR         = RTImage::createFromFile("node-move-x-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveTL        = RTImage::createFromFile("node-move-nw-se-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveTR        = RTImage::createFromFile("node-move-sw-ne-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveX         = RTImage::createFromFile("node-move-x-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveXY        = RTImage::createFromFile("node-move-xy-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> moveY         = RTImage::createFromFile("node-move-y-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> rotate        = RTImage::createFromFile("rotate-aroundnode-hicontrast.png");
-    Cairo::RefPtr<Cairo::ImageSurface> wait          = RTImage::createFromFile("gears.png"); // Currently unused, create *-hicontrast once used.
+    Glib::RefPtr<Gdk::Pixbuf> add           = RTImage::createPixbufFromFile("crosshair-small.png");
+    Glib::RefPtr<Gdk::Pixbuf> colPick       = RTImage::createPixbufFromFile("color-picker-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> colPickAdd    = RTImage::createPixbufFromFile("color-picker-add-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> cropDraw      = RTImage::createPixbufFromFile("crop-point-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> crosshair     = RTImage::createPixbufFromFile("crosshair-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> empty         = RTImage::createPixbufFromFile("empty.png");
+    Glib::RefPtr<Gdk::Pixbuf> handClosed    = RTImage::createPixbufFromFile("hand-closed-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> handOpen      = RTImage::createPixbufFromFile("hand-open-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveBL        = RTImage::createPixbufFromFile("node-move-sw-ne-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveBR        = RTImage::createPixbufFromFile("node-move-nw-se-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveL         = RTImage::createPixbufFromFile("node-move-x-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveR         = RTImage::createPixbufFromFile("node-move-x-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveTL        = RTImage::createPixbufFromFile("node-move-nw-se-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveTR        = RTImage::createPixbufFromFile("node-move-sw-ne-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveX         = RTImage::createPixbufFromFile("node-move-x-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveXY        = RTImage::createPixbufFromFile("node-move-xy-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> moveY         = RTImage::createPixbufFromFile("node-move-y-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> rotate        = RTImage::createPixbufFromFile("rotate-aroundnode-hicontrast.png");
+    Glib::RefPtr<Gdk::Pixbuf> wait          = RTImage::createPixbufFromFile("gears.png"); // Currently unused, create *-hicontrast once used.
 
     cAdd = add                  ? Gdk::Cursor::create(display, add, 8, 8)           : Gdk::Cursor::create(display, Gdk::PLUS);
     cAddPicker = colPickAdd     ? Gdk::Cursor::create(display, colPickAdd, 4, 21)   : Gdk::Cursor::create(display, Gdk::PLUS);

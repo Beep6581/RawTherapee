@@ -59,9 +59,9 @@ private:
             add (isSeparator);
         }
     };
-    Glib::RefPtr<Gdk::Pixbuf>  delicon;
-    Glib::RefPtr<Gdk::Pixbuf>  keepicon;
-    Glib::RefPtr<Gdk::Pixbuf>  editicon;
+    Glib::RefPtr<Gdk::Pixbuf> delicon;
+    Glib::RefPtr<Gdk::Pixbuf> keepicon;
+    Glib::RefPtr<Gdk::Pixbuf> editicon;
 
     ExifColumns exifColumns;
     Gtk::TreeView* exifTree;

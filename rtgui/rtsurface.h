@@ -33,12 +33,14 @@ public:
     Cairo::RefPtr<Cairo::ImageSurface> surface;
 
     RTSurface ();
+    RTSurface (const RTSurface&  other);
     RTSurface (Glib::ustring fileName, Glib::ustring rtlFileName = Glib::ustring());
 
     void setImage (Glib::ustring fileName, Glib::ustring rtlFileName = Glib::ustring());
     void changeImage (Glib::ustring imageName);
-    int getWidth();
-    int getHeight();
+    int getWidth() const;
+    int getHeight() const;
+    bool hasSurface() const;
 
     static void init();
     static void updateImages ();

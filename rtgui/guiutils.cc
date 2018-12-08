@@ -564,7 +564,7 @@ void MyExpander::init()
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
-    child(nullptr), headerWidget(nullptr),
+    child(nullptr), headerWidget(nullptr), statusImage(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
     set_spacing(0);
@@ -760,12 +760,12 @@ void MyExpander::set_inconsistent(bool isInconsistent)
 
         if (useEnabled) {
             if (isInconsistent) {
-                statusImage->from(inconsistentImage);
+                statusImage->set(inconsistentImage->get_pixbuf());
             } else {
                 if (enabled) {
-                    statusImage->from(enabledImage);
+                    statusImage->set(enabledImage->get_pixbuf());
                 } else {
-                    statusImage->from(disabledImage);
+                    statusImage->set(disabledImage->get_pixbuf());
                 }
             }
         }
@@ -791,14 +791,14 @@ void MyExpander::setEnabled(bool isEnabled)
                 enabled = false;
 
                 if (!inconsistent) {
-                    statusImage->from(disabledImage);
+                    statusImage->set(disabledImage->get_pixbuf());
                     message.emit();
                 }
             } else {
                 enabled = true;
 
                 if (!inconsistent) {
-                    statusImage->from(enabledImage);
+                    statusImage->set(enabledImage->get_pixbuf());
                     message.emit();
                 }
             }
@@ -834,9 +834,9 @@ void MyExpander::set_expanded( bool expanded )
 
     if (!useEnabled) {
         if (expanded ) {
-            statusImage->from(openedImage);
+            statusImage->set(openedImage->get_pixbuf());
         } else {
-            statusImage->from(closedImage);
+            statusImage->set(closedImage->get_pixbuf());
         }
     }
 
@@ -879,9 +879,9 @@ bool MyExpander::on_toggle(GdkEventButton* event)
 
     if (!useEnabled) {
         if (isVisible) {
-            statusImage->from(closedImage);
+            statusImage->set(closedImage->get_pixbuf());
         } else {
-            statusImage->from(openedImage);
+            statusImage->set(openedImage->get_pixbuf());
         }
     }
 
@@ -906,10 +906,10 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
     if (event->button == 1) {
         if (enabled) {
             enabled = false;
-            statusImage->from(disabledImage);
+            statusImage->set(disabledImage->get_pixbuf());
         } else {
             enabled = true;
-            statusImage->from(enabledImage);
+            statusImage->set(enabledImage->get_pixbuf());
         }
 
         message.emit();

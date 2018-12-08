@@ -65,6 +65,8 @@ Glib::ustring argv2;
 bool simpleEditor = false;
 bool gimpPlugin = false;
 bool remote = false;
+unsigned char scale = 1;
+float fontScale = 1.f;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
 //Glib::Threads::Thread* mainThread;
@@ -316,17 +318,62 @@ RTWindow *create_rt_window()
         }
 
         // Set the font face and size
+        Glib::ustring css;
         if (options.fontFamily != "default") {
+            //GTK318
+            #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize * scale);
+            #else
+            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize * scale);
+            #endif
+            //GTK318
+            fontScale = options.fontSize / 9;
+        } else if (scale == 2) {
+            Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
+            Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
+            if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
+                int fontSize = pfd.get_size();
+                bool isPix = pfd.get_size_is_absolute();
+                printf("FONT SIZE = %d pt\n", fontSize);
+
+
+                double r = style->get_screen()->get_resolution();
+                printf("RESOLUTION = %.3f\n", r);
+
+
+                if (isPix) {
+                    // 1pt =  0.3527mm @ 96 ppi
+                    double resolution = style->get_screen()->get_resolution();
+                    //             px         >inch >mm    >pt      >"scaled pt"
+                    int pt = (int)(fontSize / 96. * 25.4 / 0.3527 * (96. / resolution) + 0.49);
+                    // if resolution is lower than 192ppi, we're supposing that it's already expressed in a scale==1 scenario
+                    if (resolution >= 192) {
+                        // it's already scaled up, no need to set the font size
+                        resolution /= 2.;  // Reducing the value for a scale==1 case
+                        pt /= 2.;
+                    } else {
+                        // fontSize is for scale==1, we have to scale up
+                        css = Glib::ustring::compose ("* { font-size: %1px }", pt * scale);
+                    }
+                    fontScale = pt / 9;
+                } else {
+                    int pt = fontSize / Pango::SCALE;
+                    css = Glib::ustring::compose ("* { font-size: %1pt }", pt * scale);
+                    fontScale = pt / 9;
+                }
+            } else {
+                printf("La taille n'est pas specifiee\n");
+                fontScale = 1.f;
+            }
+        }
+        if (!css.empty()) {
+            printf("CSS: %s", css.c_str());
             try {
                 cssForced = Gtk::CssProvider::create();
-                //GTK318
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
-#else
-                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
-#endif
-                //GTK318
+                cssForced->load_from_data (css);
+
                 Gtk::StyleContext::add_provider_for_screen (screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
             } catch (Glib::Error &err) {
                 printf ("Error: \"%s\"\n", err.what().c_str());
             } catch (...) {
@@ -346,7 +393,6 @@ RTWindow *create_rt_window()
 
     //gdk_threads_enter ();
     RTWindow *rtWindow = new RTWindow();
-
     return rtWindow;
 }
 
@@ -470,6 +516,12 @@ int main (int argc, char **argv)
 
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     Gio::init ();
+
+    const gchar *gscale = g_getenv("GDK_SCALE");
+    if (gscale && gscale[0] == '2') {
+        scale = 2;
+        g_setenv("GDK_SCALE", "1", true);
+    }
 
 #ifdef WIN32
     if (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0003) {
