@@ -268,17 +268,17 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_COLORAPP_LABEL"));
-    appendBehavList (mi, M ("TP_COLORAPP_ADAPTSCENE"), ADDSET_CAT_ADAPTSCENE, true);
+    appendBehavList (mi, M("TP_COLORAPP_LABEL_SCENE") + " - " + M("TP_COLORAPP_ABSOLUTELUMINANCE"), ADDSET_CAT_ADAPTSCENE, true);
+    appendBehavList (mi, M("TP_COLORAPP_LABEL_VIEWING") + " - " + M("TP_COLORAPP_ABSOLUTELUMINANCE"), ADDSET_CAT_ADAPTVIEWING, true);
     appendBehavList (mi, M ("TP_COLORAPP_LIGHT"), ADDSET_CAT_LIGHT, true);
     appendBehavList (mi, M ("TP_COLORAPP_BRIGHT"), ADDSET_CAT_BRIGHT, true);
     appendBehavList (mi, M ("TP_COLORAPP_CHROMA"), ADDSET_CAT_CHROMA, true);
+    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_S"), ADDSET_CAT_CHROMA_S, true);
+    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_M"), ADDSET_CAT_CHROMA_M, true);
     appendBehavList (mi, M ("TP_COLORAPP_RSTPRO"), ADDSET_CAT_RSTPRO, true);
     appendBehavList (mi, M ("TP_COLORAPP_CONTRAST"), ADDSET_CAT_CONTRAST, true);
     appendBehavList (mi, M ("TP_COLORAPP_CONTRAST_Q"), ADDSET_CAT_CONTRAST_Q, true);
-    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_S"), ADDSET_CAT_CHROMA_S, true);
-    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_M"), ADDSET_CAT_CHROMA_M, true);
     appendBehavList (mi, M ("TP_COLORAPP_HUE"), ADDSET_CAT_HUE, true);
-    appendBehavList (mi, M ("TP_COLORAPP_ADAPTVIEWING"), ADDSET_CAT_ADAPTVIEWING, true);
     appendBehavList (mi, M ("TP_COLORAPP_BADPIXSL"), ADDSET_CAT_BADPIX, true);
 
     mi = behModel->append ();
@@ -1002,6 +1002,8 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     Gtk::Label* themeLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_APPEARANCE_THEME") + ":"));
     setExpandAlignProperties(themeLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    Gtk::Label* themeRestartLbl = Gtk::manage ( new Gtk::Label (Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    setExpandAlignProperties(themeRestartLbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     themeCBT = Gtk::manage(new Gtk::ComboBoxText());
     themeCBT->set_active(0);
@@ -1048,7 +1050,8 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
-    appearanceGrid->attach(*vSep,               2, 0, 1, 3);
+    appearanceGrid->attach(*themeRestartLbl,    2, 0, 2, 1);
+    appearanceGrid->attach(*vSep,               2, 1, 1, 3);
     appearanceGrid->attach(*mainFontLbl,        0, 1, 1, 1);
     appearanceGrid->attach(*mainFontFB,         1, 1, 1, 1);
     appearanceGrid->attach(*cropMaskColorLbl,   3, 1, 1, 1);

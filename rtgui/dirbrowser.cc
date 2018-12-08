@@ -246,16 +246,6 @@ int updateVolumesUI (void* br)
     return 1;
 }
 
-void DirBrowser::winDirChanged ()
-{
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<DirBrowser*>(data)->updateDirTreeRoot();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
 #endif
 
 void DirBrowser::fillRoot ()
@@ -333,14 +323,9 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
         expandSuccess = true;
     }
 
-#ifdef WIN32
-    Glib::RefPtr<WinDirMonitor> monitor = Glib::RefPtr<WinDirMonitor>(new WinDirMonitor (iter->get_value (dtColumns.dirname), this));
-    iter->set_value (dtColumns.monitor, monitor);
-#else
     Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
     iter->set_value (dtColumns.monitor, monitor);
     monitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &DirBrowser::file_changed), iter, dir->get_parse_name()));
-#endif
 }
 
 void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)

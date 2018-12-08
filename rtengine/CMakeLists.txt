@@ -164,7 +164,7 @@ add_dependencies(rtengine UpdateInfo)
 
 # It may be nice to store library version too
 if(BUILD_SHARED_LIBS)
-    install (TARGETS rtengine DESTINATION ${LIBDIR})
+    install(TARGETS rtengine DESTINATION ${LIBDIR})
 endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")

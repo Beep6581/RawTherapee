@@ -1826,6 +1826,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
+!GENERAL_CURRENT;Current
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
 !GENERAL_SLIDER;Slider

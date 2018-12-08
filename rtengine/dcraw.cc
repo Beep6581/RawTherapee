@@ -1,13 +1,8 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wparentheses"
 #if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
-#if (__GNUC__ >= 7)
-#pragma GCC diagnostic ignored "-Wdangling-else"
-#endif
 #endif
 #endif
 
@@ -1045,10 +1040,11 @@ void CLASS canon_sraw_load_raw()
   for (row=0; row < height; row++, ip+=width) {
     if (row & (jh.sraw >> 1))
       for (col=0; col < width; col+=2)
-	for (c=1; c < 3; c++)
+	for (c=1; c < 3; c++) {
 	  if (row == height-1)
 	       ip[col][c] =  ip[col-width][c];
 	  else ip[col][c] = (ip[col-width][c] + ip[col+width][c] + 1) >> 1;
+	}
     for (col=1; col < width; col+=2)
       for (c=1; c < 3; c++)
 	if (col == width-1)
