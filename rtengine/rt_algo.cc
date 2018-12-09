@@ -32,7 +32,7 @@
 #include "rt_algo.h"
 #include "rt_math.h"
 #include "sleef.c"
-#include <iostream>
+
 namespace {
 float calcBlendFactor(float val, float threshold) {
     // sigmoid function
@@ -343,7 +343,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                     }
                 }
             }
-            std::cout << pass + 1 << " : " << minvar << std::endl;
+
             if (minvar <= 1.f || pass == 1) {
                 const int minY = skip * minI;
                 const int minX = skip * minJ;
@@ -393,7 +393,7 @@ void buildBlendMask(float** luminance, float **blend, int W, int H, float &contr
                             }
                         }
                     }
-                    std::cout << 3 << " : " << minvar << std::endl;
+
                     contrastThreshold = minvar <= 4.f ? calcContrastThreshold(luminance, topLeftYStart + minI, topLeftXStart + minJ, tilesize) : 0.f;
                 }
             }
