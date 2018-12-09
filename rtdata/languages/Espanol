@@ -62,7 +62,6 @@
 #62 2014-10-10 fotger
 #63 2018-12-09 Faber777
 
-;PREFERENCES_D50_OLD;5000K
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Créditos
 ABOUT_TAB_LICENSE;Licencia
@@ -1060,6 +1059,7 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID Etiqueta
 PREFERENCES_CUSTPROFBUILDPATH;Ruta al programa ejecutable
 PREFERENCES_CUTOVERLAYBRUSH;Recortar máscara de color/transparencia
 PREFERENCES_D50;5000ºK
+PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500ºK
 PREFERENCES_D60;6000ºK
 PREFERENCES_D65;6500ºK
@@ -2377,7 +2377,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
-!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_SND_THRESHOLDSECS;After seconds
