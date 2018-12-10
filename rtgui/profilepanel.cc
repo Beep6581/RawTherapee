@@ -307,8 +307,6 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     do {
         if (dialog.run() == Gtk::RESPONSE_OK) {
 
-            dialog.hide();
-
             std::string fname = dialog.get_filename();
             Glib::ustring ext = getExtension (fname);
 
