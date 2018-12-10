@@ -326,6 +326,9 @@ inline void catmull_rom_spline(int n_points,
     if (p1_y == p2_y && (p1_y == 0 || p1_y == 1)) {
         for (i = 1; i < n_points-1; ++i) {
             t = p1_x + space * i;
+            if (t >= p2_x) {
+                break;
+            }
             res_x.push_back(t);
             res_y.push_back(p1_y);
         }
