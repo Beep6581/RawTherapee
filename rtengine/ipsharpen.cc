@@ -180,11 +180,21 @@ BENCHFUN
     buildBlendMask(luminance, blend, W, H, contrast, sharpenParam.deconvamount / 100.f);
     JaggedArray<float> blur(W, H);
 
-    if(sharpenParam.blurradius > 0) {
-    #pragma omp parallel
-    {
-        gaussianBlur(tmpI, blur, W, H, sharpenParam.blurradius);
-    }
+    if (sharpenParam.blurradius >= 0.25f) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(tmpI, blur, W, H, sharpenParam.blurradius);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], luminance[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
     }
     const float damping = sharpenParam.deconvdamping / 5.0;
     const bool needdamp = sharpenParam.deconvdamping > 0;
@@ -216,7 +226,7 @@ BENCHFUN
             }
         }
 
-        if(sharpenParam.blurradius > 0) {
+        if (sharpenParam.blurradius >= 0.25f) {
 #ifdef _OPENMP
         #pragma omp for
 #endif
@@ -274,19 +284,30 @@ BENCHFUN
         }
     }
 
-    JaggedArray<float> blur(W, H);
-
-    if(sharpenParam.blurradius > 0) {
-    #pragma omp parallel
-    {
-        gaussianBlur(lab->L, blur, W, H, sharpenParam.blurradius);
-    }
-    }
-
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
     float contrast = sharpenParam.contrast / 100.f;
     buildBlendMask(lab->L, blend, W, H, contrast);
+
+    JaggedArray<float> blur(W, H);
+
+    if (sharpenParam.blurradius >= 0.25f) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(lab->L, blur, W, H, sharpenParam.blurradius);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], lab->L[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
+    }
+
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -349,16 +370,17 @@ BENCHFUN
 
         delete [] b3;
     }
-        if(sharpenParam.blurradius > 0) {
+
+    if (sharpenParam.blurradius >= 0.25f) {
 #ifdef _OPENMP
-        #pragma omp parallel for
+    #pragma omp parallel for
 #endif
-            for (int i = 0; i < H; ++i) {
-                for (int j = 0; j < W; ++j) {
-                    lab->L[i][j] = intp(blend[i][j], lab->L[i][j], max(blur[i][j], 0.0f));
-                }
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                lab->L[i][j] = intp(blend[i][j], lab->L[i][j], max(blur[i][j], 0.0f));
             }
         }
+    }
 
 }
 
