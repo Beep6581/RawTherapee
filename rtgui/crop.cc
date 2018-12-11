@@ -52,12 +52,29 @@ int notifyListenerUI (void* data)
     return 0;
 }
 
+
+inline void get_custom_ratio(int w, int h, double &rw, double &rh)
+{
+    if (w < h) {
+        double r = double(h) / double(w);
+        int rr = r * 100 + 0.5;
+        rw = 1.0;
+        rh = rr / 100.0;
+    } else {
+        double r = double(w) / double(h);
+        int rr = r * 100 + 0.5;
+        rw = rr / 100.0;
+        rh = 1.0;
+    }
 }
+
+} // namespace
 
 Crop::Crop():
     FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
     crop_ratios{
         {M("GENERAL_ASIMAGE"), 0.0},
+        {M("GENERAL_CURRENT"), -1.0},
         {"3:2", 3.0 / 2.0},                 // L1.5,        P0.666...
         {"4:3", 4.0 / 3.0},                 // L1.333...,   P0.75
         {"16:9", 16.0 / 9.0},               // L1.777...,   P0.5625
@@ -176,10 +193,17 @@ Crop::Crop():
     
     guide = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties(guide, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    
+
+    customRatioLabel = Gtk::manage(new Gtk::Label(""));
+    customRatioLabel->hide();
+    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    hb->pack_start(*orientation);
+    hb->pack_start(*customRatioLabel);
+
+    settingsgrid->set_column_homogeneous(true);
     settingsgrid->attach (*fixr, 0, 0, 1, 1);
     settingsgrid->attach (*ratio, 1, 0, 1, 1);
-    settingsgrid->attach (*orientation, 2, 0, 1, 1);
+    settingsgrid->attach (*hb, 2, 0, 1, 1);
     settingsgrid->attach (*guidelab, 0, 1, 1, 1);
     settingsgrid->attach (*guide, 1, 1, 2, 1);
     pack_start (*settingsgrid, Gtk::PACK_SHRINK, 0 );
@@ -349,13 +373,6 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         setDimensions (pp->crop.x + pp->crop.w, pp->crop.y + pp->crop.h);
     }
 
-    if (pp->crop.ratio == "As Image") {
-        ratio->set_active(0);
-    } else {
-        ratio->set_active_text (pp->crop.ratio);
-    }
-    fixr->set_active (pp->crop.fixratio);
-
     const bool flip_orientation = pp->crop.fixratio && crop_ratios[ratio->get_active_row_number()].value > 0 && crop_ratios[ratio->get_active_row_number()].value < 1.0;
 
     if (pp->crop.orientation == "Landscape") {
@@ -395,6 +412,20 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
     ny = pp->crop.y;
     nw = pp->crop.w;
     nh = pp->crop.h;
+
+    customRatioLabel->hide();
+    orientation->show();
+    if (pp->crop.ratio == "As Image") {
+        ratio->set_active(0);
+    } else if (pp->crop.ratio == "Current") {
+        ratio->set_active(1);
+        updateCurrentRatio();
+        customRatioLabel->show();        
+        orientation->hide();
+    } else {
+        ratio->set_active_text (pp->crop.ratio);
+    }
+    fixr->set_active (pp->crop.fixratio);
 
     lastRotationDeg = pp->coarse.rotate;
 
@@ -448,7 +479,13 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
     pp->crop.w = nw;
     pp->crop.h = nh;
     pp->crop.fixratio = fixr->get_active ();
-    pp->crop.ratio = ratio->get_active_text ();
+    if (ratio->get_active_row_number() == 0) {
+        pp->crop.ratio = "As Image";
+    } else if (ratio->get_active_row_number() == 1) {
+        pp->crop.ratio = "Current";
+    } else {
+        pp->crop.ratio = ratio->get_active_text ();
+    }
 
     // for historical reasons we store orientation different if ratio is written as 2:3 instead of 3:2, but in GUI 'landscape' is always long side horizontal regardless of the ratio is written short or long side first.
     const bool flip_orientation = fixr->get_active() && crop_ratios[ratio->get_active_row_number()].value > 0 && crop_ratios[ratio->get_active_row_number()].value < 1.0;
@@ -701,6 +738,15 @@ void Crop::ratioFixedChanged ()
 // change to orientation or ration
 void Crop::ratioChanged ()
 {
+    if (ratio->get_active_row_number() == 1) {
+        orientation->hide();
+        updateCurrentRatio();
+        customRatioLabel->show();
+    } else {
+        orientation->show();
+        customRatioLabel->hide();
+    }
+    
     if (!fixr->get_active ()) {
         fixr->set_active(true);    // will adjust ratio anyway
     } else {
@@ -712,18 +758,51 @@ void Crop::ratioChanged ()
 void Crop::adjustCropToRatio()
 {
     if (fixr->get_active() && !fixr->get_inconsistent()) {
+        int W1 = nw, W2 = nw;
+        int H1 = nh, H2 = nh;
+        int X1 = nx, X2 = nx;
+        int Y1 = ny, Y2 = ny;
 
-//        int W = w->get_value ();
-//        int H = h->get_value ();
-        int W = nw;
-        int H = nh;
-        int X = nx;
-        int Y = ny;
+        float r = getRatio();
 
-        if (W >= H) {
-            cropWidth2Resized (X, Y, W, H);
+        H1 = round(W1 / r);
+        Y1 = ny + (nh - H1)/2.0;
+        if (Y1 < 0) {
+            Y1 = 0;
+        }
+        if (H1 > maxh) {
+            H1 = maxh;
+            W1 = round(H1 * r);
+            X1 = nx + (nw - W1)/2.0;
+        }
+        if (Y1+H1 > maxh) {
+            Y1 = maxh - H1;
+        }
+
+        W2 = round(H2 * r);
+        X2 = nx + (nw - W2)/2.0;
+        if (X2 < 0) {
+            X2 = 0;
+        }
+        if (W2 > maxw) {
+            W2 = maxw;
+            H2 = round(W2 / r);
+            Y2 = ny + (nh - H2)/2.0;
+        }
+        if (X2+W2 > maxw) {
+            X2 = maxw - W2;
+        }
+
+        if (W1 * H1 >= W2 * H2) {
+            nx = X1;
+            ny = Y1;
+            nw = W1;
+            nh = H1;
         } else {
-            cropHeight2Resized (X, Y, W, H);
+            nx = X2;
+            ny = Y2;
+            nw = W2;
+            nh = H2;
         }
     }
 
@@ -846,6 +925,10 @@ bool Crop::refreshSpins (bool notify)
     yconn.block (false);
     wconn.block (false);
     hconn.block (false);
+
+    if (ratio->get_active_row_number() == 1 && !fixr->get_active()) {
+        updateCurrentRatio();
+    }
 
     refreshSize ();
 
@@ -1371,4 +1454,13 @@ void Crop::setBatchMode (bool batchMode)
     removeIfThere (this, ppigrid);
     removeIfThere (methodgrid, selectCrop);
     removeIfThere (methodgrid, resetCrop);
+}
+
+
+void Crop::updateCurrentRatio()
+{
+    double rw, rh;
+    get_custom_ratio(w->get_value(), h->get_value(), rw, rh);
+    customRatioLabel->set_text(Glib::ustring::compose("%1:%2", rw, rh));
+    crop_ratios[1].value = double(w->get_value())/double(h->get_value());
 }

@@ -221,6 +221,7 @@ GENERAL_AUTO;Automatique
 GENERAL_BEFORE;Avant
 GENERAL_CANCEL;Annuler
 GENERAL_CLOSE;Fermer
+GENERAL_CURRENT;Actuel
 GENERAL_DISABLE;Désactiver
 GENERAL_DISABLED;Désactivé
 GENERAL_ENABLE;Activer
@@ -509,33 +510,33 @@ HISTORY_MSG_254;CpND - Teinte chair
 HISTORY_MSG_255;Réd. de bruit - Filtre médian
 HISTORY_MSG_256;Réd. de bruit - Médian - Type
 HISTORY_MSG_257;Virage Partiel
-HISTORY_MSG_258;Virage Partiel - Couleur
-HISTORY_MSG_259;Virage Partiel - Opacité
-HISTORY_MSG_260;Virage Partiel - Opacité 'a[b]'
-HISTORY_MSG_261;Virage Partiel - Méthode
-HISTORY_MSG_262;Virage Partiel - Opacité 'b'
-HISTORY_MSG_263;Virage Partiel - Ombres - Rouge
-HISTORY_MSG_264;Virage Partiel - Ombres - Vert
-HISTORY_MSG_265;Virage Partiel - Ombres - Bleu
-HISTORY_MSG_266;Virage Partiel - Moyen - Rouge
-HISTORY_MSG_267;Virage Partiel - Moyen - Vert
-HISTORY_MSG_268;Virage Partiel - Moyen - Bleu
-HISTORY_MSG_269;Virage Partiel - HL - Rouge
-HISTORY_MSG_270;Virage Partiel - HL - Vert
-HISTORY_MSG_271;Virage Partiel - HL - Bleu
-HISTORY_MSG_272;Virage Partiel - Balance
-HISTORY_MSG_273;Virage Partiel - Balance Couleur O/TM/HL
-HISTORY_MSG_274;Virage Partiel - Saturation des ombres
-HISTORY_MSG_275;Virage Partiel - Saturation des HL
-HISTORY_MSG_276;Virage Partiel - Opacité
+HISTORY_MSG_258;VP - Couleur
+HISTORY_MSG_259;VP - Opacité
+HISTORY_MSG_260;VP - Opacité 'a[b]'
+HISTORY_MSG_261;VP - Méthode
+HISTORY_MSG_262;VP - Opacité 'b'
+HISTORY_MSG_263;VP - Ombres - Rouge
+HISTORY_MSG_264;VP - Ombres - Vert
+HISTORY_MSG_265;VP - Ombres - Bleu
+HISTORY_MSG_266;VP - Moyen - Rouge
+HISTORY_MSG_267;VP - Moyen - Vert
+HISTORY_MSG_268;VP - Moyen - Bleu
+HISTORY_MSG_269;VP - HL - Rouge
+HISTORY_MSG_270;VP - HL - Vert
+HISTORY_MSG_271;VP - HL - Bleu
+HISTORY_MSG_272;VP - Balance
+HISTORY_MSG_273;VP - Balance Couleur O/TM/HL
+HISTORY_MSG_274;VP - Saturation des ombres
+HISTORY_MSG_275;VP - Saturation des HL
+HISTORY_MSG_276;VP - Opacité
 HISTORY_MSG_277;--inutilisé--
-HISTORY_MSG_278;Virage Partiel - Préserver luminance
-HISTORY_MSG_279;Virage partiel - Ombres
-HISTORY_MSG_280;Virage partiel - Hautes lumières
-HISTORY_MSG_281;Virage partiel - Protect. Saturé
-HISTORY_MSG_282;Virage partiel - Seuil de protection
-HISTORY_MSG_283;Virage partiel - Force
-HISTORY_MSG_284;Virage partiel - Protect. saturé auto
+HISTORY_MSG_278;VP - Préserver luminance
+HISTORY_MSG_279;VP - Ombres
+HISTORY_MSG_280;VP - Hautes lumières
+HISTORY_MSG_281;VP - Protect. Saturé
+HISTORY_MSG_282;VP - Seuil de protection
+HISTORY_MSG_283;VP - Force
+HISTORY_MSG_284;VP - Protect. saturé auto
 HISTORY_MSG_285;Réd. de bruit - Médiane - Méthode
 HISTORY_MSG_286;Réd. de bruit - Médiane - Type
 HISTORY_MSG_287;Réd. de bruit - Médiane - Itérations
@@ -730,15 +731,20 @@ HISTORY_MSG_491;Balances des Blancs
 HISTORY_MSG_492;Courbes RVB
 HISTORY_MSG_493;Ajustements L*a*b*
 HISTORY_MSG_CLAMPOOG;Tronquer les couleurs hors gamut
-HISTORY_MSG_COLORTONING_LABGRID_VALUE;Virage Partiel - Correction couleur
-HISTORY_MSG_COLORTONING_LABREGION_AB;Virage Partiel - Correction couleur
-HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;Virage Partiel - Masque C
-HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;Virage Partiel - Masque T
-HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;Virage Partiel - Luminosité
-HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;Virage Partiel - Masque L
-HISTORY_MSG_COLORTONING_LABREGION_LIST;Virage Partiel - Liste
-HISTORY_MSG_COLORTONING_LABREGION_SATURATION;Virage Partiel - Saturation
-HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;Virage Partiel - Montrer le masque
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;VP - Correction couleur
+HISTORY_MSG_COLORTONING_LABREGION_AB;VP - Correction couleur
+HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;VP - Canal
+HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;VP - Masque C
+HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;VP - Masque T
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;VP - Luminosité
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;VP - Masque L
+HISTORY_MSG_COLORTONING_LABREGION_LIST;VP - Liste
+HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;VP - Masque flou local
+HISTORY_MSG_COLORTONING_LABREGION_OFFSET;VP - Offset local
+HISTORY_MSG_COLORTONING_LABREGION_POWER;VP - Puissance locale
+HISTORY_MSG_COLORTONING_LABREGION_SATURATION;VP - Saturation
+HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;VP - Montrer le masque
+HISTORY_MSG_COLORTONING_LABREGION_SLOPE;VP - Pente locale
 HISTORY_MSG_DEHAZE_DEPTH;EB - Profondeur
 HISTORY_MSG_DEHAZE_ENABLED;Élimination de la Brume
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;EB - Montrer carte de profondeur
@@ -1036,9 +1042,15 @@ PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WAVELETGROUP;Niveaux d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
 PREFERENCES_ADD;Ajoute
+PREFERENCES_APPEARANCE;Apparence
+PREFERENCES_APPEARANCE_COLORPICKERFONT;Police des ancres de vérification couleur
+PREFERENCES_APPEARANCE_CROPMASKCOLOR;Couleur du masque de recadrage
+PREFERENCES_APPEARANCE_MAINFONT;Police principale
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Couleur du cadre dans le Navigateur
+PREFERENCES_APPEARANCE_THEME;Thème
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
+PREFERENCES_AUTOSAVE_TP_OPEN;Sauvegarder l'état ouvert/fermé des outils en quittant
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHADDALL;Tout à 'Ajoute'
 PREFERENCES_BEHADDALLHINT;Règle tous les paramètres sur le mode <b>Ajoute</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera des <b>deltas</b> par-rapport aux valeurs existantes
@@ -1097,6 +1109,7 @@ PREFERENCES_EDITORCMDLINE;Ligne de commande personnelle
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre d'outil compact dans le Navigateur de Fichiers
 PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FLATFIELDFOUND;Trouvé
 PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
@@ -1379,6 +1392,7 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourci: <b>[</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite\nRaccourci: <b>]</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Symétriser / axe horizontal
+TP_COLORAPP_ABSOLUTELUMINANCE;Luminance absolue
 TP_COLORAPP_ALGO;Algorithme
 TP_COLORAPP_ALGO_ALL;Tout
 TP_COLORAPP_ALGO_JC;Luminosité + Chroma (JC)
@@ -1389,6 +1403,7 @@ TP_COLORAPP_BADPIXSL;Filtrer les pixels chauds/morts
 TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression des pixels chauds/morts (colorés de manière intense).\n0=Aucun effet 1=Médian 2=Gaussien.\n\nCes artefacts sont dus aux limitations de CIECAM02. Vous pouvez également adjuster l'image afin d'éviter les ombres très sombres.
 TP_COLORAPP_BRIGHT;Brillance (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Brillance dans CIECAM02 est différent de Lab et RVB, prend en compte la luminosité du blanc
+TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Lorsque réglé manuellement, les valeurs au-dessus de 65 sont recommandées.
 TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Niveau de couleurs (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Niveau de couleurs dans CIECAM02 est différent de Lab et RVB
@@ -1419,6 +1434,7 @@ TP_COLORAPP_LABEL_SCENE;Conditions de la scène
 TP_COLORAPP_LABEL_VIEWING;Conditions de visionnage
 TP_COLORAPP_LIGHT;Luminosité (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de celui de Lab et RVB
+TP_COLORAPP_MEANLUMINANCE;Luminance moyenne (Yb%)
 TP_COLORAPP_MODEL;Modèle de Point Blanc
 TP_COLORAPP_MODEL_TOOLTIP;Modèle de Point Blanc\n\n<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglée dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglée dans Préférences
 TP_COLORAPP_NEUTRAL;Résinitialiser
@@ -1462,14 +1478,23 @@ TP_COLORTONING_LABGRID;Grille de correction L*a*b*
 TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nO: a=%3 b=%4
 TP_COLORTONING_LABREGIONS;Régions de correction L*a*b*
 TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+TP_COLORTONING_LABREGION_CHANNEL;Canal
+TP_COLORTONING_LABREGION_CHANNEL_ALL;Tous
+TP_COLORTONING_LABREGION_CHANNEL_B;Bleu
+TP_COLORTONING_LABREGION_CHANNEL_G;Vert
+TP_COLORTONING_LABREGION_CHANNEL_R;Rouge
 TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
 TP_COLORTONING_LABREGION_HUEMASK;T
 TP_COLORTONING_LABREGION_LIGHTNESS;Luminosité
 TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
 TP_COLORTONING_LABREGION_LIST_TITLE;Correction
 TP_COLORTONING_LABREGION_MASK;Masque
+TP_COLORTONING_LABREGION_MASKBLUR;Masque Flou
+TP_COLORTONING_LABREGION_OFFSET;Décalage
+TP_COLORTONING_LABREGION_POWER;Puissance
 TP_COLORTONING_LABREGION_SATURATION;Saturation
 TP_COLORTONING_LABREGION_SHOWMASK;Montrer le masque
+TP_COLORTONING_LABREGION_SLOPE;Pente
 TP_COLORTONING_LUMA;Luminance
 TP_COLORTONING_LUMAMODE;Préserver la luminance
 TP_COLORTONING_LUMAMODE_TOOLTIP;Si activé, lorsque vous changez la couleur (rouge, vert, cyan, bleu, etc.), la luminance de chaque pixel est préservé
@@ -1509,6 +1534,8 @@ TP_CROP_GUIDETYPE;Type de guide:
 TP_CROP_H;H
 TP_CROP_LABEL;Recadrage
 TP_CROP_PPI;PPI=
+TP_CROP_RESETCROP;Réinitialiser
+TP_CROP_SELECTCROP;Sélectionner
 TP_CROP_W;L
 TP_CROP_X;X
 TP_CROP_Y;Y
@@ -1760,7 +1787,16 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Peut être utilisé avec le curseur Chromaticité et 
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatiquement
+TP_LENSPROFILE_CORRECTION_LCPFILE;Fichier LCP
+TP_LENSPROFILE_CORRECTION_MANUAL;Manuellement
 TP_LENSPROFILE_LABEL;Profil de correction d'objectif
+TP_LENSPROFILE_LENS_WARNING;Attention: le facteur de recadrage utilisé pour la caractérisation d'un objectif est plus grand que le facteur de recadrage de l'appareil photo, les résultats pourraient être faux.
+TP_LENSPROFILE_MODE_HEADER;Sélectionner le profil d'objectif:
+TP_LENSPROFILE_USE_CA;Aberration chromatique
+TP_LENSPROFILE_USE_GEOMETRIC;Géometrique
+TP_LENSPROFILE_USE_HEADER;Sélectionner les distortions à corriger:
+TP_LENSPROFILE_USE_VIGNETTING;Vignetage
 TP_LOCALCONTRAST_AMOUNT;Quantité
 TP_LOCALCONTRAST_DARKNESS;Niveau des ombres
 TP_LOCALCONTRAST_LABEL;Contraste Local
@@ -1803,6 +1839,7 @@ TP_PRSHARPENING_LABEL;Netteté post-redimensionnement
 TP_PRSHARPENING_TOOLTIP;Augmente la netteté de l'image après le redimentionnement. Ne fonctionne que si la méthode de redimensionnement "Lanczos" est utilisé. Il est impossible de prévisualiser les effets de cet outil. Cf. RawPedia pour les instructions d'utilisation.
 TP_RAWCACORR_AUTO;Correction automatique
 TP_RAWCACORR_AUTOIT;Itérations
+TP_RAWCACORR_AUTOIT_TOOLTIP;Ce réglage est disponible si "Correction-auto" est activé.\nCorrection-auto est conservatif, signifiant qu'il ne corrige souvent pas toute l'aberration chromatique.\nPour corriger l'aberration restante, vous pouvez uttiliser jusqu'à cinq itérations de de la correction automatique de l'aberration chromatique.\nChaque itération réduira l'aberration restante de l'itération précédente avec un prix d'un temps de traitement plus long.
 TP_RAWCACORR_AVOIDCOLORSHIFT;Éviter les dérives couleurs
 TP_RAWCACORR_CABLUE;Bleu
 TP_RAWCACORR_CARED;Rouge
@@ -1926,6 +1963,7 @@ TP_RESIZE_WIDTH;Largeur
 TP_RETINEX_CONTEDIT_HSL;Égaliseur d'histogramme TSV
 TP_RETINEX_CONTEDIT_LAB;Égaliseur d'histogramme L*a*b*
 TP_RETINEX_CONTEDIT_LH;Égaliseur de teinte
+TP_RETINEX_CONTEDIT_MAP;Égaliseur
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance en fonction de la luminance L=f(L)\nCorrige les données raw pour réduire halos et artéfacts.
 TP_RETINEX_CURVEEDITOR_LH;Force=f(T)
@@ -1963,6 +2001,7 @@ TP_RETINEX_LABEL;Retinex
 TP_RETINEX_LABEL_MASK;Masque
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Bas
+TP_RETINEX_MAP;Méthode
 TP_RETINEX_MAP_GAUS;Masque gaussien
 TP_RETINEX_MAP_MAPP;Masque pointu (ondelettes partielles)
 TP_RETINEX_MAP_MAPT;Masque pointu (ondelettes totales)
@@ -2272,6 +2311,7 @@ TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
 TP_WBALANCE_LED_HEADER;LED
 TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 TP_WBALANCE_METHOD;Méthode
+TP_WBALANCE_PICKER;Sélectionner
 TP_WBALANCE_SHADE;Ombre
 TP_WBALANCE_SIZE;Taille:
 TP_WBALANCE_SOLUX35;Solux 3500K
@@ -2294,46 +2334,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
-!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
-!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
-!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
-!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
-!PREFERENCES_APPEARANCE;Appearance
-!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
-!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
-!PREFERENCES_APPEARANCE_MAINFONT;Main font
-!PREFERENCES_APPEARANCE_THEME;Theme
-!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
-!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
-!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-!TP_COLORTONING_LABREGION_CHANNEL;Channel
-!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
-!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
-!TP_COLORTONING_LABREGION_CHANNEL_G;Green
-!TP_COLORTONING_LABREGION_CHANNEL_R;Red
-!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
-!TP_COLORTONING_LABREGION_OFFSET;Offset
-!TP_COLORTONING_LABREGION_POWER;Power
-!TP_COLORTONING_LABREGION_SLOPE;Slope
-!TP_CROP_RESETCROP;Reset
-!TP_CROP_SELECTCROP;Select
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
-!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
-!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
-!TP_LENSPROFILE_USE_CA;Chromatic aberration
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
-!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
-!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
-!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
-!TP_RETINEX_CONTEDIT_MAP;Equalizer
-!TP_RETINEX_MAP;Method
-!TP_WBALANCE_PICKER;Pick

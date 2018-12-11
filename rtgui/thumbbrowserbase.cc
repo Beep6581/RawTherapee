@@ -76,6 +76,10 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
     } else {
         delta = deltaY;
     }
+    if (direction == GDK_SCROLL_SMOOTH && delta == 0.0) {
+        // sometimes this case happens. To avoid scrolling the wrong direction in this case, we just do nothing    
+        return;
+    }
     double coef = direction == GDK_SCROLL_DOWN || (direction == GDK_SCROLL_SMOOTH && delta > 0.0) ? +1.0 : -1.0;
 
     // GUI already acquired when here
@@ -1005,9 +1009,6 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn)
     }
 
     redraw ();
-#ifdef WIN32
-    gdk_window_process_updates (get_window()->gobj(), true);
-#endif
 }
 
 void ThumbBrowserBase::refreshThumbImages ()

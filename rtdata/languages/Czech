@@ -2168,6 +2168,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !DYNPROFILEEDITOR_IMGTYPE_STD;Standard
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!GENERAL_CURRENT;Current
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.

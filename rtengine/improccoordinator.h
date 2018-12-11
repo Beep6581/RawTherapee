@@ -259,7 +259,8 @@ protected:
     float colourToningSatLimitOpacity;
     bool lastspotdup;
     bool highQualityComputed;
-
+    cmsHTRANSFORM customTransformIn;
+    cmsHTRANSFORM customTransformOut;
 public:
 
     ImProcCoordinator ();
@@ -416,6 +417,16 @@ public:
     InitialImage*  getInitialImage () override
     {
         return imgsrc;
+    }
+
+    cmsHTRANSFORM& getCustomTransformIn ()
+    {
+        return customTransformIn;
+    }
+
+    cmsHTRANSFORM& getCustomTransformOut ()
+    {
+        return customTransformOut;
     }
 
     struct DenoiseInfoStore {

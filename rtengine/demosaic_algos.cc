@@ -1425,8 +1425,6 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     chr[2] = hdif;
     chr[3] = vdif;
 
-    border_interpolate2(winw, winh, 7, rawData, red, green, blue);
-
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
         plistener->setProgress (0.0);
@@ -1781,6 +1779,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
             }
         }
     }// End of parallelization
+    border_interpolate2(winw, winh, 8, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgress (1.0);
@@ -1814,8 +1813,6 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 
     vdif  = (float (*))    calloc(width * height / 2, sizeof * vdif);
     hdif  = (float (*))    calloc(width * height / 2, sizeof * hdif);
-
-    border_interpolate2(winw, winh, 7, rawData, red, green, blue);
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
@@ -2045,6 +2042,8 @@ void RawImageSource::igv_interpolate(int winw, int winh)
                 blue [row][col] = CLIP(rgb[1][indx] - 65535.f * chr[1][indx]);
             }
     }// End of parallelization
+    border_interpolate2(winw, winh, 8, rawData, red, green, blue);
+
 
     if (plistener) {
         plistener->setProgress (1.0);
@@ -3083,6 +3082,7 @@ BENCHFUN
     free(buffer0);
 }
 
+    border_interpolate2(W, H, 1, rawData, red, green, blue);
     if(plistener) {
         plistener->setProgress (1.0);
     }

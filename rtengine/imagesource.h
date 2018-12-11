@@ -76,7 +76,6 @@ public:
     virtual void        flushRGB           () {};
     virtual void        HLRecovery_Global  (const ToneCurveParams &hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
-    virtual void        MSR (LabImage* lab, LUTf & mapcurve, bool &mapcontlutili, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
     virtual bool        isRGBSourceModified () const = 0; // tracks whether cached rgb output of demosaic has been modified
 

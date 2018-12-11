@@ -1131,6 +1131,10 @@ Camera constants:
     },
 
 // Canon Powershot
+    { // Quality C, CHDK DNGs, raw frame correction
+        "make_model": "Canon PowerShot A3100 IS",
+        "raw_crop": [ 24, 12, 4032, 3024 ] // full size 4036X3026
+    },
 
     { // Quality C, CHDK DNGs, raw frame corrections, experimental infrared support commented out
         "make_model": "Canon PowerShot A480",
@@ -1211,6 +1215,11 @@ Camera constants:
         "raw_crop": [ 120, 34, 4616, 3464 ], // full raw 4768x3516, Usable 96,16,4672,3498 - Canon official 4608x3456 left 124 top 38,
         "masked_areas": [ 20, 2, 3480, 80 ],
         "ranges": { "white": 4050 } // nominal 4080-4093
+    },
+
+    { // Quality C
+        "make_model": "Canon PowerShot SX150 IS",
+        "raw_crop": [ 26, 10, 4364, 3254 ] // cut 2pix left and right
     },
 
     { // Quality C
@@ -1343,6 +1352,7 @@ Camera constants:
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
         //"dcraw_matrix": [ 11563,-2891,-3203,-5313,15625,625,-781,2813,5625 ], // DNG A
+        "raw_crop": [ 0, 0, 5312, 2986 ], // cropped last two rows because last row was garbage
         "ranges": { "white": 1000 }
     },
     { // Quality C
@@ -1682,6 +1692,13 @@ Camera constants:
     { // Quality C, only green equilibration
         "make_model" : ["OLYMPUS E-3", "OLYMPUS E-520"],
         "global_green_equilibration" : true
+    },
+
+    { // Quality X
+        "make_model": [ "Panasonic DC-LX100M2" ],
+        "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610 ], // Adobe DNG Converter 11.0 ColorMatrix2
+        "raw_crop": [ 0, 0, 0, 0 ],
+        "ranges": { "black": 15 }
     },
 
     { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574

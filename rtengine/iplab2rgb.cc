@@ -357,7 +357,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, bool normalizeIn, bool normalizeOut)
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -382,160 +382,167 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
     };
 
-    double pwr = 1.0 / gampos;
-    double ts = slpos;
-    int five = mul;
-
-
-    if (gampos < 1.0) {
-        pwr = gampos;
-        gampos = 1. / gampos;
-        five = -mul;
-    }
-
-    //  int select_temp = 1; //5003K
-    constexpr double eps = 0.000000001; // not divide by zero
-
-    enum class ColorTemp {
-        D50 = 5003, // for Widegamut, ProPhoto Best, Beta -> D50
-        D65 = 6504, // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-        D60 = 6005  // for ACES AP0 and AP1
-
-    };
-    ColorTemp temp = ColorTemp::D50;
-
-    float p[6]; //primaries
-
-    //primaries for 10 working profiles ==> output profiles
-    if (profile == "WideGamut") {
-        p[0] = 0.7350;    //Widegamut primaries
-        p[1] = 0.2650;
-        p[2] = 0.1150;
-        p[3] = 0.8260;
-        p[4] = 0.1570;
-        p[5] = 0.0180;
-    } else if (profile == "Adobe RGB") {
-        p[0] = 0.6400;    //Adobe primaries
-        p[1] = 0.3300;
-        p[2] = 0.2100;
-        p[3] = 0.7100;
-        p[4] = 0.1500;
-        p[5] = 0.0600;
-        temp = ColorTemp::D65;
-    } else if (profile == "sRGB") {
-        p[0] = 0.6400;    // sRGB primaries
-        p[1] = 0.3300;
-        p[2] = 0.3000;
-        p[3] = 0.6000;
-        p[4] = 0.1500;
-        p[5] = 0.0600;
-        temp = ColorTemp::D65;
-    } else if (profile == "BruceRGB") {
-        p[0] = 0.6400;    // Bruce primaries
-        p[1] = 0.3300;
-        p[2] = 0.2800;
-        p[3] = 0.6500;
-        p[4] = 0.1500;
-        p[5] = 0.0600;
-        temp = ColorTemp::D65;
-    } else if (profile == "Beta RGB") {
-        p[0] = 0.6888;    // Beta primaries
-        p[1] = 0.3112;
-        p[2] = 0.1986;
-        p[3] = 0.7551;
-        p[4] = 0.1265;
-        p[5] = 0.0352;
-    } else if (profile == "BestRGB") {
-        p[0] = 0.7347;    // Best primaries
-        p[1] = 0.2653;
-        p[2] = 0.2150;
-        p[3] = 0.7750;
-        p[4] = 0.1300;
-        p[5] = 0.0350;
-    } else if (profile == "Rec2020") {
-        p[0] = 0.7080;    // Rec2020 primaries
-        p[1] = 0.2920;
-        p[2] = 0.1700;
-        p[3] = 0.7970;
-        p[4] = 0.1310;
-        p[5] = 0.0460;
-        temp = ColorTemp::D65;
-    } else if (profile == "ACESp0") {
-        p[0] = 0.7347;    // ACES P0 primaries
-        p[1] = 0.2653;
-        p[2] = 0.0000;
-        p[3] = 1.0;
-        p[4] = 0.0001;
-        p[5] = -0.0770;
-        temp = ColorTemp::D60;
-    } else if (profile == "ACESp1") {
-        p[0] = 0.713;    // ACES P1 primaries
-        p[1] = 0.293;
-        p[2] = 0.165;
-        p[3] = 0.830;
-        p[4] = 0.128;
-        p[5] = 0.044;
-        temp = ColorTemp::D60;
-    } else if (profile == "ProPhoto") {
-        p[0] = 0.7347;    //ProPhoto and default primaries
-        p[1] = 0.2653;
-        p[2] = 0.1596;
-        p[3] = 0.8404;
-        p[4] = 0.0366;
-        p[5] = 0.0001;
+    cmsHTRANSFORM hTransform = nullptr;
+    if (transform) {
+        hTransform = transform;
     } else {
-        p[0] = 0.7347;    //default primaries always unused
-        p[1] = 0.2653;
-        p[2] = 0.1596;
-        p[3] = 0.8404;
-        p[4] = 0.0366;
-        p[5] = 0.0001;
+
+        double pwr = 1.0 / gampos;
+        double ts = slpos;
+        int five = mul;
+
+
+        if (gampos < 1.0) {
+            pwr = gampos;
+            gampos = 1. / gampos;
+            five = -mul;
+        }
+
+        //  int select_temp = 1; //5003K
+        constexpr double eps = 0.000000001; // not divide by zero
+
+        enum class ColorTemp {
+            D50 = 5003, // for Widegamut, ProPhoto Best, Beta -> D50
+            D65 = 6504, // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+            D60 = 6005  // for ACES AP0 and AP1
+
+        };
+        ColorTemp temp = ColorTemp::D50;
+
+        float p[6]; //primaries
+
+        //primaries for 10 working profiles ==> output profiles
+        if (profile == "WideGamut") {
+            p[0] = 0.7350;    //Widegamut primaries
+            p[1] = 0.2650;
+            p[2] = 0.1150;
+            p[3] = 0.8260;
+            p[4] = 0.1570;
+            p[5] = 0.0180;
+        } else if (profile == "Adobe RGB") {
+            p[0] = 0.6400;    //Adobe primaries
+            p[1] = 0.3300;
+            p[2] = 0.2100;
+            p[3] = 0.7100;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            temp = ColorTemp::D65;
+        } else if (profile == "sRGB") {
+            p[0] = 0.6400;    // sRGB primaries
+            p[1] = 0.3300;
+            p[2] = 0.3000;
+            p[3] = 0.6000;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            temp = ColorTemp::D65;
+        } else if (profile == "BruceRGB") {
+            p[0] = 0.6400;    // Bruce primaries
+            p[1] = 0.3300;
+            p[2] = 0.2800;
+            p[3] = 0.6500;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            temp = ColorTemp::D65;
+        } else if (profile == "Beta RGB") {
+            p[0] = 0.6888;    // Beta primaries
+            p[1] = 0.3112;
+            p[2] = 0.1986;
+            p[3] = 0.7551;
+            p[4] = 0.1265;
+            p[5] = 0.0352;
+        } else if (profile == "BestRGB") {
+            p[0] = 0.7347;    // Best primaries
+            p[1] = 0.2653;
+            p[2] = 0.2150;
+            p[3] = 0.7750;
+            p[4] = 0.1300;
+            p[5] = 0.0350;
+        } else if (profile == "Rec2020") {
+            p[0] = 0.7080;    // Rec2020 primaries
+            p[1] = 0.2920;
+            p[2] = 0.1700;
+            p[3] = 0.7970;
+            p[4] = 0.1310;
+            p[5] = 0.0460;
+            temp = ColorTemp::D65;
+        } else if (profile == "ACESp0") {
+            p[0] = 0.7347;    // ACES P0 primaries
+            p[1] = 0.2653;
+            p[2] = 0.0000;
+            p[3] = 1.0;
+            p[4] = 0.0001;
+            p[5] = -0.0770;
+            temp = ColorTemp::D60;
+        } else if (profile == "ACESp1") {
+            p[0] = 0.713;    // ACES P1 primaries
+            p[1] = 0.293;
+            p[2] = 0.165;
+            p[3] = 0.830;
+            p[4] = 0.128;
+            p[5] = 0.044;
+            temp = ColorTemp::D60;
+        } else if (profile == "ProPhoto") {
+            p[0] = 0.7347;    //ProPhoto and default primaries
+            p[1] = 0.2653;
+            p[2] = 0.1596;
+            p[3] = 0.8404;
+            p[4] = 0.0366;
+            p[5] = 0.0001;
+        } else {
+            p[0] = 0.7347;    //default primaries always unused
+            p[1] = 0.2653;
+            p[2] = 0.1596;
+            p[3] = 0.8404;
+            p[4] = 0.0366;
+            p[5] = 0.0001;
+        }
+
+        if (slpos == 0) {
+            slpos = eps;
+        }
+
+        GammaValues g_a; //gamma parameters
+        constexpr int mode = 0;
+        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+
+
+        cmsFloat64Number gammaParams[7];
+        gammaParams[4] = g_a[3] * ts;
+        gammaParams[0] = gampos;
+        gammaParams[1] = 1. / (1.0 + g_a[4]);
+        gammaParams[2] = g_a[4] / (1.0 + g_a[4]);
+        gammaParams[3] = 1. / slpos;
+        gammaParams[5] = 0.0;
+        gammaParams[6] = 0.0;
+       // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
+
+        // 7 parameters for smoother curves
+        cmsCIExyY xyD;
+        cmsWhitePointFromTemp(&xyD, (double)temp);
+        if (profile == "ACESp0") {
+            xyD = {0.32168, 0.33767, 1.0};//refine white point to avoid differences
+        }
+
+        cmsToneCurve* GammaTRC[3];
+        GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
+
+        const cmsCIExyYTRIPLE Primaries = {
+            {p[0], p[1], 1.0}, // red
+            {p[2], p[3], 1.0}, // green
+            {p[4], p[5], 1.0}  // blue
+        };
+        const cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+        cmsFreeToneCurve(GammaTRC[0]);
+
+        if (oprofdef) {
+            constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+            const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
+            lcmsMutex->lock();
+            hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
+            lcmsMutex->unlock();
+        }
     }
-
-    if (slpos == 0) {
-        slpos = eps;
-    }
-
-    GammaValues g_a; //gamma parameters
-    constexpr int mode = 0;
-    Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-
-
-    cmsFloat64Number gammaParams[7];
-    gammaParams[4] = g_a[3] * ts;
-    gammaParams[0] = gampos;
-    gammaParams[1] = 1. / (1.0 + g_a[4]);
-    gammaParams[2] = g_a[4] / (1.0 + g_a[4]);
-    gammaParams[3] = 1. / slpos;
-    gammaParams[5] = 0.0;
-    gammaParams[6] = 0.0;
-   // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
-
-    // 7 parameters for smoother curves
-    cmsCIExyY xyD;
-    cmsWhitePointFromTemp(&xyD, (double)temp);
-    if (profile == "ACESp0") {
-        xyD = {0.32168, 0.33767, 1.0};//refine white point to avoid differences
-    }
-
-    cmsToneCurve* GammaTRC[3];
-    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
-
-    const cmsCIExyYTRIPLE Primaries = {
-        {p[0], p[1], 1.0}, // red
-        {p[2], p[3], 1.0}, // green
-        {p[4], p[5], 1.0}  // blue
-    };
-    const cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
-
-    cmsFreeToneCurve(GammaTRC[0]);
-
-    if (oprofdef) {
-        constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
-        const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
-        lcmsMutex->lock();
-        const cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
-        lcmsMutex->unlock();
+    if (hTransform) {
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
@@ -567,8 +574,11 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
                 }
             }
         }
-
-        cmsDeleteTransform(hTransform);
+        if (!keepTransForm) {
+            cmsDeleteTransform(hTransform);
+            hTransform = nullptr;
+        }
+        transform = hTransform;
     }
 }
 

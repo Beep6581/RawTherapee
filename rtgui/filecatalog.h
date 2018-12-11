@@ -19,9 +19,6 @@
 #ifndef _FILECATALOG_
 #define _FILECATALOG_
 
-#ifdef WIN32
-#include "windirmonitor.h"
-#endif
 #include "filebrowser.h"
 #include "exiffiltersettings.h"
 #include <giomm.h>
@@ -48,9 +45,6 @@ class FileCatalog : public Gtk::VBox,
     public FilterPanelListener,
     public FileBrowserListener,
     public ExportPanelListener
-#ifdef WIN32
-    , public WinDirChangeListener
-#endif
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
@@ -142,11 +136,7 @@ private:
     std::set<Glib::ustring> editedFiles;
     guint modifierKey; // any modifiers held when rank button was pressed
 
-#ifndef _WIN32
     Glib::RefPtr<Gio::FileMonitor> dirMonitor;
-#else
-    WinDirMonitor* wdMonitor;
-#endif
 
     IdleRegister idle_register;
 
@@ -288,11 +278,7 @@ public:
     void showToolBar();
     void hideToolBar();
 
-#ifndef _WIN32
     void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);
-#else
-    void winDirChanged ();
-#endif
 
 };
 

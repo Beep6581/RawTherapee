@@ -73,6 +73,7 @@
 #72 05.10.2018 Korrekturen (TooWaBoo) RT 5.5
 #73 21.11.2018 Erweiterung (TooWaBoo) RT 5.5
 #74 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
+#75 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -295,6 +296,7 @@ GENERAL_AUTO;Automatisch
 GENERAL_BEFORE;Vorher
 GENERAL_CANCEL;Abbrechen
 GENERAL_CLOSE;Schließen
+GENERAL_CURRENT;Aktuell
 GENERAL_DISABLE;Deaktivieren
 GENERAL_DISABLED;Deaktiviert
 GENERAL_ENABLE;Aktivieren

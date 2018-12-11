@@ -640,7 +640,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
     labgrid->setParams(pp->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, false);
 
     if (pedited && !pedited->colorToning.method) {
-        method->set_active (5);
+        method->set_active (7);
     } else if (pp->colorToning.method == "Lab") {
         method->set_active (0);
     } else if (pp->colorToning.method == "RGBSliders") {

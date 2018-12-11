@@ -89,6 +89,7 @@ public:
 private:
 
     ThumbImageUpdater();
+    ~ThumbImageUpdater();
 
     class Impl;
     Impl* impl_;
