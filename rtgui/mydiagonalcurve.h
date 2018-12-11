@@ -34,6 +34,7 @@ enum DiagonalCurveType {
     DCT_Spline,         // 1
     DCT_Parametric,     // 2
     DCT_NURBS,          // 3
+    DCT_CatumullRom,    // 4
     // Insert new curve type above this line
     DCT_Unchanged       // Must remain the last of the enum
 };

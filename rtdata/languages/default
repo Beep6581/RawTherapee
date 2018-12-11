@@ -17,9 +17,10 @@ CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
 CURVEEDITOR_AXIS_OUT;O:
 CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+CURVEEDITOR_CATMULLROM;Flexible
 CURVEEDITOR_CURVE;Curve
 CURVEEDITOR_CURVES;Curves
-CURVEEDITOR_CUSTOM;Custom
+CURVEEDITOR_CUSTOM;Standard
 CURVEEDITOR_DARKS;Darks
 CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -1209,7 +1210,7 @@ PREFERENCES_SET;Set
 PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 PREFERENCES_SHOWDATETIME;Show date and time
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 PREFERENCES_SINGLETAB;Single Editor Tab Mode
 PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
@@ -1823,7 +1824,6 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 TP_PREPROCESS_NO_FOUND;None found
 TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction

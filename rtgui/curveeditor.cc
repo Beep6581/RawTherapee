@@ -25,6 +25,47 @@
 
 #include <cstring>
 
+namespace {
+
+class CurveTypePopUpButton: public PopUpToggleButton {
+public:
+    CurveTypePopUpButton(const Glib::ustring &label=""):
+        PopUpToggleButton(label) {}
+    
+    void setPosIndexMap(const std::vector<int> &pmap)
+    {
+        posidxmap_ = pmap;
+    }
+    
+protected:
+    int posToIndex(int pos) const override
+    {
+        if (pos < 0 || size_t(pos) >= posidxmap_.size()) {
+            return pos;
+        }
+        return posidxmap_[pos];
+    }
+
+    int indexToPos(int index) const override
+    {
+        if (index < 0 || size_t(index) >= posidxmap_.size()) {
+            return index;
+        }
+        for (int i = 0, n = int(posidxmap_.size()); i < n; ++i) {
+            if (posidxmap_[i] == index) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+private:
+    std::vector<int> posidxmap_;
+};
+
+} // namespace
+
+
 bool CurveEditor::reset()
 {
     return subGroup->curveReset(this);
@@ -33,12 +74,14 @@ bool CurveEditor::reset()
 DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup)
 {
 
-    // Order set in the same order than "enum DiagonalCurveType". Shouldn't change, for compatibility reason
     curveType->addEntry("curve-linear-small.png", M("CURVEEDITOR_LINEAR")); // 0 Linear
     curveType->addEntry("curve-spline-small.png", M("CURVEEDITOR_CUSTOM")); // 1 Spline
+    curveType->addEntry("curve-catmullrom-small.png", M("CURVEEDITOR_CATMULLROM")); // 4 CatmullRom
     curveType->addEntry("curve-parametric-small.png", M("CURVEEDITOR_PARAMETRIC")); // 2 Parametric
     curveType->addEntry("curve-nurbs-small.png", M("CURVEEDITOR_NURBS")); // 3 NURBS
+    static_cast<CurveTypePopUpButton *>(curveType)->setPosIndexMap({ 0, 1, 4, 2, 3 });
     curveType->setSelected(DCT_Linear);
+    
     curveType->show();
 
     rangeLabels[0] = M("CURVEEDITOR_SHADOWS");
@@ -64,6 +107,9 @@ std::vector<double> DiagonalCurveEditor::getCurve ()
 
     case (DCT_NURBS):
         return curve = NURBSCurveEd;
+
+    case (DCT_CatumullRom):
+        return curve = catmullRomCurveEd;
 
     default:
         // returning Linear or Unchanged
@@ -96,6 +142,13 @@ void DiagonalCurveEditor::setResetCurve(DiagonalCurveType cType, const std::vect
 
         break;
 
+    case (DCT_CatumullRom):
+        if (resetCurve.size() && DiagonalCurveType(resetCurve.at(0)) == cType) {
+            catmullRomResetCurve = resetCurve;
+        }
+
+        break;
+        
     default:
         break;
     }
@@ -209,9 +262,9 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
     subGroup = ceSubGroup;
 
     if (group && text.size()) {
-        curveType = new PopUpToggleButton(text + ":");
+        curveType = new CurveTypePopUpButton(text + ":");
     } else {
-        curveType = new PopUpToggleButton();
+        curveType = new CurveTypePopUpButton();
     }
 
     curveType->set_tooltip_text(M("CURVEEDITOR_TYPE"));
