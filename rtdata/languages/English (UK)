@@ -1279,7 +1279,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 !PREFERENCES_SHOWDATETIME;Show date and time
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs

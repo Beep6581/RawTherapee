@@ -1853,7 +1853,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview

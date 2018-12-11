@@ -91,6 +91,7 @@ CURVEEDITOR_AXIS_IN;x:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
 CURVEEDITOR_AXIS_OUT;y:
 CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+CURVEEDITOR_CATMULLROM;Flexibel
 CURVEEDITOR_CURVE;Kurve
 CURVEEDITOR_CURVES;Kurven
 CURVEEDITOR_CUSTOM;Standard
@@ -2407,8 +2408,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-CURVEEDITOR_CATMULLROM;Flexibel

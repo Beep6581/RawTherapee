@@ -1345,7 +1345,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
 !PREFERENCES_SET;Set
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
