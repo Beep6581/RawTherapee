@@ -2162,6 +2162,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
+!CURVEEDITOR_CATMULLROM;Flexible
 !DYNPROFILEEDITOR_IMGTYPE_ANY;Any
 !DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
 !DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift

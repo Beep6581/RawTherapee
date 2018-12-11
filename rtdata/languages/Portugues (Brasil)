@@ -2219,6 +2219,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!CURVEEDITOR_CATMULLROM;Flexible
 !DYNPROFILEEDITOR_IMGTYPE_ANY;Any
 !DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
 !DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift

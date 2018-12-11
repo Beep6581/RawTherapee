@@ -2340,4 +2340,5 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!CURVEEDITOR_CATMULLROM;Flexible
 !GENERAL_CURRENT;Current
