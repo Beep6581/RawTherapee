@@ -156,6 +156,8 @@ protected:
     std::vector<double> paramResetCurve;
     std::vector<double> NURBSCurveEd;
     std::vector<double> NURBSResetCurve;
+    std::vector<double> catmullRomCurveEd;
+    std::vector<double> catmullRomResetCurve;
     Glib::ustring rangeLabels[4];
     double rangeMilestones[3];
 

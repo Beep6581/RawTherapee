@@ -97,55 +97,6 @@ int findMatch(int val, const std::vector<int> &cdf, int j)
 }
 
 
-class CubicSplineCurve: public DiagonalCurve {
-public:
-    CubicSplineCurve(const std::vector<double> &points):
-        DiagonalCurve({DCT_Linear})
-    {
-        N = points.size() / 2;
-        x = new double[N];
-        y = new double[N];
-
-        for (int i = 0; i < N; ++i) {
-            x[i] = points[2*i];
-            y[i] = points[2*i+1];
-        }
-        kind = DCT_Spline;
-        spline_cubic_set();
-    }
-
-    double getVal(double t) const override
-    {
-        // values under and over the first and last point
-        if (t > x[N - 1]) {
-            return y[N - 1];
-        } else if (t < x[0]) {
-            return y[0];
-        }
-
-        // do a binary search for the right interval:
-        unsigned int k_lo = 0, k_hi = N - 1;
-
-        while (k_hi > 1 + k_lo) {
-            unsigned int k = (k_hi + k_lo) / 2;
-
-            if (x[k] > t) {
-                k_hi = k;
-            } else {
-                k_lo = k;
-            }
-        }
-
-        double h = x[k_hi] - x[k_lo];
-
-        double a = (x[k_hi] - t) / h;
-        double b = (t - x[k_lo]) / h;
-        double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
-        return LIM01(r);
-    }
-};
-
-
 void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 {
     curve.clear();
@@ -259,10 +210,11 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
     if (curve.size() < 4) {
         curve = { DCT_Linear }; // not enough points, fall back to linear
     } else {
-        CubicSplineCurve c(curve);
+        curve.insert(curve.begin(), DCT_Spline);
+        DiagonalCurve c(curve);
         double gap = 0.05;
         double x = 0.0;
-        curve = { DCT_Spline };
+        curve = { DCT_CatumullRom };
         while (x < 1.0) {
             curve.push_back(x);
             curve.push_back(c.getVal(x));
