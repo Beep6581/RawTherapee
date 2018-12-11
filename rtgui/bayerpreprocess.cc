@@ -68,7 +68,6 @@ BayerPreProcess::BayerPreProcess () : FoldableToolPanel(this, "bayerpreprocess",
     pack_start( *greenEqThreshold, Gtk::PACK_SHRINK, 4);
 
     pdafLinesFilter = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_PDAFLINESFILTER"))));
-    pdafLinesFilter->set_tooltip_markup(M("TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP"));
     pdafLinesFilter->show();
     pdafLinesFilter->signal_toggled().connect(sigc::mem_fun(*this, &BayerPreProcess::pdafLinesFilterChanged), true);
 

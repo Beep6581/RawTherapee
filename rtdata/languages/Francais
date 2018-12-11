@@ -1834,7 +1834,6 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontale seulement sur les lig
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Verticale
 TP_PREPROCESS_NO_FOUND;Aucun trouvé
 TP_PREPROCESS_PDAFLINESFILTER;Filtre de ligne PDAF
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Essaie de supprimer les bandes de bruit causées par les pixel PDAF sur le capteur, arrivant sur certains mirrorless Sony cameras avec des scènes en contre-jour avec un flare visible.
 TP_PRSHARPENING_LABEL;Netteté post-redimensionnement
 TP_PRSHARPENING_TOOLTIP;Augmente la netteté de l'image après le redimentionnement. Ne fonctionne que si la méthode de redimensionnement "Lanczos" est utilisé. Il est impossible de prévisualiser les effets de cet outil. Cf. RawPedia pour les instructions d'utilisation.
 TP_RAWCACORR_AUTO;Correction automatique
