@@ -2460,4 +2460,4 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !CURVEEDITOR_CATMULLROM;Flexible
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
+!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Suppresses stripe noise caused by on-sensor PDAF pixels, known to occur on some Sony and Nikon cameras when shooting backlit scenes with visible flare.
