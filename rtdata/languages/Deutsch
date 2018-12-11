@@ -74,6 +74,7 @@
 #73 21.11.2018 Erweiterung (TooWaBoo) RT 5.5
 #74 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
 #75 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
+#76 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -92,7 +93,7 @@ CURVEEDITOR_AXIS_OUT;y:
 CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 CURVEEDITOR_CURVE;Kurve
 CURVEEDITOR_CURVES;Kurven
-CURVEEDITOR_CUSTOM;Angepasst
+CURVEEDITOR_CUSTOM;Standard
 CURVEEDITOR_DARKS;Tiefen
 CURVEEDITOR_EDITPOINT_HINT;Bearbeitung der Kurvenpunkte über Zahlenwerte.\n\nRechtsklick auf einen Kurvenpunkt um ihn auszuwählen.\nRechtsklick in einen leeren Bereich um ihn abzuwählen.
 CURVEEDITOR_HIGHLIGHTS;Spitzlichter
@@ -2411,4 +2412,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!CURVEEDITOR_CATMULLROM;Flexible
+CURVEEDITOR_CATMULLROM;Flexibel
