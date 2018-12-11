@@ -1211,7 +1211,7 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
                     params.resize.width = options.fastexport_resize_width;
                     params.resize.height = options.fastexport_resize_height;
                 }
-                
+
                 params.resize.enabled = options.fastexport_resize_enabled;
                 params.resize.scale = options.fastexport_resize_scale;
                 params.resize.appliesTo = options.fastexport_resize_appliesTo;
@@ -2522,7 +2522,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
 void FileCatalog::showToolBar()
 {
-    if (!options.FileBrowserToolbarSingleRow) {
+    if (hbToolBar1STB) {
         hbToolBar1STB->show();
     }
 
@@ -2531,7 +2531,7 @@ void FileCatalog::showToolBar()
 
 void FileCatalog::hideToolBar()
 {
-    if (!options.FileBrowserToolbarSingleRow) {
+    if (hbToolBar1STB) {
         hbToolBar1STB->hide();
     }
 
