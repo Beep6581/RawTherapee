@@ -1,9 +1,11 @@
-RAWTHERAPEE 5.5-RC1 RELEASE NOTES
+RAWTHERAPEE 5.5-RC2 RELEASE NOTES
 
-This is RawTherapee 5.5 Release Candidate 1, released on 2018-12-03.
+This is RawTherapee 5.5 Release Candidate 2, released on 2018-12-11.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
+
+
 
 NEWS RELEVANT TO PHOTOGRAPHERS
 
@@ -18,7 +20,7 @@ In order to use RawTherapee efficiently you should know that:
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
 New features since 5.4:
-- Filter to remove striping and banding artifacts caused by Phase Detection Auto Focus (PDAF), available for any camera which has a PDAF entry in camconst.json, currently:
+- Filter to remove striping artifacts caused by Phase Detection Auto Focus (PDAF) as seen in Sony cameras, and to remove banding artifacts apparently caused by Nikon's too-aggressive in-camera PDAF correction. These are available for any camera which has a PDAF entry in camconst.json, currently:
     - Nikon Z 6
     - Nikon Z 7
     - Sony DSC-RX1RM2
@@ -56,7 +58,7 @@ New features since 5.4:
 - ICC profile generator.
 - The bundled profiles have been re-generated, and now include ICC v2 and v4 variants.
 - If your screen's resolution is such that not all icons fit in a toolbar, you can now scroll the toolbar using the mouse scroll-wheel.
-- New tone curve type. One of the characteristics of the "Custom" cubic spline curve used in all previous versions was that editing one node could have a huge impact on what happens to the curve in relation to the other nodes. This curve was replaced by the new centripetal Catmull–Rom spline which allows you to make adjustments to one part of the curve without affecting the other segments as much.
+- New "Flexible" tone curve type. A characteristic of the cubic spline curve (renamed from "Custom" to "Standard") is that editing one node could have a huge impact on what happens to the curve in relation to the other nodes. The new "Flexible" centripetal Catmull–Rom spline curve allows you to make adjustments to any part of the curve with little impact on the other parts.
 - Allow saving both floating-point and integer type files at both 16-bit and 32-bit precision from RawTherapee GUI and CLI.
 - Improves lensfun chromatic aberration correction.
 - The raw chromatic aberration correction tool can now run in several iterations, and gained a feature to avoid introducing a color shift which could result from correcting chromatic aberration before demosaicing.
@@ -87,8 +89,6 @@ Changes since 5.4:
 - Requires CMake >= 2.8.8.
 - Optional codesigning commands have been added to the CMakeLists.txt and macosx_bundle.sh scripts. If you wish to codesign the built packages (.app and .dmg), add your details to your CMake command flags:
     -DCODESIGNID:STRING="Developer ID Application: Firstname Lastname (xxx)"
-
-
 
 
 
