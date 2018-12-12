@@ -25,7 +25,6 @@
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
-#include "../rtengine/icons.h"
 
 extern int scale;
 
@@ -93,11 +92,11 @@ RTWindow::RTWindow ()
 {
 
     cacheMgr->init ();
-    WhiteBalance::init();
-    ProfilePanel::init (this);
     RTScalable::init(this);
     RTSurface::init();
     RTImage::init();
+    WhiteBalance::init();
+    ProfilePanel::init (this);
     MyExpander::init();
 
 #ifndef WIN32

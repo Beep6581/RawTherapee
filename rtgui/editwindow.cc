@@ -23,7 +23,8 @@
 #include <gtk/gtk.h>
 #include "rtimage.h"
 #include "threadutils.h"
-#include "../rtengine/icons.h"
+
+extern Glib::ustring argv0;
 
 // Check if the system has more than one display and option is set
 bool EditWindow::isMultiDisplayEnabled()
@@ -148,23 +149,20 @@ void EditWindow::setAppIcon()
             downsize = true;
         }
     }
-    double resolution2 = resolution;
-    Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName, resolution2);
-    if (!fullPath.empty()) {
-        const Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create_from_file(fullPath);
-        if (!pixbuf) {
-            return;
-        }
-        if (downsize) {
-            int size = int((48. * resolution) / 192.);
-            pixbuf->scale_simple(size, size, Gdk::InterpType::INTERP_BILINEAR);
-        }
+    Glib::ustring icon_path = Glib::build_filename (argv0, "images", fName);
+    const Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create_from_file(icon_path);
+    if (!pixbuf) {
+        return;
+    }
+    if (downsize) {
+        int size = int((48. * resolution) / 192.);
+        pixbuf->scale_simple(size, size, Gdk::InterpType::INTERP_BILINEAR);
+    }
 
-        try {
-            set_default_icon(pixbuf);
-        } catch(Glib::Exception& ex) {
-            printf ("%s\n", ex.what().c_str());
-        }
+    try {
+        set_default_icon(pixbuf);
+    } catch(Glib::Exception& ex) {
+        printf ("%s\n", ex.what().c_str());
     }
 }
 

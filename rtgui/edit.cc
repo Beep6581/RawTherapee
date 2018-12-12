@@ -18,7 +18,6 @@
  */
 
 #include "edit.h"
-#include "../rtengine/icons.h"
 
 ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {}
 

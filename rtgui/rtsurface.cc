@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include "options.h"
-#include "../rtengine/icons.h"
 #include "rtsurface.h"
 
 namespace
@@ -70,7 +69,7 @@ void RTSurface::setDPInScale (const double newDPI, const int newScale)
         RTScalable::setDPInScale(newDPI, newScale);
         dpiBack = getDPI();
         scaleBack = getScale();
-        printf("RTSurface::setDPInScale : New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTSurface\n", scaleBack, dpiBack, newDPI);
+        //printf("RTSurface::setDPInScale : New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTSurface\n", scaleBack, dpiBack, newDPI);
         updateImages();
     }
 }
@@ -80,26 +79,16 @@ void RTSurface::changeImage (Glib::ustring imageName)
     auto iterator = surfaceCache.find (imageName);
 
     if (iterator == surfaceCache.end ()) {
-        double requestedDPI = getDPI();
-        const auto imagePath = rtengine::findIconAbsolutePath (imageName, requestedDPI);
-        surface = Cairo::ImageSurface::create_from_png(imagePath);
-
-        if (getDPI() > 0. && requestedDPI != -1 && requestedDPI != getDPI()) {
-            // scale the bitmap
-            printf("Resizing from %.1f to %.1f DPI\n", requestedDPI, getDPI());
-            resizeImage(surface, getDPI() / requestedDPI);
-        }
+        surface = loadImage(imageName, getTweakedDPI());
 
         // HOMBRE: As of now, GDK_SCALE is forced to 1, so setting the Cairo::ImageSurface scale is not required
+        //         Anyway, this might be of use one day
         /*
         double x=0., y=0.;
         cairo_surface_get_device_scale(surface->cobj(), &x, &y);
-        printf("   -> Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surface->get_width(), surface->get_height(), (float)x);
         if (getScale() == 2) {
-            cairo_surface_set_device_scale(surface->cobj(), 0.5, 0.5);
-            cairo_surface_get_device_scale(surface->cobj(), &x, &y);
+            cairo_surface_set_device_scale(surface->cobj(), 0.5, 0.5); // Not sure if it should be 0.5 or 2.0 here !
             surface->flush();
-            printf("      Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surface->get_width(), surface->get_height(), (float)x);
         }
         */
 
@@ -127,11 +116,10 @@ void RTSurface::init()
 
 void RTSurface::updateImages()
 {
-    for (auto& entry : surfaceCache) {
-        double imgDPI = getDPI();
-        const auto imagePath = rtengine::findIconAbsolutePath (entry.first, imgDPI);
-        entry.second = Cairo::ImageSurface::create_from_png(imagePath);
-        printf("RTSurface::updateImages : %s\n", imagePath.c_str());
+    double res = getTweakedDPI();
+    for (auto entry : surfaceCache) {
+        entry.second = loadImage(entry.first, res);
+        //printf("RTSurface::updateImages : %s\n", entry.first.c_str());
     }
 }
 

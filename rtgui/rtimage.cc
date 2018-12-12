@@ -23,7 +23,6 @@
 #include <iostream>
 
 #include "options.h"
-#include "../rtengine/icons.h"
 
 namespace
 {
@@ -85,7 +84,7 @@ void RTImage::setDPInScale (const double newDPI, const int newScale)
         RTScalable::setDPInScale(newDPI, newScale);
         dpiBack = getDPI();
         scaleBack = getScale();
-        printf("RTImage::setDPInScale : New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTImage\n", scaleBack, dpiBack, newDPI);
+        //printf("RTImage::setDPInScale : New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTImage\n", scaleBack, dpiBack, newDPI);
         updateImages();
     }
 }
@@ -96,13 +95,13 @@ void RTImage::changeImage (const Glib::ustring& imageName)
 
     if (pixbuf) {
         auto iterator = pixbufCache.find (imageName);
-        printf("changeImage / pixbufCache[%d] : \"%s\" %s!\n", (int)(pixbufCache.size()), imageName.c_str(), iterator == pixbufCache.end () ? "not found" : "found");
+        //printf("changeImage / pixbufCache[%d] : \"%s\" %s!\n", (int)(pixbufCache.size()), imageName.c_str(), iterator == pixbufCache.end () ? "not found" : "found");
         assert(iterator != pixbufCache.end ());
         pixbuf = iterator->second;
         set(iterator->second);
     } else  {  // if no Pixbuf is set, we update or create a Cairo::ImageSurface
         auto iterator = surfaceCache.find (imageName);
-        printf("changeImage / surfaceCache[%d] : \"%s\" %s!\n", (int)(surfaceCache.size()), imageName.c_str(), iterator == surfaceCache.end () ? "not found" : "found");
+        //printf("changeImage / surfaceCache[%d] : \"%s\" %s!\n", (int)(surfaceCache.size()), imageName.c_str(), iterator == surfaceCache.end () ? "not found" : "found");
         if (iterator == surfaceCache.end ()) {
             auto surf = createImgSurfFromFile(imageName);
             iterator = surfaceCache.emplace (imageName, surf).first;
@@ -139,37 +138,20 @@ Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::u
 {
     Cairo::RefPtr<Cairo::ImageSurface> surf;
 
-    printf("Creating \"%s\"\n", fileName.c_str());
+    //printf("Creating \"%s\"\n", fileName.c_str());
     try {
-
-        double requestedDPI = getDPI();
-        const auto filePath = rtengine::findIconAbsolutePath (fileName, requestedDPI);
-        // requestedDPI is now the icon's DPI, not necessarily the one we asked
-
-        if (!filePath.empty ()) {
-            surf = Cairo::ImageSurface::create_from_png(filePath);
-        }
-
-        if (!surf) {
-            return surf; // nullptr
-        }
-
-        if (getDPI() > 0. && requestedDPI != -1 && requestedDPI != getDPI()) {
-            // scale the bitmap
-            printf("Resizing from %.1f to %.1f DPI\n", requestedDPI, getDPI());
-            resizeImage(surf, getDPI() / requestedDPI);
-        }
+        surf = loadImage(fileName, getTweakedDPI());
 
         // HOMBRE: As of now, GDK_SCALE is forced to 1, so setting the Cairo::ImageSurface scale is not required
         /*
         double x=0., y=0.;
         cairo_surface_get_device_scale(surf->cobj(), &x, &y);
-        printf("   -> Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
+        //printf("   -> Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
         if (getScale() == 2) {
             cairo_surface_set_device_scale(surf->cobj(), 0.5, 0.5);
             cairo_surface_get_device_scale(surf->cobj(), &x, &y);
             surf->flush();
-            printf("      Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
+            //printf("      Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
         }
         */
     } catch (const Glib::Exception& exception) {

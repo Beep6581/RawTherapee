@@ -28,7 +28,6 @@
 #include <giomm.h>
 #include <iostream>
 #include <tiffio.h>
-#include "../rtengine/icons.h"
 #include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
@@ -253,8 +252,6 @@ RTWindow *create_rt_window()
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
     defaultIconTheme->append_search_path (icon_path);
 
-    rtengine::setPaths();
-
     // ------- loading theme files
 
     Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
@@ -327,7 +324,7 @@ RTWindow *create_rt_window()
             css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize * scale);
             #endif
             //GTK318
-            fontScale = options.fontSize / 9;
+            fontScale = options.fontSize / 9.f;
         } else if (scale == 2) {
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
             Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
@@ -343,6 +340,7 @@ RTWindow *create_rt_window()
 
                 if (isPix) {
                     // 1pt =  1/72in @ 96 ppi
+                    // HOMBRE: If the font unit is px, is it alredy scaled up to match the resolution ?
                     double resolution = style->get_screen()->get_resolution();
                     //             px         >inch >pt      >"scaled pt"
                     int pt = (int)(fontSize / 96. * 72 * (96. / resolution) + 0.49);
@@ -353,21 +351,20 @@ RTWindow *create_rt_window()
                         pt /= 2.;
                     } else {
                         // fontSize is for scale==1, we have to scale up
-                        css = Glib::ustring::compose ("* { font-size: %1px }", pt * scale);
+                        css = Glib::ustring::compose ("* { font-size: %1pt }", pt * scale);
                     }
-                    fontScale = pt / 9;
+                    fontScale = (float)pt / 9.f;
                 } else {
                     int pt = fontSize / Pango::SCALE;
                     css = Glib::ustring::compose ("* { font-size: %1pt }", pt * scale);
-                    fontScale = pt / 9;
+                    fontScale = (float)pt / 9.f;
                 }
             } else {
-                printf("La taille n'est pas specifiee\n");
                 fontScale = 1.f;
             }
         }
         if (!css.empty()) {
-            printf("CSS: %s", css.c_str());
+            printf("CSS: %s\nfontScale: %.5f\n\n", css.c_str(), fontScale);
             try {
                 cssForced = Gtk::CssProvider::create();
                 cssForced->load_from_data (css);

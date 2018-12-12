@@ -33,7 +33,6 @@
 #include <cstdlib>
 #include <locale.h>
 #include "options.h"
-#include "../rtengine/icons.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
@@ -194,8 +193,6 @@ int main (int argc, char **argv)
                   << "Default internal values will be used instead." << std::endl << std::endl;
         options.defProfImg = DEFPROFILE_INTERNAL;
     }
-
-    rtengine::setPaths();
 
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
 

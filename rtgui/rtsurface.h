@@ -28,6 +28,7 @@ class RTSurface : public RTScalable
 {
     static double dpiBack; // used to keep track of master dpi change
     static int scaleBack;  // used to keep track of master scale change
+    void changeImage (Glib::ustring imageName);
 
 public:
     Cairo::RefPtr<Cairo::ImageSurface> surface;
@@ -37,7 +38,6 @@ public:
     RTSurface (Glib::ustring fileName, Glib::ustring rtlFileName = Glib::ustring());
 
     void setImage (Glib::ustring fileName, Glib::ustring rtlFileName = Glib::ustring());
-    void changeImage (Glib::ustring imageName);
     int getWidth() const;
     int getHeight() const;
     bool hasSurface() const;
