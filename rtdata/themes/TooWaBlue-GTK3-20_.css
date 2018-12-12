@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 2.98
+  Version 3.00
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1191,7 +1191,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 /*** end ***************************************************************************************/
 
 /*** Context & popups menus *****************************************************************************/
-.popup > decoration {
+.csd.popup > decoration {
     background-image: none;
     border-radius: 0;
     border: none;
@@ -1245,47 +1245,47 @@ menu image:not(.dummy),
 }
 
 /*** Selection popup list (used in filechooser) ***/
-entry > window > frame {
+entry > window > frame:not(.dummy) {
     background-color: @bg-dark-grey;
+    padding: 0;
 }
-entry > window > frame > border {
+entry > window > frame > border:not(.dummy) {
     background-color: @bg-dark-grey;
     padding: 0.083333333333333333em;
-    border: 0.083333333333333333em solid @accent-color;
-}
-entry > window > frame > border {
     margin: 0.083333333333333333em;
+    border: 0.083333333333333333em solid @accent-color;
 }
 /* end */
 
 /*** end ***************************************************************************************/
 
 /*** Popover *** Context menu filechooser ******************************************************/
-
-popover.background {
+popover {
+    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
+}
+popover {
     background-color: @bg-dark-grey;
     border: 0.083333333333333333em solid  @accent-color;
     border-radius: 0;
     padding: 0;
     margin: 0;
-    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
 }
-popover.background > box {
+popover > box {
     padding: 0;
     margin: -9px;
 }
-popover.background modelbutton {
+popover modelbutton {
     min-height: 2em;
     padding: 0 0.416666666666666666em;
     margin: 0;
     border-radius: 0;
 }
 
-popover.background label {
+popover label {
     margin-right: 0.5em;
 }
-popover.background modelbutton:hover label,
-popover.background modelbutton:hover {
+popover modelbutton:hover label,
+popover modelbutton:hover {
     background-color: @accent-color;
     color: @text-hl-color;
 }
@@ -2042,7 +2042,7 @@ entry:focus > selection  {
 /*** end ***************************************************************************************/
 
 /*** Window Layout *****************************************************************************/
-:not(.popup):not(tooltip) > decoration {
+.csd:not(.popup):not(tooltip) > decoration {
     background-color: @winHeaderbar;
     background-image: none;
     border-radius: 0.416666666666666666em 0.416666666666666666em 0 0;
@@ -2057,13 +2057,9 @@ headerbar {
     background-image: linear-gradient(shade(@winHeaderbar,1.14), shade(@winHeaderbar,.86));
     border-bottom: 0.083333333333333333em solid @bg-dark-grey;
     border-radius: 0.416666666666666666em 0.416666666666666666em 0 0;
-    min-height: 2.333333333333333333em;
+    min-height: 2em;
     padding: 0.083333333333333333em 0.416666666666666666em 0;
     margin: 0;
-}
-messagedialog headerbar {
-    min-height: 2em;
-
 }
 headerbar .title{
     color: @winTitle;
@@ -2076,7 +2072,7 @@ headerbar .title{
 /**/
 
 /* Window in background */
-:not(.popup):not(tooltip) > decoration:backdrop {
+.csd:not(.popup):not(tooltip) > decoration:backdrop {
     box-shadow: 0 0.25em 0.75em 0.083333333333333333em rgba(0, 0, 0, 0.3), 0 0 0 0.083333333333333333em @bg-dark-grey;
 }
 headerbar:backdrop {

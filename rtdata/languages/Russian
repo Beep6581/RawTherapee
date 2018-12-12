@@ -1433,6 +1433,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+!CURVEEDITOR_CATMULLROM;Flexible
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
@@ -1843,7 +1844,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
@@ -2033,7 +2034,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTOIT;Iterations
