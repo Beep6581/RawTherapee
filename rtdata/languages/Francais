@@ -15,6 +15,7 @@ CURVEEDITOR_AXIS_IN;E:
 CURVEEDITOR_AXIS_LEFT_TAN;TG:
 CURVEEDITOR_AXIS_OUT;S:
 CURVEEDITOR_AXIS_RIGHT_TAN;TD:
+CURVEEDITOR_CATMULLROM;Flexible
 CURVEEDITOR_CURVE;Courbe
 CURVEEDITOR_CURVES;Courbes
 CURVEEDITOR_CUSTOM;Personnalisé
@@ -2333,8 +2334,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!CURVEEDITOR_CATMULLROM;Flexible
