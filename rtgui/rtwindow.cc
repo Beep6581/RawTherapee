@@ -201,9 +201,7 @@ RTWindow::RTWindow ()
             fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_TOP, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            printf("---------------- folder-closed\n");
             RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed.png"));
-            printf("---------------- folder-closed : %dx%d\n", folderIcon->get_width(), folderIcon->get_height());
             fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_RIGHT, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_RIGHT, 1, 1);
         }
@@ -405,9 +403,7 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
         get_position (options.windowX, options.windowY);
     }
 
-    printf("RTWindow::on_configure_event : May update the RTImage and RTSurface\n");
     int newScale = scale;
-    printf("********** scale = %d / get_window()->get_scale_factor() = %d\n", scale, get_window()->get_scale_factor());
     double newDPI = get_window()->get_screen()->get_resolution();
     RTImage::setDPInScale(newDPI, newScale);   // will update the RTImage   on scale/resolution change
     RTSurface::setDPInScale(newDPI, newScale); // will update the RTSurface on scale/resolution change

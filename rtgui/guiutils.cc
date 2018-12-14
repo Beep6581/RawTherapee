@@ -576,7 +576,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new RTImage(*(disabledImage.get())));
+        statusImage = Gtk::manage(new RTImage(*(disabledImage.operator ->())));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
@@ -585,7 +585,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new RTImage(*(openedImage.get())));
+        statusImage = Gtk::manage(new RTImage(*(openedImage.operator ->())));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -629,7 +629,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new RTImage(*(disabledImage.get())));
+        statusImage = Gtk::manage(new RTImage(*(disabledImage.operator ->())));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
@@ -639,7 +639,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new RTImage(*(openedImage.get())));
+        statusImage = Gtk::manage(new RTImage(*(openedImage.operator ->())));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -1457,7 +1457,6 @@ TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx
 {
 
     RTImage *img = Gtk::manage(new RTImage(fname));
-    printf(">>> TOI \"%s\" : %d x %d\n", fname.c_str(), img->get_width(), img->get_height());
     pack_start(*img, Gtk::PACK_SHRINK, 0);
     set_tooltip_markup("<span font_size=\"large\" font_weight=\"bold\">" + labelTx  + "</span>\n" + tooltipTx);
 

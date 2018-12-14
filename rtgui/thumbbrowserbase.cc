@@ -701,8 +701,6 @@ void ThumbBrowserBase::enableInspector()
 bool ThumbBrowserBase::Internal::on_configure_event(GdkEventConfigure *configure_event)
 {
     double resolution = get_window()->get_screen()->get_resolution();
-    printf("ThumbBrowserBase::Internal::on_configure_event  /  Scale:%d   StyleScale:%d   X:%d Y:%d W:%d H:%d  /  DPI: %.3f\n",
-            get_scale_factor(), get_style_context()->get_scale(), configure_event->x, configure_event->y, configure_event->width, configure_event->height, (float)resolution);
     return true;
 }
 
