@@ -167,6 +167,7 @@ Gtk::TreeIter ProfilePanel::getLastSavedRow()
 Gtk::TreeIter ProfilePanel::addCustomRow()
 {
     if(customPSE) {
+        profiles->deleteRow(customPSE);
         delete customPSE;
         customPSE = nullptr;
     }
@@ -179,6 +180,7 @@ Gtk::TreeIter ProfilePanel::addCustomRow()
 Gtk::TreeIter ProfilePanel::addLastSavedRow()
 {
     if(lastSavedPSE) {
+        profiles->deleteRow(lastSavedPSE);
         delete lastSavedPSE;
         lastSavedPSE = nullptr;
     }
