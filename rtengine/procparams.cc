@@ -2868,7 +2868,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hlcomprthresh, "Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.shcompr, "Exposure", "ShadowCompr", toneCurve.shcompr, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.histmatching, "Exposure", "HistogramMatching", toneCurve.histmatching, keyFile);
-        saveToKeyfile(!pedited || pedited->toneCurve.fromHistMatching, "Exposure", "FromHistogramMatching", toneCurve.fromHistMatching, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.fromHistMatching, "Exposure", "CurveFromHistogramMatching", toneCurve.fromHistMatching, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.clampOOG, "Exposure", "ClampOOG", toneCurve.clampOOG, keyFile);
 
 // Highlight recovery
@@ -3683,7 +3683,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->toneCurve.fromHistMatching = true;
                 }
             } else {
-                assignFromKeyfile(keyFile, "Exposure", "FromHistogramMatching", pedited, toneCurve.fromHistMatching, pedited->toneCurve.fromHistMatching);
+                assignFromKeyfile(keyFile, "Exposure", "CurveFromHistogramMatching", pedited, toneCurve.fromHistMatching, pedited->toneCurve.fromHistMatching);
             }
             assignFromKeyfile(keyFile, "Exposure", "ClampOOG", pedited, toneCurve.clampOOG, pedited->toneCurve.clampOOG);
         }

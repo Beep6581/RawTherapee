@@ -521,7 +521,7 @@ static int parseScan(ljp* self) {
 
     // First pixel predicted from base value
     int diff;
-    int Px;
+    int Px = 0;
     int col = 0;
     int row = 0;
     int left = 0;
