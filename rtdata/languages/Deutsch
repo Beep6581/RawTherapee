@@ -75,6 +75,7 @@
 #74 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
 #75 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
 #76 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
+#77 16.12.2018 Korrektur Farbwähler-Tooltip (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -1389,7 +1390,7 @@ THRESHOLDSELECTOR_HINT;<b>Umschalt</b>-Taste halten, um individuelle\nKontrollpu
 THRESHOLDSELECTOR_T;Oben
 THRESHOLDSELECTOR_TL;Oben-Links
 THRESHOLDSELECTOR_TR;Oben-Rechts
-TOOLBAR_TOOLTIP_COLORPICKER;Farbwähler\n\nWenn eingeschaltet:\n- Mit der linken Maustaste können Sie einen Farbwähler setzen.\n- Zum Verschieben, linke Maustaste festhalten.\n- Umschalttaste + Rechts-Klick entfernt alle Farbwähler.\n- Rechts-Klick auf den Farbwählerbutton blendet die Farbwähler ein/aus\n- Rechts-Klick in einen freien Bereich schaltet auf das Hand-Werkzeug zurück.
+TOOLBAR_TOOLTIP_COLORPICKER;Farbwähler\n\nWenn eingeschaltet:\n- Mit der linken Maustaste können Sie einen Farbwähler setzen.\n- Zum Verschieben, linke Maustaste festhalten.\n- Strg + Umschalttaste + Rechts-Klick entfernt alle Farbwähler.\n- Rechts-Klick auf den Farbwählerbutton blendet die Farbwähler ein/aus\n- Rechts-Klick in einen freien Bereich schaltet auf das Hand-Werkzeug zurück.
 TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen.\nTaste: <b>c</b>\n\nZum Verschieben des Ausschnitts,\nUmschalttaste festhalten.
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug\nTaste: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Ausrichten / Drehen\nTaste: <b>s</b>\n\nRichtet das Bild entlang einer Leitlinie aus.
