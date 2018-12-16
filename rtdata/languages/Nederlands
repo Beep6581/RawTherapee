@@ -1408,7 +1408,6 @@ TP_EPD_LABEL;Tonemapping (Lab/CIECAM02)
 TP_EPD_REWEIGHTINGITERATES;Herhaling
 TP_EPD_SCALE;Schaal
 TP_EPD_STRENGTH;Sterkte
-TP_EPD_TOOLTIP;Tonemapping is mogelijk via Lab mode (standaard) of CIECAM02 mode.\n\nOm CIECAM02 Tonemapping mode te gebruiken moeten de volgende instellingen worden gekozen: \n1. CIECAM\n2. Algoritme="Helderheid + Kleurrijkheid (QM)"\n3. "Tonemapping gebruik makend van CIECAM02 helderheid (Q)"
 TP_EXPOSURE_AUTOLEVELS;Autom. niveaus
 TP_EXPOSURE_AUTOLEVELS_TIP;Activeer automatische niveaus\nActiveer Herstel Hoge lichten indien nodig.
 TP_EXPOSURE_BLACKLEVEL;Schaduwen

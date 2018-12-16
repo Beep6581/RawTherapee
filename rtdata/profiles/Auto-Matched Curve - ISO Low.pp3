@@ -1,32 +1,16 @@
+[Exposure]
+Auto=false
+HistogramMatching=true
+
 [HLRecovery]
 Enabled=true
 Method=Blend
-
-[Exposure]
-Auto=false
-Clip=0.02
-Compensation=0
-Brightness=0
-Contrast=0
-Saturation=0
-Black=0
-HighlightCompr=0
-HighlightComprThreshold=33
-ShadowCompr=50
-HistogramMatching=true
-CurveMode=FilmLike
-CurveMode2=WeightedStd
-Curve=0;
-Curve2=0;
 
 [LensProfile]
 LcMode=lfauto
 UseDistortion=true
 UseVignette=true
-UseCA=false
-
-[RAW]
-CA=true
+UseCA=true
 
 [Color Management]
 ToneCurve=false
@@ -34,3 +18,6 @@ ApplyLookTable=true
 ApplyBaselineExposureOffset=true
 ApplyHueSatMap=true
 DCPIlluminant=0
+
+[RAW]
+CA=true

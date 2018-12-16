@@ -126,7 +126,7 @@ void BatchToolPanelCoordinator::initSession ()
         pparams = selected[0]->getProcParams ();
 
         coarse->initBatchBehavior ();
-        
+
         int w,h;
         selected[0]->getOriginalSize(w,h);
         crop->setDimensions (w, h);
@@ -707,11 +707,11 @@ void BatchToolPanelCoordinator::spotWBselected (int x, int y, Thumbnail* thm)
                 double otemp = initialPP[i].wb.temperature;
                 double ogreen = initialPP[i].wb.green;
 
-                if (options.baBehav[12]) {
+                if (options.baBehav[ADDSET_ROTATE_DEGREE]) {
                     temp = temp - otemp;
                 }
 
-                if (options.baBehav[13]) {
+                if (options.baBehav[ADDSET_DIST_AMOUNT]) {
                     green = green - ogreen;
                 }
 

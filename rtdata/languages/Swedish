@@ -1281,7 +1281,6 @@ TP_EPD_LABEL;Tonmappning
 TP_EPD_REWEIGHTINGITERATES;Återviktade iterationer
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Styrka
-TP_EPD_TOOLTIP;Tonmappning är möjligt via Lab-läge (standard) och CIECAM02-läge.\n\nFör att aktivera CIECAM02- tonmappningsläget, aktivera följande:\n1. CIECAM02\n2. Algoritm="Intensitet + Färgmättnad (QM)"\n3. "Tonmappning mha CIECAM02 intensitet (Q)"
 TP_EXPOSURE_AUTOLEVELS;Autonivåer
 TP_EXPOSURE_AUTOLEVELS_TIP;Slå av/på autonivåer för att automatiskt beräkna och använda värden baserat på bildanalys\nAktiverar högdageråterställning om nödvändigt
 TP_EXPOSURE_BLACKLEVEL;Svärta

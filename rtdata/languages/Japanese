@@ -1658,7 +1658,6 @@ TP_EPD_LABEL;トーンマッピング
 TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
 TP_EPD_STRENGTH;強さ
-TP_EPD_TOOLTIP;トーンマッピングは、L*a*b*モード(標準)またはCIECAM02モードを介して可能です\n\nL*a*b*モードの場合、トーンマッピングはウェーブレット機能の残差画像にも使えます\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします:\n 1. CIECAM02\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM02 明るさ(Q)でトーンマッピング"
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定します
 TP_EXPOSURE_BLACKLEVEL;黒レベル

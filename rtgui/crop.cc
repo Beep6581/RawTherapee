@@ -181,6 +181,10 @@ Crop::Crop():
     fixr = Gtk::manage (new Gtk::CheckButton (M("TP_CROP_FIXRATIO")));
     setExpandAlignProperties(fixr, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     fixr->set_active (1);
+    
+    Gtk::Grid* ratiogrid = Gtk::manage(new Gtk::Grid());
+    ratiogrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(ratiogrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     ratio = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties(ratio, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -188,24 +192,25 @@ Crop::Crop():
     orientation = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties(orientation, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
+    customRatioLabel = Gtk::manage(new Gtk::Label(""));
+    customRatioLabel->hide();
+    setExpandAlignProperties(customRatioLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    
+    ratiogrid->set_column_homogeneous (true);
+    ratiogrid->attach (*ratio, 0, 0, 1, 1);
+    ratiogrid->attach (*customRatioLabel, 1, 0, 1, 1);
+    ratiogrid->attach (*orientation, 1, 0, 1, 1);
+    
     Gtk::Label* guidelab = Gtk::manage (new Gtk::Label (M("TP_CROP_GUIDETYPE")));
     setExpandAlignProperties(guidelab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     
     guide = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties(guide, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    customRatioLabel = Gtk::manage(new Gtk::Label(""));
-    customRatioLabel->hide();
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
-    hb->pack_start(*orientation);
-    hb->pack_start(*customRatioLabel);
-
-    settingsgrid->set_column_homogeneous(true);
     settingsgrid->attach (*fixr, 0, 0, 1, 1);
-    settingsgrid->attach (*ratio, 1, 0, 1, 1);
-    settingsgrid->attach (*hb, 2, 0, 1, 1);
+    settingsgrid->attach (*ratiogrid, 1, 0, 1, 1);
     settingsgrid->attach (*guidelab, 0, 1, 1, 1);
-    settingsgrid->attach (*guide, 1, 1, 2, 1);
+    settingsgrid->attach (*guide, 1, 1, 1, 1);
     pack_start (*settingsgrid, Gtk::PACK_SHRINK, 0 );
 
 
