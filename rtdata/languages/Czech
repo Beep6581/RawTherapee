@@ -1666,7 +1666,6 @@ TP_EPD_LABEL;Mapování tónů
 TP_EPD_REWEIGHTINGITERATES;Počet průchodů převážení
 TP_EPD_SCALE;Měřítko
 TP_EPD_STRENGTH;Síla
-TP_EPD_TOOLTIP;Mapování tónů je dostupné v L*a*b* (standard) a CIECAM02 módu.\n\nV L*a*b* módu může být mapování tónů použito i pro zůstatkový obraz nástroje Vlnka\n\nPro zapnutí mapování tónů v CIECAM02  módu zapněte prosím následující volby:\n1. CIECAM02\n2. Algoritmus="Jas a pestrobarevnost (QM)"\n3. "Mapování tónů pomocí jasu CIECAM02 (Q)"
 TP_EXPOSURE_AUTOLEVELS;Automatické úrovně
 TP_EXPOSURE_AUTOLEVELS_TIP;Přepne provedení Automatické úrovně na automatickou sadu hodnot parametrů založených na analýze obrázku\nPokud to je nezbytné, povolí rekonstrukci světel.
 TP_EXPOSURE_BLACKLEVEL;Černá

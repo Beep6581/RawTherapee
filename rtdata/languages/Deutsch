@@ -1707,7 +1707,6 @@ TP_EPD_LABEL;Tonwertkorrektur
 TP_EPD_REWEIGHTINGITERATES;Iterationen
 TP_EPD_SCALE;Faktor
 TP_EPD_STRENGTH;Intensität
-TP_EPD_TOOLTIP;Tonwertkorrektur ist mit dem L*a*b*- und CIECAM02-Modus möglich.\n\nFür den CIECAM02-Modus müssen folgende Optionen aktiviert sein:\n1. CIECAM02\n2. Algorithmus = Helligkeit + Farbigkeit (QM)\n3. Tonwertkorrektur mittels CIECAM02-Helligkeit (Q)
 TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung\nbasierend auf Bildanalyse.
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
