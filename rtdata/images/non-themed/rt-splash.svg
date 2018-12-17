@@ -912,7 +912,7 @@
        y="279.20517" />
     <g
        style="fill:#ffffff;enable-background:new"
-       transform="matrix(0.24804687,0,0,0.2480469,36.283943,273.1232)"
+       transform="matrix(0.24804687,0,0,0.2480469,-16.632726,273.1232)"
        id="g1249">
       <text
          transform="skewX(3)"
@@ -942,7 +942,7 @@
            sodipodi:role="line"
            x="595.29559"
            y="49.720543"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.06666565px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px">Release Candidate 2</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.06666565px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px">Release Candidate 1</tspan></text>
     </g>
   </g>
 </svg>
