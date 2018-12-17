@@ -1550,7 +1550,6 @@ TP_EPD_LABEL;Mapeamento de Tom
 TP_EPD_REWEIGHTINGITERATES;Reponderando iterações
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensidade
-TP_EPD_TOOLTIP;O mapeamento de tom é possível no modo L*a*b*  (padão) e no modo CIECAM02.\n\nQuando no modo L*a*b*, o mapeamento de tom também pode ser usado na imagem residual da ferramenta de Níveis de Wavelet.\n\nPara ativar o modo de mapeamento de tom CIECAM02, habilite as seguintes configurações:\n1. CIECAM02\n2. Algorítimo = "Brilho + Colorido (QM)"\n3. "Mapeamento de tom usando o brilho do CIECAM02 (Q)"
 TP_EXPOSURE_AUTOLEVELS;Níveis Automáticos
 TP_EXPOSURE_AUTOLEVELS_TIP;Alterna a execução dos Níveis Automáticos para definir automaticamente os valores do controle deslizante de Exposição baseado numa análise de imagem.\nHabilita a Reconstrução de Realce se necessário.
 TP_EXPOSURE_BLACKLEVEL;Preto
@@ -2306,7 +2305,6 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_LENSPROFILE_USE_GEOMETRIC;Geometric
 !TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
 !TP_LENSPROFILE_USE_VIGNETTING;Vignetting
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Suppresses stripe noise caused by on-sensor PDAF pixels, known to occur on some Sony and Nikon cameras when shooting backlit scenes with visible flare.
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift

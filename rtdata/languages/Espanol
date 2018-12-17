@@ -1030,7 +1030,7 @@ PARTIALPASTE_BASICGROUP;Ajustes básicos
 PARTIALPASTE_CACORRECTION;Corrección de aberraciones cromáticas
 PARTIALPASTE_CHANNELMIXER;Mezclador de canales
 PARTIALPASTE_CHANNELMIXERBW;Blanco y Negro
-PARTIALPASTE_COARSETRANS;Rotar 90º/ voltear
+PARTIALPASTE_COARSETRANS;Rotar 90°/ voltear
 PARTIALPASTE_COLORAPP;Modelo CIE 2002 de apariencia de color
 PARTIALPASTE_COLORGROUP;Ajustes de color
 PARTIALPASTE_COLORTONING;Tonificación de Color
@@ -1165,11 +1165,11 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nombre
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID Etiqueta
 PREFERENCES_CUSTPROFBUILDPATH;Ruta al programa ejecutable
 PREFERENCES_CUTOVERLAYBRUSH;Recortar máscara de color/transparencia
-PREFERENCES_D50;5000ºK
-PREFERENCES_D50_OLD;5000K
-PREFERENCES_D55;5500ºK
-PREFERENCES_D60;6000ºK
-PREFERENCES_D65;6500ºK
+PREFERENCES_D50;5000°K
+PREFERENCES_D50_OLD;5000°K
+PREFERENCES_D55;5500°K
+PREFERENCES_D60;6000°K
+PREFERENCES_D65;6500°K
 PREFERENCES_DARKFRAMEFOUND;Encontrado
 PREFERENCES_DARKFRAMESHOTS;disparos
 PREFERENCES_DARKFRAMETEMPLATES;plantillas
@@ -1749,7 +1749,6 @@ TP_EPD_LABEL;Mapeo tonal
 TP_EPD_REWEIGHTINGITERATES;Iteraciones de reponderación
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensidad
-TP_EPD_TOOLTIP;El mapeo tonal puede hacerse en modo Lab (estándar) y en modo CIECAM02.\n\nPara activar mapeo tonal modo CIECAM02 haga los siguientes ajustes:\n1. CIECAM02\n2. Algoritmo="Brillo + Colorido (QM)"\n3. "Mapeo tonal usando Brillo CIECAM02 (Q)"
 TP_EXPOSURE_AUTOLEVELS;Niveles automáticos
 TP_EXPOSURE_AUTOLEVELS_TIP;Ejecuta Niveles Automáticos. Establece automáticamente los valores de los parámetros basándose en el análisis de la imagen.\nHabilita la reconstrucción de luces altas si es necesario
 TP_EXPOSURE_BLACKLEVEL;Nivel de Negro
@@ -2460,4 +2459,3 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !CURVEEDITOR_CATMULLROM;Flexible
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Suppresses stripe noise caused by on-sensor PDAF pixels, known to occur on some Sony and Nikon cameras when shooting backlit scenes with visible flare.
