@@ -167,6 +167,7 @@ Gtk::TreeIter ProfilePanel::getLastSavedRow()
 Gtk::TreeIter ProfilePanel::addCustomRow()
 {
     if(customPSE) {
+        profiles->deleteRow(customPSE);
         delete customPSE;
         customPSE = nullptr;
     }
@@ -179,6 +180,7 @@ Gtk::TreeIter ProfilePanel::addCustomRow()
 Gtk::TreeIter ProfilePanel::addLastSavedRow()
 {
     if(lastSavedPSE) {
+        profiles->deleteRow(lastSavedPSE);
         delete lastSavedPSE;
         lastSavedPSE = nullptr;
     }
@@ -306,8 +308,6 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
 
     do {
         if (dialog.run() == Gtk::RESPONSE_OK) {
-
-            dialog.hide();
 
             std::string fname = dialog.get_filename();
             Glib::ustring ext = getExtension (fname);

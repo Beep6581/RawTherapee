@@ -2,25 +2,25 @@
 
 # If we find ReleaseInfo.cmake we use the info from there and don't need Git to be installed
 find_file(REL_INFO_FILE ReleaseInfo.cmake PATHS "${PROJECT_SOURCE_DIR}" NO_DEFAULT_PATH)
-if (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+if(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     # we look for the git command in this paths by order of preference
-    if (WIN32)
+    if(WIN32)
         find_program(GIT_CMD git.exe HINTS ENV Path PATH_SUFFIXES ../)
-    elseif (APPLE)
+    elseif(APPLE)
         find_program(GIT_CMD git PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
         find_program(GIT_CMD git)
-        set (SHELL "/bin/bash")
-    else (WIN32) # Linux
+        set(SHELL "/bin/bash")
+    else(WIN32) # Linux
         find_program(GIT_CMD git)
-        set (SHELL "/bin/bash")
-    endif (WIN32)
+        set(SHELL "/bin/bash")
+    endif(WIN32)
 
     # Fail if Git is not installed
-    if (GIT_CMD STREQUAL GIT_CMD-NOTFOUND)
+    if(GIT_CMD STREQUAL GIT_CMD-NOTFOUND)
         message(FATAL_ERROR "git command not found!")
-    else ()
+    else()
         message(STATUS "git command found: ${GIT_CMD}")
-    endif ()
+    endif()
 
     # Get version description.
     # Depending on whether you checked out a branch (dev) or a tag (release),
@@ -50,19 +50,19 @@ if (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     execute_process(COMMAND ${GIT_CMD} rev-list --count HEAD --not --tags OUTPUT_VARIABLE GIT_COMMITS_SINCE_BRANCH OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
     # If user checked-out something which is not a branch, use the description as branch name.
-    if (GIT_BRANCH STREQUAL "")
-        set (GIT_BRANCH "${GIT_DESCRIBE}")
+    if(GIT_BRANCH STREQUAL "")
+        set(GIT_BRANCH "${GIT_DESCRIBE}")
     endif()
 
     # Create numeric version.
     # This version is nonsense, either don't use it at all or use it only where you have no other choice, e.g. Inno Setup's VersionInfoVersion.
     # Strip everything after hyphen, e.g. "5.0-gtk2" -> "5.0", "5.1-rc1" -> "5.1" (ergo BS).
-    if (GIT_COMMITS_SINCE_TAG STREQUAL "")
-        set (GIT_NUMERIC_VERSION_BS "0.0.0")
-    else ()
+    if(GIT_COMMITS_SINCE_TAG STREQUAL "")
+        set(GIT_NUMERIC_VERSION_BS "0.0.0")
+    else()
         string(REGEX REPLACE "-.*" "" GIT_NUMERIC_VERSION_BS ${GIT_DESCRIBE})
         set(GIT_NUMERIC_VERSION_BS "${GIT_NUMERIC_VERSION_BS}.${GIT_COMMITS_SINCE_TAG}")
-    endif ()
+    endif()
 
     message(STATUS "Git checkout information:")
     message(STATUS "	Commit description:	${GIT_DESCRIBE}")
@@ -73,38 +73,38 @@ if (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     message(STATUS "	Commits since branch:	${GIT_COMMITS_SINCE_BRANCH}")
     message(STATUS "	Version (unreliable):	${GIT_NUMERIC_VERSION_BS}")
 
-    if (NOT DEFINED CACHE_NAME_SUFFIX)
+    if(NOT DEFINED CACHE_NAME_SUFFIX)
         set(CACHE_NAME_SUFFIX "${GIT_DESCRIBE}")
         message(STATUS "CACHE_NAME_SUFFIX was not defined, it is now \"${CACHE_NAME_SUFFIX}\"")
-    else ()
+    else()
         message(STATUS "CACHE_NAME_SUFFIX is \"${CACHE_NAME_SUFFIX}\"")
-    endif ()
+    endif()
 
-else (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+else(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     include("${PROJECT_SOURCE_DIR}/ReleaseInfo.cmake")
-endif (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
+endif(REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
 
-if (WIN32)
-    if (BIT_DEPTH EQUAL 4)
+if(WIN32)
+    if(BIT_DEPTH EQUAL 4)
         set(BUILD_BIT_DEPTH 32)
         # 32 bits builds has to be installable on 64 bits system, to support WinXP/64.
         set(ARCHITECTURE_ALLOWED "x86 x64 ia64")
         # installing in 32 bits mode even on 64 bits OS and architecture
         set(INSTALL_MODE "")
-    elseif (BIT_DEPTH EQUAL 8)
+    elseif(BIT_DEPTH EQUAL 8)
         set(BUILD_BIT_DEPTH 64)
         # Restricting the 64 bits builds to 64 bits systems only
         set(ARCHITECTURE_ALLOWED "x64 ia64")
         # installing in 64 bits mode for all 64 bits processors, even for itanium architecture
         set(INSTALL_MODE "x64 ia64")
-    endif (BIT_DEPTH EQUAL 4)
+    endif(BIT_DEPTH EQUAL 4)
     # set part of the output archive name
     set(SYSTEM_NAME "WinVista")
 
-    configure_file ("${PROJECT_SOURCE_DIR}/tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_BINARY_DIR}/rtdata/WindowsInnoSetup.iss")
-endif (WIN32)
+    configure_file("${PROJECT_SOURCE_DIR}/tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_BINARY_DIR}/rtdata/WindowsInnoSetup.iss")
+endif(WIN32)
 
 # build version.h from template
-configure_file ("${PROJECT_SOURCE_DIR}/rtgui/version.h.in" "${CMAKE_BINARY_DIR}/rtgui/version.h")
+configure_file("${PROJECT_SOURCE_DIR}/rtgui/version.h.in" "${CMAKE_BINARY_DIR}/rtgui/version.h")
 # build AboutThisBuild.txt from template
-configure_file ("${PROJECT_SOURCE_DIR}/AboutThisBuild.txt.in" "${CMAKE_BINARY_DIR}/AboutThisBuild.txt")
+configure_file("${PROJECT_SOURCE_DIR}/AboutThisBuild.txt.in" "${CMAKE_BINARY_DIR}/AboutThisBuild.txt")

@@ -339,6 +339,25 @@ Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subDir,
 
 void CacheManager::applyCacheSizeLimitation () const
 {
+    // first count files without fetching file name and timestamp.
+    std::size_t numFiles = 0;
+    try {
+
+        const auto dirName = Glib::build_filename (baseDir, "data");
+        const auto dir = Gio::File::create_for_path (dirName);
+
+        auto enumerator = dir->enumerate_children ("");
+
+        while (numFiles <= options.maxCacheEntries && enumerator->next_file ()) {
+            ++numFiles;
+        }
+
+    } catch (Glib::Exception&) {}
+
+    if (numFiles <= options.maxCacheEntries) {
+        return;
+    }
+
     using FNameMTime = std::pair<Glib::ustring, Glib::TimeVal>;
     std::vector<FNameMTime> files;
 

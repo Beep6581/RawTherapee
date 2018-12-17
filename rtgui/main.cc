@@ -536,7 +536,7 @@ int main (int argc, char **argv)
                 bool Console = true;
 
                 for (int i = 1; i < argc; i++)
-                    if (!strcmp (argv[i], "-w")) {
+                    if (!strcmp (argv[i], "-w") || !strcmp (argv[i], "-R")) {
                         Console = false;
                         break;
                     }

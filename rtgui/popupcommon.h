@@ -75,6 +75,9 @@ private:
     void showMenu(GdkEventButton* event);
 
 protected:
+    virtual int posToIndex(int p) const { return p; }
+    virtual int indexToPos(int i) const { return i; }
+    
     void entrySelected (int i);
 
 };
@@ -96,7 +99,7 @@ inline int PopUpCommon::getEntryCount () const
 
 inline int PopUpCommon::getSelected () const
 {
-    return selected;
+    return posToIndex(selected);
 }
 
 #endif

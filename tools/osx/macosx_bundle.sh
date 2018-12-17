@@ -152,12 +152,18 @@ done
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${GTK_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
 
+# Copy libjpeg-turbo into the app bundle
+cp /opt/local/lib/libjpeg.62.dylib "${RESOURCES}/../Frameworks"
+
+# Copy libtiff into the app bundle
+cp /opt/local/lib/libtiff.5.dylib "${RESOURCES}/../Frameworks"
+
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
 cp /opt/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
 
 # Copy liblensfun to Frameworks
-cp /opt/local/lib/liblensfun.1.dylib "${RESOURCES}/../Frameworks"
+cp /opt/local/lib/liblensfun.2.dylib "${RESOURCES}/../Frameworks"
 
 # Copy libiomp5 to Frameworks
 cp /opt/local/lib/libomp/libiomp5.dylib "${RESOURCES}/../Frameworks"
@@ -228,7 +234,7 @@ function CreateDmg {
     fi
 
     msg "Creating disk image:"
-    hdiutil create -format UDBZ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
+    hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
 
     # Sign disk image
     codesign --deep --force -v -s "${CODESIGNID}" "${dmg_name}.dmg"

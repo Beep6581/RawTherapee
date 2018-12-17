@@ -55,7 +55,7 @@ LensProfilePanel::LensProfilePanel() :
     lensfunCameras(Gtk::manage((new MyComboBox()))),
     lensfunLensesLbl(Gtk::manage((new Gtk::Label(M("EXIFFILTER_LENS"))))),
     lensfunLenses(Gtk::manage((new MyComboBox()))),
-    warning(Gtk::manage((new Gtk::Image()))),
+    warning(Gtk::manage(new RTImage("warning.png"))),
     ckbUseDist(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_GEOMETRIC"))))),
     ckbUseVign(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_VIGNETTING"))))),
     ckbUseCA(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_CA")))))
@@ -65,12 +65,12 @@ LensProfilePanel::LensProfilePanel() :
     }
 
     // Main containers:
-    
+
     Gtk::Frame *nodesFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_MODE_HEADER")));
 
     modesGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(modesGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    
+
     Gtk::Frame *distFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_USE_HEADER")));
 
     distGrid->get_style_context()->add_class("grid-spacing");
@@ -104,7 +104,6 @@ LensProfilePanel::LensProfilePanel() :
     lensesCellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
     lensesCellRenderer->property_ellipsize_set() = true;
 
-    warning->set_from_icon_name("dialog-warning", Gtk::ICON_SIZE_LARGE_TOOLBAR);
     warning->set_tooltip_text(M("TP_LENSPROFILE_LENS_WARNING"));
     warning->hide();
 
@@ -248,8 +247,6 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         setLensfunLens(pp->lensProf.lfLens);
     }
 
-    lcModeChanged = lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
-    useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
 
     /*  
    if (!batchMode && !checkLensfunCanCorrect(true)) {
@@ -287,6 +284,9 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         ckbUseCA->set_sensitive(true);
     }
 
+    lcModeChanged = lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
+    useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
+    
     updateLensfunWarning();
     enableListener();
     conUseDist.block(false);
@@ -479,9 +479,10 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
         Glib::ustring mode;
 
         if (rbChanged == corrOffRB) {
+            lcModeChanged = true;
             useLensfunChanged = true;
             lensfunAutoChanged = true;
-            lcpFileChanged = true;
+            lcpFileChanged = false;
 
             ckbUseDist->set_sensitive(false);
             ckbUseVign->set_sensitive(false);
@@ -490,13 +491,12 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             mode = M("GENERAL_NONE");
             
         } else if (rbChanged == corrLensfunAutoRB) {
+            lcModeChanged = true;
             useLensfunChanged = true;
             lensfunAutoChanged = true;
             lensfunCameraChanged = true;
             lensfunLensChanged = true;
-            lcpFileChanged = true;
-            useDistChanged = true;
-            useVignChanged = true;
+            lcpFileChanged = false;
 
             ckbUseDist->set_sensitive(true);
             ckbUseVign->set_sensitive(true);
@@ -515,19 +515,18 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
                 setLensfunLens(l.getLens());
             }
             if (disabled) {
-                    enableListener();
+                enableListener();
             }
             
             mode = M("TP_LENSPROFILE_CORRECTION_AUTOMATCH");
             
         } else if (rbChanged == corrLensfunManualRB) {
+            lcModeChanged = true;
             useLensfunChanged = true;
             lensfunAutoChanged = true;
             lensfunCameraChanged = true;
             lensfunLensChanged = true;
-            lcpFileChanged = true;
-            useDistChanged = true;
-            useVignChanged = true;
+            lcpFileChanged = false;
 
             ckbUseDist->set_sensitive(true);
             ckbUseVign->set_sensitive(true);
@@ -536,17 +535,17 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             mode = M("TP_LENSPROFILE_CORRECTION_MANUAL");
             
         } else if (rbChanged == corrLcpFileRB) {
+            lcModeChanged = true;
             useLensfunChanged = true;
             lensfunAutoChanged = true;
             lcpFileChanged = true;
-            useDistChanged = true;
-            useVignChanged = true;
 
             updateDisabled(true);
 
             mode = M("TP_LENSPROFILE_CORRECTION_LCPFILE");
             
         } else if (rbChanged == corrUnchangedRB) {
+            lcModeChanged = false;
             useLensfunChanged = false;
             lensfunAutoChanged = false;
             lcpFileChanged = false;
@@ -560,7 +559,6 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             mode = M("GENERAL_UNCHANGED");
         }
 
-        lcModeChanged = true;
         updateLensfunWarning();
 
         if (rbChanged == corrLensfunManualRB || (!batchMode && rbChanged == corrLensfunAutoRB)) {
