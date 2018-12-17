@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChanged (false), editDataProvider (nullptr), favoritePanelSW(nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), editDataProvider (nullptr)
 {
 
     favoritePanel   = Gtk::manage (new ToolVBox ());
