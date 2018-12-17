@@ -178,9 +178,11 @@ BENCHFUN
     JaggedArray<float> blend(W, H);
     float contrast = sharpenParam.contrast / 100.f;
     buildBlendMask(luminance, blend, W, H, contrast, sharpenParam.deconvamount / 100.f);
-    JaggedArray<float> blur(W, H);
+    JaggedArray<float>* blurbuffer = nullptr;
 
     if (sharpenParam.blurradius >= 0.25f) {
+        blurbuffer = new JaggedArray<float>(W, H);
+        JaggedArray<float> &blur = *blurbuffer;
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -227,6 +229,7 @@ BENCHFUN
         }
 
         if (sharpenParam.blurradius >= 0.25f) {
+            JaggedArray<float> &blur = *blurbuffer;
 #ifdef _OPENMP
         #pragma omp for
 #endif
@@ -237,6 +240,7 @@ BENCHFUN
             }
         }
     } // end parallel
+    delete blurbuffer;
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam, bool showMask)
