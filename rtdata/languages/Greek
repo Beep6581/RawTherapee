@@ -424,9 +424,10 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+!CURVEEDITOR_CATMULLROM;Flexible
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
-!CURVEEDITOR_CUSTOM;Custom
+!CURVEEDITOR_CUSTOM;Standard
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -1344,7 +1345,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
 !PREFERENCES_SET;Set
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
@@ -1409,7 +1410,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !THRESHOLDSELECTOR_T;Top
 !THRESHOLDSELECTOR_TL;Top-left
 !THRESHOLDSELECTOR_TR;Top-right
-!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b>.
+!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects
@@ -1698,7 +1699,6 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
 !TP_EPD_SCALE;Scale
 !TP_EPD_STRENGTH;Strength
-!TP_EPD_TOOLTIP;Tone mapping is possible in L*a*b* mode (standard) and CIECAM02 mode.\n\nWhen in L*a*b* mode, tone mapping can also be used on the residual image of the Wavelet Levels tool.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSURE_AUTOLEVELS_TIP;Toggles execution of Auto Levels to automatically set Exposure slider values based on an image analysis.\nEnables Highlight Reconstruction if necessary.
 !TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in Auto Levels operation.
@@ -1874,7 +1874,6 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_NO_FOUND;None found
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTO;Auto-correction

@@ -15,6 +15,7 @@ CURVEEDITOR_AXIS_IN;E:
 CURVEEDITOR_AXIS_LEFT_TAN;TG:
 CURVEEDITOR_AXIS_OUT;S:
 CURVEEDITOR_AXIS_RIGHT_TAN;TD:
+CURVEEDITOR_CATMULLROM;Flexible
 CURVEEDITOR_CURVE;Courbe
 CURVEEDITOR_CURVES;Courbes
 CURVEEDITOR_CUSTOM;Personnalisé
@@ -1313,7 +1314,7 @@ THRESHOLDSELECTOR_HINT;Maintenez la touche <b>Shift</b> appuyée pour déplacer 
 THRESHOLDSELECTOR_T;Haut
 THRESHOLDSELECTOR_TL;Haut-Gauche
 THRESHOLDSELECTOR_TR;Haut-droite
-TOOLBAR_TOOLTIP_COLORPICKER;Ancre de Vérification Couleur\n\nLorque activé:\nCliquez la zone d'image avec le bouton gauche de la souris pour ajouter une ancre\nDéplacez-le en le "tirant" avec le bouton gauche de la souris\nSupprimez une ancre en cliquant dessus avec le bouton droit de la souris\nSupprimez toutes les ancres avec Shift + click avec le bouton droit\nCliquez avec le bouton droit de la souris en dehors de toute ancre pour revenir au mode Déplacement
+TOOLBAR_TOOLTIP_COLORPICKER;Ancre de Vérification Couleur\n\nLorque activé:\n- Ajouter une ancre: <b>clic-gauche</b>.\n- Déplacer une ancre: <b>clic-gauche et tirer</b>.\n- Supprimez une ancre: <b>clic-droit</b>.\n- Supprimez toutes les ancres: <b>ctrl</b>+<b>shift</b>+<b>clic-droit</b>.\n- Revenir au mode Déplacement: <b>clic-droit</b> en dehors de toute ancre.
 TOOLBAR_TOOLTIP_CROP;Sélection du recadrage\nRaccourci: <b>c</b>\nDéplacez le recadrage en utilisant Shift + Glisser
 TOOLBAR_TOOLTIP_HAND;Outil de navigation\nRaccourci: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon\nRaccourci: <b>s</b>\n\nIndiquez la verticale ou l'horizontale en dessinant une ligne à travers l'image de prévisualisation. L'angle de rotation sera affiché près de la ligne guide. Le centre de rotation est le centre géométrique de l'image.
@@ -1631,7 +1632,6 @@ TP_EPD_LABEL;Compression tonale
 TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
 TP_EPD_SCALE;Échelle
 TP_EPD_STRENGTH;Force
-TP_EPD_TOOLTIP;Vous pouvez choisir entre le mode Lab (standard) ou le mode CIECAM02.\n En activant "Compression tonale avec brillance Q CIECAM" dans le menu "Brillance + Niveau de couleur CIECAM"
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de Niveaux automatiques afin de régler automatiquement les valeurs basé sur l'analyse de l'image\nActive la Reconstruction des Hautes Lumières si nécessaire.
 TP_EXPOSURE_BLACKLEVEL;Noir
@@ -1834,7 +1834,6 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontale seulement sur les lig
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Verticale
 TP_PREPROCESS_NO_FOUND;Aucun trouvé
 TP_PREPROCESS_PDAFLINESFILTER;Filtre de ligne PDAF
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Essaie de supprimer les bandes de bruit causées par les pixel PDAF sur le capteur, arrivant sur certains mirrorless Sony cameras avec des scènes en contre-jour avec un flare visible.
 TP_PRSHARPENING_LABEL;Netteté post-redimensionnement
 TP_PRSHARPENING_TOOLTIP;Augmente la netteté de l'image après le redimentionnement. Ne fonctionne que si la méthode de redimensionnement "Lanczos" est utilisé. Il est impossible de prévisualiser les effets de cet outil. Cf. RawPedia pour les instructions d'utilisation.
 TP_RAWCACORR_AUTO;Correction automatique

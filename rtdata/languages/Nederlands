@@ -1408,7 +1408,6 @@ TP_EPD_LABEL;Tonemapping (Lab/CIECAM02)
 TP_EPD_REWEIGHTINGITERATES;Herhaling
 TP_EPD_SCALE;Schaal
 TP_EPD_STRENGTH;Sterkte
-TP_EPD_TOOLTIP;Tonemapping is mogelijk via Lab mode (standaard) of CIECAM02 mode.\n\nOm CIECAM02 Tonemapping mode te gebruiken moeten de volgende instellingen worden gekozen: \n1. CIECAM\n2. Algoritme="Helderheid + Kleurrijkheid (QM)"\n3. "Tonemapping gebruik makend van CIECAM02 helderheid (Q)"
 TP_EXPOSURE_AUTOLEVELS;Autom. niveaus
 TP_EXPOSURE_AUTOLEVELS_TIP;Activeer automatische niveaus\nActiveer Herstel Hoge lichten indien nodig.
 TP_EXPOSURE_BLACKLEVEL;Schaduwen
@@ -2049,6 +2048,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
 !BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
+!CURVEEDITOR_CATMULLROM;Flexible
 !DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_IMGTYPE_ANY;Any
 !DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
@@ -2317,7 +2317,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift

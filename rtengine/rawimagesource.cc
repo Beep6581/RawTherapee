@@ -4843,20 +4843,27 @@ void RawImageSource::getRAWHistogram(LUTu & histRedRaw, LUTu & histGreenRaw, LUT
         } // end of critical region
     } // end of parallel region
 
+    const auto getidx =
+        [&](int c, int i) -> int
+        {
+            float f = mult[c] * std::max(0.f, i - cblacksom[c]);
+            return f > 0.f ? (f < 1.f ? 1 : std::min(int(f), 255)) : 0;
+        };
+
     for(int i = 0; i < histoSize; i++) {
-        int idx = std::min(255.f, mult[0] * std::max(0.f, i - cblacksom[0]));
+        int idx = getidx(0, i);
         histRedRaw[idx] += hist[0][i];
 
         if (ri->get_colors() > 1) {
-            idx = std::min(255.f, mult[1] * std::max(0.f, i - cblacksom[1]));
+            idx = getidx(1, i);
             histGreenRaw[idx] += hist[1][i];
 
             if (fourColours) {
-                idx = std::min(255.f, mult[3] * std::max(0.f, i - cblacksom[3]));
+                idx = getidx(3, i);
                 histGreenRaw[idx] += hist[3][i];
             }
 
-            idx = std::min(255.f, mult[2] * std::max(0.f, i - cblacksom[2]));
+            idx = getidx(2, i);
             histBlueRaw[idx] += hist[2][i];
         }
     }

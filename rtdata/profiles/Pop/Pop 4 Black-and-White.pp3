@@ -1,7 +1,7 @@
 [Exposure]
 Auto=false
 Clip=0.02
-Compensation=0.66
+Compensation=0.66000000000000003
 Brightness=0
 Contrast=0
 Saturation=0
@@ -9,24 +9,22 @@ Black=0
 HighlightCompr=70
 HighlightComprThreshold=0
 ShadowCompr=50
+HistogramMatching=false
+CurveFromHistogramMatching=false
+ClampOOG=true
 CurveMode=SatAndValueBlending
 CurveMode2=Standard
-Curve=3;0;0;0.084;0;0.187;0.188;0.587;0.742;1;1;
+Curve=3;0;0;0.084000000000000005;0;0.187;0.188;0.58699999999999997;0.74199999999999999;1;1;
 Curve2=0;
 
 [HLRecovery]
 Enabled=true
 Method=Blend
 
-[Channel Mixer]
-Red=100;0;0;
-Green=0;100;0;
-Blue=0;0;100;
-
 [Black & White]
 Enabled=true
 Method=ChannelMixer
-Auto=true
+Auto=false
 ComplementaryColors=true
 Setting=RGB-Rel
 Filter=None
@@ -49,13 +47,14 @@ BeforeCurve=0;
 AfterCurve=0;
 
 [Luminance Curve]
+Enabled=true
 Brightness=0
 Contrast=0
 Chromaticity=0
 AvoidColorShift=false
 RedAndSkinTonesProtection=0
 LCredsk=true
-LCurve=3;0;0;0.212;0.119;0.674;0.773;1;1;
+LCurve=3;0;0;0.21199999999999999;0.11899999999999999;0.67400000000000004;0.77300000000000002;1;1;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -65,18 +64,14 @@ hhCurve=0;
 LcCurve=0;
 ClCurve=0;
 
-[Vibrance]
-Enabled=false
-
-[White Balance]
-Setting=Camera
-Equal=1
-
 [Color appearance]
 Enabled=true
-Degree=100
+Degree=97
 AutoDegree=true
+Degreeout=85
+AutoDegreeout=true
 Surround=Average
+Surrsrc=Average
 AdaptLum=16
 Badpixsl=0
 Model=RawT
@@ -90,60 +85,36 @@ J-Contrast=0
 Q-Contrast=0
 H-Hue=0
 RSTProtection=0
-AdaptScene=208
+AdaptScene=164.33000000000001
 AutoAdapscen=true
+YbScene=10
+Autoybscen=true
 SurrSource=false
 Gamut=true
+Tempout=5000
+Greenout=1
+Tempsc=5000
+Greensc=1
+Ybout=18
 Datacie=false
 Tonecie=true
 CurveMode=Lightness
 CurveMode2=Lightness
 CurveMode3=Colorfullness
-Curve=3;0;0;0.15;0;0.545;1;1;1;
+Curve=3;0;0;0.14999999999999999;0;0.54500000000000004;1;1;1;
 Curve2=0;
 Curve3=0;
 
 [EPD]
 Enabled=true
 Strength=0.25
-EdgeStopping=2.4
-Scale=0.10
+Gamma=1
+EdgeStopping=1.3999999999999999
+Scale=0.5
 ReweightingIterates=0
-
-[Shadows & Highlights]
-Enabled=false
-
-[Gradient]
-Enabled=false
 
 [PCVignette]
 Enabled=true
 Strength=1
 Feather=50
 Roundness=50
-
-[HSV Equalizer]
-HCurve=0;
-SCurve=0;
-VCurve=0;
-
-[Film Simulation]
-Enabled=false
-
-[Wavelet]
-Enabled=false
-
-[RGB Curves]
-LumaMode=false
-rCurve=0;
-gCurve=0;
-bCurve=0;
-
-[ColorToning]
-Enabled=false
-
-[RAW]
-CA=true
-HotPixelFilter=true
-DeadPixelFilter=false
-HotDeadPixelThresh=100

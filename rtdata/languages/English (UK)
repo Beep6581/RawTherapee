@@ -53,7 +53,7 @@ PREFERENCES_PRTPROFILE;Colour profile
 PREFERENCES_TAB_COLORMGR;Colour Management
 SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colours with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Colour Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-TOOLBAR_TOOLTIP_COLORPICKER;Lockable Colour Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b>.
+TOOLBAR_TOOLTIP_COLORPICKER;Lockable Colour Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Centre of rotation is the geometrical centre of the image.
 TP_BWMIX_CC_ENABLED;Adjust complementary colour
 TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colours in ROYGCBPM mode.
@@ -87,7 +87,6 @@ TP_DIRPYRDENOISE_MAIN_COLORSPACE;Colour space
 TP_DIRPYREQUALIZER_ALGO;Skin Colour Range
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colours of the skin, minimizing the action on other colours\nLarge: avoid more artifacts.
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colours (hue, chroma, luma) and the rest of the image.
-TP_EPD_TOOLTIP;Tone mapping is possible in L*a*b* mode (standard) and CIECAM02 mode.\n\nWhen in L*a*b* mode, tone mapping can also be used on the residual image of the Wavelet Levels tool.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colourfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to colour cast.
 TP_GRADIENT_CENTER;Centre
@@ -138,9 +137,10 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+!CURVEEDITOR_CATMULLROM;Flexible
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
-!CURVEEDITOR_CUSTOM;Custom
+!CURVEEDITOR_CUSTOM;Standard
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -1278,7 +1278,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 !PREFERENCES_SHOWDATETIME;Show date and time
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show filmstrip toolbar
+!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
@@ -1838,7 +1838,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 !TP_PREPROCESS_NO_FOUND;None found
 !TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tries to suppress stripe noise caused by on-sensor PDAF pixels, occurring with some Sony mirrorless cameras on some backlit scenes with visible flare.
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_AUTO;Auto-correction

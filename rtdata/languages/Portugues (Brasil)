@@ -1550,7 +1550,6 @@ TP_EPD_LABEL;Mapeamento de Tom
 TP_EPD_REWEIGHTINGITERATES;Reponderando iterações
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensidade
-TP_EPD_TOOLTIP;O mapeamento de tom é possível no modo L*a*b*  (padão) e no modo CIECAM02.\n\nQuando no modo L*a*b*, o mapeamento de tom também pode ser usado na imagem residual da ferramenta de Níveis de Wavelet.\n\nPara ativar o modo de mapeamento de tom CIECAM02, habilite as seguintes configurações:\n1. CIECAM02\n2. Algorítimo = "Brilho + Colorido (QM)"\n3. "Mapeamento de tom usando o brilho do CIECAM02 (Q)"
 TP_EXPOSURE_AUTOLEVELS;Níveis Automáticos
 TP_EXPOSURE_AUTOLEVELS_TIP;Alterna a execução dos Níveis Automáticos para definir automaticamente os valores do controle deslizante de Exposição baseado numa análise de imagem.\nHabilita a Reconstrução de Realce se necessário.
 TP_EXPOSURE_BLACKLEVEL;Preto
@@ -1744,7 +1743,6 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal apenas em linhas PDAF
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 TP_PREPROCESS_NO_FOUND;Nenhum encontrado
 TP_PREPROCESS_PDAFLINESFILTER;Filtro de linhas PDAF
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tenta suprimir o ruído de faixas causado por pixels PDAF no sensor, ocorrendo com algumas câmeras mirrorless da Sony em algumas cenas em contraluz com "flare" visível.
 TP_PRSHARPENING_LABEL;Pós-Redimensionamento de Nitidez
 TP_PRSHARPENING_TOOLTIP;Focaliza a imagem após o redimensionamento. Funciona somente quando o método de redimensionamento "Lanczos" é usado. É impossível visualizar os efeitos dessa ferramenta. Veja RawPedia para instruções de uso.
 TP_RAWCACORR_AUTO;Auto correção
@@ -2219,6 +2217,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!CURVEEDITOR_CATMULLROM;Flexible
 !DYNPROFILEEDITOR_IMGTYPE_ANY;Any
 !DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
 !DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
