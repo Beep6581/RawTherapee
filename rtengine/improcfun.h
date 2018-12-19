@@ -253,7 +253,7 @@ public:
     void Lanczos(const Imagefloat* src, Imagefloat* dst, float scale);
 
     void deconvsharpening(float** luminance, float** buffer, int W, int H, const SharpeningParams &sharpenParam);
-    void deconvsharpeningloc(float** luminance, float** buffer, int W, int H, float** loctemp, int damp, double radi, int ite, int amo);
+    void deconvsharpeningloc(float** luminance, float** buffer, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast);
 
     void MLsharpen(LabImage* lab); // Manuel's clarity / sharpening
     void MLmicrocontrast(float** luminance, int W, int H);   //Manuel's microcontrast
@@ -319,7 +319,7 @@ public:
     void InverseColorLight_Local(const struct local_params& lp, LUTf & lightCurveloc, LabImage* original, LabImage* transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk);
     void cat02_Local(float moddE, float powdE, float **buflightcat, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk);
 
-    void Sharp_Local(int call, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
+    void Sharp_Local(int call, float **loctemp,  int senstype, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
     void InverseSharp_Local(float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
 
 
@@ -397,8 +397,10 @@ public:
     void BadpixelsLab(LabImage * lab, double radius, int thresh, float chrom);
 
     void dehaze(Imagefloat *rgb);
+    void dehazeloc(Imagefloat *rgb, float deha, float depth);
     void ToneMapFattal02(Imagefloat *rgb);
     void localContrast(LabImage *lab);
+    void localContrastloc(LabImage *lab, int scale,  int rad, int amo, int darkn, int lightn, float **loctemp);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
     void shadowsHighlights(LabImage *lab);
     void softLight(LabImage *lab);

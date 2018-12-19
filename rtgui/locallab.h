@@ -51,9 +51,10 @@ private:
     MyExpander* const exptonemap;
     MyExpander* const expreti;
     MyExpander* const expsharp;
+    MyExpander* const expcontrast;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
-    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecbdlConn, enabledenoiConn;
+    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
     // Color & Light
@@ -106,13 +107,21 @@ private:
     Adjuster* const chrrt;
     Adjuster* const neigh;
     Adjuster* const vart;
+    Adjuster* const dehaz;    
     Adjuster* const sensih;
     // Sharpening
+    Adjuster* const sharcontrast;
     Adjuster* const sharradius;
     Adjuster* const sharamount;
     Adjuster* const shardamping;
     Adjuster* const shariter;
     Adjuster* const sensisha;
+    //local contrast
+    Adjuster* const lcradius;
+    Adjuster* const lcamount;
+    Adjuster* const lcdarkness;
+    Adjuster* const lclightness;
+    Adjuster* const sensilc;
     // Contrast by detail levels
     Adjuster* multiplier[5];
     Adjuster* const chromacbdl;

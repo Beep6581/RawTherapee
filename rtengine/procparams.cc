@@ -2411,17 +2411,26 @@ LocallabParams::LocallabParams() :
     chrrt(),
     neigh(),
     vart(),
+    dehaz(),
     sensih(),
     localTgaincurve(),
     inversret(),
     // Sharpening
     expsharp(),
+    sharcontrast(),
     sharradius(),
     sharamount(),
     shardamping(),
     shariter(),
     sensisha(),
     inverssha(),
+    //local contrast
+    expcontrast(),
+    lcradius(),
+    lcamount(),
+    lcdarkness(),
+    lclightness(),
+    sensilc(),
     // Contrast by detail levels
     expcbdl(),
     mult(),
@@ -2527,17 +2536,27 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && chrrt == other.chrrt
         && neigh == other.neigh
         && vart == other.vart
+        && dehaz == other.dehaz
         && sensih == other.sensih
         && localTgaincurve == other.localTgaincurve
         && inversret == other.inversret
         // Sharpening
         && expsharp == other.expsharp
+        && sharcontrast == other.sharcontrast
         && sharradius == other.sharradius
         && sharamount == other.sharamount
         && shardamping == other.shardamping
         && shariter == other.shariter
         && sensisha == other.sensisha
         && inverssha == other.inverssha
+        //local contrast
+        && expcontrast == other.expcontrast
+        && lcradius == other.lcradius
+        && lcamount == other.lcamount
+        && lcdarkness == other.lcdarkness
+        && lclightness == other.lclightness
+        && sensilc == other.sensilc
+
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
@@ -3570,17 +3589,27 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->locallab.chrrt, "Locallab", "Chrrt_" + std::to_string(i), locallab.chrrt.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.neigh, "Locallab", "Neigh_" + std::to_string(i), locallab.neigh.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.vart, "Locallab", "Vart_" + std::to_string(i), locallab.vart.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.dehaz, "Locallab", "Dehaz_" + std::to_string(i), locallab.dehaz.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sensih, "Locallab", "Sensih_" + std::to_string(i), locallab.sensih.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.localTgaincurve, "Locallab", "TgainCurve_" + std::to_string(i), locallab.localTgaincurve.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.inversret, "Locallab", "Inversret_" + std::to_string(i), locallab.inversret.at(i), keyFile);
             // Sharpening
             saveToKeyfile(!pedited || pedited->locallab.expsharp, "Locallab", "Expsharp_" + std::to_string(i), locallab.expsharp.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.sharcontrast, "Locallab", "Sharcontrast_" + std::to_string(i), locallab.sharcontrast.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sharradius, "Locallab", "Sharradius_" + std::to_string(i), locallab.sharradius.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sharamount, "Locallab", "Sharamount_" + std::to_string(i), locallab.sharamount.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.shardamping, "Locallab", "Shardamping_" + std::to_string(i), locallab.shardamping.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.shariter, "Locallab", "Shariter_" + std::to_string(i), locallab.shariter.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sensisha, "Locallab", "Sensisha_" + std::to_string(i), locallab.sensisha.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.inverssha, "Locallab", "Inverssha_" + std::to_string(i), locallab.inverssha.at(i), keyFile);
+            //local contrast
+            saveToKeyfile(!pedited || pedited->locallab.expcontrast, "Locallab", "Expcontrast_" + std::to_string(i), locallab.expcontrast.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lcradius_" + std::to_string(i), locallab.lcradius.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lcamount_" + std::to_string(i), locallab.lcamount.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lcdarkness_" + std::to_string(i), locallab.lcdarkness.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lclightness_" + std::to_string(i), locallab.lclightness.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.sensilc, "Locallab", "Sensilc_" + std::to_string(i), locallab.sensilc.at(i), keyFile);
+
             // Contrast by detail levels
             saveToKeyfile(!pedited || pedited->locallab.expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), locallab.expcbdl.at(i), keyFile);
 
@@ -4748,17 +4777,26 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 locallab.chrrt.resize(locallab.nbspot);
                 locallab.neigh.resize(locallab.nbspot);
                 locallab.vart.resize(locallab.nbspot);
+                locallab.dehaz.resize(locallab.nbspot);
                 locallab.sensih.resize(locallab.nbspot);
                 locallab.localTgaincurve.resize(locallab.nbspot);
                 locallab.inversret.resize(locallab.nbspot);
                 // Sharpening
                 locallab.expsharp.resize(locallab.nbspot);
+                locallab.sharcontrast.resize(locallab.nbspot);
                 locallab.sharradius.resize(locallab.nbspot);
                 locallab.sharamount.resize(locallab.nbspot);
                 locallab.shardamping.resize(locallab.nbspot);
                 locallab.shariter.resize(locallab.nbspot);
                 locallab.sensisha.resize(locallab.nbspot);
                 locallab.inverssha.resize(locallab.nbspot);
+                //local contrast
+                locallab.expcontrast.resize(locallab.nbspot);
+                locallab.lcradius.resize(locallab.nbspot);
+                locallab.lcamount.resize(locallab.nbspot);
+                locallab.lcdarkness.resize(locallab.nbspot);
+                locallab.lclightness.resize(locallab.nbspot);
+                locallab.sensilc.resize(locallab.nbspot);
                 // Contrast by detail levels
                 locallab.expcbdl.resize(locallab.nbspot);
 
@@ -4873,17 +4911,27 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chrrt_" + std::to_string(i), pedited, locallab.chrrt.at(i), pedited->locallab.chrrt);
                 assignFromKeyfile(keyFile, "Locallab", "Neigh_" + std::to_string(i), pedited, locallab.neigh.at(i), pedited->locallab.neigh);
                 assignFromKeyfile(keyFile, "Locallab", "Vart_" + std::to_string(i), pedited, locallab.vart.at(i), pedited->locallab.vart);
+                assignFromKeyfile(keyFile, "Locallab", "Dehaz_" + std::to_string(i), pedited, locallab.dehaz.at(i), pedited->locallab.dehaz);
                 assignFromKeyfile(keyFile, "Locallab", "Sensih_" + std::to_string(i), pedited, locallab.sensih.at(i), pedited->locallab.sensih);
                 assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + std::to_string(i), pedited, locallab.localTgaincurve.at(i), pedited->locallab.localTgaincurve);
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + std::to_string(i), pedited, locallab.inversret.at(i), pedited->locallab.inversret);
                 // Sharpening
                 assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, locallab.expsharp.at(i), pedited->locallab.expsharp);
+                assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + std::to_string(i), pedited, locallab.sharcontrast.at(i), pedited->locallab.sharcontrast);
                 assignFromKeyfile(keyFile, "Locallab", "Sharradius_" + std::to_string(i), pedited, locallab.sharradius.at(i), pedited->locallab.sharradius);
                 assignFromKeyfile(keyFile, "Locallab", "Sharamount_" + std::to_string(i), pedited, locallab.sharamount.at(i), pedited->locallab.sharamount);
                 assignFromKeyfile(keyFile, "Locallab", "Shardamping_" + std::to_string(i), pedited, locallab.shardamping.at(i), pedited->locallab.shardamping);
                 assignFromKeyfile(keyFile, "Locallab", "Shariter_" + std::to_string(i), pedited, locallab.shariter.at(i), pedited->locallab.shariter);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + std::to_string(i), pedited, locallab.sensisha.at(i), pedited->locallab.sensisha);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + std::to_string(i), pedited, locallab.inverssha.at(i), pedited->locallab.inverssha);
+                //local contrast
+                assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + std::to_string(i), pedited, locallab.expcontrast.at(i), pedited->locallab.expcontrast);
+                assignFromKeyfile(keyFile, "Locallab", "Lcradius_" + std::to_string(i), pedited, locallab.lcradius.at(i), pedited->locallab.lcradius);
+                assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + std::to_string(i), pedited, locallab.lcamount.at(i), pedited->locallab.lcamount);
+                assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + std::to_string(i), pedited, locallab.lcdarkness.at(i), pedited->locallab.lcdarkness);
+                assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + std::to_string(i), pedited, locallab.lclightness.at(i), pedited->locallab.lclightness);
+                assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, locallab.sensilc.at(i), pedited->locallab.sensilc);
+
                 // Contrast by detail levels
                 assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, locallab.expcbdl.at(i), pedited->locallab.expcbdl);
 

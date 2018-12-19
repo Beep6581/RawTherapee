@@ -537,17 +537,26 @@ public:
     bool chrrt;
     bool neigh;
     bool vart;
+    bool dehaz;
     bool sensih;
     bool localTgaincurve;
     bool inversret;
     // Sharpening
     bool expsharp;
+    bool sharcontrast;
     bool sharradius;
     bool sharamount;
     bool shardamping;
     bool shariter;
     bool sensisha;
     bool inverssha;
+    //local contrast
+    bool expcontrast;
+    bool lcradius;
+    bool lcamount;
+    bool lcdarkness;
+    bool lclightness;
+    bool sensilc;
     // Contrast by detail levels
     bool expcbdl;
     bool mult[5];

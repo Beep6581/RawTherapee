@@ -211,7 +211,7 @@ BENCHFUN
     } // end parallel
 }
 
-void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo)
+void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast)
 {
     // BENCHFUN
 
@@ -232,6 +232,11 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
             tmpI[i][j] = luminance[i][j];
         }
     }
+
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    float contras = contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contras, amo / 100.f);
 
     float damping = (float) damp / 5.0;
     bool needdamp = damp > 0;
@@ -261,8 +266,8 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
             gaussianBlur (tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
         } // end for
 
-        float p2 = (float) amo / 100.0;
-        float p1 = 1.0 - p2;
+    //    float p2 = (float) amo / 100.0;
+    //    float p1 = 1.0 - p2;
 
 #ifdef _OPENMP
         #pragma omp for
@@ -270,7 +275,8 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
 
         for (int i = 0; i < H; i++)
             for (int j = 0; j < W; j++) {
-                loctemp[i][j] = luminance[i][j] * p1 + max (tmpI[i][j], 0.0f) * p2;
+            //    loctemp[i][j] = luminance[i][j] * p1 + max (tmpI[i][j], 0.0f) * p2;
+                loctemp[i][j] = intp(blend[i][j], max(tmpI[i][j], 0.0f), luminance[i][j]);
             }
     } // end parallel
 

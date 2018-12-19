@@ -999,17 +999,26 @@ struct LocallabParams {
     std::vector<int> chrrt;
     std::vector<int> neigh;
     std::vector<int> vart;
+    std::vector<int> dehaz;
     std::vector<int> sensih;
     std::vector<std::vector<double>> localTgaincurve;
     std::vector<int> inversret;
     // Sharpening
     std::vector<int> expsharp;
+    std::vector<int> sharcontrast;
     std::vector<int> sharradius;
     std::vector<int> sharamount;
     std::vector<int> shardamping;
     std::vector<int> shariter;
     std::vector<int> sensisha;
     std::vector<int> inverssha;
+    //local contrast
+    std::vector<int> expcontrast;
+    std::vector<int> lcradius;
+    std::vector<int> lcamount;
+    std::vector<int> lcdarkness;
+    std::vector<int> lclightness;
+    std::vector<int> sensilc;
     // Contrast by detail levels
     std::vector<int> expcbdl;
     std::vector<double> mult[5];

@@ -407,17 +407,26 @@ void ParamsEdited::set(bool v)
     locallab.chrrt = v;
     locallab.neigh = v;
     locallab.vart = v;
+    locallab.dehaz = v;
     locallab.sensih = v;
     locallab.localTgaincurve = v;
     locallab.inversret = v;
     // Sharpening
     locallab.expsharp = v;
+    locallab.sharcontrast = v;
     locallab.sharradius = v;
     locallab.sharamount = v;
     locallab.shardamping = v;
     locallab.shariter = v;
     locallab.sensisha = v;
     locallab.inverssha = v;
+    //local contrast
+    locallab.expcontrast = v;
+    locallab.lcradius = v;
+    locallab.lcamount = v;
+    locallab.lcdarkness = v;
+    locallab.lclightness = v;
+    locallab.sensilc = v;
     // Contrast by detail levels
     locallab.expcbdl = v;
 
@@ -1090,17 +1099,26 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.chrrt = locallab.chrrt && p.locallab.chrrt == other.locallab.chrrt;
         locallab.neigh = locallab.neigh && p.locallab.neigh == other.locallab.neigh;
         locallab.vart = locallab.vart && p.locallab.vart == other.locallab.vart;
+        locallab.dehaz = locallab.dehaz && p.locallab.dehaz == other.locallab.dehaz;
         locallab.sensih = locallab.sensih && p.locallab.sensih == other.locallab.sensih;
         locallab.localTgaincurve = locallab.localTgaincurve && p.locallab.localTgaincurve == other.locallab.localTgaincurve;
         locallab.inversret = locallab.inversret && p.locallab.inversret == other.locallab.inversret;
         // Sharpening
         locallab.expsharp = locallab.expsharp && p.locallab.expsharp == other.locallab.expsharp;
+        locallab.sharcontrast = locallab.sharcontrast && p.locallab.sharcontrast == other.locallab.sharcontrast;
         locallab.sharradius = locallab.sharradius && p.locallab.sharradius == other.locallab.sharradius;
         locallab.sharamount = locallab.sharamount && p.locallab.sharamount == other.locallab.sharamount;
         locallab.shardamping = locallab.shardamping && p.locallab.shardamping == other.locallab.shardamping;
         locallab.shariter = locallab.shariter && p.locallab.shariter == other.locallab.shariter;
         locallab.sensisha = locallab.sensisha && p.locallab.sensisha == other.locallab.sensisha;
         locallab.inverssha = locallab.inverssha && p.locallab.inverssha == other.locallab.inverssha;
+        //local contrast
+        locallab.expcontrast = locallab.expcontrast && p.locallab.expcontrast == other.locallab.expcontrast;
+        locallab.lcradius = locallab.lcradius && p.locallab.lcradius == other.locallab.lcradius;
+        locallab.lcamount = locallab.lcamount && p.locallab.lcamount == other.locallab.lcamount;
+        locallab.lcdarkness = locallab.lcdarkness && p.locallab.lcdarkness == other.locallab.lcdarkness;
+        locallab.lclightness = locallab.lclightness && p.locallab.lclightness == other.locallab.lclightness;
+        locallab.sensilc = locallab.sensilc && p.locallab.sensilc == other.locallab.sensilc;
         // Contrast by detail levels
         locallab.expcbdl = locallab.expcbdl && p.locallab.expcbdl == other.locallab.expcbdl;
 
@@ -2792,6 +2810,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.vart   = mods.locallab.vart;
     }
 
+    if (locallab.dehaz) {
+        toEdit.locallab.dehaz     = mods.locallab.dehaz;
+    }
+
     if (locallab.sensih) {
         toEdit.locallab.sensih     = mods.locallab.sensih;
     }
@@ -2807,6 +2829,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     // Sharpening
     if (locallab.expsharp) {
         toEdit.locallab.expsharp   = mods.locallab.expsharp;
+    }
+
+    if (locallab.sharcontrast) {
+        toEdit.locallab.sharcontrast    = mods.locallab.sharcontrast;
     }
 
     if (locallab.sharradius) {
@@ -2832,7 +2858,30 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (locallab.inverssha) {
         toEdit.locallab.inverssha     = mods.locallab.inverssha;
     }
+    //local contrast
+    if (locallab.expcontrast) {
+        toEdit.locallab.expcontrast   = mods.locallab.expcontrast;
+    }
 
+    if (locallab.lcradius) {
+        toEdit.locallab.lcradius   = mods.locallab.lcradius;
+    }
+
+    if (locallab.lcamount) {
+        toEdit.locallab.lcamount   = mods.locallab.lcamount;
+    }
+
+    if (locallab.lcdarkness) {
+        toEdit.locallab.lcdarkness   = mods.locallab.lcdarkness;
+    }
+
+    if (locallab.lclightness) {
+        toEdit.locallab.lclightness   = mods.locallab.lclightness;
+    }
+
+    if (locallab.sensilc) {
+        toEdit.locallab.sensilc   = mods.locallab.sensilc;
+    }
     // Contrast by detail levels
     if (locallab.expcbdl) {
         toEdit.locallab.expcbdl   = mods.locallab.expcbdl;

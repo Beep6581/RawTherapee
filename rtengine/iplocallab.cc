@@ -155,13 +155,15 @@ struct local_params {
     int cir;
     float thr;
     int prox;
-    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden;
+    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc;
     float ligh;
     int shamo, shdamp, shiter, senssha, sensv;
+    float lcamount;
     double shrad;
     double rad;
     double stren;
     int trans;
+    int dehaze;
     bool inv;
     bool curvact;
     bool invrad;
@@ -193,6 +195,7 @@ struct local_params {
     bool tonemapena;
     bool retiena;
     bool sharpena;
+    bool lcena;
     bool cbdlena;
     bool denoiena;
     bool expvib;
@@ -422,15 +425,18 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensibn = locallab.sensibn.at(sp);
     int local_sensitm = locallab.sensitm.at(sp);
     int local_sensiexclu = locallab.sensiexclu.at(sp);
+    int local_sensilc = locallab.sensilc.at(sp);
     int local_struc = locallab.struc.at(sp);
     int local_warm = locallab.warm.at(sp);
     int local_sensih = locallab.sensih.at(sp);
+    int local_dehaze = locallab.dehaz.at(sp);
     int local_sensicb = locallab.sensicb.at(sp);
     int local_contrast = locallab.contrast.at(sp);
     float local_lightness = (float) locallab.lightness.at(sp);
     int local_transit = locallab.transit.at(sp);
     double radius = (double) locallab.radius.at(sp);
     double sharradius = ((double) locallab.sharradius.at(sp)) / 100. ;
+    double lcamount = ((double) locallab.lcamount.at(sp)) / 100. ;
     int local_sensisha = locallab.sensisha.at(sp);
     int local_sharamount = locallab.sharamount.at(sp);
     int local_shardamping = locallab.shardamping.at(sp);
@@ -460,6 +466,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.chro = local_chroma;
     lp.sens = local_sensi;
     lp.sensh = local_sensih;
+    lp.dehaze = local_dehaze;
     lp.senscb = local_sensicb;
     lp.cont = local_contrast;
     lp.ligh = local_lightness;
@@ -473,6 +480,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.stren = strength;
     lp.sensbn = local_sensibn;
     lp.sensexclu = local_sensiexclu;
+    lp.senslc = local_sensilc;
+    lp.lcamount = lcamount;
     lp.inv = inverse;
     lp.curvact = curvacti;
     lp.invrad = inverserad;
@@ -516,6 +525,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.tonemapena = locallab.exptonemap.at(sp);
     lp.retiena = locallab.expreti.at(sp);
     lp.sharpena = locallab.expsharp.at(sp);
+    lp.lcena = locallab.expcontrast.at(sp);
     lp.cbdlena = locallab.expcbdl.at(sp);
     lp.denoiena = locallab.expdenoi.at(sp);
     lp.expvib = locallab.expvibrance.at(sp);
@@ -5400,7 +5410,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
 }
 
 
-void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
     const float ach = (float)lp.trans / 100.f;
@@ -5410,15 +5420,22 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
     const float bpl = - apl * hueplus;
     const float amo = 1.f / delhu;
     const float bmo = - amo * huemoins;
+    float varsens = 0.f;
 
+    if (senstype == 0) {
+        varsens = lp.senssha;
+
+    } else if (senstype == 0) {
+        varsens = lp.senslc;
+    }
 
     const float pb = 4.f;
     const float pa = (1.f - pb) / 40.f;
 
-    const float ahu = 1.f / (2.8f * lp.senssha - 280.f);
-    const float bhu = 1.f - ahu * 2.8f * lp.senssha;
+    const float ahu = 1.f / (2.8f * varsens - 280.f);
+    const float bhu = 1.f - ahu * 2.8f * varsens;
 
-    const bool detectHue = lp.senssha < 20.f && lp.qualmet >= 1;
+    const bool detectHue = varsens < 20.f && lp.qualmet >= 1;
 
     int GW = transformed->W;
     int GH = transformed->H;
@@ -5521,20 +5538,20 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
                 float deltachro = fabs(rchro - chromaref);
 
                 //kch to modulate action with chroma
-                if (deltachro < 160.f * SQR(lp.senssha / 100.f)) {
+                if (deltachro < 160.f * SQR(varsens / 100.f)) {
                     kch = 1.f;
                 } else {
-                    float ck = 160.f * SQR(lp.senssha / 100.f);
+                    float ck = 160.f * SQR(varsens / 100.f);
                     float ak = 1.f / (ck - 160.f);
                     float bk = -160.f * ak;
                     kch = ak * deltachro + bk;
 
-                    if (lp.senssha < 40.f) {
-                        kch = pow_F(kch, pa * lp.senssha + pb);    //increase under 40
+                    if (varsens < 40.f) {
+                        kch = pow_F(kch, pa * varsens + pb);    //increase under 40
                     }
                 }
 
-                if (lp.senssha >= 99.f) {
+                if (varsens >= 99.f) {
                     kch = 1.f;
                 }
 
@@ -5596,7 +5613,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, const float hueplus
 
                     float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
 
-                    if (deltaE <  2.8f * lp.senssha) {
+                    if (deltaE <  2.8f * varsens) {
                         fach = khu;
                     } else {
                         fach = khu * (ahu * deltaE + bhu);
@@ -8602,6 +8619,8 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
         float dhuesha = ared * lp.senssha + bred; //delta hue sharp
 
+        float dhuelc = ared * lp.senslc + bred; //delta hue local contrast
+
         float dhuecb = ared * lp.senscb + bred; //delta hue cbdl
 
         float dhueexclu = ared * lp.sensexclu + bred; //delta hue exclude
@@ -9801,7 +9820,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
         bool execdenoi = false ;
         bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0.f); // only if one slider ore more is engaged
         bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) ;//only if user want cbdl
-        execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
+        execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
 
         if (((lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) || execdenoi) {  // sk == 1 ??
             StopWatch Stop1("locallab Denoise called");
@@ -11964,6 +11983,64 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
 
 //end cbdl
+//local contrast
+        if (lp.lcamount > 0.f && call < 3  && lp.lcena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
+            int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
+            int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
+            JaggedArray<float> loctemp(bfw, bfh);
+            LabImage *bufloca = nullptr;
+
+            if (call == 2) { //call from simpleprocess
+                bufloca = new LabImage(bfw, bfh);
+
+                //  JaggedArray<float> hbuffer(bfw, bfh);
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            bufloca->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        }
+                    }
+
+                ImProcFunctions::localContrastloc(bufloca, sk, params->locallab.lcradius.at(sp), params->locallab.lcamount.at(sp), params->locallab.lcdarkness.at(sp), params->locallab.lightness.at(sp), loctemp);
+
+            } else { //call from dcrop.cc
+
+                ImProcFunctions::localContrastloc(original, sk, params->locallab.lcradius.at(sp), params->locallab.lcamount.at(sp), params->locallab.lcdarkness.at(sp), params->locallab.lightness.at(sp), loctemp);
+
+            }
+
+            float hueplus = hueref + dhuelc;
+            float huemoins = hueref - dhuelc;
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhuelc - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhuelc + 2.f * rtengine::RT_PI;
+            }
+
+            //sharpen ellipse and transition
+            Sharp_Local(call, loctemp, 1, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
+
+            delete bufloca;
+
+
+        }
+
+
         if (!lp.invshar && lp.shrad > 0.42 && call < 3  && lp.sharpena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
             int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
             int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
@@ -11994,10 +12071,10 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 //   }
 
                 //sharpen only square area instaed of all image
-                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
+                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp));
             } else { //call from dcrop.cc
 
-                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
+                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp));
 
             }
 
@@ -12013,14 +12090,14 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
             }
 
             //sharpen ellipse and transition
-            Sharp_Local(call, loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
+            Sharp_Local(call, loctemp, 0, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
 
         } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena) {
             int GW = original->W;
             int GH = original->H;
             JaggedArray<float> loctemp(GW, GH);
 
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp));
+            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp));
 
             float hueplus = hueref + dhuesha;
             float huemoins = hueref - dhuesha;
@@ -12103,6 +12180,17 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                         }
                     }
 
+                //calc dehaze
+                Imagefloat *tmpImage = nullptr;
+                tmpImage = new Imagefloat(bfw, bfh);
+                lab2rgb(*bufreti, *tmpImage, params->icm.workingProfile);
+                float deha = LIM01(float(0.9f * params->locallab.dehaz.at(sp) + 0.3f*lp.str) / 100.f * 0.9f);
+                float depthcombi = 0.3f*params->locallab.neigh.at(sp) + 0.15f * (500.f - params->locallab.vart.at(sp));
+                float depth = -LIM01(depthcombi / 100.f);
+
+                dehazeloc(tmpImage, deha, depth);
+
+                rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
 
 
             }
