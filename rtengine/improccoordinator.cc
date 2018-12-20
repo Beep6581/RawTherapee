@@ -102,12 +102,12 @@ ImProcCoordinator::ImProcCoordinator()
       pW(-1), pH(-1),
       plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), flatFieldAutoClipListener(nullptr), bayerAutoContrastListener(nullptr), xtransAutoContrastListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false), customTransformIn(nullptr), customTransformOut(nullptr),
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false),  
       locallutili(false), localcutili(false), localskutili(false), localexutili(false), LHutili(false), HHutili(false),
-      centerx(500, -10000),
-      centery(500, -10000),
+   //   centerx(500, -10000),
+   //   centery(500, -10000),
 
-      huerefs(500, -100000.f),
+   //   huerefs(500, -100000.f),
       huerefblurs(500, -100000.f),
       chromarefs(500, -100000.f),
       lumarefs(500, -100000.f),
@@ -117,8 +117,9 @@ ImProcCoordinator::ImProcCoordinator()
       chromar(0),
       lumar(0),
       sobeler(0),
-      lastspotdup(false),
-
+      colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f),       
+      lastspotdup(false), highQualityComputed(false),
+      customTransformIn(nullptr), customTransformOut(nullptr),
       retistrsav(nullptr)
 {}
 
@@ -806,7 +807,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 huerblu = huerefblurs[sp] = huerefblu;
-                huer = huerefs[sp] = huere;
+              //  huer = huerefs[sp] = huere;
+                huer = huere;
                 chromar = chromarefs[sp] = chromare;
                 lumar = lumarefs[sp] = lumare ;
                 sobeler = sobelrefs[sp] = sobelre;
@@ -818,7 +820,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  * - maxspot, huerefs, centerx and centery aren't used in Lab_Local (only for printf) so values aren't important
                  * - shbuffer is used as nullptr
                  */
-                ipf.Lab_Local(3, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
+                ipf.Lab_Local(3, sp, sobelrefs, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler);
 
                 // Clear local curves

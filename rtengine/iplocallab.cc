@@ -8522,7 +8522,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
 
-void ImProcFunctions::Lab_Local(int call, int sp, LUTf & huerefs, LUTf & sobelrefs, LUTi & centerx, LUTi & centery, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
+void ImProcFunctions::Lab_Local(int call, int sp , LUTf & sobelrefs, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
@@ -12228,7 +12228,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & huerefs, LUTf & sobelre
                 tmpl = new LabImage(Wd, Hd);
 
             }  else {
-                                
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
