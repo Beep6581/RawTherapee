@@ -820,7 +820,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
     float yb = 18.f;
     float d, dj;
 
-    const int gamu = 0; //(params->colorappearance.gamut) ? 1 : 0;
+   // const int gamu = 0; //(params->colorappearance.gamut) ? 1 : 0;
     xw = 100.0f * Xw;
     yw = 100.0f * Yw;
     zw = 100.0f * Zw;
@@ -4463,7 +4463,7 @@ struct local_contra {
     float al, bl;
 };
 
-void ImProcFunctions::Contrast_Local(float moddE, float powdE, int call, float ** buflightc, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::Contrast_Local(float powdE, int call, float ** buflightc, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
 // contrast - perhaps for 4 areas   if need
@@ -5145,7 +5145,7 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
     delete origblur;
 }
 
-static void calclight(float lum, float  koef, float & lumnew, bool inv, LUTf & lightCurveloc)
+static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurveloc)
 //replace L-curve that does not work in local or bad
 {
     /*
@@ -5815,8 +5815,6 @@ void ImProcFunctions::Exclude_Local(float moddE, float powdE, int sen, float **d
 
                     float cli = 1.f;
                     float clc = 1.f;
-                    float cli2 = 1.f;
-                    float clc2 = 1.f;
 
                     cli = (buflight[loy - begy][lox - begx]);
                     clc = (bufchro[loy - begy][lox - begx]);
@@ -7313,7 +7311,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                 }
 
                                 if (lp.ligh != 0.f && lp.curvact == false) {
-                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -7439,7 +7437,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
 
 
                                 if (lp.ligh != 0.f && lp.curvact == false) {
-                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -7936,7 +7934,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                 float lightcont;
 
                                 if (lp.ligh != 0.f) {
-                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -7963,7 +7961,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                 float lumnew = original->L[y][x];
 
                                 if (lp.ligh != 0.f) {
-                                    calclight(original->L[y][x], lp.ligh, lumnew, false, lightCurveloc);
+                                    calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
                                 }
 
                                 float lightcont = lumnew ; //apply lightness
@@ -7988,7 +7986,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                 float lightcont;
 
                                 if (lp.ligh != 0.f) {
-                                    calclight(lumnew, lp.ligh, lumnew, true, lightCurveloc);  //replace L-curve
+                                    calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -8012,7 +8010,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
                             } else {
                                 if (lp.ligh != 0.f) {
-                                    calclight(original->L[y][x], lp.ligh, lumnew, false, lightCurveloc);
+                                    calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
                                 }
 
                                 float lightcont = lumnew ;
@@ -8524,7 +8522,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
 
-void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, LUTf & sobelrefs, LUTi & centerx, LUTi & centery, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
+void ImProcFunctions::Lab_Local(int call, int sp, LUTf & huerefs, LUTf & sobelrefs, LUTi & centerx, LUTi & centery, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
@@ -11088,7 +11086,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                                 float lighLnew;
                                 float amplil = 140.f;
                                 float lighL = bufcolorig->L[loy - begy][lox - begx];
-                                calclight(lighL, lp.ligh, lighLnew, true, lightCurveloc);  //replace L-curve
+                                calclight(lighL, lp.ligh, lighLnew, lightCurveloc);  //replace L-curve
                                 lL = lighLnew / lighL;
 
                                 if (lL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
@@ -11128,7 +11126,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 if (lp.qualcurvemet >= 4) {
                     JaggedArray<float> blend(bfw, bfh);
                     float contrastf = lp.sensexclu / 100.f;
-                    LabImage * tmpsob;
+                    //LabImage * tmpsob;
                     //   tmpsob = new LabImage(bfw, bfh);
                     //   SobelCannyLuma(tmpsob->L, bufcolorig->L, bfw, bfh, 1.f);
 
@@ -11149,7 +11147,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                         }
                     }
 
-                    delete tmpsob;
+                   // delete tmpsob;
                 }
 
 
@@ -11323,7 +11321,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
             }
 
-            Contrast_Local(moddE, powdE, call, buflightc, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, lp, original, transformed, cx, cy, sk);
+            Contrast_Local(powdE, call, buflightc, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, lp, original, transformed, cx, cy, sk);
 
             if (call <= 3) {
 
@@ -12182,17 +12180,19 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
 
                 //calc dehaze
                 Imagefloat *tmpImage = nullptr;
-                tmpImage = new Imagefloat(bfw, bfh);
-                lab2rgb(*bufreti, *tmpImage, params->icm.workingProfile);
-                float deha = LIM01(float(0.9f * params->locallab.dehaz.at(sp) + 0.3f*lp.str) / 100.f * 0.9f);
-                float depthcombi = 0.3f*params->locallab.neigh.at(sp) + 0.15f * (500.f - params->locallab.vart.at(sp));
-                float depth = -LIM01(depthcombi / 100.f);
+                if(lp.dehaze > 0) {
+                    tmpImage = new Imagefloat(bfw, bfh);
+                    lab2rgb(*bufreti, *tmpImage, params->icm.workingProfile);
+                    float deha = LIM01(float(0.9f * lp.dehaze + 0.3f*lp.str) / 100.f * 0.9f);
+                    float depthcombi = 0.3f*params->locallab.neigh.at(sp) + 0.15f * (500.f - params->locallab.vart.at(sp));
+                    float depth = -LIM01(depthcombi / 100.f);
 
-                dehazeloc(tmpImage, deha, depth);
+                    dehazeloc(tmpImage, deha, depth);
 
-                rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
+                    rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
 
-
+                    delete tmpImage;
+                }       
             }
 
             float *orig[Hd] ALIGNED16;
@@ -12228,6 +12228,7 @@ void ImProcFunctions::Lab_Local(int call, int maxspot, int sp, LUTf & huerefs, L
                 tmpl = new LabImage(Wd, Hd);
 
             }  else {
+                                
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)

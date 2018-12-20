@@ -739,7 +739,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             nprevl->CopyFrom(oprevl);
         reserv->CopyFrom(oprevl);
 
-        int maxspot = 1;
+      //  int maxspot = 1;
         progress("Applying Color Boost...", 100 * readyphase / numofphases);
 
         //*************************************************************
@@ -818,7 +818,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  * - maxspot, huerefs, centerx and centery aren't used in Lab_Local (only for printf) so values aren't important
                  * - shbuffer is used as nullptr
                  */
-                ipf.Lab_Local(3, maxspot, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
+                ipf.Lab_Local(3, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler);
 
                 // Clear local curves

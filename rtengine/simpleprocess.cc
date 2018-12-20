@@ -1083,7 +1083,7 @@ private:
             LUTf lightCurveloc(32770, 0);
             LUTf exlocalcurve(65536, 0);
 
-            int maxspot = 1;
+           // int maxspot = 1;
             float** shbuffer = nullptr;
 
             for (int sp = 0; sp < params.locallab.nbspot; sp++) {
@@ -1130,7 +1130,7 @@ private:
 
                 }
 
-                ipf.Lab_Local(2, maxspot, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
+                ipf.Lab_Local(2, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
 
                 // Clear local curves
