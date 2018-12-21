@@ -473,7 +473,7 @@ RawImageSource::~RawImageSource ()
         delete riFrames[i];
     }
 
-    for(size_t i = 0; i < numFrames - 1; ++i) {
+    for(size_t i = 0; i + 1 < numFrames; ++i) {
         delete rawDataBuffer[i];
     }
 
