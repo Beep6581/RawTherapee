@@ -26,7 +26,6 @@
 #include "imagesource.h"
 #include "procevents.h"
 #include "dcrop.h"
-
 #include "LUT.h"
 #include "../rtgui/threadutils.h"
 
@@ -52,16 +51,12 @@ class ImProcCoordinator : public StagedImageProcessor
 {
 
     friend class Crop;
-private:
-
 
 protected:
     Imagefloat *orig_prev;
     Imagefloat *oprevi;
     LabImage *oprevl;
     LabImage *nprevl;
-    LabImage *reserv;
-
     Imagefloat *fattal_11_dcrop_cache; // global cache for ToneMapFattal02 used in 1:1 detail windows (except when denoise is active)
     Image8 *previmg;  // displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
     Image8 *workimg;  // internal image in output color space for analysis
@@ -94,15 +89,11 @@ protected:
 
     float bwAutoR, bwAutoG, bwAutoB;
     float CAMMean;
-    int coordX, coordY, localX, localY;
-    ColorGradientCurve ctColorCurve;
-
     LUTf hltonecurve;
     LUTf shtonecurve;
     LUTf tonecurve;
 
     LUTf lumacurve;
-//    LUTf localcurve;
     LUTf chroma_acurve;
     LUTf chroma_bcurve;
     LUTf satcurve;
@@ -112,18 +103,6 @@ protected:
     multi_array2D<float, 4> conversionBuffer;
     LUTf wavclCurve;
     LUTf clToningcurve;
-    LUTf lllocalcurve;
-    LUTf cclocalcurve;
-    LUTf sklocalcurve;
-    LUTf exlocalcurve;
-
-    LUTf hltonecurveloc;
-    LUTf shtonecurveloc;
-    LUTf tonecurveloc;
-    LUTf lightCurveloc;
-
-//    ToneCurve customToneCurve1loc;
-
     LUTf cl2Toningcurve;
     LUTf Noisecurve;
     LUTf NoiseCCcurve;
@@ -138,7 +117,7 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
-    LUTu lhist16;
+
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
     LUTf rCurve;
@@ -146,6 +125,7 @@ protected:
     LUTf bCurve;
     ToneCurve customToneCurve1;
     ToneCurve customToneCurve2;
+    ColorGradientCurve ctColorCurve;
     OpacityCurve ctOpacityCurve;
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
@@ -156,10 +136,6 @@ protected:
     WavOpacityCurveWL waOpacityCurveWL;
     RetinextransmissionCurve dehatransmissionCurve;
     RetinexgaintransmissionCurve dehagaintransmissionCurve;
-    LocretigainCurve locRETgainCurve;
-    LocretigainCurverab locRETgainCurverab;
-    LocLHCurve loclhCurve;
-    LocHHCurve lochhCurve;
 
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
@@ -192,7 +168,7 @@ protected:
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
 
-
+    
     HistogramListener* hListener;
     std::vector<SizeListener*> sizeListeners;
 
@@ -207,7 +183,6 @@ protected:
     void updateLRGBHistograms();
     void setScale(int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
-//    void updatePreviewImage(int todo, Crop* cropCall = nullptr);
 
     MyMutex mProcessing;
     ProcParams params;
@@ -226,7 +201,6 @@ protected:
     int  changeSinceLast;
     bool updaterRunning;
     ProcParams nextParams;
-    ProcParams nextParams2;
     bool destroying;
     bool utili;
     bool autili;
@@ -236,31 +210,51 @@ protected:
     bool clcutili;
     bool opautili;
     bool wavcontlutili;
+    void startProcessing();
+    void process();
+    float colourToningSatLimit;
+    float colourToningSatLimitOpacity;
+    bool highQualityComputed;
+    cmsHTRANSFORM customTransformIn;
+    cmsHTRANSFORM customTransformOut;
+    
+    //locallab
+    LabImage *reserv;       
+    int coordX, coordY, localX, localY;
+    LUTf lllocalcurve;
+    LUTf cclocalcurve;
+    LUTf sklocalcurve;
+    LUTf exlocalcurve;
+    LUTf hltonecurveloc;
+    LUTf shtonecurveloc;
+    LUTf tonecurveloc;
+    LUTf lightCurveloc;
+    LUTu lhist16;
+    LocretigainCurve locRETgainCurve;
+    LocretigainCurverab locRETgainCurverab;
+    LocLHCurve loclhCurve;
+    LocHHCurve lochhCurve;
+    ProcParams nextParams2;
     bool locallutili;
     bool localcutili;
     bool localskutili;
     bool localexutili;
     bool LHutili;
     bool HHutili;
-
-    LUTi centerx;
-    LUTi centery;
-
     LUTf huerefs;
     LUTf huerefblurs;
     LUTf chromarefs;
     LUTf lumarefs;
     LUTf sobelrefs;
-
     double huer, huerblu, chromar, lumar, sobeler;
-    void startProcessing();
-    void process();
-    float colourToningSatLimit;
-    float colourToningSatLimitOpacity;
     bool lastspotdup;
-    bool highQualityComputed;
-    cmsHTRANSFORM customTransformIn;
-    cmsHTRANSFORM customTransformOut;
+
+
+
+
+
+
+    
 public:
 
     ImProcCoordinator ();

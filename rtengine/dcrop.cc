@@ -940,7 +940,7 @@ void Crop::update(int todo)
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
 
-                parent->ipf.Lab_Local(1, sp, parent->huerefs, parent->sobelrefs, parent->centerx, parent->centery, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
+                parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
                                       loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
 
                 lllocalcurve2.clear();

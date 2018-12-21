@@ -42,11 +42,11 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator()
-    : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), reserv(nullptr), fattal_11_dcrop_cache(nullptr), previmg(nullptr), workimg(nullptr),
-      ncie(nullptr), imgsrc(nullptr), lastAwbEqual(0.), lastAwbTempBias(0.0), ipf(&params, true), monitorIntent(RI_RELATIVE),
+    : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), fattal_11_dcrop_cache(nullptr), previmg(nullptr), workimg(nullptr),
+      ncie (nullptr), imgsrc (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof(false), gamutCheck(false), sharpMask(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
-      allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN), coordX(0), coordY(0), localX(0), localY(0),
-      ctColorCurve(),
+      allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
+
       hltonecurve(65536),
       shtonecurve(65536),
       tonecurve(65536, 0),  //,1);
@@ -59,14 +59,6 @@ ImProcCoordinator::ImProcCoordinator()
       conversionBuffer(1, 1),
       wavclCurve(65536, 0),
       clToningcurve(65536, 0),
-      lllocalcurve(65536, 0),
-      cclocalcurve(65536, 0),
-      sklocalcurve(65536, 0),
-      exlocalcurve(65536, 0),
-      hltonecurveloc(65536, 0), //32768
-      shtonecurveloc(65536, 0),
-      tonecurveloc(65536, 0),
-      lightCurveloc(32770, 0),
       cl2Toningcurve(65536, 0),
       Noisecurve(65536, 0),
       NoiseCCcurve(65536, 0),
@@ -94,6 +86,7 @@ ImProcCoordinator::ImProcCoordinator()
       rCurve(),
       gCurve(),
       bCurve(),
+      ctColorCurve(),
       rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
       gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
@@ -103,10 +96,18 @@ ImProcCoordinator::ImProcCoordinator()
       plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), flatFieldAutoClipListener(nullptr), bayerAutoContrastListener(nullptr), xtransAutoContrastListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f), highQualityComputed(false), customTransformIn(nullptr), customTransformOut(nullptr),
+      //locallab
+      reserv(nullptr),
+      coordX(0), coordY(0), localX(0), localY(0),
+      lllocalcurve(65536, 0),
+      cclocalcurve(65536, 0),
+      sklocalcurve(65536, 0),
+      exlocalcurve(65536, 0),
+      hltonecurveloc(65536, 0), //32768
+      shtonecurveloc(65536, 0),
+      tonecurveloc(65536, 0),
+      lightCurveloc(32770, 0),
       locallutili(false), localcutili(false), localskutili(false), localexutili(false), LHutili(false), HHutili(false),
-      centerx(500, -10000),
-      centery(500, -10000),
-
       huerefs(500, -100000.f),
       huerefblurs(500, -100000.f),
       chromarefs(500, -100000.f),
@@ -117,8 +118,7 @@ ImProcCoordinator::ImProcCoordinator()
       chromar(0),
       lumar(0),
       sobeler(0),
-      lastspotdup(false),
-
+      lastspotdup(false), 
       retistrsav(nullptr)
 {}
 
@@ -818,7 +818,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  * - maxspot, huerefs, centerx and centery aren't used in Lab_Local (only for printf) so values aren't important
                  * - shbuffer is used as nullptr
                  */
-                ipf.Lab_Local(3, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
+                ipf.Lab_Local(3, sp, sobelrefs, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler);
 
                 // Clear local curves
