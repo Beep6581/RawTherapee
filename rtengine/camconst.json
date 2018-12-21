@@ -1209,6 +1209,11 @@ Camera constants:
         "ranges": { "white": 4050 }
     },
 
+    { // Quality C
+        "make_model": "Canon PowerShot SX50 HS",
+        "ranges": { "white": 4050 }
+    },
+
     { // Quality B
         "make_model": "Canon PowerShot SX60 HS",
         "dcraw_matrix": [ 13161,-5451,-1344,-1989,10654,1531,-47,1271,4955 ], // DNG_V8.7 D65
