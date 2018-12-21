@@ -243,10 +243,10 @@ protected:
     bool LHutili;
     bool HHutili;
 
- //   LUTi centerx;
- //   LUTi centery;
+    LUTi centerx;
+    LUTi centery;
 
-  //  LUTf huerefs;
+    LUTf huerefs;
     LUTf huerefblurs;
     LUTf chromarefs;
     LUTf lumarefs;
