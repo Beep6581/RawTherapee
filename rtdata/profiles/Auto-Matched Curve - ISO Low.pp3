@@ -10,7 +10,7 @@ Method=Blend
 LcMode=lfauto
 UseDistortion=true
 UseVignette=true
-UseCA=true
+UseCA=false
 
 [Color Management]
 ToneCurve=false
