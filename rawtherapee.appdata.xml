@@ -48,4 +48,16 @@
         </screenshot>
     </screenshots>
     <update_contact>contactus@rawtherapee.com</update_contact>
+  <kudos>
+    <kudo>ModernToolkit</kudo>
+    <kudo>HiDpiIcon</kudo>
+  </kudos>
+  <content_rating type="oars-1.0" />
+  <launchable type="desktop-id">rawtherapee.desktop</launchable>
+  <provides>
+    <binary>rawtherapee</binary>
+  </provides>
+  <releases>
+    <release version="5.5" date="2018-12-19"/>
+  </releases>
 </component>
