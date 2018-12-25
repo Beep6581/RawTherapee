@@ -32,6 +32,7 @@
 #include "batchqueue.h"
 #include "extprog.h"
 #include "profilestorecombobox.h"
+#include "procparamchangers.h"
 
 using namespace rtengine::procparams;
 
@@ -449,7 +450,9 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams.hsvequalizer != pp.hsvequalizer
         || pparams.filmSimulation != pp.filmSimulation
         || pparams.softlight != pp.softlight
-        || pparams.dehaze != pp.dehaze;
+        || pparams.dehaze != pp.dehaze
+        || whoChangedIt == FILEBROWSER
+        || whoChangedIt == BATCHEDITOR;
 
     {
         MyMutex::MyLock lock(mutex);

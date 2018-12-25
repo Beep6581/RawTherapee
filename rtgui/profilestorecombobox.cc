@@ -356,3 +356,11 @@ Gtk::TreeIter ProfileStoreComboBox::addRow (const ProfileStoreEntry *profileStor
     return newEntry;
 }
 
+/** @brief Delete a row from the first level of the tree */
+void ProfileStoreComboBox::deleteRow (const ProfileStoreEntry *profileStoreEntry)
+{
+    Gtk::TreeIter entry = findRowFromEntry(profileStoreEntry);
+    if (entry) {
+        refTreeModel->erase(entry);
+    }
+}

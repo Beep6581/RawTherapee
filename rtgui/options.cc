@@ -399,6 +399,7 @@ void Options::setDefaults()
     autoSaveTpOpen = true;
     //crvOpen.clear ();
     parseExtensions.clear();
+    favorites.clear();
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     renameUseTemplates = false;
@@ -1075,6 +1076,10 @@ void Options::readFromFile(Glib::ustring fname)
             }
 
             if (keyFile.has_group("GUI")) {
+                if (keyFile.has_key("GUI", "Favorites")) {
+                    favorites = keyFile.get_string_list("GUI", "Favorites");
+                }
+
                 if (keyFile.has_key("GUI", "WindowWidth")) {
                     windowWidth = keyFile.get_integer("GUI", "WindowWidth");
                 }
@@ -1283,27 +1288,27 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "HistogramPosition")) {
                     histogramPosition = keyFile.get_integer("GUI", "HistogramPosition");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramRed")) {
                     histogramRed = keyFile.get_boolean("GUI", "HistogramRed");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramGreen")) {
                     histogramGreen = keyFile.get_boolean("GUI", "HistogramGreen");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramBlue")) {
                     histogramBlue = keyFile.get_boolean("GUI", "HistogramBlue");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramLuma")) {
                     histogramLuma = keyFile.get_boolean("GUI", "HistogramLuma");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramChroma")) {
                     histogramChroma = keyFile.get_boolean("GUI", "HistogramChroma");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramRAW")) {
                     histogramRAW = keyFile.get_boolean("GUI", "HistogramRAW");
                 }
@@ -1311,11 +1316,11 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "HistogramBar")) {
                     histogramBar = keyFile.get_boolean("GUI", "HistogramBar");
                 }
-                
+
                 if (keyFile.has_key ("GUI", "HistogramHeight")) {
                     histogramHeight = keyFile.get_integer ("GUI", "HistogramHeight");
                 }
-                
+
                 if (keyFile.has_key ("GUI", "HistogramDrawMode")) {
                     histogramDrawMode = keyFile.get_integer ("GUI", "HistogramDrawMode");
                 }
@@ -1507,7 +1512,7 @@ void Options::readFromFile(Glib::ustring fname)
                     if (rtSettings.ACESp0 == "RTv4_ACES-AP0") {
                         rtSettings.ACESp0 = "RTv2_ACES-AP0";
                     }
-                    
+
                 }
 
                 if (keyFile.has_key("Color Management", "ACES-AP1")) {
@@ -1515,7 +1520,7 @@ void Options::readFromFile(Glib::ustring fname)
                     if (rtSettings.ACESp1 == "RTv4_ACES-AP1") {
                         rtSettings.ACESp1 = "RTv2_ACES-AP1";
                     }
-                    
+
                 }
 
                 if (keyFile.has_key("Color Management", "GamutLch")) {
@@ -1593,6 +1598,7 @@ void Options::readFromFile(Glib::ustring fname)
             if (keyFile.has_group("Batch Processing")) {
                 if (keyFile.has_key("Batch Processing", "AdjusterBehavior")) {
                     baBehav = keyFile.get_integer_list("Batch Processing", "AdjusterBehavior");
+                    baBehav.resize(ADDSET_PARAM_NUM);
                 }
             }
 
@@ -1973,6 +1979,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer("Profiles", "CustomProfileBuilderKeys", CPBKeys);
 
+        Glib::ArrayHandle<Glib::ustring> ahfavorites = favorites;
+        keyFile.set_string_list("GUI", "Favorites", ahfavorites);
         keyFile.set_integer("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer("GUI", "WindowX", windowX);

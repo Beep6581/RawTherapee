@@ -131,6 +131,9 @@ public:
         this->batchMode = batchMode;
     }
 
+    virtual Glib::ustring getToolName () {
+        return toolName;
+    }
 };
 
 class FoldableToolPanel : public ToolPanel
