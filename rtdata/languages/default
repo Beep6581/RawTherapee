@@ -853,6 +853,9 @@ HISTORY_MSG_596;Local - Local contrast darkness
 HISTORY_MSG_597;Local - Local contrast lightness
 HISTORY_MSG_598;Local - Local contrast scope
 HISTORY_MSG_599;Local - Retinex dehaze
+HISTORY_MSG_600;Local - Soft Light enable
+HISTORY_MSG_601;Local - Soft Light strength
+HISTORY_MSG_602;Local - Soft Light scope
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2013,6 +2016,8 @@ TP_LOCALLAB_SENSICB;Scope
 TP_LOCALLAB_SENSIBN;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SETTINGS;Settings
+TP_LOCALLAB_SOFT;Soft Light
+TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGTH;Noise
 TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.

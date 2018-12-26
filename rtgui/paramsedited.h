@@ -515,6 +515,10 @@ public:
     bool pastsattog;
     bool sensiv;
     bool skintonescurve;
+    //Soft Light
+    bool expsoft;
+    bool streng;
+    bool sensisf;
     // Blur & Noise
     bool expblur;
     bool radius;

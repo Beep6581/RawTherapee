@@ -2389,6 +2389,10 @@ LocallabParams::LocallabParams() :
     pastsattog(),
     sensiv(),
     skintonescurve(),
+    //Soft Light
+    expsoft(),
+    streng(),
+    sensisf(),
     // Blur & Noise
     expblur(),
     radius(),
@@ -2514,6 +2518,10 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && pastsattog == other.pastsattog
         && sensiv == other.sensiv
         && skintonescurve == other.skintonescurve
+        //Soft Light
+        && expsoft == other.expsoft
+        && streng == other.streng
+        && sensisf == other.sensisf
         // Blur & Noise
         && expblur == other.expblur
         && radius == other.radius
@@ -3567,6 +3575,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->locallab.pastsattog, "Locallab", "PastSatTog_" + std::to_string(i), locallab.pastsattog.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sensiv, "Locallab", "Sensiv_" + std::to_string(i), locallab.sensiv.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.skintonescurve, "Locallab", "SkinTonesCurve_" + std::to_string(i), locallab.skintonescurve.at(i), keyFile);
+            //Soft Light
+            saveToKeyfile(!pedited || pedited->locallab.expsoft, "Locallab", "Expsoft_" + std::to_string(i), locallab.expsoft.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.streng, "Locallab", "Streng_" + std::to_string(i), locallab.streng.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.sensisf, "Locallab", "Sensisf_" + std::to_string(i), locallab.sensisf.at(i), keyFile);
             // Blur & Noise
             saveToKeyfile(!pedited || pedited->locallab.expblur, "Locallab", "Expblur_" + std::to_string(i), locallab.expblur.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.radius, "Locallab", "Radius_" + std::to_string(i), locallab.radius.at(i), keyFile);
@@ -4755,6 +4767,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 locallab.pastsattog.resize(locallab.nbspot);
                 locallab.sensiv.resize(locallab.nbspot);
                 locallab.skintonescurve.resize(locallab.nbspot);
+                //Soft Light
+                locallab.expsoft.resize(locallab.nbspot);
+                locallab.streng.resize(locallab.nbspot);
+                locallab.sensisf.resize(locallab.nbspot);
                 // Blur & Noise
                 locallab.expblur.resize(locallab.nbspot);
                 locallab.radius.resize(locallab.nbspot);
@@ -4889,6 +4905,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + std::to_string(i), pedited, locallab.pastsattog.at(i), pedited->locallab.pastsattog);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + std::to_string(i), pedited, locallab.sensiv.at(i), pedited->locallab.sensiv);
                 assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + std::to_string(i), pedited, locallab.skintonescurve.at(i), pedited->locallab.skintonescurve);
+                //Soft Light
+                assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, locallab.expsoft.at(i), pedited->locallab.expsoft);
+                assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, locallab.streng.at(i), pedited->locallab.streng);
+                assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, locallab.sensisf.at(i), pedited->locallab.sensisf);
                 // Blur & Noise
                 assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, locallab.expblur.at(i), pedited->locallab.expblur);
                 assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, locallab.radius.at(i), pedited->locallab.radius);

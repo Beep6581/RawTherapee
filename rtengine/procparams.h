@@ -977,6 +977,10 @@ struct LocallabParams {
     std::vector<int> pastsattog;
     std::vector<int> sensiv;
     std::vector<std::vector<double>> skintonescurve;
+    //Soft Light
+    std::vector<int> expsoft;
+    std::vector<int> streng;
+    std::vector<int> sensisf;
     // Blur & Noise
     std::vector<int> expblur;
     std::vector<int> radius;

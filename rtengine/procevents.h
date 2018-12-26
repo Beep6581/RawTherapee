@@ -626,6 +626,9 @@ enum ProcEventCode {
     Evlocallablclightness = 596,
     Evlocallabsensilc = 597,
     Evlocallabdehaz = 598,
+    EvLocenasoft = 599,
+    Evlocallabstreng = 600,
+    Evlocallabsensisf = 601,
     NUMOFEVENTS
 };
 

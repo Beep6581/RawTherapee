@@ -155,9 +155,10 @@ struct local_params {
     int cir;
     float thr;
     int prox;
-    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc;
+    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf;
     float ligh;
     int shamo, shdamp, shiter, senssha, sensv;
+    float strng;
     float lcamount;
     double shrad;
     double rad;
@@ -196,6 +197,7 @@ struct local_params {
     bool retiena;
     bool sharpena;
     bool lcena;
+    bool sfena;
     bool cbdlena;
     bool denoiena;
     bool expvib;
@@ -340,7 +342,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float est = ((float)locallab.estop.at(sp)) / 100.f;
     float scal_tm = ((float)locallab.scaltm.at(sp)) / 10.f;
     float rewe = ((float)locallab.rewei.at(sp));
-
+    float strlight = ((float)locallab.streng.at(sp)) / 100.f;
     float thre = locallab.thresh.at(sp) / 100.f;
     double local_x = locallab.locX.at(sp) / 2000.0;
     double local_y = locallab.locY.at(sp) / 2000.0;
@@ -445,6 +447,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool curvacti = locallab.curvactiv.at(sp);
     bool acti = locallab.activlum.at(sp);
     bool cupas = false; // Provision
+    int local_sensisf = locallab.sensisf.at(sp);
 
     bool inverserad = false; // Provision
     bool inverseret = locallab.inversret.at(sp);
@@ -470,6 +473,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senscb = local_sensicb;
     lp.cont = local_contrast;
     lp.ligh = local_lightness;
+    lp.senssf = local_sensisf;
+    lp.strng = strlight;
 
     if (lp.ligh >= -2.f && lp.ligh <= 2.f) {
         lp.ligh /= 5.f;
@@ -526,6 +531,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.retiena = locallab.expreti.at(sp);
     lp.sharpena = locallab.expsharp.at(sp);
     lp.lcena = locallab.expcontrast.at(sp);
+    lp.sfena = locallab.expsoft.at(sp);
     lp.cbdlena = locallab.expcbdl.at(sp);
     lp.denoiena = locallab.expdenoi.at(sp);
     lp.expvib = locallab.expvibrance.at(sp);
@@ -6184,6 +6190,11 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
             varsens =  lp.sensv;
         }
 
+        if (senstype == 3) //soft light
+        {
+            varsens =  lp.senssf;
+        }
+
         //chroma
         constexpr float amplchsens = 2.5f;
         constexpr float achsens = (amplchsens - 1.f) / (100.f - 20.f); //20. default locallab.sensih
@@ -8619,6 +8630,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
         float dhuelc = ared * lp.senslc + bred; //delta hue local contrast
 
+        float dhuesf = ared * lp.senssf + bred; //delta hue soft light
+        
         float dhuecb = ared * lp.senscb + bred; //delta hue cbdl
 
         float dhueexclu = ared * lp.sensexclu + bred; //delta hue exclude
@@ -9818,7 +9831,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         bool execdenoi = false ;
         bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0.f); // only if one slider ore more is engaged
         bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) ;//only if user want cbdl
-        execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
+        execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
 
         if (((lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) || execdenoi) {  // sk == 1 ??
             StopWatch Stop1("locallab Denoise called");
@@ -11980,7 +11993,124 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         }
 
 
-//end cbdl
+//end cbdl_Local
+
+// soft light
+        if (lp.strng > 0.f && call < 3  && lp.sfena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
+            float hueplus = hueref + dhuesf;
+            float huemoins = hueref - dhuesf;
+
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhuesf - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhuesf + 2.f * rtengine::RT_PI;
+            }
+
+            LabImage *bufexporig = nullptr;
+            LabImage *bufexpfin = nullptr;
+
+            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            int bfw = int (lp.lx + lp.lxL) + del;
+
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufl_ab(bfw, bfh);
+
+
+            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
+
+
+                bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
+                bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int jr = 0; jr < bfw; jr++) {
+                        bufexporig->L[ir][jr] = 0.f;
+                        bufexporig->a[ir][jr] = 0.f;
+                        bufexporig->b[ir][jr] = 0.f;
+                        bufexpfin->L[ir][jr] = 0.f;
+                        bufexpfin->a[ir][jr] = 0.f;
+                        bufexpfin->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufl_ab[ir][jr] = 0.f;
+
+
+                    }
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+
+                        }
+                    }
+
+
+                ImProcFunctions::softLightloc(bufexporig, bufexpfin, lp.strng);
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                            float rL;
+                            rL = CLIPRET((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
+
+                            buflight[loy - begy][lox - begx] = rL;
+
+
+                            float chp;
+                            chp = CLIPRET((sqrt(SQR(bufexpfin->a[loy - begy][lox - begx]) + SQR(bufexpfin->b[loy - begy][lox - begx])) - sqrt(SQR(bufexporig->a[loy - begy][lox - begx]) + SQR(bufexporig->b[loy - begy][lox - begx]))) / 250.f);
+
+                            bufl_ab[loy - begy][lox - begx] = chp;
+
+                        }
+                    }
+
+                Expo_vibr_Local(moddE, powdE, 3, buflight, bufl_ab, hueplus, huemoins, hueref, dhuesf, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
+
+            }
+
+            if (call <= 3) {
+
+                delete bufexporig;
+                delete bufexpfin;
+
+
+            }
+
+
+        }
+
+
 //local contrast
         if (lp.lcamount > 0.f && call < 3  && lp.lcena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
             int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
