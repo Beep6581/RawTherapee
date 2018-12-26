@@ -161,6 +161,7 @@ struct local_params {
     float strng;
     float lcamount;
     double shrad;
+    double shblurr;
     double rad;
     double stren;
     int trans;
@@ -439,6 +440,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double radius = (double) locallab.radius.at(sp);
     double sharradius = ((double) locallab.sharradius.at(sp)) / 100. ;
     double lcamount = ((double) locallab.lcamount.at(sp)) / 100. ;
+    double sharblurr = ((double) locallab.sharblur.at(sp)) / 100. ;
     int local_sensisha = locallab.sensisha.at(sp);
     int local_sharamount = locallab.sharamount.at(sp);
     int local_shardamping = locallab.shardamping.at(sp);
@@ -494,6 +496,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.invshar = inversesha;
     lp.str = str;
     lp.shrad = sharradius;
+    lp.shblurr = sharblurr;
     lp.senssha = local_sensisha;
     lp.shamo = local_sharamount;
     lp.shdamp = local_shardamping;
@@ -12199,10 +12202,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                 //   }
 
                 //sharpen only square area instaed of all image
-                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp));
+                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp),(double)params->locallab.sharblur.at(sp) / 100.);
             } else { //call from dcrop.cc
 
-                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp));
+                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp),(double)params->locallab.sharblur.at(sp) / 100.);
 
             }
 
@@ -12225,7 +12228,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
             int GH = original->H;
             JaggedArray<float> loctemp(GW, GH);
 
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp));
+            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp),(double)params->locallab.sharblur.at(sp) / 100.);
 
             float hueplus = hueref + dhuesha;
             float huemoins = hueref - dhuesha;

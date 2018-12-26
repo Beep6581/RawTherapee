@@ -422,6 +422,7 @@ void ParamsEdited::set(bool v)
     locallab.sharamount = v;
     locallab.shardamping = v;
     locallab.shariter = v;
+    locallab.sharblur = v;
     locallab.sensisha = v;
     locallab.inverssha = v;
     //local contrast
@@ -1118,6 +1119,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.sharamount = locallab.sharamount && p.locallab.sharamount == other.locallab.sharamount;
         locallab.shardamping = locallab.shardamping && p.locallab.shardamping == other.locallab.shardamping;
         locallab.shariter = locallab.shariter && p.locallab.shariter == other.locallab.shariter;
+        locallab.sharblur = locallab.sharblur && p.locallab.sharblur == other.locallab.sharblur;
         locallab.sensisha = locallab.sensisha && p.locallab.sensisha == other.locallab.sensisha;
         locallab.inverssha = locallab.inverssha && p.locallab.inverssha == other.locallab.inverssha;
         //local contrast
@@ -2872,6 +2874,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.shariter    = mods.locallab.shariter;
     }
 
+    if (locallab.sharblur) {
+        toEdit.locallab.sharblur    = mods.locallab.sharblur;
+    }
+    
     if (locallab.sensisha) {
         toEdit.locallab.sensisha     = mods.locallab.sensisha;
     }

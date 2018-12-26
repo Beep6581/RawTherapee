@@ -108,6 +108,7 @@ Locallab::Locallab():
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 19))),
     // Sharpening
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
+    sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 20, 200, 1, 20))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 42, 500, 1, 4))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75))),
@@ -524,6 +525,8 @@ Locallab::Locallab():
 
     shariter->setAdjusterListener(this);
 
+    sharblur->setAdjusterListener(this);
+
     sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
     sensisha->setAdjusterListener(this);
 
@@ -531,6 +534,7 @@ Locallab::Locallab():
 
     ToolParamBlock* const sharpBox = Gtk::manage(new ToolParamBlock());
     sharpBox->pack_start(*sharcontrast);
+    sharpBox->pack_start(*sharblur);
     sharpBox->pack_start(*sharradius);
     sharpBox->pack_start(*sharamount);
     sharpBox->pack_start(*shardamping);
@@ -945,6 +949,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         shardamping->setEditedState(pedited->locallab.shardamping ? Edited : UnEdited);
         shariter->setEditedState(pedited->locallab.shariter ? Edited : UnEdited);
         sensisha->setEditedState(pedited->locallab.sensisha ? Edited : UnEdited);
+        sharblur->setEditedState(pedited->locallab.sharblur ? Edited : UnEdited);
         inverssha->set_inconsistent(multiImage && !pedited->locallab.inverssha);
 
         // local contrast
@@ -1203,6 +1208,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             pp->locallab.sharamount.push_back(100);
             pp->locallab.shardamping.push_back(75);
             pp->locallab.shariter.push_back(30);
+            pp->locallab.sharblur.push_back(20);
             pp->locallab.sensisha.push_back(19);
             pp->locallab.inverssha.push_back(0);
             //local contrast
@@ -1347,6 +1353,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.sharamount.erase(pp->locallab.sharamount.begin() + i);
                     pp->locallab.shardamping.erase(pp->locallab.shardamping.begin() + i);
                     pp->locallab.shariter.erase(pp->locallab.shariter.begin() + i);
+                    pp->locallab.sharblur.erase(pp->locallab.sharblur.begin() + i);
                     pp->locallab.sensisha.erase(pp->locallab.sensisha.begin() + i);
                     pp->locallab.inverssha.erase(pp->locallab.inverssha.begin() + i);
                     //local contrast
@@ -1568,6 +1575,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 pp->locallab.sharamount.at(pp->locallab.selspot) = sharamount->getIntValue();
                 pp->locallab.shardamping.at(pp->locallab.selspot) = shardamping->getIntValue();
                 pp->locallab.shariter.at(pp->locallab.selspot) = shariter->getIntValue();
+                pp->locallab.sharblur.at(pp->locallab.selspot) = sharblur->getIntValue();
                 pp->locallab.sensisha.at(pp->locallab.selspot) = sensisha->getIntValue();
                 pp->locallab.inverssha.at(pp->locallab.selspot) = (int)inverssha->get_active();
                 //local contrast
@@ -1704,6 +1712,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.sharamount = sharamount->getEditedState();
         pedited->locallab.shardamping = shardamping->getEditedState();
         pedited->locallab.shariter = shariter->getEditedState();
+        pedited->locallab.sharblur = sharblur->getEditedState();
         pedited->locallab.sensisha = sensisha->getEditedState();
         pedited->locallab.inverssha = !inverssha->get_inconsistent();
         //local contrast
@@ -2636,6 +2645,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == sharblur) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsharblur, sharblur->getTextValue());
+            }
+        }
+
         if (a == sensisha) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensis, sensisha->getTextValue());
@@ -2917,6 +2932,7 @@ void Locallab::setBatchMode(bool batchMode)
     sharamount->showEditedCB();
     shardamping->showEditedCB();
     shariter->showEditedCB();
+    sharblur->showEditedCB();
     lcradius->showEditedCB();
     lcamount->showEditedCB();
     lcdarkness->showEditedCB();
@@ -3265,6 +3281,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         sharamount->setValue(pp->locallab.sharamount.at(index));
         shardamping->setValue(pp->locallab.shardamping.at(index));
         shariter->setValue(pp->locallab.shariter.at(index));
+        sharblur->setValue(pp->locallab.sharblur.at(index));
         sensisha->setValue(pp->locallab.sensisha.at(index));
         inverssha->set_active((bool)pp->locallab.inverssha.at(index));
 

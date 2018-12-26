@@ -115,6 +115,7 @@ private:
     Adjuster* const sensih;
     // Sharpening
     Adjuster* const sharcontrast;
+    Adjuster* const sharblur;
     Adjuster* const sharradius;
     Adjuster* const sharamount;
     Adjuster* const shardamping;

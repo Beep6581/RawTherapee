@@ -2426,6 +2426,7 @@ LocallabParams::LocallabParams() :
     sharamount(),
     shardamping(),
     shariter(),
+    sharblur(),
     sensisha(),
     inverssha(),
     //local contrast
@@ -2555,6 +2556,7 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && sharamount == other.sharamount
         && shardamping == other.shardamping
         && shariter == other.shariter
+        && sharblur == other.sharblur
         && sensisha == other.sensisha
         && inverssha == other.inverssha
         //local contrast
@@ -3612,6 +3614,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->locallab.sharamount, "Locallab", "Sharamount_" + std::to_string(i), locallab.sharamount.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.shardamping, "Locallab", "Shardamping_" + std::to_string(i), locallab.shardamping.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.shariter, "Locallab", "Shariter_" + std::to_string(i), locallab.shariter.at(i), keyFile);
+            saveToKeyfile(!pedited || pedited->locallab.sharblur, "Locallab", "Sharblur_" + std::to_string(i), locallab.sharblur.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sensisha, "Locallab", "Sensisha_" + std::to_string(i), locallab.sensisha.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.inverssha, "Locallab", "Inverssha_" + std::to_string(i), locallab.inverssha.at(i), keyFile);
             //local contrast
@@ -4804,6 +4807,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 locallab.sharamount.resize(locallab.nbspot);
                 locallab.shardamping.resize(locallab.nbspot);
                 locallab.shariter.resize(locallab.nbspot);
+                locallab.sharblur.resize(locallab.nbspot);
                 locallab.sensisha.resize(locallab.nbspot);
                 locallab.inverssha.resize(locallab.nbspot);
                 //local contrast
@@ -4942,6 +4946,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sharamount_" + std::to_string(i), pedited, locallab.sharamount.at(i), pedited->locallab.sharamount);
                 assignFromKeyfile(keyFile, "Locallab", "Shardamping_" + std::to_string(i), pedited, locallab.shardamping.at(i), pedited->locallab.shardamping);
                 assignFromKeyfile(keyFile, "Locallab", "Shariter_" + std::to_string(i), pedited, locallab.shariter.at(i), pedited->locallab.shariter);
+                assignFromKeyfile(keyFile, "Locallab", "Sharblur_" + std::to_string(i), pedited, locallab.sharblur.at(i), pedited->locallab.sharblur);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + std::to_string(i), pedited, locallab.sensisha.at(i), pedited->locallab.sensisha);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + std::to_string(i), pedited, locallab.inverssha.at(i), pedited->locallab.inverssha);
                 //local contrast

@@ -629,6 +629,7 @@ enum ProcEventCode {
     EvLocenasoft = 599,
     Evlocallabstreng = 600,
     Evlocallabsensisf = 601,
+    Evlocallabsharblur = 602,
     NUMOFEVENTS
 };
 

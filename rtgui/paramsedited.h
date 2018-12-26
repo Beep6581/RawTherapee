@@ -552,6 +552,7 @@ public:
     bool sharamount;
     bool shardamping;
     bool shariter;
+    bool sharblur;
     bool sensisha;
     bool inverssha;
     //local contrast

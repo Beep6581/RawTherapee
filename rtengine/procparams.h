@@ -1015,6 +1015,7 @@ struct LocallabParams {
     std::vector<int> shardamping;
     std::vector<int> shariter;
     std::vector<int> sensisha;
+    std::vector<int> sharblur;
     std::vector<int> inverssha;
     //local contrast
     std::vector<int> expcontrast;
