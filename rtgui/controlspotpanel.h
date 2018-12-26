@@ -65,9 +65,8 @@ public:
      * A SpotEdited structure allows exchanges of spot panel widgets edited states from and to ControlSpotClass
      */
     struct SpotEdited {
-        bool addbutton;
-        bool deletebutton;
-        bool treeview;
+        bool nbspot;
+        bool selspot;
         bool name;
         bool isvisible;
         bool shape;
@@ -161,7 +160,7 @@ public:
      */
     void deleteControlSpot(int id);
 
-    // Panel widgets edited states management functions
+    // Panel widgets management functions
     /**
      * Getter of panel widgets edited states
      *
@@ -179,16 +178,37 @@ public:
      *
      * @param defParams ProcParams containing default values to set to the adjusters
      * @param pedited   ParamsEdited containing default state values to set to the adjusters
+     * @param id Spot id to consider to update adjusters default values and default state values
      */
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr, int id = 0);
     /**
      * Variant of setDefaults function which only update adjuster default values
      *
      * @param defParams ProcParams containing default values to set to the adjusters
      * @param id Spot id to consider to update adjusters default values
      */
-    void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
+    // void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
+    /**
+     * Variant of setDefaults function which only update adjuster default states
+     *
+     * @param pedited ParamsEdited containing default states to set to the adjusters
+     * @param id Spot id to consider to update adjusters default states
+     */
+    // void updateDefaultsStates(const ParamsEdited* pedited, int id = 0);
+    /**
+     * Enable or disable the interactions with panel widgets
+     *
+     * @param cond Condition to enable interactions
+     */
+    void setParamEditable(bool cond);
+
+    // Batch mode management
+    /**
+     * Implementation of setBatchMode function of toolpanel.h
+     *
+     * @param batchMode Condition to enable batch mode
+     */
+    void setBatchMode(bool batchMode);
 
 private:
     // Cell renderer
@@ -213,7 +233,6 @@ private:
     void updateParamVisibility();
     void adjusterChanged(Adjuster* a, double newval);
     void disableParamlistener(bool cond);
-    void setParamEditable(bool cond);
 
     void addControlSpotCurve(Gtk::TreeModel::Row row);
     void updateControlSpotCurve(Gtk::TreeModel::Row row);
@@ -304,6 +323,9 @@ private:
     // Internal variables
     int lastObject_;
     rtengine::Coord* lastCoord_;
+    bool nbSpotChanged_;
+    bool selSpotChanged_;
+    bool nameChanged_;
 
     int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event
 };

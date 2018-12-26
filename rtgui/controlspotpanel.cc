@@ -57,6 +57,9 @@ ControlSpotPanel::ControlSpotPanel():
 
     lastObject_(-1),
     lastCoord_(new Coord()),
+    nbSpotChanged_(false),
+    selSpotChanged_(false),
+    nameChanged_(false),
 
     eventType(0)
 {
@@ -221,15 +224,6 @@ ControlSpotPanel::ControlSpotPanel():
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
 
-    // Set param widgets sensitive if there is at least one control spot
-    auto s = treeview_.get_selection();
-
-    if (!s->count_selected_rows()) {
-        setParamEditable(false);
-    } else {
-        setParamEditable(true);
-    }
-
     show_all();
 }
 
@@ -279,6 +273,8 @@ void ControlSpotPanel::on_button_add()
     }
 
     // Raise event
+    nbSpotChanged_ = true;
+    selSpotChanged_ = true;
     eventType = 1; // 1 = Spot creation event
     const int newId = getNewId();
     listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId));
@@ -293,6 +289,8 @@ void ControlSpotPanel::on_button_delete()
     }
 
     // Raise event
+    nbSpotChanged_ = true;
+    selSpotChanged_ = true;
     eventType = 2; // 2 = Spot deletion event
     const int delId = getSelectedSpot();
     listener->panelChanged(EvLocallabSpotDeleted, "ID#" + std::to_string(delId));
@@ -324,6 +322,7 @@ void ControlSpotPanel::on_button_rename()
 
     // Update actual name and raise event
     if (status == 1) {
+        nameChanged_ = true;
         const auto newname = d.get_new_name();
         row[spots_.name] = newname;
         treeview_.columns_autosize();
@@ -372,6 +371,7 @@ void ControlSpotPanel::controlspotChanged()
     }
 
     // Raise event
+    selSpotChanged_ = true;
     eventType = 3; // 3 = Spot selection event
     const int selId = getSelectedSpot();
     listener->panelChanged(EvLocallabSpotSelected, "ID#" + std::to_string(selId));
@@ -693,7 +693,8 @@ void ControlSpotPanel::disableParamlistener(bool cond)
 
 void ControlSpotPanel::setParamEditable(bool cond)
 {
-    printf("setParamEditable: %d\n", cond);
+    // printf("setParamEditable: %d\n", cond);
+
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
     sensiexclu_->set_sensitive(cond);
@@ -1449,7 +1450,6 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.transit] = newSpot->transit;
     row[spots_.thresh] = newSpot->thresh;
     row[spots_.iter] = newSpot->iter;
-    setParamEditable(true);
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -1520,13 +1520,6 @@ void ControlSpotPanel::deleteControlSpot(int id)
         }
     }
 
-    // Set param widgets unsensitive if there is no more control spot
-    auto s = treeview_.get_selection();
-
-    if (!s->count_selected_rows()) {
-        setParamEditable(false);
-    }
-
     disableParamlistener(false);
 }
 
@@ -1536,10 +1529,27 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
 
     SpotEdited* se = new SpotEdited();
 
-    se->treeview = treeview_.is_sensitive();
-    se->addbutton = button_add_.is_sensitive();
-    se->deletebutton = button_delete_.is_sensitive();
-    se->name = button_rename_.is_sensitive();
+    if (nbSpotChanged_) {
+        se->nbspot = true;
+        // nbSpotChanged_ = false;
+    } else {
+        se->nbspot = false;
+    }
+
+    if (selSpotChanged_) {
+        se->selspot = true;
+        // selSpotChanged_ = false;
+    } else {
+        se->selspot = false;
+    }
+
+    if (nameChanged_) {
+        se->name = true;
+        // nameChanged_ = false;
+    } else {
+        se->name = false;
+    }
+
     se->isvisible = false; // TODO isvisible
     se->shape = shape_->get_active_row_number() != 2;
     se->spotMethod = spotMethod_->get_active_row_number() != 2;
@@ -1565,14 +1575,26 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
 {
     printf("setEditedStates\n");
 
+    // Reset treeview edited states
+    nbSpotChanged_ = false;
+    selSpotChanged_ = false;
+    nameChanged_ = false;
+
     // Disable params listeners
     disableParamlistener(true);
 
     // Set widgets edited states
-    treeview_.set_sensitive(se->treeview);
-    button_add_.set_sensitive(se->addbutton);
-    button_delete_.set_sensitive(se->deletebutton);
-    button_rename_.set_sensitive(se->name);
+    if (!se->nbspot || !se->selspot) {
+        treeview_.set_sensitive(false);
+        button_add_.set_sensitive(false);
+        button_delete_.set_sensitive(false);
+        button_rename_.set_sensitive(false);
+    } else {
+        treeview_.set_sensitive(true);
+        button_add_.set_sensitive(true);
+        button_delete_.set_sensitive(true);
+        button_rename_.set_sensitive(se->name);
+    }
 
     // TODO Add isvisible
     if (!se->shape) {
@@ -1610,30 +1632,45 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     disableParamlistener(false);
 }
 
-void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited)
+void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited, int id)
 {
-    // Set default values for adjusters
-    if (defParams->locallab.selspot < (int)defParams->locallab.spots.size()) {
-        updateDefaultsValues(defParams, defParams->locallab.spots.at(defParams->locallab.selspot).id);
-    } else {
-        updateDefaultsValues(defParams);
+    // Find vector index of given spot id (index = -1 if not found)
+    int index = -1;
+
+    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
+        printf("Test\n");
+
+        if (defParams->locallab.spots.at(i).id == id) {
+            index = i;
+
+            break;
+        }
     }
 
+    printf("index: %d\n", index);
+
+    // Set default values for adjusters
+    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
+
+    if (index != -1 && index < (int)defParams->locallab.spots.size()) {
+        defSpot = &defParams->locallab.spots.at(index);
+    }
+
+    sensiexclu_->setDefault((double)defSpot->sensiexclu);
+    struc_->setDefault((double)defSpot->struc);
+    locX_->setDefault((double)defSpot->locX);
+    locXL_->setDefault((double)defSpot->locXL);
+    locY_->setDefault((double)defSpot->locY);
+    locYT_->setDefault((double)defSpot->locYT);
+    centerX_->setDefault((double)defSpot->centerX);
+    centerY_->setDefault((double)defSpot->centerY);
+    circrad_->setDefault((double)defSpot->circrad);
+    transit_->setDefault((double)defSpot->transit);
+    thresh_->setDefault((double)defSpot->thresh);
+    iter_->setDefault((double)defSpot->iter);
+
     // Set default edited states for adjusters
-    if (pedited) {
-        sensiexclu_->setDefaultEditedState(pedited->locallab.sensiexclu ? Edited : UnEdited);
-        struc_->setDefaultEditedState(pedited->locallab.struc ? Edited : UnEdited);
-        locX_->setDefaultEditedState(pedited->locallab.locX ? Edited : UnEdited);
-        locXL_->setDefaultEditedState(pedited->locallab.locXL ? Edited : UnEdited);
-        locY_->setDefaultEditedState(pedited->locallab.locY ? Edited : UnEdited);
-        locYT_->setDefaultEditedState(pedited->locallab.locYT ? Edited : UnEdited);
-        centerX_->setDefaultEditedState(pedited->locallab.centerX ? Edited : UnEdited);
-        centerY_->setDefaultEditedState(pedited->locallab.centerY ? Edited : UnEdited);
-        circrad_->setDefaultEditedState(pedited->locallab.circrad ? Edited : UnEdited);
-        transit_->setDefaultEditedState(pedited->locallab.transit ? Edited : UnEdited);
-        thresh_->setDefaultEditedState(pedited->locallab.thresh ? Edited : UnEdited);
-        iter_->setDefaultEditedState(pedited->locallab.iter ? Edited : UnEdited);
-    } else {
+    if (!pedited) {
         sensiexclu_->setDefaultEditedState(Irrelevant);
         struc_->setDefaultEditedState(Irrelevant);
         locX_->setDefaultEditedState(Irrelevant);
@@ -1646,9 +1683,29 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
         transit_->setDefaultEditedState(Irrelevant);
         thresh_->setDefaultEditedState(Irrelevant);
         iter_->setDefaultEditedState(Irrelevant);
+    } else {
+        const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
+
+        if (index != 1 && index < (int)pedited->locallab.spots.size()) {
+            defSpotState = &pedited->locallab.spots.at(index);
+        }
+
+        sensiexclu_->setDefaultEditedState(defSpotState->sensiexclu ? Edited : UnEdited);
+        struc_->setDefaultEditedState(defSpotState->struc ? Edited : UnEdited);
+        locX_->setDefaultEditedState(defSpotState->locX ? Edited : UnEdited);
+        locXL_->setDefaultEditedState(defSpotState->locXL ? Edited : UnEdited);
+        locY_->setDefaultEditedState(defSpotState->locY ? Edited : UnEdited);
+        locYT_->setDefaultEditedState(defSpotState->locYT ? Edited : UnEdited);
+        centerX_->setDefaultEditedState(defSpotState->centerX ? Edited : UnEdited);
+        centerY_->setDefaultEditedState(defSpotState->centerY ? Edited : UnEdited);
+        circrad_->setDefaultEditedState(defSpotState->circrad ? Edited : UnEdited);
+        transit_->setDefaultEditedState(defSpotState->transit ? Edited : UnEdited);
+        thresh_->setDefaultEditedState(defSpotState->thresh ? Edited : UnEdited);
+        iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
     }
 }
 
+/*
 void ControlSpotPanel::updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id)
 {
     const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
@@ -1674,6 +1731,30 @@ void ControlSpotPanel::updateDefaultsValues(const rtengine::procparams::ProcPara
     transit_->setDefault((double)defSpot->transit);
     thresh_->setDefault((double)defSpot->thresh);
     iter_->setDefault((double)defSpot->iter);
+}
+
+void ControlSpotPanel::updateDefaultsStates(const ParamsEdited* pedited, int id = 0)
+{
+}
+*/
+
+void ControlSpotPanel::setBatchMode(bool batchMode)
+{
+    ToolPanel::setBatchMode(batchMode);
+
+    // Set batch mode for adjusters
+    sensiexclu_->showEditedCB();
+    struc_->showEditedCB();
+    locX_->showEditedCB();
+    locXL_->showEditedCB();
+    locY_->showEditedCB();
+    locYT_->showEditedCB();
+    centerX_->showEditedCB();
+    centerY_->showEditedCB();
+    circrad_->showEditedCB();
+    transit_->showEditedCB();
+    thresh_->showEditedCB();
+    iter_->showEditedCB();
 }
 
 //-----------------------------------------------------------------------------

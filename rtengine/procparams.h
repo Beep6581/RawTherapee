@@ -1030,54 +1030,6 @@ struct LocallabParams {
 
     bool operator ==(const LocallabParams& other) const;
     bool operator !=(const LocallabParams& other) const;
-
-    template <typename T>
-    bool compareSpotsByElem(const std::vector<LocallabSpot>& other, T LocallabSpot::*elem) const
-    {
-        if (spots.size() != other.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < (int)spots.size(); i++) {
-            if (spots.at(i).*elem != other.at(i).*elem) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    template <typename T>
-    bool compareSpotsByElemArray(const std::vector<LocallabSpot>& other, T LocallabSpot::*elem, int index) const
-    {
-        if (spots.size() != other.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < (int)spots.size(); i++) {
-            if ((spots.at(i).*elem)[index] != (other.at(i).*elem)[index]) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    template <typename T>
-    void setSpotsByElem(const std::vector<LocallabSpot>& other, T LocallabSpot::*elem)
-    {
-        for (int i = 0; i < (int)spots.size() && i < (int)other.size(); i++) {
-            spots.at(i).*elem = other.at(i).*elem;
-        }
-    }
-
-    template <typename T>
-    void setSpotsByElemArray(const std::vector<LocallabSpot>& other, T LocallabSpot::*elem, int index)
-    {
-        for (int i = 0; i < (int)spots.size() && i < (int)other.size(); i++) {
-            (spots.at(i).*elem)[index] = (other.at(i).*elem)[index];
-        }
-    }
 };
 
 /**

@@ -155,7 +155,12 @@ Locallab::Locallab():
     labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
     lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
     lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
-    lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
+    lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
+
+    // Others
+    defparams(nullptr),
+    defpedited(nullptr),
+    pe(nullptr)
 {
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
 
@@ -608,6 +613,9 @@ Locallab::Locallab():
     panel->pack_start(*avoid);
 
     pack_start(*panel);
+
+    setParamEditable(false);
+
     show_all();
 }
 
@@ -758,149 +766,151 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     if (pedited) {
         set_inconsistent(multiImage && !pedited->locallab.enabled);
 
-        // Control spot settings
-        ControlSpotPanel::SpotEdited* const se = new ControlSpotPanel::SpotEdited();
+        if (pp->locallab.selspot < pp->locallab.nbspot && pp->locallab.selspot < (int)pedited->locallab.spots.size()) {
+            const LocallabParamsEdited::LocallabSpotEdited* spotState = &pedited->locallab.spots.at(pp->locallab.selspot);
 
-        if (pedited->locallab.nbspot) {
-            se->addbutton = true;
-            se->deletebutton = true;
-        } else {
-            se->addbutton = false;
-            se->deletebutton = false;
+            // Control spot settings
+            ControlSpotPanel::SpotEdited* const se = new ControlSpotPanel::SpotEdited();
+
+            if (pedited->locallab.nbspot && pedited->locallab.id) {
+                se->nbspot = true;
+            } else {
+                se->nbspot = false;
+            }
+
+            se->selspot = pedited->locallab.selspot;
+            se->name = spotState->name;
+            se->isvisible = spotState->isvisible;
+            se->shape = spotState->shape;
+            se->spotMethod = spotState->spotMethod;
+            se->sensiexclu = spotState->sensiexclu;
+            se->struc = spotState->struc;
+            se->shapeMethod = spotState->shapeMethod;
+            se->locX = spotState->locX;
+            se->locXL = spotState->locXL;
+            se->locY = spotState->locY;
+            se->locYT = spotState->locYT;
+            se->centerX = spotState->centerX;
+            se->centerY = spotState->centerY;
+            se->circrad = spotState->circrad;
+            se->qualityMethod = spotState->qualityMethod;
+            se->transit = spotState->transit;
+            se->thresh = spotState->thresh;
+            se->iter = spotState->iter;
+            expsettings->setEditedStates(se);
+
+            // Color & Light
+            expcolor->set_inconsistent(!spotState->expcolor);
+            curvactiv->set_inconsistent(multiImage && !spotState->curvactiv);
+            lightness->setEditedState(spotState->lightness ? Edited : UnEdited);
+            contrast->setEditedState(spotState->contrast ? Edited : UnEdited);
+            chroma->setEditedState(spotState->chroma ? Edited : UnEdited);
+            sensi->setEditedState(spotState->sensi ? Edited : UnEdited);
+
+            if (!spotState->qualitycurveMethod) {
+                qualitycurveMethod->set_active_text(M("GENERAL_UNCHANGED"));
+            }
+
+            llshape->setUnChanged(!spotState->llcurve);
+            ccshape->setUnChanged(!spotState->cccurve);
+            LHshape->setUnChanged(!spotState->LHcurve);
+            HHshape->setUnChanged(!spotState->HHcurve);
+            invers->set_inconsistent(multiImage && !spotState->invers);
+
+            // Exposure
+            expexpose->set_inconsistent(!spotState->expexpose);
+            expcomp->setEditedState(spotState->expcomp ? Edited : UnEdited);
+            hlcompr->setEditedState(spotState->hlcompr ? Edited : UnEdited);
+            hlcomprthresh->setEditedState(spotState->hlcomprthresh ? Edited : UnEdited);
+            black->setEditedState(spotState->black ? Edited : UnEdited);
+            warm->setEditedState(spotState->warm ? Edited : UnEdited);
+            shcompr->setEditedState(spotState->shcompr ? Edited : UnEdited);
+            sensiex->setEditedState(spotState->sensiex ? Edited : UnEdited);
+            shapeexpos->setUnChanged(!spotState->excurve);
+
+            // Vibrance
+            expvibrance->set_inconsistent(!spotState->expvibrance);
+            saturated->setEditedState(spotState->saturated ? Edited : UnEdited);
+            pastels->setEditedState(spotState->pastels ? Edited : UnEdited);
+            psThreshold->setEditedState(spotState->psthreshold ? Edited : UnEdited);
+            protectSkins->set_inconsistent(multiImage && !spotState->protectskins);
+            avoidColorShift->set_inconsistent(multiImage && !spotState->avoidcolorshift);
+            pastSatTog->set_inconsistent(multiImage && !spotState->pastsattog);
+            sensiv->setEditedState(spotState->sensiv ? Edited : UnEdited);
+            skinTonesCurve->setUnChanged(!spotState->skintonescurve);
+
+            // Blur & Noise
+            expblur->set_inconsistent(!spotState->expblur);
+            radius->setEditedState(spotState->radius ? Edited : UnEdited);
+            strength->setEditedState(spotState->strength ? Edited : UnEdited);
+            sensibn->setEditedState(spotState->sensibn ? Edited : UnEdited);
+
+            if (!spotState->blurMethod) {
+                blurMethod->set_active_text(M("GENERAL_UNCHANGED"));
+            }
+
+            activlum->set_inconsistent(multiImage && !spotState->activlum);
+
+            // Tone Mapping
+            exptonemap->set_inconsistent(!spotState->exptonemap);
+            stren->setEditedState(spotState->stren ? Edited : UnEdited);
+            gamma->setEditedState(spotState->gamma ? Edited : UnEdited);
+            estop->setEditedState(spotState->estop ? Edited : UnEdited);
+            scaltm->setEditedState(spotState->scaltm ? Edited : UnEdited);
+            rewei->setEditedState(spotState->rewei ? Edited : UnEdited);
+            sensitm->setEditedState(spotState->sensitm ? Edited : UnEdited);
+
+            // Retinex
+            expreti->set_inconsistent(!spotState->expreti);
+
+            if (!spotState->retinexMethod) {
+                retinexMethod->set_active_text(M("GENERAL_UNCHANGED"));
+            }
+
+            str->setEditedState(spotState->str ? Edited : UnEdited);
+            chrrt->setEditedState(spotState->chrrt ? Edited : UnEdited);
+            neigh->setEditedState(spotState->neigh ? Edited : UnEdited);
+            vart->setEditedState(spotState->vart ? Edited : UnEdited);
+            sensih->setEditedState(spotState->sensih ? Edited : UnEdited);
+            cTgainshape->setUnChanged(!spotState->localTgaincurve);
+            inversret->set_inconsistent(multiImage && !spotState->inversret);
+
+            // Sharpening
+            expsharp->set_inconsistent(!spotState->expsharp);
+            sharradius->setEditedState(spotState->sharradius ? Edited : UnEdited);
+            sharamount->setEditedState(spotState->sharamount ? Edited : UnEdited);
+            shardamping->setEditedState(spotState->shardamping ? Edited : UnEdited);
+            shariter->setEditedState(spotState->shariter ? Edited : UnEdited);
+            sensisha->setEditedState(spotState->sensisha ? Edited : UnEdited);
+            inverssha->set_inconsistent(multiImage && !spotState->inverssha);
+
+            // Contrast by detail levels
+            expcbdl->set_inconsistent(!spotState->expcbdl);
+
+            for (int i = 0; i < 5; i++) {
+                multiplier[i]->setEditedState(spotState->mult[i] ? Edited : UnEdited);
+            }
+
+            chromacbdl->setEditedState(spotState->chromacbdl ? Edited : UnEdited);
+            threshold->setEditedState(spotState->threshold ? Edited : UnEdited);
+            sensicb->setEditedState(spotState->sensicb ? Edited : UnEdited);
+
+            // Denoise
+            expdenoi->set_inconsistent(!spotState->expdenoi);
+            noiselumf->setEditedState(spotState->noiselumf ? Edited : UnEdited);
+            noiselumc->setEditedState(spotState->noiselumc ? Edited : UnEdited);
+            noiselumdetail->setEditedState(spotState->noiselumdetail ? Edited : UnEdited);
+            noiselequal->setEditedState(spotState->noiselequal ? Edited : UnEdited);
+            noisechrof->setEditedState(spotState->noisechrof ? Edited : UnEdited);
+            noisechroc->setEditedState(spotState->noisechroc ? Edited : UnEdited);
+            noisechrodetail->setEditedState(spotState->noisechrodetail ? Edited : UnEdited);
+            adjblur->setEditedState(spotState->adjblur ? Edited : UnEdited);
+            bilateral->setEditedState(spotState->bilateral ? Edited : UnEdited);
+            sensiden->setEditedState(spotState->sensiden ? Edited : UnEdited);
+
+            // Others
+            avoid->set_inconsistent(multiImage && !spotState->avoid);
         }
-
-        se->treeview = pedited->locallab.nbspot || pedited->locallab.selspot;
-        se->name = pedited->locallab.name;
-        se->isvisible = pedited->locallab.isvisible;
-        se->shape = pedited->locallab.shape;
-        se->spotMethod = pedited->locallab.spotMethod;
-        se->sensiexclu = pedited->locallab.sensiexclu;
-        se->struc = pedited->locallab.struc;
-        se->shapeMethod = pedited->locallab.shapeMethod;
-        se->locX = pedited->locallab.locX;
-        se->locXL = pedited->locallab.locXL;
-        se->locY = pedited->locallab.locY;
-        se->locYT = pedited->locallab.locYT;
-        se->centerX = pedited->locallab.centerX;
-        se->centerY = pedited->locallab.centerY;
-        se->circrad = pedited->locallab.circrad;
-        se->qualityMethod = pedited->locallab.qualityMethod;
-        se->transit = pedited->locallab.transit;
-        se->thresh = pedited->locallab.thresh;
-        se->iter = pedited->locallab.iter;
-        expsettings->setEditedStates(se);
-
-        // Color & Light
-        expcolor->set_inconsistent(!pedited->locallab.expcolor);
-        curvactiv->set_inconsistent(multiImage && !pedited->locallab.curvactiv);
-        lightness->setEditedState(pedited->locallab.lightness ? Edited : UnEdited);
-        contrast->setEditedState(pedited->locallab.contrast ? Edited : UnEdited);
-        chroma->setEditedState(pedited->locallab.chroma ? Edited : UnEdited);
-        sensi->setEditedState(pedited->locallab.sensi ? Edited : UnEdited);
-
-        if (!pedited->locallab.qualitycurveMethod) {
-            qualitycurveMethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        llshape->setUnChanged(!pedited->locallab.llcurve);
-        ccshape->setUnChanged(!pedited->locallab.cccurve);
-        LHshape->setUnChanged(!pedited->locallab.LHcurve);
-        HHshape->setUnChanged(!pedited->locallab.HHcurve);
-        invers->set_inconsistent(multiImage && !pedited->locallab.invers);
-
-        // Exposure
-        expexpose->set_inconsistent(!pedited->locallab.expexpose);
-        expcomp->setEditedState(pedited->locallab.expcomp ? Edited : UnEdited);
-        hlcompr->setEditedState(pedited->locallab.hlcompr ? Edited : UnEdited);
-        hlcomprthresh->setEditedState(pedited->locallab.hlcomprthresh ? Edited : UnEdited);
-        black->setEditedState(pedited->locallab.black ? Edited : UnEdited);
-        warm->setEditedState(pedited->locallab.warm ? Edited : UnEdited);
-        shcompr->setEditedState(pedited->locallab.shcompr ? Edited : UnEdited);
-        sensiex->setEditedState(pedited->locallab.sensiex ? Edited : UnEdited);
-        shapeexpos->setUnChanged(!pedited->locallab.excurve);
-
-        // Vibrance
-        expvibrance->set_inconsistent(!pedited->locallab.expvibrance);
-        saturated->setEditedState(pedited->locallab.saturated ? Edited : UnEdited);
-        pastels->setEditedState(pedited->locallab.pastels ? Edited : UnEdited);
-        psThreshold->setEditedState(pedited->locallab.psthreshold ? Edited : UnEdited);
-        protectSkins->set_inconsistent(!pedited->locallab.protectskins);
-        avoidColorShift->set_inconsistent(!pedited->locallab.avoidcolorshift);
-        pastSatTog->set_inconsistent(!pedited->locallab.pastsattog);
-        sensiv->setEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
-        skinTonesCurve->setUnChanged(!pedited->locallab.skintonescurve);
-
-        // Blur & Noise
-        expblur->set_inconsistent(!pedited->locallab.expblur);
-        radius->setEditedState(pedited->locallab.radius ? Edited : UnEdited);
-        strength->setEditedState(pedited->locallab.strength ? Edited : UnEdited);
-        sensibn->setEditedState(pedited->locallab.sensibn ? Edited : UnEdited);
-
-        if (!pedited->locallab.blurMethod) {
-            blurMethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        activlum->set_inconsistent(multiImage && !pedited->locallab.activlum);
-
-        // Tone Mapping
-        exptonemap->set_inconsistent(!pedited->locallab.exptonemap);
-        stren->setEditedState(pedited->locallab.stren ? Edited : UnEdited);
-        gamma->setEditedState(pedited->locallab.gamma ? Edited : UnEdited);
-        estop->setEditedState(pedited->locallab.estop ? Edited : UnEdited);
-        scaltm->setEditedState(pedited->locallab.scaltm ? Edited : UnEdited);
-        rewei->setEditedState(pedited->locallab.rewei ? Edited : UnEdited);
-        sensitm->setEditedState(pedited->locallab.sensitm ? Edited : UnEdited);
-
-        // Retinex
-        expreti->set_inconsistent(!pedited->locallab.expreti);
-
-        if (!pedited->locallab.retinexMethod) {
-            retinexMethod->set_active_text(M("GENERAL_UNCHANGED"));
-        }
-
-        str->setEditedState(pedited->locallab.str ? Edited : UnEdited);
-        chrrt->setEditedState(pedited->locallab.chrrt ? Edited : UnEdited);
-        neigh->setEditedState(pedited->locallab.neigh ? Edited : UnEdited);
-        vart->setEditedState(pedited->locallab.vart ? Edited : UnEdited);
-        sensih->setEditedState(pedited->locallab.sensih ? Edited : UnEdited);
-        cTgainshape->setUnChanged(!pedited->locallab.localTgaincurve);
-        inversret->set_inconsistent(multiImage && !pedited->locallab.inversret);
-
-        // Sharpening
-        expsharp->set_inconsistent(!pedited->locallab.expsharp);
-        sharradius->setEditedState(pedited->locallab.sharradius ? Edited : UnEdited);
-        sharamount->setEditedState(pedited->locallab.sharamount ? Edited : UnEdited);
-        shardamping->setEditedState(pedited->locallab.shardamping ? Edited : UnEdited);
-        shariter->setEditedState(pedited->locallab.shariter ? Edited : UnEdited);
-        sensisha->setEditedState(pedited->locallab.sensisha ? Edited : UnEdited);
-        inverssha->set_inconsistent(multiImage && !pedited->locallab.inverssha);
-
-        // Contrast by detail levels
-        expcbdl->set_inconsistent(!pedited->locallab.expcbdl);
-
-        for (int i = 0; i < 5; i++) {
-            multiplier[i]->setEditedState(pedited->locallab.mult[i] ? Edited : UnEdited);
-        }
-
-        chromacbdl->setEditedState(pedited->locallab.chromacbdl ? Edited : UnEdited);
-        threshold->setEditedState(pedited->locallab.threshold ? Edited : UnEdited);
-        sensicb->setEditedState(pedited->locallab.sensicb ? Edited : UnEdited);
-
-        // Denoise
-        expdenoi->set_inconsistent(!pedited->locallab.expdenoi);
-        noiselumf->setEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
-        noiselumc->setEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
-        noiselumdetail->setEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
-        noiselequal->setEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
-        noisechrof->setEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
-        noisechroc->setEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
-        noisechrodetail->setEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
-        adjblur->setEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
-        bilateral->setEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
-        sensiden->setEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
-
-        // Others
-        avoid->set_inconsistent(multiImage && !pedited->locallab.avoid);
     }
 
     setEnabled(pp->locallab.enabled);
@@ -988,18 +998,27 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     // Update Locallab tools GUI
-    updateLocallabGUI(pp, pp->locallab.selspot);
+    updateLocallabGUI(pp, nullptr, pp->locallab.selspot);
+
+    if (pp->locallab.nbspot > 0) {
+        setParamEditable(true);
+
+        // Locallab params are not editable if nbspot, selspot or id are not coherent (batch mode)
+        if (pedited) {
+            if (!pedited->locallab.nbspot || !pedited->locallab.selspot || !pedited->locallab.id) {
+                setParamEditable(false);
+            }
+        }
+    } else {
+        setParamEditable(false);
+    }
 
     // Enable all listeners
     enableListener();
 
     // Update default values according to selected spot
-    if (pp->locallab.nbspot > 0) {
-        expsettings->updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
-        updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
-    } else {
-        expsettings->updateDefaultsValues(defparams);
-        updateDefaultsValues(defparams);
+    if (pp->locallab.nbspot > 0 && pp->locallab.selspot < (int)pp->locallab.spots.size()) {
+        setDefaults(defparams, defpedited, pp->locallab.spots.at(pp->locallab.selspot).id);
     }
 }
 
@@ -1080,12 +1099,29 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             // Update Locallab tools GUI with new created spot
             disableListener();
-            updateLocallabGUI(pp, pp->locallab.selspot);
+
+            if (pe) {
+                pe->locallab.spots.push_back(new LocallabParamsEdited::LocallabSpotEdited(true));
+            }
+
+            updateLocallabGUI(pp, pe, pp->locallab.selspot);
+
             enableListener();
 
+            if (pp->locallab.nbspot == 1) {
+                setParamEditable(true);
+            }
+
             // Update default values according to selected spot
-            expsettings->updateDefaultsValues(defparams, spotId);
-            updateDefaultsValues(defparams, spotId);
+            setDefaults(defparams, defpedited, spotId);
+
+            // ParamsEdited update
+            if (pedited) {
+                pedited->locallab.nbspot = true;
+                pedited->locallab.selspot = true;
+                pedited->locallab.id = true;
+                pedited->locallab.spots.push_back(new LocallabParamsEdited::LocallabSpotEdited(true));
+            }
 
             break;
 
@@ -1108,17 +1144,38 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
                     // Update Locallab tools GUI with new created spot
                     disableListener();
-                    updateLocallabGUI(pp, pp->locallab.selspot);
+
+                    if (pe) {
+                        if (i < (int)pe->locallab.spots.size()) {
+                            pe->locallab.spots.erase(pe->locallab.spots.begin() + i);
+                        }
+                    }
+
+                    updateLocallabGUI(pp, pe, pp->locallab.selspot);
+
                     enableListener();
+
+                    if (pp->locallab.nbspot == 0) {
+                        setParamEditable(false);
+                    }
 
                     // Update default values according to selected spot
                     if (pp->locallab.nbspot > 0) {
-                        expsettings->updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
-                        updateDefaultsValues(defparams, pp->locallab.spots.at(pp->locallab.selspot).id);
-                    } else {
-                        expsettings->updateDefaultsValues(defparams);
-                        updateDefaultsValues(defparams);
+                        setDefaults(defparams, defpedited, pp->locallab.spots.at(pp->locallab.selspot).id);
                     }
+
+                    // ParamsEdited update
+                    if (pedited) {
+                        pedited->locallab.nbspot = true;
+                        pedited->locallab.selspot = true;
+                        pedited->locallab.id = true;
+
+                        if (i < (int)pedited->locallab.spots.size()) {
+                            pedited->locallab.spots.erase(pedited->locallab.spots.begin() + i);
+                        }
+                    }
+
+                    printf("size after deletion %d\n", (int)pp->locallab.spots.size());
 
                     break;
                 }
@@ -1139,12 +1196,16 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             // Update control spots and Locallab tools GUI with selected spot
             expsettings->setSelectedSpot(spotId);
             disableListener();
-            updateLocallabGUI(pp, pp->locallab.selspot);
+            updateLocallabGUI(pp, pe, pp->locallab.selspot);
             enableListener();
 
             // Update default values according to selected spot
-            expsettings->updateDefaultsValues(defparams, spotId);
-            updateDefaultsValues(defparams, spotId);
+            setDefaults(defparams, defpedited, spotId);
+
+            // ParamsEdited update
+            if (pedited) {
+                pedited->locallab.selspot = true;
+            }
 
             break;
 
@@ -1317,129 +1378,249 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     // Others
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = avoid->get_active();
                 }
+
+                ControlSpotPanel::SpotEdited* const se = expsettings->getEditedStates();
+
+                if (pe) {
+                    if (pp->locallab.selspot < (int)pe->locallab.spots.size()) {
+                        pe->locallab.spots.at(pp->locallab.selspot).name = pe->locallab.spots.at(pp->locallab.selspot).name || se->name;
+                        pe->locallab.spots.at(pp->locallab.selspot).isvisible = pe->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
+                        pe->locallab.spots.at(pp->locallab.selspot).shape = pe->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
+                        pe->locallab.spots.at(pp->locallab.selspot).spotMethod = pe->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).sensiexclu = pe->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
+                        pe->locallab.spots.at(pp->locallab.selspot).struc = pe->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
+                        pe->locallab.spots.at(pp->locallab.selspot).shapeMethod = pe->locallab.spots.at(pp->locallab.selspot).shapeMethod || se->shapeMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).locX = pe->locallab.spots.at(pp->locallab.selspot).locX || se->locX;
+                        pe->locallab.spots.at(pp->locallab.selspot).locXL = pe->locallab.spots.at(pp->locallab.selspot).locXL || se->locXL;
+                        pe->locallab.spots.at(pp->locallab.selspot).locY = pe->locallab.spots.at(pp->locallab.selspot).locY || se->locY;
+                        pe->locallab.spots.at(pp->locallab.selspot).locYT = pe->locallab.spots.at(pp->locallab.selspot).locYT || se->locYT;
+                        pe->locallab.spots.at(pp->locallab.selspot).centerX = pe->locallab.spots.at(pp->locallab.selspot).centerX || se->centerX;
+                        pe->locallab.spots.at(pp->locallab.selspot).centerY = pe->locallab.spots.at(pp->locallab.selspot).centerY || se->centerY;
+                        pe->locallab.spots.at(pp->locallab.selspot).circrad = pe->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
+                        pe->locallab.spots.at(pp->locallab.selspot).qualityMethod = pe->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).transit = pe->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
+                        pe->locallab.spots.at(pp->locallab.selspot).thresh = pe->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
+                        pe->locallab.spots.at(pp->locallab.selspot).iter = pe->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
+                        // Color & Light
+                        pe->locallab.spots.at(pp->locallab.selspot).expcolor = pe->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).curvactiv = pe->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).lightness = pe->locallab.spots.at(pp->locallab.selspot).lightness || lightness->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).contrast = pe->locallab.spots.at(pp->locallab.selspot).contrast || contrast->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).chroma = pe->locallab.spots.at(pp->locallab.selspot).chroma || chroma->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensi = pe->locallab.spots.at(pp->locallab.selspot).sensi || sensi->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).llcurve = pe->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).cccurve = pe->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).LHcurve = pe->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).HHcurve = pe->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).invers = pe->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
+                        // Exposure
+                        pe->locallab.spots.at(pp->locallab.selspot).expexpose = pe->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).expcomp = pe->locallab.spots.at(pp->locallab.selspot).expcomp || expcomp->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).hlcompr = pe->locallab.spots.at(pp->locallab.selspot).hlcompr || hlcompr->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = pe->locallab.spots.at(pp->locallab.selspot).hlcomprthresh || hlcomprthresh->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).black = pe->locallab.spots.at(pp->locallab.selspot).black || black->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).shcompr = pe->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).warm = pe->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensiex = pe->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).excurve = pe->locallab.spots.at(pp->locallab.selspot).excurve || !shapeexpos->isUnChanged();
+                        // Vibrance
+                        pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).pastels = pe->locallab.spots.at(pp->locallab.selspot).pastels || pastels->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).psthreshold = pe->locallab.spots.at(pp->locallab.selspot).psthreshold || psThreshold->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).protectskins = pe->locallab.spots.at(pp->locallab.selspot).protectskins || !protectSkins->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).avoidcolorshift = pe->locallab.spots.at(pp->locallab.selspot).avoidcolorshift || !avoidColorShift->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).pastsattog = pe->locallab.spots.at(pp->locallab.selspot).pastsattog || !pastSatTog->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensiv = pe->locallab.spots.at(pp->locallab.selspot).sensiv || sensiv->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).skintonescurve = pe->locallab.spots.at(pp->locallab.selspot).skintonescurve || !skinTonesCurve->isUnChanged();
+                        // Blur & Noise
+                        pe->locallab.spots.at(pp->locallab.selspot).expblur = pe->locallab.spots.at(pp->locallab.selspot).expblur || !expblur->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).radius = pe->locallab.spots.at(pp->locallab.selspot).radius || radius->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strength = pe->locallab.spots.at(pp->locallab.selspot).strength || strength->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensibn = pe->locallab.spots.at(pp->locallab.selspot).sensibn || sensibn->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).blurMethod = pe->locallab.spots.at(pp->locallab.selspot).blurMethod || blurMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).activlum = pe->locallab.spots.at(pp->locallab.selspot).activlum || !activlum->get_inconsistent();
+                        // Tone Mapping
+                        pe->locallab.spots.at(pp->locallab.selspot).exptonemap = pe->locallab.spots.at(pp->locallab.selspot).activlum || !exptonemap->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).stren = pe->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).gamma = pe->locallab.spots.at(pp->locallab.selspot).gamma || gamma->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).estop = pe->locallab.spots.at(pp->locallab.selspot).estop || estop->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).scaltm = pe->locallab.spots.at(pp->locallab.selspot).scaltm || scaltm->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).rewei = pe->locallab.spots.at(pp->locallab.selspot).rewei || rewei->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensitm = pe->locallab.spots.at(pp->locallab.selspot).sensitm || sensitm->getEditedState();
+                        // Retinex
+                        pe->locallab.spots.at(pp->locallab.selspot).expreti = pe->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).retinexMethod = pe->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).str = pe->locallab.spots.at(pp->locallab.selspot).str || str->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).chrrt = pe->locallab.spots.at(pp->locallab.selspot).chrrt || chrrt->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).neigh = pe->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).vart = pe->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensih = pe->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).inversret = pe->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
+                        // Sharpening
+                        pe->locallab.spots.at(pp->locallab.selspot).expsharp = pe->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).sharradius = pe->locallab.spots.at(pp->locallab.selspot).sharradius || sharradius->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sharamount = pe->locallab.spots.at(pp->locallab.selspot).sharamount || sharamount->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).shardamping = pe->locallab.spots.at(pp->locallab.selspot).shardamping || shardamping->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).shariter = pe->locallab.spots.at(pp->locallab.selspot).shariter || shariter->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensisha = pe->locallab.spots.at(pp->locallab.selspot).sensisha || sensisha->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).inverssha = pe->locallab.spots.at(pp->locallab.selspot).inverssha || !inverssha->get_inconsistent();
+                        // Contrast by detail levels
+                        pe->locallab.spots.at(pp->locallab.selspot).expcbdl = pe->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
+
+                        for (int i = 0; i < 5; i++) {
+                            pe->locallab.spots.at(pp->locallab.selspot).mult[i] = pe->locallab.spots.at(pp->locallab.selspot).mult[i] || multiplier[i]->getEditedState();
+                        }
+
+                        pe->locallab.spots.at(pp->locallab.selspot).chromacbdl = pe->locallab.spots.at(pp->locallab.selspot).chromacbdl || chromacbdl->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).threshold = pe->locallab.spots.at(pp->locallab.selspot).threshold || threshold->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensicb = pe->locallab.spots.at(pp->locallab.selspot).sensicb || sensicb->getEditedState();
+                        // Denoise
+                        pe->locallab.spots.at(pp->locallab.selspot).expdenoi = pe->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).noiselumf = pe->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noiselumc = pe->locallab.spots.at(pp->locallab.selspot).noiselumc || noiselumc->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noiselumdetail = pe->locallab.spots.at(pp->locallab.selspot).noiselumdetail || noiselumdetail->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noiselequal = pe->locallab.spots.at(pp->locallab.selspot).noiselequal || noiselequal->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noisechrof = pe->locallab.spots.at(pp->locallab.selspot).noisechrof || noisechrof->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noisechroc = pe->locallab.spots.at(pp->locallab.selspot).noisechroc || noisechroc->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noisechrodetail = pe->locallab.spots.at(pp->locallab.selspot).noisechrodetail || noisechrodetail->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).adjblur = pe->locallab.spots.at(pp->locallab.selspot).adjblur || adjblur->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).bilateral = pe->locallab.spots.at(pp->locallab.selspot).bilateral || bilateral->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensiden = pe->locallab.spots.at(pp->locallab.selspot).sensiden || sensiden->getEditedState();
+                        // Others
+                        pe->locallab.spots.at(pp->locallab.selspot).avoid = pe->locallab.spots.at(pp->locallab.selspot).avoid || !avoid->get_inconsistent();
+                    }
+                }
+
+                // ParamsEdited update
+                if (pedited) {
+                    pedited->locallab.enabled = pedited->locallab.enabled || !get_inconsistent();
+
+                    if (pp->locallab.selspot < (int)pedited->locallab.spots.size()) {
+                        // Control spot settings
+                        /*
+                        pedited->locallab.nbspot = se->nbspot;
+                        pedited->locallab.selspot = se->selspot;
+                        pedited->locallab.id = se->nbspot;
+                        */
+                        pedited->locallab.spots.at(pp->locallab.selspot).name = pedited->locallab.spots.at(pp->locallab.selspot).name || se->name;
+                        pedited->locallab.spots.at(pp->locallab.selspot).isvisible = pedited->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
+                        pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
+                        pedited->locallab.spots.at(pp->locallab.selspot).spotMethod = pedited->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu = pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
+                        pedited->locallab.spots.at(pp->locallab.selspot).struc = pedited->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
+                        pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod = pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod || se->shapeMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locX = pedited->locallab.spots.at(pp->locallab.selspot).locX || se->locX;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locXL = pedited->locallab.spots.at(pp->locallab.selspot).locXL || se->locXL;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locY = pedited->locallab.spots.at(pp->locallab.selspot).locY || se->locY;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locYT = pedited->locallab.spots.at(pp->locallab.selspot).locYT || se->locYT;
+                        pedited->locallab.spots.at(pp->locallab.selspot).centerX = pedited->locallab.spots.at(pp->locallab.selspot).centerX || se->centerX;
+                        pedited->locallab.spots.at(pp->locallab.selspot).centerY = pedited->locallab.spots.at(pp->locallab.selspot).centerY || se->centerY;
+                        pedited->locallab.spots.at(pp->locallab.selspot).circrad = pedited->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
+                        pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).transit = pedited->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
+                        pedited->locallab.spots.at(pp->locallab.selspot).thresh = pedited->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
+                        pedited->locallab.spots.at(pp->locallab.selspot).iter = pedited->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
+                        // Color & Light
+                        pedited->locallab.spots.at(pp->locallab.selspot).expcolor = pedited->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).curvactiv = pedited->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lightness = pedited->locallab.spots.at(pp->locallab.selspot).lightness || lightness->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).contrast = pedited->locallab.spots.at(pp->locallab.selspot).contrast || contrast->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).chroma = pedited->locallab.spots.at(pp->locallab.selspot).chroma || chroma->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensi = pedited->locallab.spots.at(pp->locallab.selspot).sensi || sensi->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).llcurve = pedited->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).cccurve = pedited->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).LHcurve = pedited->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).HHcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).invers = pedited->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
+                        // Exposure
+                        pedited->locallab.spots.at(pp->locallab.selspot).expexpose = pedited->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).expcomp = pedited->locallab.spots.at(pp->locallab.selspot).expcomp || expcomp->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).hlcompr = pedited->locallab.spots.at(pp->locallab.selspot).hlcompr || hlcompr->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = pedited->locallab.spots.at(pp->locallab.selspot).hlcomprthresh || hlcomprthresh->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).black = pedited->locallab.spots.at(pp->locallab.selspot).black || black->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).shcompr = pedited->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).warm = pedited->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensiex = pedited->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).excurve = pedited->locallab.spots.at(pp->locallab.selspot).excurve || !shapeexpos->isUnChanged();
+                        // Vibrance
+                        pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).pastels = pedited->locallab.spots.at(pp->locallab.selspot).pastels || pastels->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).psthreshold = pedited->locallab.spots.at(pp->locallab.selspot).psthreshold || psThreshold->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).protectskins = pedited->locallab.spots.at(pp->locallab.selspot).protectskins || !protectSkins->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).avoidcolorshift = pedited->locallab.spots.at(pp->locallab.selspot).avoidcolorshift || !avoidColorShift->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).pastsattog = pedited->locallab.spots.at(pp->locallab.selspot).pastsattog || !pastSatTog->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensiv = pedited->locallab.spots.at(pp->locallab.selspot).sensiv || sensiv->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).skintonescurve = pedited->locallab.spots.at(pp->locallab.selspot).skintonescurve || !skinTonesCurve->isUnChanged();
+                        // Blur & Noise
+                        pedited->locallab.spots.at(pp->locallab.selspot).expblur = pedited->locallab.spots.at(pp->locallab.selspot).expblur || !expblur->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).radius = pedited->locallab.spots.at(pp->locallab.selspot).radius || radius->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strength = pedited->locallab.spots.at(pp->locallab.selspot).strength || strength->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensibn = pedited->locallab.spots.at(pp->locallab.selspot).sensibn || sensibn->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).blurMethod = pedited->locallab.spots.at(pp->locallab.selspot).blurMethod || blurMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).activlum = pedited->locallab.spots.at(pp->locallab.selspot).activlum || !activlum->get_inconsistent();
+                        // Tone Mapping
+                        pedited->locallab.spots.at(pp->locallab.selspot).exptonemap = pedited->locallab.spots.at(pp->locallab.selspot).exptonemap || !exptonemap->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).stren = pedited->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).gamma = pedited->locallab.spots.at(pp->locallab.selspot).gamma || gamma->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).estop = pedited->locallab.spots.at(pp->locallab.selspot).estop || estop->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).scaltm = pedited->locallab.spots.at(pp->locallab.selspot).scaltm || scaltm->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).rewei = pedited->locallab.spots.at(pp->locallab.selspot).rewei || rewei->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensitm = pedited->locallab.spots.at(pp->locallab.selspot).sensitm || sensitm->getEditedState();
+                        // Retinex
+                        pedited->locallab.spots.at(pp->locallab.selspot).expreti = pedited->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod = pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).str = pedited->locallab.spots.at(pp->locallab.selspot).str || str->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).chrrt = pedited->locallab.spots.at(pp->locallab.selspot).chrrt || chrrt->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).neigh = pedited->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).vart = pedited->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensih = pedited->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).inversret = pedited->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
+                        // Sharpening
+                        pedited->locallab.spots.at(pp->locallab.selspot).expsharp = pedited->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sharradius = pedited->locallab.spots.at(pp->locallab.selspot).sharradius || sharradius->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sharamount = pedited->locallab.spots.at(pp->locallab.selspot).sharamount || sharamount->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).shardamping = pedited->locallab.spots.at(pp->locallab.selspot).shardamping || shardamping->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).shariter = pedited->locallab.spots.at(pp->locallab.selspot).shariter || shariter->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensisha = pedited->locallab.spots.at(pp->locallab.selspot).sensisha || sensisha->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).inverssha = pedited->locallab.spots.at(pp->locallab.selspot).inverssha || !inverssha->get_inconsistent();
+                        // Contrast by detail levels
+                        pedited->locallab.spots.at(pp->locallab.selspot).expcbdl = pedited->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
+
+                        for (int i = 0; i < 5; i++) {
+                            pedited->locallab.spots.at(pp->locallab.selspot).mult[i] = pedited->locallab.spots.at(pp->locallab.selspot).mult[i] || multiplier[i]->getEditedState();
+                        }
+
+                        pedited->locallab.spots.at(pp->locallab.selspot).chromacbdl = pedited->locallab.spots.at(pp->locallab.selspot).chromacbdl || chromacbdl->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).threshold = pedited->locallab.spots.at(pp->locallab.selspot).threshold || threshold->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensicb = pedited->locallab.spots.at(pp->locallab.selspot).sensicb || sensicb->getEditedState();
+                        // Denoise
+                        pedited->locallab.spots.at(pp->locallab.selspot).expdenoi = pedited->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noiselumf = pedited->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noiselumc = pedited->locallab.spots.at(pp->locallab.selspot).noiselumc || noiselumc->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noiselumdetail = pedited->locallab.spots.at(pp->locallab.selspot).noiselumdetail || noiselumdetail->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noiselequal = pedited->locallab.spots.at(pp->locallab.selspot).noiselequal || noiselequal->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noisechrof = pedited->locallab.spots.at(pp->locallab.selspot).noisechrof || noisechrof->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noisechroc = pedited->locallab.spots.at(pp->locallab.selspot).noisechroc || noisechroc->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noisechrodetail = pedited->locallab.spots.at(pp->locallab.selspot).noisechrodetail || noisechrodetail->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).adjblur = pedited->locallab.spots.at(pp->locallab.selspot).adjblur || adjblur->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).bilateral = pedited->locallab.spots.at(pp->locallab.selspot).bilateral || bilateral->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensiden = pedited->locallab.spots.at(pp->locallab.selspot).sensiden || sensiden->getEditedState();
+                        // Others
+                        pedited->locallab.spots.at(pp->locallab.selspot).avoid = pedited->locallab.spots.at(pp->locallab.selspot).avoid || !avoid->get_inconsistent();
+                    }
+                }
             }
 
             // Update Locallab tools GUI
             disableListener();
             updateSpecificGUIState();
             enableListener();
-    }
-
-    if (pedited) {
-        pedited->locallab.enabled = !get_inconsistent();
-        // Control spot settings
-        ControlSpotPanel::SpotEdited* const se = expsettings->getEditedStates();
-        pedited->locallab.nbspot = se->addbutton || se->deletebutton;
-        pedited->locallab.selspot = se->treeview;
-        pedited->locallab.id = se->addbutton || se->deletebutton;
-        pedited->locallab.name = se->name;
-        pedited->locallab.isvisible = se->isvisible;
-        pedited->locallab.shape = se->shape;
-        pedited->locallab.spotMethod = se->spotMethod;
-        pedited->locallab.sensiexclu = se->sensiexclu;
-        pedited->locallab.struc = se->struc;
-        pedited->locallab.shapeMethod = se->shapeMethod;
-        pedited->locallab.locX = se->locX;
-        pedited->locallab.locXL = se->locXL;
-        pedited->locallab.locY = se->locY;
-        pedited->locallab.locYT = se->locYT;
-        pedited->locallab.centerX = se->centerX;
-        pedited->locallab.centerY = se->centerY;
-        pedited->locallab.circrad = se->circrad;
-        pedited->locallab.qualityMethod = se->qualityMethod;
-        pedited->locallab.transit = se->transit;
-        pedited->locallab.thresh = se->thresh;
-        pedited->locallab.iter = se->iter;
-        // Color & Light
-        pedited->locallab.expcolor = !expcolor->get_inconsistent();
-        pedited->locallab.curvactiv = !curvactiv->get_inconsistent();
-        pedited->locallab.lightness = lightness->getEditedState();
-        pedited->locallab.contrast = contrast->getEditedState();
-        pedited->locallab.chroma = chroma->getEditedState();
-        pedited->locallab.sensi = sensi->getEditedState();
-        pedited->locallab.qualitycurveMethod = qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->locallab.llcurve = !llshape->isUnChanged();
-        pedited->locallab.cccurve = !ccshape->isUnChanged();
-        pedited->locallab.LHcurve = !LHshape->isUnChanged();
-        pedited->locallab.HHcurve = !HHshape->isUnChanged();
-        pedited->locallab.invers = !invers->get_inconsistent();
-        // Exposure
-        pedited->locallab.expexpose = !expexpose->get_inconsistent();
-        pedited->locallab.expcomp = expcomp->getEditedState();
-        pedited->locallab.hlcompr = hlcompr->getEditedState();
-        pedited->locallab.hlcomprthresh = hlcomprthresh->getEditedState();
-        pedited->locallab.black = black->getEditedState();
-        pedited->locallab.shcompr = shcompr->getEditedState();
-        pedited->locallab.warm = warm->getEditedState();
-        pedited->locallab.sensiex = sensiex->getEditedState();
-        pedited->locallab.excurve = !shapeexpos->isUnChanged();
-        // Vibrance
-        pedited->locallab.expvibrance = !expvibrance->get_inconsistent();
-        pedited->locallab.saturated = saturated->getEditedState();
-        pedited->locallab.pastels = pastels->getEditedState();
-        pedited->locallab.psthreshold = psThreshold->getEditedState();
-        pedited->locallab.protectskins = !protectSkins->get_inconsistent();
-        pedited->locallab.avoidcolorshift = !avoidColorShift->get_inconsistent();
-        pedited->locallab.pastsattog = !pastSatTog->get_inconsistent();
-        pedited->locallab.sensiv = sensiv->getEditedState();
-        pedited->locallab.skintonescurve = !skinTonesCurve->isUnChanged();
-        // Blur & Noise
-        pedited->locallab.expblur = !expblur->get_inconsistent();
-        pedited->locallab.radius = radius->getEditedState();
-        pedited->locallab.strength = strength->getEditedState();
-        pedited->locallab.sensibn = sensibn->getEditedState();
-        pedited->locallab.blurMethod = blurMethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->locallab.activlum = !activlum->get_inconsistent();
-        // Tone Mapping
-        pedited->locallab.exptonemap = !exptonemap->get_inconsistent();
-        pedited->locallab.stren = stren->getEditedState();
-        pedited->locallab.gamma = gamma->getEditedState();
-        pedited->locallab.estop = estop->getEditedState();
-        pedited->locallab.scaltm = scaltm->getEditedState();
-        pedited->locallab.rewei = rewei->getEditedState();
-        pedited->locallab.sensitm = sensitm->getEditedState();
-        // Retinex
-        pedited->locallab.expreti = !expreti->get_inconsistent();
-        pedited->locallab.retinexMethod = retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->locallab.str = str->getEditedState();
-        pedited->locallab.chrrt = chrrt->getEditedState();
-        pedited->locallab.neigh = neigh->getEditedState();
-        pedited->locallab.vart = vart->getEditedState();
-        pedited->locallab.sensih = sensih->getEditedState();
-        pedited->locallab.localTgaincurve = !cTgainshape->isUnChanged();
-        pedited->locallab.inversret = !inversret->get_inconsistent();
-        // Sharpening
-        pedited->locallab.expsharp = !expsharp->get_inconsistent();
-        pedited->locallab.sharradius = sharradius->getEditedState();
-        pedited->locallab.sharamount = sharamount->getEditedState();
-        pedited->locallab.shardamping = shardamping->getEditedState();
-        pedited->locallab.shariter = shariter->getEditedState();
-        pedited->locallab.sensisha = sensisha->getEditedState();
-        pedited->locallab.inverssha = !inverssha->get_inconsistent();
-        // Contrast by detail levels
-        pedited->locallab.expcbdl = !expcbdl->get_inconsistent();
-
-        for (int i = 0; i < 5; i++) {
-            pedited->locallab.mult[i] = multiplier[i]->getEditedState();
-        }
-
-        pedited->locallab.chromacbdl = chromacbdl->getEditedState();
-        pedited->locallab.threshold = threshold->getEditedState();
-        pedited->locallab.sensicb = sensicb->getEditedState();
-        // Denoise
-        pedited->locallab.expdenoi = !expdenoi->get_inconsistent();
-        pedited->locallab.noiselumf = noiselumf->getEditedState();
-        pedited->locallab.noiselumc = noiselumc->getEditedState();
-        pedited->locallab.noiselumdetail = noiselumdetail->getEditedState();
-        pedited->locallab.noiselequal = noiselequal->getEditedState();
-        pedited->locallab.noisechrof = noisechrof->getEditedState();
-        pedited->locallab.noisechroc = noisechroc->getEditedState();
-        pedited->locallab.noisechrodetail = noisechrodetail->getEditedState();
-        pedited->locallab.adjblur = adjblur->getEditedState();
-        pedited->locallab.bilateral = bilateral->getEditedState();
-        pedited->locallab.sensiden = sensiden->getEditedState();
-        // Others
-        pedited->locallab.avoid = !avoid->get_inconsistent();
     }
 }
 
@@ -1828,6 +2009,7 @@ void Locallab::inversretChanged()
     }
 }
 
+/*
 void Locallab::updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id)
 {
     const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
@@ -1901,86 +2083,137 @@ void Locallab::updateDefaultsValues(const rtengine::procparams::ProcParams* defP
     bilateral->setDefault((double)defSpot->bilateral);
     sensiden->setDefault((double)defSpot->sensiden);
 }
+*/
 
-void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited)
+void Locallab::setParamEditable(bool cond)
+{
+    printf("setParamEditable: %d\n", cond);
+
+    // Update params editable state for controlspotpanel
+    expsettings->setParamEditable(cond);
+
+    // Color & Light
+    expcolor->set_sensitive(cond);
+    // Exposure
+    expexpose->set_sensitive(cond);
+    // Vibrance
+    expvibrance->set_sensitive(cond);
+    // Blur & Noise
+    expblur->set_sensitive(cond);
+    // Tone Mapping
+    exptonemap->set_sensitive(cond);
+    // Retinex
+    expreti->set_sensitive(cond);
+    // Sharpening
+    expsharp->set_sensitive(cond);
+    // Contrast by detail levels
+    expcbdl->set_sensitive(cond);
+    // Denoise
+    expdenoi->set_sensitive(cond);
+    // Others
+    avoid->set_sensitive(cond);
+}
+
+void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+{
+    defparams = defParams;
+    defpedited = pedited;
+
+    if (pedited) {
+        pe = new ParamsEdited(*pedited);
+    } else {
+        pe = nullptr;
+    }
+}
+
+void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited, int id)
 {
     printf("setDefaults\n");
-
-    // Store default ProcParams
-    defparams = defParams;
+    printf("defparams: %p\n", defparams);
 
     // Set default values and edited states for controlspotpanel
-    expsettings->setDefaults(defParams, pedited);
+    expsettings->setDefaults(defParams, pedited, id);
 
-    // Set default values for adjusters and threshold adjusters
-    if (defParams->locallab.selspot < (int)defParams->locallab.spots.size()) {
-        updateDefaultsValues(defParams, defParams->locallab.spots.at(defParams->locallab.selspot).id);
-    } else {
-        updateDefaultsValues(defParams);
+    // Find vector index of given spot id (index = -1 if not found)
+    int index = -1;
+
+    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
+        if (defParams->locallab.spots.at(i).id == id) {
+            index = i;
+
+            break;
+        }
     }
 
+    // Set default values for adjusters
+    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
+
+    if (index != -1 && index < (int)defParams->locallab.spots.size()) {
+        defSpot = &defParams->locallab.spots.at(index);
+    }
+
+    // Color & Light
+    lightness->setDefault((double)defSpot->lightness);
+    contrast->setDefault((double)defSpot->contrast);
+    chroma->setDefault((double)defSpot->chroma);
+    sensi->setDefault((double)defSpot->sensi);
+    // Exposure
+    expcomp->setDefault((double)defSpot->expcomp);
+    hlcompr->setDefault((double)defSpot->hlcompr);
+    hlcomprthresh->setDefault((double)defSpot->hlcomprthresh);
+    black->setDefault((double)defSpot->black);
+    shcompr->setDefault((double)defSpot->shcompr);
+    warm->setDefault((double)defSpot->warm);
+    sensiex->setDefault((double)defSpot->sensiex);
+    // Vibrance
+    saturated->setDefault((double)defSpot->saturated);
+    pastels->setDefault((double)defSpot->pastels);
+    psThreshold->setDefault<int>(defSpot->psthreshold);
+    sensiv->setDefault((double)defSpot->sensiv);
+    // Blur & Noise
+    radius->setDefault((double)defSpot->radius);
+    strength->setDefault((double)defSpot->strength);
+    sensibn->setDefault((double)defSpot->sensibn);
+    // Tone Mapping
+    stren->setDefault((double)defSpot->stren);
+    gamma->setDefault((double)defSpot->gamma);
+    estop->setDefault((double)defSpot->estop);
+    scaltm->setDefault((double)defSpot->scaltm);
+    rewei->setDefault((double)defSpot->rewei);
+    sensitm->setDefault((double)defSpot->sensitm);
+    // Retinex
+    str->setDefault((double)defSpot->str);
+    chrrt->setDefault((double)defSpot->chrrt);
+    neigh->setDefault((double)defSpot->neigh);
+    vart->setDefault((double)defSpot->vart);
+    sensih->setDefault((double)defSpot->sensih);
+    // Sharpening
+    sharradius->setDefault((double)defSpot->sharradius);
+    sharamount->setDefault((double)defSpot->sharamount);
+    shardamping->setDefault((double)defSpot->shardamping);
+    shariter->setDefault((double)defSpot->shariter);
+    sensisha->setDefault((double)defSpot->sensisha);
+    // Contrast by detail levels
+    for (int i = 0; i < 5; i++) {
+        multiplier[i]->setDefault(defSpot->mult[i]);
+    }
+    chromacbdl->setDefault((double)defSpot->chromacbdl);
+    threshold->setDefault(defSpot->threshold);
+    sensicb->setDefault((double)defSpot->sensicb);
+    // Denoise
+    noiselumf->setDefault((double)defSpot->noiselumf);
+    noiselumc->setDefault((double)defSpot->noiselumc);
+    noiselumdetail->setDefault((double)defSpot->noiselumdetail);
+    noiselequal->setDefault((double)defSpot->noiselequal);
+    noisechrof->setDefault((double)defSpot->noisechrof);
+    noisechroc->setDefault((double)defSpot->noisechroc);
+    noisechrodetail->setDefault((double)defSpot->noisechrodetail);
+    adjblur->setDefault((double)defSpot->adjblur);
+    bilateral->setDefault((double)defSpot->bilateral);
+    sensiden->setDefault((double)defSpot->sensiden);
+
     // Set default edited states for adjusters and threshold adjusters
-    if (pedited) {
-        // Color & Light
-        lightness->setDefaultEditedState(pedited->locallab.lightness ? Edited : UnEdited);
-        contrast->setDefaultEditedState(pedited->locallab.contrast ? Edited : UnEdited);
-        chroma->setDefaultEditedState(pedited->locallab.chroma ? Edited : UnEdited);
-        sensi->setDefaultEditedState(pedited->locallab.sensi ? Edited : UnEdited);
-        // Exposure
-        expcomp->setDefaultEditedState(pedited->locallab.expcomp ? Edited : UnEdited);
-        hlcompr->setDefaultEditedState(pedited->locallab.hlcompr ? Edited : UnEdited);
-        hlcomprthresh->setDefaultEditedState(pedited->locallab.hlcomprthresh ? Edited : UnEdited);
-        black->setDefaultEditedState(pedited->locallab.black ? Edited : UnEdited);
-        shcompr->setDefaultEditedState(pedited->locallab.shcompr ? Edited : UnEdited);
-        warm->setDefaultEditedState(pedited->locallab.warm ? Edited : UnEdited);
-        sensiex->setDefaultEditedState(pedited->locallab.sensiex ? Edited : UnEdited);
-        // Vibrance
-        saturated->setDefaultEditedState(pedited->locallab.saturated ? Edited : UnEdited);
-        pastels->setDefaultEditedState(pedited->locallab.pastels ? Edited : UnEdited);
-        psThreshold->setDefaultEditedState(pedited->locallab.psthreshold ? Edited : UnEdited);
-        sensiv->setDefaultEditedState(pedited->locallab.sensiv ? Edited : UnEdited);
-        // Blur & Noise
-        radius->setDefaultEditedState(pedited->locallab.radius ? Edited : UnEdited);
-        strength->setDefaultEditedState(pedited->locallab.strength ? Edited : UnEdited);
-        sensibn->setDefaultEditedState(pedited->locallab.sensibn ? Edited : UnEdited);
-        // Tone Mapping
-        stren->setDefaultEditedState(pedited->locallab.stren ? Edited : UnEdited);
-        gamma->setDefaultEditedState(pedited->locallab.gamma ? Edited : UnEdited);
-        estop->setDefaultEditedState(pedited->locallab.estop ? Edited : UnEdited);
-        scaltm->setDefaultEditedState(pedited->locallab.scaltm ? Edited : UnEdited);
-        rewei->setDefaultEditedState(pedited->locallab.rewei ? Edited : UnEdited);
-        sensitm->setDefaultEditedState(pedited->locallab.sensitm ? Edited : UnEdited);
-        // Retinex
-        str->setDefaultEditedState(pedited->locallab.str ? Edited : UnEdited);
-        chrrt->setDefaultEditedState(pedited->locallab.chrrt ? Edited : UnEdited);
-        neigh->setDefaultEditedState(pedited->locallab.neigh ? Edited : UnEdited);
-        vart->setDefaultEditedState(pedited->locallab.vart ? Edited : UnEdited);
-        sensih->setDefaultEditedState(pedited->locallab.sensih ? Edited : UnEdited);
-        // Sharpening
-        sharradius->setDefaultEditedState(pedited->locallab.sharradius ? Edited : UnEdited);
-        sharamount->setDefaultEditedState(pedited->locallab.sharamount ? Edited : UnEdited);
-        shardamping->setDefaultEditedState(pedited->locallab.shardamping ? Edited : UnEdited);
-        shariter->setDefaultEditedState(pedited->locallab.shariter ? Edited : UnEdited);
-        sensisha->setDefaultEditedState(pedited->locallab.sensisha ? Edited : UnEdited);
-        // Contrast by detail levels
-        for (int i = 0; i < 5; i++) {
-            multiplier[i]->setDefaultEditedState(pedited->locallab.mult[i] ? Edited : UnEdited);
-        }
-        chromacbdl->setDefaultEditedState(pedited->locallab.chromacbdl ? Edited : UnEdited);
-        threshold->setDefaultEditedState(pedited->locallab.threshold ? Edited : UnEdited);
-        sensicb->setDefaultEditedState(pedited->locallab.sensicb ? Edited : UnEdited);
-        // Denoise
-        noiselumf->setDefaultEditedState(pedited->locallab.noiselumf ? Edited : UnEdited);
-        noiselumc->setDefaultEditedState(pedited->locallab.noiselumc ? Edited : UnEdited);
-        noiselumdetail->setDefaultEditedState(pedited->locallab.noiselumdetail ? Edited : UnEdited);
-        noiselequal->setDefaultEditedState(pedited->locallab.noiselequal ? Edited : UnEdited);
-        noisechrof->setDefaultEditedState(pedited->locallab.noisechrof ? Edited : UnEdited);
-        noisechroc->setDefaultEditedState(pedited->locallab.noisechroc ? Edited : UnEdited);
-        noisechrodetail->setDefaultEditedState(pedited->locallab.noisechrodetail ? Edited : UnEdited);
-        adjblur->setDefaultEditedState(pedited->locallab.adjblur ? Edited : UnEdited);
-        bilateral->setDefaultEditedState(pedited->locallab.bilateral ? Edited : UnEdited);
-        sensiden->setDefaultEditedState(pedited->locallab.sensiden ? Edited : UnEdited);
-    } else {
+    if (!pedited) {
         // Color & Light
         lightness->setDefaultEditedState(Irrelevant);
         contrast->setDefaultEditedState(Irrelevant);
@@ -2040,6 +2273,72 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         adjblur->setDefaultEditedState(Irrelevant);
         bilateral->setDefaultEditedState(Irrelevant);
         sensiden->setDefaultEditedState(Irrelevant);
+    } else {
+        const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
+
+        if (index != 1 && index < (int)pedited->locallab.spots.size()) {
+            defSpotState = &pedited->locallab.spots.at(index);
+        }
+
+        // Color & Light
+        lightness->setDefaultEditedState(defSpotState->lightness ? Edited : UnEdited);
+        contrast->setDefaultEditedState(defSpotState->contrast ? Edited : UnEdited);
+        chroma->setDefaultEditedState(defSpotState->chroma ? Edited : UnEdited);
+        sensi->setDefaultEditedState(defSpotState->sensi ? Edited : UnEdited);
+        // Exposure
+        expcomp->setDefaultEditedState(defSpotState->expcomp ? Edited : UnEdited);
+        hlcompr->setDefaultEditedState(defSpotState->hlcompr ? Edited : UnEdited);
+        hlcomprthresh->setDefaultEditedState(defSpotState->hlcomprthresh ? Edited : UnEdited);
+        black->setDefaultEditedState(defSpotState->black ? Edited : UnEdited);
+        shcompr->setDefaultEditedState(defSpotState->shcompr ? Edited : UnEdited);
+        warm->setDefaultEditedState(defSpotState->warm ? Edited : UnEdited);
+        sensiex->setDefaultEditedState(defSpotState->sensiex ? Edited : UnEdited);
+        // Vibrance
+        saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
+        pastels->setDefaultEditedState(defSpotState->pastels ? Edited : UnEdited);
+        psThreshold->setDefaultEditedState(defSpotState->psthreshold ? Edited : UnEdited);
+        sensiv->setDefaultEditedState(defSpotState->sensiv ? Edited : UnEdited);
+        // Blur & Noise
+        radius->setDefaultEditedState(defSpotState->radius ? Edited : UnEdited);
+        strength->setDefaultEditedState(defSpotState->strength ? Edited : UnEdited);
+        sensibn->setDefaultEditedState(defSpotState->sensibn ? Edited : UnEdited);
+        // Tone Mapping
+        stren->setDefaultEditedState(defSpotState->stren ? Edited : UnEdited);
+        gamma->setDefaultEditedState(defSpotState->gamma ? Edited : UnEdited);
+        estop->setDefaultEditedState(defSpotState->estop ? Edited : UnEdited);
+        scaltm->setDefaultEditedState(defSpotState->scaltm ? Edited : UnEdited);
+        rewei->setDefaultEditedState(defSpotState->rewei ? Edited : UnEdited);
+        sensitm->setDefaultEditedState(defSpotState->sensitm ? Edited : UnEdited);
+        // Retinex
+        str->setDefaultEditedState(defSpotState->str ? Edited : UnEdited);
+        chrrt->setDefaultEditedState(defSpotState->chrrt ? Edited : UnEdited);
+        neigh->setDefaultEditedState(defSpotState->neigh ? Edited : UnEdited);
+        vart->setDefaultEditedState(defSpotState->vart ? Edited : UnEdited);
+        sensih->setDefaultEditedState(defSpotState->sensih ? Edited : UnEdited);
+        // Sharpening
+        sharradius->setDefaultEditedState(defSpotState->sharradius ? Edited : UnEdited);
+        sharamount->setDefaultEditedState(defSpotState->sharamount ? Edited : UnEdited);
+        shardamping->setDefaultEditedState(defSpotState->shardamping ? Edited : UnEdited);
+        shariter->setDefaultEditedState(defSpotState->shariter ? Edited : UnEdited);
+        sensisha->setDefaultEditedState(defSpotState->sensisha ? Edited : UnEdited);
+        // Contrast by detail levels
+        for (int i = 0; i < 5; i++) {
+            multiplier[i]->setDefaultEditedState(defSpotState->mult[i] ? Edited : UnEdited);
+        }
+        chromacbdl->setDefaultEditedState(defSpotState->chromacbdl ? Edited : UnEdited);
+        threshold->setDefaultEditedState(defSpotState->threshold ? Edited : UnEdited);
+        sensicb->setDefaultEditedState(defSpotState->sensicb ? Edited : UnEdited);
+        // Denoise
+        noiselumf->setDefaultEditedState(defSpotState->noiselumf ? Edited : UnEdited);
+        noiselumc->setDefaultEditedState(defSpotState->noiselumc ? Edited : UnEdited);
+        noiselumdetail->setDefaultEditedState(defSpotState->noiselumdetail ? Edited : UnEdited);
+        noiselequal->setDefaultEditedState(defSpotState->noiselequal ? Edited : UnEdited);
+        noisechrof->setDefaultEditedState(defSpotState->noisechrof ? Edited : UnEdited);
+        noisechroc->setDefaultEditedState(defSpotState->noisechroc ? Edited : UnEdited);
+        noisechrodetail->setDefaultEditedState(defSpotState->noisechrodetail ? Edited : UnEdited);
+        adjblur->setDefaultEditedState(defSpotState->adjblur ? Edited : UnEdited);
+        bilateral->setDefaultEditedState(defSpotState->bilateral ? Edited : UnEdited);
+        sensiden->setDefaultEditedState(defSpotState->sensiden ? Edited : UnEdited);
     }
 }
 
@@ -2500,66 +2799,74 @@ void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
 
 void Locallab::setBatchMode(bool batchMode)
 {
-    ToolPanel::setBatchMode(batchMode);
     printf("BatchMode : %d\n", batchMode);
 
-    adjblur->showEditedCB();
+    ToolPanel::setBatchMode(batchMode);
+
+    // Set batch mode for controlspotpanel
+    expsettings->setBatchMode(batchMode);
+
+    // Set batch mode for adjusters and threshold adjusters
+    // Color & Light
     lightness->showEditedCB();
     contrast->showEditedCB();
     chroma->showEditedCB();
-    warm->showEditedCB();
+    sensi->showEditedCB();
+    // Exposure
     expcomp->showEditedCB();
-    black->showEditedCB();
     hlcompr->showEditedCB();
     hlcomprthresh->showEditedCB();
+    black->showEditedCB();
     shcompr->showEditedCB();
-    noiselumf->showEditedCB();
-    noiselumc->showEditedCB();
-    noiselumdetail->showEditedCB();
-    noiselequal->showEditedCB();
-    noisechrodetail->showEditedCB();
-    bilateral->showEditedCB();
-    sensiden->showEditedCB();
-    noisechroc->showEditedCB();
-    noiselumf->showEditedCB();
-    sharradius->showEditedCB();
-    sharamount->showEditedCB();
-    shardamping->showEditedCB();
-    shariter->showEditedCB();
-    sensisha->showEditedCB();
-    sensi->showEditedCB();
+    warm->showEditedCB();
     sensiex->showEditedCB();
-    sensih->showEditedCB();
-    sensicb->showEditedCB();
-    sensibn->showEditedCB();
-    sensitm->showEditedCB();
+    // Vibrance
+    saturated->showEditedCB();
+    pastels->showEditedCB();
+    psThreshold->showEditedCB();
+    sensiv->showEditedCB();
+    // Blur & Noise
     radius->showEditedCB();
     strength->showEditedCB();
+    sensibn->showEditedCB();
+    // Tone Mapping
     stren->showEditedCB();
     gamma->showEditedCB();
     estop->showEditedCB();
     scaltm->showEditedCB();
     rewei->showEditedCB();
+    sensitm->showEditedCB();
+    // Retinex
     str->showEditedCB();
+    chrrt->showEditedCB();
     neigh->showEditedCB();
     vart->showEditedCB();
-    LocalcurveEditorgainT->setBatchMode(batchMode);
-    llCurveEditorG->setBatchMode(batchMode);
-    chrrt->showEditedCB();
-
+    sensih->showEditedCB();
+    // Sharpening
+    sharradius->showEditedCB();
+    sharamount->showEditedCB();
+    shardamping->showEditedCB();
+    shariter->showEditedCB();
+    sensisha->showEditedCB();
+    // Contrast by detail levels
     for (int i = 0; i < 5; i++) {
         multiplier[i]->showEditedCB();
     }
 
-    threshold->showEditedCB();
     chromacbdl->showEditedCB();
-    pastels->showEditedCB();
-    saturated->showEditedCB();
-    psThreshold->showEditedCB();
-    sensiv->showEditedCB();
-
-    curveEditorGG->setBatchMode(batchMode);
-
+    threshold->showEditedCB();
+    sensicb->showEditedCB();
+    // Denoise
+    noiselumf->showEditedCB();
+    noiselumc->showEditedCB();
+    noiselumdetail->showEditedCB();
+    noiselequal->showEditedCB();
+    noiselumf->showEditedCB();
+    noisechroc->showEditedCB();
+    noisechrodetail->showEditedCB();
+    adjblur->showEditedCB();
+    bilateral->showEditedCB();
+    sensiden->showEditedCB();
 }
 
 std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
@@ -2751,7 +3058,7 @@ void Locallab::disableListener()
     avoidConn.block(true);
 }
 
-void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int index)
+void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index)
 {
     printf("updateLocallabGUI\n");
 
@@ -2880,6 +3187,154 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
 
         // Others
         avoid->set_active(pp->locallab.spots.at(index).avoid);
+
+        if (pedited) {
+            if (index < (int)pedited->locallab.spots.size()) {
+                const LocallabParamsEdited::LocallabSpotEdited* spotState = &pedited->locallab.spots.at(index);
+
+                // Control spot settings
+                ControlSpotPanel::SpotEdited* const se = new ControlSpotPanel::SpotEdited();
+
+                if (pedited->locallab.nbspot && pedited->locallab.id) {
+                    se->nbspot = true;
+                } else {
+                    se->nbspot = false;
+                }
+
+                se->selspot = pedited->locallab.selspot;
+                se->name = spotState->name;
+                se->isvisible = spotState->isvisible;
+                se->shape = spotState->shape;
+                se->spotMethod = spotState->spotMethod;
+                se->sensiexclu = spotState->sensiexclu;
+                se->struc = spotState->struc;
+                se->shapeMethod = spotState->shapeMethod;
+                se->locX = spotState->locX;
+                se->locXL = spotState->locXL;
+                se->locY = spotState->locY;
+                se->locYT = spotState->locYT;
+                se->centerX = spotState->centerX;
+                se->centerY = spotState->centerY;
+                se->circrad = spotState->circrad;
+                se->qualityMethod = spotState->qualityMethod;
+                se->transit = spotState->transit;
+                se->thresh = spotState->thresh;
+                se->iter = spotState->iter;
+                expsettings->setEditedStates(se);
+
+                // Color & Light
+                expcolor->set_inconsistent(!spotState->expcolor);
+                curvactiv->set_inconsistent(multiImage && !spotState->curvactiv);
+                lightness->setEditedState(spotState->lightness ? Edited : UnEdited);
+                contrast->setEditedState(spotState->contrast ? Edited : UnEdited);
+                chroma->setEditedState(spotState->chroma ? Edited : UnEdited);
+                sensi->setEditedState(spotState->sensi ? Edited : UnEdited);
+
+                if (!spotState->qualitycurveMethod) {
+                    qualitycurveMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
+                llshape->setUnChanged(!spotState->llcurve);
+                ccshape->setUnChanged(!spotState->cccurve);
+                LHshape->setUnChanged(!spotState->LHcurve);
+                HHshape->setUnChanged(!spotState->HHcurve);
+                invers->set_inconsistent(multiImage && !spotState->invers);
+
+                // Exposure
+                expexpose->set_inconsistent(!spotState->expexpose);
+                expcomp->setEditedState(spotState->expcomp ? Edited : UnEdited);
+                hlcompr->setEditedState(spotState->hlcompr ? Edited : UnEdited);
+                hlcomprthresh->setEditedState(spotState->hlcomprthresh ? Edited : UnEdited);
+                black->setEditedState(spotState->black ? Edited : UnEdited);
+                warm->setEditedState(spotState->warm ? Edited : UnEdited);
+                shcompr->setEditedState(spotState->shcompr ? Edited : UnEdited);
+                sensiex->setEditedState(spotState->sensiex ? Edited : UnEdited);
+                shapeexpos->setUnChanged(!spotState->excurve);
+
+                // Vibrance
+                expvibrance->set_inconsistent(!spotState->expvibrance);
+                saturated->setEditedState(spotState->saturated ? Edited : UnEdited);
+                pastels->setEditedState(spotState->pastels ? Edited : UnEdited);
+                psThreshold->setEditedState(spotState->psthreshold ? Edited : UnEdited);
+                protectSkins->set_inconsistent(multiImage && !spotState->protectskins);
+                avoidColorShift->set_inconsistent(multiImage && !spotState->avoidcolorshift);
+                pastSatTog->set_inconsistent(multiImage && !spotState->pastsattog);
+                sensiv->setEditedState(spotState->sensiv ? Edited : UnEdited);
+                skinTonesCurve->setUnChanged(!spotState->skintonescurve);
+
+                // Blur & Noise
+                expblur->set_inconsistent(!spotState->expblur);
+                radius->setEditedState(spotState->radius ? Edited : UnEdited);
+                strength->setEditedState(spotState->strength ? Edited : UnEdited);
+                sensibn->setEditedState(spotState->sensibn ? Edited : UnEdited);
+
+                if (!spotState->blurMethod) {
+                    blurMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
+                activlum->set_inconsistent(multiImage && !spotState->activlum);
+
+                // Tone Mapping
+                exptonemap->set_inconsistent(!spotState->exptonemap);
+                stren->setEditedState(spotState->stren ? Edited : UnEdited);
+                gamma->setEditedState(spotState->gamma ? Edited : UnEdited);
+                estop->setEditedState(spotState->estop ? Edited : UnEdited);
+                scaltm->setEditedState(spotState->scaltm ? Edited : UnEdited);
+                rewei->setEditedState(spotState->rewei ? Edited : UnEdited);
+                sensitm->setEditedState(spotState->sensitm ? Edited : UnEdited);
+
+                // Retinex
+                expreti->set_inconsistent(!spotState->expreti);
+
+                if (!spotState->retinexMethod) {
+                    retinexMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
+                str->setEditedState(spotState->str ? Edited : UnEdited);
+                chrrt->setEditedState(spotState->chrrt ? Edited : UnEdited);
+                neigh->setEditedState(spotState->neigh ? Edited : UnEdited);
+                vart->setEditedState(spotState->vart ? Edited : UnEdited);
+                sensih->setEditedState(spotState->sensih ? Edited : UnEdited);
+                cTgainshape->setUnChanged(!spotState->localTgaincurve);
+                inversret->set_inconsistent(multiImage && !spotState->inversret);
+
+                // Sharpening
+                expsharp->set_inconsistent(!spotState->expsharp);
+                sharradius->setEditedState(spotState->sharradius ? Edited : UnEdited);
+                sharamount->setEditedState(spotState->sharamount ? Edited : UnEdited);
+                shardamping->setEditedState(spotState->shardamping ? Edited : UnEdited);
+                shariter->setEditedState(spotState->shariter ? Edited : UnEdited);
+                sensisha->setEditedState(spotState->sensisha ? Edited : UnEdited);
+                inverssha->set_inconsistent(multiImage && !spotState->inverssha);
+
+                // Contrast by detail levels
+                expcbdl->set_inconsistent(!spotState->expcbdl);
+
+                for (int i = 0; i < 5; i++) {
+                    multiplier[i]->setEditedState(spotState->mult[i] ? Edited : UnEdited);
+                }
+
+                chromacbdl->setEditedState(spotState->chromacbdl ? Edited : UnEdited);
+                threshold->setEditedState(spotState->threshold ? Edited : UnEdited);
+                sensicb->setEditedState(spotState->sensicb ? Edited : UnEdited);
+
+                // Denoise
+                expdenoi->set_inconsistent(!spotState->expdenoi);
+                noiselumf->setEditedState(spotState->noiselumf ? Edited : UnEdited);
+                noiselumc->setEditedState(spotState->noiselumc ? Edited : UnEdited);
+                noiselumdetail->setEditedState(spotState->noiselumdetail ? Edited : UnEdited);
+                noiselequal->setEditedState(spotState->noiselequal ? Edited : UnEdited);
+                noisechrof->setEditedState(spotState->noisechrof ? Edited : UnEdited);
+                noisechroc->setEditedState(spotState->noisechroc ? Edited : UnEdited);
+                noisechrodetail->setEditedState(spotState->noisechrodetail ? Edited : UnEdited);
+                adjblur->setEditedState(spotState->adjblur ? Edited : UnEdited);
+                bilateral->setEditedState(spotState->bilateral ? Edited : UnEdited);
+                sensiden->setEditedState(spotState->sensiden ? Edited : UnEdited);
+
+                // Others
+                avoid->set_inconsistent(multiImage && !spotState->avoid);
+            }
+        }
     }
 }
 

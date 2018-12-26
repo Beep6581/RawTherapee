@@ -181,6 +181,16 @@ private:
      * When an other spot is selected, this default ProcParams is used to update adjusters default values
      */
     const rtengine::ProcParams* defparams;
+    /**
+     * Used to store the default ParamsEdited when setDefaults function is called
+     * When an other spot is selected, this default ParamsEdited is used to update adjusters default edited state
+     */
+    const ParamsEdited* defpedited;
+    /**
+     * Used to store the default ParamsEdited when setDefaults function is called
+     * This ParamsEdited is updated when control spots are modified and is used to update adjusters edited state
+     */
+    ParamsEdited* pe;
 
     // Expander management functions
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
@@ -217,9 +227,10 @@ private:
     void lumacontrastPlusPressed();
 
     // Locallab GUI management function
-    void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int index);
+    void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);
     void updateSpecificGUIState();
-    void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
+    // void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
+    void setParamEditable(bool cond);
 
 public:
     Locallab();
@@ -229,6 +240,7 @@ public:
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited, int id);
     void setBatchMode(bool batchMode);
     void trimValues(rtengine::procparams::ProcParams* pp);
     void setListener(ToolPanelListener* tpl);

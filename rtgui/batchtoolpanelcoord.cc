@@ -57,7 +57,13 @@ void BatchToolPanelCoordinator::selectionChanged (const std::vector<Thumbnail*>&
 void BatchToolPanelCoordinator::closeSession (bool save)
 {
 
-    pparamsEdited.set (false);
+    // Should remain commented for Locallab to work
+    // pparamsEdited.set (false);
+    printf("closeSession\n");
+    printf("closeSession pedited %d\n", (int)pparamsEdited.locallab.spots.size());
+    printf("closeSession pparams %d\n", (int)pparams.locallab.spots.size());
+    printf("closeSession nbspot %d\n", (int)pparams.locallab.nbspot);
+    printf("closeSession pedited nbspot %d\n", pparamsEdited.locallab.nbspot);
 
     for (size_t i = 0; i < selected.size(); i++) {
         selected[i]->removeThumbnailListener (this);
@@ -70,12 +76,18 @@ void BatchToolPanelCoordinator::closeSession (bool save)
             toolPanels[i]->write (&pparams, &pparamsEdited);
         }
 
+        printf("closeSession 2 pedited %d\n", (int)pparamsEdited.locallab.spots.size());
+        printf("closeSession 2 pparams %d\n", (int)pparams.locallab.spots.size());
+        printf("closeSession 2 nbspot %d\n", (int)pparams.locallab.nbspot);
+        printf("closeSession 2 pedited nbspot %d\n", pparamsEdited.locallab.nbspot);
+
         // combine with initial parameters and set
         ProcParams newParams;
 
         for (size_t i = 0; i < selected.size(); i++) {
             newParams = initialPP[i];
             pparamsEdited.combine (newParams, pparams, selected.size() == 1);
+            printf("newParams%d->nbspot %d, size %d\n", (int)i, newParams.locallab.nbspot, (int)newParams.locallab.spots.size());
 
             // trim new adjuster's values to the adjuster's limits
             for (unsigned int j = 0; j < toolPanels.size(); j++) {
@@ -383,6 +395,9 @@ void BatchToolPanelCoordinator::initSession ()
             paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M ("BATCH_PROCESSING"), &pparamsEdited);
         }
     }
+
+    // ParamsEdited are set to false for initialization and is updated each time panel is changed (mandatory for Locallab)
+    pparamsEdited.set(false);
 }
 
 void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::ustring& descr)
@@ -392,9 +407,12 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
         return;
     }
 
+    printf("panelChanged batch mode\n");
+
     somethingChanged = true;
 
-    pparamsEdited.set (false);
+    // Should remain commented for Locallab to work
+    // pparamsEdited.set (false);
 
     // read new values from the gui
     for (size_t i = 0; i < toolPanels.size(); i++) {
@@ -554,6 +572,10 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
     for (size_t i = 0; i < paramcListeners.size(); i++) {
         paramcListeners[i]->procParamsChanged (&pparams, event, descr, &pparamsEdited);
     }
+
+    printf("panel changed pedited %d\n", (int)pparamsEdited.locallab.spots.size());
+    printf("panel changed pparams %d\n", (int)pparams.locallab.spots.size());
+    printf("panel changed nbspot %d\n", (int)pparams.locallab.nbspot);
 }
 
 void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, double tempBias)

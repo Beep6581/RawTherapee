@@ -182,8 +182,16 @@ void History::historySelectionChanged ()
         if (row && tpc) {
             ProcParams pparams = row[historyColumns.params];
             ParamsEdited pe (true);
+            pe.locallab.spots.resize(pparams.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(true));
             PartialProfile pp (&pparams, &pe);
             ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
+
+            printf("historySelectionChanged\n");
+            printf("nbspot: %d %d\n", pp.pparams->locallab.nbspot, (int)pp.pparams->locallab.spots.size());
+            for (size_t i = 0; i < pp.pparams->locallab.spots.size(); i++) {
+                printf("id_%d = %d\n", (int)i, pp.pparams->locallab.spots.at(i).id);
+            }
+
             tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
 
@@ -215,6 +223,7 @@ void History::bookmarkSelectionChanged ()
         if (row && tpc) {
             ProcParams pparams = row[bookmarkColumns.params];
             ParamsEdited pe (true);
+            pe.locallab.spots.resize(pparams.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(true));
             PartialProfile pp (&pparams, &pe);
             ParamsEdited paramsEdited = row[bookmarkColumns.paramsEdited];
             tpc->profileChange (&pp, EvBookmarkSelected, row[bookmarkColumns.text], &paramsEdited);

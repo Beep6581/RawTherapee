@@ -422,6 +422,7 @@ void PartialPasteDlg::everythingToggled ()
     ConnectionBlocker metaBlocker(metaConn);
     ConnectionBlocker rawBlocker(rawConn);
     ConnectionBlocker advancedBlocker(advancedConn);
+    ConnectionBlocker locallabBlocker(locallabConn);
 
     everything->set_inconsistent (false);
 
@@ -434,6 +435,7 @@ void PartialPasteDlg::everythingToggled ()
     meta->set_active(everything->get_active());
     raw->set_active(everything->get_active());
     advanced->set_active(everything->get_active());
+    locallab->set_active(everything->get_active());
 
     //toggle group children
     PartialPasteDlg::basicToggled ();
@@ -444,6 +446,7 @@ void PartialPasteDlg::everythingToggled ()
     PartialPasteDlg::metaToggled ();
     PartialPasteDlg::rawToggled ();
     PartialPasteDlg::advancedToggled ();
+    PartialPasteDlg::locallabToggled();
 }
 
 void PartialPasteDlg::rawToggled ()
@@ -660,7 +663,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 {
 
     ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
+    falsePE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(false));
     ParamsEdited filterPE(true); // Contains the initial information about the loaded values
+    filterPE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(true));
 
     if (srcPE) {
         filterPE = *srcPE;
