@@ -536,7 +536,7 @@ int main (int argc, char **argv)
                 bool Console = true;
 
                 for (int i = 1; i < argc; i++)
-                    if (!strcmp (argv[i], "-w") || !strcmp (argv[i], "-R")) {
+                    if (!strcmp (argv[i], "-w") || !strcmp (argv[i], "-R") || !strcmp (argv[i], "-gimp")) {
                         Console = false;
                         break;
                     }
