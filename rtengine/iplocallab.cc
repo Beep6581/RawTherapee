@@ -6968,7 +6968,8 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                             kdE = SQR(SQR(dE / dEsens));
                         }
 
-                        if (deltahue < 0.3f && (lp.qualcurvemet == 3 || lp.qualcurvemet == 5)) {//for very low differences with smal values of scope
+                     //   if (deltahue < 0.3f && (lp.qualcurvemet == 3 || lp.qualcurvemet == 5)) {//for very low differences with smal values of scope
+                        if (deltahue < 0.3f) {//for very low differences with smal values of scope
                             kchchro = kch = pow(kch0, (1.f + kdE * moddE * (3.f - 10.f * deltahue)) * kkch);
                         }
                     }
@@ -7339,7 +7340,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                 //    float flichrosl = 1.f;
 
                                 if (lp.curvact && lp.ligh != 0.f) {
-                                    flisl = ((100.f + realclighsl * falL) / 100.f); //luma transition
+                                    flisl = ((100.f + realclighsl * falL * kchchro) / 100.f); //luma transition
                                     //  flisl = ((100.f + realclighsl) / 100.f); //luma transition
                                 }
 
@@ -11999,7 +12000,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 //end cbdl_Local
 
 // soft light
-        if (lp.strng > 0.f && call < 3  && lp.sfena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
+        if (lp.strng > 0.f && call < 3  && lp.sfena) { 
             float hueplus = hueref + dhuesf;
             float huemoins = hueref - dhuesf;
 
