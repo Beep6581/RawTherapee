@@ -1068,12 +1068,12 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     const float add = 0.055f;
     float maxran = 65536.f; //65536
 
-    ecomp /= 100.;//for mip files in integer * 100
+    ecomp /= 100.;
 
     // check if brightness curve is needed
     if (br > 0.00001 || br < -0.00001) {
         //     utili = true;
-
+        br /= 4.f;//to avoid artifacts in some cases
         std::vector<double> brightcurvePoints;
         brightcurvePoints.resize(9);
         brightcurvePoints.at(0) = double (DCT_NURBS);
@@ -1082,11 +1082,11 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         brightcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
 
         if (br > 0) {
-            brightcurvePoints.at(3) = 0.1;  // toe point
-            brightcurvePoints.at(4) = 0.1 + br / 150.0;  //value at toe point
+            brightcurvePoints.at(3) = 0.2;  // toe point
+            brightcurvePoints.at(4) = 0.2 + br / 250.0;  //value at toe point
 
-            brightcurvePoints.at(5) = 0.7;  // shoulder point
-            brightcurvePoints.at(6) = min(1.0, 0.7 + br / 300.0);   //value at shoulder point
+            brightcurvePoints.at(5) = 0.6;  // shoulder point
+            brightcurvePoints.at(6) = min(1.0, 0.6 + br / 200.0);   //value at shoulder point
         } else {
             brightcurvePoints.at(3) = 0.1 - br / 150.0;  // toe point
             brightcurvePoints.at(4) = 0.1;  // value at toe point

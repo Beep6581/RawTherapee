@@ -5154,6 +5154,7 @@ void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco
     delete origblur;
 }
 
+
 static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurveloc)
 //replace L-curve that does not work in local or bad
 {
