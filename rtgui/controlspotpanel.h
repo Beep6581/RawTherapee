@@ -25,6 +25,7 @@
 #include "adjuster.h"
 #include "edit.h"
 #include "guiutils.h"
+#include "threadutils.h"
 #include "toolpanel.h"
 #include <gtkmm.h>
 #include <string>
@@ -328,6 +329,9 @@ private:
     bool nameChanged_;
 
     int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event
+
+    // Treeview mutex
+    MyMutex mTreeview;
 };
 
 #endif // _CONTROLSPOTPANEL_H_

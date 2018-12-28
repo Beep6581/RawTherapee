@@ -1314,6 +1314,8 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
 {
     printf("getSpot: %d\n", id);
 
+    MyMutex::MyLock lock(mTreeview);
+
     SpotRow* r = new SpotRow();
 
     Gtk::TreeModel::Children children = treemodel_->children();
@@ -1352,6 +1354,8 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
 
 std::vector<int>* ControlSpotPanel::getSpotIdList()
 {
+    MyMutex::MyLock lock(mTreeview);
+
     std::vector<int>* r = new std::vector<int>();
 
     Gtk::TreeModel::Children children = treemodel_->children();
@@ -1368,6 +1372,8 @@ std::vector<int>* ControlSpotPanel::getSpotIdList()
 int ControlSpotPanel::getSelectedSpot()
 {
     printf("getSelectedSpot\n");
+
+    MyMutex::MyLock lock(mTreeview);
 
     const auto s = treeview_.get_selection();
 
@@ -1386,6 +1392,8 @@ int ControlSpotPanel::getSelectedSpot()
 void ControlSpotPanel::setSelectedSpot(int id)
 {
     printf("setSelectedSpot: %d\n", id);
+
+    MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
 
@@ -1407,6 +1415,8 @@ void ControlSpotPanel::setSelectedSpot(int id)
 
 int ControlSpotPanel::getNewId()
 {
+    MyMutex::MyLock lock(mTreeview);
+
     // Looking for maximum used id
     int max_row_id = 0;
     Gtk::TreeModel::Children children = treemodel_->children();
@@ -1427,6 +1437,8 @@ int ControlSpotPanel::getNewId()
 void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
 {
     printf("addControlSpot: %d\n", newSpot->id);
+
+    MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
     Gtk::TreeModel::Row row = * (treemodel_->append());
@@ -1461,6 +1473,8 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
 int ControlSpotPanel::updateControlSpot(SpotRow* spot)
 {
     printf("updateControlSpot: %d\n", spot->id);
+
+    MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
 
@@ -1506,6 +1520,8 @@ void ControlSpotPanel::deleteControlSpot(int id)
 {
     printf("deleteControlSpot: %d\n", id);
 
+    MyMutex::MyLock lock(mTreeview);
+
     disableParamlistener(true);
 
     Gtk::TreeModel::Children children = treemodel_->children();
@@ -1517,6 +1533,7 @@ void ControlSpotPanel::deleteControlSpot(int id)
         if (row[spots_.id] == id) {
             deleteControlSpotCurve(row);
             treemodel_->erase(iter);
+            break;
         }
     }
 
