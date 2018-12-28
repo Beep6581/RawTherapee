@@ -327,8 +327,8 @@ private:
     bool nbSpotChanged_;
     bool selSpotChanged_;
     bool nameChanged_;
-
     int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event
+    Gtk::Frame* const excluFrame;
 
     // Treeview mutex
     MyMutex mTreeview;

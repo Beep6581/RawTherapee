@@ -60,8 +60,8 @@ ControlSpotPanel::ControlSpotPanel():
     nbSpotChanged_(false),
     selSpotChanged_(false),
     nameChanged_(false),
-
-    eventType(0)
+    eventType(0),
+    excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF"))))
 {
     treeview_.set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
 
@@ -146,7 +146,6 @@ ControlSpotPanel::ControlSpotPanel():
     ctboxspotmethod->pack_start(*spotMethod_);
     pack_start(*ctboxspotmethod);
 
-    Gtk::Frame* const excluFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF")));
     excluFrame->set_label_align(0.025, 0.5);
     excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
     ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
@@ -416,6 +415,13 @@ void ControlSpotPanel::spotMethodChanged()
 
     row[spots_.spotMethod] = spotMethod_->get_active_row_number();
 
+    // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
+    if (spotMethod_->get_active_row_number() == 0) { // Normal case
+        excluFrame->hide();
+    } else { // Excluding case
+        excluFrame->show();
+    }
+
     // Raise event
     if (listener) {
         listener->panelChanged(EvLocallabSpotSpotMethod, spotMethod_->get_active_text());
@@ -452,7 +458,39 @@ void ControlSpotPanel::shapeMethodChanged()
         row[spots_.shapeMethod] = shapeMethod_->get_active_row_number();
     }
 
-    updateParamVisibility();
+    // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with updateParamVisibility function)
+    if (method == 1 || method == 3) { // Symmetrical cases
+        locXL_->hide();
+        locYT_->hide();
+
+        if (method == 1) { // 1 = Symmetrical (mouse)
+            locX_->hide();
+            locY_->hide();
+            centerX_->hide();
+            centerY_->hide();
+        } else { // 3 = Symmetrical (mouse + sliders)
+            locX_->show();
+            locY_->show();
+            centerX_->show();
+            centerY_->show();
+        }
+    } else { // Independent cases
+        if (method == 0) { // 0 = Independent (mouse)
+            locX_->hide();
+            locXL_->hide();
+            locY_->hide();
+            locYT_->hide();
+            centerX_->hide();
+            centerY_->hide();
+        } else { // 2 = Independent (mouse + sliders)
+            locX_->show();
+            locXL_->show();
+            locY_->show();
+            locYT_->show();
+            centerX_->show();
+            centerY_->show();
+        }
+    }
 
     // Raise event
     if (listener) {
@@ -485,8 +523,9 @@ void ControlSpotPanel::qualityMethodChanged()
 void ControlSpotPanel::updateParamVisibility()
 {
     printf("updateParamVisibility\n");
-    const int method = shapeMethod_->get_active_row_number();
 
+    // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with shapeMethodChanged function)
+    const int method = shapeMethod_->get_active_row_number();
     if (method == 1 || method == 3) { // Symmetrical cases
         locXL_->hide();
         locYT_->hide();
@@ -518,6 +557,13 @@ void ControlSpotPanel::updateParamVisibility()
             centerX_->show();
             centerY_->show();
         }
+    }
+
+    // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with spotMethodChanged function)
+    if (spotMethod_->get_active_row_number() == 0) { // Normal case
+        excluFrame->hide();
+    } else { // Excluding case
+        excluFrame->show();
     }
 }
 
