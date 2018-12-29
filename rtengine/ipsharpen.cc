@@ -159,7 +159,7 @@ extern const Settings* settings;
 
 void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, int H, const SharpeningParams &sharpenParam)
 {
-    if (sharpenParam.deconvamount < 1) {
+    if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25f) {
         return;
     }
 BENCHFUN
@@ -177,11 +177,31 @@ BENCHFUN
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
     float contrast = sharpenParam.contrast / 100.f;
-    buildBlendMask(luminance, blend, W, H, contrast, sharpenParam.deconvamount / 100.f);
+    buildBlendMask(luminance, blend, W, H, contrast, 1.f);
+    JaggedArray<float>* blurbuffer = nullptr;
 
+    if (sharpenParam.blurradius >= 0.25f) {
+        blurbuffer = new JaggedArray<float>(W, H);
+        JaggedArray<float> &blur = *blurbuffer;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(tmpI, blur, W, H, sharpenParam.blurradius);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], luminance[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
+    }
     const float damping = sharpenParam.deconvdamping / 5.0;
     const bool needdamp = sharpenParam.deconvdamping > 0;
     const double sigma = sharpenParam.deconvradius / scale;
+    const float amount = sharpenParam.deconvamount / 100.f;
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -205,10 +225,23 @@ BENCHFUN
 
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < W; ++j) {
-                luminance[i][j] = intp(blend[i][j], max(tmpI[i][j], 0.0f), luminance[i][j]);
+                luminance[i][j] = intp(blend[i][j] * amount, max(tmpI[i][j], 0.0f), luminance[i][j]);
+            }
+        }
+
+        if (sharpenParam.blurradius >= 0.25f) {
+            JaggedArray<float> &blur = *blurbuffer;
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    luminance[i][j] = intp(blend[i][j], luminance[i][j], max(blur[i][j], 0.0f));
+                }
             }
         }
     } // end parallel
+    delete blurbuffer;
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam, bool showMask)
@@ -224,7 +257,7 @@ void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpen
         // calculate contrast based blend factors to reduce sharpening in regions with low contrast
         JaggedArray<float> blend(W, H);
         float contrast = sharpenParam.contrast / 100.f;
-        buildBlendMask(lab->L, blend, W, H, contrast, sharpenParam.method == "rld" ? sharpenParam.deconvamount / 100.f : 1.f);
+        buildBlendMask(lab->L, blend, W, H, contrast, 1.f);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -260,6 +293,26 @@ BENCHFUN
     JaggedArray<float> blend(W, H);
     float contrast = sharpenParam.contrast / 100.f;
     buildBlendMask(lab->L, blend, W, H, contrast);
+
+    JaggedArray<float> blur(W, H);
+
+    if (sharpenParam.blurradius >= 0.25f) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(lab->L, blur, W, H, sharpenParam.blurradius);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], lab->L[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
+    }
+
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -322,6 +375,18 @@ BENCHFUN
 
         delete [] b3;
     }
+
+    if (sharpenParam.blurradius >= 0.25f) {
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                lab->L[i][j] = intp(blend[i][j], lab->L[i][j], max(blur[i][j], 0.0f));
+            }
+        }
+    }
+
 }
 
 // To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>
