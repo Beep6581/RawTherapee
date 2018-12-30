@@ -1079,6 +1079,7 @@ void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurv
 SharpeningParams::SharpeningParams() :
     enabled(false),
     contrast(20.0),
+    blurradius(0.2),
     radius(0.5),
     amount(200),
     threshold(20, 80, 2000, 1200, false),
@@ -1100,6 +1101,7 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
     return
         enabled == other.enabled
         && contrast == other.contrast
+        && blurradius == other.blurradius
         && radius == other.radius
         && amount == other.amount
         && threshold == other.threshold
@@ -3303,6 +3305,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sharpening.contrast, "Sharpening", "Contrast", sharpening.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.method, "Sharpening", "Method", sharpening.method, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.radius, "Sharpening", "Radius", sharpening.radius, keyFile);
+        saveToKeyfile(!pedited || pedited->sharpening.blurradius, "Sharpening", "BlurRadius", sharpening.blurradius, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.amount, "Sharpening", "Amount", sharpening.amount, keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.threshold, "Sharpening", "Threshold", sharpening.threshold.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->sharpening.edgesonly, "Sharpening", "OnlyEdges", sharpening.edgesonly, keyFile);
@@ -4323,6 +4326,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "Sharpening", "Radius", pedited, sharpening.radius, pedited->sharpening.radius);
+            assignFromKeyfile(keyFile, "Sharpening", "BlurRadius", pedited, sharpening.blurradius, pedited->sharpening.blurradius);
             assignFromKeyfile(keyFile, "Sharpening", "Amount", pedited, sharpening.amount, pedited->sharpening.amount);
 
             if (keyFile.has_key("Sharpening", "Threshold")) {
