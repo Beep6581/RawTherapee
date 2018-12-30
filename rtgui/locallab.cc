@@ -648,39 +648,57 @@ void Locallab::enableToggled(MyExpander *expander)
     // TODO Locallab printf
     printf("enableToggled\n");
 
-    if (getEnabled() && listener) {
-        rtengine::ProcEvent event = NUMOFEVENTS;
+    rtengine::ProcEvent event;
+    sigc::connection* expConn;
 
-        if (expander == expcolor) {
-            event = EvLocenacolor;
-        } else if (expander == expexpose) {
-            event = EvLocenaexpose;
-        } else if (expander == expvibrance) {
-            event = EvLocenavibrance;
-        } else if (expander == expblur) {
-            event = EvLocenablur;
-        } else if (expander == exptonemap) {
-            event = EvLocenatonemap;
-        } else if (expander == expreti) {
-            event = EvLocenareti;
-        } else if (expander == expsharp) {
-            event = EvLocenasharp;
-        } else if (expander == expcbdl) {
-            event = EvLocenacbdl;
-        } else if (expander == expdenoi) {
-            event = EvLocenadenoi;
-        } else {
-            return;
-        }
+    if (expander == expcolor) {
+        event = EvLocenacolor;
+        expConn = &enablecolorConn;
+    } else if (expander == expexpose) {
+        event = EvLocenaexpose;
+        expConn = &enableexposeConn;
+    } else if (expander == expvibrance) {
+        event = EvLocenavibrance;
+        expConn = &enablevibranceConn;
+    } else if (expander == expblur) {
+        event = EvLocenablur;
+        expConn = &enableblurConn;
+    } else if (expander == exptonemap) {
+        event = EvLocenatonemap;
+        expConn = &enabletonemapConn;
+    } else if (expander == expreti) {
+        event = EvLocenareti;
+        expConn = &enableretiConn;
+    } else if (expander == expsharp) {
+        event = EvLocenasharp;
+        expConn = &enablesharpConn;
+    } else if (expander == expcbdl) {
+        event = EvLocenacbdl;
+        expConn = &enablecbdlConn;
+    } else if (expander == expdenoi) {
+        event = EvLocenadenoi;
+        expConn = &enabledenoiConn;
+    } else {
+        return;
+    }
 
+    if (multiImage) {
         if (expander->get_inconsistent()) {
-            listener->panelChanged(event, M("GENERAL_UNCHANGED"));
-        } else if (expander->getEnabled()) {
-            listener->panelChanged(event, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(event, M("GENERAL_DISABLED"));
+            expander->set_inconsistent(false);
+            expConn->block(true);
+            expander->setEnabled(false);
+            expConn->block(false);
         }
+    }
 
+    if (getEnabled()) {
+        if (listener) {
+            if (expander->getEnabled()) {
+                listener->panelChanged(event, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(event, M("GENERAL_DISABLED"));
+            }
+        }
     }
 }
 
@@ -763,6 +781,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     // Disable all listeners
     disableListener();
 
+    /*
     if (pedited) {
         set_inconsistent(multiImage && !pedited->locallab.enabled);
 
@@ -912,8 +931,13 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
             avoid->set_inconsistent(multiImage && !spotState->avoid);
         }
     }
+    */
 
     setEnabled(pp->locallab.enabled);
+
+    if (pedited) {
+        set_inconsistent(multiImage && !pedited->locallab.enabled);
+    }
 
     // Add non existent spots and update existent ones
     ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
@@ -998,7 +1022,8 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     // Update Locallab tools GUI
-    updateLocallabGUI(pp, nullptr, pp->locallab.selspot);
+    updateLocallabGUI(pp, pedited, pp->locallab.selspot);
+    updateSpecificGUIState();
 
     if (pp->locallab.nbspot > 0) {
         setParamEditable(true);
@@ -1616,31 +1641,25 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     }
                 }
             }
-
-            // Update Locallab tools GUI
-            disableListener();
-            updateSpecificGUIState();
-            enableListener();
     }
+
+    // Update Locallab tools GUI
+    disableListener();
+    updateSpecificGUIState();
+    enableListener();
 }
 
 void Locallab::protectskins_toggled()
 {
     printf("protectskins_toggled\n");
 
-    if (batchMode) {
-        /*
+    if (multiImage) {
         if (protectSkins->get_inconsistent()) {
             protectSkins->set_inconsistent(false);
             pskinsconn.block(true);
             protectSkins->set_active(false);
             pskinsconn.block(false);
-        } else if (lastProtectSkins) {
-            protectSkins->set_inconsistent(true);
         }
-
-        lastProtectSkins = protectSkins->get_active();
-        */
     }
 
     if (getEnabled() && expvibrance->getEnabled()) {
@@ -1658,19 +1677,13 @@ void Locallab::avoidcolorshift_toggled()
 {
     printf("avoidcolorshift_toggled\n");
 
-    if (batchMode) {
-        /*
+    if (multiImage) {
         if (avoidColorShift->get_inconsistent()) {
             avoidColorShift->set_inconsistent(false);
             ashiftconn.block(true);
             avoidColorShift->set_active(false);
             ashiftconn.block(false);
-        } else if (lastAvoidColorShift) {
-            avoidColorShift->set_inconsistent(true);
         }
-
-        lastAvoidColorShift = avoidColorShift->get_active();
-        */
     }
 
     if (getEnabled() && expvibrance->getEnabled()) {
@@ -1688,23 +1701,20 @@ void Locallab::pastsattog_toggled()
 {
     printf("pastsattog_toggled\n");
 
-    if (batchMode) {
-        /*
+    if (multiImage) {
         if (pastSatTog->get_inconsistent()) {
             pastSatTog->set_inconsistent(false);
             pastsattogconn.block(true);
             pastSatTog->set_active(false);
             pastsattogconn.block(false);
-        } else if (lastPastSatTog) {
-            pastSatTog->set_inconsistent(true);
         }
-
-        lastPastSatTog = pastSatTog->get_active();
-        */
     }
 
     // Update Vibrance GUI according to pastsattog button state (to be compliant with updateSpecificGUIState function)
-    if (pastSatTog->get_active()) {
+    if (multiImage && pastSatTog->get_inconsistent()) {
+        psThreshold->set_sensitive(true);
+        saturated->set_sensitive(true);
+    } else if (pastSatTog->get_active()) {
         // Link both slider, so we set saturated and psThresholds unsensitive
         psThreshold->set_sensitive(false);
         saturated->set_sensitive(false);
@@ -1801,13 +1811,6 @@ void Locallab::retinexMethodChanged()
 {
     printf("retinexMethodChanged\n");
 
-    if (!batchMode) {
-        /*
-        retrab->hide();
-        LocalcurveEditorgainTrab->hide();
-        */
-    }
-
     if (getEnabled() && expreti->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabretinexMethod, retinexMethod->get_active_text());
@@ -1820,7 +1823,9 @@ void Locallab::blurMethodChanged()
     printf("blurMethodChanged\n");
 
     // Update Blur & Noise GUI according to blurMethod combobox (to be compliant with updateSpecificGUIState function)
-    if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
+    if (multiImage && blurMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
+        sensibn->show();
+    } else if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
         sensibn->show();
     } else {
         sensibn->hide();
@@ -1848,20 +1853,35 @@ void Locallab::inversChanged()
 {
     printf("inversChanged\n");
 
-    /*
-    if (batchMode) {
+    if (multiImage) {
         if (invers->get_inconsistent()) {
             invers->set_inconsistent(false);
             inversConn.block(true);
             invers->set_active(false);
             inversConn.block(false);
-        } else if (lastinvers) {
-            invers->set_inconsistent(true);
         }
-
-        lastinvers = invers->get_active();
     }
-    */
+
+    // Update Color & Light GUI according to invers button state (to be compliant with updateSpecificGUIState function)
+    if (multiImage && invers->get_inconsistent()) {
+        sensi->show();
+        llCurveEditorG->show();
+        curvactiv->show();
+        qualitycurveMethod->show();
+        labqualcurv->show();
+    } else if (invers->get_active()) {
+        sensi->show();
+        llCurveEditorG->hide();
+        curvactiv->hide();
+        qualitycurveMethod->hide();
+        labqualcurv->hide();
+    } else {
+        sensi->show();
+        llCurveEditorG->show();
+        curvactiv->show();
+        qualitycurveMethod->show();
+        labqualcurv->show();
+    }
 
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
@@ -1878,21 +1898,14 @@ void Locallab::curvactivChanged()
 {
     printf("curvactivChanged\n");
 
-    // TODO Batch mode
-    /*
-    if (batchMode) {
+    if (multiImage) {
         if (curvactiv->get_inconsistent()) {
             curvactiv->set_inconsistent(false);
             curvactivConn.block(true);
             curvactiv->set_active(false);
             curvactivConn.block(false);
-        } else if (lastcurvactiv) {
-            curvactiv->set_inconsistent(true);
         }
-
-        lastcurvactiv = curvactiv->get_active();
     }
-    */
 
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
@@ -1909,19 +1922,13 @@ void Locallab::activlumChanged()
 {
     printf("activlumChanged\n");
 
-    if (batchMode) {
-        /*
+    if (multiImage) {
         if (activlum->get_inconsistent()) {
             activlum->set_inconsistent(false);
             activlumConn.block(true);
             activlum->set_active(false);
             activlumConn.block(false);
-        } else if (lastactivlum) {
-            activlum->set_inconsistent(true);
         }
-
-        lastactivlum = activlum->get_active();
-        */
     }
 
     if (getEnabled() && expblur->getEnabled()) {
@@ -1939,23 +1946,19 @@ void Locallab::inversshaChanged()
 {
     printf("inversshaChanged\n");
 
-    if (batchMode) {
-        /*
+    if (multiImage) {
         if (inverssha->get_inconsistent()) {
             inverssha->set_inconsistent(false);
             inversshaConn.block(true);
             inverssha->set_active(false);
             inversshaConn.block(false);
-        } else if (lastinverssha) {
-            inverssha->set_inconsistent(true);
         }
-
-        lastinverssha = inverssha->get_active();
-        */
     }
 
     // Update Sharpening GUI according to inverssha button state (to be compliant with updateSpecificGUIState function)
-    if (inverssha->get_active()) {
+    if (multiImage && inverssha->get_inconsistent()) {
+        sensisha->show();
+    } else if (inverssha->get_active()) {
         sensisha->hide();
     } else {
         sensisha->show();
@@ -1976,23 +1979,19 @@ void Locallab::inversretChanged()
 {
     printf("inversretChanged\n");
 
-    if (batchMode) {
-        /*
+    if (multiImage) {
         if (inversret->get_inconsistent()) {
             inversret->set_inconsistent(false);
             inversretConn.block(true);
             inversret->set_active(false);
             inversretConn.block(false);
-        } else if (lastinversret) {
-            inversret->set_inconsistent(true);
         }
-
-        lastinversret = inversret->get_active();
-        */
     }
 
     // Update Retinex GUI according to inversret button state (to be compliant with updateSpecificGUIState function)
-    if (inversret->get_active()) {
+    if (multiImage && inversret->get_inconsistent()) {
+        sensih->show();
+    } else if (inversret->get_active()) {
         sensih->hide();
     } else {
         sensih->show();
@@ -2387,7 +2386,11 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     // Exposure
     if (a == black) {
         // Update Exposure GUI according to black adjuster state (to be compliant with updateSpecificGUIState function)
-        shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
+        if (multiImage && black->getEditedState() != Edited) {
+            shcompr->set_sensitive(true);
+        } else {
+            shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
+        }
     }
 
     if (getEnabled() && expexpose->getEnabled()) {
@@ -2435,7 +2438,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     }
 
     // Vibrance
-    if (a == pastels && pastSatTog->get_active()) {
+    if (a == pastels && pastSatTog->get_active() && !(multiImage && pastSatTog->get_inconsistent())) {
         saturated->setValue(newval);
     }
 
@@ -2699,19 +2702,13 @@ void Locallab::avoidChanged()
 {
     printf("avoidChanged\n");
 
-    if (batchMode) {
-        /*
+    if (multiImage) {
         if (avoid->get_inconsistent()) {
             avoid->set_inconsistent(false);
             avoidConn.block(true);
             avoid->set_active(false);
             avoidConn.block(false);
-        } else if (lastavoid) {
-            avoid->set_inconsistent(true);
         }
-
-        lastavoid = avoid->get_active();
-        */
     }
 
     if (getEnabled()) {
@@ -2867,6 +2864,14 @@ void Locallab::setBatchMode(bool batchMode)
     adjblur->showEditedCB();
     bilateral->showEditedCB();
     sensiden->showEditedCB();
+
+    // Set batch mode for comboBoxText
+    // Color & Light
+    qualitycurveMethod->append(M("GENERAL_UNCHANGED"));
+    // Blur & Noise
+    blurMethod->append(M("GENERAL_UNCHANGED"));
+    // Retinex
+    retinexMethod->append(M("GENERAL_UNCHANGED"));
 }
 
 std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
@@ -3340,28 +3345,39 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
 void Locallab::updateSpecificGUIState()
 {
-    // Update Color & Light GUI according to invers button state
-    if (invers->get_active()) {
+    // Update Color & Light GUI according to invers button state (to be compliant with inversChanged function)
+    if (multiImage && invers->get_inconsistent()) {
+        sensi->show();
+        llCurveEditorG->show();
+        curvactiv->show();
+        qualitycurveMethod->show();
+        labqualcurv->show();
+    } else if (invers->get_active()) {
         sensi->show();
         llCurveEditorG->hide();
         curvactiv->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
-
     } else {
         sensi->show();
         llCurveEditorG->show();
         curvactiv->show();
         qualitycurveMethod->show();
         labqualcurv->show();
-
     }
 
     // Update Exposure GUI according to black adjuster state (to be compliant with adjusterChanged function)
-    shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
+    if (multiImage && black->getEditedState() != Edited) {
+        shcompr->set_sensitive(true);
+    } else {
+        shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
+    }
 
     // Update Vibrance GUI according to pastsattog button state (to be compliant with pastsattog_toggled function)
-    if (pastSatTog->get_active()) {
+    if (multiImage && pastSatTog->get_inconsistent()) {
+        psThreshold->set_sensitive(true);
+        saturated->set_sensitive(true);
+    } else if (pastSatTog->get_active()) {
         // Link both slider, so we set saturated and psThresholds unsensitive
         psThreshold->set_sensitive(false);
         saturated->set_sensitive(false);
@@ -3373,21 +3389,27 @@ void Locallab::updateSpecificGUIState()
     }
 
     // Update Blur & Noise GUI according to blurMethod combobox (to be compliant with blurMethodChanged function)
-    if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
+    if (multiImage && blurMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
+        sensibn->show();
+    } else if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
         sensibn->show();
     } else {
         sensibn->hide();
     }
 
     // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
-    if (inversret->get_active()) {
+    if (multiImage && inversret->get_inconsistent()) {
+        sensih->show();
+    } else if (inversret->get_active()) {
         sensih->hide();
     } else {
         sensih->show();
     }
 
     // Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)
-    if (inverssha->get_active()) {
+    if (multiImage && inverssha->get_inconsistent()) {
+        sensisha->show();
+    } else if (inverssha->get_active()) {
         sensisha->hide();
     } else {
         sensisha->show();

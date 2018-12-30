@@ -2579,64 +2579,64 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         // Vibrance
         if (locallab.spots.at(i).expvibrance) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
         }
 
         if (locallab.spots.at(i).saturated) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).saturated = mods.locallab.spots.at(i).saturated;
         }
 
         if (locallab.spots.at(i).pastels) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).pastels = mods.locallab.spots.at(i).pastels;
         }
 
         if (locallab.spots.at(i).psthreshold) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).psthreshold = mods.locallab.spots.at(i).psthreshold;
         }
 
         if (locallab.spots.at(i).protectskins) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).protectskins = mods.locallab.spots.at(i).protectskins;
         }
 
         if (locallab.spots.at(i).avoidcolorshift) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).avoidcolorshift = mods.locallab.spots.at(i).avoidcolorshift;
         }
 
         if (locallab.spots.at(i).pastsattog) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).pastsattog = mods.locallab.spots.at(i).pastsattog;
         }
 
         if (locallab.spots.at(i).sensiv) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).sensiv = mods.locallab.spots.at(i).sensiv;
         }
 
         if (locallab.spots.at(i).skintonescurve) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).skintonescurve = mods.locallab.spots.at(i).skintonescurve;
         }
 
         // Blur & Noise
         if (locallab.spots.at(i).expblur) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).expblur = mods.locallab.spots.at(i).expblur;
         }
 
         if (locallab.spots.at(i).radius) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).radius = mods.locallab.spots.at(i).radius;
         }
 
         if (locallab.spots.at(i).strength) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).strength = mods.locallab.spots.at(i).strength;
         }
 
         if (locallab.spots.at(i).sensibn) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).sensibn = mods.locallab.spots.at(i).sensibn;
         }
 
         if (locallab.spots.at(i).blurMethod) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).blurMethod = mods.locallab.spots.at(i).blurMethod;
         }
 
         if (locallab.spots.at(i).activlum) {
-            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+            toEdit.locallab.spots.at(i).activlum = mods.locallab.spots.at(i).activlum;
         }
 
         // Tone Mapping

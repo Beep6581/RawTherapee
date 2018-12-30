@@ -416,7 +416,9 @@ void ControlSpotPanel::spotMethodChanged()
     row[spots_.spotMethod] = spotMethod_->get_active_row_number();
 
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
-    if (spotMethod_->get_active_row_number() == 0) { // Normal case
+    if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+        excluFrame->show();
+    } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
     } else { // Excluding case
         excluFrame->show();
@@ -443,7 +445,7 @@ void ControlSpotPanel::shapeMethodChanged()
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
 
-    if (method == 1 || method == 3) { // Symmetrical cases
+    if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases
         disableParamlistener(true);
         locXL_->setValue(locX_->getValue());
         locYT_->setValue(locY_->getValue());
@@ -454,42 +456,51 @@ void ControlSpotPanel::shapeMethodChanged()
         row[spots_.locYT] = static_cast<int>(locY_->getValue());
 
         updateControlSpotCurve(row);
-    } else {
+    } else { // In batch mode, sliders are always independent
         row[spots_.shapeMethod] = shapeMethod_->get_active_row_number();
     }
 
     // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with updateParamVisibility function)
-    if (method == 1 || method == 3) { // Symmetrical cases
-        locXL_->hide();
-        locYT_->hide();
-
-        if (method == 1) { // 1 = Symmetrical (mouse)
-            locX_->hide();
-            locY_->hide();
-            centerX_->hide();
-            centerY_->hide();
-        } else { // 3 = Symmetrical (mouse + sliders)
-            locX_->show();
-            locY_->show();
-            centerX_->show();
-            centerY_->show();
-        }
-    } else { // Independent cases
-        if (method == 0) { // 0 = Independent (mouse)
-            locX_->hide();
+    if (!batchMode) {
+        if (method == 1 || method == 3) { // Symmetrical cases
             locXL_->hide();
-            locY_->hide();
             locYT_->hide();
-            centerX_->hide();
-            centerY_->hide();
-        } else { // 2 = Independent (mouse + sliders)
-            locX_->show();
-            locXL_->show();
-            locY_->show();
-            locYT_->show();
-            centerX_->show();
-            centerY_->show();
+
+            if (method == 1) { // 1 = Symmetrical (mouse)
+                locX_->hide();
+                locY_->hide();
+                centerX_->hide();
+                centerY_->hide();
+            } else { // 3 = Symmetrical (mouse + sliders)
+                locX_->show();
+                locY_->show();
+                centerX_->show();
+                centerY_->show();
+            }
+        } else { // Independent cases
+            if (method == 0) { // 0 = Independent (mouse)
+                locX_->hide();
+                locXL_->hide();
+                locY_->hide();
+                locYT_->hide();
+                centerX_->hide();
+                centerY_->hide();
+            } else { // 2 = Independent (mouse + sliders)
+                locX_->show();
+                locXL_->show();
+                locY_->show();
+                locYT_->show();
+                centerX_->show();
+                centerY_->show();
+            }
         }
+    } else { // In batch mode, sliders are necessary shown
+        locX_->show();
+        locXL_->show();
+        locY_->show();
+        locYT_->show();
+        centerX_->show();
+        centerY_->show();
     }
 
     // Raise event
@@ -526,41 +537,52 @@ void ControlSpotPanel::updateParamVisibility()
 
     // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with shapeMethodChanged function)
     const int method = shapeMethod_->get_active_row_number();
-    if (method == 1 || method == 3) { // Symmetrical cases
-        locXL_->hide();
-        locYT_->hide();
-
-        if (method == 1) { // 1 = Symmetrical (mouse)
-            locX_->hide();
-            locY_->hide();
-            centerX_->hide();
-            centerY_->hide();
-        } else { // 3 = Symmetrical (mouse + sliders)
-            locX_->show();
-            locY_->show();
-            centerX_->show();
-            centerY_->show();
-        }
-    } else { // Independent cases
-        if (method == 0) { // 0 = Independent (mouse)
-            locX_->hide();
+    if (!batchMode) {
+        if (method == 1 || method == 3) { // Symmetrical cases
             locXL_->hide();
-            locY_->hide();
             locYT_->hide();
-            centerX_->hide();
-            centerY_->hide();
-        } else { // 2 = Independent (mouse + sliders)
-            locX_->show();
-            locXL_->show();
-            locY_->show();
-            locYT_->show();
-            centerX_->show();
-            centerY_->show();
+
+            if (method == 1) { // 1 = Symmetrical (mouse)
+                locX_->hide();
+                locY_->hide();
+                centerX_->hide();
+                centerY_->hide();
+            } else { // 3 = Symmetrical (mouse + sliders)
+                locX_->show();
+                locY_->show();
+                centerX_->show();
+                centerY_->show();
+            }
+        } else { // Independent cases
+            if (method == 0) { // 0 = Independent (mouse)
+                locX_->hide();
+                locXL_->hide();
+                locY_->hide();
+                locYT_->hide();
+                centerX_->hide();
+                centerY_->hide();
+            } else { // 2 = Independent (mouse + sliders)
+                locX_->show();
+                locXL_->show();
+                locY_->show();
+                locYT_->show();
+                centerX_->show();
+                centerY_->show();
+            }
         }
+    } else { // In batch mode, sliders are necessary shown
+        locX_->show();
+        locXL_->show();
+        locY_->show();
+        locYT_->show();
+        centerX_->show();
+        centerY_->show();
     }
 
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with spotMethodChanged function)
-    if (spotMethod_->get_active_row_number() == 0) { // Normal case
+    if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+        excluFrame->show();
+    } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
     } else { // Excluding case
         excluFrame->show();
@@ -601,7 +623,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     if (a == locX_) {
         row[spots_.locX] = (int) locX_->getValue();
 
-        if (method == 1 || method == 3) { // Symmetrical cases
+        if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locXL_->setValue(locX_->getValue());
             disableParamlistener(false);
@@ -618,7 +640,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     if (a == locXL_) {
         row[spots_.locXL] = (int) locXL_->getValue();
 
-        if (method == 1 || method == 3) { // Symmetrical cases
+        if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locX_->setValue(locXL_->getValue());
             disableParamlistener(false);
@@ -635,7 +657,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     if (a == locY_) {
         row[spots_.locY] = (int) locY_->getValue();
 
-        if (method == 1 || method == 3) { // Symmetrical cases
+        if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locYT_->setValue(locY_->getValue());
             disableParamlistener(false);
@@ -652,7 +674,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     if (a == locYT_) {
         row[spots_.locYT] = (int) locYT_->getValue();
 
-        if (method == 1 || method == 3) { // Symmetrical cases
+        if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locY_->setValue(locYT_->getValue());
             disableParamlistener(false);
@@ -1614,11 +1636,11 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     }
 
     se->isvisible = false; // TODO isvisible
-    se->shape = shape_->get_active_row_number() != 2;
-    se->spotMethod = spotMethod_->get_active_row_number() != 2;
+    se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
+    se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->sensiexclu = sensiexclu_->getEditedState();
     se->struc = struc_->getEditedState();
-    se->shapeMethod = shapeMethod_->get_active_row_number() != 4;
+    se->shapeMethod = shapeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->locX = locX_->getEditedState();
     se->locXL = locXL_->getEditedState();
     se->locY = locY_->getEditedState();
@@ -1626,7 +1648,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->centerX = centerX_->getEditedState();
     se-> centerY = centerY_->getEditedState();
     se->circrad = circrad_->getEditedState();
-    se->qualityMethod = qualityMethod_->get_active_row_number() != 4;
+    se->qualityMethod = qualityMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->transit = transit_->getEditedState();
     se->thresh = thresh_->getEditedState();
     se->iter = iter_->getEditedState();
@@ -1661,18 +1683,18 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
 
     // TODO Add isvisible
     if (!se->shape) {
-        shape_->set_active(2);
+        shape_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     if (!se->spotMethod) {
-        spotMethod_->set_active(2);
+        spotMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
     struc_->setEditedState(se->struc ? Edited : UnEdited);
 
     if (!se->shapeMethod) {
-        shapeMethod_->set_active(4);
+        shapeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     locX_->setEditedState(se->locX ? Edited : UnEdited);
@@ -1684,12 +1706,15 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     circrad_->setEditedState(se->circrad ? Edited : UnEdited);
 
     if (!se->qualityMethod) {
-        qualityMethod_->set_active(4);
+        qualityMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     transit_->setEditedState(se->transit ? Edited : UnEdited);
     thresh_->setEditedState(se->thresh ? Edited : UnEdited);
     iter_->setEditedState(se->iter ? Edited : UnEdited);
+
+    // Update Control Spot GUI according to widgets edited states
+    updateParamVisibility();
 
     // Enable params listeners
     disableParamlistener(false);
@@ -1818,6 +1843,12 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     transit_->showEditedCB();
     thresh_->showEditedCB();
     iter_->showEditedCB();
+
+    // Set batch mode for comboBoxText
+    shape_->append(M("GENERAL_UNCHANGED"));
+    spotMethod_->append(M("GENERAL_UNCHANGED"));
+    shapeMethod_->append(M("GENERAL_UNCHANGED"));
+    qualityMethod_->append(M("GENERAL_UNCHANGED"));
 }
 
 //-----------------------------------------------------------------------------
