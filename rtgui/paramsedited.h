@@ -519,6 +519,8 @@ public:
     bool expsoft;
     bool streng;
     bool sensisf;
+    //Lab region
+    bool explabregion;
     // Blur & Noise
     bool expblur;
     bool radius;

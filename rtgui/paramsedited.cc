@@ -389,6 +389,8 @@ void ParamsEdited::set(bool v)
     locallab.expsoft = v;
     locallab.streng = v;
     locallab.sensisf = v;
+    //Lab region
+    locallab.explabregion = v;
     // Blur & Noise
     locallab.expblur = v;
     locallab.radius = v;
@@ -1086,6 +1088,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.expsoft = locallab.expsoft && p.locallab.expsoft == other.locallab.expsoft;
         locallab.streng = locallab.streng && p.locallab.streng == other.locallab.streng;
         locallab.sensisf = locallab.sensisf && p.locallab.sensisf == other.locallab.sensisf;
+        //Lab region
+        locallab.explabregion = locallab.explabregion && p.locallab.explabregion == other.locallab.explabregion;
         // Blur & Noise
         locallab.expblur = locallab.expblur && p.locallab.expblur == other.locallab.expblur;
         locallab.radius = locallab.radius && p.locallab.radius == other.locallab.radius;
@@ -2752,6 +2756,11 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.sensisf) {
         toEdit.locallab.sensisf   = mods.locallab.sensisf;
+    }
+
+    //Lab region
+    if (locallab.explabregion) {
+        toEdit.locallab.explabregion   = mods.locallab.explabregion;
     }
 
     // Blur & Noise

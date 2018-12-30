@@ -630,6 +630,7 @@ enum ProcEventCode {
     Evlocallabstreng = 600,
     Evlocallabsensisf = 601,
     Evlocallabsharblur = 602,
+    EvLocenalabregion = 603,
     NUMOFEVENTS
 };
 

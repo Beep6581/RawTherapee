@@ -49,6 +49,7 @@ Locallab::Locallab():
     expexpose(new MyExpander(true, M("TP_LOCALLAB_EXPOSE"))),
     expvibrance(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE"))),
     expsoft(new MyExpander(true, M("TP_LOCALLAB_SOFT"))),
+    explabregion(new MyExpander(true, M("TP_LOCALLAB_LABREGION"))),
     expblur(new MyExpander(true, M("TP_LOCALLAB_BLUFR"))),
     exptonemap(new MyExpander(true, M("TP_LOCALLAB_TM"))),
     expreti(new MyExpander(true, M("TP_LOCALLAB_RETI"))),
@@ -186,6 +187,7 @@ Locallab::Locallab():
     // Color & Light
     expcolor->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcolor));
     enablecolorConn = expcolor->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcolor));
+    expcolor->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
 
     curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
 
@@ -402,6 +404,22 @@ Locallab::Locallab():
 
     panel->pack_start(*expsoft, false, false);
 
+    //Labregion
+    explabregion->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), explabregion));
+    enablelabregionConn = explabregion->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), explabregion));
+
+    ToolParamBlock* const labRegionBox = Gtk::manage(new ToolParamBlock());
+    explabregion->add(*labRegionBox);
+    explabregion->setLevel(2);
+/*    
+    labRegionSlope = Gtk::manage(new Adjuster(M("TP_COLORTONING_LABREGION_SLOPE"), 0.1, 4.0, 0.001, 1));
+    labRegionSlope->setLogScale(4, 0.1);
+    labRegionSlope->setAdjusterListener(this);
+    labRegionBox->pack_start(*labRegionSlope);
+*/
+ //   panel->pack_start(*explabregion, false, false);
+//    labRegionSlope->delay = options.adjusterMaxDelay;
+
     // Blur & Noise
     expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
     enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
@@ -460,7 +478,7 @@ Locallab::Locallab():
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
 
-    panel->pack_start(*exptonemap, false, false);
+   // panel->pack_start(*exptonemap, false, false);
 
     // Retinex
     expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
@@ -569,6 +587,7 @@ Locallab::Locallab():
     // Contrast by detail levels
     expcbdl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcbdl));
     enablecbdlConn = expcbdl->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcbdl));
+    expcbdl->set_tooltip_text(M("TP_LOCALLAB_EXPCBDL_TOOLTIP"));
 
     for (int i = 0; i < 5; i++) {
         Glib::ustring ss;
@@ -685,6 +704,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expexpose->set_expanded(expexpose == expander);
         expvibrance->set_expanded(expvibrance == expander);
         expsoft->set_expanded(expsoft == expander);
+        explabregion->set_expanded(explabregion == expander);
         expblur->set_expanded(expblur == expander);
         exptonemap->set_expanded(exptonemap == expander);
         expreti->set_expanded(expreti == expander);
@@ -712,6 +732,8 @@ void Locallab::enableToggled(MyExpander *expander)
             event = EvLocenavibrance;
         } else if (expander == expsoft) {
             event = EvLocenasoft;
+        } else if (expander == explabregion) {
+            event = EvLocenalabregion;
         } else if (expander == expblur) {
             event = EvLocenablur;
         } else if (expander == exptonemap) {
@@ -748,6 +770,7 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expexpose->get_expanded());
     tpOpen.push_back(expvibrance->get_expanded());
     tpOpen.push_back(expsoft->get_expanded());
+    tpOpen.push_back(explabregion->get_expanded());
     tpOpen.push_back(expblur->get_expanded());
     tpOpen.push_back(exptonemap->get_expanded());
     tpOpen.push_back(expreti->get_expanded());
@@ -760,19 +783,20 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 12) {
+    if (tpOpen.size() >= 13) {
         expsettings->setExpanded(tpOpen.at(0));
         expcolor->set_expanded(tpOpen.at(1));
         expexpose->set_expanded(tpOpen.at(2));
         expvibrance->set_expanded(tpOpen.at(3));
         expsoft->set_expanded(tpOpen.at(4));
-        expblur->set_expanded(tpOpen.at(5));
-        exptonemap->set_expanded(tpOpen.at(6));
-        expreti->set_expanded(tpOpen.at(7));
-        expsharp->set_expanded(tpOpen.at(8));
-        expcontrast->set_expanded(tpOpen.at(9));
-        expcbdl->set_expanded(tpOpen.at(10));
-        expdenoi->set_expanded(tpOpen.at(11));
+        explabregion->set_expanded(tpOpen.at(5));
+        expblur->set_expanded(tpOpen.at(6));
+        exptonemap->set_expanded(tpOpen.at(7));
+        expreti->set_expanded(tpOpen.at(8));
+        expsharp->set_expanded(tpOpen.at(9));
+        expcontrast->set_expanded(tpOpen.at(10));
+        expcbdl->set_expanded(tpOpen.at(11));
+        expdenoi->set_expanded(tpOpen.at(12));
     }
 }
 
@@ -903,6 +927,9 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         expsoft->set_inconsistent(!pedited->locallab.expsoft);
         streng->setEditedState(pedited->locallab.streng ? Edited : UnEdited);
         sensisf->setEditedState(pedited->locallab.sensisf ? Edited : UnEdited);
+
+        //Lab region
+        explabregion->set_inconsistent(!pedited->locallab.explabregion);
 
         // Blur & Noise
         expblur->set_inconsistent(!pedited->locallab.expblur);
@@ -1175,6 +1202,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             pp->locallab.expsoft.push_back(0);
             pp->locallab.streng.push_back(0);
             pp->locallab.sensisf.push_back(19);
+            //Lab region
+            pp->locallab.explabregion.push_back(0);
             // Blur & Noise
             pp->locallab.expblur.push_back(0);
             pp->locallab.radius.push_back(1);
@@ -1320,6 +1349,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.expsoft.erase(pp->locallab.expsoft.begin() + i);
                     pp->locallab.streng.erase(pp->locallab.streng.begin() + i);
                     pp->locallab.sensisf.erase(pp->locallab.sensisf.begin() + i);
+                    //Lab region
+                    pp->locallab.explabregion.erase(pp->locallab.explabregion.begin() + i);
+
                     // Blur & Noise
                     pp->locallab.expblur.erase(pp->locallab.expblur.begin() + i);
                     pp->locallab.radius.erase(pp->locallab.radius.begin() + i);
@@ -1526,6 +1558,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 pp->locallab.expsoft.at(pp->locallab.selspot) = (int)expsoft->getEnabled();
                 pp->locallab.streng.at(pp->locallab.selspot) = streng->getIntValue();
                 pp->locallab.sensisf.at(pp->locallab.selspot) = sensisf->getIntValue();
+                //Lab region
+                pp->locallab.explabregion.at(pp->locallab.selspot) = (int)explabregion->getEnabled();
                 // Blur & Noise
                 pp->locallab.expblur.at(pp->locallab.selspot) = (int)expblur->getEnabled();
                 pp->locallab.radius.at(pp->locallab.selspot) = radius->getIntValue();
@@ -1679,6 +1713,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.expsoft = !expsoft->get_inconsistent();
         pedited->locallab.streng = streng->getEditedState();
         pedited->locallab.sensisf = sensisf->getEditedState();
+        //Lab region
+        pedited->locallab.explabregion = !explabregion->get_inconsistent();
         // Blur & Noise
         pedited->locallab.expblur = !expblur->get_inconsistent();
         pedited->locallab.radius = radius->getEditedState();
@@ -2514,6 +2550,17 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
     }
+    //Lab region
+    /*
+    if (getEnabled() && explabregion->getEnabled()) {
+        if (a == labRegionSlope) {
+            if (listener) {
+                listener->panelChanged(EvlocallablabRegionSlope, labRegionSlope->getTextValue());
+            }
+        }
+
+    }
+*/
     // Blur & Noise
     if (getEnabled() && expblur->getEnabled()) {
         if (a == radius) {
@@ -3229,6 +3276,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int
         expsoft->setEnabled((bool)pp->locallab.expsoft.at(index));
         streng->setValue(pp->locallab.streng.at(index));
         sensisf->setValue(pp->locallab.sensisf.at(index));
+        //Lab region
+        explabregion->setEnabled((bool)pp->locallab.explabregion.at(index));
+
         // Blur & Noise
         expblur->setEnabled((bool)pp->locallab.expblur.at(index));
         radius->setValue(pp->locallab.radius.at(index));

@@ -981,6 +981,30 @@ struct LocallabParams {
     std::vector<int> expsoft;
     std::vector<int> streng;
     std::vector<int> sensisf;
+    //Lab region
+    std::vector<int> explabregion;
+    
+    /*
+    struct LabCorrectionRegion {
+        enum { CHAN_ALL = -1, CHAN_R, CHAN_G, CHAN_B };
+        double a;
+        double b;
+        double saturation;
+        double slope;
+        double offset;
+        double power;
+        std::vector<double> hueMask;
+        std::vector<double> chromaticityMask;
+        std::vector<double> lightnessMask;
+        double maskBlur;
+        int channel;
+
+        LabCorrectionRegion();
+        bool operator==(const LabCorrectionRegion &other) const;
+        bool operator!=(const LabCorrectionRegion &other) const;
+    };
+    std::vector<LabCorrectionRegion> Labcorr;
+*/
     // Blur & Noise
     std::vector<int> expblur;
     std::vector<int> radius;

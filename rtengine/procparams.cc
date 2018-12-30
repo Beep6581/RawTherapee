@@ -2393,6 +2393,8 @@ LocallabParams::LocallabParams() :
     expsoft(),
     streng(),
     sensisf(),
+    //Lab region
+    explabregion(),
     // Blur & Noise
     expblur(),
     radius(),
@@ -2523,6 +2525,8 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && expsoft == other.expsoft
         && streng == other.streng
         && sensisf == other.sensisf
+        //Lab region
+        && explabregion == other.explabregion
         // Blur & Noise
         && expblur == other.expblur
         && radius == other.radius
@@ -3581,6 +3585,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->locallab.expsoft, "Locallab", "Expsoft_" + std::to_string(i), locallab.expsoft.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.streng, "Locallab", "Streng_" + std::to_string(i), locallab.streng.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.sensisf, "Locallab", "Sensisf_" + std::to_string(i), locallab.sensisf.at(i), keyFile);
+            //Lab region
+            saveToKeyfile(!pedited || pedited->locallab.explabregion, "Locallab", "Explabregion_" + std::to_string(i), locallab.explabregion.at(i), keyFile);
             // Blur & Noise
             saveToKeyfile(!pedited || pedited->locallab.expblur, "Locallab", "Expblur_" + std::to_string(i), locallab.expblur.at(i), keyFile);
             saveToKeyfile(!pedited || pedited->locallab.radius, "Locallab", "Radius_" + std::to_string(i), locallab.radius.at(i), keyFile);
@@ -4774,6 +4780,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 locallab.expsoft.resize(locallab.nbspot);
                 locallab.streng.resize(locallab.nbspot);
                 locallab.sensisf.resize(locallab.nbspot);
+                //Lab region
+                locallab.explabregion.resize(locallab.nbspot);
                 // Blur & Noise
                 locallab.expblur.resize(locallab.nbspot);
                 locallab.radius.resize(locallab.nbspot);
@@ -4913,6 +4921,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, locallab.expsoft.at(i), pedited->locallab.expsoft);
                 assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, locallab.streng.at(i), pedited->locallab.streng);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, locallab.sensisf.at(i), pedited->locallab.sensisf);
+                //Lab region
+                assignFromKeyfile(keyFile, "Locallab", "Explabregion_" + std::to_string(i), pedited, locallab.explabregion.at(i), pedited->locallab.explabregion);
                 // Blur & Noise
                 assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, locallab.expblur.at(i), pedited->locallab.expblur);
                 assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, locallab.radius.at(i), pedited->locallab.radius);
