@@ -112,31 +112,31 @@ protected:
     void getMouseOverArea ();
     bool getHandles(int n);
     CursorShape motionNotify(CursorShape type, double minDistanceX, double minDistanceY, int num);
-    std::vector<double> get_vector (int veclen);
+    std::vector<double> get_vector (int veclen) override;
     void get_LUT (LUTf &lut);
 
 public:
     MyFlatCurve ();
     //~MyFlatCurve ();
-    std::vector<double> getPoints ();
+    std::vector<double> getPoints () override;
     void setPeriodicity (bool isPeriodic)
     {
         periodic = isPeriodic;
     };
-    void setPoints (const std::vector<double>& p);
+    void setPoints (const std::vector<double>& p) override;
     void setType (FlatCurveType t);
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool handleEvents (GdkEvent* event);
-    void reset (const std::vector<double> &resetCurve, double identityValue = 0.5);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool handleEvents (GdkEvent* event) override;
+    void reset (const std::vector<double> &resetCurve, double identityValue = 0.5) override;
     //void updateBackgroundHistogram (unsigned int* hist);
 
-    void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey);
-    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Released(EditDataProvider *provider);
-    void pipetteDrag(EditDataProvider *provider, int modifierKey);
+    void pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider, int modifierKey) override;
+    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) override;
+    void pipetteButton1Released(EditDataProvider *provider) override;
+    void pipetteDrag(EditDataProvider *provider, int modifierKey) override;
 
-    void setPos(double pos, int chanIdx);
-    virtual void stopNumericalAdjustment();
+    void setPos(double pos, int chanIdx) override;
+    void stopNumericalAdjustment() override;
 };
 
 #endif

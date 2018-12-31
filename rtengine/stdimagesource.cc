@@ -194,7 +194,7 @@ void StdImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
     // the code will use OpenMP as of now.
 
-    img->getStdImage(ctemp, tran, image, pp, true, hrp);
+    img->getStdImage(ctemp, tran, image, pp);
 
     // Hombre: we could have rotated the image here too, with just few line of code, but:
     // 1. it would require other modifications in the engine, so "do not touch that little plonker!"

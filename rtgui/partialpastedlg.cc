@@ -65,6 +65,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
+    dehaze = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEHAZE")) );
 
     // Advanced Settings:
     retinex     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RETINEX")));
@@ -168,6 +169,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[1]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*defringe, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*dehaze, Gtk::PACK_SHRINK, 2);
 
     //COLOR
     vboxes[2]->pack_start (*color, Gtk::PACK_SHRINK, 2);
@@ -327,6 +329,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyreqConn    = dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    dehazeConn    = dehaze->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
     // Advanced Settings:
     retinexConn     = retinex->signal_toggled().connect (sigc::bind (sigc::mem_fun(*advanced, &Gtk::CheckButton::set_inconsistent), true));
@@ -534,6 +537,7 @@ void PartialPasteDlg::detailToggled ()
     ConnectionBlocker dirpyrdenBlocker(dirpyrdenConn);
     ConnectionBlocker defringeBlocker(defringeConn);
     ConnectionBlocker dirpyreqBlocker(dirpyreqConn);
+    ConnectionBlocker dehazeBlocker(dehazeConn);
 
     detail->set_inconsistent (false);
 
@@ -545,6 +549,7 @@ void PartialPasteDlg::detailToggled ()
     dirpyrden->set_active (detail->get_active ());
     defringe->set_active (detail->get_active ());
     dirpyreq->set_active (detail->get_active ());
+    dehaze->set_active (detail->get_active ());
 }
 
 void PartialPasteDlg::advancedToggled ()
@@ -762,6 +767,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.softlight = falsePE.softlight;
     }
 
+    if (!dehaze->get_active ()) {
+        filterPE.dehaze = falsePE.dehaze;
+    }
+    
     if (!rgbcurves->get_active ()) {
         filterPE.rgbCurves    = falsePE.rgbCurves;
     }

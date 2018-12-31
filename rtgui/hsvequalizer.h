@@ -42,19 +42,19 @@ protected:
 public:
 
     HSVEqualizer ();
-    virtual ~HSVEqualizer ();
+    ~HSVEqualizer () override;
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void curveChanged    (CurveEditor* ce);
+    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void curveChanged    (CurveEditor* ce) override;
     //void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-    void setBatchMode    (bool batchMode);
-    void setEditProvider (EditDataProvider *provider);
-    void autoOpenCurve   ();
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void setBatchMode    (bool batchMode) override;
+    void setEditProvider (EditDataProvider *provider) override;
+    void autoOpenCurve   () override;
+    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
     //void adjusterChanged (Adjuster* a, double newval);
-    void enabledChanged();
+    void enabledChanged() override;
 };
 
 #endif

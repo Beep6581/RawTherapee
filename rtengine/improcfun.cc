@@ -910,12 +910,12 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
 
         float cz, wh, pfl;
-        Ciecam02::initcam1float (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
+        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
         //printf ("wh=%f \n", wh);
 
         const float pow1 = pow_F ( 1.64f - pow_F ( 0.29f, n ), 0.73f );
         float nj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float (gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
 #ifdef __SSE2__
         const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -1030,7 +1030,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                                                          Q,  M,  s, aw, fl, wh,
                                                          x,  y,  z,
                                                          xw1, yw1,  zw1,
-                                                         c,  nc, gamu, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -1068,7 +1068,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                                                          Q,  M,  s, aw, fl, wh,
                                                          x,  y,  z,
                                                          xw1, yw1,  zw1,
-                                                         c,  nc, gamu, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -1483,7 +1483,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             Ciecam02::jch2xyz_ciecam02float ( xx, yy, zz,
                                                               J,  C, h,
                                                               xw2, yw2,  zw2,
-                                                              c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
@@ -1638,7 +1638,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                 if (params->defringe.enabled)
                     if (execsharp) {
                         lab->deleteLab();
-                        ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
+                        defringecam (ncie);//defringe adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -1649,7 +1649,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
 
                     lab->deleteLab();
-                    ImProcFunctions::badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
+                    badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
                     lab->reallocLab();
                 }
 
@@ -1657,7 +1657,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                 if (params->colorappearance.badpixsl > 0 && execsharp) {
                     int mode = params->colorappearance.badpixsl;
                     lab->deleteLab();
-                    ImProcFunctions::badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
+                    badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
                     lab->reallocLab();
                 }
 
@@ -1666,17 +1666,17 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                         buffers[0] = lab->L;
                         buffers[1] = lab->a;
                         buffers[2] = lab->b;
-                        ImProcFunctions::impulsedenoisecam (ncie, buffers); //impulse adapted to CIECAM
+                        impulsedenoisecam (ncie, buffers); //impulse adapted to CIECAM
                     }
 
                 if (params->sharpenMicro.enabled)if (execsharp) {
-                        ImProcFunctions::MLmicrocontrastcam (ncie);
+                        MLmicrocontrastcam (ncie);
                     }
 
                 if (params->sharpening.enabled)
                     if (execsharp) {
                         float **buffer = lab->L; // We can use the L-buffer from lab as buffer to save some memory
-                        ImProcFunctions::sharpeningcam (ncie, buffer, showSharpMask); // sharpening adapted to CIECAM
+                        sharpeningcam (ncie, buffer, showSharpMask); // sharpening adapted to CIECAM
                     }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
@@ -1732,7 +1732,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
             if (epdEnabled  && params->colorappearance.tonecie && algepd) {
                 lab->deleteLab();
-                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
+                EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
                 lab->reallocLab();
             }
 
@@ -1816,7 +1816,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                         Ciecam02::jch2xyz_ciecam02float ( xx, yy, zz,
                                                           ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                           xw2, yw2,  zw2,
-                                                          c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;
@@ -2448,20 +2448,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             rtemp[ti * TS + tj] = r;
                             gtemp[ti * TS + tj] = g;
                             btemp[ti * TS + tj] = b;
-                        }
-                    }
-                } else {
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            // clip out of gamut colors, without distorting colour too bad
-                            float r = std::max(rtemp[ti * TS + tj], 0.f);
-                            float g = std::max(gtemp[ti * TS + tj], 0.f);
-                            float b = std::max(btemp[ti * TS + tj], 0.f);
-
-                            if (OOG(max(r, g, b)) && !OOG(min(r, g, b))) {
-                                filmlike_clip(&r, &g, &b);
-                            }
-                            setUnlessOOG(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], r, g, b);
                         }
                     }
                 }
@@ -3186,7 +3172,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     }
                 }
 
-                softLight(rtemp, gtemp, btemp, istart, jstart, tW, tH, TS);
+                //softLight(rtemp, gtemp, btemp, istart, jstart, tW, tH, TS);
                 
                 if (!blackwhite) {
                     if (editImgFloat || editWhatever) {
@@ -4151,6 +4137,42 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
         }
     }
 
+    //-------------------------------------------------------------------------
+    // support for pipettes for the new LabRegions color toning mode this is a
+    // hack to fill the pipette buffers also when
+    // !params->labCurve.enabled. It is ugly, but it's the smallest code
+    // change that I could find
+    //-------------------------------------------------------------------------
+    class TempParams {
+        const ProcParams **p_;
+        const ProcParams *old_;
+        ProcParams tmp_;
+
+    public:
+        explicit TempParams(const ProcParams **p): p_(p)
+        {
+            old_ = *p;
+            tmp_.labCurve.enabled = true;
+            *p_ = &tmp_;
+        }
+
+        ~TempParams()
+        {
+            *p_ = old_;
+        }
+    };
+    std::unique_ptr<TempParams> tempparams;
+    bool pipette_for_colortoning_labregions =
+        editPipette &&
+        params->colorToning.enabled && params->colorToning.method == "LabRegions";
+    if (!params->labCurve.enabled && pipette_for_colortoning_labregions) {
+        utili = autili = butili = ccutili = cclutili = clcutili = false;
+        tempparams.reset(new TempParams(&params));
+        curve.makeIdentity();
+    }
+    //-------------------------------------------------------------------------
+
+    
     if (!params->labCurve.enabled) {
         if (editPipette && (editID == EUID_Lab_LCurve || editID == EUID_Lab_aCurve || editID == EUID_Lab_bCurve || editID == EUID_Lab_LHCurve || editID == EUID_Lab_CHCurve || editID == EUID_Lab_HHCurve || editID == EUID_Lab_CLCurve || editID == EUID_Lab_CCurve || editID == EUID_Lab_LCCurve)) {
             // fill pipette buffer with zeros to avoid crashes
@@ -4371,7 +4393,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     av = LVFU (lold->a[i][k]);
                     bv = LVFU (lold->b[i][k]);
                     STVF (HHBuffer[k], xatan2f (bv, av));
-                    STVF (CCBuffer[k], _mm_sqrt_ps (SQRV (av) + SQRV (bv)) / c327d68v);
+                    STVF (CCBuffer[k], vsqrtf (SQRV (av) + SQRV (bv)) / c327d68v);
                 }
 
                 for (; k < W; k++) {
@@ -5226,6 +5248,10 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
 
     if (minL > 0.0f) {
         minL = 0.0f;    //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
+    }
+
+    if (maxL == 0.f) { // avoid division by zero
+        maxL = 1.f;
     }
 
     #pragma omp parallel for

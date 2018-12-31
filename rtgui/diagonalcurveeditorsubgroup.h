@@ -75,37 +75,37 @@ protected:
 
 public:
     DiagonalCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
-    virtual ~DiagonalCurveEditorSubGroup();
+    ~DiagonalCurveEditorSubGroup() override;
 
     DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "");
-    virtual void updateBackgroundHistogram (CurveEditor* ce);
-    void switchGUI();
-    void refresh(CurveEditor *curveToRefresh);
-    void editModeSwitchedOff ();
-    void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
-    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
-    void pipetteButton1Released(EditDataProvider *provider);
-    void pipetteDrag(EditDataProvider *provider, int modifierKey);
-    void showCoordinateAdjuster(CoordinateProvider *provider);
-    void stopNumericalAdjustment();
+    void updateBackgroundHistogram (CurveEditor* ce) override;
+    void switchGUI() override;
+    void refresh(CurveEditor *curveToRefresh) override;
+    void editModeSwitchedOff () override;
+    void pipetteMouseOver(EditDataProvider *provider, int modifierKey) override;
+    bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) override;
+    void pipetteButton1Released(EditDataProvider *provider) override;
+    void pipetteDrag(EditDataProvider *provider, int modifierKey) override;
+    void showCoordinateAdjuster(CoordinateProvider *provider) override;
+    void stopNumericalAdjustment() override;
 
-    bool curveReset (CurveEditor *ce);
+    bool curveReset (CurveEditor *ce) override;
 
 protected:
-    void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
-    void storeDisplayedCurve ();
-    void restoreDisplayedHistogram ();
+    void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) override;
+    void storeDisplayedCurve () override;
+    void restoreDisplayedHistogram () override;
     void savePressed ();
     void loadPressed ();
     void copyPressed ();
     void pastePressed ();
     void editPointToggled(Gtk::ToggleButton *button);
     void editToggled (Gtk::ToggleButton *button);
-    void removeEditor ();
-    const std::vector<double> getCurveFromGUI (int type);
-    void shcChanged ();
-    void adjusterChanged (Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
+    void removeEditor () override;
+    const std::vector<double> getCurveFromGUI (int type) override;
+    void shcChanged () override;
+    void adjusterChanged (Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     bool adjusterEntered (GdkEventCrossing* ev, int ac);
     bool adjusterLeft (GdkEventCrossing* ev, int ac);
     void setSubGroupRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4);

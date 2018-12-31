@@ -107,7 +107,7 @@ void BatchToolPanelCoordinator::initSession ()
     // compare all the ProcParams and describe which parameters has different (i.e. inconsistent) values in pparamsEdited
     pparamsEdited.initFrom (initialPP);
 
-    crop->setDimensions (100000, 100000);
+    //crop->setDimensions (100000, 100000);
 
     /*    if (!selected.empty()) {
             pparams = selected[0]->getProcParams ();
@@ -126,6 +126,10 @@ void BatchToolPanelCoordinator::initSession ()
         pparams = selected[0]->getProcParams ();
 
         coarse->initBatchBehavior ();
+
+        int w,h;
+        selected[0]->getOriginalSize(w,h);
+        crop->setDimensions (w, h);
 
         if (selected.size() == 1) {
 
@@ -202,6 +206,7 @@ void BatchToolPanelCoordinator::initSession ()
             colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRENGTH], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
             softlight->setAdjusterBehavior(options.baBehav[ADDSET_SOFTLIGHT_STRENGTH]);
+            dehaze->setAdjusterBehavior(options.baBehav[ADDSET_DEHAZE_STRENGTH]);
             retinex->setAdjusterBehavior (options.baBehav[ADDSET_RETI_STR], options.baBehav[ADDSET_RETI_NEIGH], options.baBehav[ADDSET_RETI_LIMD], options.baBehav[ADDSET_RETI_OFFS], options.baBehav[ADDSET_RETI_VART], options.baBehav[ADDSET_RETI_GAM], options.baBehav[ADDSET_RETI_SLO]);
 
             chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
@@ -292,6 +297,7 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_COLORTONING_STRENGTH]) { pparams.colorToning.strength = 0; }
             if (options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]) { pparams.filmSimulation.strength = 0; }
             if (options.baBehav[ADDSET_SOFTLIGHT_STRENGTH]) { pparams.softlight.strength = 0; }
+            if (options.baBehav[ADDSET_DEHAZE_STRENGTH]) { pparams.dehaze.strength = 0; }
             if (options.baBehav[ADDSET_ROTATE_DEGREE]) { pparams.rotate.degree = 0; }
             if (options.baBehav[ADDSET_RESIZE_SCALE]) { pparams.resize.scale = 0; }
             if (options.baBehav[ADDSET_DIST_AMOUNT]) { pparams.distortion.amount = 0; }
@@ -701,11 +707,11 @@ void BatchToolPanelCoordinator::spotWBselected (int x, int y, Thumbnail* thm)
                 double otemp = initialPP[i].wb.temperature;
                 double ogreen = initialPP[i].wb.green;
 
-                if (options.baBehav[12]) {
+                if (options.baBehav[ADDSET_ROTATE_DEGREE]) {
                     temp = temp - otemp;
                 }
 
-                if (options.baBehav[13]) {
+                if (options.baBehav[ADDSET_DIST_AMOUNT]) {
                     green = green - ogreen;
                 }
 

@@ -136,7 +136,7 @@ protected:
 
 public:
     FileBrowser ();
-    ~FileBrowser ();
+    ~FileBrowser () override;
 
     void addEntry (FileBrowserEntry* entry); // can be called from any thread
     void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread
@@ -164,17 +164,17 @@ public:
         return numFiltered;
     }
 
-    void buttonPressed (LWButton* button, int actionCode, void* actionData);
-    void redrawNeeded  (LWButton* button);
-    bool checkFilter (ThumbBrowserEntryBase* entry);
-    void rightClicked (ThumbBrowserEntryBase* entry);
-    void doubleClicked (ThumbBrowserEntryBase* entry);
-    bool keyPressed (GdkEventKey* event);
+    void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
+    void redrawNeeded  (LWButton* button) override;
+    bool checkFilter (ThumbBrowserEntryBase* entry) override;
+    void rightClicked (ThumbBrowserEntryBase* entry) override;
+    void doubleClicked (ThumbBrowserEntryBase* entry) override;
+    bool keyPressed (GdkEventKey* event) override;
 
-    void saveThumbnailHeight (int height);
-    int  getThumbnailHeight ();
+    void saveThumbnailHeight (int height) override;
+    int  getThumbnailHeight () override;
 
-    bool isInTabMode()
+    bool isInTabMode() override
     {
         return tbl ? tbl->isInTabMode() : false;
     }
@@ -191,18 +191,18 @@ public:
     void openDefaultViewer (int destination);
 #endif
 
-    void thumbRearrangementNeeded ();
+    void thumbRearrangementNeeded () override;
     void _thumbRearrangementNeeded ();
 
-    void selectionChanged ();
+    void selectionChanged () override;
 
     void setExportPanel (ExportPanel* expanel);
     // exportpanel interface
-    void exportRequested();
+    void exportRequested() override;
 
-    void storeCurrentValue();
-    void updateProfileList();
-    void restoreValue();
+    void storeCurrentValue() override;
+    void updateProfileList() override;
+    void restoreValue() override;
 
     type_trash_changed trash_changed();
 };

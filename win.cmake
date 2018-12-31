@@ -24,7 +24,7 @@ set(PROC_TARGET_NUMBER 0 CACHE STRING "Target Processor")
 
 # If you want to force the target processor name when PROC_TARGET_NUMBER = 0 or 2,
 # uncomment the next line and replace labelWithoutQuotes by its value
-#set (PROC_LABEL labelWithoutQuotes CACHE STRING "Target Processor label")
+#set(PROC_LABEL labelWithoutQuotes CACHE STRING "Target Processor label")
 
 # Important: MinGW-w64 user may need to specify the -m32 or -m64 flag in CMAKE_CXX_FLAGS,
 # CMAKE_C_FLAGS and CMAKE_EXE_LINKER_FLAGS to select between 32/64bit build

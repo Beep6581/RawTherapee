@@ -459,9 +459,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     }
 
     selectedDirectory = "";
-#ifdef WIN32
-    wdMonitor = NULL;
-#endif
 }
 
 FileCatalog::~FileCatalog()
@@ -540,20 +537,9 @@ void FileCatalog::closeDir ()
         exportPanel->set_sensitive (false);
     }
 
-#ifndef WIN32
-
     if (dirMonitor) {
         dirMonitor->cancel ();
     }
-
-#else
-
-    if (wdMonitor) {
-        delete wdMonitor;
-        wdMonitor = NULL;
-    }
-
-#endif
 
     // ignore old requests
     ++selectedDirectoryId;
@@ -671,12 +657,8 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
             filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"), 0);
         }
 
-#ifdef WIN32
-        wdMonitor = new WinDirMonitor (selectedDirectory, this);
-#else
         dirMonitor = dir->monitor_directory ();
         dirMonitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::on_dir_changed), false));
-#endif
     } catch (Glib::Exception& ex) {
         std::cout << ex.what();
     }
@@ -1622,26 +1604,6 @@ BrowserFilter FileCatalog::getFilter ()
                                       anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive;
     }
 
-    if( options.rtSettings.verbose ) {
-        printf ("\n**************** FileCatalog::getFilter *** AFTER STEP 1 \n");
-
-        for (int i = 0; i <= 5; i++) {
-            printf ("filter.showRanked[%i] = %i\n", i, filter.showRanked[i]);
-        }
-
-        for (int i = 0; i <= 5; i++) {
-            printf ("filter.showCLabeled[%i] = %i\n", i, filter.showCLabeled[i]);
-        }
-
-        for (int i = 0; i < 2; i++) {
-            printf ("filter.showEdited[%i] = %i\n", i, filter.showEdited[i]);
-        }
-
-        for (int i = 0; i < 2; i++) {
-            printf ("filter.showRecentlySaved[%i] = %i\n", i, filter.showRecentlySaved[i]);
-        }
-    }
-
     filter.multiselect = false;
 
     /*
@@ -1670,28 +1632,6 @@ BrowserFilter FileCatalog::getFilter ()
         for (int i = 0; i < 2; i++) {
             filter.showEdited[i] = anyEditedFilterActive ? bEdited[i]->get_active() : true;
             filter.showRecentlySaved[i] = anyRecentlySavedFilterActive ? bRecentlySaved[i]->get_active() : true;
-        }
-
-        if( options.rtSettings.verbose ) {
-            printf ("\n**************** FileCatalog::getFilter *** AFTER STEP 2 \n");
-
-            for (int i = 0; i <= 5; i++) {
-                printf ("filter.showRanked[%i] = %i\n", i, filter.showRanked[i]);
-            }
-
-            for (int i = 0; i <= 5; i++) {
-                printf ("filter.showCLabeled[%i] = %i\n", i, filter.showCLabeled[i]);
-            }
-
-            for (int i = 0; i < 2; i++) {
-                printf ("filter.showEdited[%i] = %i\n", i, filter.showEdited[i]);
-            }
-
-            for (int i = 0; i < 2; i++) {
-                printf ("filter.showRecentlySaved[%i] = %i\n", i, filter.showRecentlySaved[i]);
-            }
-
-            printf ("filter.multiselect = %i\n", filter.multiselect);
         }
     }
 
@@ -1789,22 +1729,6 @@ void FileCatalog::reparseDirectory ()
     fileNameList = nfileNameList;
 }
 
-#ifdef WIN32
-
-void FileCatalog::winDirChanged ()
-{
-    const auto func =
-        [](FileCatalog* self) -> bool
-        {
-            self->reparseDirectory();
-            return false;
-        };
-
-    idle_register.add<FileCatalog>(func, this, false);
-}
-
-#else
-
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal)
 {
 
@@ -1818,8 +1742,6 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
         }
     }
 }
-
-#endif
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
 {
@@ -2599,7 +2521,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
 void FileCatalog::showToolBar()
 {
-    if (!options.FileBrowserToolbarSingleRow) {
+    if (hbToolBar1STB) {
         hbToolBar1STB->show();
     }
 
@@ -2608,7 +2530,7 @@ void FileCatalog::showToolBar()
 
 void FileCatalog::hideToolBar()
 {
-    if (!options.FileBrowserToolbarSingleRow) {
+    if (hbToolBar1STB) {
         hbToolBar1STB->hide();
     }
 

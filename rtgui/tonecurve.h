@@ -88,21 +88,21 @@ protected:
 
 public:
     ToneCurve ();
-    ~ToneCurve ();
+    ~ToneCurve () override;
 
-    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode        (bool batchMode);
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode        (bool batchMode) override;
     void setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
-    void autoOpenCurve       ();
-    void setEditProvider     (EditDataProvider *provider);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void autoOpenCurve       () override;
+    void setEditProvider     (EditDataProvider *provider) override;
 
-    virtual float blendPipetteValues (CurveEditor *ce, float chan1, float chan2, float chan3);
+    float blendPipetteValues (CurveEditor *ce, float chan1, float chan2, float chan3) override;
 
-    void adjusterChanged (Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
+    void adjusterChanged (Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void neutral_pressed ();
     void autolevels_toggled ();
     void clip_changed ();
@@ -110,7 +110,7 @@ public:
     void waitForAutoExp ();
     bool autoExpComputed_ ();
     void enableAll ();
-    void curveChanged (CurveEditor* ce);
+    void curveChanged (CurveEditor* ce) override;
     void curveMode1Changed ();
     bool curveMode1Changed_ ();
     void curveMode2Changed ();
@@ -133,8 +133,8 @@ public:
     void histmatchingToggled();
     bool histmatchingComputed();
 
-    void autoExpChanged(double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons);
-    void autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve);
+    void autoExpChanged(double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons) override;
+    void autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve) override;
 
     void setRaw (bool raw);
 

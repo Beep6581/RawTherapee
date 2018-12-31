@@ -38,25 +38,45 @@ class DirPyrDenoise final :
 {
 public:
     DirPyrDenoise ();
-    ~DirPyrDenoise ();
+    ~DirPyrDenoise () override;
 
-    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode (bool batchMode);
-    void curveChanged (CurveEditor* ce);
-    void setEditProvider (EditDataProvider *provider);
-    void autoOpenCurve ();
-    void adjusterChanged (Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
-    void enabledChanged ();
-    void chromaChanged (double autchroma, double autred, double autblue);
-    void noiseChanged (double nresid, double highresid);
-    void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP);
-    void updateNoiseLabel (float nois = 0.f, float high = 0.f);
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode   (bool batchMode) override;
+    void curveChanged   (CurveEditor* ce) override;
+    void setEditProvider     (EditDataProvider *provider) override;
+    void autoOpenCurve  () override;
+
+    void adjusterChanged (Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
+    void enabledChanged  () override;
+    void medianChanged  ();
+    void chromaChanged (double autchroma, double autred, double autblue) override;
+    bool chromaComputed_ ();
+    void noiseChanged (double nresid, double highresid) override;
+    bool noiseComputed_ ();
+    void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) override;
+    bool TilePrevComputed_ ();
+
+//    void perform_toggled  ();
+    void updateNoiseLabel      ();
+    void LmethodChanged      ();
+    void CmethodChanged      ();
+    void C2methodChanged      ();
+    void updateTileLabel      ();
+    void updatePrevLabel      ();
+
+    void dmethodChanged      ();
+    void medmethodChanged      ();
+    void methodmedChanged      ();
+    void rgbmethodChanged      ();
+    void smethodChanged      ();
+    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
+
     void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd, bool passesadd);
-    void trimValues (rtengine::procparams::ProcParams* pp);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    Glib::ustring getSettingString ();
 
 private:
     CurveEditorGroup* NoiscurveEditorG;
@@ -70,12 +90,17 @@ private:
     Adjuster* passes;
     FlatCurveEditor* lshape;
     FlatCurveEditor* ccshape;
+
     sigc::connection medianConn;
     Gtk::CheckButton* median;
     bool lastmedian;
     Gtk::Label*    NoiseLabels;
     Gtk::Label*    TileLabels;
     Gtk::Label*    PrevLabels;
+
+//    Gtk::CheckButton* perform;
+//    bool lastperform;
+//    sigc::connection perfconn;
     MyComboBoxText*   dmethod;
     sigc::connection  dmethodconn;
     MyComboBoxText*   Lmethod;
@@ -95,21 +120,22 @@ private:
     MyComboBoxText*   rgbmethod;
     sigc::connection  rgbmethodconn;
     Gtk::HBox* ctboxrgb;
+    double nextchroma;
+    double nextred;
+    double nextblue;
+    double nextnresid;
+    double nexthighresid;
     Gtk::HBox* ctboxL;
     Gtk::HBox* ctboxC;
     Gtk::HBox* ctboxC2;
+    int nexttileX;
+    int nexttileY;
+    int nextprevX;
+    int nextprevY;
+    int nextsizeT;
+    int nextsizeP;
+
     IdleRegister idle_register;
-
-    void LmethodChanged ();
-    void CmethodChanged ();
-    void C2methodChanged ();
-    void dmethodChanged ();
-    void medmethodChanged ();
-    void methodmedChanged ();
-    void rgbmethodChanged ();
-    void smethodChanged ();
-    void medianChanged ();
-
 };
 
 #endif

@@ -473,7 +473,7 @@ RawImageSource::~RawImageSource ()
         delete riFrames[i];
     }
 
-    for(size_t i = 0; i < numFrames - 1; ++i) {
+    for(size_t i = 0; i + 1 < numFrames; ++i) {
         delete rawDataBuffer[i];
     }
 
@@ -716,6 +716,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     gm /= area;
     bm /= area;
     bool doHr = (hrp.hrenabled && hrp.method != "Color");
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+    
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
@@ -894,6 +899,10 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
 DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
 {
+    if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
+        return nullptr;
+    }
+
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
     findInputProfile(cmp.inputProfile, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
@@ -2821,7 +2830,7 @@ void RawImageSource::flushRGB()
     }
 }
 
-void RawImageSource::HLRecovery_Global(ToneCurveParams hrp)
+void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 {
     if (hrp.hrenabled && hrp.method == "Color") {
         if(!rgbSourceModified) {
@@ -3101,8 +3110,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                 vfloat rowBlackv = blackv[row & 1];
 
                 for (; col < W - 3; col += 4) {
-                    vfloat linecorrv = SQRV(vmaxf(epsv, LVFU(cfablur[row * W + col]) - rowBlackv)) /
-                                       (vmaxf(epsv, LVFU(cfablur1[row * W + col]) - rowBlackv) * vmaxf(epsv, LVFU(cfablur2[row * W + col]) - rowBlackv));
+                    vfloat linecorrv = SQRV(vmaxf(LVFU(cfablur[row * W + col]) - rowBlackv, epsv)) /
+                                       (vmaxf(LVFU(cfablur1[row * W + col]) - rowBlackv, epsv) * vmaxf(LVFU(cfablur2[row * W + col]) - rowBlackv, epsv));
                     vfloat valv = LVFU(rawData[row][col]);
                     valv -= rowBlackv;
                     STVFU(rawData[row][col], valv * linecorrv + rowBlackv);
@@ -3232,10 +3241,10 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
     }
 }
 
-void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW)
+void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW)
 {
 
-    if(boxW == 0 && boxH == 0) { // nothing to blur
+    if (boxW < 0 || boxH < 0 || (boxW == 0 && boxH == 0)) { // nothing to blur or negative values
         memcpy(cfablur, riFlatFile->data[0], W * H * sizeof(float));
         return;
     }
@@ -4387,17 +4396,11 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 //  very effective to reduce (or remove) the magenta, but with levels of grey !
 void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* hlmax)
 {
-    const int ColorCount = 3;
+    constexpr int ColorCount = 3;
 
     // Transform matrixes rgb>lab and back
-    static const float trans[2][ColorCount][ColorCount] = {
-        { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } },
-        { { 1, 1, 1 }, { 1, -1, 1 }, { 1, 1, -1 } }
-    };
-    static const float itrans[2][ColorCount][ColorCount] = {
-        { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } },
-        { { 1, 1, 1 }, { 1, -1, 1 }, { 1, 1, -1 } }
-    };
+    constexpr float trans[ColorCount][ColorCount] = { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } };
+    constexpr float itrans[ColorCount][ColorCount] = { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } };
 
 #define FOREACHCOLOR for (int c=0; c < ColorCount; c++)
 
@@ -4454,7 +4457,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
                 for (int j = 0; j < ColorCount; j++)
                 {
-                    lab[i][c] += trans[ColorCount - 3][c][j] * cam[i][j];
+                    lab[i][c] += trans[c][j] * cam[i][j];
                 }
             }
 
@@ -4478,7 +4481,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
             for (int j = 0; j < ColorCount; j++)
             {
-                cam[0][c] += itrans[ColorCount - 3][c][j] * lab[0][j];
+                cam[0][c] += itrans[c][j] * lab[0][j];
             }
         }
         FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
@@ -4830,20 +4833,27 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         } // end of critical region
     } // end of parallel region
 
+    const auto getidx =
+        [&](int c, int i) -> int
+        {
+            float f = mult[c] * std::max(0.f, i - cblacksom[c]);
+            return f > 0.f ? (f < 1.f ? 1 : std::min(int(f), 255)) : 0;
+        };
+
     for(int i = 0; i < histoSize; i++) {
-        int idx = std::min(255.f, mult[0] * std::max(0.f, i - cblacksom[0]));
+        int idx = getidx(0, i);
         histRedRaw[idx] += hist[0][i];
 
         if (ri->get_colors() > 1) {
-            idx = std::min(255.f, mult[1] * std::max(0.f, i - cblacksom[1]));
+            idx = getidx(1, i);
             histGreenRaw[idx] += hist[1][i];
 
             if (fourColours) {
-                idx = std::min(255.f, mult[3] * std::max(0.f, i - cblacksom[3]));
+                idx = getidx(3, i);
                 histGreenRaw[idx] += hist[3][i];
             }
 
-            idx = std::min(255.f, mult[2] * std::max(0.f, i - cblacksom[2]));
+            idx = getidx(2, i);
             histBlueRaw[idx] += hist[2][i];
         }
     }

@@ -50,5 +50,5 @@ const float Daub4_anal16[2][16] ALIGNED16 = {//Daub 14
 };
 
 // if necessary ?? we can add D20 !!
-};
+}
 

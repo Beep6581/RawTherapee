@@ -63,4 +63,5 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Johan Thor
   Vitalis Tiknius
   TooWaBoo
+  Franz Trischberger
   Colin Walker

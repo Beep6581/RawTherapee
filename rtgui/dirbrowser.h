@@ -21,16 +21,13 @@
 
 #include <gtkmm.h>
 #include <giomm.h>
-#ifdef WIN32
-#include "windirmonitor.h"
-#endif
 
 #include "guiutils.h"
+#ifdef WIN32
+#include "windows.h"
+#endif
 
 class DirBrowser : public Gtk::VBox
-#ifdef WIN32
-    , public WinDirChangeListener
-#endif
 {
 public:
     typedef sigc::signal<void, const Glib::ustring&, const Glib::ustring&> DirSelectionSignal;
@@ -45,11 +42,7 @@ private:
         Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon1;
         Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon2;
         Gtk::TreeModelColumn<Glib::ustring> dirname;
-#ifdef WIN32
-        Gtk::TreeModelColumn<Glib::RefPtr<WinDirMonitor>  > monitor;
-#else
         Gtk::TreeModelColumn<Glib::RefPtr<Gio::FileMonitor> > monitor;
-#endif
 
         DirTreeColumns()
         {
@@ -84,12 +77,11 @@ private:
     bool expandSuccess;
 
 #ifdef WIN32
-    int volumes;
+    unsigned int volumes;
 public:
     void updateVolumes ();
     void updateDirTree  (const Gtk::TreeModel::iterator& iter);
     void updateDirTreeRoot  ();
-    void winDirChanged ();
 private:
     void addRoot (char letter);
 #endif
@@ -101,7 +93,7 @@ private:
 
 public:
     DirBrowser ();
-    ~DirBrowser();
+    ~DirBrowser() override;
 
     void fillDirTree ();
     void on_sort_column_changed() const;

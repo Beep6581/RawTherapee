@@ -11,7 +11,6 @@ using namespace rtengine::procparams;
 Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL"), false, true), lastmedianmap (false)
 {
     CurveListener::setMulti (true);
-    std::vector<double> defaultCurve;
     std::vector<GradientMilestone> milestones;
     nextmin = 0.;
     nextmax = 0.;

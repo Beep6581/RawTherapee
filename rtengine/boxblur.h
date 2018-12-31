@@ -19,6 +19,7 @@
 #ifndef _BOXBLUR_H_
 #define _BOXBLUR_H_
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

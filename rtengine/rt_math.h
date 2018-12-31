@@ -220,5 +220,21 @@ std::array<T, 3> dotProduct(const std::array<std::array<T, 3>, 3> &a, const std:
     return res;
 }
 
+
+template <typename T>
+T lin2log(T x, T base)
+{
+    constexpr T one(1);
+    return std::log(x * (base - one) + one) / std::log(base); 
+}
+
+
+template <typename T>
+T log2lin(T x, T base)
+{
+    constexpr T one(1);
+    return (std::pow(base, x) - one) / (base - one);
+}
+
 }
 

@@ -68,7 +68,7 @@ private:
 
 public:
     RTWindow ();
-    ~RTWindow();
+    ~RTWindow() override;
 
 #if defined(__APPLE__)
     bool osxFileOpenEvent (Glib::ustring path);
@@ -81,20 +81,20 @@ public:
     void addBatchQueueJobs      (const std::vector<BatchQueueEntry*>& entries);
 
     bool keyPressed (GdkEventKey* event);
-    bool on_configure_event (GdkEventConfigure* event);
-    bool on_delete_event (GdkEventAny* event);
-    bool on_window_state_event (GdkEventWindowState* event);
+    bool on_configure_event (GdkEventConfigure* event) override;
+    bool on_delete_event (GdkEventAny* event) override;
+    bool on_window_state_event (GdkEventWindowState* event) override;
     void on_mainNB_switch_page (Gtk::Widget* widget, guint page_num);
 
     void showICCProfileCreator ();
     void showPreferences ();
-    void on_realize ();
+    void on_realize () override;
     void toggle_fullscreen ();
 
-    void setProgress(double p);
-    void setProgressStr(const Glib::ustring& str);
-    void setProgressState(bool inProcessing);
-    void error(const Glib::ustring& descr);
+    void setProgress(double p) override;
+    void setProgressStr(const Glib::ustring& str) override;
+    void setProgressState(bool inProcessing) override;
+    void error(const Glib::ustring& descr) override;
 
     rtengine::ProgressListener* getProgressListener ()
     {

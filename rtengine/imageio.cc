@@ -201,7 +201,7 @@ void png_read_data(png_struct_def  *png_ptr, unsigned char *data, size_t length)
 void png_write_data(png_struct_def *png_ptr, unsigned char *data, size_t length);
 void png_flush(png_struct_def *png_ptr);
 
-int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
+int ImageIO::getPNGSampleFormat (const Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
     FILE *file = g_fopen (fname.c_str (), "rb");
 
@@ -273,7 +273,7 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
     }
 }
 
-int ImageIO::loadPNG  (Glib::ustring fname)
+int ImageIO::loadPNG  (const Glib::ustring &fname)
 {
 
     FILE *file = g_fopen (fname.c_str (), "rb");
@@ -447,7 +447,7 @@ void my_error_exit (j_common_ptr cinfo)
     (*cinfo->err->output_message) (cinfo);
 
     /* Return control to the setjmp point */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     __builtin_longjmp(myerr->setjmp_buffer, 1);
 #else
     longjmp(myerr->setjmp_buffer, 1);
@@ -471,7 +471,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -543,7 +543,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     return IMIO_SUCCESS;
 }
 
-int ImageIO::loadJPEG (Glib::ustring fname)
+int ImageIO::loadJPEG (const Glib::ustring &fname)
 {
     FILE *file = g_fopen(fname.c_str (), "rb");
 
@@ -629,7 +629,7 @@ int ImageIO::loadJPEG (Glib::ustring fname)
     }
 }
 
-int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
+int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
 #ifdef WIN32
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
@@ -731,7 +731,7 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
     return IMIO_VARIANTNOTSUPPORTED;
 }
 
-int ImageIO::loadTIFF (Glib::ustring fname)
+int ImageIO::loadTIFF (const Glib::ustring &fname)
 {
 
     static MyMutex thumbMutex;
@@ -972,7 +972,7 @@ void PNGwriteRawProfile(png_struct *ping, png_info *ping_info, const char *profi
 
 } // namespace
 
-int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
+int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
@@ -1111,7 +1111,7 @@ int ImageIO::savePNG  (Glib::ustring fname, volatile int bps)
 
 
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
-int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
+int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
@@ -1134,7 +1134,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1252,7 +1252,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     unsigned char *row = new unsigned char [rowlen];
 
     /* To avoid memory leaks we establish a new setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ )
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1301,7 +1301,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     return IMIO_SUCCESS;
 }
 
-int ImageIO::saveTIFF (Glib::ustring fname, int bps, float isFloat, bool uncompressed)
+int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool uncompressed) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
@@ -1595,7 +1595,7 @@ void png_flush(png_structp png_ptr)
     }
 }
 
-int ImageIO::load (Glib::ustring fname)
+int ImageIO::load (const Glib::ustring &fname)
 {
 
     if (hasPngExtension(fname)) {
@@ -1609,7 +1609,7 @@ int ImageIO::load (Glib::ustring fname)
     }
 }
 
-int ImageIO::save (Glib::ustring fname)
+int ImageIO::save (const Glib::ustring &fname) const
 {
     if (hasPngExtension(fname)) {
         return savePNG (fname);
@@ -1620,4 +1620,58 @@ int ImageIO::save (Glib::ustring fname)
     } else {
         return IMIO_FILETYPENOTSUPPORTED;
     }
+}
+
+void ImageIO::setProgressListener (ProgressListener* l)
+{
+    pl = l;
+}
+
+void ImageIO::setSampleFormat(IIOSampleFormat sFormat)
+{
+    sampleFormat = sFormat;
+}
+
+IIOSampleFormat ImageIO::getSampleFormat() const
+{
+    return sampleFormat;
+}
+
+void ImageIO::setSampleArrangement(IIOSampleArrangement sArrangement)
+{
+    sampleArrangement = sArrangement;
+}
+
+IIOSampleArrangement ImageIO::getSampleArrangement() const
+{
+    return sampleArrangement;
+}
+
+cmsHPROFILE ImageIO::getEmbeddedProfile () const
+{
+    return embProfile;
+}
+
+void ImageIO::getEmbeddedProfileData (int& length, unsigned char*& pdata) const
+{
+    length = loadedProfileLength;
+    pdata = (unsigned char*)loadedProfileData;
+}
+
+MyMutex& ImageIO::mutex ()
+{
+    return imutex;
+}
+
+void ImageIO::deleteLoadedProfileData( )
+{
+    if(loadedProfileData) {
+        if(loadedProfileDataJpg) {
+            free(loadedProfileData);
+        } else {
+            delete[] loadedProfileData;
+        }
+    }
+
+    loadedProfileData = nullptr;
 }

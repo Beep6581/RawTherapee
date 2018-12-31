@@ -109,7 +109,7 @@ protected:
 
 public:
     MyCurve ();
-    ~MyCurve ();
+    ~MyCurve () override;
 
     void setCurveListener (CurveListener* cl)
     {
@@ -126,10 +126,10 @@ public:
     {
         curveIsDirty = true;
     }
-    void on_style_updated ();
+    void on_style_updated () override;
     virtual std::vector<double> getPoints () = 0;
     virtual void setPoints (const std::vector<double>& p) = 0;
-    virtual bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) = 0;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override = 0;
     virtual bool handleEvents (GdkEvent* event) = 0;
     virtual void reset (const std::vector<double> &resetCurve, double identityValue = 0.5) = 0;
 
@@ -138,11 +138,11 @@ public:
     virtual void pipetteButton1Released(EditDataProvider *provider) = 0;
     virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) = 0;
 
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 };
 
 class MyCurveIdleHelper

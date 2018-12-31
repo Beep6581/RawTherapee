@@ -399,6 +399,7 @@ void Options::setDefaults()
     autoSaveTpOpen = true;
     //crvOpen.clear ();
     parseExtensions.clear();
+    favorites.clear();
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     renameUseTemplates = false;
@@ -551,16 +552,16 @@ void Options::setDefaults()
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
     rtSettings.autoMonitorProfile = false;
-    rtSettings.adobe = "RTv4_Medium"; // put the name of yours profiles (here windows)
-    rtSettings.prophoto = "RTv4_Large"; // these names appear in the menu "output profile"
-    rtSettings.widegamut = "RTv4_Wide";
-    rtSettings.srgb = "RTv4_sRGB";
-    rtSettings.bruce = "RTv4_Bruce";
-    rtSettings.beta = "RTv4_Beta";
-    rtSettings.best = "RTv4_Best";
-    rtSettings.rec2020 = "RTv4_Rec2020";
-    rtSettings.ACESp0 = "RTv4_ACES-AP0";
-    rtSettings.ACESp1 = "RTv4_ACES-AP1";
+    rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
+    rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
+    rtSettings.widegamut = "RTv2_Wide";
+    rtSettings.srgb = "RTv2_sRGB";
+    rtSettings.bruce = "RTv2_Bruce";
+    rtSettings.beta = "RTv2_Beta";
+    rtSettings.best = "RTv2_Best";
+    rtSettings.rec2020 = "RTv2_Rec2020";
+    rtSettings.ACESp0 = "RTv2_ACES-AP0";
+    rtSettings.ACESp1 = "RTv2_ACES-AP1";
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
@@ -942,11 +943,17 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("File Browser", "ParseExtensions")) {
-                    parseExtensions = keyFile.get_string_list("File Browser", "ParseExtensions");
+                    auto l = keyFile.get_string_list("File Browser", "ParseExtensions");
+                    if (!l.empty()) {
+                        parseExtensions = l;
+                    }
                 }
 
                 if (keyFile.has_key("File Browser", "ParseExtensionsEnabled")) {
-                    parseExtensionsEnabled = keyFile.get_integer_list("File Browser", "ParseExtensionsEnabled");
+                    auto l = keyFile.get_integer_list("File Browser", "ParseExtensionsEnabled");
+                    if (!l.empty()) {
+                        parseExtensionsEnabled = l;
+                    }
                 }
 
                 if (keyFile.has_key("File Browser", "ThumbnailArrangement")) {
@@ -1069,6 +1076,10 @@ void Options::readFromFile(Glib::ustring fname)
             }
 
             if (keyFile.has_group("GUI")) {
+                if (keyFile.has_key("GUI", "Favorites")) {
+                    favorites = keyFile.get_string_list("GUI", "Favorites");
+                }
+
                 if (keyFile.has_key("GUI", "WindowWidth")) {
                     windowWidth = keyFile.get_integer("GUI", "WindowWidth");
                 }
@@ -1277,27 +1288,27 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "HistogramPosition")) {
                     histogramPosition = keyFile.get_integer("GUI", "HistogramPosition");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramRed")) {
                     histogramRed = keyFile.get_boolean("GUI", "HistogramRed");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramGreen")) {
                     histogramGreen = keyFile.get_boolean("GUI", "HistogramGreen");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramBlue")) {
                     histogramBlue = keyFile.get_boolean("GUI", "HistogramBlue");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramLuma")) {
                     histogramLuma = keyFile.get_boolean("GUI", "HistogramLuma");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramChroma")) {
                     histogramChroma = keyFile.get_boolean("GUI", "HistogramChroma");
                 }
-                
+
                 if (keyFile.has_key("GUI", "HistogramRAW")) {
                     histogramRAW = keyFile.get_boolean("GUI", "HistogramRAW");
                 }
@@ -1305,11 +1316,11 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "HistogramBar")) {
                     histogramBar = keyFile.get_boolean("GUI", "HistogramBar");
                 }
-                
+
                 if (keyFile.has_key ("GUI", "HistogramHeight")) {
                     histogramHeight = keyFile.get_integer ("GUI", "HistogramHeight");
                 }
-                
+
                 if (keyFile.has_key ("GUI", "HistogramDrawMode")) {
                     histogramDrawMode = keyFile.get_integer ("GUI", "HistogramDrawMode");
                 }
@@ -1442,66 +1453,74 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "AdobeRGB")) {
                     rtSettings.adobe = keyFile.get_string("Color Management", "AdobeRGB");
-                    if (rtSettings.adobe == "RT_Medium_gsRGB") {
-                        rtSettings.adobe = "RTv4_Medium";
+                    if (rtSettings.adobe == "RT_Medium_gsRGB"  || rtSettings.adobe == "RTv4_Medium") {
+                        rtSettings.adobe = "RTv2_Medium";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "ProPhoto")) {
                     rtSettings.prophoto = keyFile.get_string("Color Management", "ProPhoto");
-                    if (rtSettings.prophoto == "RT_Large_gBT709") {
-                        rtSettings.prophoto = "RTv4_Large";
+                    if (rtSettings.prophoto == "RT_Large_gBT709"  || rtSettings.prophoto == "RTv4_Large") {
+                        rtSettings.prophoto = "RTv2_Large";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "WideGamut")) {
                     rtSettings.widegamut = keyFile.get_string("Color Management", "WideGamut");
-                    if (rtSettings.widegamut == "WideGamutRGB") {
-                        rtSettings.widegamut = "RTv4_Wide";
+                    if (rtSettings.widegamut == "WideGamutRGB"  || rtSettings.widegamut == "RTv4_Wide") {
+                        rtSettings.widegamut = "RTv2_Wide";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "sRGB")) {
                     rtSettings.srgb = keyFile.get_string("Color Management", "sRGB");
-                    if (rtSettings.srgb == "RT_sRGB") {
-                        rtSettings.srgb = "RTv4_sRGB";
+                    if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv4_sRGB") {
+                        rtSettings.srgb = "RTv2_sRGB";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Beta")) {
                     rtSettings.beta = keyFile.get_string("Color Management", "Beta");
-                    if (rtSettings.beta == "BetaRGB") {
-                        rtSettings.beta = "RTv4_Beta";
+                    if (rtSettings.beta == "BetaRGB"  || rtSettings.beta == "RTv4_Beta") {
+                        rtSettings.beta = "RTv2_Beta";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Best")) {
                     rtSettings.best = keyFile.get_string("Color Management", "Best");
-                    if (rtSettings.best == "BestRGB") {
-                        rtSettings.best = "RTv4_Best";
+                    if (rtSettings.best == "BestRGB" || rtSettings.best == "RTv4_Best") {
+                        rtSettings.best = "RTv2_Best";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Rec2020")) {
                     rtSettings.rec2020 = keyFile.get_string("Color Management", "Rec2020");
-                    if (rtSettings.rec2020 == "Rec2020") {
-                        rtSettings.rec2020 = "RTv4_Rec2020";
+                    if (rtSettings.rec2020 == "Rec2020"  || rtSettings.rec2020 == "RTv4_Rec2020") {
+                        rtSettings.rec2020 = "RTv2_Rec2020";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "Bruce")) {
                     rtSettings.bruce = keyFile.get_string("Color Management", "Bruce");
-                    if (rtSettings.bruce == "Bruce") {
-                        rtSettings.bruce = "RTv4_Bruce";
+                    if (rtSettings.bruce == "Bruce"  || rtSettings.bruce == "RTv4_Bruce") {
+                        rtSettings.bruce = "RTv2_Bruce";
                     }
                 }
 
                 if (keyFile.has_key("Color Management", "ACES-AP0")) {
                     rtSettings.ACESp0 = keyFile.get_string("Color Management", "ACES-AP0");
+                    if (rtSettings.ACESp0 == "RTv4_ACES-AP0") {
+                        rtSettings.ACESp0 = "RTv2_ACES-AP0";
+                    }
+
                 }
 
                 if (keyFile.has_key("Color Management", "ACES-AP1")) {
                     rtSettings.ACESp1 = keyFile.get_string("Color Management", "ACES-AP1");
+                    if (rtSettings.ACESp1 == "RTv4_ACES-AP1") {
+                        rtSettings.ACESp1 = "RTv2_ACES-AP1";
+                    }
+
                 }
 
                 if (keyFile.has_key("Color Management", "GamutLch")) {
@@ -1579,6 +1598,7 @@ void Options::readFromFile(Glib::ustring fname)
             if (keyFile.has_group("Batch Processing")) {
                 if (keyFile.has_key("Batch Processing", "AdjusterBehavior")) {
                     baBehav = keyFile.get_integer_list("Batch Processing", "AdjusterBehavior");
+                    baBehav.resize(ADDSET_PARAM_NUM);
                 }
             }
 
@@ -1959,6 +1979,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer("Profiles", "CustomProfileBuilderKeys", CPBKeys);
 
+        Glib::ArrayHandle<Glib::ustring> ahfavorites = favorites;
+        keyFile.set_string_list("GUI", "Favorites", ahfavorites);
         keyFile.set_integer("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer("GUI", "WindowX", windowX);

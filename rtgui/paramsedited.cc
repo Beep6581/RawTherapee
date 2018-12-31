@@ -141,10 +141,13 @@ void ParamsEdited::set(bool v)
     colorToning.labgridBLow = v;
     colorToning.labgridAHigh = v;
     colorToning.labgridBHigh = v;
+    colorToning.labregions = v;
+    colorToning.labregionsShowMask = v;
 
     sharpening.enabled            = v;
     sharpening.contrast           = v;
     sharpening.radius             = v;
+    sharpening.blurradius         = v;
     sharpening.amount             = v;
     sharpening.threshold          = v;
     sharpening.edgesonly          = v;
@@ -568,6 +571,10 @@ void ParamsEdited::set(bool v)
     filmSimulation.strength = v;
     softlight.enabled = v;
     softlight.strength = v;
+    dehaze.enabled = v;
+    dehaze.strength = v;
+    dehaze.showDepthMap = v;
+    dehaze.depth = v;
     metadata.mode = v;
 
     exif = v;
@@ -699,6 +706,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorToning.labgridBLow = colorToning.labgridBLow && p.colorToning.labgridBLow == other.colorToning.labgridBLow;
         colorToning.labgridAHigh = colorToning.labgridAHigh && p.colorToning.labgridAHigh == other.colorToning.labgridAHigh;
         colorToning.labgridBHigh = colorToning.labgridBHigh && p.colorToning.labgridBHigh == other.colorToning.labgridBHigh;
+        colorToning.labregions = colorToning.labregions && p.colorToning.labregions == other.colorToning.labregions;
+        colorToning.labregionsShowMask = colorToning.labregionsShowMask && p.colorToning.labregionsShowMask == other.colorToning.labregionsShowMask;
         sharpenEdge.enabled = sharpenEdge.enabled && p.sharpenEdge.enabled == other.sharpenEdge.enabled;
         sharpenEdge.passes = sharpenEdge.passes && p.sharpenEdge.passes == other.sharpenEdge.passes;
         sharpenEdge.amount = sharpenEdge.amount && p.sharpenEdge.amount == other.sharpenEdge.amount;
@@ -711,6 +720,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.enabled = sharpening.enabled && p.sharpening.enabled == other.sharpening.enabled;
         sharpening.contrast = sharpening.contrast && p.sharpening.contrast == other.sharpening.contrast;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
+        sharpening.blurradius = sharpening.blurradius && p.sharpening.blurradius == other.sharpening.blurradius;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
         sharpening.threshold = sharpening.threshold && p.sharpening.threshold == other.sharpening.threshold;
         sharpening.edgesonly = sharpening.edgesonly && p.sharpening.edgesonly == other.sharpening.edgesonly;
@@ -1123,6 +1133,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
         softlight.enabled = softlight.enabled && p.softlight.enabled == other.softlight.enabled;
         softlight.strength = softlight.strength && p.softlight.strength == other.softlight.strength;
+        dehaze.enabled = dehaze.enabled && p.dehaze.enabled == other.dehaze.enabled;
+        dehaze.strength = dehaze.strength && p.dehaze.strength == other.dehaze.strength;
+        dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
+        dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
 
 //      How the hell can we handle that???
@@ -1571,6 +1585,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorToning.labgridBHigh = mods.colorToning.labgridBHigh;
     }
 
+    if (colorToning.labregions) {
+        toEdit.colorToning.labregions = mods.colorToning.labregions;
+    }
+
+    if (colorToning.labregionsShowMask) {
+        toEdit.colorToning.labregionsShowMask = mods.colorToning.labregionsShowMask;
+    }
+    
     if (sharpenEdge.enabled) {
         toEdit.sharpenEdge.enabled    = mods.sharpenEdge.enabled;
     }
@@ -1617,6 +1639,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sharpening.radius) {
         toEdit.sharpening.radius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.radius + mods.sharpening.radius : mods.sharpening.radius;
+    }
+
+    if (sharpening.blurradius) {
+        toEdit.sharpening.blurradius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.blurradius + mods.sharpening.blurradius : mods.sharpening.blurradius;
     }
 
     if (sharpening.amount) {
@@ -3124,7 +3150,23 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (softlight.strength) {
         toEdit.softlight.strength        = dontforceSet && options.baBehav[ADDSET_SOFTLIGHT_STRENGTH] ? toEdit.softlight.strength + mods.softlight.strength : mods.softlight.strength;
     }
+
+    if (dehaze.enabled) {
+        toEdit.dehaze.enabled     = mods.dehaze.enabled;
+    }
+
+    if (dehaze.strength) {
+        toEdit.dehaze.strength        = dontforceSet && options.baBehav[ADDSET_DEHAZE_STRENGTH] ? toEdit.dehaze.strength + mods.dehaze.strength : mods.dehaze.strength;
+    }
     
+    if (dehaze.depth) {
+        toEdit.dehaze.depth     = mods.dehaze.depth;
+    }
+
+    if (dehaze.showDepthMap) {
+        toEdit.dehaze.showDepthMap     = mods.dehaze.showDepthMap;
+    }
+
     if (metadata.mode) {
         toEdit.metadata.mode     = mods.metadata.mode;
     }

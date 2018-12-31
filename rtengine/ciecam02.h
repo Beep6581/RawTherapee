@@ -30,9 +30,9 @@ class Ciecam02
 private:
     static float d_factorfloat ( float f, float la );
     static float calculate_fl_from_la_ciecam02float ( float la );
-    static float achromatic_response_to_whitefloat ( float x, float y, float z, float d, float fl, float nbb, int gamu );
-    static void xyz_to_cat02float ( float &r,  float &g,  float &b,  float x, float y, float z, int gamu );
-    static void cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b, int gamu );
+    static float achromatic_response_to_whitefloat ( float x, float y, float z, float d, float fl, float nbb);
+    static void xyz_to_cat02float ( float &r,  float &g,  float &b,  float x, float y, float z);
+    static void cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b);
 
 #ifdef __SSE2__
     static void xyz_to_cat02float ( vfloat &r,  vfloat &g,  vfloat &b,  vfloat x, vfloat y, vfloat z );
@@ -46,7 +46,7 @@ private:
     static void calculate_abfloat ( float &aa, float &bb, float h, float e, float t, float nbb, float a );
     static void Aab_to_rgbfloat ( float &r, float &g, float &b, float A, float aa, float bb, float nbb );
     static void hpe_to_xyzfloat   ( float &x,  float &y,  float &z,  float r, float g, float b );
-    static void cat02_to_xyzfloat ( float &x,  float &y,  float &z,  float r, float g, float b, int gamu );
+    static void cat02_to_xyzfloat ( float &x,  float &y,  float &z,  float r, float g, float b);
 #ifdef __SSE2__
     static vfloat inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl );
     static void calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vfloat t, vfloat nbb, vfloat a );
@@ -66,7 +66,7 @@ public:
     static void jch2xyz_ciecam02float ( float &x, float &y, float &z,
                                         float J, float C, float h,
                                         float xw, float yw, float zw,
-                                        float c, float nc, int gamu, float n, float nbb, float ncb, float fl, float cz, float d, float aw );
+                                        float c, float nc, float n, float nbb, float ncb, float fl, float cz, float d, float aw );
 #ifdef __SSE2__
     static void jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z,
                                         vfloat J, vfloat C, vfloat h,
@@ -76,10 +76,10 @@ public:
     /**
      * Forward transform from XYZ to CIECAM02 JCh.
      */
-    static void initcam1float (float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+    static void initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                                float &cz, float &aw, float &wh, float &pfl, float &fl, float &c);
 
-    static void initcam2float (float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+    static void initcam2float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                                float &cz, float &aw, float &fl);
 
     static void xyz2jch_ciecam02float ( float &J, float &C, float &h,
@@ -92,7 +92,7 @@ public:
                                            float &Q, float &M, float &s, float aw, float fl, float wh,
                                            float x, float y, float z,
                                            float xw, float yw, float zw,
-                                           float c, float nc, int gamu, float n, float nbb, float ncb, float pfl, float cz, float d  );
+                                           float c, float nc, float n, float nbb, float ncb, float pfl, float cz, float d  );
 
 #ifdef __SSE2__
     static void xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h,

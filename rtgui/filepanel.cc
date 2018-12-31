@@ -303,7 +303,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 #ifdef WIN32
                     else {
                         Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
-                        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+                        Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                         msgd.run ();
                         goto MAXGDIHANDLESREACHED;
                     }
@@ -324,7 +324,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             }
         } else {
             Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
-            Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
 #ifdef WIN32
@@ -385,16 +385,6 @@ void FilePanel::optionsChanged ()
 
 bool FilePanel::handleShortcutKey (GdkEventKey* event)
 {
-
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-
-    if (!ctrl) {
-        switch(event->keyval) {
-        }
-    } else {
-        switch (event->keyval) {
-        }
-    }
 
     if(tpc->getToolBar() && tpc->getToolBar()->handleShortcutKey(event)) {
         return true;

@@ -266,6 +266,6 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
     coeff0 = nullptr;
 }
 
-};
+}
 
 #endif

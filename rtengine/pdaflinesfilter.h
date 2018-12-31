@@ -27,7 +27,7 @@ namespace rtengine {
 
 class PDAFLinesFilter {
 public:
-    PDAFLinesFilter(RawImage *ri);
+    explicit PDAFLinesFilter(RawImage *ri);
     ~PDAFLinesFilter();
     
     int mark(array2D<float> &rawData, PixelsMap &bpMap);

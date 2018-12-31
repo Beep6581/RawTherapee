@@ -28,9 +28,9 @@ class ILabel : public Gtk::DrawingArea
 
 public:
     explicit ILabel (const Glib::ustring &lab);
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    void on_realize();
-    void on_style_updated ();
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    void on_realize() override;
+    void on_style_updated () override;
 };
 
 #endif

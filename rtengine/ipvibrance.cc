@@ -170,12 +170,6 @@ void ImProcFunctions::vibrance (LabImage* lab)
         {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
     };
 
-
-    if (settings->verbose) {
-        printf ("vibrance:  p0=%1.2f  p1=%1.2f  p2=%1.2f  s0=%1.2f s1=%1.2f s2=%1.2f\n", p0, p1, p2, s0, s1, s2);
-        printf ("           pastel=%f   satur=%f   limit= %1.2f   chromamean=%0.5f\n", 1.0f + chromaPastel, 1.0f + chromaSatur, limitpastelsatur, chromamean);
-    }
-
     #pragma omp parallel if (multiThread)
     {
 

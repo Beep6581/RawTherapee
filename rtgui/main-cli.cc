@@ -203,7 +203,9 @@ int main (int argc, char **argv)
 
     // Move the old path to the new one if the new does not exist
     if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
-        g_rename (Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
+        if (g_rename (Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ()) == -1) {
+            std::cout << "g_rename " <<  Glib::build_filename (options.rtdir, "cache").c_str () << " => " << options.cacheBaseDir.c_str () << " failed." << std::endl;
+        }
     }
 
 #endif
@@ -409,8 +411,6 @@ int processLineParams ( int argc, char **argv )
                         deleteProcParams (processingParams);
                         return -3;
                     }
-
-                    std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
 
                     break;
 
@@ -622,6 +622,18 @@ int processLineParams ( int argc, char **argv )
         }
     }
 
+    if (bits == -1) {
+        if (outputType == "jpg") {
+            bits = 8;
+        } else if (outputType == "png") {
+            bits = 8;
+        } else if (outputType == "tif") {
+            bits = 16;
+        } else {
+            bits = 8;
+        }
+    }
+
     if ( !argv1.empty() ) {
         return 1;
     }
@@ -662,6 +674,7 @@ int processLineParams ( int argc, char **argv )
         rtengine::procparams::ProcParams currentParams;
 
         Glib::ustring inputFile = inputFiles[iFile];
+        std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
         std::cout << "Processing: " << inputFile << std::endl;
 
         rtengine::InitialImage* ii = nullptr;

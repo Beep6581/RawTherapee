@@ -80,6 +80,7 @@
 #include "fattaltonemap.h"
 #include "localcontrast.h"
 #include "softlight.h"
+#include "dehaze.h"
 #include "guiutils.h"
 
 class ImageEditorCoordinator;
@@ -135,6 +136,7 @@ protected:
     DirPyrEqualizer* dirpyrequalizer;
     HSVEqualizer* hsvequalizer;
     SoftLight *softlight;
+    Dehaze *dehaze;
     FilmSimulation *filmSimulation;
     SensorBayer * sensorbayer;
     SensorXTrans * sensorxtrans;
@@ -156,6 +158,8 @@ protected:
     rtengine::StagedImageProcessor* ipc;
 
     std::vector<ToolPanel*> toolPanels;
+    std::vector<FoldableToolPanel*> favorites;
+    ToolVBox* favoritePanel;
     ToolVBox* exposurePanel;
     ToolVBox* detailsPanel;
     ToolVBox* colorPanel;
@@ -164,6 +168,7 @@ protected:
     ToolVBox* advancedPanel;
     ToolBar* toolBar;
 
+    TextOrIcon* toiF;
     TextOrIcon* toiE;
     TextOrIcon* toiD;
     TextOrIcon* toiC;
@@ -172,9 +177,10 @@ protected:
     TextOrIcon* toiM;
     TextOrIcon* toiW;
 
-    Gtk::Image* imgPanelEnd[6];
-    Gtk::VBox* vbPanelEnd[6];
+    Gtk::Image* imgPanelEnd[7];
+    Gtk::VBox* vbPanelEnd[7];
 
+    Gtk::ScrolledWindow* favoritePanelSW;
     Gtk::ScrolledWindow* exposurePanelSW;
     Gtk::ScrolledWindow* detailsPanelSW;
     Gtk::ScrolledWindow* colorPanelSW;
@@ -189,6 +195,7 @@ protected:
     void addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void foldThemAll (GdkEventButton* event);
     void updateVScrollbars (bool hide);
+    void addfavoritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
 
 private:
     EditDataProvider *editDataProvider;
@@ -198,7 +205,7 @@ public:
     Gtk::Notebook* toolPanelNotebook;
 
     ToolPanelCoordinator (bool batch = false);
-    virtual ~ToolPanelCoordinator ();
+    ~ToolPanelCoordinator () override;
 
     bool getChangedState                ()
     {
@@ -225,9 +232,9 @@ public:
     }
 
     // toolpanellistener interface
-    void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr);
+    void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) override;
 
-    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false);
+    void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false) override;
 
 //    void autoContrastChanged (double autoContrast);
     // profilechangelistener interface
@@ -237,8 +244,8 @@ public:
         const Glib::ustring& descr,
         const ParamsEdited* paramsEdited = nullptr,
         bool fromLastSave = false
-    );
-    void setDefaults(const rtengine::procparams::ProcParams* defparams);
+    ) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defparams) override;
 
     // DirSelectionListener interface
     void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
@@ -261,13 +268,13 @@ public:
 
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, double tempBias)
+    void getAutoWB (double& temp, double& green, double equal, double tempBias) override
     {
         if (ipc) {
             ipc->getAutoWB (temp, green, equal, tempBias);
         }
     }
-    void getCamWB (double& temp, double& green)
+    void getCamWB (double& temp, double& green) override
     {
         if (ipc) {
             ipc->getCamWB (temp, green);
@@ -275,41 +282,41 @@ public:
     }
 
     //DFProvider interface
-    rtengine::RawImage* getDF();
+    rtengine::RawImage* getDF() override;
 
     //FFProvider interface
-    rtengine::RawImage* getFF();
-    Glib::ustring GetCurrentImageFilePath();
+    rtengine::RawImage* getFF() override;
+    Glib::ustring GetCurrentImageFilePath() override;
 
     // rotatelistener interface
-    void straightenRequested ();
-    void autoCropRequested ();
-    double autoDistorRequested ();
+    void straightenRequested () override;
+    void autoCropRequested () override;
+    double autoDistorRequested () override;
 
     // spotwblistener interface
-    void spotWBRequested (int size);
+    void spotWBRequested (int size) override;
 
     // croppanellistener interface
-    void cropSelectRequested ();
+    void cropSelectRequested () override;
 
     // icmpanellistener interface
-    void saveInputICCReference(const Glib::ustring& fname, bool apply_wb);
+    void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) override;
 
     // imageareatoollistener interface
-    void spotWBselected(int x, int y, Thumbnail* thm = nullptr);
-    void sharpMaskSelected(bool sharpMask);
-    int getSpotWBRectSize() const;
-    void cropSelectionReady();
-    void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr);
-    ToolBar* getToolBar() const;
-    CropGUIListener* startCropEditing(Thumbnail* thm = nullptr);
+    void spotWBselected(int x, int y, Thumbnail* thm = nullptr) override;
+    void sharpMaskSelected(bool sharpMask) override;
+    int getSpotWBRectSize() const override;
+    void cropSelectionReady() override;
+    void rotateSelectionReady(double rotate_deg, Thumbnail* thm = nullptr) override;
+    ToolBar* getToolBar() const override;
+    CropGUIListener* startCropEditing(Thumbnail* thm = nullptr) override;
 
     void updateTPVScrollbar (bool hide);
     bool handleShortcutKey (GdkEventKey* event);
 
     // ToolBarListener interface
-    void toolSelected (ToolMode tool);
-    void editModeSwitchedOff ();
+    void toolSelected (ToolMode tool) override;
+    void editModeSwitchedOff () override;
 
     void setEditProvider (EditDataProvider *provider);
 

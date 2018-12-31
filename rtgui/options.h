@@ -108,8 +108,8 @@ public:
     class Error: public std::exception
     {
     public:
-        Error (const Glib::ustring &msg): msg_ (msg) {}
-        const char *what() const throw()
+        explicit Error (const Glib::ustring &msg): msg_ (msg) {}
+        const char *what() const throw() override
         {
             return msg_.c_str();
         }
@@ -375,6 +375,7 @@ public:
     int           fastexport_resize_height;
     bool fastexport_use_fast_pipeline;
 
+    std::vector<Glib::ustring> favorites;
     // Dialog settings
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;

@@ -760,12 +760,13 @@ void XMLCALL rtengine::LCPProfile::XmlStartHandler(void* pLCPProfile, const char
         ++src;
     }
 
-    strcpy(pProf->lastTag, src);
-
+    strncpy(pProf->lastTag, src, sizeof(pProf->lastTag) - 1);
+    pProf->lastTag[sizeof(pProf->lastTag) - 1] = 0;
     const std::string src_str = src;
 
     if (src_str == "VignetteModelPiecewiseParam") {
-        strcpy(pProf->inInvalidTag, src);
+        strncpy(pProf->inInvalidTag, src, sizeof(pProf->inInvalidTag) - 1);
+        pProf->inInvalidTag[sizeof(pProf->inInvalidTag) - 1] = 0;
     }
 
     if (src_str == "CameraProfiles") {
@@ -931,7 +932,12 @@ std::shared_ptr<rtengine::LCPProfile> rtengine::LCPStore::getProfile(const Glib:
 
     std::shared_ptr<LCPProfile> res;
     if (!cache.get(filename, res)) {
-        res.reset(new LCPProfile(filename));
+        try {
+            res.reset(new LCPProfile(filename));
+        } catch (...) {
+            return nullptr;
+        }
+
         cache.set(filename, res);
     }
 

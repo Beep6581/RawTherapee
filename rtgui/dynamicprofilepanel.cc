@@ -41,7 +41,17 @@ DynamicProfilePanel::EditDialog::EditDialog (const Glib::ustring &title, Gtk::Wi
 
     add_optional (M ("EXIFFILTER_CAMERA"), has_camera_, camera_);
     add_optional (M ("EXIFFILTER_LENS"), has_lens_, lens_);
-    add_optional (M ("EXIFFILTER_IMAGETYPE"), has_imagetype_, imagetype_);
+    
+    imagetype_ = Gtk::manage (new MyComboBoxText());
+    imagetype_->append(Glib::ustring("(") + M("DYNPROFILEEDITOR_IMGTYPE_ANY") + ")");
+    imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_STD"));
+    imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_HDR"));
+    imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_PS"));
+    imagetype_->set_active(0);
+    hb = Gtk::manage (new Gtk::HBox());
+    hb->pack_start (*Gtk::manage (new Gtk::Label (M ("EXIFFILTER_IMAGETYPE"))), false, false, 4);
+    hb->pack_start (*imagetype_, true, true, 2);
+    get_content_area()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
 
     add_range (M ("EXIFFILTER_ISO"), iso_min_, iso_max_);
     add_range (M ("EXIFFILTER_APERTURE"), fnumber_min_, fnumber_max_);
@@ -82,8 +92,17 @@ void DynamicProfilePanel::EditDialog::set_rule (
     has_lens_->set_active (rule.lens.enabled);
     lens_->set_text (rule.lens.value);
 
-    has_imagetype_->set_active (rule.imagetype.enabled);
-    imagetype_->set_text (rule.imagetype.value);
+    if (!rule.imagetype.enabled) {
+        imagetype_->set_active(0);
+    } else if (rule.imagetype.value == "STD") {
+        imagetype_->set_active(1);
+    } else if (rule.imagetype.value == "HDR") {
+        imagetype_->set_active(2);
+    } else if (rule.imagetype.value == "PS") {
+        imagetype_->set_active(3);
+    } else {
+        imagetype_->set_active(0);
+    }
 
     profilepath_->updateProfileList();
 
@@ -116,8 +135,20 @@ DynamicProfileRule DynamicProfilePanel::EditDialog::get_rule()
     ret.lens.enabled = has_lens_->get_active();
     ret.lens.value = lens_->get_text();
 
-    ret.imagetype.enabled = has_imagetype_->get_active();
-    ret.imagetype.value = imagetype_->get_text();
+    ret.imagetype.enabled = imagetype_->get_active_row_number() > 0;
+    switch (imagetype_->get_active_row_number()) {
+    case 1:
+        ret.imagetype.value = "STD";
+        break;
+    case 2:
+        ret.imagetype.value = "HDR";
+        break;
+    case 3:
+        ret.imagetype.value = "PS";
+        break;
+    default:
+        ret.imagetype.value = "";
+    }
 
     ret.profilepath = profilepath_->getFullPathFromActiveRow();
 
@@ -478,7 +509,14 @@ void DynamicProfilePanel::render_lens (
 void DynamicProfilePanel::render_imagetype (
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_OPTIONAL_ (imagetype);
+    auto row = *iter;
+    Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
+    DynamicProfileRule::Optional o = row[columns_.imagetype];
+    if (o.enabled) {
+        ct->property_text() = M(std::string("DYNPROFILEEDITOR_IMGTYPE_") + o.value);
+    } else { \
+        ct->property_text() = "";
+    }
 }
 
 #undef RENDER_OPTIONAL_

@@ -64,7 +64,7 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
             } catch (const Glib::Exception& exception) {
 
                 if (options.rtSettings.verbose) {
-                    std::cerr << exception.what () << std::endl;
+                    std::cerr << exception.what().c_str() << std::endl;
                 }
 
             }
@@ -220,7 +220,7 @@ void DirBrowser::updateDirTree (const Gtk::TreeModel::iterator& iter)
 void DirBrowser::updateVolumes ()
 {
 
-    int nvolumes = GetLogicalDrives ();
+    unsigned int nvolumes = GetLogicalDrives ();
 
     if (nvolumes != volumes) {
         GThreadLock lock;
@@ -246,17 +246,6 @@ int updateVolumesUI (void* br)
     return 1;
 }
 
-void DirBrowser::winDirChanged ()
-{
-    const auto func =
-        [](DirBrowser* self) -> bool
-        {
-            self->updateDirTreeRoot();
-            return false;
-        };
-
-    idle_register.add<DirBrowser>(func, this, false);
-}
 #endif
 
 void DirBrowser::fillRoot ()
@@ -334,14 +323,9 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
         expandSuccess = true;
     }
 
-#ifdef WIN32
-    Glib::RefPtr<WinDirMonitor> monitor = Glib::RefPtr<WinDirMonitor>(new WinDirMonitor (iter->get_value (dtColumns.dirname), this));
-    iter->set_value (dtColumns.monitor, monitor);
-#else
     Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
     iter->set_value (dtColumns.monitor, monitor);
     monitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &DirBrowser::file_changed), iter, dir->get_parse_name()));
-#endif
 }
 
 void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)

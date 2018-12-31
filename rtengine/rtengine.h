@@ -347,7 +347,7 @@ class AutoColorTonListener
 {
 public:
     virtual ~AutoColorTonListener() = default;
-    virtual void autoColorTonChanged(int satthres, int satprot) = 0;
+    virtual void autoColorTonChanged(int bwct, int satthres, int satprot) = 0;
 };
 
 class AutoBWListener
