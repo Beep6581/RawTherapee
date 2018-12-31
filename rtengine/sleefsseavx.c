@@ -1427,5 +1427,21 @@ static INLINE void vconvertrgbrgbrgbrgb2rrrrggggbbbb (const float * src, vfloat 
     bv = _mm_setr_ps(src[2],src[5],src[8],src[11]);
 }
 
+#if defined( __SSE4_1__ ) && defined( __x86_64__ )
+static INLINE vfloat vceilf(vfloat x) {
+    return _mm_round_ps(x, _MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC);
+}
+
+#else
+
+static INLINE vfloat vceilf(vfloat x) {
+    __m128i zerov = _mm_setzero_si128();
+    zerov = _mm_cmpeq_epi32(zerov, zerov);
+    const vfloat onev = (vfloat)_mm_slli_epi32(_mm_srli_epi32(zerov, 25), 23); //create vector 1.0f
+    const vfloat xi = _mm_cvtepi32_ps(_mm_cvttps_epi32(x));
+    return xi + _mm_and_ps(_mm_cmplt_ps(xi, x), onev);
+}
+#endif
+
 #endif // __SSE2__
 #endif // SLEEFSSEAVX
