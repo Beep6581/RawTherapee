@@ -58,7 +58,7 @@ EXIFPANEL_SUBDIRECTORY;Підкаталог
 EXPORT_BYPASS_ALL;Zaznacz / Odznacz wszystkie
 EXPORT_BYPASS_DEFRINGE;Pomiń usuwanie widma
 EXPORT_BYPASS_DIRPYRDENOISE;Pomiń redukcję szumów
-EXPORT_BYPASS_DIRPYREQUALIZER;Pomiń kontrast wg. poziomu detali
+EXPORT_BYPASS_DIRPYREQUALIZER;Pomiń Контраст wg. poziomu detali
 EXPORT_BYPASS_RAW_CA;Pomiń redukcję aberracji chromatycznej (raw)
 EXPORT_BYPASS_RAW_CCSTEPS;Pomiń tłumienie fałszowania koloru (raw)
 EXPORT_BYPASS_RAW_DCB_ENHANCE;Pomiń poprawę DCB (raw)
@@ -70,27 +70,27 @@ EXPORT_BYPASS_RAW_LINENOISE;Pomiń redukcję szumów liniowych (raw)
 EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Pomiń poprawę LMMSE [raw]
 EXPORT_BYPASS_SHARPENEDGE;Pomiń wyostrzanie krawędzi
 EXPORT_BYPASS_SHARPENING;Pomiń wyostrzanie
-EXPORT_BYPASS_SHARPENMICRO;Pomiń mikrokontrast
+EXPORT_BYPASS_SHARPENMICRO;Pomiń mikroКонтраст
 EXPORT_BYPASS_SH_HQ;Pomiń wysokiej jakości korekte cieni/podświetleń
 EXPORT_FASTEXPORTOPTIONS;<b>Opcje szybkiego eksportu</b>
 EXPORT_INSTRUCTIONS;Opcje szybkiego eksportu umożliwiają pominięcie pewnych narzędzi które mogą być dość wymagające na procesor oraz mogą znacznie przedłużyc czas przetwarzania podczas eksportowania zdjęć. Ta metoda jest zalecana w razie potrzeby szybkiego uzyskania zdjęć o niższej rozdzielczości oraz jakości kiedy zależy nam na czasie a nie chcemy modyfikować plików PP3.
-EXPORT_MAXHEIGHT;Maksymalna wysokość:
-EXPORT_MAXWIDTH;Maksymalna szerokość:
-EXPORT_PUTTOQUEUEFAST;  Dodaj do kolejki szybkiego eksportu
-EXPORT_RAW_DMETHOD;Algorytm demozaikowania
+EXPORT_MAXHEIGHT;Максимальна висота:
+EXPORT_MAXWIDTH;Максимальна широта:
+EXPORT_PUTTOQUEUEFAST;  Додати до черги швидкого експорту
+EXPORT_RAW_DMETHOD;Алгоритм демозаїзації
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;wywołane w kolejce
-FILEBROWSER_ADDDELTEMPLATE;Dodaj/Usuń szablon...
-FILEBROWSER_APPLYPROFILE;Zastosuj profil
-FILEBROWSER_APPLYPROFILE_PARTIAL;Zastosuj częściowy profil
+FILEBROWSER_ADDDELTEMPLATE;Додати/Усунути шаблон...
+FILEBROWSER_APPLYPROFILE;Застосувати профіль
+FILEBROWSER_APPLYPROFILE_PARTIAL;Застосувати частковий профіль
 FILEBROWSER_AUTODARKFRAME;Automatyczne użycie czarnej klatki
 FILEBROWSER_AUTOFLATFIELD;Automatyczne użycie klatki typu puste pole
 FILEBROWSER_BROWSEPATHBUTTONHINT;Należy kliknąć, aby przeglądać wybraną ścieżkę
 FILEBROWSER_BROWSEPATHHINT;Umożliwia przeglądanie wprowadzonej ścieżki\n<b>Ctrl-o</b> zaznaczenie\n<b>Enter</b>, <b>Ctrl-Enter</b> (w menedżerze plików) przeglądanie\nSkróty:\n  <b>~</b>      - katalog domowy użytkownika\n  <b>!</b>        - katalog z obrazami użytkownia
 FILEBROWSER_CACHE;Pamięć podręczna
-FILEBROWSER_CLEARPROFILE;Wyczyść profil
+FILEBROWSER_CLEARPROFILE;Очистити профіль
 FILEBROWSER_COLORLABEL_TOOLTIP;Kolorowe etykiety\n\nUżyj za pomocą rozwijanej listy lub skrótów:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Czerwona\n<b>Shift-Ctrl-2</b> Żółta\n<b>Shift-Ctrl-3</b> Zielona\n<b>Shift-Ctrl-4</b> Niebieska\n<b>Shift-Ctrl-5</b> Purpurowa
-FILEBROWSER_COPYPROFILE;Kopiuj profil
+FILEBROWSER_COPYPROFILE;Копіювати профіль
 FILEBROWSER_CURRENT_NAME;Obecna nazwa:
 FILEBROWSER_DARKFRAME;Czarna klatka
 FILEBROWSER_DELETEDLGLABEL;Potwierdzenie usunięcia pliku
@@ -107,38 +107,38 @@ FILEBROWSER_OPENDEFAULTVIEWER;Domyślna przeglądarka zdjęć (z kolejki)
 FILEBROWSER_PARTIALPASTEPROFILE;Wklej częściowo
 FILEBROWSER_PASTEPROFILE;Wklej profil
 FILEBROWSER_POPUPCANCELJOB;Anuluj zadanie
-FILEBROWSER_POPUPCOLORLABEL;Kolorowa etykieta
-FILEBROWSER_POPUPCOLORLABEL0;Etykieta: Brak
-FILEBROWSER_POPUPCOLORLABEL1;Etykieta: Czerwona
-FILEBROWSER_POPUPCOLORLABEL2;Etykieta: Żółta
-FILEBROWSER_POPUPCOLORLABEL3;Etykieta: Zielona
-FILEBROWSER_POPUPCOLORLABEL4;Etykieta: Niebieska
-FILEBROWSER_POPUPCOLORLABEL5;Etykieta: Purpurowa
-FILEBROWSER_POPUPCOPYTO;Skopiuj do...
-FILEBROWSER_POPUPFILEOPERATIONS;Operacje na plikach
-FILEBROWSER_POPUPMOVEEND;Przenieś na koniec kolejki
-FILEBROWSER_POPUPMOVEHEAD;Przenieś na początek kolejki
-FILEBROWSER_POPUPMOVETO;Przenieś do...
-FILEBROWSER_POPUPOPEN;Otwórz
-FILEBROWSER_POPUPOPENINEDITOR;Otwórz w edytorze
-FILEBROWSER_POPUPPROCESS;Umieść w kolejce do przetwarzania
-FILEBROWSER_POPUPPROCESSFAST;Dodaj do kolejki szybkiego eksportu
-FILEBROWSER_POPUPPROFILEOPERATIONS;Profile przetwarzania
-FILEBROWSER_POPUPRANK;Ocena
-FILEBROWSER_POPUPRANK0;Usuń ocenę
-FILEBROWSER_POPUPRANK1;Ocena 1 *
-FILEBROWSER_POPUPRANK2;Ocena 2 **
-FILEBROWSER_POPUPRANK3;Ocena 3 ***
-FILEBROWSER_POPUPRANK4;Ocena 4 ****
-FILEBROWSER_POPUPRANK5;Ocena 5 *****
-FILEBROWSER_POPUPREMOVE;Usuń z dysku
-FILEBROWSER_POPUPREMOVEINCLPROC;Usuń z dysku wraz z wynikiem przetwarzania
-FILEBROWSER_POPUPRENAME;Zmień nazwę
-FILEBROWSER_POPUPSELECTALL;Zaznacz wszystkie
-FILEBROWSER_POPUPTRASH;Przenieś do kosza
-FILEBROWSER_POPUPUNRANK;Usuń ocenę
-FILEBROWSER_POPUPUNTRASH;Usuń z kosza
-FILEBROWSER_QUERYBUTTONHINT;Wyczyść hasło szukania
+FILEBROWSER_POPUPCOLORLABEL;Кольоровий маркер
+FILEBROWSER_POPUPCOLORLABEL0;Маркер: Немає
+FILEBROWSER_POPUPCOLORLABEL1;Маркер: Червоний
+FILEBROWSER_POPUPCOLORLABEL2;Маркер: Жовтий
+FILEBROWSER_POPUPCOLORLABEL3;Маркер: Зелений
+FILEBROWSER_POPUPCOLORLABEL4;Маркер: Синій
+FILEBROWSER_POPUPCOLORLABEL5;Маркер: Фіолетовий
+FILEBROWSER_POPUPCOPYTO;Копіювати до...
+FILEBROWSER_POPUPFILEOPERATIONS;Операції з файлами
+FILEBROWSER_POPUPMOVEEND;Перенести на кінець черги
+FILEBROWSER_POPUPMOVEHEAD;Перенести на початок черги
+FILEBROWSER_POPUPMOVETO;Перенести до...
+FILEBROWSER_POPUPOPEN;Відкрити
+FILEBROWSER_POPUPOPENINEDITOR;Відкрити в редакторі
+FILEBROWSER_POPUPPROCESS;Додати до черги на обробку
+FILEBROWSER_POPUPPROCESSFAST;Додати до черги швидкого експорту
+FILEBROWSER_POPUPPROFILEOPERATIONS;Профілі обробки
+FILEBROWSER_POPUPRANK;Оцінка
+FILEBROWSER_POPUPRANK0;Прибрати оцінку
+FILEBROWSER_POPUPRANK1;Оцінка 1 *
+FILEBROWSER_POPUPRANK2;Оцінка 2 **
+FILEBROWSER_POPUPRANK3;Оцінка 3 ***
+FILEBROWSER_POPUPRANK4;Оцінка 4 ****
+FILEBROWSER_POPUPRANK5;Оцінка 5 *****
+FILEBROWSER_POPUPREMOVE;Знищити на диску
+FILEBROWSER_POPUPREMOVEINCLPROC;Знищити на диску разом з результатами обробки
+FILEBROWSER_POPUPRENAME;Змінити назву
+FILEBROWSER_POPUPSELECTALL;Вибрати всі
+FILEBROWSER_POPUPTRASH;Перенести до смітника
+FILEBROWSER_POPUPUNRANK;Прибрати оцінку
+FILEBROWSER_POPUPUNTRASH;Забрати з смітника
+FILEBROWSER_QUERYBUTTONHINT;Очистити пошук
 FILEBROWSER_QUERYHINT;Wprowadź część nazwy, by zlokalizować plik. Oddziel hasła przecinkami, np.\n<i>1001,1004,1199</i>\n\nWyklucz hasła poprzedzając je znakiem <i>!=</i>\nnp.\n<i>!=1001,1004,1199</i>\n\nSkróty:\n<b>Ctrl-f</b> - przejdź do pola "Znajdź",\n<b>Enter</b> - szukaj,\n<b>Esc</b> - wyczyść pole "Znajdź",\n<b>Shift-Esc</b> - wyjdź z pola "Znajdź".
 FILEBROWSER_QUERYLABEL; Znajdź:
 FILEBROWSER_RANK1_TOOLTIP;Oceń 1 *\nSkrót: <b>Shift-1</b>
@@ -172,26 +172,26 @@ FILEBROWSER_THUMBSIZE;Rozmiar minaturek
 FILEBROWSER_UNRANK_TOOLTIP;Usuń ocenę.\nSkrót: <b>Shift-0</b>
 FILEBROWSER_ZOOMINHINT;Zwiększa rozmiar miniaturek.\n\nSkróty:\n<b>+</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>+</b> - Tryb pojedyńczej zakładki.
 FILEBROWSER_ZOOMOUTHINT;Zmniejsza rozmiar miniaturek.\n\nSkróty:\n<b>-</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>-</b> - Tryb pojedyńczej zakładki.
-GENERAL_ABOUT;O programie
-GENERAL_AFTER;Po
-GENERAL_AUTO;Automatyczne
-GENERAL_BEFORE;Przed
-GENERAL_CANCEL;Anuluj
-GENERAL_CLOSE;Zamknij
-GENERAL_DISABLE;Wyłącz
-GENERAL_DISABLED;Wyłączone
-GENERAL_ENABLE;Włącz
-GENERAL_ENABLED;Włączone
-GENERAL_FILE;Plik
-GENERAL_LANDSCAPE;Poziomo
-GENERAL_NA;nd.
-GENERAL_NO;Nie
-GENERAL_NONE;Żaden
+GENERAL_ABOUT;Про програму
+GENERAL_AFTER;Після
+GENERAL_AUTO;Автоматично
+GENERAL_BEFORE;Перед
+GENERAL_CANCEL;Відмінити
+GENERAL_CLOSE;Закрити
+GENERAL_DISABLE;Вимкнути
+GENERAL_DISABLED;Вимкнуто
+GENERAL_ENABLE;Ввімкнути
+GENERAL_ENABLED;Ввімкнуто
+GENERAL_FILE;Файл
+GENERAL_LANDSCAPE;Горизонтальний режим
+GENERAL_NA;нд
+GENERAL_NO;Ні
+GENERAL_NONE;Немає
 GENERAL_OK;OK
-GENERAL_PORTRAIT;Pionowo
-GENERAL_SAVE;Zapisz
-GENERAL_UNCHANGED;(Niezmienione)
-GENERAL_WARNING;Uwaga
+GENERAL_PORTRAIT;Вертикальний режим
+GENERAL_SAVE;Зберегти
+GENERAL_UNCHANGED;(Без змін)
+GENERAL_WARNING;Попередження
 HISTOGRAM_TOOLTIP_B;Pokaż/Ukryj histogram błękitów.
 HISTOGRAM_TOOLTIP_BAR;Pokazuje/Ukrywa wskaźnik RGB.\nKliknięcie prawym przyciskiem myszy na podglądzie zdjęcia blokuje/odblokowuje.
 HISTOGRAM_TOOLTIP_CHRO;Pokaż/Ukryj histogram chromatyczności.
@@ -200,29 +200,29 @@ HISTOGRAM_TOOLTIP_G;Pokaż/Ukryj histogram zieleni.
 HISTOGRAM_TOOLTIP_L;Pokaż/Ukryj histogram luminancji CIELab.
 HISTOGRAM_TOOLTIP_R;Pokaż/Ukryj histogram czerwieni.
 HISTOGRAM_TOOLTIP_RAW;Pokaż/Ukryj histogram raw.
-HISTORY_CHANGED;Zmieniono
+HISTORY_CHANGED;Змінено
 HISTORY_CUSTOMCURVE;Krzywa własna
-HISTORY_FROMCLIPBOARD;Ze schowka
-HISTORY_LABEL;Historia
-HISTORY_MSG_1;Zdjęcie załadowane
-HISTORY_MSG_2;Profil załadowany
-HISTORY_MSG_3;Profil zmieniony
-HISTORY_MSG_4;Przeglądanie historii
+HISTORY_FROMCLIPBOARD;З буферу
+HISTORY_LABEL;Історія
+HISTORY_MSG_1;Фотографію завантажено
+HISTORY_MSG_2;Профіль завантажено
+HISTORY_MSG_3;Профіль змінено
+HISTORY_MSG_4;Перегляд історії
 HISTORY_MSG_5;Światłość
-HISTORY_MSG_6;Kontrast
-HISTORY_MSG_7;Czerń
-HISTORY_MSG_8;Kompensacja ekspozycji
+HISTORY_MSG_6;Контраст
+HISTORY_MSG_7;Чорний
+HISTORY_MSG_8;Компенсація експозиції
 HISTORY_MSG_9;Kompresja podświetleń
-HISTORY_MSG_10;Kompresja cieni
-HISTORY_MSG_11;Krzywa tonalna
-HISTORY_MSG_12;Automatyczna ekspozycja
+HISTORY_MSG_10;Компресія тіней
+HISTORY_MSG_11;Тональна крива
+HISTORY_MSG_12;Автоматична експозиція
 HISTORY_MSG_13;Przycinanie ekspozycji
 HISTORY_MSG_14;L*a*b* - Światłość
-HISTORY_MSG_15;L*a*b* - Kontrast
+HISTORY_MSG_15;L*a*b* - Контраст
 HISTORY_MSG_16;-
 HISTORY_MSG_17;-
 HISTORY_MSG_18;-
-HISTORY_MSG_19;Krzywa L*
+HISTORY_MSG_19;Крива L*
 HISTORY_MSG_20;Wyostrzanie
 HISTORY_MSG_21;USM - Promień
 HISTORY_MSG_22;USM - Siła
@@ -258,7 +258,7 @@ HISTORY_MSG_51;C/P - Podświetlenia
 HISTORY_MSG_52;C/P - Cienie
 HISTORY_MSG_53;C/P - Szerokość tonalna podśw.
 HISTORY_MSG_54;C/P - Szerokość tonalna cieni
-HISTORY_MSG_55;C/P - Kontrast lokalny
+HISTORY_MSG_55;C/P - Контраст lokalny
 HISTORY_MSG_56;C/P - Promień
 HISTORY_MSG_57;Obrót dyskretny
 HISTORY_MSG_58;Odbicie w poziomie
@@ -296,12 +296,12 @@ HISTORY_MSG_89;Redukcja szumów
 HISTORY_MSG_90;RS - Luminancja
 HISTORY_MSG_91;RS - Chrominancja
 HISTORY_MSG_92;RS - Gamma
-HISTORY_MSG_93;Kontrast wg. poziomu detali
-HISTORY_MSG_94;Kontrast wg. poziomu detali
+HISTORY_MSG_93;Контраст wg. poziomu detali
+HISTORY_MSG_94;Контраст wg. poziomu detali
 HISTORY_MSG_95;L*a*b* - Chromatyczność
 HISTORY_MSG_96;Krzywa a*
 HISTORY_MSG_97;Krzywa b*
-HISTORY_MSG_98;Algorytm demozaikowania
+HISTORY_MSG_98;Алгоритм demozaikowania
 HISTORY_MSG_99;Filtrowanie gorących pikseli
 HISTORY_MSG_100;Nasycenie RGB
 HISTORY_MSG_101;HSV - Odcień
@@ -340,19 +340,19 @@ HISTORY_MSG_133;Gamma wyjściowa
 HISTORY_MSG_134;Wolna gamma
 HISTORY_MSG_135;Wolna gamma
 HISTORY_MSG_136;Nachylenie gamma
-HISTORY_MSG_137;Poziom czerni - Zielony 1
-HISTORY_MSG_138;Poziom czerni - Czerwony
-HISTORY_MSG_139;Poziom czerni - Niebieski
-HISTORY_MSG_140;Poziom czerni - Zielony 2
+HISTORY_MSG_137;Poziom czerni - Зелений 1
+HISTORY_MSG_138;Poziom czerni - Червоний
+HISTORY_MSG_139;Poziom czerni - Синій
+HISTORY_MSG_140;Poziom czerni - Зелений 2
 HISTORY_MSG_141;Poziom czerni - Połącz zielone
 HISTORY_MSG_142;WK - Powtórzenia
 HISTORY_MSG_143;WK - Siła
-HISTORY_MSG_144;Mikrokontrast - Siła
-HISTORY_MSG_145;Mikrokontrast - Jednolitość
+HISTORY_MSG_144;MikroКонтраст - Siła
+HISTORY_MSG_145;MikroКонтраст - Jednolitość
 HISTORY_MSG_146;Wyostrzanie krawędzi
 HISTORY_MSG_147;Wyostrzanie krawędzi - tylko luminacja
-HISTORY_MSG_148;Mikrokontrast
-HISTORY_MSG_149;Mikrokontrast - matryca 3×3
+HISTORY_MSG_148;MikroКонтраст
+HISTORY_MSG_149;MikroКонтраст - matryca 3×3
 HISTORY_MSG_150;Redukcja szumu i artefaktów po demozaikowaniu
 HISTORY_MSG_151;Jaskrawość
 HISTORY_MSG_152;Jaskrawość - Ppastelowe
@@ -369,7 +369,7 @@ HISTORY_MSG_162;Tone Mapping
 HISTORY_MSG_163;Krzywe RGB - Czerwona
 HISTORY_MSG_164;Krzywe RGB - Zielona
 HISTORY_MSG_165;Krzywe RGB - Niebieska
-HISTORY_MSG_167;Algorytm demozaikowania
+HISTORY_MSG_167;Алгоритм demozaikowania
 HISTORY_MSG_168;L*a*b* - Krzywa CC
 HISTORY_MSG_169;L*a*b* - Krzywa CH
 HISTORY_MSG_170;Jaskrawość - Krzywa HH
@@ -384,13 +384,13 @@ HISTORY_MSG_179;CAM02 - Model punktu bieli
 HISTORY_MSG_180;CAM02 - Światłość (J)
 HISTORY_MSG_181;CAM02 - Chroma (C)
 HISTORY_MSG_182;CAM02 - Automatyczne CAT02
-HISTORY_MSG_183;CAM02 - Kontrast (J)
+HISTORY_MSG_183;CAM02 - Контраст (J)
 HISTORY_MSG_184;CAM02 - Otoczenie sceny
 HISTORY_MSG_185;CAM02 - Kontrola gamma
-HISTORY_MSG_186;CAM02 - Algorytm
+HISTORY_MSG_186;CAM02 - Алгоритм
 HISTORY_MSG_187;CAM02 - Ochrona czerwieni/skóry
 HISTORY_MSG_188;CAM02 - Jasność (Q)
-HISTORY_MSG_189;CAM02 - Kontrast (Q)
+HISTORY_MSG_189;CAM02 - Контраст (Q)
 HISTORY_MSG_190;CAM02 - Nasycenie (S)
 HISTORY_MSG_191;CAM02 - Barwistość (M)
 HISTORY_MSG_192;CAM02 - Odcień (hue, h)
@@ -414,19 +414,19 @@ HISTORY_MSG_211;Filtr Połówkowy
 HISTORY_MSG_212;Winietowanie - Siła
 HISTORY_MSG_213;Winietowanie
 HISTORY_MSG_214;Czarno-białe (B&amp;W)
-HISTORY_MSG_215;B&amp;W - MK - Czerwony
-HISTORY_MSG_216;B&amp;W - MK - Zielony
-HISTORY_MSG_217;B&amp;W - MK - Niebieski
-HISTORY_MSG_218;B&amp;W - Gamma - Czerwony
-HISTORY_MSG_219;B&amp;W - Gamma - Zielony
-HISTORY_MSG_220;B&amp;W - Gamma - Niebieski
+HISTORY_MSG_215;B&amp;W - MK - Червоний
+HISTORY_MSG_216;B&amp;W - MK - Зелений
+HISTORY_MSG_217;B&amp;W - MK - Синій
+HISTORY_MSG_218;B&amp;W - Gamma - Червоний
+HISTORY_MSG_219;B&amp;W - Gamma - Зелений
+HISTORY_MSG_220;B&amp;W - Gamma - Синій
 HISTORY_MSG_221;B&amp;W - Filtr barwny
 HISTORY_MSG_222;B&amp;W - Ustawienia
-HISTORY_MSG_223;B&amp;W - MK - Pomarańczowy
-HISTORY_MSG_224;B&amp;W - MK - Żółty
+HISTORY_MSG_223;B&amp;W - MK - Оранжевий
+HISTORY_MSG_224;B&amp;W - MK - Жовтий
 HISTORY_MSG_225;B&amp;W - MK - Cyjanowy
 HISTORY_MSG_226;B&amp;W - MK - Magenta
-HISTORY_MSG_227;B&amp;W - MK - Purpurowy
+HISTORY_MSG_227;B&amp;W - MK - Пурпуровий
 HISTORY_MSG_228;B&amp;W - Ekwalizator luminancji
 HISTORY_MSG_229;B&amp;W - Ekwalizator luminancji
 HISTORY_MSG_230;B&amp;W - Tryb
@@ -448,7 +448,7 @@ HISTORY_MSG_247;Krzywa LH
 HISTORY_MSG_248;Krzywa HH
 HISTORY_MSG_249;KwgPS - Próg
 HISTORY_MSG_250;RS - Ulepszona
-HISTORY_MSG_251;B&amp;W - Algorytm
+HISTORY_MSG_251;B&amp;W - Алгоритм
 HISTORY_MSG_252;KwgPS - Odcienie skóry
 HISTORY_MSG_253;KwgPS - Redukcja błędów
 HISTORY_MSG_254;KwgPS - Odcienie skóry
@@ -459,15 +459,15 @@ HISTORY_MSG_259;Koloryzacja - Przezroczystość
 HISTORY_MSG_260;Koloryzacja - Przezroczystość a*[b*]
 HISTORY_MSG_261;Koloryzacja - Metoda
 HISTORY_MSG_262;Koloryzacja - Przezroczystość b*
-HISTORY_MSG_263;Koloryzacja - Cienie - Czerwony
-HISTORY_MSG_264;Koloryzacja - Cienie - Zielony
+HISTORY_MSG_263;Koloryzacja - Cienie - Червоний
+HISTORY_MSG_264;Koloryzacja - Cienie - Зелений
 HISTORY_MSG_265;Koloryzacja - Cienie - Niebiski
 HISTORY_MSG_266;Koloryzacja - Þółcienie - Czerwone
 HISTORY_MSG_267;Koloryzacja - Þółcienie - Zielone
-HISTORY_MSG_268;Koloryzacja - Þółcienie - Niebieskie
+HISTORY_MSG_268;Koloryzacja - Þółcienie - Синійe
 HISTORY_MSG_269;Koloryzacja - Podświetlenia - Czerwone
 HISTORY_MSG_270;Koloryzacja - Podświetlenia - Zielona
-HISTORY_MSG_271;Koloryzacja - Podświetlenia - Niebieskie
+HISTORY_MSG_271;Koloryzacja - Podświetlenia - Синійe
 HISTORY_MSG_272;Koloryzacja - Balans
 HISTORY_MSG_274;Koloryzacja - Nasycenie cieni
 HISTORY_MSG_275;Koloryzacja - Nasycenie jasnych
@@ -485,9 +485,9 @@ HISTORY_MSG_286;RS - Mediana - Typ
 HISTORY_MSG_287;RS - Mediana - Powtarzanie
 HISTORY_MSG_288;Puste pole - Zabezp. przed obcinaniem
 HISTORY_MSG_289;Puste pole - Auto-zabezp. przed obcinaniem
-HISTORY_MSG_290;Próg czerni - Czerwony
-HISTORY_MSG_291;Próg czerni - Zielony
-HISTORY_MSG_292;Próg czerni - Niebieski
+HISTORY_MSG_290;Próg czerni - Червоний
+HISTORY_MSG_291;Próg czerni - Зелений
+HISTORY_MSG_292;Próg czerni - Синій
 HISTORY_MSG_293;Symulacja Kliszy
 HISTORY_MSG_294;Symulacja Kliszy - Siła
 HISTORY_MSG_295;Symulacja Kliszy - Klisza
@@ -571,7 +571,7 @@ MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zablokuj</b> / <b>Odblokuj</b> widok <b>Przed</b
 MAIN_TOOLTIP_HIDEHP;Pokaż/ukryj lewy panel (razem z historią).\nSkrót: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Pokaż obcięte prześwietlenia.\nSkrót: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Pokaż obcięte niedoświetlenia.\nSkrót: <b>&gt;</b>
-MAIN_TOOLTIP_PREVIEWB;Podgląd <b>kanału niebieskiego</b>.\nSkrót: <b>b</b>
+MAIN_TOOLTIP_PREVIEWB;Podgląd <b>kanału Синійego</b>.\nSkrót: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Podgląd <b>maski ostrości</b>.\nSkrót: <b>Shift-f</b>\n\nDokładniejsze w przypadku zdjęc o płytkiej głębi ostrości, niskim pozimie szumów i o większym przybliżeniu. W przypadku zdjęć o wyższym poziomie szumów maska ostrości będzie dokładniejsza przy mniejszym zoomie (10-30%).
 MAIN_TOOLTIP_PREVIEWG;Podgląd <b>kanału zielonego</b>.\nSkrót: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Podgląd <b>kanału jasności</b>.\nSkrót: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
@@ -611,7 +611,7 @@ PARTIALPASTE_DEFRINGE;Usuwanie widma
 PARTIALPASTE_DETAILGROUP;Ustawienia szczegółowe
 PARTIALPASTE_DIALOGLABEL;Częściowe wklejenie profilu przetwarzania
 PARTIALPASTE_DIRPYRDENOISE;Redukcja szumu
-PARTIALPASTE_DIRPYREQUALIZER;Kontrast wg. poziomu detali
+PARTIALPASTE_DIRPYREQUALIZER;Контраст wg. poziomu detali
 PARTIALPASTE_DISTORTION;Korekcja zniekształcenia
 PARTIALPASTE_EPD;Tone Mapping
 PARTIALPASTE_EVERYTHING;Wszystko
@@ -645,7 +645,7 @@ PARTIALPASTE_RAWEXPOS_PRESER;Zachowanie prześwietleń
 PARTIALPASTE_RAWGROUP;Ustawienia raw
 PARTIALPASTE_RAW_DCBENHANCE;Zastosuj poprawę DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Liczba powtórzeń DCB
-PARTIALPASTE_RAW_DMETHOD;Algorytm demozaikowania
+PARTIALPASTE_RAW_DMETHOD;Алгоритм demozaikowania
 PARTIALPASTE_RAW_FALSECOLOR;Tłumienie fałszowania koloru
 PARTIALPASTE_RAW_LMMSEITERATIONS;Kroki poprawy LMMSE
 PARTIALPASTE_RESIZE;Zmiana rozmiaru
@@ -654,7 +654,7 @@ PARTIALPASTE_ROTATION;Obrót
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Cienie/Podświetlenia
 PARTIALPASTE_SHARPENEDGE;Krawędzie
 PARTIALPASTE_SHARPENING;Wyostrzanie
-PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_SHARPENMICRO;MikroКонтраст
 PARTIALPASTE_VIBRANCE;Jaskrawość
 PARTIALPASTE_VIGNETTING;Korekcja winietowania
 PARTIALPASTE_WHITEBALANCE;Balans bieli
@@ -850,7 +850,7 @@ TOOLBAR_TOOLTIP_CROP;<b>Kadruj</b>.\nSkrót: <b>c</b>\nMożna przesuwać obszar 
 TOOLBAR_TOOLTIP_HAND;Przesuń.\nSkrót: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Wyprostuj</b> / <b>obróć</b>.\nSkrót: <b>s</b>\n\nWyznacz pionową lub poziomą poprzez narysowanie linii prowadnicy na podglądzie. Kąt obrotu zostanie pokazany obok linii prowadnicy. Punktem obrotu jest geometryczny środek obrazu.
 TOOLBAR_TOOLTIP_WB;Wskaż balans bieli.\nSkrót: <b>w</b>
-TP_BWMIX_ALGO;Algorytm PZCRM
+TP_BWMIX_ALGO;Алгоритм PZCRM
 TP_BWMIX_ALGO_LI;Liniowy
 TP_BWMIX_ALGO_SP;Efekty specjalne
 TP_BWMIX_ALGO_TOOLTIP;Liniowy: mieszanie kanałów <b>liniowo</b>.\nEfekty specjalne: kanały zostaną mieszane <b>nieliniowo</b>.
@@ -864,41 +864,41 @@ TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Krzywa po konwersji obrazu na czarnobiały.
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Krzywa przed konwersją obrazu na czarnobiały.\nWspółczynniki koloru mogą mieć wpływ.
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminancja według odcieni (hue) L=f(H).\nNależy zwrócić uwagę na ekstremalne ustawienia ponieważ mogą pojawić się zniekształcenia sygnału w obrazie.
 TP_BWMIX_FILTER;Filtr barwny
-TP_BWMIX_FILTER_BLUE;Niebieski
-TP_BWMIX_FILTER_BLUEGREEN;Niebieski-Zielony
-TP_BWMIX_FILTER_GREEN;Zielony
-TP_BWMIX_FILTER_GREENYELLOW;Zielony-Żółty
+TP_BWMIX_FILTER_BLUE;Синій
+TP_BWMIX_FILTER_BLUEGREEN;Синій-Зелений
+TP_BWMIX_FILTER_GREEN;Зелений
+TP_BWMIX_FILTER_GREENYELLOW;Зелений-Жовтий
 TP_BWMIX_FILTER_NONE;Brak
-TP_BWMIX_FILTER_PURPLE;Purpurowy
-TP_BWMIX_FILTER_RED;Czerwony
-TP_BWMIX_FILTER_REDYELLOW;Czerwony-Żółty
-TP_BWMIX_FILTER_TOOLTIP;Filtr barwny symuluje działanie prawdziwego filtru barwnego usytuowanego przed obiektywem. Filtry barwne obniżają transmitancję specyficznych kolorów a zatem mają wpływ na ich jasność, np. filtr czerwony przyciemnia niebieskie niebo.
-TP_BWMIX_FILTER_YELLOW;Żółty
-TP_BWMIX_GAMMA;Korekcja gamma
-TP_BWMIX_GAM_TOOLTIP;Korekcja gamma dla każdego kanału RGB.
-TP_BWMIX_LABEL;Czarno-Biały
-TP_BWMIX_MET;Metoda
-TP_BWMIX_MET_CHANMIX;Mieszacz kanałów
-TP_BWMIX_MET_DESAT;Desaturacja
+TP_BWMIX_FILTER_PURPLE;Пурпуровий
+TP_BWMIX_FILTER_RED;Червоний
+TP_BWMIX_FILTER_REDYELLOW;Червоний-Жовтий
+TP_BWMIX_FILTER_TOOLTIP;Filtr barwny symuluje działanie prawdziwego filtru barwnego usytuowanego przed obiektywem. Filtry barwne obniżają transmitancję specyficznych kolorów a zatem mają wpływ na ich jasność, np. filtr Червоний przyciemnia Синійe niebo.
+TP_BWMIX_FILTER_YELLOW;Жовтий
+TP_BWMIX_GAMMA;Корекція гами
+TP_BWMIX_GAM_TOOLTIP;Корекція для каналів RGB.
+TP_BWMIX_LABEL;Чорно-білий
+TP_BWMIX_MET;Метод
+TP_BWMIX_MET_CHANMIX;Міксер каналів
+TP_BWMIX_MET_DESAT;Знебарвлення
 TP_BWMIX_MET_LUMEQUAL;Ekwalizator luminancji
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;Ostateczne wartości RGB które uwzględniają wszystkie opcje mieszacza.\n"Total" wyświetla sumę wartości RGB:\n- zawsze 100% w trybie relatywnym,\n- ponad (jaśniej) lub poniżej (ciemniej) 100% w trybie absolutnym.
 TP_BWMIX_RGB_TOOLTIP;Miesza kanały RGB. Kieruj się gotowymi ustawieniami.\nNależy zwrócić uwagę na ujemne wartości ponieważ mogą pojawić się zniekształcenia sygnału w obrazie lub działać w sposób nieprzewidywalny.
 TP_BWMIX_SETTING;Gotowe ustawienia
 TP_BWMIX_SETTING_TOOLTIP;Różne gotowe ustawienia (klisza, krajobraz, etc.) oraz ręcznie ustawienia mieszacza kanałów.
-TP_BWMIX_SET_HIGHCONTAST;Wysoki kontrast
-TP_BWMIX_SET_HIGHSENSIT;Wysoka czułość
-TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
-TP_BWMIX_SET_INFRARED;Podczerwień
-TP_BWMIX_SET_LANDSCAPE;Krajobraz
-TP_BWMIX_SET_LOWSENSIT;Niska czułość
+TP_BWMIX_SET_HIGHCONTAST;Високий контраст
+TP_BWMIX_SET_HIGHSENSIT;Висока чутливість
+TP_BWMIX_SET_HYPERPANCHRO;Гіпер панхроматичний
+TP_BWMIX_SET_INFRARED;Інфрачервоний
+TP_BWMIX_SET_LANDSCAPE;Горизонтально
+TP_BWMIX_SET_LOWSENSIT;Низька чутливість
 TP_BWMIX_SET_LUMINANCE;Luminancja
-TP_BWMIX_SET_NORMCONTAST;Normalny kontrast
-TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
-TP_BWMIX_SET_PANCHRO;Panchromatic
-TP_BWMIX_SET_PORTRAIT;Portret
-TP_BWMIX_SET_RGBABS;Absolutny RGB
-TP_BWMIX_SET_RGBREL;Relatywny RGB
+TP_BWMIX_SET_NORMCONTAST;Нормальний контраст
+TP_BWMIX_SET_ORTHOCHRO;Ортохроматично
+TP_BWMIX_SET_PANCHRO;Панхроматично
+TP_BWMIX_SET_PORTRAIT;Вертикально
+TP_BWMIX_SET_RGBABS;Абсолютний RGB
+TP_BWMIX_SET_RGBREL;Відносний RGB
 TP_BWMIX_SET_ROYGCBPMABS;Absolutny CPŻZCNPM
 TP_BWMIX_SET_ROYGCBPMREL;Relatywny CPŻZCNPM
 TP_BWMIX_TCMODE_FILMLIKE;B&W Klisza
@@ -906,13 +906,13 @@ TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Mieszanie Nasycenia i Mocy Światła Biał
 TP_BWMIX_TCMODE_STANDARD;B&W Standardowa
 TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Ważona Standardowa
 TP_BWMIX_VAL;L
-TP_CACORRECTION_BLUE;Niebieski
+TP_CACORRECTION_BLUE;Синій
 TP_CACORRECTION_LABEL;Korekcja aberracji chromatycznej
-TP_CACORRECTION_RED;Czerwony
-TP_CHMIXER_BLUE;Niebieski
-TP_CHMIXER_GREEN;Zielony
+TP_CACORRECTION_RED;Червоний
+TP_CHMIXER_BLUE;Синій
+TP_CHMIXER_GREEN;Зелений
 TP_CHMIXER_LABEL;Mieszacz kanałów
-TP_CHMIXER_RED;Czerwony
+TP_CHMIXER_RED;Червоний
 TP_CHROMATABERR_LABEL;Aberracja chromatyczna
 TP_COARSETRAF_TOOLTIP_HFLIP;Odbij w poziomie
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Obróć w lewo.\n\nSkróty:\n<b>[</b> - Tryb wielu zakładek,\n<b>Alt-[</b> - Tryb jednej zakładki.
@@ -923,7 +923,7 @@ TP_COLORAPP_ADAPTSCENE_TOOLTIP;Bezwzględna luminancja sceny (cd/m²).\n1)Oblicz
 TP_COLORAPP_ADAPTVIEWING;Luminancji widowni (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Bezwzględna luminancja widowni\n(zazwyczaj 16cd/m²).
 TP_COLORAPP_ADAP_AUTO_TOOLTIP;Jesli zaznaczone (polecamy), RawTherapee obliczy optymalną wartość na podstawie Exif.\nAby ustawic wartość ręcznie, należy wpierw odznaczyc pudło.
-TP_COLORAPP_ALGO;Algorytm
+TP_COLORAPP_ALGO;Алгоритм
 TP_COLORAPP_ALGO_ALL;Wszystkie
 TP_COLORAPP_ALGO_JC;Światłość + Chroma (JC)
 TP_COLORAPP_ALGO_JS;Światłość + Nasycenie (JS)
@@ -940,10 +940,10 @@ TP_COLORAPP_CHROMA_S;Nasycenie (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;Nasycenie w CIECAM02 różni się od nasycenia L*a*b* oraz RGB.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma w CIECAM02 różni się od chromy L*a*b* oraz RGB.
 TP_COLORAPP_CIECAT_DEGREE;Adaptacja CAT02
-TP_COLORAPP_CONTRAST;Kontrast (J)
-TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
-TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast w CIECAM02 dla suwaka Q różni się od kontrastu L*a*b* oraz RGB.
-TP_COLORAPP_CONTRAST_TOOLTIP;Kontrast w CIECAM02 dla suwaka J różni się od kontrastu L*a*b* oraz RGB.
+TP_COLORAPP_CONTRAST;Контраст (J)
+TP_COLORAPP_CONTRAST_Q;Контраст (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Контраст w CIECAM02 dla suwaka Q różni się od Контрастu L*a*b* oraz RGB.
+TP_COLORAPP_CONTRAST_TOOLTIP;Контраст w CIECAM02 dla suwaka J różni się od Контрастu L*a*b* oraz RGB.
 TP_COLORAPP_CURVEEDITOR1;Krzywa tonalna 1
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Pokazuje histogram L* (L*a*b*) przed CIECAM02.\nJeśli opcja "Pokaż histogramy wyjściowe CIECAM02 za krzywymi" jest włączona, pokazuje histogram J i Q po CIECAM02.\n\nJ i Q nie są pokazywane w głównym histogramie.\n\nEfekt końcowy jest przedstawiony w głównym histogramie.
 TP_COLORAPP_CURVEEDITOR2;Krzywa tonalna 2
@@ -1076,10 +1076,10 @@ TP_DIRPYREQUALIZER_ALGO;Zakres odcieni skóry
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;-
 TP_DIRPYREQUALIZER_HUESKIN;Odcień skóry
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Piramida wyznacza zakres kolorów uważany jako zakres odcieni skóry. Większość odcieni skóry - białej, czarnej, i pomiędzy - ma tę samą odcień. Małe poprawki są dopuszczalne, jednak jeśli potrzebna jest większa zmiana w lewo lub prawo, lub jeśli są widoczne artefakty, to najprawdopobniej <b>balans bieli jest niepoprawny</b>.
-TP_DIRPYREQUALIZER_LABEL;Kontrast wg. precyzji detali
+TP_DIRPYREQUALIZER_LABEL;Контраст wg. precyzji detali
 TP_DIRPYREQUALIZER_LUMACOARSEST;Zgrubne
-TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
-TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Контраст-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Контраст+
 TP_DIRPYREQUALIZER_LUMAFINEST;Delikatne
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutralne
 TP_DIRPYREQUALIZER_SKIN;Ochrona/celowanie odcieni skóry
@@ -1093,7 +1093,7 @@ TP_EPD_LABEL;Tone Mapping
 TP_EPD_REWEIGHTINGITERATES;Powtarzanie rozważania
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Siła
-TP_EPD_TOOLTIP;Tone mapping może się odbyć w przestrzeni kolorów L*a*b* (domyślnie) oraz CIECAM02.\n\nAby wykonać tone mapping w przestrzeni CIECAM02 należy włączyć następujące ustawienia:\n1. CIECAM02\n2. Algorytm="Jasność + Barwistość (QM)"\n3. "Tone mapping za pomocą jasności CIECAM02 (Q)"
+TP_EPD_TOOLTIP;Tone mapping może się odbyć w przestrzeni kolorów L*a*b* (domyślnie) oraz CIECAM02.\n\nAby wykonać tone mapping w przestrzeni CIECAM02 należy włączyć następujące ustawienia:\n1. CIECAM02\n2. Алгоритм="Jasność + Barwistość (QM)"\n3. "Tone mapping za pomocą jasności CIECAM02 (Q)"
 TP_EXPOSURE_AUTOLEVELS;Wyrównaj poziomy
 TP_EXPOSURE_AUTOLEVELS_TIP;Dokonaj automatycznego ustawienia parametrów ekspozycji na podstawie analizy obrazu
 TP_EXPOSURE_BLACKLEVEL;Czerń
@@ -1103,7 +1103,7 @@ TP_EXPOSURE_CLIP_TIP;Ułamek pikseli ktore mają zostać rozjaśnione do punktu 
 TP_EXPOSURE_COMPRHIGHLIGHTS;Kompresja podświetleń
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Próg kompresji podświetleń
 TP_EXPOSURE_COMPRSHADOWS;Kompresja cieni
-TP_EXPOSURE_CONTRAST;Kontrast
+TP_EXPOSURE_CONTRAST;Контраст
 TP_EXPOSURE_CURVEEDITOR;Krzywa tonalna
 TP_EXPOSURE_CURVEEDITOR1;Krzywa Tonalna 1
 TP_EXPOSURE_CURVEEDITOR2;Krzywa Tonalna 2
@@ -1192,14 +1192,14 @@ TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Umieszcza kolory w gamie roboczej przestrzen
 TP_LABCURVE_BRIGHTNESS;Światłość
 TP_LABCURVE_CHROMATICITY;Chromatyczność
 TP_LABCURVE_CHROMA_TOOLTIP;Aby zastosować tonowanie zdjęcia B&amp;W, ustaw chromatyczność na -100.
-TP_LABCURVE_CONTRAST;Kontrast
+TP_LABCURVE_CONTRAST;Контраст
 TP_LABCURVE_CURVEEDITOR;Krzywa luminacji
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Zielone Nasycone
 TP_LABCURVE_CURVEEDITOR_A_RANGE2;Zielone Pastelowe
 TP_LABCURVE_CURVEEDITOR_A_RANGE3;Czerwone Pastelowe
 TP_LABCURVE_CURVEEDITOR_A_RANGE4;Czerwone Nasycone
-TP_LABCURVE_CURVEEDITOR_B_RANGE1;Niebieskie Nasycone
-TP_LABCURVE_CURVEEDITOR_B_RANGE2;Niebieskie Pastelowe
+TP_LABCURVE_CURVEEDITOR_B_RANGE1;Синійe Nasycone
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;Синійe Pastelowe
 TP_LABCURVE_CURVEEDITOR_B_RANGE3;Żółte Pastelowe
 TP_LABCURVE_CURVEEDITOR_B_RANGE4;Żółte Nasycone
 TP_LABCURVE_CURVEEDITOR_CC;CC
@@ -1253,19 +1253,19 @@ TP_PREPROCESS_LABEL;Przetwarzanie początkowe
 TP_PREPROCESS_LINEDENOISE;Filtr zakłóceń liniowych
 TP_PREPROCESS_NO_FOUND;Nic nie znaleziono
 TP_RAWCACORR_AUTO;Autokorekcja
-TP_RAWCACORR_CABLUE;Niebieski
-TP_RAWCACORR_CARED;Czerwony
+TP_RAWCACORR_CABLUE;Синій
+TP_RAWCACORR_CARED;Червоний
 TP_RAWEXPOS_BLACKS;Poziomy czerni
-TP_RAWEXPOS_BLACK_0;Zielony 1 (główny)
-TP_RAWEXPOS_BLACK_1;Czerwony
-TP_RAWEXPOS_BLACK_2;Niebieski
-TP_RAWEXPOS_BLACK_3;Zielony 2
-TP_RAWEXPOS_BLACK_BLUE;Niebieski
-TP_RAWEXPOS_BLACK_GREEN;Zielony
-TP_RAWEXPOS_BLACK_RED;Czerwony
+TP_RAWEXPOS_BLACK_0;Зелений 1 (główny)
+TP_RAWEXPOS_BLACK_1;Червоний
+TP_RAWEXPOS_BLACK_2;Синій
+TP_RAWEXPOS_BLACK_3;Зелений 2
+TP_RAWEXPOS_BLACK_BLUE;Синій
+TP_RAWEXPOS_BLACK_GREEN;Зелений
+TP_RAWEXPOS_BLACK_RED;Червоний
 TP_RAWEXPOS_LINEAR;Liniowy współczynnik korekcji
 TP_RAWEXPOS_PRESER;Zachowanie prześwietleń
-TP_RAWEXPOS_RGB;Czerwony, Zielony, Niebieski
+TP_RAWEXPOS_RGB;Червоний, Зелений, Синій
 TP_RAWEXPOS_TWOGREEN;Połącz obie zielenie
 TP_RAW_DCBENHANCE;Zastosuj poprawę DCB
 TP_RAW_DCBITERATIONS;Liczba powtórzeń DCB
@@ -1308,7 +1308,7 @@ TP_SAVEDIALOG_OK_TIP;Skrót: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Podświetlenia
 TP_SHADOWSHLIGHTS_HLTONALW;Szerokość tonalna
 TP_SHADOWSHLIGHTS_LABEL;Cienie/Podświetlenia
-TP_SHADOWSHLIGHTS_LOCALCONTR;Kontrast lokalny
+TP_SHADOWSHLIGHTS_LOCALCONTR;Контраст lokalny
 TP_SHADOWSHLIGHTS_RADIUS;Promień
 TP_SHADOWSHLIGHTS_SHADOWS;Cienie
 TP_SHADOWSHLIGHTS_SHARPMASK;Ostra maska
@@ -1333,7 +1333,7 @@ TP_SHARPENING_RLD_ITERATIONS;Powtórzenia
 TP_SHARPENING_THRESHOLD;Próg
 TP_SHARPENING_USM;Maska wyostrzająca
 TP_SHARPENMICRO_AMOUNT;Siła
-TP_SHARPENMICRO_LABEL;Mikrokontrast
+TP_SHARPENMICRO_LABEL;MikroКонтраст
 TP_SHARPENMICRO_MATRIX;Matryca 3×3 zamiast 5×5
 TP_SHARPENMICRO_UNIFORMITY;Jednolitość
 TP_VIBRANCE_AVOIDCOLORSHIFT;Zapobiegaj przesunięcia kolorów
