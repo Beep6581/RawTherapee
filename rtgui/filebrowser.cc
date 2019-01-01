@@ -1925,21 +1925,15 @@ void FileBrowser::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextP
     }
 }
 
-void FileBrowser::_thumbRearrangementNeeded ()
-{
-    refreshThumbImages ();  // arrangeFiles is NOT enough
-}
-
 void FileBrowser::thumbRearrangementNeeded ()
 {
-    const auto func =
-        [](FileBrowser* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->_thumbRearrangementNeeded();
+            refreshThumbImages();// arrangeFiles is NOT enough
             return false;
-        };
-
-    idle_register.add<FileBrowser>(func, this, false);
+        }
+    );
 }
 
 void FileBrowser::selectionChanged ()

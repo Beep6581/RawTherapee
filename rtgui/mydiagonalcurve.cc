@@ -1518,28 +1518,27 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist)
 
     mcih->pending++;
 
-    const auto func =
-        [](MyCurveIdleHelper* mcih) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
             if (mcih->destroyed) {
                 if (mcih->pending == 1) {
                     delete mcih;
                 } else {
-                    mcih->pending--;
+                    --mcih->pending;
                 }
 
                 return false;
             }
 
-            mcih->clearPixmap ();
-            mcih->myCurve->queue_draw ();
+            mcih->clearPixmap();
+            mcih->myCurve->queue_draw();
 
-            mcih->pending--;
+            --mcih->pending;
 
             return false;
-        };
-
-    idle_register.add<MyCurveIdleHelper>(func, mcih, false);
+        }
+    );
 }
 
 void MyDiagonalCurve::reset(const std::vector<double> &resetCurve, double identityValue)

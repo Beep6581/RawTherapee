@@ -139,14 +139,13 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 
     fileCatalog->setFileSelectionListener (this);
 
-    const auto func =
-        [](FilePanel* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->init();
+            init();
             return false;
-        };
-
-    idle_register.add<FilePanel>(func, this, false);
+        }
+    );
 
     show_all ();
 }

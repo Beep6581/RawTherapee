@@ -39,25 +39,6 @@
 using namespace std;
 using namespace rtengine;
 
-namespace
-{
-
-struct NLParams {
-    BatchQueueListener* listener;
-    int qsize;
-    bool queueRunning;
-    bool queueError;
-    Glib::ustring queueErrorMessage;
-};
-
-bool bqnotifylistenerUI(NLParams* params)
-{
-    params->listener->queueSizeChanged (params->qsize, params->queueRunning, params->queueError, params->queueErrorMessage);
-    return false;
-}
-
-}
-
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
 {
 
@@ -606,14 +587,13 @@ void BatchQueue::setProgress(double p)
     }
 
     // No need to acquire the GUI, setProgressUI will do it
-    const auto func =
-        [](BatchQueue* bq) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            bq->redraw();
+            redraw();
             return false;
-        };
-
-    idle_register.add<BatchQueue>(func, this, false);
+        }
+    );
 }
 
 void BatchQueue::setProgressStr(const Glib::ustring& str)
@@ -638,12 +618,15 @@ void BatchQueue::error(const Glib::ustring& descr)
     }
 
     if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
-        params->queueRunning = false;
-        params->queueError = true;
-        params->queueErrorMessage = descr;
-        idle_register.add<NLParams>(bqnotifylistenerUI, params, true);
+        BatchQueueListener* const bql = listener;
+
+        idle_register.add(
+            [bql, descr]() -> bool
+            {
+                bql->queueSizeChanged(0, false, true, descr);
+                return false;
+            }
+        );
     }
 }
 
@@ -974,15 +957,21 @@ void BatchQueue::notifyListener ()
 {
     const bool queueRunning = processing;
     if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
+        BatchQueueListener* const bql = listener;
+
+        int qsize = 0;
         {
             MYREADERLOCK(l, entryRW);
-            params->qsize = fd.size();
+            qsize = fd.size();
         }
-        params->queueRunning = queueRunning;
-        params->queueError = false;
-        idle_register.add<NLParams>(bqnotifylistenerUI, params, true);
+
+        idle_register.add(
+            [bql, qsize, queueRunning]() -> bool
+            {
+                bql->queueSizeChanged(qsize, queueRunning, false, {});
+                return false;
+            }
+        );
     }
 }
 

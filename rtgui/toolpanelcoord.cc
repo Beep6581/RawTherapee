@@ -297,74 +297,74 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
 {
     if (isRaw) {
         if (isBayer) {
-            const auto func =
-                [](ToolPanelCoordinator* self) -> bool
+            idle_register.add(
+                [this]() -> bool
                 {
-                    self->rawPanelSW->set_sensitive (true);
-                    self->sensorxtrans->FoldableToolPanel::hide();
-                    self->sensorbayer->FoldableToolPanel::show();
-                    self->preprocess->FoldableToolPanel::show();
-                    self->flatfield->FoldableToolPanel::show();
-                    self->retinex->FoldableToolPanel::setGrayedOut(false);
+                    rawPanelSW->set_sensitive(true);
+                    sensorxtrans->FoldableToolPanel::hide();
+                    sensorbayer->FoldableToolPanel::show();
+                    preprocess->FoldableToolPanel::show();
+                    flatfield->FoldableToolPanel::show();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
-                };
-            idle_register.add<ToolPanelCoordinator>(func, this, false);
+                }
+            );
         }
         else if (isXtrans) {
-            const auto func =
-                [](ToolPanelCoordinator* self) -> bool
+            idle_register.add(
+                [this]() -> bool
                 {
-                    self->rawPanelSW->set_sensitive (true);
-                    self->sensorxtrans->FoldableToolPanel::show();
-                    self->sensorbayer->FoldableToolPanel::hide();
-                    self->preprocess->FoldableToolPanel::show();
-                    self->flatfield->FoldableToolPanel::show();
-                    self->retinex->FoldableToolPanel::setGrayedOut(false);
+                    rawPanelSW->set_sensitive(true);
+                    sensorxtrans->FoldableToolPanel::show();
+                    sensorbayer->FoldableToolPanel::hide();
+                    preprocess->FoldableToolPanel::show();
+                    flatfield->FoldableToolPanel::show();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
-                };
-            idle_register.add<ToolPanelCoordinator>(func, this, false);
+                }
+            );
         }
         else if (isMono) {
-            const auto func =
-                [](ToolPanelCoordinator* self) -> bool
+            idle_register.add(
+                [this]() -> bool
                 {
-                    self->rawPanelSW->set_sensitive (true);
-                    self->sensorbayer->FoldableToolPanel::hide();
-                    self->sensorxtrans->FoldableToolPanel::hide();
-                    self->preprocess->FoldableToolPanel::hide();
-                    self->flatfield->FoldableToolPanel::show();
-                    self->retinex->FoldableToolPanel::setGrayedOut(false);
+                    rawPanelSW->set_sensitive(true);
+                    sensorbayer->FoldableToolPanel::hide();
+                    sensorxtrans->FoldableToolPanel::hide();
+                    preprocess->FoldableToolPanel::hide();
+                    flatfield->FoldableToolPanel::show();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
-                };
-            idle_register.add<ToolPanelCoordinator>(func, this, false);
+                }
+            );
         } else {
-            const auto func =
-                [](ToolPanelCoordinator* self) -> bool
+            idle_register.add(
+                [this]() -> bool
                 {
-                    self->rawPanelSW->set_sensitive (true);
-                    self->sensorbayer->FoldableToolPanel::hide();
-                    self->sensorxtrans->FoldableToolPanel::hide();
-                    self->preprocess->FoldableToolPanel::hide();
-                    self->flatfield->FoldableToolPanel::hide();
-                    self->retinex->FoldableToolPanel::setGrayedOut(false);
+                    rawPanelSW->set_sensitive(true);
+                    sensorbayer->FoldableToolPanel::hide();
+                    sensorxtrans->FoldableToolPanel::hide();
+                    preprocess->FoldableToolPanel::hide();
+                    flatfield->FoldableToolPanel::hide();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
-                };
-            idle_register.add<ToolPanelCoordinator>(func, this, false);
+                }
+            );
         }
     } else {
-        const auto func =
-            [](ToolPanelCoordinator* self) -> bool
+        idle_register.add(
+            [this]() -> bool
             {
-                self->rawPanelSW->set_sensitive (false);
-                self->retinex->FoldableToolPanel::setGrayedOut(true);
+                rawPanelSW->set_sensitive(false);
+                retinex->FoldableToolPanel::setGrayedOut(true);
 
                 return false;
-            };
-        idle_register.add<ToolPanelCoordinator>(func, this, false);
+            }
+        );
     }
 
 }

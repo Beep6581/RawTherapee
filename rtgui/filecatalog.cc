@@ -855,14 +855,13 @@ void FileCatalog::previewsFinished (int dir_id)
         currentEFS = dirEFS;
     }
 
-    const auto func =
-        [](FileCatalog* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->previewsFinishedUI();
+            previewsFinishedUI();
             return false;
-        };
-
-    idle_register.add<FileCatalog>(func, this, false);
+        }
+    );
 }
 
 void FileCatalog::setEnabled (bool e)
@@ -901,10 +900,9 @@ void FileCatalog::refreshHeight ()
     set_size_request(0, newHeight + 2); // HOMBRE: yeah, +2, there's always 2 pixels missing... sorry for this dirty hack O:)
 }
 
-void FileCatalog::_openImage (std::vector<Thumbnail*> tmb)
+void FileCatalog::_openImage(const std::vector<Thumbnail*>& tmb)
 {
-
-    if (enabled && listener != nullptr) {
+    if (enabled && listener) {
         bool continueToLoad = true;
 
         for (size_t i = 0; i < tmb.size() && continueToLoad; i++) {
@@ -919,40 +917,30 @@ void FileCatalog::_openImage (std::vector<Thumbnail*> tmb)
     }
 }
 
-struct FCOIParams {
-    FileCatalog* catalog;
-    std::vector<Thumbnail*> tmb;
-};
-
-bool openRequestedUI(FCOIParams* params)
-{
-    params->catalog->_openImage (params->tmb);
-    return false;
-}
-
 void FileCatalog::filterApplied()
 {
-    const auto func =
-        [](FileCatalog* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->_refreshProgressBar();
+            _refreshProgressBar();
             return false;
-        };
-
-    idle_register.add<FileCatalog>(func, this, false);
+        }
+    );
 }
 
 void FileCatalog::openRequested(const std::vector<Thumbnail*>& tmb)
 {
-    FCOIParams* params = new FCOIParams;
-    params->catalog = this;
-    params->tmb = tmb;
-
-    for (size_t i = 0; i < tmb.size(); i++) {
-        tmb[i]->increaseRef ();
+    for (auto thumb : tmb) {
+        thumb->increaseRef();
     }
 
-    idle_register.add<FCOIParams>(openRequestedUI, params, true);
+    idle_register.add(
+        [this, tmb]() -> bool
+        {
+            _openImage(tmb);
+            return false;
+        }
+    );
 }
 
 void FileCatalog::deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed)
@@ -1821,11 +1809,14 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
         FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name ());
         previewReady (selectedDirectoryId, entry);
         // open the file
-        FCOIParams* params = new FCOIParams;
-        params->catalog = this;
-        params->tmb.push_back (tmb);
         tmb->increaseRef ();
-        idle_register.add<FCOIParams>(openRequestedUI, params, true);
+        idle_register.add(
+            [this, tmb]() -> bool
+            {
+                _openImage({tmb});
+                return false;
+            }
+        );
 
     } catch(Gio::Error&) {}
 }

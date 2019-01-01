@@ -562,14 +562,14 @@ void HistogramRGBArea::update (int valh, int rh, int  gh, int bh)
 
     harih->pending++;
 
-    const auto func =
-        [](HistogramRGBAreaIdleHelper* harih) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
             if (harih->destroyed) {
                 if (harih->pending == 1) {
                     delete harih;
                 } else {
-                    harih->pending--;
+                    --harih->pending;
                 }
 
                 return false;
@@ -578,12 +578,11 @@ void HistogramRGBArea::update (int valh, int rh, int  gh, int bh)
             harih->harea->updateBackBuffer(-1, -1, -1);
             harih->harea->queue_draw ();
 
-            harih->pending--;
+            --harih->pending;
 
             return false;
-        };
-
-    idle_register.add<HistogramRGBAreaIdleHelper>(func, harih, false);
+        }
+    );
 }
 
 void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, bool bar)
@@ -760,30 +759,30 @@ void HistogramArea::update(
     }
 
     haih->pending++;
+
     // Can be done outside of the GUI thread
-    const auto func =
-        [](HistogramAreaIdleHelper* haih) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
             if (haih->destroyed) {
                 if (haih->pending == 1) {
                     delete haih;
                 } else {
-                    haih->pending--;
+                    --haih->pending;
                 }
 
                 return false;
             }
 
-            haih->harea->setDirty (true);
-            haih->harea->updateBackBuffer ();
-            haih->harea->queue_draw ();
+            haih->harea->setDirty(true);
+            haih->harea->updateBackBuffer();
+            haih->harea->queue_draw();
 
-            haih->pending--;
+            --haih->pending;
 
             return false;
-        };
-
-    idle_register.add<HistogramAreaIdleHelper>(func, haih, false);
+        }
+    );
 }
 
 void HistogramArea::updateBackBuffer ()

@@ -375,14 +375,13 @@ void BlackWhite::BWChanged  (double redbw, double greenbw, double bluebw)
     nextgreenbw = greenbw;
     nextbluebw = bluebw;
 
-    const auto func =
-        [](BlackWhite* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->BWComputed_();
+            BWComputed_();
             return false;
-        };
-
-    idle_register.add<BlackWhite>(func, this, false);
+        }
+    );
 }
 
 bool BlackWhite::BWComputed_ ()

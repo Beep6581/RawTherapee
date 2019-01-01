@@ -891,17 +891,16 @@ void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
     nextsatth = satthres;
     nextsatpr = satprot;
 
-    const auto func =
-        [](ColorToning* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->disableListener();
-            self->saturatedOpacity->setValue(self->nextsatpr);
-            self->satProtectionThreshold->setValue(self->nextsatth);
-            self->enableListener();
+            disableListener();
+            saturatedOpacity->setValue(nextsatpr);
+            satProtectionThreshold->setValue(nextsatth);
+            enableListener();
             return false;
-        };
-
-    idle_register.add<ColorToning>(func, this, false);
+        }
+    );
 }
 
 void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)

@@ -289,19 +289,18 @@ void DirPyrDenoise::chromaChanged (double autchroma, double autred, double autbl
     nextred = autred;
     nextblue = autblue;
 
-    const auto func =
-        [](DirPyrDenoise* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->disableListener();
-            self->chroma->setValue(self->nextchroma);
-            self->redchro->setValue(self->nextred);
-            self->bluechro->setValue(self->nextblue);
-            self->enableListener();
-            self->updateNoiseLabel();
+            disableListener();
+            chroma->setValue(nextchroma);
+            redchro->setValue(nextred);
+            bluechro->setValue(nextblue);
+            enableListener();
+            updateNoiseLabel();
             return false;
-        };
-
-    idle_register.add<DirPyrDenoise>(func, this, false);
+        }
+    );
 }
 
 void DirPyrDenoise::noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP)
@@ -313,17 +312,16 @@ void DirPyrDenoise::noiseTilePrev (int tileX, int tileY, int prevX, int prevY, i
     nextsizeT = sizeT;
     nextsizeP = sizeP;
 
-    const auto func =
-        [](DirPyrDenoise* self) -> bool
+    idle_register.add(
+        [this]() -> bool
         {
-            self->disableListener();
-            self->enableListener();
-            self->updateTileLabel();
-            self->updatePrevLabel();
+            disableListener();
+            enableListener();
+            updateTileLabel();
+            updatePrevLabel();
             return false;
-        };
-
-    idle_register.add<DirPyrDenoise>(func, this, false);
+        }
+    );
 }
 
 void DirPyrDenoise::updateTileLabel ()
@@ -361,16 +359,18 @@ void DirPyrDenoise::updatePrevLabel ()
 
 void DirPyrDenoise::noiseChanged (double nresid, double highresid)
 {
-    const auto func =
-        [](DirPyrDenoise* self) -> bool
-        {
-            self->disableListener();
-            self->enableListener();
-            self->updateNoiseLabel();
-            return false;
-        };
+    nextnresid = nresid;
+    nexthighresid = highresid;
 
-    idle_register.add<DirPyrDenoise>(func, this, false);
+    idle_register.add(
+        [this]() -> bool
+        {
+            disableListener();
+            enableListener();
+            updateNoiseLabel();
+            return false;
+        }
+    );
 }
 
 void DirPyrDenoise::updateNoiseLabel()

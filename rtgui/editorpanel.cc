@@ -38,34 +38,15 @@ using namespace rtengine::procparams;
 namespace
 {
 
-struct spparams {
-    double val;
-    Glib::ustring str;
-    MyProgressBar *pProgress;
-    Glib::RefPtr<Gtk::CssProvider> cssProvider;
-};
-
-bool setprogressStrUI(spparams* s)
+void setprogressStrUI(double val, const Glib::ustring str, MyProgressBar* pProgress)
 {
-    if ( ! s->str.empty() ) {
-        s->pProgress->set_text ( M (s->str) );
+    if (!str.empty()) {
+        pProgress->set_text(M(str));
     }
 
-    if ( s->val >= 0 ) {
-        s->pProgress->set_fraction ( s->val );
-
-        if (s->cssProvider) {
-            if ( s->val < 1.0 ) {
-                s->cssProvider->load_from_data ("ProgressBar { background-color: red }");
-            } else {
-                s->cssProvider->load_from_data ("ProgressBar { background-color: grey }");
-            }
-
-            s->pProgress->get_style_context()->set_background (s->pProgress->get_window());
-        }
+    if (val >= 0.0) {
+        pProgress->set_fraction(val);
     }
-
-    return false;
 }
 
 
@@ -1186,19 +1167,28 @@ void EditorPanel::clearParamChanges()
 
 void EditorPanel::setProgress(double p)
 {
-    spparams *s = new spparams;
-    s->val = p;
-    s->pProgress = progressLabel;
-    idle_register.add<spparams>(setprogressStrUI, s, true);
+    MyProgressBar* const pl = progressLabel;
+
+    idle_register.add(
+        [p, pl]() -> bool
+        {
+            setprogressStrUI(p, {}, pl);
+            return false;
+        }
+    );
 }
 
 void EditorPanel::setProgressStr(const Glib::ustring& str)
 {
-    spparams *s = new spparams;
-    s->str = str;
-    s->val = -1;
-    s->pProgress = progressLabel;
-    idle_register.add<spparams>(setprogressStrUI, s, true);
+    MyProgressBar* const pl = progressLabel;
+
+    idle_register.add(
+        [str, pl]() -> bool
+        {
+            setprogressStrUI(-1.0, str, pl);
+            return false;
+        }
+    );
 }
 
 void EditorPanel::setProgressState(bool inProcessing)
@@ -1243,39 +1233,27 @@ void EditorPanel::error(const Glib::ustring& descr)
 
 void EditorPanel::error(const Glib::ustring& title, const Glib::ustring& descr)
 {
-    struct errparams {
-        Glib::ustring descr;
-        Glib::ustring title;
-        EditorPanelIdleHelper* epih;
-    };
-
     epih->pending++;
-    errparams* const p = new errparams;
-    p->descr = descr;
-    p->title = title;
-    p->epih = epih;
 
-    const auto func =
-        [](errparams* p) -> bool
+    idle_register.add(
+        [this, descr, title]() -> bool
         {
-            if (p->epih->destroyed)
-            {
-                if (p->epih->pending == 1) {
-                    delete p->epih;
+            if (epih->destroyed) {
+                if (epih->pending == 1) {
+                    delete epih;
                 } else {
-                    p->epih->pending--;
+                    --epih->pending;
                 }
 
                 return false;
             }
 
-            p->epih->epanel->displayError (p->title, p->descr);
-            p->epih->pending--;
+            epih->epanel->displayError(title, descr);
+            --epih->pending;
 
             return false;
-        };
-
-    idle_register.add<errparams>(func, p, true);
+        }
+    );
 }
 
 void EditorPanel::displayError(const Glib::ustring& title, const Glib::ustring& descr)
@@ -1296,16 +1274,16 @@ void EditorPanel::displayError(const Glib::ustring& title, const Glib::ustring& 
 // This is only called from the ThreadUI, so within the gtk thread
 void EditorPanel::refreshProcessingState (bool inProcessingP)
 {
-    spparams *s = new spparams;
-    s->pProgress = progressLabel;
+    double val;
+    Glib::ustring str;
 
     if (inProcessingP) {
         if (processingStartedTime == 0) {
             processingStartedTime = ::time (nullptr);
         }
 
-        s->str = "PROGRESSBAR_PROCESSING";
-        s->val = 1.0;
+        val = 1.0;
+        str = "PROGRESSBAR_PROCESSING";
     } else {
         // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
         if (ipc && openThm && tpc->getChangedState()) {
@@ -1326,8 +1304,8 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         }
 
         // Set progress bar "done"
-        s->str = "PROGRESSBAR_READY";
-        s->val = 0.0;
+        val = 0.0;
+        str = "PROGRESSBAR_READY";
 
 #ifdef WIN32
 
@@ -1342,7 +1320,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
 
     isProcessing = inProcessingP;
 
-    setprogressStrUI (s);
+    setprogressStrUI(val, str, progressLabel);
 }
 
 void EditorPanel::info_toggled ()

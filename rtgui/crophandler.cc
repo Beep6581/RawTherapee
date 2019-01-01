@@ -338,70 +338,69 @@ void CropHandler::setDetailedCrop(
         bool expected = false;
 
         if (redraw_needed.compare_exchange_strong(expected, true)) {
-            const auto func =
-                [](CropHandler* self) -> bool
+            idle_register.add(
+                [this]() -> bool
                 {
-                self->cimg.lock ();
+                    cimg.lock ();
 
-                if (self->redraw_needed.exchange(false)) {
-                    self->cropPixbuf.clear ();
+                    if (redraw_needed.exchange(false)) {
+                        cropPixbuf.clear ();
 
-                    if (!self->enabled) {
-                        self->cropimg.clear();
-                        self->cropimgtrue.clear();
-                        self->cimg.unlock ();
-                        return false;
-                    }
-
-                    if (!self->cropimg.empty()) {
-                        if (self->cix == self->cropX && self->ciy == self->cropY && self->ciw == self->cropW && self->cih == self->cropH && self->cis == (self->zoom >= 1000 ? 1 : self->zoom / 10)) {
-                            // calculate final image size
-                            float czoom = self->zoom >= 1000 ?
-                                self->zoom / 1000.f :
-                                float((self->zoom/10) * 10) / float(self->zoom);
-                            int imw = self->cropimg_width * czoom;
-                            int imh = self->cropimg_height * czoom;
-
-                            if (imw > self->ww) {
-                                imw = self->ww;
-                            }
-
-                            if (imh > self->wh) {
-                                imh = self->wh;
-                            }
-
-                            Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (self->cropimg.data(), Gdk::COLORSPACE_RGB, false, 8, self->cropimg_width, self->cropimg_height, 3 * self->cropimg_width);
-                            self->cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                            tmpPixbuf->scale (self->cropPixbuf, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
-                            tmpPixbuf.clear ();
-
-                            Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (self->cropimgtrue.data(), Gdk::COLORSPACE_RGB, false, 8, self->cropimg_width, self->cropimg_height, 3 * self->cropimg_width);
-                            self->cropPixbuftrue = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                            tmpPixbuftrue->scale (self->cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
-                            tmpPixbuftrue.clear ();
+                        if (!enabled) {
+                            cropimg.clear();
+                            cropimgtrue.clear();
+                            cimg.unlock ();
+                            return false;
                         }
 
-                        self->cropimg.clear();
-                        self->cropimgtrue.clear();
-                    }
+                        if (!cropimg.empty()) {
+                            if (cix == cropX && ciy == cropY && ciw == cropW && cih == cropH && cis == (zoom >= 1000 ? 1 : zoom / 10)) {
+                                // calculate final image size
+                                float czoom = zoom >= 1000 ?
+                                    zoom / 1000.f :
+                                    float((zoom/10) * 10) / float(zoom);
+                                int imw = cropimg_width * czoom;
+                                int imh = cropimg_height * czoom;
 
-                    self->cimg.unlock ();
+                                if (imw > ww) {
+                                    imw = ww;
+                                }
 
-                    if (self->displayHandler) {
-                        self->displayHandler->cropImageUpdated ();
+                                if (imh > wh) {
+                                    imh = wh;
+                                }
 
-                        if (self->initial.exchange(false)) {
-                            self->displayHandler->initialImageArrived ();
+                                Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (cropimg.data(), Gdk::COLORSPACE_RGB, false, 8, cropimg_width, cropimg_height, 3 * cropimg_width);
+                                cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
+                                tmpPixbuf->scale (cropPixbuf, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
+                                tmpPixbuf.clear ();
+
+                                Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (cropimgtrue.data(), Gdk::COLORSPACE_RGB, false, 8, cropimg_width, cropimg_height, 3 * cropimg_width);
+                                cropPixbuftrue = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
+                                tmpPixbuftrue->scale (cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
+                                tmpPixbuftrue.clear ();
+                            }
+
+                            cropimg.clear();
+                            cropimgtrue.clear();
                         }
+
+                        cimg.unlock ();
+
+                        if (displayHandler) {
+                            displayHandler->cropImageUpdated ();
+
+                            if (initial.exchange(false)) {
+                                displayHandler->initialImageArrived ();
+                            }
+                        }
+                    } else {
+                        cimg.unlock();
                     }
-                } else {
-                    self->cimg.unlock();
+
+                    return false;
                 }
-
-                return false;
-            };
-
-            idle_register.add<CropHandler>(func, this, false);
+            );
         }
     }
 
