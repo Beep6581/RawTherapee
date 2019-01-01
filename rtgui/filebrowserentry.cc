@@ -217,45 +217,27 @@ void FileBrowserEntry::updateImage(rtengine::IImage8* img, double scale, const r
     redrawRequests++;
     feih->pending++;
 
-    struct tiupdate {
-        FileBrowserEntryIdleHelper* feih;
-        rtengine::IImage8* img;
-        double scale;
-        rtengine::procparams::CropParams cropParams;
-    };
-
-    tiupdate* param = new tiupdate{
-        feih,
-        img,
-        scale,
-        cropParams
-    };
-
-    const gint priority = G_PRIORITY_LOW;
-
-    const auto func =
-        [](tiupdate* params) -> bool
+    idle_register.add(
+        [this, img, scale, cropParams]() -> bool
         {
-            FileBrowserEntryIdleHelper* const feih = params->feih;
-
             if (feih->destroyed) {
                 if (feih->pending == 1) {
                     delete feih;
                 } else {
-                    feih->pending--;
+                    --feih->pending;
                 }
 
-                params->img->free ();
+                img->free();
                 return false;
             }
 
-            feih->fbentry->_updateImage (params->img, params->scale, params->cropParams);
-            feih->pending--;
+            feih->fbentry->_updateImage(img, scale, cropParams);
+            --feih->pending;
 
             return false;
-        };
-
-    idle_register.add<tiupdate>(func, param, true, priority);
+        },
+        G_PRIORITY_LOW
+    );
 }
 
 void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rtengine::procparams::CropParams& cropParams)

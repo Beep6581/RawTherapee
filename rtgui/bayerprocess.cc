@@ -718,56 +718,39 @@ void BayerProcess::pixelShiftMotionMethodChanged ()
 
 void BayerProcess::FrameCountChanged(int n, int frameNum)
 {
-    struct Data {
-        BayerProcess *me;
-        int n;
-        int frameNum;
-    };
-
-    const auto func =
-        [](Data* d) -> bool
+    idle_register.add(
+        [this, n, frameNum]() -> bool
         {
-            BayerProcess *me = d->me;
-            me->imageNumber->block (true);
-            int n = d->n;
-            int frameNum = d->frameNum;
+            imageNumber->block(true);
 
-            me->imageNumber->remove_all();
-            me->imageNumber->append("1");
-            for(int i = 2; i <= std::min(n, 4); ++i) {
+            imageNumber->remove_all();
+            imageNumber->append("1");
+            for (int i = 2; i <= std::min(n, 4); ++i) {
                 std::ostringstream entry;
                 entry << i;
-                me->imageNumber->append(entry.str());
+                imageNumber->append(entry.str());
             }
-            me->imageNumber->set_active(std::min(frameNum, n - 1));
-            if(n == 1) {
-                me->imageNumberBox->hide();
+            imageNumber->set_active(std::min(frameNum, n - 1));
+            if (n == 1) {
+                imageNumberBox->hide();
             } else {
-                me->imageNumberBox->show();
+                imageNumberBox->show();
             }
-            me->imageNumber->block (false);
+            imageNumber->block (false);
             return false;
-        };
-
-    idle_register.add<Data>(func, new Data{this, n, frameNum}, true);
+        }
+    );
 }
 
 void BayerProcess::autoContrastChanged (double autoContrast)
 {
-    struct Data {
-        BayerProcess* self;
-        double autoContrast;
-    };
-
-    const auto func =
-        [](Data* data) -> bool
+    idle_register.add(
+        [this, autoContrast]() -> bool
         {
-            BayerProcess* const self = data->self;
-            self->disableListener();
-            self->dualDemosaicContrast->setValue(data->autoContrast);
-            self->enableListener();
+            disableListener();
+            dualDemosaicContrast->setValue(autoContrast);
+            enableListener();
             return false;
-        };
-
-    idle_register.add<Data>(func, new Data{this, autoContrast}, true);
+        }
+    );
 }

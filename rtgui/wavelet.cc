@@ -887,23 +887,18 @@ Wavelet::~Wavelet ()
 void Wavelet::wavChanged (double nlevel)
 {
     if (!batchMode) {
-        struct Data {
-            Wavelet *self;
-            double nlevel;
-        };
-
-        const auto func =
-            [](Data* data) -> bool
+        idle_register.add(
+            [this, nlevel]() -> bool
             {
-                Wavelet* self = data->self;
-                self->wavLabels->set_text(
-                Glib::ustring::compose(M("TP_WAVELET_LEVLABEL"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), data->nlevel))
+                wavLabels->set_text(
+                    Glib::ustring::compose(
+                        M("TP_WAVELET_LEVLABEL"),
+                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)
+                    )
                 );
                 return false;
-            };
-
-        idle_register.add<Data>(func, new Data{this, nlevel}, true);
+            }
+        );
     }
 }
 

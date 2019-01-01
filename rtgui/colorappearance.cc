@@ -1447,64 +1447,42 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 
 void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 {
-    struct Data {
-        ColorAppearance* me;
-        double ccam;
-        double ccamout;
-    };
-
-    const auto func =
-        [](Data* data) -> bool
+    idle_register.add(
+        [this, ccam, ccamout]() -> bool
         {
-            ColorAppearance* const self = data->me;
-            self->disableListener();
-            self->degree->setValue(data->ccam);
-            self->degreeout->setValue(data->ccamout);
-            self->enableListener();
+            disableListener();
+            degree->setValue(ccam);
+            degreeout->setValue(ccamout);
+            enableListener();
             return false;
-        };
-
-    idle_register.add<Data>(func, new Data{this, ccam, ccamout}, true);
+        }
+    );
 }
 
 void ColorAppearance::adapCamChanged (double cadap)
 {
-    struct Data {
-        ColorAppearance* self;
-        double cadap;
-    };
-
-    const auto func =
-        [](Data* data) -> bool
+    idle_register.add(
+        [this, cadap]() -> bool
         {
-            ColorAppearance* const self = data->self;
-            self->disableListener();
-            self->adapscen->setValue(data->cadap);
-            self->enableListener();
+            disableListener();
+            adapscen->setValue(cadap);
+            enableListener();
             return false;
-        };
-
-    idle_register.add<Data>(func, new Data{this, cadap}, true);
+        }
+    );
 }
 
 void ColorAppearance::ybCamChanged (int ybsc)
 {
-    struct Data {
-        ColorAppearance* self;
-        int ybsc;
-    };
-
-    const auto func =
-        [](Data* data) -> bool
+    idle_register.add(
+        [this, ybsc]() -> bool
         {
-            ColorAppearance* self = data->self;
-            self->disableListener();
-            self->ybscen->setValue(data->ybsc);
-            self->enableListener();
+            disableListener();
+            ybscen->setValue(ybsc);
+            enableListener();
             return false;
-        };
-
-    idle_register.add<Data>(func, new Data{this, ybsc}, true);
+        }
+    );
 }
 
 void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)

@@ -411,20 +411,13 @@ void FlatField::setShortcutPath(const Glib::ustring& path)
 
 void FlatField::flatFieldAutoClipValueChanged(int n)
 {
-    struct Data {
-        FlatField* self;
-        int n;
-    };
-
-    const auto func =
-        [](Data* data) -> bool
+    idle_register.add(
+        [this, n]() -> bool
         {
-            FlatField* const self = data->self;
-            self->disableListener();
-            self->flatFieldClipControl->setValue (data->n);
-            self->enableListener();
+            disableListener();
+            flatFieldClipControl->setValue(n);
+            enableListener();
             return false;
-        };
-
-    idle_register.add<Data>(func, new Data{this, n}, true);
+        }
+    );
 }

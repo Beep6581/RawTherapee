@@ -1193,38 +1193,28 @@ void EditorPanel::setProgressStr(const Glib::ustring& str)
 
 void EditorPanel::setProgressState(bool inProcessing)
 {
-    struct spsparams {
-        bool inProcessing;
-        EditorPanelIdleHelper* epih;
-    };
-
     epih->pending++;
 
-    spsparams* p = new spsparams;
-    p->inProcessing = inProcessing;
-    p->epih = epih;
-
-    const auto func =
-        [](spsparams* p) -> bool
+    idle_register.add(
+        [this, inProcessing]() -> bool
         {
-            if (p->epih->destroyed)
+            if (epih->destroyed)
             {
-                if (p->epih->pending == 1) {
-                    delete p->epih;
+                if (epih->pending == 1) {
+                    delete epih;
                 } else {
-                    p->epih->pending--;
+                    --epih->pending;
                 }
 
                 return false;
             }
 
-            p->epih->epanel->refreshProcessingState (p->inProcessing);
-            p->epih->pending--;
+            epih->epanel->refreshProcessingState(inProcessing);
+            --epih->pending;
 
             return false;
-        };
-
-    idle_register.add<spsparams>(func, p, true);
+        }
+    );
 }
 
 void EditorPanel::error(const Glib::ustring& descr)

@@ -913,25 +913,18 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
 
 void WhiteBalance::WBChanged(double temperature, double greenVal)
 {
-    struct Data {
-        WhiteBalance* self;
-        double temperature;
-        double green_val;
-    };
-
-    const auto func =
-        [](Data* data) -> bool
+    idle_register.add(
+        [this, temperature, greenVal]() -> bool
         {
-            data->self->disableListener();
-            data->self->setEnabled(true);
-            data->self->temp->setValue(data->temperature);
-            data->self->green->setValue(data->green_val);
-            data->self->temp->setDefault(data->temperature);
-            data->self->green->setDefault(data->green_val);
-            data->self->enableListener();
+            disableListener();
+            setEnabled(true);
+            temp->setValue(temperature);
+            green->setValue(greenVal);
+            temp->setDefault(temperature);
+            green->setDefault(greenVal);
+            enableListener();
 
             return false;
-        };
-
-    idle_register.add<Data>(func, new Data{this, temperature, greenVal}, true);
+        }
+    );
 }

@@ -45,15 +45,31 @@ IdleRegister::~IdleRegister()
 
 void IdleRegister::add(std::function<bool ()> function, gint priority)
 {
-    using Function = std::function<bool ()>;
-
-    const auto func =
-        [](Function* function)
+    const auto dispatch =
+        [](gpointer data) -> gboolean
         {
-            return (*function)();
+            DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
+
+            if (!data_wrapper->function()) {
+                data_wrapper->self->mutex.lock();
+                data_wrapper->self->ids.erase(data_wrapper);
+                data_wrapper->self->mutex.unlock();
+
+                delete data_wrapper;
+                return FALSE;
+            }
+
+            return TRUE;
         };
 
-    add<Function>(func, new Function(std::move(function)), true, priority);
+    DataWrapper* const data_wrapper = new DataWrapper{
+        this,
+        std::move(function)
+    };
+
+    mutex.lock();
+    ids[data_wrapper] = gdk_threads_add_idle_full(priority, dispatch, data_wrapper, nullptr);
+    mutex.unlock();
 }
 
 void IdleRegister::destroy()
@@ -61,9 +77,6 @@ void IdleRegister::destroy()
     mutex.lock();
     for (const auto& id : ids) {
         g_source_remove(id.second);
-        if (id.first->deleter) {
-            id.first->deleter(id.first->data);
-        }
         delete id.first;
     }
     ids.clear();

@@ -51,63 +51,13 @@ class IdleRegister final :
 public:
     ~IdleRegister();
 
-    template<typename DATA>
-    void add(bool (*function)(DATA*), DATA* data, bool delete_data, gint priority = G_PRIORITY_DEFAULT_IDLE)
-    {
-        const auto dispatch =
-            [](gpointer data) -> gboolean
-            {
-                DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
-
-                // This is safe as per https://en.cppreference.com/w/cpp/language/reinterpret_cast item 7)
-                if (!reinterpret_cast<bool (*)(DATA*)>(data_wrapper->function)(static_cast<DATA*>(data_wrapper->data))) {
-                    data_wrapper->self->mutex.lock();
-                    data_wrapper->self->ids.erase(data_wrapper);
-                    data_wrapper->self->mutex.unlock();
-
-                    if (data_wrapper->deleter) {
-                        data_wrapper->deleter(data_wrapper->data);
-                    }
-
-                    delete data_wrapper;
-                    return FALSE;
-                }
-
-                return TRUE;
-            };
-
-        DataWrapper* const data_wrapper = new DataWrapper{
-            this,
-            reinterpret_cast<GSourceFunc>(function),
-            data,
-            [delete_data]() -> GSourceFunc
-            {
-                if (delete_data) {
-                    return
-                        [](gpointer data) -> gboolean
-                        {
-                            delete static_cast<DATA*>(data);
-                            return TRUE;
-                        };
-                }
-                return nullptr;
-            }()
-        };
-
-        mutex.lock();
-        ids[data_wrapper] = gdk_threads_add_idle_full(priority, dispatch, data_wrapper, nullptr);
-        mutex.unlock();
-    }
-
     void add(std::function<bool ()> function, gint priority = G_PRIORITY_DEFAULT_IDLE);
     void destroy();
 
 private:
     struct DataWrapper {
         IdleRegister* const self;
-        GSourceFunc function;
-        gpointer data;
-        GSourceFunc deleter;
+        std::function<bool ()> function;
     };
 
     std::map<const DataWrapper*, guint> ids;

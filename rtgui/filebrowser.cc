@@ -565,31 +565,22 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
 
 void FileBrowser::addEntry (FileBrowserEntry* entry)
 {
-    struct addparams {
-        FileBrowser* self;
-        FileBrowserEntry* entry;
-        unsigned int session_id;
-    };
+    entry->setParent(this);
 
-    addparams* const ap = new addparams;
-    entry->setParent (this);
-    ap->self = this;
-    ap->entry = entry;
-    ap->session_id = session_id();
+    const unsigned int sid = session_id();
 
-    const auto func =
-        [](addparams* ap) -> bool
+    idle_register.add(
+        [this, entry, sid]() -> bool
         {
-            if (ap->session_id != ap->self->session_id()) {
-                delete ap->entry;
+            if (sid != session_id()) {
+                delete entry;
             } else {
-                ap->self->addEntry_(ap->entry);
+                addEntry_(entry);
             }
 
             return false;
-        };
-
-    idle_register.add<addparams>(func, ap, true);
+        }
+    );
 }
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry)
