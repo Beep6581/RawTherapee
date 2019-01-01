@@ -40,7 +40,7 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SH
     amount->setAdjusterListener (this);
     amount->show();
 
-    uniformity = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_UNIFORMITY"), 0, 100, 10, 50));
+    uniformity = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_UNIFORMITY"), 0, 10, 1, 5));
     uniformity->setAdjusterListener (this);
     uniformity->show();
 
