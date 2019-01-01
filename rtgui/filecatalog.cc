@@ -930,7 +930,7 @@ void FileCatalog::filterApplied()
 
 void FileCatalog::openRequested(const std::vector<Thumbnail*>& tmb)
 {
-    for (auto thumb : tmb) {
+    for (const auto thumb : tmb) {
         thumb->increaseRef();
     }
 

@@ -86,6 +86,17 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
 
 BatchQueue::~BatchQueue ()
 {
+    std::set<BatchQueueEntry*> removable_bqes;
+
+    mutex_removable_batch_queue_entries.lock();
+    removable_batch_queue_entries.swap(removable_bqes);
+    mutex_removable_batch_queue_entries.unlock();
+
+    for (const auto entry : removable_bqes) {
+        ::g_remove(entry->savedParamsFile.c_str());
+        delete entry;
+    }
+
     idle_register.destroy();
 
     MYWRITERLOCK(l, entryRW);
@@ -395,6 +406,8 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
 
 void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
+    std::set<BatchQueueEntry*> removable_bqes;
+
     {
         MYWRITERLOCK(l, entryRW);
 
@@ -417,14 +430,7 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            const auto func =
-                [](BatchQueueEntry* bqe) -> bool
-                {
-                    ::g_remove(bqe->savedParamsFile.c_str());
-                    return false;
-                };
-
-            idle_register.add<BatchQueueEntry>(func, entry, true);
+            removable_bqes.insert(entry);
         }
 
         for (const auto entry : fd)
@@ -432,6 +438,30 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 
         lastClicked = nullptr;
         selected.clear ();
+    }
+
+    if (!removable_bqes.empty()) {
+        mutex_removable_batch_queue_entries.lock();
+        removable_batch_queue_entries.insert(removable_bqes.begin(), removable_bqes.end());
+        mutex_removable_batch_queue_entries.unlock();
+
+        idle_register.add(
+            [this]() -> bool
+            {
+                std::set<BatchQueueEntry*> removable_bqes;
+
+                mutex_removable_batch_queue_entries.lock();
+                removable_batch_queue_entries.swap(removable_bqes);
+                mutex_removable_batch_queue_entries.unlock();
+
+                for (const auto entry : removable_bqes) {
+                    ::g_remove(entry->savedParamsFile.c_str());
+                    delete entry;
+                }
+
+                return false;
+            }
+        );
     }
 
     saveBatchQueue ();
@@ -940,9 +970,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData)
 {
-
-    std::vector<ThumbBrowserEntryBase*> bqe;
-    bqe.push_back (static_cast<BatchQueueEntry*>(actionData));
+    const std::vector<ThumbBrowserEntryBase*> bqe = {static_cast<BatchQueueEntry*>(actionData)};
 
     if (actionCode == 10) { // cancel
         cancelItems (bqe);
