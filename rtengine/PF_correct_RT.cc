@@ -396,26 +396,26 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
                 }
             }
         } // end of ab channel averaging
+    }
 #ifdef _OPENMP
-        #pragma omp parallel for
+    #pragma omp parallel for
 #endif
-        for(int i = 0; i < height; i++) {
-            int j = 0;
+    for(int i = 0; i < height; i++) {
+        int j = 0;
 #ifdef __SSE2__
 
-            for (; j < width - 3; j += 4) {
-                const vfloat interav = LVFU(tmaa[i][j]);
-                const vfloat interbv = LVFU(tmbb[i][j]);
-                STVFU(ncie->h_p[i][j], xatan2f(interbv, interav) / F2V(RT_PI_F_180));
-                STVFU(ncie->C_p[i][j], vsqrtf(SQRV(interbv) + SQRV(interav)));
-            }
+        for (; j < width - 3; j += 4) {
+            const vfloat interav = LVFU(tmaa[i][j]);
+            const vfloat interbv = LVFU(tmbb[i][j]);
+            STVFU(ncie->h_p[i][j], xatan2f(interbv, interav) / F2V(RT_PI_F_180));
+            STVFU(ncie->C_p[i][j], vsqrtf(SQRV(interbv) + SQRV(interav)));
+        }
 #endif
-            for (; j < width; j++) {
-                const float intera = tmaa[i][j];
-                const float interb = tmbb[i][j];
-                ncie->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
-                ncie->C_p[i][j] = sqrt(SQR(interb) + SQR(intera));
-            }
+        for (; j < width; j++) {
+            const float intera = tmaa[i][j];
+            const float interb = tmbb[i][j];
+            ncie->h_p[i][j] = xatan2f(interb, intera) / RT_PI_F_180;
+            ncie->C_p[i][j] = sqrt(SQR(interb) + SQR(intera));
         }
     }
 }
