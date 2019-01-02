@@ -43,6 +43,7 @@ void writeFailed (Gtk::Window& parent, const std::string& filename);
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
 gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
+Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style);
 
 class IdleRegister final :
     public rtengine::NonCopyable

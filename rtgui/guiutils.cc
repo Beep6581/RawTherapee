@@ -176,6 +176,25 @@ void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, e
     widget->set_valign(vAlign);
 }
 
+Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style)
+{
+    Gtk::Border padding;
+    if (!style) {
+        return padding;
+    }
+
+    int s = (double)RTScalable::getScale();
+    padding = style->get_padding();
+    if (s > 1) {
+        padding.set_left(padding.get_left() * s);
+        padding.set_right(padding.get_right() * s);
+        padding.set_top(padding.get_top() * s);
+        padding.set_bottom(padding.get_bottom() * s);
+    }
+
+    return padding;
+}
+
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference)
 {
 
@@ -576,7 +595,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new RTImage(*(disabledImage.operator ->())));
+        statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
@@ -585,7 +604,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new RTImage(*(openedImage.operator ->())));
+        statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -629,7 +648,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new RTImage(*(disabledImage.operator ->())));
+        statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
@@ -639,7 +658,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new RTImage(*(openedImage.operator ->())));
+        statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -759,12 +778,12 @@ void MyExpander::set_inconsistent(bool isInconsistent)
 
         if (useEnabled) {
             if (isInconsistent) {
-                statusImage->set(inconsistentImage->get_pixbuf());
+                statusImage->set(inconsistentImage->get_surface());
             } else {
                 if (enabled) {
-                    statusImage->set(enabledImage->get_pixbuf());
+                    statusImage->set(enabledImage->get_surface());
                 } else {
-                    statusImage->set(disabledImage->get_pixbuf());
+                    statusImage->set(disabledImage->get_surface());
                 }
             }
         }
@@ -790,14 +809,14 @@ void MyExpander::setEnabled(bool isEnabled)
                 enabled = false;
 
                 if (!inconsistent) {
-                    statusImage->set(disabledImage->get_pixbuf());
+                    statusImage->set(disabledImage->get_surface());
                     message.emit();
                 }
             } else {
                 enabled = true;
 
                 if (!inconsistent) {
-                    statusImage->set(enabledImage->get_pixbuf());
+                    statusImage->set(enabledImage->get_surface());
                     message.emit();
                 }
             }
@@ -833,9 +852,9 @@ void MyExpander::set_expanded( bool expanded )
 
     if (!useEnabled) {
         if (expanded ) {
-            statusImage->set(openedImage->get_pixbuf());
+            statusImage->set(openedImage->get_surface());
         } else {
-            statusImage->set(closedImage->get_pixbuf());
+            statusImage->set(closedImage->get_surface());
         }
     }
 
@@ -878,9 +897,19 @@ bool MyExpander::on_toggle(GdkEventButton* event)
 
     if (!useEnabled) {
         if (isVisible) {
-            statusImage->set(closedImage->get_pixbuf());
+            statusImage->set(closedImage->get_surface());
+            if (closedImage->get_surface().operator bool()) {
+                Cairo::RefPtr<Cairo::ImageSurface> p = closedImage->get_surface();
+                int w = p->get_width();
+                int h = p->get_height();
+            }
         } else {
-            statusImage->set(openedImage->get_pixbuf());
+            statusImage->set(openedImage->get_surface());
+            if (openedImage->get_surface().operator bool()) {
+                Cairo::RefPtr<Cairo::ImageSurface> p = openedImage->get_surface();
+                int w = p->get_width();
+                int h = p->get_height();
+            }
         }
     }
 
@@ -905,10 +934,10 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
     if (event->button == 1) {
         if (enabled) {
             enabled = false;
-            statusImage->set(disabledImage->get_pixbuf());
+            statusImage->set(disabledImage->get_surface());
         } else {
             enabled = true;
-            statusImage->set(enabledImage->get_pixbuf());
+            statusImage->set(enabledImage->get_surface());
         }
 
         message.emit();

@@ -24,11 +24,13 @@
 SHCSelector::SHCSelector() : movingPosition(-1), tmpX(0.0), tmpPos(0.0), wslider(0.0), cl(nullptr), coloredBar(RTO_Left2Right)
 {
 
+    int s = RTScalable::getScale();
+
     positions[0] = defaults[0] = 0.25;
     positions[1] = defaults[1] = 0.5;
     positions[2] = defaults[2] = 0.75;
-    leftMargin = RADIUS;
-    rightMargin = RADIUS;
+    leftMargin = (RADIUS - 1.5) * s;
+    rightMargin = (RADIUS - 1.5) * s;
 
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     style->add_class("drawingarea");
@@ -57,13 +59,14 @@ void SHCSelector::get_preferred_height_vfunc (int &minimum_height, int &natural_
 
 void SHCSelector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 100;
-    natural_width = 150;
+    int s = RTScalable::getScale();
+    minimum_width = 100 * s;
+    natural_width = 150 * s;
 }
 
 void SHCSelector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    natural_height = minimum_height = 14;
+    natural_height = minimum_height = 14 * RTScalable::getScale();
 }
 
 void SHCSelector::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
@@ -135,8 +138,10 @@ void SHCSelector::updateBackBuffer()
     int w = get_width () - leftMargin - rightMargin;
     int h = get_height ();
 
-    wslider = std::max(int(h / 5), 10);
-    double hwslider = double(wslider) / 2.;
+    double s = RTScalable::getScale();
+
+    wslider = (double)std::max(h / 5, 10) * s;
+    double hwslider = wslider / 2.;
 
     // clear bg
     cr->set_source_rgba (0., 0., 0., 0.);
@@ -146,22 +151,23 @@ void SHCSelector::updateBackBuffer()
 
 
     // set the box's colors
-    cr->set_line_width (1.0);
+    cr->set_line_width (1.0 * s);
     cr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
+    int coloredBarHeight = (int)((double)h * 5.5 / 7. + 0.5);
     if (is_sensitive() && coloredBar.canGetColors()) {
         // gradient background
 
         // this will eventually create/update the off-screen BackBuffer
-        coloredBar.setDrawRectangle(leftMargin + 1, 1, w - 2, int(float(h) * 5.5f / 7.f + 0.5f));
+        coloredBar.setDrawRectangle(leftMargin + 1 * (int)s, 1 * (int)s, w - 2 * (int)s, coloredBarHeight - 2 * (int)s);
         // that we're displaying here
         coloredBar.expose(*this, cr);
     } else {
-        style->render_background(cr, leftMargin + 1, 1, w - 2, int(float(h) * 5.5f / 7.f + 0.5f));
+        style->render_background(cr, leftMargin + 1 * (int)s, 1 * (int)s, w - 2 * (int)s, coloredBarHeight - 2 * (int)s);
     }
     // draw the box's borders
-    style->render_frame(cr, leftMargin + 1, 1, w - 2, int(float(h) * 5.5f / 7.f + 0.5f));
+    style->render_frame(cr, leftMargin, 0, w, coloredBarHeight);
 
 
     // draw sliders
@@ -169,82 +175,43 @@ void SHCSelector::updateBackBuffer()
         if (i == movingPosition) {
             style->set_state(Gtk::STATE_FLAG_ACTIVE);
         }
-        /*
-        else if (i==litCursor)
-            style->set_state(Gtk::STATE_FLAG_PRELIGHT);
-        */
         else if (!is_sensitive()) {
             style->set_state(Gtk::STATE_FLAG_INSENSITIVE);
         } else {
             style->set_state(Gtk::STATE_FLAG_NORMAL);
         }
 
-        style->render_slider(cr, leftMargin + 0.5 + (w - 1)*positions[i] - hwslider, vb, wslider, h - vb, Gtk::ORIENTATION_VERTICAL);
+        style->render_slider(cr, (double)leftMargin + 1. * s + ((double)w - 2. * s) * positions[i] - (double)hwslider, (double)vb * s, wslider, (double)h - (double)vb * s, Gtk::ORIENTATION_VERTICAL);
         style->set_state(Gtk::STATE_FLAG_NORMAL);
     }
-
-    /*
-    for (int i=0; i<3; i++) {
-        double posX = leftMargin+0.5+(w-1)*positions[i];
-        double arrowY = h-(h*3.5/7.-0.5)-vb;
-        double baseY = h-0.5-vb;
-        double centerY = (arrowY+baseY)/2.;
-        cr->move_to (posX, arrowY);
-        cr->line_to (posX+hwslider, centerY);
-        cr->line_to (posX+hwslider, baseY);
-        cr->line_to (posX-hwslider, baseY);
-        cr->line_to (posX-hwslider, centerY);
-        cr->close_path();
-        if (i==movingPosition) {
-            // moved (selected)
-            Gdk::RGBA c = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
-            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->fill_preserve ();
-            c = style->get_border_color (Gtk::STATE_FLAG_SELECTED);
-            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->stroke ();
-        }
-        / *
-        else if (i==litCursor) {
-            // prelight
-            Gdk::RGBA c = style->get_background_color(Gtk::STATE_FLAG_PRELIGHT);
-            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->fill_preserve ();
-            c = style->get_border_color (Gtk::STATE_FLAG_PRELIGHT);
-            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->stroke ();
-        }
-        * /
-        else {
-            // normal
-            Gdk::RGBA c = style->get_background_color(is_sensitive() ? Gtk::STATE_FLAG_ACTIVE : Gtk::STATE_FLAG_INSENSITIVE);
-            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->fill_preserve ();
-            c = style->get_border_color (is_sensitive() ? Gtk::STATE_FLAG_ACTIVE : Gtk::STATE_FLAG_INSENSITIVE);
-            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->stroke ();
-        }
-    }
-    */
 
     // draw text for the slider that is being moved
     if (movingPosition >= 0) {
         int i = movingPosition;
         int offset;
-        int layout_width, layout_height;
+        int layout_width = 0, layout_height = 0;
+
+        Glib::RefPtr<Pango::Context> context = get_pango_context () ;
+        Pango::FontDescription fontd(get_style_context()->get_font());
+
+        // update font
+        fontd.set_weight (Pango::WEIGHT_NORMAL);
+        fontd.set_absolute_size((double)h * 0.8 * (double)Pango::SCALE);
+        context->set_font_description (fontd);
+
         Glib::RefPtr<Pango::Layout> layout = create_pango_layout(Glib::ustring::format(std::setprecision(2), positions[i]));
         layout->get_pixel_size(layout_width, layout_height);
-        offset = positions[i] > 0.5 ? -layout_width - 1 - hwslider : 1 + hwslider;
+        offset = positions[i] > 0.5 ? -layout_width - 1 * (int)s - hwslider : 1 * (int)s + hwslider;
         cr->set_source_rgb (0., 0., 0.);
 
-        cr->set_line_width(3.);
+        cr->set_line_width(3. * s);
         cr->set_line_join(Cairo::LINE_JOIN_ROUND);
         cr->set_line_cap(Cairo::LINE_CAP_ROUND);
 
-        cr->move_to (leftMargin + w * positions[i] + offset, 0.);
+        cr->move_to ((double)leftMargin + (double)w * positions[i] + (double)offset, 0.);
         layout->add_to_cairo_context (cr);
         cr->stroke_preserve();
-        cr->set_line_width(0.5);
+        cr->set_line_width(0.5 * s);
         cr->set_source_rgb (1., 1., 1.);
         cr->fill ();
     }
@@ -274,13 +241,18 @@ bool SHCSelector::on_button_press_event (GdkEventButton* event)
     double w = double(get_width () - leftMargin - rightMargin);
     movingPosition = -1;
 
-    for (int i = 0; i < 3; i++)
-        if (event->x > double(leftMargin) + w * positions[i] - wslider / 2. && event->x < double(leftMargin) + w * positions[i] + wslider / 2) {
+    double s = RTScalable::getScale();
+
+    for (int i = 0; i < 3; i++) {
+        double currPos = double(leftMargin) + 1. * s + (w - 2. * s) * positions[i];
+        double hwslider = wslider / 2.;
+        if (event->x >= currPos - hwslider && event->x <= currPos + hwslider) {
             movingPosition = i;
             tmpX = event->x;
             tmpPos = positions[i];
             break;
         }
+    }
 
     queue_draw ();
     return true;
@@ -315,23 +287,24 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event)
 {
 
     if (movingPosition >= 0) {
-        int w = get_width ();
-        positions[movingPosition] = tmpPos + (event->x - tmpX) / w;
+        double s = RTScalable::getScale();
+        double innerw = double(get_width () - leftMargin - rightMargin) - 2. * s;
+        positions[movingPosition] = tmpPos + (event->x - tmpX) / innerw;
 
         if (positions[movingPosition] < 0) {
             positions[movingPosition] = 0.0;
         }
 
-        if (movingPosition > 0 && positions[movingPosition] < positions[movingPosition - 1] + wslider / w) {
-            positions[movingPosition] = positions[movingPosition - 1] + wslider / w;
+        if (movingPosition > 0 && positions[movingPosition] < positions[movingPosition - 1] + wslider / innerw) {
+            positions[movingPosition] = positions[movingPosition - 1] + wslider / innerw;
         }
 
         if (positions[movingPosition] > 1.0) {
             positions[movingPosition] = 1.0;
         }
 
-        if (movingPosition < 2 && positions[movingPosition] > positions[movingPosition + 1] - wslider / w) {
-            positions[movingPosition] = positions[movingPosition + 1] - wslider / w;
+        if (movingPosition < 2 && positions[movingPosition] > positions[movingPosition + 1] - wslider / innerw) {
+            positions[movingPosition] = positions[movingPosition + 1] - wslider / innerw;
         }
 
         if (cl) {

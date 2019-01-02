@@ -2331,11 +2331,11 @@ void Preferences::switchFontTo (const Glib::ustring &newFontFamily, const int ne
 
         try {
             //GTK318
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", newFontFamily, newFontSize));
-#else
-            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize));
-#endif
+//#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+//            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", newFontFamily, newFontSize * RTScalable::getScale()));
+//#else
+            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize * RTScalable::getScale()));
+//#endif
             //GTK318
         } catch (Glib::Error &err) {
             printf ("Error: \"%s\"\n", err.what().c_str());

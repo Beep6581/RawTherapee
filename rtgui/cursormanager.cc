@@ -62,7 +62,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cAddPicker = colPickAdd     ? Gdk::Cursor::create(display, colPickAdd, (int)(4.*s), (int)(21.*s))   : Gdk::Cursor::create(display, Gdk::PLUS);
     cCropDraw = cropDraw        ? Gdk::Cursor::create(display, cropDraw, (int)(3.*s), (int)(3.*s))      : Gdk::Cursor::create(display, Gdk::DIAMOND_CROSS);
     cCrosshair = crosshair      ? Gdk::Cursor::create(display, crosshair, (int)(12.*s), (int)(12.*s))   : Gdk::Cursor::create(display, Gdk::CROSSHAIR);
-    cEmpty = empty              ? Gdk::Cursor::create(display, empty, (int)(12.*s), (int)(12.*s))       : Gdk::Cursor::create(display, Gdk::BLANK_CURSOR);
+    cEmpty = empty              ? Gdk::Cursor::create(display, empty, 12, 12) /* PNG: do not scale */   : Gdk::Cursor::create(display, Gdk::BLANK_CURSOR);
     cHandClosed = handClosed    ? Gdk::Cursor::create(display, handClosed, (int)(12.*s), (int)(12.*s))  : Gdk::Cursor::create(display, Gdk::HAND1);
     cHandOpen = handOpen        ? Gdk::Cursor::create(display, handOpen, (int)(12.*s), (int)(12.*s))    : Gdk::Cursor::create(display, Gdk::HAND2);
     cMoveBL = moveBL            ? Gdk::Cursor::create(display, moveBL, (int)(12.*s), (int)(12.*s))      : Gdk::Cursor::create(display, Gdk::BOTTOM_LEFT_CORNER);

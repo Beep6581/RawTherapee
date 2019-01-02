@@ -55,10 +55,38 @@ RTImage::RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileNam
     setImage (fileName, rtlFileName);
 }
 
-RTImage::RTImage (Glib::RefPtr<Gdk::Pixbuf> &pixbuf)
+RTImage::RTImage (Glib::RefPtr<Gdk::Pixbuf> &pbuf)
+{
+    if (surface) {
+        surface.clear();
+    }
+    if (pbuf) {
+        set(pbuf);
+        this->pixbuf = pbuf;
+    }
+}
+
+RTImage::RTImage (Cairo::RefPtr<Cairo::ImageSurface> &surf)
 {
     if (pixbuf) {
-        set(pixbuf);
+        pixbuf.clear();
+    }
+    if (surf) {
+        set(surf);
+        surface = surf;
+    }
+}
+
+RTImage::RTImage (Glib::RefPtr<RTImage> &other)
+{
+    if (other) {
+        if (other->get_surface()) {
+            surface = other->get_surface();
+            set(surface);
+        } else {
+            pixbuf = other->get_pixbuf();
+            set(pixbuf);
+        }
     }
 }
 
@@ -84,7 +112,6 @@ void RTImage::setDPInScale (const double newDPI, const int newScale)
         RTScalable::setDPInScale(newDPI, newScale);
         dpiBack = getDPI();
         scaleBack = getScale();
-        //printf("RTImage::setDPInScale : New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTImage\n", scaleBack, dpiBack, newDPI);
         updateImages();
     }
 }
@@ -95,13 +122,11 @@ void RTImage::changeImage (const Glib::ustring& imageName)
 
     if (pixbuf) {
         auto iterator = pixbufCache.find (imageName);
-        //printf("changeImage / pixbufCache[%d] : \"%s\" %s!\n", (int)(pixbufCache.size()), imageName.c_str(), iterator == pixbufCache.end () ? "not found" : "found");
         assert(iterator != pixbufCache.end ());
         pixbuf = iterator->second;
         set(iterator->second);
     } else  {  // if no Pixbuf is set, we update or create a Cairo::ImageSurface
         auto iterator = surfaceCache.find (imageName);
-        //printf("changeImage / surfaceCache[%d] : \"%s\" %s!\n", (int)(surfaceCache.size()), imageName.c_str(), iterator == surfaceCache.end () ? "not found" : "found");
         if (iterator == surfaceCache.end ()) {
             auto surf = createImgSurfFromFile(imageName);
             iterator = surfaceCache.emplace (imageName, surf).first;
@@ -109,6 +134,33 @@ void RTImage::changeImage (const Glib::ustring& imageName)
         surface = iterator->second;
         set(iterator->second);
     }
+}
+
+Cairo::RefPtr<Cairo::ImageSurface> RTImage::get_surface()
+{
+    return surface;
+}
+
+int RTImage::get_width()
+{
+    if (surface) {
+        return surface->get_width();
+    }
+    if (pixbuf) {
+        return pixbuf->get_width();
+    }
+    return -1;
+}
+
+int RTImage::get_height()
+{
+    if (surface) {
+        return surface->get_height();
+    }
+    if (pixbuf) {
+        return pixbuf->get_height();
+    }
+    return -1;
 }
 
 void RTImage::init()
@@ -138,7 +190,6 @@ Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::u
 {
     Cairo::RefPtr<Cairo::ImageSurface> surf;
 
-    //printf("Creating \"%s\"\n", fileName.c_str());
     try {
         surf = loadImage(fileName, getTweakedDPI());
 
@@ -146,12 +197,10 @@ Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::u
         /*
         double x=0., y=0.;
         cairo_surface_get_device_scale(surf->cobj(), &x, &y);
-        //printf("   -> Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
         if (getScale() == 2) {
             cairo_surface_set_device_scale(surf->cobj(), 0.5, 0.5);
             cairo_surface_get_device_scale(surf->cobj(), &x, &y);
             surf->flush();
-            //printf("      Cairo::ImageSurface is now %dx%d (scale: %.1f)\n", surf->get_width(), surf->get_height(), (float)x);
         }
         */
     } catch (const Glib::Exception& exception) {

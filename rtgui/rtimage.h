@@ -39,12 +39,17 @@ public:
     RTImage ();
     RTImage (RTImage &other);
     RTImage (Glib::RefPtr<Gdk::Pixbuf> &pixbuf);
+    RTImage (Cairo::RefPtr<Cairo::ImageSurface> &surf);
     RTImage(Cairo::RefPtr<Cairo::ImageSurface> other);
     RTImage (Glib::RefPtr<RTImage> &other);
     RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
 
     void setImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
     void changeImage (const Glib::ustring& imageName);
+    Cairo::RefPtr<Cairo::ImageSurface> get_surface();
+    int get_width();
+    int get_height();
+
 
     static void init();
     static void updateImages ();

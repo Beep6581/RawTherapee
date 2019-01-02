@@ -700,7 +700,6 @@ void ThumbBrowserBase::enableInspector()
 
 bool ThumbBrowserBase::Internal::on_configure_event(GdkEventConfigure *configure_event)
 {
-    double resolution = get_window()->get_screen()->get_resolution();
     return true;
 }
 

@@ -10,6 +10,7 @@ set(THEMEDIR "themes")
 
 # Other images which are generated manually:
 file(GLOB IMAGES_NONTHEMED   LIST_DIRECTORIES false "images/non-themed/png/*")
+file(GLOB SVG_NONTHEMED      LIST_DIRECTORIES false "images/non-themed/rt-splash.svg")
 file(GLOB SVG_THEMED         LIST_DIRECTORIES false "images/themed/svg/*")
 
 if(WIN32)
@@ -51,6 +52,8 @@ install(DIRECTORY ${THEMEDIR} DESTINATION "${DATADIR}")
 #install(DIRECTORY ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images/")
 install(FILES ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images")
 install(FILES ${SVG_THEMED} DESTINATION "${DATADIR}/images")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/non-themed/rt-splash.svg" DESTINATION "${DATADIR}/images" RENAME splash.svg)
+
 
 if(APPLE)
     # CMake escapes first item quote character. Do not remove 'DUMMY_VARIABLE='
