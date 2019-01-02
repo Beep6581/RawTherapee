@@ -356,7 +356,6 @@ RTWindow *create_rt_window()
             }
         }
         if (!css.empty()) {
-            printf("CSS: %s\nfontScale: %.5f\n\n", css.c_str(), fontScale);
             try {
                 cssForced = Gtk::CssProvider::create();
                 cssForced->load_from_data (css);

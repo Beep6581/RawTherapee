@@ -898,18 +898,8 @@ bool MyExpander::on_toggle(GdkEventButton* event)
     if (!useEnabled) {
         if (isVisible) {
             statusImage->set(closedImage->get_surface());
-            if (closedImage->get_surface().operator bool()) {
-                Cairo::RefPtr<Cairo::ImageSurface> p = closedImage->get_surface();
-                int w = p->get_width();
-                int h = p->get_height();
-            }
         } else {
             statusImage->set(openedImage->get_surface());
-            if (openedImage->get_surface().operator bool()) {
-                Cairo::RefPtr<Cairo::ImageSurface> p = openedImage->get_surface();
-                int w = p->get_width();
-                int h = p->get_height();
-            }
         }
     }
 

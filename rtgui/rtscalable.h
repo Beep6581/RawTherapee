@@ -29,15 +29,17 @@ class RTScalable
     static double dpi;
     static int scale;
     static Gtk::TextDirection direction;  // cached value for text-direction
+    static void deleteDir(const Glib::ustring& path);
 
 protected:
     static void setDPInScale (const double newDPI, const int newScale);
     static Cairo::RefPtr<Cairo::ImageSurface> loadImage(const Glib::ustring &fname, double dpi);
-    Gtk::TextDirection getDirection();
+    static Gtk::TextDirection getDirection();
 
 
 public:
     static void init(Gtk::Window *window);
+    static void cleanup();
     static double getDPI ();
     static double getTweakedDPI ();   // The returned value is tweaked DPI to adapt to main the font size. Maybe not an ideal solution.
     static int getScale ();

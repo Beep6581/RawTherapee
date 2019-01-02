@@ -74,6 +74,60 @@ void RTScalable::init(Gtk::Window *window)
     direction = window->get_direction();
 }
 
+void RTScalable::deleteDir(const Glib::ustring& path)
+{
+    int error = 0;
+    try {
+
+        Glib::Dir dir (path);
+
+        // Removing the directory content
+        for (auto entry = dir.begin(); entry != dir.end(); ++entry) {
+            error |= g_remove (Glib::build_filename (path, *entry).c_str());
+        }
+
+        if (error != 0 && options.rtSettings.verbose) {
+            std::cerr << "Failed to delete all entries in '" << path << "': " << g_strerror(errno) << std::endl;
+        }
+
+    } catch (Glib::Error&) {
+        error = 1;
+    }
+
+    // Removing the directory itself
+    if (!error) {
+        try {
+
+            error = g_remove (path.c_str());
+
+        } catch (Glib::Error&) {}
+    }
+}
+
+void RTScalable::cleanup()
+{
+    Glib::ustring imagesCacheFolder = Glib::build_filename (options.cacheBaseDir, "svg2png");
+    Glib::ustring sDPI = Glib::ustring::compose("%1", (int)getTweakedDPI());
+
+    try {
+        Glib::Dir dir(imagesCacheFolder);
+
+        for (Glib::DirIterator entry = dir.begin(); entry != dir.end(); ++entry) {
+            const Glib::ustring fileName = *entry;
+            const Glib::ustring filePath = Glib::build_filename(imagesCacheFolder, fileName);
+            if (fileName == "." || fileName == ".." || !Glib::file_test(filePath, Glib::FILE_TEST_IS_DIR)) {
+                continue;
+            }
+
+            if (fileName != sDPI) {
+                deleteDir(filePath);
+            }
+        }
+    } catch (Glib::Exception&) {
+    }
+
+}
+
 /*
  * This function try to find the svg file converted to png in a cache and return
  * the Cairo::ImageSurface. If it can't find it, it will generate it.

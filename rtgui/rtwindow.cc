@@ -321,6 +321,8 @@ RTWindow::~RTWindow()
     if (fpanel) {
         delete fpanel;
     }
+
+    RTScalable::cleanup();
 }
 
 void RTWindow::on_realize ()
