@@ -1925,7 +1925,6 @@ TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_THRES;Threshold chroma
 TP_LOCALLAB_PROXI;Iterations
-TP_LOCALLAB_ANBSPOT_TOOLTIP;Provisory control (I hope somebody can help to manage events!! and suppress this bad function)
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
 TP_LOCALLAB_RADIUS;Radius
@@ -1942,8 +1941,6 @@ TP_LOCALLAB_SENSIH;Hue Scope
 TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
 TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
-TP_LOCALLAB_SPOTDUPLI;Duplicate Current Spot
-TP_LOCALLAB_SPOTDUPLI_TOOLTIP;If check, a copy of all datas will be done, except center X=200 and centerY=200\nto show it is a duplicated spot.\nYou must first increase Control spot.\nIf the spot (current) is not empty, datas will be crushed.
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_SHARP;Sharpening
@@ -1967,6 +1964,22 @@ TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and
 TP_LOCALLAB_VIBRANCE;Vibrance
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
+TP_LOCALLAB_SPOTNAME;Control Spot #
+TP_LOCALLAB_BUTTON_ADD;Add
+TP_LOCALLAB_BUTTON_DEL;Delete
+TP_LOCALLAB_BUTTON_DUPL;Duplicate
+TP_LOCALLAB_BUTTON_REN;Rename
+TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_COL_NAME;Name
+TP_LOCALLAB_COL_VIS;Status
+TP_LOCALLAB_ROW_VIS;Visible
+TP_LOCALLAB_ROW_NVIS;Not visible
+TP_LOCALLAB_EV_VIS;Show
+TP_LOCALLAB_EV_NVIS;Hide
+TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
+TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
+TP_LOCALLAB_EV_DUPL;Copy of
+TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right

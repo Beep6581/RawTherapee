@@ -1065,7 +1065,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             spotId = expsettings->getNewId();
             r = new ControlSpotPanel::SpotRow();
             r->id = newSpot->id = spotId;
-            r->name = newSpot->name = "Control Spot #" + std::to_string(spotId);
+            r->name = newSpot->name = M("TP_LOCALLAB_SPOTNAME") + std::to_string(spotId);
             r->isvisible = newSpot->isvisible;
 
             if (newSpot->shape == "ELI") {
@@ -1230,6 +1230,106 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             // ParamsEdited update
             if (pedited) {
                 pedited->locallab.selspot = true;
+            }
+
+            break;
+
+        case (4): // 4 = Spot duplication event
+            newSpot = nullptr;
+            spotId = expsettings->getSelectedSpot();
+
+            for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
+                if (pp->locallab.spots.at(i).id == spotId) {
+                    newSpot = new LocallabParams::LocallabSpot(pp->locallab.spots.at(i));
+                    break;
+                }
+            }
+
+            if (!newSpot) {
+                break;
+            }
+
+            // Spot creation (initialization at currently selected spot)
+            spotId = expsettings->getNewId();
+            r = new ControlSpotPanel::SpotRow();
+            r->id = newSpot->id = spotId;
+            r->name = newSpot->name = newSpot->name + " - " + M("TP_LOCALLAB_DUPLSPOTNAME");
+            r->isvisible = newSpot->isvisible;
+
+            if (newSpot->shape == "ELI") {
+                r->shape = 0;
+            } else {
+                r->shape = 1;
+            }
+
+            if (newSpot->spotMethod == "norm") {
+                r->spotMethod = 0;
+            } else {
+                r->spotMethod = 1;
+            }
+
+            r->sensiexclu = newSpot->sensiexclu;
+            r->struc = newSpot->struc;
+
+            if (newSpot->shapeMethod == "IND") {
+                r->shapeMethod = 0;
+            } else if (newSpot->shapeMethod == "SYM") {
+                r->shapeMethod = 1;
+            } else if (newSpot->shapeMethod == "INDSL") {
+                r->shapeMethod = 2;
+            } else {
+                r->shapeMethod = 3;
+            }
+
+            r->locX = newSpot->locX;
+            r->locXL = newSpot->locXL;
+            r->locY = newSpot->locY;
+            r->locYT = newSpot->locYT;
+            r->centerX = newSpot->centerX;
+            r->centerY = newSpot->centerY;
+            r->circrad = newSpot->circrad;
+
+            if (newSpot->qualityMethod == "std") {
+                r->qualityMethod = 0;
+            } else if (newSpot->qualityMethod == "enh") {
+                r->qualityMethod = 1;
+            } else {
+                r->qualityMethod = 2;
+            }
+
+            r->transit = newSpot->transit;
+            r->thresh = newSpot->thresh;
+            r->iter = newSpot->iter;
+            expsettings->addControlSpot(r);
+
+            // ProcParams update
+            pp->locallab.nbspot++;
+            pp->locallab.selspot = pp->locallab.nbspot - 1;
+            pp->locallab.spots.push_back(*newSpot);
+
+            // New created spot selection
+            expsettings->setSelectedSpot(spotId);
+
+            // Update Locallab tools GUI with new created spot
+            disableListener();
+
+            if (pe) {
+                pe->locallab.spots.push_back(new LocallabParamsEdited::LocallabSpotEdited(true));
+            }
+
+            updateLocallabGUI(pp, pe, pp->locallab.selspot);
+
+            enableListener();
+
+            // Update default values according to selected spot
+            setDefaults(defparams, defpedited, spotId);
+
+            // ParamsEdited update
+            if (pedited) {
+                pedited->locallab.nbspot = true;
+                pedited->locallab.selspot = true;
+                pedited->locallab.id = true;
+                pedited->locallab.spots.push_back(new LocallabParamsEdited::LocallabSpotEdited(true));
             }
 
             break;

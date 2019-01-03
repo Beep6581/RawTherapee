@@ -33,9 +33,12 @@ ControlSpotPanel::ControlSpotPanel():
     EditSubscriber(ET_OBJECTS),
     FoldableToolPanel(this, "controlspotpanel", M("TP_LOCALLAB_SETTINGS")),
 
-    button_add_("Add"),
-    button_delete_("Delete"),
-    button_rename_("Rename"),
+    button_add_(M("TP_LOCALLAB_BUTTON_ADD")),
+    button_delete_(M("TP_LOCALLAB_BUTTON_DEL")),
+    button_duplicate_(M("TP_LOCALLAB_BUTTON_DUPL")),
+
+    button_rename_(M("TP_LOCALLAB_BUTTON_REN")),
+    button_visibility_(M("TP_LOCALLAB_BUTTON_VIS")),
 
     shape_(Gtk::manage(new MyComboBoxText())),
     spotMethod_(Gtk::manage(new MyComboBoxText())),
@@ -60,29 +63,40 @@ ControlSpotPanel::ControlSpotPanel():
     nbSpotChanged_(false),
     selSpotChanged_(false),
     nameChanged_(false),
+    visibilityChanged_(false),
     eventType(0),
     excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF"))))
 {
-    treeview_.set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
+    Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
+    hbox1_->pack_start(button_add_);
+    hbox1_->pack_start(button_delete_);
+    hbox1_->pack_start(button_duplicate_);
+    pack_start(*hbox1_);
 
-    scrolledwindow_.add(treeview_);
-    scrolledwindow_.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    scrolledwindow_.set_min_content_height(150);
-
-    pack_start(buttonbox_);
-    pack_start(scrolledwindow_);
-
-    buttonbox_.pack_start(button_add_, Gtk::PACK_SHRINK, 4);
-    buttonbox_.pack_start(button_delete_, Gtk::PACK_SHRINK, 4);
-    buttonbox_.pack_start(button_rename_);
-    buttonbox_.set_layout(Gtk::BUTTONBOX_START);
+    Gtk::HBox* const hbox2_ = Gtk::manage(new Gtk::HBox(true, 4));
+    hbox2_->pack_start(button_rename_);
+    hbox2_->pack_start(button_visibility_);
+    pack_start(*hbox2_);
 
     buttonaddconn_ = button_add_.signal_clicked().connect(
                          sigc::mem_fun(*this, &ControlSpotPanel::on_button_add));
     buttondeleteconn_ = button_delete_.signal_clicked().connect(
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_delete));
+    buttonduplicateconn_ = button_duplicate_.signal_clicked().connect(
+                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
+
+
     buttonrenameconn_ = button_rename_.signal_clicked().connect(
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_rename));
+    buttonvisibilityconn_ = button_visibility_.signal_clicked().connect(
+                                sigc::mem_fun(*this, &ControlSpotPanel::on_button_visibility));
+
+    treeview_.set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
+
+    scrolledwindow_.add(treeview_);
+    scrolledwindow_.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    scrolledwindow_.set_min_content_height(150);
+    pack_start(scrolledwindow_);
 
     treemodel_ = Gtk::ListStore::create(spots_);
 
@@ -102,7 +116,7 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     cell = Gtk::manage(new Gtk::CellRendererText());
-    cols_count = treeview_.append_column("Name", *cell);
+    cols_count = treeview_.append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
     col = treeview_.get_column(cols_count - 1);
 
     if (col) {
@@ -112,7 +126,7 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     cell = Gtk::manage(new Gtk::CellRendererText());
-    cols_count = treeview_.append_column("Status", *cell);
+    cols_count = treeview_.append_column(M("TP_LOCALLAB_COL_VIS"), *cell);
     col = treeview_.get_column(cols_count - 1);
 
     if (col) {
@@ -257,9 +271,9 @@ void ControlSpotPanel::render_isvisible(
     auto value = row[spots_.isvisible];
 
     if (value) {
-        ct->property_text() = "Visible";
+        ct->property_text() = M("TP_LOCALLAB_ROW_VIS");
     } else {
-        ct->property_text() = "Not visible";
+        ct->property_text() = M("TP_LOCALLAB_ROW_NVIS");
     }
 }
 
@@ -295,6 +309,28 @@ void ControlSpotPanel::on_button_delete()
     listener->panelChanged(EvLocallabSpotDeleted, "ID#" + std::to_string(delId));
 }
 
+void ControlSpotPanel::on_button_duplicate()
+{
+    printf("on_button_duplicate\n");
+
+    if (!listener) {
+        return;
+    }
+
+    // Raise event
+    const int selId = getSelectedSpot();
+    if (selId == 0) { // No selected spot to duplicate
+        return;
+    }
+    nbSpotChanged_ = true;
+    selSpotChanged_ = true;
+    eventType = 4; // 4 = Spot duplication event
+    const int newId = getNewId();
+    listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId)
+                                + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
+                                + std::to_string(selId) + ")");
+}
+
 void ControlSpotPanel::on_button_rename()
 {
     printf("on_button_rename\n");
@@ -326,6 +362,39 @@ void ControlSpotPanel::on_button_rename()
         row[spots_.name] = newname;
         treeview_.columns_autosize();
         listener->panelChanged(EvLocallabSpotName, newname);
+    }
+}
+
+void ControlSpotPanel::on_button_visibility()
+{
+    printf("on_button_visibility\n");
+
+    if (!listener) {
+        return;
+    }
+
+    // Get selected control spot
+    const auto s = treeview_.get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    const Gtk::TreeModel::Row row = *iter;
+
+    // Update visibility
+    row[spots_.isvisible] = !(bool)row[spots_.isvisible];
+    updateControlSpotCurve(row);
+
+    // Raise event
+    visibilityChanged_ = true;
+    const int id = getSelectedSpot();
+
+    if ((bool)row[spots_.isvisible]) {
+        listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " ID#" + std::to_string(id));
+    } else {
+        listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS") + " ID#" + std::to_string(id));
     }
 }
 
@@ -740,7 +809,9 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     treeviewconn_.block(cond);
     buttonaddconn_.block(cond);
     buttondeleteconn_.block(cond);
+    buttonduplicateconn_.block(cond);
     buttonrenameconn_.block(cond);
+    buttonvisibilityconn_.block(cond);
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
     sensiexclu_->block(cond);
@@ -910,6 +981,7 @@ void ControlSpotPanel::updateControlSpotCurve(Gtk::TreeModel::Row row)
     const int locY_ = static_cast<int>(row[spots_.locY]);
     const int locYT_ = static_cast<int>(row[spots_.locYT]);
     const int shape_ = static_cast<int>(row[spots_.shape]);
+    const bool isvisible_ = static_cast<bool>(row[spots_.isvisible]);
 
     printf("updateControlSpotCurve: %d\n", curveid_);
 
@@ -991,31 +1063,67 @@ void ControlSpotPanel::updateControlSpotCurve(Gtk::TreeModel::Row row)
     updateRectangle(visibleGeometry.at((curveid_ - 1) * 10 + 9));
     updateRectangle(mouseOverGeometry.at((curveid_ - 1) * 10 + 9));
 
-    // Update Arcellipse/Rectangle visibility according to shape
-    if (shape_ == 0) { // 0 = Ellipse
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 5)->setActive(true); // arc1
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 6)->setActive(true); // arc2
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 7)->setActive(true); // arc3
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 8)->setActive(true); // arc4
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 9)->setActive(false); // rec
+    // Update Arcellipse/Rectangle visibility according to shape and visibility
+    if (isvisible_) {
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10)->setActive(true);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 1)->setActive(true);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 2)->setActive(true);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 3)->setActive(true);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 4)->setActive(true);
 
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 5)->setActive(true); // arc1
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 6)->setActive(true); // arc2
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 7)->setActive(true); // arc3
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 8)->setActive(true); // arc4
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 9)->setActive(false); // rec
-    } else { // 1 = Rectangle
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 5)->setActive(false); // arc1
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 6)->setActive(false); // arc2
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 7)->setActive(false); // arc3
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 8)->setActive(false); // arc4
-        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 9)->setActive(true); // rec
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10)->setActive(true);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 1)->setActive(true);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 2)->setActive(true);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 3)->setActive(true);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 4)->setActive(true);
 
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 5)->setActive(false); // arc1
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 6)->setActive(false); // arc2
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 7)->setActive(false); // arc3
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 8)->setActive(false); // arc4
-        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 9)->setActive(true); // rec
+        if (shape_ == 0) { // 0 = Ellipse
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 5)->setActive(true); // arc1
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 6)->setActive(true); // arc2
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 7)->setActive(true); // arc3
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 8)->setActive(true); // arc4
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 9)->setActive(false); // rec
+
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 5)->setActive(true); // arc1
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 6)->setActive(true); // arc2
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 7)->setActive(true); // arc3
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 8)->setActive(true); // arc4
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 9)->setActive(false); // rec
+        } else { // 1 = Rectangle
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 5)->setActive(false); // arc1
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 6)->setActive(false); // arc2
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 7)->setActive(false); // arc3
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 8)->setActive(false); // arc4
+            EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 9)->setActive(true); // rec
+
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 5)->setActive(false); // arc1
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 6)->setActive(false); // arc2
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 7)->setActive(false); // arc3
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 8)->setActive(false); // arc4
+            EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 9)->setActive(true); // rec
+        }
+    } else {
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 1)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 2)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 3)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 4)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 5)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 6)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 7)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 8)->setActive(false);
+        EditSubscriber::visibleGeometry.at((curveid_ - 1) * 10 + 9)->setActive(false);
+
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 1)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 2)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 3)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 4)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 5)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 6)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 7)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 8)->setActive(false);
+        EditSubscriber::mouseOverGeometry.at((curveid_ - 1) * 10 + 9)->setActive(false);
     }
 }
 
@@ -1635,7 +1743,13 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
         se->name = false;
     }
 
-    se->isvisible = false; // TODO isvisible
+    if (visibilityChanged_) {
+        se->isvisible = true;
+        // visibilityChanged_ = false;
+    } else {
+        se->isvisible = false;
+    }
+
     se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
     se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->sensiexclu = sensiexclu_->getEditedState();
@@ -1664,6 +1778,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     nbSpotChanged_ = false;
     selSpotChanged_ = false;
     nameChanged_ = false;
+    visibilityChanged_ = false;
 
     // Disable params listeners
     disableParamlistener(true);
@@ -1673,15 +1788,18 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
         treeview_.set_sensitive(false);
         button_add_.set_sensitive(false);
         button_delete_.set_sensitive(false);
+        button_duplicate_.set_sensitive(false);
         button_rename_.set_sensitive(false);
+        button_visibility_.set_sensitive(false);
     } else {
         treeview_.set_sensitive(true);
         button_add_.set_sensitive(true);
         button_delete_.set_sensitive(true);
+        button_duplicate_.set_sensitive(true);
         button_rename_.set_sensitive(se->name);
+        button_visibility_.set_sensitive(se->isvisible);
     }
 
-    // TODO Add isvisible
     if (!se->shape) {
         shape_->set_active_text(M("GENERAL_UNCHANGED"));
     }
@@ -1884,10 +2002,10 @@ ControlSpotPanel::ControlSpots::ControlSpots()
 //-----------------------------------------------------------------------------
 
 ControlSpotPanel::RenameDialog::RenameDialog(const Glib::ustring &actualname, Gtk::Window &parent):
-    Gtk::Dialog("Renaming Control Spot", parent)
+    Gtk::Dialog(M("TP_LOCALLAB_REN_DIALOG_NAME"), parent)
 {
     Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
-    hb->pack_start(*Gtk::manage(new Gtk::Label("Enter the new Control Spot name")), false, false, 4);
+    hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_REN_DIALOG_LAB"))), false, false, 4);
 
     newname_.set_text(actualname);
     hb->pack_start(newname_);

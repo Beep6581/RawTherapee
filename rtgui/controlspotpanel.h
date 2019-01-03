@@ -219,9 +219,9 @@ private:
 
     void on_button_add();
     void on_button_delete();
+    void on_button_duplicate();
     void on_button_rename();
-    // TODO Add visibility button
-    // TODO Add duplication button
+    void on_button_visibility();
 
     void load_ControlSpot_param();
 
@@ -291,13 +291,17 @@ private:
     sigc::connection treeviewconn_;
     Glib::RefPtr<Gtk::ListStore> treemodel_;
 
-    Gtk::ButtonBox buttonbox_;
     Gtk::Button button_add_;
     sigc::connection buttonaddconn_;
     Gtk::Button button_delete_;
     sigc::connection buttondeleteconn_;
+    Gtk::Button button_duplicate_;
+    sigc::connection buttonduplicateconn_;
+
     Gtk::Button button_rename_;
     sigc::connection buttonrenameconn_;
+    Gtk::Button button_visibility_;
+    sigc::connection buttonvisibilityconn_;
 
     MyComboBoxText* const shape_;
     sigc::connection shapeconn_;
@@ -327,7 +331,8 @@ private:
     bool nbSpotChanged_;
     bool selSpotChanged_;
     bool nameChanged_;
-    int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event
+    bool visibilityChanged_;
+    int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event, 4 = Spot duplication event
     Gtk::Frame* const excluFrame;
 
     // Treeview mutex
