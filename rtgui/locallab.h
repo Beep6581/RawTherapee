@@ -229,7 +229,6 @@ private:
     // Locallab GUI management function
     void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);
     void updateSpecificGUIState();
-    // void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
     void setParamEditable(bool cond);
 
 public:

@@ -186,12 +186,6 @@ void History::historySelectionChanged ()
             PartialProfile pp (&pparams, &pe);
             ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
 
-            printf("historySelectionChanged\n");
-            printf("nbspot: %d %d\n", pp.pparams->locallab.nbspot, (int)pp.pparams->locallab.spots.size());
-            for (size_t i = 0; i < pp.pparams->locallab.spots.size(); i++) {
-                printf("id_%d = %d\n", (int)i, pp.pparams->locallab.spots.at(i).id);
-            }
-
             tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
 

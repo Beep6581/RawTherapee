@@ -3003,9 +3003,6 @@ void ProcParams::setDefaults()
 
 int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bool fnameAbsolute, ParamsEdited* pedited)
 {
-    // TODO Locallab printf
-    printf("Save to .pp3 file\n");
-
     if (fname.empty() && fname2.empty()) {
         return 0;
     }

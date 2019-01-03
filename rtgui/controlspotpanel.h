@@ -183,13 +183,6 @@ public:
      */
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr, int id = 0);
     /**
-     * Variant of setDefaults function which only update adjuster default values
-     *
-     * @param defParams ProcParams containing default values to set to the adjusters
-     * @param id Spot id to consider to update adjusters default values
-     */
-    // void updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id = 0);
-    /**
      * Variant of setDefaults function which only update adjuster default states
      *
      * @param pedited ParamsEdited containing default states to set to the adjusters

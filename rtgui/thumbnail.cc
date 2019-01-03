@@ -452,12 +452,9 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams.softlight != pp.softlight;
 
     {
-        printf("setProcParams: %d\n", needsReprocessing);
-
         MyMutex::MyLock lock(mutex);
 
         if (pparams != pp) {
-            printf("recentlySaved\n");
             cfs.recentlySaved = false;
         } else if (pparamsValid && !updateCacheNow) {
             // nothing to do
@@ -470,10 +467,8 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         const int inTrash = getStage();
 
         if (pe) {
-            printf("size: %d %d %d\n", (int)pe->locallab.spots.size(), pe->locallab.nbspot, pe->locallab.selspot);
             pe->combine(pparams, pp, true);
         } else {
-            printf("size: %d\n", (int)pp.locallab.spots.size());
             pparams = pp;
         }
 

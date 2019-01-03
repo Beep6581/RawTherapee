@@ -279,7 +279,7 @@ void ControlSpotPanel::render_isvisible(
 
 void ControlSpotPanel::on_button_add()
 {
-    printf("on_button_add\n");
+    // printf("on_button_add\n");
 
     if (!listener) {
         return;
@@ -295,7 +295,7 @@ void ControlSpotPanel::on_button_add()
 
 void ControlSpotPanel::on_button_delete()
 {
-    printf("on_button_delete\n");
+    // printf("on_button_delete\n");
 
     if (!listener) {
         return;
@@ -311,7 +311,7 @@ void ControlSpotPanel::on_button_delete()
 
 void ControlSpotPanel::on_button_duplicate()
 {
-    printf("on_button_duplicate\n");
+    // printf("on_button_duplicate\n");
 
     if (!listener) {
         return;
@@ -333,7 +333,7 @@ void ControlSpotPanel::on_button_duplicate()
 
 void ControlSpotPanel::on_button_rename()
 {
-    printf("on_button_rename\n");
+    // printf("on_button_rename\n");
 
     if (!listener) {
         return;
@@ -367,7 +367,7 @@ void ControlSpotPanel::on_button_rename()
 
 void ControlSpotPanel::on_button_visibility()
 {
-    printf("on_button_visibility\n");
+    // printf("on_button_visibility\n");
 
     if (!listener) {
         return;
@@ -400,7 +400,8 @@ void ControlSpotPanel::on_button_visibility()
 
 void ControlSpotPanel::load_ControlSpot_param()
 {
-    printf("load_ControlSpot_param\n");
+    // printf("load_ControlSpot_param\n");
+
     // Get selected control spot
     const auto s = treeview_.get_selection();
 
@@ -432,7 +433,7 @@ void ControlSpotPanel::load_ControlSpot_param()
 
 void ControlSpotPanel::controlspotChanged()
 {
-    printf("controlspotChanged\n");
+    // printf("controlspotChanged\n");
 
     if (!listener) {
         return;
@@ -447,7 +448,7 @@ void ControlSpotPanel::controlspotChanged()
 
 void ControlSpotPanel::shapeChanged()
 {
-    printf("shapeChanged\n");
+    // printf("shapeChanged\n");
 
     // Get selected control spot
     const auto s = treeview_.get_selection();
@@ -470,7 +471,7 @@ void ControlSpotPanel::shapeChanged()
 
 void ControlSpotPanel::spotMethodChanged()
 {
-    printf("spotMethodChanged\n");
+    // printf("spotMethodChanged\n");
 
     // Get selected control spot
     const auto s = treeview_.get_selection();
@@ -501,7 +502,8 @@ void ControlSpotPanel::spotMethodChanged()
 
 void ControlSpotPanel::shapeMethodChanged()
 {
-    printf("shapeMethodChanged\n");
+    // printf("shapeMethodChanged\n");
+
     const int method = shapeMethod_->get_active_row_number();
 
     // Get selected control spot
@@ -580,7 +582,7 @@ void ControlSpotPanel::shapeMethodChanged()
 
 void ControlSpotPanel::qualityMethodChanged()
 {
-    printf("qualityMethodChanged\n");
+    // printf("qualityMethodChanged\n");
 
     // Get selected control spot
     const auto s = treeview_.get_selection();
@@ -602,7 +604,7 @@ void ControlSpotPanel::qualityMethodChanged()
 
 void ControlSpotPanel::updateParamVisibility()
 {
-    printf("updateParamVisibility\n");
+    // printf("updateParamVisibility\n");
 
     // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with shapeMethodChanged function)
     const int method = shapeMethod_->get_active_row_number();
@@ -660,7 +662,8 @@ void ControlSpotPanel::updateParamVisibility()
 
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
 {
-    printf("adjusterChanged\n");
+    // printf("adjusterChanged\n");
+
     const int method = shapeMethod_->get_active_row_number();
 
     // Get selected control spot
@@ -805,7 +808,8 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
 
 void ControlSpotPanel::disableParamlistener(bool cond)
 {
-    printf("disableParamlistener: %d\n", cond);
+    // printf("disableParamlistener: %d\n", cond);
+
     treeviewconn_.block(cond);
     buttonaddconn_.block(cond);
     buttondeleteconn_.block(cond);
@@ -854,7 +858,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row row)
 {
-    printf("addControlSpotCurve\n");
+    // printf("addControlSpotCurve\n");
 
     if (row[spots_.curveid] > 0) { // Row has already an associated curve
         return;
@@ -983,7 +987,7 @@ void ControlSpotPanel::updateControlSpotCurve(Gtk::TreeModel::Row row)
     const int shape_ = static_cast<int>(row[spots_.shape]);
     const bool isvisible_ = static_cast<bool>(row[spots_.isvisible]);
 
-    printf("updateControlSpotCurve: %d\n", curveid_);
+    // printf("updateControlSpotCurve: %d\n", curveid_);
 
     EditDataProvider* dataProvider = getEditProvider();
 
@@ -1135,7 +1139,7 @@ void ControlSpotPanel::deleteControlSpotCurve(Gtk::TreeModel::Row row)
         return;
     }
 
-    printf("deleteControlSpotCurve: %d\n", curveid_);
+    // printf("deleteControlSpotCurve: %d\n", curveid_);
 
     // visibleGeometry
     EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 10 + 9);
@@ -1177,7 +1181,8 @@ void ControlSpotPanel::deleteControlSpotCurve(Gtk::TreeModel::Row row)
 
 CursorShape ControlSpotPanel::getCursor(int objectID)
 {
-    printf("Object ID: %d\n", objectID);
+    // printf("Object ID: %d\n", objectID);
+
     int rem_ = objectID % 10;
 
     switch (rem_) {
@@ -1321,7 +1326,8 @@ bool ControlSpotPanel::mouseOver(int modifierKey)
 
 bool ControlSpotPanel::button1Pressed(int modifierKey)
 {
-    printf("button1Pressed\n");
+    // printf("button1Pressed\n");
+
     EditDataProvider *provider = getEditProvider();
 
     if (!provider || lastObject_ == -1) {
@@ -1348,14 +1354,15 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
 
 bool ControlSpotPanel::button1Released()
 {
-    printf("button1Released\n");
+    // printf("button1Released\n");
+
     EditSubscriber::action = ES_ACTION_NONE;
     return true;
 }
 
 bool ControlSpotPanel::drag1(int modifierKey)
 {
-    printf("drag1\n");
+    // printf("drag1\n");
 
     EditDataProvider *provider = getEditProvider();
 
@@ -1488,7 +1495,7 @@ int ControlSpotPanel::getEventType()
 
 ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
 {
-    printf("getSpot: %d\n", id);
+    // printf("getSpot: %d\n", id);
 
     MyMutex::MyLock lock(mTreeview);
 
@@ -1547,7 +1554,7 @@ std::vector<int>* ControlSpotPanel::getSpotIdList()
 
 int ControlSpotPanel::getSelectedSpot()
 {
-    printf("getSelectedSpot\n");
+    // printf("getSelectedSpot\n");
 
     MyMutex::MyLock lock(mTreeview);
 
@@ -1567,7 +1574,7 @@ int ControlSpotPanel::getSelectedSpot()
 
 void ControlSpotPanel::setSelectedSpot(int id)
 {
-    printf("setSelectedSpot: %d\n", id);
+    // printf("setSelectedSpot: %d\n", id);
 
     MyMutex::MyLock lock(mTreeview);
 
@@ -1612,7 +1619,7 @@ int ControlSpotPanel::getNewId()
 
 void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
 {
-    printf("addControlSpot: %d\n", newSpot->id);
+    // printf("addControlSpot: %d\n", newSpot->id);
 
     MyMutex::MyLock lock(mTreeview);
 
@@ -1648,7 +1655,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
 
 int ControlSpotPanel::updateControlSpot(SpotRow* spot)
 {
-    printf("updateControlSpot: %d\n", spot->id);
+    // printf("updateControlSpot: %d\n", spot->id);
 
     MyMutex::MyLock lock(mTreeview);
 
@@ -1694,7 +1701,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
 
 void ControlSpotPanel::deleteControlSpot(int id)
 {
-    printf("deleteControlSpot: %d\n", id);
+    // printf("deleteControlSpot: %d\n", id);
 
     MyMutex::MyLock lock(mTreeview);
 
@@ -1718,7 +1725,7 @@ void ControlSpotPanel::deleteControlSpot(int id)
 
 ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
 {
-    printf("getEditedStates\n");
+    // printf("getEditedStates\n");
 
     SpotEdited* se = new SpotEdited();
 
@@ -1772,7 +1779,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
 
 void ControlSpotPanel::setEditedStates(SpotEdited* se)
 {
-    printf("setEditedStates\n");
+    // printf("setEditedStates\n");
 
     // Reset treeview edited states
     nbSpotChanged_ = false;
@@ -1844,16 +1851,12 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
     int index = -1;
 
     for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
-        printf("Test\n");
-
         if (defParams->locallab.spots.at(i).id == id) {
             index = i;
 
             break;
         }
     }
-
-    printf("index: %d\n", index);
 
     // Set default values for adjusters
     const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
@@ -1910,39 +1913,6 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
         iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
     }
 }
-
-/*
-void ControlSpotPanel::updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id)
-{
-    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
-
-    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
-        if (defParams->locallab.spots.at(i).id == id) {
-            defSpot = &defParams->locallab.spots.at(i);
-
-            break;
-        }
-    }
-
-    // Set default values for adjusters
-    sensiexclu_->setDefault((double)defSpot->sensiexclu);
-    struc_->setDefault((double)defSpot->struc);
-    locX_->setDefault((double)defSpot->locX);
-    locXL_->setDefault((double)defSpot->locXL);
-    locY_->setDefault((double)defSpot->locY);
-    locYT_->setDefault((double)defSpot->locYT);
-    centerX_->setDefault((double)defSpot->centerX);
-    centerY_->setDefault((double)defSpot->centerY);
-    circrad_->setDefault((double)defSpot->circrad);
-    transit_->setDefault((double)defSpot->transit);
-    thresh_->setDefault((double)defSpot->thresh);
-    iter_->setDefault((double)defSpot->iter);
-}
-
-void ControlSpotPanel::updateDefaultsStates(const ParamsEdited* pedited, int id = 0)
-{
-}
-*/
 
 void ControlSpotPanel::setBatchMode(bool batchMode)
 {

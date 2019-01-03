@@ -374,10 +374,6 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
 
 void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::ustring& descr)
 {
-    // TODO Locallab printf
-    printf("panelChanged\n");
-    printf("panelChanged event: %d\n", (int)event);
-
     if (!ipc) {
         return;
     }
@@ -389,8 +385,6 @@ void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::u
     for (auto toolPanel : toolPanels) {
         toolPanel->write(params);
     }
-
-    printf("nbspot#1 %d %d\n", params->locallab.nbspot, (int)params->locallab.spots.size());
 
     // Compensate rotation on flip
     if (event == rtengine::EvCTHFlip || event == rtengine::EvCTVFlip) {
@@ -463,16 +457,10 @@ void ToolPanelCoordinator::panelChanged(rtengine::ProcEvent event, const Glib::u
     }
 
     photoLoadedOnce = true;
-
-    printf("nbspot#2 %d %d\n", params->locallab.nbspot, (int)params->locallab.spots.size());
 }
 
 void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited, bool fromLastSave)
 {
-    // TODO Locallab printf
-    printf("profileChanged\n");
-    printf("profileChanged event: %d\n", (int)event);
-
     int fw, fh, tr;
 
     if (!ipc) {
@@ -481,12 +469,6 @@ void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine
 
     ProcParams *params = ipc->beginUpdateParams();
     ProcParams *mergedParams = new ProcParams();
-
-    printf("profileChanged 1\n");
-    printf("nbspot: %d\n", params->locallab.nbspot);
-    for (size_t i = 0; i < params->locallab.spots.size(); i++) {
-        printf("id_%d = %d\n", (int)i, params->locallab.spots.at(i).id);
-    }
 
     // Copy the current params as default values for the fusion
     *mergedParams = *params;
@@ -515,12 +497,6 @@ void ToolPanelCoordinator::profileChange(const PartialProfile *nparams, rtengine
 
     *params = *mergedParams;
     delete mergedParams;
-
-    printf("profileChanged 2\n");
-    printf("nbspot: %d\n", params->locallab.nbspot);
-    for (size_t i = 0; i < params->locallab.spots.size(); i++) {
-        printf("id_%d = %d\n", (int)i, params->locallab.spots.at(i).id);
-    }
 
     tr = TR_NONE;
 

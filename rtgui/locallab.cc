@@ -645,8 +645,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
 
 void Locallab::enableToggled(MyExpander *expander)
 {
-    // TODO Locallab printf
-    printf("enableToggled\n");
+    // printf("enableToggled\n");
 
     rtengine::ProcEvent event;
     sigc::connection* expConn;
@@ -735,8 +734,7 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
 
 void Locallab::lumaneutralPressed()
 {
-    // TODO Locallab printf
-    printf("lumaneutralPressed\n");
+    // printf("lumaneutralPressed\n");
 
     for (int i = 0; i < 5; i++) {
         multiplier[i]->setValue(100);
@@ -748,8 +746,7 @@ void Locallab::lumaneutralPressed()
 
 void Locallab::lumacontrastPlusPressed()
 {
-    // TODO Locallab printf
-    printf("lumacontrastPlusPressed\n");
+    // printf("lumacontrastPlusPressed\n");
 
     for (int i = 0; i < 5; i++) {
         float inc = (5 - i);
@@ -762,8 +759,7 @@ void Locallab::lumacontrastPlusPressed()
 
 void Locallab::lumacontrastMinusPressed()
 {
-    // TODO Locallab printf
-    printf("lumacontrastMinusPressed\n");
+    // printf("lumacontrastMinusPressed\n");
 
     for (int i = 0; i < 5; i++) {
         float inc = - (5 - i);
@@ -776,162 +772,10 @@ void Locallab::lumacontrastMinusPressed()
 
 void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 {
-    printf("Locallab read\n");
+    // printf("Locallab read\n");
 
     // Disable all listeners
     disableListener();
-
-    /*
-    if (pedited) {
-        set_inconsistent(multiImage && !pedited->locallab.enabled);
-
-        if (pp->locallab.selspot < pp->locallab.nbspot && pp->locallab.selspot < (int)pedited->locallab.spots.size()) {
-            const LocallabParamsEdited::LocallabSpotEdited* spotState = &pedited->locallab.spots.at(pp->locallab.selspot);
-
-            // Control spot settings
-            ControlSpotPanel::SpotEdited* const se = new ControlSpotPanel::SpotEdited();
-
-            if (pedited->locallab.nbspot && pedited->locallab.id) {
-                se->nbspot = true;
-            } else {
-                se->nbspot = false;
-            }
-
-            se->selspot = pedited->locallab.selspot;
-            se->name = spotState->name;
-            se->isvisible = spotState->isvisible;
-            se->shape = spotState->shape;
-            se->spotMethod = spotState->spotMethod;
-            se->sensiexclu = spotState->sensiexclu;
-            se->struc = spotState->struc;
-            se->shapeMethod = spotState->shapeMethod;
-            se->locX = spotState->locX;
-            se->locXL = spotState->locXL;
-            se->locY = spotState->locY;
-            se->locYT = spotState->locYT;
-            se->centerX = spotState->centerX;
-            se->centerY = spotState->centerY;
-            se->circrad = spotState->circrad;
-            se->qualityMethod = spotState->qualityMethod;
-            se->transit = spotState->transit;
-            se->thresh = spotState->thresh;
-            se->iter = spotState->iter;
-            expsettings->setEditedStates(se);
-
-            // Color & Light
-            expcolor->set_inconsistent(!spotState->expcolor);
-            curvactiv->set_inconsistent(multiImage && !spotState->curvactiv);
-            lightness->setEditedState(spotState->lightness ? Edited : UnEdited);
-            contrast->setEditedState(spotState->contrast ? Edited : UnEdited);
-            chroma->setEditedState(spotState->chroma ? Edited : UnEdited);
-            sensi->setEditedState(spotState->sensi ? Edited : UnEdited);
-
-            if (!spotState->qualitycurveMethod) {
-                qualitycurveMethod->set_active_text(M("GENERAL_UNCHANGED"));
-            }
-
-            llshape->setUnChanged(!spotState->llcurve);
-            ccshape->setUnChanged(!spotState->cccurve);
-            LHshape->setUnChanged(!spotState->LHcurve);
-            HHshape->setUnChanged(!spotState->HHcurve);
-            invers->set_inconsistent(multiImage && !spotState->invers);
-
-            // Exposure
-            expexpose->set_inconsistent(!spotState->expexpose);
-            expcomp->setEditedState(spotState->expcomp ? Edited : UnEdited);
-            hlcompr->setEditedState(spotState->hlcompr ? Edited : UnEdited);
-            hlcomprthresh->setEditedState(spotState->hlcomprthresh ? Edited : UnEdited);
-            black->setEditedState(spotState->black ? Edited : UnEdited);
-            warm->setEditedState(spotState->warm ? Edited : UnEdited);
-            shcompr->setEditedState(spotState->shcompr ? Edited : UnEdited);
-            sensiex->setEditedState(spotState->sensiex ? Edited : UnEdited);
-            shapeexpos->setUnChanged(!spotState->excurve);
-
-            // Vibrance
-            expvibrance->set_inconsistent(!spotState->expvibrance);
-            saturated->setEditedState(spotState->saturated ? Edited : UnEdited);
-            pastels->setEditedState(spotState->pastels ? Edited : UnEdited);
-            psThreshold->setEditedState(spotState->psthreshold ? Edited : UnEdited);
-            protectSkins->set_inconsistent(multiImage && !spotState->protectskins);
-            avoidColorShift->set_inconsistent(multiImage && !spotState->avoidcolorshift);
-            pastSatTog->set_inconsistent(multiImage && !spotState->pastsattog);
-            sensiv->setEditedState(spotState->sensiv ? Edited : UnEdited);
-            skinTonesCurve->setUnChanged(!spotState->skintonescurve);
-
-            // Blur & Noise
-            expblur->set_inconsistent(!spotState->expblur);
-            radius->setEditedState(spotState->radius ? Edited : UnEdited);
-            strength->setEditedState(spotState->strength ? Edited : UnEdited);
-            sensibn->setEditedState(spotState->sensibn ? Edited : UnEdited);
-
-            if (!spotState->blurMethod) {
-                blurMethod->set_active_text(M("GENERAL_UNCHANGED"));
-            }
-
-            activlum->set_inconsistent(multiImage && !spotState->activlum);
-
-            // Tone Mapping
-            exptonemap->set_inconsistent(!spotState->exptonemap);
-            stren->setEditedState(spotState->stren ? Edited : UnEdited);
-            gamma->setEditedState(spotState->gamma ? Edited : UnEdited);
-            estop->setEditedState(spotState->estop ? Edited : UnEdited);
-            scaltm->setEditedState(spotState->scaltm ? Edited : UnEdited);
-            rewei->setEditedState(spotState->rewei ? Edited : UnEdited);
-            sensitm->setEditedState(spotState->sensitm ? Edited : UnEdited);
-
-            // Retinex
-            expreti->set_inconsistent(!spotState->expreti);
-
-            if (!spotState->retinexMethod) {
-                retinexMethod->set_active_text(M("GENERAL_UNCHANGED"));
-            }
-
-            str->setEditedState(spotState->str ? Edited : UnEdited);
-            chrrt->setEditedState(spotState->chrrt ? Edited : UnEdited);
-            neigh->setEditedState(spotState->neigh ? Edited : UnEdited);
-            vart->setEditedState(spotState->vart ? Edited : UnEdited);
-            sensih->setEditedState(spotState->sensih ? Edited : UnEdited);
-            cTgainshape->setUnChanged(!spotState->localTgaincurve);
-            inversret->set_inconsistent(multiImage && !spotState->inversret);
-
-            // Sharpening
-            expsharp->set_inconsistent(!spotState->expsharp);
-            sharradius->setEditedState(spotState->sharradius ? Edited : UnEdited);
-            sharamount->setEditedState(spotState->sharamount ? Edited : UnEdited);
-            shardamping->setEditedState(spotState->shardamping ? Edited : UnEdited);
-            shariter->setEditedState(spotState->shariter ? Edited : UnEdited);
-            sensisha->setEditedState(spotState->sensisha ? Edited : UnEdited);
-            inverssha->set_inconsistent(multiImage && !spotState->inverssha);
-
-            // Contrast by detail levels
-            expcbdl->set_inconsistent(!spotState->expcbdl);
-
-            for (int i = 0; i < 5; i++) {
-                multiplier[i]->setEditedState(spotState->mult[i] ? Edited : UnEdited);
-            }
-
-            chromacbdl->setEditedState(spotState->chromacbdl ? Edited : UnEdited);
-            threshold->setEditedState(spotState->threshold ? Edited : UnEdited);
-            sensicb->setEditedState(spotState->sensicb ? Edited : UnEdited);
-
-            // Denoise
-            expdenoi->set_inconsistent(!spotState->expdenoi);
-            noiselumf->setEditedState(spotState->noiselumf ? Edited : UnEdited);
-            noiselumc->setEditedState(spotState->noiselumc ? Edited : UnEdited);
-            noiselumdetail->setEditedState(spotState->noiselumdetail ? Edited : UnEdited);
-            noiselequal->setEditedState(spotState->noiselequal ? Edited : UnEdited);
-            noisechrof->setEditedState(spotState->noisechrof ? Edited : UnEdited);
-            noisechroc->setEditedState(spotState->noisechroc ? Edited : UnEdited);
-            noisechrodetail->setEditedState(spotState->noisechrodetail ? Edited : UnEdited);
-            adjblur->setEditedState(spotState->adjblur ? Edited : UnEdited);
-            bilateral->setEditedState(spotState->bilateral ? Edited : UnEdited);
-            sensiden->setEditedState(spotState->sensiden ? Edited : UnEdited);
-
-            // Others
-            avoid->set_inconsistent(multiImage && !spotState->avoid);
-        }
-    }
-    */
 
     setEnabled(pp->locallab.enabled);
 
@@ -1049,7 +893,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
 
 void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 {
-    printf("Locallab write\n");
+    // printf("Locallab write\n");
 
     pp->locallab.enabled = getEnabled();
 
@@ -1199,8 +1043,6 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                             pedited->locallab.spots.erase(pedited->locallab.spots.begin() + i);
                         }
                     }
-
-                    printf("size after deletion %d\n", (int)pp->locallab.spots.size());
 
                     break;
                 }
@@ -1751,7 +1593,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
 void Locallab::protectskins_toggled()
 {
-    printf("protectskins_toggled\n");
+    // printf("protectskins_toggled\n");
 
     if (multiImage) {
         if (protectSkins->get_inconsistent()) {
@@ -1775,7 +1617,7 @@ void Locallab::protectskins_toggled()
 
 void Locallab::avoidcolorshift_toggled()
 {
-    printf("avoidcolorshift_toggled\n");
+    // printf("avoidcolorshift_toggled\n");
 
     if (multiImage) {
         if (avoidColorShift->get_inconsistent()) {
@@ -1799,7 +1641,7 @@ void Locallab::avoidcolorshift_toggled()
 
 void Locallab::pastsattog_toggled()
 {
-    printf("pastsattog_toggled\n");
+    // printf("pastsattog_toggled\n");
 
     if (multiImage) {
         if (pastSatTog->get_inconsistent()) {
@@ -1892,24 +1734,11 @@ void Locallab::curveChanged(CurveEditor* ce)
             }
         }
     }
-
-    /*
-    if (ce == skinTonesCurve) {
-        listener->panelChanged(EvlocallabSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
-        int strval = retrab->getValue();
-        //update MIP
-        retrab->setValue(strval + 1);
-        adjusterChanged(retrab, strval + 1);
-        usleep(10000);  //to test
-        retrab->setValue(strval);
-        adjusterChanged(retrab, strval);
-    }
-    */
 }
 
 void Locallab::retinexMethodChanged()
 {
-    printf("retinexMethodChanged\n");
+    // printf("retinexMethodChanged\n");
 
     if (getEnabled() && expreti->getEnabled()) {
         if (listener) {
@@ -1920,7 +1749,7 @@ void Locallab::retinexMethodChanged()
 
 void Locallab::blurMethodChanged()
 {
-    printf("blurMethodChanged\n");
+    // printf("blurMethodChanged\n");
 
     // Update Blur & Noise GUI according to blurMethod combobox (to be compliant with updateSpecificGUIState function)
     if (multiImage && blurMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
@@ -1940,7 +1769,7 @@ void Locallab::blurMethodChanged()
 
 void Locallab::qualitycurveMethodChanged()
 {
-    printf("qualitycurveMethodChanged\n");
+    // printf("qualitycurveMethodChanged\n");
 
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
@@ -1951,7 +1780,7 @@ void Locallab::qualitycurveMethodChanged()
 
 void Locallab::inversChanged()
 {
-    printf("inversChanged\n");
+    // printf("inversChanged\n");
 
     if (multiImage) {
         if (invers->get_inconsistent()) {
@@ -1996,7 +1825,7 @@ void Locallab::inversChanged()
 
 void Locallab::curvactivChanged()
 {
-    printf("curvactivChanged\n");
+    // printf("curvactivChanged\n");
 
     if (multiImage) {
         if (curvactiv->get_inconsistent()) {
@@ -2020,7 +1849,7 @@ void Locallab::curvactivChanged()
 
 void Locallab::activlumChanged()
 {
-    printf("activlumChanged\n");
+    // printf("activlumChanged\n");
 
     if (multiImage) {
         if (activlum->get_inconsistent()) {
@@ -2044,7 +1873,7 @@ void Locallab::activlumChanged()
 
 void Locallab::inversshaChanged()
 {
-    printf("inversshaChanged\n");
+    // printf("inversshaChanged\n");
 
     if (multiImage) {
         if (inverssha->get_inconsistent()) {
@@ -2077,7 +1906,7 @@ void Locallab::inversshaChanged()
 
 void Locallab::inversretChanged()
 {
-    printf("inversretChanged\n");
+    // printf("inversretChanged\n");
 
     if (multiImage) {
         if (inversret->get_inconsistent()) {
@@ -2108,85 +1937,9 @@ void Locallab::inversretChanged()
     }
 }
 
-/*
-void Locallab::updateDefaultsValues(const rtengine::procparams::ProcParams* defParams, int id)
-{
-    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
-
-    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
-        if (defParams->locallab.spots.at(i).id == id) {
-            defSpot = &defParams->locallab.spots.at(i);
-
-            break;
-        }
-    }
-
-    // Set default values for adjusters and threshold adjusters
-    // Color & Light
-    lightness->setDefault((double)defSpot->lightness);
-    contrast->setDefault((double)defSpot->contrast);
-    chroma->setDefault((double)defSpot->chroma);
-    sensi->setDefault((double)defSpot->sensi);
-    // Exposure
-    expcomp->setDefault((double)defSpot->expcomp);
-    hlcompr->setDefault((double)defSpot->hlcompr);
-    hlcomprthresh->setDefault((double)defSpot->hlcomprthresh);
-    black->setDefault((double)defSpot->black);
-    shcompr->setDefault((double)defSpot->shcompr);
-    warm->setDefault((double)defSpot->warm);
-    sensiex->setDefault((double)defSpot->sensiex);
-    // Vibrance
-    saturated->setDefault((double)defSpot->saturated);
-    pastels->setDefault((double)defSpot->pastels);
-    psThreshold->setDefault<int>(defSpot->psthreshold);
-    sensiv->setDefault((double)defSpot->sensiv);
-    // Blur & Noise
-    radius->setDefault((double)defSpot->radius);
-    strength->setDefault((double)defSpot->strength);
-    sensibn->setDefault((double)defSpot->sensibn);
-    // Tone Mapping
-    stren->setDefault((double)defSpot->stren);
-    gamma->setDefault((double)defSpot->gamma);
-    estop->setDefault((double)defSpot->estop);
-    scaltm->setDefault((double)defSpot->scaltm);
-    rewei->setDefault((double)defSpot->rewei);
-    sensitm->setDefault((double)defSpot->sensitm);
-    // Retinex
-    str->setDefault((double)defSpot->str);
-    chrrt->setDefault((double)defSpot->chrrt);
-    neigh->setDefault((double)defSpot->neigh);
-    vart->setDefault((double)defSpot->vart);
-    sensih->setDefault((double)defSpot->sensih);
-    // Sharpening
-    sharradius->setDefault((double)defSpot->sharradius);
-    sharamount->setDefault((double)defSpot->sharamount);
-    shardamping->setDefault((double)defSpot->shardamping);
-    shariter->setDefault((double)defSpot->shariter);
-    sensisha->setDefault((double)defSpot->sensisha);
-    // Contrast by detail levels
-    for (int i = 0; i < 5; i++) {
-        multiplier[i]->setDefault(defSpot->mult[i]);
-    }
-    chromacbdl->setDefault((double)defSpot->chromacbdl);
-    threshold->setDefault(defSpot->threshold);
-    sensicb->setDefault((double)defSpot->sensicb);
-    // Denoise
-    noiselumf->setDefault((double)defSpot->noiselumf);
-    noiselumc->setDefault((double)defSpot->noiselumc);
-    noiselumdetail->setDefault((double)defSpot->noiselumdetail);
-    noiselequal->setDefault((double)defSpot->noiselequal);
-    noisechrof->setDefault((double)defSpot->noisechrof);
-    noisechroc->setDefault((double)defSpot->noisechroc);
-    noisechrodetail->setDefault((double)defSpot->noisechrodetail);
-    adjblur->setDefault((double)defSpot->adjblur);
-    bilateral->setDefault((double)defSpot->bilateral);
-    sensiden->setDefault((double)defSpot->sensiden);
-}
-*/
-
 void Locallab::setParamEditable(bool cond)
 {
-    printf("setParamEditable: %d\n", cond);
+    // printf("setParamEditable: %d\n", cond);
 
     // Update params editable state for controlspotpanel
     expsettings->setParamEditable(cond);
@@ -2227,8 +1980,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, co
 
 void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited, int id)
 {
-    printf("setDefaults\n");
-    printf("defparams: %p\n", defparams);
+    // printf("setDefaults\n");
 
     // Set default values and edited states for controlspotpanel
     expsettings->setDefaults(defParams, pedited, id);
@@ -2443,7 +2195,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
 
 void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
 {
-    printf("adjusterChangedTS\n");
+    // printf("adjusterChangedTS\n");
 
     if (getEnabled() && expvibrance->getEnabled()) {
         if (listener) {
@@ -2454,7 +2206,7 @@ void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
 
 void Locallab::adjusterChanged(Adjuster * a, double newval)
 {
-    printf("adjusterChanged\n");
+    // printf("adjusterChanged\n");
 
     // Color & Light
     if (getEnabled() && expcolor->getEnabled()) {
@@ -2800,7 +2552,7 @@ void Locallab::enabledChanged()
 
 void Locallab::avoidChanged()
 {
-    printf("avoidChanged\n");
+    // printf("avoidChanged\n");
 
     if (multiImage) {
         if (avoid->get_inconsistent()) {
@@ -2822,81 +2574,14 @@ void Locallab::avoidChanged()
     }
 }
 
-// TODO
 void Locallab::trimValues(rtengine::procparams::ProcParams * pp)
 {
-    /*
-    degree->trimValue(pp->locallab.degree);
-    locY->trimValue(pp->locallab.locY);
-    locX->trimValue(pp->locallab.locX);
-    locYT->trimValue(pp->locallab.locYT);
-    locXL->trimValue(pp->locallab.locXL);
-    centerX->trimValue(pp->locallab.centerX);
-    centerY->trimValue(pp->locallab.centerY);
-    circrad->trimValue(pp->locallab.circrad);
-    adjblur->trimValue(pp->locallab.adjblur);
-    thres->trimValue(pp->locallab.thres);
-    proxi->trimValue(pp->locallab.proxi);
-    lightness->trimValue(pp->locallab.lightness);
-    contrast->trimValue(pp->locallab.contrast);
-    chroma->trimValue(pp->locallab.chroma);
-    warm->trimValue(pp->locallab.warm);
-    expcomp->trimValue(pp->locallab.expcomp);
-    hlcompr->trimValue(pp->locallab.hlcompr);
-    hlcomprthresh->trimValue(pp->locallab.hlcomprthresh);
-    black->trimValue(pp->locallab.black);
-    shcompr->trimValue(pp->locallab.shcompr);
-    noiselumf->trimValue(pp->locallab.noiselumf);
-    noiselumc->trimValue(pp->locallab.noiselumc);
-    noiselumdetail->trimValue(pp->locallab.noiselumdetail);
-    noiselequal->trimValue(pp->locallab.noiselequal);
-    noisechrodetail->trimValue(pp->locallab.noisechrodetail);
-    bilateral->trimValue(pp->locallab.bilateral);
-    sensiden->trimValue(pp->locallab.sensiden);
-    noisechrof->trimValue(pp->locallab.noisechrof);
-    noisechroc->trimValue(pp->locallab.noisechroc);
-    sharradius->trimValue(pp->locallab.sharradius);
-    sharamount->trimValue(pp->locallab.sharamount);
-    shardamping->trimValue(pp->locallab.shardamping);
-    shariter->trimValue(pp->locallab.shariter);
-    sensisha->trimValue(pp->locallab.sensisha);
-    sensi->trimValue(pp->locallab.sensi);
-    sensiex->trimValue(pp->locallab.sensiex);
-    sensih->trimValue(pp->locallab.sensih);
-    sensiexclu->trimValue(pp->locallab.sensiexclu);
-    struc->trimValue(pp->locallab.struc);
-    sensicb->trimValue(pp->locallab.sensicb);
-    sensibn->trimValue(pp->locallab.sensibn);
-    sensitm->trimValue(pp->locallab.sensitm);
-    radius->trimValue(pp->locallab.radius);
-    strength->trimValue(pp->locallab.strength);
-    stren->trimValue(pp->locallab.stren);
-    gamma->trimValue(pp->locallab.gamma);
-    estop->trimValue(pp->locallab.estop);
-    scaltm->trimValue(pp->locallab.scaltm);
-    rewei->trimValue(pp->locallab.rewei);
-    transit->trimValue(pp->locallab.transit);
-    str->trimValue(pp->locallab.str);
-    neigh->trimValue(pp->locallab.neigh);
-    vart->trimValue(pp->locallab.vart);
-    chrrt->trimValue(pp->locallab.chrrt);
-
-    for (int i = 0; i < 5; i++) {
-        multiplier[i]->trimValue(pp->locallab.mult[i]);
-    }
-
-    chromacbdl->trimValue(pp->locallab.chromacbdl);
-
-    threshold->trimValue(pp->locallab.threshold);
-    pastels->trimValue(pp->locallab.pastels);
-    saturated->trimValue(pp->locallab.saturated);
-    sensiv->trimValue(pp->locallab.sensiv);
-     */
+    // TODO
 }
 
 void Locallab::setBatchMode(bool batchMode)
 {
-    printf("BatchMode : %d\n", batchMode);
+    // printf("BatchMode : %d\n", batchMode);
 
     ToolPanel::setBatchMode(batchMode);
 
@@ -3023,9 +2708,6 @@ std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
     return points;
 }
 
-
-
-
 void Locallab::setEditProvider(EditDataProvider * provider)
 {
     expsettings->setEditProvider(provider);
@@ -3091,7 +2773,7 @@ void Locallab::setListener(ToolPanelListener* tpl)
 
 void Locallab::enableListener()
 {
-    printf("enableListener\n");
+    // printf("enableListener\n");
 
     FoldableToolPanel::enableListener();
     // Color & Light
@@ -3128,7 +2810,7 @@ void Locallab::enableListener()
 
 void Locallab::disableListener()
 {
-    printf("disableListener\n");
+    // printf("disableListener\n");
 
     FoldableToolPanel::disableListener();
     // Color & Light
@@ -3165,7 +2847,7 @@ void Locallab::disableListener()
 
 void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index)
 {
-    printf("updateLocallabGUI\n");
+    // printf("updateLocallabGUI\n");
 
     // Update GUI values
     if (index < pp->locallab.nbspot && index < (int)pp->locallab.spots.size()) {
@@ -3518,7 +3200,7 @@ void Locallab::updateSpecificGUIState()
 
 void Locallab::autoOpenCurve()
 {
-    printf("autoOpenCurve\n");
+    // printf("autoOpenCurve\n");
 
     // TODO autoOpenCurve only considers linearity state of selected spot curve
     llshape->openIfNonlinear();
