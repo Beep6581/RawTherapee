@@ -30,8 +30,8 @@ int RTScalable::scale = 0;
 
 extern Glib::ustring argv0;
 extern Options options;
+extern unsigned char initialGdkScale;
 extern float fontScale;
-extern unsigned char scale;
 Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;
 
 void RTScalable::setDPInScale (const double newDPI, const int newScale)
@@ -41,8 +41,15 @@ void RTScalable::setDPInScale (const double newDPI, const int newScale)
         scale = newScale;
         // HOMBRE: On windows, if scale = 2, the dpi is non significant, i.e. should be considered = 192 ; don't know for linux/macos
         dpi = newDPI;
-        if (scale == 2 && newDPI < 192) {
-            dpi *= 2;
+        if (scale == 1) {
+            if (dpi >= 192.) {
+                scale = 2;
+            }
+        }
+        else if (scale == 2) {
+            if (dpi < 192.) {
+                dpi *= 2.;
+            }
         }
         //printf("RTScalable::setDPInScale  /  New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTScalable\n", scale, dpi, newDPI);
     }
@@ -70,7 +77,11 @@ Gtk::TextDirection RTScalable::getDirection()
 
 void RTScalable::init(Gtk::Window *window)
 {
-    setDPInScale(window->get_screen()->get_resolution(), ::scale);
+    dpi = 0.;
+    scale = 0;
+
+    printf("RTScalable::init / setDPInScale(scale:%d, DPI:%.3f)\n", rtengine::max((int)initialGdkScale, window->get_scale_factor()), window->get_screen()->get_resolution());
+    setDPInScale(window->get_screen()->get_resolution(), rtengine::max((int)initialGdkScale, window->get_scale_factor()));
     direction = window->get_direction();
 }
 
