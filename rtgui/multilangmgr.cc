@@ -209,6 +209,27 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 {
     Glib::ustring langName ("default");
 
+#if defined (WIN32)
+
+    const LCID localeID = GetUserDefaultLCID ();
+    TCHAR localeName[18];
+
+    const int langLen = GetLocaleInfo (localeID, LOCALE_SISO639LANGNAME, localeName, 9);
+    if (langLen <= 0) {
+        return langName;
+    }
+
+    localeName[langLen - 1] = '-';
+
+    const int countryLen = GetLocaleInfo (localeID, LOCALE_SISO3166CTRYNAME, &localeName[langLen], 9);
+    if (countryLen <= 0) {
+        return langName;
+    }
+
+    langName = localeToLang (localeName);
+
+#elif defined (__linux__) || defined (__APPLE__)
+
     // Query the current locale and force decimal point to dot.
     const char *locale = getenv("LANG");
     if (locale || (locale = setlocale (LC_CTYPE, ""))) {
@@ -216,6 +237,8 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
     }
 
     setlocale (LC_NUMERIC, "C");
+
+#endif
 
     return langName;
 }
