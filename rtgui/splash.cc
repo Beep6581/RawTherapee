@@ -76,12 +76,12 @@ Gtk::SizeRequestMode SplashImage::get_request_mode_vfunc () const
 
 void SplashImage::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height = natural_height = surface ? surface->get_height() : 100;
+    minimum_height = natural_height = surface ? surface->get_height() : 100 * RTScalable::getScale();
 }
 
 void SplashImage::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = surface ? surface->get_width() : 100;
+    minimum_width = natural_width = surface ? surface->get_width() : 100 * RTScalable::getScale();
 }
 
 void SplashImage::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const

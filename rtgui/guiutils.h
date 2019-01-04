@@ -287,6 +287,7 @@ class MyScrolledWindow : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int& minimum_width, int& natural_width) const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
 
@@ -301,7 +302,7 @@ class MyScrolledToolbar : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event) override;
-    void get_preferred_height (int &minimumHeight, int &naturalHeight);
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
 
 public:
     MyScrolledToolbar();

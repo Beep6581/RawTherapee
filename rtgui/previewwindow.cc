@@ -152,6 +152,7 @@ bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         int x, y, w, h;
         getObservedFrameArea (x, y, w, h);
         if (x>imgX || y>imgY || w < imgW || h < imgH) {
+            double s = RTScalable::getScale();
             double rectX = x + 0.5;
             double rectY = y + 0.5;
             double rectW = std::min(w, (int)(imgW - (x - imgX) - 1));
@@ -159,9 +160,9 @@ bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 
             // draw a black "shadow" line
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.65);
-            cr->set_line_width (1.);
+            cr->set_line_width (1. * s);
             cr->set_line_join(Cairo::LINE_JOIN_MITER);
-            cr->rectangle (rectX + 1., rectY + 1, rectW, rectH);
+            cr->rectangle (rectX + 1. * s, rectY + 1. * s, rectW - 2. * s, rectH - 2. * s);
             cr->stroke ();
 
             // draw a "frame" line. Color of frame line can be set in preferences
@@ -302,14 +303,14 @@ Gtk::SizeRequestMode PreviewWindow::get_request_mode_vfunc () const
 
 void PreviewWindow::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height= 50;
-    natural_height = 100;
+    minimum_height= 50 * RTScalable::getScale();
+    natural_height = 100 * RTScalable::getScale();
 }
 
 void PreviewWindow::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 80;
-    natural_width = 120;
+    minimum_width = 80 * RTScalable::getScale();
+    natural_width = 120 * RTScalable::getScale();
 }
 
 void PreviewWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
