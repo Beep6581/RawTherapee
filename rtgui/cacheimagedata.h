@@ -87,30 +87,30 @@ public:
     // FramesMetaData interface
     //-------------------------------------------------------------------------
 
-    unsigned int getRootCount () const { return -1; }
-    unsigned int getFrameCount () const { return frameCount; }
-    bool hasExif (unsigned int frame = 0) const  { return false; }
-    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const { return nullptr; }
-    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const { return nullptr; }
-    rtexif::TagDirectory* getBestExifData (rtengine::ImageSource *imgSource, rtengine::procparams::RAWParams *rawParams) const { return nullptr; }
-    bool hasIPTC (unsigned int frame = 0) const { return false; }
-    rtengine::procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const { return rtengine::procparams::IPTCPairs(); }
-    tm getDateTime (unsigned int frame = 0) const { return tm{}; }
-    time_t getDateTimeAsTS(unsigned int frame = 0) const { return time_t(-1); }
-    int getISOSpeed (unsigned int frame = 0) const { return iso; }
-    double getFNumber  (unsigned int frame = 0) const { return fnumber; }
-    double getFocalLen (unsigned int frame = 0) const { return focalLen; }
-    double getFocalLen35mm (unsigned int frame = 0) const { return focalLen35mm; }
-    float getFocusDist (unsigned int frame = 0) const { return focusDist; }
-    double getShutterSpeed (unsigned int frame = 0) const { return shutter; }
-    double getExpComp (unsigned int frame = 0) const { return atof(expcomp.c_str()); }
-    std::string getMake     (unsigned int frame = 0) const { return camMake; }
-    std::string getModel    (unsigned int frame = 0) const { return camModel; }
-    std::string getLens     (unsigned int frame = 0) const { return lens; }
-    std::string getOrientation (unsigned int frame = 0) const { return ""; } // TODO
-    bool getPixelShift () const { return isPixelShift; }
-    bool getHDR (unsigned int frame = 0) const { return isHDR; }
-    std::string getImageType (unsigned int frame) const { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
-    rtengine::IIOSampleFormat getSampleFormat (unsigned int frame = 0) const { return sampleFormat; }
+    unsigned int getRootCount () const override { return -1; }
+    unsigned int getFrameCount () const override { return frameCount; }
+    bool hasExif (unsigned int frame = 0) const override  { return false; }
+    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const override { return nullptr; }
+    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const override { return nullptr; }
+    rtexif::TagDirectory* getBestExifData (rtengine::ImageSource *imgSource, rtengine::procparams::RAWParams *rawParams) const override { return nullptr; }
+    bool hasIPTC (unsigned int frame = 0) const override { return false; }
+    rtengine::procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const override { return rtengine::procparams::IPTCPairs(); }
+    tm getDateTime (unsigned int frame = 0) const override { return tm{}; }
+    time_t getDateTimeAsTS(unsigned int frame = 0) const override { return time_t(-1); }
+    int getISOSpeed (unsigned int frame = 0) const override { return iso; }
+    double getFNumber  (unsigned int frame = 0) const override { return fnumber; }
+    double getFocalLen (unsigned int frame = 0) const override { return focalLen; }
+    double getFocalLen35mm (unsigned int frame = 0) const override { return focalLen35mm; }
+    float getFocusDist (unsigned int frame = 0) const override { return focusDist; }
+    double getShutterSpeed (unsigned int frame = 0) const override { return shutter; }
+    double getExpComp (unsigned int frame = 0) const override { return atof(expcomp.c_str()); }
+    std::string getMake     (unsigned int frame = 0) const override { return camMake; }
+    std::string getModel    (unsigned int frame = 0) const override { return camModel; }
+    std::string getLens     (unsigned int frame = 0) const override { return lens; }
+    std::string getOrientation (unsigned int frame = 0) const override { return ""; } // TODO
+    bool getPixelShift () const override { return isPixelShift; }
+    bool getHDR (unsigned int frame = 0) const override { return isHDR; }
+    std::string getImageType (unsigned int frame) const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
+    rtengine::IIOSampleFormat getSampleFormat (unsigned int frame = 0) const override { return sampleFormat; }
 };
 #endif

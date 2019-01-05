@@ -140,19 +140,15 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
 
-    Gtk::ComboBoxText* theme;
-    Gtk::FontButton* fontButton;
-    Gtk::FontButton* colorPickerFontButton;
-    Gtk::ColorButton* butCropCol;
-    Gtk::ColorButton* butNavGuideCol;
+    Gtk::ComboBoxText* themeCBT;
+    Gtk::FontButton* mainFontFB;
+    Gtk::FontButton* colorPickerFontFB;
+    Gtk::ColorButton* cropMaskColorCB;
+    Gtk::ColorButton* navGuideColorCB;
 
-    Gtk::SpinButton*   maxThumbSize;
-    Gtk::SpinButton*   maxCacheEntries;
     Gtk::SpinButton*   maxRecentFolders;
-    Gtk::Button*       clearThumbnails;
-    Gtk::Button*       clearProfiles;
-    Gtk::Button*       clearmip;
-    Gtk::Button*       clearAll;
+    Gtk::SpinButton*   maxThumbHeightSB;
+    Gtk::SpinButton*   maxCacheEntriesSB;
     Gtk::Entry*     extension;
     Gtk::TreeView*  extensions;
     Gtk::Button*    addExt;
@@ -204,8 +200,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
     DynamicProfilePanel *dynProfilePanel;
 
-    Gtk::ComboBoxText *cropGuides;
-    Gtk::CheckButton *cropAutoFit;
+    Gtk::ComboBoxText *cropGuidesCombo;
+    Gtk::CheckButton *cropAutoFitCB;
 
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
@@ -262,7 +258,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
 public:
     explicit Preferences (RTWindow *rtwindow);
-    ~Preferences ();
+    ~Preferences () override;
 
     void savePressed ();
     void loadPressed ();
@@ -282,7 +278,6 @@ public:
     void darkFrameChanged ();
     void flatFieldChanged ();
     void clearProfilesPressed ();
-    void clearmipPressed ();
     void clearThumbImagesPressed ();
     void clearAllPressed ();
 
@@ -293,9 +288,9 @@ public:
     void behAddAllPressed ();
     void behSetAllPressed ();
 
-    virtual void storeCurrentValue();
-    virtual void updateProfileList();
-    virtual void restoreValue();
+    void storeCurrentValue() override;
+    void updateProfileList() override;
+    void restoreValue() override;
 
 //    void selectICCProfileDir ();
 //    void selectMonitorProfile ();

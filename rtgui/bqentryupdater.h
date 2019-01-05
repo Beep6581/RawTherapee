@@ -28,8 +28,8 @@ class BQEntryUpdateListener
 {
 
 public:
-    virtual ~BQEntryUpdateListener () {}
-    virtual void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) {}
+    virtual ~BQEntryUpdateListener() = default;
+    virtual void updateImage(guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) = 0;
 };
 
 class BatchQueueEntryUpdater

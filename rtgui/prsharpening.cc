@@ -37,7 +37,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
-    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 0));
+    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 15));
     contrast->setAdjusterListener (this);
     pack_start(*contrast);
     contrast->show();
@@ -314,7 +314,6 @@ void PrSharpening::setDefaults (const ProcParams* defParams, const ParamsEdited*
 
 void PrSharpening::adjusterChanged (Adjuster* a, double newval)
 {
-
     if (listener && (multiImage || getEnabled()) ) {
 
         Glib::ustring costr;
@@ -351,9 +350,12 @@ void PrSharpening::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
+void PrSharpening::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+
 void PrSharpening::enabledChanged ()
 {
-
     if (listener) {
         if (get_inconsistent()) {
             listener->panelChanged (EvPrShrEnabled, M("GENERAL_UNCHANGED"));
@@ -455,13 +457,29 @@ void PrSharpening::method_changed ()
 
 }
 
-void PrSharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+void PrSharpening::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
+void PrSharpening::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+}
+
+void PrSharpening::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
+{
+}
+
+void PrSharpening::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
 {
     if (listener && (multiImage || getEnabled()) ) {
         if(a == threshold) {
             listener->panelChanged (EvPrShrThresh, threshold->getHistoryString());
         }
     }
+}
+
+void PrSharpening::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
 }
 
 void PrSharpening::setBatchMode (bool batchMode)

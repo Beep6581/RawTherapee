@@ -96,24 +96,25 @@ protected:
 
 public:
     Retinex   ();
-    ~Retinex  ();
+    ~Retinex  () override;
 
-    void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode          (bool batchMode);
-    void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void trimValues            (rtengine::procparams::ProcParams* pp);
-    void adjusterChanged       (Adjuster* a, double newval);
-    void autoOpenCurve         ();
+    void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode          (bool batchMode) override;
+    void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void trimValues            (rtengine::procparams::ProcParams* pp) override;
+    void adjusterChanged       (Adjuster* a, double newval) override;
+    void adjusterAutoToggled   (Adjuster* a, bool newval) override;
+    void autoOpenCurve         () override;
     void medianmapChanged        ();
-    void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax);
+    void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;
     bool minmaxComputed_ ();
     void updateLabel      ();
     void updateTrans      ();
     void neutral_pressed       ();
 
-    void enabledChanged        ();
-    void curveChanged          (CurveEditor* ce);
+    void enabledChanged        () override;
+    void curveChanged          (CurveEditor* ce) override;
     void retinexMethodChanged();
     void mapMethodChanged();
     void viewMethodChanged();
@@ -123,9 +124,20 @@ public:
     void writeOptions (std::vector<int> &tpOpen);
     void updateToolState (std::vector<int> &tpOpen);
     void setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd);
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    void updateCurveBackgroundHistogram(
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histLRETI
+    );
 
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
 private:
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);

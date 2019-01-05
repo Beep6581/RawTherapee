@@ -26,8 +26,6 @@
 #include <glibmm.h>
 #include <lcms2.h>
 
-#include "coord.h"
-#include "LUT.h"
 #include "noncopyable.h"
 
 class ParamsEdited;
@@ -465,6 +463,27 @@ struct ColorToningParams {
     static const double LABGRID_CORR_MAX;
     static const double LABGRID_CORR_SCALE;
 
+    struct LabCorrectionRegion {
+        enum { CHAN_ALL = -1, CHAN_R, CHAN_G, CHAN_B };
+        double a;
+        double b;
+        double saturation;
+        double slope;
+        double offset;
+        double power;
+        std::vector<double> hueMask;
+        std::vector<double> chromaticityMask;
+        std::vector<double> lightnessMask;
+        double maskBlur;
+        int channel;
+
+        LabCorrectionRegion();
+        bool operator==(const LabCorrectionRegion &other) const;
+        bool operator!=(const LabCorrectionRegion &other) const;
+    };
+    std::vector<LabCorrectionRegion> labregions;
+    int labregionsShowMask;
+    
     ColorToningParams();
 
     bool operator ==(const ColorToningParams& other) const;
@@ -485,6 +504,7 @@ struct ColorToningParams {
 struct SharpeningParams {
     bool           enabled;
     double         contrast;
+    double         blurradius;
     double         radius;
     int            amount;
     Threshold<int> threshold;
@@ -762,6 +782,7 @@ struct SHParams {
     int     shadows;
     int     stonalwidth;
     int     radius;
+    bool    lab;
 
     SHParams();
 
@@ -924,7 +945,7 @@ struct LocallabParams {
         int centerX;
         int centerY;
         int circrad;
-        Glib::ustring qualityMethod; // std, enh, enhden
+        Glib::ustring qualityMethod; // none, std, enh, enhsup, contr, sob2
         int transit;
         int thresh;
         int iter;
@@ -961,6 +982,13 @@ struct LocallabParams {
         bool pastsattog;
         int sensiv;
         std::vector<double> skintonescurve;
+        // Soft Light
+        bool expsoft;
+        int streng;
+        int sensisf;
+        // Lab Region
+        bool explabregion;
+        // ColorToningParams::LabCorrectionRegion Labcorr;
         // Blur & Noise
         bool expblur;
         int radius;
@@ -983,17 +1011,27 @@ struct LocallabParams {
         int chrrt;
         int neigh;
         int vart;
+        int dehaz;
         int sensih;
         std::vector<double> localTgaincurve;
         bool inversret;
         // Sharpening
         bool expsharp;
+        int sharcontrast;
         int sharradius;
         int sharamount;
         int shardamping;
         int shariter;
+        int sharblur;
         int sensisha;
         bool inverssha;
+        // Local Contrast
+        bool expcontrast;
+        int lcradius;
+        int lcamount;
+        int lcdarkness;
+        int lclightness;
+        int sensilc;
         // Contrast by detail levels
         bool expcbdl;
         double mult[5];
@@ -1368,6 +1406,19 @@ struct SoftLightParams {
 };
 
 
+struct DehazeParams {
+    bool enabled;
+    int strength;
+    bool showDepthMap;
+    int depth;
+
+    DehazeParams();
+
+    bool operator==(const DehazeParams &other) const;
+    bool operator!=(const DehazeParams &other) const;
+};
+
+
 /**
   * Parameters for RAW demosaicing, common to all sensor type
   */
@@ -1427,6 +1478,7 @@ struct RAWParams {
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
+        bool dualDemosaicAutoContrast;
         double dualDemosaicContrast;
         PSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
         double pixelShiftEperIso;
@@ -1474,6 +1526,7 @@ struct RAWParams {
         };
 
         Glib::ustring method;
+        bool dualDemosaicAutoContrast;
         double dualDemosaicContrast;
         int ccSteps;
         double blackred;
@@ -1580,6 +1633,7 @@ public:
     HSVEqualizerParams      hsvequalizer;    ///< hsv wavelet parameters
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
     SoftLightParams         softlight;       ///< softlight parameters
+    DehazeParams            dehaze;          ///< dehaze parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image

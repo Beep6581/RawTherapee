@@ -160,12 +160,6 @@ void History::initHistory ()
     bookmarkModel->clear ();
 }
 
-void History::clearParamChanges ()
-{
-
-    initHistory ();
-}
-
 void History::historySelectionChanged ()
 {
 
@@ -225,9 +219,13 @@ void History::bookmarkSelectionChanged ()
     }
 }
 
-void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited)
+void History::procParamsChanged(
+    const ProcParams* params,
+    const ProcEvent& ev,
+    const Glib::ustring& descr,
+    const ParamsEdited* paramsEdited
+)
 {
-
     // to prevent recursion, we filter out the events triggered by the history and events that should not be registered
     if (ev == EvHistoryBrowsed || ev == EvMonitorTransform || descr == "")  {
         return;
@@ -309,6 +307,11 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
 
     selchangehist.block (false);
     selchangebm.block (false);
+}
+
+void History::clearParamChanges ()
+{
+    initHistory ();
 }
 
 void History::addBookmarkWithText (Glib::ustring text)

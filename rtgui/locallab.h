@@ -41,19 +41,22 @@ class Locallab :
     public ThresholdAdjusterListener
 
 {
-private:
+private: 
     // Expander widgets
     ControlSpotPanel* const expsettings;
     MyExpander* const expcolor;
     MyExpander* const expexpose;
     MyExpander* const expvibrance;
+    MyExpander* const expsoft;
+    MyExpander* const explabregion;
     MyExpander* const expblur;
     MyExpander* const exptonemap;
     MyExpander* const expreti;
     MyExpander* const expsharp;
+    MyExpander* const expcontrast;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
-    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecbdlConn, enabledenoiConn;
+    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enablesoftConn, enablelabregionConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
     // Color & Light
@@ -90,6 +93,9 @@ private:
     Adjuster* const saturated;
     Adjuster* const pastels;
     Adjuster* const sensiv;
+    // Soft Light
+    Adjuster* const streng;
+    Adjuster* const sensisf;
     // Blur & Noise
     Adjuster* const radius;
     Adjuster* const strength;
@@ -106,13 +112,22 @@ private:
     Adjuster* const chrrt;
     Adjuster* const neigh;
     Adjuster* const vart;
+    Adjuster* const dehaz;    
     Adjuster* const sensih;
     // Sharpening
+    Adjuster* const sharcontrast;
     Adjuster* const sharradius;
     Adjuster* const sharamount;
     Adjuster* const shardamping;
     Adjuster* const shariter;
+    Adjuster* const sharblur;
     Adjuster* const sensisha;
+    // Local Contrast
+    Adjuster* const lcradius;
+    Adjuster* const lcamount;
+    Adjuster* const lcdarkness;
+    Adjuster* const lclightness;
+    Adjuster* const sensilc;
     // Contrast by detail levels
     Adjuster* multiplier[5];
     Adjuster* const chromacbdl;
@@ -231,6 +246,44 @@ private:
     void updateSpecificGUIState();
     void setParamEditable(bool cond);
 
+/*
+    void onLabRegionSelectionChanged();
+    void labRegionAddPressed();
+    void labRegionRemovePressed();
+    void labRegionUpPressed();
+    void labRegionDownPressed();
+    void labRegionCopyPressed();
+    void labRegionShowMaskChanged();
+    void labRegionChannelChanged();
+    void labRegionPopulateList();
+    void labRegionShow(int idx, bool list_only=false);
+    void labRegionGet(int idx);
+
+    Gtk::VBox *labRegionBox;
+    Gtk::ListViewText *labRegionList;
+    Gtk::Button *labRegionAdd;
+    Gtk::Button *labRegionRemove;
+    Gtk::Button *labRegionUp;
+    Gtk::Button *labRegionDown;
+    Gtk::Button *labRegionCopy;
+    LabGrid *labRegionAB;
+    Adjuster *labRegionSaturation;
+    */
+ //   Adjuster *labRegionSlope;
+    /*
+    Adjuster *labRegionOffset;
+    Adjuster *labRegionPower;
+    MyComboBoxText *labRegionChannel;
+    FlatCurveEditor *labRegionHueMask;
+    FlatCurveEditor *labRegionChromaticityMask;
+    FlatCurveEditor *labRegionLightnessMask;
+    Adjuster *labRegionMaskBlur;
+    Gtk::CheckButton *labRegionShowMask;
+    std::vector<rtengine::ColorToningParams::LabCorrectionRegion> labRegionData;
+    int labRegionSelected;
+    sigc::connection labRegionSelectionConn;
+*/
+
 public:
     Locallab();
     ~Locallab();
@@ -264,9 +317,14 @@ public:
 
     // Adjuster event function
     void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
 
     // ThresholdAdjuster event functions
     virtual void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
     std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
 };

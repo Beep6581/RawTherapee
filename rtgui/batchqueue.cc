@@ -39,6 +39,27 @@
 using namespace std;
 using namespace rtengine;
 
+namespace
+{
+
+struct NLParams {
+    BatchQueueListener* listener;
+    int qsize;
+    bool queueRunning;
+    bool queueError;
+    Glib::ustring queueErrorMessage;
+};
+
+int bqnotifylistenerUI (void* data)
+{
+    NLParams* params = static_cast<NLParams*>(data);
+    params->listener->queueSizeChanged (params->qsize, params->queueRunning, params->queueError, params->queueErrorMessage);
+    delete params;
+    return 0;
+}
+
+}
+
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
 {
 
@@ -208,7 +229,7 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
         saveBatchQueue ();
 
     redraw ();
-    notifyListener (false);
+    notifyListener ();
 }
 
 bool BatchQueue::saveBatchQueue ()
@@ -366,7 +387,7 @@ bool BatchQueue::loadBatchQueue ()
     }
 
     redraw ();
-    notifyListener (false);
+    notifyListener ();
 
     return !fd.empty ();
 }
@@ -439,7 +460,7 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
     saveBatchQueue ();
 
     redraw ();
-    notifyListener (false);
+    notifyListener ();
 }
 
 void BatchQueue::headItems (const std::vector<ThumbBrowserEntryBase*>& items)
@@ -576,13 +597,60 @@ void BatchQueue::startProcessing ()
             // start batch processing
             rtengine::startBatchProcessing (next->job, this);
             queue_draw ();
+
+            notifyListener();
         }
     }
 }
 
-rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
+void BatchQueue::setProgress(double p)
 {
+    if (processing) {
+        processing->progress = p;
+    }
 
+    // No need to acquire the GUI, setProgressUI will do it
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<BatchQueue*>(data)->redraw();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
+}
+
+void BatchQueue::setProgressStr(const Glib::ustring& str)
+{
+}
+
+void BatchQueue::setProgressState(bool inProcessing)
+{
+}
+
+void BatchQueue::error(const Glib::ustring& descr)
+{
+    if (processing && processing->processing) {
+        // restore failed thumb
+        BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (processing);
+        bqbs->setButtonListener (this);
+        processing->addButtonSet (bqbs);
+        processing->processing = false;
+        processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, processing->params);
+        processing = nullptr;
+        redraw ();
+    }
+
+    if (listener) {
+        NLParams* params = new NLParams;
+        params->listener = listener;
+        params->queueRunning = false;
+        params->queueError = true;
+        params->queueErrorMessage = descr;
+        idle_register.add(bqnotifylistenerUI, params);
+    }
+}
+
+rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
+{
     // save image img
     Glib::ustring fname;
     SaveFormat saveFormat;
@@ -640,7 +708,6 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
     Glib::ustring processedParams = processing->savedParamsFile;
 
     // delete from the queue
-    bool queueEmptied = false;
     bool remove_button_set = false;
 
     {
@@ -652,9 +719,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
         fd.erase (fd.begin());
 
         // return next job
-        if (fd.empty()) {
-            queueEmptied = true;
-        } else if (listener && listener->canStartNext ()) {
+        if (!fd.empty() && listener && listener->canStartNext ()) {
             BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as selected and set sequence
             next->processing = true;
@@ -712,7 +777,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
     }
 
     redraw ();
-    notifyListener (queueEmptied);
+    notifyListener ();
 
     return processing ? processing->job : nullptr;
 }
@@ -892,22 +957,6 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     return "";
 }
 
-void BatchQueue::setProgress (double p)
-{
-
-    if (processing) {
-        processing->progress = p;
-    }
-
-    // No need to acquire the GUI, setProgressUI will do it
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<BatchQueue*>(data)->redraw();
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData)
 {
 
@@ -923,25 +972,9 @@ void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionDa
     }
 }
 
-struct NLParams {
-    BatchQueueListener* listener;
-    int qsize;
-    bool queueEmptied;
-    bool queueError;
-    Glib::ustring queueErrorMessage;
-};
-
-int bqnotifylistenerUI (void* data)
+void BatchQueue::notifyListener ()
 {
-    NLParams* params = static_cast<NLParams*>(data);
-    params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
-    delete params;
-    return 0;
-}
-
-void BatchQueue::notifyListener (bool queueEmptied)
-{
-
+    const bool queueRunning = processing;
     if (listener) {
         NLParams* params = new NLParams;
         params->listener = listener;
@@ -949,7 +982,7 @@ void BatchQueue::notifyListener (bool queueEmptied)
             MYREADERLOCK(l, entryRW);
             params->qsize = fd.size();
         }
-        params->queueEmptied = queueEmptied;
+        params->queueRunning = queueRunning;
         params->queueError = false;
         idle_register.add(bqnotifylistenerUI, params);
     }
@@ -959,28 +992,4 @@ void BatchQueue::redrawNeeded (LWButton* button)
 {
     GThreadLock lock;
     queue_draw ();
-}
-
-void BatchQueue::error (Glib::ustring msg)
-{
-
-    if (processing && processing->processing) {
-        // restore failed thumb
-        BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (processing);
-        bqbs->setButtonListener (this);
-        processing->addButtonSet (bqbs);
-        processing->processing = false;
-        processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, processing->params);
-        processing = nullptr;
-        redraw ();
-    }
-
-    if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
-        params->queueEmptied = false;
-        params->queueError = true;
-        params->queueErrorMessage = msg;
-        idle_register.add(bqnotifylistenerUI, params);
-    }
 }

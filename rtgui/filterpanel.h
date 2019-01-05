@@ -24,9 +24,9 @@
 
 class FilterPanelListener
 {
-
 public:
-    virtual void exifFilterChanged () {}
+    virtual ~FilterPanelListener() = default;
+    virtual void exifFilterChanged () = 0;
 };
 
 class FilterPanel : public Gtk::VBox

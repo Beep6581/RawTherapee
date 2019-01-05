@@ -178,6 +178,8 @@ public:
     bool labgridBLow;
     bool labgridAHigh;
     bool labgridBHigh;
+    bool labregions;
+    bool labregionsShowMask;
 };
 
 class SharpenEdgeParamsEdited
@@ -207,6 +209,7 @@ class SharpeningParamsEdited
 public:
     bool enabled;
     bool contrast;
+    bool blurradius;
     bool radius;
     bool amount;
     bool threshold;
@@ -402,12 +405,12 @@ class SHParamsEdited
 
 public:
     bool enabled;
-    bool hq;
     bool highlights;
     bool htonalwidth;
     bool shadows;
     bool stonalwidth;
     bool radius;
+    bool lab;
 };
 
 class CropParamsEdited
@@ -510,6 +513,12 @@ public:
         bool pastsattog;
         bool sensiv;
         bool skintonescurve;
+        // Soft Light
+        bool expsoft;
+        bool streng;
+        bool sensisf;
+        // Lab Region
+        bool explabregion;
         // Blur & Noise
         bool expblur;
         bool radius;
@@ -532,17 +541,27 @@ public:
         bool chrrt;
         bool neigh;
         bool vart;
+        bool dehaz;
         bool sensih;
         bool localTgaincurve;
         bool inversret;
         // Sharpening
         bool expsharp;
+        bool sharcontrast;
         bool sharradius;
         bool sharamount;
         bool shardamping;
         bool shariter;
+        bool sharblur;
         bool sensisha;
         bool inverssha;
+        // Local Contrast
+        bool expcontrast;
+        bool lcradius;
+        bool lcamount;
+        bool lcdarkness;
+        bool lclightness;
+        bool sensilc;
         // Contrast by detail levels
         bool expcbdl;
         bool mult[5];
@@ -845,6 +864,16 @@ public:
     bool strength;
 };
 
+class DehazeParamsEdited
+{
+public:
+    bool enabled;
+    bool strength;
+    bool showDepthMap;
+    bool depth;
+};
+
+
 class RAWParamsEdited
 {
 
@@ -865,6 +894,7 @@ public:
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
+        bool dualDemosaicAutoContrast;
         bool dualDemosaicContrast;
         bool pixelShiftMotionCorrectionMethod;
         bool pixelShiftEperIso;
@@ -895,6 +925,7 @@ public:
 
     public:
         bool method;
+        bool dualDemosaicAutoContrast;
         bool dualDemosaicContrast;
         bool ccSteps;
         bool exBlackRed;
@@ -987,6 +1018,7 @@ public:
     HSVEqualizerParamsEdited      hsvequalizer;
     FilmSimulationParamsEdited    filmSimulation;
     SoftLightParamsEdited         softlight;
+    DehazeParamsEdited            dehaze;
     MetaDataParamsEdited          metadata;
     bool                          exif;
     bool                          iptc;

@@ -46,10 +46,6 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
 {
     int lastlevel = maxlevel;
 
-    if (settings->verbose) {
-        printf("Dirpyr scaleprev=%i\n", scaleprev);
-    }
-
     float atten123 = (float) settings->level123_cbdl;
 
     if (atten123 > 50.f) {
@@ -105,10 +101,6 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
             }
         }
 
-    }
-
-    if (settings->verbose) {
-        printf("CbDL mult0=%f  1=%f 2=%f 3=%f 4=%f 5=%f\n", multi[0], multi[1], multi[2], multi[3], multi[4], multi[5]);
     }
 
     multi_array2D<float, maxlevel> dirpyrlo(srcwidth, srcheight);
@@ -193,7 +185,7 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
                 int j;
 
                 for (j = 0; j < srcwidth - 3; j += 4) {
-                    _mm_storeu_ps(&tmpChr[i][j], _mm_sqrt_ps(SQRV(LVFU(l_b[i][j])) + SQRV(LVFU(l_a[i][j]))) / div);
+                    _mm_storeu_ps(&tmpChr[i][j], vsqrtf(SQRV(LVFU(l_b[i][j])) + SQRV(LVFU(l_a[i][j]))) / div);
                 }
 
                 for (; j < srcwidth; j++) {

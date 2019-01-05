@@ -97,55 +97,6 @@ int findMatch(int val, const std::vector<int> &cdf, int j)
 }
 
 
-class CubicSplineCurve: public DiagonalCurve {
-public:
-    CubicSplineCurve(const std::vector<double> &points):
-        DiagonalCurve({DCT_Linear})
-    {
-        N = points.size() / 2;
-        x = new double[N];
-        y = new double[N];
-
-        for (int i = 0; i < N; ++i) {
-            x[i] = points[2*i];
-            y[i] = points[2*i+1];
-        }
-        kind = DCT_Spline;
-        spline_cubic_set();
-    }
-
-    double getVal(double t) const
-    {
-        // values under and over the first and last point
-        if (t > x[N - 1]) {
-            return y[N - 1];
-        } else if (t < x[0]) {
-            return y[0];
-        }
-
-        // do a binary search for the right interval:
-        unsigned int k_lo = 0, k_hi = N - 1;
-
-        while (k_hi > 1 + k_lo) {
-            unsigned int k = (k_hi + k_lo) / 2;
-
-            if (x[k] > t) {
-                k_hi = k;
-            } else {
-                k_lo = k;
-            }
-        }
-
-        double h = x[k_hi] - x[k_lo];
-
-        double a = (x[k_hi] - t) / h;
-        double b = (t - x[k_lo]) / h;
-        double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
-        return LIM01(r);
-    }
-};
-
-
 void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 {
     curve.clear();
@@ -216,14 +167,54 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 
     curve.push_back(1.0);
     curve.push_back(1.0);
+
+    // we assume we are matching an S-shaped curve, so try to avoid
+    // concavities in the upper part of the S
+    const auto getpos =
+        [](float x, float xa, float ya, float xb, float yb)
+        {
+            // line equation:
+            // (x - xa) / (xb - xa) = (y - ya) / (yb - ya)
+            return (x - xa) / (xb - xa) * (yb - ya) + ya;
+        };
+    idx = -1;
+    for (size_t i = curve.size()-1; i > 0; i -= 2) {
+        if (curve[i] <= 0.f) {
+            idx = i+1;
+            break;
+        }
+    }
+    if (idx >= 0 && size_t(idx) < curve.size()) {
+        // idx is the position of the first point in the upper part of the S
+        // for each 3 consecutive points (xa, ya), (x, y), (xb, yb) we check
+        // that y is above the point at x of the line between the other two
+        // if this is not the case, we remove (x, y) from the curve
+        while (size_t(idx+5) < curve.size()) {
+            float xa = curve[idx];
+            float ya = curve[idx+1];
+            float x = curve[idx+2];
+            float y = curve[idx+3];
+            float xb = curve[idx+4];
+            float yb = curve[idx+5];
+            float yy = getpos(x, xa, ya, xb, yb);
+            if (yy > y) {
+                // we have to remove (x, y) from the curve
+                curve.erase(curve.begin()+(idx+2), curve.begin()+(idx+4));
+            } else {
+                // move on to the next point
+                idx += 2;
+            }
+        }
+    }
         
     if (curve.size() < 4) {
         curve = { DCT_Linear }; // not enough points, fall back to linear
     } else {
-        CubicSplineCurve c(curve);
+        curve.insert(curve.begin(), DCT_Spline);
+        DiagonalCurve c(curve);
         double gap = 0.05;
         double x = 0.0;
-        curve = { DCT_Spline };
+        curve = { DCT_CatumullRom };
         while (x < 1.0) {
             curve.push_back(x);
             curve.push_back(c.getVal(x));

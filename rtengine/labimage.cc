@@ -101,7 +101,7 @@ void LabImage::deleteLab()
 void LabImage::reallocLab()
 {
     allocLab(W, H);
-};
+}
 
 void LabImage::clear(bool multiThread) {
 #ifdef _OPENMP

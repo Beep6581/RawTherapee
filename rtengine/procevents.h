@@ -618,6 +618,19 @@ enum ProcEventCode {
     Evlocallabbilateral = 588,
     Evlocallabsensiden = 589,
     Evlocallabavoid = 590,
+    Evlocallabsharcontrast = 591,
+    EvLocenacontrast = 592,
+    Evlocallablcradius = 593,
+    Evlocallablcamount = 594,
+    Evlocallablcdarkness = 595,
+    Evlocallablclightness = 596,
+    Evlocallabsensilc = 597,
+    Evlocallabdehaz = 598,
+    EvLocenasoft = 599,
+    Evlocallabstreng = 600,
+    Evlocallabsensisf = 601,
+    Evlocallabsharblur = 602,
+    EvLocenalabregion = 603,
     NUMOFEVENTS
 };
 

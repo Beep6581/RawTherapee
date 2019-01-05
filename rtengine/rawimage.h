@@ -121,13 +121,13 @@ public:
     {
         return image;
     }
-    float** compress_image(int frameNum, bool freeImage = true); // revert to compressed pixels format and release image data
+    float** compress_image(unsigned int frameNum, bool freeImage = true); // revert to compressed pixels format and release image data
     float** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
     unsigned prefilters;               // original filters saved ( used for 4 color processing )
-    unsigned int getFrameCount() const
-    {
-        return is_raw;
-    }
+    unsigned int getFrameCount() const { return is_raw; }
+
+    double getBaselineExposure() const { return RT_baseline_exposure; }
+ 
 protected:
     Glib::ustring filename; // complete filename
     int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif

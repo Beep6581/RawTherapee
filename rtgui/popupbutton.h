@@ -34,7 +34,7 @@ public:
     void set_sensitive (bool isSensitive=true);
 
 protected:
-    bool on_button_release_event (GdkEventButton* event);
+    bool on_button_release_event (GdkEventButton* event) override;
 
 private:
     bool nextOnClicked;

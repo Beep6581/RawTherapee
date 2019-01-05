@@ -127,7 +127,6 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
 
         Gtk::Grid *box = Gtk::manage (new Gtk::Grid());
         box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
-        box->set_column_spacing(3);
 
         setExpandAlignProperties(currAdjuster->label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         setExpandAlignProperties(currAdjuster->spinButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);

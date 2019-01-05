@@ -159,7 +159,7 @@ extern const Settings* settings;
 
 void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, int H, const SharpeningParams &sharpenParam)
 {
-    if (sharpenParam.deconvamount < 1) {
+    if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25f) {
         return;
     }
 BENCHFUN
@@ -176,11 +176,32 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(luminance, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.deconvamount / 100.0);
+    float contrast = sharpenParam.contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contrast, 1.f);
+    JaggedArray<float>* blurbuffer = nullptr;
 
+    if (sharpenParam.blurradius >= 0.25f) {
+        blurbuffer = new JaggedArray<float>(W, H);
+        JaggedArray<float> &blur = *blurbuffer;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(tmpI, blur, W, H, sharpenParam.blurradius);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], luminance[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
+    }
     const float damping = sharpenParam.deconvdamping / 5.0;
     const bool needdamp = sharpenParam.deconvdamping > 0;
     const double sigma = sharpenParam.deconvradius / scale;
+    const float amount = sharpenParam.deconvamount / 100.f;
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -204,13 +225,26 @@ BENCHFUN
 
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < W; ++j) {
-                luminance[i][j] = intp(blend[i][j], max(tmpI[i][j], 0.0f), luminance[i][j]);
+                luminance[i][j] = intp(blend[i][j] * amount, max(tmpI[i][j], 0.0f), luminance[i][j]);
+            }
+        }
+
+        if (sharpenParam.blurradius >= 0.25f) {
+            JaggedArray<float> &blur = *blurbuffer;
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    luminance[i][j] = intp(blend[i][j], luminance[i][j], max(blur[i][j], 0.0f));
+                }
             }
         }
     } // end parallel
+    delete blurbuffer;
 }
 
-void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo)
+void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast, double blurrad)
 {
     // BENCHFUN
 
@@ -232,16 +266,39 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
         }
     }
 
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    float contras = contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contras, 1.f);
+    JaggedArray<float> blur(W, H);
+    
+    if (blurrad >= 0.25) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(tmpI, blur, W, H, blurrad);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], luminance[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
+    }
+
     float damping = (float) damp / 5.0;
     bool needdamp = damp > 0;
     double sigma = radi / scale;
+    const float amount = (float) amo / 100.f;
 
     if (sigma < 0.26f) {
         sigma = 0.26f;
     }
 
     int itera = ite;
-    // printf("OK 2 damp=%f sigam=%f  iter=%i\n", damping, sigma, itera);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -260,8 +317,6 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
             gaussianBlur (tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
         } // end for
 
-        float p2 = (float) amo / 100.0;
-        float p1 = 1.0 - p2;
 
 #ifdef _OPENMP
         #pragma omp for
@@ -269,8 +324,20 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
 
         for (int i = 0; i < H; i++)
             for (int j = 0; j < W; j++) {
-                loctemp[i][j] = luminance[i][j] * p1 + max (tmpI[i][j], 0.0f) * p2;
+                loctemp[i][j] = intp(blend[i][j] * amount, max(tmpI[i][j], 0.0f), luminance[i][j]);
             }
+            
+        if (blurrad >= 0.25) {
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    loctemp[i][j] = intp(blend[i][j], loctemp[i][j], max(blur[i][j], 0.0f));
+                }
+            }
+        }
+            
     } // end parallel
 
     delete [] tmpI[0];
@@ -292,7 +359,8 @@ void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpen
     if(showMask) {
         // calculate contrast based blend factors to reduce sharpening in regions with low contrast
         JaggedArray<float> blend(W, H);
-        buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f, sharpenParam.method == "rld" ? sharpenParam.deconvamount / 100.0 : 1.f);
+        float contrast = sharpenParam.contrast / 100.f;
+        buildBlendMask(lab->L, blend, W, H, contrast, 1.f);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -326,7 +394,28 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(lab->L, blend, W, H, sharpenParam.contrast / 100.f);
+    float contrast = sharpenParam.contrast / 100.f;
+    buildBlendMask(lab->L, blend, W, H, contrast);
+
+    JaggedArray<float> blur(W, H);
+
+    if (sharpenParam.blurradius >= 0.25f) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(lab->L, blur, W, H, sharpenParam.blurradius);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], lab->L[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
+    }
+
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -389,6 +478,18 @@ BENCHFUN
 
         delete [] b3;
     }
+
+    if (sharpenParam.blurradius >= 0.25f) {
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                lab->L[i][j] = intp(blend[i][j], lab->L[i][j], max(blur[i][j], 0.0f));
+            }
+        }
+    }
+
 }
 
 // To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>
@@ -680,7 +781,8 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(luminance, blend, W, H, params->sharpenMicro.contrast / 100.f);
+    float contrast = params->sharpenMicro.contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contrast);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -889,7 +991,8 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
     if(showMask) {
         // calculate contrast based blend factors to reduce sharpening in regions with low contrast
         JaggedArray<float> blend(W, H);
-        buildBlendMask(ncie->sh_p, blend, W, H, params->sharpening.contrast / 100.f);
+        float contrast = params->sharpening.contrast / 100.f;
+        buildBlendMask(ncie->sh_p, blend, W, H, contrast);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -922,7 +1025,8 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(ncie->sh_p, blend, W, H, params->sharpening.contrast / 100.f);
+    float contrast = params->sharpening.contrast / 100.f;
+    buildBlendMask(ncie->sh_p, blend, W, H, contrast);
 
 #ifdef _OPENMP
     #pragma omp parallel

@@ -29,7 +29,6 @@ typedef enum IIO_Sample_Format {
     //IIOSF_SIGNED_INT         ,    // Not yet supported
     IIOSF_UNSIGNED_CHAR  = 1 << 0,
     IIOSF_UNSIGNED_SHORT = 1 << 1,
-    //IIOSF_HALF               ,    // OpenEXR & NVidia's Half Float, not yet supported
     IIOSF_LOGLUV24       = 1 << 2,
     IIOSF_LOGLUV32       = 1 << 3,
     IIOSF_FLOAT16        = 1 << 4,

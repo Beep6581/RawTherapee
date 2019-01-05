@@ -33,6 +33,7 @@
 #include "extprog.h"
 #include "profilestorecombobox.h"
 #include "md5helper.h"
+#include "procparamchangers.h"
 
 using namespace rtengine::procparams;
 
@@ -418,10 +419,11 @@ bool Thumbnail::hasProcParams () const
     return pparamsValid;
 }
 
-void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow)
+void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow, bool resetToDefault)
 {
     const bool needsReprocessing =
-           pparams.toneCurve != pp.toneCurve
+           resetToDefault
+        || pparams.toneCurve != pp.toneCurve
         || pparams.locallab != pp.locallab
         || pparams.labCurve != pp.labCurve
         || pparams.localContrast != pp.localContrast
@@ -449,7 +451,10 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams.icm != pp.icm
         || pparams.hsvequalizer != pp.hsvequalizer
         || pparams.filmSimulation != pp.filmSimulation
-        || pparams.softlight != pp.softlight;
+        || pparams.softlight != pp.softlight
+        || pparams.dehaze != pp.dehaze
+        || whoChangedIt == FILEBROWSER
+        || whoChangedIt == BATCHEDITOR;
 
     {
         MyMutex::MyLock lock(mutex);
@@ -618,6 +623,11 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, i
     }
 }
 
+void Thumbnail::getOriginalSize (int& w, int& h)
+{
+    w = tw;
+    h = th;
+}
 
 rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale)
 {
@@ -855,8 +865,10 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     }
 
     if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
-        // load aehistogram
-        tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
+        if(!tpp->isAeValid()) {
+            // load aehistogram
+            tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
+        }
 
         // load embedded profile
         tpp->readEmbProfile (getCacheFileName ("embprofiles", ".icc"));
@@ -898,19 +910,15 @@ void Thumbnail::_saveThumbnail ()
         return;
     }
 
-    if (g_remove (getCacheFileName ("images", ".rtti").c_str ()) != 0) {
-        // No file deleted, so we try to deleted obsolete files, if any
-        g_remove (getCacheFileName ("images", ".cust").c_str ());
-        g_remove (getCacheFileName ("images", ".cust16").c_str ());
-        g_remove (getCacheFileName ("images", ".jpg").c_str ());
-    }
+    g_remove (getCacheFileName ("images", ".rtti").c_str ());
 
     // save thumbnail image
     tpp->writeImage (getCacheFileName ("images", ""));
 
-    // save aehistogram
-    tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
-
+    if(!tpp->isAeValid()) {
+        // save aehistogram
+        tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
+    }
     // save embedded profile
     tpp->writeEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 

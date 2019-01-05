@@ -26,10 +26,9 @@
 
 class FormatChangeListener
 {
-
 public:
-    virtual ~FormatChangeListener () {}
-    virtual void formatChanged (Glib::ustring f) {}
+    virtual ~FormatChangeListener() = default;
+    virtual void formatChanged(const Glib::ustring& format) = 0;
 };
 
 class SaveFormatPanel : public Gtk::Grid, public AdjusterListener
@@ -50,7 +49,7 @@ protected:
 public:
 
     SaveFormatPanel ();
-    ~SaveFormatPanel ();
+    ~SaveFormatPanel () override;
     void        setListener     (FormatChangeListener* l)
     {
         listener = l;
@@ -60,7 +59,8 @@ public:
     SaveFormat  getFormat       ();
 
     void        formatChanged   ();
-    void        adjusterChanged (Adjuster* a, double newval);
+    void        adjusterChanged (Adjuster* a, double newval) override;
+    void        adjusterAutoToggled(Adjuster* a, bool newval) override;
 };
 
 #endif

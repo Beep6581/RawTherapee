@@ -104,6 +104,11 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     }
 }
 
+FlatField::~FlatField ()
+{
+    idle_register.destroy();
+}
+
 void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener ();
@@ -232,11 +237,10 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 
 }
 
-void FlatField::adjusterChanged (Adjuster* a, double newval)
+void FlatField::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
-
-        Glib::ustring value = a->getTextValue();
+        const Glib::ustring value = a->getTextValue();
 
         if (a == flatFieldBlurRadius) {
             listener->panelChanged (EvFlatFieldBlurRadius,  value);
@@ -248,7 +252,6 @@ void FlatField::adjusterChanged (Adjuster* a, double newval)
 
 void FlatField::adjusterAutoToggled (Adjuster* a, bool newval)
 {
-
     if (multiImage) {
         if (flatFieldClipControl->getAutoInconsistent()) {
             flatFieldClipControl->setAutoInconsistent(false);
@@ -404,4 +407,23 @@ void FlatField::setShortcutPath(const Glib::ustring& path)
         lastShortcutPath = path;
 
     } catch (Glib::Error&) {}
+}
+
+void FlatField::flatFieldAutoClipValueChanged(int n)
+{
+    struct Data {
+        FlatField *me;
+        int n;
+    };
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        FlatField *me = d->me;
+        me->disableListener();
+        me->flatFieldClipControl->setValue (d->n);
+        me->enableListener();
+        delete d;
+        return FALSE;
+    };
+
+    idle_register.add(func, new Data { this, n });
 }

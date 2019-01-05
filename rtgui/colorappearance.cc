@@ -230,8 +230,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     }
 
     degree->throwOnButtonRelease();
-    degree->addAutoButton (M ("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
-    degree->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    degree->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p1VBox->pack_start (*degree);
 
     // surrsource = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_SURSOURCE")));
@@ -284,27 +283,25 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p1VBox->pack_start (*greensc);
 
 
-//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adapscen->delay < options.adjusterMaxDelay) {
         adapscen->delay = options.adjusterMaxDelay;
     }
 
     adapscen->throwOnButtonRelease();
-    adapscen->addAutoButton (M ("TP_COLORAPP_ADAP_AUTO_TOOLTIP"));
-    adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPTSCENE_TOOLTIP"));
+    adapscen->addAutoButton();
     p1VBox->pack_start (*adapscen);
 
-    ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YBSCENE"), 1, 90, 1, 18));
+    ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 1, 90, 1, 18));
 
     if (ybscen->delay < options.adjusterMaxDelay) {
         ybscen->delay = options.adjusterMaxDelay;
     }
 
     ybscen->throwOnButtonRelease();
-    ybscen->addAutoButton (M ("TP_COLORAPP_ADAP_AUTO_TOOLTIP"));
-    ybscen->set_tooltip_markup (M ("TP_COLORAPP_YBSCENE_TOOLTIP"));
+    ybscen->addAutoButton();
     p1VBox->pack_start (*ybscen);
 
     p1Frame->add (*p1VBox);
@@ -579,15 +576,15 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
     Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
     Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
-//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  16384., 0.1,   16.));
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
+//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.1,  16384., 0.1,   16.));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adaplum->delay < options.adjusterMaxDelay) {
         adaplum->delay = options.adjusterMaxDelay;
     }
 
     adaplum->throwOnButtonRelease();
-    adaplum->set_tooltip_markup (M ("TP_COLORAPP_ADAPTVIEWING_TOOLTIP"));
+    adaplum->set_tooltip_markup (M ("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
 //   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
@@ -600,8 +597,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     }
 
     degreeout->throwOnButtonRelease();
-    degreeout->addAutoButton (M ("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
-    degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    degreeout->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p3VBox->pack_start (*degreeout);
     /*
         Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
@@ -611,7 +607,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     */
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
-    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 90, 1, 18));
+    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 5, 90, 1, 18));
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP_TOOLTIP"));
 
     tempout->show();
@@ -1544,9 +1540,8 @@ void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller:
     caller->ccBlue = double (B);
 }
 
-void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
+void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && (multiImage || getEnabled()) ) {
         if (a == degree) {
             listener->panelChanged (EvCATDegree, a->getTextValue());
@@ -1594,9 +1589,8 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
-void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
+void ColorAppearance::adjusterAutoToggled(Adjuster* a, bool newval)
 {
-
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -1844,11 +1838,21 @@ void ColorAppearance::setBatchMode (bool batchMode)
     curveEditorG3->setBatchMode (batchMode);
 }
 
-void ColorAppearance::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
+void ColorAppearance::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
 {
-
-    shape->updateBackgroundHistogram (histLCAM);
-    shape3->updateBackgroundHistogram (histCCAM);
+    shape->updateBackgroundHistogram(histLCAM);
+    shape3->updateBackgroundHistogram(histCCAM);
 }
 
 

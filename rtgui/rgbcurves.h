@@ -26,7 +26,7 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 
-class RGBCurves : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
+class RGBCurves : public ToolParamBlock, public FoldableToolPanel, public CurveListener, public ColorProvider
 {
 
 protected:
@@ -42,18 +42,29 @@ protected:
 public:
 
     RGBCurves ();
-    ~RGBCurves ();
+    ~RGBCurves () override;
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode    (bool batchMode);
-    void setEditProvider (EditDataProvider *provider);
-    void autoOpenCurve   ();
+    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode    (bool batchMode) override;
+    void setEditProvider (EditDataProvider *provider) override;
+    void autoOpenCurve   () override;
 
-    void curveChanged (CurveEditor* ce);
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve,  LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    void curveChanged (CurveEditor* ce) override;
+    void updateCurveBackgroundHistogram(
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histLRETI
+    );
     void lumamodeChanged  ();
-    void enabledChanged();
+    void enabledChanged() override;
 };
 
 #endif

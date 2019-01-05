@@ -228,7 +228,6 @@ void FilePanel::on_NB_switch_page(Gtk::Widget* page, guint page_num)
 
 bool FilePanel::fileSelected (Thumbnail* thm)
 {
-
     if (!parent) {
         return false;
     }
@@ -258,6 +257,16 @@ bool FilePanel::fileSelected (Thumbnail* thm)
                    sigc::bind(sigc::mem_fun(*this, &FilePanel::imageLoaded), thm, ld) );
     return true;
 }
+
+bool FilePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries)
+{
+    if (parent) {
+        parent->addBatchQueueJobs (entries);
+    }
+
+    return true;
+}
+
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc )
 {
 
@@ -292,7 +301,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 #ifdef WIN32
                     else {
                         Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
-                        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+                        Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                         msgd.run ();
                         goto MAXGDIHANDLESREACHED;
                     }
@@ -313,7 +322,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             }
         } else {
             Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
-            Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
 #ifdef WIN32
@@ -365,16 +374,6 @@ void FilePanel::open (const Glib::ustring& d)
     }
 }
 
-bool FilePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries )
-{
-
-    if (parent) {
-        parent->addBatchQueueJobs (entries);
-    }
-
-    return true;
-}
-
 void FilePanel::optionsChanged ()
 {
 
@@ -384,16 +383,6 @@ void FilePanel::optionsChanged ()
 
 bool FilePanel::handleShortcutKey (GdkEventKey* event)
 {
-
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-
-    if (!ctrl) {
-        switch(event->keyval) {
-        }
-    } else {
-        switch (event->keyval) {
-        }
-    }
 
     if(tpc->getToolBar() && tpc->getToolBar()->handleShortcutKey(event)) {
         return true;

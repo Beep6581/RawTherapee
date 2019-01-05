@@ -735,7 +735,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         av = LVFU (lab->a[i][j]);
                         bv = LVFU (lab->b[i][j]);
                         huev = xatan2f (bv, av);
-                        chrov = _mm_sqrt_ps (SQRV (av) + SQRV (bv)) / c327d68v;
+                        chrov = vsqrtf(SQRV(av) + SQRV(bv)) / c327d68v;
                         _mm_storeu_ps (&varhue[i1][j1], huev);
                         _mm_storeu_ps (&varchro[i1][j1], chrov);
 
@@ -1103,7 +1103,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 bv = LVFU (labco->b[i1][col]);
                                 STVF (atan2Buffer[col], xatan2f (bv, av));
 
-                                cv = _mm_sqrt_ps (SQRV (av) + SQRV (bv));
+                                cv = vsqrtf(SQRV(av) + SQRV(bv));
                                 yv = av / cv;
                                 xv = bv / cv;
                                 xyMask = vmaskf_eq (zerov, cv);
@@ -1991,7 +1991,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition &WaveletCoeffs_a, 
                     __m128 av = LVFU (WavCoeffs_a0[i * W_L + k]);
                     __m128 bv = LVFU (WavCoeffs_b0[i * W_L + k]);
                     __m128 huev = xatan2f (bv, av);
-                    __m128 chrv = _mm_sqrt_ps (SQRV (av) + SQRV (bv));
+                    __m128 chrv = vsqrtf(SQRV(av) + SQRV(bv));
                     STVF (huebuffer[k], huev);
                     STVF (chrbuffer[k], chrv);
                 }
@@ -2772,8 +2772,8 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             }
         } else if (cp.EDmet == 1) { //threshold adjuster
             float MaxPCompare = MaxP[level] * SQR (cp.edg_max / 100.f); //100 instead of b_r...case if b_r < 100
-            float MaxNCompare = MaxN[level] * SQR (cp.edg_max / 100.f); //always rduce a little edge for near max values
-            float edgeSdCompare = (mean[level] + 1.5f * sigma[level]) * SQR (cp.edg_sd / t_r); // 1.5 standard deviation #80%  range between mean 50% and 80%
+            float MaxNCompare = MaxN[level] * SQR(cp.edg_max / 100.f); //always reduce a little edge for near max values
+            float edgeSdCompare = (mean[level] + 1.5f * sigma[level]) * SQR(cp.edg_sd / t_r); // 1.5 standard deviation #80% range between mean 50% and 80%
             float edgeMeanCompare = mean[level] * SQR (cp.edg_mean / t_l);
             float edgeLowCompare = (5.f + SQR (cp.edg_low));
             float edgeMeanFactor = cbrt (cp.edg_mean / t_l);
@@ -2817,7 +2817,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                         edge = edgePrecalc;
                     }
 
-                    //algorithm that take into account local contrast
+                    //algorithm that takes into account local contrast
                     // I use a thresholdadjuster with
                     // Bottom left ==> minimal low value for local contrast (not 0, but 5...we can change)
                     // 0 10*10 35*35 100*100 substantially correspond to the true distribution of low value, mean, standard-deviation and max (ed 5, 50, 400, 4000
@@ -2865,7 +2865,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                         if (edge < 1.f) {
                             edge = 1.f;
                         }
-                    }//mofify effect if sd change
+                    }//modify effect if sd change
 
                     if (fabs (WavCoeffs_L[dir][k]) < edgeMeanCompare) {
                         edge *= edgeMeanFactor;

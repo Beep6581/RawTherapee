@@ -1131,6 +1131,10 @@ Camera constants:
     },
 
 // Canon Powershot
+    { // Quality C, CHDK DNGs, raw frame correction
+        "make_model": "Canon PowerShot A3100 IS",
+        "raw_crop": [ 24, 12, 4032, 3024 ] // full size 4036X3026
+    },
 
     { // Quality C, CHDK DNGs, raw frame corrections, experimental infrared support commented out
         "make_model": "Canon PowerShot A480",
@@ -1205,12 +1209,22 @@ Camera constants:
         "ranges": { "white": 4050 }
     },
 
+    { // Quality C
+        "make_model": "Canon PowerShot SX50 HS",
+        "ranges": { "white": 4050 }
+    },
+
     { // Quality B
         "make_model": "Canon PowerShot SX60 HS",
         "dcraw_matrix": [ 13161,-5451,-1344,-1989,10654,1531,-47,1271,4955 ], // DNG_V8.7 D65
         "raw_crop": [ 120, 34, 4616, 3464 ], // full raw 4768x3516, Usable 96,16,4672,3498 - Canon official 4608x3456 left 124 top 38,
         "masked_areas": [ 20, 2, 3480, 80 ],
         "ranges": { "white": 4050 } // nominal 4080-4093
+    },
+
+    { // Quality C
+        "make_model": "Canon PowerShot SX150 IS",
+        "raw_crop": [ 26, 10, 4364, 3254 ] // cut 2pix left and right
     },
 
     { // Quality C
@@ -1223,6 +1237,11 @@ Camera constants:
         "ranges": {
             "black": 4080
         }
+    },
+
+    { // Quality C
+        "make_model": "DJI FC6310",
+        "ranges": { "white": 64886 }
     },
 
     { // Quality B
@@ -1338,13 +1357,14 @@ Camera constants:
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
         //"dcraw_matrix": [ 11563,-2891,-3203,-5313,15625,625,-781,2813,5625 ], // DNG A
-        "ranges": { "white_max": 1000 }
+        "raw_crop": [ 0, 0, 5312, 2986 ], // cropped last two rows because last row was garbage
+        "ranges": { "white": 1000 }
     },
     { // Quality C
         "make_model": "LG mobile LG-H850",
         //"dcraw_matrix": [ 10000,-2188,-2813,-5156,15469,625,-703,2734,5078 ], // DNG A
         "dcraw_matrix": [ 5313,1016,-1172,-6250,15391,547,-2344,5547,3359 ], // DNG D65
-        "ranges": { "white_max": 1000 }
+        "ranges": { "white": 1000 }
     },
 
     { // Quality A
@@ -1578,6 +1598,20 @@ Camera constants:
         "ranges": { "white": 3980 } // 12-bit files.
     },
 
+    { // Quality C, only colour matrix and PDAF lines info
+        "make_model" : "Nikon Z 7",
+        "dcraw_matrix" : [10405,-3755,-1270,-5461,13787,1793,-1040,2015,6785], // Adobe DNG Converter 11.0 ColorMatrix2
+        "pdaf_pattern" : [0, 12],
+        "pdaf_offset" : 29
+    },
+
+    { // Quality C, only colour matrix and PDAF lines info
+        "make_model" : "Nikon Z 6",
+        "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
+        "pdaf_pattern" : [0, 12],
+        "pdaf_offset" : 32        
+    },
+    
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",
         "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // DNG_v8.8 D65
@@ -1663,6 +1697,13 @@ Camera constants:
     { // Quality C, only green equilibration
         "make_model" : ["OLYMPUS E-3", "OLYMPUS E-520"],
         "global_green_equilibration" : true
+    },
+
+    { // Quality X
+        "make_model": [ "Panasonic DC-LX100M2" ],
+        "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610 ], // Adobe DNG Converter 11.0 ColorMatrix2
+        "raw_crop": [ 0, 0, 0, 0 ],
+        "ranges": { "black": 15 }
     },
 
     { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574

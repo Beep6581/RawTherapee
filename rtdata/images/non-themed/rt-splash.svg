@@ -15,9 +15,9 @@
    viewBox="0 0 146.05 91.545836"
    version="1.1"
    id="svg783"
-   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="rt_splash.svg"
-   inkscape:export-filename="/tmp/splash.png"
+   inkscape:version="0.92.2 2405546, 2018-03-11"
+   sodipodi:docname="rt-splash.svg"
+   inkscape:export-filename="/home/morgan/programs/code-rawtherapee/rtdata/images/non-themed/png/splash.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
   <defs
@@ -517,9 +517,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="366.55779"
-     inkscape:cy="87.326779"
+     inkscape:zoom="2.3410405"
+     inkscape:cx="276"
+     inkscape:cy="173"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -544,7 +544,7 @@
      inkscape:snap-nodes="false"
      inkscape:snap-global="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1019"
+     inkscape:window-height="1017"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1">
@@ -902,7 +902,7 @@
          y="2.2370076"
          x="283.85016"
          id="tspan3664"
-         sodipodi:role="line">. 4</tspan></text>
+         sodipodi:role="line">. 5</tspan></text>
     <rect
        style="fill:#2a2a2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.26458338;enable-background:new"
        id="rect1167"
@@ -929,7 +929,7 @@
     </g>
     <g
        id="g3712"
-       transform="matrix(0.24804687,0,0,0.2480469,58.508951,273.1232)"
+       transform="matrix(0.24804687,0,0,0.2480469,75.046794,273.10678)"
        style="fill:#ffffff;enable-background:new">
       <text
          xml:space="preserve"

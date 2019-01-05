@@ -48,10 +48,13 @@ Locallab::Locallab():
     expcolor(new MyExpander(true, M("TP_LOCALLAB_COFR"))),
     expexpose(new MyExpander(true, M("TP_LOCALLAB_EXPOSE"))),
     expvibrance(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE"))),
+    expsoft(new MyExpander(true, M("TP_LOCALLAB_SOFT"))),
+    explabregion(new MyExpander(true, M("TP_LOCALLAB_LABREGION"))),
     expblur(new MyExpander(true, M("TP_LOCALLAB_BLUFR"))),
     exptonemap(new MyExpander(true, M("TP_LOCALLAB_TM"))),
     expreti(new MyExpander(true, M("TP_LOCALLAB_RETI"))),
     expsharp(new MyExpander(true, M("TP_LOCALLAB_SHARP"))),
+    expcontrast(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST"))),
     expcbdl(new MyExpander(true, M("TP_LOCALLAB_CBDL"))),
     expdenoi(new MyExpander(true, M("TP_LOCALLAB_DENOIS"))),
 
@@ -83,6 +86,9 @@ Locallab::Locallab():
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
     sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
+    //Soft Light
+    streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
+    sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 19))),
     // Blur & Noise
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1, 100, 1, 1))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
@@ -99,13 +105,22 @@ Locallab::Locallab():
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
     neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 14, 150, 1, 50))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 50, 500, 1, 200))),
+    dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 19))),
     // Sharpening
+    sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 42, 500, 1, 4))),
-    sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 75))),
+    sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
+    sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 20, 200, 1, 20))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
+    // Local Contrast
+    lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 200, 1, 80))),
+    lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 100, 1, 0))),
+    lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 300, 1, 100))),
+    lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 300, 1, 100))),
+    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Contrast by detail levels
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20))),
@@ -178,6 +193,7 @@ Locallab::Locallab():
     // Color & Light
     expcolor->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcolor));
     enablecolorConn = expcolor->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcolor));
+    expcolor->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
 
     curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
 
@@ -193,6 +209,10 @@ Locallab::Locallab():
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVENH"));
+    qualitycurveMethod->append(M("TP_LOCALLAB_CURVENHSU"));
+    qualitycurveMethod->append(M("TP_LOCALLAB_CURVENCONTRAST"));
+    qualitycurveMethod->append(M("TP_LOCALLAB_CURVENSOB2"));
+
     qualitycurveMethod->set_active(0);
     qualitycurveMethod->set_tooltip_markup(M("TP_LOCALLAB_CURVEMETHOD_TOOLTIP"));
     qualitycurveMethodConn = qualitycurveMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::qualitycurveMethodChanged));
@@ -376,6 +396,38 @@ Locallab::Locallab():
 
     panel->pack_start(*expvibrance, false, false);
 
+    // Soft Light
+    expsoft->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsoft));
+    enablesoftConn = expsoft->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsoft));
+
+    streng->setAdjusterListener(this);
+
+    sensisf->setAdjusterListener(this);
+
+    ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
+    softBox->pack_start(*streng);
+    softBox->pack_start(*sensisf);
+    expsoft->add(*softBox);
+    expsoft->setLevel(2);
+
+    panel->pack_start(*expsoft, false, false);
+
+    // Lab Region
+    explabregion->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), explabregion));
+    enablelabregionConn = explabregion->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), explabregion));
+
+    ToolParamBlock* const labRegionBox = Gtk::manage(new ToolParamBlock());
+    explabregion->add(*labRegionBox);
+    explabregion->setLevel(2);
+/*    
+    labRegionSlope = Gtk::manage(new Adjuster(M("TP_COLORTONING_LABREGION_SLOPE"), 0.1, 4.0, 0.001, 1));
+    labRegionSlope->setLogScale(4, 0.1);
+    labRegionSlope->setAdjusterListener(this);
+    labRegionBox->pack_start(*labRegionSlope);
+*/
+    // panel->pack_start(*explabregion, false, false);
+//    labRegionSlope->delay = options.adjusterMaxDelay;
+
     // Blur & Noise
     expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
     enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
@@ -434,7 +486,7 @@ Locallab::Locallab():
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
 
-    panel->pack_start(*exptonemap, false, false);
+    // panel->pack_start(*exptonemap, false, false);
 
     // Retinex
     expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
@@ -452,6 +504,8 @@ Locallab::Locallab():
     neigh->setAdjusterListener(this);
 
     vart->setAdjusterListener(this);
+
+    dehaz->setAdjusterListener(this);
 
     chrrt->setAdjusterListener(this);
 
@@ -475,6 +529,7 @@ Locallab::Locallab():
     retiBox->pack_start(*chrrt);
     retiBox->pack_start(*neigh);
     retiBox->pack_start(*vart);
+    retiBox->pack_start(*dehaz);
     retiBox->pack_start(*sensih);
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*inversret);
@@ -487,6 +542,8 @@ Locallab::Locallab():
     expsharp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsharp));
     enablesharpConn = expsharp->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsharp));
 
+    sharcontrast->setAdjusterListener(this);
+
     sharradius->setAdjusterListener(this);
 
     sharamount->setAdjusterListener(this);
@@ -495,16 +552,20 @@ Locallab::Locallab():
 
     shariter->setAdjusterListener(this);
 
+    sharblur->setAdjusterListener(this);
+
     sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
     sensisha->setAdjusterListener(this);
 
     inversshaConn  = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversshaChanged));
 
     ToolParamBlock* const sharpBox = Gtk::manage(new ToolParamBlock());
+    sharpBox->pack_start(*sharcontrast);
     sharpBox->pack_start(*sharradius);
     sharpBox->pack_start(*sharamount);
     sharpBox->pack_start(*shardamping);
     sharpBox->pack_start(*shariter);
+    sharpBox->pack_start(*sharblur);
     sharpBox->pack_start(*sensisha);
     sharpBox->pack_start(*inverssha);
     expsharp->add(*sharpBox);
@@ -512,9 +573,35 @@ Locallab::Locallab():
 
     panel->pack_start(*expsharp, false, false);
 
+    // Local Contrast
+    expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrast));
+    enablecontrastConn = expcontrast->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcontrast));
+
+    lcradius->setAdjusterListener(this);
+
+    lcamount->setAdjusterListener(this);
+
+    lcdarkness->setAdjusterListener(this);
+
+    lclightness->setAdjusterListener(this);
+
+    sensilc->setAdjusterListener(this);
+
+    ToolParamBlock* const contrastBox = Gtk::manage(new ToolParamBlock());
+    contrastBox->pack_start(*lcradius);
+    contrastBox->pack_start(*lcamount);
+    contrastBox->pack_start(*lcdarkness);
+    contrastBox->pack_start(*lclightness);
+    contrastBox->pack_start(*sensilc);
+    expcontrast->add(*contrastBox);
+    expcontrast->setLevel(2);
+
+    panel->pack_start(*expcontrast, false, false);
+
     // Contrast by detail levels
     expcbdl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcbdl));
     enablecbdlConn = expcbdl->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcbdl));
+    expcbdl->set_tooltip_text(M("TP_LOCALLAB_EXPCBDL_TOOLTIP"));
 
     for (int i = 0; i < 5; i++) {
         Glib::ustring ss;
@@ -633,10 +720,13 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expcolor->set_expanded(expcolor == expander);
         expexpose->set_expanded(expexpose == expander);
         expvibrance->set_expanded(expvibrance == expander);
+        expsoft->set_expanded(expsoft == expander);
+        explabregion->set_expanded(explabregion == expander);
         expblur->set_expanded(expblur == expander);
         exptonemap->set_expanded(exptonemap == expander);
         expreti->set_expanded(expreti == expander);
         expsharp->set_expanded(expsharp == expander);
+        expcontrast->set_expanded(expcontrast == expander);
         expcbdl->set_expanded(expcbdl == expander);
         expdenoi->set_expanded(expdenoi == expander);
 
@@ -659,6 +749,12 @@ void Locallab::enableToggled(MyExpander *expander)
     } else if (expander == expvibrance) {
         event = EvLocenavibrance;
         expConn = &enablevibranceConn;
+    } else if (expander == expsoft) {
+        event = EvLocenasoft;
+        expConn = &enablesoftConn;
+    } else if (expander == explabregion) {
+        event = EvLocenalabregion;
+        expConn = &enablelabregionConn;
     } else if (expander == expblur) {
         event = EvLocenablur;
         expConn = &enableblurConn;
@@ -671,6 +767,9 @@ void Locallab::enableToggled(MyExpander *expander)
     } else if (expander == expsharp) {
         event = EvLocenasharp;
         expConn = &enablesharpConn;
+    } else if (expander == expcontrast) {
+        event = EvLocenacontrast;
+        expConn = &enablecontrastConn;
     } else if (expander == expcbdl) {
         event = EvLocenacbdl;
         expConn = &enablecbdlConn;
@@ -707,10 +806,13 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expcolor->get_expanded());
     tpOpen.push_back(expexpose->get_expanded());
     tpOpen.push_back(expvibrance->get_expanded());
+    tpOpen.push_back(expsoft->get_expanded());
+    tpOpen.push_back(explabregion->get_expanded());
     tpOpen.push_back(expblur->get_expanded());
     tpOpen.push_back(exptonemap->get_expanded());
     tpOpen.push_back(expreti->get_expanded());
     tpOpen.push_back(expsharp->get_expanded());
+    tpOpen.push_back(expcontrast->get_expanded());
     tpOpen.push_back(expcbdl->get_expanded());
     tpOpen.push_back(expdenoi->get_expanded());
 
@@ -718,17 +820,20 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 10) {
+    if (tpOpen.size() >= 13) {
         expsettings->setExpanded(tpOpen.at(0));
         expcolor->set_expanded(tpOpen.at(1));
         expexpose->set_expanded(tpOpen.at(2));
         expvibrance->set_expanded(tpOpen.at(3));
-        expblur->set_expanded(tpOpen.at(4));
-        exptonemap->set_expanded(tpOpen.at(5));
-        expreti->set_expanded(tpOpen.at(6));
-        expsharp->set_expanded(tpOpen.at(7));
-        expcbdl->set_expanded(tpOpen.at(8));
-        expdenoi->set_expanded(tpOpen.at(9));
+        expsoft->set_expanded(tpOpen.at(4));
+        explabregion->set_expanded(tpOpen.at(5));
+        expblur->set_expanded(tpOpen.at(6));
+        exptonemap->set_expanded(tpOpen.at(7));
+        expreti->set_expanded(tpOpen.at(8));
+        expsharp->set_expanded(tpOpen.at(9));
+        expcontrast->set_expanded(tpOpen.at(10));
+        expcbdl->set_expanded(tpOpen.at(11));
+        expdenoi->set_expanded(tpOpen.at(12));
     }
 }
 
@@ -845,7 +950,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     std::vector<int>* const list = expsettings->getSpotIdList();
     bool ispresent;
 
-    for (int i = 0; i < (int)list->size(); i++) {
+    for (int i = 0; i < (int)list->size() - 1; i++) {
         ispresent = false;
 
         for (int j = 0; j < pp->locallab.nbspot && j < (int)pp->locallab.spots.size(); j++) {
@@ -1271,6 +1376,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).pastsattog = pastSatTog->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).sensiv = sensiv->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).skintonescurve = skinTonesCurve->getCurve();
+                    // Soft Light
+                    pp->locallab.spots.at(pp->locallab.selspot).expsoft = expsoft->getEnabled();
+                    pp->locallab.spots.at(pp->locallab.selspot).streng = streng->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sensisf = sensisf->getIntValue();
+                    // Lab Region
+                    pp->locallab.spots.at(pp->locallab.selspot).explabregion = explabregion->getEnabled();
                     // Blur & Noise
                     pp->locallab.spots.at(pp->locallab.selspot).expblur = expblur->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).radius = radius->getIntValue();
@@ -1309,17 +1420,27 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chrrt = chrrt->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).neigh = neigh->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).vart = vart->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).dehaz = dehaz->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensih = sensih->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).localTgaincurve = cTgainshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).inversret = inversret->get_active();
                     // Sharpening
                     pp->locallab.spots.at(pp->locallab.selspot).expsharp = expsharp->getEnabled();
+                    pp->locallab.spots.at(pp->locallab.selspot).sharcontrast = sharcontrast->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sharradius = sharradius->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sharamount = sharamount->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shardamping = shardamping->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shariter = shariter->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sharblur = sharblur->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensisha = sensisha->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).inverssha = inverssha->get_active();
+                    // Local Contrast
+                    pp->locallab.spots.at(pp->locallab.selspot).expcontrast = expcontrast->getEnabled();
+                    pp->locallab.spots.at(pp->locallab.selspot).lcradius = lcradius->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lcamount = lcamount->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lcdarkness = lcdarkness->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lclightness = lclightness->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sensilc = sensilc->getIntValue();
                     // Contrast by detail levels
                     pp->locallab.spots.at(pp->locallab.selspot).expcbdl = expcbdl->getEnabled();
 
@@ -1401,6 +1522,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).pastsattog = pe->locallab.spots.at(pp->locallab.selspot).pastsattog || !pastSatTog->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).sensiv = pe->locallab.spots.at(pp->locallab.selspot).sensiv || sensiv->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).skintonescurve = pe->locallab.spots.at(pp->locallab.selspot).skintonescurve || !skinTonesCurve->isUnChanged();
+                        // Soft Light
+                        pe->locallab.spots.at(pp->locallab.selspot).expsoft = pe->locallab.spots.at(pp->locallab.selspot).expsoft || !expsoft->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).streng = pe->locallab.spots.at(pp->locallab.selspot).streng || streng->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensisf = pe->locallab.spots.at(pp->locallab.selspot).sensisf || sensisf->getEditedState();
+                        // Lab Region
+                        pe->locallab.spots.at(pp->locallab.selspot).explabregion = pe->locallab.spots.at(pp->locallab.selspot).explabregion || !explabregion->get_inconsistent();
                         // Blur & Noise
                         pe->locallab.spots.at(pp->locallab.selspot).expblur = pe->locallab.spots.at(pp->locallab.selspot).expblur || !expblur->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).radius = pe->locallab.spots.at(pp->locallab.selspot).radius || radius->getEditedState();
@@ -1423,17 +1550,27 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chrrt = pe->locallab.spots.at(pp->locallab.selspot).chrrt || chrrt->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).neigh = pe->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).vart = pe->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).dehaz = pe->locallab.spots.at(pp->locallab.selspot).dehaz || dehaz->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensih = pe->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).inversret = pe->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         // Sharpening
                         pe->locallab.spots.at(pp->locallab.selspot).expsharp = pe->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).sharcontrast = pe->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sharradius = pe->locallab.spots.at(pp->locallab.selspot).sharradius || sharradius->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sharamount = pe->locallab.spots.at(pp->locallab.selspot).sharamount || sharamount->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).shardamping = pe->locallab.spots.at(pp->locallab.selspot).shardamping || shardamping->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).shariter = pe->locallab.spots.at(pp->locallab.selspot).shariter || shariter->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sharblur = pe->locallab.spots.at(pp->locallab.selspot).sharblur || sharblur->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensisha = pe->locallab.spots.at(pp->locallab.selspot).sensisha || sensisha->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).inverssha = pe->locallab.spots.at(pp->locallab.selspot).inverssha || !inverssha->get_inconsistent();
+                        // Local Contrast
+                        pe->locallab.spots.at(pp->locallab.selspot).expcontrast = pe->locallab.spots.at(pp->locallab.selspot).expcontrast || !expcontrast->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).lcradius = pe->locallab.spots.at(pp->locallab.selspot).lcradius || lcradius->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).lcamount = pe->locallab.spots.at(pp->locallab.selspot).lcamount || lcamount->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).lcdarkness = pe->locallab.spots.at(pp->locallab.selspot).lcdarkness || lcdarkness->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).lclightness = pe->locallab.spots.at(pp->locallab.selspot).lclightness || lclightness->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensilc = pe->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         // Contrast by detail levels
                         pe->locallab.spots.at(pp->locallab.selspot).expcbdl = pe->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -1467,11 +1604,6 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
                     if (pp->locallab.selspot < (int)pedited->locallab.spots.size()) {
                         // Control spot settings
-                        /*
-                        pedited->locallab.nbspot = se->nbspot;
-                        pedited->locallab.selspot = se->selspot;
-                        pedited->locallab.id = se->nbspot;
-                        */
                         pedited->locallab.spots.at(pp->locallab.selspot).name = pedited->locallab.spots.at(pp->locallab.selspot).name || se->name;
                         pedited->locallab.spots.at(pp->locallab.selspot).isvisible = pedited->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
                         pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
@@ -1523,6 +1655,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).pastsattog = pedited->locallab.spots.at(pp->locallab.selspot).pastsattog || !pastSatTog->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiv = pedited->locallab.spots.at(pp->locallab.selspot).sensiv || sensiv->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).skintonescurve = pedited->locallab.spots.at(pp->locallab.selspot).skintonescurve || !skinTonesCurve->isUnChanged();
+                        // Soft Light
+                        pedited->locallab.spots.at(pp->locallab.selspot).expsoft = pedited->locallab.spots.at(pp->locallab.selspot).expsoft || !expsoft->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).streng = pedited->locallab.spots.at(pp->locallab.selspot).streng || streng->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensisf = pedited->locallab.spots.at(pp->locallab.selspot).sensisf || sensisf->getEditedState();
+                        // Lab Region
+                        pedited->locallab.spots.at(pp->locallab.selspot).explabregion = pedited->locallab.spots.at(pp->locallab.selspot).explabregion || !explabregion->get_inconsistent();
                         // Blur & Noise
                         pedited->locallab.spots.at(pp->locallab.selspot).expblur = pedited->locallab.spots.at(pp->locallab.selspot).expblur || !expblur->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).radius = pedited->locallab.spots.at(pp->locallab.selspot).radius || radius->getEditedState();
@@ -1545,17 +1683,27 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chrrt = pedited->locallab.spots.at(pp->locallab.selspot).chrrt || chrrt->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).neigh = pedited->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).vart = pedited->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).dehaz = pedited->locallab.spots.at(pp->locallab.selspot).dehaz || dehaz->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensih = pedited->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).inversret = pedited->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         // Sharpening
                         pedited->locallab.spots.at(pp->locallab.selspot).expsharp = pedited->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast = pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sharradius = pedited->locallab.spots.at(pp->locallab.selspot).sharradius || sharradius->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sharamount = pedited->locallab.spots.at(pp->locallab.selspot).sharamount || sharamount->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).shardamping = pedited->locallab.spots.at(pp->locallab.selspot).shardamping || shardamping->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).shariter = pedited->locallab.spots.at(pp->locallab.selspot).shariter || shariter->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sharblur = pedited->locallab.spots.at(pp->locallab.selspot).sharblur || sharblur->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensisha = pedited->locallab.spots.at(pp->locallab.selspot).sensisha || sensisha->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).inverssha = pedited->locallab.spots.at(pp->locallab.selspot).inverssha || !inverssha->get_inconsistent();
+                        // Local Contrast
+                        pedited->locallab.spots.at(pp->locallab.selspot).expcontrast = pedited->locallab.spots.at(pp->locallab.selspot).expcontrast || !expcontrast->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lcradius = pedited->locallab.spots.at(pp->locallab.selspot).lcradius || lcradius->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lcamount = pedited->locallab.spots.at(pp->locallab.selspot).lcamount || lcamount->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lcdarkness = pedited->locallab.spots.at(pp->locallab.selspot).lcdarkness || lcdarkness->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lclightness = pedited->locallab.spots.at(pp->locallab.selspot).lclightness || lclightness->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensilc = pedited->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         // Contrast by detail levels
                         pedited->locallab.spots.at(pp->locallab.selspot).expcbdl = pedited->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -1760,12 +1908,20 @@ void Locallab::blurMethodChanged()
         sensibn->hide();
     }
 
+    if (blurMethod->get_active_row_number() == 2) {
+        strength->hide();
+    } else {
+        strength->show();
+    }
+
     if (getEnabled() && expblur->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabblurMethod, blurMethod->get_active_text());
         }
     }
 }
+
+
 
 void Locallab::qualitycurveMethodChanged()
 {
@@ -1922,11 +2078,13 @@ void Locallab::inversretChanged()
         sensih->show();
     } else if (inversret->get_active()) {
         sensih->hide();
+        dehaz->hide();
     } else {
         sensih->show();
+        dehaz->show();
     }
 
-    if (getEnabled() && expsharp->getEnabled()) {
+    if (getEnabled() && expreti->getEnabled()) {
         if (listener) {
             if (inversret->get_active()) {
                 listener->panelChanged(Evlocallabinversret, M("GENERAL_ENABLED"));
@@ -1950,6 +2108,10 @@ void Locallab::setParamEditable(bool cond)
     expexpose->set_sensitive(cond);
     // Vibrance
     expvibrance->set_sensitive(cond);
+    // Soft Light
+    expsoft->set_sensitive(cond);
+    // Lab Region
+    explabregion->set_sensitive(cond);
     // Blur & Noise
     expblur->set_sensitive(cond);
     // Tone Mapping
@@ -1958,6 +2120,8 @@ void Locallab::setParamEditable(bool cond)
     expreti->set_sensitive(cond);
     // Sharpening
     expsharp->set_sensitive(cond);
+    // Local Contrast
+    expcontrast->set_sensitive(cond);
     // Contrast by detail levels
     expcbdl->set_sensitive(cond);
     // Denoise
@@ -2021,6 +2185,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     pastels->setDefault((double)defSpot->pastels);
     psThreshold->setDefault<int>(defSpot->psthreshold);
     sensiv->setDefault((double)defSpot->sensiv);
+    // Soft Light
+    streng->setDefault((double)defSpot->streng);
+    sensisf->setDefault((double)defSpot->sensisf);
     // Blur & Noise
     radius->setDefault((double)defSpot->radius);
     strength->setDefault((double)defSpot->strength);
@@ -2037,13 +2204,22 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chrrt->setDefault((double)defSpot->chrrt);
     neigh->setDefault((double)defSpot->neigh);
     vart->setDefault((double)defSpot->vart);
+    dehaz->setDefault((double)defSpot->dehaz);
     sensih->setDefault((double)defSpot->sensih);
     // Sharpening
+    sharcontrast->setDefault((double)defSpot->sharcontrast);
     sharradius->setDefault((double)defSpot->sharradius);
     sharamount->setDefault((double)defSpot->sharamount);
     shardamping->setDefault((double)defSpot->shardamping);
     shariter->setDefault((double)defSpot->shariter);
+    sharblur->setDefault((double)defSpot->sharblur);
     sensisha->setDefault((double)defSpot->sensisha);
+    // Local Contrast
+    lcradius->setDefault((double)defSpot->lcradius);
+    lcamount->setDefault((double)defSpot->lcamount);
+    lcdarkness->setDefault((double)defSpot->lcdarkness);
+    lclightness->setDefault((double)defSpot->lclightness);
+    sensilc->setDefault((double)defSpot->sensilc);
     // Contrast by detail levels
     for (int i = 0; i < 5; i++) {
         multiplier[i]->setDefault(defSpot->mult[i]);
@@ -2083,6 +2259,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         pastels->setDefaultEditedState(Irrelevant);
         psThreshold->setDefaultEditedState(Irrelevant);
         sensiv->setDefaultEditedState(Irrelevant);
+        // Soft Light
+        streng->setDefaultEditedState(Irrelevant);
+        sensisf->setDefaultEditedState(Irrelevant);
         // Blur & Noise
         radius->setDefaultEditedState(Irrelevant);
         strength->setDefaultEditedState(Irrelevant);
@@ -2099,13 +2278,22 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chrrt->setDefaultEditedState(Irrelevant);
         neigh->setDefaultEditedState(Irrelevant);
         vart->setDefaultEditedState(Irrelevant);
+        dehaz->setDefaultEditedState(Irrelevant);
         sensih->setDefaultEditedState(Irrelevant);
         // Sharpening
+        sharcontrast->setDefaultEditedState(Irrelevant);
         sharradius->setDefaultEditedState(Irrelevant);
         sharamount->setDefaultEditedState(Irrelevant);
         shardamping->setDefaultEditedState(Irrelevant);
         shariter->setDefaultEditedState(Irrelevant);
+        sharblur->setDefaultEditedState(Irrelevant);
         sensisha->setDefaultEditedState(Irrelevant);
+        // Local Contrast
+        lcradius->setDefaultEditedState(Irrelevant);
+        lcamount->setDefaultEditedState(Irrelevant);
+        lcdarkness->setDefaultEditedState(Irrelevant);
+        lclightness->setDefaultEditedState(Irrelevant);
+        sensilc->setDefaultEditedState(Irrelevant);
         // Contrast by detail levels
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(Irrelevant);
@@ -2149,6 +2337,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         pastels->setDefaultEditedState(defSpotState->pastels ? Edited : UnEdited);
         psThreshold->setDefaultEditedState(defSpotState->psthreshold ? Edited : UnEdited);
         sensiv->setDefaultEditedState(defSpotState->sensiv ? Edited : UnEdited);
+        // Soft Light
+        streng->setDefaultEditedState(defSpotState->streng ? Edited : UnEdited);
+        sensisf->setDefaultEditedState(defSpotState->sensisf ? Edited : UnEdited);
         // Blur & Noise
         radius->setDefaultEditedState(defSpotState->radius ? Edited : UnEdited);
         strength->setDefaultEditedState(defSpotState->strength ? Edited : UnEdited);
@@ -2165,13 +2356,22 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chrrt->setDefaultEditedState(defSpotState->chrrt ? Edited : UnEdited);
         neigh->setDefaultEditedState(defSpotState->neigh ? Edited : UnEdited);
         vart->setDefaultEditedState(defSpotState->vart ? Edited : UnEdited);
+        dehaz->setDefaultEditedState(defSpotState->dehaz ? Edited : UnEdited);
         sensih->setDefaultEditedState(defSpotState->sensih ? Edited : UnEdited);
         // Sharpening
+        sharcontrast->setDefaultEditedState(defSpotState->sharcontrast ? Edited : UnEdited);
         sharradius->setDefaultEditedState(defSpotState->sharradius ? Edited : UnEdited);
         sharamount->setDefaultEditedState(defSpotState->sharamount ? Edited : UnEdited);
         shardamping->setDefaultEditedState(defSpotState->shardamping ? Edited : UnEdited);
         shariter->setDefaultEditedState(defSpotState->shariter ? Edited : UnEdited);
+        sharblur->setDefaultEditedState(defSpotState->sharblur ? Edited : UnEdited);
         sensisha->setDefaultEditedState(defSpotState->sensisha ? Edited : UnEdited);
+        // Local Contrast
+        lcradius->setDefaultEditedState(defSpotState->lcradius ? Edited : UnEdited);
+        lcamount->setDefaultEditedState(defSpotState->lcamount ? Edited : UnEdited);
+        lcdarkness->setDefaultEditedState(defSpotState->lcdarkness ? Edited : UnEdited);
+        lclightness->setDefaultEditedState(defSpotState->lclightness ? Edited : UnEdited);
+        sensilc->setDefaultEditedState(defSpotState->sensilc ? Edited : UnEdited);
         // Contrast by detail levels
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(defSpotState->mult[i] ? Edited : UnEdited);
@@ -2191,6 +2391,30 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         bilateral->setDefaultEditedState(defSpotState->bilateral ? Edited : UnEdited);
         sensiden->setDefaultEditedState(defSpotState->sensiden ? Edited : UnEdited);
     }
+}
+
+void Locallab::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+    // Not used
+}
+
+void Locallab::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+    // Not used
+}
+void Locallab::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+    // Not used
+}
+
+void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+{
+    // Not used
+}
+
+void Locallab::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+    // Not used
 }
 
 void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
@@ -2314,6 +2538,33 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         }
     }
 
+    // Soft Light
+    if (getEnabled() && expsoft->getEnabled()) {
+        if (a == streng) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstreng, streng->getTextValue());
+            }
+        }
+
+        if (a == sensisf) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensisf, sensisf->getTextValue());
+            }
+        }
+    }
+
+    //Lab region
+    /*
+    if (getEnabled() && explabregion->getEnabled()) {
+        if (a == labRegionSlope) {
+            if (listener) {
+                listener->panelChanged(EvlocallablabRegionSlope, labRegionSlope->getTextValue());
+            }
+        }
+
+    }
+    */
+
     // Blur & Noise
     if (getEnabled() && expblur->getEnabled()) {
         if (a == radius) {
@@ -2400,6 +2651,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == dehaz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdehaz, dehaz->getTextValue());
+            }
+        }
+
         if (a == sensih) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensih, sensih->getTextValue());
@@ -2409,6 +2666,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
 
     // Sharpening
     if (getEnabled() && expsharp->getEnabled()) {
+        if (a == sharcontrast) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsharcontrast, sharcontrast->getTextValue());
+            }
+        }
+
         if (a == sharradius) {
             if (listener) {
                 listener->panelChanged(Evlocallabsharradius, sharradius->getTextValue());
@@ -2433,9 +2696,48 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == sharblur) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsharblur, sharblur->getTextValue());
+            }
+        }
+
         if (a == sensisha) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensis, sensisha->getTextValue());
+            }
+        }
+    }
+
+    // Local Contrast
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (a == lcradius) {
+            if (listener) {
+                listener->panelChanged(Evlocallablcradius, lcradius->getTextValue());
+            }
+        }
+
+        if (a == lcamount) {
+            if (listener) {
+                listener->panelChanged(Evlocallablcamount, lcamount->getTextValue());
+            }
+        }
+
+        if (a == lcdarkness) {
+            if (listener) {
+                listener->panelChanged(Evlocallablcdarkness, lcdarkness->getTextValue());
+            }
+        }
+
+        if (a == lclightness) {
+            if (listener) {
+                listener->panelChanged(Evlocallablclightness, lclightness->getTextValue());
+            }
+        }
+
+        if (a == sensilc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensilc, sensilc->getTextValue());
             }
         }
     }
@@ -2607,8 +2909,12 @@ void Locallab::setBatchMode(bool batchMode)
     pastels->showEditedCB();
     psThreshold->showEditedCB();
     sensiv->showEditedCB();
+    // Soft Light
+    streng->showEditedCB();
+    sensisf->showEditedCB();
     // Blur & Noise
     radius->showEditedCB();
+    streng->showEditedCB();
     strength->showEditedCB();
     sensibn->showEditedCB();
     // Tone Mapping
@@ -2623,6 +2929,7 @@ void Locallab::setBatchMode(bool batchMode)
     chrrt->showEditedCB();
     neigh->showEditedCB();
     vart->showEditedCB();
+    dehaz->showEditedCB();
     sensih->showEditedCB();
     // Sharpening
     sharradius->showEditedCB();
@@ -2630,6 +2937,12 @@ void Locallab::setBatchMode(bool batchMode)
     shardamping->showEditedCB();
     shariter->showEditedCB();
     sensisha->showEditedCB();
+    // Local Contrast
+    lcradius->showEditedCB();
+    lcamount->showEditedCB();
+    lcdarkness->showEditedCB();
+    lclightness->showEditedCB();
+    sensilc->showEditedCB();
     // Contrast by detail levels
     for (int i = 0; i < 5; i++) {
         multiplier[i]->showEditedCB();
@@ -2788,6 +3101,10 @@ void Locallab::enableListener()
     pskinsconn.block(false);
     ashiftconn.block(false);
     pastsattogconn.block(false);
+    // Soft Light
+    enablesoftConn.block(false);
+    // Lab Region
+    enablelabregionConn.block(false);
     // Blur & Noise
     enableblurConn.block(false);
     blurMethodConn.block(false);
@@ -2801,6 +3118,8 @@ void Locallab::enableListener()
     // Sharpening
     enablesharpConn.block(false);
     inversshaConn.block(false);
+    // Local Contrast
+    enablecontrastConn.block(false);
     // Contrast by detail levels
     enablecbdlConn.block(false);
     // Denoise
@@ -2825,6 +3144,10 @@ void Locallab::disableListener()
     pskinsconn.block(true);
     ashiftconn.block(true);
     pastsattogconn.block(true);
+    // Soft Light
+    enablesoftConn.block(true);
+    // Lab Region
+    enablelabregionConn.block(true);
     // Blur & Noise
     enableblurConn.block(true);
     blurMethodConn.block(true);
@@ -2838,6 +3161,8 @@ void Locallab::disableListener()
     // Sharpening
     enablesharpConn.block(true);
     inversshaConn.block(true);
+    // Local Contrast
+    enablecontrastConn.block(true);
     // Contrast by detail levels
     enablecbdlConn.block(true);
     // Denoise
@@ -2863,8 +3188,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             qualitycurveMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).qualitycurveMethod == "std") {
             qualitycurveMethod->set_active(1);
-        } else {
+        } else if (pp->locallab.spots.at(index).qualitycurveMethod == "enh") {
             qualitycurveMethod->set_active(2);
+        } else if (pp->locallab.spots.at(index).qualitycurveMethod == "enhsup") {
+            qualitycurveMethod->set_active(3);
+        } else if (pp->locallab.spots.at(index).qualitycurveMethod == "contr") {
+            qualitycurveMethod->set_active(4);
+        } else if (pp->locallab.spots.at(index).qualitycurveMethod == "sob2") {
+            qualitycurveMethod->set_active(5);
         }
 
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
@@ -2894,6 +3225,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         pastSatTog->set_active(pp->locallab.spots.at(index).pastsattog);
         sensiv->setValue(pp->locallab.spots.at(index).sensiv);
         skinTonesCurve->setCurve(pp->locallab.spots.at(index).skintonescurve);
+
+        // Soft Light
+        expsoft->setEnabled(pp->locallab.spots.at(index).expsoft);
+        streng->setValue(pp->locallab.spots.at(index).streng);
+        sensisf->setValue(pp->locallab.spots.at(index).sensisf);
+
+        // Lab Region
+        explabregion->setEnabled(pp->locallab.spots.at(index).explabregion);
 
         // Blur & Noise
         expblur->setEnabled(pp->locallab.spots.at(index).expblur);
@@ -2935,18 +3274,29 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chrrt->setValue(pp->locallab.spots.at(index).chrrt);
         neigh->setValue(pp->locallab.spots.at(index).neigh);
         vart->setValue(pp->locallab.spots.at(index).vart);
+        dehaz->setValue(pp->locallab.spots.at(index).dehaz);
         sensih->setValue(pp->locallab.spots.at(index).sensih);
         cTgainshape->setCurve(pp->locallab.spots.at(index).localTgaincurve);
         inversret->set_active(pp->locallab.spots.at(index).inversret);
 
         // Sharpening
         expsharp->setEnabled(pp->locallab.spots.at(index).expsharp);
+        sharcontrast->setValue(pp->locallab.spots.at(index).sharcontrast);
         sharradius->setValue(pp->locallab.spots.at(index).sharradius);
         sharamount->setValue(pp->locallab.spots.at(index).sharamount);
         shardamping->setValue(pp->locallab.spots.at(index).shardamping);
         shariter->setValue(pp->locallab.spots.at(index).shariter);
+        sharblur->setValue(pp->locallab.spots.at(index).sharblur);
         sensisha->setValue(pp->locallab.spots.at(index).sensisha);
         inverssha->set_active(pp->locallab.spots.at(index).inverssha);
+
+        // Local Contrast
+        expcontrast->setEnabled(pp->locallab.spots.at(index).expcontrast);
+        lcradius->setValue(pp->locallab.spots.at(index).lcradius);
+        lcamount->setValue(pp->locallab.spots.at(index).lcamount);
+        lcdarkness->setValue(pp->locallab.spots.at(index).lcdarkness);
+        lclightness->setValue(pp->locallab.spots.at(index).lclightness);
+        sensilc->setValue(pp->locallab.spots.at(index).sensilc);
 
         // Contrast by detail levels
         expcbdl->setEnabled(pp->locallab.spots.at(index).expcbdl);
@@ -3049,6 +3399,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensiv->setEditedState(spotState->sensiv ? Edited : UnEdited);
                 skinTonesCurve->setUnChanged(!spotState->skintonescurve);
 
+                // Soft Light
+                expsoft->set_inconsistent(!spotState->expsoft);
+                streng->setEditedState(spotState->streng ? Edited : UnEdited);
+                sensisf->setEditedState(spotState->sensisf ? Edited : UnEdited);
+
+                // Lab Region
+                explabregion->set_inconsistent(!spotState->explabregion);
+
                 // Blur & Noise
                 expblur->set_inconsistent(!spotState->expblur);
                 radius->setEditedState(spotState->radius ? Edited : UnEdited);
@@ -3081,18 +3439,29 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chrrt->setEditedState(spotState->chrrt ? Edited : UnEdited);
                 neigh->setEditedState(spotState->neigh ? Edited : UnEdited);
                 vart->setEditedState(spotState->vart ? Edited : UnEdited);
+                dehaz->setEditedState(spotState->dehaz ? Edited : UnEdited);
                 sensih->setEditedState(spotState->sensih ? Edited : UnEdited);
                 cTgainshape->setUnChanged(!spotState->localTgaincurve);
                 inversret->set_inconsistent(multiImage && !spotState->inversret);
 
                 // Sharpening
                 expsharp->set_inconsistent(!spotState->expsharp);
+                sharcontrast->setEditedState(spotState->sharcontrast ? Edited : UnEdited);
                 sharradius->setEditedState(spotState->sharradius ? Edited : UnEdited);
                 sharamount->setEditedState(spotState->sharamount ? Edited : UnEdited);
                 shardamping->setEditedState(spotState->shardamping ? Edited : UnEdited);
                 shariter->setEditedState(spotState->shariter ? Edited : UnEdited);
+                sharblur->setEditedState(spotState->sharblur ? Edited : UnEdited);
                 sensisha->setEditedState(spotState->sensisha ? Edited : UnEdited);
                 inverssha->set_inconsistent(multiImage && !spotState->inverssha);
+
+                // Local Contrast
+                expcontrast->set_inconsistent(!spotState->expcontrast);
+                lcradius->setEditedState(spotState->lcradius ? Edited : UnEdited);
+                lcamount->setEditedState(spotState->lcamount ? Edited : UnEdited);
+                lcdarkness->setEditedState(spotState->lcdarkness ? Edited : UnEdited);
+                lclightness->setEditedState(spotState->lclightness ? Edited : UnEdited);
+                sensilc->setEditedState(spotState->sensilc ? Edited : UnEdited);
 
                 // Contrast by detail levels
                 expcbdl->set_inconsistent(!spotState->expcbdl);
@@ -3177,6 +3546,12 @@ void Locallab::updateSpecificGUIState()
         sensibn->show();
     } else {
         sensibn->hide();
+    }
+
+    if (blurMethod->get_active_row_number() == 2) {
+        strength->hide();
+    } else {
+        strength->show();
     }
 
     // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)

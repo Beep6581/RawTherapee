@@ -137,10 +137,10 @@ void SharpenMicro::matrix_toggled ()
     }
 }
 
-void SharpenMicro::adjusterChanged (Adjuster* a, double newval)
+void SharpenMicro::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener && getEnabled()) {
-        Glib::ustring value = a->getTextValue();
+        const Glib::ustring value = a->getTextValue();
 
         if (a == amount) {
             listener->panelChanged (EvSharpenMicroAmount,     value);
@@ -150,6 +150,10 @@ void SharpenMicro::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvSharpenMicroUniformity, value);
         }
     }
+}
+
+void SharpenMicro::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void SharpenMicro::setBatchMode(bool batchMode)

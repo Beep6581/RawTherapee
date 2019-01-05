@@ -30,10 +30,9 @@
 
 class ICMPanelListener
 {
-
 public:
-    virtual ~ICMPanelListener() {}
-    virtual void saveInputICCReference(Glib::ustring fname, bool apply_wb) {}
+    virtual ~ICMPanelListener() = default;
+    virtual void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) = 0;
 };
 
 class ICMPanel :
@@ -122,11 +121,12 @@ private:
 public:
     ICMPanel();
 
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode(bool batchMode);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void adjusterChanged(Adjuster* a, double newval);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
 
     void wpChanged();
     void wtrcinChanged();

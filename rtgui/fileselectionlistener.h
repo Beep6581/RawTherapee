@@ -19,15 +19,15 @@
 #ifndef _FILESELECTIONLISTENER_
 #define _FILESELECTIONLISTENER_
 
-#include "thumbnail.h"
-#include "batchqueueentry.h"
+class Thumbnail;
+class BatchQueueEntry;
 
 class FileSelectionListener
 {
-
 public:
-    virtual bool fileSelected           (Thumbnail* thm) = 0;
-    virtual bool addBatchQueueJobs      ( std::vector<BatchQueueEntry*> &entries ) = 0;
+    virtual ~FileSelectionListener() = default;
+    virtual bool fileSelected(Thumbnail* thm) = 0;
+    virtual bool addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries) = 0;
 };
 
 #endif

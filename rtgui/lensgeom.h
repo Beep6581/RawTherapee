@@ -37,16 +37,16 @@ protected:
 public:
 
     LensGeometry ();
-    ~LensGeometry ();
+    ~LensGeometry () override;
 
     Gtk::Box* getPackBox ()
     {
         return packBox;
     }
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode   (bool batchMode) override;
 
     void fillPressed            ();
     void autoCropPressed        ();

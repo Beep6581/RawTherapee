@@ -30,7 +30,8 @@
 #include "gauss.h"
 #include "array2D.h"
 
-namespace rtengine {
+namespace rtengine
+{
 
 void ImProcFunctions::localContrast(LabImage *lab)
 {
@@ -54,6 +55,7 @@ void ImProcFunctions::localContrast(LabImage *lab)
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif
+
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             float bufval = (lab->L[y][x] - buf[y][x]) * a;
@@ -63,6 +65,41 @@ void ImProcFunctions::localContrast(LabImage *lab)
             }
 
             lab->L[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
+        }
+    }
+}
+
+void ImProcFunctions::localContrastloc(LabImage *lab, int scale, int rad, int amo, int darkn, int lightn, float **loctemp)
+{
+
+    const int width = lab->W;
+    const int height = lab->H;
+    const float a = (float)(amo) / 100.f;
+    const float dark = (float)(darkn) / 100.f;
+    const float light = (float)(lightn) / 100.f;
+    array2D<float> buf(width, height);
+    const float sigma = (float)(rad) / scale;
+
+#ifdef _OPENMP
+    #pragma omp parallel if(multiThread)
+#endif
+    gaussianBlur(lab->L, buf, width, height, sigma);
+
+#ifdef _OPENMP
+    #pragma omp parallel for if(multiThread)
+#endif
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            float bufval = (lab->L[y][x] - buf[y][x]) * a;
+
+            if (dark != 1 || light != 1) {
+                bufval *= (bufval > 0.f) ? light : dark;
+            }
+
+            // lab->L[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
+            loctemp[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
+
         }
     }
 }

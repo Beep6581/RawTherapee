@@ -45,21 +45,22 @@ struct EditorPanelIdleHelper {
 };
 
 class RTWindow;
+
 class EditorPanel final :
-        public Gtk::VBox,
-        public PParamsChangeListener,
-        public rtengine::ProgressListener,
-        public ThumbnailListener,
-        public HistoryBeforeLineListener,
-        public rtengine::HistogramListener
+    public Gtk::VBox,
+    public PParamsChangeListener,
+    public rtengine::ProgressListener,
+    public ThumbnailListener,
+    public HistoryBeforeLineListener,
+    public rtengine::HistogramListener
 {
 public:
     explicit EditorPanel (FilePanel* filePanel = nullptr);
-    ~EditorPanel ();
+    ~EditorPanel () override;
 
     void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
     void setAspect ();
-    void on_realize ();
+    void on_realize () override;
     void leftPaneButtonReleased (GdkEventButton *event);
     void rightPaneButtonReleased (GdkEventButton *event);
 
@@ -81,26 +82,48 @@ public:
     {
         return realized;
     }
-    // progresslistener interface
-    void setProgress (double p);
-    void setProgressStr (Glib::ustring str);
-    void setProgressState (bool inProcessing);
-    void error (Glib::ustring title, Glib::ustring descr);
-    void displayError (Glib::ustring title, Glib::ustring descr);  // this is called by error in the gtk thread
+    // ProgressListener interface
+    void setProgress(double p) override;
+    void setProgressStr(const Glib::ustring& str) override;
+    void setProgressState(bool inProcessing) override;
+    void error(const Glib::ustring& descr) override;
+
+    void error(const Glib::ustring& title, const Glib::ustring& descr);
+    void displayError(const Glib::ustring& title, const Glib::ustring& descr);  // this is called by error in the gtk thread
     void refreshProcessingState (bool inProcessing); // this is called by setProcessingState in the gtk thread
 
     // PParamsChangeListener interface
-    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = nullptr);
+    void procParamsChanged(
+        const rtengine::procparams::ProcParams* params,
+        const rtengine::ProcEvent& ev,
+        const Glib::ustring& descr,
+        const ParamsEdited* paramsEdited = nullptr
+    ) override;
+    void clearParamChanges() override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt);
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
 
     // HistoryBeforeLineListener
-    void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params);
+    void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) override;
 
     // HistogramListener
-    void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM,
-                           LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw, LUTu & histChroma, LUTu & histLRETI);
+    void histogramChanged(
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRedRaw,
+        const LUTu& histGreenRaw,
+        const LUTu& histBlueRaw,
+        const LUTu& histChroma,
+        const LUTu& histLRETI
+    ) override;
 
     // event handlers
     void info_toggled ();

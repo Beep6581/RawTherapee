@@ -38,16 +38,16 @@ class ColorAppearance final :
 {
 public:
     ColorAppearance ();
-    ~ColorAppearance ();
+    ~ColorAppearance () override;
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void adjusterChanged     (Adjuster* a, double newval);
-    void adjusterAutoToggled (Adjuster* a, bool newval);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode   (bool batchMode) override;
+    void adjusterChanged     (Adjuster* a, double newval) override;
+    void adjusterAutoToggled (Adjuster* a, bool newval) override;
 //    void adjusterAdapToggled (Adjuster* a, bool newval);
-    void enabledChanged      ();
+    void enabledChanged      () override;
     void surroundChanged     ();
     void surrsrcChanged     ();
     void wbmodelChanged      ();
@@ -58,14 +58,14 @@ public:
     void datacie_toggled     ();
     void tonecie_toggled     ();
 //    void sharpcie_toggled     ();
-    void autoCamChanged (double ccam, double ccamout);
+    void autoCamChanged (double ccam, double ccamout) override;
     bool autoCamComputed_ ();
-    void adapCamChanged (double cadap);
+    void adapCamChanged (double cadap) override;
     bool adapCamComputed_ ();
-    void ybCamChanged (int yb);
+    void ybCamChanged (int yb) override;
     bool ybCamComputed_ ();
 
-    void curveChanged        (CurveEditor* ce);
+    void curveChanged        (CurveEditor* ce) override;
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();
     void curveMode2Changed   ();
@@ -76,12 +76,23 @@ public:
 
     void expandCurve         (bool isExpanded);
     bool isCurveExpanded     ();
-    void autoOpenCurve       ();
+    void autoOpenCurve       () override;
 
     void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void updateCurveBackgroundHistogram(
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histLRETI
+    );
+    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller) override;
     void updateToolState (std::vector<int> &tpOpen);
     void writeOptions (std::vector<int> &tpOpen);
 

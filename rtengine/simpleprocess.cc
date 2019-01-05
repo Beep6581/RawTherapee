@@ -214,8 +214,10 @@ private:
         if (pl) {
             pl->setProgress(0.20);
         }
-        double contrastThresholdDummy;
-        imgsrc->demosaic (params.raw, false, contrastThresholdDummy);
+        bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
+        double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
+
+        imgsrc->demosaic (params.raw, autoContrast, contrastThreshold);
 
 
         if (pl) {
@@ -860,9 +862,8 @@ private:
 
         ipf.firstAnalysis(baseImg, params, hist16);
 
-        if (params.fattal.enabled) {
-            ipf.ToneMapFattal02(baseImg);
-        }
+        ipf.dehaze(baseImg);
+        ipf.ToneMapFattal02(baseImg);
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
@@ -901,41 +902,16 @@ private:
 
         //gamma TRC working
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-            Glib::ustring profile;
-            profile = params.icm.workingProfile;
+            const Glib::ustring profile = params.icm.workingProfile;
 
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                int  cw = baseImg->getWidth();
-                int  ch = baseImg->getHeight();
+                const int cw = baseImg->getWidth();
+                const int ch = baseImg->getHeight();
+                cmsHTRANSFORM dummy = nullptr;
                 // put gamma TRC to 1
-                Imagefloat* readyImg0 = NULL;
-                readyImg0 = ipf.workingtrc(baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
-                #pragma omp parallel for
-
-                for (int row = 0; row < ch; row++) {
-                    for (int col = 0; col < cw; col++) {
-                        baseImg->r(row, col) = (float)readyImg0->r(row, col);
-                        baseImg->g(row, col) = (float)readyImg0->g(row, col);
-                        baseImg->b(row, col) = (float)readyImg0->b(row, col);
-                    }
-                }
-
-                delete readyImg0;
-
+                ipf.workingtrc(baseImg, baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
                 //adjust TRC
-                Imagefloat* readyImg = NULL;
-                readyImg = ipf.workingtrc(baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
-                #pragma omp parallel for
-
-                for (int row = 0; row < ch; row++) {
-                    for (int col = 0; col < cw; col++) {
-                        baseImg->r(row, col) = (float)readyImg->r(row, col);
-                        baseImg->g(row, col) = (float)readyImg->g(row, col);
-                        baseImg->b(row, col) = (float)readyImg->b(row, col);
-                    }
-                }
-
-                delete readyImg;
+                ipf.workingtrc(baseImg, baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, dummy, false, true, false);
             }
         }
 
@@ -1107,7 +1083,7 @@ private:
             LUTf lightCurveloc(32770, 0);
             LUTf exlocalcurve(65536, 0);
 
-            int maxspot = 1;
+           // int maxspot = 1;
             float** shbuffer = nullptr;
 
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
@@ -1154,7 +1130,7 @@ private:
 
                 }
 
-                ipf.Lab_Local(2, maxspot, sp, huerefs, sobelrefs, centerx, centery, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
+                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
 
                 // Clear local curves
@@ -1194,6 +1170,7 @@ private:
 
 
         ipf.vibrance(labView);
+        ipf.labColorCorrectionRegions(labView);
 
         if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
             ipf.impulsedenoise(labView);
@@ -1246,6 +1223,8 @@ private:
         }
 
         wavCLVCurve.Reset();
+
+        ipf.softLight(labView);
 
         //Colorappearance and tone-mapping associated
 
@@ -1372,10 +1351,9 @@ private:
             }
         }
 
-        Imagefloat* readyImg = nullptr;
         cmsHPROFILE jprof = nullptr;
-        bool customGamma = false;
-        bool useLCMS = false;
+        constexpr bool customGamma = false;
+        constexpr bool useLCMS = false;
         bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
 
         ///////////// Custom output gamma has been removed, the user now has to create
@@ -1384,7 +1362,7 @@ private:
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-        readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
+        Imagefloat* readyImg = ipf.lab2rgbOut (labView, cx, cy, cw, ch, params.icm);
 
         if (settings->verbose) {
             printf ("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());

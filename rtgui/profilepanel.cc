@@ -167,6 +167,7 @@ Gtk::TreeIter ProfilePanel::getLastSavedRow()
 Gtk::TreeIter ProfilePanel::addCustomRow()
 {
     if(customPSE) {
+        profiles->deleteRow(customPSE);
         delete customPSE;
         customPSE = nullptr;
     }
@@ -179,6 +180,7 @@ Gtk::TreeIter ProfilePanel::addCustomRow()
 Gtk::TreeIter ProfilePanel::addLastSavedRow()
 {
     if(lastSavedPSE) {
+        profiles->deleteRow(lastSavedPSE);
         delete lastSavedPSE;
         lastSavedPSE = nullptr;
     }
@@ -306,8 +308,6 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
 
     do {
         if (dialog.run() == Gtk::RESPONSE_OK) {
-
-            dialog.hide();
 
             std::string fname = dialog.get_filename();
             Glib::ustring ext = getExtension (fname);
@@ -743,9 +743,13 @@ void ProfilePanel::selection_changed ()
     dontupdate = false;
 }
 
-void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited)
+void ProfilePanel::procParamsChanged(
+    const rtengine::procparams::ProcParams* p,
+    const rtengine::ProcEvent& ev,
+    const Glib::ustring& descr,
+    const ParamsEdited* paramsEdited
+)
 {
-
     // to prevent recursion, filter out the events caused by the profilepanel
     if (ev == EvProfileChanged || ev == EvPhotoLoaded) {
         return;
@@ -770,6 +774,10 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
     // Setting LocallabSpotEdited number coherent with nbspot number in p
     custom->pedited->locallab.spots.clear();
     custom->pedited->locallab.spots.resize(p->locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(true));
+}
+
+void ProfilePanel::clearParamChanges()
+{
 }
 
 /** @brief Initialize the Profile panel with a default profile, overridden by the last saved profile if provided

@@ -41,6 +41,7 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROM
 
     caAutoiterations = Gtk::manage(new Adjuster (M("TP_RAWCACORR_AUTOIT"), 1, 5, 1, 2));
     caAutoiterations->setAdjusterListener (this);
+    caAutoiterations->set_tooltip_markup(M("TP_RAWCACORR_AUTOIT_TOOLTIP"));
 
     if (caAutoiterations->delay < options.adjusterMaxDelay) {
         caAutoiterations->delay = options.adjusterMaxDelay;
@@ -123,7 +124,7 @@ void RAWCACorr::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 
 }
 
-void RAWCACorr::adjusterChanged (Adjuster* a, double newval)
+void RAWCACorr::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
 
@@ -137,6 +138,10 @@ void RAWCACorr::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessCABlue,  value );
         }
     }
+}
+
+void RAWCACorr::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)

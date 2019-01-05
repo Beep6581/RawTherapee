@@ -273,7 +273,7 @@ void Vibrance::pastsattog_toggled ()
     }
 }
 
-void Vibrance::adjusterChanged (Adjuster* a, double newval)
+void Vibrance::adjusterChanged(Adjuster* a, double newval)
 {
     if (a == pastels && pastSatTog->get_active()) {
         saturated->setValue (newval);
@@ -290,13 +290,32 @@ void Vibrance::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
-void Vibrance::adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop)
+void Vibrance::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+
+void Vibrance::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
+void Vibrance::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+}
+
+void Vibrance::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
 {
     if (listener && getEnabled()) {
         listener->panelChanged (EvVibrancePastSatThreshold, psThreshold->getHistoryString());
     }
 }
 
+void Vibrance::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+{
+}
+
+void Vibrance::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+}
 
 void Vibrance::setBatchMode(bool batchMode)
 {

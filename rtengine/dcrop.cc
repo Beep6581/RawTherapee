@@ -148,10 +148,10 @@ void Crop::update(int todo)
 
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
-    bool overrideWindow = false;
+    const bool overrideWindow = cropImageListener;
 
-    if (cropImageListener) {
-        overrideWindow = cropImageListener->getWindow(wx, wy, ww, wh, ws);
+    if (overrideWindow) {
+        cropImageListener->getWindow(wx, wy, ww, wh, ws);
     }
 
     // re-allocate sub-images and arrays if their dimensions changed
@@ -701,7 +701,7 @@ void Crop::update(int todo)
 
     std::unique_ptr<Imagefloat> fattalCrop;
 
-    if ((todo & M_HDR) && params.fattal.enabled) {
+    if ((todo & M_HDR) && (params.fattal.enabled || params.dehaze.enabled)) {
         Imagefloat *f = origCrop;
         int fw = skips(parent->fw, skip);
         int fh = skips(parent->fh, skip);
@@ -750,6 +750,7 @@ void Crop::update(int todo)
         }
 
         if (need_fattal) {
+            parent->ipf.dehaze(f);
             parent->ipf.ToneMapFattal02(f);
         }
 
@@ -816,59 +817,34 @@ void Crop::update(int todo)
 
     }
 
-    if (todo & (M_AUTOEXP | M_RGBCURVE)) {
+    if (todo & M_RGBCURVE) {
+        Imagefloat *workingCrop = baseCrop;
+
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-            Glib::ustring profile;
-            profile = params.icm.workingProfile;
+            const Glib::ustring profile = params.icm.workingProfile;
 
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-
+                const int cw = baseCrop->getWidth();
+                const int ch = baseCrop->getHeight();
+                workingCrop = new Imagefloat(cw, ch);
                 //first put gamma TRC to 1
-                int  cw = baseCrop->getWidth();
-                int  ch = baseCrop->getHeight();
-                Imagefloat* readyImg0 = NULL;
-
-                readyImg0 = parent->ipf.workingtrc(baseCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310);
-                #pragma omp parallel for
-
-                for (int row = 0; row < ch; row++) {
-                    for (int col = 0; col < cw; col++) {
-                        baseCrop->r(row, col) = (float)readyImg0->r(row, col);
-                        baseCrop->g(row, col) = (float)readyImg0->g(row, col);
-                        baseCrop->b(row, col) = (float)readyImg0->b(row, col);
-                    }
-                }
-
-                delete readyImg0;
-
+                parent->ipf.workingtrc(baseCrop, workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, parent->getCustomTransformIn(), true, false, true);
                 //adjust gamma TRC
-                Imagefloat* readyImg = NULL;
-                readyImg = parent->ipf.workingtrc(baseCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope);
-                #pragma omp parallel for
-
-                for (int row = 0; row < ch; row++) {
-                    for (int col = 0; col < cw; col++) {
-                        baseCrop->r(row, col) = (float)readyImg->r(row, col);
-                        baseCrop->g(row, col) = (float)readyImg->g(row, col);
-                        baseCrop->b(row, col) = (float)readyImg->b(row, col);
-                    }
-                }
-
-                delete readyImg;
+                parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, parent->getCustomTransformOut(), false, true, true);
             }
         }
-    }
-
-    if (todo & M_RGBCURVE) {
         double rrm, ggm, bbm;
         DCPProfile::ApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
-        parent->ipf.rgbProc(baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
+        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, 
                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
+        if (workingCrop != baseCrop) {
+            delete workingCrop;
+        }
     }
 
     /*xref=000;yref=000;
@@ -930,7 +906,7 @@ void Crop::update(int todo)
         int sca = skip;
 
         //     bool tyty = false;
-        int maxspot = 1;
+     //   int maxspot = 1;
 
         if (needslocal) {
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
@@ -964,7 +940,7 @@ void Crop::update(int todo)
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
 
-                parent->ipf.Lab_Local(1, maxspot, sp, parent->huerefs, parent->sobelrefs, parent->centerx, parent->centery, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
+                parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
                                       loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
 
                 lllocalcurve2.clear();
@@ -979,9 +955,9 @@ void Crop::update(int todo)
         }
 
         //   int moderetinex;
-        //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
         parent->ipf.chromiLuminanceCurve(this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance(labnCrop);
+        parent->ipf.labColorCorrectionRegions(labnCrop);
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             parent->ipf.EPDToneMap(labnCrop, 5, skip);
@@ -1098,6 +1074,8 @@ void Crop::update(int todo)
             parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
         }
 
+        parent->ipf.softLight(labnCrop);        
+
         //     }
 
         //   }
@@ -1183,10 +1161,6 @@ void Crop::update(int todo)
 void Crop::freeAll()
 {
 
-    if (settings->verbose) {
-        printf("freeallcrop starts %d\n", (int)cropAllocated);
-    }
-
     if (cropAllocated) {
         if (origCrop) {
             delete    origCrop;
@@ -1262,10 +1236,6 @@ bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int
  */
 bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool internal)
 {
-
-    if (settings->verbose) {
-        printf("setcropsizes before lock\n");
-    }
 
     if (!internal) {
         cropMutex.lock();
@@ -1357,10 +1327,6 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
     int cw = skips(bw, skip);
     int ch = skips(bh, skip);
-
-    if (settings->verbose) {
-        printf("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);
-    }
 
     EditType editType = ET_PIPETTE;
 
@@ -1455,10 +1421,6 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
     cropx = bx1;
     cropy = by1;
-
-    if (settings->verbose) {
-        printf("setsizes ends\n");
-    }
 
     if (!internal) {
         cropMutex.unlock();

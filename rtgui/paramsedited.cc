@@ -141,10 +141,13 @@ void ParamsEdited::set(bool v)
     colorToning.labgridBLow = v;
     colorToning.labgridAHigh = v;
     colorToning.labgridBHigh = v;
+    colorToning.labregions = v;
+    colorToning.labregionsShowMask = v;
 
     sharpening.enabled            = v;
     sharpening.contrast           = v;
     sharpening.radius             = v;
+    sharpening.blurradius         = v;
     sharpening.amount             = v;
     sharpening.threshold          = v;
     sharpening.edgesonly          = v;
@@ -292,6 +295,7 @@ void ParamsEdited::set(bool v)
     sh.shadows       = v;
     sh.stonalwidth   = v;
     sh.radius        = v;
+    sh.lab           = v;
     crop.enabled = v;
     crop.x       = v;
     crop.y       = v;
@@ -415,6 +419,7 @@ void ParamsEdited::set(bool v)
     raw.bayersensor.dcbEnhance = v;
     //raw.bayersensor.allEnhance = v;
     raw.bayersensor.lmmseIterations = v;
+    raw.bayersensor.dualDemosaicAutoContrast = v;
     raw.bayersensor.dualDemosaicContrast = v;
     raw.bayersensor.pixelShiftMotionCorrectionMethod = v;
     raw.bayersensor.pixelShiftEperIso = v;
@@ -435,6 +440,7 @@ void ParamsEdited::set(bool v)
     raw.bayersensor.linenoiseDirection = v;
     raw.bayersensor.pdafLinesFilter = v;
     raw.xtranssensor.method = v;
+    raw.xtranssensor.dualDemosaicAutoContrast = v;
     raw.xtranssensor.dualDemosaicContrast = v;
     raw.xtranssensor.ccSteps = v;
     raw.xtranssensor.exBlackRed = v;
@@ -575,6 +581,10 @@ void ParamsEdited::set(bool v)
     filmSimulation.strength = v;
     softlight.enabled = v;
     softlight.strength = v;
+    dehaze.enabled = v;
+    dehaze.strength = v;
+    dehaze.showDepthMap = v;
+    dehaze.depth = v;
     metadata.mode = v;
 
     exif = v;
@@ -710,6 +720,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorToning.labgridBLow = colorToning.labgridBLow && p.colorToning.labgridBLow == other.colorToning.labgridBLow;
         colorToning.labgridAHigh = colorToning.labgridAHigh && p.colorToning.labgridAHigh == other.colorToning.labgridAHigh;
         colorToning.labgridBHigh = colorToning.labgridBHigh && p.colorToning.labgridBHigh == other.colorToning.labgridBHigh;
+        colorToning.labregions = colorToning.labregions && p.colorToning.labregions == other.colorToning.labregions;
+        colorToning.labregionsShowMask = colorToning.labregionsShowMask && p.colorToning.labregionsShowMask == other.colorToning.labregionsShowMask;
         sharpenEdge.enabled = sharpenEdge.enabled && p.sharpenEdge.enabled == other.sharpenEdge.enabled;
         sharpenEdge.passes = sharpenEdge.passes && p.sharpenEdge.passes == other.sharpenEdge.passes;
         sharpenEdge.amount = sharpenEdge.amount && p.sharpenEdge.amount == other.sharpenEdge.amount;
@@ -722,6 +734,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.enabled = sharpening.enabled && p.sharpening.enabled == other.sharpening.enabled;
         sharpening.contrast = sharpening.contrast && p.sharpening.contrast == other.sharpening.contrast;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
+        sharpening.blurradius = sharpening.blurradius && p.sharpening.blurradius == other.sharpening.blurradius;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
         sharpening.threshold = sharpening.threshold && p.sharpening.threshold == other.sharpening.threshold;
         sharpening.edgesonly = sharpening.edgesonly && p.sharpening.edgesonly == other.sharpening.edgesonly;
@@ -865,6 +878,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sh.shadows = sh.shadows && p.sh.shadows == other.sh.shadows;
         sh.stonalwidth = sh.stonalwidth && p.sh.stonalwidth == other.sh.stonalwidth;
         sh.radius = sh.radius && p.sh.radius == other.sh.radius;
+        sh.lab = sh.lab && p.sh.lab == other.sh.lab;
         crop.enabled = crop.enabled && p.crop.enabled == other.crop.enabled;
         crop.x = crop.x && p.crop.x == other.crop.x;
         crop.y = crop.y && p.crop.y == other.crop.y;
@@ -960,6 +974,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).pastsattog = locallab.spots.at(j).pastsattog && pSpot.pastsattog == otherSpot.pastsattog;
                 locallab.spots.at(j).sensiv = locallab.spots.at(j).sensiv && pSpot.sensiv == otherSpot.sensiv;
                 locallab.spots.at(j).skintonescurve = locallab.spots.at(j).skintonescurve && pSpot.skintonescurve == otherSpot.skintonescurve;
+                // Soft Light
+                locallab.spots.at(j).expsoft = locallab.spots.at(j).expsoft && pSpot.expsoft == otherSpot.expsoft;
+                locallab.spots.at(j).streng = locallab.spots.at(j).streng && pSpot.streng == otherSpot.streng;
+                locallab.spots.at(j).sensisf = locallab.spots.at(j).sensisf && pSpot.sensisf == otherSpot.sensisf;
+                // Lab Region
+                locallab.spots.at(j).explabregion = locallab.spots.at(j).explabregion && pSpot.explabregion == otherSpot.explabregion;
                 // Blur & Noise
                 locallab.spots.at(j).expblur = locallab.spots.at(j).expblur && pSpot.expblur == otherSpot.expblur;
                 locallab.spots.at(j).radius = locallab.spots.at(j).radius && pSpot.radius == otherSpot.radius;
@@ -982,17 +1002,27 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chrrt = locallab.spots.at(j).chrrt && pSpot.chrrt == otherSpot.chrrt;
                 locallab.spots.at(j).neigh = locallab.spots.at(j).neigh && pSpot.neigh == otherSpot.neigh;
                 locallab.spots.at(j).vart = locallab.spots.at(j).vart && pSpot.vart == otherSpot.vart;
+                locallab.spots.at(j).dehaz = locallab.spots.at(j).dehaz && pSpot.dehaz == otherSpot.dehaz;
                 locallab.spots.at(j).sensih = locallab.spots.at(j).sensih && pSpot.sensih == otherSpot.sensih;
                 locallab.spots.at(j).localTgaincurve = locallab.spots.at(j).localTgaincurve && pSpot.localTgaincurve == otherSpot.localTgaincurve;
                 locallab.spots.at(j).inversret = locallab.spots.at(j).inversret &&pSpot.inversret == otherSpot.inversret;
                 // Sharpening
                 locallab.spots.at(j).expsharp = locallab.spots.at(j).expsharp && pSpot.expsharp == otherSpot.expsharp;
+                locallab.spots.at(j).sharcontrast = locallab.spots.at(j).sharcontrast && pSpot.sharcontrast == otherSpot.sharcontrast;
                 locallab.spots.at(j).sharradius = locallab.spots.at(j).sharradius && pSpot.sharradius == otherSpot.sharradius;
                 locallab.spots.at(j).sharamount = locallab.spots.at(j).sharamount && pSpot.sharamount == otherSpot.sharamount;
                 locallab.spots.at(j).shardamping = locallab.spots.at(j).shardamping && pSpot.shardamping == otherSpot.shardamping;
                 locallab.spots.at(j).shariter = locallab.spots.at(j).shariter && pSpot.shariter == otherSpot.shariter;
+                locallab.spots.at(j).sharblur = locallab.spots.at(j).sharblur && pSpot.sharblur == otherSpot.sharblur;
                 locallab.spots.at(j).sensisha = locallab.spots.at(j).sensisha && pSpot.sensisha == otherSpot.sensisha;
                 locallab.spots.at(j).inverssha = locallab.spots.at(j).inverssha && pSpot.inverssha == otherSpot.inverssha;
+                // Local Contrast
+                locallab.spots.at(j).expcontrast = locallab.spots.at(j).expcontrast && pSpot.expcontrast == otherSpot.expcontrast;
+                locallab.spots.at(j).lcradius = locallab.spots.at(j).lcradius && pSpot.lcradius == otherSpot.lcradius;
+                locallab.spots.at(j).lcamount = locallab.spots.at(j).lcamount && pSpot.lcamount == otherSpot.lcamount;
+                locallab.spots.at(j).lcdarkness = locallab.spots.at(j).lcdarkness && pSpot.lcdarkness == otherSpot.lcdarkness;
+                locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
+                locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
                 // Contrast by detail levels
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
 
@@ -1105,6 +1135,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.bayersensor.dcbEnhance = raw.bayersensor.dcbEnhance && p.raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance;
         //raw.bayersensor.allEnhance = raw.bayersensor.allEnhance && p.raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance;
         raw.bayersensor.lmmseIterations = raw.bayersensor.lmmseIterations && p.raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations;
+        raw.bayersensor.dualDemosaicAutoContrast = raw.bayersensor.dualDemosaicAutoContrast && p.raw.bayersensor.dualDemosaicAutoContrast == other.raw.bayersensor.dualDemosaicAutoContrast;
         raw.bayersensor.dualDemosaicContrast = raw.bayersensor.dualDemosaicContrast && p.raw.bayersensor.dualDemosaicContrast == other.raw.bayersensor.dualDemosaicContrast;
         raw.bayersensor.pixelShiftMotionCorrectionMethod = raw.bayersensor.pixelShiftMotionCorrectionMethod && p.raw.bayersensor.pixelShiftMotionCorrectionMethod == other.raw.bayersensor.pixelShiftMotionCorrectionMethod;
         raw.bayersensor.pixelShiftEperIso = raw.bayersensor.pixelShiftEperIso && p.raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso;
@@ -1125,6 +1156,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.bayersensor.linenoiseDirection = raw.bayersensor.linenoiseDirection && p.raw.bayersensor.linenoiseDirection == other.raw.bayersensor.linenoiseDirection;
         raw.bayersensor.pdafLinesFilter = raw.bayersensor.pdafLinesFilter && p.raw.bayersensor.pdafLinesFilter == other.raw.bayersensor.pdafLinesFilter;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
+        raw.xtranssensor.dualDemosaicAutoContrast = raw.xtranssensor.dualDemosaicAutoContrast && p.raw.xtranssensor.dualDemosaicAutoContrast == other.raw.xtranssensor.dualDemosaicAutoContrast;
         raw.xtranssensor.dualDemosaicContrast = raw.xtranssensor.dualDemosaicContrast && p.raw.xtranssensor.dualDemosaicContrast == other.raw.xtranssensor.dualDemosaicContrast;
         raw.xtranssensor.ccSteps = raw.xtranssensor.ccSteps && p.raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps;
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
@@ -1260,6 +1292,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
         softlight.enabled = softlight.enabled && p.softlight.enabled == other.softlight.enabled;
         softlight.strength = softlight.strength && p.softlight.strength == other.softlight.strength;
+        dehaze.enabled = dehaze.enabled && p.dehaze.enabled == other.dehaze.enabled;
+        dehaze.strength = dehaze.strength && p.dehaze.strength == other.dehaze.strength;
+        dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
+        dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
 
 //      How the hell can we handle that???
@@ -1708,6 +1744,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorToning.labgridBHigh = mods.colorToning.labgridBHigh;
     }
 
+    if (colorToning.labregions) {
+        toEdit.colorToning.labregions = mods.colorToning.labregions;
+    }
+
+    if (colorToning.labregionsShowMask) {
+        toEdit.colorToning.labregionsShowMask = mods.colorToning.labregionsShowMask;
+    }
+    
     if (sharpenEdge.enabled) {
         toEdit.sharpenEdge.enabled    = mods.sharpenEdge.enabled;
     }
@@ -1754,6 +1798,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sharpening.radius) {
         toEdit.sharpening.radius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.radius + mods.sharpening.radius : mods.sharpening.radius;
+    }
+
+    if (sharpening.blurradius) {
+        toEdit.sharpening.blurradius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.blurradius + mods.sharpening.blurradius : mods.sharpening.blurradius;
     }
 
     if (sharpening.amount) {
@@ -2259,6 +2307,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.sh.radius      = mods.sh.radius;
     }
 
+    if (sh.lab) {
+        toEdit.sh.lab      = mods.sh.lab;
+    }
+
     if (crop.enabled) {
         toEdit.crop.enabled = mods.crop.enabled;
     }
@@ -2614,6 +2666,24 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).skintonescurve = mods.locallab.spots.at(i).skintonescurve;
         }
 
+        // Soft Light
+        if (locallab.spots.at(i).expsoft) {
+            toEdit.locallab.spots.at(i).expsoft = mods.locallab.spots.at(i).expsoft;
+        }
+
+        if (locallab.spots.at(i).streng) {
+            toEdit.locallab.spots.at(i).streng = mods.locallab.spots.at(i).streng;
+        }
+
+        if (locallab.spots.at(i).sensisf) {
+            toEdit.locallab.spots.at(i).sensisf = mods.locallab.spots.at(i).sensisf;
+        }
+
+        // Lab Region
+        if (locallab.spots.at(i).explabregion) {
+            toEdit.locallab.spots.at(i).explabregion = mods.locallab.spots.at(i).explabregion;
+        }
+
         // Blur & Noise
         if (locallab.spots.at(i).expblur) {
             toEdit.locallab.spots.at(i).expblur = mods.locallab.spots.at(i).expblur;
@@ -2693,6 +2763,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).vart = mods.locallab.spots.at(i).vart;
         }
 
+        if (locallab.spots.at(i).dehaz) {
+            toEdit.locallab.spots.at(i).dehaz = mods.locallab.spots.at(i).dehaz;
+        }
+
         if (locallab.spots.at(i).sensih) {
             toEdit.locallab.spots.at(i).sensih = mods.locallab.spots.at(i).sensih;
         }
@@ -2708,6 +2782,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         // Sharpening
         if (locallab.spots.at(i).expsharp) {
             toEdit.locallab.spots.at(i).expsharp = mods.locallab.spots.at(i).expsharp;
+        }
+
+        if (locallab.spots.at(i).sharcontrast) {
+            toEdit.locallab.spots.at(i).sharcontrast    = mods.locallab.spots.at(i).sharcontrast;
         }
 
         if (locallab.spots.at(i).sharradius) {
@@ -2726,12 +2804,41 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).shariter = mods.locallab.spots.at(i).shariter;
         }
 
+        if (locallab.spots.at(i).sharblur) {
+            toEdit.locallab.spots.at(i).sharblur    = mods.locallab.spots.at(i).sharblur;
+        }
+
         if (locallab.spots.at(i).sensisha) {
             toEdit.locallab.spots.at(i).sensisha = mods.locallab.spots.at(i).sensisha;
         }
 
         if (locallab.spots.at(i).inverssha) {
             toEdit.locallab.spots.at(i).inverssha = mods.locallab.spots.at(i).inverssha;
+        }
+
+        // Local Contrast
+        if (locallab.spots.at(i).expcontrast) {
+            toEdit.locallab.spots.at(i).expcontrast   = mods.locallab.spots.at(i).expcontrast;
+        }
+
+        if (locallab.spots.at(i).lcradius) {
+            toEdit.locallab.spots.at(i).lcradius   = mods.locallab.spots.at(i).lcradius;
+        }
+
+        if (locallab.spots.at(i).lcamount) {
+            toEdit.locallab.spots.at(i).lcamount   = mods.locallab.spots.at(i).lcamount;
+        }
+
+        if (locallab.spots.at(i).lcdarkness) {
+            toEdit.locallab.spots.at(i).lcdarkness   = mods.locallab.spots.at(i).lcdarkness;
+        }
+
+        if (locallab.spots.at(i).lclightness) {
+            toEdit.locallab.spots.at(i).lclightness   = mods.locallab.spots.at(i).lclightness;
+        }
+
+        if (locallab.spots.at(i).sensilc) {
+            toEdit.locallab.spots.at(i).sensilc   = mods.locallab.spots.at(i).sensilc;
         }
 
         // Contrast by detail levels
@@ -3095,6 +3202,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.bayersensor.lmmse_iterations = mods.raw.bayersensor.lmmse_iterations;
     }
 
+    if (raw.bayersensor.dualDemosaicAutoContrast) {
+        toEdit.raw.bayersensor.dualDemosaicAutoContrast = mods.raw.bayersensor.dualDemosaicAutoContrast;
+    }
+
     if (raw.bayersensor.dualDemosaicContrast) {
         toEdit.raw.bayersensor.dualDemosaicContrast = mods.raw.bayersensor.dualDemosaicContrast;
     }
@@ -3173,6 +3284,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (raw.xtranssensor.method) {
         toEdit.raw.xtranssensor.method          = mods.raw.xtranssensor.method;
+    }
+
+    if (raw.xtranssensor.dualDemosaicAutoContrast) {
+        toEdit.raw.xtranssensor.dualDemosaicAutoContrast          = mods.raw.xtranssensor.dualDemosaicAutoContrast;
     }
 
     if (raw.xtranssensor.dualDemosaicContrast) {
@@ -3676,6 +3791,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.softlight.strength        = dontforceSet && options.baBehav[ADDSET_SOFTLIGHT_STRENGTH] ? toEdit.softlight.strength + mods.softlight.strength : mods.softlight.strength;
     }
 
+    if (dehaze.enabled) {
+        toEdit.dehaze.enabled     = mods.dehaze.enabled;
+    }
+
+    if (dehaze.strength) {
+        toEdit.dehaze.strength        = dontforceSet && options.baBehav[ADDSET_DEHAZE_STRENGTH] ? toEdit.dehaze.strength + mods.dehaze.strength : mods.dehaze.strength;
+    }
+    
+    if (dehaze.depth) {
+        toEdit.dehaze.depth     = mods.dehaze.depth;
+    }
+
+    if (dehaze.showDepthMap) {
+        toEdit.dehaze.showDepthMap     = mods.dehaze.showDepthMap;
+    }
+
     if (metadata.mode) {
         toEdit.metadata.mode     = mods.metadata.mode;
     }
@@ -3695,7 +3826,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
-    return  method && border && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
+    return  method && border && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicAutoContrast && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
             && pixelShiftMotionCorrectionMethod && pixelShiftEperIso && pixelShiftSigma && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
             && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftDemosaicMethod && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftEqualBright && pixelShiftEqualBrightChannel
             && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
@@ -3703,7 +3834,7 @@ bool RAWParamsEdited::BayerSensor::isUnchanged() const
 
 bool RAWParamsEdited::XTransSensor::isUnchanged() const
 {
-    return method && exBlackRed && exBlackGreen && exBlackBlue;
+    return method && exBlackRed && exBlackGreen && exBlackBlue && dualDemosaicAutoContrast && dualDemosaicContrast;
 }
 
 bool RAWParamsEdited::isUnchanged() const
@@ -3775,6 +3906,12 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     pastsattog(v),
     sensiv(v),
     skintonescurve(v),
+    // Soft Light
+    expsoft(v),
+    streng(v),
+    sensisf(v),
+    // Lab Region
+    explabregion(v),
     // Blur & Noise
     expblur(v),
     radius(v),
@@ -3797,17 +3934,27 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chrrt(v),
     neigh(v),
     vart(v),
+    dehaz(v),
     sensih(v),
     localTgaincurve(v),
     inversret(v),
     // Sharpening
     expsharp(v),
+    sharcontrast(v),
     sharradius(v),
     sharamount(v),
     shardamping(v),
     shariter(v),
+    sharblur(v),
     sensisha(v),
     inverssha(v),
+    // Local Contrast
+    expcontrast(v),
+    lcradius(v),
+    lcamount(v),
+    lcdarkness(v),
+    lclightness(v),
+    sensilc(v),
     // Contrast by detail levels
     expcbdl(v),
     mult{v, v, v, v, v},
@@ -3884,6 +4031,12 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     pastsattog = v;
     sensiv = v;
     skintonescurve = v;
+    // Soft Light
+    expsoft = v;
+    streng = v;
+    sensisf = v;
+    // Lab Region
+    explabregion = v;
     // Blur & Noise
     expblur = v;
     radius = v;
@@ -3906,17 +4059,27 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chrrt = v;
     neigh = v;
     vart = v;
+    dehaz = v;
     sensih = v;
     localTgaincurve = v;
     inversret = v;
     // Sharpening
     expsharp = v;
+    sharcontrast = v;
     sharradius = v;
     sharamount = v;
     shardamping = v;
     shariter = v;
+    sharblur = v;
     sensisha = v;
     inverssha = v;
+    // Local Contrast
+    expcontrast = v;
+    lcradius = v;
+    lcamount = v;
+    lcdarkness = v;
+    lclightness = v;
+    sensilc = v;
     // Contrast by detail levels
     expcbdl = v;
 

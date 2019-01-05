@@ -113,8 +113,6 @@ FILEBROWSER_AUTOFLATFIELD;Flat-field automático
 FILEBROWSER_BROWSEPATHBUTTONHINT;Clique para navegar até o caminho escolhido.
 FILEBROWSER_BROWSEPATHHINT;Digite um caminho para navegar até.\n\nAtalhos do teclado:\n<b>Ctrl-o</b> para focar na caixa de texto do caminho.\n<b>Enter</b> / <b>Ctrl-Enter</b> para navegar lá;\n<b>Esc</b> para limpar as alterações.\n<b>Shift-Esc</b> para remover o foco.\n\nAtalhos do caminho:\n<b>~</b>	- diretório home do usuário.\n<b>!</b>	- diretório de fotos do usuário
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMFULL;Limpeza do cache - completa
-FILEBROWSER_CACHECLEARFROMPARTIAL;Limpeza do cache - partcial
 FILEBROWSER_CLEARPROFILE;Perfil de limpeza
 FILEBROWSER_COLORLABEL_TOOLTIP;Etiqueta de cor.\n\nUse o menu suspenso ou atalhos:\n<b>Shift-Ctrl-0</b> Sem Cor\n<b>Shift-Ctrl-1</b> Vermelho\n<b>Shift-Ctrl-2</b> Amarelo\n<b>Shift-Ctrl-3</b> Verde\n<b>Shift-Ctrl-4</b> Azul\n<b>Shift-Ctrl-5</b> Roxo
 FILEBROWSER_COPYPROFILE;Copiar perfil
@@ -719,7 +717,6 @@ HISTORY_MSG_485;Correção de Lente
 HISTORY_MSG_486;Correção de Lente - Câmera
 HISTORY_MSG_487;Correção de Lente - Lente
 HISTORY_MSG_488;Compressão de Amplitude Dinâmica(DRC)
-HISTORY_MSG_489;DRC - Limite
 HISTORY_MSG_490;DRC - Montante
 HISTORY_MSG_491;Balanço de Branco
 HISTORY_MSG_492;Curvas RGB
@@ -838,9 +835,6 @@ IPTCPANEL_TITLE;Título
 IPTCPANEL_TITLEHINT;Digite um nome curto e legível para a imagem, pode ser o nome do arquivo.
 IPTCPANEL_TRANSREFERENCE;Job ID
 IPTCPANEL_TRANSREFERENCEHINT;Digite um número ou identificador necessário para controle ou rastreamento do fluxo de trabalho.
-LENSPROFILE_CORRECTION_AUTOMATCH;Parâmetros de correção de correspondência automática
-LENSPROFILE_CORRECTION_LCPFILE;Arquivo LCP
-LENSPROFILE_CORRECTION_MANUAL;Parâmetros de correção manual
 LENSPROFILE_LENS_WARNING;Aviso: o fator de corte usado para o perfil da lente é maior que o fator de corte da câmera, os resultados podem estar errados.
 MAIN_BUTTON_FULLSCREEN;Tela cheia
 MAIN_BUTTON_ICCPROFCREATOR;Criador de Perfil ICC
@@ -911,7 +905,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;Pré-visualize a <b>Máscara de Foco</b>.\nAtalho:
 MAIN_TOOLTIP_PREVIEWG;Pré-visualize o <b>Canal verde</b>.\nAtalho: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Pré-visualize a <b>Luminosidade</b>.\nAtalho: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Pré-visualize o <b>Canal vermelho</b>.\nAtalho: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Pré-visualize a <b>Máscara de Contraste de Nitidez</b>.\nAtalho: <b>Nenhum</b>\n\nSó funciona quando a nitidez e o zoom estão ativados >= 100%.
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Pré-visualize a <b>Máscara de Contraste de Nitidez</b>.\nAtalho: <b>p</b>\n\nSó funciona quando a nitidez e o zoom estão ativados >= 100%.
 MAIN_TOOLTIP_QINFO;Informação rápida na imagem.\nAtalho: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Mostrar/Ocultar o painel esquerdo.\nShortcut: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Mostrar/Ocultar o painel direito.\nAtalho: <b>Alt-l</b>
@@ -1012,9 +1006,9 @@ PARTIALPASTE_VIBRANCE;Vibração
 PARTIALPASTE_VIGNETTING;Correção de vinheta
 PARTIALPASTE_WHITEBALANCE;Balanço de branco
 PREFERENCES_ADD;Adicionar
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Cor do guia do navegador
 PREFERENCES_APPLNEXTSTARTUP;é necessário reiniciar
 PREFERENCES_AUTOMONPROFILE;Usar o perfil de cores do monitor principal do sistema operacional
-PREFERENCES_AUTOSAVE_TP_OPEN;Salvar automaticamente ferramentas recolhidas/expandidas\nestado antes de sair
 PREFERENCES_BATCH_PROCESSING;Processamento em Lote
 PREFERENCES_BEHADDALL;Tudo para 'Adicionar'
 PREFERENCES_BEHADDALLHINT;Definir todos os parâmetros para o <b>Adicionar</b> modo.\nAjustes de parâmetros no painel de ferramentas de lote serão <b>deltas</b> para os valores armazenados.
@@ -1022,9 +1016,6 @@ PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BEHSETALL;Tudo para 'Configurar'
 PREFERENCES_BEHSETALLHINT;Definir todos os parâmetros para o <b>Configurar</b> modo.\nAjustes de parâmetros no painel de ferramentas de lote serão <b>absoluto</b>, os valores reais serão exibidos.
 PREFERENCES_BLACKBODY;Tungstênio
-PREFERENCES_CACHECLEARALL;Limpar Tudo
-PREFERENCES_CACHECLEARPROFILES;Limpar Perfis de Processamento
-PREFERENCES_CACHECLEARTHUMBS;Limpar Miniaturas
 PREFERENCES_CACHEMAXENTRIES;Número máximo de entradas de cache
 PREFERENCES_CACHEOPTS;Opções de Cache
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima da miniatura
@@ -1050,7 +1041,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Formato de chaves
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nome
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID da Tag
 PREFERENCES_CUSTPROFBUILDPATH;Caminho executável
-PREFERENCES_CUTOVERLAYBRUSH;Cor da máscara de corte/transparência
 PREFERENCES_D50;Configurações no menu principal
 PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
@@ -1072,7 +1062,6 @@ PREFERENCES_EDITORCMDLINE;Linha de comando personalizada
 PREFERENCES_EDITORLAYOUT;Layout do Editor
 PREFERENCES_EXTERNALEDITOR;Editor Externo
 PREFERENCES_FBROWSEROPTS;Navegador de Arquivos / Opções de Miniaturas
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de ferramentas do navegador de arquivos de linha única\n(desmarque para exibição de baixa resolução)
 PREFERENCES_FILEFORMAT;Formato de arquivo
 PREFERENCES_FLATFIELDFOUND;Encontrado
 PREFERENCES_FLATFIELDSDIR;Diretório de campos planos
@@ -1129,7 +1118,6 @@ PREFERENCES_MONPROFILE;Perfil de cor padrão
 PREFERENCES_MONPROFILE_WARNOSX;Devido às limitações do MacOS, apenas o sRGB é suportado.
 PREFERENCES_MULTITAB;Modo de Mútiplas Abas do Editor
 PREFERENCES_MULTITABDUALMON;Múltiplas Abas do Editor no Modo de Janela Própria
-PREFERENCES_NAVGUIDEBRUSH;Cor do guia do navegador
 PREFERENCES_NAVIGATIONFRAME;Navegação
 PREFERENCES_OUTDIR;Diretório de Saída
 PREFERENCES_OUTDIRFOLDER;Salvar na pasta
@@ -1167,13 +1155,10 @@ PREFERENCES_PSPATH;Diretório de instalação do Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Lembre-se de zoom % e compensar pan
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Lembre-se do zoom % e de compensar o pan da imagem atual ao abrir uma nova imagem.\n\nEsta opção só funciona em "Modo da Aba do Editor Único" e quando "o método Demosaicing utilizado para a pré-visualização em <100% zoom" está definido como "Como no PP3".
 PREFERENCES_SAVE_TP_OPEN_NOW;Salvar ferramentas no estado recolhidas/expandididas agora
-PREFERENCES_SELECTFONT;Selecione a fonte principal
-PREFERENCES_SELECTFONT_COLPICKER;Selecione a fonte do Seletor de Cor
 PREFERENCES_SELECTLANG;Selecione linguagem
-PREFERENCES_SELECTTHEME;Selecione tema
-PREFERENCES_SERIALIZE_TIFF_READ;Configurações de leitura tiff
-PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize a leitura de arquivos tiff
-PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Ao trabalhar com pastas cheias de arquivos tiff não compactados, ativar essa opção pode aumentar o desempenho da geração de miniaturas.
+PREFERENCES_SERIALIZE_TIFF_READ;Configurações de leitura TIFF
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize a leitura de arquivos TIFF
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Ao trabalhar com pastas cheias de arquivos TIFF não compactados, ativar essa opção pode aumentar o desempenho da geração de miniaturas.
 PREFERENCES_SET;Configuração
 PREFERENCES_SHOWBASICEXIF;Mostrar informações Exif básicas
 PREFERENCES_SHOWDATETIME;Mostrar data e hora
@@ -1193,7 +1178,6 @@ PREFERENCES_TAB_DYNAMICPROFILE;Regras de Perfil Dinâmico
 PREFERENCES_TAB_GENERAL;Geral
 PREFERENCES_TAB_IMPROC;Processamento de Imagem
 PREFERENCES_TAB_SOUND;Sons
-PREFERENCES_THEME;Tema
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Visualização JPEG incorporada
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Imagem para mostrar
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Renderização raw neutra
@@ -1357,11 +1341,6 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Girar horizontalmente.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotacione à esquerda.\n\nAtalhos:\n<b>[</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-[</b> - Modo de Guia do Editor Único.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotacione à direita.\n\nAtalhos:\n<b>]</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-]</b> - Modo de Guia do Editor Único.
 TP_COARSETRAF_TOOLTIP_VFLIP;Girar verticalmente.
-TP_COLORAPP_ADAPTSCENE;Luminância absoluta da cena
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminância absoluta do ambiente da cena (cd/m²).\n1) Calculada a partir dos dados Exif:\nVelocidade do obturador - velocidade ISO - número F - correção de exposição da câmera.\n2) Calculado a partir do ponto branco raw e do controle deslizante de Compensação de Exposição do RT.
-TP_COLORAPP_ADAPTVIEWING;Visualizando luminância absoluta (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminância absoluta do ambiente de visualização\n(usualmente 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Se a caixa de seleção estiver marcada (recommendado) RawTherapee calcula um valor ótimo a partir dos dados Exif.\nPara definir o valor manualmente, desmarque a caixa de seleção primeiro.
 TP_COLORAPP_ALGO;Algorimo
 TP_COLORAPP_ALGO_ALL;Tudo
 TP_COLORAPP_ALGO_JC;Claridade + Croma (JC)
@@ -1391,8 +1370,6 @@ TP_COLORAPP_CURVEEDITOR3;Curva de cor
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ajustar croma, saturação ou colorido.\n\nMostra o histograma da cromaticidade (L*a*b*) antes de CIECAM02.\nSe a caixa de seleção "Mostrar histogramas de saída do CIECAM02 em curvas" estiver ativada, mostra o histograma de C, s ou M depois de CIECAM02.\n\nC, s e M não são mostrados no painel principal do histograma.\nPara a saída final, consulte o painel principal do histograma.
 TP_COLORAPP_DATACIE;Histogramas de saída em curvas do CIECAM02
 TP_COLORAPP_DATACIE_TOOLTIP;Quando ativado, os histogramas em curvas do CIECAM02 mostram valores/intervalos aproximados para J ou Q, e C, s ou M após os ajustes do CIECAM02.\nEsta seleção não afeta o painel principal do histograma.\n\nQuando desativado, os histogramas em curvas do CIECAM02 mostram L*a*b* valores antes dos ajustes do CIECAM02.
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Se a caixa de seleção estiver marcada (recomendado), RawTherapee calcula um valor ótimo, que será usado pelo CAT02, e também para todo o CIECAM02.\nPara definir o valor manualmente, primeiro desmarque a caixa de seleção (valores acima de 65 são recomendados).
-TP_COLORAPP_DEGREE_TOOLTIP;Quantidade de Adaptação Cromática CIE Transformar 2002.
 TP_COLORAPP_FREE;Temp+verde livre + CAT02 + [saída]
 TP_COLORAPP_GAMUT;Controle Gamut (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Permitir controle gamut no modo L*a*b*.
@@ -1410,8 +1387,6 @@ TP_COLORAPP_NEUTRAL;Restaurar
 TP_COLORAPP_NEUTRAL_TIP;Restaurar todas as caixas de seleção e curvas dos controles deslizantes para seus valores padrão
 TP_COLORAPP_RSTPRO;Proteção vermelho e de tons de pele
 TP_COLORAPP_RSTPRO_TOOLTIP;Vermelho &amp; proteção de tons de pele afeta os controles deslizantes e as curvas.
-TP_COLORAPP_SHARPCIE;--sem uso--
-TP_COLORAPP_SHARPCIE_TOOLTIP;--sem uso--
 TP_COLORAPP_SURROUND;Borda
 TP_COLORAPP_SURROUND_AVER;Média
 TP_COLORAPP_SURROUND_DARK;Escuro
@@ -1431,11 +1406,9 @@ TP_COLORAPP_TCMODE_SATUR;Saturação
 TP_COLORAPP_TEMP_TOOLTIP;Para selecionar um iluminante, defina sempre Matiz=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TONECIE;Mapeamento de tom usando CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Se esta opção estiver desativada, o mapeamento de tom é feito no espaço L*a*b*.\nSe esta opção estiver habilitada, o mapeamento de tom é feito usando CIECAM02.\nA ferramenta de Mapeamento de Tom deve estar ativada para que esta configuração tenha efeito.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminância absoluta do ambiente de visualização\n(usualmente 16cd/m²).
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [saída]
 TP_COLORAPP_WBRT;WB [RT] + [saída]
-TP_COLORAPP_YB;Yb% (média luminância)
-TP_COLORAPP_YBSCENE;Yb% (média luminância)
-TP_COLORAPP_YBSCENE_TOOLTIP;Se "auto" estiver ativado, Yb é calculado a partir do valor médio da luminância real da imagem
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automático
 TP_COLORTONING_BALANCE;Balanço
@@ -1488,7 +1461,6 @@ TP_CROP_GUIDETYPE;Tipo de guia:
 TP_CROP_H;Altura
 TP_CROP_LABEL;Cortar
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;Selecione para Cortar
 TP_CROP_W;Largura
 TP_CROP_X;X
 TP_CROP_Y;Y
@@ -1578,7 +1550,6 @@ TP_EPD_LABEL;Mapeamento de Tom
 TP_EPD_REWEIGHTINGITERATES;Reponderando iterações
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensidade
-TP_EPD_TOOLTIP;O mapeamento de tom é possível no modo L*a*b*  (padão) e no modo CIECAM02.\n\nQuando no modo L*a*b*, o mapeamento de tom também pode ser usado na imagem residual da ferramenta de Níveis de Wavelet.\n\nPara ativar o modo de mapeamento de tom CIECAM02, habilite as seguintes configurações:\n1. CIECAM02\n2. Algorítimo = "Brilho + Colorido (QM)"\n3. "Mapeamento de tom usando o brilho do CIECAM02 (Q)"
 TP_EXPOSURE_AUTOLEVELS;Níveis Automáticos
 TP_EXPOSURE_AUTOLEVELS_TIP;Alterna a execução dos Níveis Automáticos para definir automaticamente os valores do controle deslizante de Exposição baseado numa análise de imagem.\nHabilita a Reconstrução de Realce se necessário.
 TP_EXPOSURE_BLACKLEVEL;Preto
@@ -1735,9 +1706,6 @@ TP_LENSGEOM_AUTOCROP;Corte automático
 TP_LENSGEOM_FILL;Preenchimento automático
 TP_LENSGEOM_LABEL;Lente / Geometria
 TP_LENSPROFILE_LABEL;Correção de lente perfilada
-TP_LENSPROFILE_USECA;Correção da aberração cromática
-TP_LENSPROFILE_USEDIST;Correção de distorção
-TP_LENSPROFILE_USEVIGN;Correção de vinheta
 TP_LOCALCONTRAST_AMOUNT;Montante
 TP_LOCALCONTRAST_DARKNESS;Nível de escuridão
 TP_LOCALCONTRAST_LABEL;Contraste Local
@@ -1775,7 +1743,6 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal apenas em linhas PDAF
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
 TP_PREPROCESS_NO_FOUND;Nenhum encontrado
 TP_PREPROCESS_PDAFLINESFILTER;Filtro de linhas PDAF
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Tenta suprimir o ruído de faixas causado por pixels PDAF no sensor, ocorrendo com algumas câmeras mirrorless da Sony em algumas cenas em contraluz com "flare" visível.
 TP_PRSHARPENING_LABEL;Pós-Redimensionamento de Nitidez
 TP_PRSHARPENING_TOOLTIP;Focaliza a imagem após o redimensionamento. Funciona somente quando o método de redimensionamento "Lanczos" é usado. É impossível visualizar os efeitos dessa ferramenta. Veja RawPedia para instruções de uso.
 TP_RAWCACORR_AUTO;Auto correção
@@ -1880,7 +1847,6 @@ TP_RESIZE_WIDTH;Largura
 TP_RETINEX_CONTEDIT_HSL;Equalizador de histograma HSL
 TP_RETINEX_CONTEDIT_LAB;Equalizador de histograma L*a*b*
 TP_RETINEX_CONTEDIT_LH;Equalizador de matiz
-TP_RETINEX_CONTEDIT_MAP;Equalizador de máscara
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminância de acordo com a luminância L=f(L)\nCorrija dados raw para reduzir halos e artefatos.
 TP_RETINEX_CURVEEDITOR_LH;Intensidade=f(M)
@@ -1917,7 +1883,6 @@ TP_RETINEX_LABEL;Retinex
 TP_RETINEX_LABEL_MASK;Máscara
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Baixo
-TP_RETINEX_MAP;Método de máscara
 TP_RETINEX_MAP_GAUS;Máscara gaussiana
 TP_RETINEX_MAP_MAPP;Máscara de nitidez (wavelet parcial)
 TP_RETINEX_MAP_MAPT;Máscara de nitidez (wavelet total)
@@ -2005,7 +1970,6 @@ TP_SOFTLIGHT_STRENGTH;Intensidade
 TP_TM_FATTAL_AMOUNT;Montante
 TP_TM_FATTAL_ANCHOR;Âncora
 TP_TM_FATTAL_LABEL;Compressão de Amplitude Dinâmica(DRC)
-TP_TM_FATTAL_THRESHOLD;Limite
 TP_VIBRANCE_AVOIDCOLORSHIFT;Evite mudança de cor
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;MM
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons cor de pele
@@ -2253,16 +2217,101 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!CURVEEDITOR_CATMULLROM;Flexible
+!DYNPROFILEEDITOR_IMGTYPE_ANY;Any
+!DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+!DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
+!DYNPROFILEEDITOR_IMGTYPE_STD;Standard
+!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!GENERAL_CURRENT;Current
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
+!HISTORY_MSG_489;DRC - Detail
+!HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
+!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
+!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - region C mask
+!HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
+!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
+!HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
+!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
+!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
+!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
+!HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
+!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
+!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
+!HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
+!HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
+!HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
+!HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
+!HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
 !HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
+!PREFERENCES_APPEARANCE;Appearance
+!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
+!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
+!PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_THEME;Theme
+!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
+!PREFERENCES_CACHECLEAR;Clear
+!PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
+!PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
+!PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
+!PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !SAVEDLG_FILEFORMAT_FLOAT; floating-point
+!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
+!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
+!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
+!TP_COLORTONING_LABREGIONS;Color correction regions
+!TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+!TP_COLORTONING_LABREGION_CHANNEL;Channel
+!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
+!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
+!TP_COLORTONING_LABREGION_CHANNEL_G;Green
+!TP_COLORTONING_LABREGION_CHANNEL_R;Red
+!TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+!TP_COLORTONING_LABREGION_HUEMASK;H
+!TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
+!TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+!TP_COLORTONING_LABREGION_LIST_TITLE;Correction
+!TP_COLORTONING_LABREGION_MASK;Mask
+!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
+!TP_COLORTONING_LABREGION_OFFSET;Offset
+!TP_COLORTONING_LABREGION_POWER;Power
+!TP_COLORTONING_LABREGION_SATURATION;Saturation
+!TP_COLORTONING_LABREGION_SHOWMASK;Show mask
+!TP_COLORTONING_LABREGION_SLOPE;Slope
+!TP_CROP_RESETCROP;Reset
+!TP_CROP_SELECTCROP;Select
+!TP_DEHAZE_DEPTH;Depth
+!TP_DEHAZE_LABEL;Haze Removal
+!TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+!TP_DEHAZE_STRENGTH;Strength
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_USE_CA;Chromatic aberration
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
+!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_RAWCACORR_AUTOIT;Iterations
+!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
+!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
+!TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
+!TP_RETINEX_MAP;Method
+!TP_TM_FATTAL_THRESHOLD;Detail
+!TP_WBALANCE_PICKER;Pick

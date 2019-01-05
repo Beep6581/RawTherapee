@@ -149,7 +149,7 @@ private:
 
 public:
     explicit ExpanderBox( Gtk::Container *p);
-    ~ExpanderBox( )
+    ~ExpanderBox( ) override
     {
         delete pC;
     }
@@ -285,9 +285,9 @@ public:
 class MyScrolledWindow : public Gtk::ScrolledWindow
 {
 
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
 
 public:
     MyScrolledWindow();
@@ -299,7 +299,7 @@ public:
 class MyScrolledToolbar : public Gtk::ScrolledWindow
 {
 
-    bool on_scroll_event (GdkEventScroll* event);
+    bool on_scroll_event (GdkEventScroll* event) override;
     void get_preferred_height (int &minimumHeight, int &naturalHeight);
 
 public:
@@ -313,9 +313,9 @@ class MyComboBox : public Gtk::ComboBox
 {
     int naturalWidth, minimumWidth;
 
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 public:
     MyComboBox ();
@@ -331,9 +331,9 @@ class MyComboBoxText : public Gtk::ComboBoxText
     int naturalWidth, minimumWidth;
     sigc::connection myConnection;
 
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 public:
     explicit MyComboBoxText (bool has_entry = false);
@@ -350,8 +350,8 @@ class MySpinButton : public Gtk::SpinButton
 {
 
 protected:
-    bool on_scroll_event (GdkEventScroll* event);
-    bool on_key_press_event (GdkEventKey* event);
+    bool on_scroll_event (GdkEventScroll* event) override;
+    bool on_key_press_event (GdkEventKey* event) override;
 
 public:
     MySpinButton ();
@@ -364,8 +364,8 @@ public:
 class MyHScale : public Gtk::HScale
 {
 
-    bool on_scroll_event (GdkEventScroll* event);
-    bool on_key_press_event (GdkEventKey* event);
+    bool on_scroll_event (GdkEventScroll* event) override;
+    bool on_key_press_event (GdkEventKey* event) override;
 };
 
 /**
@@ -388,9 +388,9 @@ private:
     sigc::signal<void> selection_changed_;
 
 protected:
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
     void set_none();
 
@@ -484,8 +484,8 @@ class MyProgressBar : public Gtk::ProgressBar
 private:
     int w;
 
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 public:
     explicit MyProgressBar(int width);

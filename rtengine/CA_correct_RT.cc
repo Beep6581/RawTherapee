@@ -1252,7 +1252,7 @@ float* RawImageSource::CA_correct_RT(
                         vfloat factors = oldvals / newvals;
                         factors = vself(vmaskf_le(newvals, onev), onev, factors);
                         factors = vself(vmaskf_le(oldvals, onev), onev, factors);
-                        STVFU((*nonGreen)[i/2][j/2], LIMV(factors, zd5v, twov));
+                        STVFU((*nonGreen)[i/2][j/2], vclampf(factors, zd5v, twov));
                     }
 #endif
                     for (; j < W - 2 * cb; j += 2) {

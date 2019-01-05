@@ -33,11 +33,9 @@ class FoldableToolPanel;
 
 class ToolPanelListener
 {
-
 public:
-
-    virtual ~ToolPanelListener() {}
-    virtual void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr) {}
+    virtual ~ToolPanelListener() = default;
+    virtual void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) = 0;
 };
 
 /// @brief This class control the space around the group of tools inside a tab, as well as the space separating each tool. */
@@ -133,6 +131,9 @@ public:
         this->batchMode = batchMode;
     }
 
+    virtual Glib::ustring getToolName () {
+        return toolName;
+    }
 };
 
 class FoldableToolPanel : public ToolPanel
@@ -150,11 +151,11 @@ public:
 
     FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool useEnabled = false);
 
-    MyExpander* getExpander()
+    MyExpander* getExpander() override
     {
         return exp;
     }
-    void setExpanded (bool expanded)
+    void setExpanded (bool expanded) override
     {
         if (exp) {
             exp->set_expanded( expanded );
@@ -172,7 +173,7 @@ public:
             exp->show();
         }
     }
-    bool getExpanded ()
+    bool getExpanded () override
     {
         if (exp) {
             return exp->get_expanded();
@@ -180,11 +181,11 @@ public:
 
         return false;
     }
-    void setParent (Gtk::Box* parent)
+    void setParent (Gtk::Box* parent) override
     {
         parentContainer = parent;
     }
-    Gtk::Box* getParent ()
+    Gtk::Box* getParent () override
     {
         return parentContainer;
     }

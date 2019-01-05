@@ -128,6 +128,10 @@ set(RTENGINESOURCEFILES
     xtrans_demosaic.cc
     vng4_demosaic_RT.cc
     ipsoftlight.cc
+    guidedfilter.cc
+    ipdehaze.cc
+    iplabregions.cc
+    lj92.c
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)
@@ -161,7 +165,7 @@ add_dependencies(rtengine UpdateInfo)
 
 # It may be nice to store library version too
 if(BUILD_SHARED_LIBS)
-    install (TARGETS rtengine DESTINATION ${LIBDIR})
+    install(TARGETS rtengine DESTINATION ${LIBDIR})
 endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")

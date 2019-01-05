@@ -127,9 +127,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
 FileBrowser::FileBrowser () :
     menuLabel(nullptr),
-#ifdef WIN32
     miOpenDefaultViewer(nullptr),
-#endif
     selectDF(nullptr),
     thisIsDF(nullptr),
     autoDF(nullptr),
@@ -981,7 +979,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER);
+            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER, true, true);
         }
 
         if (!mselected.empty() && bppcl) {
@@ -1992,7 +1990,11 @@ void FileBrowser::setExportPanel (ExportPanel* expanel)
     exportPanel->setExportPanelListener (this);
 }
 
-void FileBrowser::updateProfileList ()
+void FileBrowser::storeCurrentValue()
+{
+}
+
+void FileBrowser::updateProfileList()
 {
     // submenu applmenu
     int p = 0;
@@ -2084,6 +2086,10 @@ void FileBrowser::updateProfileList ()
 
     ProfileStore::getInstance()->releaseFileList();
     subMenuList.clear();
+}
+
+void FileBrowser::restoreValue()
+{
 }
 
 void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)

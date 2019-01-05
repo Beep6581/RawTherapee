@@ -111,17 +111,17 @@ protected:
     void updateTooltip();
     void updateBackBuffer();
 
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
-    void on_realize ();
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool on_button_press_event (GdkEventButton* event);
-    bool on_button_release_event (GdkEventButton* event);
-    bool on_motion_notify_event (GdkEventMotion* event);
-    bool on_leave_notify_event (GdkEventCrossing* event);
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+    void on_realize () override;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_button_press_event (GdkEventButton* event) override;
+    bool on_button_release_event (GdkEventButton* event) override;
+    bool on_motion_notify_event (GdkEventMotion* event) override;
+    bool on_leave_notify_event (GdkEventCrossing* event) override;
 
 public:
 

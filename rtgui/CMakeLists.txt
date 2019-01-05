@@ -158,6 +158,7 @@ set(NONCLISOURCEFILES
     metadatapanel.cc
     labgrid.cc
     softlight.cc
+    dehaze.cc
     )
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
@@ -171,7 +172,7 @@ endif()
 
 if(WIN32)
     set(EXTRA_SRC_CLI myicon.rc)
-    set(EXTRA_SRC_NONCLI myicon.rc windirmonitor.cc)
+    set(EXTRA_SRC_NONCLI myicon.rc)
     set(EXTRA_LIB_RTGUI winmm)
     include_directories(${EXTRA_INCDIR}
         ${GIOMM_INCLUDE_DIRS}

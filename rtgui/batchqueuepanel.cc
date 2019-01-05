@@ -57,6 +57,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     qAutoStart->set_tooltip_text (M("BATCHQUEUE_AUTOSTARTHINT"));
     qAutoStart->set_active (options.procQueueEnabled);
 
+    queueShouldRun = false;
+
     batchQueueButtonBox->pack_start (*qStartStop, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*qAutoStart, Gtk::PACK_SHRINK, 4);
     Gtk::Frame *bbox = Gtk::manage(new Gtk::Frame(M("MAIN_FRAME_BATCHQUEUE")));
@@ -245,20 +247,13 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
     }
 }
 
-void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage)
+void BatchQueuePanel::queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage)
 {
-    updateTab ( qsize);
+    setGuiFromBatchState(queueRunning, qsize);
 
-    if (qsize == 0 || (qsize == 1 && !fdir->get_sensitive())) {
-        qStartStop->set_sensitive(false);
-    } else {
-        qStartStop->set_sensitive(true);
-    }
-
-    if (queueEmptied || queueError) {
-        stopBatchProc ();
-        fdir->set_sensitive (true);
-        fformat->set_sensitive (true);
+    if (!queueRunning && qsize == 0 && queueShouldRun) {
+        // There was work, but it is all done now.
+        queueShouldRun = false;
 
         SoundManager::playSoundAsync(options.sndBatchQueueDone);
     }
@@ -271,8 +266,7 @@ void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied, bool queue
 
 void BatchQueuePanel::startOrStopBatchProc()
 {
-    bool state = qStartStop->get_state();
-    if (state) {
+    if (qStartStop->get_state()) {
         startBatchProc();
     } else {
         stopBatchProc();
@@ -281,55 +275,51 @@ void BatchQueuePanel::startOrStopBatchProc()
 
 void BatchQueuePanel::startBatchProc ()
 {
-    // Update switch when queue started programmatically
-    qStartStopConn.block (true);
-    qStartStop->set_active(true);
-    qStartStopConn.block (false);
-
     if (batchQueue->hasJobs()) {
-        fdir->set_sensitive (false);
-        fformat->set_sensitive (false);
-        if (batchQueue->getEntries().size() == 1) {
-            qStartStop->set_sensitive(false);
-        }
+        // Update the *desired* state of the queue, then launch it.  The switch
+        // state is not updated here; it is changed by the queueSizeChanged()
+        // callback in response to the *reported* state.
+        queueShouldRun = true;
+
         saveOptions();
         batchQueue->startProcessing ();
-    } else {
-        stopBatchProc ();
     }
-
-    updateTab (batchQueue->getEntries().size());
 }
 
 void BatchQueuePanel::stopBatchProc ()
 {
-    // Update switch when queue started programmatically
-    qStartStopConn.block (true);
-    qStartStop->set_active(false);
-    qStartStopConn.block (false);
-
-    updateTab (batchQueue->getEntries().size());
+    // There is nothing much to do here except set the desired state, which the
+    // background queue thread must check.  It will notify queueSizeChanged()
+    // when it stops.
+    queueShouldRun = false;
 }
 
-void BatchQueuePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries, bool head)
+void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
 {
+    // Change the GUI state in response to the reported queue state
+    if (qsize == 0 || (qsize == 1 && queueRunning)) {
+        qStartStop->set_sensitive(false);
+    } else {
+        qStartStop->set_sensitive(true);
+    }
 
-    batchQueue->addEntries (entries, head);
+    qStartStopConn.block(true);
+    qStartStop->set_active(queueRunning);
+    qStartStopConn.block(false);
+
+    fdir->set_sensitive (!queueRunning);
+    fformat->set_sensitive (!queueRunning);
+
+    updateTab(qsize);
+}
+
+void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
+{
+    batchQueue->addEntries(entries, head);
 
     if (!qStartStop->get_active() && qAutoStart->get_active()) {
+        // Auto-start as if the user had pressed the qStartStop switch
         startBatchProc ();
-    }
-}
-
-bool BatchQueuePanel::canStartNext ()
-{
-
-    if (qStartStop->get_active()) {
-        return true;
-    } else {
-        fdir->set_sensitive (true);
-        fformat->set_sensitive (true);
-        return false;
     }
 }
 
@@ -339,6 +329,33 @@ void BatchQueuePanel::saveOptions ()
     options.savePathTemplate    = outdirTemplate->get_text();
     options.saveUsePathTemplate = useTemplate->get_active();
     options.procQueueEnabled    = qAutoStart->get_active();
+}
+
+bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
+{
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+
+    if (ctrl) {
+        switch(event->keyval) {
+        case GDK_KEY_s:
+            if (qStartStop->get_active()) {
+                stopBatchProc();
+            } else {
+                startBatchProc();
+            }
+
+            return true;
+        }
+    }
+
+    return batchQueue->keyPressed (event);
+}
+
+bool BatchQueuePanel::canStartNext ()
+{
+    // This function is called from the background BatchQueue thread.  It
+    // cannot call UI functions; we keep the desired state in an atomic.
+    return queueShouldRun;
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()
@@ -363,33 +380,10 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 // since these settings are shared with editorpanel :
 void BatchQueuePanel::pathFolderChanged ()
 {
-
     options.savePathFolder = outdirFolder->get_filename();
 }
 
-void BatchQueuePanel::formatChanged (Glib::ustring f)
+void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
-
-    options.saveFormatBatch = saveFormatPanel->getFormat ();
-
-}
-
-bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
-{
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-
-    if (ctrl) {
-        switch(event->keyval) {
-        case GDK_KEY_s:
-            if (qStartStop->get_active()) {
-                stopBatchProc();
-            } else {
-                startBatchProc();
-            }
-
-            return true;
-        }
-    }
-
-    return batchQueue->keyPressed (event);
+    options.saveFormatBatch = saveFormatPanel->getFormat();
 }

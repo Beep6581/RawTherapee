@@ -155,11 +155,11 @@ public:
     virtual Tag*     findTagUpward (const char* name) const;
     bool             getXMPTagValue (const char* name, char* value) const;
 
-    void             keepTag       (int ID);
-    virtual void     addTag        (Tag* a);
-    virtual void     addTagFront   (Tag* a);
-    virtual void     replaceTag    (Tag* a);
-    inline Tag*      getTagByIndex (int ix)
+    void        keepTag       (int ID);
+    void        addTag        (Tag* &a);
+    void        addTagFront   (Tag* &a);
+    void        replaceTag    (Tag* a);
+    inline Tag* getTagByIndex (int ix)
     {
         return tags[ix];
     }
@@ -171,7 +171,7 @@ public:
     virtual int      calculateSize ();
     virtual int      write         (int start, unsigned char* buffer);
     virtual TagDirectory* clone    (TagDirectory* parent);
-    virtual void     applyChange   (std::string field, Glib::ustring value);
+    void     applyChange   (const std::string &field, const Glib::ustring &value);
 
     virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
     virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
@@ -191,10 +191,10 @@ public:
     TagDirectoryTable();
     TagDirectoryTable (TagDirectory* p, unsigned char *v, int memsize, int offs, TagType type, const TagAttrib* ta, ByteOrder border);
     TagDirectoryTable (TagDirectory* p, FILE* f, int memsize, int offset, TagType type, const TagAttrib* ta, ByteOrder border);
-    virtual ~TagDirectoryTable();
-    virtual int calculateSize ();
-    virtual int write (int start, unsigned char* buffer);
-    virtual TagDirectory* clone (TagDirectory* parent);
+    ~TagDirectoryTable() override;
+    int calculateSize () override;
+    int write (int start, unsigned char* buffer) override;
+    TagDirectory* clone (TagDirectory* parent) override;
 };
 
 // a class representing a single tag
@@ -488,7 +488,7 @@ protected:
     std::map<int, std::string> choices;
 public:
     ChoiceInterpreter () {};
-    virtual std::string toString (Tag* t)
+    std::string toString (Tag* t) override
     {
         std::map<int, std::string>::iterator r = choices.find (t->toInt());
 

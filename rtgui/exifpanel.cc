@@ -261,7 +261,7 @@ void ExifPanel::addDirectory (const TagDirectory* dir, Gtk::TreeModel::Children 
                 Tag* t2 = (const_cast<TagDirectory*> (dir))->getTagByIndex (j);
                 const TagAttrib* currAttrib = t2->getAttrib();
 
-                if (currAttrib && ((options.lastShowAllExif) || (!options.lastShowAllExif && currAttrib->action != AC_SYSTEM))) {
+                if (currAttrib && (options.lastShowAllExif || currAttrib->action != AC_SYSTEM)) {
                     addSeparator();
                     hasContent = true;
                     break;
