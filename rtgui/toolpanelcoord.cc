@@ -182,7 +182,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     updateVScrollbars (options.hideTPVScrollbar);
 
     // load panel endings
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
         imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
         imgPanelEnd[i]->show();
@@ -214,7 +214,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     locallabPanelSW->add(*locallabPanel);
     locallabPanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
-    locallabPanel->pack_start(*vbPanelEnd[6], Gtk::PACK_SHRINK, 0);
+    locallabPanel->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
     
     transformPanelSW->add (*transformPanel);
     transformPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);

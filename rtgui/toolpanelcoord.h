@@ -181,8 +181,8 @@ protected:
     TextOrIcon* toiW;
     TextOrIcon* toiL;
 
-    Gtk::Image* imgPanelEnd[7];
-    Gtk::VBox* vbPanelEnd[7];
+    Gtk::Image* imgPanelEnd[8];
+    Gtk::VBox* vbPanelEnd[8];
 
     Gtk::ScrolledWindow* favoritePanelSW;
     Gtk::ScrolledWindow* exposurePanelSW;
