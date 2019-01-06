@@ -888,7 +888,14 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         set_inconsistent(multiImage && !pedited->locallab.enabled);
     }
 
-    // Add non existent spots and update existent ones
+    // Delete all existent spots
+    std::vector<int>* const list = expsettings->getSpotIdList();
+
+    for (size_t i = 0; i < list->size(); i++) {
+        expsettings->deleteControlSpot(list->at(i));
+    }
+
+    // Add existent spots based on pp
     ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
 
     for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
@@ -941,28 +948,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         r->thresh = pp->locallab.spots.at(i).thresh;
         r->iter = pp->locallab.spots.at(i).iter;
 
-        if (!expsettings->updateControlSpot(r)) {
-            expsettings->addControlSpot(r);
-        }
-    }
-
-    // Delete not anymore existent spots
-    std::vector<int>* const list = expsettings->getSpotIdList();
-    bool ispresent;
-
-    for (int i = 0; i < (int)list->size() - 1; i++) {
-        ispresent = false;
-
-        for (int j = 0; j < pp->locallab.nbspot && j < (int)pp->locallab.spots.size(); j++) {
-            if (list->at(i) == pp->locallab.spots.at(j).id) {
-                ispresent = true;
-                break;
-            }
-        }
-
-        if (!ispresent) {
-            expsettings->deleteControlSpot(list->at(i));
-        }
+        expsettings->addControlSpot(r);
     }
 
     // Select active spot
