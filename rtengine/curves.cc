@@ -1054,7 +1054,7 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
-                                     double shcompr, double br,
+                                     double shcompr, double br, double cont, LUTu & histogram,
                                      LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc,
                                      int skip)
 {
@@ -1114,18 +1114,75 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
             lightCurveloc[i] = CLIPD(val);
         }
 
-        lightCurveloc *= 32767.f;
-
-        for (int i = 32768; i < 32770; i++) { // set last two elements of lut to 32768 and 32769 to allow linear interpolation
-            lightCurveloc[i] = (float)i;
-        }
 
 
     } else {
         lightCurveloc.makeIdentity(32767.f);
     }
 
+    // check if contrast curve is needed
+    if (cont > 0.00001 || cont < -0.00001) {
 
+        // compute mean luminance of the image with the curve applied
+        int sum = 0;
+        float avg = 0;
+
+        for (int i = 0; i < 32768; i++) {
+            avg += lightCurveloc[i] * histogram[i];
+            sum += histogram[i];
+        }
+
+        std::vector<double> contrastcurvePoints;
+
+        if (sum) {
+            avg /= sum;
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            contrastcurvePoints.resize(9);
+            contrastcurvePoints.at(0) = double (DCT_NURBS);
+
+            contrastcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+            contrastcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
+
+            contrastcurvePoints.at(3) = avg - avg * (0.6 - cont / 250.0);  // toe point
+            contrastcurvePoints.at(4) = avg - avg * (0.6 + cont / 250.0);  // value at toe point
+
+            contrastcurvePoints.at(5) = avg + (1 - avg) * (0.6 - cont / 250.0);  // shoulder point
+            contrastcurvePoints.at(6) = avg + (1 - avg) * (0.6 + cont / 250.0);  // value at shoulder point
+
+            contrastcurvePoints.at(7) = 1.;  // white point
+            contrastcurvePoints.at(8) = 1.;  // value at white point
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        } else {
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            // sum has an invalid value (next to 0, producing a division by zero, so we create a fake contrast curve, producing a white image
+            contrastcurvePoints.resize(5);
+            contrastcurvePoints.at(0) = double (DCT_NURBS);
+
+            contrastcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+            contrastcurvePoints.at(2) = 1.;  // black point.  Value in [0 ; 1] range
+
+            contrastcurvePoints.at(3) = 1.;  // white point
+            contrastcurvePoints.at(4) = 1.;  // value at white point
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        }
+
+        DiagonalCurve contrastcurve(contrastcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+
+        // apply contrast enhancement
+        for (int i = 0; i < 32768; i++) {
+            lightCurveloc[i] = contrastcurve.getVal(lightCurveloc[i]);
+        }
+
+    }
+
+        lightCurveloc *= 32767.f;
+
+        for (int i = 32768; i < 32770; i++) { // set last two elements of lut to 32768 and 32769 to allow linear interpolation
+            lightCurveloc[i] = (float)i;
+        }
 
 
     // a: slope of the curve, black: starting point at the x axis

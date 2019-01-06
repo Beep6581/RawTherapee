@@ -1081,6 +1081,7 @@ private:
             LUTf shtonecurveloc(65536, 0);
             LUTf tonecurveloc(65536, 0);
             LUTf lightCurveloc(32770, 0);
+            LUTu lhist16loc(32768, 0);
             LUTf exlocalcurve(65536, 0);
 
            // int maxspot = 1;
@@ -1116,19 +1117,19 @@ private:
                 double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
                 double shcompr = params.locallab.spots.at(sp).shcompr;
                 double br = params.locallab.spots.at(sp).lightness;
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                                1);
+                double cont = params.locallab.spots.at(sp).contrast;
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, sobelre;
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
-
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 }
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                                1);
 
                 ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);

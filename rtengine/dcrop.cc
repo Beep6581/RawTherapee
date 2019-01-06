@@ -892,6 +892,7 @@ void Crop::update(int todo)
         LUTf shtonecurveloc2(65536, 0);
         LUTf tonecurveloc2(65536, 0);
         LUTf lightCurveloc2(32770, 0);
+        LUTu lhist16loc2(32770, 0);
         bool LHutili = parent->LHutili;
         bool HHutili = parent->HHutili;
 
@@ -929,16 +930,17 @@ void Crop::update(int todo)
                 double shcompr = params.locallab.spots.at(sp).shcompr;
                 double br = params.locallab.spots.at(sp).lightness;
 
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
-                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
-                                                sca);
-
+                double cont = params.locallab.spots.at(sp).contrast;
+                lhist16loc2 = parent->lhist16loc;
                 double huere, chromare, lumare, huerefblu, sobelre;
                 huerefblu = parent->huerefblurs[sp];
                 huere = parent->huerefs[sp];
                 chromare = parent->chromarefs[sp];
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc2,
+                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
+                                                sca);
 
                 parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
                                       loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);

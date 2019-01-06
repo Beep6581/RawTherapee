@@ -345,7 +345,7 @@ public:
 
                              int skip = 1);
 
-    static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br,
+    static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double cont, LUTu & histogram,
                                   LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc,
                                   int skip = 1);
 

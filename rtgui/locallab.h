@@ -172,6 +172,12 @@ private:
     // Color & Light
     MyComboBoxText* const qualitycurveMethod;
     sigc::connection qualitycurveMethodConn;
+    MyComboBoxText* const showmaskcolMethod;
+    sigc::connection showmaskcolMethodConn;
+    //Exposure
+    MyComboBoxText* const showmaskexpMethod;
+    sigc::connection showmaskexpMethodConn;
+
     // Blur & Noise
     MyComboBoxText* const blurMethod;
     sigc::connection blurMethodConn;
@@ -190,6 +196,10 @@ private:
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
 
+    //Frame
+    Gtk::Frame* maskcolFrame;
+    Gtk::Frame* maskexpFrame;
+    
     // Others
     /**
      * Used to store the default ProcParams when setDefaults function is called
@@ -215,6 +225,10 @@ private:
     // Color & Light
     void curvactivChanged();
     void inversChanged();
+    void showmaskcolMethodChanged();
+    //Exposure
+    void showmaskexpMethodChanged();
+
     // Vibrance
     void protectskins_toggled();
     void avoidcolorshift_toggled();

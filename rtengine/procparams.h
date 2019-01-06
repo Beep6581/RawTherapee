@@ -957,6 +957,7 @@ struct LocallabParams {
         int chroma;
         int sensi;
         Glib::ustring qualitycurveMethod;
+        Glib::ustring showmaskcolMethod;
         std::vector<double> llcurve;
         std::vector<double> cccurve;
         std::vector<double> LHcurve;
@@ -972,6 +973,7 @@ struct LocallabParams {
         int warm;
         int sensiex;
         std::vector<double> excurve;
+        Glib::ustring showmaskexpMethod;
         // Vibrance
         bool expvibrance;
         int saturated;

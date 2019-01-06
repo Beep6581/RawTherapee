@@ -949,6 +949,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chroma = locallab.spots.at(j).chroma && pSpot.chroma == otherSpot.chroma;
                 locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
+                locallab.spots.at(j).showmaskcolMethod = locallab.spots.at(j).showmaskcolMethod && pSpot.showmaskcolMethod == otherSpot.showmaskcolMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
                 locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
@@ -964,6 +965,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
                 locallab.spots.at(j).sensiex = locallab.spots.at(j).sensiex && pSpot.sensiex == otherSpot.sensiex;
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
+                locallab.spots.at(j).showmaskexpMethod = locallab.spots.at(j).showmaskexpMethod && pSpot.showmaskexpMethod == otherSpot.showmaskexpMethod;
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -2572,6 +2574,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).qualitycurveMethod = mods.locallab.spots.at(i).qualitycurveMethod;
         }
 
+        if (locallab.spots.at(i).showmaskcolMethod) {
+            toEdit.locallab.spots.at(i).showmaskcolMethod = mods.locallab.spots.at(i).showmaskcolMethod;
+        }
+
         if (locallab.spots.at(i).llcurve) {
             toEdit.locallab.spots.at(i).llcurve = mods.locallab.spots.at(i).llcurve;
         }
@@ -2627,6 +2633,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).excurve) {
             toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+        }
+
+        if (locallab.spots.at(i).showmaskexpMethod) {
+            toEdit.locallab.spots.at(i).showmaskexpMethod = mods.locallab.spots.at(i).showmaskexpMethod;
         }
 
         // Vibrance
@@ -3881,6 +3891,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chroma(v),
     sensi(v),
     qualitycurveMethod(v),
+    showmaskcolMethod(v),
     llcurve(v),
     cccurve(v),
     LHcurve(v),
@@ -3896,6 +3907,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     warm(v),
     sensiex(v),
     excurve(v),
+    showmaskexpMethod(v),
     // Vibrance
     expvibrance(v),
     saturated(v),
@@ -4006,6 +4018,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chroma = v;
     sensi = v;
     qualitycurveMethod = v;
+    showmaskcolMethod = v;
     llcurve = v;
     cccurve = v;
     LHcurve = v;
@@ -4021,6 +4034,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     warm = v;
     sensiex = v;
     excurve = v;
+    showmaskexpMethod = v;
     // Vibrance
     expvibrance = v;
     saturated = v;

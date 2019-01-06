@@ -107,6 +107,7 @@ ImProcCoordinator::ImProcCoordinator()
       shtonecurveloc(65536, 0),
       tonecurveloc(65536, 0),
       lightCurveloc(32770, 0),
+      lhist16loc(32770, 0),
       locallutili(false), localcutili(false), localskutili(false), localexutili(false), LHutili(false), HHutili(false),
       huerefs(500, -100000.f),
       huerefblurs(500, -100000.f),
@@ -693,7 +694,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         readyphase++;
-    lhist16(32768);
+//    lhist16(32768);
 
         if (todo & (M_LUMACURVE | M_CROP)) {
             LUTu lhist16(32768);
@@ -792,18 +793,22 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
                 double shcompr = params.locallab.spots.at(sp).shcompr;
                 double br = params.locallab.spots.at(sp).lightness;
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                                sca);
+                double cont = params.locallab.spots.at(sp).contrast;
+                lhist16loc.clear();
+
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, sobelre;
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre);
+                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 } else {
-                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre);
+                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 }
+
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                                sca);
 
                 huerblu = huerefblurs[sp] = huerefblu;
                 huer = huerefs[sp] = huere;
