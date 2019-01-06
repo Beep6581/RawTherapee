@@ -188,14 +188,14 @@ RTWindow::RTWindow ()
                 if (isPix) {
                     // HOMBRE: guessing here...
                     // if resolution is lower than 192ppi, we're supposing that it's already expressed in a scale==1 scenario
-                    if (resolution >= 192) {
+                    if (resolution >= int(RTScalable::baseHiDPI)) {
                         // converting the resolution to a scale==1 scenario
                         resolution /= 2;
                     }
                     // 1pt =  1/72in @ 96 ppi
                     // HOMBRE: If the font unit is px, is it alredy scaled up to match the resolution ?
                     //             px         >inch >pt      >"scaled pt"
-                    pt = (int)(fontSize / 96. * 72 * (96. / resolution) + 0.49);
+                    pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (RTScalable::baseHiDPI / resolution) + 0.49);
                 } else {
                     pt = fontSize / Pango::SCALE;
                 }

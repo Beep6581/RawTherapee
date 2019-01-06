@@ -42,12 +42,12 @@ void RTScalable::setDPInScale (const double newDPI, const int newScale)
         // HOMBRE: On windows, if scale = 2, the dpi is non significant, i.e. should be considered = 192 ; don't know for linux/macos
         dpi = newDPI;
         if (scale == 1) {
-            if (dpi >= 192.) {
+            if (dpi >= baseHiDPI) {
                 scale = 2;
             }
         }
         else if (scale == 2) {
-            if (dpi < 192.) {
+            if (dpi < baseHiDPI) {
                 dpi *= 2.;
             }
         }
