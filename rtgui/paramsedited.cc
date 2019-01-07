@@ -954,6 +954,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
+                locallab.spots.at(j).CCmaskcurve = locallab.spots.at(j).CCmaskcurve && pSpot.CCmaskcurve == otherSpot.CCmaskcurve;
+                locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
                 locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
                 // Exposure
                 locallab.spots.at(j).expexpose = locallab.spots.at(j).expexpose && pSpot.expexpose == otherSpot.expexpose;
@@ -2594,6 +2596,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHcurve = mods.locallab.spots.at(i).HHcurve;
         }
 
+        if (locallab.spots.at(i).CCmaskcurve) {
+            toEdit.locallab.spots.at(i).CCmaskcurve = mods.locallab.spots.at(i).CCmaskcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskcurve) {
+            toEdit.locallab.spots.at(i).LLmaskcurve = mods.locallab.spots.at(i).LLmaskcurve;
+        }
+
         if (locallab.spots.at(i).invers) {
             toEdit.locallab.spots.at(i).invers = mods.locallab.spots.at(i).invers;
         }
@@ -3896,6 +3906,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     cccurve(v),
     LHcurve(v),
     HHcurve(v),
+    CCmaskcurve(v),
+    LLmaskcurve(v),
     invers(v),
     // Exposure
     expexpose(v),
@@ -4023,6 +4035,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     cccurve = v;
     LHcurve = v;
     HHcurve = v;
+    CCmaskcurve = v;
+    LLmaskcurve = v;
     invers = v;
     // Exposure
     expexpose = v;

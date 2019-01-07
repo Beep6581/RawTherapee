@@ -61,10 +61,14 @@ private:
     // Curve widgets
     // Color & Light
     CurveEditorGroup* const llCurveEditorG;
+    CurveEditorGroup* const maskCurveEditorG;
     DiagonalCurveEditor* llshape;
     DiagonalCurveEditor* ccshape;
     FlatCurveEditor* LHshape;
     FlatCurveEditor* HHshape;
+    FlatCurveEditor* CCmaskshape;
+    FlatCurveEditor* LLmaskshape;
+    
     // Exposure
     CurveEditorGroup* const curveEditorG;
     DiagonalCurveEditor* shapeexpos;

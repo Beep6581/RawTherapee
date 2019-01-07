@@ -632,6 +632,63 @@ public:
     }
 };
 
+class LocCCmaskCurve
+{
+private:
+    LUTf lutLocCCmaskCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocCCmaskCurve() {};
+    LocCCmaskCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool &HHutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocCCmaskCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocCCmaskCurve;
+    }
+};
+
+class LocLLmaskCurve
+{
+private:
+    LUTf lutLocLLmaskCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocLLmaskCurve() {};
+    LocLLmaskCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool &HHutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocLLmaskCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocLLmaskCurve;
+    }
+};
+
+
 class LocHHCurve
 {
 private:

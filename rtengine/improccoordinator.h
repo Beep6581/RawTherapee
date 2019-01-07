@@ -234,6 +234,8 @@ protected:
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;
+    LocCCmaskCurve locccmasCurve;
+    LocLLmaskCurve locllmasCurve;
     ProcParams nextParams2;
     bool locallutili;
     bool localcutili;
@@ -241,6 +243,8 @@ protected:
     bool localexutili;
     bool LHutili;
     bool HHutili;
+    bool CCmaskutili;
+    bool LLmaskutili;
     LUTf huerefs;
     LUTf huerefblurs;
     LUTf chromarefs;

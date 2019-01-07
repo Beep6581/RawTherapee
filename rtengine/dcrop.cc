@@ -895,12 +895,15 @@ void Crop::update(int todo)
         LUTu lhist16loc2(32770, 0);
         bool LHutili = parent->LHutili;
         bool HHutili = parent->HHutili;
-
+        bool CCmaskutili = parent->CCmaskutili;
+        bool LLmaskutili = parent->LLmaskutili;
         LUTu dummy;
         bool needslocal = params.locallab.enabled;
         LocretigainCurve locRETgainCurve;
         LocLHCurve loclhCurve;
         LocHHCurve lochhCurve;
+        LocCCmaskCurve locccmasCurve;
+        LocLLmaskCurve locllmasCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -914,6 +917,8 @@ void Crop::update(int todo)
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, CCmaskutili);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, LLmaskutili);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localcutili = false;

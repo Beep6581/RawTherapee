@@ -1074,6 +1074,8 @@ private:
             LocretigainCurve locRETgainCurve;
             LocLHCurve loclhCurve;
             LocHHCurve lochhCurve;
+            LocCCmaskCurve locccmasCurve;
+            LocLLmaskCurve locllmasCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf sklocalcurve(65536, 0);
@@ -1099,6 +1101,8 @@ private:
                 // Set local curves of current spot to LUT
                 bool LHutili = false;
                 bool HHutili = false;
+                bool CCmaskutili = false; 
+                bool LLmaskutili = false;
                 bool locallutili = false;
                 bool localcutili = false;
                 bool localskutili = false;
@@ -1106,6 +1110,8 @@ private:
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, CCmaskutili);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, LLmaskutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);

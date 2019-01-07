@@ -771,6 +771,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             float **shbuffer = nullptr;
             int sca = 1;
+            double huere, chromare, lumare, huerefblu, sobelre;
 
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
                 // Set local curves of current spot to LUT
@@ -780,9 +781,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 localexutili = false;
                 localcutili = false;
                 localskutili = false;
+                CCmaskutili = false;
+                LLmaskutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, CCmaskutili);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, LLmaskutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, sca);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, sca);
@@ -798,14 +803,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
                 // Reference parameters computation
-                double huere, chromare, lumare, huerefblu, sobelre;
-
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 }
-
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                                 sca);
@@ -816,7 +818,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 lumar = lumarefs[sp] = lumare ;
                 sobeler = sobelrefs[sp] = sobelre;
 
-                printf("huerblu=%f, huer=%f, chromar=%f, lumar=%f, sobeler=%f\n", huerblu, huer, chromar, lumar, sobeler);
+                //printf("sp=%i huerblu=%f, huer=%f, chromar=%f, lumar=%f, sobeler=%f\n", sp, huerblu, huer, chromar, lumar, sobeler);
 
                 // Locallab tools computation
                 /* Notes:
@@ -826,11 +828,30 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 ipf.Lab_Local(3, sp, sobelrefs, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler);
 
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
+                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                } else {
+                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                }
+
                 // Clear local curves
                 lllocalcurve.clear();
                 cclocalcurve.clear();
                 sklocalcurve.clear();
                 exlocalcurve.clear();
+            }
+            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
+            //update references after threatment
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
+                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                } else {
+                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                }
+                huerblu = huerefblurs[sp] = huerefblu;
+                huer = huerefs[sp] = huere;
+                chromar = chromarefs[sp] = chromare;
+                lumar = lumarefs[sp] = lumare ;
+                sobeler = sobelrefs[sp] = sobelre;
             }
         }
             

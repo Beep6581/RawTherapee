@@ -6984,9 +6984,6 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
         calcLocalParams(sp, oW, oH, params->locallab, lp);
-        int del = 3;
-        int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-        int bfw = int (lp.lx + lp.lxL) + del;
         int begy = lp.yc - lp.lyT;
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
@@ -7119,7 +7116,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         }
 
         //ref for sobel
-        bool toto = true;
+        bool toto = false;
 
         if (toto) {
             for (int y = max(cy, (int)(lp.yc - spotSise2)); y < min(transformed->H + cy, (int)(lp.yc + spotSise2 + 1)); y++) {
@@ -7182,7 +7179,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         //    printf("hueblur=%f hue=%f\n", huerefblur, hueref);
         chromaref = aveChro;
         lumaref = avL;
-
+        //printf("Calcref => sp=%i huere=%f chromare=%f lumare=%f \n", sp, hueref, chromaref, lumaref); 
         if (isdenoise) {
             delete origblur;
             delete blurorig;
@@ -7535,7 +7532,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         float radiussob = strred / (sk * 1.4f);
         double ave = 0.;
         int n = 0;
-        float av = 0;
         int levred;
         bool noiscfactiv = false;
 
@@ -7574,11 +7570,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
             }
 
             ave = ave / n;
-            av = ave / 327.68f;
         }
 
         printf("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f\n", call, sp, hueref, chromaref, lumaref);
-        struct local_contra lco;
+//        struct local_contra lco;
 
 // we must here detect : general case, skin, sky,...foliages ???
 // delta dhue, luminance and chroma
@@ -7614,17 +7609,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         float moddE = 2.5f;
         float powdE = 6.f;
 
-        constexpr float maxh = 3.5f; // 3.5 amplification contrast above mean
-
-        constexpr float maxl = 2.5f; // 3 reductio contrast under mean
-
-        float multh = (float) fabs(lp.cont) * (maxh - 1.f) / 100.f + 1.f;
-
-        float mult = (float)fabs(lp.cont) * (maxl - 1.f) / 100.f + 1.f;
-
-        lco.dx = 1.f - 1.f / mult;
-
-        lco.dy = 1.f - 1.f / multh;
 
 
         if (lp.excmet == 1  && call <= 3) {

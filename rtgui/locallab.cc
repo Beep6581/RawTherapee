@@ -61,6 +61,7 @@ Locallab::Locallab():
     // CurveEditorGroup widgets
     // Color & Light
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
+    maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     // Exposure
     curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
     // Vibrance
@@ -281,9 +282,24 @@ Locallab::Locallab():
     HHshape->setBottomBarBgGradient(mHHshape);
 
     llCurveEditorG->curveListComplete();
+    maskCurveEditorG->setCurveListener(this);
 
     inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
 
+    CCmaskshape = static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
+    CCmaskshape->setIdentityValue(0.);
+    CCmaskshape->setResetCurve(FlatCurveType(defSpot.CCmaskcurve.at(0)), defSpot.CCmaskcurve);
+    CCmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    CCmaskshape->setBottomBarColorProvider(this, 7);
+
+    LLmaskshape = static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
+    LLmaskshape->setIdentityValue(0.);
+    LLmaskshape->setResetCurve(FlatCurveType(defSpot.CCmaskcurve.at(0)), defSpot.CCmaskcurve);
+    LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    LLmaskshape->setBottomBarBgGradient(mllshape);
+
+    maskCurveEditorG->curveListComplete();
+    
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const superFrame = Gtk::manage(new Gtk::Frame());
     superFrame->set_label_align(0.025, 0.5);
@@ -305,6 +321,7 @@ Locallab::Locallab():
     maskcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 0);
+//    maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     maskcolFrame->add(*maskcolBox);
     colorBox->pack_start(*maskcolFrame);
@@ -1380,6 +1397,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).cccurve = ccshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LHcurve = LHshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHcurve = HHshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = CCmaskshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = LLmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).invers = invers->get_active();
                     // Exposure
                     pp->locallab.spots.at(pp->locallab.selspot).expexpose = expexpose->getEnabled();
@@ -1533,6 +1552,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).cccurve = pe->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LHcurve = pe->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHcurve = pe->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).invers = pe->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
                         // Exposure
                         pe->locallab.spots.at(pp->locallab.selspot).expexpose = pe->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
@@ -1668,6 +1689,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).cccurve = pedited->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LHcurve = pedited->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).invers = pedited->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
                         // Exposure
                         pedited->locallab.spots.at(pp->locallab.selspot).expexpose = pedited->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
@@ -1889,6 +1912,19 @@ void Locallab::curveChanged(CurveEditor* ce)
                 listener->panelChanged(EvlocallabHHshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
+
+        if (ce == CCmaskshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCCmaskshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == LLmaskshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+        
     }
 
     // Exposure
@@ -3141,6 +3177,17 @@ void Locallab::colorForValue(double valX, double valY, enum ColorCaller::ElemTyp
         }
 
         Color::hsv2rgb01(h, 0.5f, 0.5f, R, G, B);
+    } else if (callerId == 6) {
+        // TODO
+        float x = valX - 1.f/6.f;
+        if (x < 0.f) {
+            x += 1.f;
+        }
+        x = log2lin(x, 3.f);
+        // float x = valX;
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);        
+    } else if (callerId == 7) {
+        Color::hsv2rgb01(float(valY), float(valX), 0.5f, R, G, B);        
     }
 
     caller->ccRed = double (R);
@@ -3281,6 +3328,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         ccshape->setCurve(pp->locallab.spots.at(index).cccurve);
         LHshape->setCurve(pp->locallab.spots.at(index).LHcurve);
         HHshape->setCurve(pp->locallab.spots.at(index).HHcurve);
+        CCmaskshape->setCurve(pp->locallab.spots.at(index).CCmaskcurve);
+        LLmaskshape->setCurve(pp->locallab.spots.at(index).LLmaskcurve);
         invers->set_active(pp->locallab.spots.at(index).invers);
 
         // Exposure
@@ -3462,6 +3511,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 ccshape->setUnChanged(!spotState->cccurve);
                 LHshape->setUnChanged(!spotState->LHcurve);
                 HHshape->setUnChanged(!spotState->HHcurve);
+                CCmaskshape->setUnChanged(!spotState->CCmaskcurve);
+                LLmaskshape->setUnChanged(!spotState->LLmaskcurve);
                 invers->set_inconsistent(multiImage && !spotState->invers);
 
                 // Exposure
@@ -3691,4 +3742,7 @@ void Locallab::autoOpenCurve()
     ccshape->openIfNonlinear();
     LHshape->openIfNonlinear();
     HHshape->openIfNonlinear();
+    CCmaskshape->openIfNonlinear();
+    LLmaskshape->openIfNonlinear();
+    
 }
