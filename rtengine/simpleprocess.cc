@@ -1137,7 +1137,7 @@ private:
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                                 1);
 
-                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
+                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, CCmaskutili, LLmaskutili,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
 
                 // Clear local curves

@@ -47,6 +47,8 @@ class LocretigainCurve;
 class LocretigainCurverab;
 class LocLHCurve;
 class LocHHCurve;
+class LocLLmaskCurve;
+class LocCCmaskCurve;
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
