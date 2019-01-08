@@ -222,7 +222,10 @@ Locallab::Locallab():
     qualitycurveMethodConn = qualitycurveMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::qualitycurveMethodChanged));
 
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
-    showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMAK1"));
+    showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+    showmaskcolMethod->append(M("TP_LOCALLAB_USEMASK"));
+    showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMASK"));
 
     showmaskcolMethod->set_active(0);
     showmaskcolMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
@@ -321,7 +324,7 @@ Locallab::Locallab():
     maskcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 0);
-//    maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     maskcolFrame->add(*maskcolBox);
     colorBox->pack_start(*maskcolFrame);
@@ -1391,6 +1394,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "none";
                     } else if (showmaskcolMethod->get_active_row_number() == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "color";
+                    } else if (showmaskcolMethod->get_active_row_number() == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "colormask";
+                    } else if (showmaskcolMethod->get_active_row_number() == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "mask";
+                    } else if (showmaskcolMethod->get_active_row_number() == 4) {
+                        pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "showmask";
                     }
                  
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
@@ -3323,6 +3332,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             showmaskcolMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).showmaskcolMethod == "color") {
             showmaskcolMethod->set_active(1);
+        } else if (pp->locallab.spots.at(index).showmaskcolMethod == "colormask") {
+            showmaskcolMethod->set_active(2);
+        } else if (pp->locallab.spots.at(index).showmaskcolMethod == "mask") {
+            showmaskcolMethod->set_active(3);
+        } else if (pp->locallab.spots.at(index).showmaskcolMethod == "showmask") {
+            showmaskcolMethod->set_active(4);
         }
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
         ccshape->setCurve(pp->locallab.spots.at(index).cccurve);

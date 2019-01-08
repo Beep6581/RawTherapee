@@ -1955,7 +1955,8 @@ TP_LOCALLAB_LUM;Curves
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
-TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
+TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves'
+TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves at the top, mask is completely black no transformation is made by the mask on the image.\nAs you go down the curve, the mask gradually more colorful and brilliant, the image is changing more and more 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
 TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
@@ -1993,6 +1994,7 @@ TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_THRES;Threshold chroma
 TP_LOCALLAB_PROXI;Iterations
 TP_LOCALLAB_LIGHTNESS;Lightness
+TP_LOCALLAB_MASK;Mask:
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RETI;Retinex
@@ -2021,10 +2023,13 @@ TP_LOCALLAB_SENSICB;Scope
 TP_LOCALLAB_SENSIBN;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SETTINGS;Settings
-TP_LOCALLAB_SHOW;Show modifications
-TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure).\nYou must put 'Show modification' to none to enabled the other show
+TP_LOCALLAB_SHOW;Mask and modifications
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure).\nYou must put 'Show modification' to none to enabled the other show.\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None
-TP_LOCALLAB_SHOWMAK1;Show modifications
+TP_LOCALLAB_SHOWMODIF;Show modif.whithout mask
+TP_LOCALLAB_SHOWMODIFMASK;Show modif.whith mask
+TP_LOCALLAB_SHOWMASK;Show mask
+TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_SOFT;Soft Light
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGTH;Noise
