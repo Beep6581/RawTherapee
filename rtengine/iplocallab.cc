@@ -10894,7 +10894,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
 //local color and light
 
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || lp.qualcurvemet != 0) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet >= 2) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
@@ -11010,7 +11010,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                                     float chromaskr = chromask / 50000.f;
                                     valCC = float (locccmasCurve[500.f *  chromaskr]);
                                     valCC = 1.f - valCC;
-                                    float huemask = xatan2f(bufcolorig->b[loy - begy][lox - begx], bufcolorig->a[loy - begy][lox - begx]);
+                                    //float huemask = xatan2f(bufcolorig->b[loy - begy][lox - begx], bufcolorig->a[loy - begy][lox - begx]);
                                     sincosval.y = (bufcolorig->a[loy - begy][lox - begx]) / chromask;
                                     sincosval.x = (bufcolorig->b[loy - begy][lox - begx]) / chromask;
                                     bufmaskblur->a[loy - begy][lox - begx] = 50000.f * valCC * sincosval.y;

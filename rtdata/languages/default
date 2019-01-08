@@ -859,6 +859,8 @@ HISTORY_MSG_602;Local - Soft Light scope
 HISTORY_MSG_603;Local - Sh Blur radius
 HISTORY_MSG_605;Local - Color Modifications
 HISTORY_MSG_606;Local - Exp Modifications
+HISTORY_MSG_607;Local - Color Mask C
+HISTORY_MSG_608;Local - Color Mask L
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
