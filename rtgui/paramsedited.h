@@ -507,6 +507,8 @@ public:
         bool sensiex;
         bool excurve;
         bool showmaskexpMethod;
+        bool CCmaskexpcurve;
+        bool LLmaskexpcurve;
         // Vibrance
         bool expvibrance;
         bool saturated;

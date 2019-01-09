@@ -904,6 +904,8 @@ void Crop::update(int todo)
         LocHHCurve lochhCurve;
         LocCCmaskCurve locccmasCurve;
         LocLLmaskCurve locllmasCurve;
+        LocCCmaskexpCurve locccmasexpCurve;
+        LocLLmaskexpCurve locllmasexpCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -919,6 +921,8 @@ void Crop::update(int todo)
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
                 locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, CCmaskutili);
                 locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, LLmaskutili);
+                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
+                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localcutili = false;
@@ -948,7 +952,7 @@ void Crop::update(int todo)
                                                 sca);
 
                 parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2, 
-                                      loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, CCmaskutili, LLmaskutili, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
+                                      loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, locccmasexpCurve, locllmasexpCurve, CCmaskutili, LLmaskutili, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();

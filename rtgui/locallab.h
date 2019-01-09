@@ -71,7 +71,10 @@ private:
     
     // Exposure
     CurveEditorGroup* const curveEditorG;
+    CurveEditorGroup* const maskexpCurveEditorG;
     DiagonalCurveEditor* shapeexpos;
+    FlatCurveEditor* CCmaskexpshape;
+    FlatCurveEditor* LLmaskexpshape;
     // Vibrance
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* skinTonesCurve;

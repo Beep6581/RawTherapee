@@ -978,6 +978,8 @@ struct LocallabParams {
         int sensiex;
         std::vector<double> excurve;
         Glib::ustring showmaskexpMethod;
+        std::vector<double> CCmaskexpcurve;
+        std::vector<double> LLmaskexpcurve;
         // Vibrance
         bool expvibrance;
         int saturated;

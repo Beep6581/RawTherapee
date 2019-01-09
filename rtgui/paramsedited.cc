@@ -968,6 +968,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensiex = locallab.spots.at(j).sensiex && pSpot.sensiex == otherSpot.sensiex;
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
                 locallab.spots.at(j).showmaskexpMethod = locallab.spots.at(j).showmaskexpMethod && pSpot.showmaskexpMethod == otherSpot.showmaskexpMethod;
+                locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
+                locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -2649,6 +2651,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).showmaskexpMethod = mods.locallab.spots.at(i).showmaskexpMethod;
         }
 
+        if (locallab.spots.at(i).CCmaskexpcurve) {
+            toEdit.locallab.spots.at(i).CCmaskexpcurve = mods.locallab.spots.at(i).CCmaskexpcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskexpcurve) {
+            toEdit.locallab.spots.at(i).LLmaskexpcurve = mods.locallab.spots.at(i).LLmaskexpcurve;
+        }
+
         // Vibrance
         if (locallab.spots.at(i).expvibrance) {
             toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
@@ -3920,6 +3930,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensiex(v),
     excurve(v),
     showmaskexpMethod(v),
+    CCmaskexpcurve(v),
+    LLmaskexpcurve(v),
     // Vibrance
     expvibrance(v),
     saturated(v),
@@ -4049,6 +4061,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensiex = v;
     excurve = v;
     showmaskexpMethod = v;
+    CCmaskexpcurve = v;
+    LLmaskexpcurve = v;
     // Vibrance
     expvibrance = v;
     saturated = v;
