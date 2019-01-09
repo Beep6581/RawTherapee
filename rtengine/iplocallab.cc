@@ -5607,7 +5607,7 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
 }
 
 
-void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabImage * bufcolorig, LabImage * originalmask, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
 // chroma and lightness
@@ -5693,8 +5693,22 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
     LabImage *origblur = nullptr;
 
     origblur = new LabImage(GW, GH);
+    LabImage *origblurmask = nullptr;
+
 
     float radius = 3.f / sk;
+ if (lp.showmaskcolmet >= 2) {
+        origblurmask = new LabImage(GW, GH);
+ 
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
+        gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
+        gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
+    }
+ } 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -5702,7 +5716,6 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
         gaussianBlur(original->a, origblur->a, GW, GH, radius);
         gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
     }
 
 
@@ -5787,9 +5800,13 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                     if (fabs(origblur->b[y][x]) < 0.01f) {
                         origblur->b[y][x] = 0.01f;
                     }
-
-                    float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-                    //retriev data curve lightness
+                    float dE = 0.f;
+                    if (lp.showmaskcolmet >= 2) {
+                        dE = sqrt(SQR(refa - origblurmask->a[y][x] / 327.68f) + SQR(refb - origblurmask->b[y][x] / 327.68f) + SQR(lumaref - origblurmask->L[y][x] / 327.68f));
+                    } else {
+                        dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                    }
+                        //retriev data curve lightness
                     float cli = (buflight[loy - begy][lox - begx]);
                     //parameters for linear interpolation in function of real hue
                     float apluscligh = (1.f - cli) / delhu;
@@ -6488,7 +6505,9 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
     }
 
     delete origblur;
-
+    if (lp.showmaskcolmet >= 2) {
+        delete origblurmask;
+    }
 }
 
 void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LUTf & lightCurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk)
@@ -10911,6 +10930,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
             LabImage *bufcolorig = nullptr;
             LabImage *bufmaskorig = nullptr;
             LabImage *bufmaskblur = nullptr;
+            LabImage *originalmask = nullptr;
 
             float chpro = 1.f;
             float cligh = 1.f;
@@ -11002,7 +11022,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                                     valLL = (float)(locllmasCurve[500.f * (bufcolorig->L[loy - begy][lox - begx]) / 32768.f]);
                                     valLL = 1.f - valLL;
                                     bufmaskblur->L[loy - begy][lox - begx] = 32768.f * valLL;
-                                    //       transformed->L[y][x] = 32768.f * valLL;
                                 }
 
                                 if (locccmasCurve) {
@@ -11010,7 +11029,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                                     float chromaskr = chromask / 50000.f;
                                     valCC = float (locccmasCurve[500.f *  chromaskr]);
                                     valCC = 1.f - valCC;
-                                    //float huemask = xatan2f(bufcolorig->b[loy - begy][lox - begx], bufcolorig->a[loy - begy][lox - begx]);
                                     sincosval.y = (bufcolorig->a[loy - begy][lox - begx]) / chromask;
                                     sincosval.x = (bufcolorig->b[loy - begy][lox - begx]) / chromask;
                                     bufmaskblur->a[loy - begy][lox - begx] = 50000.f * valCC * sincosval.y;
@@ -11032,6 +11050,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                         gaussianBlur(bufmaskblur->a, bufmaskorig->a, bfw, bfh, radiusb);
                         gaussianBlur(bufmaskblur->b, bufmaskorig->b, bfw, bfh, radiusb);
                     }
+                int GWm = transformed->W;
+                int GHm = transformed->H;
+
+
+                originalmask = new LabImage(GWm, GHm);
 
                     if (lp.showmaskcolmet == 2 || lp.showmaskcolmet == 3) {
 
@@ -11043,11 +11066,26 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                             for (int x = 0; x < transformed->W; x++) {
                                 int lox = cx + x;
                                 int loy = cy + y;
+                                int zone = 0;
+
+                                float localFactor = 1.f;
+                                const float achm = (float)lp.trans / 100.f;
+
+                                if (lp.shapmet == 0) {
+                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                } else if (lp.shapmet == 1) {
+                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                }
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    bufcolorig->L[loy - begy][lox - begx] -= bufmaskorig->L[loy - begy][lox - begx];
-                                    bufcolorig->a[loy - begy][lox - begx] -= bufmaskorig->a[loy - begy][lox - begx];
-                                    bufcolorig->b[loy - begy][lox - begx] -= bufmaskorig->b[loy - begy][lox - begx];
+                                    if(zone > 0) {
+                                        bufcolorig->L[loy - begy][lox - begx] -= bufmaskorig->L[loy - begy][lox - begx];
+                                        bufcolorig->a[loy - begy][lox - begx] -= bufmaskorig->a[loy - begy][lox - begx];
+                                        bufcolorig->b[loy - begy][lox - begx] -= bufmaskorig->b[loy - begy][lox - begx];
+                                        originalmask->L[y][x] = bufcolorig->L[loy - begy][lox - begx];
+                                        originalmask->a[y][x] = bufcolorig->a[loy - begy][lox - begx];
+                                        originalmask->b[y][x] = bufcolorig->L[loy - begy][lox - begx];
+                                    }
                                 }
                             }
                     } else if (lp.showmaskcolmet == 4) {
@@ -11059,11 +11097,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                             for (int x = 0; x < transformed->W; x++) {
                                 int lox = cx + x;
                                 int loy = cy + y;
+                                int zone = 0;
+                                float localFactor = 1.f;
+                                const float achm = (float)lp.trans / 100.f;
+
+                                if (lp.shapmet == 0) {
+                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                } else if (lp.shapmet == 1) {
+                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                }
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    transformed->L[y][x] = bufmaskorig->L[loy - begy][lox - begx];
-                                    transformed->a[y][x] = bufmaskorig->a[loy - begy][lox - begx];
-                                    transformed->b[y][x] = bufmaskorig->b[loy - begy][lox - begx];
+                                    if(zone > 0) {
+                                        transformed->L[y][x] = bufmaskorig->L[loy - begy][lox - begx];
+                                        transformed->a[y][x] = bufmaskorig->a[loy - begy][lox - begx];
+                                        transformed->b[y][x] = bufmaskorig->b[loy - begy][lox - begx];
+                                    }
                                 }
                             }
 
@@ -11180,14 +11229,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                     }
                 }
 
-                ColorLight_Local(moddE, powdE, call, bufcolorig, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
+                ColorLight_Local(moddE, powdE, call, bufcolorig, originalmask, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
 
                 if (call <= 3) {
 
                     delete bufcolorig;
                     delete bufmaskorig;
                     delete bufmaskblur;
-
+                    delete originalmask;
 
                 }
             }

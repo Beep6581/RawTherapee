@@ -2028,8 +2028,8 @@ TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SHOW;Mask and modifications
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure).\nYou must put 'Show modification' to none to enabled the other show.\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None
-TP_LOCALLAB_SHOWMODIF;Show modif.whithout mask
-TP_LOCALLAB_SHOWMODIFMASK;Show modif.whith mask
+TP_LOCALLAB_SHOWMODIF;Show modifications whithout mask
+TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_SOFT;Soft Light
