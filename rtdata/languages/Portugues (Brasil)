@@ -2248,8 +2248,11 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
 !HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
+!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
+!MAIN_TAB_FAVORITES;Favorites
+!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 !PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
 !PREFERENCES_APPEARANCE;Appearance
@@ -2313,5 +2316,6 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_MAP;Method
+!TP_SHARPENING_BLUR;Blur radius
 !TP_TM_FATTAL_THRESHOLD;Detail
 !TP_WBALANCE_PICKER;Pick
