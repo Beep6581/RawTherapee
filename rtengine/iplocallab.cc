@@ -4542,6 +4542,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
             }
         }
     }
+        delete origblur;    
 }
 
 
