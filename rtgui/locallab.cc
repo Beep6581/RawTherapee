@@ -300,7 +300,7 @@ Locallab::Locallab():
     LLmaskshape->setIdentityValue(0.);
     LLmaskshape->setResetCurve(FlatCurveType(defSpot.LLmaskcurve.at(0)), defSpot.LLmaskcurve);
     LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
- //   LLmaskshape->setBottomBarBgGradient(mllshape);
+    LLmaskshape->setBottomBarBgGradient(mllshape);
     
 
     maskCurveEditorG->curveListComplete();
