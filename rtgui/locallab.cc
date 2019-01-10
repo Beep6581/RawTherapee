@@ -298,9 +298,10 @@ Locallab::Locallab():
 
     LLmaskshape = static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskshape->setIdentityValue(0.);
-    LLmaskshape->setResetCurve(FlatCurveType(defSpot.CCmaskcurve.at(0)), defSpot.CCmaskcurve);
+    LLmaskshape->setResetCurve(FlatCurveType(defSpot.LLmaskcurve.at(0)), defSpot.LLmaskcurve);
     LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    LLmaskshape->setBottomBarBgGradient(mllshape);
+ //   LLmaskshape->setBottomBarBgGradient(mllshape);
+    
 
     maskCurveEditorG->curveListComplete();
     
@@ -384,10 +385,11 @@ Locallab::Locallab():
     CCmaskexpshape->setResetCurve(FlatCurveType(defSpot.CCmaskexpcurve.at(0)), defSpot.CCmaskexpcurve);
     CCmaskexpshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     CCmaskexpshape->setBottomBarColorProvider(this, 7);
+    const ColorToningParams default_params;
 
     LLmaskexpshape = static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
     LLmaskexpshape->setIdentityValue(0.);
-    LLmaskexpshape->setResetCurve(FlatCurveType(defSpot.CCmaskexpcurve.at(0)), defSpot.CCmaskexpcurve);
+    LLmaskexpshape->setResetCurve(FlatCurveType(defSpot.LLmaskexpcurve.at(0)), defSpot.LLmaskexpcurve);   
     LLmaskexpshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     LLmaskexpshape->setBottomBarBgGradient(mllshape);
 
