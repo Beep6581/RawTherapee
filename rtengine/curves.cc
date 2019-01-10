@@ -1697,14 +1697,13 @@ void LocCCmaskCurve::Set(const Curve &pCurve)
 
 
 
-void LocCCmaskCurve::Set(const std::vector<double> &curvePoints, bool &HHutili)
+void LocCCmaskCurve::Set(const std::vector<double> &curvePoints)
 {
     //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
-        HHutili = true;
     } else {
         Reset();
     }
@@ -1743,14 +1742,13 @@ void LocLLmaskCurve::Set(const Curve &pCurve)
 
 
 
-void LocLLmaskCurve::Set(const std::vector<double> &curvePoints, bool &HHutili)
+void LocLLmaskCurve::Set(const std::vector<double> &curvePoints)
 {
     //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         ttcurve.setIdentityValue(0.);
         Set(ttcurve);
-        HHutili = true;
     } else {
         Reset();
     }

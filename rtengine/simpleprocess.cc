@@ -1103,8 +1103,6 @@ private:
                 // Set local curves of current spot to LUT
                 bool LHutili = false;
                 bool HHutili = false;
-                bool CCmaskutili = false; 
-                bool LLmaskutili = false;
                 bool locallutili = false;
                 bool localcutili = false;
                 bool localskutili = false;
@@ -1112,8 +1110,10 @@ private:
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
-                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, CCmaskutili);
-                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, LLmaskutili);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
+                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
+                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);
@@ -1139,7 +1139,7 @@ private:
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                                 1);
 
-                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, locccmasexpCurve, locllmasexpCurve, CCmaskutili, LLmaskutili,
+                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, locccmasexpCurve, locllmasexpCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
 
                 // Clear local curves

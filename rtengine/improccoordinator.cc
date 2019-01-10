@@ -781,14 +781,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 localexutili = false;
                 localcutili = false;
                 localskutili = false;
-                CCmaskutili = false;
-                LLmaskutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
-                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, CCmaskutili);
-                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, LLmaskutili);
-                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, CCmaskutili);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, sca);
@@ -828,7 +825,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  * - maxspot, huerefs, centerx and centery aren't used in Lab_Local (only for printf) so values aren't important
                  * - shbuffer is used as nullptr
                  */
-                ipf.Lab_Local(3, sp, sobelrefs, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve, locccmasCurve, locllmasCurve, locccmasexpCurve, locllmasexpCurve, CCmaskutili, LLmaskutili,
+                ipf.Lab_Local(3, sp, sobelrefs, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve, locccmasCurve, locllmasCurve, locccmasexpCurve, locllmasexpCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler);
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {

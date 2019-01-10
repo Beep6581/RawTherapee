@@ -245,8 +245,6 @@ protected:
     bool localexutili;
     bool LHutili;
     bool HHutili;
-    bool CCmaskutili;
-    bool LLmaskutili;
     LUTf huerefs;
     LUTf huerefblurs;
     LUTf chromarefs;

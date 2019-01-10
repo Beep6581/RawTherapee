@@ -412,12 +412,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).showmaskexpMethod == "showmask") {
         lp.showmaskexpmet = 4;
     }
-    
-    if (locallab.spots.at(sp).showmaskexpMethod == "none") {
-        lp.showmaskexpmet = 0;
-    } else if (locallab.spots.at(sp).showmaskexpMethod == "expo") {
-        lp.showmaskexpmet = 1;
-    }
+
 
     if (locallab.spots.at(sp).blurMethod == "norm") {
         lp.blurmet = 0;
@@ -5114,18 +5109,19 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
         LabImage *origblurmask = nullptr;
 
         float radius = 3.f / sk;
- if (lp.showmaskexpmet >= 2  && senstype == 1) {
+        bool usemask = lp.showmaskexpmet >= 2  && senstype == 1;
+    if (usemask) {
         origblurmask = new LabImage(GW, GH);
 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
-    {
-        gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
-        gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
-        gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
-    }
- } 
+        {
+            gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
+            gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
+            gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
+        }
+    } 
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -5210,12 +5206,20 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                     float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                     float rL = origblur->L[y][x] / 327.68f;
-
+                    float rhuemask = 0.f;
+                    float rchromask = 0.f;
+                    float rLmask = 0.f;
                     float dE = 0.f;
-                    if (lp.showmaskexpmet >= 2 && senstype == 1) {
+                    if (usemask) {
+                        rhuemask = xatan2f(origblurmask->b[y][x], origblurmask->a[y][x]);
+                        rchromask = sqrt(SQR(origblurmask->b[y][x]) + SQR(origblurmask->a[y][x])) / 327.68f;
+                        rLmask = origblurmask->L[y][x] / 327.68f;
                         dE = sqrt(SQR(refa - origblurmask->a[y][x] / 327.68f) + SQR(refb - origblurmask->b[y][x] / 327.68f) + SQR(lumaref - origblurmask->L[y][x] / 327.68f));
                     } else {
                         dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                        rhuemask = rhue;
+                        rchromask = rchro;
+                        rLmask = rL;
                     }
 
                     float cli = 1.f;
@@ -5258,15 +5262,15 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                     float realstrb = 1.f;
 
                     //prepare shape detection
-                    float deltachro = fabs(rchro - chromaref);
-                    float deltahue = fabs(rhue - hueref);
+                    float deltachro = fabs(rchromask - chromaref);
+                    float deltahue = fabs(rhuemask - hueref);
 
                     if (deltahue > rtengine::RT_PI) {
                         deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                     }
 
                     float deltaE = 20.f * deltahue + deltachro; //between 0 and 280
-                    float deltaL = fabs(lumaref - rL);  //between 0 and 100
+                    float deltaL = fabs(lumaref - rLmask);  //between 0 and 100
 
                     float kch = 1.f;
                     float kchchro = 1.f;
@@ -5836,10 +5840,19 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                         origblur->b[y][x] = 0.01f;
                     }
                     float dE = 0.f;
+                    float rhuemask = 0.f;
+                    float rchromask = 0.f;
+                    float rLmask = 0.f;
                     if (lp.showmaskcolmet >= 2) {
+                        rhuemask = xatan2f(origblurmask->b[y][x], origblurmask->a[y][x]);
+                        rchromask = sqrt(SQR(origblurmask->b[y][x]) + SQR(origblurmask->a[y][x])) / 327.68f;
+                        rLmask = origblurmask->L[y][x] / 327.68f;
                         dE = sqrt(SQR(refa - origblurmask->a[y][x] / 327.68f) + SQR(refb - origblurmask->b[y][x] / 327.68f) + SQR(lumaref - origblurmask->L[y][x] / 327.68f));
                     } else {
                         dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                        rhuemask = rhue;
+                        rchromask = rchro;
+                        rLmask = rL;
                     }
                         //retriev data curve lightness
                     float cli = (buflight[loy - begy][lox - begx]);
@@ -5888,9 +5901,9 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                     float realclighsl = 1.f;
                     float realhh = 0.f;
                     //evaluate delta Hue and delta Chro
-                    float deltachro = fabs(rchro - chromaref);
+                    float deltachro = fabs(rchromask - chromaref);
 
-                    float deltahue = fabs(rhue - hueref);
+                    float deltahue = fabs(rhuemask - hueref);
 
                     if (deltahue > rtengine::RT_PI) {
                         deltahue = - (deltahue - 2.f * rtengine::RT_PI);
@@ -5898,7 +5911,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
 
                     //pseudo deltaE
                     float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-                    float deltaL = fabs(lumaref - rL);  //between 0 and 100
+                    float deltaL = fabs(lumaref - rLmask);  //between 0 and 100
 
                     float kchchro = 1.f;
                     float kch = 1.f;
@@ -7565,7 +7578,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
 void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
-                                const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, const LocCCmaskCurve & locccmasCurve, const  LocLLmaskCurve & locllmasCurve, const LocCCmaskexpCurve & locccmasexpCurve, const  LocLLmaskexpCurve & locllmasexpCurve, bool CCmaskutili, bool LLmaskutili,
+                                const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, const LocCCmaskCurve & locccmasCurve, const  LocLLmaskCurve & locllmasCurve, const LocCCmaskexpCurve & locccmasexpCurve, const  LocLLmaskexpCurve & locllmasexpCurve,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref

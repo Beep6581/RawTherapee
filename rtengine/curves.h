@@ -702,7 +702,7 @@ public:
     virtual ~LocCCmaskCurve() {};
     LocCCmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool &HHutili);
+    void Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
@@ -730,7 +730,7 @@ public:
     virtual ~LocLLmaskCurve() {};
     LocLLmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints, bool &HHutili);
+    void Set(const std::vector<double> &curvePoints);
     float getSum() const
     {
         return sum;
