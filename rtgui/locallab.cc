@@ -2114,12 +2114,12 @@ void Locallab::qualitycurveMethodChanged()
         if (listener) {
             listener->panelChanged(EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text());
         }
-    }
+    } 
 }
 
 void Locallab::showmaskcolMethodChanged()
 {
-    if(showmaskcolMethod->get_active_row_number() == 1   && expcolor->getEnabled()) {
+    if((showmaskcolMethod->get_active_row_number() == 1 || showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 4) && expcolor->getEnabled()) {
         showmaskexpMethod->set_active(0);
         expexpose->setEnabled(false); 
     }
@@ -2134,7 +2134,7 @@ void Locallab::showmaskcolMethodChanged()
 void Locallab::showmaskexpMethodChanged()
 {
     
-    if(showmaskexpMethod->get_active_row_number() == 1  && expexpose->getEnabled()) {
+    if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4) && expexpose->getEnabled()) {
         showmaskcolMethod->set_active(0);
         expcolor->setEnabled(false); 
     }
