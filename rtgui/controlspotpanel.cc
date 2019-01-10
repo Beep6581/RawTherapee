@@ -1203,6 +1203,12 @@ CursorShape ControlSpotPanel::getCursor(int objectID)
 {
     // printf("Object ID: %d\n", objectID);
 
+    // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
+    const auto s = treeview_.get_selection();
+    if (!s->count_selected_rows()) {
+         return CSHandOpen;
+     }
+
     int rem_ = objectID % 10;
 
     switch (rem_) {
@@ -1244,8 +1250,9 @@ CursorShape ControlSpotPanel::getCursor(int objectID)
 bool ControlSpotPanel::mouseOver(int modifierKey)
 {
     EditDataProvider* editProvider_ = getEditProvider();
+    const auto s = treeview_.get_selection();
 
-    if (!editProvider_) {
+    if (!editProvider_ || !s->count_selected_rows()) { // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
         return false;
     }
 
@@ -1349,8 +1356,9 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
     // printf("button1Pressed\n");
 
     EditDataProvider *provider = getEditProvider();
+    const auto s = treeview_.get_selection();
 
-    if (!provider || lastObject_ == -1) {
+    if (!provider || lastObject_ == -1 || !s->count_selected_rows()) { // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
         return false;
     }
 
@@ -1385,15 +1393,9 @@ bool ControlSpotPanel::drag1(int modifierKey)
     // printf("drag1\n");
 
     EditDataProvider *provider = getEditProvider();
-
-    if (!provider || lastObject_ == -1) {
-        return false;
-    }
-
-    // Get associated control spot
     const auto s = treeview_.get_selection();
 
-    if (!s->count_selected_rows()) {
+    if (!provider || lastObject_ == -1 || !s->count_selected_rows()) { // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
         return false;
     }
 
