@@ -167,6 +167,7 @@ protected:
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
+    LocallabListener* locallListener;
 
     
     HistogramListener* hListener;
@@ -380,6 +381,10 @@ public:
     void setRetinexListener  (RetinexListener* adh) override
     {
         dehaListener = adh;
+    }
+    void setLocallabListener  (LocallabListener* lla) override
+    {
+        locallListener = lla;
     }
     void setWaveletListener  (WaveletListener* awa) override
     {

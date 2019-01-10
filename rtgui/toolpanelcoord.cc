@@ -634,6 +634,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setRetinexListener(retinex);
         ipc->setSizeListener(crop);
         ipc->setSizeListener(resize);
+        ipc->setLocallabListener(locallab);
         ipc->setImageTypeListener(this);
         flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 

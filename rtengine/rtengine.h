@@ -344,6 +344,13 @@ public:
     virtual void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) = 0;
 };
 
+class LocallabListener
+{
+public:
+    virtual ~LocallabListener() = default;
+    virtual void refChanged (double huer, double lumar, double chromar) = 0;
+};
+
 class AutoColorTonListener
 {
 public:
@@ -507,6 +514,7 @@ public:
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;
+    virtual void        setLocallabListener     (LocallabListener* l) = 0;
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;

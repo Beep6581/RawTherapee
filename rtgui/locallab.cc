@@ -180,7 +180,11 @@ Locallab::Locallab():
     // Others
     defparams(nullptr),
     defpedited(nullptr),
-    pe(nullptr)
+    pe(nullptr),
+    nexthuer(0.),
+    nextlumar(0.),
+    nextchromar(0.)
+
 {
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
 
@@ -289,6 +293,7 @@ Locallab::Locallab():
     maskCurveEditorG->setCurveListener(this);
 
     inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
+    transLabels = Gtk::manage (new Gtk::Label ("---"));
 
     CCmaskshape = static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
     CCmaskshape->setIdentityValue(0.);
@@ -325,6 +330,7 @@ Locallab::Locallab():
     maskcolFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")));
     maskcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
+    maskcolBox->pack_start(*transLabels, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
@@ -369,7 +375,7 @@ Locallab::Locallab():
 
     curveEditorG->curveListComplete();
     maskexpCurveEditorG->setCurveListener(this);
-    
+    transLabels2 = Gtk::manage (new Gtk::Label ("---"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -399,6 +405,7 @@ Locallab::Locallab():
     maskexpFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")));
     maskexpFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
+    maskexpBox->pack_start(*transLabels2, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
@@ -893,6 +900,53 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expcbdl->get_expanded());
     tpOpen.push_back(expdenoi->get_expanded());
 
+}
+
+void Locallab::refChanged (double huer, double lumar, double chromar)
+{
+    nexthuer = huer;
+    nextlumar = lumar / 100.f;
+    nextchromar = chromar / 152.f;
+    //printf("nh=%f nl=%f nc=%f\n", nexthuer, nextlumar, nextchromar);
+    const auto func = [] (gpointer data) -> gboolean {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+        static_cast<Locallab*> (data)->refComputed_();
+
+        return FALSE;
+    };
+
+    idle_register.add (func, this);
+}
+
+bool Locallab::refComputed_ ()
+{
+
+    disableListener ();
+    enableListener ();
+    updateLabel ();
+    return false;
+}
+
+void Locallab::updateLabel ()
+{
+    if (!batchMode) {
+        float nX, nY;
+        
+        nX = nextlumar;
+        nY = nextchromar;
+        {
+            transLabels->set_text (
+                Glib::ustring::compose (M ("TP_LOCALLAB_REFLABEL"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nX),
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nY))
+            );
+            transLabels2->set_text (
+                Glib::ustring::compose (M ("TP_LOCALLAB_REFLABEL"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nX),
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nY))
+            );
+        }
+    }
 }
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)

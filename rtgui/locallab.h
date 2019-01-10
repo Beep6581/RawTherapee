@@ -38,10 +38,13 @@ class Locallab :
     public CurveListener,
     public ColorProvider,
     public ThresholdCurveProvider,
+    public rtengine::LocallabListener,
     public ThresholdAdjusterListener
 
 {
 private: 
+    IdleRegister idle_register;
+
     // Expander widgets
     ControlSpotPanel* const expsettings;
     MyExpander* const expcolor;
@@ -202,6 +205,8 @@ private:
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
+    Gtk::Label* transLabels;
+    Gtk::Label* transLabels2;
 
     //Frame
     Gtk::Frame* maskcolFrame;
@@ -266,6 +271,9 @@ private:
     void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);
     void updateSpecificGUIState();
     void setParamEditable(bool cond);
+    double nexthuer;
+    double nextlumar;
+    double nextchromar;
 
 /*
     void onLabRegionSelectionChanged();
@@ -321,6 +329,9 @@ public:
     void disableListener();
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);
+    void refChanged (double huer, double lumar, double chromar);
+    bool refComputed_ ();
+    void updateLabel      ();
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider);
