@@ -906,7 +906,7 @@ void Locallab::refChanged (double huer, double lumar, double chromar)
 {
     nexthuer = huer;
     nextlumar = lumar / 100.f;
-    nextchromar = chromar / 152.f;
+    nextchromar = chromar / 137.4f;
     //printf("nh=%f nl=%f nc=%f\n", nexthuer, nextlumar, nextchromar);
     const auto func = [] (gpointer data) -> gboolean {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -932,8 +932,8 @@ void Locallab::updateLabel ()
     if (!batchMode) {
         float nX, nY;
         
-        nX = nextlumar;
-        nY = nextchromar;
+        nY = nextlumar;
+        nX = nextchromar;
         {
             transLabels->set_text (
                 Glib::ustring::compose (M ("TP_LOCALLAB_REFLABEL"),
@@ -3829,14 +3829,14 @@ void Locallab::updateSpecificGUIState()
     //update showmethod
     if (multiImage && showmaskcolMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
         showmaskexpMethod->set_active(0);
-    } else if(showmaskcolMethod->get_active_row_number() == 1) {
+    } else if((showmaskcolMethod->get_active_row_number() == 1 || showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 4)) {
         showmaskexpMethod->set_active(0);
         expexpose->setEnabled(false); 
     }
     
     if (multiImage && showmaskexpMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
         showmaskcolMethod->set_active(0);
-    } else if(showmaskexpMethod->get_active_row_number() == 1) {
+    } else if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4)) {
         showmaskcolMethod->set_active(0);
         expcolor->setEnabled(false); 
     }

@@ -10884,13 +10884,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
                                 if (locccmasCurve) {
                                     float chromask = (sqrt(SQR(bufcolorig->a[loy - begy][lox - begx]) + SQR(bufcolorig->b[loy - begy][lox - begx])));
-                                    float chromaskr = chromask / 50000.f;
+                                    float chromaskr = chromask / 45000.f;
                                     valCC = float (locccmasCurve[500.f *  chromaskr]);
                                     valCC = 1.f - valCC;
                                     sincosval.y = (bufcolorig->a[loy - begy][lox - begx]) / chromask;
                                     sincosval.x = (bufcolorig->b[loy - begy][lox - begx]) / chromask;
-                                    bufmaskblur->a[loy - begy][lox - begx] = 50000.f * valCC * sincosval.y;
-                                    bufmaskblur->b[loy - begy][lox - begx] = 50000.f * valCC * sincosval.x;
+                                    bufmaskblur->a[loy - begy][lox - begx] = 45000.f * valCC * sincosval.y;
+                                    bufmaskblur->b[loy - begy][lox - begx] = 45000.f * valCC * sincosval.x;
                                 }
                             }
                         }
@@ -11231,13 +11231,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
                                 if (locccmasexpCurve) {
                                     float chromask = (sqrt(SQR(bufexporig->a[loy - begy][lox - begx]) + SQR(bufexporig->b[loy - begy][lox - begx])));
-                                    float chromaskr = chromask / 50000.f;
+                                    float chromaskr = chromask / 45000.f;
                                     valCC = float (locccmasexpCurve[500.f *  chromaskr]);
                                     valCC = 1.f - valCC;
                                     sincosval.y = (bufexporig->a[loy - begy][lox - begx]) / chromask;
                                     sincosval.x = (bufexporig->b[loy - begy][lox - begx]) / chromask;
-                                    bufmaskblur->a[loy - begy][lox - begx] = 50000.f * valCC * sincosval.y;
-                                    bufmaskblur->b[loy - begy][lox - begx] = 50000.f * valCC * sincosval.x;
+                                    bufmaskblur->a[loy - begy][lox - begx] = 45000.f * valCC * sincosval.y;
+                                    bufmaskblur->b[loy - begy][lox - begx] = 45000.f * valCC * sincosval.x;
                                 }
                             }
                         }
