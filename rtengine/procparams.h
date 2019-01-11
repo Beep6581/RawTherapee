@@ -49,6 +49,7 @@ class LocLHCurve;
 class LocHHCurve;
 class LocLLmaskCurve;
 class LocCCmaskCurve;
+class LocHHmaskCurve;
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
@@ -966,6 +967,7 @@ struct LocallabParams {
         std::vector<double> HHcurve;
         std::vector<double> CCmaskcurve;
         std::vector<double> LLmaskcurve;
+        std::vector<double> HHmaskcurve;
         bool invers;
         // Exposure
         bool expexpose;

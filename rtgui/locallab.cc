@@ -306,7 +306,14 @@ Locallab::Locallab():
     LLmaskshape->setResetCurve(FlatCurveType(defSpot.LLmaskcurve.at(0)), defSpot.LLmaskcurve);
     LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
     LLmaskshape->setBottomBarBgGradient(mllshape);
-    
+    LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+
+    HHmaskshape = static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
+    HHmaskshape->setIdentityValue(0.);
+    HHmaskshape->setResetCurve(FlatCurveType(defSpot.LLmaskcurve.at(0)), defSpot.LLmaskcurve);
+    HHmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    HHmaskshape->setCurveColorProvider(this, 6);
+    HHmaskshape->setBottomBarColorProvider(this, 6);
 
     maskCurveEditorG->curveListComplete();
     
@@ -907,6 +914,12 @@ void Locallab::refChanged (double huer, double lumar, double chromar)
     nexthuer = huer;
     nextlumar = lumar / 100.f;
     nextchromar = chromar / 137.4f;
+    float h = Color::huelab_to_huehsv2(nexthuer);
+    h += 1.f/6.f;
+    if (h > 1.f) {
+        h -= 1.f;
+    }
+    nexthuer = h;
     //printf("nh=%f nl=%f nc=%f\n", nexthuer, nextlumar, nextchromar);
     const auto func = [] (gpointer data) -> gboolean {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -930,20 +943,23 @@ bool Locallab::refComputed_ ()
 void Locallab::updateLabel ()
 {
     if (!batchMode) {
-        float nX, nY;
-        
+        float nX, nY, nZ;
+
         nY = nextlumar;
         nX = nextchromar;
+        nZ = nexthuer;
         {
             transLabels->set_text (
                 Glib::ustring::compose (M ("TP_LOCALLAB_REFLABEL"),
                                         Glib::ustring::format (std::fixed, std::setprecision (3), nX),
-                                        Glib::ustring::format (std::fixed, std::setprecision (3), nY))
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nY),
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nZ))
             );
             transLabels2->set_text (
                 Glib::ustring::compose (M ("TP_LOCALLAB_REFLABEL"),
                                         Glib::ustring::format (std::fixed, std::setprecision (3), nX),
-                                        Glib::ustring::format (std::fixed, std::setprecision (3), nY))
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nY),
+                                        Glib::ustring::format (std::fixed, std::setprecision (3), nZ))
             );
         }
     }
@@ -1486,6 +1502,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).HHcurve = HHshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = CCmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = LLmaskshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = HHmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).invers = invers->get_active();
                     // Exposure
                     pp->locallab.spots.at(pp->locallab.selspot).expexpose = expexpose->getEnabled();
@@ -1649,6 +1666,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).HHcurve = pe->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskcurve || !HHmaskshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).invers = pe->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
                         // Exposure
                         pe->locallab.spots.at(pp->locallab.selspot).expexpose = pe->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
@@ -1788,6 +1806,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).HHcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHcurve || !HHshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskcurve || !CCmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskcurve || !LLmaskshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskcurve || !HHmaskshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).invers = pedited->locallab.spots.at(pp->locallab.selspot).invers || !invers->get_inconsistent();
                         // Exposure
                         pedited->locallab.spots.at(pp->locallab.selspot).expexpose = pedited->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
@@ -2021,6 +2040,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == LLmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == HHmaskshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHmaskshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -3448,6 +3473,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         HHshape->setCurve(pp->locallab.spots.at(index).HHcurve);
         CCmaskshape->setCurve(pp->locallab.spots.at(index).CCmaskcurve);
         LLmaskshape->setCurve(pp->locallab.spots.at(index).LLmaskcurve);
+        HHmaskshape->setCurve(pp->locallab.spots.at(index).HHmaskcurve);
         invers->set_active(pp->locallab.spots.at(index).invers);
 
         // Exposure
@@ -3639,6 +3665,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 HHshape->setUnChanged(!spotState->HHcurve);
                 CCmaskshape->setUnChanged(!spotState->CCmaskcurve);
                 LLmaskshape->setUnChanged(!spotState->LLmaskcurve);
+                HHmaskshape->setUnChanged(!spotState->HHmaskcurve);
                 invers->set_inconsistent(multiImage && !spotState->invers);
 
                 // Exposure
@@ -3866,12 +3893,13 @@ void Locallab::autoOpenCurve()
     // printf("autoOpenCurve\n");
 
     // TODO autoOpenCurve only considers linearity state of selected spot curve
-    llshape->openIfNonlinear();
-    ccshape->openIfNonlinear();
-    LHshape->openIfNonlinear();
-    HHshape->openIfNonlinear();
-    CCmaskshape->openIfNonlinear();
-    LLmaskshape->openIfNonlinear();
-    CCmaskexpshape->openIfNonlinear();
-    LLmaskexpshape->openIfNonlinear();
+//    llshape->openIfNonlinear();
+//    ccshape->openIfNonlinear();
+//    LHshape->openIfNonlinear();
+//    HHshape->openIfNonlinear();
+//    CCmaskshape->openIfNonlinear();
+//    LLmaskshape->openIfNonlinear();
+//    HHmaskshape->openIfNonlinear();
+//    CCmaskexpshape->openIfNonlinear();
+//    LLmaskexpshape->openIfNonlinear();
 }

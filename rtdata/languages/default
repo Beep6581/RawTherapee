@@ -863,6 +863,7 @@ HISTORY_MSG_607;Local - Color Mask C
 HISTORY_MSG_608;Local - Color Mask L
 HISTORY_MSG_609;Local - Exp Mask C
 HISTORY_MSG_610;Local - Exp Mask L
+HISTORY_MSG_611;Local - Color Mask H
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1974,7 +1975,7 @@ TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
-TP_LOCALLAB_REFLABEL;Reference (0..1) Chroma=%1 Luma=%2
+TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_NOISELUMFINE;Luminance fine (Wav)
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
 TP_LOCALLAB_NOISELUMDETAIL;Luminance detail (DCT)

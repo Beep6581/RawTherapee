@@ -71,6 +71,7 @@ private:
     FlatCurveEditor* HHshape;
     FlatCurveEditor* CCmaskshape;
     FlatCurveEditor* LLmaskshape;
+    FlatCurveEditor* HHmaskshape;
     
     // Exposure
     CurveEditorGroup* const curveEditorG;

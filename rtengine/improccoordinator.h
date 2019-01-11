@@ -237,6 +237,7 @@ protected:
     LocHHCurve lochhCurve;
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
+    LocHHmaskCurve lochhmasCurve;
     LocCCmaskexpCurve locccmasexpCurve;
     LocLLmaskexpCurve locllmasexpCurve;
     ProcParams nextParams2;

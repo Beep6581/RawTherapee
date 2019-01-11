@@ -495,6 +495,7 @@ public:
         bool HHcurve;
         bool CCmaskcurve;
         bool LLmaskcurve;
+        bool HHmaskcurve;
         bool invers;
         // Exposure
         bool expexpose;

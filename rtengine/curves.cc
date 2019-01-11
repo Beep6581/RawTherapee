@@ -1663,6 +1663,55 @@ void LocCCmaskexpCurve::Set(const std::vector<double> &curvePoints)
     }
 }
 
+LocHHmaskCurve::LocHHmaskCurve() : sum(0.f) {};
+
+void LocHHmaskCurve::Reset()
+{
+    lutLocHHmaskCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskCurve[i] < 0.02f) {
+            lutLocHHmaskCurve[i] = 0.02f;   
+        }
+
+        sum += lutLocHHmaskCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocHHmaskCurve::Set(const std::vector<double> &curvePoints)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
 LocCCmaskCurve::LocCCmaskCurve() : sum(0.f) {};
 
 void LocCCmaskCurve::Reset()

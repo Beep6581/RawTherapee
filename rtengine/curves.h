@@ -688,6 +688,33 @@ public:
     }
 };
 
+class LocHHmaskCurve
+{
+private:
+    LUTf lutLocHHmaskCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocHHmaskCurve() {};
+    LocHHmaskCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocHHmaskCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocHHmaskCurve;
+    }
+};
 
 
 class LocCCmaskCurve
