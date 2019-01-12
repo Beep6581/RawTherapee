@@ -167,6 +167,7 @@ protected:
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
+    LocallabListener* locallListener;
 
     
     HistogramListener* hListener;
@@ -229,11 +230,16 @@ protected:
     LUTf shtonecurveloc;
     LUTf tonecurveloc;
     LUTf lightCurveloc;
-    LUTu lhist16;
+    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;
+    LocCCmaskCurve locccmasCurve;
+    LocLLmaskCurve locllmasCurve;
+    LocHHmaskCurve lochhmasCurve;
+    LocCCmaskexpCurve locccmasexpCurve;
+    LocLLmaskexpCurve locllmasexpCurve;
     ProcParams nextParams2;
     bool locallutili;
     bool localcutili;
@@ -376,6 +382,10 @@ public:
     void setRetinexListener  (RetinexListener* adh) override
     {
         dehaListener = adh;
+    }
+    void setLocallabListener  (LocallabListener* lla) override
+    {
+        locallListener = lla;
     }
     void setWaveletListener  (WaveletListener* awa) override
     {

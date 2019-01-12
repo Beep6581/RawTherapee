@@ -47,6 +47,9 @@ class LocretigainCurve;
 class LocretigainCurverab;
 class LocLHCurve;
 class LocHHCurve;
+class LocLLmaskCurve;
+class LocCCmaskCurve;
+class LocHHmaskCurve;
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
@@ -103,6 +106,12 @@ public:
                 bottom_left == rhs.bottom_left
                 && top_left == rhs.top_left;
         }
+    }
+
+    template<typename U = T>
+    typename std::enable_if<std::is_integral<U>::value, bool>::type operator !=(const Threshold<U>& rhs) const
+    {
+        return !(*this == rhs);
     }
 
     T getBottom() const
@@ -922,162 +931,154 @@ struct GradientParams {
   * Parameters of the Local Lab
   */
 struct LocallabParams {
+    struct LocallabSpot {
+        // Control spot settings
+        int id;
+        Glib::ustring name;
+        bool isvisible;
+        Glib::ustring shape; // ELI, RECT
+        Glib::ustring spotMethod; // norm, exc
+        int sensiexclu;
+        int struc;
+        Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
+        int locX;
+        int locXL;
+        int locY;
+        int locYT;
+        int centerX;
+        int centerY;
+        int circrad;
+        Glib::ustring qualityMethod; // none, std, enh, enhsup, contr, sob2
+        int transit;
+        int thresh;
+        int iter;
+        // Color & Light
+        bool expcolor;
+        bool curvactiv;
+        int lightness;
+        int contrast;
+        int chroma;
+        int sensi;
+        Glib::ustring qualitycurveMethod;
+        Glib::ustring showmaskcolMethod;
+        std::vector<double> llcurve;
+        std::vector<double> cccurve;
+        std::vector<double> LHcurve;
+        std::vector<double> HHcurve;
+        std::vector<double> CCmaskcurve;
+        std::vector<double> LLmaskcurve;
+        std::vector<double> HHmaskcurve;
+        bool invers;
+        // Exposure
+        bool expexpose;
+        int expcomp;
+        int hlcompr;
+        int hlcomprthresh;
+        int black;
+        int shcompr;
+        int warm;
+        int sensiex;
+        std::vector<double> excurve;
+        Glib::ustring showmaskexpMethod;
+        std::vector<double> CCmaskexpcurve;
+        std::vector<double> LLmaskexpcurve;
+        // Vibrance
+        bool expvibrance;
+        int saturated;
+        int pastels;
+        Threshold<int> psthreshold;
+        bool protectskins;
+        bool avoidcolorshift;
+        bool pastsattog;
+        int sensiv;
+        std::vector<double> skintonescurve;
+        // Soft Light
+        bool expsoft;
+        int streng;
+        int sensisf;
+        // Lab Region
+        bool explabregion;
+        // ColorToningParams::LabCorrectionRegion Labcorr;
+        // Blur & Noise
+        bool expblur;
+        int radius;
+        int strength;
+        int sensibn;
+        Glib::ustring blurMethod;
+        bool activlum;
+        // Tone Mapping
+        bool exptonemap;
+        int stren;
+        int gamma;
+        int estop;
+        int scaltm;
+        int rewei;
+        int sensitm;
+        // Retinex
+        bool expreti;
+        Glib::ustring retinexMethod;
+        int str;
+        int chrrt;
+        int neigh;
+        int vart;
+        int dehaz;
+        int sensih;
+        std::vector<double> localTgaincurve;
+        bool inversret;
+        // Sharpening
+        bool expsharp;
+        int sharcontrast;
+        int sharradius;
+        int sharamount;
+        int shardamping;
+        int shariter;
+        int sharblur;
+        int sensisha;
+        bool inverssha;
+        // Local Contrast
+        bool expcontrast;
+        int lcradius;
+        int lcamount;
+        int lcdarkness;
+        int lclightness;
+        int sensilc;
+        // Contrast by detail levels
+        bool expcbdl;
+        double mult[5];
+        int chromacbdl;
+        double threshold;
+        int sensicb;
+        // Denoise
+        bool expdenoi;
+        int noiselumf;
+        int noiselumc;
+        int noiselumdetail;
+        int noiselequal;
+        int noisechrof;
+        int noisechroc;
+        int noisechrodetail;
+        int adjblur;
+        int bilateral;
+        int sensiden;
+        // Others
+        bool avoid;
+
+        LocallabSpot();
+
+        bool operator ==(const LocallabSpot& other) const;
+        bool operator !=(const LocallabSpot& other) const;
+    };
+
     bool enabled;
     int nbspot;
     int selspot;
-    // Control spot settings
-    std::vector<int> id;
-    std::vector<Glib::ustring> name;
-    std::vector<int> isvisible;
-    std::vector<Glib::ustring> shape; // ELI, RECT
-    std::vector<Glib::ustring> spotMethod; // norm, exc
-    std::vector<int> sensiexclu;
-    std::vector<int> struc;
-    std::vector<Glib::ustring> shapeMethod; // IND, SYM, INDSL, SYMSL
-    std::vector<int> locX;
-    std::vector<int> locXL;
-    std::vector<int> locY;
-    std::vector<int> locYT;
-    std::vector<int> centerX;
-    std::vector<int> centerY;
-    std::vector<int> circrad;
-    std::vector<Glib::ustring> qualityMethod; // std, enh, enhden
-    std::vector<int> transit;
-    std::vector<int> thresh;
-    std::vector<int> iter;
-    // Color & Light
-    std::vector<int> expcolor;
-    std::vector<int> curvactiv;
-    std::vector<int> lightness;
-    std::vector<int> contrast;
-    std::vector<int> chroma;
-    std::vector<int> sensi;
-    std::vector<Glib::ustring> qualitycurveMethod;
-    std::vector<std::vector<double>> llcurve;
-    std::vector<std::vector<double>> cccurve;
-    std::vector<std::vector<double>> LHcurve;
-    std::vector<std::vector<double>> HHcurve;
-    std::vector<int> invers;
-    // Exposure
-    std::vector<int> expexpose;
-    std::vector<int> expcomp;
-    std::vector<int> hlcompr;
-    std::vector<int> hlcomprthresh;
-    std::vector<int> black;
-    std::vector<int> shcompr;
-    std::vector<int> warm;
-    std::vector<int> sensiex;
-    std::vector<std::vector<double>> excurve;
-    // Vibrance
-    std::vector<int> expvibrance;
-    std::vector<int> saturated;
-    std::vector<int> pastels;
-    std::vector<Threshold<int>> psthreshold;
-    std::vector<int> protectskins;
-    std::vector<int> avoidcolorshift;
-    std::vector<int> pastsattog;
-    std::vector<int> sensiv;
-    std::vector<std::vector<double>> skintonescurve;
-    //Soft Light
-    std::vector<int> expsoft;
-    std::vector<int> streng;
-    std::vector<int> sensisf;
-    //Lab region
-    std::vector<int> explabregion;
-    
-    /*
-    struct LabCorrectionRegion {
-        enum { CHAN_ALL = -1, CHAN_R, CHAN_G, CHAN_B };
-        double a;
-        double b;
-        double saturation;
-        double slope;
-        double offset;
-        double power;
-        std::vector<double> hueMask;
-        std::vector<double> chromaticityMask;
-        std::vector<double> lightnessMask;
-        double maskBlur;
-        int channel;
-
-        LabCorrectionRegion();
-        bool operator==(const LabCorrectionRegion &other) const;
-        bool operator!=(const LabCorrectionRegion &other) const;
-    };
-    std::vector<LabCorrectionRegion> Labcorr;
-*/
-    // Blur & Noise
-    std::vector<int> expblur;
-    std::vector<int> radius;
-    std::vector<int> strength;
-    std::vector<int> sensibn;
-    std::vector<Glib::ustring> blurMethod;
-    std::vector<int> activlum;
-    // Tone Mapping
-    std::vector<int> exptonemap;
-    std::vector<int> stren;
-    std::vector<int> gamma;
-    std::vector<int> estop;
-    std::vector<int> scaltm;
-    std::vector<int> rewei;
-    std::vector<int> sensitm;
-    // Retinex
-    std::vector<int> expreti;
-    std::vector<Glib::ustring> retinexMethod;
-    std::vector<int> str;
-    std::vector<int> chrrt;
-    std::vector<int> neigh;
-    std::vector<int> vart;
-    std::vector<int> dehaz;
-    std::vector<int> sensih;
-    std::vector<std::vector<double>> localTgaincurve;
-    std::vector<int> inversret;
-    // Sharpening
-    std::vector<int> expsharp;
-    std::vector<int> sharcontrast;
-    std::vector<int> sharradius;
-    std::vector<int> sharamount;
-    std::vector<int> shardamping;
-    std::vector<int> shariter;
-    std::vector<int> sensisha;
-    std::vector<int> sharblur;
-    std::vector<int> inverssha;
-    //local contrast
-    std::vector<int> expcontrast;
-    std::vector<int> lcradius;
-    std::vector<int> lcamount;
-    std::vector<int> lcdarkness;
-    std::vector<int> lclightness;
-    std::vector<int> sensilc;
-    // Contrast by detail levels
-    std::vector<int> expcbdl;
-    std::vector<double> mult[5];
-    std::vector<int> chromacbdl;
-    std::vector<double> threshold;
-    std::vector<int> sensicb;
-    // Denoise
-    std::vector<int> expdenoi;
-    std::vector<int> noiselumf;
-    std::vector<int> noiselumc;
-    std::vector<int> noiselumdetail;
-    std::vector<int> noiselequal;
-    std::vector<int> noisechrof;
-    std::vector<int> noisechroc;
-    std::vector<int> noisechrodetail;
-    std::vector<int> adjblur;
-    std::vector<int> bilateral;
-    std::vector<int> sensiden;
-    // Others
-    std::vector<int> avoid;
+    std::vector<LocallabSpot> spots;
 
     LocallabParams();
 
     bool operator ==(const LocallabParams& other) const;
     bool operator !=(const LocallabParams& other) const;
 };
-
-
-
 
 /**
   * Parameters of the post-crop vignette filter

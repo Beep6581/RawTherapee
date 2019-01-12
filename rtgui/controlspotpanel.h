@@ -25,6 +25,7 @@
 #include "adjuster.h"
 #include "edit.h"
 #include "guiutils.h"
+#include "threadutils.h"
 #include "toolpanel.h"
 #include <gtkmm.h>
 #include <string>
@@ -66,9 +67,8 @@ public:
      * A SpotEdited structure allows exchanges of spot panel widgets edited states from and to ControlSpotClass
      */
     struct SpotEdited {
-        bool addbutton;
-        bool deletebutton;
-        bool treeview;
+        bool nbspot;
+        bool selspot;
         bool name;
         bool isvisible;
         bool shape;
@@ -162,7 +162,7 @@ public:
      */
     void deleteControlSpot(int id);
 
-    // Panel widgets edited states management functions
+    // Panel widgets management functions
     /**
      * Getter of panel widgets edited states
      *
@@ -172,9 +172,38 @@ public:
     /**
      * Setter of panel widgets edited states
      *
-     * @param se A SpotEdited structure containing the widgets edidted states to update
+     * @param se A SpotEdited structure containing the widgets edited states to update
      */
     void setEditedStates(SpotEdited* se);
+    /**
+     * Implementation of setDefaults function of toolpanel.h
+     *
+     * @param defParams ProcParams containing default values to set to the adjusters
+     * @param pedited   ParamsEdited containing default state values to set to the adjusters
+     * @param id Spot id to consider to update adjusters default values and default state values
+     */
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr, int id = 0);
+    /**
+     * Variant of setDefaults function which only update adjuster default states
+     *
+     * @param pedited ParamsEdited containing default states to set to the adjusters
+     * @param id Spot id to consider to update adjusters default states
+     */
+    // void updateDefaultsStates(const ParamsEdited* pedited, int id = 0);
+    /**
+     * Enable or disable the interactions with panel widgets
+     *
+     * @param cond Condition to enable interactions
+     */
+    void setParamEditable(bool cond);
+
+    // Batch mode management
+    /**
+     * Implementation of setBatchMode function of toolpanel.h
+     *
+     * @param batchMode Condition to enable batch mode
+     */
+    void setBatchMode(bool batchMode);
 
 private:
     // Cell renderer
@@ -184,9 +213,9 @@ private:
 
     void on_button_add();
     void on_button_delete();
+    void on_button_duplicate();
     void on_button_rename();
-    // TODO Add visibility button
-    // TODO Add duplication button
+    void on_button_visibility();
 
     void load_ControlSpot_param();
 
@@ -206,7 +235,6 @@ private:
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
 
     void disableParamlistener(bool cond);
-    void setParamEditable(bool cond);
 
     void addControlSpotCurve(Gtk::TreeModel::Row row);
     void updateControlSpotCurve(Gtk::TreeModel::Row row);
@@ -264,13 +292,17 @@ private:
     sigc::connection treeviewconn_;
     Glib::RefPtr<Gtk::ListStore> treemodel_;
 
-    Gtk::ButtonBox buttonbox_;
     Gtk::Button button_add_;
     sigc::connection buttonaddconn_;
     Gtk::Button button_delete_;
     sigc::connection buttondeleteconn_;
+    Gtk::Button button_duplicate_;
+    sigc::connection buttonduplicateconn_;
+
     Gtk::Button button_rename_;
     sigc::connection buttonrenameconn_;
+    Gtk::Button button_visibility_;
+    sigc::connection buttonvisibilityconn_;
 
     MyComboBoxText* const shape_;
     sigc::connection shapeconn_;
@@ -297,8 +329,15 @@ private:
     // Internal variables
     int lastObject_;
     rtengine::Coord* lastCoord_;
+    bool nbSpotChanged_;
+    bool selSpotChanged_;
+    bool nameChanged_;
+    bool visibilityChanged_;
+    int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event, 4 = Spot duplication event
+    Gtk::Frame* const excluFrame;
 
-    int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event
+    // Treeview mutex
+    MyMutex mTreeview;
 };
 
 #endif // _CONTROLSPOTPANEL_H_

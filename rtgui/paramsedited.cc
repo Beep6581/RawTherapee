@@ -333,132 +333,11 @@ void ParamsEdited::set(bool v)
     locallab.enabled = v;
     locallab.nbspot = v;
     locallab.selspot = v;
-    // Control spot settings
     locallab.id = v;
-    locallab.name = v;
-    locallab.isvisible = v;
-    locallab.shape = v;
-    locallab.spotMethod = v;
-    locallab.sensiexclu = v;
-    locallab.struc = v;
-    locallab.shapeMethod = v;
-    locallab.locX = v;
-    locallab.locXL = v;
-    locallab.locY = v;
-    locallab.locYT = v;
-    locallab.centerX = v;
-    locallab.centerY = v;
-    locallab.circrad = v;
-    locallab.qualityMethod = v;
-    locallab.transit = v;
-    locallab.thresh = v;
-    locallab.iter = v;
-    // Color & Light
-    locallab.expcolor = v;
-    locallab.curvactiv = v;
-    locallab.lightness = v;
-    locallab.contrast = v;
-    locallab.chroma = v;
-    locallab.sensi = v;
-    locallab.qualitycurveMethod = v;
-    locallab.llcurve = v;
-    locallab.cccurve = v;
-    locallab.LHcurve = v;
-    locallab.HHcurve = v;
-    locallab.invers = v;
-    // Exposure
-    locallab.expexpose = v;
-    locallab.expcomp = v;
-    locallab.hlcompr = v;
-    locallab.hlcomprthresh = v;
-    locallab.black = v;
-    locallab.shcompr = v;
-    locallab.warm = v;
-    locallab.sensiex = v;
-    locallab.excurve = v;
-    // Vibrance
-    locallab.expvibrance = v;
-    locallab.saturated = v;
-    locallab.pastels = v;
-    locallab.psthreshold = v;
-    locallab.protectskins = v;
-    locallab.avoidcolorshift = v;
-    locallab.pastsattog = v;
-    locallab.sensiv = v;
-    locallab.skintonescurve = v;
-    //Soft Light
-    locallab.expsoft = v;
-    locallab.streng = v;
-    locallab.sensisf = v;
-    //Lab region
-    locallab.explabregion = v;
-    // Blur & Noise
-    locallab.expblur = v;
-    locallab.radius = v;
-    locallab.strength = v;
-    locallab.sensibn = v;
-    locallab.blurMethod = v;
-    locallab.activlum = v;
-    // Tone Mapping
-    locallab.exptonemap = v;
-    locallab.stren = v;
-    locallab.gamma = v;
-    locallab.estop = v;
-    locallab.scaltm = v;
-    locallab.rewei = v;
-    locallab.sensitm = v;
-    // Retinex
-    locallab.expreti = v;
-    locallab.retinexMethod = v;
-    locallab.str = v;
-    locallab.chrrt = v;
-    locallab.neigh = v;
-    locallab.vart = v;
-    locallab.dehaz = v;
-    locallab.sensih = v;
-    locallab.localTgaincurve = v;
-    locallab.inversret = v;
-    // Sharpening
-    locallab.expsharp = v;
-    locallab.sharcontrast = v;
-    locallab.sharradius = v;
-    locallab.sharamount = v;
-    locallab.shardamping = v;
-    locallab.shariter = v;
-    locallab.sharblur = v;
-    locallab.sensisha = v;
-    locallab.inverssha = v;
-    //local contrast
-    locallab.expcontrast = v;
-    locallab.lcradius = v;
-    locallab.lcamount = v;
-    locallab.lcdarkness = v;
-    locallab.lclightness = v;
-    locallab.sensilc = v;
-    // Contrast by detail levels
-    locallab.expcbdl = v;
 
-    for (int i = 0; i < 5; i++) {
-        locallab.mult[i] = v;
+    for (size_t i = 0; i < locallab.spots.size(); i++) {
+        locallab.spots.at(i).set(v);
     }
-
-    locallab.chromacbdl = v;
-    locallab.threshold = v;
-    locallab.sensicb = v;
-    // Denoise
-    locallab.expdenoi = v;
-    locallab.noiselumf = v;
-    locallab.noiselumc = v;
-    locallab.noiselumdetail = v;
-    locallab.noiselequal = v;
-    locallab.noisechrof = v;
-    locallab.noisechroc = v;
-    locallab.noisechrodetail = v;
-    locallab.adjblur = v;
-    locallab.bilateral = v;
-    locallab.sensiden = v;
-    // Others
-    locallab.avoid = v;
 
     pcvignette.enabled = v;
     pcvignette.strength = v;
@@ -725,6 +604,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
     }
 
     const ProcParams& p = src[0];
+
+    // Resize LocallabSpotEdited according to src[0]
+    locallab.spots.clear();
+    locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(true));
 
     for (size_t i = 1; i < src.size(); i++) {
         const ProcParams& other = src[i];
@@ -1033,132 +916,153 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         locallab.enabled = locallab.enabled && p.locallab.enabled == other.locallab.enabled;
         locallab.nbspot = locallab.nbspot && p.locallab.nbspot == other.locallab.nbspot;
         locallab.selspot = locallab.selspot && p.locallab.selspot == other.locallab.selspot;
-        // Control spot settings
-        locallab.id = locallab.id && p.locallab.id == other.locallab.id;
-        locallab.name = locallab.name && p.locallab.name == other.locallab.name;
-        locallab.isvisible = locallab.isvisible && p.locallab.isvisible == other.locallab.isvisible;
-        locallab.shape = locallab.shape && p.locallab.shape == other.locallab.shape;
-        locallab.spotMethod = locallab.spotMethod && p.locallab.spotMethod == other.locallab.spotMethod;
-        locallab.sensiexclu = locallab.sensiexclu && p.locallab.sensiexclu == other.locallab.sensiexclu;
-        locallab.struc = locallab.struc && p.locallab.struc == other.locallab.struc;
-        locallab.shapeMethod = locallab.shapeMethod && p.locallab.shapeMethod == other.locallab.shapeMethod;
-        locallab.locX = locallab.locX && p.locallab.locX == other.locallab.locX;
-        locallab.locXL = locallab.locXL && p.locallab.locXL == other.locallab.locXL;
-        locallab.locY = locallab.locY && p.locallab.locY == other.locallab.locY;
-        locallab.locYT = locallab.locYT && p.locallab.locYT == other.locallab.locYT;
-        locallab.centerX = locallab.centerX && p.locallab.centerX == other.locallab.centerX;
-        locallab.centerY = locallab.centerY && p.locallab.centerY == other.locallab.centerY;
-        locallab.circrad = locallab.circrad && p.locallab.circrad == other.locallab.circrad;
-        locallab.qualityMethod = locallab.qualityMethod && p.locallab.qualityMethod == other.locallab.qualityMethod;
-        locallab.transit = locallab.transit && p.locallab.transit == other.locallab.transit;
-        locallab.thresh = locallab.thresh && p.locallab.thresh == other.locallab.thresh;
-        locallab.iter = locallab.iter && p.locallab.iter == other.locallab.iter;
-        // Color & Light
-        locallab.expcolor = locallab.expcolor && p.locallab.expcolor == other.locallab.expcolor;
-        locallab.curvactiv = locallab.curvactiv && p.locallab.curvactiv == other.locallab.curvactiv;
-        locallab.lightness = locallab.lightness && p.locallab.lightness == other.locallab.lightness;
-        locallab.contrast = locallab.contrast && p.locallab.contrast == other.locallab.contrast;
-        locallab.chroma = locallab.chroma && p.locallab.chroma == other.locallab.chroma;
-        locallab.sensi = locallab.sensi && p.locallab.sensi == other.locallab.sensi;
-        locallab.qualitycurveMethod = locallab.qualitycurveMethod && p.locallab.qualitycurveMethod == other.locallab.qualitycurveMethod;
-        locallab.llcurve = locallab.llcurve && p.locallab.llcurve == other.locallab.llcurve;
-        locallab.cccurve = locallab.cccurve && p.locallab.cccurve == other.locallab.cccurve;
-        locallab.LHcurve = locallab.LHcurve && p.locallab.LHcurve == other.locallab.LHcurve;
-        locallab.HHcurve = locallab.HHcurve && p.locallab.HHcurve == other.locallab.HHcurve;
-        locallab.invers = locallab.invers && p.locallab.invers == other.locallab.invers;
-        // Exposure
-        locallab.expexpose = locallab.expexpose && p.locallab.expexpose == other.locallab.expexpose;
-        locallab.expcomp = locallab.expcomp && p.locallab.expcomp == other.locallab.expcomp;
-        locallab.hlcompr = locallab.hlcompr && p.locallab.hlcompr == other.locallab.hlcompr;
-        locallab.hlcomprthresh = locallab.hlcomprthresh && p.locallab.hlcomprthresh == other.locallab.hlcomprthresh;
-        locallab.black = locallab.black && p.locallab.black == other.locallab.black;
-        locallab.shcompr = locallab.shcompr && p.locallab.shcompr == other.locallab.shcompr;
-        locallab.warm = locallab.warm && p.locallab.warm == other.locallab.warm;
-        locallab.sensiex = locallab.sensiex && p.locallab.sensiex == other.locallab.sensiex;
-        locallab.excurve = locallab.excurve && p.locallab.excurve == other.locallab.excurve;
-        // Vibrance
-        locallab.expvibrance = locallab.expvibrance && p.locallab.expvibrance == other.locallab.expvibrance;
-        locallab.saturated = locallab.saturated && p.locallab.saturated == other.locallab.saturated;
-        locallab.pastels = locallab.pastels && p.locallab.pastels == other.locallab.pastels;
-        locallab.psthreshold = locallab.psthreshold && p.locallab.psthreshold == other.locallab.psthreshold;
-        locallab.protectskins = locallab.protectskins && p.locallab.protectskins == other.locallab.protectskins;
-        locallab.avoidcolorshift = locallab.avoidcolorshift && p.locallab.avoidcolorshift == other.locallab.avoidcolorshift;
-        locallab.pastsattog = locallab.pastsattog && p.locallab.pastsattog == other.locallab.pastsattog;
-        locallab.sensiv = locallab.sensiv && p.locallab.sensiv == other.locallab.sensiv;
-        locallab.skintonescurve = locallab.skintonescurve && p.locallab.skintonescurve == other.locallab.skintonescurve;
-        //Soft Light
-        locallab.expsoft = locallab.expsoft && p.locallab.expsoft == other.locallab.expsoft;
-        locallab.streng = locallab.streng && p.locallab.streng == other.locallab.streng;
-        locallab.sensisf = locallab.sensisf && p.locallab.sensisf == other.locallab.sensisf;
-        //Lab region
-        locallab.explabregion = locallab.explabregion && p.locallab.explabregion == other.locallab.explabregion;
-        // Blur & Noise
-        locallab.expblur = locallab.expblur && p.locallab.expblur == other.locallab.expblur;
-        locallab.radius = locallab.radius && p.locallab.radius == other.locallab.radius;
-        locallab.strength = locallab.strength && p.locallab.strength == other.locallab.strength;
-        locallab.sensibn = locallab.sensibn && p.locallab.sensibn == other.locallab.sensibn;
-        locallab.blurMethod = locallab.blurMethod && p.locallab.blurMethod == other.locallab.blurMethod;
-        locallab.activlum = locallab.activlum && p.locallab.activlum == other.locallab.activlum;
-        // Tone Mapping
-        locallab.exptonemap = locallab.exptonemap && p.locallab.exptonemap == other.locallab.exptonemap;
-        locallab.stren = locallab.stren && p.locallab.stren == other.locallab.stren;
-        locallab.gamma = locallab.gamma && p.locallab.gamma == other.locallab.gamma;
-        locallab.estop = locallab.estop && p.locallab.estop == other.locallab.estop;
-        locallab.scaltm = locallab.scaltm && p.locallab.scaltm == other.locallab.scaltm;
-        locallab.rewei = locallab.rewei && p.locallab.rewei == other.locallab.rewei;
-        locallab.sensitm = locallab.sensitm && p.locallab.sensitm == other.locallab.sensitm;
-        // Retinex
-        locallab.expreti = locallab.expreti && p.locallab.expreti == other.locallab.expreti;
-        locallab.retinexMethod = locallab.retinexMethod && p.locallab.retinexMethod == other.locallab.retinexMethod;
-        locallab.str = locallab.str && p.locallab.str == other.locallab.str;
-        locallab.chrrt = locallab.chrrt && p.locallab.chrrt == other.locallab.chrrt;
-        locallab.neigh = locallab.neigh && p.locallab.neigh == other.locallab.neigh;
-        locallab.vart = locallab.vart && p.locallab.vart == other.locallab.vart;
-        locallab.dehaz = locallab.dehaz && p.locallab.dehaz == other.locallab.dehaz;
-        locallab.sensih = locallab.sensih && p.locallab.sensih == other.locallab.sensih;
-        locallab.localTgaincurve = locallab.localTgaincurve && p.locallab.localTgaincurve == other.locallab.localTgaincurve;
-        locallab.inversret = locallab.inversret && p.locallab.inversret == other.locallab.inversret;
-        // Sharpening
-        locallab.expsharp = locallab.expsharp && p.locallab.expsharp == other.locallab.expsharp;
-        locallab.sharcontrast = locallab.sharcontrast && p.locallab.sharcontrast == other.locallab.sharcontrast;
-        locallab.sharradius = locallab.sharradius && p.locallab.sharradius == other.locallab.sharradius;
-        locallab.sharamount = locallab.sharamount && p.locallab.sharamount == other.locallab.sharamount;
-        locallab.shardamping = locallab.shardamping && p.locallab.shardamping == other.locallab.shardamping;
-        locallab.shariter = locallab.shariter && p.locallab.shariter == other.locallab.shariter;
-        locallab.sharblur = locallab.sharblur && p.locallab.sharblur == other.locallab.sharblur;
-        locallab.sensisha = locallab.sensisha && p.locallab.sensisha == other.locallab.sensisha;
-        locallab.inverssha = locallab.inverssha && p.locallab.inverssha == other.locallab.inverssha;
-        //local contrast
-        locallab.expcontrast = locallab.expcontrast && p.locallab.expcontrast == other.locallab.expcontrast;
-        locallab.lcradius = locallab.lcradius && p.locallab.lcradius == other.locallab.lcradius;
-        locallab.lcamount = locallab.lcamount && p.locallab.lcamount == other.locallab.lcamount;
-        locallab.lcdarkness = locallab.lcdarkness && p.locallab.lcdarkness == other.locallab.lcdarkness;
-        locallab.lclightness = locallab.lclightness && p.locallab.lclightness == other.locallab.lclightness;
-        locallab.sensilc = locallab.sensilc && p.locallab.sensilc == other.locallab.sensilc;
-        // Contrast by detail levels
-        locallab.expcbdl = locallab.expcbdl && p.locallab.expcbdl == other.locallab.expcbdl;
 
-        for (int i = 0; i < 5; i++) {
-            locallab.mult[i] = locallab.mult[i] && p.locallab.mult[i] == other.locallab.mult[i];
+        if (locallab.nbspot) {
+            for (size_t j = 0; j < locallab.spots.size() && j < p.locallab.spots.size() && j < other.locallab.spots.size(); j++) {
+                const LocallabParams::LocallabSpot& pSpot = p.locallab.spots.at(j);
+                const LocallabParams::LocallabSpot& otherSpot = other.locallab.spots.at(j);
+                // Control spot settings
+                locallab.id = locallab.id && pSpot.id == otherSpot.id;
+                locallab.spots.at(j).name = locallab.spots.at(j).name && pSpot.name == otherSpot.name;
+                locallab.spots.at(j).isvisible = locallab.spots.at(j).isvisible && pSpot.isvisible == otherSpot.isvisible;
+                locallab.spots.at(j).shape = locallab.spots.at(j).shape && pSpot.shape == otherSpot.shape;
+                locallab.spots.at(j).spotMethod = locallab.spots.at(j).spotMethod && pSpot.spotMethod == otherSpot.spotMethod;
+                locallab.spots.at(j).sensiexclu = locallab.spots.at(j).sensiexclu && pSpot.sensiexclu == otherSpot.sensiexclu;
+                locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
+                locallab.spots.at(j).shapeMethod = locallab.spots.at(j).shapeMethod && pSpot.shapeMethod == otherSpot.shapeMethod;
+                locallab.spots.at(j).locX = locallab.spots.at(j).locX && pSpot.locX == otherSpot.locX;
+                locallab.spots.at(j).locXL = locallab.spots.at(j).locXL && pSpot.locXL == otherSpot.locXL;
+                locallab.spots.at(j).locY = locallab.spots.at(j).locY && pSpot.locY == otherSpot.locY;
+                locallab.spots.at(j).locYT = locallab.spots.at(j).locYT && pSpot.locYT == otherSpot.locYT;
+                locallab.spots.at(j).centerX = locallab.spots.at(j).centerX && pSpot.centerX == otherSpot.centerX;
+                locallab.spots.at(j).centerY = locallab.spots.at(j).centerY && pSpot.centerY == otherSpot.centerY;
+                locallab.spots.at(j).circrad = locallab.spots.at(j).circrad && pSpot.circrad == otherSpot.circrad;
+                locallab.spots.at(j).qualityMethod = locallab.spots.at(j).qualityMethod && pSpot.qualityMethod == otherSpot.qualityMethod;
+                locallab.spots.at(j).transit = locallab.spots.at(j).transit && pSpot.transit == otherSpot.transit;
+                locallab.spots.at(j).thresh = locallab.spots.at(j).thresh && pSpot.thresh == otherSpot.thresh;
+                locallab.spots.at(j).iter = locallab.spots.at(j).iter && pSpot.iter == otherSpot.iter;
+                // Color & Light
+                locallab.spots.at(j).expcolor = locallab.spots.at(j).expcolor && pSpot.expcolor == otherSpot.expcolor;
+                locallab.spots.at(j).curvactiv = locallab.spots.at(j).curvactiv && pSpot.curvactiv == otherSpot.curvactiv;
+                locallab.spots.at(j).lightness = locallab.spots.at(j).lightness && pSpot.lightness == otherSpot.lightness;
+                locallab.spots.at(j).contrast = locallab.spots.at(j).contrast && pSpot.contrast == otherSpot.contrast;
+                locallab.spots.at(j).chroma = locallab.spots.at(j).chroma && pSpot.chroma == otherSpot.chroma;
+                locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
+                locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
+                locallab.spots.at(j).showmaskcolMethod = locallab.spots.at(j).showmaskcolMethod && pSpot.showmaskcolMethod == otherSpot.showmaskcolMethod;
+                locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
+                locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
+                locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
+                locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
+                locallab.spots.at(j).CCmaskcurve = locallab.spots.at(j).CCmaskcurve && pSpot.CCmaskcurve == otherSpot.CCmaskcurve;
+                locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
+                locallab.spots.at(j).HHmaskcurve = locallab.spots.at(j).HHmaskcurve && pSpot.HHmaskcurve == otherSpot.HHmaskcurve;
+                locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
+                // Exposure
+                locallab.spots.at(j).expexpose = locallab.spots.at(j).expexpose && pSpot.expexpose == otherSpot.expexpose;
+                locallab.spots.at(j).expcomp = locallab.spots.at(j).expcomp && pSpot.expcomp == otherSpot.expcomp;
+                locallab.spots.at(j).hlcompr = locallab.spots.at(j).hlcompr && pSpot.hlcompr == otherSpot.hlcompr;
+                locallab.spots.at(j).hlcomprthresh = locallab.spots.at(j).hlcomprthresh && pSpot.hlcomprthresh == otherSpot.hlcomprthresh;
+                locallab.spots.at(j).black = locallab.spots.at(j).black && pSpot.black == otherSpot.black;
+                locallab.spots.at(j).shcompr = locallab.spots.at(j).shcompr && pSpot.shcompr == otherSpot.shcompr;
+                locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
+                locallab.spots.at(j).sensiex = locallab.spots.at(j).sensiex && pSpot.sensiex == otherSpot.sensiex;
+                locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
+                locallab.spots.at(j).showmaskexpMethod = locallab.spots.at(j).showmaskexpMethod && pSpot.showmaskexpMethod == otherSpot.showmaskexpMethod;
+                locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
+                locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
+                // Vibrance
+                locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
+                locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
+                locallab.spots.at(j).pastels = locallab.spots.at(j).pastels && pSpot.pastels == otherSpot.pastels;
+                locallab.spots.at(j).psthreshold = locallab.spots.at(j).psthreshold && pSpot.psthreshold == otherSpot.psthreshold;
+                locallab.spots.at(j).protectskins = locallab.spots.at(j).protectskins && pSpot.protectskins == otherSpot.protectskins;
+                locallab.spots.at(j).avoidcolorshift = locallab.spots.at(j).avoidcolorshift && pSpot.avoidcolorshift == otherSpot.avoidcolorshift;
+                locallab.spots.at(j).pastsattog = locallab.spots.at(j).pastsattog && pSpot.pastsattog == otherSpot.pastsattog;
+                locallab.spots.at(j).sensiv = locallab.spots.at(j).sensiv && pSpot.sensiv == otherSpot.sensiv;
+                locallab.spots.at(j).skintonescurve = locallab.spots.at(j).skintonescurve && pSpot.skintonescurve == otherSpot.skintonescurve;
+                // Soft Light
+                locallab.spots.at(j).expsoft = locallab.spots.at(j).expsoft && pSpot.expsoft == otherSpot.expsoft;
+                locallab.spots.at(j).streng = locallab.spots.at(j).streng && pSpot.streng == otherSpot.streng;
+                locallab.spots.at(j).sensisf = locallab.spots.at(j).sensisf && pSpot.sensisf == otherSpot.sensisf;
+                // Lab Region
+                locallab.spots.at(j).explabregion = locallab.spots.at(j).explabregion && pSpot.explabregion == otherSpot.explabregion;
+                // Blur & Noise
+                locallab.spots.at(j).expblur = locallab.spots.at(j).expblur && pSpot.expblur == otherSpot.expblur;
+                locallab.spots.at(j).radius = locallab.spots.at(j).radius && pSpot.radius == otherSpot.radius;
+                locallab.spots.at(j).strength = locallab.spots.at(j).strength && pSpot.strength == otherSpot.strength;
+                locallab.spots.at(j).sensibn = locallab.spots.at(j).sensibn && pSpot.sensibn == otherSpot.sensibn;
+                locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
+                locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
+                // Tone Mapping
+                locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
+                locallab.spots.at(j).stren = locallab.spots.at(j).stren && pSpot.stren == otherSpot.stren;
+                locallab.spots.at(j).gamma = locallab.spots.at(j).gamma && pSpot.gamma == otherSpot.gamma;
+                locallab.spots.at(j).estop = locallab.spots.at(j).estop && pSpot.estop == otherSpot.estop;
+                locallab.spots.at(j).scaltm = locallab.spots.at(j).scaltm && pSpot.scaltm == otherSpot.scaltm;
+                locallab.spots.at(j).rewei = locallab.spots.at(j).rewei && pSpot.rewei == otherSpot.rewei;
+                locallab.spots.at(j).sensitm = locallab.spots.at(j).sensitm && pSpot.sensitm == otherSpot.sensitm;
+                // Retinex
+                locallab.spots.at(j).expreti = locallab.spots.at(j).expreti && pSpot.expreti == otherSpot.expreti;
+                locallab.spots.at(j).retinexMethod = locallab.spots.at(j).retinexMethod && pSpot.retinexMethod == otherSpot.retinexMethod;
+                locallab.spots.at(j).str = locallab.spots.at(j).str && pSpot.str == otherSpot.str;
+                locallab.spots.at(j).chrrt = locallab.spots.at(j).chrrt && pSpot.chrrt == otherSpot.chrrt;
+                locallab.spots.at(j).neigh = locallab.spots.at(j).neigh && pSpot.neigh == otherSpot.neigh;
+                locallab.spots.at(j).vart = locallab.spots.at(j).vart && pSpot.vart == otherSpot.vart;
+                locallab.spots.at(j).dehaz = locallab.spots.at(j).dehaz && pSpot.dehaz == otherSpot.dehaz;
+                locallab.spots.at(j).sensih = locallab.spots.at(j).sensih && pSpot.sensih == otherSpot.sensih;
+                locallab.spots.at(j).localTgaincurve = locallab.spots.at(j).localTgaincurve && pSpot.localTgaincurve == otherSpot.localTgaincurve;
+                locallab.spots.at(j).inversret = locallab.spots.at(j).inversret &&pSpot.inversret == otherSpot.inversret;
+                // Sharpening
+                locallab.spots.at(j).expsharp = locallab.spots.at(j).expsharp && pSpot.expsharp == otherSpot.expsharp;
+                locallab.spots.at(j).sharcontrast = locallab.spots.at(j).sharcontrast && pSpot.sharcontrast == otherSpot.sharcontrast;
+                locallab.spots.at(j).sharradius = locallab.spots.at(j).sharradius && pSpot.sharradius == otherSpot.sharradius;
+                locallab.spots.at(j).sharamount = locallab.spots.at(j).sharamount && pSpot.sharamount == otherSpot.sharamount;
+                locallab.spots.at(j).shardamping = locallab.spots.at(j).shardamping && pSpot.shardamping == otherSpot.shardamping;
+                locallab.spots.at(j).shariter = locallab.spots.at(j).shariter && pSpot.shariter == otherSpot.shariter;
+                locallab.spots.at(j).sharblur = locallab.spots.at(j).sharblur && pSpot.sharblur == otherSpot.sharblur;
+                locallab.spots.at(j).sensisha = locallab.spots.at(j).sensisha && pSpot.sensisha == otherSpot.sensisha;
+                locallab.spots.at(j).inverssha = locallab.spots.at(j).inverssha && pSpot.inverssha == otherSpot.inverssha;
+                // Local Contrast
+                locallab.spots.at(j).expcontrast = locallab.spots.at(j).expcontrast && pSpot.expcontrast == otherSpot.expcontrast;
+                locallab.spots.at(j).lcradius = locallab.spots.at(j).lcradius && pSpot.lcradius == otherSpot.lcradius;
+                locallab.spots.at(j).lcamount = locallab.spots.at(j).lcamount && pSpot.lcamount == otherSpot.lcamount;
+                locallab.spots.at(j).lcdarkness = locallab.spots.at(j).lcdarkness && pSpot.lcdarkness == otherSpot.lcdarkness;
+                locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
+                locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
+                // Contrast by detail levels
+                locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
+
+                for (int k = 0; k < 5; k++) {
+                    locallab.spots.at(j).mult[k] = locallab.spots.at(j).mult[k] && pSpot.mult[k] == otherSpot.mult[k];
+                }
+
+                locallab.spots.at(j).chromacbdl = locallab.spots.at(j).chromacbdl && pSpot.chromacbdl == otherSpot.chromacbdl;
+                locallab.spots.at(j).threshold = locallab.spots.at(j).threshold && pSpot.threshold == otherSpot.threshold;
+                locallab.spots.at(j).sensicb = locallab.spots.at(j).sensicb && pSpot.sensicb == otherSpot.sensicb;
+                // Denoise
+                locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
+                locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
+                locallab.spots.at(j).noiselumc = locallab.spots.at(j).noiselumc && pSpot.noiselumc == otherSpot.noiselumc;
+                locallab.spots.at(j).noiselumdetail = locallab.spots.at(j).noiselumdetail && pSpot.noiselumdetail == otherSpot.noiselumdetail;
+                locallab.spots.at(j).noiselequal = locallab.spots.at(j).noiselequal && pSpot.noiselequal == otherSpot.noiselequal;
+                locallab.spots.at(j).noisechrof = locallab.spots.at(j).noisechrof && pSpot.noisechrof == otherSpot.noisechrof;
+                locallab.spots.at(j).noisechroc = locallab.spots.at(j).noisechroc && pSpot.noisechroc == otherSpot.noisechroc;
+                locallab.spots.at(j).noisechrodetail = locallab.spots.at(j).noisechrodetail && pSpot.noisechrodetail == otherSpot.noisechrodetail;
+                locallab.spots.at(j).adjblur = locallab.spots.at(j).adjblur && pSpot.adjblur == otherSpot.adjblur;
+                locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
+                locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
+                // Others
+                locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
+            }
         }
 
-        locallab.chromacbdl = locallab.chromacbdl && p.locallab.chromacbdl == other.locallab.chromacbdl;
-        locallab.threshold = locallab.threshold && p.locallab.threshold == other.locallab.threshold;
-        locallab.sensicb = locallab.sensicb && p.locallab.sensicb == other.locallab.sensicb;
-        // Denoise
-        locallab.expdenoi = locallab.expdenoi && p.locallab.expdenoi == other.locallab.expdenoi;
-        locallab.noiselumf = locallab.noiselumf && p.locallab.noiselumf == other.locallab.noiselumf;
-        locallab.noiselumc = locallab.noiselumc && p.locallab.noiselumc == other.locallab.noiselumc;
-        locallab.noiselumdetail = locallab.noiselumdetail && p.locallab.noiselumdetail == other.locallab.noiselumdetail;
-        locallab.noiselequal = locallab.noiselequal && p.locallab.noiselequal == other.locallab.noiselequal;
-        locallab.noisechrof = locallab.noisechrof && p.locallab.noisechrof == other.locallab.noisechrof;
-        locallab.noisechroc = locallab.noisechroc && p.locallab.noisechroc == other.locallab.noisechroc;
-        locallab.noisechrodetail = locallab.noisechrodetail && p.locallab.noisechrodetail == other.locallab.noisechrodetail;
-        locallab.adjblur = locallab.adjblur && p.locallab.adjblur == other.locallab.adjblur;
-        locallab.bilateral = locallab.bilateral && p.locallab.bilateral == other.locallab.bilateral;
-        locallab.sensiden = locallab.sensiden && p.locallab.sensiden == other.locallab.sensiden;
-        // Others
-        locallab.avoid = locallab.avoid && p.locallab.avoid == other.locallab.avoid;
+        if (!locallab.nbspot || !locallab.id) {
+            // locallab.id and locallab.spots are set to false because cannot be combined
+            locallab.id = false;
+            locallab.spots.clear();
+            locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(false));
+        }
 
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
         pcvignette.strength = pcvignette.strength && p.pcvignette.strength == other.pcvignette.strength;
@@ -2543,7 +2447,28 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.enabled   = mods.locallab.enabled;
     }
 
-    if (locallab.nbspot) {
+    if (locallab.nbspot || locallab.id) { // For locallab to work, id order needs to be maintained when adding or deleting spots
+        // Saving toEdit locallab temporarily
+        LocallabParams tmpLocallab = toEdit.locallab;
+
+        // Removing all spots in toEdit and recreating spots based on mods id
+        toEdit.locallab.spots.clear();
+        for (size_t i = 0; i < mods.locallab.spots.size(); i++) {
+            LocallabParams::LocallabSpot *newSpot = new LocallabParams::LocallabSpot();
+            newSpot->id = mods.locallab.spots.at(i).id;
+            toEdit.locallab.spots.push_back(*newSpot);
+        }
+
+        // Common spots in tmpLocallab and mods are restored in toEdit
+        for (size_t i = 0; i < toEdit.locallab.spots.size(); i++) {
+            for (size_t j = 0; j < tmpLocallab.spots.size(); j++) {
+                if (toEdit.locallab.spots.at(i).id == tmpLocallab.spots.at(j).id) {
+                    toEdit.locallab.spots.at(i) = tmpLocallab.spots.at(j);
+                }
+            }
+        }
+
+        // Updating nbspot accordingly
         toEdit.locallab.nbspot   = mods.locallab.nbspot;
     }
 
@@ -2551,450 +2476,478 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.selspot   = mods.locallab.selspot;
     }
 
-    // Control spot settings
-    if (locallab.id) {
-        toEdit.locallab.id   = mods.locallab.id;
-    }
-
-    if (locallab.name) {
-        toEdit.locallab.name   = mods.locallab.name;
-    }
-
-    if (locallab.isvisible) {
-        toEdit.locallab.isvisible   = mods.locallab.isvisible;
-    }
-
-    if (locallab.shape) {
-        toEdit.locallab.shape   = mods.locallab.shape;
-    }
-
-    if (locallab.spotMethod) {
-        toEdit.locallab.spotMethod   = mods.locallab.spotMethod;
-    }
-
-    if (locallab.sensiexclu) {
-        toEdit.locallab.sensiexclu   = mods.locallab.sensiexclu;
-    }
-
-    if (locallab.struc) {
-        toEdit.locallab.struc   = mods.locallab.struc;
-    }
-
-    if (locallab.shapeMethod) {
-        toEdit.locallab.shapeMethod   = mods.locallab.shapeMethod;
-    }
-
-    if (locallab.locX) {
-        toEdit.locallab.locX   = mods.locallab.locX;
-    }
-
-    if (locallab.locXL) {
-        toEdit.locallab.locXL   = mods.locallab.locXL;
-    }
-
-    if (locallab.locY) {
-        toEdit.locallab.locY   = mods.locallab.locY;
-    }
-
-    if (locallab.locYT) {
-        toEdit.locallab.locYT   = mods.locallab.locYT;
-    }
-
-    if (locallab.centerX) {
-        toEdit.locallab.centerX   = mods.locallab.centerX;
-    }
-
-    if (locallab.centerY) {
-        toEdit.locallab.centerY   = mods.locallab.centerY;
-    }
-
-    if (locallab.circrad) {
-        toEdit.locallab.circrad   = mods.locallab.circrad;
-    }
-
-    if (locallab.qualityMethod) {
-        toEdit.locallab.qualityMethod   = mods.locallab.qualityMethod;
-    }
-
-    if (locallab.transit) {
-        toEdit.locallab.transit   = mods.locallab.transit;
-    }
-
-    if (locallab.thresh) {
-        toEdit.locallab.thresh   = mods.locallab.thresh;
-    }
-
-    if (locallab.iter) {
-        toEdit.locallab.iter   = mods.locallab.iter;
-    }
-
-    // Color & Light
-    if (locallab.expcolor) {
-        toEdit.locallab.expcolor   = mods.locallab.expcolor;
-    }
-
-    if (locallab.curvactiv) {
-        toEdit.locallab.curvactiv    = mods.locallab.curvactiv;
-    }
-
-    if (locallab.lightness) {
-        toEdit.locallab.lightness     = mods.locallab.lightness;
-    }
-
-    if (locallab.contrast) {
-        toEdit.locallab.contrast  = mods.locallab.contrast;
-    }
-
-    if (locallab.chroma) {
-        toEdit.locallab.chroma    = mods.locallab.chroma;
-    }
-
-    if (locallab.sensi) {
-        toEdit.locallab.sensi     = mods.locallab.sensi;
-    }
-
-    if (locallab.qualitycurveMethod) {
-        toEdit.locallab.qualitycurveMethod   = mods.locallab.qualitycurveMethod;
-    }
-
-    if (locallab.llcurve) {
-        toEdit.locallab.llcurve   = mods.locallab.llcurve;
-    }
-
-    if (locallab.cccurve) {
-        toEdit.locallab.cccurve   = mods.locallab.cccurve;
-    }
-
-    if (locallab.LHcurve) {
-        toEdit.locallab.LHcurve   = mods.locallab.LHcurve;
-    }
-
-    if (locallab.HHcurve) {
-        toEdit.locallab.HHcurve   = mods.locallab.HHcurve;
-    }
-
-    if (locallab.invers) {
-        toEdit.locallab.invers    = mods.locallab.invers;
-    }
-
-    // Exposure
-    if (locallab.expexpose) {
-        toEdit.locallab.expexpose   = mods.locallab.expexpose;
-    }
-
-    if (locallab.expcomp) {
-        toEdit.locallab.expcomp     = mods.locallab.expcomp;
-    }
-
-    if (locallab.hlcompr) {
-        toEdit.locallab.hlcompr     = mods.locallab.hlcompr;
-    }
-
-    if (locallab.hlcomprthresh) {
-        toEdit.locallab.hlcomprthresh     = mods.locallab.hlcomprthresh;
-    }
-
-    if (locallab.black) {
-        toEdit.locallab.black     = mods.locallab.black;
-    }
-
-    if (locallab.shcompr) {
-        toEdit.locallab.shcompr     = mods.locallab.shcompr;
-    }
-
-    if (locallab.warm) {
-        toEdit.locallab.warm    = mods.locallab.warm;
-    }
-
-    if (locallab.sensiex) {
-        toEdit.locallab.sensiex     = mods.locallab.sensiex;
-    }
-
-    if (locallab.excurve) {
-        toEdit.locallab.excurve   = mods.locallab.excurve;
-    }
-
-    // Vibrance
-    if (locallab.expvibrance) {
-        toEdit.locallab.expvibrance   = mods.locallab.expvibrance;
-    }
-
-    if (locallab.saturated) {
-        toEdit.locallab.saturated           = mods.locallab.saturated;
-    }
-
-    if (locallab.pastels) {
-        toEdit.locallab.pastels           = mods.locallab.pastels;
-    }
-
-    if (locallab.psthreshold) {
-        toEdit.locallab.psthreshold       = mods.locallab.psthreshold;
-    }
-
-    if (locallab.protectskins) {
-        toEdit.locallab.protectskins  = mods.locallab.protectskins;
-    }
-
-    if (locallab.avoidcolorshift) {
-        toEdit.locallab.avoidcolorshift   = mods.locallab.avoidcolorshift;
-    }
-
-    if (locallab.pastsattog) {
-        toEdit.locallab.pastsattog        = mods.locallab.pastsattog;
-    }
-
-    if (locallab.sensiv) {
-        toEdit.locallab.sensiv     = mods.locallab.sensiv;
-    }
-
-    if (locallab.skintonescurve) {
-        toEdit.locallab.skintonescurve    = mods.locallab.skintonescurve;
-    }
-
-    //Soft Light
-    if (locallab.expsoft) {
-        toEdit.locallab.expsoft   = mods.locallab.expsoft;
-    }
-
-    if (locallab.streng) {
-        toEdit.locallab.streng   = mods.locallab.streng;
-    }
-
-    if (locallab.sensisf) {
-        toEdit.locallab.sensisf   = mods.locallab.sensisf;
-    }
-
-    //Lab region
-    if (locallab.explabregion) {
-        toEdit.locallab.explabregion   = mods.locallab.explabregion;
-    }
-
-    // Blur & Noise
-    if (locallab.expblur) {
-        toEdit.locallab.expblur   = mods.locallab.expblur;
-    }
-
-    if (locallab.radius) {
-        toEdit.locallab.radius    = mods.locallab.radius;
-    }
-
-    if (locallab.strength) {
-        toEdit.locallab.strength  = mods.locallab.strength;
-    }
-
-    if (locallab.sensibn) {
-        toEdit.locallab.sensibn     = mods.locallab.sensibn;
-    }
-
-    if (locallab.blurMethod) {
-        toEdit.locallab.blurMethod    = mods.locallab.blurMethod;
-    }
-
-    if (locallab.activlum) {
-        toEdit.locallab.activlum    = mods.locallab.activlum;
-    }
-
-    // Tone Mapping
-    if (locallab.exptonemap) {
-        toEdit.locallab.exptonemap   = mods.locallab.exptonemap;
-    }
-
-    if (locallab.stren) {
-        toEdit.locallab.stren  = mods.locallab.stren;
-    }
-
-    if (locallab.gamma) {
-        toEdit.locallab.gamma  = mods.locallab.gamma;
-    }
-
-    if (locallab.estop) {
-        toEdit.locallab.estop  = mods.locallab.estop;
-    }
-
-    if (locallab.scaltm) {
-        toEdit.locallab.scaltm  = mods.locallab.scaltm;
-    }
-
-    if (locallab.rewei) {
-        toEdit.locallab.rewei  = mods.locallab.rewei;
-    }
-
-    if (locallab.sensitm) {
-        toEdit.locallab.sensitm     = mods.locallab.sensitm;
-    }
-
-    // Retinex
-    if (locallab.expreti) {
-        toEdit.locallab.expreti   = mods.locallab.expreti;
-    }
-
-    if (locallab.retinexMethod) {
-        toEdit.locallab.retinexMethod   = mods.locallab.retinexMethod;
-    }
-
-    if (locallab.str) {
-        toEdit.locallab.str   = mods.locallab.str;
-    }
-
-    if (locallab.chrrt) {
-        toEdit.locallab.chrrt   = mods.locallab.chrrt;
-    }
-
-    if (locallab.neigh) {
-        toEdit.locallab.neigh   = mods.locallab.neigh;
-    }
-
-    if (locallab.vart) {
-        toEdit.locallab.vart   = mods.locallab.vart;
-    }
-
-    if (locallab.dehaz) {
-        toEdit.locallab.dehaz     = mods.locallab.dehaz;
-    }
-
-    if (locallab.sensih) {
-        toEdit.locallab.sensih     = mods.locallab.sensih;
-    }
-
-    if (locallab.localTgaincurve) {
-        toEdit.locallab.localTgaincurve   = mods.locallab.localTgaincurve;
-    }
-
-    if (locallab.inversret) {
-        toEdit.locallab.inversret     = mods.locallab.inversret;
-    }
-
-    // Sharpening
-    if (locallab.expsharp) {
-        toEdit.locallab.expsharp   = mods.locallab.expsharp;
-    }
-
-    if (locallab.sharcontrast) {
-        toEdit.locallab.sharcontrast    = mods.locallab.sharcontrast;
-    }
-
-    if (locallab.sharradius) {
-        toEdit.locallab.sharradius    = mods.locallab.sharradius;
-    }
-
-    if (locallab.sharamount) {
-        toEdit.locallab.sharamount    = mods.locallab.sharamount;
-    }
-
-    if (locallab.shardamping) {
-        toEdit.locallab.shardamping    = mods.locallab.shardamping;
-    }
-
-    if (locallab.shariter) {
-        toEdit.locallab.shariter    = mods.locallab.shariter;
-    }
-
-    if (locallab.sharblur) {
-        toEdit.locallab.sharblur    = mods.locallab.sharblur;
-    }
-    
-    if (locallab.sensisha) {
-        toEdit.locallab.sensisha     = mods.locallab.sensisha;
-    }
-
-    if (locallab.inverssha) {
-        toEdit.locallab.inverssha     = mods.locallab.inverssha;
-    }
-    //local contrast
-    if (locallab.expcontrast) {
-        toEdit.locallab.expcontrast   = mods.locallab.expcontrast;
-    }
-
-    if (locallab.lcradius) {
-        toEdit.locallab.lcradius   = mods.locallab.lcradius;
-    }
-
-    if (locallab.lcamount) {
-        toEdit.locallab.lcamount   = mods.locallab.lcamount;
-    }
-
-    if (locallab.lcdarkness) {
-        toEdit.locallab.lcdarkness   = mods.locallab.lcdarkness;
-    }
-
-    if (locallab.lclightness) {
-        toEdit.locallab.lclightness   = mods.locallab.lclightness;
-    }
-
-    if (locallab.sensilc) {
-        toEdit.locallab.sensilc   = mods.locallab.sensilc;
-    }
-    // Contrast by detail levels
-    if (locallab.expcbdl) {
-        toEdit.locallab.expcbdl   = mods.locallab.expcbdl;
-    }
-
-    for (int i = 0; i < 5; i++) {
-        if (locallab.mult[i]) {
-            toEdit.locallab.mult[i]    = mods.locallab.mult[i];
+    for (size_t i = 0; i < toEdit.locallab.spots.size() && i < mods.locallab.spots.size() && i < locallab.spots.size(); i++) {
+        // Control spot settings
+        if (locallab.spots.at(i).name) {
+            toEdit.locallab.spots.at(i).name = mods.locallab.spots.at(i).name;
         }
-    }
 
-    if (locallab.chromacbdl) {
-        toEdit.locallab.chromacbdl = mods.locallab.chromacbdl;
-    }
+        if (locallab.spots.at(i).isvisible) {
+            toEdit.locallab.spots.at(i).isvisible = mods.locallab.spots.at(i).isvisible;
+        }
 
-    if (locallab.threshold) {
-        toEdit.locallab.threshold = mods.locallab.threshold;
-    }
+        if (locallab.spots.at(i).shape) {
+            toEdit.locallab.spots.at(i).shape = mods.locallab.spots.at(i).shape;
+        }
 
-    if (locallab.sensicb) {
-        toEdit.locallab.sensicb     = mods.locallab.sensicb;
-    }
+        if (locallab.spots.at(i).spotMethod) {
+            toEdit.locallab.spots.at(i).spotMethod = mods.locallab.spots.at(i).spotMethod;
+        }
 
-    // Denoise
-    if (locallab.expdenoi) {
-        toEdit.locallab.expdenoi   = mods.locallab.expdenoi;
-    }
+        if (locallab.spots.at(i).sensiexclu) {
+            toEdit.locallab.spots.at(i).sensiexclu = mods.locallab.spots.at(i).sensiexclu;
+        }
 
-    if (locallab.noiselumf) {
-        toEdit.locallab.noiselumf    = mods.locallab.noiselumf;
-    }
+        if (locallab.spots.at(i).struc) {
+            toEdit.locallab.spots.at(i).struc = mods.locallab.spots.at(i).struc;
+        }
 
-    if (locallab.noiselumc) {
-        toEdit.locallab.noiselumc    = mods.locallab.noiselumc;
-    }
+        if (locallab.spots.at(i).shapeMethod) {
+            toEdit.locallab.spots.at(i).shapeMethod = mods.locallab.spots.at(i).shapeMethod;
+        }
 
-    if (locallab.noiselumdetail) {
-        toEdit.locallab.noiselumdetail    = mods.locallab.noiselumdetail;
-    }
+        if (locallab.spots.at(i).locX) {
+            toEdit.locallab.spots.at(i).locX = mods.locallab.spots.at(i).locX;
+        }
 
-    if (locallab.noiselequal) {
-        toEdit.locallab.noiselequal    = mods.locallab.noiselequal;
-    }
+        if (locallab.spots.at(i).locXL) {
+            toEdit.locallab.spots.at(i).locXL = mods.locallab.spots.at(i).locXL;
+        }
 
-    if (locallab.noisechrof) {
-        toEdit.locallab.noisechrof    = mods.locallab.noisechrof;
-    }
+        if (locallab.spots.at(i).locY) {
+            toEdit.locallab.spots.at(i).locY = mods.locallab.spots.at(i).locY;
+        }
 
-    if (locallab.noisechroc) {
-        toEdit.locallab.noisechroc    = mods.locallab.noisechroc;
-    }
+        if (locallab.spots.at(i).locYT) {
+            toEdit.locallab.spots.at(i).locYT = mods.locallab.spots.at(i).locYT;
+        }
 
-    if (locallab.noisechrodetail) {
-        toEdit.locallab.noisechrodetail    = mods.locallab.noisechrodetail;
-    }
+        if (locallab.spots.at(i).centerX) {
+            toEdit.locallab.spots.at(i).centerX = mods.locallab.spots.at(i).centerX;
+        }
 
-    if (locallab.adjblur) {
-        toEdit.locallab.adjblur   = mods.locallab.adjblur;
-    }
+        if (locallab.spots.at(i).centerY) {
+            toEdit.locallab.spots.at(i).centerY = mods.locallab.spots.at(i).centerY;
+        }
 
-    if (locallab.bilateral) {
-        toEdit.locallab.bilateral    = mods.locallab.bilateral;
-    }
+        if (locallab.spots.at(i).circrad) {
+            toEdit.locallab.spots.at(i).circrad = mods.locallab.spots.at(i).circrad;
+        }
 
-    if (locallab.sensiden) {
-        toEdit.locallab.sensiden    = mods.locallab.sensiden;
-    }
+        if (locallab.spots.at(i).qualityMethod) {
+            toEdit.locallab.spots.at(i).qualityMethod = mods.locallab.spots.at(i).qualityMethod;
+        }
 
-    // Others
-    if (locallab.avoid) {
-        toEdit.locallab.avoid     = mods.locallab.avoid;
+        if (locallab.spots.at(i).transit) {
+            toEdit.locallab.spots.at(i).transit = mods.locallab.spots.at(i).transit;
+        }
+
+        if (locallab.spots.at(i).thresh) {
+            toEdit.locallab.spots.at(i).thresh = mods.locallab.spots.at(i).thresh;
+        }
+
+        if (locallab.spots.at(i).iter) {
+            toEdit.locallab.spots.at(i).iter = mods.locallab.spots.at(i).iter;
+        }
+
+        // Color & Light
+        if (locallab.spots.at(i).expcolor) {
+            toEdit.locallab.spots.at(i).expcolor = mods.locallab.spots.at(i).expcolor;
+        }
+
+        if (locallab.spots.at(i).curvactiv) {
+            toEdit.locallab.spots.at(i).curvactiv = mods.locallab.spots.at(i).curvactiv;
+        }
+
+        if (locallab.spots.at(i).lightness) {
+            toEdit.locallab.spots.at(i).lightness = mods.locallab.spots.at(i).lightness;
+        }
+
+        if (locallab.spots.at(i).contrast) {
+            toEdit.locallab.spots.at(i).contrast = mods.locallab.spots.at(i).contrast;
+        }
+
+        if (locallab.spots.at(i).chroma) {
+            toEdit.locallab.spots.at(i).chroma = mods.locallab.spots.at(i).chroma;
+        }
+
+        if (locallab.spots.at(i).sensi) {
+            toEdit.locallab.spots.at(i).sensi = mods.locallab.spots.at(i).sensi;
+        }
+
+        if (locallab.spots.at(i).qualitycurveMethod) {
+            toEdit.locallab.spots.at(i).qualitycurveMethod = mods.locallab.spots.at(i).qualitycurveMethod;
+        }
+
+        if (locallab.spots.at(i).showmaskcolMethod) {
+            toEdit.locallab.spots.at(i).showmaskcolMethod = mods.locallab.spots.at(i).showmaskcolMethod;
+        }
+
+        if (locallab.spots.at(i).llcurve) {
+            toEdit.locallab.spots.at(i).llcurve = mods.locallab.spots.at(i).llcurve;
+        }
+
+        if (locallab.spots.at(i).cccurve) {
+            toEdit.locallab.spots.at(i).cccurve = mods.locallab.spots.at(i).cccurve;
+        }
+
+        if (locallab.spots.at(i).LHcurve) {
+            toEdit.locallab.spots.at(i).LHcurve = mods.locallab.spots.at(i).LHcurve;
+        }
+
+        if (locallab.spots.at(i).HHcurve) {
+            toEdit.locallab.spots.at(i).HHcurve = mods.locallab.spots.at(i).HHcurve;
+        }
+
+        if (locallab.spots.at(i).CCmaskcurve) {
+            toEdit.locallab.spots.at(i).CCmaskcurve = mods.locallab.spots.at(i).CCmaskcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskcurve) {
+            toEdit.locallab.spots.at(i).LLmaskcurve = mods.locallab.spots.at(i).LLmaskcurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskcurve) {
+            toEdit.locallab.spots.at(i).HHmaskcurve = mods.locallab.spots.at(i).HHmaskcurve;
+        }
+
+        if (locallab.spots.at(i).invers) {
+            toEdit.locallab.spots.at(i).invers = mods.locallab.spots.at(i).invers;
+        }
+
+        // Exposure
+        if (locallab.spots.at(i).expexpose) {
+            toEdit.locallab.spots.at(i).expexpose = mods.locallab.spots.at(i).expexpose;
+        }
+
+        if (locallab.spots.at(i).expcomp) {
+            toEdit.locallab.spots.at(i).expcomp = mods.locallab.spots.at(i).expcomp;
+        }
+
+        if (locallab.spots.at(i).hlcompr) {
+            toEdit.locallab.spots.at(i).hlcompr = mods.locallab.spots.at(i).hlcompr;
+        }
+
+        if (locallab.spots.at(i).hlcomprthresh) {
+            toEdit.locallab.spots.at(i).hlcomprthresh = mods.locallab.spots.at(i).hlcomprthresh;
+        }
+
+        if (locallab.spots.at(i).black) {
+            toEdit.locallab.spots.at(i).black = mods.locallab.spots.at(i).black;
+        }
+
+        if (locallab.spots.at(i).shcompr) {
+            toEdit.locallab.spots.at(i).shcompr = mods.locallab.spots.at(i).shcompr;
+        }
+
+        if (locallab.spots.at(i).warm) {
+            toEdit.locallab.spots.at(i).warm = mods.locallab.spots.at(i).warm;
+        }
+
+        if (locallab.spots.at(i).sensiex) {
+            toEdit.locallab.spots.at(i).sensiex = mods.locallab.spots.at(i).sensiex;
+        }
+
+        if (locallab.spots.at(i).excurve) {
+            toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
+        }
+
+        if (locallab.spots.at(i).showmaskexpMethod) {
+            toEdit.locallab.spots.at(i).showmaskexpMethod = mods.locallab.spots.at(i).showmaskexpMethod;
+        }
+
+        if (locallab.spots.at(i).CCmaskexpcurve) {
+            toEdit.locallab.spots.at(i).CCmaskexpcurve = mods.locallab.spots.at(i).CCmaskexpcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskexpcurve) {
+            toEdit.locallab.spots.at(i).LLmaskexpcurve = mods.locallab.spots.at(i).LLmaskexpcurve;
+        }
+
+        // Vibrance
+        if (locallab.spots.at(i).expvibrance) {
+            toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
+        }
+
+        if (locallab.spots.at(i).saturated) {
+            toEdit.locallab.spots.at(i).saturated = mods.locallab.spots.at(i).saturated;
+        }
+
+        if (locallab.spots.at(i).pastels) {
+            toEdit.locallab.spots.at(i).pastels = mods.locallab.spots.at(i).pastels;
+        }
+
+        if (locallab.spots.at(i).psthreshold) {
+            toEdit.locallab.spots.at(i).psthreshold = mods.locallab.spots.at(i).psthreshold;
+        }
+
+        if (locallab.spots.at(i).protectskins) {
+            toEdit.locallab.spots.at(i).protectskins = mods.locallab.spots.at(i).protectskins;
+        }
+
+        if (locallab.spots.at(i).avoidcolorshift) {
+            toEdit.locallab.spots.at(i).avoidcolorshift = mods.locallab.spots.at(i).avoidcolorshift;
+        }
+
+        if (locallab.spots.at(i).pastsattog) {
+            toEdit.locallab.spots.at(i).pastsattog = mods.locallab.spots.at(i).pastsattog;
+        }
+
+        if (locallab.spots.at(i).sensiv) {
+            toEdit.locallab.spots.at(i).sensiv = mods.locallab.spots.at(i).sensiv;
+        }
+
+        if (locallab.spots.at(i).skintonescurve) {
+            toEdit.locallab.spots.at(i).skintonescurve = mods.locallab.spots.at(i).skintonescurve;
+        }
+
+        // Soft Light
+        if (locallab.spots.at(i).expsoft) {
+            toEdit.locallab.spots.at(i).expsoft = mods.locallab.spots.at(i).expsoft;
+        }
+
+        if (locallab.spots.at(i).streng) {
+            toEdit.locallab.spots.at(i).streng = mods.locallab.spots.at(i).streng;
+        }
+
+        if (locallab.spots.at(i).sensisf) {
+            toEdit.locallab.spots.at(i).sensisf = mods.locallab.spots.at(i).sensisf;
+        }
+
+        // Lab Region
+        if (locallab.spots.at(i).explabregion) {
+            toEdit.locallab.spots.at(i).explabregion = mods.locallab.spots.at(i).explabregion;
+        }
+
+        // Blur & Noise
+        if (locallab.spots.at(i).expblur) {
+            toEdit.locallab.spots.at(i).expblur = mods.locallab.spots.at(i).expblur;
+        }
+
+        if (locallab.spots.at(i).radius) {
+            toEdit.locallab.spots.at(i).radius = mods.locallab.spots.at(i).radius;
+        }
+
+        if (locallab.spots.at(i).strength) {
+            toEdit.locallab.spots.at(i).strength = mods.locallab.spots.at(i).strength;
+        }
+
+        if (locallab.spots.at(i).sensibn) {
+            toEdit.locallab.spots.at(i).sensibn = mods.locallab.spots.at(i).sensibn;
+        }
+
+        if (locallab.spots.at(i).blurMethod) {
+            toEdit.locallab.spots.at(i).blurMethod = mods.locallab.spots.at(i).blurMethod;
+        }
+
+        if (locallab.spots.at(i).activlum) {
+            toEdit.locallab.spots.at(i).activlum = mods.locallab.spots.at(i).activlum;
+        }
+
+        // Tone Mapping
+        if (locallab.spots.at(i).exptonemap) {
+            toEdit.locallab.spots.at(i).exptonemap = mods.locallab.spots.at(i).exptonemap;
+        }
+
+        if (locallab.spots.at(i).stren) {
+            toEdit.locallab.spots.at(i).stren = mods.locallab.spots.at(i).stren;
+        }
+
+        if (locallab.spots.at(i).gamma) {
+            toEdit.locallab.spots.at(i).gamma = mods.locallab.spots.at(i).gamma;
+        }
+
+        if (locallab.spots.at(i).estop) {
+            toEdit.locallab.spots.at(i).estop = mods.locallab.spots.at(i).estop;
+        }
+
+        if (locallab.spots.at(i).scaltm) {
+            toEdit.locallab.spots.at(i).scaltm = mods.locallab.spots.at(i).scaltm;
+        }
+
+        if (locallab.spots.at(i).rewei) {
+            toEdit.locallab.spots.at(i).rewei = mods.locallab.spots.at(i).rewei;
+        }
+
+        if (locallab.spots.at(i).sensitm) {
+            toEdit.locallab.spots.at(i).sensitm = mods.locallab.spots.at(i).sensitm;
+        }
+
+        // Retinex
+        if (locallab.spots.at(i).expreti) {
+            toEdit.locallab.spots.at(i).expreti = mods.locallab.spots.at(i).expreti;
+        }
+
+        if (locallab.spots.at(i).retinexMethod) {
+            toEdit.locallab.spots.at(i).retinexMethod = mods.locallab.spots.at(i).retinexMethod;
+        }
+
+        if (locallab.spots.at(i).str) {
+            toEdit.locallab.spots.at(i).str = mods.locallab.spots.at(i).str;
+        }
+
+        if (locallab.spots.at(i).chrrt) {
+            toEdit.locallab.spots.at(i).chrrt = mods.locallab.spots.at(i).chrrt;
+        }
+
+        if (locallab.spots.at(i).neigh) {
+            toEdit.locallab.spots.at(i).neigh = mods.locallab.spots.at(i).neigh;
+        }
+
+        if (locallab.spots.at(i).vart) {
+            toEdit.locallab.spots.at(i).vart = mods.locallab.spots.at(i).vart;
+        }
+
+        if (locallab.spots.at(i).dehaz) {
+            toEdit.locallab.spots.at(i).dehaz = mods.locallab.spots.at(i).dehaz;
+        }
+
+        if (locallab.spots.at(i).sensih) {
+            toEdit.locallab.spots.at(i).sensih = mods.locallab.spots.at(i).sensih;
+        }
+
+        if (locallab.spots.at(i).localTgaincurve) {
+            toEdit.locallab.spots.at(i).localTgaincurve = mods.locallab.spots.at(i).localTgaincurve;
+        }
+
+        if (locallab.spots.at(i).inversret) {
+            toEdit.locallab.spots.at(i).inversret = mods.locallab.spots.at(i).inversret;
+        }
+
+        // Sharpening
+        if (locallab.spots.at(i).expsharp) {
+            toEdit.locallab.spots.at(i).expsharp = mods.locallab.spots.at(i).expsharp;
+        }
+
+        if (locallab.spots.at(i).sharcontrast) {
+            toEdit.locallab.spots.at(i).sharcontrast    = mods.locallab.spots.at(i).sharcontrast;
+        }
+
+        if (locallab.spots.at(i).sharradius) {
+            toEdit.locallab.spots.at(i).sharradius = mods.locallab.spots.at(i).sharradius;
+        }
+
+        if (locallab.spots.at(i).sharamount) {
+            toEdit.locallab.spots.at(i).sharamount = mods.locallab.spots.at(i).sharamount;
+        }
+
+        if (locallab.spots.at(i).shardamping) {
+            toEdit.locallab.spots.at(i).shardamping = mods.locallab.spots.at(i).shardamping;
+        }
+
+        if (locallab.spots.at(i).shariter) {
+            toEdit.locallab.spots.at(i).shariter = mods.locallab.spots.at(i).shariter;
+        }
+
+        if (locallab.spots.at(i).sharblur) {
+            toEdit.locallab.spots.at(i).sharblur    = mods.locallab.spots.at(i).sharblur;
+        }
+
+        if (locallab.spots.at(i).sensisha) {
+            toEdit.locallab.spots.at(i).sensisha = mods.locallab.spots.at(i).sensisha;
+        }
+
+        if (locallab.spots.at(i).inverssha) {
+            toEdit.locallab.spots.at(i).inverssha = mods.locallab.spots.at(i).inverssha;
+        }
+
+        // Local Contrast
+        if (locallab.spots.at(i).expcontrast) {
+            toEdit.locallab.spots.at(i).expcontrast   = mods.locallab.spots.at(i).expcontrast;
+        }
+
+        if (locallab.spots.at(i).lcradius) {
+            toEdit.locallab.spots.at(i).lcradius   = mods.locallab.spots.at(i).lcradius;
+        }
+
+        if (locallab.spots.at(i).lcamount) {
+            toEdit.locallab.spots.at(i).lcamount   = mods.locallab.spots.at(i).lcamount;
+        }
+
+        if (locallab.spots.at(i).lcdarkness) {
+            toEdit.locallab.spots.at(i).lcdarkness   = mods.locallab.spots.at(i).lcdarkness;
+        }
+
+        if (locallab.spots.at(i).lclightness) {
+            toEdit.locallab.spots.at(i).lclightness   = mods.locallab.spots.at(i).lclightness;
+        }
+
+        if (locallab.spots.at(i).sensilc) {
+            toEdit.locallab.spots.at(i).sensilc   = mods.locallab.spots.at(i).sensilc;
+        }
+
+        // Contrast by detail levels
+        if (locallab.spots.at(i).expcbdl) {
+            toEdit.locallab.spots.at(i).expcbdl = mods.locallab.spots.at(i).expcbdl;
+        }
+
+        for (int j = 0; j < 5; j++) {
+            if (locallab.spots.at(i).mult[j]) {
+                toEdit.locallab.spots.at(i).mult[j] = mods.locallab.spots.at(i).mult[j];
+            }
+        }
+
+        if (locallab.spots.at(i).chromacbdl) {
+            toEdit.locallab.spots.at(i).chromacbdl = mods.locallab.spots.at(i).chromacbdl;
+        }
+
+        if (locallab.spots.at(i).threshold) {
+            toEdit.locallab.spots.at(i).threshold = mods.locallab.spots.at(i).threshold;
+        }
+
+        if (locallab.spots.at(i).sensicb) {
+            toEdit.locallab.spots.at(i).sensicb = mods.locallab.spots.at(i).sensicb;
+        }
+
+        // Denoise
+        if (locallab.spots.at(i).expdenoi) {
+            toEdit.locallab.spots.at(i).expdenoi = mods.locallab.spots.at(i).expdenoi;
+        }
+
+        if (locallab.spots.at(i).noiselumf) {
+            toEdit.locallab.spots.at(i).noiselumf = mods.locallab.spots.at(i).noiselumf;
+        }
+
+        if (locallab.spots.at(i).noiselumc) {
+            toEdit.locallab.spots.at(i).noiselumc = mods.locallab.spots.at(i).noiselumc;
+        }
+
+        if (locallab.spots.at(i).noiselumdetail) {
+            toEdit.locallab.spots.at(i).noiselumdetail = mods.locallab.spots.at(i).noiselumdetail;
+        }
+
+        if (locallab.spots.at(i).noiselequal) {
+            toEdit.locallab.spots.at(i).noiselequal = mods.locallab.spots.at(i).noiselequal;
+        }
+
+        if (locallab.spots.at(i).noisechrof) {
+            toEdit.locallab.spots.at(i).noisechrof = mods.locallab.spots.at(i).noisechrof;
+        }
+
+        if (locallab.spots.at(i).noisechroc) {
+            toEdit.locallab.spots.at(i).noisechroc = mods.locallab.spots.at(i).noisechroc;
+        }
+
+        if (locallab.spots.at(i).noisechrodetail) {
+            toEdit.locallab.spots.at(i).noisechrodetail = mods.locallab.spots.at(i).noisechrodetail;
+        }
+
+        if (locallab.spots.at(i).adjblur) {
+            toEdit.locallab.spots.at(i).adjblur = mods.locallab.spots.at(i).adjblur;
+        }
+
+        if (locallab.spots.at(i).bilateral) {
+            toEdit.locallab.spots.at(i).bilateral = mods.locallab.spots.at(i).bilateral;
+        }
+
+        if (locallab.spots.at(i).sensiden) {
+            toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
+        }
+
+        // Others
+        if (locallab.spots.at(i).avoid) {
+            toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
+        }
     }
 
 
@@ -3933,4 +3886,271 @@ bool LensProfParamsEdited::isUnchanged() const
 bool RetinexParamsEdited::isUnchanged() const
 {
     return enabled && retinexcolorspace && gammaretinex && gam && slope;
+}
+
+LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
+    // Control spot settings
+    name(v),
+    isvisible(v),
+    shape(v),
+    spotMethod(v),
+    sensiexclu(v),
+    struc(v),
+    shapeMethod(v),
+    locX(v),
+    locXL(v),
+    locY(v),
+    locYT(v),
+    centerX(v),
+    centerY(v),
+    circrad(v),
+    qualityMethod(v),
+    transit(v),
+    thresh(v),
+    iter(v),
+    // Color & Light
+    expcolor(v),
+    curvactiv(v),
+    lightness(v),
+    contrast(v),
+    chroma(v),
+    sensi(v),
+    qualitycurveMethod(v),
+    showmaskcolMethod(v),
+    llcurve(v),
+    cccurve(v),
+    LHcurve(v),
+    HHcurve(v),
+    CCmaskcurve(v),
+    LLmaskcurve(v),
+    HHmaskcurve(v),
+    invers(v),
+    // Exposure
+    expexpose(v),
+    expcomp(v),
+    hlcompr(v),
+    hlcomprthresh(v),
+    black(v),
+    shcompr(v),
+    warm(v),
+    sensiex(v),
+    excurve(v),
+    showmaskexpMethod(v),
+    CCmaskexpcurve(v),
+    LLmaskexpcurve(v),
+    // Vibrance
+    expvibrance(v),
+    saturated(v),
+    pastels(v),
+    psthreshold(v),
+    protectskins(v),
+    avoidcolorshift(v),
+    pastsattog(v),
+    sensiv(v),
+    skintonescurve(v),
+    // Soft Light
+    expsoft(v),
+    streng(v),
+    sensisf(v),
+    // Lab Region
+    explabregion(v),
+    // Blur & Noise
+    expblur(v),
+    radius(v),
+    strength(v),
+    sensibn(v),
+    blurMethod(v),
+    activlum(v),
+    // Tone Mapping
+    exptonemap(v),
+    stren(v),
+    gamma(v),
+    estop(v),
+    scaltm(v),
+    rewei(v),
+    sensitm(v),
+    // Retinex
+    expreti(v),
+    retinexMethod(v),
+    str(v),
+    chrrt(v),
+    neigh(v),
+    vart(v),
+    dehaz(v),
+    sensih(v),
+    localTgaincurve(v),
+    inversret(v),
+    // Sharpening
+    expsharp(v),
+    sharcontrast(v),
+    sharradius(v),
+    sharamount(v),
+    shardamping(v),
+    shariter(v),
+    sharblur(v),
+    sensisha(v),
+    inverssha(v),
+    // Local Contrast
+    expcontrast(v),
+    lcradius(v),
+    lcamount(v),
+    lcdarkness(v),
+    lclightness(v),
+    sensilc(v),
+    // Contrast by detail levels
+    expcbdl(v),
+    mult{v, v, v, v, v},
+    chromacbdl(v),
+    threshold(v),
+    sensicb(v),
+    // Denoise
+    expdenoi(v),
+    noiselumf(v),
+    noiselumc(v),
+    noiselumdetail(v),
+    noiselequal(v),
+    noisechrof(v),
+    noisechroc(v),
+    noisechrodetail(v),
+    adjblur(v),
+    bilateral(v),
+    sensiden(v),
+    // Others
+    avoid(v)
+{
+}
+
+void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
+{
+    name = v;
+    isvisible = v;
+    shape = v;
+    spotMethod = v;
+    sensiexclu = v;
+    struc = v;
+    shapeMethod = v;
+    locX = v;
+    locXL = v;
+    locY = v;
+    locYT = v;
+    centerX = v;
+    centerY = v;
+    circrad = v;
+    qualityMethod = v;
+    transit = v;
+    thresh = v;
+    iter = v;
+    // Color & Light
+    expcolor = v;
+    curvactiv = v;
+    lightness = v;
+    contrast = v;
+    chroma = v;
+    sensi = v;
+    qualitycurveMethod = v;
+    showmaskcolMethod = v;
+    llcurve = v;
+    cccurve = v;
+    LHcurve = v;
+    HHcurve = v;
+    CCmaskcurve = v;
+    LLmaskcurve = v;
+    HHmaskcurve = v;
+    invers = v;
+    // Exposure
+    expexpose = v;
+    expcomp = v;
+    hlcompr = v;
+    hlcomprthresh = v;
+    black = v;
+    shcompr = v;
+    warm = v;
+    sensiex = v;
+    excurve = v;
+    showmaskexpMethod = v;
+    CCmaskexpcurve = v;
+    LLmaskexpcurve = v;
+    // Vibrance
+    expvibrance = v;
+    saturated = v;
+    pastels = v;
+    psthreshold = v;
+    protectskins = v;
+    avoidcolorshift = v;
+    pastsattog = v;
+    sensiv = v;
+    skintonescurve = v;
+    // Soft Light
+    expsoft = v;
+    streng = v;
+    sensisf = v;
+    // Lab Region
+    explabregion = v;
+    // Blur & Noise
+    expblur = v;
+    radius = v;
+    strength = v;
+    sensibn = v;
+    blurMethod = v;
+    activlum = v;
+    // Tone Mapping
+    exptonemap = v;
+    stren = v;
+    gamma = v;
+    estop = v;
+    scaltm = v;
+    rewei = v;
+    sensitm = v;
+    // Retinex
+    expreti = v;
+    retinexMethod = v;
+    str = v;
+    chrrt = v;
+    neigh = v;
+    vart = v;
+    dehaz = v;
+    sensih = v;
+    localTgaincurve = v;
+    inversret = v;
+    // Sharpening
+    expsharp = v;
+    sharcontrast = v;
+    sharradius = v;
+    sharamount = v;
+    shardamping = v;
+    shariter = v;
+    sharblur = v;
+    sensisha = v;
+    inverssha = v;
+    // Local Contrast
+    expcontrast = v;
+    lcradius = v;
+    lcamount = v;
+    lcdarkness = v;
+    lclightness = v;
+    sensilc = v;
+    // Contrast by detail levels
+    expcbdl = v;
+
+    for (int i = 0; i < 5; i++) {
+        mult[i] = v;
+    }
+
+    chromacbdl = v;
+    threshold = v;
+    sensicb = v;
+    // Denoise
+    expdenoi = v;
+    noiselumf = v;
+    noiselumc = v;
+    noiselumdetail = v;
+    noiselequal = v;
+    noisechrof = v;
+    noisechroc = v;
+    noisechrodetail = v;
+    adjblur = v;
+    bilateral = v;
+    sensiden = v;
+    // Others
+    avoid = v;
 }

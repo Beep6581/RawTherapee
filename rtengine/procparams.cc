@@ -2334,144 +2334,145 @@ void WaveletParams::getCurves(
 
 }
 
-LocallabParams::LocallabParams() :
-    enabled(false),
-    nbspot(0),
-    selspot(0),
+LocallabParams::LocallabSpot::LocallabSpot() :
     // Control spot settings
-    id(),
-    name(),
-    isvisible(),
-    shape(),
-    spotMethod(),
-    sensiexclu(),
-    struc(),
-    shapeMethod(),
-    locX(),
-    locXL(),
-    locY(),
-    locYT(),
-    centerX(),
-    centerY(),
-    circrad(),
-    qualityMethod(),
-    transit(),
-    thresh(),
-    iter(),
+    id(1),
+    name(""),
+    isvisible(true),
+    shape("ELI"),
+    spotMethod("norm"),
+    sensiexclu(19),
+    struc(0),
+    shapeMethod("IND"),
+    locX(250),
+    locXL(250),
+    locY(250),
+    locYT(250),
+    centerX(0),
+    centerY(0),
+    circrad(18),
+    qualityMethod("enh"),
+    transit(60),
+    thresh(18),
+    iter(0),
     // Color & Light
-    expcolor(),
-    curvactiv(),
-    lightness(),
-    contrast(),
-    chroma(),
-    sensi(),
-    qualitycurveMethod(),
-    llcurve(),
-    cccurve(),
-    LHcurve(),
-    HHcurve(),
-    invers(),
+    expcolor(false),
+    curvactiv(false),
+    lightness(0),
+    contrast(0),
+    chroma(0),
+    sensi(19),
+    qualitycurveMethod("none"),
+    showmaskcolMethod("none"),
+    llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
+    cccurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
+    LHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
+    HHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
+    CCmaskcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+    LLmaskcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+    HHmaskcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+    invers(false),
     // Exposure
-    expexpose(),
-    expcomp(),
-    hlcompr(),
-    hlcomprthresh(),
-    black(),
-    shcompr(),
-    warm(),
-    sensiex(),
-    excurve(),
+    expexpose(false),
+    expcomp(0),
+    hlcompr(20),
+    hlcomprthresh(33),
+    black(0),
+    shcompr(50),
+    warm(0),
+    sensiex(19),
+    excurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
+    showmaskexpMethod("none"),
+    CCmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+    LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+
     // Vibrance
-    expvibrance(),
-    saturated(),
-    pastels(),
-    psthreshold(),
-    protectskins(),
-    avoidcolorshift(),
-    pastsattog(),
-    sensiv(),
-    skintonescurve(),
-    //Soft Light
-    expsoft(),
-    streng(),
-    sensisf(),
-    //Lab region
-    explabregion(),
+    expvibrance(false),
+    saturated(0),
+    pastels(0),
+    psthreshold({0, 75, false}),
+    protectskins(false),
+    avoidcolorshift(true),
+    pastsattog(true),
+    sensiv(19),
+    skintonescurve{(double)DCT_Linear},
+    // Soft Light
+    expsoft(false),
+    streng(0),
+    sensisf(19),
+    // Lab Region
+    explabregion(false),
     // Blur & Noise
-    expblur(),
-    radius(),
-    strength(),
-    sensibn(),
-    blurMethod(),
-    activlum(),
+    expblur(false),
+    radius(1),
+    strength(0),
+    sensibn(40),
+    blurMethod("norm"),
+    activlum(false),
     // Tone Mapping
-    exptonemap(),
-    stren(),
-    gamma(),
-    estop(),
-    scaltm(),
-    rewei(),
-    sensitm(),
+    exptonemap(false),
+    stren(1),
+    gamma(100),
+    estop(140),
+    scaltm(10),
+    rewei(0),
+    sensitm(19),
     // Retinex
-    expreti(),
-    retinexMethod(),
-    str(),
-    chrrt(),
-    neigh(),
-    vart(),
-    dehaz(),
-    sensih(),
-    localTgaincurve(),
-    inversret(),
+    expreti(false),
+    retinexMethod("high"),
+    str(0),
+    chrrt(0),
+    neigh(50),
+    vart(200),
+    dehaz(0),
+    sensih(19),
+    localTgaincurve{(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35},
+    inversret(false),
     // Sharpening
-    expsharp(),
-    sharcontrast(),
-    sharradius(),
-    sharamount(),
-    shardamping(),
-    shariter(),
-    sharblur(),
-    sensisha(),
-    inverssha(),
-    //local contrast
-    expcontrast(),
-    lcradius(),
-    lcamount(),
-    lcdarkness(),
-    lclightness(),
-    sensilc(),
+    expsharp(false),
+    sharcontrast(20),
+    sharradius(40),
+    sharamount(75),
+    shardamping(75),
+    shariter(30),
+    sharblur(20),
+    sensisha(19),
+    inverssha(false),
+    // Local Contrast
+    expcontrast(false),
+    lcradius(80),
+    lcamount(0),
+    lcdarkness(100),
+    lclightness(100),
+    sensilc(19),
     // Contrast by detail levels
-    expcbdl(),
-    mult(),
-    chromacbdl(),
-    threshold(),
-    sensicb(),
+    expcbdl(false),
+    mult{100.0, 100.0, 100.0, 100.0, 100.0},
+    chromacbdl(0),
+    threshold(20.0),
+    sensicb(19),
     // Denoise
-    expdenoi(),
-    noiselumf(),
-    noiselumc(),
-    noiselumdetail(),
-    noiselequal(),
-    noisechrof(),
-    noisechroc(),
-    noisechrodetail(),
-    adjblur(),
-    bilateral(),
-    sensiden(),
+    expdenoi(false),
+    noiselumf(0),
+    noiselumc(0),
+    noiselumdetail(0),
+    noiselequal(7),
+    noisechrof(0),
+    noisechroc(0),
+    noisechrodetail(0),
+    adjblur(0),
+    bilateral(0),
+    sensiden(30),
     // Others
-    avoid()
+    avoid(false)
 {
 }
 
-bool LocallabParams::operator ==(const LocallabParams& other) const
+bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
 {
-
     return
-        enabled == other.enabled
-        && nbspot == other.nbspot
-        && selspot == other.selspot
         // Control spot settings
-        && id == other.id
+        id == other.id
         && name == other.name
         && isvisible == other.isvisible
         && shape == other.shape
@@ -2498,10 +2499,14 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && chroma == other.chroma
         && sensi == other.sensi
         && qualitycurveMethod == other.qualitycurveMethod
+        && showmaskcolMethod == other.showmaskcolMethod
         && llcurve == other.llcurve
         && cccurve == other.cccurve
         && LHcurve == other.LHcurve
         && HHcurve == other.HHcurve
+        && CCmaskcurve == other.CCmaskcurve
+        && LLmaskcurve == other.LLmaskcurve
+        && HHmaskcurve == other.HHmaskcurve
         && invers == other.invers
         // Exposure
         && expexpose == other.expexpose
@@ -2513,6 +2518,9 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && warm == other.warm
         && sensiex == other.sensiex
         && excurve == other.excurve
+        && showmaskexpMethod == other.showmaskexpMethod
+        && CCmaskexpcurve == other.CCmaskexpcurve
+        && LLmaskexpcurve == other.LLmaskexpcurve
         // Vibrance
         && expvibrance == other.expvibrance
         && saturated == other.saturated
@@ -2604,11 +2612,32 @@ bool LocallabParams::operator ==(const LocallabParams& other) const
         && avoid == other.avoid;
 }
 
-bool LocallabParams::operator !=(const LocallabParams& other) const
+bool LocallabParams::LocallabSpot::operator !=(const LocallabSpot& other) const
 {
     return !(*this == other);
 }
 
+LocallabParams::LocallabParams() :
+    enabled(false),
+    nbspot(0),
+    selspot(0),
+    spots()
+{
+}
+
+bool LocallabParams::operator ==(const LocallabParams& other) const
+{
+    return
+        enabled == other.enabled
+        && nbspot == other.nbspot
+        && selspot == other.selspot
+        && spots == other.spots;
+}
+
+bool LocallabParams::operator !=(const LocallabParams& other) const
+{
+    return !(*this == other);
+}
 
 DirPyrEqualizerParams::DirPyrEqualizerParams() :
     enabled(false),
@@ -3121,9 +3150,6 @@ void ProcParams::setDefaults()
 
 int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bool fnameAbsolute, ParamsEdited* pedited)
 {
-    // TODO Locallab printf
-    printf("Save to .pp3 file\n");
-
     if (fname.empty() && fname2.empty()) {
         return 0;
     }
@@ -3530,134 +3556,143 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->locallab.nbspot, "Locallab", "Nbspot", locallab.nbspot, keyFile);
         saveToKeyfile(!pedited || pedited->locallab.selspot, "Locallab", "Selspot", locallab.selspot, keyFile);
 
-        for (int i = 0; i < locallab.nbspot; i++) {
-            // Control spot settings
-            saveToKeyfile(!pedited || pedited->locallab.id, "Locallab", "Id_" + std::to_string(i), locallab.id.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.name, "Locallab", "Name_" + std::to_string(i), locallab.name.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.isvisible, "Locallab", "Isvisible_" + std::to_string(i), locallab.isvisible.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.shape, "Locallab", "Shape_" + std::to_string(i), locallab.shape.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.spotMethod, "Locallab", "SpotMethod_" + std::to_string(i), locallab.spotMethod.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensiexclu, "Locallab", "SensiExclu_" + std::to_string(i), locallab.sensiexclu.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.struc, "Locallab", "Struc_" + std::to_string(i), locallab.struc.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.shapeMethod, "Locallab", "ShapeMethod_" + std::to_string(i), locallab.shapeMethod.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.locX, "Locallab", "LocX_" + std::to_string(i), locallab.locX.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.locXL, "Locallab", "LocXL_" + std::to_string(i), locallab.locXL.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.locY, "Locallab", "LocY_" + std::to_string(i), locallab.locY.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.locYT, "Locallab", "LocYT_" + std::to_string(i), locallab.locYT.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.centerX, "Locallab", "CenterX_" + std::to_string(i), locallab.centerX.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.centerY, "Locallab", "CenterY_" + std::to_string(i), locallab.centerY.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.circrad, "Locallab", "Circrad_" + std::to_string(i), locallab.circrad.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.qualityMethod, "Locallab", "QualityMethod_" + std::to_string(i), locallab.qualityMethod.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.transit, "Locallab", "Transit_" + std::to_string(i), locallab.transit.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.thresh, "Locallab", "Thresh_" + std::to_string(i), locallab.thresh.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.iter, "Locallab", "Iter_" + std::to_string(i), locallab.iter.at(i), keyFile);
-            // Color & Light
-            saveToKeyfile(!pedited || pedited->locallab.expcolor, "Locallab", "Expcolor_" + std::to_string(i), locallab.expcolor.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.curvactiv, "Locallab", "Curvactiv_" + std::to_string(i), locallab.curvactiv.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.lightness, "Locallab", "Lightness_" + std::to_string(i), locallab.lightness.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.contrast, "Locallab", "Contrast_" + std::to_string(i), locallab.contrast.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.chroma, "Locallab", "Chroma_" + std::to_string(i), locallab.chroma.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensi, "Locallab", "Sensi_" + std::to_string(i), locallab.sensi.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), locallab.qualitycurveMethod.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.llcurve, "Locallab", "LLCurve_" + std::to_string(i), locallab.llcurve.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.cccurve, "Locallab", "CCCurve_" + std::to_string(i), locallab.cccurve.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.LHcurve, "Locallab", "LHCurve_" + std::to_string(i), locallab.LHcurve.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.HHcurve, "Locallab", "HHCurve_" + std::to_string(i), locallab.HHcurve.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.invers, "Locallab", "Invers_" + std::to_string(i), locallab.invers.at(i), keyFile);
-            // Exposure
-            saveToKeyfile(!pedited || pedited->locallab.expexpose, "Locallab", "Expexpose_" + std::to_string(i), locallab.expexpose.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.expcomp, "Locallab", "Expcomp_" + std::to_string(i), locallab.expcomp.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.hlcompr, "Locallab", "Hlcompr_" + std::to_string(i), locallab.hlcompr.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.hlcomprthresh, "Locallab", "Hlcomprthresh_" + std::to_string(i), locallab.hlcomprthresh.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.black, "Locallab", "Black_" + std::to_string(i), locallab.black.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.shcompr, "Locallab", "Shcompr_" + std::to_string(i), locallab.shcompr.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.warm, "Locallab", "Warm_" + std::to_string(i), locallab.warm.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensiex, "Locallab", "Sensiex_" + std::to_string(i), locallab.sensiex.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.excurve, "Locallab", "ExCurve_" + std::to_string(i), locallab.excurve.at(i), keyFile);
-            // Vibrance
-            saveToKeyfile(!pedited || pedited->locallab.expvibrance, "Locallab", "Expvibrance_" + std::to_string(i), locallab.expvibrance.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.saturated, "Locallab", "Saturated_" + std::to_string(i), locallab.saturated.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.pastels, "Locallab", "Pastels_" + std::to_string(i), locallab.pastels.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.psthreshold, "Locallab", "PSThreshold_" + std::to_string(i), locallab.psthreshold.at(i).toVector(), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.protectskins, "Locallab", "ProtectSkins_" + std::to_string(i), locallab.protectskins.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.avoidcolorshift, "Locallab", "AvoidColorShift_" + std::to_string(i), locallab.avoidcolorshift.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.pastsattog, "Locallab", "PastSatTog_" + std::to_string(i), locallab.pastsattog.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensiv, "Locallab", "Sensiv_" + std::to_string(i), locallab.sensiv.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.skintonescurve, "Locallab", "SkinTonesCurve_" + std::to_string(i), locallab.skintonescurve.at(i), keyFile);
-            //Soft Light
-            saveToKeyfile(!pedited || pedited->locallab.expsoft, "Locallab", "Expsoft_" + std::to_string(i), locallab.expsoft.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.streng, "Locallab", "Streng_" + std::to_string(i), locallab.streng.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensisf, "Locallab", "Sensisf_" + std::to_string(i), locallab.sensisf.at(i), keyFile);
-            //Lab region
-            saveToKeyfile(!pedited || pedited->locallab.explabregion, "Locallab", "Explabregion_" + std::to_string(i), locallab.explabregion.at(i), keyFile);
-            // Blur & Noise
-            saveToKeyfile(!pedited || pedited->locallab.expblur, "Locallab", "Expblur_" + std::to_string(i), locallab.expblur.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.radius, "Locallab", "Radius_" + std::to_string(i), locallab.radius.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.strength, "Locallab", "Strength_" + std::to_string(i), locallab.strength.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensibn, "Locallab", "Sensibn_" + std::to_string(i), locallab.sensibn.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.blurMethod, "Locallab", "BlurMethod_" + std::to_string(i), locallab.blurMethod.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.activlum, "Locallab", "activlum_" + std::to_string(i), locallab.activlum.at(i), keyFile);
-            // Tone Mapping
-            saveToKeyfile(!pedited || pedited->locallab.exptonemap, "Locallab", "Exptonemap_" + std::to_string(i), locallab.exptonemap.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.stren, "Locallab", "Stren_" + std::to_string(i), locallab.stren.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.gamma, "Locallab", "Gamma_" + std::to_string(i), locallab.gamma.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.estop, "Locallab", "Estop_" + std::to_string(i), locallab.estop.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.scaltm, "Locallab", "Scaltm_" + std::to_string(i), locallab.scaltm.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.rewei, "Locallab", "Rewei_" + std::to_string(i), locallab.rewei.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensitm, "Locallab", "Sensitm_" + std::to_string(i), locallab.sensitm.at(i), keyFile);
-            // Retinex
-            saveToKeyfile(!pedited || pedited->locallab.expreti, "Locallab", "Expreti_" + std::to_string(i), locallab.expreti.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.retinexMethod, "Locallab", "retinexMethod_" + std::to_string(i), locallab.retinexMethod.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.str, "Locallab", "Str_" + std::to_string(i), locallab.str.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.chrrt, "Locallab", "Chrrt_" + std::to_string(i), locallab.chrrt.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.neigh, "Locallab", "Neigh_" + std::to_string(i), locallab.neigh.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.vart, "Locallab", "Vart_" + std::to_string(i), locallab.vart.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.dehaz, "Locallab", "Dehaz_" + std::to_string(i), locallab.dehaz.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensih, "Locallab", "Sensih_" + std::to_string(i), locallab.sensih.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.localTgaincurve, "Locallab", "TgainCurve_" + std::to_string(i), locallab.localTgaincurve.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.inversret, "Locallab", "Inversret_" + std::to_string(i), locallab.inversret.at(i), keyFile);
-            // Sharpening
-            saveToKeyfile(!pedited || pedited->locallab.expsharp, "Locallab", "Expsharp_" + std::to_string(i), locallab.expsharp.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sharcontrast, "Locallab", "Sharcontrast_" + std::to_string(i), locallab.sharcontrast.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sharradius, "Locallab", "Sharradius_" + std::to_string(i), locallab.sharradius.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sharamount, "Locallab", "Sharamount_" + std::to_string(i), locallab.sharamount.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.shardamping, "Locallab", "Shardamping_" + std::to_string(i), locallab.shardamping.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.shariter, "Locallab", "Shariter_" + std::to_string(i), locallab.shariter.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sharblur, "Locallab", "Sharblur_" + std::to_string(i), locallab.sharblur.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensisha, "Locallab", "Sensisha_" + std::to_string(i), locallab.sensisha.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.inverssha, "Locallab", "Inverssha_" + std::to_string(i), locallab.inverssha.at(i), keyFile);
-            //local contrast
-            saveToKeyfile(!pedited || pedited->locallab.expcontrast, "Locallab", "Expcontrast_" + std::to_string(i), locallab.expcontrast.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lcradius_" + std::to_string(i), locallab.lcradius.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lcamount_" + std::to_string(i), locallab.lcamount.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lcdarkness_" + std::to_string(i), locallab.lcdarkness.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.lcradius, "Locallab", "Lclightness_" + std::to_string(i), locallab.lclightness.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensilc, "Locallab", "Sensilc_" + std::to_string(i), locallab.sensilc.at(i), keyFile);
+        for (int i = 0; i < locallab.nbspot && i < (int)locallab.spots.size(); i++) {
+            if (!pedited || i < (int)pedited->locallab.spots.size()) {
+                const LocallabParams::LocallabSpot& spot = locallab.spots.at(i);
+                // Control spot settings
+                saveToKeyfile(!pedited || pedited->locallab.id, "Locallab", "Id_" + std::to_string(i), spot.id, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).name, "Locallab", "Name_" + std::to_string(i), spot.name, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).isvisible, "Locallab", "Isvisible_" + std::to_string(i), spot.isvisible, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shape, "Locallab", "Shape_" + std::to_string(i), spot.shape, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).spotMethod, "Locallab", "SpotMethod_" + std::to_string(i), spot.spotMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiexclu, "Locallab", "SensiExclu_" + std::to_string(i), spot.sensiexclu, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).struc, "Locallab", "Struc_" + std::to_string(i), spot.struc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shapeMethod, "Locallab", "ShapeMethod_" + std::to_string(i), spot.shapeMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locX, "Locallab", "LocX_" + std::to_string(i), spot.locX, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locXL, "Locallab", "LocXL_" + std::to_string(i), spot.locXL, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locY, "Locallab", "LocY_" + std::to_string(i), spot.locY, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locYT, "Locallab", "LocYT_" + std::to_string(i), spot.locYT, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).centerX, "Locallab", "CenterX_" + std::to_string(i), spot.centerX, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).centerY, "Locallab", "CenterY_" + std::to_string(i), spot.centerY, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).circrad, "Locallab", "Circrad_" + std::to_string(i), spot.circrad, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualityMethod, "Locallab", "QualityMethod_" + std::to_string(i), spot.qualityMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transit, "Locallab", "Transit_" + std::to_string(i), spot.transit, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).thresh, "Locallab", "Thresh_" + std::to_string(i), spot.thresh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).iter, "Locallab", "Iter_" + std::to_string(i), spot.iter, keyFile);
+                // Color & Light
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcolor, "Locallab", "Expcolor_" + std::to_string(i), spot.expcolor, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).curvactiv, "Locallab", "Curvactiv_" + std::to_string(i), spot.curvactiv, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lightness, "Locallab", "Lightness_" + std::to_string(i), spot.lightness, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).contrast, "Locallab", "Contrast_" + std::to_string(i), spot.contrast, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chroma, "Locallab", "Chroma_" + std::to_string(i), spot.chroma, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensi, "Locallab", "Sensi_" + std::to_string(i), spot.sensi, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).showmaskcolMethod, "Locallab", "ShowmaskcolMethod_" + std::to_string(i), spot.showmaskcolMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).cccurve, "Locallab", "CCCurve_" + std::to_string(i), spot.cccurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LHcurve, "Locallab", "LHCurve_" + std::to_string(i), spot.LHcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHcurve, "Locallab", "HHCurve_" + std::to_string(i), spot.HHcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskcurve, "Locallab", "CCmaskCurve_" + std::to_string(i), spot.CCmaskcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcurve, "Locallab", "LLmaskCurve_" + std::to_string(i), spot.LLmaskcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskcurve, "Locallab", "HHmaskCurve_" + std::to_string(i), spot.HHmaskcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).invers, "Locallab", "Invers_" + std::to_string(i), spot.invers, keyFile);
+                // Exposure
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expexpose, "Locallab", "Expexpose_" + std::to_string(i), spot.expexpose, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcomp, "Locallab", "Expcomp_" + std::to_string(i), spot.expcomp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).hlcompr, "Locallab", "Hlcompr_" + std::to_string(i), spot.hlcompr, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).hlcomprthresh, "Locallab", "Hlcomprthresh_" + std::to_string(i), spot.hlcomprthresh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).black, "Locallab", "Black_" + std::to_string(i), spot.black, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shcompr, "Locallab", "Shcompr_" + std::to_string(i), spot.shcompr, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).warm, "Locallab", "Warm_" + std::to_string(i), spot.warm, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiex, "Locallab", "Sensiex_" + std::to_string(i), spot.sensiex, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).excurve, "Locallab", "ExCurve_" + std::to_string(i), spot.excurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).showmaskexpMethod, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), spot.showmaskexpMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskexpcurve, "Locallab", "CCmaskexpCurve_" + std::to_string(i), spot.CCmaskexpcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskexpcurve, "Locallab", "LLmaskexpCurve_" + std::to_string(i), spot.LLmaskexpcurve, keyFile);
+                // Vibrance
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expvibrance, "Locallab", "Expvibrance_" + std::to_string(i), spot.expvibrance, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).saturated, "Locallab", "Saturated_" + std::to_string(i), spot.saturated, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).pastels, "Locallab", "Pastels_" + std::to_string(i), spot.pastels, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).psthreshold, "Locallab", "PSThreshold_" + std::to_string(i), spot.psthreshold.toVector(), keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).protectskins, "Locallab", "ProtectSkins_" + std::to_string(i), spot.protectskins, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoidcolorshift, "Locallab", "AvoidColorShift_" + std::to_string(i), spot.avoidcolorshift, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).pastsattog, "Locallab", "PastSatTog_" + std::to_string(i), spot.pastsattog, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiv, "Locallab", "Sensiv_" + std::to_string(i), spot.sensiv, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).skintonescurve, "Locallab", "SkinTonesCurve_" + std::to_string(i), spot.skintonescurve, keyFile);
+                // Soft Light
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsoft, "Locallab", "Expsoft_" + std::to_string(i), spot.expsoft, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).streng, "Locallab", "Streng_" + std::to_string(i), spot.streng, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensisf, "Locallab", "Sensisf_" + std::to_string(i), spot.sensisf, keyFile);
+                // Lab Region
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).explabregion, "Locallab", "Explabregion_" + std::to_string(i), spot.explabregion, keyFile);
+                // Blur & Noise
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expblur, "Locallab", "Expblur_" + std::to_string(i), spot.expblur, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radius, "Locallab", "Radius_" + std::to_string(i), spot.radius, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strength, "Locallab", "Strength_" + std::to_string(i), spot.strength, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensibn, "Locallab", "Sensibn_" + std::to_string(i), spot.sensibn, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurMethod, "Locallab", "BlurMethod_" + std::to_string(i), spot.blurMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).activlum, "Locallab", "activlum_" + std::to_string(i), spot.activlum, keyFile);
+                // Tone Mapping
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).exptonemap, "Locallab", "Exptonemap_" + std::to_string(i), spot.exptonemap, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).stren, "Locallab", "Stren_" + std::to_string(i), spot.stren, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gamma, "Locallab", "Gamma_" + std::to_string(i), spot.gamma, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).estop, "Locallab", "Estop_" + std::to_string(i), spot.estop, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).scaltm, "Locallab", "Scaltm_" + std::to_string(i), spot.scaltm, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).rewei, "Locallab", "Rewei_" + std::to_string(i), spot.rewei, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensitm, "Locallab", "Sensitm_" + std::to_string(i), spot.sensitm, keyFile);
+                // Retinex
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expreti, "Locallab", "Expreti_" + std::to_string(i), spot.expreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).retinexMethod, "Locallab", "retinexMethod_" + std::to_string(i), spot.retinexMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).str, "Locallab", "Str_" + std::to_string(i), spot.str, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chrrt, "Locallab", "Chrrt_" + std::to_string(i), spot.chrrt, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).neigh, "Locallab", "Neigh_" + std::to_string(i), spot.neigh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).vart, "Locallab", "Vart_" + std::to_string(i), spot.vart, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).dehaz, "Locallab", "Dehaz_" + std::to_string(i), spot.dehaz, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensih, "Locallab", "Sensih_" + std::to_string(i), spot.sensih, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localTgaincurve, "Locallab", "TgainCurve_" + std::to_string(i), spot.localTgaincurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inversret, "Locallab", "Inversret_" + std::to_string(i), spot.inversret, keyFile);
+                // Sharpening
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsharp, "Locallab", "Expsharp_" + std::to_string(i), spot.expsharp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sharcontrast, "Locallab", "Sharcontrast_" + std::to_string(i), spot.sharcontrast, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sharradius, "Locallab", "Sharradius_" + std::to_string(i), spot.sharradius, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sharamount, "Locallab", "Sharamount_" + std::to_string(i), spot.sharamount, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shardamping, "Locallab", "Shardamping_" + std::to_string(i), spot.shardamping, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shariter, "Locallab", "Shariter_" + std::to_string(i), spot.shariter, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sharblur, "Locallab", "Sharblur_" + std::to_string(i), spot.sharblur, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensisha, "Locallab", "Sensisha_" + std::to_string(i), spot.sensisha, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inverssha, "Locallab", "Inverssha_" + std::to_string(i), spot.inverssha, keyFile);
+                // Local Contrast
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcontrast, "Locallab", "Expcontrast_" + std::to_string(i), spot.expcontrast, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lcradius_" + std::to_string(i), spot.lcradius, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lcamount_" + std::to_string(i), spot.lcamount, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lcdarkness_" + std::to_string(i), spot.lcdarkness, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lclightness_" + std::to_string(i), spot.lclightness, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilc, "Locallab", "Sensilc_" + std::to_string(i), spot.sensilc, keyFile);
+                // Contrast by detail levels
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), spot.expcbdl, keyFile);
 
-            // Contrast by detail levels
-            saveToKeyfile(!pedited || pedited->locallab.expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), locallab.expcbdl.at(i), keyFile);
+                for (int j = 0; j < 5; j++) {
+                    saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mult[j], "Locallab", "Mult" + std::to_string(j) + "_" + std::to_string(i), spot.mult[j], keyFile);
+                }
 
-            for (int j = 0; j < 5; j++) {
-                saveToKeyfile(!pedited || pedited->locallab.mult[j], "Locallab", "Mult" + std::to_string(j) + "_" + std::to_string(i), locallab.mult[j].at(i), keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromacbdl, "Locallab", "Chromacbdl_" + std::to_string(i), spot.chromacbdl, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).threshold, "Locallab", "Threshold_" + std::to_string(i), spot.threshold, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensicb, "Locallab", "Sensicb_" + std::to_string(i), spot.sensicb, keyFile);
+                // Denoise
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expdenoi, "Locallab", "Expdenoi_" + std::to_string(i), spot.expdenoi, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumf, "Locallab", "noiselumf_" + std::to_string(i), spot.noiselumf, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumc, "Locallab", "noiselumc_" + std::to_string(i), spot.noiselumc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumdetail, "Locallab", "noiselumdetail_" + std::to_string(i), spot.noiselumdetail, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselequal, "Locallab", "noiselequal_" + std::to_string(i), spot.noiselequal, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noisechrof, "Locallab", "noisechrof_" + std::to_string(i), spot.noisechrof, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noisechroc, "Locallab", "noisechroc_" + std::to_string(i), spot.noisechroc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noisechrodetail, "Locallab", "noisechrodetail_" + std::to_string(i), spot.noisechrodetail, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).adjblur, "Locallab", "Adjblur_" + std::to_string(i), spot.adjblur, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).bilateral, "Locallab", "Bilateral_" + std::to_string(i), spot.bilateral, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiden, "Locallab", "Sensiden_" + std::to_string(i), spot.sensiden, keyFile);
+                // Others
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoid, "Locallab", "Avoid_" + std::to_string(i), spot.avoid, keyFile);
             }
-
-            saveToKeyfile(!pedited || pedited->locallab.chromacbdl, "Locallab", "Chromacbdl_" + std::to_string(i), locallab.chromacbdl.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.threshold, "Locallab", "Threshold_" + std::to_string(i), locallab.threshold.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensicb, "Locallab", "Sensicb_" + std::to_string(i), locallab.sensicb.at(i), keyFile);
-            // Denoise
-            saveToKeyfile(!pedited || pedited->locallab.expdenoi, "Locallab", "Expdenoi_" + std::to_string(i), locallab.expdenoi.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.noiselumf, "Locallab", "noiselumf_" + std::to_string(i), locallab.noiselumf.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.noiselumc, "Locallab", "noiselumc_" + std::to_string(i), locallab.noiselumc.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.noiselumdetail, "Locallab", "noiselumdetail_" + std::to_string(i), locallab.noiselumdetail.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.noiselequal, "Locallab", "noiselequal_" + std::to_string(i), locallab.noiselequal.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.noisechrof, "Locallab", "noisechrof_" + std::to_string(i), locallab.noisechrof.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.noisechroc, "Locallab", "noisechroc_" + std::to_string(i), locallab.noisechroc.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.noisechrodetail, "Locallab", "noisechrodetail_" + std::to_string(i), locallab.noisechrodetail.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.adjblur, "Locallab", "Adjblur_" + std::to_string(i), locallab.adjblur.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.bilateral, "Locallab", "Bilateral_" + std::to_string(i), locallab.bilateral.at(i), keyFile);
-            saveToKeyfile(!pedited || pedited->locallab.sensiden, "Locallab", "Sensiden_" + std::to_string(i), locallab.sensiden.at(i), keyFile);
-            // Others
-            saveToKeyfile(!pedited || pedited->locallab.avoid, "Locallab", "Avoid_" + std::to_string(i), locallab.avoid.at(i), keyFile);
         }
 
 // Post-crop vignette
@@ -4725,276 +4760,171 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Locallab", "Selspot", pedited, locallab.selspot, pedited->locallab.selspot);
 
             // Resize locallab settings if required
-            if (locallab.nbspot > (int)locallab.id.size()) {
-                // Control spot settings
-                locallab.id.resize(locallab.nbspot);
-                locallab.name.resize(locallab.nbspot);
-                locallab.isvisible.resize(locallab.nbspot);
-                locallab.shape.resize(locallab.nbspot);
-                locallab.spotMethod.resize(locallab.nbspot);
-                locallab.sensiexclu.resize(locallab.nbspot);
-                locallab.struc.resize(locallab.nbspot);
-                locallab.shapeMethod.resize(locallab.nbspot);
-                locallab.locX.resize(locallab.nbspot);
-                locallab.locXL.resize(locallab.nbspot);
-                locallab.locY.resize(locallab.nbspot);
-                locallab.locYT.resize(locallab.nbspot);
-                locallab.centerX.resize(locallab.nbspot);
-                locallab.centerY.resize(locallab.nbspot);
-                locallab.circrad.resize(locallab.nbspot);
-                locallab.qualityMethod.resize(locallab.nbspot);
-                locallab.transit.resize(locallab.nbspot);
-                locallab.thresh.resize(locallab.nbspot);
-                locallab.iter.resize(locallab.nbspot);
-                // Color & Light
-                locallab.expcolor.resize(locallab.nbspot);
-                locallab.curvactiv.resize(locallab.nbspot);
-                locallab.lightness.resize(locallab.nbspot);
-                locallab.contrast.resize(locallab.nbspot);
-                locallab.chroma.resize(locallab.nbspot);
-                locallab.sensi.resize(locallab.nbspot);
-                locallab.qualitycurveMethod.resize(locallab.nbspot);
-                locallab.llcurve.resize(locallab.nbspot);
-                locallab.cccurve.resize(locallab.nbspot);
-                locallab.LHcurve.resize(locallab.nbspot);
-                locallab.HHcurve.resize(locallab.nbspot);
-                locallab.invers.resize(locallab.nbspot);
-                // Exposure
-                locallab.expexpose.resize(locallab.nbspot);
-                locallab.expcomp.resize(locallab.nbspot);
-                locallab.hlcompr.resize(locallab.nbspot);
-                locallab.hlcomprthresh.resize(locallab.nbspot);
-                locallab.black.resize(locallab.nbspot);
-                locallab.shcompr.resize(locallab.nbspot);
-                locallab.warm.resize(locallab.nbspot);
-                locallab.sensiex.resize(locallab.nbspot);
-                locallab.excurve.resize(locallab.nbspot);
-                // Vibrance
-                locallab.expvibrance.resize(locallab.nbspot);
-                locallab.saturated.resize(locallab.nbspot);
-                locallab.pastels.resize(locallab.nbspot);
-                Threshold<int> val(0, 0, false); // Default value (initialization values not important) for resize function as Threshold<T> does not have constructor Threshold<T>()
-                locallab.psthreshold.resize(locallab.nbspot, val);
-                locallab.protectskins.resize(locallab.nbspot);
-                locallab.avoidcolorshift.resize(locallab.nbspot);
-                locallab.pastsattog.resize(locallab.nbspot);
-                locallab.sensiv.resize(locallab.nbspot);
-                locallab.skintonescurve.resize(locallab.nbspot);
-                //Soft Light
-                locallab.expsoft.resize(locallab.nbspot);
-                locallab.streng.resize(locallab.nbspot);
-                locallab.sensisf.resize(locallab.nbspot);
-                //Lab region
-                locallab.explabregion.resize(locallab.nbspot);
-                // Blur & Noise
-                locallab.expblur.resize(locallab.nbspot);
-                locallab.radius.resize(locallab.nbspot);
-                locallab.strength.resize(locallab.nbspot);
-                locallab.sensibn.resize(locallab.nbspot);
-                locallab.blurMethod.resize(locallab.nbspot);
-                locallab.activlum.resize(locallab.nbspot);
-                // Tone Mapping
-                locallab.exptonemap.resize(locallab.nbspot);
-                locallab.stren.resize(locallab.nbspot);
-                locallab.gamma.resize(locallab.nbspot);
-                locallab.estop.resize(locallab.nbspot);
-                locallab.scaltm.resize(locallab.nbspot);
-                locallab.rewei.resize(locallab.nbspot);
-                locallab.sensitm.resize(locallab.nbspot);
-                // Retinex
-                locallab.expreti.resize(locallab.nbspot);
-                locallab.retinexMethod.resize(locallab.nbspot);
-                locallab.str.resize(locallab.nbspot);
-                locallab.chrrt.resize(locallab.nbspot);
-                locallab.neigh.resize(locallab.nbspot);
-                locallab.vart.resize(locallab.nbspot);
-                locallab.dehaz.resize(locallab.nbspot);
-                locallab.sensih.resize(locallab.nbspot);
-                locallab.localTgaincurve.resize(locallab.nbspot);
-                locallab.inversret.resize(locallab.nbspot);
-                // Sharpening
-                locallab.expsharp.resize(locallab.nbspot);
-                locallab.sharcontrast.resize(locallab.nbspot);
-                locallab.sharradius.resize(locallab.nbspot);
-                locallab.sharamount.resize(locallab.nbspot);
-                locallab.shardamping.resize(locallab.nbspot);
-                locallab.shariter.resize(locallab.nbspot);
-                locallab.sharblur.resize(locallab.nbspot);
-                locallab.sensisha.resize(locallab.nbspot);
-                locallab.inverssha.resize(locallab.nbspot);
-                //local contrast
-                locallab.expcontrast.resize(locallab.nbspot);
-                locallab.lcradius.resize(locallab.nbspot);
-                locallab.lcamount.resize(locallab.nbspot);
-                locallab.lcdarkness.resize(locallab.nbspot);
-                locallab.lclightness.resize(locallab.nbspot);
-                locallab.sensilc.resize(locallab.nbspot);
-                // Contrast by detail levels
-                locallab.expcbdl.resize(locallab.nbspot);
+            if (locallab.nbspot > (int)locallab.spots.size()) {
+                locallab.spots.resize(locallab.nbspot);
+            }
 
-                for (int i = 0; i < 5; i++) {
-                    locallab.mult[i].resize(locallab.nbspot);
-                }
-
-                locallab.chromacbdl.resize(locallab.nbspot);
-                locallab.threshold.resize(locallab.nbspot);
-                locallab.sensicb.resize(locallab.nbspot);
-                // Denoise
-                locallab.expdenoi.resize(locallab.nbspot);
-                locallab.noiselumf.resize(locallab.nbspot);
-                locallab.noiselumc.resize(locallab.nbspot);
-                locallab.noiselumdetail.resize(locallab.nbspot);
-                locallab.noiselequal.resize(locallab.nbspot);
-                locallab.noisechrof.resize(locallab.nbspot);
-                locallab.noisechroc.resize(locallab.nbspot);
-                locallab.noisechrodetail.resize(locallab.nbspot);
-                locallab.adjblur.resize(locallab.nbspot);
-                locallab.bilateral.resize(locallab.nbspot);
-                locallab.sensiden.resize(locallab.nbspot);
-                // Others
-                locallab.avoid.resize(locallab.nbspot);
+            // Initialize LocallabSpotEdited to false according to nbspot
+            if (pedited) {
+                pedited->locallab.spots.clear();
+                pedited->locallab.spots.resize(locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(false));
             }
 
             for (int i = 0; i < locallab.nbspot; i++) {
+                LocallabParams::LocallabSpot spot;
+                LocallabParamsEdited::LocallabSpotEdited spotEdited(false);
+
                 // Control spot settings
-                assignFromKeyfile(keyFile, "Locallab", "Id_" + std::to_string(i), pedited, locallab.id.at(i), pedited->locallab.id);
-                assignFromKeyfile(keyFile, "Locallab", "Name_" + std::to_string(i), pedited, locallab.name.at(i), pedited->locallab.name);
-                assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + std::to_string(i), pedited, locallab.isvisible.at(i), pedited->locallab.isvisible);
-                assignFromKeyfile(keyFile, "Locallab", "Shape_" + std::to_string(i), pedited, locallab.shape.at(i), pedited->locallab.shape);
-                assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + std::to_string(i), pedited, locallab.spotMethod.at(i), pedited->locallab.spotMethod);
-                assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + std::to_string(i), pedited, locallab.shapeMethod.at(i), pedited->locallab.shapeMethod);
-                assignFromKeyfile(keyFile, "Locallab", "SensiExclu_" + std::to_string(i), pedited, locallab.sensiexclu.at(i), pedited->locallab.sensiexclu);
-                assignFromKeyfile(keyFile, "Locallab", "Struc_" + std::to_string(i), pedited, locallab.struc.at(i), pedited->locallab.struc);
-                assignFromKeyfile(keyFile, "Locallab", "LocX_" + std::to_string(i), pedited, locallab.locX.at(i), pedited->locallab.locX);
-                assignFromKeyfile(keyFile, "Locallab", "LocXL_" + std::to_string(i), pedited, locallab.locXL.at(i), pedited->locallab.locXL);
-                assignFromKeyfile(keyFile, "Locallab", "LocY_" + std::to_string(i), pedited, locallab.locY.at(i), pedited->locallab.locY);
-                assignFromKeyfile(keyFile, "Locallab", "LocYT_" + std::to_string(i), pedited, locallab.locYT.at(i), pedited->locallab.locYT);
-                assignFromKeyfile(keyFile, "Locallab", "CenterX_" + std::to_string(i), pedited, locallab.centerX.at(i), pedited->locallab.centerX);
-                assignFromKeyfile(keyFile, "Locallab", "CenterY_" + std::to_string(i), pedited, locallab.centerY.at(i), pedited->locallab.centerY);
-                assignFromKeyfile(keyFile, "Locallab", "Circrad_" + std::to_string(i), pedited, locallab.circrad.at(i), pedited->locallab.circrad);
-                assignFromKeyfile(keyFile, "Locallab", "QualityMethod_" + std::to_string(i), pedited, locallab.qualityMethod.at(i), pedited->locallab.qualityMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Transit_" + std::to_string(i), pedited, locallab.transit.at(i), pedited->locallab.transit);
-                assignFromKeyfile(keyFile, "Locallab", "Thresh_" + std::to_string(i), pedited, locallab.thresh.at(i), pedited->locallab.thresh);
-                assignFromKeyfile(keyFile, "Locallab", "Iter_" + std::to_string(i), pedited, locallab.iter.at(i), pedited->locallab.iter);
+                assignFromKeyfile(keyFile, "Locallab", "Id_" + std::to_string(i), pedited, spot.id, pedited->locallab.id);
+                assignFromKeyfile(keyFile, "Locallab", "Name_" + std::to_string(i), pedited, spot.name, spotEdited.name);
+                assignFromKeyfile(keyFile, "Locallab", "Isvisible_" + std::to_string(i), pedited, spot.isvisible, spotEdited.isvisible);
+                assignFromKeyfile(keyFile, "Locallab", "Shape_" + std::to_string(i), pedited, spot.shape, spotEdited.shape);
+                assignFromKeyfile(keyFile, "Locallab", "SpotMethod_" + std::to_string(i), pedited, spot.spotMethod, spotEdited.spotMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + std::to_string(i), pedited, spot.shapeMethod, spotEdited.shapeMethod);
+                assignFromKeyfile(keyFile, "Locallab", "SensiExclu_" + std::to_string(i), pedited, spot.sensiexclu, spotEdited.sensiexclu);
+                assignFromKeyfile(keyFile, "Locallab", "Struc_" + std::to_string(i), pedited, spot.struc, spotEdited.struc);
+                assignFromKeyfile(keyFile, "Locallab", "LocX_" + std::to_string(i), pedited, spot.locX, spotEdited.locX);
+                assignFromKeyfile(keyFile, "Locallab", "LocXL_" + std::to_string(i), pedited, spot.locXL, spotEdited.locXL);
+                assignFromKeyfile(keyFile, "Locallab", "LocY_" + std::to_string(i), pedited, spot.locY, spotEdited.locY);
+                assignFromKeyfile(keyFile, "Locallab", "LocYT_" + std::to_string(i), pedited, spot.locYT, spotEdited.locYT);
+                assignFromKeyfile(keyFile, "Locallab", "CenterX_" + std::to_string(i), pedited, spot.centerX, spotEdited.centerX);
+                assignFromKeyfile(keyFile, "Locallab", "CenterY_" + std::to_string(i), pedited, spot.centerY, spotEdited.centerY);
+                assignFromKeyfile(keyFile, "Locallab", "Circrad_" + std::to_string(i), pedited, spot.circrad, spotEdited.circrad);
+                assignFromKeyfile(keyFile, "Locallab", "QualityMethod_" + std::to_string(i), pedited, spot.qualityMethod, spotEdited.qualityMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Transit_" + std::to_string(i), pedited, spot.transit, spotEdited.transit);
+                assignFromKeyfile(keyFile, "Locallab", "Thresh_" + std::to_string(i), pedited, spot.thresh, spotEdited.thresh);
+                assignFromKeyfile(keyFile, "Locallab", "Iter_" + std::to_string(i), pedited, spot.iter, spotEdited.iter);
                 // Color & Light
-                assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, locallab.expcolor.at(i), pedited->locallab.expcolor);
-                assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + std::to_string(i), pedited, locallab.curvactiv.at(i), pedited->locallab.curvactiv);
-                assignFromKeyfile(keyFile, "Locallab", "Lightness_" + std::to_string(i), pedited, locallab.lightness.at(i), pedited->locallab.lightness);
-                assignFromKeyfile(keyFile, "Locallab", "Contrast_" + std::to_string(i), pedited, locallab.contrast.at(i), pedited->locallab.contrast);
-                assignFromKeyfile(keyFile, "Locallab", "Chroma_" + std::to_string(i), pedited, locallab.chroma.at(i), pedited->locallab.chroma);
-                assignFromKeyfile(keyFile, "Locallab", "Sensi_" + std::to_string(i), pedited, locallab.sensi.at(i), pedited->locallab.sensi);
-                assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, locallab.qualitycurveMethod.at(i), pedited->locallab.qualitycurveMethod);
-                assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, locallab.llcurve.at(i), pedited->locallab.llcurve);
-                assignFromKeyfile(keyFile, "Locallab", "CCCurve_" + std::to_string(i), pedited, locallab.cccurve.at(i), pedited->locallab.cccurve);
-                assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + std::to_string(i), pedited, locallab.LHcurve.at(i), pedited->locallab.LHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + std::to_string(i), pedited, locallab.HHcurve.at(i), pedited->locallab.HHcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Invers_" + std::to_string(i), pedited, locallab.invers.at(i), pedited->locallab.invers);
+                assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, spot.expcolor, spotEdited.expcolor);
+                assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + std::to_string(i), pedited, spot.curvactiv, spotEdited.curvactiv);
+                assignFromKeyfile(keyFile, "Locallab", "Lightness_" + std::to_string(i), pedited, spot.lightness, spotEdited.lightness);
+                assignFromKeyfile(keyFile, "Locallab", "Contrast_" + std::to_string(i), pedited, spot.contrast, spotEdited.contrast);
+                assignFromKeyfile(keyFile, "Locallab", "Chroma_" + std::to_string(i), pedited, spot.chroma, spotEdited.chroma);
+                assignFromKeyfile(keyFile, "Locallab", "Sensi_" + std::to_string(i), pedited, spot.sensi, spotEdited.sensi);
+                assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ShowmaskcolMethod_" + std::to_string(i), pedited, spot.showmaskcolMethod, spotEdited.showmaskcolMethod);
+                assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CCCurve_" + std::to_string(i), pedited, spot.cccurve, spotEdited.cccurve);
+                assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + std::to_string(i), pedited, spot.LHcurve, spotEdited.LHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + std::to_string(i), pedited, spot.HHcurve, spotEdited.HHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskCurve_" + std::to_string(i), pedited, spot.CCmaskcurve, spotEdited.CCmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskCurve_" + std::to_string(i), pedited, spot.LLmaskcurve, spotEdited.LLmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + std::to_string(i), pedited, spot.HHmaskcurve, spotEdited.HHmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Invers_" + std::to_string(i), pedited, spot.invers, spotEdited.invers);
                 // Exposure
-                assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + std::to_string(i), pedited, locallab.expexpose.at(i), pedited->locallab.expexpose);
-                assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + std::to_string(i), pedited, locallab.expcomp.at(i), pedited->locallab.expcomp);
-                assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + std::to_string(i), pedited, locallab.hlcompr.at(i), pedited->locallab.hlcompr);
-                assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + std::to_string(i), pedited, locallab.hlcomprthresh.at(i), pedited->locallab.hlcomprthresh);
-                assignFromKeyfile(keyFile, "Locallab", "Black_" + std::to_string(i), pedited, locallab.black.at(i), pedited->locallab.black);
-                assignFromKeyfile(keyFile, "Locallab", "Shcompr_" + std::to_string(i), pedited, locallab.shcompr.at(i), pedited->locallab.shcompr);
-                assignFromKeyfile(keyFile, "Locallab", "Warm_" + std::to_string(i), pedited, locallab.warm.at(i), pedited->locallab.warm);
-                assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + std::to_string(i), pedited, locallab.sensiex.at(i), pedited->locallab.sensiex);
-                assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + std::to_string(i), pedited, locallab.excurve.at(i), pedited->locallab.excurve);
+                assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + std::to_string(i), pedited, spot.expexpose, spotEdited.expexpose);
+                assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + std::to_string(i), pedited, spot.expcomp, spotEdited.expcomp);
+                assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + std::to_string(i), pedited, spot.hlcompr, spotEdited.hlcompr);
+                assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + std::to_string(i), pedited, spot.hlcomprthresh, spotEdited.hlcomprthresh);
+                assignFromKeyfile(keyFile, "Locallab", "Black_" + std::to_string(i), pedited, spot.black, spotEdited.black);
+                assignFromKeyfile(keyFile, "Locallab", "Shcompr_" + std::to_string(i), pedited, spot.shcompr, spotEdited.shcompr);
+                assignFromKeyfile(keyFile, "Locallab", "Warm_" + std::to_string(i), pedited, spot.warm, spotEdited.warm);
+                assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + std::to_string(i), pedited, spot.sensiex, spotEdited.sensiex);
+                assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + std::to_string(i), pedited, spot.excurve, spotEdited.excurve);
+                assignFromKeyfile(keyFile, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), pedited, spot.showmaskexpMethod, spotEdited.showmaskexpMethod);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskexpCurve_" + std::to_string(i), pedited, spot.CCmaskexpcurve, spotEdited.CCmaskexpcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskexpCurve_" + std::to_string(i), pedited, spot.LLmaskexpcurve, spotEdited.LLmaskexpcurve);
                 // Vibrance
-                assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, locallab.expvibrance.at(i), pedited->locallab.expvibrance);
-                assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, locallab.saturated.at(i), pedited->locallab.saturated);
-                assignFromKeyfile(keyFile, "Locallab", "Pastels_" + std::to_string(i), pedited, locallab.pastels.at(i), pedited->locallab.pastels);
+                assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
+                assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, spot.saturated, spotEdited.saturated);
+                assignFromKeyfile(keyFile, "Locallab", "Pastels_" + std::to_string(i), pedited, spot.pastels, spotEdited.pastels);
 
                 if (keyFile.has_key("Locallab", "PSThreshold_" + std::to_string(i))) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "PSThreshold_" + std::to_string(i));
 
                     if (thresh.size() >= 2) {
-                        locallab.psthreshold.at(i).setValues(thresh[0], thresh[1]);
+                        spot.psthreshold.setValues(thresh[0], thresh[1]);
                     }
 
                     if (pedited) {
-                        pedited->locallab.psthreshold = true;
+                        spotEdited.psthreshold = true;
                     }
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "ProtectSkins_" + std::to_string(i), pedited, locallab.protectskins.at(i), pedited->locallab.protectskins);
-                assignFromKeyfile(keyFile, "Locallab", "AvoidColorShift_" + std::to_string(i), pedited, locallab.avoidcolorshift.at(i), pedited->locallab.avoidcolorshift);
-                assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + std::to_string(i), pedited, locallab.pastsattog.at(i), pedited->locallab.pastsattog);
-                assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + std::to_string(i), pedited, locallab.sensiv.at(i), pedited->locallab.sensiv);
-                assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + std::to_string(i), pedited, locallab.skintonescurve.at(i), pedited->locallab.skintonescurve);
-                //Soft Light
-                assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, locallab.expsoft.at(i), pedited->locallab.expsoft);
-                assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, locallab.streng.at(i), pedited->locallab.streng);
-                assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, locallab.sensisf.at(i), pedited->locallab.sensisf);
-                //Lab region
-                assignFromKeyfile(keyFile, "Locallab", "Explabregion_" + std::to_string(i), pedited, locallab.explabregion.at(i), pedited->locallab.explabregion);
+                assignFromKeyfile(keyFile, "Locallab", "ProtectSkins_" + std::to_string(i), pedited, spot.protectskins, spotEdited.protectskins);
+                assignFromKeyfile(keyFile, "Locallab", "AvoidColorShift_" + std::to_string(i), pedited, spot.avoidcolorshift, spotEdited.avoidcolorshift);
+                assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + std::to_string(i), pedited, spot.pastsattog, spotEdited.pastsattog);
+                assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + std::to_string(i), pedited, spot.sensiv, spotEdited.sensiv);
+                assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + std::to_string(i), pedited, spot.skintonescurve, spotEdited.skintonescurve);
+                // Soft Light
+                assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, spot.expsoft, spotEdited.expsoft);
+                assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, spot.streng, spotEdited.streng);
+                assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, spot.sensisf, spotEdited.sensisf);
+                // Lab Region
+                assignFromKeyfile(keyFile, "Locallab", "Explabregion_" + std::to_string(i), pedited, spot.explabregion, spotEdited.explabregion);
                 // Blur & Noise
-                assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, locallab.expblur.at(i), pedited->locallab.expblur);
-                assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, locallab.radius.at(i), pedited->locallab.radius);
-                assignFromKeyfile(keyFile, "Locallab", "Strength_" + std::to_string(i), pedited, locallab.strength.at(i), pedited->locallab.strength);
-                assignFromKeyfile(keyFile, "Locallab", "Sensibn_" + std::to_string(i), pedited, locallab.sensibn.at(i), pedited->locallab.sensibn);
-                assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + std::to_string(i), pedited, locallab.blurMethod.at(i), pedited->locallab.blurMethod);
-                assignFromKeyfile(keyFile, "Locallab", "activlum_" + std::to_string(i), pedited, locallab.activlum.at(i), pedited->locallab.activlum);
+                assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, spot.expblur, spotEdited.expblur);
+                assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, spot.radius, spotEdited.radius);
+                assignFromKeyfile(keyFile, "Locallab", "Strength_" + std::to_string(i), pedited, spot.strength, spotEdited.strength);
+                assignFromKeyfile(keyFile, "Locallab", "Sensibn_" + std::to_string(i), pedited, spot.sensibn, spotEdited.sensibn);
+                assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + std::to_string(i), pedited, spot.blurMethod, spotEdited.blurMethod);
+                assignFromKeyfile(keyFile, "Locallab", "activlum_" + std::to_string(i), pedited, spot.activlum, spotEdited.activlum);
                 // Tone Mapping
-                assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + std::to_string(i), pedited, locallab.exptonemap.at(i), pedited->locallab.exptonemap);
-                assignFromKeyfile(keyFile, "Locallab", "Stren_" + std::to_string(i), pedited, locallab.stren.at(i), pedited->locallab.stren);
-                assignFromKeyfile(keyFile, "Locallab", "Gamma_" + std::to_string(i), pedited, locallab.gamma.at(i), pedited->locallab.gamma);
-                assignFromKeyfile(keyFile, "Locallab", "Estop_" + std::to_string(i), pedited, locallab.estop.at(i), pedited->locallab.estop);
-                assignFromKeyfile(keyFile, "Locallab", "Scaltm_" + std::to_string(i), pedited, locallab.scaltm.at(i), pedited->locallab.scaltm);
-                assignFromKeyfile(keyFile, "Locallab", "Rewei_" + std::to_string(i), pedited, locallab.rewei.at(i), pedited->locallab.rewei);
-                assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + std::to_string(i), pedited, locallab.sensitm.at(i), pedited->locallab.sensitm);
+                assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + std::to_string(i), pedited, spot.exptonemap, spotEdited.exptonemap);
+                assignFromKeyfile(keyFile, "Locallab", "Stren_" + std::to_string(i), pedited, spot.stren, spotEdited.stren);
+                assignFromKeyfile(keyFile, "Locallab", "Gamma_" + std::to_string(i), pedited, spot.gamma, spotEdited.gamma);
+                assignFromKeyfile(keyFile, "Locallab", "Estop_" + std::to_string(i), pedited, spot.estop, spotEdited.estop);
+                assignFromKeyfile(keyFile, "Locallab", "Scaltm_" + std::to_string(i), pedited, spot.scaltm, spotEdited.scaltm);
+                assignFromKeyfile(keyFile, "Locallab", "Rewei_" + std::to_string(i), pedited, spot.rewei, spotEdited.rewei);
+                assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + std::to_string(i), pedited, spot.sensitm, spotEdited.sensitm);
                 // Retinex
-                assignFromKeyfile(keyFile, "Locallab", "Expreti_" + std::to_string(i), pedited, locallab.expreti.at(i), pedited->locallab.expreti);
-                assignFromKeyfile(keyFile, "Locallab", "retinexMethod_" + std::to_string(i), pedited, locallab.retinexMethod.at(i), pedited->locallab.retinexMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Str_" + std::to_string(i), pedited, locallab.str.at(i), pedited->locallab.str);
-                assignFromKeyfile(keyFile, "Locallab", "Chrrt_" + std::to_string(i), pedited, locallab.chrrt.at(i), pedited->locallab.chrrt);
-                assignFromKeyfile(keyFile, "Locallab", "Neigh_" + std::to_string(i), pedited, locallab.neigh.at(i), pedited->locallab.neigh);
-                assignFromKeyfile(keyFile, "Locallab", "Vart_" + std::to_string(i), pedited, locallab.vart.at(i), pedited->locallab.vart);
-                assignFromKeyfile(keyFile, "Locallab", "Dehaz_" + std::to_string(i), pedited, locallab.dehaz.at(i), pedited->locallab.dehaz);
-                assignFromKeyfile(keyFile, "Locallab", "Sensih_" + std::to_string(i), pedited, locallab.sensih.at(i), pedited->locallab.sensih);
-                assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + std::to_string(i), pedited, locallab.localTgaincurve.at(i), pedited->locallab.localTgaincurve);
-                assignFromKeyfile(keyFile, "Locallab", "Inversret_" + std::to_string(i), pedited, locallab.inversret.at(i), pedited->locallab.inversret);
+                assignFromKeyfile(keyFile, "Locallab", "Expreti_" + std::to_string(i), pedited, spot.expreti, spotEdited.expreti);
+                assignFromKeyfile(keyFile, "Locallab", "retinexMethod_" + std::to_string(i), pedited, spot.retinexMethod, spotEdited.retinexMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Str_" + std::to_string(i), pedited, spot.str, spotEdited.str);
+                assignFromKeyfile(keyFile, "Locallab", "Chrrt_" + std::to_string(i), pedited, spot.chrrt, spotEdited.chrrt);
+                assignFromKeyfile(keyFile, "Locallab", "Neigh_" + std::to_string(i), pedited, spot.neigh, spotEdited.neigh);
+                assignFromKeyfile(keyFile, "Locallab", "Vart_" + std::to_string(i), pedited, spot.vart, spotEdited.vart);
+                assignFromKeyfile(keyFile, "Locallab", "Dehaz_" + std::to_string(i), pedited, spot.dehaz, spotEdited.dehaz);
+                assignFromKeyfile(keyFile, "Locallab", "Sensih_" + std::to_string(i), pedited, spot.sensih, spotEdited.sensih);
+                assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + std::to_string(i), pedited, spot.localTgaincurve, spotEdited.localTgaincurve);
+                assignFromKeyfile(keyFile, "Locallab", "Inversret_" + std::to_string(i), pedited, spot.inversret, spotEdited.inversret);
                 // Sharpening
-                assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, locallab.expsharp.at(i), pedited->locallab.expsharp);
-                assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + std::to_string(i), pedited, locallab.sharcontrast.at(i), pedited->locallab.sharcontrast);
-                assignFromKeyfile(keyFile, "Locallab", "Sharradius_" + std::to_string(i), pedited, locallab.sharradius.at(i), pedited->locallab.sharradius);
-                assignFromKeyfile(keyFile, "Locallab", "Sharamount_" + std::to_string(i), pedited, locallab.sharamount.at(i), pedited->locallab.sharamount);
-                assignFromKeyfile(keyFile, "Locallab", "Shardamping_" + std::to_string(i), pedited, locallab.shardamping.at(i), pedited->locallab.shardamping);
-                assignFromKeyfile(keyFile, "Locallab", "Shariter_" + std::to_string(i), pedited, locallab.shariter.at(i), pedited->locallab.shariter);
-                assignFromKeyfile(keyFile, "Locallab", "Sharblur_" + std::to_string(i), pedited, locallab.sharblur.at(i), pedited->locallab.sharblur);
-                assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + std::to_string(i), pedited, locallab.sensisha.at(i), pedited->locallab.sensisha);
-                assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + std::to_string(i), pedited, locallab.inverssha.at(i), pedited->locallab.inverssha);
-                //local contrast
-                assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + std::to_string(i), pedited, locallab.expcontrast.at(i), pedited->locallab.expcontrast);
-                assignFromKeyfile(keyFile, "Locallab", "Lcradius_" + std::to_string(i), pedited, locallab.lcradius.at(i), pedited->locallab.lcradius);
-                assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + std::to_string(i), pedited, locallab.lcamount.at(i), pedited->locallab.lcamount);
-                assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + std::to_string(i), pedited, locallab.lcdarkness.at(i), pedited->locallab.lcdarkness);
-                assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + std::to_string(i), pedited, locallab.lclightness.at(i), pedited->locallab.lclightness);
-                assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, locallab.sensilc.at(i), pedited->locallab.sensilc);
-
+                assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, spot.expsharp, spotEdited.expsharp);
+                assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + std::to_string(i), pedited, spot.sharcontrast, spotEdited.sharcontrast);
+                assignFromKeyfile(keyFile, "Locallab", "Sharradius_" + std::to_string(i), pedited, spot.sharradius, spotEdited.sharradius);
+                assignFromKeyfile(keyFile, "Locallab", "Sharamount_" + std::to_string(i), pedited, spot.sharamount, spotEdited.sharamount);
+                assignFromKeyfile(keyFile, "Locallab", "Shardamping_" + std::to_string(i), pedited, spot.shardamping, spotEdited.shardamping);
+                assignFromKeyfile(keyFile, "Locallab", "Shariter_" + std::to_string(i), pedited, spot.shariter, spotEdited.shariter);
+                assignFromKeyfile(keyFile, "Locallab", "Sharblur_" + std::to_string(i), pedited, spot.sharblur, spotEdited.sharblur);
+                assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + std::to_string(i), pedited, spot.sensisha, spotEdited.sensisha);
+                assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + std::to_string(i), pedited, spot.inverssha, spotEdited.inverssha);
+                // Local Contrast
+                assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + std::to_string(i), pedited, spot.expcontrast, spotEdited.expcontrast);
+                assignFromKeyfile(keyFile, "Locallab", "Lcradius_" + std::to_string(i), pedited, spot.lcradius, spotEdited.lcradius);
+                assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + std::to_string(i), pedited, spot.lcamount, spotEdited.lcamount);
+                assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + std::to_string(i), pedited, spot.lcdarkness, spotEdited.lcdarkness);
+                assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + std::to_string(i), pedited, spot.lclightness, spotEdited.lclightness);
+                assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, spot.sensilc, spotEdited.sensilc);
                 // Contrast by detail levels
-                assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, locallab.expcbdl.at(i), pedited->locallab.expcbdl);
+                assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, spot.expcbdl, spotEdited.expcbdl);
 
                 for (int j = 0; j < 5; j ++) {
-                    assignFromKeyfile(keyFile, "Locallab", "Mult" + std::to_string(j) + "_" + std::to_string(i), pedited, locallab.mult[j].at(i), pedited->locallab.mult[j]);
+                    assignFromKeyfile(keyFile, "Locallab", "Mult" + std::to_string(j) + "_" + std::to_string(i), pedited, spot.mult[j], spotEdited.mult[j]);
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Chromacbdl_" + std::to_string(i), pedited, locallab.chromacbdl.at(i), pedited->locallab.chromacbdl);
-                assignFromKeyfile(keyFile, "Locallab", "Threshold_" + std::to_string(i), pedited, locallab.threshold.at(i), pedited->locallab.threshold);
-                assignFromKeyfile(keyFile, "Locallab", "Sensicb_" + std::to_string(i), pedited, locallab.sensicb.at(i), pedited->locallab.sensicb);
+                assignFromKeyfile(keyFile, "Locallab", "Chromacbdl_" + std::to_string(i), pedited, spot.chromacbdl, spotEdited.chromacbdl);
+                assignFromKeyfile(keyFile, "Locallab", "Threshold_" + std::to_string(i), pedited, spot.threshold, spotEdited.threshold);
+                assignFromKeyfile(keyFile, "Locallab", "Sensicb_" + std::to_string(i), pedited, spot.sensicb, spotEdited.sensicb);
                 // Denoise
-                assignFromKeyfile(keyFile, "Locallab", "Expdenoi_" + std::to_string(i), pedited, locallab.expdenoi.at(i), pedited->locallab.expdenoi);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + std::to_string(i), pedited, locallab.noiselumf.at(i), pedited->locallab.noiselumf);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumc_" + std::to_string(i), pedited, locallab.noiselumc.at(i), pedited->locallab.noiselumc);
-                assignFromKeyfile(keyFile, "Locallab", "noiselumdetail_" + std::to_string(i), pedited, locallab.noiselumdetail.at(i), pedited->locallab.noiselumdetail);
-                assignFromKeyfile(keyFile, "Locallab", "noiselequal_" + std::to_string(i), pedited, locallab.noiselequal.at(i), pedited->locallab.noiselequal);
-                assignFromKeyfile(keyFile, "Locallab", "noisechrof_" + std::to_string(i), pedited, locallab.noisechrof.at(i), pedited->locallab.noisechrof);
-                assignFromKeyfile(keyFile, "Locallab", "noisechroc_" + std::to_string(i), pedited, locallab.noisechroc.at(i), pedited->locallab.noisechroc);
-                assignFromKeyfile(keyFile, "Locallab", "noisechrodetail_" + std::to_string(i), pedited, locallab.noisechrodetail.at(i), pedited->locallab.noisechrodetail);
-                assignFromKeyfile(keyFile, "Locallab", "Adjblur_" + std::to_string(i), pedited, locallab.adjblur.at(i), pedited->locallab.adjblur);
-                assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, locallab.bilateral.at(i), pedited->locallab.bilateral);
-                assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, locallab.sensiden.at(i), pedited->locallab.sensiden);
+                assignFromKeyfile(keyFile, "Locallab", "Expdenoi_" + std::to_string(i), pedited, spot.expdenoi, spotEdited.expdenoi);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + std::to_string(i), pedited, spot.noiselumf, spotEdited.noiselumf);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumc_" + std::to_string(i), pedited, spot.noiselumc, spotEdited.noiselumc);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumdetail_" + std::to_string(i), pedited, spot.noiselumdetail, spotEdited.noiselumdetail);
+                assignFromKeyfile(keyFile, "Locallab", "noiselequal_" + std::to_string(i), pedited, spot.noiselequal, spotEdited.noiselequal);
+                assignFromKeyfile(keyFile, "Locallab", "noisechrof_" + std::to_string(i), pedited, spot.noisechrof, spotEdited.noisechrof);
+                assignFromKeyfile(keyFile, "Locallab", "noisechroc_" + std::to_string(i), pedited, spot.noisechroc, spotEdited.noisechroc);
+                assignFromKeyfile(keyFile, "Locallab", "noisechrodetail_" + std::to_string(i), pedited, spot.noisechrodetail, spotEdited.noisechrodetail);
+                assignFromKeyfile(keyFile, "Locallab", "Adjblur_" + std::to_string(i), pedited, spot.adjblur, spotEdited.adjblur);
+                assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, spot.bilateral, spotEdited.bilateral);
+                assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, spot.sensiden, spotEdited.sensiden);
                 // Others
-                assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, locallab.avoid.at(i), pedited->locallab.avoid);
+                assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
+
+                locallab.spots.at(i) = spot;
+
+                if (pedited) {
+                    pedited->locallab.spots.at(i) = spotEdited;
+                }
             }
         }
 

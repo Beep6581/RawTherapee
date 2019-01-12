@@ -48,6 +48,7 @@
 #define BENCHMARK
 #include "StopWatch.h"
 #include "rt_algo.h"
+#include "guidedfilter.h"
 
 #define cliploc( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 
@@ -171,10 +172,13 @@ struct local_params {
     bool invrad;
     bool invret;
     bool invshar;
+    bool showmaskexpo;
     bool actsp;
     float str;
     int qualmet;
     int qualcurvemet;
+    int showmaskcolmet;
+    int showmaskexpmet;
     int blurmet;
     float noiself;
     float noiseldetail;
@@ -337,125 +341,151 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 {
     int w = oW;
     int h = oH;
-    int circr = locallab.circrad.at(sp);
-    float streng = ((float)locallab.stren.at(sp)) / 100.f;
-    float gam = ((float)locallab.gamma.at(sp)) / 100.f;
-    float est = ((float)locallab.estop.at(sp)) / 100.f;
-    float scal_tm = ((float)locallab.scaltm.at(sp)) / 10.f;
-    float rewe = ((float)locallab.rewei.at(sp));
-    float strlight = ((float)locallab.streng.at(sp)) / 100.f;
-    float thre = locallab.thresh.at(sp) / 100.f;
-    double local_x = locallab.locX.at(sp) / 2000.0;
-    double local_y = locallab.locY.at(sp) / 2000.0;
-    double local_xL = locallab.locXL.at(sp) / 2000.0;
-    double local_yT = locallab.locYT.at(sp) / 2000.0;
-    double local_center_x = locallab.centerX.at(sp) / 2000.0 + 0.5;
-    double local_center_y = locallab.centerY.at(sp) / 2000.0 + 0.5;
+    int circr = locallab.spots.at(sp).circrad;
+    float streng = ((float)locallab.spots.at(sp).stren) / 100.f;
+    float gam = ((float)locallab.spots.at(sp).gamma) / 100.f;
+    float est = ((float)locallab.spots.at(sp).estop) / 100.f;
+    float scal_tm = ((float)locallab.spots.at(sp).scaltm) / 10.f;
+    float rewe = ((float)locallab.spots.at(sp).rewei);
+    float strlight = ((float)locallab.spots.at(sp).streng) / 100.f;
+    float thre = locallab.spots.at(sp).thresh / 100.f;
+    double local_x = locallab.spots.at(sp).locX / 2000.0;
+    double local_y = locallab.spots.at(sp).locY / 2000.0;
+    double local_xL = locallab.spots.at(sp).locXL / 2000.0;
+    double local_yT = locallab.spots.at(sp).locYT / 2000.0;
+    double local_center_x = locallab.spots.at(sp).centerX / 2000.0 + 0.5;
+    double local_center_y = locallab.spots.at(sp).centerY / 2000.0 + 0.5;
     double local_center_xbuf = 0.0; // Provision
     double local_center_ybuf = 0.0; // Provision
-    double local_dxx = locallab.iter.at(sp) / 8000.0; //for proxi = 2==> # 1 pixel
-    double local_dyy = locallab.iter.at(sp) / 8000.0;
-    float iterati = (float) locallab.iter.at(sp);
+    double local_dxx = locallab.spots.at(sp).iter / 8000.0; //for proxi = 2==> # 1 pixel
+    double local_dyy = locallab.spots.at(sp).iter / 8000.0;
+    float iterati = (float) locallab.spots.at(sp).iter;
 //    double local_dyy = locallab.proxi;
 
-    float chromaPastel = float (locallab.pastels.at(sp))   / 100.0f;
-    float chromaSatur  = float (locallab.saturated.at(sp)) / 100.0f;
-    int local_sensiv = locallab.sensiv.at(sp);
-    int local_sensiex = locallab.sensiex.at(sp);
+    float chromaPastel = float (locallab.spots.at(sp).pastels)   / 100.0f;
+    float chromaSatur  = float (locallab.spots.at(sp).saturated) / 100.0f;
+    int local_sensiv = locallab.spots.at(sp).sensiv;
+    int local_sensiex = locallab.spots.at(sp).sensiex;
 
-    if (locallab.qualityMethod.at(sp) == "std") {
+    if (locallab.spots.at(sp).qualityMethod == "std") {
         lp.qualmet = 0;
-    } else if (locallab.qualityMethod.at(sp) == "enh") {
+    } else if (locallab.spots.at(sp).qualityMethod == "enh") {
         lp.qualmet = 1;
-    } else if (locallab.qualityMethod.at(sp) == "enhden") {
+    } else if (locallab.spots.at(sp).qualityMethod == "enhden") {
         lp.qualmet = 2;
     }
 
-    if (locallab.qualitycurveMethod.at(sp) == "none") {
+    if (locallab.spots.at(sp).qualitycurveMethod == "none") {
         lp.qualcurvemet = 0;
-    } else if (locallab.qualitycurveMethod.at(sp) == "std") {
+    } else if (locallab.spots.at(sp).qualitycurveMethod == "std") {
         lp.qualcurvemet = 1;
-    } else if (locallab.qualitycurveMethod.at(sp) == "enh") {
+    } else if (locallab.spots.at(sp).qualitycurveMethod == "enh") {
         lp.qualcurvemet = 2;
-    } else if (locallab.qualitycurveMethod.at(sp) == "enhsup") {
+    } else if (locallab.spots.at(sp).qualitycurveMethod == "enhsup") {
         lp.qualcurvemet = 3;
-    } else if (locallab.qualitycurveMethod.at(sp) == "contr") {
+    } else if (locallab.spots.at(sp).qualitycurveMethod == "contr") {
         lp.qualcurvemet = 4;
-    } else if (locallab.qualitycurveMethod.at(sp) == "sob2") {
+    } else if (locallab.spots.at(sp).qualitycurveMethod == "sob2") {
         lp.qualcurvemet = 5;
     }
 
-    if (locallab.blurMethod.at(sp) == "norm") {
+    if (locallab.spots.at(sp).showmaskcolMethod == "none") {
+        lp.showmaskcolmet = 0;
+    } else if (locallab.spots.at(sp).showmaskcolMethod == "color") {
+        lp.showmaskcolmet = 1;
+    } else if (locallab.spots.at(sp).showmaskcolMethod == "colormask") {
+        lp.showmaskcolmet = 2;
+    } else if (locallab.spots.at(sp).showmaskcolMethod == "mask") {
+        lp.showmaskcolmet = 3;
+    } else if (locallab.spots.at(sp).showmaskcolMethod == "showmask") {
+        lp.showmaskcolmet = 4;
+    }
+
+    if (locallab.spots.at(sp).showmaskexpMethod == "none") {
+        lp.showmaskexpmet = 0;
+    } else if (locallab.spots.at(sp).showmaskexpMethod == "expo") {
+        lp.showmaskexpmet = 1;
+    } else if (locallab.spots.at(sp).showmaskexpMethod == "expomask") {
+        lp.showmaskexpmet = 2;
+    } else if (locallab.spots.at(sp).showmaskexpMethod == "mask") {
+        lp.showmaskexpmet = 3;
+    } else if (locallab.spots.at(sp).showmaskexpMethod == "showmask") {
+        lp.showmaskexpmet = 4;
+    }
+
+
+    if (locallab.spots.at(sp).blurMethod == "norm") {
         lp.blurmet = 0;
-    } else if (locallab.blurMethod.at(sp) == "inv") {
+    } else if (locallab.spots.at(sp).blurMethod == "inv") {
         lp.blurmet = 1;
-    } else if (locallab.blurMethod.at(sp) == "sym") {
+    } else if (locallab.spots.at(sp).blurMethod == "sym") {
         lp.blurmet = 2;
     }
 
-    if (locallab.spotMethod.at(sp) == "norm") {
+    if (locallab.spots.at(sp).spotMethod == "norm") {
         lp.excmet = 0;
-    } else if (locallab.spotMethod.at(sp) == "exc") {
+    } else if (locallab.spots.at(sp).spotMethod == "exc") {
         lp.excmet = 1;
     }
 
-    if (locallab.shape.at(sp) == "ELI") {
+    if (locallab.spots.at(sp).shape == "ELI") {
         lp.shapmet = 0;
-    } else if (locallab.shape.at(sp) == "RECT") {
+    } else if (locallab.spots.at(sp).shape == "RECT") {
         lp.shapmet = 1;
     }
 
-    float local_noiself = (float)locallab.noiselumf.at(sp);
-    float local_noiselc = (float)locallab.noiselumc.at(sp);
-    float local_noiseldetail = (float)locallab.noiselumdetail.at(sp);
-    int local_noiselequal = locallab.noiselequal.at(sp);
-    float local_noisechrodetail = (float)locallab.noisechrodetail.at(sp);
-    int local_sensiden = locallab.sensiden.at(sp);
+    float local_noiself = (float)locallab.spots.at(sp).noiselumf;
+    float local_noiselc = (float)locallab.spots.at(sp).noiselumc;
+    float local_noiseldetail = (float)locallab.spots.at(sp).noiselumdetail;
+    int local_noiselequal = locallab.spots.at(sp).noiselequal;
+    float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
+    int local_sensiden = locallab.spots.at(sp).sensiden;
 
-    float local_noisecf = ((float)locallab.noisechrof.at(sp)) / 10.f;
-    float local_noisecc = ((float)locallab.noisechroc.at(sp)) / 10.f;
+    float local_noisecf = ((float)locallab.spots.at(sp).noisechrof) / 10.f;
+    float local_noisecc = ((float)locallab.spots.at(sp).noisechroc) / 10.f;
     float multi[5];
 
     for (int y = 0; y < 5; y++) {
-        multi[y] = ((float) locallab.mult[y].at(sp)) / 100.f;
+        multi[y] = ((float) locallab.spots.at(sp).mult[y]) / 100.f;
     }
 
-    float thresho = ((float)locallab.threshold.at(sp)) / 100.f;
-    float chromcbdl = (float)locallab.chromacbdl.at(sp);
+    float thresho = ((float)locallab.spots.at(sp).threshold) / 100.f;
+    float chromcbdl = (float)locallab.spots.at(sp).chromacbdl;
 
-    int local_chroma = locallab.chroma.at(sp);
-    int local_sensi = locallab.sensi.at(sp);
-    int local_sensibn = locallab.sensibn.at(sp);
-    int local_sensitm = locallab.sensitm.at(sp);
-    int local_sensiexclu = locallab.sensiexclu.at(sp);
-    int local_sensilc = locallab.sensilc.at(sp);
-    int local_struc = locallab.struc.at(sp);
-    int local_warm = locallab.warm.at(sp);
-    int local_sensih = locallab.sensih.at(sp);
-    int local_dehaze = locallab.dehaz.at(sp);
-    int local_sensicb = locallab.sensicb.at(sp);
-    int local_contrast = locallab.contrast.at(sp);
-    float local_lightness = (float) locallab.lightness.at(sp);
-    int local_transit = locallab.transit.at(sp);
-    double radius = (double) locallab.radius.at(sp);
-    double sharradius = ((double) locallab.sharradius.at(sp)) / 100. ;
-    double lcamount = ((double) locallab.lcamount.at(sp)) / 100. ;
-    double sharblurr = ((double) locallab.sharblur.at(sp)) / 100. ;
-    int local_sensisha = locallab.sensisha.at(sp);
-    int local_sharamount = locallab.sharamount.at(sp);
-    int local_shardamping = locallab.shardamping.at(sp);
-    int local_shariter = locallab.shariter.at(sp);
-    bool inverse = locallab.invers.at(sp);
-    bool curvacti = locallab.curvactiv.at(sp);
-    bool acti = locallab.activlum.at(sp);
+    int local_chroma = locallab.spots.at(sp).chroma;
+    int local_sensi = locallab.spots.at(sp).sensi;
+    int local_sensibn = locallab.spots.at(sp).sensibn;
+    int local_sensitm = locallab.spots.at(sp).sensitm;
+    int local_sensiexclu = locallab.spots.at(sp).sensiexclu;
+    int local_sensilc = locallab.spots.at(sp).sensilc;
+    int local_struc = locallab.spots.at(sp).struc;
+    int local_warm = locallab.spots.at(sp).warm;
+    int local_sensih = locallab.spots.at(sp).sensih;
+    int local_dehaze = locallab.spots.at(sp).dehaz;
+    int local_sensicb = locallab.spots.at(sp).sensicb;
+    int local_contrast = locallab.spots.at(sp).contrast;
+    float local_lightness = (float) locallab.spots.at(sp).lightness;
+    int local_transit = locallab.spots.at(sp).transit;
+    double radius = (double) locallab.spots.at(sp).radius;
+    double sharradius = ((double) locallab.spots.at(sp).sharradius) / 100. ;
+    double lcamount = ((double) locallab.spots.at(sp).lcamount) / 100. ;
+    double sharblurr = ((double) locallab.spots.at(sp).sharblur) / 100. ;
+    int local_sensisha = locallab.spots.at(sp).sensisha;
+    int local_sharamount = locallab.spots.at(sp).sharamount;
+    int local_shardamping = locallab.spots.at(sp).shardamping;
+    int local_shariter = locallab.spots.at(sp).shariter;
+    bool inverse = locallab.spots.at(sp).invers;
+    bool curvacti = locallab.spots.at(sp).curvactiv;
+    bool acti = locallab.spots.at(sp).activlum;
     bool cupas = false; // Provision
-    int local_sensisf = locallab.sensisf.at(sp);
+    int local_sensisf = locallab.spots.at(sp).sensisf;
 
     bool inverserad = false; // Provision
-    bool inverseret = locallab.inversret.at(sp);
-    bool inversesha = locallab.inverssha.at(sp);
-    double strength = (double) locallab.strength.at(sp);
-    float str = (float)locallab.str.at(sp);
+    bool inverseret = locallab.spots.at(sp).inversret;
+    bool inversesha = locallab.spots.at(sp).inverssha;
+    double strength = (double) locallab.spots.at(sp).strength;
+    float str = (float)locallab.spots.at(sp).str;
+//   lp.showmaskexpo = showmexp;
 
     lp.cir = circr;
     lp.actsp = acti;
@@ -513,8 +543,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
-    lp.bilat = locallab.bilateral.at(sp);
-    lp.adjch = (float) locallab.adjblur.at(sp);
+    lp.bilat = locallab.spots.at(sp).bilateral;
+    lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
     lp.esto = est;
@@ -528,27 +558,27 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
-    lp.colorena = locallab.expcolor.at(sp);
-    lp.blurena = locallab.expblur.at(sp);
-    lp.tonemapena = locallab.exptonemap.at(sp);
-    lp.retiena = locallab.expreti.at(sp);
-    lp.sharpena = locallab.expsharp.at(sp);
-    lp.lcena = locallab.expcontrast.at(sp);
-    lp.sfena = locallab.expsoft.at(sp);
-    lp.cbdlena = locallab.expcbdl.at(sp);
-    lp.denoiena = locallab.expdenoi.at(sp);
-    lp.expvib = locallab.expvibrance.at(sp);
+    lp.colorena = locallab.spots.at(sp).expcolor;
+    lp.blurena = locallab.spots.at(sp).expblur;
+    lp.tonemapena = locallab.spots.at(sp).exptonemap;
+    lp.retiena = locallab.spots.at(sp).expreti;
+    lp.sharpena = locallab.spots.at(sp).expsharp;
+    lp.lcena = locallab.spots.at(sp).expcontrast;
+    lp.sfena = locallab.spots.at(sp).expsoft;
+    lp.cbdlena = locallab.spots.at(sp).expcbdl;
+    lp.denoiena = locallab.spots.at(sp).expdenoi;
+    lp.expvib = locallab.spots.at(sp).expvibrance;
     lp.sensv = local_sensiv;
     lp.past =  chromaPastel;
     lp.satur = chromaSatur;
 
-    lp.exposena = locallab.expexpose.at(sp);
+    lp.exposena = locallab.spots.at(sp).expexpose;
     lp.cut_past = cupas;
-    lp.blac = locallab.black.at(sp);
-    lp.shcomp = locallab.shcompr.at(sp);
-    lp.hlcomp = locallab.hlcompr.at(sp);
-    lp.hlcompthr = locallab.hlcomprthresh.at(sp);
-    lp.expcomp = locallab.expcomp.at(sp) / 100.;
+    lp.blac = locallab.spots.at(sp).black;
+    lp.shcomp = locallab.spots.at(sp).shcompr;
+    lp.hlcomp = locallab.spots.at(sp).hlcompr;
+    lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
+    lp.expcomp = locallab.spots.at(sp).expcomp / 100.;
     lp.sensex = local_sensiex;
     lp.strucc = local_struc;
     lp.war = local_warm;
@@ -786,10 +816,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 
     int tempo;
 
-    if (params->locallab.warm.at(sp) > 0) {
-        tempo = 5000 - 30 * params->locallab.warm.at(sp);
+    if (params->locallab.spots.at(sp).warm > 0) {
+        tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
     } else {
-        tempo = 5000 - 49 * params->locallab.warm.at(sp);
+        tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
     }
 
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
@@ -829,7 +859,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
     float yb = 18.f;
     float d, dj;
 
-   // const int gamu = 0; //(params->colorappearance.gamut) ? 1 : 0;
+    // const int gamu = 0; //(params->colorappearance.gamut) ? 1 : 0;
     xw = 100.0f * Xw;
     yw = 100.0f * Yw;
     zw = 100.0f * Zw;
@@ -1052,7 +1082,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 
 void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
 {
-    if (!((bool)params->locallab.expvibrance.at(sp))) {
+    if (!((bool)params->locallab.spots.at(sp).expvibrance)) {
         return;
     }
 
@@ -1065,10 +1095,10 @@ void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  La
     int negat = 0, moreRGB = 0, negsat = 0, moresat = 0;
 #endif
 
-    const float chromaPastel = float (params->locallab.pastels.at(sp))   / 100.0f;
-    const float chromaSatur  = float (params->locallab.saturated.at(sp)) / 100.0f;
+    const float chromaPastel = float (params->locallab.spots.at(sp).pastels)   / 100.0f;
+    const float chromaSatur  = float (params->locallab.spots.at(sp).saturated) / 100.0f;
     const float p00 = 0.07f;
-    const float limitpastelsatur = (static_cast<float>(params->locallab.psthreshold.at(sp).getTopLeft())    / 100.0f) * (1.0f - p00) + p00;
+    const float limitpastelsatur = (static_cast<float>(params->locallab.spots.at(sp).psthreshold.getTopLeft())    / 100.0f) * (1.0f - p00) + p00;
     const float maxdp = (limitpastelsatur - p00) / 4.0f;
     const float maxds = (1.0 - limitpastelsatur) / 4.0f;
     const float p0 = p00 + maxdp;
@@ -1077,7 +1107,7 @@ void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  La
     const float s0 = limitpastelsatur + maxds;
     const float s1 = limitpastelsatur + 2.0f * maxds;
     const float s2 = limitpastelsatur + 3.0f * maxds;
-    const float transitionweighting = static_cast<float>(params->locallab.psthreshold.at(sp).getBottomLeft()) / 100.0f;
+    const float transitionweighting = static_cast<float>(params->locallab.spots.at(sp).psthreshold.getBottomLeft()) / 100.0f;
     float chromamean = 0.0f;
 
     if (chromaPastel != chromaSatur) {
@@ -1109,8 +1139,8 @@ void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  La
 
 
     const bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
-    const bool protectskins = params->locallab.protectskins.at(sp);
-    const bool avoidcolorshift = params->locallab.avoidcolorshift.at(sp);
+    const bool protectskins = params->locallab.spots.at(sp).protectskins;
+    const bool avoidcolorshift = params->locallab.spots.at(sp).avoidcolorshift;
 
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     //inverse matrix user select
@@ -2111,469 +2141,6 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
     delete origblur;
 
 }
-
-void ImProcFunctions::cat02_Local(float moddE, float powdE, float **buflightcat, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
-{
-
-//local cat02
-    BENCHFUN {
-        const float ach = (float)lp.trans / 100.f;
-        float varsens =  lp.sensex;
-
-
-        //chroma
-        constexpr float amplchsens = 2.5f;
-        constexpr float achsens = (amplchsens - 1.f) / (100.f - 20.f); //20. default locallab.sensih
-        constexpr float bchsens = 1.f - 20.f * achsens;
-        const float multchro = varsens * achsens + bchsens;
-
-        //luma
-
-        //skin
-        constexpr float amplchsensskin = 1.6f;
-        constexpr float achsensskin = (amplchsensskin - 1.f) / (100.f - 20.f); //20. default locallab.sensih
-        constexpr float bchsensskin = 1.f - 20.f * achsensskin;
-        const float multchroskin = varsens * achsensskin + bchsensskin;
-
-        //transition = difficult to avoid artifact with scope on flat area (sky...)
-
-        constexpr float delhu = 0.05f; //between 0.05 and 0.2
-
-        const float apl = (-1.f) / delhu;
-        const float bpl = - apl * hueplus;
-        const float amo = 1.f / delhu;
-        const float bmo = - amo * huemoins;
-
-
-        const float pb = 4.f;
-        const float pa = (1.f - pb) / 40.f;
-        float refa = chromaref * cos(hueref);
-        float refb = chromaref * sin(hueref);
-
-        const float ahu = 1.f / (2.8f * varsens - 280.f);
-        const float bhu = 1.f - ahu * 2.8f * varsens;
-
-        const float alum = 1.f / (varsens - 100.f);
-        const float blum = 1.f - alum * varsens;
-
-        int GW = transformed->W;
-        int GH = transformed->H;
-
-        LabImage *origblur = nullptr;
-
-        origblur = new LabImage(GW, GH);
-
-        float radius = 3.f / sk;
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-            gaussianBlur(original->L, origblur->L, GW, GH, radius);
-            gaussianBlur(original->a, origblur->a, GW, GH, radius);
-            gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
-        }
-
-#ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
-#endif
-        {
-#ifdef __SSE2__
-            float atan2Buffer[transformed->W] ALIGNED16;
-            float sqrtBuffer[transformed->W] ALIGNED16;
-            vfloat c327d68v = F2V(327.68f);
-#endif
-
-#ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
-#endif
-
-            for (int y = 0; y < transformed->H; y++)
-            {
-
-                const int loy = cy + y;
-                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
-
-                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                    for (int x = 0; x < transformed->W; x++) {
-                        transformed->L[y][x] = original->L[y][x];
-                    }
-
-                    continue;
-                }
-
-#ifdef __SSE2__
-                int i = 0;
-
-                for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(origblur->a[y][i]);
-                    vfloat bv = LVFU(origblur->b[y][i]);
-                    STVF(atan2Buffer[i], xatan2f(bv, av));
-                    STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-                }
-
-                for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-                }
-
-#endif
-
-                for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
-                    int begx = int (lp.xc - lp.lxL);
-                    int begy = int (lp.yc - lp.lyT);
-
-                    int zone = 0;
-                    float localFactor = 1.f;
-
-                    if (lp.shapmet == 0) {
-                        calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else if (lp.shapmet == 1) {
-                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
-                    }
-
-
-                    if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
-                        transformed->L[y][x] = original->L[y][x];
-                        continue;
-                    }
-
-#ifdef __SSE2__
-                    float rhue = atan2Buffer[x];
-                    float rchro = sqrtBuffer[x];
-#else
-                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
-                    float rL = origblur->L[y][x] / 327.68f;
-                    float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-
-                    float cli = 1.f;
-                    float cla = 1.f;
-                    float clb = 1.f;
-
-                    cli = buflightcat[loy - begy][lox - begx];
-                    cla = buf_a_cat[loy - begy][lox - begx];
-                    clb = buf_b_cat[loy - begy][lox - begx];
-
-
-                    float aplus = (1.f - cli) / delhu;
-                    float bplus = 1.f - aplus * hueplus;
-                    float amoins = (cli - 1.f) / delhu;
-                    float bmoins = 1.f - amoins * huemoins;
-
-                    float aplusa = (1.f - cla) / delhu;
-                    float bplusa = 1.f - aplusa * hueplus;
-                    float amoinsa = (cla - 1.f) / delhu;
-                    float bmoinsa = 1.f - amoinsa * huemoins;
-
-                    float aplusb = (1.f - clb) / delhu;
-                    float bplusb = 1.f - aplusb * hueplus;
-                    float amoinsb = (clb - 1.f) / delhu;
-                    float bmoinsb = 1.f - amoinsb * huemoins;
-
-                    float realstr = 1.f;
-                    float realstra = 1.f;
-                    float realstrb = 1.f;
-
-                    //prepare shape detection
-                    float deltachro = fabs(rchro - chromaref);
-                    float deltahue = fabs(rhue - hueref);
-
-                    if (deltahue > rtengine::RT_PI) {
-                        deltahue = - (deltahue - 2.f * rtengine::RT_PI);
-                    }
-
-                    float deltaE = 20.f * deltahue + deltachro; //between 0 and 280
-                    float deltaL = fabs(lumaref - rL);  //between 0 and 100
-
-                    float kch = 1.f;
-                    float khu = 0.f;
-                    float fach = 1.f;
-                    float falu = 1.f;
-
-                    if (deltachro < 160.f * SQR(varsens / 100.f)) {
-                        kch = 1.f;
-                    } else {
-                        float ck = 160.f * SQR(varsens / 100.f);
-                        float ak = 1.f / (ck - 160.f);
-                        float bk = -160.f * ak;
-                        kch = ak * deltachro + bk;
-                    }
-
-                    float kkch = 1.f;
-                    float kchchro = 1.f;
-                    kkch = pa * varsens + pb;
-                    float kch0 = kch;
-
-                    if (varsens < 40.f) {
-                        kch = kchchro = pow(kch0, kkch);    //increase under 40
-                        float dEsens = moddE * varsens;
-                        float kdE = 1.f;
-
-                        if (dE > dEsens) {
-                            kdE = 1.f;
-                        } else {
-                            kdE = SQR(SQR(dE / dEsens));
-                        }
-
-                        if (deltahue < 0.3f && settings->detectshape == true) {
-                            kchchro = kch = pow(kch0, (1.f + kdE * moddE * (3.f - 10.f * deltahue)) * kkch);
-                        }
-                    }
-
-                    float dEsensall = varsens;
-                    float kD = 1.f;
-
-                    if (settings->detectshape == true) {
-                        if (dE < dEsensall) {
-                            kD = 1.f;
-                        } else {
-                            kD = pow(dEsensall / dE, powdE);
-                        }
-                    }
-
-                    /*
-                                        if (varsens < 40.f) {
-                                            kch = pow(kch, pa * varsens + pb);    //increase under 40
-                                        }
-                    */
-                    bool kzon = false;
-
-                    //transition = difficult to avoid artifact with scope on flat area (sky...)
-                    //hue detection
-                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                        if (rhue >= hueplus - delhu)  {
-                            realstr = aplus * rhue + bplus;
-                            realstra = aplusa * rhue + bplusa;
-                            realstrb = aplusb * rhue + bplusb;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstra = amoinsa * rhue + bmoinsa;
-                            realstrb = amoinsb * rhue + bmoinsb;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstra = cla;
-                            realstrb = clb;
-
-                        }
-
-                        kzon = true;
-                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realstr = aplus * rhue + bplus;
-                            realstra = aplusa * rhue + bplusa;
-                            realstrb = aplusb * rhue + bplusb;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstra = amoinsa * rhue + bmoinsa;
-                            realstrb = amoinsb * rhue + bmoinsb;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstra = cla;
-                            realstrb = clb;
-                        }
-
-                        kzon = true;
-                    }
-
-                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realstr = aplus * rhue + bplus;
-                            realstra = aplusa * rhue + bplusa;
-                            realstrb = aplusb * rhue + bplusb;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstra = amoinsa * rhue + bmoinsa;
-                            realstrb = amoinsb * rhue + bmoinsb;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstra = cla;
-                            realstrb = clb;
-                        }
-
-                        kzon = true;
-                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realstr = aplus * rhue + bplus;
-                            realstra = aplusa * rhue + bplusa;
-                            realstrb = aplusb * rhue + bplusb;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstra = amoinsa * rhue + bmoinsa;
-                            realstrb = amoinsb * rhue + bmoinsb;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstra = cla;
-                            realstrb = clb;
-                        }
-
-                        kzon = true;
-                    }
-
-                    realstr *= kD;
-                    realstra *= kD;
-                    realstrb *= kD;
-
-                    //shape detection for hue chroma and luma
-
-                    if (settings->detectshape == false) {
-                        if (varsens <= 20.f) { //to try...
-
-                            if (deltaE <  2.8f * varsens) {
-                                fach = khu;
-                            } else {
-                                fach = khu * (ahu * deltaE + bhu);
-                            }
-
-                            float kcr = 10.f;
-
-                            if (rchro < kcr) {
-                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                            }
-
-                            if (lp.qualmet >= 1) {
-                            } else {
-                                fach = 1.f;
-                            }
-
-                            if (deltaL <  varsens) {
-                                falu = 1.f;
-                            } else {
-                                falu = alum * deltaL + blum;
-                            }
-
-                        }
-                    }
-
-                    //    float kdiff = 0.f;
-                    // I add these functions...perhaps not good
-                    if (kzon) {
-                        if (varsens < 60.f) { //arbitrary value
-                            if (hueref < -1.1f && hueref > -2.8f) { // detect blue sky
-                                if (chromaref > 0.f && chromaref < 35.f * multchro) { // detect blue sky
-                                    if ((rhue > -2.79f && rhue < -1.11f) && (rchro < 35.f * multchro)) {
-                                        realstr *= 0.9f;
-                                    } else {
-                                        realstr = 1.f;
-                                    }
-                                }
-                            } else {
-                                realstr = cli;
-                            }
-
-                            if (varsens < 50.f) { //&& lp.chro > 0.f
-                                if (hueref > -0.1f && hueref < 1.6f) { // detect skin
-                                    if (chromaref > 0.f && chromaref < 55.f * multchroskin) { // detect skin
-                                        if ((rhue > -0.09f && rhue < 1.59f) && (rchro < 55.f * multchroskin)) {
-                                            realstr *= 0.7f;
-                                        } else {
-                                            realstr = 1.f;
-                                        }
-                                    }
-                                } else {
-                                    realstr = cli;
-                                }
-                            }
-                        }
-
-                    }
-
-                    float kcr = 100.f * lp.thr;
-                    float falL = 1.f;
-
-                    if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
-                        falL *= pow(rchro / kcr, lp.iterat / 10.f);
-                    }
-
-                    if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
-                        switch (zone) {
-                            case 0: { // outside selection and outside transition zone => no effect, keep original values
-                                transformed->L[y][x] = original->L[y][x];
-                                transformed->a[y][x] = original->a[y][x];
-                                transformed->b[y][x] = original->b[y][x];
-
-                                break;
-                            }
-
-                            case 1: { // inside transition zone
-                                float factorx = localFactor;
-
-                                float difL;
-                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                difL *= factorx * (100.f + realstr * falL) / 100.f;
-                                difL *= kch * fach;
-
-                                transformed->L[y][x] = original->L[y][x] + difL;
-                                float difa, difb;
-
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                difa *= factorx * (100.f + realstra * falu * falL) / 100.f;
-                                difb *= factorx * (100.f + realstrb * falu * falL) / 100.f;
-                                difa *= kch * fach;
-                                difb *= kch * fach;
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-
-
-                                break;
-
-                            }
-
-                            case 2: { // inside selection => full effect, no transition
-                                float difL;
-
-                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                difL *= (100.f + realstr * falL) / 100.f;
-                                difL *= kch * fach;
-                                transformed->L[y][x] = original->L[y][x] + difL;
-                                float difa, difb;
-
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                difa *= (100.f + realstra * falu * falL) / 100.f;
-                                difb *= (100.f + realstrb * falu * falL) / 100.f;
-                                difa *= kch * fach;
-                                difb *= kch * fach;
-
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-
-                            }
-                        }
-
-                    }
-                }
-            }
-
-        }
-        delete origblur;
-
-    }
-}
-
 
 void ImProcFunctions::cbdl_Local(float moddE, float powdE, float ** buflight, float ** bufchrom, float **loctemp, float **loctempch, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int chro, int sk)
 {
@@ -4472,722 +4039,16 @@ struct local_contra {
     float al, bl;
 };
 
-void ImProcFunctions::Contrast_Local(float powdE, int call, float ** buflightc, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
-{
-    BENCHFUN
-// contrast - perhaps for 4 areas   if need
-// I tried shmap adaptaed to Lab, but no real gain and artifacts
-    const float localtype = lumaref; // always spot area
-    const float ach = (float)lp.trans / 100.f;
-    float reducac;
-
-    //constant and variable to prepare shape detection
-    if (lp.sens < 30.f) {
-        reducac = 0.2f * (lp.sens / 100.f);
-    } else {
-        float areduc = 0.6285714f; //0.44f/0.7f;
-        float breduc = 0.5f - areduc;
-        reducac = areduc * (lp.sens / 100.f) + breduc;
-    }
-
-    const float realcox = lco.dx, realcoy = lco.dy;
-
-    lco.alsup = (-realcox) / (localtype / 2.f);
-    lco.blsup = -lco.alsup * localtype;
-    lco.alsup2 = (realcoy) / (50.f - localtype / 2.f);
-    lco.blsup2 = -lco.alsup2 * localtype;
-    lco.alsup3 = (realcoy) / (localtype / 2.f - 50.f);
-    lco.blsup3 = -lco.alsup3 * 100.f;
-    lco.aDY = realcoy;
-
-
-    constexpr float delhu = 0.1f; //between 0.05 and 0.2
-
-    const float apl = (-1.f) / delhu;
-    const float bpl = - apl * hueplus;
-    const float amo = 1.f / delhu;
-    const float bmo = - amo * huemoins;
-
-
-    const float pb = 4.f;
-    const float pa = (1.f - pb) / 40.f;
-    float refa = chromaref * cos(hueref);
-    float refb = chromaref * sin(hueref);
-
-    //const float moddE = 2.f;
-
-    const float ahu = 1.f / (2.8f * lp.sens - 280.f);
-    const float bhu = 1.f - ahu * 2.8f * lp.sens;
-
-    lco.alinf = realcox / (localtype / 2.f);
-    const float vi = (localtype / 2.f) / 100.f;
-    const float vinf = (50.f + localtype / 2.f) / 100.f;
-    ImProcFunctions::secondeg_begin(reducac, vi, lco.aa, lco.bb); //parabolic
-    ImProcFunctions::secondeg_end(reducac, vinf, lco.aaa, lco.bbb, lco.ccc); //parabolic
-
-    int GW = transformed->W;
-    int GH = transformed->H;
-
-    LabImage *origblur = nullptr;
-
-    origblur = new LabImage(GW, GH);
-
-    float radius = 3.f / sk;
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        gaussianBlur(original->L, origblur->L, GW, GH, radius);
-        gaussianBlur(original->a, origblur->a, GW, GH, radius);
-        gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
-    }
-
-
-    if (call <= 3) {
-#ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
-#endif
-        {
-            //Todo optimization in this first part with something equivalent to bufcolorig and bufcoltra in colorlight_local
-#ifdef __SSE2__
-            float atan2Buffer[transformed->W] ALIGNED16;
-            float sqrtBuffer[transformed->W] ALIGNED16;
-            vfloat c327d68v = F2V(327.68f);
-#endif
-
-#ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
-#endif
-
-            for (int y = 0; y < transformed->H; y++)
-            {
-                const int loy = cy + y;
-                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
-
-                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                    continue;
-                }
-
-#ifdef __SSE2__
-                int i = 0;
-
-                for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(origblur->a[y][i]);
-                    vfloat bv = LVFU(origblur->b[y][i]);
-                    STVF(atan2Buffer[i], xatan2f(bv, av));
-                    STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-                }
-
-                for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-                }
-
-#endif
-
-                for (int x = 0; x < transformed->W; x++) {
-                    const int lox = cx + x;
-
-                    float rL;
-
-                    if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && (rL = origblur->L[y][x]) > 3.2768f) {
-                        // rL > 3.2768f to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
-                        int zone = 0;
-
-                        float localFactor = 1.f;
-
-                        if (lp.shapmet == 0) {
-                            calcTransition(lox, loy, ach, lp, zone, localFactor);
-                        } else if (lp.shapmet == 1) {
-                            calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
-                        }
-
-                        //     calcTransition(lox, loy, ach, lp, zone, localFactor);
-
-                        if (zone == 0) {
-                            continue;
-                        }
-
-#ifdef __SSE2__
-                        float rhue = atan2Buffer[x];
-                        float rchro = sqrtBuffer[x];
-#else
-                        float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-                        float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
-                        rL = origblur->L[y][x] / 327.68f;
-
-                        float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-
-                        //prepare shape detection
-                        float khu = 0.f;
-                        float kch = 1.f;
-                        float fach = 1.f;
-
-                        float cli = 1.f;
-
-                        const int begx = lp.xc - lp.lxL;
-                        const int begy = lp.yc - lp.lyT;
-
-                        if (lp.curvact) {
-
-                            cli = buflightc[loy - begy][lox - begx];
-
-                            if (cli ==  0.0f) {
-                                cli = 0.01f;
-                            }
-                        }
-
-                        //parameters for linear interpolation in function of real hue
-                        float apluscligh = (1.f - cli) / delhu;
-                        float bpluscligh = 1.f - apluscligh * hueplus;
-                        float amoinscligh = (cli - 1.f) / delhu;
-                        float bmoinscligh = 1.f - amoinscligh * huemoins;
-                        float realcligh = 1.f;
-                        float deltachro = fabs(rchro - chromaref);
-                        float deltahue = fabs(rhue - hueref);
-
-                        if (deltahue > rtengine::RT_PI) {
-                            deltahue = - (deltahue - 2.f * rtengine::RT_PI);
-                        }
-
-                        float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-
-                        //kch to modulate action with chroma
-                        if (deltachro < 160.f * SQR(lp.sens / 100.f)) {  // TODOPRECOMPUTE
-                            kch = 1.f;
-                        } else {
-                            float ck = 160.f * SQR(lp.sens / 100.f);
-                            float ak = 1.f / (ck - 160.f);
-                            float bk = -160.f * ak;
-                            kch = ak * deltachro + bk;
-
-                            if (lp.sens < 40.f) {
-                                kch = pow_F(kch, pa * lp.sens + pb);    //increase under 40
-                            }
-                        }
-
-                        float dEsensall = lp.sens;
-                        float kD = 1.f;
-
-                        if (settings->detectshape == true) {
-                            if (dE < dEsensall) {
-                                kD = 1.f;
-                            } else {
-                                kD = pow(dEsensall / dE, powdE);
-                            }
-                        }
-
-                        // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                        if (lp.sens < 100.f && lp.qualmet >= 1) { //to try...
-                            //hue detection
-                            if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                                if (rhue >= hueplus - delhu)  {
-                                    realcligh = apluscligh * rhue + bpluscligh;
-
-                                    khu  = apl * rhue + bpl;
-                                } else if (rhue < huemoins + delhu)  {
-                                    realcligh = amoinscligh * rhue + bmoinscligh;
-
-                                    khu = amo * rhue + bmo;
-                                } else {
-                                    realcligh = cli;
-
-                                    khu = 1.f;
-                                }
-
-
-                            } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                                if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                                    realcligh = apluscligh * rhue + bpluscligh;
-
-                                    khu  = apl * rhue + bpl;
-                                } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                                    realcligh = amoinscligh * rhue + bmoinscligh;
-
-                                    khu = amo * rhue + bmo;
-                                } else {
-                                    realcligh = cli;
-
-                                    khu = 1.f;
-                                }
-
-                            }
-
-                            if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                                if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                                    realcligh = apluscligh * rhue + bpluscligh;
-
-                                    khu  = apl * rhue + bpl;
-                                } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                                    realcligh = amoinscligh * rhue + bmoinscligh;
-                                    khu = amo * rhue + bmo;
-                                } else {
-                                    realcligh = cli;
-
-                                    khu = 1.f;
-                                }
-
-                            } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                                if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                                    realcligh = apluscligh * rhue + bpluscligh;
-
-                                    khu  = apl * rhue + bpl;
-                                } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                                    realcligh = amoinscligh * rhue + bmoinscligh;
-
-                                    khu = amo * rhue + bmo;
-                                } else {
-                                    realcligh = cli;
-
-                                    khu = 1.f;
-                                }
-
-                            }
-
-                            realcligh *= kD;
-
-                            if (deltaE <  2.8f * lp.sens) {
-                                fach = khu;
-                            } else {
-                                fach = khu * (ahu * deltaE + bhu);
-                            }
-
-                            constexpr float kcr = 10.f;
-
-                            if (rchro < kcr) {
-                                fach *= SQR(rchro) / SQR(kcr);
-                            }
-                        }
-
-                        float kcr = 100.f * lp.thr;
-                        float falL = 1.f;
-
-                        if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
-                            falL *= pow_F(rchro / kcr, lp.iterat / 10.f);
-                        }
-
-                        float modu =  1.f ;//realclig / cli;
-                        float localty = localtype;
-
-                        switch (zone) {
-
-                            case 1: { // inside transition zone
-                                if (!lp.curvact) {
-                                    modu = 1.f;
-                                } else {
-                                    modu = CLIP1(realcligh / cli);
-
-                                }
-
-
-                                if (original->L[y][x] < 32768.f) {
-                                    float factorx = localFactor;
-                                    float prov100 = original->L[y][x] / 32768.f;
-                                    float prov = prov100 * 100.f;
-
-                                    if (prov > localty) {
-                                        if (prov >= localty && prov < 50.f + localty / 2.f) {
-                                            float core = (lco.alsup2 * prov + lco.blsup2) ;
-                                            core *= factorx;
-
-                                            transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * (core) * kch * fach * falL * modu);
-                                        } else {
-                                            float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
-
-                                            core *= factorx;
-
-                                            transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * (core) * kch * fach * falL * modu);
-                                        }
-                                    } else  { //inferior
-                                        if (2.f * prov > localty && prov < localty)  {
-                                            float core = (lco.alsup * prov + lco.blsup) ;
-                                            core *= factorx;
-
-                                            transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
-                                        } else if (2.f * prov <= localtype) {
-                                            float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
-
-                                            core *= factorx;
-
-                                            transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
-                                        }
-                                    }
-                                }
-
-                                break;
-                            }
-
-                            case 2: { // inside selection => full effect, no transition
-                                if (!lp.curvact) {
-                                    modu = 1.f;
-                                } else {
-                                    modu = CLIP1(realcligh / cli);
-
-                                }
-
-                                if (original->L[y][x] < 32768.f) {
-                                    float prov100 = original->L[y][x] / 32768.f;
-                                    float prov = prov100 * 100.f;
-
-                                    if (prov > localty) {
-                                        if (prov >= localty && prov < 50.f + localty / 2.f) {
-                                            float core = (lco.alsup2 * prov + lco.blsup2) ;
-                                            transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * core * kch * fach * falL * modu);
-                                        } else {
-                                            float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
-                                            transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * core * kch * fach * falL * modu);
-                                        }
-                                    } else  { //inferior
-                                        if (2.f * prov > localty && prov < localty)  {
-                                            float core = (lco.alsup * prov + lco.blsup) ;
-                                            transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
-                                        } else if (2.f * prov <= localtype) {
-                                            float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
-                                            transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    delete origblur;
-}
-
-void ImProcFunctions::InverseContrast_Local(float ave, struct local_contra & lco, const struct local_params & lp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
-
-{
-    //  BENCHFUN
-    //  float ach = (float)lp.trans / 100.f;
-    const float localtype = lumaref; // always spot area
-    const float ach = (float)lp.trans / 100.f;
-    float reducac;
-
-    //constant and variable to prepare shape detection
-    if (lp.sens < 30.f) {
-        reducac = 0.2f * (lp.sens / 100.f);
-    } else {
-        float areduc = 0.6285714f; //0.44f/0.7f;
-        float breduc = 0.5f - areduc;
-        reducac = areduc * (lp.sens / 100.f) + breduc;
-    }
-
-    const float realcox = lco.dx, realcoy = lco.dy;
-
-    lco.alsup = (-realcox) / (localtype / 2.f);
-    lco.blsup = -lco.alsup * localtype;
-    lco.alsup2 = (realcoy) / (50.f - localtype / 2.f);
-    lco.blsup2 = -lco.alsup2 * localtype;
-    lco.alsup3 = (realcoy) / (localtype / 2.f - 50.f);
-    lco.blsup3 = -lco.alsup3 * 100.f;
-    lco.aDY = realcoy;
-
-
-    constexpr float delhu = 0.1f; //between 0.05 and 0.2
-
-    const float apl = (-1.f) / delhu;
-    const float bpl = - apl * hueplus;
-    const float amo = 1.f / delhu;
-    const float bmo = - amo * huemoins;
-
-
-    const float pb = 4.f;
-    const float pa = (1.f - pb) / 40.f;
-
-    const float ahu = 1.f / (2.8f * lp.sens - 280.f);
-    const float bhu = 1.f - ahu * 2.8f * lp.sens;
-
-    lco.alinf = realcox / (localtype / 2.f);
-    const float vi = (localtype / 2.f) / 100.f;
-    const float vinf = (50.f + localtype / 2.f) / 100.f;
-    ImProcFunctions::secondeg_begin(reducac, vi, lco.aa, lco.bb); //parabolic
-    ImProcFunctions::secondeg_end(reducac, vinf, lco.aaa, lco.bbb, lco.ccc); //parabolic
-
-    int GW = transformed->W;
-    int GH = transformed->H;
-
-    LabImage *origblur = nullptr;
-
-    origblur = new LabImage(GW, GH);
-
-    float radius = 3.f / sk;
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        gaussianBlur(original->L, origblur->L, GW, GH, radius);
-        gaussianBlur(original->a, origblur->a, GW, GH, radius);
-        gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel if (multiThread)
-#endif
-    {
-        //Todo optimization in this first part with something equivalent to bufcolorig and bufcoltra in colorlight_local
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
-
-#ifdef _OPENMP
-        #pragma omp for schedule(dynamic,16)
-#endif
-
-        for (int y = 0; y < transformed->H; y++) {
-            const int loy = cy + y;
-
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
-
-            for (int x = 0; x < transformed->W; x++) {
-                const int lox = cx + x;
-
-                //      float rL;
-
-                // rL > 3.2768f to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
-                int zone = 0;
-
-                float localFactor = 1.f;
-
-                if (lp.shapmet == 0) {
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
-                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
-                }
-
-
-
-#ifdef __SSE2__
-                float rhue = atan2Buffer[x];
-                float rchro = sqrtBuffer[x];
-#else
-                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
-                //prepare shape detection
-                float khu = 0.f;
-                float kch = 1.f;
-                float fach = 1.f;
-
-                float deltachro = fabs(rchro - chromaref);
-                float deltahue = fabs(rhue - hueref);
-
-                if (deltahue > rtengine::RT_PI) {
-                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
-                }
-
-                float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-
-                //kch to modulate action with chroma
-                if (deltachro < 160.f * SQR(lp.sens / 100.f)) {  // TODOPRECOMPUTE
-                    kch = 1.f;
-                } else {
-                    float ck = 160.f * SQR(lp.sens / 100.f);
-                    float ak = 1.f / (ck - 160.f);
-                    float bk = -160.f * ak;
-                    kch = ak * deltachro + bk;
-
-                    if (lp.sens < 40.f) {
-                        kch = pow_F(kch, pa * lp.sens + pb);    //increase under 40
-                    }
-                }
-
-                // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                if (lp.sens < 100.f && lp.qualmet >= 1) { //to try...
-                    //hue detection
-                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                        if (rhue >= hueplus - delhu)  {
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue < huemoins + delhu)  {
-
-                            khu = amo * rhue + bmo;
-                        } else {
-
-                            khu = 1.f;
-                        }
-
-
-                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-
-                            khu = amo * rhue + bmo;
-                        } else {
-
-                            khu = 1.f;
-                        }
-
-                    }
-
-                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-
-                            khu = 1.f;
-                        }
-
-                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-
-                            khu = amo * rhue + bmo;
-                        } else {
-
-                            khu = 1.f;
-                        }
-
-                    }
-
-                    if (deltaE <  2.8f * lp.sens) {
-                        fach = khu;
-                    } else {
-                        fach = khu * (ahu * deltaE + bhu);
-                    }
-
-                    constexpr float kcr = 10.f;
-
-                    if (rchro < kcr) {
-                        fach *= SQR(rchro) / SQR(kcr);
-                    }
-                }
-
-                float kcr = 100.f * lp.thr;
-                float falL = 1.f;
-
-                if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
-                    falL *= pow_F(rchro / kcr, lp.iterat / 10.f);
-                }
-
-                if (lp.sens > 75.f) {
-                    fach = 1.f;
-                    kch = 1.f;
-                    falL = 1.f;
-                }
-
-                switch (zone) {
-                    case 0: { //
-                        if (original->L[y][x] < 32768.f) {
-                            float prov = original->L[y][x];
-
-                            if (original->L[y][x] > ave) {
-                                float kh = lco.ah * (original->L[y][x] / 327.68f) + lco.bh;
-                                original->L[y][x] = ave + kh * (original->L[y][x] - ave);
-                            } else  {
-                                float kl = lco.al * (original->L[y][x] / 327.68f) + 1.f;
-                                original->L[y][x] = ave - kl * (ave - original->L[y][x]);
-                            }
-
-                            float diflc = original->L[y][x] - prov;
-                            transformed->L[y][x] =  prov + diflc * fach * kch * falL;
-                        } else {
-                            transformed->L[y][x] = original->L[y][x];
-                        }
-
-                        break;
-                    }
-
-                    case 1: { // inside transition zone
-
-                        if (original->L[y][x] < 32768.f) {
-                            float factorx = localFactor;
-                            factorx = 1.f - factorx;
-                            float prov = original->L[y][x];
-
-                            if (original->L[y][x] > ave) {
-                                float kh = lco.ah * (original->L[y][x] / 327.68f) + lco.bh;
-                                original->L[y][x] = ave + kh * (original->L[y][x] - ave);
-                            } else  {
-                                float kl = lco.al * (original->L[y][x] / 327.68f) + 1.f;
-                                original->L[y][x] = ave - kl * (ave - original->L[y][x]);
-                            }
-
-                            float diflc = original->L[y][x] - prov;
-                            diflc *= factorx;
-                            transformed->L[y][x] =  prov + diflc * fach * kch * falL;
-
-                        } else {
-                            transformed->L[y][x] = original->L[y][x];
-                        }
-
-                        break;
-                    }
-
-                    case 2: { // inside selection => no effect, keep original values
-                        transformed->L[y][x] = original->L[y][x];
-                    }
-                }
-            }
-        }
-    }
-    delete origblur;
-}
-
-
 static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurveloc)
 //replace L-curve that does not work in local or bad
 {
-    /*
-        float blac = 0.3f;
-
-        if (inv == false) {
-            blac = 0.99f;
-        } else {
-            if (koef < -90.f) {
-                blac = -0.069f * koef - 5.91f;
-            }
-        }
-    */
     if (koef >= 0.f) {
-        //  lumnew = lum + 0.2f * (33000.f - lum) * koef / 100.f;
         lumnew = lightCurveloc[lum];
     }
 
     if (koef < 0.f) {
         lumnew = lightCurveloc[lum];
 
-        /*
-           lumnew = lum + blac * lum * koef / 100.f;//0.999 instead of 0.2
-
-           if (lumnew < 0.f) {
-               float kc = lum / (lum - lumnew);
-               lumnew = lum + kc * 0.2f * lum * koef / 100.f;
-
-           }
-
-           //    if (inv == false && koef == -100.f) {
-           */
         if (koef == -100.f) {
             lumnew = 0.f;
         }
@@ -5197,6 +4058,7 @@ static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurvel
     lumnew = CLIPLOC(lumnew);
 
 }
+
 
 void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
@@ -5675,6 +4537,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
             }
         }
     }
+        delete origblur;    
 }
 
 
@@ -6176,7 +5039,7 @@ void ImProcFunctions::Exclude_Local(float moddE, float powdE, int sen, float **d
 }
 
 
-void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
+void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * difLab, const LabImage * const tmp1, int cx, int cy, int sk)
 {
 
 //local exposure and vibrance
@@ -6238,11 +5101,27 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
         int GW = transformed->W;
         int GH = transformed->H;
 
+
+
         LabImage *origblur = nullptr;
 
         origblur = new LabImage(GW, GH);
+        LabImage *origblurmask = nullptr;
 
         float radius = 3.f / sk;
+        bool usemask = lp.showmaskexpmet >= 2  && senstype == 1;
+    if (usemask) {
+        origblurmask = new LabImage(GW, GH);
+
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+        {
+            gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
+            gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
+            gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
+        }
+    } 
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -6327,14 +5206,35 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                     float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                     float rL = origblur->L[y][x] / 327.68f;
-                    float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                    float rhuemask = 0.f;
+                    float rchromask = 0.f;
+                    float rLmask = 0.f;
+                    float dE = 0.f;
+                    if (usemask) {
+                        rhuemask = xatan2f(origblurmask->b[y][x], origblurmask->a[y][x]);
+                        rchromask = sqrt(SQR(origblurmask->b[y][x]) + SQR(origblurmask->a[y][x])) / 327.68f;
+                        rLmask = origblurmask->L[y][x] / 327.68f;
+                        dE = sqrt(SQR(refa - origblurmask->a[y][x] / 327.68f) + SQR(refb - origblurmask->b[y][x] / 327.68f) + SQR(lumaref - origblurmask->L[y][x] / 327.68f));
+                    } else {
+                        dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                        rhuemask = rhue;
+                        rchromask = rchro;
+                        rLmask = rL;
+                    }
 
                     float cli = 1.f;
                     float clc = 1.f;
+                    float cla = 1.f;
+                    float clb = 1.f;
 
                     //                       if (lp.curvact == true) {
                     cli = (buflight[loy - begy][lox - begx]);
                     clc = (bufchro[loy - begy][lox - begx]);
+
+                    if (senstype == 1) {
+                        cla = buf_a_cat[loy - begy][lox - begx];
+                        clb = buf_b_cat[loy - begy][lox - begx];
+                    }
 
                     float aplus = (1.f - cli) / delhu;
                     float bplus = 1.f - aplus * hueplus;
@@ -6346,18 +5246,31 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                     float amoinsch = (clc - 1.f) / delhu;
                     float bmoinsch = 1.f - amoinsch * huemoins;
 
+                    float aplusa = (1.f - cla) / delhu;
+                    float bplusa = 1.f - aplusa * hueplus;
+                    float amoinsa = (cla - 1.f) / delhu;
+                    float bmoinsa = 1.f - amoinsa * huemoins;
+
+                    float aplusb = (1.f - clb) / delhu;
+                    float bplusb = 1.f - aplusb * hueplus;
+                    float amoinsb = (clb - 1.f) / delhu;
+                    float bmoinsb = 1.f - amoinsb * huemoins;
+
                     float realstr = 1.f;
                     float realstrch = 1.f;
+                    float realstra = 1.f;
+                    float realstrb = 1.f;
+
                     //prepare shape detection
-                    float deltachro = fabs(rchro - chromaref);
-                    float deltahue = fabs(rhue - hueref);
+                    float deltachro = fabs(rchromask - chromaref);
+                    float deltahue = fabs(rhuemask - hueref);
 
                     if (deltahue > rtengine::RT_PI) {
                         deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                     }
 
                     float deltaE = 20.f * deltahue + deltachro; //between 0 and 280
-                    float deltaL = fabs(lumaref - rL);  //between 0 and 100
+                    float deltaL = fabs(lumaref - rLmask);  //between 0 and 100
 
                     float kch = 1.f;
                     float kchchro = 1.f;
@@ -6420,17 +5333,23 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                         if (rhue >= hueplus - delhu)  {
                             realstr = aplus * rhue + bplus;
                             realstrch = aplusch * rhue + bplusch;
+                            realstra = aplusa * rhue + bplusa;
+                            realstrb = aplusb * rhue + bplusb;
                             khu  = apl * rhue + bpl;
 
                         } else if (rhue < huemoins + delhu)  {
                             realstr = amoins * rhue + bmoins;
                             realstrch = amoinsch * rhue + bmoinsch;
+                            realstra = amoinsa * rhue + bmoinsa;
+                            realstrb = amoinsb * rhue + bmoinsb;
                             khu = amo * rhue + bmo;
 
                         } else {
                             realstr = cli;
                             khu = 1.f;
                             realstrch = clc;
+                            realstra = cla;
+                            realstrb = clb;
 
                         }
 
@@ -6439,17 +5358,23 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             realstr = aplus * rhue + bplus;
                             realstrch = aplusch * rhue + bplusch;
+                            realstra = aplusa * rhue + bplusa;
+                            realstrb = aplusb * rhue + bplusb;
                             khu  = apl * rhue + bpl;
 
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
                             realstr = amoins * rhue + bmoins;
                             realstrch = amoinsch * rhue + bmoinsch;
+                            realstra = amoinsa * rhue + bmoinsa;
+                            realstrb = amoinsb * rhue + bmoinsb;
                             khu = amo * rhue + bmo;
 
                         } else {
                             realstr = cli;
                             khu = 1.f;
                             realstrch = clc;
+                            realstra = cla;
+                            realstrb = clb;
 
                         }
 
@@ -6460,17 +5385,23 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             realstr = aplus * rhue + bplus;
                             realstrch = aplusch * rhue + bplusch;
+                            realstra = aplusa * rhue + bplusa;
+                            realstrb = aplusb * rhue + bplusb;
                             khu  = apl * rhue + bpl;
 
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
                             realstr = amoins * rhue + bmoins;
                             realstrch = amoinsch * rhue + bmoinsch;
+                            realstra = amoinsa * rhue + bmoinsa;
+                            realstrb = amoinsb * rhue + bmoinsb;
                             khu = amo * rhue + bmo;
 
                         } else {
                             realstr = cli;
                             khu = 1.f;
                             realstrch = clc;
+                            realstra = cla;
+                            realstrb = clb;
 
                         }
 
@@ -6479,17 +5410,23 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             realstr = aplus * rhue + bplus;
                             realstrch = aplusch * rhue + bplusch;
+                            realstra = aplusa * rhue + bplusa;
+                            realstrb = aplusb * rhue + bplusb;
                             khu  = apl * rhue + bpl;
 
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
                             realstr = amoins * rhue + bmoins;
                             realstrch = amoinsch * rhue + bmoinsch;
+                            realstra = amoinsa * rhue + bmoinsa;
+                            realstrb = amoinsb * rhue + bmoinsb;
                             khu = amo * rhue + bmo;
 
                         } else {
                             realstr = cli;
                             khu = 1.f;
                             realstrch = clc;
+                            realstra = cla;
+                            realstrb = clb;
 
                         }
 
@@ -6590,55 +5527,81 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
                             case 1: { // inside transition zone
                                 float factorx = localFactor;
 
-                                float difL;
-                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                difL *= factorx * (100.f + realstr * falL) / 100.f;
+                                // float difL;
+                                difLab->L[loy - begy][lox - begx] = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                                difLab->L[loy - begy][lox - begx] *= factorx * (100.f + realstr * falL) / 100.f;
                                 //     difL *= kch * fach;
-                                difL *= kch ;
+                                difLab->L[loy - begy][lox - begx] *= kch ;
 
-                                transformed->L[y][x] = original->L[y][x] + difL;
-                                float difa, difb;
+                                transformed->L[y][x] = original->L[y][x] + difLab->L[loy - begy][lox - begx];
+                                //   float difa, difb;
 
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                difa *= factorx * (100.f + realstrch * falu * falL) / 100.f;
-                                difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
-                                difa *= kch * fach;
-                                difb *= kch * fach;
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                difLab->a[loy - begy][lox - begx] = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                                difLab->b[loy - begy][lox - begx] = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
 
+                                if (senstype != 1) {
+                                    difLab->a[loy - begy][lox - begx] *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                    difLab->b[loy - begy][lox - begx] *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                } else {
+                                    difLab->a[loy - begy][lox - begx] *= factorx * (100.f + realstra * falu * falL) / 100.f;
+                                    difLab->b[loy - begy][lox - begx] *= factorx * (100.f + realstrb * falu * falL) / 100.f;
+                                }
+
+                                difLab->a[loy - begy][lox - begx] *= kch * fach;
+                                difLab->b[loy - begy][lox - begx] *= kch * fach;
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difLab->a[loy - begy][lox - begx]);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difLab->b[loy - begy][lox - begx]);
+
+                                if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2) &&  senstype == 1) {
+                                    transformed->a[y][x] = difLab->a[loy - begy][lox - begx];
+                                    transformed->b[y][x] = difLab->b[loy - begy][lox - begx];
+                                    transformed->L[y][x] = 12000.f + difLab->L[loy - begy][lox - begx];
+                                }
 
                                 break;
 
                             }
 
                             case 2: { // inside selection => full effect, no transition
-                                float difL;
+                                // float difL;
 
-                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                difL *= (100.f + realstr * falL) / 100.f;
+                                difLab->L[loy - begy][lox - begx] = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                                difLab->L[loy - begy][lox - begx] *= (100.f + realstr * falL) / 100.f;
                                 //    difL *= kch * fach;
-                                difL *= kch;
-                                transformed->L[y][x] = original->L[y][x] + difL;
-                                float difa, difb;
+                                difLab->L[loy - begy][lox - begx] *= kch;
+                                transformed->L[y][x] = original->L[y][x] + difLab->L[loy - begy][lox - begx];
+                                //  float difa, difb;
 
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                difa *= (100.f + realstrch * falu * falL) / 100.f;
-                                difb *= (100.f + realstrch * falu * falL) / 100.f;
-                                difa *= kch * fach;
-                                difb *= kch * fach;
+                                difLab->a[loy - begy][lox - begx] = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                                difLab->b[loy - begy][lox - begx] = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
 
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                if (senstype != 1) {
+                                    difLab->a[loy - begy][lox - begx] *= (100.f + realstrch * falu * falL) / 100.f;
+                                    difLab->b[loy - begy][lox - begx] *= (100.f + realstrch * falu * falL) / 100.f;
+                                } else {
+                                    difLab->a[loy - begy][lox - begx] *= (100.f + realstra * falu * falL) / 100.f;
+                                    difLab->b[loy - begy][lox - begx] *= (100.f + realstrb * falu * falL) / 100.f;
+                                }
 
+                                difLab->a[loy - begy][lox - begx] *= kch * fach;
+                                difLab->b[loy - begy][lox - begx] *= kch * fach;
+
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difLab->a[loy - begy][lox - begx]);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difLab->b[loy - begy][lox - begx]);
+
+                                if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2) &&  senstype == 1) {
+                                    transformed->a[y][x] = difLab->a[loy - begy][lox - begx];
+                                    transformed->b[y][x] = difLab->b[loy - begy][lox - begx];
+                                    transformed->L[y][x] = 12000.f + difLab->L[loy - begy][lox - begx];
+                                }
                             }
                         }
 
 
                         //}
                     }
+
+
                 }
             }
 
@@ -6675,12 +5638,15 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, fl
 
         }
         delete origblur;
+        if (lp.showmaskcolmet >= 2 && senstype == 1) {
+            delete origblurmask;
+        }
 
     }
 }
 
 
-void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabImage * bufcolorig, LabImage * originalmask, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
 // chroma and lightness
@@ -6766,8 +5732,22 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
     LabImage *origblur = nullptr;
 
     origblur = new LabImage(GW, GH);
+    LabImage *origblurmask = nullptr;
+
 
     float radius = 3.f / sk;
+ if (lp.showmaskcolmet >= 2) {
+        origblurmask = new LabImage(GW, GH);
+ 
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
+        gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
+        gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
+    }
+ } 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -6775,7 +5755,6 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
         gaussianBlur(original->a, origblur->a, GW, GH, radius);
         gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
     }
 
 
@@ -6860,9 +5839,22 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                     if (fabs(origblur->b[y][x]) < 0.01f) {
                         origblur->b[y][x] = 0.01f;
                     }
-
-                    float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-                    //retriev data curve lightness
+                    float dE = 0.f;
+                    float rhuemask = 0.f;
+                    float rchromask = 0.f;
+                    float rLmask = 0.f;
+                    if (lp.showmaskcolmet >= 2) {
+                        rhuemask = xatan2f(origblurmask->b[y][x], origblurmask->a[y][x]);
+                        rchromask = sqrt(SQR(origblurmask->b[y][x]) + SQR(origblurmask->a[y][x])) / 327.68f;
+                        rLmask = origblurmask->L[y][x] / 327.68f;
+                        dE = sqrt(SQR(refa - origblurmask->a[y][x] / 327.68f) + SQR(refb - origblurmask->b[y][x] / 327.68f) + SQR(lumaref - origblurmask->L[y][x] / 327.68f));
+                    } else {
+                        dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                        rhuemask = rhue;
+                        rchromask = rchro;
+                        rLmask = rL;
+                    }
+                        //retriev data curve lightness
                     float cli = (buflight[loy - begy][lox - begx]);
                     //parameters for linear interpolation in function of real hue
                     float apluscligh = (1.f - cli) / delhu;
@@ -6909,9 +5901,9 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                     float realclighsl = 1.f;
                     float realhh = 0.f;
                     //evaluate delta Hue and delta Chro
-                    float deltachro = fabs(rchro - chromaref);
+                    float deltachro = fabs(rchromask - chromaref);
 
-                    float deltahue = fabs(rhue - hueref);
+                    float deltahue = fabs(rhuemask - hueref);
 
                     if (deltahue > rtengine::RT_PI) {
                         deltahue = - (deltahue - 2.f * rtengine::RT_PI);
@@ -6919,7 +5911,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
 
                     //pseudo deltaE
                     float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-                    float deltaL = fabs(lumaref - rL);  //between 0 and 100
+                    float deltaL = fabs(lumaref - rLmask);  //between 0 and 100
 
                     float kchchro = 1.f;
                     float kch = 1.f;
@@ -6969,7 +5961,6 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                             kdE = SQR(SQR(dE / dEsens));
                         }
 
-                     //   if (deltahue < 0.3f && (lp.qualcurvemet == 3 || lp.qualcurvemet == 5)) {//for very low differences with smal values of scope
                         if (deltahue < 0.3f) {//for very low differences with smal values of scope
                             kchchro = kch = pow(kch0, (1.f + kdE * moddE * (3.f - 10.f * deltahue)) * kkch);
                         }
@@ -7326,7 +6317,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
 
                                 }
 
-                                if (lp.ligh != 0.f && lp.curvact == false) {
+                                if ((lp.ligh != 0.f || lp.cont != 0) && lp.curvact == false) {
                                     calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
@@ -7340,40 +6331,37 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
 
                                 //    float flichrosl = 1.f;
 
-                                if (lp.curvact && lp.ligh != 0.f) {
+                                if (lp.curvact && (lp.ligh != 0.f || lp.cont != 0)) {
                                     flisl = ((100.f + realclighsl * falL * kchchro) / 100.f); //luma transition
-                                    //  flisl = ((100.f + realclighsl) / 100.f); //luma transition
                                 }
 
                                 if (lp.curvact && lp.chro != 0.f) {
                                     realchro = realchroslid;//chroma transition
-                                    //realchro = 1.f;
                                 }
 
                                 if (lp.qualcurvemet >= 2) {
                                     fli = ((100.f + realcligh * falL) / 100.f); //luma transition
-                                    //    fli = ((100.f + realcligh) / 100.f); //luma transition
                                 }
 
                                 float flicur = 1.f;
 
                                 if (lp.qualcurvemet != 0) {
                                     flicur = ((100.f + realcurv * factorx * falu * falL * kchchro) / 100.f);
-                                    //   flicur = ((100.f + realcurv * factorx) / 100.f);
                                 }
 
                                 float fac = flicur * (100.f + factorx * realchro * falu * falL) / 100.f;  //chroma factor transition
-                                //  float fac = flicur * (100.f + factorx * realchro) / 100.f;  //chroma factor transition
-                                //if(fac < 0.2f) fac = 0.2f;
+
                                 float diflc = lightcont * fli * flisl - original->L[y][x];
-                                //  float diflc = lightcont  - original->L[y][x];
                                 kdiff *= fach * kch;
                                 diflc *= kdiff ;
                                 diflc *= kch ;
 
                                 diflc *= factorx; //transition lightness
-                                transformed->L[y][x] = CLIPL(1.f * (original->L[y][x] + diflc));
+                                transformed->L[y][x] = CLIPL((original->L[y][x] + diflc));
 
+                                if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
+                                    transformed->L[y][x] = 12000.f + diflc; //CLIPL((original->L[y][x] + diflc));
+                                }
 
                                 if (lochhCurve  && lp.qualcurvemet >= 1 && HHutili) {
                                     float addh = 0.f;
@@ -7391,7 +6379,6 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
 
                                     if (lp.qualcurvemet >= 2) {
                                         addh = 0.01f * realhh * factorx;
-
                                     }
 
                                     float newhr = rhue + addh;
@@ -7406,10 +6393,19 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                     transformed->a[y][x] = CLIPC(chromhr * sincosval.y * fac) ;
                                     transformed->b[y][x] = CLIPC(chromhr * sincosval.x * fac);
 
+                                    if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
+                                        transformed->a[y][x] = chromhr * sincosval.y * (fac - 1.f) ;
+                                        transformed->b[y][x] = chromhr * sincosval.x * (fac - 1.f);
+                                    }
                                 } else {
 
                                     transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
                                     transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+
+                                    if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
+                                        transformed->a[y][x] = original->a[y][x] * (fac - 1.f) ;
+                                        transformed->b[y][x] = original->b[y][x] * (fac - 1.f);
+                                    }
                                 }
 
                                 break;
@@ -7452,7 +6448,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                 }
 
 
-                                if (lp.ligh != 0.f && lp.curvact == false) {
+                                if ((lp.ligh != 0.f || lp.cont != 0.f) && lp.curvact == false) {
                                     calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
@@ -7463,7 +6459,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                 float fli = 1.f;
                                 float flisl = 1.f;
 
-                                if (lp.curvact && lp.ligh != 0.f) {
+                                if (lp.curvact && (lp.ligh != 0.f || lp.cont != 0)) {
                                     flisl = ((100.f + realclighsl * falL) / 100.f); //luma transition
                                     //  flisl = ((100.f + realclighsl) / 100.f); //luma transition
                                 }
@@ -7482,22 +6478,21 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
 
                                 if (lp.qualcurvemet != 0) {
                                     flicur = ((100.f + realcurv * falu * falL * kchchro) / 100.f);
-                                    //  flicur = ((100.f + realcurv) / 100.f);
                                 }
 
                                 float fac = flicur * (100.f + realchro * falu * falL) / 100.f; //chroma factor transition7
-                                //     float fac = flicur * (100.f + realchro) / 100.f; //chroma factor transition7
-                                //if(fac < 0.2f) fac = 0.2f;
 
                                 float diflc = lightcont * fli * flisl - original->L[y][x];
-                                //  float diflc = lightcont - original->L[y][x];
 
                                 kdiff *= fach * kch;
                                 diflc *= kdiff ;
                                 diflc *= kch ;
-                                transformed->L[y][x] = CLIPL(1.f * (original->L[y][x] + diflc));
+                                transformed->L[y][x] = CLIPL((original->L[y][x] + diflc));
 
-                                //                              float newchro = sqrt (SQR (original->a[y][x]) + SQR (original->b[y][x]));
+                                if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
+                                    transformed->L[y][x] = 12000.f + diflc; //CLIPL((original->L[y][x] + diflc));
+                                }
+
 
                                 if (lochhCurve && lp.qualcurvemet >= 1 && HHutili) {
                                     float addh = 0.f;
@@ -7528,11 +6523,19 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                     transformed->a[y][x] = CLIPC(chromhr * sincosval.y * fac) ;
                                     transformed->b[y][x] = CLIPC(chromhr * sincosval.x * fac);
 
+                                    if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
+                                        transformed->a[y][x] = chromhr * sincosval.y * (fac - 1.f) ;
+                                        transformed->b[y][x] = chromhr * sincosval.x * (fac - 1.f);
+                                    }
+
                                 } else {
-
-
                                     transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
                                     transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+
+                                    if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
+                                        transformed->a[y][x] = original->a[y][x] * (fac - 1.f) ;
+                                        transformed->b[y][x] = original->b[y][x] * (fac - 1.f);
+                                    }
                                 }
 
 
@@ -7550,7 +6553,9 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
     }
 
     delete origblur;
-
+    if (lp.showmaskcolmet >= 2) {
+        delete origblurmask;
+    }
 }
 
 void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LUTf & lightCurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk)
@@ -7949,7 +6954,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                             if (lp.sens < 75.f) {
                                 float lightcont;
 
-                                if (lp.ligh != 0.f) {
+                                if ((lp.ligh != 0.f || lp.cont != 0)) {
                                     calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
@@ -7976,7 +6981,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                 float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
                                 float lumnew = original->L[y][x];
 
-                                if (lp.ligh != 0.f) {
+                                if ((lp.ligh != 0.f || lp.cont != 0)) {
                                     calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
                                 }
 
@@ -8001,7 +7006,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
                                 float lightcont;
 
-                                if (lp.ligh != 0.f) {
+                                if ((lp.ligh != 0.f || lp.cont != 0)) {
                                     calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
                                     lightcont = lumnew;
 
@@ -8025,7 +7030,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 
                             } else {
-                                if (lp.ligh != 0.f) {
+                                if ((lp.ligh != 0.f || lp.cont != 0)) {
                                     calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
                                 }
 
@@ -8046,12 +7051,45 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 }
 
-void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
+void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
         calcLocalParams(sp, oW, oH, params->locallab, lp);
+        int begy = lp.yc - lp.lyT;
+        int begx = lp.xc - lp.lxL;
+        int yEn = lp.yc + lp.ly;
+        int xEn = lp.xc + lp.lx;
+//claculate histogram for area selected
+#ifdef _OPENMP
+        const int numThreads = min(max(transformed->W * transformed->H / (int)histogram.getSize(), 1), omp_get_max_threads());
+        #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
+        {
+            LUTu lhist16thrloc(histogram.getSize());
+            lhist16thrloc.clear();
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+
+            for (int y = 0; y < transformed->H ; y++) //{
+                for (int x = 0; x < transformed->W; x++) {
+                    int lox = cx + x;
+                    int loy = cy + y;
+
+                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                        int pos = (int)(original->L[y][x]);
+                        lhist16thrloc[pos]++;
+                    }
+                }
+
+
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            histogram += lhist16thrloc;
+        }
 
 // double precision for large summations
         double aveA = 0.;
@@ -8151,7 +7189,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         }
 
         //ref for sobel
-        bool toto = true;
+        bool toto = false;
 
         if (toto) {
             for (int y = max(cy, (int)(lp.yc - spotSise2)); y < min(transformed->H + cy, (int)(lp.yc + spotSise2 + 1)); y++) {
@@ -8215,6 +7253,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         chromaref = aveChro;
         lumaref = avL;
 
+        //printf("Calcref => sp=%i huere=%f chromare=%f lumare=%f \n", sp, hueref, chromaref, lumaref);
         if (isdenoise) {
             delete origblur;
             delete blurorig;
@@ -8539,7 +7578,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
 void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
-                                const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
+                                const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, const LocCCmaskCurve & locccmasCurve, const  LocLLmaskCurve & locllmasCurve, const  LocHHmaskCurve & lochhmasCurve, const LocCCmaskexpCurve & locccmasexpCurve, const  LocLLmaskexpCurve & locllmasexpCurve,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -8567,7 +7606,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         float radiussob = strred / (sk * 1.4f);
         double ave = 0.;
         int n = 0;
-        float av = 0;
         int levred;
         bool noiscfactiv = false;
 
@@ -8606,11 +7644,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
             }
 
             ave = ave / n;
-            av = ave / 327.68f;
         }
 
         printf("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f\n", call, sp, hueref, chromaref, lumaref);
-        struct local_contra lco;
+//        struct local_contra lco;
 
 // we must here detect : general case, skin, sky,...foliages ???
 // delta dhue, luminance and chroma
@@ -8636,7 +7673,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         float dhuelc = ared * lp.senslc + bred; //delta hue local contrast
 
         float dhuesf = ared * lp.senssf + bred; //delta hue soft light
-        
+
         float dhuecb = ared * lp.senscb + bred; //delta hue cbdl
 
         float dhueexclu = ared * lp.sensexclu + bred; //delta hue exclude
@@ -8646,17 +7683,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         float moddE = 2.5f;
         float powdE = 6.f;
 
-        constexpr float maxh = 3.5f; // 3.5 amplification contrast above mean
-
-        constexpr float maxl = 2.5f; // 3 reductio contrast under mean
-
-        float multh = (float) fabs(lp.cont) * (maxh - 1.f) / 100.f + 1.f;
-
-        float mult = (float)fabs(lp.cont) * (maxl - 1.f) / 100.f + 1.f;
-
-        lco.dx = 1.f - 1.f / mult;
-
-        lco.dy = 1.f - 1.f / multh;
 
 
         if (lp.excmet == 1  && call <= 3) {
@@ -9834,7 +8860,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
         // but if user select volontary denoise, it is that choice the good (prioritary)
         bool execdenoi = false ;
-        bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0.f); // only if one slider ore more is engaged
+        bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0); // only if one slider ore more is engaged
         bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) ;//only if user want cbdl
         execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
 
@@ -10855,776 +9881,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
         }
 
 
-
-//local color and light
-
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.qualcurvemet != 0 || lp.war != 0) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
-            // double huerefspot = 0., chromarefspot = 0., lumarefspot = 0.;
-            //      int spotSi = 1 + 2 * max (1,  lp.cir / sk);
-            /*
-                        if (!lastcutpast && loc.cutpast) {
-                            spotbuffer = new LabImage (spotSi, spotSi);//buffer for data in zone limit
-
-
-                            copy_ref (call, 1,  spotbuffer, original, transformed, sx, sy, cx, cy,  oW, oH,  fw,  fh,  sk, lp, huerefspot, chromarefspot, lumarefspot);
-                            loc.centerXbuf = loc.centerX;
-                            loc.centerYbuf = loc.centerY;
-                            lastcutpast = true;
-                        }
-            */
-            /*
-                        if (lastcutpast && !loc.cutpast) {
-
-                            paste_ref (call, 1,  spotbuffer, original, transformed, sx, sy, cx, cy,  oW, oH,  fw,  fh,  sk, lp, huerefspot, chromarefspot, lumarefspot);
-                            loc.centerXbuf = 0 ;
-                            loc.centerYbuf = 0 ;
-                            lastcutpast = false;
-                            delete spotbuffer;
-
-                        }
-            */
-            float hueplus = hueref + dhue;
-            float huemoins = hueref - dhue;
-            // float ddhue = 0.f;
-
-            //printf("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhue);
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
-            }
-
-            LabImage *bufcolorig = nullptr;
-
-            float chpro = 1.f;
-            float cligh = 1.f;
-            float clighL = 1.f;
-
-            int bfh = 0.f, bfw = 0.f;
-            bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-            bfw = int (lp.lx + lp.lxL) + del;
-            JaggedArray<float> buflight(bfw, bfh);
-            JaggedArray<float> bufchro(bfw, bfh);
-            JaggedArray<float> buflightslid(bfw, bfh);
-            JaggedArray<float> bufchroslid(bfw, bfh);
-            JaggedArray<float> bufhh(bfw, bfh);
-
-            float adjustr = 1.0f;
-
-//adapt chroma to working profile
-            if (params->icm.workingProfile == "ProPhoto")   {
-                adjustr = 1.2f;   // 1.2 instead 1.0 because it's very rare to have C>170..
-            } else if (params->icm.workingProfile == "Adobe RGB")  {
-                adjustr = 1.8f;
-            } else if (params->icm.workingProfile == "sRGB")       {
-                adjustr = 2.0f;
-            } else if (params->icm.workingProfile == "WideGamut")  {
-                adjustr = 1.2f;
-            } else if (params->icm.workingProfile == "Beta RGB")   {
-                adjustr = 1.4f;
-            } else if (params->icm.workingProfile == "BestRGB")    {
-                adjustr = 1.4f;
-            } else if (params->icm.workingProfile == "BruceRGB")   {
-                adjustr = 1.8f;
-            }
-
-
-
-
-            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                bufcolorig = new LabImage(bfw, bfh); //buffer for data in zone limit
-
-
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufcolorig->L[ir][jr] = 0.f;
-                        bufcolorig->a[ir][jr] = 0.f;
-                        bufcolorig->b[ir][jr] = 0.f;
-                        bufchro[ir][jr] = 0.f;
-                        bufchroslid[ir][jr] = 0.f;
-                        buflightslid[ir][jr] = 0.f;
-                        buflight[ir][jr] = 0.f;
-                        bufhh[ir][jr] = 0.f;
-                    }
-
-                /*
-                                int yStart = lp.yc - lp.lyT - cy;
-                                int yEnd = lp.yc + lp.ly - cy;
-                                int xStart = lp.xc - lp.lxL - cx;
-                                int xEnd = lp.xc + lp.lx - cx;
-
-                     //   int begx = int (lp.xc - lp.lxL);
-                     //   int begy = int (lp.yc - lp.lyT);
-
-                */
-
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
-                int yEn = lp.yc + lp.ly;
-                int xEn = lp.xc + lp.lx;
-                /*
-                                            int yStart = lp.yc - lp.lyT - cy;
-                                            int yEnd = lp.yc + lp.ly - cy;
-                                            int xStart = lp.xc - lp.lxL - cx;
-                                            int xEnd = lp.xc + lp.lx - cx;
-                                            //there is a bug in calculation==> outof limits ==> crash
-                                            printf("cy=%i cx=%i begy=%i begx=%i yS=%i yE=%i xS=%i xE=%i tH=%i tW=%i\n", cy, cx, begy, begx, yStart, yEnd, xStart, xEnd, transformed->H, transformed->W );
-                                            int ymax = min(transformed->H, yEnd);
-                                            int xmax = min(transformed->W, xEnd);
-
-                            #ifdef _OPENMP
-                                            #pragma omp parallel for schedule(dynamic,16)
-                            #endif
-
-                                            for (int y = yStart; y < ymax ; y++) {
-                                                int loy = cy + y;
-
-                                                for (int x = xStart, lox = cx + x; x < xmax; x++, lox++) {
-                                                    bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                                                    bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                                                    bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                                                }
-                                            }
-                */
-
-                /*
-                                    printf("Pastbef \n");
-
-                                if (lastcutpast && !loc.cutpast) {
-
-                                    printf("Past \n");
-                                    int nab = 0;
-                                    int spotSize = max (1,  lp.cir / sk);
-
-                                    for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
-                                        for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
-                                            int yb = max (cy, (int) (lp.yc - spotSize));
-                                            int ye = min (transformed->H + cy, (int) (lp.yc + spotSize + 1));
-                                            int xb = max (cx, (int) (lp.xc - spotSize));
-                                            int xe = min (transformed->W + cx, (int) (lp.xc + spotSize + 1));
-                                            int z = y - yb;
-                                            int u = x - xb;
-                                            original->L[y - cy][x - cx] = spotbuffer->L[z][u];
-                                            original->a[y - cy][x - cx] = spotbuffer->a[z][u];
-                                            original->b[y - cy][x - cx] = spotbuffer->b[z][u];
-
-                                            nab++;
-                                        }
-                                    }
-
-                                 //   loc.centerXbuf = 0 ;
-                                 //   loc.centerYbuf = 0 ;
-                                    lastcutpast = false;
-
-                                    delete spotbuffer;
-                                }
-                                    printf("PastAft \n");
-
-
-                                    int spotSize = max (1,  lp.cir / sk);
-                                    */
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-                        //     int yb = max (cy, (int) (lp.yc - spotSize));
-                        //     int xb = max (cx, (int) (lp.xc - spotSize));
-                        //     int z = y - yb;
-                        //     int u = x - xb;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                            chpro = 0.f;
-
-                            //Chroma curve
-                            if (cclocalcurve  && lp.qualcurvemet != 0) { // C=f(C) curve
-                                float chromat = sqrt(SQR(bufcolorig->a[loy - begy][lox - begx]) +  SQR(bufcolorig->b[loy - begy][lox - begx]));
-                                float ch;
-                                float ampli = 25.f;
-                                ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-
-                                //    if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                //        chpro = 99.f * ch - 99.f;
-                                //    } else {
-                                chpro = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
-                                //   }
-
-                                bufchro[loy - begy][lox - begx] = chpro;
-
-                            }
-
-                            chpro = 0.f;
-
-
-                            if (lp.chro != 0.f  && lp.curvact) {
-                                // process to improve eg same as in Lab adjustements
-                                float ch;
-                                float ampli = 70.f;
-                                //   ch = (1.f + 0.01f * lp.chro) * (chromat * adjustr)  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-                                ch = (1.f + 0.01f * lp.chro) ; //* (chromat * adjustr)  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-
-                                if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                    chpro = 99.f * ch - 99.f;
-                                } else {
-                                    chpro = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
-                                }
-
-                                bufchroslid[loy - begy][lox - begx] = chpro;
-
-                            }
-
-                            if (lochhCurve && lp.qualcurvemet >= 2 && HHutili) {
-                                float hhforcurv = xatan2f(bufcolorig->b[loy - begy][lox - begx], bufcolorig->a[loy - begy][lox - begx]);
-
-                                float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)  1.7 optimisation !
-                                float ddhue = CLIPRET(200.f * valparam);
-                                bufhh[loy - begy][lox - begx] = ddhue;//valparamdh; //
-
-                            }
-
-                            //slider lightness
-                            clighL = 0.f;
-
-                            if (lp.ligh != 0.f  && lp.curvact) {
-                                float lL;
-                                float lighLnew;
-                                float amplil = 140.f;
-                                float lighL = bufcolorig->L[loy - begy][lox - begx];
-                                calclight(lighL, lp.ligh, lighLnew, lightCurveloc);  //replace L-curve
-                                lL = lighLnew / lighL;
-
-                                if (lL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                    clighL = 99.f * lL - 99.f;
-                                } else {
-                                    clighL = CLIPLIG(amplil * lL - amplil);  //ampli = 25.f arbitrary empirical coefficient between 5 and 150
-                                }
-
-                                buflightslid[loy - begy][lox - begx] = clighL;
-                                //   printf("cl=%f ", clighL);
-
-                            }
-
-                            cligh = 0.f;
-
-                            //luma curve
-                            if (lllocalcurve  && lp.qualcurvemet >= 2) {// L=f(L) curve enhanced
-                                float lh;
-                                float amplil = 25.f;
-                                float lighn = bufcolorig->L[loy - begy][lox - begx];
-                                lh = (lllocalcurve[lighn * 1.9f]) / ((lighn + 0.00001f) * 1.9f) ; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
-
-                                // printf("lh=%f ", lh);
-                                //    if (lh <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                //        cligh = 0.3f * (100.f * lh - 100.f);//0.3 reduce sensibility
-                                //    } else {
-                                //  cligh = CLIPLIG(amplil * lh - amplil);
-                                cligh = CLIPLIG(amplil * lh - amplil);
-                                //  }
-
-                                buflight[loy - begy][lox - begx] = cligh;
-                                //  printf("cli=%f ", cligh);
-                            }
-                        }
-                    }
-
-                if (lp.qualcurvemet >= 4) {
-                    JaggedArray<float> blend(bfw, bfh);
-                    float contrastf = lp.sensexclu / 100.f;
-                    //LabImage * tmpsob;
-                    //   tmpsob = new LabImage(bfw, bfh);
-                    //   SobelCannyLuma(tmpsob->L, bufcolorig->L, bfw, bfh, 1.f);
-
-                    buildBlendMask(bufcolorig->L, blend, bfw, bfh, contrastf, 1.f, true);
-
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int i = 0; i < bfh; ++i) {
-                        for (int j = 0; j < bfw; ++j) {
-                            if (blend[i][j] > 0.05f) {
-                                blend[i][j] = 1.22361f * sqrt(blend[i][j]) - 0.22361f;
-                            }
-
-                            buflight[i][j] = intp(blend[i][j], buflight[i][j], 0.f);// tmpsob->L[i][j]);
-                            bufchro[i][j] = intp(blend[i][j], bufchro[i][j], 0.f); //tmpsob->L[i][j] );
-                        }
-                    }
-
-                   // delete tmpsob;
-                }
-
-
-            }
-
-            // printf("callCOLOR= %i sp=%i hueref=%f chromaref=%f lumaref=%f\n", call, sp, hueref, chromaref, lumaref);
-
-            ColorLight_Local(moddE, powdE, call, bufcolorig, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
-
-            if (call <= 3) {
-
-                delete bufcolorig;
-
-                // delete bufcoltra;
-
-            }
-        }
-//inverse
-        else if (lp.inv  && (lp.chro != 0 || lp.ligh != 0.f) && lp.colorena) {
-            float hueplus = hueref + dhue;
-            float huemoins = hueref - dhue;
-            // float ddhue = 0.f;
-
-            //printf("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhue);
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
-            }
-
-            InverseColorLight_Local(lp, lightCurveloc, original, transformed, cx, cy,  hueplus, huemoins, hueref, dhue, chromaref, lumaref, sk);
-        }
-
-
-        if (!lp.inv  && lp.cont != 0 && lp.colorena  && lp.ligh > -99) {  //contrast interior ellipse
-            const float pm = lp.cont < 0.f ? -1.f : 1.f;
-            float hueplus = hueref + dhue;
-            float huemoins = hueref - dhue;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
-            }
-
-            LabImage *bufcontorig = nullptr;
-            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-            int bfw = int (lp.lx + lp.lxL) + del;
-            JaggedArray<float> buflightc(bfw, bfh);
-
-            float clighc = 0.f;
-            const float localtype = lumaref;
-            //         const float localtype = ave;
-            float reducac;
-            float corered;
-
-            if (lp.sens < 30.f) {
-                reducac = 0.2f * (lp.sens / 100.f);
-            } else {
-                float areduc = 0.6285714f; //0.44f/0.7f;
-                float breduc = 0.5f - areduc;
-                reducac = areduc * (lp.sens / 100.f) + breduc;
-            }
-
-            const float realcox = lco.dx, realcoy = lco.dy;
-
-            lco.alsup = (-realcox) / (localtype / 2.f);
-            lco.blsup = -lco.alsup * localtype;
-            lco.alsup2 = (realcoy) / (50.f - localtype / 2.f);
-            lco.blsup2 = -lco.alsup2 * localtype;
-            lco.alsup3 = (realcoy) / (localtype / 2.f - 50.f);
-            lco.blsup3 = -lco.alsup3 * 100.f;
-            lco.aDY = realcoy;
-
-            lco.alinf = realcox / (localtype / 2.f);
-            const float vi = (localtype / 2.f) / 100.f;
-            const float vinf = (50.f + localtype / 2.f) / 100.f;
-            ImProcFunctions::secondeg_begin(reducac, vi, lco.aa, lco.bb); //parabolic
-            ImProcFunctions::secondeg_end(reducac, vinf, lco.aaa, lco.bbb, lco.ccc); //parabolic
-
-            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                bufcontorig = new LabImage(bfw, bfh); //buffer for data in zone limit
-
-
-
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufcontorig->L[ir][jr] = 0.f;
-                        //   bufcontorig->a[ir][jr] = 0.f;
-                        //   bufcontorig->b[ir][jr] = 0.f;
-                        buflightc[ir][jr] = 0.f;
-
-
-                    }
-
-                float localty;
-                localty = localtype;
-
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
-                int yEn = lp.yc + lp.ly;
-                int xEn = lp.xc + lp.lx;
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufcontorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-
-                            //slider contrast
-                            clighc = 1.f;
-                            corered = 0.f;
-
-
-                            if (lp.cont != 0.f  && lp.curvact) {
-
-                                float cL;
-                                float amplil = 150.f;
-                                float prov100 = bufcontorig->L[loy - begy][lox - begx] / 32768.f;
-                                float prov = prov100 * 100.f;
-                                cL = 1.f;
-
-                                if (prov > localty) {
-                                    if (prov >= localty && prov < 50.f + localty / 2.f) {
-                                        float core = (lco.alsup2 * prov + lco.blsup2) ;
-                                        corered = prov + pm * (prov - localty) * (core);
-                                    } else {
-                                        float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
-                                        corered = prov + pm * (prov - localty) * (core);
-
-                                    }
-                                }  else {
-                                    if (2.f * prov > localty && prov < localty)  {
-                                        float core = (lco.alsup * prov + lco.blsup) ;
-                                        corered = prov - pm * (localty - prov) * core;
-                                    } else if (2.f * prov <= localty) {
-                                        float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
-                                        corered = prov - pm * (localty - prov) * core;
-
-                                    }
-                                }
-
-                                cL = corered / prov;
-
-                                if (cL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                    clighc = 99.f * cL - 99.f;
-                                } else {
-                                    clighc = CLIPLIG(amplil * cL - amplil);  //arbitrary empirical coefficient between 5 and 150
-                                }
-
-                                buflightc[loy - begy][lox - begx] = clighc;
-
-                            }
-                        }
-                    }
-
-            }
-
-            Contrast_Local(powdE, call, buflightc, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, lp, original, transformed, cx, cy, sk);
-
-            if (call <= 3) {
-
-                delete bufcontorig;
-            }
-
-
-        } else if (lp.inv && lp.cont != 0 && lp.colorena && lp.ligh > -99) {
-            float hueplus = hueref + dhue;
-            float huemoins = hueref - dhue;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
-            }
-
-            float multL = (float)lp.cont * (maxl - 1.f) / 100.f + 1.f;
-            float multH = (float) lp.cont * (maxh - 1.f) / 100.f + 1.f;
-
-            lco.ah = (multH - 1.f) / (av - 100.f); //av ==> lumaref
-            lco.bh = 1.f - 100.f * lco.ah;
-            lco.al = (multL - 1.f) / av;
-            lco.bl = 1.f;
-            InverseContrast_Local(ave, lco, lp, hueplus, huemoins, hueref, dhue, chromaref, lumaref, original, transformed, cx, cy, sk);
-
-        }
-
-
-// end contrast interior and exterior
-
-//exposure and cat02
-        if (lp.war != 0  && lp.exposena) {//move cat02WB to exposure ==> reduce color artifacts
-            float hueplus = hueref + dhueex;
-            float huemoins = hueref - dhueex;
-            // float ddhue = 0.f;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhueex - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhueex + 2.f * rtengine::RT_PI;
-            }
-
-            int bfh = 0.f, bfw = 0.f;
-            bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-            bfw = int (lp.lx + lp.lxL) + del;
-
-            LabImage *bufcat02 = nullptr;
-            LabImage *bufcat02fin = nullptr;
-
-            JaggedArray<float> buflightcat(bfw, bfh, true);
-            JaggedArray<float> buf_a_cat(bfw, bfh, true);
-            JaggedArray<float> buf_b_cat(bfw, bfh, true);
-
-            bufcat02 = new LabImage(bfw, bfh); //buffer for data in zone limit
-            bufcat02fin = new LabImage(bfw, bfh); //buffer for data in zone limit
-
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int ir = 0; ir < bfh; ir++) //fill with 0
-                for (int jr = 0; jr < bfw; jr++) {
-                    bufcat02->L[ir][jr] = 0.f;
-                    bufcat02->a[ir][jr] = 0.f;
-                    bufcat02->b[ir][jr] = 0.f;
-                    bufcat02fin->L[ir][jr] = 0.f;
-                    bufcat02fin->a[ir][jr] = 0.f;
-                    bufcat02fin->b[ir][jr] = 0.f;
-                }
-
-            int begy = lp.yc - lp.lyT;
-            int begx = lp.xc - lp.lxL;
-            int yEn = lp.yc + lp.ly;
-            int xEn = lp.xc + lp.lx;
-
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-            for (int y = 0; y < transformed->H ; y++) //{
-                for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
-                    int loy = cy + y;
-
-                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                        bufcat02->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                        bufcat02->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                        bufcat02->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                    }
-                }
-
-            ImProcFunctions::ciecamloc_02float(sp, bufcat02, bufcat02fin);
-
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-            for (int y = 0; y < transformed->H ; y++) //{
-                for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
-                    int loy = cy + y;
-
-                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                        float rL;
-                        rL = CLIPRET((bufcat02fin->L[loy - begy][lox - begx] - bufcat02->L[loy - begy][lox - begx]) / 328.f);
-                        buflightcat[loy - begy][lox - begx] = rL;
-
-                        float rA;
-                        rA = CLIPRET((bufcat02fin->a[loy - begy][lox - begx] - bufcat02->a[loy - begy][lox - begx]) / 328.f);
-                        buf_a_cat[loy - begy][lox - begx] = rA;
-
-
-                        float rB;
-                        rB = CLIPRET((bufcat02fin->b[loy - begy][lox - begx] - bufcat02->b[loy - begy][lox - begx]) / 328.f);
-                        buf_b_cat[loy - begy][lox - begx] = rB;
-
-                    }
-                }
-
-            cat02_Local(moddE, powdE, buflightcat, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufcat02fin, cx, cy, sk);
-
-
-
-            delete bufcat02;
-            delete bufcat02fin;
-
-        }
-
-
-
-        if (lp.exposena && (lp.expcomp != 0.f || (exlocalcurve  && localexutili))) {  //interior ellipse renforced lightness and chroma  //locallutili
-            float hueplus = hueref + dhuev;
-            float huemoins = hueref - dhuev;
-
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuev - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuev + 2.f * rtengine::RT_PI;
-            }
-
-            LabImage *bufexporig = nullptr;
-            LabImage *bufexpfin = nullptr;
-            LabImage *bufexptemp = nullptr;
-
-            int bfh = 0.f, bfw = 0.f;
-            bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-            bfw = int (lp.lx + lp.lxL) + del;
-            JaggedArray<float> buflight(bfw, bfh);
-            JaggedArray<float> bufl_ab(bfw, bfh);
-            JaggedArray<float> buflightcurv(bfw, bfh);
-
-
-            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-
-
-                bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
-                bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
-                bufexptemp = new LabImage(bfw, bfh); //buffer for data in zone limit
-
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufexporig->L[ir][jr] = 0.f;
-                        bufexporig->a[ir][jr] = 0.f;
-                        bufexporig->b[ir][jr] = 0.f;
-                        bufexptemp->L[ir][jr] = 0.f;
-                        bufexptemp->a[ir][jr] = 0.f;
-                        bufexptemp->b[ir][jr] = 0.f;
-                        bufexpfin->L[ir][jr] = 0.f;
-                        bufexpfin->a[ir][jr] = 0.f;
-                        bufexpfin->b[ir][jr] = 0.f;
-                        buflight[ir][jr] = 0.f;
-                        bufl_ab[ir][jr] = 0.f;
-                        buflightcurv[ir][jr] = 0.f;
-
-
-                    }
-
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
-                int yEn = lp.yc + lp.ly;
-                int xEn = lp.xc + lp.lx;
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-
-                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                            bufexptemp->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufexptemp->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufexptemp->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-
-                        }
-                    }
-
-
-
-
-                if (exlocalcurve  && localexutili) {// L=f(L) curve enhanced
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < transformed->H ; y++) //{
-                        for (int x = 0; x < transformed->W; x++) {
-                            int lox = cx + x;
-                            int loy = cy + y;
-
-                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-
-                                float lighn = bufexporig->L[loy - begy][lox - begx];
-
-                                float lh;
-                                lh = 0.5f * exlocalcurve[2.f * lighn]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
-                                bufexptemp->L[loy - begy][lox - begx] = lh;
-                            }
-                        }
-
-                    if (lp.expcomp == 0.f) {
-                        lp.expcomp = 0.1f;    // to enabled
-                    }
-
-                    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexptemp, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
-
-
-                } else {
-
-                    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
-                }
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-
-                            float rL;
-                            rL = CLIPRET((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
-
-                            buflight[loy - begy][lox - begx] = rL;
-
-
-                        }
-                    }
-
-                Expo_vibr_Local(moddE, powdE, 1, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
-                //call Expo_vibr_Local with first parameter = 1 for exposure
-            }
-
-            if (call <= 3) {
-
-                delete bufexporig;
-                delete bufexpfin;
-                delete bufexptemp;
-            }
-
-        }
-
-
-
 //vibrance
 
         if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
@@ -11644,6 +9900,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
+            LabImage *difLab = nullptr;
 
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
@@ -11657,6 +9914,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
+                difLab = new LabImage(bfw, bfh); //buffer for data in zone limit
 
 
 #ifdef _OPENMP
@@ -11730,7 +9988,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                         }
                     }
 
-                Expo_vibr_Local(moddE, powdE, 2, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
+                Expo_vibr_Local(moddE, powdE, 2, nullptr, buflight, bufl_ab, nullptr, nullptr, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, difLab, bufexpfin, cx, cy, sk);
                 //call Expo_vibr_Local with first parameter = 2 for vibrance
 
             }
@@ -11739,6 +9997,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
                 delete bufexporig;
                 delete bufexpfin;
+                delete difLab;
 
 
             }
@@ -12001,7 +10260,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 //end cbdl_Local
 
 // soft light
-        if (lp.strng > 0.f && call < 3  && lp.sfena) { 
+        if (lp.strng > 0.f && call < 3  && lp.sfena) {
             float hueplus = hueref + dhuesf;
             float huemoins = hueref - dhuesf;
 
@@ -12016,6 +10275,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
+            LabImage *difLab = nullptr;
 
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
@@ -12029,6 +10289,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
+                difLab = new LabImage(bfw, bfh); //buffer for data in zone limit
 
 
 #ifdef _OPENMP
@@ -12100,7 +10361,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                         }
                     }
 
-                Expo_vibr_Local(moddE, powdE, 3, buflight, bufl_ab, hueplus, huemoins, hueref, dhuesf, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy, sk);
+                Expo_vibr_Local(moddE, powdE, 3, nullptr, buflight, bufl_ab, nullptr, nullptr, hueplus, huemoins, hueref, dhuesf, chromaref, lumaref, lp, original, transformed, difLab, bufexpfin, cx, cy, sk);
 
             }
 
@@ -12108,6 +10369,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
                 delete bufexporig;
                 delete bufexpfin;
+                delete difLab;
 
 
             }
@@ -12146,11 +10408,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                         }
                     }
 
-                ImProcFunctions::localContrastloc(bufloca, sk, params->locallab.lcradius.at(sp), params->locallab.lcamount.at(sp), params->locallab.lcdarkness.at(sp), params->locallab.lightness.at(sp), loctemp);
+                ImProcFunctions::localContrastloc(bufloca, sk, params->locallab.spots.at(sp).lcradius, params->locallab.spots.at(sp).lcamount, params->locallab.spots.at(sp).lcdarkness, params->locallab.spots.at(sp).lightness, loctemp);
 
             } else { //call from dcrop.cc
 
-                ImProcFunctions::localContrastloc(original, sk, params->locallab.lcradius.at(sp), params->locallab.lcamount.at(sp), params->locallab.lcdarkness.at(sp), params->locallab.lightness.at(sp), loctemp);
+                ImProcFunctions::localContrastloc(original, sk, params->locallab.spots.at(sp).lcradius, params->locallab.spots.at(sp).lcamount, params->locallab.spots.at(sp).lcdarkness, params->locallab.spots.at(sp).lightness, loctemp);
 
             }
 
@@ -12204,10 +10466,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                 //   }
 
                 //sharpen only square area instaed of all image
-                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp),(double)params->locallab.sharblur.at(sp) / 100.);
+                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur / 100.);
             } else { //call from dcrop.cc
 
-                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp),(double)params->locallab.sharblur.at(sp) / 100.);
+                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur / 100.);
 
             }
 
@@ -12230,7 +10492,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
             int GH = original->H;
             JaggedArray<float> loctemp(GW, GH);
 
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping.at(sp), (double)params->locallab.sharradius.at(sp) / 100., params->locallab.shariter.at(sp), params->locallab.sharamount.at(sp), params->locallab.sharcontrast.at(sp),(double)params->locallab.sharblur.at(sp) / 100.);
+            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur / 100.);
 
             float hueplus = hueref + dhuesha;
             float huemoins = hueref - dhuesha;
@@ -12315,11 +10577,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
 
                 //calc dehaze
                 Imagefloat *tmpImage = nullptr;
-                if(lp.dehaze > 0) {
+
+                if (lp.dehaze > 0) {
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufreti, *tmpImage, params->icm.workingProfile);
-                    float deha = LIM01(float(0.9f * lp.dehaze + 0.3f*lp.str) / 100.f * 0.9f);
-                    float depthcombi = 0.3f*params->locallab.neigh.at(sp) + 0.15f * (500.f - params->locallab.vart.at(sp));
+                    float deha = LIM01(float(0.9f * lp.dehaze + 0.3f * lp.str) / 100.f * 0.9f);
+                    float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
                     float depth = -LIM01(depthcombi / 100.f);
 
                     dehazeloc(tmpImage, deha, depth);
@@ -12327,7 +10590,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                     rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
 
                     delete tmpImage;
-                }       
+                }
             }
 
             float *orig[Hd] ALIGNED16;
@@ -12363,7 +10626,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                 tmpl = new LabImage(Wd, Hd);
 
             }  else {
-                                
+
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -12408,7 +10671,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
                 InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
             }
 
-            if (params->locallab.chrrt.at(sp) > 0) {
+            if (params->locallab.spots.at(sp).chrrt > 0) {
 
                 if (!lp.invret && call <= 3) {
 
@@ -12506,9 +10769,720 @@ void ImProcFunctions::Lab_Local(int call, int sp, LUTf & sobelrefs, float** shbu
             }
         }
 
+//local color and light
+
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet >= 2) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+            float hueplus = hueref + dhue;
+            float huemoins = hueref - dhue;
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
+            }
+
+
+
+            LabImage *bufcolorig = nullptr;
+            LabImage *bufmaskorig = nullptr;
+            LabImage *bufmaskblur = nullptr;
+            LabImage *originalmask = nullptr;
+
+            float chpro = 1.f;
+            float cligh = 1.f;
+            float clighL = 1.f;
+
+            int bfh = 0.f, bfw = 0.f;
+            bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            bfw = int (lp.lx + lp.lxL) + del;
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufchro(bfw, bfh);
+            JaggedArray<float> buflightslid(bfw, bfh);
+            JaggedArray<float> bufchroslid(bfw, bfh);
+            JaggedArray<float> bufhh(bfw, bfh);
+
+            float adjustr = 1.0f;
+
+//adapt chroma to working profile
+            if (params->icm.workingProfile == "ProPhoto")   {
+                adjustr = 1.2f;   // 1.2 instead 1.0 because it's very rare to have C>170..
+            } else if (params->icm.workingProfile == "Adobe RGB")  {
+                adjustr = 1.8f;
+            } else if (params->icm.workingProfile == "sRGB")       {
+                adjustr = 2.0f;
+            } else if (params->icm.workingProfile == "WideGamut")  {
+                adjustr = 1.2f;
+            } else if (params->icm.workingProfile == "Beta RGB")   {
+                adjustr = 1.4f;
+            } else if (params->icm.workingProfile == "BestRGB")    {
+                adjustr = 1.4f;
+            } else if (params->icm.workingProfile == "BruceRGB")   {
+                adjustr = 1.8f;
+            }
+
+            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
+                bufcolorig = new LabImage(bfw, bfh);
+                bufmaskorig = new LabImage(bfw, bfh);
+                bufmaskblur = new LabImage(bfw, bfh);
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int jr = 0; jr < bfw; jr++) {
+                        bufcolorig->L[ir][jr] = 0.f;
+                        bufcolorig->a[ir][jr] = 0.f;
+                        bufcolorig->b[ir][jr] = 0.f;
+                        bufmaskorig->L[ir][jr] = 0.f;
+                        bufmaskorig->a[ir][jr] = 0.f;
+                        bufmaskorig->b[ir][jr] = 0.f;
+                        bufchro[ir][jr] = 0.f;
+                        bufchroslid[ir][jr] = 0.f;
+                        buflightslid[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufhh[ir][jr] = 0.f;
+                    }
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            bufmaskorig->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufmaskorig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufmaskorig->b[loy - begy][lox - begx] = original->b[y][x];
+                            bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];
+                            bufmaskblur->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufmaskblur->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufmaskblur->b[loy - begy][lox - begx] = original->b[y][x];
+
+                            float valLL = 0.f;
+                            float valCC = 0.f;
+                            float valHH = 0.f;
+                            float2 sincosval;
+                            float kmaskL = 0;
+                            float kmaskCa = 0;
+                            float kmaskCb = 0;
+                            
+                            float kmaskHL = 0;
+                            float kmaskHa = 0;
+                            float kmaskHb = 0;
+
+                            if (lp.showmaskcolmet >= 2) {
+                                if (locllmasCurve) {
+                                    valLL = (float)(locllmasCurve[500.f * (bufcolorig->L[loy - begy][lox - begx]) / 32768.f]);
+                                    valLL = 1.f - valLL;
+                                    kmaskL = 32768.f * valLL;
+                                }
+
+                                if (locccmasCurve) {
+                                    float chromask = (sqrt(SQR(bufcolorig->a[loy - begy][lox - begx]) + SQR(bufcolorig->b[loy - begy][lox - begx])));
+                                    float chromaskr = chromask / 45000.f;
+                                    valCC = float (locccmasCurve[500.f *  chromaskr]);
+                                    valCC = 1.f - valCC;
+                                    sincosval.y = (bufcolorig->a[loy - begy][lox - begx]) / chromask;
+                                    sincosval.x = (bufcolorig->b[loy - begy][lox - begx]) / chromask;
+                                    kmaskCa = 45000.f * valCC * sincosval.y;
+                                    kmaskCb = 45000.f * valCC * sincosval.x;
+                                }
+
+                                if (lochhmasCurve) {
+                                    float huema= xatan2f(bufcolorig->b[loy - begy][lox - begx], bufcolorig->a[loy - begy][lox - begx]);
+                                    float h = Color::huelab_to_huehsv2(huema);
+                                    h += 1.f/6.f;
+                                    if (h > 1.f) {
+                                        h -= 1.f;
+                                    }
+                                    float chromask = (sqrt(SQR(bufcolorig->a[loy - begy][lox - begx]) + SQR(bufcolorig->b[loy - begy][lox - begx])));
+                                    valHH = float (lochhmasCurve[500.f *  h]);
+                                    valHH = 1.f - valHH;
+                                    sincosval.y = (bufcolorig->a[loy - begy][lox - begx]) / chromask;
+                                    sincosval.x = (bufcolorig->b[loy - begy][lox - begx]) / chromask;
+                                    kmaskHa = 45000.f * valHH * sincosval.y;
+                                    kmaskHb = 45000.f * valHH * sincosval.x;
+                                    kmaskHL = 32768.f * valHH;
+                                }
+
+                                bufmaskblur->L[loy - begy][lox - begx] = kmaskL + kmaskHL;
+                                bufmaskblur->a[loy - begy][lox - begx] = kmaskCa + kmaskHa;
+                                bufmaskblur->b[loy - begy][lox - begx] = kmaskCb + kmaskHb;
+
+                            }
+                        }
+                    }
+
+                float radiusb = 3.f / sk;
+
+                if (lp.showmaskcolmet >= 2) {
+
+#ifdef _OPENMP
+                    #pragma omp parallel
+#endif
+                    {
+                        gaussianBlur(bufmaskblur->L, bufmaskorig->L, bfw, bfh, radiusb);
+                        gaussianBlur(bufmaskblur->a, bufmaskorig->a, bfw, bfh, radiusb);
+                        gaussianBlur(bufmaskblur->b, bufmaskorig->b, bfw, bfh, radiusb);
+                    }
+                int GWm = transformed->W;
+                int GHm = transformed->H;
+
+
+                originalmask = new LabImage(GWm, GHm);
+
+                    if (lp.showmaskcolmet == 2 || lp.showmaskcolmet == 3) {
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int y = 0; y < transformed->H ; y++) //{
+                            for (int x = 0; x < transformed->W; x++) {
+                                int lox = cx + x;
+                                int loy = cy + y;
+                                int zone = 0;
+
+                                float localFactor = 1.f;
+                                const float achm = (float)lp.trans / 100.f;
+
+                                if (lp.shapmet == 0) {
+                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                } else if (lp.shapmet == 1) {
+                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                }
+
+                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                    if(zone > 0) {
+                                        bufcolorig->L[loy - begy][lox - begx] -= bufmaskorig->L[loy - begy][lox - begx];
+                                        bufcolorig->a[loy - begy][lox - begx] -= bufmaskorig->a[loy - begy][lox - begx];
+                                        bufcolorig->b[loy - begy][lox - begx] -= bufmaskorig->b[loy - begy][lox - begx];
+                                        originalmask->L[y][x] = bufcolorig->L[loy - begy][lox - begx];
+                                        originalmask->a[y][x] = bufcolorig->a[loy - begy][lox - begx];
+                                        originalmask->b[y][x] = bufcolorig->L[loy - begy][lox - begx];
+                                    }
+                                }
+                            }
+                    } else if (lp.showmaskcolmet == 4) {
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int y = 0; y < transformed->H ; y++) //{
+                            for (int x = 0; x < transformed->W; x++) {
+                                int lox = cx + x;
+                                int loy = cy + y;
+                                int zone = 0;
+                                float localFactor = 1.f;
+                                const float achm = (float)lp.trans / 100.f;
+
+                                if (lp.shapmet == 0) {
+                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                } else if (lp.shapmet == 1) {
+                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                }
+
+                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                    if(zone > 0) {
+                                        transformed->L[y][x] = bufmaskorig->L[loy - begy][lox - begx];
+                                        transformed->a[y][x] = bufmaskorig->a[loy - begy][lox - begx];
+                                        transformed->b[y][x] = bufmaskorig->b[loy - begy][lox - begx];
+                                    }
+                                }
+                            }
+
+                    }
+                }
+
+
+
+                if (lp.showmaskcolmet != 4) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < transformed->H ; y++) //{
+                        for (int x = 0; x < transformed->W; x++) {
+                            int lox = cx + x;
+                            int loy = cy + y;
+
+                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                //    bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                                //    bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                                //    bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                                chpro = 0.f;
+
+                                //Chroma curve
+                                if (cclocalcurve  && lp.qualcurvemet != 0) { // C=f(C) curve
+                                    float chromat = sqrt(SQR(bufcolorig->a[loy - begy][lox - begx]) +  SQR(bufcolorig->b[loy - begy][lox - begx]));
+                                    float ch;
+                                    float ampli = 25.f;
+                                    ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+                                    chpro = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                                    bufchro[loy - begy][lox - begx] = chpro;
+                                }
+
+                                chpro = 0.f;
+
+                                if (lp.chro != 0.f  && lp.curvact) {
+                                    // process to improve eg same as in Lab adjustements
+                                    float ch;
+                                    float ampli = 70.f;
+                                    ch = (1.f + 0.01f * lp.chro) ; //* (chromat * adjustr)  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+
+                                    if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
+                                        chpro = 99.f * ch - 99.f;
+                                    } else {
+                                        chpro = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                                    }
+
+                                    bufchroslid[loy - begy][lox - begx] = chpro;
+                                }
+
+                                if (lochhCurve && lp.qualcurvemet >= 2 && HHutili) {
+                                    float hhforcurv = xatan2f(bufcolorig->b[loy - begy][lox - begx], bufcolorig->a[loy - begy][lox - begx]);
+
+                                    float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)  1.7 optimisation !
+                                    float ddhue = CLIPRET(200.f * valparam);
+                                    bufhh[loy - begy][lox - begx] = ddhue;//valparamdh; //
+                                }
+
+                                //slider lightness
+                                clighL = 0.f;
+
+                                if ((lp.ligh != 0.f || lp.cont != 0)  && lp.curvact) {
+                                    float lL;
+                                    float lighLnew;
+                                    float amplil = 140.f;
+                                    float lighL = bufcolorig->L[loy - begy][lox - begx];
+                                    calclight(lighL, lp.ligh, lighLnew, lightCurveloc);  //replace L-curve
+                                    lL = lighLnew / lighL;
+
+                                    if (lL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
+                                        clighL = 99.f * lL - 99.f;
+                                    } else {
+                                        clighL = CLIPLIG(amplil * lL - amplil);  //ampli = 25.f arbitrary empirical coefficient between 5 and 150
+                                    }
+
+                                    buflightslid[loy - begy][lox - begx] = clighL;
+                                    //   printf("cl=%f ", clighL);
+                                }
+
+                                cligh = 0.f;
+
+                                //luma curve
+                                if (lllocalcurve  && lp.qualcurvemet >= 2) {// L=f(L) curve enhanced
+                                    float lh;
+                                    float amplil = 25.f;
+                                    float lighn = bufcolorig->L[loy - begy][lox - begx];
+                                    lh = (lllocalcurve[lighn * 1.9f]) / ((lighn + 0.00001f) * 1.9f) ; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
+                                    cligh = CLIPLIG(amplil * lh - amplil);
+                                    buflight[loy - begy][lox - begx] = cligh;
+                                }
+                            }
+                        }
+
+                    if (lp.qualcurvemet >= 4) {
+                        JaggedArray<float> blend(bfw, bfh);
+                        float contrastf = lp.sensexclu / 100.f;
+                        buildBlendMask(bufcolorig->L, blend, bfw, bfh, contrastf, 1.f, true);
+
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int i = 0; i < bfh; ++i) {
+                            for (int j = 0; j < bfw; ++j) {
+                                if (blend[i][j] > 0.05f) {
+                                    blend[i][j] = 1.22361f * sqrt(blend[i][j]) - 0.22361f;
+                                }
+
+                                buflight[i][j] = intp(blend[i][j], buflight[i][j], 0.f);// tmpsob->L[i][j]);
+                                bufchro[i][j] = intp(blend[i][j], bufchro[i][j], 0.f); //tmpsob->L[i][j] );
+                            }
+                        }
+                    }
+                }
+
+                ColorLight_Local(moddE, powdE, call, bufcolorig, originalmask, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
+
+                if (call <= 3) {
+
+                    delete bufcolorig;
+                    delete bufmaskorig;
+                    delete bufmaskblur;
+                    delete originalmask;
+
+                }
+            }
+        }
+//inverse
+        else if (lp.inv  && (lp.chro != 0 || lp.ligh != 0) && lp.colorena) {
+            float hueplus = hueref + dhue;
+            float huemoins = hueref - dhue;
+            // float ddhue = 0.f;
+
+            //printf("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhue);
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
+            }
+
+            InverseColorLight_Local(lp, lightCurveloc, original, transformed, cx, cy,  hueplus, huemoins, hueref, dhue, chromaref, lumaref, sk);
+        }
+
+
+
+        if (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet >= 2 || (exlocalcurve  && localexutili))) {  //interior ellipse renforced lightness and chroma  //locallutili
+            float hueplus = hueref + dhuev;
+            float huemoins = hueref - dhuev;
+
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhuev - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhuev + 2.f * rtengine::RT_PI;
+            }
+
+            LabImage *bufexporig = nullptr;
+            LabImage *bufexpfin = nullptr;
+            LabImage *bufexptemp = nullptr;
+            LabImage *difLab = nullptr;
+            LabImage *bufcat02fin = nullptr;
+            LabImage *bufmaskorig = nullptr;
+            LabImage *bufmaskblur = nullptr;
+            LabImage *originalmask = nullptr;
+
+            int bfh = 0.f, bfw = 0.f;
+            bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            bfw = int (lp.lx + lp.lxL) + del;
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufl_ab(bfw, bfh);
+            JaggedArray<float> buflightcurv(bfw, bfh);
+            JaggedArray<float> buf_a_cat(bfw, bfh, true);
+            JaggedArray<float> buf_b_cat(bfw, bfh, true);
+
+
+            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
+
+
+                bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
+                bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
+                bufexptemp = new LabImage(bfw, bfh); //buffer for data in zone limit
+                difLab = new LabImage(bfw, bfh); //buffer for data in zone limit
+                bufcat02fin = new LabImage(bfw, bfh); //buffer for data in zone limit
+                bufmaskorig = new LabImage(bfw, bfh);
+                bufmaskblur = new LabImage(bfw, bfh);
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int jr = 0; jr < bfw; jr++) {
+                        bufexporig->L[ir][jr] = 0.f;
+                        bufexporig->a[ir][jr] = 0.f;
+                        bufexporig->b[ir][jr] = 0.f;
+                        bufmaskorig->L[ir][jr] = 0.f;
+                        bufmaskorig->a[ir][jr] = 0.f;
+                        bufmaskorig->b[ir][jr] = 0.f;
+                        bufexptemp->L[ir][jr] = 0.f;
+                        bufexptemp->a[ir][jr] = 0.f;
+                        bufexptemp->b[ir][jr] = 0.f;
+                        bufexpfin->L[ir][jr] = 0.f;
+                        bufexpfin->a[ir][jr] = 0.f;
+                        bufexpfin->b[ir][jr] = 0.f;
+                        bufcat02fin->L[ir][jr] = 0.f;
+                        bufcat02fin->a[ir][jr] = 0.f;
+                        bufcat02fin->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufl_ab[ir][jr] = 0.f;
+                        buflightcurv[ir][jr] = 0.f;
+                        buf_a_cat[ir][jr] = 0.f;
+                        buf_b_cat[ir][jr] = 0.f;
+                    }
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+                
+                
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            bufmaskorig->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufmaskorig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufmaskorig->b[loy - begy][lox - begx] = original->b[y][x];
+                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
+                            bufmaskblur->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufmaskblur->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufmaskblur->b[loy - begy][lox - begx] = original->b[y][x];
+
+                            float valLL = 0.f;
+                            float valCC = 0.f;
+                            float2 sincosval;
+
+                            if (lp.showmaskexpmet >= 2) {
+                                if (locllmasexpCurve) {
+                                    valLL = (float)(locllmasexpCurve[500.f * (bufexporig->L[loy - begy][lox - begx]) / 32768.f]);
+                                    valLL = 1.f - valLL;
+                                    bufmaskblur->L[loy - begy][lox - begx] = 32768.f * valLL;
+                                }
+
+                                if (locccmasexpCurve) {
+                                    float chromask = (sqrt(SQR(bufexporig->a[loy - begy][lox - begx]) + SQR(bufexporig->b[loy - begy][lox - begx])));
+                                    float chromaskr = chromask / 45000.f;
+                                    valCC = float (locccmasexpCurve[500.f *  chromaskr]);
+                                    valCC = 1.f - valCC;
+                                    sincosval.y = (bufexporig->a[loy - begy][lox - begx]) / chromask;
+                                    sincosval.x = (bufexporig->b[loy - begy][lox - begx]) / chromask;
+                                    bufmaskblur->a[loy - begy][lox - begx] = 45000.f * valCC * sincosval.y;
+                                    bufmaskblur->b[loy - begy][lox - begx] = 45000.f * valCC * sincosval.x;
+                                }
+                            }
+                        }
+                    }
+
+                float radiusb = 3.f / sk;
+
+                if (lp.showmaskexpmet >= 2) {
+
+#ifdef _OPENMP
+                    #pragma omp parallel
+#endif
+                    {
+                        gaussianBlur(bufmaskblur->L, bufmaskorig->L, bfw, bfh, radiusb);
+                        gaussianBlur(bufmaskblur->a, bufmaskorig->a, bfw, bfh, radiusb);
+                        gaussianBlur(bufmaskblur->b, bufmaskorig->b, bfw, bfh, radiusb);
+                    }
+                int GWm = transformed->W;
+                int GHm = transformed->H;
+
+
+                originalmask = new LabImage(GWm, GHm);
+
+                    if (lp.showmaskexpmet == 2 || lp.showmaskexpmet == 3) {
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int y = 0; y < transformed->H ; y++) //{
+                            for (int x = 0; x < transformed->W; x++) {
+                                int lox = cx + x;
+                                int loy = cy + y;
+                                int zone = 0;
+
+                                float localFactor = 1.f;
+                                const float achm = (float)lp.trans / 100.f;
+
+                                if (lp.shapmet == 0) {
+                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                } else if (lp.shapmet == 1) {
+                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                }
+
+                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                    if(zone > 0) {
+                                        bufexporig->L[loy - begy][lox - begx] -= bufmaskorig->L[loy - begy][lox - begx];
+                                        bufexporig->a[loy - begy][lox - begx] -= bufmaskorig->a[loy - begy][lox - begx];
+                                        bufexporig->b[loy - begy][lox - begx] -= bufmaskorig->b[loy - begy][lox - begx];
+                                        originalmask->L[y][x] = bufexporig->L[loy - begy][lox - begx];
+                                        originalmask->a[y][x] = bufexporig->a[loy - begy][lox - begx];
+                                        originalmask->b[y][x] = bufexporig->L[loy - begy][lox - begx];
+                                    }
+                                }
+                            }
+                    } else if (lp.showmaskexpmet == 4) {
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int y = 0; y < transformed->H ; y++) //{
+                            for (int x = 0; x < transformed->W; x++) {
+                                int lox = cx + x;
+                                int loy = cy + y;
+                                int zone = 0;
+                                float localFactor = 1.f;
+                                const float achm = (float)lp.trans / 100.f;
+
+                                if (lp.shapmet == 0) {
+                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
+                                } else if (lp.shapmet == 1) {
+                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                                }
+
+                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                    if(zone > 0) {
+                                        transformed->L[y][x] = bufmaskorig->L[loy - begy][lox - begx];
+                                        transformed->a[y][x] = bufmaskorig->a[loy - begy][lox - begx];
+                                        transformed->b[y][x] = bufmaskorig->b[loy - begy][lox - begx];
+                                    }
+                                }
+                            }
+
+                    }
+                }
+
+
+            if (lp.showmaskexpmet != 4) {
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                       //     bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                       //     bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                       //     bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufexptemp->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexptemp->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexptemp->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufexpfin->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexpfin->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexpfin->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        }
+                    }
+
+//to do Modulate bufexporig and bufexptemp with blend L, H, C and masks
+
+
+                if (exlocalcurve  && localexutili) {// L=f(L) curve enhanced
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < transformed->H ; y++) //{
+                        for (int x = 0; x < transformed->W; x++) {
+                            int lox = cx + x;
+                            int loy = cy + y;
+
+                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                                float lighn = bufexporig->L[loy - begy][lox - begx];
+
+                                float lh;
+                                lh = 0.5f * exlocalcurve[2.f * lighn]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
+                                bufexptemp->L[loy - begy][lox - begx] = lh;
+                            }
+                        }
+
+                    if (lp.expcomp == 0.f) {
+                        lp.expcomp = 0.1f;    // to enabled
+                    }
+
+                    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexptemp, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
+
+
+                } else {
+
+                    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
+                }
+
+                //cat02
+                if (params->locallab.spots.at(sp).warm != 0) {
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin, bufcat02fin);
+                } else {
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++)
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufcat02fin->L[ir][jr] = bufexpfin->L[ir][jr];
+                            bufcat02fin->a[ir][jr] = bufexpfin->a[ir][jr];
+                            bufcat02fin->b[ir][jr] = bufexpfin->b[ir][jr];
+                        }
+                }
+
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                            float rL;
+                            rL = CLIPRET((bufcat02fin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
+
+                            buflight[loy - begy][lox - begx] = rL;
+                            float rA;
+                            rA = CLIPRET((bufcat02fin->a[loy - begy][lox - begx] - bufexporig->a[loy - begy][lox - begx]) / 328.f);
+                            buf_a_cat[loy - begy][lox - begx] = rA;
+
+
+                            float rB;
+                            rB = CLIPRET((bufcat02fin->b[loy - begy][lox - begx] - bufexporig->b[loy - begy][lox - begx]) / 328.f);
+                            buf_b_cat[loy - begy][lox - begx] = rB;
+
+
+                        }
+                    }
+            }
+                Expo_vibr_Local(moddE, powdE, 1, originalmask, buflight, bufl_ab, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, difLab, bufcat02fin, cx, cy, sk);
+                //view mask
+            }
+
+            if (call <= 3) {
+
+                delete bufexporig;
+                delete bufexpfin;
+                delete bufexptemp;
+                delete difLab;
+                delete bufcat02fin;
+                delete bufmaskorig;
+                delete bufmaskblur;
+                delete originalmask;
+            }
+
+        }
+
+
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash
-        if (params->locallab.avoid.at(sp)) {
+        if (params->locallab.spots.at(sp).avoid) {
             TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
             float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},

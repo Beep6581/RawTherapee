@@ -857,6 +857,13 @@ HISTORY_MSG_600;Local - Soft Light enable
 HISTORY_MSG_601;Local - Soft Light strength
 HISTORY_MSG_602;Local - Soft Light scope
 HISTORY_MSG_603;Local - Sh Blur radius
+HISTORY_MSG_605;Local - Color Modifications
+HISTORY_MSG_606;Local - Exp Modifications
+HISTORY_MSG_607;Local - Color Mask C
+HISTORY_MSG_608;Local - Color Mask L
+HISTORY_MSG_609;Local - Exp Mask C
+HISTORY_MSG_610;Local - Exp Mask L
+HISTORY_MSG_611;Local - Color Mask H
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1089,6 +1096,7 @@ NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
+PARTIALPASTE_LOCALLABGROUP;Local L*a*b Settings
 PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;Chromatic aberration correction
@@ -1952,7 +1960,8 @@ TP_LOCALLAB_LUM;Curves
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
-TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
+TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves'
+TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves at the top, mask is completely black no transformation is made by the mask on the image.\nAs you go down the curve, the mask gradually more colorful and brilliant, the image is changing more and more 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
 TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
@@ -1966,6 +1975,7 @@ TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
+TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_NOISELUMFINE;Luminance fine (Wav)
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
 TP_LOCALLAB_NOISELUMDETAIL;Luminance detail (DCT)
@@ -1989,8 +1999,8 @@ TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_THRES;Threshold chroma
 TP_LOCALLAB_PROXI;Iterations
-TP_LOCALLAB_ANBSPOT_TOOLTIP;Provisory control (I hope somebody can help to manage events!! and suppress this bad function)
 TP_LOCALLAB_LIGHTNESS;Lightness
+TP_LOCALLAB_MASK;Mask:
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RETI;Retinex
@@ -2006,8 +2016,6 @@ TP_LOCALLAB_SENSIH;Hue Scope
 TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
 TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
-TP_LOCALLAB_SPOTDUPLI;Duplicate Current Spot
-TP_LOCALLAB_SPOTDUPLI_TOOLTIP;If check, a copy of all datas will be done, except center X=200 and centerY=200\nto show it is a duplicated spot.\nYou must first increase Control spot.\nIf the spot (current) is not empty, datas will be crushed.
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_SHARP;Sharpening
@@ -2021,6 +2029,13 @@ TP_LOCALLAB_SENSICB;Scope
 TP_LOCALLAB_SENSIBN;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SETTINGS;Settings
+TP_LOCALLAB_SHOW;Mask and modifications
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure).\nYou must put 'Display modification' to 'none' or 'Usemask' to enabled the other show.\n\nUse Mask is before algorihtm shape detection  
+TP_LOCALLAB_SHOWMNONE;None
+TP_LOCALLAB_SHOWMODIF;Show modifications whithout mask
+TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
+TP_LOCALLAB_SHOWMASK;Show mask
+TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_SOFT;Soft Light
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGTH;Noise
@@ -2034,6 +2049,22 @@ TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and
 TP_LOCALLAB_VIBRANCE;Vibrance
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
+TP_LOCALLAB_SPOTNAME;Control Spot #
+TP_LOCALLAB_BUTTON_ADD;Add
+TP_LOCALLAB_BUTTON_DEL;Delete
+TP_LOCALLAB_BUTTON_DUPL;Duplicate
+TP_LOCALLAB_BUTTON_REN;Rename
+TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_COL_NAME;Name
+TP_LOCALLAB_COL_VIS;Status
+TP_LOCALLAB_ROW_VIS;Visible
+TP_LOCALLAB_ROW_NVIS;Not visible
+TP_LOCALLAB_EV_VIS;Show
+TP_LOCALLAB_EV_NVIS;Hide
+TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
+TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
+TP_LOCALLAB_EV_DUPL;Copy of
+TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right

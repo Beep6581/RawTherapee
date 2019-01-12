@@ -57,7 +57,8 @@ void BatchToolPanelCoordinator::selectionChanged (const std::vector<Thumbnail*>&
 void BatchToolPanelCoordinator::closeSession (bool save)
 {
 
-    pparamsEdited.set (false);
+    // Should remain commented for Locallab to work
+    // pparamsEdited.set (false);
 
     for (size_t i = 0; i < selected.size(); i++) {
         selected[i]->removeThumbnailListener (this);
@@ -389,6 +390,9 @@ void BatchToolPanelCoordinator::initSession ()
             paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M ("BATCH_PROCESSING"), &pparamsEdited);
         }
     }
+
+    // ParamsEdited are set to false for initialization and is updated each time panel is changed (mandatory for Locallab)
+    pparamsEdited.set(false);
 }
 
 void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
@@ -399,7 +403,8 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
 
     somethingChanged = true;
 
-    pparamsEdited.set (false);
+    // Should remain commented for Locallab to work
+    // pparamsEdited.set (false);
 
     // read new values from the gui
     for (size_t i = 0; i < toolPanels.size(); i++) {

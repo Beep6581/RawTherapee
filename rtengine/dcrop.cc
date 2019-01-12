@@ -892,14 +892,19 @@ void Crop::update(int todo)
         LUTf shtonecurveloc2(65536, 0);
         LUTf tonecurveloc2(65536, 0);
         LUTf lightCurveloc2(32770, 0);
+        LUTu lhist16loc2(32770, 0);
         bool LHutili = parent->LHutili;
         bool HHutili = parent->HHutili;
-
         LUTu dummy;
         bool needslocal = params.locallab.enabled;
         LocretigainCurve locRETgainCurve;
         LocLHCurve loclhCurve;
         LocHHCurve lochhCurve;
+        LocCCmaskCurve locccmasCurve;
+        LocLLmaskCurve locllmasCurve;
+        LocHHmaskCurve lochhmasCurve;
+        LocCCmaskexpCurve locccmasexpCurve;
+        LocLLmaskexpCurve locllmasexpCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -909,39 +914,45 @@ void Crop::update(int todo)
      //   int maxspot = 1;
 
         if (needslocal) {
-            for (int sp = 0; sp < params.locallab.nbspot; sp++) {
-                locRETgainCurve.Set(params.locallab.localTgaincurve.at(sp));
-                loclhCurve.Set(params.locallab.LHcurve.at(sp), LHutili);
-                lochhCurve.Set(params.locallab.HHcurve.at(sp), HHutili);
+            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
+                locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
+                loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
+                lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
+                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
+                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
+                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
                 locallutili = false;
-                CurveFactory::curveLocal(locallutili, params.locallab.llcurve.at(sp), lllocalcurve2, sca);
+                CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localcutili = false;
-                CurveFactory::curveCCLocal(localcutili, params.locallab.cccurve.at(sp), cclocalcurve2, sca);
+                CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve2, sca);
                 //localskutili = false;
-                CurveFactory::curveskLocal(localskutili, params.locallab.skintonescurve.at(sp), sklocalcurve2, sca);
-                CurveFactory::curveexLocal(localexutili, params.locallab.excurve.at(sp), exlocalcurve2, sca);
+                CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve2, sca);
+                CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve2, sca);
 
 
-                double ecomp = params.locallab.expcomp.at(sp);
-                double black = params.locallab.black.at(sp);
-                double hlcompr = params.locallab.hlcompr.at(sp);
-                double hlcomprthresh = params.locallab.hlcomprthresh.at(sp);
-                double shcompr = params.locallab.shcompr.at(sp);
-                double br = params.locallab.lightness.at(sp);
+                double ecomp = params.locallab.spots.at(sp).expcomp;
+                double black = params.locallab.spots.at(sp).black;
+                double hlcompr = params.locallab.spots.at(sp).hlcompr;
+                double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
+                double shcompr = params.locallab.spots.at(sp).shcompr;
+                double br = params.locallab.spots.at(sp).lightness;
 
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
-                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
-                                                sca);
-
+                double cont = params.locallab.spots.at(sp).contrast;
+                lhist16loc2 = parent->lhist16loc;
                 double huere, chromare, lumare, huerefblu, sobelre;
                 huerefblu = parent->huerefblurs[sp];
                 huere = parent->huerefs[sp];
                 chromare = parent->chromarefs[sp];
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc2,
+                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
+                                                sca);
 
-                parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
-                                      loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
+                parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2, 
+                                      loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();

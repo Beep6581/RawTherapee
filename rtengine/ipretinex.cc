@@ -814,10 +814,10 @@ void ImProcFunctions::MSRLocal(int sp, float** luminance, float** templ, const f
         //   constexpr bool useHsl = false; //never used
         constexpr bool useHslLin = false;//never used
         const float offse = 0.f; //loc.offs;
-        const float chrT = (float)(loc.chrrt.at(sp)) / 100.f;
+        const float chrT = (float)(loc.spots.at(sp).chrrt) / 100.f;
         const int scal = scall;//3;//loc.scale;;
-        const float vart = loc.vart.at(sp) / 100.f;//variance
-        const float strength = loc.str.at(sp) / 100.f; // Blend with original L channel data
+        const float vart = loc.spots.at(sp).vart / 100.f;//variance
+        const float strength = loc.spots.at(sp).str / 100.f; // Blend with original L channel data
         float limD = 10.f;//(float) loc.limd;
         limD = pow(limD, 1.7f);  //about 2500 enough
         //limD *= useHslLin ? 10.f : 1.f;
@@ -826,7 +826,7 @@ void ImProcFunctions::MSRLocal(int sp, float** luminance, float** templ, const f
 
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
-        int nei = (int)(krad * loc.neigh.at(sp));
+        int nei = (int)(krad * loc.spots.at(sp).neigh);
 
         if (skip >= 4) {
             nei = (int)(0.1f * nei + 2.f);     //not too bad
@@ -836,12 +836,12 @@ void ImProcFunctions::MSRLocal(int sp, float** luminance, float** templ, const f
 
         int moderetinex = 0;
 
-        if (loc.retinexMethod.at(sp) == "uni") {
+        if (loc.spots.at(sp).retinexMethod == "uni") {
             moderetinex = 0;
-        } else if (loc.retinexMethod.at(sp) == "low") {
+        } else if (loc.spots.at(sp).retinexMethod == "low") {
             moderetinex = 1;
         } else {
-            if (loc.retinexMethod.at(sp) == "high") { // default to 2 ( deh.retinexMethod == "high" )
+            if (loc.spots.at(sp).retinexMethod == "high") { // default to 2 ( deh.retinexMethod == "high" )
                 moderetinex = 2;
             }
         }

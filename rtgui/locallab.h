@@ -38,10 +38,13 @@ class Locallab :
     public CurveListener,
     public ColorProvider,
     public ThresholdCurveProvider,
+    public rtengine::LocallabListener,
     public ThresholdAdjusterListener
 
 {
 private: 
+    IdleRegister idle_register;
+
     // Expander widgets
     ControlSpotPanel* const expsettings;
     MyExpander* const expcolor;
@@ -61,13 +64,21 @@ private:
     // Curve widgets
     // Color & Light
     CurveEditorGroup* const llCurveEditorG;
+    CurveEditorGroup* const maskCurveEditorG;
     DiagonalCurveEditor* llshape;
     DiagonalCurveEditor* ccshape;
     FlatCurveEditor* LHshape;
     FlatCurveEditor* HHshape;
+    FlatCurveEditor* CCmaskshape;
+    FlatCurveEditor* LLmaskshape;
+    FlatCurveEditor* HHmaskshape;
+    
     // Exposure
     CurveEditorGroup* const curveEditorG;
+    CurveEditorGroup* const maskexpCurveEditorG;
     DiagonalCurveEditor* shapeexpos;
+    FlatCurveEditor* CCmaskexpshape;
+    FlatCurveEditor* LLmaskexpshape;
     // Vibrance
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* skinTonesCurve;
@@ -93,7 +104,7 @@ private:
     Adjuster* const saturated;
     Adjuster* const pastels;
     Adjuster* const sensiv;
-    //Soft Light
+    // Soft Light
     Adjuster* const streng;
     Adjuster* const sensisf;
     // Blur & Noise
@@ -116,13 +127,13 @@ private:
     Adjuster* const sensih;
     // Sharpening
     Adjuster* const sharcontrast;
-    Adjuster* const sharblur;
     Adjuster* const sharradius;
     Adjuster* const sharamount;
     Adjuster* const shardamping;
     Adjuster* const shariter;
+    Adjuster* const sharblur;
     Adjuster* const sensisha;
-    //local contrast
+    // Local Contrast
     Adjuster* const lcradius;
     Adjuster* const lcamount;
     Adjuster* const lcdarkness;
@@ -172,6 +183,12 @@ private:
     // Color & Light
     MyComboBoxText* const qualitycurveMethod;
     sigc::connection qualitycurveMethodConn;
+    MyComboBoxText* const showmaskcolMethod;
+    sigc::connection showmaskcolMethodConn;
+    //Exposure
+    MyComboBoxText* const showmaskexpMethod;
+    sigc::connection showmaskexpMethodConn;
+
     // Blur & Noise
     MyComboBoxText* const blurMethod;
     sigc::connection blurMethodConn;
@@ -189,6 +206,29 @@ private:
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
+    Gtk::Label* transLabels;
+    Gtk::Label* transLabels2;
+
+    //Frame
+    Gtk::Frame* maskcolFrame;
+    Gtk::Frame* maskexpFrame;
+    
+    // Others
+    /**
+     * Used to store the default ProcParams when setDefaults function is called
+     * When an other spot is selected, this default ProcParams is used to update adjusters default values
+     */
+    const rtengine::ProcParams* defparams;
+    /**
+     * Used to store the default ParamsEdited when setDefaults function is called
+     * When an other spot is selected, this default ParamsEdited is used to update adjusters default edited state
+     */
+    const ParamsEdited* defpedited;
+    /**
+     * Used to store the default ParamsEdited when setDefaults function is called
+     * This ParamsEdited is updated when control spots are modified and is used to update adjusters edited state
+     */
+    ParamsEdited* pe;
 
     // Expander management functions
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);
@@ -198,6 +238,10 @@ private:
     // Color & Light
     void curvactivChanged();
     void inversChanged();
+    void showmaskcolMethodChanged();
+    //Exposure
+    void showmaskexpMethodChanged();
+
     // Vibrance
     void protectskins_toggled();
     void avoidcolorshift_toggled();
@@ -225,8 +269,13 @@ private:
     void lumacontrastPlusPressed();
 
     // Locallab GUI management function
-    void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, int index);
+    void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);
     void updateSpecificGUIState();
+    void setParamEditable(bool cond);
+    double nexthuer;
+    double nextlumar;
+    double nextchromar;
+
 /*
     void onLabRegionSelectionChanged();
     void labRegionAddPressed();
@@ -264,6 +313,7 @@ private:
     int labRegionSelected;
     sigc::connection labRegionSelectionConn;
 */
+
 public:
     Locallab();
     ~Locallab();
@@ -272,6 +322,7 @@ public:
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited, int id);
     void setBatchMode(bool batchMode);
     void trimValues(rtengine::procparams::ProcParams* pp);
     void setListener(ToolPanelListener* tpl);
@@ -279,6 +330,9 @@ public:
     void disableListener();
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);
+    void refChanged (double huer, double lumar, double chromar);
+    bool refComputed_ ();
+    void updateLabel      ();
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider);
@@ -306,6 +360,4 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
-
-
 };

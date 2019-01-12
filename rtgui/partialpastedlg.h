@@ -40,6 +40,7 @@ public:
     Gtk::CheckButton* meta;
     Gtk::CheckButton* raw;
     Gtk::CheckButton* advanced;
+    Gtk::CheckButton* locallab;
 
     // options in basic:
     Gtk::CheckButton* wb;
@@ -129,7 +130,7 @@ public:
     Gtk::CheckButton* ff_BlurType;
     Gtk::CheckButton* ff_ClipControl;
 
-    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, advancedConn;
+    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, advancedConn, locallabConn;
 
     sigc::connection wbConn, exposureConn, localcontrastConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn;
     sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, fattalConn, dirpyreqConn, waveletConn, retinexConn, dehazeConn;
@@ -154,6 +155,7 @@ public:
     void metaToggled ();
     void rawToggled ();
     void advancedToggled ();
+    void locallabToggled ();
 };
 
 #endif

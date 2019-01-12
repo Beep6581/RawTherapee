@@ -1074,6 +1074,11 @@ private:
             LocretigainCurve locRETgainCurve;
             LocLHCurve loclhCurve;
             LocHHCurve lochhCurve;
+            LocCCmaskCurve locccmasCurve;
+            LocLLmaskCurve locllmasCurve;
+            LocHHmaskCurve lochhmasCurve;
+            LocCCmaskexpCurve locccmasexpCurve;
+            LocLLmaskexpCurve locllmasexpCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf sklocalcurve(65536, 0);
@@ -1081,13 +1086,14 @@ private:
             LUTf shtonecurveloc(65536, 0);
             LUTf tonecurveloc(65536, 0);
             LUTf lightCurveloc(32770, 0);
+            LUTu lhist16loc(32768, 0);
             LUTf exlocalcurve(65536, 0);
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
 
-            for (int sp = 0; sp < params.locallab.nbspot; sp++) {
-                if (params.locallab.inverssha.at(sp)) {
+            for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
+                if (params.locallab.spots.at(sp).inverssha) {
                     shbuffer = new float*[fh];
 
                     for (int i = 0; i < fh; i++) {
@@ -1102,35 +1108,40 @@ private:
                 bool localcutili = false;
                 bool localskutili = false;
                 bool localexutili = false;
-                locRETgainCurve.Set(params.locallab.localTgaincurve.at(sp));
-                loclhCurve.Set(params.locallab.LHcurve.at(sp), LHutili);
-                lochhCurve.Set(params.locallab.HHcurve.at(sp), HHutili);
-                CurveFactory::curveLocal(locallutili, params.locallab.llcurve.at(sp), lllocalcurve, 1);
-                CurveFactory::curveCCLocal(localcutili, params.locallab.cccurve.at(sp), cclocalcurve, 1);
-                CurveFactory::curveskLocal(localskutili, params.locallab.skintonescurve.at(sp), sklocalcurve, 1);
-                CurveFactory::curveexLocal(localexutili, params.locallab.excurve.at(sp), exlocalcurve, 1);
+                locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
+                loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
+                lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
+                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
+                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
+                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
+                CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
+                CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
+                CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);
+                CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
                 //provisory
-                double ecomp = params.locallab.expcomp.at(sp);
-                double black = params.locallab.black.at(sp);
-                double hlcompr = params.locallab.hlcompr.at(sp);
-                double hlcomprthresh = params.locallab.hlcomprthresh.at(sp);
-                double shcompr = params.locallab.shcompr.at(sp);
-                double br = params.locallab.lightness.at(sp);
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                                1);
+                double ecomp = params.locallab.spots.at(sp).expcomp;
+                double black = params.locallab.spots.at(sp).black;
+                double hlcompr = params.locallab.spots.at(sp).hlcompr;
+                double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
+                double shcompr = params.locallab.spots.at(sp).shcompr;
+                double br = params.locallab.spots.at(sp).lightness;
+                double cont = params.locallab.spots.at(sp).contrast;
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, sobelre;
 
-                if (params.locallab.spotMethod.at(sp) == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre);
-
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 }
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                                1);
 
-                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve,
+                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
 
                 // Clear local curves
@@ -1139,7 +1150,7 @@ private:
                 sklocalcurve.clear();
                 exlocalcurve.clear();
 
-                if (params.locallab.inverssha.at(sp)) {
+                if (params.locallab.spots.at(sp).inverssha) {
 
                     for (int i = 0; i < fh; i++) {
                         delete [] shbuffer[i];

@@ -182,7 +182,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     updateVScrollbars (options.hideTPVScrollbar);
 
     // load panel endings
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
         imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
         imgPanelEnd[i]->show();
@@ -214,7 +214,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     locallabPanelSW->add(*locallabPanel);
     locallabPanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
-    locallabPanel->pack_start(*vbPanelEnd[6], Gtk::PACK_SHRINK, 0);
+    locallabPanel->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
     
     transformPanelSW->add (*transformPanel);
     transformPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
@@ -251,6 +251,11 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     notebookconn = toolPanelNotebook->signal_switch_page().connect(
                        sigc::mem_fun(*this, &ToolPanelCoordinator::notebookPageChanged));
+
+    // In batch mode, notebookPageChanged method is blocked because it's useless to display spots
+    if (batch) {
+        notebookconn.block(true);
+    }
 
     for (auto toolPanel : toolPanels) {
         toolPanel->setListener(this);
@@ -396,9 +401,6 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
 
 void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
 {
-    // TODO Locallab printf
-    printf("panelChanged\n");
- //   printf("panelChanged event: %d\n", (int)event);
     if (!ipc) {
         return;
     }
@@ -492,9 +494,6 @@ void ToolPanelCoordinator::profileChange(
     bool fromLastSave
 )
 {
-    // TODO Locallab printf
-    printf("profileChanged\n");
-//    printf("profileChanged event: %d\n", (int)event);
     int fw, fh, tr;
 
     if (!ipc) {
@@ -635,6 +634,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setRetinexListener(retinex);
         ipc->setSizeListener(crop);
         ipc->setSizeListener(resize);
+        ipc->setLocallabListener(locallab);
         ipc->setImageTypeListener(this);
         flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 
