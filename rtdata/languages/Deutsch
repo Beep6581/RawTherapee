@@ -2408,3 +2408,11 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
+!MAIN_TAB_FAVORITES;Favorites
+!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
+!TP_SHARPENING_BLUR;Blur radius

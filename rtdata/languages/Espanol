@@ -2459,3 +2459,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !CURVEEDITOR_CATMULLROM;Flexible
+!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
+!MAIN_TAB_FAVORITES;Favorites
+!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
+!TP_SHARPENING_BLUR;Blur radius
