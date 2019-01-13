@@ -92,6 +92,8 @@ private:
     Adjuster* const contrast;
     Adjuster* const chroma;
     Adjuster* const sensi;
+    Adjuster* const structcol;
+
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;
@@ -100,6 +102,7 @@ private:
     Adjuster* const shcompr;
     Adjuster* const warm;
     Adjuster* const sensiex;
+    Adjuster* const structexp;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;

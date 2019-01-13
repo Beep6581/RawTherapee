@@ -487,6 +487,7 @@ public:
         bool contrast;
         bool chroma;
         bool sensi;
+        bool structcol;
         bool qualitycurveMethod;
         bool showmaskcolMethod;
         bool llcurve;
@@ -506,6 +507,7 @@ public:
         bool shcompr;
         bool warm;
         bool sensiex;
+        bool structexp;
         bool excurve;
         bool showmaskexpMethod;
         bool CCmaskexpcurve;

@@ -864,6 +864,8 @@ HISTORY_MSG_608;Local - Color Mask L
 HISTORY_MSG_609;Local - Exp Mask C
 HISTORY_MSG_610;Local - Exp Mask L
 HISTORY_MSG_611;Local - Color Mask H
+HISTORY_MSG_612;Local - Color Structure
+HISTORY_MSG_613;Local - Exp Structure
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2039,6 +2041,7 @@ TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_SOFT;Soft Light
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGTH;Noise
+TP_LOCALLAB_STRUCCOL;Structure
 TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
