@@ -5046,7 +5046,7 @@ void ImProcFunctions::Exclude_Local(float moddE, float powdE, int sen, float **d
 }
 
 
-void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref,  const float lumaref, float sobelref, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * difLab, const LabImage * const tmp1, int cx, int cy, int sk)
+void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref,  const float lumaref, float sobelref, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
 //local exposure and vibrance
@@ -5672,7 +5672,7 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
 }
 
 
-void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabImage * bufcolorig, LabImage * originalmask, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, float sobelref, float ** blend2,  float ** blendch, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabImage * bufcolorig, LabImage * originalmask, float ** buflight, float ** bufchro, float ** bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, float sobelref, float ** blend2, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
 // chroma and lightness
@@ -5868,7 +5868,7 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                         origblur->b[y][x] = 0.01f;
                     }
                     //Sobel
-                    float csob = (blend2[loy - begy][lox - begx])/100.f ; //+ (blendch[loy - begy][lox - begx])/100.f ;
+                    float csob = (blend2[loy - begy][lox - begx])/100.f ;
                     if(csob > 60.f) csob = 60.f;
                      csob = log(1.f + csob);
                     float rs = sobelref / csob;
@@ -7089,7 +7089,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 }
 
-void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, float **blend, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram)
+void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -9246,7 +9246,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
-            LabImage *difLab = nullptr;
 
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
@@ -9260,7 +9259,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
-                difLab = new LabImage(bfw, bfh); //buffer for data in zone limit
 
 
 #ifdef _OPENMP
@@ -9334,7 +9332,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                Expo_vibr_Local(moddE, powdE, 2, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, difLab, bufexpfin, cx, cy, sk);
+                Expo_vibr_Local(moddE, powdE, 2, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
                 //call Expo_vibr_Local with first parameter = 2 for vibrance
 
             }
@@ -9343,7 +9341,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 delete bufexporig;
                 delete bufexpfin;
-                delete difLab;
 
 
             }
@@ -9621,7 +9618,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
-            LabImage *difLab = nullptr;
 
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
@@ -9635,7 +9631,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
-                difLab = new LabImage(bfw, bfh); //buffer for data in zone limit
 
 
 #ifdef _OPENMP
@@ -9707,7 +9702,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                Expo_vibr_Local(moddE, powdE, 3, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueplus, huemoins, hueref, dhuesf, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, difLab, bufexpfin, cx, cy, sk);
+                Expo_vibr_Local(moddE, powdE, 3, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueplus, huemoins, hueref, dhuesf, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
             }
 
@@ -9715,7 +9710,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 delete bufexporig;
                 delete bufexpfin;
-                delete difLab;
 
 
             }
@@ -10149,7 +10143,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             JaggedArray<float> bufchroslid(bfw, bfh);
             JaggedArray<float> bufhh(bfw, bfh);
             JaggedArray<float> blend2(bfw, bfh);
-            JaggedArray<float> blendch(bfw, bfh);
             JaggedArray<float> buforigchro(bfw, bfh);
 
             float adjustr = 1.0f;
@@ -10222,7 +10215,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 if(bfw > 2* spotSi && bfh > 2* spotSi  && lp.struco > 0.f) {
                     SobelCannyLuma(blend2,bufcolorig->L , bfw, bfh, radius);
-                //    SobelCannyLuma(blendch, buforigchro , bfw, bfh, radius);
                     array2D<float> ble(bfw, bfh);
                     array2D<float> blec(bfw, bfh);
                     array2D<float> guid(bfw, bfh);
@@ -10232,7 +10224,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
                             ble[ir][jr] = blend2[ir][jr] / 32768.f;
-                        //    blec[ir][jr] = blendch[ir][jr] / 32768.f;
                             guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
                         }
                     float blur = 25 / sk * (10.f + 1.2f * lp.struco); 
@@ -10247,7 +10238,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
                         blend2[ir][jr] = ble[ir][jr] * 32768.f;
-                    //    blendch[ir][jr] = ble[ir][jr] * 32768.f;
                         }
 
                     bool execmedian = true;
@@ -10263,7 +10253,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                         Median medianTypeL = Median::TYPE_3X3_STRONG;
                         Median_Denoise(blend2, blend2, wid, hei, medianTypeL, passes, multiThread, tmL);
-                    //    Median_Denoise(blendch, blendch, wid, hei, medianTypeL, 1, multiThread, tmL);
 
                         for (int i = 0; i < hei; ++i) {
                             delete[] tmL[i];
@@ -10542,7 +10531,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                ColorLight_Local(moddE, powdE, call, bufcolorig, originalmask, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, sobelref, blend2, blendch, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
+                ColorLight_Local(moddE, powdE, call, bufcolorig, originalmask, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, sobelref, blend2, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
 
                 if (call <= 3) {
 
@@ -10590,7 +10579,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
             LabImage *bufexptemp = nullptr;
-            LabImage *difLab = nullptr;
             LabImage *bufcat02fin = nullptr;
             LabImage *bufmaskorig = nullptr;
             LabImage *bufmaskblur = nullptr;
@@ -10613,7 +10601,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexptemp = new LabImage(bfw, bfh); //buffer for data in zone limit
-                difLab = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufcat02fin = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufmaskorig = new LabImage(bfw, bfh);
                 bufmaskblur = new LabImage(bfw, bfh);
@@ -10953,7 +10940,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
             }
-                Expo_vibr_Local(moddE, powdE, 1, bufexporig, originalmask, buflight, bufl_ab, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, sobelref, blend2, lp, original, transformed, difLab, bufcat02fin, cx, cy, sk);
+                Expo_vibr_Local(moddE, powdE, 1, bufexporig, originalmask, buflight, bufl_ab, buf_a_cat, buf_b_cat, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, sobelref, blend2, lp, original, transformed, cx, cy, sk);
                 //view mask
             }
 
@@ -10962,7 +10949,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 delete bufexporig;
                 delete bufexpfin;
                 delete bufexptemp;
-                delete difLab;
                 delete bufcat02fin;
                 delete bufmaskorig;
                 delete bufmaskblur;

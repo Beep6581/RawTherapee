@@ -1135,9 +1135,9 @@ private:
                 double huere, chromare, lumare, huerefblu, sobelre;
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, blend, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 } else {
-                    ipf.calc_ref(sp, labView, labView, blend, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 }
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
