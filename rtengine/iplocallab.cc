@@ -3896,62 +3896,61 @@ void ImProcFunctions::Reti_Local(float moddE, float powdE, float **buflight, flo
                                 float factorx = localFactor;
 
                                 if (chro == 0) {
-                                    float difL;
-
-                                    difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                    difL *= factorx * (100.f + realstr * falL) / 100.f;
-                                    difL *= kch * fach;
-
-                                    transformed->L[y][x] = original->L[y][x] + difL;
+                                    float lightc = tmp1->L[loy - begy][lox - begx];
+                                    float fli = 1.f;
+                                    fli = ((100.f + realstr * falL) / 100.f);
+                                    float diflc = lightc * fli - original->L[y][x];
+                                    diflc *= kch * fach;
+                                    diflc *= factorx;
+                                    transformed->L[y][x] = original->L[y][x] + diflc;
                                 }
 
                                 if (chro == 1) {
-                                    float difa, difb;
+                                    float flia = 1.f;
+                                    float flib = 1.f;
+                                    float chra = tmp1->a[loy - begy][lox - begx];
+                                    float chrb = tmp1->b[loy - begy][lox - begx];
 
-                                    difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                    difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                    difa *= factorx * (100.f + realstrch * falu * falL) / 100.f;
-                                    difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                    flia = ((100.f + realstrch * falu * falL) / 100.f);
+                                    flib = ((100.f + realstrch * falu * falL) / 100.f);
+                                    float difa = chra * flia - original->a[y][x];
+                                    float difb = chrb * flib - original->b[y][x];
+                                    difa *= factorx;
+                                    difb *= factorx;
                                     difa *= kch * fach;
                                     difb *= kch * fach;
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-
+                                    transformed->a[y][x] = original->a[y][x] + difa;
+                                    transformed->b[y][x] = original->b[y][x] + difb;
                                 }
-
                                 break;
-
                             }
-
                             case 2: { // inside selection => full effect, no transition
                                 if (chro == 0) {
-                                    float difL;
-
-                                    difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                    difL *= (100.f + realstr * falL) / 100.f;
-                                    difL *= kch * fach;
-                                    transformed->L[y][x] = original->L[y][x] + difL;
-
+                                    float lightc = tmp1->L[loy - begy][lox - begx];
+                                    float fli = 1.f;
+                                    fli = ((100.f + realstr * falL) / 100.f);
+                                    float diflc = lightc * fli - original->L[y][x];
+                                    diflc *= kch * fach;
+                                    transformed->L[y][x] = original->L[y][x] + diflc;
                                 }
 
                                 if (chro == 1) {
-                                    float difa, difb;
+                                    float flia = 1.f;
+                                    float flib = 1.f;
+                                    float chra = tmp1->a[loy - begy][lox - begx];
+                                    float chrb = tmp1->b[loy - begy][lox - begx];
 
-                                    difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                    difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                    difa *= (100.f + realstrch * falu * falL) / 100.f;
-                                    difb *= (100.f + realstrch * falu * falL) / 100.f;
+                                    flia = ((100.f + realstrch * falu * falL) / 100.f);
+                                    flib = ((100.f + realstrch * falu * falL) / 100.f);
+                                    float difa = chra * flia - original->a[y][x];
+                                    float difb = chrb * flib - original->b[y][x];
                                     difa *= kch * fach;
                                     difb *= kch * fach;
-
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-
+                                    transformed->a[y][x] = original->a[y][x] + difa;
+                                    transformed->b[y][x] = original->b[y][x] + difb;
                                 }
                             }
                         }
-
-                        //}
                     }
                 }
             }
@@ -10006,7 +10005,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (!lp.invret) {
 
-                Reti_Local(moddE, powdE, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 0, sk);
+             //   Reti_Local(moddE, powdE, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 0, sk);
+                Reti_Local(moddE, powdE, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, bufreti, cx, cy, 0, sk);
             } else {
                 InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
             }
