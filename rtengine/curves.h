@@ -68,11 +68,9 @@ inline vmask OOG(const vfloat val)
 inline void setUnlessOOG(vfloat &r, vfloat &g, vfloat &b, const vfloat rr, const vfloat gg, const vfloat bb)
 {
     vmask cond = vandm(vandm(OOG(r), OOG(g)), OOG(b));
-    if (!_mm_movemask_ps((vfloat)cond)) {
-        r = rr;
-        g = gg;
-        b = bb;
-    }
+    r = vself(cond, r, rr);
+    g = vself(cond, g, gg);
+    b = vself(cond, b, bb);
 }
 #endif
 
