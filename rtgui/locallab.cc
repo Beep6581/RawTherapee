@@ -234,6 +234,7 @@ Locallab::Locallab():
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_USEMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMASK"));
+    showmaskcolMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
 
     showmaskcolMethod->set_active(0);
     showmaskcolMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
@@ -393,6 +394,7 @@ Locallab::Locallab():
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_USEMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMASK"));
+    showmaskexpMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
 
     showmaskexpMethod->set_active(0);
     showmaskexpMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
@@ -1501,6 +1503,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "mask";
                     } else if (showmaskcolMethod->get_active_row_number() == 4) {
                         pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "showmask";
+                    } else if (showmaskcolMethod->get_active_row_number() == 5) {
+                        pp->locallab.spots.at(pp->locallab.selspot).showmaskcolMethod = "showstruc";
                     }
                  
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
@@ -1532,6 +1536,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).showmaskexpMethod = "mask";
                     } else if (showmaskexpMethod->get_active_row_number() == 4) {
                         pp->locallab.spots.at(pp->locallab.selspot).showmaskexpMethod = "showmask";
+                    } else if (showmaskexpMethod->get_active_row_number() == 5) {
+                        pp->locallab.spots.at(pp->locallab.selspot).showmaskexpMethod = "showstruc";
                     }
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = LLmaskexpshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = CCmaskexpshape->getCurve();
@@ -2156,7 +2162,7 @@ void Locallab::qualitycurveMethodChanged()
 
 void Locallab::showmaskcolMethodChanged()
 {
-    if((showmaskcolMethod->get_active_row_number() == 1 || showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 4) && expcolor->getEnabled()) {
+    if((showmaskcolMethod->get_active_row_number() == 1 || showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 4 || showmaskcolMethod->get_active_row_number() == 5) && expcolor->getEnabled()) {
         showmaskexpMethod->set_active(0);
         expexpose->setEnabled(false); 
     }
@@ -2171,7 +2177,7 @@ void Locallab::showmaskcolMethodChanged()
 void Locallab::showmaskexpMethodChanged()
 {
     
-    if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4) && expexpose->getEnabled()) {
+    if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4 || showmaskexpMethod->get_active_row_number() == 5) && expexpose->getEnabled()) {
         showmaskcolMethod->set_active(0);
         expcolor->setEnabled(false); 
     }
@@ -3500,6 +3506,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             showmaskcolMethod->set_active(3);
         } else if (pp->locallab.spots.at(index).showmaskcolMethod == "showmask") {
             showmaskcolMethod->set_active(4);
+        } else if (pp->locallab.spots.at(index).showmaskcolMethod == "showstruc") {
+            showmaskcolMethod->set_active(5);
         }
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
         ccshape->setCurve(pp->locallab.spots.at(index).cccurve);
@@ -3531,6 +3539,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             showmaskexpMethod->set_active(3);
         } else if (pp->locallab.spots.at(index).showmaskexpMethod == "showmask") {
             showmaskexpMethod->set_active(4);
+        } else if (pp->locallab.spots.at(index).showmaskexpMethod == "showstruc") {
+            showmaskexpMethod->set_active(5);
         }
         CCmaskexpshape->setCurve(pp->locallab.spots.at(index).CCmaskexpcurve);
         LLmaskexpshape->setCurve(pp->locallab.spots.at(index).LLmaskexpcurve);
@@ -3893,14 +3903,14 @@ void Locallab::updateSpecificGUIState()
     //update showmethod
     if (multiImage && showmaskcolMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
         showmaskexpMethod->set_active(0);
-    } else if((showmaskcolMethod->get_active_row_number() == 1 || showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 4)) {
+    } else if((showmaskcolMethod->get_active_row_number() == 1 || showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 4 || showmaskcolMethod->get_active_row_number() == 5)) {
         showmaskexpMethod->set_active(0);
         expexpose->setEnabled(false); 
     }
     
     if (multiImage && showmaskexpMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
         showmaskcolMethod->set_active(0);
-    } else if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4)) {
+    } else if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4 || showmaskexpMethod->get_active_row_number() == 5)) {
         showmaskcolMethod->set_active(0);
         expcolor->setEnabled(false); 
     }
