@@ -49,8 +49,7 @@ namespace rtengine
 class ToneCurve;
 class ColorAppearance;
 
-template <typename T>
-void setUnlessOOG(T &r, T &g, T &b, const T &rr, const T &gg, const T &bb)
+inline void setUnlessOOG(float &r, float &g, float &b, const float &rr, const float &gg, const float &bb)
 {
     if (!OOG(r) || !OOG(g) || !OOG(b)) {
         r = rr;
@@ -58,6 +57,24 @@ void setUnlessOOG(T &r, T &g, T &b, const T &rr, const T &gg, const T &bb)
         b = bb;
     }
 }
+
+#ifdef __SSE2__
+inline vmask OOG(const vfloat val)
+{
+    return vorm(vmaskf_lt(val, ZEROV), vmaskf_gt(val, F2V(65535.f)));
+}
+
+
+inline void setUnlessOOG(vfloat &r, vfloat &g, vfloat &b, const vfloat rr, const vfloat gg, const vfloat bb)
+{
+    vmask cond = vandm(vandm(OOG(r), OOG(g)), OOG(b));
+    if (!_mm_movemask_ps((vfloat)cond)) {
+        r = rr;
+        g = gg;
+        b = bb;
+    }
+}
+#endif
 
 bool sanitizeCurve(std::vector<double>& curve);
 
@@ -967,33 +984,24 @@ inline void StandardToneCurve::BatchApply(
             break;
 #endif
         }
-        curves::setLutVal(lutToneCurve, r[i], g[i], b[i]);
+        setUnlessOOG(r[i], g[i], b[i], lutToneCurve[r[i]], lutToneCurve[g[i]], lutToneCurve[b[i]]);
         i++;
     }
 
 #ifdef __SSE2__
-    float tmpr[4] ALIGNED16;
-    float tmpg[4] ALIGNED16;
-    float tmpb[4] ALIGNED16;
-    // float mv = lutToneCurve[MAXVALF];
     for (; i + 3 < end; i += 4) {
-        __m128 r_val = LVF(r[i]);
-        __m128 g_val = LVF(g[i]);
-        __m128 b_val = LVF(b[i]);
-        STVF(tmpr[0], lutToneCurve[r_val]);
-        STVF(tmpg[0], lutToneCurve[g_val]);
-        STVF(tmpb[0], lutToneCurve[b_val]);
-        for (int j = 0; j < 4; ++j) {
-            setUnlessOOG(r[i+j], g[i+j], b[i+j], tmpr[j], tmpg[j], tmpb[j]);
-            // curves::setLutVal(r[i+j], tmpr[j], mv);
-            // curves::setLutVal(g[i+j], tmpg[j], mv);
-            // curves::setLutVal(b[i+j], tmpb[j], mv);
-        }
+        vfloat r_val = LVF(r[i]);
+        vfloat g_val = LVF(g[i]);
+        vfloat b_val = LVF(b[i]);
+        setUnlessOOG(r_val, g_val, b_val, lutToneCurve[r_val], lutToneCurve[g_val], lutToneCurve[b_val]);
+        STVF(r[i], r_val);
+        STVF(g[i], g_val);
+        STVF(b[i], b_val);
     }
 
     // Remainder in non-SSE.
     for (; i < end; ++i) {
-        curves::setLutVal(lutToneCurve, r[i], g[i], b[i]);
+        setUnlessOOG(r[i], g[i], b[i], lutToneCurve[r[i]], lutToneCurve[g[i]], lutToneCurve[b[i]]);
     }
 #endif
 }
