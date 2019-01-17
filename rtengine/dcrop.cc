@@ -905,6 +905,7 @@ void Crop::update(int todo)
         LocHHmaskCurve lochhmasCurve;
         LocCCmaskexpCurve locccmasexpCurve;
         LocLLmaskexpCurve locllmasexpCurve;
+        LocHHmaskexpCurve lochhmasexpCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -923,6 +924,7 @@ void Crop::update(int todo)
                 lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
+                lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localcutili = false;
@@ -952,7 +954,7 @@ void Crop::update(int todo)
                                                 sca);
 
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2, 
-                                      loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
+                                      loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, lochhmasexpCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();

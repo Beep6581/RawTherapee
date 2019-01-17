@@ -240,6 +240,7 @@ protected:
     LocHHmaskCurve lochhmasCurve;
     LocCCmaskexpCurve locccmasexpCurve;
     LocLLmaskexpCurve locllmasexpCurve;
+    LocHHmaskexpCurve lochhmasexpCurve;
     ProcParams nextParams2;
     bool locallutili;
     bool localcutili;

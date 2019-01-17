@@ -488,6 +488,7 @@ public:
         bool chroma;
         bool sensi;
         bool structcol;
+        bool blendmaskcol;
         bool qualitycurveMethod;
         bool showmaskcolMethod;
         bool llcurve;
@@ -512,6 +513,7 @@ public:
         bool showmaskexpMethod;
         bool CCmaskexpcurve;
         bool LLmaskexpcurve;
+        bool HHmaskexpcurve;
         // Vibrance
         bool expvibrance;
         bool saturated;

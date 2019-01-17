@@ -866,6 +866,8 @@ HISTORY_MSG_610;Local - Exp Mask L
 HISTORY_MSG_611;Local - Color Mask H
 HISTORY_MSG_612;Local - Color Structure
 HISTORY_MSG_613;Local - Exp Structure
+HISTORY_MSG_614;Local - Exp Mask H
+HISTORY_MSG_615;Local - Blend color
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1934,6 +1936,7 @@ TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
 TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BILATERAL;Bilateral filter
+TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLUFR;Blur & Noise
 TP_LOCALLAB_BLNORM;Normal

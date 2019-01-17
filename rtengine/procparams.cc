@@ -2363,6 +2363,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chroma(0),
     sensi(19),
     structcol(0),
+    blendmaskcol(-100),
     qualitycurveMethod("none"),
     showmaskcolMethod("none"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
@@ -2387,6 +2388,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     showmaskexpMethod("none"),
     CCmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
     LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+    HHmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
 
     // Vibrance
     expvibrance(false),
@@ -2501,6 +2503,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chroma == other.chroma
         && sensi == other.sensi
         && structcol == other.structcol
+        && blendmaskcol == other.blendmaskcol
         && qualitycurveMethod == other.qualitycurveMethod
         && showmaskcolMethod == other.showmaskcolMethod
         && llcurve == other.llcurve
@@ -2525,6 +2528,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && showmaskexpMethod == other.showmaskexpMethod
         && CCmaskexpcurve == other.CCmaskexpcurve
         && LLmaskexpcurve == other.LLmaskexpcurve
+        && HHmaskexpcurve == other.HHmaskexpcurve
         // Vibrance
         && expvibrance == other.expvibrance
         && saturated == other.saturated
@@ -3591,6 +3595,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chroma, "Locallab", "Chroma_" + std::to_string(i), spot.chroma, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensi, "Locallab", "Sensi_" + std::to_string(i), spot.sensi, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structcol, "Locallab", "Structcol_" + std::to_string(i), spot.structcol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskcol, "Locallab", "Blendmaskcol_" + std::to_string(i), spot.blendmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).showmaskcolMethod, "Locallab", "ShowmaskcolMethod_" + std::to_string(i), spot.showmaskcolMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
@@ -3615,6 +3620,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).showmaskexpMethod, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), spot.showmaskexpMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskexpcurve, "Locallab", "CCmaskexpCurve_" + std::to_string(i), spot.CCmaskexpcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskexpcurve, "Locallab", "LLmaskexpCurve_" + std::to_string(i), spot.LLmaskexpcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskexpcurve, "Locallab", "HHmaskexpCurve_" + std::to_string(i), spot.HHmaskexpcurve, keyFile);
                 // Vibrance
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expvibrance, "Locallab", "Expvibrance_" + std::to_string(i), spot.expvibrance, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).saturated, "Locallab", "Saturated_" + std::to_string(i), spot.saturated, keyFile);
@@ -4808,6 +4814,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chroma_" + std::to_string(i), pedited, spot.chroma, spotEdited.chroma);
                 assignFromKeyfile(keyFile, "Locallab", "Sensi_" + std::to_string(i), pedited, spot.sensi, spotEdited.sensi);
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + std::to_string(i), pedited, spot.structcol, spotEdited.structcol);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcol_" + std::to_string(i), pedited, spot.blendmaskcol, spotEdited.blendmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ShowmaskcolMethod_" + std::to_string(i), pedited, spot.showmaskcolMethod, spotEdited.showmaskcolMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);
@@ -4832,6 +4839,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), pedited, spot.showmaskexpMethod, spotEdited.showmaskexpMethod);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskexpCurve_" + std::to_string(i), pedited, spot.CCmaskexpcurve, spotEdited.CCmaskexpcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskexpCurve_" + std::to_string(i), pedited, spot.LLmaskexpcurve, spotEdited.LLmaskexpcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskexpCurve_" + std::to_string(i), pedited, spot.HHmaskexpcurve, spotEdited.HHmaskexpcurve);
                 // Vibrance
                 assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
                 assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, spot.saturated, spotEdited.saturated);

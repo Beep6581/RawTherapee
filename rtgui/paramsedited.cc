@@ -949,6 +949,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chroma = locallab.spots.at(j).chroma && pSpot.chroma == otherSpot.chroma;
                 locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
+                locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).showmaskcolMethod = locallab.spots.at(j).showmaskcolMethod && pSpot.showmaskcolMethod == otherSpot.showmaskcolMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
@@ -973,6 +974,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).showmaskexpMethod = locallab.spots.at(j).showmaskexpMethod && pSpot.showmaskexpMethod == otherSpot.showmaskexpMethod;
                 locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
                 locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
+                locallab.spots.at(j).HHmaskexpcurve = locallab.spots.at(j).HHmaskexpcurve && pSpot.HHmaskexpcurve == otherSpot.HHmaskexpcurve;
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -2581,6 +2583,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).structcol = mods.locallab.spots.at(i).structcol;
         }
 
+        if (locallab.spots.at(i).blendmaskcol) {
+            toEdit.locallab.spots.at(i).blendmaskcol = mods.locallab.spots.at(i).blendmaskcol;
+        }
+
         if (locallab.spots.at(i).qualitycurveMethod) {
             toEdit.locallab.spots.at(i).qualitycurveMethod = mods.locallab.spots.at(i).qualitycurveMethod;
         }
@@ -2672,6 +2678,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).LLmaskexpcurve) {
             toEdit.locallab.spots.at(i).LLmaskexpcurve = mods.locallab.spots.at(i).LLmaskexpcurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskexpcurve) {
+            toEdit.locallab.spots.at(i).HHmaskexpcurve = mods.locallab.spots.at(i).HHmaskexpcurve;
         }
 
         // Vibrance
@@ -3926,6 +3936,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chroma(v),
     sensi(v),
     structcol(v),
+    blendmaskcol(v),
     qualitycurveMethod(v),
     showmaskcolMethod(v),
     llcurve(v),
@@ -3950,6 +3961,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     showmaskexpMethod(v),
     CCmaskexpcurve(v),
     LLmaskexpcurve(v),
+    HHmaskexpcurve(v),
     // Vibrance
     expvibrance(v),
     saturated(v),
@@ -4060,6 +4072,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chroma = v;
     sensi = v;
     structcol = v;
+    blendmaskcol = v;
     qualitycurveMethod = v;
     showmaskcolMethod = v;
     llcurve = v;
@@ -4084,6 +4097,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     showmaskexpMethod = v;
     CCmaskexpcurve = v;
     LLmaskexpcurve = v;
+    HHmaskexpcurve = v;
     // Vibrance
     expvibrance = v;
     saturated = v;

@@ -1080,6 +1080,7 @@ private:
             LocHHmaskCurve lochhmasCurve;
             LocCCmaskexpCurve locccmasexpCurve;
             LocLLmaskexpCurve locllmasexpCurve;
+            LocHHmaskexpCurve lochhmasexpCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf sklocalcurve(65536, 0);
@@ -1118,6 +1119,7 @@ private:
                 lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
+                lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);
@@ -1143,7 +1145,7 @@ private:
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                                 1);
 
-                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve,
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, lochhmasexpCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
 
                 // Clear local curves

@@ -79,6 +79,7 @@ private:
     DiagonalCurveEditor* shapeexpos;
     FlatCurveEditor* CCmaskexpshape;
     FlatCurveEditor* LLmaskexpshape;
+    FlatCurveEditor* HHmaskexpshape;
     // Vibrance
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* skinTonesCurve;
@@ -93,6 +94,7 @@ private:
     Adjuster* const chroma;
     Adjuster* const sensi;
     Adjuster* const structcol;
+    Adjuster* const blendmaskcol;
 
     // Exposure
     Adjuster* const expcomp;
