@@ -852,7 +852,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 exlocalcurve.clear();
                 */
             }
-            
+            /*
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
             //update references after threatment
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
@@ -865,8 +865,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 chromar = chromarefs[sp] = chromare;
                 lumar = lumarefs[sp] = lumare ;
                 sobeler = sobelrefs[sp] = sobelre;
+                
             }
-            
+            */
         }
             
         //*************************************************************
