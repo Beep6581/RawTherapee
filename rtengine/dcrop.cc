@@ -949,7 +949,7 @@ void Crop::update(int todo)
                 chromare = parent->chromarefs[sp];
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc2,
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc2, lumare,
                                                 hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                                                 sca);
 

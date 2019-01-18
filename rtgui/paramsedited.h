@@ -514,6 +514,7 @@ public:
         bool CCmaskexpcurve;
         bool LLmaskexpcurve;
         bool HHmaskexpcurve;
+        bool blendmaskexp;
         // Vibrance
         bool expvibrance;
         bool saturated;

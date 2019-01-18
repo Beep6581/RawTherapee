@@ -813,15 +813,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 }
 
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                                sca);
 
                 huerblu = huerefblurs[sp] = huerefblu;
                 huer = huerefs[sp] = huere;
                 chromar = chromarefs[sp] = chromare;
                 lumar = lumarefs[sp] = lumare ;
                 sobeler = sobelrefs[sp] = sobelre;
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc, lumar,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                                sca);
 
                 if (locallListener) {
                     locallListener->refChanged(huer, lumar, chromar);

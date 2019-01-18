@@ -975,6 +975,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
                 locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
                 locallab.spots.at(j).HHmaskexpcurve = locallab.spots.at(j).HHmaskexpcurve && pSpot.HHmaskexpcurve == otherSpot.HHmaskexpcurve;
+                locallab.spots.at(j).blendmaskexp = locallab.spots.at(j).blendmaskexp && pSpot.blendmaskexp == otherSpot.blendmaskexp;
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -2684,6 +2685,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHmaskexpcurve = mods.locallab.spots.at(i).HHmaskexpcurve;
         }
 
+        if (locallab.spots.at(i).blendmaskexp) {
+            toEdit.locallab.spots.at(i).blendmaskexp = mods.locallab.spots.at(i).blendmaskexp;
+        }
+
         // Vibrance
         if (locallab.spots.at(i).expvibrance) {
             toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
@@ -3962,6 +3967,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     CCmaskexpcurve(v),
     LLmaskexpcurve(v),
     HHmaskexpcurve(v),
+    blendmaskexp(v),
     // Vibrance
     expvibrance(v),
     saturated(v),
@@ -4098,6 +4104,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     CCmaskexpcurve = v;
     LLmaskexpcurve = v;
     HHmaskexpcurve = v;
+    blendmaskexp = v;
     // Vibrance
     expvibrance = v;
     saturated = v;

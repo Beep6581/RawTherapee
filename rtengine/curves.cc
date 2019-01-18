@@ -1054,7 +1054,7 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
-                                     double shcompr, double br, double cont, LUTu & histogram,
+                                     double shcompr, double br, double cont, LUTu & histogram, double lumare,
                                      LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc,
                                      int skip)
 {
@@ -1131,12 +1131,12 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
             avg += lightCurveloc[i] * histogram[i];
             sum += histogram[i];
         }
-
+        printf("avg=%f sum=%i lumaref=%f\n", avg/sum, sum, lumare/100.f);
         std::vector<double> contrastcurvePoints;
-
-        if (sum) {
-            avg /= sum;
-
+        bool lumm = true;
+        if (lumm) {
+           // avg /= sum;
+            avg = lumare / 100.f;
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             contrastcurvePoints.resize(9);
             contrastcurvePoints.at(0) = double (DCT_NURBS);

@@ -986,6 +986,7 @@ struct LocallabParams {
         std::vector<double> CCmaskexpcurve;
         std::vector<double> LLmaskexpcurve;
         std::vector<double> HHmaskexpcurve;
+        int blendmaskexp;
         // Vibrance
         bool expvibrance;
         int saturated;

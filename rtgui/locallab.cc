@@ -79,7 +79,7 @@ Locallab::Locallab():
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blendmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -150, 100, 1, -100))),
     // Exposure
-    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -200, 200, 5, 0))),
+    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -200, 800, 5, 0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 60))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33))),
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0))),
@@ -87,6 +87,7 @@ Locallab::Locallab():
     warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
+    blendmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -150, 100, 1, -100))),
     // Vibrance
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
@@ -329,7 +330,7 @@ Locallab::Locallab():
     superFrame->set_label_widget(*curvactiv);
     ToolParamBlock* const superBox = Gtk::manage(new ToolParamBlock());
     superBox->pack_start(*lightness);
-//    superBox->pack_start(*contrast);
+    superBox->pack_start(*contrast);
     superBox->pack_start(*chroma);
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
@@ -377,6 +378,7 @@ Locallab::Locallab():
     sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensiex->setAdjusterListener(this);
     structexp->setAdjusterListener(this);
+    blendmaskexp->setAdjusterListener(this);
 
     curveEditorG->setCurveListener(this);
 
@@ -433,6 +435,7 @@ Locallab::Locallab():
     maskexpBox->pack_start(*transLabels2, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskexpBox->pack_start(*blendmaskexp, Gtk::PACK_SHRINK, 0);
 
     maskexpFrame->add(*maskexpBox);
     
@@ -1528,6 +1531,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskcurve = HHmaskshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).invers = invers->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).structexp = structexp->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).blendmaskexp = blendmaskexp->getIntValue();
                     // Exposure
                     pp->locallab.spots.at(pp->locallab.selspot).expexpose = expexpose->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).expcomp = expcomp->getIntValue();
@@ -1712,6 +1716,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve || !CCmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).blendmaskexp = pe->locallab.spots.at(pp->locallab.selspot).blendmaskexp || blendmaskexp->getEditedState();
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -1856,6 +1861,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve || !CCmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).blendmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskexp || blendmaskexp->getEditedState();
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -2189,6 +2195,12 @@ void Locallab::showmaskcolMethodChanged()
         expexpose->setEnabled(false); 
     }
     
+    if((showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 3) && expcolor->getEnabled()) {
+        blendmaskcol->show();
+    } else {
+        blendmaskcol->hide();    
+    }
+
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskcolMethod , showmaskcolMethod->get_active_text());
@@ -2200,8 +2212,15 @@ void Locallab::showmaskexpMethodChanged()
 {
     
     if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4 || showmaskexpMethod->get_active_row_number() == 5) && expexpose->getEnabled()) {
+
         showmaskcolMethod->set_active(0);
         expcolor->setEnabled(false); 
+    }
+    
+    if((showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 3) && expexpose->getEnabled()) {
+       blendmaskexp->show();
+    } else {
+       blendmaskexp->hide();    
     }
     
     if (getEnabled() && expexpose->getEnabled()) {
@@ -2463,6 +2482,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     warm->setDefault((double)defSpot->warm);
     sensiex->setDefault((double)defSpot->sensiex);
     structexp->setDefault((double)defSpot->structexp);
+    blendmaskexp->setDefault((double)defSpot->blendmaskexp);
     // Vibrance
     saturated->setDefault((double)defSpot->saturated);
     pastels->setDefault((double)defSpot->pastels);
@@ -2540,6 +2560,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         warm->setDefaultEditedState(Irrelevant);
         sensiex->setDefaultEditedState(Irrelevant);
         structexp->setDefaultEditedState(Irrelevant);
+        blendmaskexp->setDefaultEditedState(Irrelevant);
         // Vibrance
         saturated->setDefaultEditedState(Irrelevant);
         pastels->setDefaultEditedState(Irrelevant);
@@ -2621,6 +2642,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         warm->setDefaultEditedState(defSpotState->warm ? Edited : UnEdited);
         sensiex->setDefaultEditedState(defSpotState->sensiex ? Edited : UnEdited);
         structexp->setDefaultEditedState(defSpotState->structexp ? Edited : UnEdited);
+        blendmaskexp->setDefaultEditedState(defSpotState->blendmaskexp ? Edited : UnEdited);
         // Vibrance
         saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
         pastels->setDefaultEditedState(defSpotState->pastels ? Edited : UnEdited);
@@ -2817,6 +2839,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == structexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabstructexp, structexp->getTextValue());
+            }
+        }
+
+        if (a == blendmaskexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmaskexp, blendmaskexp->getTextValue());
             }
         }
 
@@ -3216,6 +3244,7 @@ void Locallab::setBatchMode(bool batchMode)
     warm->showEditedCB();
     sensiex->showEditedCB();
     structexp->showEditedCB();
+    blendmaskexp->showEditedCB();
     // Vibrance
     saturated->showEditedCB();
     pastels->showEditedCB();
@@ -3579,6 +3608,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         CCmaskexpshape->setCurve(pp->locallab.spots.at(index).CCmaskexpcurve);
         LLmaskexpshape->setCurve(pp->locallab.spots.at(index).LLmaskexpcurve);
         HHmaskexpshape->setCurve(pp->locallab.spots.at(index).HHmaskexpcurve);
+        blendmaskexp->setValue(pp->locallab.spots.at(index).blendmaskexp);
 
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
@@ -3767,6 +3797,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 CCmaskexpshape->setUnChanged(!spotState->CCmaskexpcurve);
                 LLmaskexpshape->setUnChanged(!spotState->LLmaskexpcurve);
                 HHmaskexpshape->setUnChanged(!spotState->HHmaskexpcurve);
+                blendmaskexp->setEditedState(spotState->blendmaskexp ? Edited : UnEdited);
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);
@@ -3941,6 +3972,12 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && showmaskcolMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
         showmaskexpMethod->set_active(0);
     } else if((showmaskcolMethod->get_active_row_number() == 1 || showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 4 || showmaskcolMethod->get_active_row_number() == 5)) {
+        if((showmaskcolMethod->get_active_row_number() == 2 || showmaskcolMethod->get_active_row_number() == 3)) {
+            blendmaskcol->show();
+        } else {
+            blendmaskcol->hide();    
+        }
+
         showmaskexpMethod->set_active(0);
         expexpose->setEnabled(false); 
     }
@@ -3948,6 +3985,12 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && showmaskexpMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
         showmaskcolMethod->set_active(0);
     } else if((showmaskexpMethod->get_active_row_number() == 1 || showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 4 || showmaskexpMethod->get_active_row_number() == 5)) {
+        if((showmaskexpMethod->get_active_row_number() == 2 || showmaskexpMethod->get_active_row_number() == 3)) {
+            blendmaskexp->show();
+        } else {
+            blendmaskexp->hide();    
+        }
+        
         showmaskcolMethod->set_active(0);
         expcolor->setEnabled(false); 
     }

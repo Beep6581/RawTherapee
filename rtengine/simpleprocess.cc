@@ -1088,7 +1088,7 @@ private:
             LUTf shtonecurveloc(65536, 0);
             LUTf tonecurveloc(65536, 0);
             LUTf lightCurveloc(32770, 0);
-            LUTu lhist16loc(32768, 0);
+            LUTu lhist16loc(32770, 0);
             LUTf exlocalcurve(65536, 0);
 
            // int maxspot = 1;
@@ -1141,7 +1141,7 @@ private:
                 } else {
                     ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
                 }
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc, lumare,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                                 1);
 

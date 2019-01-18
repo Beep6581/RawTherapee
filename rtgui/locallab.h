@@ -105,6 +105,7 @@ private:
     Adjuster* const warm;
     Adjuster* const sensiex;
     Adjuster* const structexp;
+    Adjuster* const blendmaskexp;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;

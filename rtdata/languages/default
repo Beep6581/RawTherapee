@@ -868,6 +868,7 @@ HISTORY_MSG_612;Local - Color Structure
 HISTORY_MSG_613;Local - Exp Structure
 HISTORY_MSG_614;Local - Exp Mask H
 HISTORY_MSG_615;Local - Blend color
+HISTORY_MSG_616;Local - Blend Exp
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
