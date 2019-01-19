@@ -143,9 +143,6 @@ void Imagefloat::getScanline (int row, unsigned char* buffer, int bps, bool isFl
             float ri = r(row, i);
             float gi = g(row, i);
             float bi = b(row, i);
-            if (ri > 65535.f || gi > 65535.f || bi > 65535.f) {
-                filmlike_clip(&ri, &gi, &bi);
-            }
             if (bps == 16) {
                 sbuffer[ix++] = CLIP(ri);
                 sbuffer[ix++] = CLIP(gi);
