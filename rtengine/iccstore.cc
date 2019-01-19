@@ -255,14 +255,21 @@ bool get_RT_gamma_slope(cmsHPROFILE profile, double &gammatag, double &slopetag)
             modelDesc = utf32_to_utf8(buffer, count);
 #endif
             if (!modelDesc.empty()) {
-                std::size_t pos = modelDesc.find("g");
-                std::size_t posmid = modelDesc.find("s");
-                std::size_t posend = modelDesc.find("!");
-                std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
-                gammatag = std::stod(strgamma.c_str());
-                std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
-                slopetag = std::stod(strslope.c_str());
-                return true;
+                try {
+                    std::size_t pos = modelDesc.find("g");
+                    std::size_t posmid = modelDesc.find("s");
+                    std::size_t posend = modelDesc.find("!");
+                    if (pos == std::string::npos || posmid == std::string::npos || posend == std::string::npos) {
+                        return false;
+                    }
+                    std::string strgamma = modelDesc.substr(pos + 1, (posmid - pos));
+                    gammatag = std::stod(strgamma.c_str());
+                    std::string strslope = modelDesc.substr(posmid + 1, (posend - posmid));
+                    slopetag = std::stod(strslope.c_str());
+                    return true;
+                } catch (std::invalid_argument &) {
+                    return false;
+                }
             }
         }
     }
