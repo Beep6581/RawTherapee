@@ -1055,7 +1055,7 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
                                      double shcompr, double br, double cont, LUTu & histogram, double lumare,
-                                     LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc,
+                                     LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc, float avg,
                                      int skip)
 {
 
@@ -1124,19 +1124,22 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     if (cont > 0.00001 || cont < -0.00001) {
 
         // compute mean luminance of the image with the curve applied
-        int sum = 0;
-        float avg = 0;
+//        int sum = 0;
+//        float avg = 0;
 
-        for (int i = 0; i < 32768; i++) {
-            avg += lightCurveloc[i] * histogram[i];
-            sum += histogram[i];
-        }
-        printf("avg=%f sum=%i lumaref=%f\n", avg/sum, sum, lumare/100.f);
+//        for (int i = 0; i < 32768; i++) {
+//            avg += lightCurveloc[i] * histogram[i];
+//            sum += histogram[i];
+//        }
+        
+        int k = avg * 32768;
+        avg = lightCurveloc[k];
+//        printf("avg=%f lumaref=%f\n", avg, lumare/100.f);
         std::vector<double> contrastcurvePoints;
         bool lumm = true;
         if (lumm) {
-           // avg /= sum;
-            avg = lumare / 100.f;
+//             avg /= sum;
+//             avg = lumare / 100.f;
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             contrastcurvePoints.resize(9);
             contrastcurvePoints.at(0) = double (DCT_NURBS);

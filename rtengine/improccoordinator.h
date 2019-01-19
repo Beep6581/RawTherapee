@@ -255,6 +255,7 @@ protected:
     LUTf sobelrefs;
     double huer, huerblu, chromar, lumar, sobeler;
     bool lastspotdup;
+    float avg;
 
 
 

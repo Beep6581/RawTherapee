@@ -120,7 +120,8 @@ ImProcCoordinator::ImProcCoordinator()
       chromar(0),
       lumar(0),
       sobeler(0),
-      lastspotdup(false), 
+      lastspotdup(false),
+      avg(0),
       retistrsav(nullptr)
 {}
 
@@ -805,22 +806,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double cont = params.locallab.spots.at(sp).contrast;
                 lhist16loc.clear();
 
-
                 // Reference parameters computation
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 } else {
-                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 }
 
-
+                printf("improc avg=%f\n", avg);
                 huerblu = huerefblurs[sp] = huerefblu;
                 huer = huerefs[sp] = huere;
                 chromar = chromarefs[sp] = chromare;
                 lumar = lumarefs[sp] = lumare ;
                 sobeler = sobelrefs[sp] = sobelre;
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc, lumar,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 sca);
 
                 if (locallListener) {

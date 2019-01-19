@@ -895,6 +895,7 @@ void Crop::update(int todo)
         LUTu lhist16loc2(32770, 0);
         bool LHutili = parent->LHutili;
         bool HHutili = parent->HHutili;
+        float avg = parent->avg;
         LUTu dummy;
         bool needslocal = params.locallab.enabled;
         LocretigainCurve locRETgainCurve;
@@ -950,7 +951,7 @@ void Crop::update(int todo)
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc2, lumare,
-                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
+                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avg,
                                                 sca);
 
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2, 

@@ -7136,7 +7136,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 }
 
-void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram)
+void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram, float &avg)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -7146,6 +7146,22 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
         int xEn = lp.xc + lp.lx;
+        float avg2 = 0.f;
+        int nc2 = 0;
+
+        for (int y = 0; y < transformed->H ; y++) //{
+            for (int x = 0; x < transformed->W; x++) {
+                int lox = cx + x;
+                int loy = cy + y;
+
+                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                    avg2 += original->L[y][x];
+                    nc2++;
+                }
+            }
+        avg2 /= 32768.f;
+        avg = avg2/nc2;
+//        printf("calc avg=%f \n", avg);
 //claculate histogram for area selected
 #ifdef _OPENMP
         const int numThreads = min(max(transformed->W * transformed->H / (int)histogram.getSize(), 1), omp_get_max_threads());
@@ -7154,6 +7170,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         {
             LUTu lhist16thrloc(histogram.getSize());
             lhist16thrloc.clear();
+            histogram.clear();
 #ifdef _OPENMP
             #pragma omp for nowait
 #endif
@@ -10242,7 +10259,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int begx = lp.xc - lp.lxL;
                 int yEn = lp.yc + lp.ly;
                 int xEn = lp.xc + lp.lx;
-
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -10257,7 +10273,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             //    buforigchro[loy - begy][lox - begx] = sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
                         }
                     }
-
                 const float radius = 3.f / (sk * 1.4f);
                 int spotSi = 1 + 2 * max(1,  lp.cir / sk);
 

@@ -346,7 +346,7 @@ public:
                              int skip = 1);
 
     static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double cont, LUTu & histogram, double lumare,
-                                  LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc,
+                                  LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc, float avg,
                                   int skip = 1);
 
     static void curveBW(const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
