@@ -951,8 +951,14 @@ void Crop::update(int todo)
                                                 hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                                                 sca);
 
-                parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2, 
-                                      loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre);
+                // Locallab mask are only shown for selected spot
+                if (sp == parent->params.locallab.selspot) {
+                    parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
+                                          loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre, parent->locallColorMask, parent->locallExpMask);
+                } else {
+                    parent->ipf.Lab_Local(1, sp, parent->sobelrefs, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,
+                                          loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, huere, chromare, lumare, sobelre, 0, 0);
+                }
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();

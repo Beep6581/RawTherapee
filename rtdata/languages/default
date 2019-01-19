@@ -864,6 +864,8 @@ HISTORY_MSG_608;Local - Color Mask L
 HISTORY_MSG_609;Local - Exp Mask C
 HISTORY_MSG_610;Local - Exp Mask L
 HISTORY_MSG_611;Local - Color Mask H
+HISTORY_MSG_612;Local - Use Color Mask
+HISTORY_MSG_613;Local - Use Exp Mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2029,6 +2031,7 @@ TP_LOCALLAB_SENSICB;Scope
 TP_LOCALLAB_SENSIBN;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SETTINGS;Settings
+TP_LOCALLAB_ENABLE_MASK;Enable mask
 TP_LOCALLAB_SHOW;Mask and modifications
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure).\nYou must put 'Display modification' to 'none' or 'Usemask' to enabled the other show.\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None

@@ -1141,8 +1141,9 @@ private:
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                                                 1);
 
+                // No Locallab mask is shown in exported picture
                 ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve,
-                              LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
+                              LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre, 0, 0);
 
                 // Clear local curves
                 lllocalcurve.clear();

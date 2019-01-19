@@ -488,15 +488,15 @@ public:
         bool chroma;
         bool sensi;
         bool qualitycurveMethod;
-        bool showmaskcolMethod;
         bool llcurve;
         bool cccurve;
         bool LHcurve;
         bool HHcurve;
+        bool invers;
+        bool enaColorMask;
         bool CCmaskcurve;
         bool LLmaskcurve;
         bool HHmaskcurve;
-        bool invers;
         // Exposure
         bool expexpose;
         bool expcomp;
@@ -507,7 +507,7 @@ public:
         bool warm;
         bool sensiex;
         bool excurve;
-        bool showmaskexpMethod;
+        bool enaExpMask;
         bool CCmaskexpcurve;
         bool LLmaskexpcurve;
         // Vibrance

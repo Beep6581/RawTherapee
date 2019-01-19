@@ -72,7 +72,6 @@ private:
     FlatCurveEditor* CCmaskshape;
     FlatCurveEditor* LLmaskshape;
     FlatCurveEditor* HHmaskshape;
-    
     // Exposure
     CurveEditorGroup* const curveEditorG;
     CurveEditorGroup* const maskexpCurveEditorG;
@@ -160,7 +159,11 @@ private:
     // Color & Light
     Gtk::CheckButton* const curvactiv;
     Gtk::CheckButton* const invers;
-    sigc::connection curvactivConn, inversConn;
+    Gtk::CheckButton* const enaColorMask;
+    sigc::connection curvactivConn, inversConn, enaColorMaskConn;
+    // Exposure
+    Gtk::CheckButton* const enaExpMask;
+    sigc::connection enaExpMaskConn;
     // Vibrance
     Gtk::CheckButton* const protectSkins;
     Gtk::CheckButton* const avoidColorShift;
@@ -188,7 +191,6 @@ private:
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
     sigc::connection showmaskexpMethodConn;
-
     // Blur & Noise
     MyComboBoxText* const blurMethod;
     sigc::connection blurMethodConn;
@@ -208,10 +210,7 @@ private:
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
     Gtk::Label* transLabels;
     Gtk::Label* transLabels2;
-
-    //Frame
     Gtk::Frame* maskcolFrame;
-    Gtk::Frame* maskexpFrame;
     
     // Others
     /**
@@ -238,10 +237,9 @@ private:
     // Color & Light
     void curvactivChanged();
     void inversChanged();
-    void showmaskcolMethodChanged();
-    //Exposure
-    void showmaskexpMethodChanged();
-
+    void enaColorMaskChanged();
+    // Exposure
+    void enaExpMaskChanged();
     // Vibrance
     void protectskins_toggled();
     void avoidcolorshift_toggled();
@@ -258,6 +256,9 @@ private:
     // ComboBox event functions
     // Color & Light
     void qualitycurveMethodChanged();
+    void showmaskcolMethodChanged();
+    //Exposure
+    void showmaskexpMethodChanged();
     // Blur & Noise
     void blurMethodChanged();
     // Retinex
@@ -330,9 +331,18 @@ public:
     void disableListener();
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);
-    void refChanged (double huer, double lumar, double chromar);
-    bool refComputed_ ();
-    void updateLabel      ();
+    void refChanged(double huer, double lumar, double chromar);
+    bool refComputed_();
+    void updateLabel();
+
+    // Mask visibility management functions
+    struct llMaskVisibility {
+        int colorMask;
+        int expMask;
+    };
+
+    void resetMaskVisibility();
+    llMaskVisibility* getMaskVisibility();
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider);
