@@ -2123,9 +2123,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
                         difL *= factorx * khu;
                         difa *= factorx * khu;
                         difb *= factorx * khu;
-                        transformed->L[y][x] = original->L[y][x] + difL;
-                        transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
-                        transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2 ;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                        transformed->a[y][x] = CLIPC((original->a[y][x] + difa) * factnoise1 * factnoise2);
+                        transformed->b[y][x] = CLIPC((original->b[y][x] + difb) * factnoise1 * factnoise2) ;
                         break;
                     }
 
@@ -2147,9 +2147,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
                         difa *= khu;
                         difb *= khu;
 
-                        transformed->L[y][x] = original->L[y][x] + difL;
-                        transformed->a[y][x] = (original->a[y][x] + difa) * factnoise1 * factnoise2;
-                        transformed->b[y][x] = (original->b[y][x] + difb) * factnoise1 * factnoise2;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                        transformed->a[y][x] = CLIPC((original->a[y][x] + difa) * factnoise1 * factnoise2);
+                        transformed->b[y][x] = CLIPC((original->b[y][x] + difb) * factnoise1 * factnoise2);
                     }
                 }
 
@@ -2537,7 +2537,7 @@ void ImProcFunctions::cbdl_Local(float moddE, float powdE, float ** buflight, fl
 
                             difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
                             difL *= factorx;
-                            transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
                         }
 
                         if (chro == 1) {
@@ -2564,7 +2564,7 @@ void ImProcFunctions::cbdl_Local(float moddE, float powdE, float ** buflight, fl
                         if (chro == 0) {
 
                             difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
-                            transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
                         }
 
                         if (chro == 1) {
@@ -2934,11 +2934,11 @@ void ImProcFunctions::TM_Local(float moddE, float powdE, LabImage * tmp1, float 
                             difa *= factorx;
                             difb *= factorx;
 
-                            transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
 
 
-                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach * falu;//same as Luma
-                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach * falu;//same as Luma
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * kch * fach * falu);//same as Luma
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * kch * fach * falu);//same as Luma
 
                             break;
                         }
@@ -2950,11 +2950,11 @@ void ImProcFunctions::TM_Local(float moddE, float powdE, LabImage * tmp1, float 
                             difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
                             difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
 
-                            transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
 
 
-                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach * falu;//same as Luma
-                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach * falu;//same as Luma
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * kch * fach * falu);//same as Luma
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * kch * fach * falu);//same as Luma
                         }
                     }
 
@@ -3345,11 +3345,11 @@ void ImProcFunctions::BlurNoise_Local(float moddE, float powdE, int call, LabIma
                         difL *= kch * fach;
 
                         if (lp.blurmet == 0) {
-                            transformed->L[y][x] = original->L[y][x] + difL;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                         }
 
                         if (lp.blurmet == 2) {
-                            transformed->L[y][x] = tmp2->L[y][x] - difL;
+                            transformed->L[y][x] = CLIP(tmp2->L[y][x] - difL);
                         }
 
                         if (!lp.actsp) {
@@ -3390,11 +3390,11 @@ void ImProcFunctions::BlurNoise_Local(float moddE, float powdE, int call, LabIma
                         difL *= kch * fach;
 
                         if (lp.blurmet == 0) {
-                            transformed->L[y][x] = original->L[y][x] + difL;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                         }
 
                         if (lp.blurmet == 2) {
-                            transformed->L[y][x] = tmp2->L[y][x] - difL;
+                            transformed->L[y][x] = CLIP(tmp2->L[y][x] - difL);
                         }
 
                         if (!lp.actsp) {
@@ -3449,13 +3449,13 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => full effect, no transition
                     if (chro == 0) {
-                        transformed->L[y][x] = tmp1->L[y][x];
+                        transformed->L[y][x] = CLIP(tmp1->L[y][x]);
                     }
 
                     if (chro == 1) {
 
-                        transformed->a[y][x] = tmp1->a[y][x];
-                        transformed->b[y][x] = tmp1->b[y][x];
+                        transformed->a[y][x] = CLIPC(tmp1->a[y][x]);
+                        transformed->b[y][x] = CLIPC(tmp1->b[y][x]);
                     }
 
                     break;
@@ -3467,7 +3467,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage
                     if (chro == 0) {
                         float difL = tmp1->L[y][x] - original->L[y][x];
                         difL *= factorx;
-                        transformed->L[y][x] = original->L[y][x] + difL;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                     }
 
                     if (chro == 1) {
@@ -3477,8 +3477,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage
                         difa *= factorx;
                         difb *= factorx;
 
-                        transformed->a[y][x] = original->a[y][x] + difa;
-                        transformed->b[y][x] = original->b[y][x] + difb;
+                        transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                        transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                     }
 
                     break;
@@ -3913,7 +3913,7 @@ void ImProcFunctions::Reti_Local(float moddE, float powdE, float **buflight, flo
                                     float diflc = lightc * fli - original->L[y][x];
                                     diflc *= kch * fach;
                                     diflc *= factorx;
-                                    transformed->L[y][x] = original->L[y][x] + diflc;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 }
 
                                 if (chro == 1) {
@@ -3930,8 +3930,8 @@ void ImProcFunctions::Reti_Local(float moddE, float powdE, float **buflight, flo
                                     difb *= factorx;
                                     difa *= kch * fach;
                                     difb *= kch * fach;
-                                    transformed->a[y][x] = original->a[y][x] + difa;
-                                    transformed->b[y][x] = original->b[y][x] + difb;
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                                 }
 
                                 break;
@@ -3944,7 +3944,7 @@ void ImProcFunctions::Reti_Local(float moddE, float powdE, float **buflight, flo
                                     fli = ((100.f + realstr * falL) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
                                     diflc *= kch * fach;
-                                    transformed->L[y][x] = original->L[y][x] + diflc;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 }
 
                                 if (chro == 1) {
@@ -3959,8 +3959,8 @@ void ImProcFunctions::Reti_Local(float moddE, float powdE, float **buflight, flo
                                     float difb = chrb * flib - original->b[y][x];
                                     difa *= kch * fach;
                                     difb *= kch * fach;
-                                    transformed->a[y][x] = original->a[y][x] + difa;
-                                    transformed->b[y][x] = original->b[y][x] + difb;
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                                 }
                             }
                         }
@@ -3998,11 +3998,11 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, Lab
 
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => full effect, no transition
-                    transformed->L[y][x] = tmp1->L[y][x];
+                    transformed->L[y][x] = CLIP(tmp1->L[y][x]);
 
                     if (!lp.actsp) {
-                        transformed->a[y][x] = tmp1->a[y][x];
-                        transformed->b[y][x] = tmp1->b[y][x];
+                        transformed->a[y][x] = CLIPC(tmp1->a[y][x]);
+                        transformed->b[y][x] = CLIPC(tmp1->b[y][x]);
                     }
 
                     break;
@@ -4018,12 +4018,12 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, Lab
                     difa *= factorx;
                     difb *= factorx;
 
-                    transformed->L[y][x] = original->L[y][x] + difL;
+                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
 
                     if (!lp.actsp) {
 
-                        transformed->a[y][x] = original->a[y][x] + difa;
-                        transformed->b[y][x] = original->b[y][x] + difb;
+                        transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                        transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                     }
 
                     break;
@@ -4275,7 +4275,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
                         float difL = loctemp[y][x] - original->L[y][x];
-                        transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
 
                         break;
                     }
@@ -4286,7 +4286,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
                         float factorx = 1.f - localFactor;
                         difL *= factorx;
 
-                        transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
                         break;
                     }
 
@@ -4536,7 +4536,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                         }
 
                         difL *= factorx;
-                        transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
 
                         break;
                     }
@@ -4550,7 +4550,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                             difL = loctemp[y][x] - original->L[y][x];
                         }
 
-                        transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
                     }
                 }
             }
@@ -4986,7 +4986,7 @@ void ImProcFunctions::Exclude_Local(float moddE, float powdE, int sen, float **d
                                 if (deltaso[loy - begy][lox - begx] == 0.f) {
                                     transformed->L[y][x]  = original->L[y][x]; //orsv->L[loy - begy][lox - begx];
                                 } else {
-                                    transformed->L[y][x] = original->L[y][x] + difL;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                                 }
 
                                 float difa, difb;
@@ -5021,7 +5021,7 @@ void ImProcFunctions::Exclude_Local(float moddE, float powdE, int sen, float **d
                                     //  printf ("0");
                                     transformed->L[y][x]  = original->L[y][x]; //rsv->L[loy - begy][lox - begx];
                                 } else {
-                                    transformed->L[y][x] = original->L[y][x] + difL;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                                 }
 
                                 //  transformed->L[y][x] = original->L[y][x] + difL;
@@ -5584,7 +5584,7 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 float diflc = lightc * fli - original->L[y][x];
                                 diflc *= kch;
                                 diflc *= factorx;
-                                transformed->L[y][x] = original->L[y][x] + diflc;
+                                transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
 
                                 float flia = 1.f;
                                 float flib = 1.f;
@@ -5604,13 +5604,13 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 difb *= factorx;
                                 difa *= kch * fach;
                                 difb *= kch * fach;
-                                transformed->a[y][x] = original->a[y][x] + difa;
-                                transformed->b[y][x] = original->b[y][x] + difb;
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
                                 if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
-                                    transformed->L[y][x] = 12000.f + diflc;
-                                    transformed->a[y][x] = difa;
-                                    transformed->b[y][x] = difb;
+                                    transformed->L[y][x] = CLIP(12000.f + diflc);
+                                    transformed->a[y][x] = CLIPC(difa);
+                                    transformed->b[y][x] = CLIPC(difb);
                                 }
 
                                 break;
@@ -5623,7 +5623,7 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 fli = ((100.f + realstr * falL) / 100.f); //luma transition
                                 float diflc = lightc * fli - original->L[y][x];
                                 diflc *= kch;
-                                transformed->L[y][x] = original->L[y][x] + diflc;
+                                transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
 
 
                                 float flia = 1.f;
@@ -5642,13 +5642,13 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 float difb = chrb * flib - original->b[y][x];
                                 difa *= kch * fach;
                                 difb *= kch * fach;
-                                transformed->a[y][x] = original->a[y][x] + difa;
-                                transformed->b[y][x] = original->b[y][x] + difb;
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
                                 if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
-                                    transformed->L[y][x] = 12000.f + diflc;
-                                    transformed->a[y][x] = difa;
-                                    transformed->b[y][x] = difb;
+                                    transformed->L[y][x] = CLIP(12000.f + diflc);
+                                    transformed->a[y][x] = CLIPC(difa);
+                                    transformed->b[y][x] = CLIPC(difb);
                                 }
                             }
                         }
@@ -6441,10 +6441,10 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                 diflc *= kch ;
 
                                 diflc *= factorx; //transition lightness
-                                transformed->L[y][x] = CLIPLOC((original->L[y][x] + diflc));
+                                transformed->L[y][x] = CLIP((original->L[y][x] + diflc));
 
                                 if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
-                                    transformed->L[y][x] = 12000.f + diflc; //CLIPL((original->L[y][x] + diflc));
+                                    transformed->L[y][x] = CLIP(12000.f + diflc); //CLIPL((original->L[y][x] + diflc));
                                 }
 
                                 if (lochhCurve  && lp.qualcurvemet >= 1 && HHutili) {
@@ -6478,8 +6478,8 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                     transformed->b[y][x] = CLIPC(chromhr * sincosval.x * fac);
 
                                     if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
-                                        transformed->a[y][x] = chromhr * sincosval.y * (fac - 1.f) ;
-                                        transformed->b[y][x] = chromhr * sincosval.x * (fac - 1.f);
+                                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * (fac - 1.f)) ;
+                                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * (fac - 1.f));
                                     }
                                 } else {
 
@@ -6487,8 +6487,8 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                     transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
 
                                     if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
-                                        transformed->a[y][x] = original->a[y][x] * (fac - 1.f) ;
-                                        transformed->b[y][x] = original->b[y][x] * (fac - 1.f);
+                                        transformed->a[y][x] = CLIPC(original->a[y][x] * (fac - 1.f)) ;
+                                        transformed->b[y][x] = CLIPC(original->b[y][x] * (fac - 1.f));
                                     }
                                 }
 
@@ -6571,10 +6571,10 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                 kdiff *= fach * kch;
                                 diflc *= kdiff ;
                                 diflc *= kch ;
-                                transformed->L[y][x] = CLIPLOC((original->L[y][x] + diflc));
+                                transformed->L[y][x] = CLIP((original->L[y][x] + diflc));
 
                                 if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
-                                    transformed->L[y][x] = 12000.f + diflc; //CLIPL((original->L[y][x] + diflc));
+                                    transformed->L[y][x] = CLIP(12000.f + diflc); //CLIPL((original->L[y][x] + diflc));
                                 }
 
 
@@ -6608,8 +6608,8 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                     transformed->b[y][x] = CLIPC(chromhr * sincosval.x * fac);
 
                                     if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
-                                        transformed->a[y][x] = chromhr * sincosval.y * (fac - 1.f) ;
-                                        transformed->b[y][x] = chromhr * sincosval.x * (fac - 1.f);
+                                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * (fac - 1.f)) ;
+                                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * (fac - 1.f));
                                     }
 
                                 } else {
@@ -6617,8 +6617,8 @@ void ImProcFunctions::ColorLight_Local(float moddE, float powdE, int call, LabIm
                                     transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
 
                                     if (lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2) {
-                                        transformed->a[y][x] = original->a[y][x] * (fac - 1.f) ;
-                                        transformed->b[y][x] = original->b[y][x] * (fac - 1.f);
+                                        transformed->a[y][x] = CLIPC(original->a[y][x] * (fac - 1.f)) ;
+                                        transformed->b[y][x] = CLIPC(original->b[y][x] * (fac - 1.f));
                                     }
                                 }
 
@@ -7057,7 +7057,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                 diflc *= kdiff ;
 
                                 diflc *= factorx; //transition lightness
-                                transformed->L[y][x] = CLIPLOC(1.f * (original->L[y][x] + diflc));
+                                transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
 
                                 transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
                                 transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
@@ -7074,9 +7074,9 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
                                 float diflc = lightcont - original->L[y][x];
                                 diflc *= factorx;
-                                transformed->L[y][x] = original->L[y][x] + diflc;
-                                transformed->a[y][x] = original->a[y][x] * fac;
-                                transformed->b[y][x] = original->b[y][x] * fac;
+                                transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                                transformed->a[y][x] = CLIPC(original->a[y][x] * fac);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
 
 
                             }
@@ -7108,7 +7108,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
                                 kdiff *= fach * kch;
                                 diflc *= kdiff ;
-                                transformed->L[y][x] = CLIPLOC(1.f * (original->L[y][x] + diflc));
+                                transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
 
                                 transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
                                 transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
@@ -7120,9 +7120,9 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                 }
 
                                 float lightcont = lumnew ;
-                                transformed->L[y][x] = lightcont;
-                                transformed->a[y][x] = original->a[y][x] * facc;
-                                transformed->b[y][x] = original->b[y][x] * facc;
+                                transformed->L[y][x] = CLIP(lightcont);
+                                transformed->a[y][x] = CLIPC(original->a[y][x] * facc);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] * facc);
 
                             }
                         }
