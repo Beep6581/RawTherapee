@@ -865,6 +865,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
+!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
@@ -1002,6 +1003,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !MAIN_TAB_EXPORT; Fast Export
 !MAIN_TAB_EXPOSURE;Exposure
 !MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
+!MAIN_TAB_FAVORITES;Favorites
+!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 !MAIN_TAB_FILTER; Filter
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_IPTC;IPTC
@@ -2044,6 +2047,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_SHARPENEDGE_PASSES;Iterations
 !TP_SHARPENEDGE_THREE;Luminance only
 !TP_SHARPENING_AMOUNT;Amount
+!TP_SHARPENING_BLUR;Blur radius
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENING_EDRADIUS;Radius
 !TP_SHARPENING_EDTOLERANCE;Edge tolerance

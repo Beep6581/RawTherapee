@@ -12,7 +12,7 @@ Enabled=true
 Contrast=15
 Matrix=false
 Strength=20
-Uniformity=50
+Uniformity=5
 
 [RAW]
 CA=true

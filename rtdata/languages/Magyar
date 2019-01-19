@@ -1291,6 +1291,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 !HISTORY_MSG_RAW_BORDER;Raw border
 !HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
+!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 !HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
@@ -1375,6 +1376,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
+!MAIN_TAB_FAVORITES;Favorites
+!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>black</b>\nShortcut: <b>9</b>
@@ -2124,6 +2127,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity mode</b> allows to vary the contribution of R, G and B channels to the luminosity of the image, without altering image color.
 !TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
 !TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
+!TP_SHARPENING_BLUR;Blur radius
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold
 !TP_SOFTLIGHT_LABEL;Soft Light
