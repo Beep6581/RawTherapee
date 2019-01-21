@@ -813,7 +813,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 }
 
-                printf("improc avg=%f\n", avg);
+//                printf("improc avg=%f\n", avg);
                 huerblu = huerefblurs[sp] = huerefblu;
                 huer = huerefs[sp] = huere;
                 chromar = chromarefs[sp] = chromare;

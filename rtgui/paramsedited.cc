@@ -970,6 +970,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
                 locallab.spots.at(j).sensiex = locallab.spots.at(j).sensiex && pSpot.sensiex == otherSpot.sensiex;
                 locallab.spots.at(j).structexp = locallab.spots.at(j).structexp && pSpot.structexp == otherSpot.structexp;
+                locallab.spots.at(j).blurexpde = locallab.spots.at(j).blurexpde && pSpot.blurexpde == otherSpot.blurexpde;
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
                 locallab.spots.at(j).showmaskexpMethod = locallab.spots.at(j).showmaskexpMethod && pSpot.showmaskexpMethod == otherSpot.showmaskexpMethod;
                 locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
@@ -2665,6 +2666,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).structexp = mods.locallab.spots.at(i).structexp;
         }
 
+        if (locallab.spots.at(i).blurexpde) {
+            toEdit.locallab.spots.at(i).blurexpde = mods.locallab.spots.at(i).blurexpde;
+        }
+
         if (locallab.spots.at(i).excurve) {
             toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
         }
@@ -3962,6 +3967,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     warm(v),
     sensiex(v),
     structexp(v),
+    blurexpde(v),
     excurve(v),
     showmaskexpMethod(v),
     CCmaskexpcurve(v),
@@ -4099,6 +4105,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     warm = v;
     sensiex = v;
     structexp = v;
+    blurexpde = v;
     excurve = v;
     showmaskexpMethod = v;
     CCmaskexpcurve = v;

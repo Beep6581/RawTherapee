@@ -1621,8 +1621,6 @@ void LocHHmaskexpCurve::Set(const std::vector<double> &curvePoints)
 
 
 
-
-
 LocLLmaskexpCurve::LocLLmaskexpCurve() : sum(0.f) {};
 
 void LocLLmaskexpCurve::Reset()

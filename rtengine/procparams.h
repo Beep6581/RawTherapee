@@ -981,6 +981,7 @@ struct LocallabParams {
         int warm;
         int sensiex;
         int structexp;
+        int blurexpde;
         std::vector<double> excurve;
         Glib::ustring showmaskexpMethod;
         std::vector<double> CCmaskexpcurve;

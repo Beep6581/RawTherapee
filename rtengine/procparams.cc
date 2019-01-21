@@ -2382,8 +2382,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     black(0),
     shcompr(50),
     warm(0),
-    sensiex(19),
+    sensiex(15),
     structexp(0),
+    blurexpde(5),
     excurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     showmaskexpMethod("none"),
     CCmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
@@ -2525,6 +2526,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && warm == other.warm
         && sensiex == other.sensiex
         && structexp == other.structexp
+        && blurexpde == other.blurexpde
         && excurve == other.excurve
         && showmaskexpMethod == other.showmaskexpMethod
         && CCmaskexpcurve == other.CCmaskexpcurve
@@ -3618,6 +3620,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).warm, "Locallab", "Warm_" + std::to_string(i), spot.warm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiex, "Locallab", "Sensiex_" + std::to_string(i), spot.sensiex, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexp, "Locallab", "Structexp_" + std::to_string(i), spot.structexp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurexpde, "Locallab", "Blurexpde_" + std::to_string(i), spot.blurexpde, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).excurve, "Locallab", "ExCurve_" + std::to_string(i), spot.excurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).showmaskexpMethod, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), spot.showmaskexpMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskexpcurve, "Locallab", "CCmaskexpCurve_" + std::to_string(i), spot.CCmaskexpcurve, keyFile);
@@ -4838,6 +4841,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Warm_" + std::to_string(i), pedited, spot.warm, spotEdited.warm);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + std::to_string(i), pedited, spot.sensiex, spotEdited.sensiex);
                 assignFromKeyfile(keyFile, "Locallab", "Structexp_" + std::to_string(i), pedited, spot.structexp, spotEdited.structexp);
+                assignFromKeyfile(keyFile, "Locallab", "Blurexpde_" + std::to_string(i), pedited, spot.blurexpde, spotEdited.blurexpde);
                 assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + std::to_string(i), pedited, spot.excurve, spotEdited.excurve);
                 assignFromKeyfile(keyFile, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), pedited, spot.showmaskexpMethod, spotEdited.showmaskexpMethod);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskexpCurve_" + std::to_string(i), pedited, spot.CCmaskexpcurve, spotEdited.CCmaskexpcurve);

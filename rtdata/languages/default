@@ -869,6 +869,7 @@ HISTORY_MSG_613;Local - Exp Structure
 HISTORY_MSG_614;Local - Exp Mask H
 HISTORY_MSG_615;Local - Blend color
 HISTORY_MSG_616;Local - Blend Exp
+HISTORY_MSG_617;Local - Blur Exp
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1940,6 +1941,7 @@ TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLUFR;Blur & Noise
+TP_LOCALLAB_BLURDE;Blur Shape detection
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLINV;Inverse
 TP_LOCALLAB_BLSYM;Symmetric

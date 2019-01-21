@@ -509,6 +509,7 @@ public:
         bool warm;
         bool sensiex;
         bool structexp;
+        bool blurexpde;
         bool excurve;
         bool showmaskexpMethod;
         bool CCmaskexpcurve;
