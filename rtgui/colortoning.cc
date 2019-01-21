@@ -356,7 +356,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
             btn->set_size_request(-1, 20);
             box->pack_start(*btn, false, false);
         };
-    
+
     EvLabRegionList = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABREGION_LIST");
     EvLabRegionAB = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABREGION_AB");
     EvLabRegionSaturation = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABREGION_SATURATION");
@@ -405,7 +405,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     add_button(labRegionCopy, vb);
     hb->pack_start(*vb, Gtk::PACK_SHRINK);
     labRegionBox->pack_start(*hb, true, true);
-    
+
     labRegionAB = Gtk::manage(new LabGrid(EvLabRegionAB, M("TP_COLORTONING_LABREGION_ABVALUES"), false));
     labRegionBox->pack_start(*labRegionAB);
 
@@ -433,7 +433,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_B"));
     labRegionChannel->set_active(0);
     labRegionChannel->signal_changed().connect(sigc::mem_fun(*this, &ColorToning::labRegionChannelChanged));
-    
+
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_COLORTONING_LABREGION_CHANNEL") + ": ")), Gtk::PACK_SHRINK);
     hb->pack_start(*labRegionChannel);
     labRegionBox->pack_start(*hb);
@@ -468,7 +468,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
         auto n = labRegionList->append("1");
         labRegionList->set_text(n, 1, "a=0 b=0 s=0 l=0");
     }
-    
+
     labRegionEditorG->curveListComplete();
     labRegionEditorG->show();
     labRegionBox->pack_start(*labRegionEditorG, Gtk::PACK_SHRINK, 2);
@@ -490,7 +490,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labRegionPower->delay = options.adjusterMaxDelay;
     labRegionMaskBlur->delay = options.adjusterMaxDelay;
     //------------------------------------------------------------------------
-    
+
     show_all();
 
     disableListener();
@@ -575,7 +575,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else {
         labRegionSelected = 0;
         labRegionShowMask->set_active(false);
-    }        
+    }
     labRegionPopulateList();
     labRegionShow(labRegionSelected);
 
@@ -824,7 +824,7 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
     shadowsColSat->setDefault<int> (defParams->colorToning.shadowsColSat);
     strength->setDefault (defParams->colorToning.strength);
     labgrid->setDefault(defParams->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX);
-    
+
 
     if (pedited) {
         redlow->setDefaultEditedState (pedited->colorToning.redlow ? Edited : UnEdited);
@@ -891,34 +891,16 @@ void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
     nextsatth = satthres;
     nextsatpr = satprot;
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<ColorToning*>(data)->CTComp_();
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
-bool ColorToning::CTComp_ ()
-{
-
-    disableListener ();
-    saturatedOpacity->setValue (nextsatpr);
-    satProtectionThreshold->setValue (nextsatth);
-    /*  if(nextbw==1) {
-            saturatedOpacity->show();
-            satProtectionThreshold->show();
-            autosat->show();
+    idle_register.add(
+        [this]() -> bool
+        {
+            disableListener();
+            saturatedOpacity->setValue(nextsatpr);
+            satProtectionThreshold->setValue(nextsatth);
+            enableListener();
+            return false;
         }
-        else {
-            saturatedOpacity->hide();
-            satProtectionThreshold->hide();
-            autosat->hide();
-        }
-    */
-    enableListener ();
-
-    return false;
+    );
 }
 
 void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)
@@ -1248,9 +1230,9 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
         }
         x = log2lin(x, 3.f);
         // float x = valX;
-        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);        
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
     } else if (callerId == ID_LABREGION_HUE+1) {
-        Color::hsv2rgb01(float(valY), float(valX), 0.5f, R, G, B);        
+        Color::hsv2rgb01(float(valY), float(valX), 0.5f, R, G, B);
     }
 
     caller->ccRed = double(R);
@@ -1440,7 +1422,7 @@ void ColorToning::labRegionGet(int idx)
     if (idx < 0 || size_t(idx) >= labRegionData.size()) {
         return;
     }
-    
+
     auto &r = labRegionData[idx];
     double la, lb;
     labRegionAB->getParams(la, lb, r.a, r.b);
@@ -1544,7 +1526,7 @@ void ColorToning::labRegionPopulateList()
     ConnectionBlocker b(labRegionSelectionConn);
     labRegionList->clear_items();
     rtengine::ColorToningParams::LabCorrectionRegion dflt;
-    
+
     for (size_t i = 0; i < labRegionData.size(); ++i) {
         auto &r = labRegionData[i];
         auto j = labRegionList->append(std::to_string(i+1));

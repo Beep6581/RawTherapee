@@ -39,27 +39,6 @@
 using namespace std;
 using namespace rtengine;
 
-namespace
-{
-
-struct NLParams {
-    BatchQueueListener* listener;
-    int qsize;
-    bool queueRunning;
-    bool queueError;
-    Glib::ustring queueErrorMessage;
-};
-
-int bqnotifylistenerUI (void* data)
-{
-    NLParams* params = static_cast<NLParams*>(data);
-    params->listener->queueSizeChanged (params->qsize, params->queueRunning, params->queueError, params->queueErrorMessage);
-    delete params;
-    return 0;
-}
-
-}
-
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
 {
 
@@ -107,6 +86,17 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
 
 BatchQueue::~BatchQueue ()
 {
+    std::set<BatchQueueEntry*> removable_bqes;
+
+    mutex_removable_batch_queue_entries.lock();
+    removable_batch_queue_entries.swap(removable_bqes);
+    mutex_removable_batch_queue_entries.unlock();
+
+    for (const auto entry : removable_bqes) {
+        ::g_remove(entry->savedParamsFile.c_str());
+        delete entry;
+    }
+
     idle_register.destroy();
 
     MYWRITERLOCK(l, entryRW);
@@ -416,6 +406,8 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
 
 void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
+    std::set<BatchQueueEntry*> removable_bqes;
+
     {
         MYWRITERLOCK(l, entryRW);
 
@@ -438,16 +430,7 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            const auto func = [](gpointer data) -> gboolean {
-                const BatchQueueEntry* const bqe = static_cast<BatchQueueEntry*>(data);
-
-                ::g_remove(bqe->savedParamsFile.c_str());
-                delete bqe;
-
-                return FALSE;
-            };
-
-            idle_register.add(func, entry);
+            removable_bqes.insert(entry);
         }
 
         for (const auto entry : fd)
@@ -455,6 +438,30 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 
         lastClicked = nullptr;
         selected.clear ();
+    }
+
+    if (!removable_bqes.empty()) {
+        mutex_removable_batch_queue_entries.lock();
+        removable_batch_queue_entries.insert(removable_bqes.begin(), removable_bqes.end());
+        mutex_removable_batch_queue_entries.unlock();
+
+        idle_register.add(
+            [this]() -> bool
+            {
+                std::set<BatchQueueEntry*> removable_bqes;
+
+                mutex_removable_batch_queue_entries.lock();
+                removable_batch_queue_entries.swap(removable_bqes);
+                mutex_removable_batch_queue_entries.unlock();
+
+                for (const auto entry : removable_bqes) {
+                    ::g_remove(entry->savedParamsFile.c_str());
+                    delete entry;
+                }
+
+                return false;
+            }
+        );
     }
 
     saveBatchQueue ();
@@ -610,12 +617,13 @@ void BatchQueue::setProgress(double p)
     }
 
     // No need to acquire the GUI, setProgressUI will do it
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<BatchQueue*>(data)->redraw();
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            redraw();
+            return false;
+        }
+    );
 }
 
 void BatchQueue::setProgressStr(const Glib::ustring& str)
@@ -640,12 +648,15 @@ void BatchQueue::error(const Glib::ustring& descr)
     }
 
     if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
-        params->queueRunning = false;
-        params->queueError = true;
-        params->queueErrorMessage = descr;
-        idle_register.add(bqnotifylistenerUI, params);
+        BatchQueueListener* const bql = listener;
+
+        idle_register.add(
+            [bql, descr]() -> bool
+            {
+                bql->queueSizeChanged(0, false, true, descr);
+                return false;
+            }
+        );
     }
 }
 
@@ -959,9 +970,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData)
 {
-
-    std::vector<ThumbBrowserEntryBase*> bqe;
-    bqe.push_back (static_cast<BatchQueueEntry*>(actionData));
+    const std::vector<ThumbBrowserEntryBase*> bqe = {static_cast<BatchQueueEntry*>(actionData)};
 
     if (actionCode == 10) { // cancel
         cancelItems (bqe);
@@ -976,15 +985,21 @@ void BatchQueue::notifyListener ()
 {
     const bool queueRunning = processing;
     if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
+        BatchQueueListener* const bql = listener;
+
+        int qsize = 0;
         {
             MYREADERLOCK(l, entryRW);
-            params->qsize = fd.size();
+            qsize = fd.size();
         }
-        params->queueRunning = queueRunning;
-        params->queueError = false;
-        idle_register.add(bqnotifylistenerUI, params);
+
+        idle_register.add(
+            [bql, qsize, queueRunning]() -> bool
+            {
+                bql->queueSizeChanged(qsize, queueRunning, false, {});
+                return false;
+            }
+        );
     }
 }
 

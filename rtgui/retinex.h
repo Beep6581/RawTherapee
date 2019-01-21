@@ -108,7 +108,6 @@ public:
     void autoOpenCurve         () override;
     void medianmapChanged        ();
     void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;
-    bool minmaxComputed_ ();
     void updateLabel      ();
     void updateTrans      ();
     void neutral_pressed       ();
