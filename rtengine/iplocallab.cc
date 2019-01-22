@@ -5620,8 +5620,8 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 if (varsens < 0.f) {
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 } else {
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE * kch * fach);
-                                    diflc = 328.f * factorx * realstrdE * kch * fach;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);//kch fach
+                                    diflc = 328.f * factorx * realstrdE;
                                 }
 
                                 if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
@@ -5634,31 +5634,19 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 float chrb = bufexporig->b[loy - begy][lox - begx];
 
                                 if (senstype != 1) {
-                                    flia = flib = ((100.f + realstrch * falu * falL) / 100.f);
+                                    flia = flib = ((100.f + realstrchdE) / 100.f);
                                 } else {
-                                    flia = ((100.f + realstra * falu * falL) / 100.f);
-                                    flib = ((100.f + realstrb * falu * falL) / 100.f);
+                                    flia = (100.f + realstradE) / 100.f;
+                                    flib = (100.f + realstrbdE) / 100.f;
                                 }
 
                                 float difa = chra * flia - original->a[y][x];
                                 float difb = chrb * flib - original->b[y][x];
-                                difa *= (kch * factorx * fach);
-                                difb *= (kch * factorx * fach);
+                                difa *= factorx;
+                                difb *= factorx;
 
-                                if (varsens < 0.f) {
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                } else {
-                                    if (senstype != 1) {
-                                  //      transformed->a[y][x] = CLIPC(original->a[y][x] + 328.f * factorx * realstrchdE * kch * fach);
-                                  //      transformed->b[y][x] = CLIPC(original->b[y][x] + 328.f * factorx * realstrchdE * kch * fach);
-                                    } else {
-                                        transformed->a[y][x] = CLIPC(original->a[y][x] + 328.f * factorx * realstradE * kch * fach);
-                                        transformed->b[y][x] = CLIPC(original->b[y][x] + 328.f * factorx * realstrbdE * kch * fach);
-                                        difa = 328.f * factorx * realstradE * kch * fach;
-                                        difb = 328.f * factorx * realstrbdE * kch * fach;
-                                    }
-                                }
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
                                 if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
                                     transformed->a[y][x] = CLIPC(difa);
@@ -5680,8 +5668,8 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 if (varsens < 0.f) {
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 } else {
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE * kch * fach);
-                                    diflc = 328.f * realstrdE * kch * fach;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE);//kch fach
+                                    diflc = 328.f * realstrdE;
                                 }
 
                                 if (lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2) {
@@ -5694,44 +5682,29 @@ void ImProcFunctions::Expo_vibr_Local(float moddE, float powdE, int senstype, La
                                 float chrb = bufexporig->b[loy - begy][lox - begx];
 
                                 if (senstype != 1) {
-                                    flia = flib = ((100.f + realstrch * falu * falL) / 100.f);
+                                    flia = flib = (100.f + realstrchdE) / 100.f;
                                 } else {
-                                    flia = ((100.f + realstra * falu * falL) / 100.f);
-                                    flib = ((100.f + realstrb * falu * falL) / 100.f);
+                                    flia = (100.f + realstradE) / 100.f;
+                                    flib = (100.f + realstrbdE) / 100.f;
+                                }
 
-                                    float difa = chra * flia - original->a[y][x];
-                                    float difb = chrb * flib - original->b[y][x];
-                                    difa *= kch * fach;
-                                    difb *= kch * fach;
+                                float difa = chra * flia - original->a[y][x];
+                                float difb = chrb * flib - original->b[y][x];
 
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
-                                    if (varsens < 0.f) {
-                                        transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                        transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                    } else {
-                                        if (senstype != 1) {
-                                            transformed->a[y][x] = CLIPC(original->a[y][x] + 328.f * realstrchdE * kch * fach);
-                                            transformed->b[y][x] = CLIPC(original->b[y][x] + 328.f * realstrchdE * kch * fach);
-                                        } else {
-                                            transformed->a[y][x] = CLIPC(original->a[y][x] + 328.f * realstradE * kch * fach);
-                                            transformed->b[y][x] = CLIPC(original->b[y][x] + 328.f * realstrbdE * kch * fach);
-                                            difa = 328.f * realstradE * kch * fach;
-                                            difb = 328.f * realstrbdE * kch * fach;
-                                        }
-                                    }
-
-                                    if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
-                                        transformed->a[y][x] = CLIPC(difa);
-                                        transformed->b[y][x] = CLIPC(difb);
-                                    }
+                                if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
+                                    transformed->a[y][x] = CLIPC(difa);
+                                    transformed->b[y][x] = CLIPC(difb);
                                 }
                             }
-
-
                         }
-                    }
 
+
+                    }
                 }
+
             }
 
             bool execmedian99 = false;
