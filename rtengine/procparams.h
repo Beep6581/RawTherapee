@@ -50,6 +50,9 @@ class LocHHCurve;
 class LocLLmaskCurve;
 class LocCCmaskCurve;
 class LocHHmaskCurve;
+class LocLLmaskexpCurve;
+class LocCCmaskexpCurve;
+class LocHHmaskexpCurve;
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,

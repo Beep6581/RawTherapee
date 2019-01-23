@@ -2363,7 +2363,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chroma(0),
     sensi(19),
     structcol(0),
-    blendmaskcol(-100),
+    blendmaskcol(0),
     qualitycurveMethod("none"),
     showmaskcolMethod("none"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
@@ -2390,7 +2390,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     CCmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
     LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
     HHmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
-    blendmaskexp(-100),
+    blendmaskexp(0),
 
     // Vibrance
     expvibrance(false),
