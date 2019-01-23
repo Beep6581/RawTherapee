@@ -836,6 +836,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  */
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, lochhmasexpCurve,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler);
+                lllocalcurve.clear();
+                cclocalcurve.clear();
+                sklocalcurve.clear();
+                exlocalcurve.clear();
 
 
                               /*
