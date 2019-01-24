@@ -718,54 +718,39 @@ void BayerProcess::pixelShiftMotionMethodChanged ()
 
 void BayerProcess::FrameCountChanged(int n, int frameNum)
 {
-    struct Data {
-        BayerProcess *me;
-        int n;
-        int frameNum;
-    };
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        BayerProcess *me = d->me;
-        me->imageNumber->block (true);
-        int n = d->n;
-        int frameNum = d->frameNum;
+    idle_register.add(
+        [this, n, frameNum]() -> bool
+        {
+            imageNumber->block(true);
 
-        me->imageNumber->remove_all();
-        me->imageNumber->append("1");
-        for(int i = 2; i <= std::min(n, 4); ++i) {
-            std::ostringstream entry;
-            entry << i;
-            me->imageNumber->append(entry.str());
+            imageNumber->remove_all();
+            imageNumber->append("1");
+            for (int i = 2; i <= std::min(n, 4); ++i) {
+                std::ostringstream entry;
+                entry << i;
+                imageNumber->append(entry.str());
+            }
+            imageNumber->set_active(std::min(frameNum, n - 1));
+            if (n == 1) {
+                imageNumberBox->hide();
+            } else {
+                imageNumberBox->show();
+            }
+            imageNumber->block (false);
+            return false;
         }
-        me->imageNumber->set_active(std::min(frameNum, n - 1));
-        if(n == 1) {
-            me->imageNumberBox->hide();
-        } else {
-            me->imageNumberBox->show();
-        }
-        me->imageNumber->block (false);
-        delete d;
-        return FALSE;
-    };
-
-    idle_register.add(func, new Data { this, n, frameNum });
+    );
 }
 
 void BayerProcess::autoContrastChanged (double autoContrast)
 {
-    struct Data {
-        BayerProcess *me;
-        double autoContrast;
-    };
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        BayerProcess *me = d->me;
-        me->disableListener();
-        me->dualDemosaicContrast->setValue(d->autoContrast);
-        me->enableListener();
-        delete d;
-        return FALSE;
-    };
-
-    idle_register.add(func, new Data { this, autoContrast });
+    idle_register.add(
+        [this, autoContrast]() -> bool
+        {
+            disableListener();
+            dualDemosaicContrast->setValue(autoContrast);
+            enableListener();
+            return false;
+        }
+    );
 }

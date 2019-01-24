@@ -254,19 +254,13 @@ void XTransProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
 
 void XTransProcess::autoContrastChanged (double autoContrast)
 {
-    struct Data {
-        XTransProcess *me;
-        double autoContrast;
-    };
-    const auto func = [](gpointer data) -> gboolean {
-        Data *d = static_cast<Data *>(data);
-        XTransProcess *me = d->me;
-        me->disableListener();
-        me->dualDemosaicContrast->setValue(d->autoContrast);
-        me->enableListener();
-        delete d;
-        return FALSE;
-    };
-
-    idle_register.add(func, new Data { this, autoContrast });
+    idle_register.add(
+        [this, autoContrast]() -> bool
+        {
+            disableListener();
+            dualDemosaicContrast->setValue(autoContrast);
+            enableListener();
+            return false;
+        }
+    );
 }

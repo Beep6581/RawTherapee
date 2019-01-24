@@ -76,6 +76,7 @@
 #75 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
 #76 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
 #77 16.12.2018 Korrektur Farbwähler-Tooltip (TooWaBoo) RT 5.5
+#78 19.01.2019 Erweiterung (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2408,3 +2409,11 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+HISTORY_MSG_SHARPENING_BLUR;(Schärfung)\nWeichzeichnerradius
+MAIN_TAB_FAVORITES;Favoriten
+MAIN_TAB_FAVORITES_TOOLTIP;Taste: <b>Alt</b> + <b>u</b>
+TP_SHARPENING_BLUR;Weichzeichnerradius

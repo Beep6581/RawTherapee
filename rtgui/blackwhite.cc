@@ -375,12 +375,13 @@ void BlackWhite::BWChanged  (double redbw, double greenbw, double bluebw)
     nextgreenbw = greenbw;
     nextbluebw = bluebw;
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<BlackWhite*>(data)->BWComputed_();
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            BWComputed_();
+            return false;
+        }
+    );
 }
 
 bool BlackWhite::BWComputed_ ()

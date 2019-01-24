@@ -643,7 +643,7 @@ BENCHFUN
     const int k = params->sharpenMicro.matrix ? 1 : 2;
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
-    const int unif = params->sharpenMicro.uniformity / 10.0f; //put unif between 0 to 10
+    const int unif = params->sharpenMicro.uniformity;
     const float amount = (k == 1 ? 2.7f : 1.f) * params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts, 25/9 if 3x3
 
     if (settings->verbose) {

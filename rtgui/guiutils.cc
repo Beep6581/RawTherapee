@@ -42,27 +42,28 @@ IdleRegister::~IdleRegister()
     destroy();
 }
 
-void IdleRegister::add(GSourceFunc function, gpointer data, gint priority)
+void IdleRegister::add(std::function<bool ()> function, gint priority)
 {
-    const auto dispatch = [](gpointer data) -> gboolean {
-        DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
+    const auto dispatch =
+        [](gpointer data) -> gboolean
+        {
+            DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
 
-        if (!data_wrapper->function(data_wrapper->data)) {
-            data_wrapper->self->mutex.lock();
-            data_wrapper->self->ids.erase(data_wrapper);
-            data_wrapper->self->mutex.unlock();
+            if (!data_wrapper->function()) {
+                data_wrapper->self->mutex.lock();
+                data_wrapper->self->ids.erase(data_wrapper);
+                data_wrapper->self->mutex.unlock();
 
-            delete data_wrapper;
-            return FALSE;
-        }
+                delete data_wrapper;
+                return FALSE;
+            }
 
-        return TRUE;
-    };
+            return TRUE;
+        };
 
     DataWrapper* const data_wrapper = new DataWrapper{
         this,
-        function,
-        data
+        std::move(function)
     };
 
     mutex.lock();
@@ -1303,7 +1304,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     if (GTK_MINOR_VERSION < 20) {
         set_border_width(2); // margin doesn't work on GTK < 3.20
     }
-    
+
     set_name("MyFileChooserButton");
 }
 
@@ -1393,7 +1394,7 @@ std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserButton::list_filters()
     return file_filters_;
 }
 
-    
+
 bool MyFileChooserButton::set_current_folder(const std::string &filename)
 {
     current_folder_ = filename;

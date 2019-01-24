@@ -19,6 +19,7 @@
 #ifndef __GUI_UTILS_
 #define __GUI_UTILS_
 
+#include <functional>
 #include <map>
 
 #include <gtkmm.h>
@@ -51,14 +52,13 @@ class IdleRegister final :
 public:
     ~IdleRegister();
 
-    void add(GSourceFunc function, gpointer data, gint priority = G_PRIORITY_DEFAULT_IDLE);
+    void add(std::function<bool ()> function, gint priority = G_PRIORITY_DEFAULT_IDLE);
     void destroy();
 
 private:
     struct DataWrapper {
         IdleRegister* const self;
-        GSourceFunc function;
-        gpointer data;
+        std::function<bool ()> function;
     };
 
     std::map<const DataWrapper*, guint> ids;
@@ -401,7 +401,7 @@ public:
 
     sigc::signal<void> &signal_selection_changed();
     sigc::signal<void> &signal_file_set();
-    
+
     std::string get_filename() const;
     bool set_filename(const std::string &filename);
 
@@ -409,7 +409,7 @@ public:
     void remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters();
-    
+
     bool set_current_folder(const std::string &filename);
     std::string get_current_folder() const;
 

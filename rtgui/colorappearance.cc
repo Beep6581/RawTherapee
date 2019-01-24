@@ -1447,75 +1447,42 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 
 void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 {
-    nextCcam = ccam;
-    nextCcamout = ccamout;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->autoCamComputed_();
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::autoCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-    degree->setValue (nextCcam);
-    degreeout->setValue (nextCcamout);
-    enableListener ();
-
-    return false;
+    idle_register.add(
+        [this, ccam, ccamout]() -> bool
+        {
+            disableListener();
+            degree->setValue(ccam);
+            degreeout->setValue(ccamout);
+            enableListener();
+            return false;
+        }
+    );
 }
 
 void ColorAppearance::adapCamChanged (double cadap)
 {
-    nextCadap = cadap;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->adapCamComputed_();
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::adapCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-    adapscen->setValue (nextCadap);
-//  ybscen->setValue (nextYbscn);
-    enableListener ();
-
-    return false;
+    idle_register.add(
+        [this, cadap]() -> bool
+        {
+            disableListener();
+            adapscen->setValue(cadap);
+            enableListener();
+            return false;
+        }
+    );
 }
 
 void ColorAppearance::ybCamChanged (int ybsc)
 {
-    nextYbscn = ybsc;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->ybCamComputed_();
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::ybCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-//    adapscen->setValue (nextCadap);
-    ybscen->setValue (nextYbscn);
-    enableListener ();
-
-    return false;
+    idle_register.add(
+        [this, ybsc]() -> bool
+        {
+            disableListener();
+            ybscen->setValue(ybsc);
+            enableListener();
+            return false;
+        }
+    );
 }
 
 void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
