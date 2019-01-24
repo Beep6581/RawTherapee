@@ -1111,15 +1111,21 @@ private:
                 bool localcutili = false;
                 bool localskutili = false;
                 bool localexutili = false;
+                bool llmasutili = false;
+                bool lcmasexputili = false;
+                bool lhmasexputili = false;
+                bool llmasexputili = false;
+                bool lcmasutili = false;
+                bool lhmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
-                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
-                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
-                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
-                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
-                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
-                lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmasutili);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmasutili);
+                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmasutili);
+                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
+                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
+                lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);
@@ -1145,7 +1151,7 @@ private:
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 1);
 
-                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, lochhmasexpCurve,
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre);
 
                 // Clear local curves

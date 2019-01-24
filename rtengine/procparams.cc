@@ -2370,9 +2370,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     cccurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
     HHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
-    CCmaskcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
-    LLmaskcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
-    HHmaskcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+    CCmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
+    LLmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
+    HHmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     invers(false),
     // Exposure
     expexpose(false),
@@ -2387,9 +2387,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blurexpde(5),
     excurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     showmaskexpMethod("none"),
-    CCmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
-    LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
-    HHmaskexpcurve{(double)FCT_MinMaxCPoints, 0., 1., 0.35, 0.35, 1., 1., 0.35, 0.35},
+    CCmaskexpcurve{(double)FCT_MinMaxCPoints,0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
+    LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    HHmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     blendmaskexp(0),
 
     // Vibrance

@@ -784,15 +784,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 localexutili = false;
                 localcutili = false;
                 localskutili = false;
+                llmasutili = false;
+                lcmasexputili = false;
+                lhmasexputili = false;
+                llmasexputili = false;
+                lhmasutili = false;
+                lcmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
-                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
-                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
-                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
-                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
-                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
-                lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmasutili);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmasutili);
+                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmasutili);
+                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
+                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
+                lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, sca);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, sca);
@@ -834,13 +840,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                  * - maxspot, huerefs, centerx and centery aren't used in Lab_Local (only for printf) so values aren't important
                  * - shbuffer is used as nullptr
                  */
-                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve, lochhmasexpCurve,
+                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
                 sklocalcurve.clear();
                 exlocalcurve.clear();
-
+                locRETgainCurve.Reset();
+                loclhCurve.Reset();
+                lochhCurve.Reset();
+                locccmasCurve.Reset();
+                locllmasCurve.Reset();
+                lochhmasCurve.Reset();
+                locllmasexpCurve.Reset();
+                locccmasexpCurve.Reset();
+                lochhmasexpCurve.Reset();
 
                               /*
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {

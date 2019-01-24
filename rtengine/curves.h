@@ -644,7 +644,7 @@ public:
     virtual ~LocHHmaskexpCurve() {};
     LocHHmaskexpCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool & lhmasexputili);
     float getSum() const
     {
         return sum;
@@ -673,7 +673,7 @@ public:
     virtual ~LocCCmaskexpCurve() {};
     LocCCmaskexpCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints,  bool & lcmasexputili);
     float getSum() const
     {
         return sum;
@@ -701,7 +701,7 @@ public:
     virtual ~LocLLmaskexpCurve() {};
     LocLLmaskexpCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool & llmasexputili);
     float getSum() const
     {
         return sum;
@@ -729,7 +729,7 @@ public:
     virtual ~LocHHmaskCurve() {};
     LocHHmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool & lhmasutili);
     float getSum() const
     {
         return sum;
@@ -758,7 +758,7 @@ public:
     virtual ~LocCCmaskCurve() {};
     LocCCmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool & lcmasutili);
     float getSum() const
     {
         return sum;
@@ -786,7 +786,7 @@ public:
     virtual ~LocLLmaskCurve() {};
     LocLLmaskCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool & llmasutili);
     float getSum() const
     {
         return sum;
