@@ -9925,7 +9925,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 #ifdef _OPENMP
-                //        #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -10023,7 +10023,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (lp.showmaskexpmet != 4) {
 
 #ifdef _OPENMP
-//                       #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                         for (int y = 0; y < transformed->H ; y++) //{
@@ -10043,9 +10043,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                     if (zone > 0) {
-                                        bufexporig->L[loy - begy][lox - begx] = bufexporig->L[loy - begy][lox - begx] + (lp.blendmaexp * bufmaskorigexp->L[loy - begy][lox - begx]);
-                                        bufexporig->a[loy - begy][lox - begx] = bufexporig->a[loy - begy][lox - begx] * (1.f + lp.blendmaexp * bufmaskorigexp->a[loy - begy][lox - begx]);
-                                        bufexporig->b[loy - begy][lox - begx] = bufexporig->b[loy - begy][lox - begx] * (1.f + lp.blendmaexp * bufmaskorigexp->b[loy - begy][lox - begx]);
+                                        bufexporig->L[loy - begy][lox - begx] += (lp.blendmaexp * bufmaskorigexp->L[loy - begy][lox - begx]);
+                                        bufexporig->a[loy - begy][lox - begx] *= (1.f + lp.blendmaexp * bufmaskorigexp->a[loy - begy][lox - begx]);
+                                        bufexporig->b[loy - begy][lox - begx] *= (1.f + lp.blendmaexp * bufmaskorigexp->b[loy - begy][lox - begx]);
 
                                         bufexporig->L[loy - begy][lox - begx] = CLIP(bufexporig->L[loy - begy][lox - begx]);
                                         bufexporig->a[loy - begy][lox - begx] = CLIPC(bufexporig->a[loy - begy][lox - begx]);
@@ -10054,7 +10054,31 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         originalmaskexp->L[y][x] = CLIP(bufexporig->L[loy - begy][lox - begx] -  bufmaskorigexp->L[loy - begy][lox - begx]);
                                         originalmaskexp->a[y][x] = CLIPC(bufexporig->a[loy - begy][lox - begx] * (1.f - bufmaskorigexp->a[loy - begy][lox - begx]));
                                         originalmaskexp->b[y][x] = CLIPC(bufexporig->b[loy - begy][lox - begx] * (1.f - bufmaskorigexp->b[loy - begy][lox - begx]));
+
+                                        switch (zone) {
+
+                                            case 1: {
+                                                original->L[y][x] += (lp.blendmaexp * localFactor * bufmaskorigexp->L[loy - begy][lox - begx]);
+                                                original->a[y][x] *= (1.f + lp.blendmaexp * localFactor * bufmaskorigexp->a[loy - begy][lox - begx]);
+                                                original->b[y][x] *= (1.f + lp.blendmaexp * localFactor * bufmaskorigexp->b[loy - begy][lox - begx]);
+                                                original->L[y][x] = CLIP(original->L[y][x]);
+                                                original->a[y][x] = CLIPC(original->a[y][x]);
+                                                original->b[y][x] = CLIPC(original->b[y][x]);
+                                                break;
+                                            }
+
+                                            case 2: {
+
+                                                original->L[y][x] = bufexporig->L[loy - begy][lox - begx];
+                                                original->a[y][x] = bufexporig->a[loy - begy][lox - begx];
+                                                original->b[y][x] = bufexporig->b[loy - begy][lox - begx];
+
+                                            }
+
+                                        }
                                     }
+
+
                                 }
                             }
 
@@ -10089,7 +10113,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                         delete bufmaskorigexp;
-						delete bufexporig;
+                        delete bufexporig;
 
                         return;
                     }
@@ -10426,7 +10450,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
 #ifdef _OPENMP
-                //              #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -10518,7 +10542,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (lp.showmaskcolmet != 4) {
 
 #ifdef _OPENMP
-//                    #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                         for (int y = 0; y < transformed->H ; y++) //{
@@ -10539,9 +10563,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                     if (zone > 0) {
 
-                                        bufcolorig->L[loy - begy][lox - begx] = bufcolorig->L[loy - begy][lox - begx] + (lp.blendmacol * bufmaskorigcol->L[loy - begy][lox - begx]);
-                                        bufcolorig->a[loy - begy][lox - begx] = bufcolorig->a[loy - begy][lox - begx] * (1.f + lp.blendmacol * bufmaskorigcol->a[loy - begy][lox - begx]);
-                                        bufcolorig->b[loy - begy][lox - begx] = bufcolorig->b[loy - begy][lox - begx] * (1.f + lp.blendmacol * bufmaskorigcol->b[loy - begy][lox - begx]);
+                                        bufcolorig->L[loy - begy][lox - begx] += (lp.blendmacol * bufmaskorigcol->L[loy - begy][lox - begx]);
+                                        bufcolorig->a[loy - begy][lox - begx] *= (1.f + lp.blendmacol * bufmaskorigcol->a[loy - begy][lox - begx]);
+                                        bufcolorig->b[loy - begy][lox - begx] *= (1.f + lp.blendmacol * bufmaskorigcol->b[loy - begy][lox - begx]);
 
                                         bufcolorig->L[loy - begy][lox - begx] = CLIP(bufcolorig->L[loy - begy][lox - begx]);
                                         bufcolorig->a[loy - begy][lox - begx] = CLIPC(bufcolorig->a[loy - begy][lox - begx]);
@@ -10551,12 +10575,34 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         originalmaskcol->a[y][x] = CLIPC(bufcolorig->a[loy - begy][lox - begx] * (1.f - bufmaskorigcol->a[loy - begy][lox - begx]));
                                         originalmaskcol->b[y][x] = CLIPC(bufcolorig->b[loy - begy][lox - begx] * (1.f - bufmaskorigcol->b[loy - begy][lox - begx]));
 
-                                    }
+                                        switch (zone) {
 
+                                            case 1: {
+                                                original->L[y][x] += (lp.blendmacol * localFactor * bufmaskorigcol->L[loy - begy][lox - begx]);
+                                                original->a[y][x] *= (1.f + lp.blendmacol * localFactor * bufmaskorigcol->a[loy - begy][lox - begx]);
+                                                original->b[y][x] *= (1.f + lp.blendmacol * localFactor * bufmaskorigcol->b[loy - begy][lox - begx]);
+                                                original->L[y][x] = CLIP(original->L[y][x]);
+                                                original->a[y][x] = CLIPC(original->a[y][x]);
+                                                original->b[y][x] = CLIPC(original->b[y][x]);
+                                                break;
+                                            }
+
+                                            case 2: {
+
+                                                original->L[y][x] = bufcolorig->L[loy - begy][lox - begx];
+                                                original->a[y][x] = bufcolorig->a[loy - begy][lox - begx];
+                                                original->b[y][x] = bufcolorig->b[loy - begy][lox - begx];
+
+                                            }
+
+                                        }
+
+                                    }
                                 }
                             }
 
                         delete bufmaskorigcol;
+
 
                     } else if (lp.showmaskcolmet == 4) {
 #ifdef _OPENMP
@@ -10587,7 +10633,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                         delete bufmaskorigcol;
-						delete bufcolorig;
+                        delete bufcolorig;
                         return;
 
                     }
