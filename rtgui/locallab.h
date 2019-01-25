@@ -78,6 +78,7 @@ private:
     DiagonalCurveEditor* shapeexpos;
     FlatCurveEditor* CCmaskexpshape;
     FlatCurveEditor* LLmaskexpshape;
+    FlatCurveEditor* HHmaskexpshape;
     // Vibrance
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* skinTonesCurve;
@@ -91,6 +92,8 @@ private:
     Adjuster* const contrast;
     Adjuster* const chroma;
     Adjuster* const sensi;
+    Adjuster* const structcol;
+    Adjuster* const blendmaskcol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;
@@ -99,6 +102,9 @@ private:
     Adjuster* const shcompr;
     Adjuster* const warm;
     Adjuster* const sensiex;
+    Adjuster* const structexp;
+    Adjuster* const blurexpde;
+    Adjuster* const blendmaskexp;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;

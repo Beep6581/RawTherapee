@@ -487,6 +487,8 @@ public:
         bool contrast;
         bool chroma;
         bool sensi;
+        bool structcol;
+        bool blendmaskcol;
         bool qualitycurveMethod;
         bool llcurve;
         bool cccurve;
@@ -506,10 +508,14 @@ public:
         bool shcompr;
         bool warm;
         bool sensiex;
+        bool structexp;
+        bool blurexpde;
         bool excurve;
         bool enaExpMask;
         bool CCmaskexpcurve;
         bool LLmaskexpcurve;
+        bool HHmaskexpcurve;
+        bool blendmaskexp;
         // Vibrance
         bool expvibrance;
         bool saturated;

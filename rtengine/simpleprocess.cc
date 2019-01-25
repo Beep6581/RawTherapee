@@ -32,6 +32,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "jaggedarray.h"
 
 
 #undef THREAD_PRIORITY_NORMAL
@@ -1079,6 +1080,7 @@ private:
             LocHHmaskCurve lochhmasCurve;
             LocCCmaskexpCurve locccmasexpCurve;
             LocLLmaskexpCurve locllmasexpCurve;
+            LocHHmaskexpCurve lochhmasexpCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf sklocalcurve(65536, 0);
@@ -1086,11 +1088,12 @@ private:
             LUTf shtonecurveloc(65536, 0);
             LUTf tonecurveloc(65536, 0);
             LUTf lightCurveloc(32770, 0);
-            LUTu lhist16loc(32768, 0);
+            LUTu lhist16loc(32770, 0);
             LUTf exlocalcurve(65536, 0);
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
+             JaggedArray<float> blend(fw, fh);
 
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
                 if (params.locallab.spots.at(sp).inverssha) {
@@ -1108,14 +1111,21 @@ private:
                 bool localcutili = false;
                 bool localskutili = false;
                 bool localexutili = false;
+                bool llmasutili = false;
+                bool lcmasexputili = false;
+                bool lhmasexputili = false;
+                bool llmasexputili = false;
+                bool lcmasutili = false;
+                bool lhmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
-                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
-                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
-                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
-                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
-                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
+                locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmasutili);
+                locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve, llmasutili);
+                lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve, lhmasutili);
+                locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
+                locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
+                lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);
@@ -1131,18 +1141,18 @@ private:
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, sobelre;
-
+                float avg = 0.f;
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc);
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 }
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc, lumare,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 1);
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, sobelrefs, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, locllmasCurve, lochhmasCurve, locccmasexpCurve, locllmasexpCurve,
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, huere, chromare, lumare, sobelre, 0, 0);
 
                 // Clear local curves

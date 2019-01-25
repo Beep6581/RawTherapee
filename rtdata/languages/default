@@ -864,8 +864,14 @@ HISTORY_MSG_608;Local - Color Mask L
 HISTORY_MSG_609;Local - Exp Mask C
 HISTORY_MSG_610;Local - Exp Mask L
 HISTORY_MSG_611;Local - Color Mask H
-HISTORY_MSG_612;Local - Use Color Mask
-HISTORY_MSG_613;Local - Use Exp Mask
+HISTORY_MSG_612;Local - Color Structure
+HISTORY_MSG_613;Local - Exp Structure
+HISTORY_MSG_614;Local - Exp Mask H
+HISTORY_MSG_615;Local - Blend color
+HISTORY_MSG_616;Local - Blend Exp
+HISTORY_MSG_617;Local - Blur Exp
+HISTORY_MSG_618;Local - Use Color Mask
+HISTORY_MSG_619;Local - Use Exp Mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1042,8 +1048,6 @@ MAIN_TAB_ADVANCED;Advanced
 MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
 MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
-MAIN_TAB_FAVORITES;Favorites
-MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
 MAIN_TAB_DEVELOP; Batch Edit 
@@ -1051,6 +1055,8 @@ MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPORT; Fast Export 
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
+MAIN_TAB_FAVORITES;Favorites
+MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 MAIN_TAB_FILTER; Filter 
 MAIN_TAB_INSPECT; Inspect 
 MAIN_TAB_IPTC;IPTC
@@ -1934,8 +1940,10 @@ TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
 TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BILATERAL;Bilateral filter
+TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLUFR;Blur & Noise
+TP_LOCALLAB_BLURDE;Blur Shape detection
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLINV;Inverse
 TP_LOCALLAB_BLSYM;Symmetric
@@ -2038,10 +2046,12 @@ TP_LOCALLAB_SHOWMNONE;None
 TP_LOCALLAB_SHOWMODIF;Show modifications whithout mask
 TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
 TP_LOCALLAB_SHOWMASK;Show mask
+TP_LOCALLAB_SHOWSTRUC;Show structure
 TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_SOFT;Soft Light
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGTH;Noise
+TP_LOCALLAB_STRUCCOL;Structure
 TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)

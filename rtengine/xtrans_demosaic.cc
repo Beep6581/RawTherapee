@@ -960,59 +960,62 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 #undef CLIP
 void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
-//    if (settings->verbose) {
-//        printf("fast X-Trans interpolation...\n");
-//    }
 
-    double progress = 0.0;
-    const bool plistenerActive = plistener;
-
-    if (plistenerActive) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "fast Xtrans"));
-        plistener->setProgress (progress);
+    if (plistener) {
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "fast Xtrans"));
+        plistener->setProgress(0.0);
     }
 
-    const int height = H, width = W;
-
-    xtransborder_interpolate (1, red, green, blue);
+    xtransborder_interpolate(1, red, green, blue);
     int xtrans[6][6];
     ri->getXtransMatrix(xtrans);
 
-    #pragma omp parallel for
+    const float weight[3][3] = {
+                                {0.25f, 0.5f, 0.25f},
+                                {0.5f,  0.f,  0.5f},
+                                {0.25f, 0.5f, 0.25f}
+                               };
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+    for (int row = 1; row < H - 1; ++row) {
+        for (int col = 1; col < W - 1; ++col) {
+            float sum[3] = {};
 
-    for(int row = 1; row < height - 1; row++) {
-        for(int col = 1; col < width - 1; col++) {
-            float sum[3] = {0.f};
-
-            for(int v = -1; v <= 1; v++) {
-                for(int h = -1; h <= 1; h++) {
-                    sum[fcol(row + v, col + h)] += rawData[row + v][(col + h)];
+            for (int v = -1; v <= 1; v++) {
+                for (int h = -1; h <= 1; h++) {
+                    sum[fcol(row + v, col + h)] += rawData[row + v][(col + h)] * weight[v + 1][h + 1];
                 }
             }
 
             switch(fcol(row, col)) {
-            case 0:
+            case 0: // red pixel
                 red[row][col] = rawData[row][col];
-                green[row][col] = sum[1] * 0.2f;
-                blue[row][col] = sum[2] * 0.33333333f;
+                green[row][col] = sum[1] * 0.5f;
+                blue[row][col] = sum[2];
                 break;
 
-            case 1:
-                red[row][col] = sum[0] * 0.5f;
+            case 1: // green pixel
                 green[row][col] = rawData[row][col];
-                blue[row][col] = sum[2] * 0.5f;
+                if (fcol(row, col - 1) == fcol(row, col + 1)) { // Solitary green pixel always has exactly two direct red and blue neighbors in 3x3 grid
+                    red[row][col] = sum[0];
+                    blue[row][col] = sum[2];
+                } else { // Non solitary green pixel always has one direct and one diagonal red and blue neighbor in 3x3 grid
+                    red[row][col] = sum[0] * 1.3333333f;
+                    blue[row][col] = sum[2] * 1.3333333f;
+                }
                 break;
 
-            case 2:
-                red[row][col] = sum[0] * 0.33333333f;
-                green[row][col] = sum[1] * 0.2f;
+            case 2: // blue pixel
+                red[row][col] = sum[0];
+                green[row][col] = sum[1] * 0.5f;
                 blue[row][col] = rawData[row][col];
                 break;
             }
         }
     }
 
-    if (plistenerActive) {
+    if (plistener) {
         plistener->setProgress (1.0);
     }
 }

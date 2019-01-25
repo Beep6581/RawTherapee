@@ -50,6 +50,9 @@ class LocHHCurve;
 class LocLLmaskCurve;
 class LocCCmaskCurve;
 class LocHHmaskCurve;
+class LocLLmaskexpCurve;
+class LocCCmaskexpCurve;
+class LocHHmaskexpCurve;
 
 enum RenderingIntent {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
@@ -959,6 +962,8 @@ struct LocallabParams {
         int contrast;
         int chroma;
         int sensi;
+        int structcol;
+        int blendmaskcol;
         Glib::ustring qualitycurveMethod;
         std::vector<double> llcurve;
         std::vector<double> cccurve;
@@ -978,10 +983,14 @@ struct LocallabParams {
         int shcompr;
         int warm;
         int sensiex;
+        int structexp;
+        int blurexpde;
         std::vector<double> excurve;
         bool enaExpMask;
         std::vector<double> CCmaskexpcurve;
         std::vector<double> LLmaskexpcurve;
+        std::vector<double> HHmaskexpcurve;
+        int blendmaskexp;
         // Vibrance
         bool expvibrance;
         int saturated;

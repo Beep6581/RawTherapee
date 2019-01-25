@@ -240,11 +240,18 @@ protected:
     LocHHmaskCurve lochhmasCurve;
     LocCCmaskexpCurve locccmasexpCurve;
     LocLLmaskexpCurve locllmasexpCurve;
+    LocHHmaskexpCurve lochhmasexpCurve;
     ProcParams nextParams2;
     bool locallutili;
     bool localcutili;
     bool localskutili;
     bool localexutili;
+    bool llmasutili;
+    bool lhmasutili;
+    bool lcmasutili;
+    bool lcmasexputili;
+    bool lhmasexputili;
+    bool llmasexputili;
     bool LHutili;
     bool HHutili;
     LUTf huerefs;
@@ -256,6 +263,7 @@ protected:
     bool lastspotdup;
     int locallColorMask;
     int locallExpMask;
+    float avg;
     
 public:
 
