@@ -53,7 +53,8 @@
 namespace
 {
 void retinex_scales(float* scales, int nscales, int mode, int s, float high)
-{
+{   if(s < 3) s = 3;//to avoid crash in MSRlocal if nei small
+
     if (nscales == 1) {
         scales[0] = (float)s / 2.f;
     } else if (nscales == 2) {
@@ -851,6 +852,7 @@ void ImProcFunctions::MSRLocal(int sp, float** luminance, float** templ, const f
         constexpr auto maxRetinexScales = 8;
         float RetinexScales[maxRetinexScales];
 
+      //  retinex_scales(RetinexScales, scal, moderetinex, nei, high);
         retinex_scales(RetinexScales, scal, moderetinex, nei, high);
 
 
