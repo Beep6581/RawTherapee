@@ -261,13 +261,9 @@ protected:
     LUTf sobelrefs;
     double huer, huerblu, chromar, lumar, sobeler;
     bool lastspotdup;
+    int locallColorMask;
+    int locallExpMask;
     float avg;
-
-
-
-
-
-
     
 public:
 
@@ -337,6 +333,12 @@ public:
     void updateUnLock () override
     {
         updaterThreadStart.unlock();
+    }
+
+    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask) override
+    {
+        this->locallColorMask = locallColorMask;
+        this->locallExpMask = locallExpMask;
     }
 
     void setProgressListener (ProgressListener* pl) override

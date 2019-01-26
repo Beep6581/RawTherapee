@@ -965,15 +965,15 @@ struct LocallabParams {
         int structcol;
         int blendmaskcol;
         Glib::ustring qualitycurveMethod;
-        Glib::ustring showmaskcolMethod;
         std::vector<double> llcurve;
         std::vector<double> cccurve;
         std::vector<double> LHcurve;
         std::vector<double> HHcurve;
+        bool invers;
+        bool enaColorMask;
         std::vector<double> CCmaskcurve;
         std::vector<double> LLmaskcurve;
         std::vector<double> HHmaskcurve;
-        bool invers;
         // Exposure
         bool expexpose;
         int expcomp;
@@ -986,7 +986,7 @@ struct LocallabParams {
         int structexp;
         int blurexpde;
         std::vector<double> excurve;
-        Glib::ustring showmaskexpMethod;
+        bool enaExpMask;
         std::vector<double> CCmaskexpcurve;
         std::vector<double> LLmaskexpcurve;
         std::vector<double> HHmaskexpcurve;

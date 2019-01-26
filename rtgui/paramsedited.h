@@ -490,15 +490,15 @@ public:
         bool structcol;
         bool blendmaskcol;
         bool qualitycurveMethod;
-        bool showmaskcolMethod;
         bool llcurve;
         bool cccurve;
         bool LHcurve;
         bool HHcurve;
+        bool invers;
+        bool enaColorMask;
         bool CCmaskcurve;
         bool LLmaskcurve;
         bool HHmaskcurve;
-        bool invers;
         // Exposure
         bool expexpose;
         bool expcomp;
@@ -511,7 +511,7 @@ public:
         bool structexp;
         bool blurexpde;
         bool excurve;
-        bool showmaskexpMethod;
+        bool enaExpMask;
         bool CCmaskexpcurve;
         bool LLmaskexpcurve;
         bool HHmaskexpcurve;

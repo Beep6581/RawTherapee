@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), editDataProvider (nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), editDataProvider (nullptr), photoLoadedOnce(false)
 {
 
     favoritePanel   = Gtk::manage (new ToolVBox ());
@@ -457,6 +457,12 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         resize->write(params);
     }
 
+    // Manage Locallab mask visibility
+    if (event == rtengine::EvlocallabshowmaskcolMethod || event == rtengine::EvlocallabshowmaskexpMethod) {
+        Locallab::llMaskVisibility* maskStruc = locallab->getMaskVisibility();
+        ipc->setLocallabMaskVisibility(maskStruc->colorMask, maskStruc->expMask);
+    }
+
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
 
     hasChanged = true;
@@ -557,6 +563,12 @@ void ToolPanelCoordinator::profileChange(
     if (event == rtengine::EvPhotoLoaded || event == rtengine::EvProfileChanged || event == rtengine::EvHistoryBrowsed || event == rtengine::EvCTRotate) {
         // updating the "on preview" geometry
         gradient->updateGeometry(params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
+    }
+
+    // Reset Locallab mask visibility when a picture is loaded
+    if (event == rtengine::EvPhotoLoaded) {
+        locallab->resetMaskVisibility();
+        ipc->setLocallabMaskVisibility(0, 0);
     }
 
     // start the IPC processing

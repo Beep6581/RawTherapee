@@ -2365,15 +2365,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structcol(0),
     blendmaskcol(0),
     qualitycurveMethod("none"),
-    showmaskcolMethod("none"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     cccurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
     HHcurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.166, 0.50, 0.35, 0.35, 0.333, 0.50, 0.35, 0.35, 0.50, 0.50, 0.35, 0.35, 0.666, 0.50, 0.35, 0.35, 0.833, 0.50, 0.35, 0.35},
+    invers(false),
+    enaColorMask(false),
     CCmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     LLmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     HHmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
-    invers(false),
     // Exposure
     expexpose(false),
     expcomp(0),
@@ -2386,12 +2386,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structexp(0),
     blurexpde(5),
     excurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
-    showmaskexpMethod("none"),
+    enaExpMask(false),
     CCmaskexpcurve{(double)FCT_MinMaxCPoints,0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
     LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     blendmaskexp(0),
-
     // Vibrance
     expvibrance(false),
     saturated(0),
@@ -2507,15 +2506,15 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && structcol == other.structcol
         && blendmaskcol == other.blendmaskcol
         && qualitycurveMethod == other.qualitycurveMethod
-        && showmaskcolMethod == other.showmaskcolMethod
         && llcurve == other.llcurve
         && cccurve == other.cccurve
         && LHcurve == other.LHcurve
         && HHcurve == other.HHcurve
+        && invers == other.invers
+        && enaColorMask == other.enaColorMask
         && CCmaskcurve == other.CCmaskcurve
         && LLmaskcurve == other.LLmaskcurve
         && HHmaskcurve == other.HHmaskcurve
-        && invers == other.invers
         // Exposure
         && expexpose == other.expexpose
         && expcomp == other.expcomp
@@ -2528,7 +2527,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && structexp == other.structexp
         && blurexpde == other.blurexpde
         && excurve == other.excurve
-        && showmaskexpMethod == other.showmaskexpMethod
+        && enaExpMask == other.enaExpMask
         && CCmaskexpcurve == other.CCmaskexpcurve
         && LLmaskexpcurve == other.LLmaskexpcurve
         && HHmaskexpcurve == other.HHmaskexpcurve
@@ -3601,15 +3600,15 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structcol, "Locallab", "Structcol_" + std::to_string(i), spot.structcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskcol, "Locallab", "Blendmaskcol_" + std::to_string(i), spot.blendmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).showmaskcolMethod, "Locallab", "ShowmaskcolMethod_" + std::to_string(i), spot.showmaskcolMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).cccurve, "Locallab", "CCCurve_" + std::to_string(i), spot.cccurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LHcurve, "Locallab", "LHCurve_" + std::to_string(i), spot.LHcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHcurve, "Locallab", "HHCurve_" + std::to_string(i), spot.HHcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).invers, "Locallab", "Invers_" + std::to_string(i), spot.invers, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enaColorMask, "Locallab", "EnaColorMask_" + std::to_string(i), spot.enaColorMask, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskcurve, "Locallab", "CCmaskCurve_" + std::to_string(i), spot.CCmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcurve, "Locallab", "LLmaskCurve_" + std::to_string(i), spot.LLmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskcurve, "Locallab", "HHmaskCurve_" + std::to_string(i), spot.HHmaskcurve, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).invers, "Locallab", "Invers_" + std::to_string(i), spot.invers, keyFile);
                 // Exposure
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expexpose, "Locallab", "Expexpose_" + std::to_string(i), spot.expexpose, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcomp, "Locallab", "Expcomp_" + std::to_string(i), spot.expcomp, keyFile);
@@ -3622,7 +3621,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexp, "Locallab", "Structexp_" + std::to_string(i), spot.structexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurexpde, "Locallab", "Blurexpde_" + std::to_string(i), spot.blurexpde, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).excurve, "Locallab", "ExCurve_" + std::to_string(i), spot.excurve, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).showmaskexpMethod, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), spot.showmaskexpMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enaExpMask, "Locallab", "EnaExpMask_" + std::to_string(i), spot.enaExpMask, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskexpcurve, "Locallab", "CCmaskexpCurve_" + std::to_string(i), spot.CCmaskexpcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskexpcurve, "Locallab", "LLmaskexpCurve_" + std::to_string(i), spot.LLmaskexpcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskexpcurve, "Locallab", "HHmaskexpCurve_" + std::to_string(i), spot.HHmaskexpcurve, keyFile);
@@ -4822,15 +4821,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + std::to_string(i), pedited, spot.structcol, spotEdited.structcol);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskcol_" + std::to_string(i), pedited, spot.blendmaskcol, spotEdited.blendmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
-                assignFromKeyfile(keyFile, "Locallab", "ShowmaskcolMethod_" + std::to_string(i), pedited, spot.showmaskcolMethod, spotEdited.showmaskcolMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);
                 assignFromKeyfile(keyFile, "Locallab", "CCCurve_" + std::to_string(i), pedited, spot.cccurve, spotEdited.cccurve);
                 assignFromKeyfile(keyFile, "Locallab", "LHCurve_" + std::to_string(i), pedited, spot.LHcurve, spotEdited.LHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHCurve_" + std::to_string(i), pedited, spot.HHcurve, spotEdited.HHcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Invers_" + std::to_string(i), pedited, spot.invers, spotEdited.invers);
+                assignFromKeyfile(keyFile, "Locallab", "EnaColorMask_" + std::to_string(i), pedited, spot.enaColorMask, spotEdited.enaColorMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskCurve_" + std::to_string(i), pedited, spot.CCmaskcurve, spotEdited.CCmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskCurve_" + std::to_string(i), pedited, spot.LLmaskcurve, spotEdited.LLmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + std::to_string(i), pedited, spot.HHmaskcurve, spotEdited.HHmaskcurve);
-                assignFromKeyfile(keyFile, "Locallab", "Invers_" + std::to_string(i), pedited, spot.invers, spotEdited.invers);
                 // Exposure
                 assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + std::to_string(i), pedited, spot.expexpose, spotEdited.expexpose);
                 assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + std::to_string(i), pedited, spot.expcomp, spotEdited.expcomp);
@@ -4843,7 +4842,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Structexp_" + std::to_string(i), pedited, spot.structexp, spotEdited.structexp);
                 assignFromKeyfile(keyFile, "Locallab", "Blurexpde_" + std::to_string(i), pedited, spot.blurexpde, spotEdited.blurexpde);
                 assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + std::to_string(i), pedited, spot.excurve, spotEdited.excurve);
-                assignFromKeyfile(keyFile, "Locallab", "ShowmaskexpMethod_" + std::to_string(i), pedited, spot.showmaskexpMethod, spotEdited.showmaskexpMethod);
+                assignFromKeyfile(keyFile, "Locallab", "EnaExpMask_" + std::to_string(i), pedited, spot.enaExpMask, spotEdited.enaExpMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskexpCurve_" + std::to_string(i), pedited, spot.CCmaskexpcurve, spotEdited.CCmaskexpcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskexpCurve_" + std::to_string(i), pedited, spot.LLmaskexpcurve, spotEdited.LLmaskexpcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskexpCurve_" + std::to_string(i), pedited, spot.HHmaskexpcurve, spotEdited.HHmaskexpcurve);

@@ -951,15 +951,15 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
                 locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
-                locallab.spots.at(j).showmaskcolMethod = locallab.spots.at(j).showmaskcolMethod && pSpot.showmaskcolMethod == otherSpot.showmaskcolMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
                 locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
                 locallab.spots.at(j).HHcurve = locallab.spots.at(j).HHcurve && pSpot.HHcurve == otherSpot.HHcurve;
+                locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
+                locallab.spots.at(j).enaColorMask = locallab.spots.at(j).enaColorMask && pSpot.enaColorMask == otherSpot.enaColorMask;
                 locallab.spots.at(j).CCmaskcurve = locallab.spots.at(j).CCmaskcurve && pSpot.CCmaskcurve == otherSpot.CCmaskcurve;
                 locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
                 locallab.spots.at(j).HHmaskcurve = locallab.spots.at(j).HHmaskcurve && pSpot.HHmaskcurve == otherSpot.HHmaskcurve;
-                locallab.spots.at(j).invers = locallab.spots.at(j).invers && pSpot.invers == otherSpot.invers;
                 // Exposure
                 locallab.spots.at(j).expexpose = locallab.spots.at(j).expexpose && pSpot.expexpose == otherSpot.expexpose;
                 locallab.spots.at(j).expcomp = locallab.spots.at(j).expcomp && pSpot.expcomp == otherSpot.expcomp;
@@ -972,7 +972,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structexp = locallab.spots.at(j).structexp && pSpot.structexp == otherSpot.structexp;
                 locallab.spots.at(j).blurexpde = locallab.spots.at(j).blurexpde && pSpot.blurexpde == otherSpot.blurexpde;
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
-                locallab.spots.at(j).showmaskexpMethod = locallab.spots.at(j).showmaskexpMethod && pSpot.showmaskexpMethod == otherSpot.showmaskexpMethod;
+                locallab.spots.at(j).enaExpMask = locallab.spots.at(j).enaExpMask && pSpot.enaExpMask == otherSpot.enaExpMask;
                 locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
                 locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
                 locallab.spots.at(j).HHmaskexpcurve = locallab.spots.at(j).HHmaskexpcurve && pSpot.HHmaskexpcurve == otherSpot.HHmaskexpcurve;
@@ -2593,10 +2593,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).qualitycurveMethod = mods.locallab.spots.at(i).qualitycurveMethod;
         }
 
-        if (locallab.spots.at(i).showmaskcolMethod) {
-            toEdit.locallab.spots.at(i).showmaskcolMethod = mods.locallab.spots.at(i).showmaskcolMethod;
-        }
-
         if (locallab.spots.at(i).llcurve) {
             toEdit.locallab.spots.at(i).llcurve = mods.locallab.spots.at(i).llcurve;
         }
@@ -2613,6 +2609,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHcurve = mods.locallab.spots.at(i).HHcurve;
         }
 
+        if (locallab.spots.at(i).invers) {
+            toEdit.locallab.spots.at(i).invers = mods.locallab.spots.at(i).invers;
+        }
+
+        if (locallab.spots.at(i).enaColorMask) {
+            toEdit.locallab.spots.at(i).enaColorMask = mods.locallab.spots.at(i).enaColorMask;
+        }
+
         if (locallab.spots.at(i).CCmaskcurve) {
             toEdit.locallab.spots.at(i).CCmaskcurve = mods.locallab.spots.at(i).CCmaskcurve;
         }
@@ -2623,10 +2627,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).HHmaskcurve) {
             toEdit.locallab.spots.at(i).HHmaskcurve = mods.locallab.spots.at(i).HHmaskcurve;
-        }
-
-        if (locallab.spots.at(i).invers) {
-            toEdit.locallab.spots.at(i).invers = mods.locallab.spots.at(i).invers;
         }
 
         // Exposure
@@ -2674,8 +2674,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
         }
 
-        if (locallab.spots.at(i).showmaskexpMethod) {
-            toEdit.locallab.spots.at(i).showmaskexpMethod = mods.locallab.spots.at(i).showmaskexpMethod;
+        if (locallab.spots.at(i).enaExpMask) {
+            toEdit.locallab.spots.at(i).enaExpMask = mods.locallab.spots.at(i).enaExpMask;
         }
 
         if (locallab.spots.at(i).CCmaskexpcurve) {
@@ -3948,15 +3948,15 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structcol(v),
     blendmaskcol(v),
     qualitycurveMethod(v),
-    showmaskcolMethod(v),
     llcurve(v),
     cccurve(v),
     LHcurve(v),
     HHcurve(v),
+    invers(v),
+    enaColorMask(v),
     CCmaskcurve(v),
     LLmaskcurve(v),
     HHmaskcurve(v),
-    invers(v),
     // Exposure
     expexpose(v),
     expcomp(v),
@@ -3969,7 +3969,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structexp(v),
     blurexpde(v),
     excurve(v),
-    showmaskexpMethod(v),
+    enaExpMask(v),
     CCmaskexpcurve(v),
     LLmaskexpcurve(v),
     HHmaskexpcurve(v),
@@ -4086,15 +4086,15 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structcol = v;
     blendmaskcol = v;
     qualitycurveMethod = v;
-    showmaskcolMethod = v;
     llcurve = v;
     cccurve = v;
     LHcurve = v;
     HHcurve = v;
+    invers = v;
+    enaColorMask = v;
     CCmaskcurve = v;
     LLmaskcurve = v;
     HHmaskcurve = v;
-    invers = v;
     // Exposure
     expexpose = v;
     expcomp = v;
@@ -4107,7 +4107,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structexp = v;
     blurexpde = v;
     excurve = v;
-    showmaskexpMethod = v;
+    enaExpMask = v;
     CCmaskexpcurve = v;
     LLmaskexpcurve = v;
     HHmaskexpcurve = v;
