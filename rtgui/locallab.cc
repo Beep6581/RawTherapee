@@ -833,6 +833,8 @@ Locallab::Locallab():
 
 Locallab::~Locallab()
 {
+    idle_register.destroy();
+
     delete llCurveEditorG;
     delete curveEditorG;
     delete curveEditorGG;
@@ -955,24 +957,23 @@ void Locallab::refChanged (double huer, double lumar, double chromar)
     }
     nexthuer = h;
     //printf("nh=%f nl=%f nc=%f\n", nexthuer, nextlumar, nextchromar);
-    const auto func = [] (gpointer data) -> gboolean {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        static_cast<Locallab*> (data)->refComputed_();
 
-        return FALSE;
-    };
 
-    idle_register.add (func, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            // FIXME: The above can't be true?!
+            disableListener();
+            enableListener();
+            updateLabel();
+            return false;
+        }
+    );
+
+
 }
 
-bool Locallab::refComputed_ ()
-{
-
-    disableListener ();
-    enableListener ();
-    updateLabel ();
-    return false;
-}
 
 void Locallab::updateLabel ()
 {

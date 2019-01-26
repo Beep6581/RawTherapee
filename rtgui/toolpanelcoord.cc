@@ -328,72 +328,72 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
 {
     if (isRaw) {
         if (isBayer) {
-            const auto func = [](gpointer data) -> gboolean {
-                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+            idle_register.add(
+                [this]() -> bool
+                {
+                    rawPanelSW->set_sensitive(true);
+                    sensorxtrans->FoldableToolPanel::hide();
+                    sensorbayer->FoldableToolPanel::show();
+                    preprocess->FoldableToolPanel::show();
+                    flatfield->FoldableToolPanel::show();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
-                self->rawPanelSW->set_sensitive(true);
-                self->sensorxtrans->FoldableToolPanel::hide();
-                self->sensorbayer->FoldableToolPanel::show();
-                self->preprocess->FoldableToolPanel::show();
-                self->flatfield->FoldableToolPanel::show();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
-
-                return FALSE;
-            };
-            idle_register.add(func, this);
+                    return false;
+                }
+            );
         } else if (isXtrans) {
-            const auto func = [](gpointer data) -> gboolean {
-                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+            idle_register.add(
+                [this]() -> bool
+                {
+                    rawPanelSW->set_sensitive(true);
+                    sensorxtrans->FoldableToolPanel::show();
+                    sensorbayer->FoldableToolPanel::hide();
+                    preprocess->FoldableToolPanel::show();
+                    flatfield->FoldableToolPanel::show();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
-                self->rawPanelSW->set_sensitive(true);
-                self->sensorxtrans->FoldableToolPanel::show();
-                self->sensorbayer->FoldableToolPanel::hide();
-                self->preprocess->FoldableToolPanel::show();
-                self->flatfield->FoldableToolPanel::show();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
-
-                return FALSE;
-            };
-            idle_register.add(func, this);
+                    return false;
+                }
+            );
         } else if (isMono) {
-            const auto func = [](gpointer data) -> gboolean {
-                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+            idle_register.add(
+                [this]() -> bool
+                {
+                    rawPanelSW->set_sensitive(true);
+                    sensorbayer->FoldableToolPanel::hide();
+                    sensorxtrans->FoldableToolPanel::hide();
+                    preprocess->FoldableToolPanel::hide();
+                    flatfield->FoldableToolPanel::show();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
-                self->rawPanelSW->set_sensitive(true);
-                self->sensorbayer->FoldableToolPanel::hide();
-                self->sensorxtrans->FoldableToolPanel::hide();
-                self->preprocess->FoldableToolPanel::hide();
-                self->flatfield->FoldableToolPanel::show();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
-
-                return FALSE;
-            };
-            idle_register.add(func, this);
+                    return false;
+                }
+            );
         } else {
-            const auto func = [](gpointer data) -> gboolean {
-                ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+            idle_register.add(
+                [this]() -> bool
+                {
+                    rawPanelSW->set_sensitive(true);
+                    sensorbayer->FoldableToolPanel::hide();
+                    sensorxtrans->FoldableToolPanel::hide();
+                    preprocess->FoldableToolPanel::hide();
+                    flatfield->FoldableToolPanel::hide();
+                    retinex->FoldableToolPanel::setGrayedOut(false);
 
-                self->rawPanelSW->set_sensitive(true);
-                self->sensorbayer->FoldableToolPanel::hide();
-                self->sensorxtrans->FoldableToolPanel::hide();
-                self->preprocess->FoldableToolPanel::hide();
-                self->flatfield->FoldableToolPanel::hide();
-                self->retinex->FoldableToolPanel::setGrayedOut(false);
-
-                return FALSE;
-            };
-            idle_register.add(func, this);
+                    return false;
+                }
+            );
         }
     } else {
-        const auto func = [](gpointer data) -> gboolean {
-            ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+        idle_register.add(
+            [this]() -> bool
+            {
+                rawPanelSW->set_sensitive(false);
+                retinex->FoldableToolPanel::setGrayedOut(true);
 
-            self->rawPanelSW->set_sensitive (false);
-            self->retinex->FoldableToolPanel::setGrayedOut(true);
-
-            return FALSE;
-        };
-        idle_register.add(func, this);
+                return false;
+            }
+        );
     }
 
 }
@@ -474,22 +474,22 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
     // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
     // segfault) and locallab panel is active
     // When a new photo is loaded, Locallab spot curves need to be set visible again
-    const auto func = [](gpointer data) -> gboolean {
-        ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
+const auto func =
+    [this]() -> bool
+    {
+        if (photoLoadedOnce && (toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()) == locallabPanelSW)) {
+            locallab->subscribe();
+       }
 
-        if (self->photoLoadedOnce && (self->toolPanelNotebook->get_nth_page(self->toolPanelNotebook->get_current_page()) == self->locallabPanelSW))
-        {
-            self->locallab->subscribe();
-        }
-
-        return FALSE;
+        return false;
     };
 
-    if (event == rtengine::EvPhotoLoaded) {
-        idle_register.add(func, this);
-    }
+if (event == rtengine::EvPhotoLoaded) {
+    idle_register.add(func);
+}
 
     photoLoadedOnce = true;
+
 }
 
 void ToolPanelCoordinator::profileChange(
@@ -587,20 +587,19 @@ void ToolPanelCoordinator::profileChange(
     // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
     // segfault) and locallab panel is active
     // When a new photo is loaded, Locallab spot curves need to be set visible again
-    const auto func = [](gpointer data) -> gboolean {
-        ToolPanelCoordinator* const self = static_cast<ToolPanelCoordinator*>(data);
-
-        if (self->photoLoadedOnce && (self->toolPanelNotebook->get_nth_page(self->toolPanelNotebook->get_current_page()) == self->locallabPanelSW))
-        {
-            self->locallab->subscribe();
+const auto func =
+    [this]() -> bool
+    {
+        if (photoLoadedOnce && (toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()) == locallabPanelSW)) {
+            locallab->subscribe();
         }
 
-        return FALSE;
+        return false;
     };
 
-    if (event == rtengine::EvPhotoLoaded) {
-        idle_register.add(func, this);
-    }
+if (event == rtengine::EvPhotoLoaded) {
+    idle_register.add(func);
+}
 
     photoLoadedOnce = true;
 }

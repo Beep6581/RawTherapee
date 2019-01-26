@@ -38,37 +38,15 @@ using namespace rtengine::procparams;
 namespace
 {
 
-struct spparams {
-    double val;
-    Glib::ustring str;
-    MyProgressBar *pProgress;
-    Glib::RefPtr<Gtk::CssProvider> cssProvider;
-};
-
-int setprogressStrUI ( void *p )
+void setprogressStrUI(double val, const Glib::ustring str, MyProgressBar* pProgress)
 {
-    spparams *s = static_cast<spparams*> (p);
-
-    if ( ! s->str.empty() ) {
-        s->pProgress->set_text ( M (s->str) );
+    if (!str.empty()) {
+        pProgress->set_text(M(str));
     }
 
-    if ( s->val >= 0 ) {
-        s->pProgress->set_fraction ( s->val );
-
-        if (s->cssProvider) {
-            if ( s->val < 1.0 ) {
-                s->cssProvider->load_from_data ("ProgressBar { background-color: red }");
-            } else {
-                s->cssProvider->load_from_data ("ProgressBar { background-color: grey }");
-            }
-
-            s->pProgress->get_style_context()->set_background (s->pProgress->get_window());
-        }
+    if (val >= 0.0) {
+        pProgress->set_fraction(val);
     }
-
-    delete s;
-    return FALSE;
 }
 
 
@@ -498,7 +476,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // build left side panel
     leftbox = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
-    
+
     // make a subbox to allow resizing of the histogram (if it's on the left)
     leftsubbox = new Gtk::Box (Gtk::ORIENTATION_VERTICAL);
     leftsubbox->set_size_request (230, 250);
@@ -520,7 +498,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     leftsubbox->pack_start (*history);
 
     leftsubbox->show_all ();
-    
+
     leftbox->pack2 (*leftsubbox, true, true);
     leftbox->show_all ();
 
@@ -638,14 +616,14 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // build right side panel
     vboxright = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
-    
+
     vsubboxright = new Gtk::Box (Gtk::ORIENTATION_VERTICAL, 0);
     vsubboxright->set_size_request (300, 250);
 
     vsubboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vsubboxright->pack_start (*tpc->toolPanelNotebook);
-    
+
     vboxright->pack2 (*vsubboxright, true, true);
 
     // Save buttons
@@ -862,7 +840,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     if (tbTopPanel_1) {
         tbTopPanel_1->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbTopPanel_1_toggled) );
     }
-    
+
 }
 
 EditorPanel::~EditorPanel ()
@@ -1193,58 +1171,54 @@ void EditorPanel::clearParamChanges()
 
 void EditorPanel::setProgress(double p)
 {
-    spparams *s = new spparams;
-    s->val = p;
-    s->pProgress = progressLabel;
-    idle_register.add(setprogressStrUI, s);
+    MyProgressBar* const pl = progressLabel;
+
+    idle_register.add(
+        [p, pl]() -> bool
+        {
+            setprogressStrUI(p, {}, pl);
+            return false;
+        }
+    );
 }
 
 void EditorPanel::setProgressStr(const Glib::ustring& str)
 {
-    spparams *s = new spparams;
-    s->str = str;
-    s->val = -1;
-    s->pProgress = progressLabel;
-    idle_register.add(setprogressStrUI, s);
+    MyProgressBar* const pl = progressLabel;
+
+    idle_register.add(
+        [str, pl]() -> bool
+        {
+            setprogressStrUI(-1.0, str, pl);
+            return false;
+        }
+    );
 }
 
 void EditorPanel::setProgressState(bool inProcessing)
 {
-    struct spsparams {
-        bool inProcessing;
-        EditorPanelIdleHelper* epih;
-    };
-
     epih->pending++;
 
-    spsparams* p = new spsparams;
-    p->inProcessing = inProcessing;
-    p->epih = epih;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        spsparams* const p = static_cast<spsparams*> (data);
-
-        if (p->epih->destroyed)
+    idle_register.add(
+        [this, inProcessing]() -> bool
         {
-            if (p->epih->pending == 1) {
-                delete p->epih;
-            } else {
-                p->epih->pending--;
+            if (epih->destroyed)
+            {
+                if (epih->pending == 1) {
+                    delete epih;
+                } else {
+                    --epih->pending;
+                }
+
+                return false;
             }
 
-            delete p;
+            epih->epanel->refreshProcessingState(inProcessing);
+            --epih->pending;
 
-            return 0;
+            return false;
         }
-
-        p->epih->epanel->refreshProcessingState (p->inProcessing);
-        p->epih->pending--;
-        delete p;
-
-        return FALSE;
-    };
-
-    idle_register.add (func, p);
+    );
 }
 
 void EditorPanel::error(const Glib::ustring& descr)
@@ -1253,42 +1227,27 @@ void EditorPanel::error(const Glib::ustring& descr)
 
 void EditorPanel::error(const Glib::ustring& title, const Glib::ustring& descr)
 {
-    struct errparams {
-        Glib::ustring descr;
-        Glib::ustring title;
-        EditorPanelIdleHelper* epih;
-    };
-
     epih->pending++;
-    errparams* const p = new errparams;
-    p->descr = descr;
-    p->title = title;
-    p->epih = epih;
 
-    const auto func = [] (gpointer data) -> gboolean {
-        errparams* const p = static_cast<errparams*> (data);
-
-        if (p->epih->destroyed)
+    idle_register.add(
+        [this, descr, title]() -> bool
         {
-            if (p->epih->pending == 1) {
-                delete p->epih;
-            } else {
-                p->epih->pending--;
+            if (epih->destroyed) {
+                if (epih->pending == 1) {
+                    delete epih;
+                } else {
+                    --epih->pending;
+                }
+
+                return false;
             }
 
-            delete p;
+            epih->epanel->displayError(title, descr);
+            --epih->pending;
 
-            return 0;
+            return false;
         }
-
-        p->epih->epanel->displayError (p->title, p->descr);
-        p->epih->pending--;
-        delete p;
-
-        return FALSE;
-    };
-
-    idle_register.add (func, p);
+    );
 }
 
 void EditorPanel::displayError(const Glib::ustring& title, const Glib::ustring& descr)
@@ -1309,16 +1268,16 @@ void EditorPanel::displayError(const Glib::ustring& title, const Glib::ustring& 
 // This is only called from the ThreadUI, so within the gtk thread
 void EditorPanel::refreshProcessingState (bool inProcessingP)
 {
-    spparams *s = new spparams;
-    s->pProgress = progressLabel;
+    double val;
+    Glib::ustring str;
 
     if (inProcessingP) {
         if (processingStartedTime == 0) {
             processingStartedTime = ::time (nullptr);
         }
 
-        s->str = "PROGRESSBAR_PROCESSING";
-        s->val = 1.0;
+        val = 1.0;
+        str = "PROGRESSBAR_PROCESSING";
     } else {
         // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
         if (ipc && openThm && tpc->getChangedState()) {
@@ -1339,8 +1298,8 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         }
 
         // Set progress bar "done"
-        s->str = "PROGRESSBAR_READY";
-        s->val = 0.0;
+        val = 0.0;
+        str = "PROGRESSBAR_READY";
 
 #ifdef WIN32
 
@@ -1355,7 +1314,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
 
     isProcessing = inProcessingP;
 
-    setprogressStrUI (s);
+    setprogressStrUI(val, str, progressLabel);
 }
 
 void EditorPanel::info_toggled ()
@@ -2385,7 +2344,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
                 leftbox->pack1(*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-            
+
             leftbox->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_LEFT);
             break;
@@ -2405,14 +2364,14 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
                 vboxright->pack1 (*histogramPanel, false, false);
                 histogramPanel->unreference();
             }
-            
-            vboxright->set_position(options.histogramHeight); 
+
+            vboxright->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_RIGHT);
             break;
     }
 
     iareapanel->imageArea->setPointerMotionHListener (histogramPanel);
-    
+
 }
 
 

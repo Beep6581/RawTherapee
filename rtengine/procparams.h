@@ -550,7 +550,7 @@ struct SharpenMicroParams {
     bool    matrix;
     double  amount;
     double  contrast;
-    double  uniformity;
+    int     uniformity;
 
     SharpenMicroParams();
 

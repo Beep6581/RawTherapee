@@ -338,7 +338,6 @@ public:
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);
     void refChanged(double huer, double lumar, double chromar);
-    bool refComputed_();
     void updateLabel();
 
     // Mask visibility management functions

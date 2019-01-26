@@ -18,12 +18,16 @@
 #ifndef _BATCHQUEUE_
 #define _BATCHQUEUE_
 
+#include <set>
+
 #include <gtkmm.h>
-#include "threadutils.h"
-#include "batchqueueentry.h"
+
 #include "../rtengine/rtengine.h"
-#include "options.h"
+
+#include "batchqueueentry.h"
 #include "lwbuttonset.h"
+#include "options.h"
+#include "threadutils.h"
 #include "thumbbrowserbase.h"
 
 class BatchQueueListener
@@ -85,7 +89,7 @@ public:
     static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence = 0);
     static int calcMaxThumbnailHeight();
 
-protected:
+private:
     int getMaxThumbnailHeight() const override;
     void saveThumbnailHeight (int height) override;
     int  getThumbnailHeight () override;
@@ -110,6 +114,9 @@ protected:
     Gtk::Menu pmenu;
 
     BatchQueueListener* listener;
+
+    std::set<BatchQueueEntry*> removable_batch_queue_entries;
+    MyMutex mutex_removable_batch_queue_entries;
 
     IdleRegister idle_register;
 };

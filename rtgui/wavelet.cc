@@ -144,7 +144,6 @@ Wavelet::Wavelet() :
     neutrHBox(Gtk::manage(new Gtk::HBox()))
 {
     CurveListener::setMulti(true);
-    nextnlevel = 7.;
 
     expsettings->signal_button_release_event().connect_notify( sigc::bind( sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings) );
 
@@ -887,34 +886,18 @@ Wavelet::~Wavelet ()
 
 void Wavelet::wavChanged (double nlevel)
 {
-    nextnlevel = nlevel;
-
-    const auto func = [](gpointer data) -> gboolean {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        static_cast<Wavelet*>(data)->wavComputed_();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
-bool Wavelet::wavComputed_ ()
-{
-    disableListener ();
-    enableListener ();
-    updatewavLabel ();
-    return false;
-}
-
-void Wavelet::updatewavLabel ()
-{
     if (!batchMode) {
-        float lv;
-        lv = nextnlevel;
-        wavLabels->set_text(
-            Glib::ustring::compose(M("TP_WAVELET_LEVLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), lv))
+        idle_register.add(
+            [this, nlevel]() -> bool
+            {
+                wavLabels->set_text(
+                    Glib::ustring::compose(
+                        M("TP_WAVELET_LEVLABEL"),
+                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)
+                    )
+                );
+                return false;
+            }
         );
     }
 }
