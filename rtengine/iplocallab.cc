@@ -3429,476 +3429,6 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage
 
 
 
-void ImProcFunctions::Reti_Local(float moddE, float powdE, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro, int sk)
-{
-
-//local retinex
-    BENCHFUN {
-        const float ach = (float)lp.trans / 100.f;
-
-        //chroma
-        constexpr float amplchsens = 2.5f;
-        constexpr float achsens = (amplchsens - 1.f) / (100.f - 20.f); //20. default locallab.sensih
-        constexpr float bchsens = 1.f - 20.f * achsens;
-        const float multchro = lp.sensh * achsens + bchsens;
-
-        //luma
-
-        //skin
-        constexpr float amplchsensskin = 1.6f;
-        constexpr float achsensskin = (amplchsensskin - 1.f) / (100.f - 20.f); //20. default locallab.sensih
-        constexpr float bchsensskin = 1.f - 20.f * achsensskin;
-        const float multchroskin = lp.sensh * achsensskin + bchsensskin;
-
-        //transition = difficult to avoid artifact with scope on flat area (sky...)
-
-        constexpr float delhu = 0.1f; //between 0.05 and 0.2
-
-        const float apl = (-1.f) / delhu;
-        const float bpl = - apl * hueplus;
-        const float amo = 1.f / delhu;
-        const float bmo = - amo * huemoins;
-
-
-        const float pb = 4.f;
-        const float pa = (1.f - pb) / 40.f;
-
-        float refa = chromaref * cos(hueref);
-        float refb = chromaref * sin(hueref);
-
-//       const float moddE = 2.f;
-
-        const float ahu = 1.f / (2.8f * lp.sensh - 280.f);
-        const float bhu = 1.f - ahu * 2.8f * lp.sensh;
-
-        const float alum = 1.f / (lp.sensh - 100.f);
-        const float blum = 1.f - alum * lp.sensh;
-
-        int GW = transformed->W;
-        int GH = transformed->H;
-
-        LabImage *origblur = nullptr;
-
-        origblur = new LabImage(GW, GH);
-
-        float radius = 3.f / sk;
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-            gaussianBlur(original->L, origblur->L, GW, GH, radius);
-            gaussianBlur(original->a, origblur->a, GW, GH, radius);
-            gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
-        }
-
-#ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
-#endif
-        {
-#ifdef __SSE2__
-            float atan2Buffer[transformed->W] ALIGNED16;
-            float sqrtBuffer[transformed->W] ALIGNED16;
-            vfloat c327d68v = F2V(327.68f);
-#endif
-
-#ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
-#endif
-
-            for (int y = 0; y < transformed->H; y++)
-            {
-
-                const int loy = cy + y;
-                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
-
-                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                    for (int x = 0; x < transformed->W; x++) {
-                        transformed->L[y][x] = original->L[y][x];
-                    }
-
-                    continue;
-                }
-
-#ifdef __SSE2__
-                int i = 0;
-
-                for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(origblur->a[y][i]);
-                    vfloat bv = LVFU(origblur->b[y][i]);
-                    STVF(atan2Buffer[i], xatan2f(bv, av));
-                    STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-                }
-
-                for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-                }
-
-#endif
-
-                for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
-                    int begx = int (lp.xc - lp.lxL);
-                    int begy = int (lp.yc - lp.lyT);
-
-                    int zone = 0;
-                    float localFactor = 1.f;
-
-                    if (lp.shapmet == 0) {
-                        calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else if (lp.shapmet == 1) {
-                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
-                    }
-
-
-                    if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
-                        transformed->L[y][x] = original->L[y][x];
-                        continue;
-                    }
-
-#ifdef __SSE2__
-                    float rhue = atan2Buffer[x];
-                    float rchro = sqrtBuffer[x];
-#else
-                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-                    float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
-                    float rL = origblur->L[y][x] / 327.68f;
-                    float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-
-                    float cli = 1.f;
-                    float clc = 1.f;
-
-                    cli = (buflight[loy - begy][lox - begx]);
-                    clc = (bufchro[loy - begy][lox - begx]);
-
-                    float aplus = (1.f - cli) / delhu;
-                    float bplus = 1.f - aplus * hueplus;
-                    float amoins = (cli - 1.f) / delhu;
-                    float bmoins = 1.f - amoins * huemoins;
-
-                    float aplusch = (1.f - clc) / delhu;
-                    float bplusch = 1.f - aplusch * hueplus;
-                    float amoinsch = (clc - 1.f) / delhu;
-                    float bmoinsch = 1.f - amoinsch * huemoins;
-
-                    float realstr = 1.f;
-                    float realstrch = 1.f;
-                    //prepare shape detection
-                    float deltachro = fabs(rchro - chromaref);
-                    float deltahue = fabs(rhue - hueref);
-
-                    if (deltahue > rtengine::RT_PI) {
-                        deltahue = - (deltahue - 2.f * rtengine::RT_PI);
-                    }
-
-                    float deltaE = 20.f * deltahue + deltachro; //between 0 and 280
-                    float deltaL = fabs(lumaref - rL);  //between 0 and 100
-
-                    float kch = 1.f;
-                    float kchchro = 1.f;
-                    float khu = 0.f;
-                    float fach = 1.f;
-                    float falu = 1.f;
-
-                    /*
-                                        if (deltachro < 160.f * SQR(lp.sensh / 100.f)) {
-                                            kch = 1.f;
-                                        } else {
-                                            float ck = 160.f * SQR(lp.sensh / 100.f);
-                                            float ak = 1.f / (ck - 160.f);
-                                            float bk = -160.f * ak;
-                                            kch = ak * deltachro + bk;
-                                        }
-
-                                        if (lp.sensh < 40.f) {
-                                            kch = pow(kch, pa * lp.sensh + pb);    //increase under 40
-                                        }
-                    */
-                    if (deltachro < 160.f * SQR(lp.sensh / 100.f)) {
-                        kch = kchchro = 1.f;
-                    } else {
-                        float ck = 160.f * SQR(lp.sensh / 100.f);
-                        float ak = 1.f / (ck - 160.f);
-                        float bk = -160.f * ak;
-                        // kch = ak * deltachro + bk;
-                        kch  = kchchro = ak * deltachro + bk;
-
-                    }
-
-                    float kkch = 1.f;
-                    kkch = pa * lp.sensh + pb;
-                    float kch0 = kch;
-
-                    if (lp.sensh < 40.f) {
-                        kch = kchchro = pow(kch0, kkch);    //increase under 40
-                        float dEsens = moddE * lp.sensh;
-                        float kdE = 1.f;
-
-                        if (dE > dEsens) {
-                            kdE = 1.f;
-                        } else {
-                            kdE = SQR(SQR(dE / dEsens));
-                        }
-
-                        if (deltahue < 0.3f && settings->detectshape == true) {
-                            kchchro = kch = pow(kch0, (1.f + kdE * moddE * (3.f - 10.f * deltahue)) * kkch);
-                        }
-                    }
-
-                    float dEsensall = lp.sensh;
-                    float kD = 1.f;
-
-                    if (settings->detectshape == true) {
-                        if (dE < dEsensall) {
-                            kD = 1.f;
-                        } else {
-                            kD = pow(dEsensall / dE, powdE);
-                        }
-                    }
-
-                    bool kzon = false;
-
-                    //transition = difficult to avoid artifact with scope on flat area (sky...)
-                    //hue detection
-                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                        if (rhue >= hueplus - delhu)  {
-                            realstr = aplus * rhue + bplus;
-                            realstrch = aplusch * rhue + bplusch;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstrch = amoinsch * rhue + bmoinsch;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstrch = clc;
-
-                        }
-
-                        kzon = true;
-                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realstr = aplus * rhue + bplus;
-                            realstrch = aplusch * rhue + bplusch;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstrch = amoinsch * rhue + bmoinsch;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstrch = clc;
-
-                        }
-
-                        kzon = true;
-                    }
-
-                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realstr = aplus * rhue + bplus;
-                            realstrch = aplusch * rhue + bplusch;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstrch = amoinsch * rhue + bmoinsch;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstrch = clc;
-
-                        }
-
-                        kzon = true;
-                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realstr = aplus * rhue + bplus;
-                            realstrch = aplusch * rhue + bplusch;
-                            khu  = apl * rhue + bpl;
-
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            realstr = amoins * rhue + bmoins;
-                            realstrch = amoinsch * rhue + bmoinsch;
-                            khu = amo * rhue + bmo;
-
-                        } else {
-                            realstr = cli;
-                            khu = 1.f;
-                            realstrch = clc;
-
-                        }
-
-                        kzon = true;
-                    }
-
-                    realstr *= kD;
-                    realstrch *= kD;
-
-                    if (settings->detectshape == false) {
-
-                        //shape detection for hue chroma and luma
-                        if (lp.sensh <= 20.f) { //to try...
-
-                            if (deltaE <  2.8f * lp.sensh) {
-                                fach = khu;
-                            } else {
-                                fach = khu * (ahu * deltaE + bhu);
-                            }
-
-                            float kcr = 10.f;
-
-                            if (rchro < kcr) {
-                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                            }
-
-                            if (lp.qualmet >= 1) {
-                            } else {
-                                fach = 1.f;
-                            }
-
-                            if (deltaL <  lp.sensh) {
-                                falu = 1.f;
-                            } else {
-                                falu = alum * deltaL + blum;
-                            }
-
-                        }
-                    }
-
-                    // I add these functions...perhaps not good
-                    if (kzon) {
-                        if (lp.sensh < 60.f) { //arbitrary value
-                            if (hueref < -1.1f && hueref > -2.8f) { // detect blue sky
-                                if (chromaref > 0.f && chromaref < 35.f * multchro) { // detect blue sky
-                                    if ((rhue > -2.79f && rhue < -1.11f) && (rchro < 35.f * multchro)) {
-                                        realstr *= 0.9f;
-                                    } else {
-                                        realstr = 1.f;
-                                    }
-                                }
-                            } else {
-                                realstr = cli;
-                            }
-
-                            if (lp.sensh < 50.f) { //&& lp.chro > 0.f
-                                if (hueref > -0.1f && hueref < 1.6f) { // detect skin
-                                    if (chromaref > 0.f && chromaref < 55.f * multchroskin) { // detect skin
-                                        if ((rhue > -0.09f && rhue < 1.59f) && (rchro < 55.f * multchroskin)) {
-                                            realstr *= 0.7f;
-                                        } else {
-                                            realstr = 1.f;
-                                        }
-                                    }
-                                } else {
-                                    realstr = cli;
-                                }
-                            }
-                        }
-
-                    }
-
-                    float kcr = 100.f * lp.thr;
-                    float falL = 1.f;
-
-                    if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
-                        falL *= pow(rchro / kcr, lp.iterat / 10.f);
-                    }
-
-
-                    if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
-                        switch (zone) {
-                            case 0: { // outside selection and outside transition zone => no effect, keep original values
-                                if (chro == 0) {
-                                    transformed->L[y][x] = original->L[y][x];
-                                }
-
-                                if (chro == 1) {
-                                    transformed->a[y][x] = original->a[y][x];
-                                    transformed->b[y][x] = original->b[y][x];
-                                }
-
-                                break;
-                            }
-
-                            case 1: { // inside transition zone
-                                float factorx = localFactor;
-
-                                if (chro == 0) {
-                                    float lightc = tmp1->L[loy - begy][lox - begx];
-                                    float fli = 1.f;
-                                    fli = ((100.f + realstr * falL) / 100.f);
-                                    float diflc = lightc * fli - original->L[y][x];
-                                    diflc *= kch * fach;
-                                    diflc *= factorx;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                }
-
-                                if (chro == 1) {
-                                    float flia = 1.f;
-                                    float flib = 1.f;
-                                    float chra = tmp1->a[loy - begy][lox - begx];
-                                    float chrb = tmp1->b[loy - begy][lox - begx];
-
-                                    flia = ((100.f + realstrch * falu * falL) / 100.f);
-                                    flib = ((100.f + realstrch * falu * falL) / 100.f);
-                                    float difa = chra * flia - original->a[y][x];
-                                    float difb = chrb * flib - original->b[y][x];
-                                    difa *= factorx;
-                                    difb *= factorx;
-                                    difa *= kch * fach;
-                                    difb *= kch * fach;
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                }
-
-                                break;
-                            }
-
-                            case 2: { // inside selection => full effect, no transition
-                                if (chro == 0) {
-                                    float lightc = tmp1->L[loy - begy][lox - begx];
-                                    float fli = 1.f;
-                                    fli = ((100.f + realstr * falL) / 100.f);
-                                    float diflc = lightc * fli - original->L[y][x];
-                                    diflc *= kch * fach;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                }
-
-                                if (chro == 1) {
-                                    float flia = 1.f;
-                                    float flib = 1.f;
-                                    float chra = tmp1->a[loy - begy][lox - begx];
-                                    float chrb = tmp1->b[loy - begy][lox - begx];
-
-                                    flia = ((100.f + realstrch * falu * falL) / 100.f);
-                                    flib = ((100.f + realstrch * falu * falL) / 100.f);
-                                    float difa = chra * flia - original->a[y][x];
-                                    float difb = chrb * flib - original->b[y][x];
-                                    difa *= kch * fach;
-                                    difb *= kch * fach;
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        delete origblur;
-    }
-}
 
 void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
 {
@@ -5009,6 +4539,11 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
             varsens =  lp.senssf;
         }
 
+        if (senstype == 4 || senstype == 5) //retinex
+        {
+            varsens =  lp.sensh;
+        }
+
         //  printf("varsen=%f \n", varsens);
         //sobel
         sobelref /= 100.;
@@ -5206,8 +4741,17 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
                                 float factorx = localFactor;
                                 float diflc = 0.f;
 
-                                transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);//kch fach
-                                diflc = 328.f * factorx * realstrdE;
+                                if (senstype == 4) {//retinex lightness
+                                    float lightc = bufexporig->L[loy - begy][lox - begx];
+
+                                    float fli = ((100.f + realstrdE) / 100.f);
+                                    float diflc = lightc * fli - original->L[y][x];
+                                    diflc *= factorx;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                                } else if (senstype <= 3) {
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);//kch fach
+                                    diflc = 328.f * factorx * realstrdE;
+                                }
 
                                 float flia = 1.f;
                                 float flib = 1.f;
@@ -5240,10 +4784,17 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
                             }
 
                             case 2: { // inside selection => full effect, no transition
-
                                 float diflc = 0.f;
-                                transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE);//kch fach
-                                diflc = 328.f * realstrdE;
+
+                                if (senstype == 4) {//retinex
+                                    float lightc = bufexporig->L[loy - begy][lox - begx];
+                                    float fli = ((100.f + realstrdE) / 100.f);
+                                    float diflc = lightc * fli - original->L[y][x];
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                                } else if (senstype <= 3) {
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE);//kch fach
+                                    diflc = 328.f * realstrdE;
+                                }
 
                                 float flia = 1.f;
                                 float flib = 1.f;
@@ -9595,9 +9146,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             if (!lp.invret) {
+                Expo_vibr_Local(4, bufreti, nullptr, buflight, bufchro, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
-                //   Reti_Local(moddE, powdE, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 0, sk);
-                Reti_Local(moddE, powdE, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, bufreti, cx, cy, 0, sk);
             } else {
                 InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
             }
@@ -9680,8 +9230,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                 if (!lp.invret) {
+                    Expo_vibr_Local(5, tmpl, nullptr, buflight, bufchro, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
-                    Reti_Local(moddE, powdE, buflight, bufchro, hueplus, huemoins, hueref, dhueret, chromaref, lumaref, lp, original, transformed, tmpl, cx, cy, 1, sk);
                 } else {
                     InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 1);
                 }
