@@ -2088,436 +2088,6 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp,  in
 
 }
 
-void ImProcFunctions::cbdl_Local(float moddE, float powdE, float ** buflight, float ** bufchrom, float **loctemp, float **loctempch, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int chro, int sk)
-{
-//local CBDL
-    BENCHFUN
-    const float ach = (float)lp.trans / 100.f;
-    constexpr float delhu = 0.1f; //between 0.05 and 0.2
-
-    const float apl = (-1.f) / delhu;
-    const float bpl = - apl * hueplus;
-    const float amo = 1.f / delhu;
-    const float bmo = - amo * huemoins;
-
-
-    const float pb = 4.f;
-    const float pa = (1.f - pb) / 40.f;
-    float refa = chromaref * cos(hueref);
-    float refb = chromaref * sin(hueref);
-
-    //const float moddE = 2.f;
-
-    const float ahu = 1.f / (2.8f * lp.senscb - 280.f);
-    const float bhu = 1.f - ahu * 2.8f * lp.senscb;
-
-    const float alum = 1.f / (lp.senscb - 100.f);
-    const float blum = 1.f - alum * lp.senscb;
-    int GW = transformed->W;
-    int GH = transformed->H;
-
-    LabImage *origblur = nullptr;
-
-    origblur = new LabImage(GW, GH);
-
-    float radius = 3.f / sk;
-#ifdef _OPENMP
-    #pragma omp parallel
-#endif
-    {
-        gaussianBlur(original->L, origblur->L, GW, GH, radius);
-        gaussianBlur(original->a, origblur->a, GW, GH, radius);
-        gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel if (multiThread)
-#endif
-    {
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
-
-#ifdef _OPENMP
-        #pragma omp for schedule(dynamic,16)
-#endif
-
-        for (int y = 0; y < transformed->H; y++) {
-            const int loy = cy + y;
-            const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
-
-            if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                continue;
-            }
-
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
-
-            for (int x = 0; x < transformed->W; x++) {
-                const int lox = cx + x;
-                int begx = int (lp.xc - lp.lxL);
-                int begy = int (lp.yc - lp.lyT);
-                int zone = 0;
-
-                float localFactor = 1.f;
-
-                if (lp.shapmet == 0) {
-                    calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else if (lp.shapmet == 1) {
-                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
-                }
-
-
-                if (zone == 0) {
-                    continue;
-                }
-
-
-#ifdef __SSE2__
-                float rhue = atan2Buffer[x];
-                float rchro = sqrtBuffer[x];
-#else
-                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
-                //     int zone;
-                float rL = origblur->L[y][x] / 327.68f;
-                float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-
-                //retrieve data
-                float cli = 1.f;
-
-                if (chro == 0) {
-
-                    cli = buflight[loy - begy][lox - begx];
-                }
-
-                //parameters for linear interpolation in function of real hue
-                float apluscligh = (1.f - cli) / delhu;
-                float bpluscligh = 1.f - apluscligh * hueplus;
-                float amoinscligh = (cli - 1.f) / delhu;
-                float bmoinscligh = 1.f - amoinscligh * huemoins;
-
-                float realcligh = 1.f;
-
-                float cchr = 1.f;
-
-                if (chro == 1) {
-                    cchr = bufchrom[loy - begy][lox - begx];
-
-                }
-
-                //parameters for linear interpolation in function of real hue
-                float apluscchro = (1.f - cchr) / delhu;
-                float bpluscchro = 1.f - apluscchro * hueplus;
-                float amoinscchro = (cchr - 1.f) / delhu;
-                float bmoinscchro = 1.f - amoinscchro * huemoins;
-
-                float realcchro = 1.f;
-
-
-                //   float localFactor = 1.f;
-                //prepare shape detection
-                float khu = 0.f;
-                float kch = 1.f;
-                float kchchro = 1.f;
-                float fach = 1.f;
-                float falu = 1.f;
-                float deltachro = fabs(rchro - chromaref);
-                float deltahue = fabs(rhue - hueref);
-
-                if (deltahue > rtengine::RT_PI) {
-                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
-                }
-
-                float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-                float deltaL = fabs(lumaref - rL);  //between 0 and 100
-
-                /*
-                                //kch to modulate action with chroma
-                                if (deltachro < 160.f * SQR(lp.senscb / 100.f)) {
-                                    kch = 1.f;
-                                } else {
-                                    float ck = 160.f * SQR(lp.senscb / 100.f);
-                                    float ak = 1.f / (ck - 160.f);
-                                    float bk = -160.f * ak;
-                                    kch = ak * deltachro + bk;
-                                }
-
-                                if (lp.senscb < 40.f) {
-                                    kch = pow(kch, pa * lp.senscb + pb);    //increase under 40
-                                }
-                */
-                if (deltachro < 160.f * SQR(lp.senscb / 100.f)) {
-                    kch = kchchro = 1.f;
-                } else {
-                    float ck = 160.f * SQR(lp.senscb / 100.f);
-                    float ak = 1.f / (ck - 160.f);
-                    float bk = -160.f * ak;
-                    // kch = ak * deltachro + bk;
-                    kch  = kchchro = ak * deltachro + bk;
-
-                }
-
-                float kkch = 1.f;
-                kkch = pa * lp.senscb + pb;
-                float kch0 = kch;
-
-                if (lp.senscb < 40.f) {
-                    kch = kchchro = pow(kch0, kkch);    //increase under 40
-                    float dEsens = moddE * lp.senscb;
-                    float kdE = 1.f;
-
-                    if (dE > dEsens) {
-                        kdE = 1.f;
-                    } else {
-                        kdE = SQR(SQR(dE / dEsens));
-                    }
-
-                    if (deltahue < 0.3f && settings->detectshape == true) {
-                        kchchro = kch = pow(kch0, (1.f + kdE * moddE * (3.f - 10.f * deltahue)) * kkch);
-                    }
-                }
-
-                float dEsensall = lp.senscb;
-                float kD = 1.f;
-
-                if (settings->detectshape == true) {
-                    if (dE < dEsensall) {
-                        kD = 1.f;
-                    } else {
-                        kD = pow(dEsensall / dE, powdE);
-                    }
-                }
-
-
-                // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                if (lp.senscb < 100.f) { //to try...
-                    //hue detection
-                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                        if (rhue >= hueplus - delhu)  {
-                            realcligh = apluscligh * rhue + bpluscligh;
-                            realcchro = apluscchro * rhue + bpluscchro;
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                            realcligh = amoinscligh * rhue + bmoinscligh;
-                            realcchro = amoinscchro * rhue + bmoinscchro;
-
-                        } else {
-                            khu = 1.f;
-                            realcligh = cli;
-                            realcchro = cchr;
-
-                        }
-
-
-                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realcligh = apluscligh * rhue + bpluscligh;
-                            realcchro = apluscchro * rhue + bpluscchro;
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                            realcchro = amoinscchro * rhue + bmoinscchro;
-                            realcligh = amoinscligh * rhue + bmoinscligh;
-
-                        } else {
-                            khu = 1.f;
-                            realcligh = cli;
-                            realcchro = cchr;
-
-                        }
-
-                    }
-
-                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realcligh = apluscligh * rhue + bpluscligh;
-                            realcchro = apluscchro * rhue + bpluscchro;
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            realcligh = amoinscligh * rhue + bmoinscligh;
-                            realcchro = amoinscchro * rhue + bmoinscchro;
-
-                            khu = amo * rhue + bmo;
-                        } else {
-                            realcligh = cli;
-                            realcchro = cchr;
-
-                            khu = 1.f;
-
-                        }
-
-                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            realcligh = apluscligh * rhue + bpluscligh;
-                            realcchro = apluscchro * rhue + bpluscchro;
-
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                            realcligh = amoinscligh * rhue + bmoinscligh;
-                            realcchro = amoinscchro * rhue + bmoinscchro;
-
-                        } else {
-                            khu = 1.f;
-                            realcligh = cli;
-                            realcchro = cchr;
-
-                        }
-
-                    }
-
-                    realcligh *= kD;;
-                    realcchro *= kD;
-
-                    if (settings->detectshape == false) {
-                        if (lp.senscb <= 20.f) {
-
-                            if (deltaE <  2.8f * lp.senscb) {
-                                fach = khu;
-                            } else {
-                                fach = khu * (ahu * deltaE + bhu);
-                            }
-
-
-                            float kcr = 10.f;
-
-                            if (rchro < kcr) {
-                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                            }
-
-                            if (lp.qualmet >= 1) {
-                            } else {
-                                fach = 1.f;
-                            }
-
-                            if (deltaL <  lp.senscb) {
-                                falu = 1.f;
-                            } else {
-                                falu = alum * deltaL + blum;
-                            }
-                        }
-                    }
-
-                } else {
-                    /*
-                        float kcr = 8.f;
-                        if(lp.senssha > 30.f){
-                        if (rchro < kcr) {
-                            fach *= (1.f / (kcr)) * rchro;
-
-                        }
-                        }
-                        */
-                }
-
-                float fli = ((100.f + realcligh) / 100.f);//luma transition
-                float kcr = 100.f * lp.thr;
-                float falL = 1.f;
-
-                if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
-                    falL *= pow(rchro / kcr, lp.iterat / 10.f);
-                }
-
-                switch (zone) {
-                    case 0: { // outside selection and outside transition zone => no effect, keep original values
-                        if (chro == 0) {
-                            transformed->L[y][x] = original->L[y][x];
-                        }
-
-                        if (chro == 1) {
-                            transformed->a[y][x] = original->a[y][x];
-                            transformed->b[y][x] = original->b[y][x];
-                        }
-
-                        break;
-                    }
-
-                    case 1: { // inside transition zone
-                        float factorx = localFactor;
-                        float difL = 0.f;
-                        float difa = 0.f;
-                        float difb = 0.f;
-
-                        if (chro == 0) {
-
-                            difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
-                            difL *= factorx;
-                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
-                        }
-
-                        if (chro == 1) {
-
-                            float difab = loctempch[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
-                            difa = difab * cos(rhue);
-                            difb = difab * sin(rhue);
-                            difa *= factorx * (100.f + realcchro * falu * falL) / 100.f;
-                            difb *= factorx * (100.f + realcchro * falu * falL) / 100.f;
-                            difa *= kch * fach;
-                            difb *= kch * fach;
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                        }
-
-                        break;
-                    }
-
-                    case 2: { // inside selection => full effect, no transition
-                        float difL = 0.f;
-                        float difa = 0.f;
-                        float difb = 0.f;
-
-                        if (chro == 0) {
-
-                            difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
-                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
-                        }
-
-                        if (chro == 1) {
-                            float difab = loctempch[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
-                            difa = difab * cos(rhue);
-                            difb = difab * sin(rhue);
-                            difa *= (100.f + realcchro * falu * falL) / 100.f;
-                            difb *= (100.f + realcchro * falu * falL) / 100.f;
-                            difa *= kch * fach;
-                            difb *= kch * fach;
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-
-                        }
-                    }
-                }
-
-                // }
-            }
-        }
-    }
-    delete origblur;
-}
-
-
 void ImProcFunctions::TM_Local(float moddE, float powdE, LabImage * tmp1, float **buflight, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local TM
@@ -4516,7 +4086,8 @@ void ImProcFunctions::Exclude_Local(float moddE, float powdE, int sen, float **d
 }
 
 
-void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, const float hueref, const float chromaref,  const float lumaref, float sobelref, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+//void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, const float hueref, const float chromaref,  const float lumaref, float sobelref, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, const float hueref, const float chromaref,  const float lumaref, float sobelref, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
 //local exposure and vibrance
@@ -4542,6 +4113,11 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
         if (senstype == 4 || senstype == 5) //retinex
         {
             varsens =  lp.sensh;
+       }
+
+        if (senstype == 6 || senstype == 7) //cbdl
+        {
+            varsens =  lp.senscb;
         }
 
         //  printf("varsen=%f \n", varsens);
@@ -4658,6 +4234,12 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
                         continue;
                     }
 
+#ifdef __SSE2__
+                    float rhue = atan2Buffer[x];
+#else
+                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+#endif
+
                     float rL = origblur->L[y][x] / 327.68f;
                     float csob = 0.f;
                     float rs = 0.f;
@@ -4728,6 +4310,7 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
 
 
+
                         switch (zone) {
                             case 0: { // outside selection and outside transition zone => no effect, keep original values
                                 transformed->L[y][x] = original->L[y][x];
@@ -4741,42 +4324,53 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
                                 float factorx = localFactor;
                                 float diflc = 0.f;
 
-                                if (senstype == 4) {//retinex lightness
+                                if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3) {//all except color and light (TODO) and exposure
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
 
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
                                     diflc *= factorx;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                } else if (senstype <= 3) {
+                                } else if (senstype == 1) {//exposure the TODO color and light
                                     transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);//kch fach
                                     diflc = 328.f * factorx * realstrdE;
                                 }
 
-                                float flia = 1.f;
-                                float flib = 1.f;
-                                float chra = bufexporig->a[loy - begy][lox - begx];
-                                float chrb = bufexporig->b[loy - begy][lox - begx];
-
-                                if (senstype != 1) {
-                                    flia = flib = ((100.f + realstrchdE) / 100.f);
+                                if (senstype == 7) {
+                                    float difab = bufexporig->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
+                                    float difa = difab * cos(rhue);
+                                    float difb = difab * sin(rhue);
+                                    difa *= factorx * (100.f + realstrchdE) / 100.f;
+                                    difb *= factorx * (100.f + realstrchdE) / 100.f;
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                                 } else {
-                                    flia = (100.f + realstradE) / 100.f;
-                                    flib = (100.f + realstrbdE) / 100.f;
-                                }
 
-                                float difa = chra * flia - original->a[y][x];
-                                float difb = chrb * flib - original->b[y][x];
-                                difa *= factorx;
-                                difb *= factorx;
+                                    float flia = 1.f;
+                                    float flib = 1.f;
+                                    float chra = bufexporig->a[loy - begy][lox - begx];
+                                    float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                    if (senstype != 1) {
+                                        flia = flib = ((100.f + realstrchdE) / 100.f);
+                                    } else {
+                                        flia = (100.f + realstradE) / 100.f;
+                                        flib = (100.f + realstrbdE) / 100.f;
+                                    }
 
-                                if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
-                                    transformed->L[y][x] = CLIP(12000.f + diflc);
-                                    transformed->a[y][x] = CLIPC(difa);
-                                    transformed->b[y][x] = CLIPC(difb);
+                                    float difa = chra * flia - original->a[y][x];
+                                    float difb = chrb * flib - original->b[y][x];
+                                    difa *= factorx;
+                                    difb *= factorx;
+
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+
+                                    if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
+                                        transformed->L[y][x] = CLIP(12000.f + diflc);
+                                        transformed->a[y][x] = CLIPC(difa);
+                                        transformed->b[y][x] = CLIPC(difb);
+                                    }
                                 }
 
                                 break;
@@ -4786,38 +4380,48 @@ void ImProcFunctions::Expo_vibr_Local(int senstype, LabImage * bufexporig, LabIm
                             case 2: { // inside selection => full effect, no transition
                                 float diflc = 0.f;
 
-                                if (senstype == 4) {//retinex
+                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3) {//retinex & cbdl
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                } else if (senstype <= 3) {
+                                } else if (senstype == 1) {
                                     transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE);//kch fach
                                     diflc = 328.f * realstrdE;
                                 }
 
-                                float flia = 1.f;
-                                float flib = 1.f;
-                                float chra = bufexporig->a[loy - begy][lox - begx];
-                                float chrb = bufexporig->b[loy - begy][lox - begx];
-
-                                if (senstype != 1) {
-                                    flia = flib = (100.f + realstrchdE) / 100.f;
+                                if (senstype == 7) {//cbdl chroma
+                                    float difab = bufexporig->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
+                                    float difa = difab * cos(rhue);
+                                    float difb = difab * sin(rhue);
+                                    difa *= (100.f + realstrchdE) / 100.f;
+                                    difb *= (100.f + realstrchdE) / 100.f;
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                                 } else {
-                                    flia = (100.f + realstradE) / 100.f;
-                                    flib = (100.f + realstrbdE) / 100.f;
-                                }
+                                    float flia = 1.f;
+                                    float flib = 1.f;
+                                    float chra = bufexporig->a[loy - begy][lox - begx];
+                                    float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                                float difa = chra * flia - original->a[y][x];
-                                float difb = chrb * flib - original->b[y][x];
+                                    if (senstype != 1) {
+                                        flia = flib = (100.f + realstrchdE) / 100.f;
+                                    } else {
+                                        flia = (100.f + realstradE) / 100.f;
+                                        flib = (100.f + realstrbdE) / 100.f;
+                                    }
 
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                    float difa = chra * flia - original->a[y][x];
+                                    float difb = chrb * flib - original->b[y][x];
 
-                                if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
-                                    transformed->L[y][x] = CLIP(12000.f + diflc);
-                                    transformed->a[y][x] = CLIPC(difa);
-                                    transformed->b[y][x] = CLIPC(difb);
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+
+                                    if ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1) {
+                                        transformed->L[y][x] = CLIP(12000.f + diflc);
+                                        transformed->a[y][x] = CLIPC(difa);
+                                        transformed->b[y][x] = CLIPC(difb);
+                                    }
                                 }
                             }
                         }
@@ -8474,7 +8078,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                Expo_vibr_Local(2, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(2, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
                 //call Expo_vibr_Local with first parameter = 2 for vibrance
 
             }
@@ -8605,8 +8209,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             JaggedArray<float> bufchrom(bfw, bfh);
             JaggedArray<float> bufchr(bfw, bfh);
             JaggedArray<float> bufsh(bfw, bfh);
-            JaggedArray<float> loctemp(bfw, bfh);
-            JaggedArray<float> loctempch(bfw, bfh);
+            LabImage *loctemp = nullptr;
+            LabImage *loctempch = nullptr;
 
             float b_l = -5.f;
             float t_l = 25.f;
@@ -8629,6 +8233,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             if (call <= 3) { //call from simpleprocess dcrop improcc
+                loctemp = new LabImage(bfw, bfh);
+                loctempch = new LabImage(bfw, bfh);
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -8640,8 +8246,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         buflight[ir][jr] = 0.f;
                         bufchr[ir][jr] = 0.f;
                         bufchrom[ir][jr] = 0.f;
-                        loctemp[ir][jr] = 0.f;
-                        loctempch[ir][jr] = 0.f;
+                        loctemp->L[ir][jr] = 0.f;
+                        loctemp->a[ir][jr] = 0.f;
+                        loctemp->b[ir][jr] = 0.f;
+                        loctempch->L[ir][jr] = 0.f;
+                        loctempch->a[ir][jr] = 0.f;
+                        loctempch->b[ir][jr] = 0.f;
                     }
 
 
@@ -8662,11 +8272,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufchr[loy - begy][lox - begx] = sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
+                            loctemp->L[loy - begy][lox - begx] =  original->L[y][x];
+                            loctemp->a[loy - begy][lox - begx] =  original->a[y][x];
+                            loctemp->b[loy - begy][lox - begx] =  original->b[y][x];
+                            loctempch->L[loy - begy][lox - begx] =  original->L[y][x];
+                            loctempch->a[loy - begy][lox - begx] =  original->a[y][x];
+                            loctempch->b[loy - begy][lox - begx] =  original->b[y][x];
                         }
                     }
 
-
-                ImProcFunctions::cbdl_local_temp(bufsh, bufsh, loctemp, bfw, bfh, lp.mulloc, 1.f, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
+                ImProcFunctions::cbdl_local_temp(bufsh, bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 
 
 #ifdef _OPENMP
@@ -8680,17 +8295,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             float rL;
-                            rL = CLIPRET((loctemp[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
+                            rL = CLIPRET((loctemp->L[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
 
                             buflight[loy - begy][lox - begx]  = rL;
-
                         }
                     }
 
 
-                cbdl_Local(moddE, powdE, buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 0, sk);
+                transit_shapedetect(6, loctemp, nullptr, buflight, bufchrom, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
-
+                delete loctemp;
 
                 //chroma CBDL begin here
                 if (lp.chromacb > 0.f) {
@@ -8710,7 +8324,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     {
-                        ImProcFunctions::cbdl_local_temp(bufchr, bufchr, loctempch, bfw, bfh, multc, lp.chromacb, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
+                        ImProcFunctions::cbdl_local_temp(bufchr, bufchr, loctempch->L, bfw, bfh, multc, lp.chromacb, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 
                         float rch;
 
@@ -8724,21 +8338,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 int loy = cy + y;
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    rch = CLIPRET((loctempch[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]))) / 200.f);
+                                    rch = CLIPRET((loctempch->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]))) / 200.f);
                                     bufchrom[loy - begy][lox - begx]  = rch;
                                 }
                             }
                     }
 
-                    cbdl_Local(moddE, powdE, buflight, bufchrom,  loctemp, loctempch, hueplus, huemoins, hueref, dhuecb, chromaref, lumaref, lp, original, transformed, cx, cy, 1, sk);
+                    transit_shapedetect(7, loctempch, nullptr, buflight, bufchrom, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+
+                    delete loctempch;
                 }
-
-
-
             }
-
-
-
         }
 
 
@@ -8844,7 +8454,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                Expo_vibr_Local(3, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(3, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
             }
 
@@ -9146,7 +8756,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             if (!lp.invret) {
-                Expo_vibr_Local(4, bufreti, nullptr, buflight, bufchro, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(4, bufreti, nullptr, buflight, bufchro, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
             } else {
                 InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
@@ -9230,7 +8840,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                 if (!lp.invret) {
-                    Expo_vibr_Local(5, tmpl, nullptr, buflight, bufchro, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(5, tmpl, nullptr, buflight, bufchro, nullptr, nullptr, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
                 } else {
                     InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 1);
@@ -9746,7 +9356,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                 }
 
-                Expo_vibr_Local(1, bufexporig, originalmaskexp, buflight, bufl_ab, buf_a_cat, buf_b_cat, hueref, chromaref, lumaref, sobelref, blend2, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(1, bufexporig, originalmaskexp, buflight, bufl_ab, buf_a_cat, buf_b_cat, hueref, chromaref, lumaref, sobelref, blend2, lp, original, transformed, cx, cy, sk);
                 //view mask
             }
 
