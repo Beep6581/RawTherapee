@@ -19,6 +19,7 @@
 #ifndef _RAWIMAGESOURCE_
 #define _RAWIMAGESOURCE_
 
+#include <rtprocess/librtprocess.h>
 #include "imagesource.h"
 #include "dcp.h"
 #include "array2D.h"
@@ -104,6 +105,10 @@ protected:
     unsigned FC(int row, int col)
     {
         return ri->FC(row, col);
+    }
+    unsigned PFC(int row, int col)
+    {
+        return ri->PFC(row, col);
     }
     inline void getRowStartEnd (int x, int &start, int &end);
     static void getProfilePreprocParams(cmsHPROFILE in, float& gammafac, float& lineFac, float& lineSum);
@@ -236,19 +241,6 @@ protected:
     inline  void interpolate_row_rb (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
     inline  void interpolate_row_rb_mul_pp (const array2D<float> &rawData, float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
 
-    float* CA_correct_RT(
-        bool autoCA,
-        size_t autoIterations,
-        double cared,
-        double cablue,
-        bool avoidColourshift,
-        const array2D<float> &rawData,
-        double* fitParamsTransfer,
-        bool fitParamsIn,
-        bool fitParamsOut,
-        float* buffer,
-        bool freeBuffer
-    );
     void ddct8x8s(int isgn, float a[8][8]);
     void processRawWhitepoint (float expos, float preser, array2D<float> &rawData);  // exposure before interpolation
 
@@ -265,37 +257,14 @@ protected:
     void nodemosaic(bool bw);
     void eahd_demosaic();
     void hphd_demosaic();
-    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void ppg_demosaic();
     void jdl_interpolate_omp();
-    void igv_interpolate(int winw, int winh);
-    void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
-    void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
-    void dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false);
+    void dual_demosaic(bool isBayer, const RAWParams &raw, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false);
     void fast_demosaic();//Emil's code for fast demosaicing
-    void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();
-    void rcd_demosaic();
     void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
     void border_interpolate2(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
-    void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
-    void fill_raw( float (*cache )[3], int x0, int y0, float** rawData);
-    void fill_border( float (*cache )[3], int border, int x0, int y0);
-    void copy_to_buffer(float (*image2)[2], float (*image)[3]);
-    void dcb_hid(float (*image)[3], int x0, int y0);
-    void dcb_color(float (*image)[3], int x0, int y0);
-    void dcb_hid2(float (*image)[3], int x0, int y0);
-    void dcb_map(float (*image)[3], uint8_t *map, int x0, int y0);
-    void dcb_correction(float (*image)[3], uint8_t *map, int x0, int y0);
-    void dcb_pp(float (*image)[3], int x0, int y0);
-    void dcb_correction2(float (*image)[3], uint8_t *map, int x0, int y0);
-    void restore_from_buffer(float (*image)[3], float (*image2)[2]);
-    void dcb_refinement(float (*image)[3], uint8_t *map, int x0, int y0);
-    void dcb_color_full(float (*image)[3], int x0, int y0, float (*chroma)[2]);
     void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
-    void xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
-    void xtrans_interpolate (const int passes, const bool useCieLab);
-    void fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);

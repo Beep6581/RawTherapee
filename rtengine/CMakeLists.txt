@@ -28,12 +28,10 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
-    CA_correct_RT.cc
     EdgePreservingDecomposition.cc
     FTblockDN.cc
     PF_correct_RT.cc
     ahd_demosaic_RT.cc
-    amaze_demosaic_RT.cc
     cJSON.c
     calc_distort.cc
     camconst.cc
@@ -108,7 +106,6 @@ set(RTENGINESOURCEFILES
     profilestore.cc
     rawimage.cc
     rawimagesource.cc
-    rcd_demosaic.cc
     refreshmap.cc
     rt_algo.cc
     rtthumbnail.cc
@@ -124,8 +121,6 @@ set(RTENGINESOURCEFILES
     pdaflinesfilter.cc
     gamutwarning.cc
     ipshadowshighlights.cc
-    xtrans_demosaic.cc
-    vng4_demosaic_RT.cc
     ipsoftlight.cc
     guidedfilter.cc
     ipdehaze.cc
@@ -184,6 +179,7 @@ target_link_libraries(rtengine rtexif
     ${TIFF_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${LENSFUN_LIBRARIES}
+    ${RTPROCESS_LIBRARIES}
     )
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

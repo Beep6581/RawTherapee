@@ -793,7 +793,7 @@ RawImage::is_ppmThumb() const
              !thumb_load_raw );
 }
 
-void RawImage::getXtransMatrix( int XtransMatrix[6][6])
+void RawImage::getXtransMatrix( unsigned XtransMatrix[6][6])
 {
     for(int row = 0; row < 6; row++)
         for(int col = 0; col < 6; col++) {

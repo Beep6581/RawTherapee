@@ -188,7 +188,7 @@ public:
     eSensorType getSensorType();
 
     void getRgbCam (float rgbcam[3][4]);
-    void getXtransMatrix ( int xtransMatrix[6][6]);
+    void getXtransMatrix ( unsigned xtransMatrix[6][6]);
     unsigned get_filters() const
     {
         return filters;
@@ -354,6 +354,10 @@ public:
     unsigned FC (unsigned row, unsigned col) const
     {
         return (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3);
+    }
+    unsigned PFC (unsigned row, unsigned col) const
+    {
+        return (prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3);
     }
     bool ISXTRANSRED  (unsigned row, unsigned col) const
     {
