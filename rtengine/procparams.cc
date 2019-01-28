@@ -2341,7 +2341,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     isvisible(true),
     shape("ELI"),
     spotMethod("norm"),
-    sensiexclu(19),
+    sensiexclu(12),
     struc(0),
     shapeMethod("IND"),
     locX(250),
@@ -2361,8 +2361,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightness(0),
     contrast(0),
     chroma(0),
-    sensi(19),
+    sensi(15),
     structcol(0),
+    blurcolde(5),
     blendmaskcol(0),
     qualitycurveMethod("none"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
@@ -2399,12 +2400,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     protectskins(false),
     avoidcolorshift(true),
     pastsattog(true),
-    sensiv(19),
+    sensiv(15),
     skintonescurve{(double)DCT_Linear},
     // Soft Light
     expsoft(false),
     streng(0),
-    sensisf(19),
+    sensisf(15),
     // Lab Region
     explabregion(false),
     // Blur & Noise
@@ -2430,7 +2431,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     neigh(50),
     vart(200),
     dehaz(0),
-    sensih(19),
+    sensih(15),
     localTgaincurve{(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35},
     inversret(false),
     // Sharpening
@@ -2455,7 +2456,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     mult{100.0, 100.0, 100.0, 100.0, 100.0},
     chromacbdl(0),
     threshold(20.0),
-    sensicb(19),
+    sensicb(15),
     // Denoise
     expdenoi(false),
     noiselumf(0),
@@ -2515,6 +2516,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && CCmaskcurve == other.CCmaskcurve
         && LLmaskcurve == other.LLmaskcurve
         && HHmaskcurve == other.HHmaskcurve
+        && blurcolde == other.blurcolde
         // Exposure
         && expexpose == other.expexpose
         && expcomp == other.expcomp
@@ -3598,6 +3600,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chroma, "Locallab", "Chroma_" + std::to_string(i), spot.chroma, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensi, "Locallab", "Sensi_" + std::to_string(i), spot.sensi, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structcol, "Locallab", "Structcol_" + std::to_string(i), spot.structcol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurcolde, "Locallab", "Blurcolde_" + std::to_string(i), spot.blurcolde, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskcol, "Locallab", "Blendmaskcol_" + std::to_string(i), spot.blendmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
@@ -4824,6 +4827,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chroma_" + std::to_string(i), pedited, spot.chroma, spotEdited.chroma);
                 assignFromKeyfile(keyFile, "Locallab", "Sensi_" + std::to_string(i), pedited, spot.sensi, spotEdited.sensi);
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + std::to_string(i), pedited, spot.structcol, spotEdited.structcol);
+                assignFromKeyfile(keyFile, "Locallab", "Blurcolde_" + std::to_string(i), pedited, spot.blurcolde, spotEdited.blurcolde);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskcol_" + std::to_string(i), pedited, spot.blendmaskcol, spotEdited.blendmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);

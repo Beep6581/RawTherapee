@@ -949,6 +949,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chroma = locallab.spots.at(j).chroma && pSpot.chroma == otherSpot.chroma;
                 locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
+                locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
                 locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
@@ -2581,6 +2582,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensi = mods.locallab.spots.at(i).sensi;
         }
 
+        if (locallab.spots.at(i).blurcolde) {
+            toEdit.locallab.spots.at(i).blurcolde = mods.locallab.spots.at(i).blurcolde;
+        }
+
         if (locallab.spots.at(i).structcol) {
             toEdit.locallab.spots.at(i).structcol = mods.locallab.spots.at(i).structcol;
         }
@@ -3946,6 +3951,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chroma(v),
     sensi(v),
     structcol(v),
+    blurcolde(v),
     blendmaskcol(v),
     qualitycurveMethod(v),
     llcurve(v),
@@ -4084,6 +4090,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chroma = v;
     sensi = v;
     structcol = v;
+    blurcolde = v;
     blendmaskcol = v;
     qualitycurveMethod = v;
     llcurve = v;

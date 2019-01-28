@@ -212,7 +212,7 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
     ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
-    qualityMethod_->append(M("TP_LOCALLAB_STD"));
+//    qualityMethod_->append(M("TP_LOCALLAB_STD"));
     qualityMethod_->append(M("TP_LOCALLAB_ENH"));
     qualityMethod_->append(M("TP_LOCALLAB_ENHDEN"));
     qualityMethod_->set_active(1);
@@ -235,7 +235,7 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*iter_);
     iter_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
-    pack_start(*artifFrame);
+//    pack_start(*artifFrame);
 
     show_all();
 }

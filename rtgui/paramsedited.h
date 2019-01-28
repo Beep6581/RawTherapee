@@ -488,6 +488,7 @@ public:
         bool chroma;
         bool sensi;
         bool structcol;
+        bool blurcolde;
         bool blendmaskcol;
         bool qualitycurveMethod;
         bool llcurve;
