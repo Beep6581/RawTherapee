@@ -3682,7 +3682,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
             varsens =  lp.senscb;
         }
 
-        //  printf("varsen=%f \n", varsens);
         //sobel
         sobelref /= 100.;
 
@@ -3864,12 +3863,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     if (senstype == 1  || senstype == 0) {
                         cla = buf_a_cat[loy - begy][lox - begx];
                         clb = buf_b_cat[loy - begy][lox - begx];
-                        //   printf("a=%f b=%f", cla, clb);
                     }
 
                     float reducdE = 0.f;
                     float mindE = 2.f + 0.05f * varsens;//between 2 and 7
-                    float maxdE = 5.f + 1.5f * varsens; // between 5 and 150, we can chnage this values
+                    float maxdE = 5.f + 1.5f * varsens; // between 5 and 150, we can change this values, with a slider ??
 
                     float ar = 1.f / (mindE - maxdE);
 
@@ -3895,7 +3893,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     float realhhdE = reducdE * hhro;
 
                     float addh = 0.f;
-                    //     float chromhr = sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
                     float2 sincosval;
                     sincosval.y = 1.f;
                     sincosval.x = 0.0f;
@@ -3929,8 +3926,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     float diflc = lightc * fli - original->L[y][x];
                                     diflc *= factorx;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                } else if (senstype == 1 || senstype == 0) {//exposure the TODO color and light
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);//kch fach
+                                } else if (senstype == 1 || senstype == 0) {
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);
                                     diflc = 328.f * factorx * realstrdE;
                                 }
 
@@ -3977,8 +3974,19 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
 
                                     if (senstype == 0 && HHutili && hhro != 0.f) {
                                         float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x]) + difb);
-                                        float faca = (original->a[y][x] + difa) / original->a[y][x];
-                                        float facb = (original->b[y][x] + difb) / original->b[y][x];
+                                        float epsia = 0.f;
+                                        float epsib = 0.f;
+
+                                        if (original->a[y][x] == 0.f) {
+                                            epsia = 0.001f;
+                                        }
+
+                                        if (original->b[y][x] == 0.f) {
+                                            epsib = 0.001f;
+                                        }
+
+                                        float faca = (original->a[y][x] + difa) / (original->a[y][x] + epsia);
+                                        float facb = (original->b[y][x] + difb) / (original->b[y][x] + epsib);
 
                                         sincosval = xsincosf(newhr);
                                         transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
@@ -4052,8 +4060,19 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
 
                                     if (senstype == 0 && HHutili  && hhro != 0.f) {
                                         float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x]) + difb);
-                                        float faca = (original->a[y][x] + difa) / original->a[y][x];
-                                        float facb = (original->b[y][x] + difb) / original->b[y][x];
+                                        float epsia = 0.f;
+                                        float epsib = 0.f;
+
+                                        if (original->a[y][x] == 0.f) {
+                                            epsia = 0.001f;
+                                        }
+
+                                        if (original->b[y][x] == 0.f) {
+                                            epsib = 0.001f;
+                                        }
+
+                                        float faca = (original->a[y][x] + difa) / (original->a[y][x] + epsia);
+                                        float facb = (original->b[y][x] + difb) / (original->b[y][x] + epsib);
 
                                         sincosval = xsincosf(newhr);
                                         transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
@@ -4070,8 +4089,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 }
                             }
                         }
-
-
                     }
                 }
 
@@ -8592,7 +8609,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 transit_shapedetect(0, bufcolorig, originalmaskcol, buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, blend2, lp, original, transformed, cx, cy, sk);
 
-                //     ColorLight_Local(moddE, powdE, call, bufcolorig, originalmaskcol, buflight, bufchro, bufchroslid, bufhh, buflightslid, LHutili, HHutili, hueplus, huemoins, hueref, dhue, chromaref, lumaref, sobelref, blend2, lllocalcurve, loclhCurve, lochhCurve, lightCurveloc, lp, original, transformed, cx, cy, sk);
 
                 if (call <= 3) {
 
