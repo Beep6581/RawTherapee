@@ -279,7 +279,7 @@ Locallab::Locallab():
     }
 
     LHshape->setBottomBarBgGradient(mLHshape);
-    llCurveEditorG->curveListComplete();
+ //   llCurveEditorG->curveListComplete();
 
     HHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
     HHshape->setIdentityValue(0.);
@@ -297,7 +297,7 @@ Locallab::Locallab():
 
     HHshape->setBottomBarBgGradient(mHHshape);
 
- //   llCurveEditorG->curveListComplete();
+    llCurveEditorG->curveListComplete();
 
     inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
 

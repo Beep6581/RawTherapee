@@ -3895,10 +3895,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     float realhhdE = reducdE * hhro;
 
                     float addh = 0.f;
-//                    float chromhr = sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
-//                    float2 sincosval;
-//                    sincosval.y = 1.f;
-//                    sincosval.x = 0.0f;
+                    //     float chromhr = sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
+                    float2 sincosval;
+                    sincosval.y = 1.f;
+                    sincosval.x = 0.0f;
+                    float difa = 0.f;
+                    float difb = 0.f;
+                    float tempa = 0.f;
+                    float tempb = 0.f;
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
 
@@ -3930,7 +3934,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     diflc = 328.f * factorx * realstrdE;
                                 }
 
-                                if (HHutili) {
+                                if (HHutili && hhro != 0.f) {
                                     addh = 0.01f * realhhdE * factorx;
                                     newhr = rhue + addh;
 
@@ -3943,21 +3947,13 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
 
                                 if (senstype == 7) {
                                     float difab = bufexporig->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
-                                    float difa = difab * cos(rhue);
-                                    float difb = difab * sin(rhue);
+                                    difa = difab * cos(rhue);
+                                    difb = difab * sin(rhue);
                                     difa *= factorx * (100.f + realstrchdE) / 100.f;
                                     difb *= factorx * (100.f + realstrchdE) / 100.f;
                                     transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                } /* else if (senstype == 0 && HHutili) {
-
-                        float fac = (100.f + factorx * realstrchdE) / 100.f;
-
-                        sincosval = xsincosf(newhr);
-                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * fac) ;
-                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * fac);
-
-                    } */else {
+                                } else {
 
                                     float flia = 1.f;
                                     float flib = 1.f;
@@ -3971,13 +3967,25 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flib = (100.f + realstrbdE) / 100.f;
                                     }
 
-                                    float difa = chra * flia - original->a[y][x];
-                                    float difb = chrb * flib - original->b[y][x];
+                                    difa = chra * flia - original->a[y][x];
+                                    difb = chrb * flib - original->b[y][x];
                                     difa *= factorx;
                                     difb *= factorx;
 
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                    transformed->a[y][x] = tempa = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = tempb = CLIPC(original->b[y][x] + difb);
+
+                                    if (senstype == 0 && HHutili && hhro != 0.f) {
+                                        float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x]) + difb);
+                                        float faca = (original->a[y][x] + difa) / original->a[y][x];
+                                        float facb = (original->b[y][x] + difb) / original->b[y][x];
+
+                                        sincosval = xsincosf(newhr);
+                                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
+                                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * facb);
+                                        difa = transformed->a[y][x] - tempa;
+                                        difb = transformed->b[y][x] - tempb;
+                                    }
 
                                     if (expshow  || colshow) {
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
@@ -4004,7 +4012,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     diflc = 328.f * realstrdE;
                                 }
 
-                                if (HHutili) {
+                                if (HHutili && hhro != 0.f) {
                                     addh = 0.01f * realhhdE;
                                     newhr = rhue + addh;
 
@@ -4017,20 +4025,13 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
 
                                 if (senstype == 7) {//cbdl chroma
                                     float difab = bufexporig->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
-                                    float difa = difab * cos(rhue);
-                                    float difb = difab * sin(rhue);
+                                    difa = difab * cos(rhue);
+                                    difb = difab * sin(rhue);
                                     difa *= (100.f + realstrchdE) / 100.f;
                                     difb *= (100.f + realstrchdE) / 100.f;
                                     transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                }/* else if (senstype == 0 && HHutili) {
-
-                        float fac = (100.f + realstrchdE) / 100.f;
-
-                        sincosval = xsincosf(newhr);
-                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * fac) ;
-                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * fac);
-                  */else {
+                                } else {
                                     float flia = 1.f;
                                     float flib = 1.f;
                                     float chra = bufexporig->a[loy - begy][lox - begx];
@@ -4043,11 +4044,23 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flib = (100.f + realstrbdE) / 100.f;
                                     }
 
-                                    float difa = chra * flia - original->a[y][x];
-                                    float difb = chrb * flib - original->b[y][x];
+                                    difa = chra * flia - original->a[y][x];
+                                    difb = chrb * flib - original->b[y][x];
 
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                    transformed->a[y][x] = tempa = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = tempb = CLIPC(original->b[y][x] + difb);
+
+                                    if (senstype == 0 && HHutili  && hhro != 0.f) {
+                                        float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x]) + difb);
+                                        float faca = (original->a[y][x] + difa) / original->a[y][x];
+                                        float facb = (original->b[y][x] + difb) / original->b[y][x];
+
+                                        sincosval = xsincosf(newhr);
+                                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
+                                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * facb);
+                                        difa = transformed->a[y][x] - tempa;
+                                        difb = transformed->b[y][x] - tempb;
+                                    }
 
                                     if (expshow  || colshow) {
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
