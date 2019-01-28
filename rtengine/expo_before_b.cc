@@ -38,6 +38,7 @@
 #include "rawimagesource.h"
 #include "mytime.h"
 #include "rt_math.h"
+#include "../rtgui/multilangmgr.h"
 
 namespace rtengine
 {
@@ -78,13 +79,23 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
                 }
     } else {
         if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
+            if (plistener) {
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST)));
+            }
+            std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                if(plistener)
+                    plistener->setProgress(p);
+                return false;
+            };
+
             // Demosaic to allow calculation of luminosity.
             if(ri->getSensorType() == ST_BAYER) {
-                fast_demosaic();
+                const unsigned cfa[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
+                bayerfast_demosaic (W, H, rawData, red, green, blue, cfa, setProgCancel, initialGain);
             } else {
                 unsigned xtrans[6][6];
                 ri->getXtransMatrix(xtrans);
-                xtransfast_demosaic(width, height, rawData, red, green, blue, xtrans, nullptr);
+                xtransfast_demosaic(width, height, rawData, red, green, blue, xtrans, setProgCancel);
             }
         }
 
