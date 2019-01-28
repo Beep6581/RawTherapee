@@ -128,8 +128,6 @@ public:
     void        flushRawData      () override;
     void        flushRGB          () override;
     void        HLRecovery_Global (const ToneCurveParams &hrp) override;
-    void        refinement_lassus (int PassCount);
-    void        refinement(int PassCount);
     void        setBorder(unsigned int rawBorder) override {border = rawBorder;}
     bool        isRGBSourceModified() const override
     {
