@@ -112,11 +112,15 @@ ImProcCoordinator::ImProcCoordinator()
       locallutili(false), localcutili(false), localskutili(false), localexutili(false), LHutili(false), HHutili(false),
       huerefs(500, -100000.f),
       huerefblurs(500, -100000.f),
+      chromarefblurs(500, -100000.f),
+      lumarefblurs(500, -100000.f),
       chromarefs(500, -100000.f),
       lumarefs(500, -100000.f),
       sobelrefs(500, -100000.f),
       huer(0),
       huerblu(0),
+      chromarblu(0),
+      lumarblu(0),
       chromar(0),
       lumar(0),
       sobeler(0),
@@ -775,7 +779,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             float **shbuffer = nullptr;
             int sca = 1;
-            double huere, chromare, lumare, huerefblu, sobelre;
+            double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
             JaggedArray<float> blend(pW, pH);
 
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
@@ -816,13 +820,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 // Reference parameters computation
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
+                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 } else {
-                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
+                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 }
 
 //                printf("improc avg=%f\n", avg);
                 huerblu = huerefblurs[sp] = huerefblu;
+                chromarblu = chromarefblurs[sp] = chromarefblu;
+                lumarblu = lumarefblurs[sp] = lumarefblu;
                 huer = huerefs[sp] = huere;
                 chromar = chromarefs[sp] = chromare;
                 lumar = lumarefs[sp] = lumare ;
@@ -844,10 +850,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 // Locallab mask are only shown for selected spot
                 if (sp == params.locallab.selspot) {
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                                                  LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler, locallColorMask, locallExpMask);
+                                                  LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, locallColorMask, locallExpMask);
                 } else {
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                                                                      LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, huer, chromar, lumar, sobeler, 0, 0);
+                                                                      LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, 0, 0);
                 }
 
                 lllocalcurve.clear();

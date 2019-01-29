@@ -2468,7 +2468,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     noisechrodetail(0),
     adjblur(0),
     bilateral(0),
-    sensiden(30),
+    sensiden(20),
     // Others
     avoid(false)
 {

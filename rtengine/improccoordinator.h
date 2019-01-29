@@ -256,10 +256,12 @@ protected:
     bool HHutili;
     LUTf huerefs;
     LUTf huerefblurs;
+    LUTf chromarefblurs;
+    LUTf lumarefblurs;
     LUTf chromarefs;
     LUTf lumarefs;
     LUTf sobelrefs;
-    double huer, huerblu, chromar, lumar, sobeler;
+    double huer, huerblu, chromarblu, lumarblu, chromar, lumar, sobeler;
     bool lastspotdup;
     int locallColorMask;
     int locallExpMask;
