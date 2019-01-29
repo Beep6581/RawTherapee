@@ -3165,17 +3165,11 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
 }
 
 
-void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, const float hueref,  const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     BENCHFUN
     const float ach = (float)lp.trans / 100.f;
-    constexpr float delhu = 0.1f; //between 0.05 and 0.2
-
-    const float apl = (-1.f) / delhu;
-    const float bpl = - apl * hueplus;
-    const float amo = 1.f / delhu;
-    const float bmo = - amo * huemoins;
-    float varsens = 0.f;
+    float varsens = lp.senssha;
 
     if (senstype == 0) {
         varsens = lp.senssha;
@@ -3184,18 +3178,13 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
         varsens = lp.senslc;
     }
 
-    const float pb = 4.f;
-    const float pa = (1.f - pb) / 40.f;
-
-    const float ahu = 1.f / (2.8f * varsens - 280.f);
-    const float bhu = 1.f - ahu * 2.8f * varsens;
-
-    const bool detectHue = varsens < 20.f && lp.qualmet >= 1;
 
     int GW = transformed->W;
     int GH = transformed->H;
 
     LabImage *origblur = nullptr;
+    float refa = chromaref * cos(hueref);
+    float refb = chromaref * sin(hueref);
 
     origblur = new LabImage(GW, GH);
 
@@ -3240,28 +3229,16 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
 #ifdef __SSE2__
             int i = 0;
 
-            if (detectHue) {
-                for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(origblur->a[y][i]);
-                    vfloat bv = LVFU(origblur->b[y][i]);
-                    STVF(atan2Buffer[i], xatan2f(bv, av));
-                    STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-                }
+            for (; i < transformed->W - 3; i += 4) {
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
+                STVF(atan2Buffer[i], xatan2f(bv, av));
+                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
+            }
 
-                for (; i < transformed->W; i++) {
-                    atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-                }
-            } else {
-                for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(origblur->a[y][i]);
-                    vfloat bv = LVFU(origblur->b[y][i]);
-                    STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-                }
-
-                for (; i < transformed->W; i++) {
-                    sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-                }
+            for (; i < transformed->W; i++) {
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
             }
 
 #endif
@@ -3270,6 +3247,8 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                 int lox = cx + x;
                 int zone = 0;
                 float localFactor = 1.f;
+                int begx = int (lp.xc - lp.lxL);
+                int begy = int (lp.yc - lp.lyT);
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -3283,108 +3262,33 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                 }
 
 #ifdef __SSE2__
-                float rchro = sqrtBuffer[x];
+//               float rchro = sqrtBuffer[x];
 #else
-                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
+//               float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
-                //prepare shape detection
-                float kch = 1.f;
-                float fach = 1.f;
-                float deltachro = fabs(rchro - chromaref);
+                float dE = 0.f;
+                float rL = origblur->L[y][x] / 327.68f;
+                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
-                //kch to modulate action with chroma
-                if (deltachro < 160.f * SQR(varsens / 100.f)) {
-                    kch = 1.f;
-                } else {
-                    float ck = 160.f * SQR(varsens / 100.f);
-                    float ak = 1.f / (ck - 160.f);
-                    float bk = -160.f * ak;
-                    kch = ak * deltachro + bk;
+                float reducdE = 0.f;
+                float mindE = 2.f + 0.05f * varsens;//between 2 and 7
+                float maxdE = 5.f + 1.5f * varsens; // between 5 and 150, we can chnage this values
 
-                    if (varsens < 40.f) {
-                        kch = pow_F(kch, pa * varsens + pb);    //increase under 40
-                    }
+                float ar = 1.f / (mindE - maxdE);
+
+                float br = - ar * maxdE;
+
+                if (dE > maxdE) {
+                    reducdE = 0.f;
                 }
 
-                if (varsens >= 99.f) {
-                    kch = 1.f;
+                if (dE > mindE && dE <= maxdE) {
+                    reducdE = ar * dE + br;
                 }
 
-                // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                if (detectHue) { //to try...
-#ifdef __SSE2__
-                    float rhue = atan2Buffer[x];
-#else
-                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-#endif
-                    float khu = 0.f;
-                    float deltahue = fabs(rhue - hueref);
-
-                    if (deltahue > rtengine::RT_PI) {
-                        deltahue = - (deltahue - 2.f * rtengine::RT_PI);
-                    }
-
-                    //hue detection
-                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                        if (rhue >= hueplus - delhu)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-
-                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-                    }
-
-                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-                    }
-
-                    float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-
-                    if (deltaE <  2.8f * varsens) {
-                        fach = khu;
-                    } else {
-                        fach = khu * (ahu * deltaE + bhu);
-                    }
-
-
-                    float kcr = 10.f;
-
-                    if (rchro < kcr) {
-                        fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                    }
-
+                if (dE <= mindE) {
+                    reducdE = 1.f;
                 }
-
-                int begx = int (lp.xc - lp.lxL);
-                int begy = int (lp.yc - lp.lyT);
 
                 switch (zone) {
 
@@ -3400,7 +3304,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                         }
 
                         difL *= factorx;
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
                         break;
                     }
@@ -3414,7 +3318,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                             difL = loctemp[y][x] - original->L[y][x];
                         }
 
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
                     }
                 }
             }
@@ -7360,7 +7264,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             //sharpen ellipse and transition
-            Sharp_Local(call, loctemp, 1, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
+            Sharp_Local(call, loctemp, 1,  hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
             delete bufloca;
 
@@ -7417,7 +7321,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             //sharpen ellipse and transition
-            Sharp_Local(call, loctemp, 0, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
+            Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
         } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena) {
             int GW = original->W;

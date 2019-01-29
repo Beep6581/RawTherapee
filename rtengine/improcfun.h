@@ -310,8 +310,9 @@ public:
 
     void ColorLight_Local(float moddE, float powdE, int call, LabImage * bufcolorig, LabImage * originalmask, float **buflight, float **bufchro, float **bufchroslid, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, float sobelref, float ** blend2, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & lightCurveloc, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
     void InverseColorLight_Local(const struct local_params& lp, LUTf & lightCurveloc, LabImage* original, LabImage* transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk);
+    void Sharp_Local(int call, float **loctemp,  int senstype, const float hueref,  const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
 
-    void Sharp_Local(int call, float **loctemp,  int senstype, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
+//    void Sharp_Local(int call, float **loctemp,  int senstype, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
     void InverseSharp_Local(float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
 
 
