@@ -37,7 +37,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -62,88 +62,100 @@ extern const Settings* settings;
 
 void RawImageSource::hphd_vertical (float** hpmap, int col_from, int col_to)
 {
-    float* temp = new float[max(W, H)];
-    float* avg = new float[max(W, H)];
-    float* dev = new float[max(W, H)];
+//    BENCHFUN
+    constexpr int numCols = 8;
+    JaggedArray<float> temp(numCols, H, true);
+    JaggedArray<float> avg(numCols, H, true);
+    JaggedArray<float> dev(numCols, H, true);
 
-    memset (temp, 0, max(W, H)*sizeof(float));
-    memset (avg, 0, max(W, H)*sizeof(float));
-    memset (dev, 0, max(W, H)*sizeof(float));
-
-    for (int k = col_from; k < col_to; k++) {
+    int k = col_from;
+    for (; k < col_to - 7; k += numCols) {
         for (int i = 5; i < H - 5; i++) {
-            temp[i] = (rawData[i - 5][k] - 8 * rawData[i - 4][k] + 27 * rawData[i - 3][k] - 48 * rawData[i - 2][k] + 42 * rawData[i - 1][k] -
-                       (rawData[i + 5][k] - 8 * rawData[i + 4][k] + 27 * rawData[i + 3][k] - 48 * rawData[i + 2][k] + 42 * rawData[i + 1][k])) / 100.0;
-            temp[i] = ABS(temp[i]);
+            #pragma omp simd
+            for(int h = 0; h < numCols; ++h) {
+                temp[i][h] = std::fabs((rawData[i - 5][k + h] - rawData[i + 5][k + h])  - 8 * (rawData[i - 4][k + h] - rawData[i + 4][k + h]) + 27 * (rawData[i - 3][k + h] - rawData[i + 3][k + h]) - 48 * (rawData[i - 2][k + h] - rawData[i + 2][k + h]) + 42 * (rawData[i - 1][k + h] - rawData[i - 1][k + h]));
+            }
         }
 
         for (int j = 4; j < H - 4; j++) {
-            float avgL = (temp[j - 4] + temp[j - 3] + temp[j - 2] + temp[j - 1] + temp[j] + temp[j + 1] + temp[j + 2] + temp[j + 3] + temp[j + 4]) / 9.0;
-            avg[j] = avgL;
-            float devL = ((temp[j - 4] - avgL) * (temp[j - 4] - avgL) + (temp[j - 3] - avgL) * (temp[j - 3] - avgL) + (temp[j - 2] - avgL) * (temp[j - 2] - avgL) + (temp[j - 1] - avgL) * (temp[j - 1] - avgL) + (temp[j] - avgL) * (temp[j] - avgL) + (temp[j + 1] - avgL) * (temp[j + 1] - avgL) + (temp[j + 2] - avgL) * (temp[j + 2] - avgL) + (temp[j + 3] - avgL) * (temp[j + 3] - avgL) + (temp[j + 4] - avgL) * (temp[j + 4] - avgL)) / 9.0;
-
-            if (devL < 0.001) {
-                devL = 0.001;
+            #pragma omp simd
+            for(int h = 0; h < numCols; ++h) {
+                const float avgL = (temp[j - 4][h] + temp[j - 3][h] + temp[j - 2][h] + temp[j - 1][h] + temp[j][h] + temp[j + 1][h] + temp[j + 2][h] + temp[j + 3][h] + temp[j + 4][h]) / 9.f;
+                avg[j][h] = avgL;
+                dev[j][h] = std::max(0.001f, SQR(temp[j - 4][h] - avgL) + SQR(temp[j - 3][h] - avgL) + SQR(temp[j - 2][h] - avgL) + SQR(temp[j - 1][h] - avgL) + SQR(temp[j][h] - avgL) + SQR(temp[j + 1][h] - avgL) + SQR(temp[j + 2][h] - avgL) + SQR(temp[j + 3][h] - avgL) + SQR(temp[j + 4][h] - avgL));
             }
-
-            dev[j] = devL;
         }
 
         for (int j = 5; j < H - 5; j++) {
-            float avgL = avg[j - 1];
-            float avgR = avg[j + 1];
-            float devL = dev[j - 1];
-            float devR = dev[j + 1];
+            #pragma omp simd
+            for(int h = 0; h < numCols; ++h) {
+                const float avgL = avg[j - 1][h];
+                const float avgR = avg[j + 1][h];
+                const float devL = dev[j - 1][h];
+                const float devR = dev[j + 1][h];
+                hpmap[j][k + h] = avgL + (avgR - avgL) * devL / (devL + devR);
+            }
+        }
+    }
+    for (; k < col_to; k++) {
+        for (int i = 5; i < H - 5; i++) {
+            temp[i][0] = std::fabs((rawData[i - 5][k] - rawData[i + 5][k]) - 8 * (rawData[i - 4][k] - rawData[i + 4][k]) + 27 * (rawData[i - 3][k] - rawData[i + 3][k]) - 48 * (rawData[i - 2][k] - rawData[i + 2][k]) + 42 * (rawData[i - 1][k] -rawData[i + 1][k]));
+        }
+
+        for (int j = 4; j < H - 4; j++) {
+            const float avgL = (temp[j - 4][0] + temp[j - 3][0] + temp[j - 2][0] + temp[j - 1][0] + temp[j][0] + temp[j + 1][0] + temp[j + 2][0] + temp[j + 3][0] + temp[j + 4][0]) / 9.f;
+            avg[j][0] = avgL;
+            dev[j][0] = std::max(0.001f, SQR(temp[j - 4][0] - avgL) + SQR(temp[j - 3][0] - avgL) + SQR(temp[j - 2][0] - avgL) + SQR(temp[j - 1][0] - avgL) + SQR(temp[j][0] - avgL) + SQR(temp[j + 1][0] - avgL) + SQR(temp[j + 2][0] - avgL) + SQR(temp[j + 3][0] - avgL) + SQR(temp[j + 4][0] - avgL));
+        }
+
+        for (int j = 5; j < H - 5; j++) {
+            const float avgL = avg[j - 1][0];
+            const float avgR = avg[j + 1][0];
+            const float devL = dev[j - 1][0];
+            const float devR = dev[j + 1][0];
             hpmap[j][k] = avgL + (avgR - avgL) * devL / (devL + devR);
         }
     }
 
-    delete [] temp;
-    delete [] avg;
-    delete [] dev;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to)
 {
-    float* temp = new float[max(W, H)];
-    float* avg = new float[max(W, H)];
-    float* dev = new float[max(W, H)];
+//    BENCHFUN
+    float* temp = new float[W];
+    float* avg = new float[W];
+    float* dev = new float[W];
 
-    memset (temp, 0, max(W, H)*sizeof(float));
-    memset (avg, 0, max(W, H)*sizeof(float));
-    memset (dev, 0, max(W, H)*sizeof(float));
+    memset(temp, 0, W * sizeof(float));
+    memset(avg, 0, W * sizeof(float));
+    memset(dev, 0, W * sizeof(float));
 
     for (int i = row_from; i < row_to; i++) {
+        #pragma omp simd
         for (int j = 5; j < W - 5; j++) {
-            temp[j] = (rawData[i][j - 5] - 8 * rawData[i][j - 4] + 27 * rawData[i][j - 3] - 48 * rawData[i][j - 2] + 42 * rawData[i][j - 1] -
-                       (rawData[i][j + 5] - 8 * rawData[i][j + 4] + 27 * rawData[i][j + 3] - 48 * rawData[i][j + 2] + 42 * rawData[i][j + 1])) / 100;
-            temp[j] = ABS(temp[j]);
+            temp[j] = std::fabs((rawData[i][j - 5] - rawData[i][j + 5]) - 8 * (rawData[i][j - 4] - rawData[i][j + 4]) + 27 * (rawData[i][j - 3] - rawData[i][j + 3]) - 48 * (rawData[i][j - 2] - rawData[i][j + 2]) + 42 * (rawData[i][j - 1] - rawData[i][j + 1]));
         }
 
+        #pragma omp simd
         for (int j = 4; j < W - 4; j++) {
-            float avgL = (temp[j - 4] + temp[j - 3] + temp[j - 2] + temp[j - 1] + temp[j] + temp[j + 1] + temp[j + 2] + temp[j + 3] + temp[j + 4]) / 9.0;
+            const float avgL = ((temp[j - 4] + temp[j - 3]) + (temp[j - 2] + temp[j - 1]) + (temp[j] + temp[j + 1]) + (temp[j + 2] + temp[j + 3]) + temp[j + 4]) / 9.f;
             avg[j] = avgL;
-            float devL = ((temp[j - 4] - avgL) * (temp[j - 4] - avgL) + (temp[j - 3] - avgL) * (temp[j - 3] - avgL) + (temp[j - 2] - avgL) * (temp[j - 2] - avgL) + (temp[j - 1] - avgL) * (temp[j - 1] - avgL) + (temp[j] - avgL) * (temp[j] - avgL) + (temp[j + 1] - avgL) * (temp[j + 1] - avgL) + (temp[j + 2] - avgL) * (temp[j + 2] - avgL) + (temp[j + 3] - avgL) * (temp[j + 3] - avgL) + (temp[j + 4] - avgL) * (temp[j + 4] - avgL)) / 9.0;
-
-            if (devL < 0.001) {
-                devL = 0.001;
-            }
-
-            dev[j] = devL;
+            dev[j] = std::max(0.001f, SQR(temp[j - 4] - avgL) + SQR(temp[j - 3] - avgL) + SQR(temp[j - 2] - avgL) + SQR(temp[j - 1] - avgL) + SQR(temp[j] - avgL) + SQR(temp[j + 1] - avgL) + SQR(temp[j + 2] - avgL) + SQR(temp[j + 3] - avgL) + SQR(temp[j + 4] - avgL));
         }
 
+        #pragma omp simd
         for (int j = 5; j < W - 5; j++) {
-            float avgL = avg[j - 1];
-            float avgR = avg[j + 1];
-            float devL = dev[j - 1];
-            float devR = dev[j + 1];
-            float hpv = avgL + (avgR - avgL) * devL / (devL + devR);
+            const float avgL = avg[j - 1];
+            const float avgR = avg[j + 1];
+            const float devL = dev[j - 1];
+            const float devR = dev[j + 1];
+            const float hpv = avgL + (avgR - avgL) * devL / (devL + devR);
 
-            if (hpmap[i][j] < 0.8 * hpv) {
+            if (hpmap[i][j] < 0.8f * hpv) {
                 hpmap[i][j] = 2;
-            } else if (hpv < 0.8 * hpmap[i][j]) {
+            } else if (hpv < 0.8f * hpmap[i][j]) {
                 hpmap[i][j] = 1;
             } else {
                 hpmap[i][j] = 0;
@@ -160,8 +172,11 @@ void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to)
 
 void RawImageSource::hphd_green (float** hpmap)
 {
+//    BENCHFUN
+
+    constexpr float eps = 0.001f;
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic, 16)
 #endif
 
     for (int i = 3; i < H - 3; i++) {
@@ -170,81 +185,81 @@ void RawImageSource::hphd_green (float** hpmap)
                 green[i][j] = rawData[i][j];
             } else {
                 if (hpmap[i][j] == 1) {
-                    int g2 = rawData[i][j + 1] + ((rawData[i][j] - rawData[i][j + 2]) / 2);
-                    int g4 = rawData[i][j - 1] + ((rawData[i][j] - rawData[i][j - 2]) / 2);
+                    const float g2 = rawData[i][j + 1] + (rawData[i][j] - rawData[i][j + 2]) * 0.5f;
+                    const float g4 = rawData[i][j - 1] + (rawData[i][j] - rawData[i][j - 2]) * 0.5f;
 
-                    int dx = rawData[i][j + 1] - rawData[i][j - 1];
-                    int d1 = rawData[i][j + 3] - rawData[i][j + 1];
-                    int d2 = rawData[i][j + 2] - rawData[i][j];
-                    int d3 = (rawData[i - 1][j + 2] - rawData[i - 1][j]) / 2;
-                    int d4 = (rawData[i + 1][j + 2] - rawData[i + 1][j]) / 2;
+                    const float dx = eps + std::fabs(rawData[i][j + 1] - rawData[i][j - 1]);
+                    float d1 = rawData[i][j + 3] - rawData[i][j + 1];
+                    float d2 = rawData[i][j + 2] - rawData[i][j];
+                    float d3 = rawData[i - 1][j + 2] - rawData[i - 1][j];
+                    float d4 = rawData[i + 1][j + 2] - rawData[i + 1][j];
 
-                    double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e2 = 1.f / (dx + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     d1 = rawData[i][j - 3] - rawData[i][j - 1];
                     d2 = rawData[i][j - 2] - rawData[i][j];
-                    d3 = (rawData[i - 1][j - 2] - rawData[i - 1][j]) / 2;
-                    d4 = (rawData[i + 1][j - 2] - rawData[i + 1][j]) / 2;
+                    d3 = rawData[i - 1][j - 2] - rawData[i - 1][j];
+                    d4 = rawData[i + 1][j - 2] - rawData[i + 1][j];
 
-                    double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e4 = 1.f / (dx + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     green[i][j] = (e2 * g2 + e4 * g4) / (e2 + e4);
                 } else if (hpmap[i][j] == 2) {
-                    int g1 = rawData[i - 1][j] + ((rawData[i][j] - rawData[i - 2][j]) / 2);
-                    int g3 = rawData[i + 1][j] + ((rawData[i][j] - rawData[i + 2][j]) / 2);
+                    const float g1 = rawData[i - 1][j] + (rawData[i][j] - rawData[i - 2][j]) * 0.5f;
+                    const float g3 = rawData[i + 1][j] + (rawData[i][j] - rawData[i + 2][j]) * 0.5f;
 
-                    int dy = rawData[i + 1][j] - rawData[i - 1][j];
-                    int d1 = rawData[i - 1][j] - rawData[i - 3][j];
-                    int d2 = rawData[i][j] - rawData[i - 2][j];
-                    int d3 = (rawData[i][j - 1] - rawData[i - 2][j - 1]) / 2;
-                    int d4 = (rawData[i][j + 1] - rawData[i - 2][j + 1]) / 2;
+                    const float dy = eps + std::fabs(rawData[i + 1][j] - rawData[i - 1][j]);
+                    float d1 = rawData[i - 1][j] - rawData[i - 3][j];
+                    float d2 = rawData[i][j] - rawData[i - 2][j];
+                    float d3 = rawData[i][j - 1] - rawData[i - 2][j - 1];
+                    float d4 = rawData[i][j + 1] - rawData[i - 2][j + 1];
 
-                    double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e1 = 1.f / (dy + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     d1 = rawData[i + 1][j] - rawData[i + 3][j];
                     d2 = rawData[i][j] - rawData[i + 2][j];
-                    d3 = (rawData[i][j - 1] - rawData[i + 2][j - 1]) / 2;
-                    d4 = (rawData[i][j + 1] - rawData[i + 2][j + 1]) / 2;
+                    d3 = rawData[i][j - 1] - rawData[i + 2][j - 1];
+                    d4 = rawData[i][j + 1] - rawData[i + 2][j + 1];
 
-                    double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e3 = 1.f / (dy + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     green[i][j] = (e1 * g1 + e3 * g3) / (e1 + e3);
                 } else {
-                    int g1 = rawData[i - 1][j] + ((rawData[i][j] - rawData[i - 2][j]) / 2);
-                    int g2 = rawData[i][j + 1] + ((rawData[i][j] - rawData[i][j + 2]) / 2);
-                    int g3 = rawData[i + 1][j] + ((rawData[i][j] - rawData[i + 2][j]) / 2);
-                    int g4 = rawData[i][j - 1] + ((rawData[i][j] - rawData[i][j - 2]) / 2);
+                    const float g1 = rawData[i - 1][j] + (rawData[i][j] - rawData[i - 2][j]) * 0.5f;
+                    const float g2 = rawData[i][j + 1] + (rawData[i][j] - rawData[i][j + 2]) * 0.5f;
+                    const float g3 = rawData[i + 1][j] + (rawData[i][j] - rawData[i + 2][j]) * 0.5f;
+                    const float g4 = rawData[i][j - 1] + (rawData[i][j] - rawData[i][j - 2]) * 0.5f;
 
-                    int dx = rawData[i][j + 1] - rawData[i][j - 1];
-                    int dy = rawData[i + 1][j] - rawData[i - 1][j];
+                    const float dx = eps + std::fabs(rawData[i][j + 1] - rawData[i][j - 1]);
+                    const float dy = eps + std::fabs(rawData[i + 1][j] - rawData[i - 1][j]);
 
-                    int d1 = rawData[i - 1][j] - rawData[i - 3][j];
-                    int d2 = rawData[i][j] - rawData[i - 2][j];
-                    int d3 = (rawData[i][j - 1] - rawData[i - 2][j - 1]) / 2;
-                    int d4 = (rawData[i][j + 1] - rawData[i - 2][j + 1]) / 2;
+                    float d1 = rawData[i - 1][j] - rawData[i - 3][j];
+                    float d2 = rawData[i][j] - rawData[i - 2][j];
+                    float d3 = rawData[i][j - 1] - rawData[i - 2][j - 1];
+                    float d4 = rawData[i][j + 1] - rawData[i - 2][j + 1];
 
-                    double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e1 = 1.f / (dy + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     d1 = rawData[i][j + 3] - rawData[i][j + 1];
                     d2 = rawData[i][j + 2] - rawData[i][j];
-                    d3 = (rawData[i - 1][j + 2] - rawData[i - 1][j]) / 2;
-                    d4 = (rawData[i + 1][j + 2] - rawData[i + 1][j]) / 2;
+                    d3 = rawData[i - 1][j + 2] - rawData[i - 1][j];
+                    d4 = rawData[i + 1][j + 2] - rawData[i + 1][j];
 
-                    double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e2 = 1.f / (dx + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     d1 = rawData[i + 1][j] - rawData[i + 3][j];
                     d2 = rawData[i][j] - rawData[i + 2][j];
-                    d3 = (rawData[i][j - 1] - rawData[i + 2][j - 1]) / 2;
-                    d4 = (rawData[i][j + 1] - rawData[i + 2][j + 1]) / 2;
+                    d3 = rawData[i][j - 1] - rawData[i + 2][j - 1];
+                    d4 = rawData[i][j + 1] - rawData[i + 2][j + 1];
 
-                    double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e3 = 1.f / (dy + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     d1 = rawData[i][j - 3] - rawData[i][j - 1];
                     d2 = rawData[i][j - 2] - rawData[i][j];
-                    d3 = (rawData[i - 1][j - 2] - rawData[i - 1][j]) / 2;
-                    d4 = (rawData[i + 1][j - 2] - rawData[i + 1][j]) / 2;
+                    d3 = rawData[i - 1][j - 2] - rawData[i - 1][j];
+                    d4 = rawData[i + 1][j - 2] - rawData[i + 1][j];
 
-                    double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    const float e4 = 1.f / (dx + std::fabs(d1) + std::fabs(d2) + (std::fabs(d3) + std::fabs(d4)) * 0.5f);
 
                     green[i][j] = (e1 * g1 + e2 * g2 + e3 * g3 + e4 * g4) / (e1 + e2 + e3 + e4);
                 }
@@ -257,12 +272,13 @@ void RawImageSource::hphd_green (float** hpmap)
 
 void RawImageSource::hphd_demosaic ()
 {
+    BENCHFUN
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)));
-        plistener->setProgress (0.0);
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)));
+        plistener->setProgress(0.0);
     }
 
-    JaggedArray<float> hpmap (W, H, true);
+    JaggedArray<float> hpmap(W, H, true);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -272,17 +288,17 @@ void RawImageSource::hphd_demosaic ()
         int blk = W / nthreads;
 
         if (tid < nthreads - 1) {
-            hphd_vertical (hpmap, tid * blk, (tid + 1)*blk);
+            hphd_vertical(hpmap, tid * blk, (tid + 1)*blk);
         } else {
-            hphd_vertical (hpmap, tid * blk, W);
+            hphd_vertical(hpmap, tid * blk, W);
         }
     }
 #else
-    hphd_vertical (hpmap, 0, W);
+    hphd_vertical(hpmap, 0, W);
 #endif
 
     if (plistener) {
-        plistener->setProgress (0.33);
+        plistener->setProgress(0.33);
     }
 
 #ifdef _OPENMP
@@ -293,35 +309,30 @@ void RawImageSource::hphd_demosaic ()
         int blk = H / nthreads;
 
         if (tid < nthreads - 1) {
-            hphd_horizontal (hpmap, tid * blk, (tid + 1)*blk);
+            hphd_horizontal(hpmap, tid * blk, (tid + 1)*blk);
         } else {
-            hphd_horizontal (hpmap, tid * blk, H);
+            hphd_horizontal(hpmap, tid * blk, H);
         }
     }
 #else
-    hphd_horizontal (hpmap, 0, H);
+    hphd_horizontal(hpmap, 0, H);
 #endif
 
-    hphd_green (hpmap);
+    hphd_green(hpmap);
 
     if (plistener) {
-        plistener->setProgress (0.66);
+        plistener->setProgress(0.66);
     }
 
-    for (int i = 0; i < H; i++) {
-        if (i == 0) {
-            interpolate_row_rb_mul_pp (rawData, red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
-        } else if (i == H - 1) {
-            interpolate_row_rb_mul_pp (rawData, red[i], blue[i], green[i - 1], green[i], nullptr, i, 1.0, 1.0, 1.0, 0, W, 1);
-        } else {
-            interpolate_row_rb_mul_pp (rawData, red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
-        }
+    #pragma omp parallel for
+    for (int i = 4; i < H - 4; i++) {
+        interpolate_row_rb_mul_pp(rawData, red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
     }
 
     border_interpolate2(W, H, 4, rawData, red, green, blue);
 
     if (plistener) {
-        plistener->setProgress (1.0);
+        plistener->setProgress(1.0);
     }
 }
 
