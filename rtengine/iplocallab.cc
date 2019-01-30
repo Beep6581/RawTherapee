@@ -2653,6 +2653,10 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                     reducdE = 1.f;
                 }
 
+                if (lp.sensbn > 99) {
+                    reducdE = 1.f;
+                }
+
 
                 float realstrdE = reducdE * cli;
                 float realstrchdE = reducdE * clc;
@@ -3290,6 +3294,10 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                     reducdE = 1.f;
                 }
 
+                if (varsens > 99) {
+                    reducdE = 1.f;
+                }
+
                 switch (zone) {
 
                     case 1: { // inside transition zone
@@ -3459,6 +3467,10 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                     }
 
                     if (dE <= mindE) {
+                        reducdE = 1.f;
+                    }
+
+                    if (varsens > 99) {
                         reducdE = 1.f;
                     }
 
@@ -3814,6 +3826,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     float realstrbdE = reducdE * clb;
                     float realstrchdE = reducdE * clc;
                     float realhhdE = reducdE * hhro;
+
+                    if (varsens > 99) {
+                        reducdE = 1.f;
+                    }
 
                     float addh = 0.f;
                     float2 sincosval;
@@ -6823,8 +6839,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                 transit_shapedetect(2, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
-                //call Expo_vibr_Local with first parameter = 2 for vibrance
-                //              transit_shapedetect(6, loctemp, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
 
             }
 
@@ -8102,7 +8116,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 transit_shapedetect(1, bufexporig, originalmaskexp, buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, blend2, lp, original, transformed, cx, cy, sk);
-                //view mask
             }
 
             if (call <= 3) {
