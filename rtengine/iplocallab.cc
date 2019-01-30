@@ -4752,29 +4752,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         constexpr float ared = (rtengine::RT_PI - 0.05f) / 100.f;
 
         constexpr float bred = 0.05f;
-        float dhue = ared * lp.sens + bred; //delta hue vibr
-
-        float dhuev = ared * lp.sensv + bred; //delta hue vibr
-
-        float dhueex = ared * lp.sensex + bred; //delta hue exp
-
-        float dhueret = ared * lp.sensh + bred; //delta hue retinex
-
-        float dhuebn = ared * lp.sensbn + bred; //delta hue blur
 
         float dhuetm = ared * lp.senstm + bred; //delta hue tone map
 
-        float dhuesha = ared * lp.senssha + bred; //delta hue sharp
-
-        float dhuelc = ared * lp.senslc + bred; //delta hue local contrast
-
-        float dhuesf = ared * lp.senssf + bred; //delta hue soft light
-
-        float dhuecb = ared * lp.senscb + bred; //delta hue cbdl
-
-        float dhueexclu = ared * lp.sensexclu + bred; //delta hue exclude
-
-        float dhueden = ared * lp.sensden + bred; //delta hue lght chroma
 
         float moddE = 2.5f;
         float powdE = 6.f;
@@ -4878,17 +4858,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             //then restore non modified area
 
-            //TODO then use instead of others modifications Color and Light, Blur, etc.
-            float hueplus = hueref + dhueexclu;
-            float huemoins = hueref - dhueexclu;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhueexclu - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhueexclu + 2.f * rtengine::RT_PI;
-            }
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -5096,16 +5065,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             if (lp.blurmet != 1) { //blur and noise (center)
-                float hueplus = hueref + dhuebn;
-                float huemoins = hueref - dhuebn;
-
-                if (hueplus > rtengine::RT_PI) {
-                    hueplus = hueref + dhuebn - 2.f * rtengine::RT_PI;
-                }
-
-                if (huemoins < -rtengine::RT_PI) {
-                    huemoins = hueref - dhuebn + 2.f * rtengine::RT_PI;
-                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -5172,16 +5131,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfw = int (lp.lx + lp.lxL) + del;
 
             LabImage *bufwv = nullptr;
-            float hueplus = huerefblur + dhueden;
-            float huemoins = huerefblur - dhueden;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = huerefblur + dhueden - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = huerefblur - dhueden + 2.f * rtengine::RT_PI;
-            }
 
             if (call == 2) {//simpleprocess
                 bufwv = new LabImage(bfw, bfh); //buffer for data in zone limit
@@ -5274,16 +5223,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 levred = 7;
             }
 
-            float hueplus = huerefblur + dhueden;
-            float huemoins = huerefblur - dhueden;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = huerefblur + dhueden - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = huerefblur - dhueden + 2.f * rtengine::RT_PI;
-            }
 
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
@@ -6377,18 +6316,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
             //  printf("OK appel vib loc\n");
-            float hueplus = hueref + dhuev;
-            float huemoins = hueref - dhuev;
-
-            //  printf ("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhuev);
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuev - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuev + 2.f * rtengine::RT_PI;
-            }
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
@@ -6503,6 +6430,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
             JaggedArray<float> buflight(bfw, bfh);
+            float hueplus = hueref + dhuetm;
+            float huemoins = hueref - dhuetm;
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhuetm - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhuetm + 2.f * rtengine::RT_PI;
+            }
 
             if (call <= 3) { //simpleprocess dcrop improcc
 
@@ -6552,16 +6489,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 delete tmp;
             }
 */
-            float hueplus = hueref + dhuetm;
-            float huemoins = hueref - dhuetm;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuetm - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuetm + 2.f * rtengine::RT_PI;
-            }
 
             int begy = lp.yc - lp.lyT;
             int begx = lp.xc - lp.lxL;
@@ -6619,16 +6546,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int choice = 0;
 
             // I initialize these variable in case of !
-            float hueplus = hueref + dhuecb;
-            float huemoins = hueref - dhuecb;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuecb - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuecb + 2.f * rtengine::RT_PI;
-            }
 
 
             if (call <= 3) { //call from simpleprocess dcrop improcc
@@ -6755,17 +6672,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 // soft light
         if (lp.strng > 0.f && call < 3  && lp.sfena) {
-            float hueplus = hueref + dhuesf;
-            float huemoins = hueref - dhuesf;
-
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuesf - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuesf + 2.f * rtengine::RT_PI;
-            }
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
@@ -6906,16 +6812,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }
 
-            float hueplus = hueref + dhuelc;
-            float huemoins = hueref - dhuelc;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuelc - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuelc + 2.f * rtengine::RT_PI;
-            }
 
             //sharpen ellipse and transition
             Sharp_Local(call, loctemp, 1,  hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
@@ -6963,16 +6859,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }
 
-            float hueplus = hueref + dhuesha;
-            float huemoins = hueref - dhuesha;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuesha - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuesha + 2.f * rtengine::RT_PI;
-            }
 
             //sharpen ellipse and transition
             Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
@@ -6984,16 +6870,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur / 100.);
 
-            float hueplus = hueref + dhuesha;
-            float huemoins = hueref - dhuesha;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhuesha - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhuesha + 2.f * rtengine::RT_PI;
-            }
 
             InverseSharp_Local(loctemp, hueref, lumaref, chromaref, lp, original, transformed, cx, cy, sk);
         }
@@ -7009,17 +6885,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfw = int (lp.lx + lp.lxL) + del;
             JaggedArray<float> buflight(bfw, bfh);
             JaggedArray<float> bufchro(bfw, bfh);
-
-            float hueplus = hueref + dhueret;
-            float huemoins = hueref - dhueret;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhueret - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhueret + 2.f * rtengine::RT_PI;
-            }
 
             int Hd, Wd;
             Hd = GH;
@@ -7261,18 +7126,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
         if (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4 || (exlocalcurve  && localexutili))) { //interior ellipse renforced lightness and chroma  //locallutili
-            float hueplus = hueref + dhueex;
-            float huemoins = hueref - dhueex;
-
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhueex - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhueex + 2.f * rtengine::RT_PI;
-            }
-
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
             LabImage *bufexptemp = nullptr;
@@ -7777,16 +7630,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
 //        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0  || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
-            float hueplus = hueref + dhue;
-            float huemoins = hueref - dhue;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
-            }
 
 //provisory fixe for contrast slider does not work at all
             //  lp.cont = 0;
@@ -8302,16 +8145,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 //inverse
         else if (lp.inv  && (lp.chro != 0 || lp.ligh != 0) && lp.colorena) {
-            float hueplus = hueref + dhue;
-            float huemoins = hueref - dhue;
-
-            if (hueplus > rtengine::RT_PI) {
-                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
-            }
-
-            if (huemoins < -rtengine::RT_PI) {
-                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
-            }
 
             InverseColorLight_Local(lp, lightCurveloc, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
