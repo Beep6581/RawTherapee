@@ -2947,26 +2947,15 @@ static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurvel
 }
 
 
-void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, const float lumaref, const float chromaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local sharp
     //  BENCHFUN
     const float ach = (float)lp.trans / 100.f;
-    constexpr float delhu = 0.1f; //between 0.05 and 0.2
-
-    const float apl = (-1.f) / delhu;
-    const float bpl = - apl * hueplus;
-    const float amo = 1.f / delhu;
-    const float bmo = - amo * huemoins;
-
-
-    const float pb = 4.f;
-    const float pa = (1.f - pb) / 40.f;
-
-    const float ahu = 1.f / (2.8f * lp.senssha - 280.f);
-    const float bhu = 1.f - ahu * 2.8f * lp.senssha;
     int GW = transformed->W;
     int GH = transformed->H;
+    float refa = chromaref * cos(hueref);
+    float refb = chromaref * sin(hueref);
 
     LabImage *origblur = nullptr;
 
@@ -3020,11 +3009,11 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
             for (int x = 0; x < transformed->W; x++) {
                 int lox = cx + x;
 #ifdef __SSE2__
-                float rhue = atan2Buffer[x];
-                float rchro = sqrtBuffer[x];
+//                float rhue = atan2Buffer[x];
+//                float rchro = sqrtBuffer[x];
 #else
-                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
+//                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+//                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
                 int zone;
                 float localFactor = 1.f;
@@ -3035,115 +3024,37 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
-                //prepare shape detection
-                float khu = 0.f;
-                float kch = 1.f;
-                float fach = 1.f;
-                float deltachro = fabs(rchro - chromaref);
-                float deltahue = fabs(rhue - hueref);
+                float rL = origblur->L[y][x] / 327.68f;
+                float reducdE = 0.f;
+                float dE = 0.f;
+                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                float mindE = 2.f + 0.05f * lp.senssha;//between 2 and 7
+                float maxdE = 5.f + 1.5f * lp.senssha; // between 5 and 150, we can chnage this values
 
-                if (deltahue > rtengine::RT_PI) {
-                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
+                float ar = 1.f / (mindE - maxdE);
+
+                float br = - ar * maxdE;
+
+                if (dE > maxdE) {
+                    reducdE = 0.f;
                 }
 
-                float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-
-                //kch to modulate action with chroma
-                if (deltachro < 160.f * SQR(lp.senssha / 100.f)) {
-                    kch = 1.f;
-                } else {
-                    float ck = 160.f * SQR(lp.senssha / 100.f);
-                    float ak = 1.f / (ck - 160.f);
-                    float bk = -160.f * ak;
-                    kch = ak * deltachro + bk;
+                if (dE > mindE && dE <= maxdE) {
+                    reducdE = ar * dE + br;
                 }
 
-                if (lp.senssha < 40.f) {
-                    kch = pow(kch, pa * lp.senssha + pb);    //increase under 40
+                if (dE <= mindE) {
+                    reducdE = 1.f;
                 }
 
-
-                // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                if (lp.senssha < 20.f) { //to try...
-                    //hue detection
-                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
-                        if (rhue >= hueplus - delhu)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-                    }
-
-                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                            khu  = apl * rhue + bpl;
-                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                            khu = amo * rhue + bmo;
-                        } else {
-                            khu = 1.f;
-                        }
-
-                    }
-
-                    if (deltaE <  2.8f * lp.senssha) {
-                        fach = khu;
-                    } else {
-                        fach = khu * (ahu * deltaE + bhu);
-                    }
-
-
-                    float kcr = 10.f;
-
-                    if (rchro < kcr) {
-                        fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                    }
-
-                    if (lp.qualmet >= 1) {
-                    } else {
-                        fach = 1.f;
-                    }
-
-                    //fach = khu ;
-
-                } else {
-                    /*
-                        float kcr = 8.f;
-                        if(lp.senssha > 30.f){
-                        if (rchro < kcr) {
-                            fach *= (1.f / (kcr)) * rchro;
-
-                        }
-                        }
-                        */
+                if (lp.senssha >  99) {
+                    reducdE = 1.f;
                 }
-
-
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
                         float difL = loctemp[y][x] - original->L[y][x];
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
                         break;
                     }
@@ -3154,7 +3065,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueplus, c
                         float factorx = 1.f - localFactor;
                         difL *= factorx;
 
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * kch * fach);
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
                         break;
                     }
 
@@ -4186,6 +4097,10 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                 }
 
                 if (dE <= mindE) {
+                    reducdE = 1.f;
+                }
+
+                if (lp.sens > 99) {
                     reducdE = 1.f;
                 }
 
@@ -7080,7 +6995,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 huemoins = hueref - dhuesha + 2.f * rtengine::RT_PI;
             }
 
-            InverseSharp_Local(loctemp, hueplus, huemoins, hueref, dhuesha, chromaref, lp, original, transformed, cx, cy, sk);
+            InverseSharp_Local(loctemp, hueref, lumaref, chromaref, lp, original, transformed, cx, cy, sk);
         }
 
         //      }

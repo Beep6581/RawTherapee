@@ -2410,7 +2410,7 @@ void Locallab::inversshaChanged()
     if (multiImage && inverssha->get_inconsistent()) {
         sensisha->show();
     } else if (inverssha->get_active()) {
-        sensisha->hide();
+        sensisha->show();
     } else {
         sensisha->show();
     }
@@ -4058,7 +4058,7 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && inverssha->get_inconsistent()) {
         sensisha->show();
     } else if (inverssha->get_active()) {
-        sensisha->hide();
+        sensisha->show();
     } else {
         sensisha->show();
     }
