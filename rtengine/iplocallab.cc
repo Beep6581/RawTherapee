@@ -4075,78 +4075,16 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
     }
 }
 
-void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LUTf & lightCurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, int sk)
+void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LUTf & lightCurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
     const float facc = (100.f + lp.chro) / 100.f; //chroma factor transition
 
-    //chroma
-    constexpr float amplchsens = 2.5f;
-    constexpr float achsens = (amplchsens - 1.f) / (100.f - 20.f); //20. default locallab.sensi
-    constexpr float bchsens = 1.f - 20.f * achsens;
-    const float multchro = lp.sens * achsens + bchsens;
-
-    //luma
-    constexpr float ampllumsens = 2.f;
-    constexpr float alumsens = (ampllumsens - 1.f) / (100.f - 20.f); //20. default locallab.sensi
-    constexpr float blumsens = 1.f - 20.f * alumsens;
-    const float multlum = lp.sens * alumsens + blumsens;
-
-    //skin
-    constexpr float amplchsensskin = 1.6f;
-    constexpr float achsensskin = (amplchsensskin - 1.f) / (100.f - 20.f); //20. default locallab.sensi
-    constexpr float bchsensskin = 1.f - 20.f * achsensskin;
-    const float multchroskin = lp.sens * achsensskin + bchsensskin;
-
-    //transition = difficult to avoid artifact with scope on flat area (sky...)
-    constexpr float delhu = 0.05f; //between 0.05 and 0.2 ==> minima for scope
-
-    const float aplus = (1.f - lp.chro) / delhu;
-    const float bplus = 1.f - aplus * hueplus;
-    const float amoins = (lp.chro - 1.f) / delhu;
-    const float bmoins = 1.f - amoins * huemoins;
-
-    const float apl = (-1.f) / delhu;
-    const float bpl = - apl * hueplus;
-    const float amo = 1.f / delhu;
-    const float bmo = - amo * huemoins;
-
-    const float pb = 4.f;
-    const float pa = (1.f - pb) / 40.f;
-
-    const float ahu = 1.f / (2.8f * lp.sens - 280.f);
-    const float bhu = 1.f - ahu * 2.8f * lp.sens;
-
-    //luma
-    constexpr float lumdelta = 11.f; //11
-    float modlum = lumdelta * multlum;
-
-    // constant and variables to prepare shape detection
-    if (lumaref + modlum >= 100.f) {
-        modlum = (100.f - lumaref) / 2.f;
-    }
-
-    if (lumaref - modlum <= 0.f) {
-        modlum = (lumaref) / 2.f;
-    }
-
-    float aa, bb, aaa, bbb, ccc;
-    float reducac = settings->reduchigh;//0.85f;
-    float reducac2 = settings->reduclow;//0.2f;
-
-    float vinf = (lumaref + modlum) / 100.f;
-    float vi = (lumaref - modlum) / 100.f;
-    ImProcFunctions::secondeg_begin(reducac, vi, aa, bb); //parabolic
-    ImProcFunctions::secondeg_end(reducac, vinf, aaa, bbb, ccc); //parabolic
-    float vinf2 = (lumaref + modlum) / 100.f;
-    float vi2 = (lumaref - modlum) / 100.f;
-    float aaaa, bbbb, cccc, aO, bO;
-    ImProcFunctions::secondeg_end(reducac2, vinf2, aaaa, bbbb, cccc); //parabolic
-    ImProcFunctions::secondeg_begin(reducac2, vi2, aO, bO); //parabolic
-
     int GW = transformed->W;
     int GH = transformed->H;
+    float refa = chromaref * cos(hueref);
+    float refb = chromaref * sin(hueref);
 
     LabImage *origblur = nullptr;
 
@@ -4213,245 +4151,43 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 
 #ifdef __SSE2__
-                float rhue = atan2Buffer[x];
-                float rchro = sqrtBuffer[x];
+//               float rhue = atan2Buffer[x];
+//               float rchro = sqrtBuffer[x];
 #else
 
-                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+//                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
 
-                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
+//                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
 #endif
 
                 float rL = origblur->L[y][x] / 327.68f;
-                float rLL = origblur->L[y][x] / 327.68f;
 
                 if (fabs(origblur->b[y][x]) < 0.01f) {
                     origblur->b[y][x] = 0.01f;
                 }
 
+                float dE = 0.f;
+                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
-                float realchro = 1.f;
-                //evaluate delta Hue and delta Chro
-                float deltachro = fabs(rchro - chromaref);
+                float reducdE = 0.f;
+                float mindE = 2.f + 0.05f * lp.sens;//between 2 and 7
+                float maxdE = 5.f + 1.5f * lp.sens; // between 5 and 150, we can chnage this values
 
-                float deltahue = fabs(rhue - hueref);
+                float ar = 1.f / (mindE - maxdE);
 
-                if (deltahue > rtengine::RT_PI) {
-                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
+                float br = - ar * maxdE;
+
+                if (dE > maxdE) {
+                    reducdE = 0.f;
                 }
 
-                //pseudo deltaE
-                float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
-                float deltaL = fabs(lumaref - rL);  //between 0 and 100
-
-                float kch = 1.f;
-                float khu = 0.f;
-                float fach = 1.f;
-                float falu = 1.f;
-
-                //kch acts on luma
-                if (deltachro < 160.f * SQR(lp.sens / 100.f)) {
-                    kch = 1.f;
-                } else {
-                    float ck = 160.f * SQR(lp.sens / 100.f);
-                    float ak = 1.f / (ck - 160.f);
-                    float bk = -160.f * ak;
-                    kch = ak * deltachro + bk;
+                if (dE > mindE && dE <= maxdE) {
+                    reducdE = ar * dE + br;
                 }
 
-                if (lp.sens < 40.f) {
-                    kch = pow(kch, pa * lp.sens + pb);    //increase under 40
+                if (dE <= mindE) {
+                    reducdE = 1.f;
                 }
-
-                bool kzon = false;
-
-                if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                    if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                        realchro = aplus * rhue + bplus;
-                        khu  = apl * rhue + bpl;
-
-                    } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                        realchro = amoins * rhue + bmoins;
-                        khu = amo * rhue + bmo;
-
-                    } else {
-                        realchro = lp.chro;
-                        khu = 1.f;
-                    }
-
-                    kzon = true;
-                } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                    if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                        realchro = aplus * rhue + bplus;
-                        khu  = apl * rhue + bpl;
-
-                    } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                        realchro = amoins * rhue + bmoins;
-                        khu = amo * rhue + bmo;
-
-                    } else {
-                        realchro = lp.chro;
-                        khu = 1.f;
-                    }
-
-                    kzon = true;
-                }
-
-                if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
-                    if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                        realchro = aplus * rhue + bplus;
-                        khu  = apl * rhue + bpl;
-
-                    } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                        realchro = amoins * rhue + bmoins;
-                        khu = amo * rhue + bmo;
-
-                    } else {
-                        realchro = lp.chro;
-                        khu = 1.f;
-                    }
-
-                    kzon = true;
-                } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus)) {
-                    if (rhue >= hueplus - delhu  && rhue < hueplus)  {
-                        realchro = aplus * rhue + bplus;
-                        khu  = apl * rhue + bpl;
-
-                    } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
-                        realchro = amoins * rhue + bmoins;
-                        khu = amo * rhue + bmo;
-
-                    } else {
-                        realchro = lp.chro;
-                        khu = 1.f;
-                    }
-
-                    kzon = true;
-                }
-
-                if (lp.sens <= 20.f) { //to try...
-                    //fach and kch acts on luma
-                    if (deltaE <  2.8f * lp.sens) {
-                        fach = khu;
-                    } else {
-                        fach = khu * (ahu * deltaE + bhu);
-                    }
-
-                    float kcr = 10.f;
-
-                    if (rchro < kcr) {
-                        fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                    }
-
-                    //can be probably improved
-                    if (lp.qualmet >= 1) {
-                    } else {
-                        fach = 1.f;
-                    }
-
-                    //falu acts on chroma
-                    if (deltaL <  lp.sens) {
-                        falu = 1.f;
-                    } else {
-                        falu = 1.f;// alum * deltaL + blum;
-                    }
-
-                }
-
-                if (kzon) {
-                    if (lp.sens < 60.f) { //arbitrary value
-                        if (hueref < -1.1f && hueref > -2.8f) { // detect blue sky
-                            if (chromaref > 0.f && chromaref < 35.f * multchro) { // detect blue sky
-                                if ((rhue > -2.79f && rhue < -1.11f) && (rchro < 35.f * multchro)) {
-                                    realchro *= 0.9f;
-                                } else {
-                                    realchro = 1.f;
-
-                                }
-                            }
-                        } else {
-                            realchro = lp.chro;
-
-                        }
-
-                        if (lp.sens < 50.f && lp.chro > 0.f) {
-                            if (hueref > -0.1f && hueref < 1.6f) { // detect skin
-                                if (chromaref > 0.f && chromaref < 55.f * multchroskin) { // detect skin
-                                    if ((rhue > -0.09f && rhue < 1.59f) && (rchro < 55.f * multchroskin)) {
-                                        realchro *= 0.9f;
-
-                                    } else {
-                                        realchro = 1.f;
-
-                                    }
-                                }
-                            } else {
-                                realchro = lp.chro;
-
-                            }
-                        }
-                    }
-
-                }
-
-                float kLinf = rLL / (100.f);
-                float kLsup = kLinf;
-
-                float kdiff = 1.f;
-
-                if (kzon) { ///rhue < hueplus && rhue > huemoins
-
-                    if ((rLL > (lumaref - modlum) && rLL < (lumaref + modlum))) {
-                        kdiff = 1.f;
-                    } else if (rLL > 0.f && rLL <= (lumaref - modlum)) {
-                        kdiff = (aa * kLinf * kLinf + bb * kLinf);   //parabolic
-
-                        if (kdiff < 0.01f) {
-                            kdiff = 0.01f;
-                        }
-                    } else if (rLL <= 100.f && rLL >= (lumaref + modlum)) {
-
-                        kdiff = (aaa * kLsup * kLsup + bbb * kLsup + ccc);   //parabolic
-
-                        if (kdiff < 0.01f) {
-                            kdiff = 0.01f;
-                        }
-
-                    }
-
-                    //end luma
-                } else {
-                    float ktes = 1.f;
-
-                    if ((rLL > (lumaref - modlum) && rLL < (lumaref + modlum))) {
-                        kdiff = ktes;
-                    } else if (rLL > 0.f && rLL <= (lumaref - modlum)) {
-
-                        kdiff = (ktes * (aO * kLinf * kLinf + bO * kLinf));    //parabolic
-
-                        if (kdiff < 0.01f) {
-                            kdiff = 0.01f;
-                        }
-
-                    } else if (rLL <= 100.f && rLL >= (lumaref + modlum)) {
-
-                        kdiff = (ktes * (aaaa * kLsup * kLsup + bbbb * kLsup + cccc));    //parabolic
-
-                        if (kdiff < 0.01f) {
-                            kdiff = 0.01f;
-                        }
-
-                    }
-
-                }
-
-                float kcr = 100.f * lp.thr;
-                float falL = 1.f;
-
-                if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
-                    falL *= pow(rchro / kcr, lp.iterat / 10.f);
-                }
-
 
                 float th_r = 0.01f;
 
@@ -4480,13 +4216,8 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                 }
 
                                 float factorx = 1.f - localFactor;
-                                float fli = 1.f;
-                                float flisl = 1.f;
-                                float flicur = 1.f;
-                                float fac = flicur * (100.f + factorx * realchro * falu * falL) / 100.f;  //chroma factor transition
-                                float diflc = lightcont * fli * flisl - original->L[y][x];
-                                kdiff *= fach * kch;
-                                diflc *= kdiff ;
+                                float fac = (100.f + factorx * lp.chro * reducdE) / 100.f; //chroma factor transition
+                                float diflc = (lightcont - original->L[y][x]) * reducdE;
 
                                 diflc *= factorx; //transition lightness
                                 transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
@@ -4531,15 +4262,9 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                                     lightcont = lumnew;
                                 }
 
-                                float fli = 1.f;
-                                float flisl = 1.f;
-                                float flicur = 1.f;
-                                float fac = flicur * (100.f + realchro * falu * falL) / 100.f; //chroma factor transition7
+                                float fac = (100.f + lp.chro * reducdE) / 100.f; //chroma factor transition
+                                float diflc = (lightcont - original->L[y][x]) * reducdE;
 
-                                float diflc = lightcont * fli * flisl - original->L[y][x];
-
-                                kdiff *= fach * kch;
-                                diflc *= kdiff ;
                                 transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
 
                                 transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
@@ -8673,7 +8398,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
-            InverseColorLight_Local(lp, lightCurveloc, original, transformed, cx, cy,  hueplus, huemoins, hueref, dhue, chromaref, lumaref, sk);
+            InverseColorLight_Local(lp, lightCurveloc, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash

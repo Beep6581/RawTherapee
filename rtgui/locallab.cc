@@ -2306,6 +2306,8 @@ void Locallab::inversChanged()
         qualitycurveMethod->show();
         labqualcurv->show();
         maskcolFrame->show();
+        structcol->show();
+        blurcolde->show();
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (invers->get_active()) {
         sensi->show();
@@ -2314,6 +2316,9 @@ void Locallab::inversChanged()
         qualitycurveMethod->hide();
         labqualcurv->hide();
         maskcolFrame->hide();
+        structcol->hide();
+        blurcolde->hide();
+
     } else {
         sensi->show();
         llCurveEditorG->show();
@@ -2321,6 +2326,9 @@ void Locallab::inversChanged()
         qualitycurveMethod->show();
         labqualcurv->show();
         maskcolFrame->show();
+        structcol->show();
+        blurcolde->show();
+
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }
@@ -3974,6 +3982,8 @@ void Locallab::updateSpecificGUIState()
         qualitycurveMethod->show();
         labqualcurv->show();
         maskcolFrame->show();
+        structcol->show();
+        blurcolde->show();
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (invers->get_active()) {
         sensi->show();
@@ -3982,6 +3992,8 @@ void Locallab::updateSpecificGUIState()
         qualitycurveMethod->hide();
         labqualcurv->hide();
         maskcolFrame->hide();
+        structcol->hide();
+        blurcolde->hide();
     } else {
         sensi->show();
         llCurveEditorG->show();
@@ -3989,6 +4001,8 @@ void Locallab::updateSpecificGUIState()
         qualitycurveMethod->show();
         labqualcurv->show();
         maskcolFrame->show();
+        structcol->show();
+        blurcolde->show();
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }
