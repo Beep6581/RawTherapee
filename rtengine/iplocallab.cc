@@ -8151,6 +8151,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash
         if (params->locallab.spots.at(sp).avoid) {
+            const float ach = (float)lp.trans / 100.f;
+
             TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
             float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
@@ -8181,6 +8183,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                 for (int y = 0; y < transformed->H; y++) {
+                    const int loy = cy + y;
+                    const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+                    if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+
+                        continue;
+                    }
+
 #ifdef __SSE2__
                     int i = 0;
 
@@ -8227,6 +8237,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                     for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        //    int begx = int (lp.xc - lp.lxL);
+                        //    int begy = int (lp.yc - lp.lyT);
+                        int zone = 0;
+                        float localFactor = 1.f;
+
+                        if (lp.shapmet == 0) {
+                            calcTransition(lox, loy, ach, lp, zone, localFactor);
+                        } else if (lp.shapmet == 1) {
+                            calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                        }
+
+                        if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                            continue;
+                        }
+
                         float Lprov1 = transformed->L[y][x] / 327.68f;
                         float2 sincosval;
 #ifdef __SSE2__
