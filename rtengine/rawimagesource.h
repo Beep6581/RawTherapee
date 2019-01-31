@@ -93,9 +93,6 @@ protected:
     std::vector<double> histMatchingCache;
     ColorManagementParams histMatchingParams;
 
-    void hphd_vertical       (float** hpmap, int col_from, int col_to);
-    void hphd_horizontal     (float** hpmap, int row_from, int row_to);
-    void hphd_green          (float** hpmap);
     void processFalseColorCorrectionThread (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
     void hlRecovery          (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
     void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
