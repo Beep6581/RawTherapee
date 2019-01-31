@@ -1861,7 +1861,7 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
 }
 
 
-void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, float ** buflight, float ** buf_a, float ** buf_b,  int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
 {
     //warning, but I hope used it next
     // local denoise and impulse
@@ -5200,7 +5200,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             //    DeNoise_Local_imp(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
-            DeNoise_Local(call, lp,  nullptr, nullptr, nullptr, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
+            DeNoise_Local(call, lp, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
 
             delete bufwv;
         }
@@ -5232,56 +5232,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
             if (call == 1) {
-                //printf("OK sk=1\n");
-//                int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-//                int bfw = int (lp.lx + lp.lxL) + del;
-//                LabImage bufwvbeg(bfw, bfh);
-//                bufwvbeg.clear(true);
-//                LabImage bufwvend(bfw, bfh);
-//                bufwvend.clear(true);
-
-//                JaggedArray<float> buflight(bfw, bfh);
-//                JaggedArray<float> buf_a(bfw, bfh);
-//                JaggedArray<float> buf_b(bfw, bfh);
-
-
-
-
-                /*
-                #ifdef _OPENMP
-                                #pragma omp parallel for
-                #endif
-
-                                for (int ir = 0; ir < bfh; ir++) //fill with 0
-                                    for (int jr = 0; jr < bfw; jr++) {
-                                        buflight[ir][jr] = 0.f;
-                                        buf_a[ir][jr] = 0.f;
-                                        buf_b[ir][jr] = 0.f;
-                                    }
-
-                                int begy = lp.yc - lp.lyT;
-                                int begx = lp.xc - lp.lxL;
-                                int yEn = lp.yc + lp.ly;
-                                int xEn = lp.xc + lp.lx;
-                */
-                /*
-                #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-                #endif
-
-                                for (int y = 0; y < transformed->H ; y++) //{
-                                    for (int x = 0; x < transformed->W; x++) {
-                                        int lox = cx + x;
-                                        int loy = cy + y;
-
-                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                            bufwvbeg.L[loy - begy][lox - begx] = original->L[y][x];
-                                            bufwvbeg.a[loy - begy][lox - begx] = original->a[y][x];
-                                            bufwvbeg.b[loy - begy][lox - begx] = original->b[y][x];
-                                        }
-
-                                    }
-                */
 
 
                 LabImage tmp1(transformed->W, transformed->H);
@@ -5765,49 +5715,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 }
 
-                /*
-                #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-                #endif
-
-                                for (int y = 0; y < transformed->H ; y++) //{
-                                    for (int x = 0; x < transformed->W; x++) {
-                                        int lox = cx + x;
-                                        int loy = cy + y;
-
-                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                            bufwvend.L[loy - begy][lox - begx] = tmp1.L[y][x];
-                                            bufwvend.a[loy - begy][lox - begx] = tmp1.a[y][x];
-                                            bufwvend.b[loy - begy][lox - begx] = tmp1.b[y][x];
-                                        }
-
-                                    }
-
-                #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-                #endif
-
-                                for (int y = 0; y < transformed->H ; y++) //{
-                                    for (int x = 0; x < transformed->W; x++) {
-                                        int lox = cx + x;
-                                        int loy = cy + y;
-
-                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                            float rL;
-                                            rL = CLIPRET((bufwvend.L[loy - begy][lox - begx] - bufwvbeg.L[loy - begy][lox - begx]) / 328.f);
-                                            buflight[loy - begy][lox - begx] = rL;
-                                            float ra;
-                                            ra = CLIPRET((bufwvend.a[loy - begy][lox - begx] - bufwvbeg.a[loy - begy][lox - begx]) / 328.f);
-                                            buf_a[loy - begy][lox - begx] = ra;
-                                            float rb;
-                                            rb = CLIPRET((bufwvend.b[loy - begy][lox - begx] - bufwvbeg.b[loy - begy][lox - begx]) / 328.f);
-                                            buf_b[loy - begy][lox - begx] = ra;
-                                        }
-
-                                    }
-                */
                 //  DeNoise_Local(call, lp,  buflight, buf_a, buf_b, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
-                DeNoise_Local(call, lp,  nullptr, nullptr, nullptr, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
+                DeNoise_Local(call, lp, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
 
             } else if (call == 2 /* || call == 1 || call == 3 */) { //simpleprocess
 
@@ -6306,7 +6215,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                 */
 
-                DeNoise_Local(call, lp, nullptr, nullptr, nullptr, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
+                DeNoise_Local(call, lp, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
             }
 
         }

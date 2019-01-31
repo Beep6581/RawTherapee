@@ -303,7 +303,7 @@ public:
     void exlabLocal(const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve);
     void Exclude_Local(int sen, float **deltaso, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, LabImage * reserv, int cx, int cy, int sk);
 
-    void DeNoise_Local(int call, const struct local_params& lp,  float ** buflight, float ** buf_a, float ** buf_b, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk);
+    void DeNoise_Local(int call, const struct local_params& lp, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk);
 
 
     void fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin,  int numThreads, const struct local_params & lp, int chrom);
