@@ -25,7 +25,7 @@
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -54,7 +54,7 @@ void hphd_vertical(const array2D<float> &rawData, float** hpmap, int col_from, i
         for (int i = 5; i < H - 5; i++) {
             #pragma omp simd
             for(int h = 0; h < numCols; ++h) {
-                temp[i][h] = std::fabs((rawData[i - 5][k + h] - rawData[i + 5][k + h])  - 8 * (rawData[i - 4][k + h] - rawData[i + 4][k + h]) + 27 * (rawData[i - 3][k + h] - rawData[i + 3][k + h]) - 48 * (rawData[i - 2][k + h] - rawData[i + 2][k + h]) + 42 * (rawData[i - 1][k + h] - rawData[i - 1][k + h]));
+                temp[i][h] = std::fabs((rawData[i - 5][k + h] - rawData[i + 5][k + h])  - 8 * (rawData[i - 4][k + h] - rawData[i + 4][k + h]) + 27 * (rawData[i - 3][k + h] - rawData[i + 3][k + h]) - 48 * (rawData[i - 2][k + h] - rawData[i + 2][k + h]) + 42 * (rawData[i - 1][k + h] - rawData[i + 1][k + h]));
             }
         }
 
