@@ -25,7 +25,7 @@
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
