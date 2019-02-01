@@ -251,7 +251,6 @@ protected:
 
     void nodemosaic(bool bw);
     void eahd_demosaic();
-    void hphd_demosaic();
     void ppg_demosaic();
     void jdl_interpolate_omp();
     void dual_demosaic(bool isBayer, const RAWParams &raw, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false);

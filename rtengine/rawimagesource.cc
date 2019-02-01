@@ -2078,7 +2078,16 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         const unsigned cfa4[2][2] = {{PFC(0,0), PFC(0,1)},{PFC(1,0),PFC(1,1)}};
         const unsigned cfa[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
         if ( raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD) ) {
-            hphd_demosaic ();
+            if (plistener) {
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)));
+                plistener->setProgress(0.0);
+            }
+            std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                if(plistener)
+                    plistener->setProgress(p);
+                return false;
+            };
+            hphd_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4) ) {
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)));
@@ -2089,7 +2098,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                     plistener->setProgress(p);
                 return false;
             };
-            vng4_demosaic (W, H, rawData, red, green, blue, cfa4, setProgCancel);
+            vng4_demosaic(W, H, rawData, red, green, blue, cfa4, setProgCancel);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD) ) {
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD)));
@@ -2119,9 +2128,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {
             if (!autoContrast) {
                 double threshold = raw.bayersensor.dualDemosaicContrast;
-                dual_demosaic (true, raw, W, H, rawData, red, green, blue, threshold, false);
+                dual_demosaic(true, raw, W, H, rawData, red, green, blue, threshold, false);
             } else {
-                dual_demosaic (true, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
+                dual_demosaic(true, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT) ) {
             pixelshift(0, 0, W, H, raw, currFrame, ri->get_maker(), ri->get_model(), raw.expos);
@@ -2171,7 +2180,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                     plistener->setProgress(p);
                 return false;
             };
-            bayerfast_demosaic (W, H, rawData, red, green, blue, cfa, setProgCancel, initialGain);
+            bayerfast_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel, initialGain);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) ) {
             nodemosaic(true);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD) ) {
@@ -2183,7 +2192,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                     plistener->setProgress(p);
                 return false;
             };
-            rcd_demosaic (W, H, rawData, red, green, blue, cfa, setProgCancel);
+            rcd_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel);
         } else {
             nodemosaic(false);
         }
@@ -2218,9 +2227,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) || raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::TWO_PASS)) {
             if (!autoContrast) {
                 double threshold = raw.xtranssensor.dualDemosaicContrast;
-                dual_demosaic (false, raw, W, H, rawData, red, green, blue, threshold, false);
+                dual_demosaic(false, raw, W, H, rawData, red, green, blue, threshold, false);
             } else {
-                dual_demosaic (false, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
+                dual_demosaic(false, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
             }
         } else if(raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) ) {
             nodemosaic(true);
