@@ -192,7 +192,6 @@ public:
 #endif
 
     void thumbRearrangementNeeded () override;
-    void _thumbRearrangementNeeded ();
 
     void selectionChanged () override;
 

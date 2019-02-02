@@ -149,11 +149,11 @@ static double wbTemp2Slider(double temp)
 
 WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL"), false, true), wbp(nullptr), wblistener(nullptr)
 {
-    
+
     Gtk::Grid* methodgrid = Gtk::manage(new Gtk::Grid());
     methodgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(methodgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    
+
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_METHOD") + ":"));
     setExpandAlignProperties(lab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
@@ -263,7 +263,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
     Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_SIZE")));
     setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     Gtk::Grid* wbsizehelper = Gtk::manage(new Gtk::Grid());
     wbsizehelper->set_name("WB-Size-Helper");
     setExpandAlignProperties(wbsizehelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -299,14 +299,14 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     if (options.whiteBalanceSpotSize == 32) {
         spotsize->set_active(4);
     }
-    
+
     wbsizehelper->attach (*spotsize, 0, 0, 1, 1);
 
     spotgrid->attach (*spotbutton, 0, 0, 1, 1);
     spotgrid->attach (*slab, 1, 0, 1, 1);
     spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
     pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
-    
+
     Gtk::HSeparator *separator = Gtk::manage (new  Gtk::HSeparator());
     separator->get_style_context()->add_class("grid-row-separator");
     pack_start (*separator, Gtk::PACK_SHRINK, 0);
@@ -700,7 +700,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         set_inconsistent(multiImage && !pedited->wb.enabled);
     }
 
-    
+
     methconn.block (false);
     enableListener ();
 }
@@ -913,28 +913,18 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
 
 void WhiteBalance::WBChanged(double temperature, double greenVal)
 {
-    struct Data {
-        WhiteBalance* self;
-        double temperature;
-        double green_val;
-    };
+    idle_register.add(
+        [this, temperature, greenVal]() -> bool
+        {
+            disableListener();
+            setEnabled(true);
+            temp->setValue(temperature);
+            green->setValue(greenVal);
+            temp->setDefault(temperature);
+            green->setDefault(greenVal);
+            enableListener();
 
-    const auto func = [](gpointer data) -> gboolean {
-        WhiteBalance* const self = static_cast<WhiteBalance*>(static_cast<Data*>(data)->self);
-        const double temperature = static_cast<Data*>(data)->temperature;
-        const double green_val = static_cast<Data*>(data)->green_val;
-        delete static_cast<Data*>(data);
-
-        self->disableListener();
-        self->setEnabled(true);
-        self->temp->setValue(temperature);
-        self->green->setValue(green_val);
-        self->temp->setDefault(temperature);
-        self->green->setDefault(green_val);
-        self->enableListener();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, new Data{this, temperature, greenVal});
+            return false;
+        }
+    );
 }

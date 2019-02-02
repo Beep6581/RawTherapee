@@ -1236,7 +1236,7 @@ private:
         cmsHPROFILE jprof = nullptr;
         constexpr bool customGamma = false;
         constexpr bool useLCMS = false;
-        bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
+        bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && !params.colorappearance.enabled;
 
         ///////////// Custom output gamma has been removed, the user now has to create
         ///////////// a new output profile with the ICCProfileCreator

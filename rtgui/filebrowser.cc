@@ -565,32 +565,22 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
 
 void FileBrowser::addEntry (FileBrowserEntry* entry)
 {
-    struct addparams {
-        FileBrowser *browser;
-        FileBrowserEntry *entry;
-        unsigned int session_id;
-    };
+    entry->setParent(this);
 
-    addparams* const ap = new addparams;
-    entry->setParent (this);
-    ap->browser = this;
-    ap->entry = entry;
-    ap->session_id = session_id();
+    const unsigned int sid = session_id();
 
-    const auto func = [](gpointer data) -> gboolean {
-        addparams* const ap = static_cast<addparams*>(data);
-        if (ap->session_id != ap->browser->session_id()) {
-            delete ap->entry;
-            delete ap;
-        } else {
-            ap->browser->addEntry_(ap->entry);
-            delete ap;
+    idle_register.add(
+        [this, entry, sid]() -> bool
+        {
+            if (sid != session_id()) {
+                delete entry;
+            } else {
+                addEntry_(entry);
+            }
+
+            return false;
         }
-
-        return FALSE;
-    };
-
-    idle_register.add(func, ap);
+    );
 }
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry)
@@ -1926,20 +1916,15 @@ void FileBrowser::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextP
     }
 }
 
-void FileBrowser::_thumbRearrangementNeeded ()
-{
-    refreshThumbImages ();  // arrangeFiles is NOT enough
-}
-
 void FileBrowser::thumbRearrangementNeeded ()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileBrowser*>(data)->_thumbRearrangementNeeded();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshThumbImages();// arrangeFiles is NOT enough
+            return false;
+        }
+    );
 }
 
 void FileBrowser::selectionChanged ()

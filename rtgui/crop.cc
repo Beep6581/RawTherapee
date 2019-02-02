@@ -28,31 +28,6 @@ extern Options options;
 namespace
 {
 
-class RefreshSpinHelper
-{
-
-public:
-    Crop* crop;
-    bool  notify;
-    RefreshSpinHelper (Crop* _crop, bool _notify)
-        : crop(_crop), notify(_notify) {}
-};
-
-int refreshSpinsUI (void* data)
-{
-    RefreshSpinHelper* rsh = static_cast<RefreshSpinHelper*>(data);
-    rsh->crop->refreshSpins (rsh->notify);
-    delete rsh;
-    return 0;
-}
-
-int notifyListenerUI (void* data)
-{
-    static_cast<Crop*>(data)->notifyListener();
-    return 0;
-}
-
-
 inline void get_custom_ratio(int w, int h, double &rw, double &rh)
 {
     if (w < h) {
@@ -122,28 +97,28 @@ Crop::Crop():
 
     Gtk::Label* xlab = Gtk::manage (new Gtk::Label (M("TP_CROP_X") + ":"));
     setExpandAlignProperties(xlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     x = Gtk::manage (new MySpinButton ());
     setExpandAlignProperties(x, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
     x->set_width_chars(6);
 
     Gtk::Label* ylab = Gtk::manage (new Gtk::Label (M("TP_CROP_Y") + ":"));
     setExpandAlignProperties(ylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     y = Gtk::manage (new MySpinButton ());
     setExpandAlignProperties(y, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
     y->set_width_chars(6);
-    
+
     Gtk::Label* wlab = Gtk::manage (new Gtk::Label (M("TP_CROP_W") + ":"));
     setExpandAlignProperties(wlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     w = Gtk::manage (new MySpinButton ());
     setExpandAlignProperties(w, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
     w->set_width_chars(6);
 
     Gtk::Label* hlab = Gtk::manage (new Gtk::Label (M("TP_CROP_H") + ":"));
     setExpandAlignProperties(hlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     h = Gtk::manage (new MySpinButton ());
     setExpandAlignProperties(h, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
     h->set_width_chars(6);
@@ -157,7 +132,7 @@ Crop::Crop():
     setExpandAlignProperties(resetCrop, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     resetCrop->get_style_context()->add_class("independent");
     resetCrop->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
-    
+
     methodgrid->attach (*xlab, 0, 0, 1, 1);
     methodgrid->attach (*x, 1, 0, 1, 1);
     methodgrid->attach (*ylab, 2, 0, 1, 1);
@@ -169,7 +144,7 @@ Crop::Crop():
     methodgrid->attach (*selectCrop, 0, 2, 2, 1);
     methodgrid->attach (*resetCrop, 2, 2, 2, 1);
     pack_start (*methodgrid, Gtk::PACK_EXPAND_WIDGET, 0 );
-    
+
     Gtk::HSeparator* methodseparator = Gtk::manage (new  Gtk::HSeparator());
     methodseparator->get_style_context()->add_class("grid-row-separator");
     pack_start (*methodseparator, Gtk::PACK_SHRINK, 0);
@@ -181,7 +156,7 @@ Crop::Crop():
     fixr = Gtk::manage (new Gtk::CheckButton (M("TP_CROP_FIXRATIO")));
     setExpandAlignProperties(fixr, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     fixr->set_active (1);
-    
+
     Gtk::Grid* ratiogrid = Gtk::manage(new Gtk::Grid());
     ratiogrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(ratiogrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -195,15 +170,15 @@ Crop::Crop():
     customRatioLabel = Gtk::manage(new Gtk::Label(""));
     customRatioLabel->hide();
     setExpandAlignProperties(customRatioLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-    
+
     ratiogrid->set_column_homogeneous (true);
     ratiogrid->attach (*ratio, 0, 0, 1, 1);
     ratiogrid->attach (*customRatioLabel, 1, 0, 1, 1);
     ratiogrid->attach (*orientation, 1, 0, 1, 1);
-    
+
     Gtk::Label* guidelab = Gtk::manage (new Gtk::Label (M("TP_CROP_GUIDETYPE")));
     setExpandAlignProperties(guidelab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     guide = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties(guide, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
@@ -222,27 +197,27 @@ Crop::Crop():
 
     Gtk::HSeparator* ppiseparator = Gtk::manage (new  Gtk::HSeparator());
     ppiseparator->get_style_context()->add_class("grid-row-separator");
-    
+
     Gtk::Grid* ppisubgrid = Gtk::manage(new Gtk::Grid());
     ppisubgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(ppisubgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     Gtk::Label* ppilab = Gtk::manage (new Gtk::Label (M("TP_CROP_PPI")));
     setExpandAlignProperties(ppilab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     ppi = Gtk::manage (new MySpinButton ());
     setExpandAlignProperties(ppi, true, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
     ppi->set_width_chars(6);
-    
+
     ppisubgrid->attach (*ppilab, 0, 0, 1, 1);
     ppisubgrid->attach (*ppi, 1, 0, 1, 1);
 
     sizecm = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " cm x " + M("GENERAL_NA") + " cm"));
     setExpandAlignProperties(sizecm, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-    
+
     sizein = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " in x " + M("GENERAL_NA") + " in"));
     setExpandAlignProperties(sizein, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-    
+
     ppigrid->attach (*ppiseparator, 0, 0, 2, 1);
     ppigrid->attach (*sizecm, 1, 1, 1, 1);
     ppigrid->attach (*sizein, 1, 2, 1, 1);
@@ -328,7 +303,7 @@ Crop::Crop():
     ppisubgrid->set_column_spacing(4);
 #endif
 //GTK318
-    
+
     show_all ();
 }
 
@@ -425,7 +400,7 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->crop.ratio == "Current") {
         ratio->set_active(1);
         updateCurrentRatio();
-        customRatioLabel->show();        
+        customRatioLabel->show();
         orientation->hide();
     } else {
         ratio->set_active_text (pp->crop.ratio);
@@ -591,7 +566,13 @@ void Crop::doresetCrop ()
     int W = maxw;
     int H = maxh;
     cropResized (X, Y, W, H);
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            notifyListener();
+            return false;
+        }
+    );
 
     refreshSpins();
 }
@@ -629,16 +610,26 @@ void Crop::enabledChanged ()
 
 void Crop::hFlipCrop ()
 {
-
     nx = maxw - nx - nw;
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::vFlipCrop ()
 {
-
     ny = maxh - ny - nh;
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::rotateCrop (int deg, bool hflip, bool vflip)
@@ -678,7 +669,13 @@ void Crop::rotateCrop (int deg, bool hflip, bool vflip)
     }
 
     lastRotationDeg = deg;
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::positionChanged ()
@@ -692,7 +689,13 @@ void Crop::positionChanged ()
     int W = nw;
     int H = nh;
     cropMoved (X, Y, W, H);
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            notifyListener();
+            return false;
+        }
+    );
 }
 
 void Crop::widthChanged ()
@@ -705,7 +708,13 @@ void Crop::widthChanged ()
     int W = (int)w->get_value ();
     int H = nh;
     cropWidth2Resized (X, Y, W, H);
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            notifyListener();
+            return false;
+        }
+    );
 }
 
 void Crop::heightChanged ()
@@ -718,7 +727,13 @@ void Crop::heightChanged ()
     int W = nw;
     int H = (int)h->get_value ();
     cropHeight2Resized (X, Y, W, H);
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            notifyListener();
+            return false;
+        }
+    );
 }
 
 // Fixed ratio toggle button
@@ -751,7 +766,7 @@ void Crop::ratioChanged ()
         orientation->show();
         customRatioLabel->hide();
     }
-    
+
     if (!fixr->get_active ()) {
         fixr->set_active(true);    // will adjust ratio anyway
     } else {
@@ -812,7 +827,13 @@ void Crop::adjustCropToRatio()
     }
 
     // This will save the options
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, true));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(true);
+            return false;
+        }
+    );
 }
 
 void Crop::refreshSize ()
@@ -886,26 +907,13 @@ void Crop::setDimensions (int mw, int mh)
 
 void Crop::sizeChanged(int x, int y, int ow, int oh)
 {
-    struct Params {
-        Crop* crop;
-        int x;
-        int y;
-    };
-
-    Params* const params = new Params{
-        this,
-        x,
-        y
-    };
-
-    const auto func = [](gpointer data) -> gboolean {
-        Params* const params = static_cast<Params*>(data);
-        params->crop->setDimensions(params->x, params->y);
-        delete params;
-        return FALSE;
-    };
-
-    idle_register.add(func, params);
+    idle_register.add(
+        [this, x, y]() -> bool
+        {
+            setDimensions(x, y);
+            return false;
+        }
+    );
 }
 
 bool Crop::refreshSpins (bool notify)
@@ -973,7 +981,13 @@ void Crop::cropMoved (int &X, int &Y, int &W, int &H)
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -1017,7 +1031,13 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H, float custom_ratio
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1057,7 +1077,13 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H, float custom_ratio
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1100,7 +1126,13 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H, float custom_rati
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1140,7 +1172,13 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H, float custom_rati
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1182,7 +1220,13 @@ void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H, float custom_rati
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1222,7 +1266,13 @@ void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H, float custom_rat
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1262,7 +1312,13 @@ void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H, float custom_r
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H, float custom_ratio)
@@ -1299,7 +1355,13 @@ void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H, float custom_
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropInit (int &x, int &y, int &w, int &h)
@@ -1413,12 +1475,24 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2)
     nw = W;
     nh = H;
 
-    idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshSpins(false);
+            return false;
+        }
+    );
 }
 
 void Crop::cropManipReady ()
 {
-    idle_register.add(notifyListenerUI, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            notifyListener();
+            return false;
+        }
+    );
 }
 
 double Crop::getRatio () const

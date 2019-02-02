@@ -338,13 +338,38 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
                 //     flags |= cmsFLAGS_GAMUTCHECK;
                 // }
 
+                const auto make_gamma_table =
+                    [](cmsHPROFILE prof, cmsTagSignature tag) -> void
+                    {
+                        cmsToneCurve *tc = static_cast<cmsToneCurve *>(cmsReadTag(prof, tag));
+                        if (tc) {
+                            const cmsUInt16Number *table = cmsGetToneCurveEstimatedTable(tc);
+                            cmsToneCurve *tc16 = cmsBuildTabulatedToneCurve16(nullptr, cmsGetToneCurveEstimatedTableEntries(tc), table);
+                            if (tc16) {
+                                cmsWriteTag(prof, tag, tc16);
+                                cmsFreeToneCurve(tc16);
+                            }
+                        }
+                    };
+
+                cmsHPROFILE softproof = ProfileContent(oprof).toProfile();
+                if (softproof) {
+                    make_gamma_table(softproof, cmsSigRedTRCTag);
+                    make_gamma_table(softproof, cmsSigGreenTRCTag);
+                    make_gamma_table(softproof, cmsSigBlueTRCTag);
+                }
+
                 monitorTransform = cmsCreateProofingTransform (
                                        iprof, TYPE_Lab_FLT,
                                        monitor, TYPE_RGB_FLT,
-                                       oprof,
+                                       softproof, //oprof,
                                        monitorIntent, outIntent,
                                        flags
                                    );
+
+                if (softproof) {
+                    cmsCloseProfile(softproof);
+                }
 
                 if (monitorTransform) {
                     softProofCreated = true;

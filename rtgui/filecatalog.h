@@ -239,7 +239,7 @@ public:
 
     void on_realize() override;
     void reparseDirectory ();
-    void _openImage (std::vector<Thumbnail*> tmb);
+    void _openImage (const std::vector<Thumbnail*>& tmb);
 
     void zoomIn ();
     void zoomOut ();
