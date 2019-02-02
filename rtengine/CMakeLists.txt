@@ -63,6 +63,7 @@ set(RTENGINESOURCEFILES
     gauss.cc
     green_equil_RT.cc
     hilite_recon.cc
+    hphd_demosaic_RT.cc
     iccjpeg.cc
     iccstore.cc
     icons.cc
