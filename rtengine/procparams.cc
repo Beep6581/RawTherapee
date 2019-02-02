@@ -2353,8 +2353,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     circrad(18),
     qualityMethod("enh"),
     transit(60),
-    thresh(18),
-    iter(0),
+    thresh(4),
+    iter(20),
     // Color & Light
     expcolor(false),
     curvactiv(false),

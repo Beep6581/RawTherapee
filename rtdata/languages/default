@@ -818,7 +818,7 @@ HISTORY_MSG_561;Local - Retinex strength
 HISTORY_MSG_562;Local - Retinex chroma
 HISTORY_MSG_563;Local - Retinex radius
 HISTORY_MSG_564;Local - Retinex contrast
-HISTORY_MSG_565;Local - Hue scope
+HISTORY_MSG_565;Local - scope
 HISTORY_MSG_566;Local - Retinex Gain curve
 HISTORY_MSG_567;Local - Retinex Inverse
 HISTORY_MSG_568;Local - Sharpening
@@ -1937,8 +1937,8 @@ TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
 TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ADJ;Equalizer blue-red
-TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
-TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
+TP_LOCALLAB_ARTIF;Shape detection
+TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold structure take into account the structure level of solid areas
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLENDMASKCOL;Blend
@@ -2008,8 +2008,8 @@ TP_LOCALLAB_LABEL;Local L*a*b*
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
-TP_LOCALLAB_THRES;Threshold chroma
-TP_LOCALLAB_PROXI;Iterations
+TP_LOCALLAB_THRES;Threshold structure
+TP_LOCALLAB_PROXI;DeltaE weakening
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_MASK;Mask:
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
@@ -2023,7 +2023,7 @@ TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_VART;Contrast
 TP_LOCALLAB_SENSI;Scope
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
-TP_LOCALLAB_SENSIH;Hue Scope
+TP_LOCALLAB_SENSIH;Scope
 TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
 TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.

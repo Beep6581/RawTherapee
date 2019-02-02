@@ -2443,8 +2443,8 @@ void Locallab::inversretChanged()
     if (multiImage && inversret->get_inconsistent()) {
         sensih->show();
     } else if (inversret->get_active()) {
-        sensih->hide();
-        dehaz->hide();
+        sensih->show();
+        dehaz->show();
     } else {
         sensih->show();
         dehaz->show();
@@ -4049,7 +4049,7 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && inversret->get_inconsistent()) {
         sensih->show();
     } else if (inversret->get_active()) {
-        sensih->hide();
+        sensih->show();
     } else {
         sensih->show();
     }

@@ -356,7 +356,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float scal_tm = ((float)locallab.spots.at(sp).scaltm) / 10.f;
     float rewe = ((float)locallab.spots.at(sp).rewei);
     float strlight = ((float)locallab.spots.at(sp).streng) / 100.f;
-    float thre = locallab.spots.at(sp).thresh / 100.f;
+    float thre = locallab.spots.at(sp).thresh;
     double local_x = locallab.spots.at(sp).locX / 2000.0;
     double local_y = locallab.spots.at(sp).locY / 2000.0;
     double local_xL = locallab.spots.at(sp).locXL / 2000.0;
@@ -367,8 +367,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double local_center_ybuf = 0.0; // Provision
     double local_dxx = locallab.spots.at(sp).iter / 8000.0; //for proxi = 2==> # 1 pixel
     double local_dyy = locallab.spots.at(sp).iter / 8000.0;
-    float iterati = (float) locallab.spots.at(sp).iter;
-//    double local_dyy = locallab.proxi;
+    float iterati = (float) locallab.spots.at(sp).iter / 10.f;
     float neigh = float (locallab.spots.at(sp).neigh);
     float chromaPastel = float (locallab.spots.at(sp).pastels)   / 100.0f;
     float chromaSatur  = float (locallab.spots.at(sp).saturated) / 100.0f;
@@ -387,17 +386,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.qualcurvemet = 0;
     } else if (locallab.spots.at(sp).qualitycurveMethod == "std") {
         lp.qualcurvemet = 1;
-    } /* else if (locallab.spots.at(sp).qualitycurveMethod == "enh") {
-
-        lp.qualcurvemet = 2;
-    } else if (locallab.spots.at(sp).qualitycurveMethod == "enhsup") {
-        lp.qualcurvemet = 3;
-    } else if (locallab.spots.at(sp).qualitycurveMethod == "contr") {
-        lp.qualcurvemet = 4;
-    } else if (locallab.spots.at(sp).qualitycurveMethod == "sob2") {
-        lp.qualcurvemet = 5;
     }
-*/
+
     lp.showmaskcolmet = llColorMask;
     lp.showmaskexpmet = llExpMask;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llColorMask == 0 && llExpMask == 0; // Color & Light mask is deactivated if Exposure mask is visible
@@ -480,7 +470,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool inversesha = locallab.spots.at(sp).inverssha;
     double strength = (double) locallab.spots.at(sp).strength;
     float str = (float)locallab.spots.at(sp).str;
-//   lp.showmaskexpo = showmexp;
 
     lp.cir = circr;
     lp.actsp = acti;
@@ -1675,7 +1664,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
 {
     //exposure local
 
-    float maxran = 65536.f; //65536
+    float maxran = 65536.f;
     const float exp_scale = pow(2.0, lp.expcomp); //lp.expcomp
     const float comp = (max(0.0, lp.expcomp) + 1.0) * lp.hlcomp / 100.0;
     const float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
@@ -1754,21 +1743,6 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
                     }
                 }
 
-                /*
-                                if (lp.chro != 0) {
-                                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                                            float satby100 = lp.chro / 100.f;
-                                            float a = atemp[ti * TSE + tj];
-                                            float b = btemp[ti * TSE + tj];
-
-                                            atemp[ti * TSE + tj] = a * (1.f + satby100);
-                                            btemp[ti * TSE + tj] = b * (1.f + satby100);
-                                        }
-                                    }
-                                }
-                */
 
                 bool vasy = true;
 
@@ -2653,6 +2627,8 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                     reducdE = 1.f;
                 }
 
+                reducdE = pow(reducdE, lp.iterat);
+
                 if (lp.sensbn > 99) {
                     reducdE = 1.f;
                 }
@@ -2760,76 +2736,158 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
     delete origblur;
 }
 
-void ImProcFunctions::InverseReti_Local(const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro)
+void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const float hueref, const float chromaref,  const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro, int sk)
 {
     // BENCHFUN
 //inverse local retinex
     float ach = (float)lp.trans / 100.f;
+    int GW = transformed->W;
+    int GH = transformed->H;
+    float refa = chromaref * cos(hueref);
+    float refb = chromaref * sin(hueref);
 
-    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+    LabImage *origblur = nullptr;
 
-    for (int y = 0; y < transformed->H; y++) {
-        int loy = cy + y;
+    origblur = new LabImage(GW, GH);
 
-        for (int x = 0; x < transformed->W; x++) {
-            int lox = cx + x;
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
 
-            int zone;
-            float localFactor;
+    }
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+#ifdef __SSE2__
+        float atan2Buffer[transformed->W] ALIGNED16;
+        float sqrtBuffer[transformed->W] ALIGNED16;
+        vfloat c327d68v = F2V(327.68f);
+#endif
 
-            if (lp.shapmet == 0) {
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
-            } else if (lp.shapmet == 1) {
-                calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < transformed->H; y++) {
+#ifdef __SSE2__
+            int i = 0;
+
+            for (; i < transformed->W - 3; i += 4) {
+                vfloat av = LVFU(origblur->a[y][i]);
+                vfloat bv = LVFU(origblur->b[y][i]);
+                STVF(atan2Buffer[i], xatan2f(bv, av));
+                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
             }
 
+            for (; i < transformed->W; i++) {
+                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
+            }
 
-            switch (zone) {
-                case 0: { // outside selection and outside transition zone => full effect, no transition
-                    if (chro == 0) {
-                        transformed->L[y][x] = CLIP(tmp1->L[y][x]);
-                    }
+#endif
 
-                    if (chro == 1) {
+            int loy = cy + y;
 
-                        transformed->a[y][x] = CLIPC(tmp1->a[y][x]);
-                        transformed->b[y][x] = CLIPC(tmp1->b[y][x]);
-                    }
+            for (int x = 0; x < transformed->W; x++) {
+                int lox = cx + x;
 
-                    break;
+                int zone;
+                float localFactor;
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
-                case 1: { // inside transition zone
-                    float factorx = 1.f - localFactor;
+                float rL = origblur->L[y][x] / 327.68f;
+                float reducdE = 0.f;
+                float dE = 0.f;
+                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                float mindE = 2.f + 0.05f * lp.sensh;//between 2 and 7
+                float maxdE = 5.f + 1.5f * lp.sensh; // between 5 and 150, we can chnage this values
 
-                    if (chro == 0) {
-                        float difL = tmp1->L[y][x] - original->L[y][x];
-                        difL *= factorx;
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                    }
+                float ar = 1.f / (mindE - maxdE);
 
-                    if (chro == 1) {
-                        float difa = tmp1->a[y][x] - original->a[y][x];
-                        float difb = tmp1->b[y][x] - original->b[y][x];
+                float br = - ar * maxdE;
 
-                        difa *= factorx;
-                        difb *= factorx;
-
-                        transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                        transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                    }
-
-                    break;
+                if (dE > maxdE) {
+                    reducdE = 0.f;
                 }
 
-                case 2: { // inside selection => no effect, keep original values
-                    if (chro == 0) {
-                        transformed->L[y][x] = original->L[y][x];
+                if (dE > mindE && dE <= maxdE) {
+                    reducdE = ar * dE + br;
+                }
+
+                if (dE <= mindE) {
+                    reducdE = 1.f;
+                }
+
+                reducdE = pow(reducdE, lp.iterat);
+
+                if (lp.sensh >  99) {
+                    reducdE = 1.f;
+                }
+
+                switch (zone) {
+                    case 0: { // outside selection and outside transition zone => full effect, no transition
+                        if (chro == 0) {
+                            float difL = tmp1->L[y][x] - original->L[y][x];
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+
+                        }
+
+                        if (chro == 1) {
+
+                            float difa = tmp1->a[y][x] - original->a[y][x];
+                            float difb = tmp1->b[y][x] - original->b[y][x];
+
+
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * reducdE);
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * reducdE);
+                        }
+
+                        break;
                     }
 
-                    if (chro == 1) {
-                        transformed->a[y][x] = original->a[y][x];
-                        transformed->b[y][x] = original->b[y][x];
+                    case 1: { // inside transition zone
+                        float factorx = 1.f - localFactor;
+
+                        if (chro == 0) {
+                            float difL = tmp1->L[y][x] - original->L[y][x];
+                            difL *= factorx;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                        }
+
+                        if (chro == 1) {
+                            float difa = tmp1->a[y][x] - original->a[y][x];
+                            float difb = tmp1->b[y][x] - original->b[y][x];
+
+                            difa *= factorx;
+                            difb *= factorx;
+
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * reducdE);
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * reducdE);
+                        }
+
+                        break;
+                    }
+
+                    case 2: { // inside selection => no effect, keep original values
+                        if (chro == 0) {
+                            transformed->L[y][x] = original->L[y][x];
+                        }
+
+                        if (chro == 1) {
+                            transformed->a[y][x] = original->a[y][x];
+                            transformed->b[y][x] = original->b[y][x];
+                        }
                     }
                 }
             }
@@ -3047,6 +3105,8 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                     reducdE = 1.f;
                 }
 
+                reducdE = pow(reducdE, lp.iterat);
+
                 if (lp.senssha >  99) {
                     reducdE = 1.f;
                 }
@@ -3204,6 +3264,8 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                 if (dE <= mindE) {
                     reducdE = 1.f;
                 }
+
+                reducdE = pow(reducdE, lp.iterat);
 
                 if (varsens > 99) {
                     reducdE = 1.f;
@@ -3381,6 +3443,8 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                         reducdE = 1.f;
                     }
 
+                    reducdE = pow(reducdE, lp.iterat);
+
                     if (varsens > 99) {
                         reducdE = 1.f;
                     }
@@ -3491,7 +3555,7 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
 }
 
 
-void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref,  const float lumaref, float sobelref, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref,  const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     BENCHFUN {
@@ -3527,13 +3591,21 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         {
             varsens =  lp.senscb;
         }
-
+        //printf("deltaE Weak=%f \n", lp.iterat);
         //sobel
         sobelref /= 100.;
+        meansobel /= 100.f;
 
         if (sobelref > 60.)
         {
             sobelref = 60.;
+        }
+
+        float k = 1.f;
+
+        if (sobelref <  meansobel && sobelref < lp.thr)//does not always work wth noisy images
+        {
+            k = -1.f;
         }
 
         sobelref = log(1.f + sobelref);
@@ -3673,7 +3745,12 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                         }
 
                         csob = log(1.f + csob + 0.001f);
-                        rs = sobelref / csob;
+
+                        if (k == 1) {
+                            rs = sobelref / csob;
+                        } else {
+                            rs = csob / sobelref;
+                        }
                     }
 
                     float dE = 0.f;
@@ -3731,6 +3808,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                         reducdE = 1.f;
                     }
 
+                    reducdE = pow(reducdE, lp.iterat);
+
+                    if (varsens > 99) {
+                        reducdE = 1.f;
+                    }
 
                     float realstrdE = reducdE * cli;
                     float realstradE = reducdE * cla;
@@ -3738,9 +3820,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     float realstrchdE = reducdE * clc;
                     float realhhdE = reducdE * hhro;
 
-                    if (varsens > 99) {
-                        reducdE = 1.f;
-                    }
 
                     float addh = 0.f;
                     float2 sincosval;
@@ -4100,6 +4179,8 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                     reducdE = 1.f;
                 }
 
+                reducdE = pow(reducdE, lp.iterat);
+
                 if (lp.sens > 99) {
                     reducdE = 1.f;
                 }
@@ -4399,7 +4480,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
                 }
 
             sobelref = avesobel / nbs;
-            printf("sobelref=%f \n", sobelref);
+          //  printf("sobelref=%f \n", sobelref);
         }
 
         delete sobelL;
@@ -4441,7 +4522,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         chromaref = aveChro;
         lumaref = avL;
 
-        printf("Calcref => sp=%i huere=%f chromare=%f lumare=%f \n", sp, hueref, chromaref, lumaref);
+        printf("Calcref => sp=%i huere=%f chromare=%f lumare=%f sobelref=%f\n", sp, hueref, chromaref, lumaref, sobelref /100.f);
 
         if (isdenoise) {
             delete origblur;
@@ -4742,7 +4823,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             ave = ave / n;
         }
 
-        printf("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f\n", call, sp, hueref, chromaref, lumaref);
+        printf("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f sobelref=%f\n", call, sp, hueref, chromaref, lumaref, sobelref / 100.f);
 //        struct local_contra lco;
 
 // we must here detect : general case, skin, sky,...foliages ???
@@ -4761,7 +4842,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 
-        if (lp.excmet == 1  && call <= 3) {
+        if (lp.excmet == 1  && call <= 3) {//exlude
             LabImage *deltasobelL = nullptr;
             LabImage *tmpsob = nullptr;
             LabImage *bufsob = nullptr;
@@ -4893,47 +4974,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufchro[ir][jr] = rch ;
                 }
 
-            /*
-                        if (lp.sensexclu < 15.f) {
-                            JaggedArray<float> blend(bfw, bfh);
-                            float contrastf = lp.sensexclu / 100.f;
-
-                            buildBlendMask(bufreserv->L, blend, bfw, bfh, contrastf, 1.f, true);
-
-            #ifdef _OPENMP
-                            #pragma omp parallel for
-            #endif
-
-                            for (int i = 0; i < bfh; ++i) {
-                                for (int j = 0; j < bfw; ++j) {
-                                    if (blend[i][j] > 0.05f) {
-                                        blend[i][j] = 1.22361f * sqrt(blend[i][j]) - 0.22361f;
-                                    }
-
-                                    bufreserv->L[i][j] = intp(blend[i][j], bufexclu->L[i][j], bufreserv->L[i][j]);
-                                    bufreserv->a[i][j] = intp(blend[i][j], bufexclu->a[i][j], bufreserv->a[i][j]);
-                                    bufreserv->b[i][j] = intp(blend[i][j], bufexclu->b[i][j], bufreserv->b[i][j]);
-
-                                }
-                            }
-                        }
-
-            #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-            #endif
-
-                        for (int y = 0; y < transformed->H ; y++) //{
-                            for (int x = 0; x < transformed->W; x++) {
-                                int lox = cx + x;
-                                int loy = cy + y;
-
-                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    original->L[y][x] = bufreserv->L[loy - begy][lox - begx];
-                                    original->a[y][x] = bufreserv->a[loy - begy][lox - begx];
-                                    original->b[y][x] = bufreserv->b[loy - begy][lox - begx];
-                                }
-                            }
-            */
             Exclude_Local(1, deltasobelL->L, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, bufreserv, reserved, cx, cy, sk);
 
 
@@ -5199,7 +5239,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 
-            //    DeNoise_Local_imp(call, lp,  levred, hueplus, huemoins, huerefblur, dhueden, original, transformed, bufwv, cx, cy, sk);
             DeNoise_Local(call, lp, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
 
             delete bufwv;
@@ -5715,7 +5754,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 }
 
-                //  DeNoise_Local(call, lp,  buflight, buf_a, buf_b, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
                 DeNoise_Local(call, lp, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
 
             } else if (call == 2 /* || call == 1 || call == 3 */) { //simpleprocess
@@ -6224,7 +6262,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //vibrance
 
         if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
-            //  printf("OK appel vib loc\n");
 
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
@@ -6314,7 +6351,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                transit_shapedetect(2, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(2, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             }
 
@@ -6331,7 +6368,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //Tone mapping
 
-//&& lp.tonemapena
+//&& lp.tonemapena disable
         if (lp.strengt != 0.f  && lp.tonemapena) {
             LabImage *tmp1 = nullptr;
 
@@ -6527,7 +6564,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
 
-                transit_shapedetect(6, loctemp, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(6, loctemp, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                 delete loctemp;
 
@@ -6569,7 +6606,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                     }
 
-                    transit_shapedetect(7, loctempch, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(7, loctempch, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     delete loctempch;
                 }
@@ -6668,7 +6705,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                transit_shapedetect(3, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(3, bufexporig, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
 
             }
 
@@ -6891,20 +6928,51 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }  else {
 
+                Imagefloat *tmpImage = nullptr;
+                bufreti = new LabImage(Wd, Hd);
 
+                if (lp.dehaze > 0) {
+                    tmpImage = new Imagefloat(Wd, Hd);
+                    lab2rgb(*original, *tmpImage, params->icm.workingProfile);
+                    float deha = LIM01(float(0.9f * lp.dehaze + 0.3f * lp.str) / 100.f * 0.9f);
+                    float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
+                    float depth = -LIM01(depthcombi / 100.f);
+
+                    dehazeloc(tmpImage, deha, depth);
+
+                    rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
+
+                    delete tmpImage;
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int ir = 0; ir < Hd; ir += 1)
-                    for (int jr = 0; jr < Wd; jr += 1) {
-                        orig[ir][jr] = original->L[ir][jr];
-                        orig1[ir][jr] = transformed->L[ir][jr];
-                    }
+                    for (int ir = 0; ir < Hd; ir += 1)
+                        for (int jr = 0; jr < Wd; jr += 1) {
+                            orig[ir][jr] = original->L[ir][jr];
+                            orig1[ir][jr] = bufreti->L[ir][jr];
+                        }
 
-                tmpl = new LabImage(transformed->W, transformed->H);
+                    tmpl = new LabImage(transformed->W, transformed->H);
+                    delete bufreti;
+
+                } else {
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int ir = 0; ir < Hd; ir += 1)
+                        for (int jr = 0; jr < Wd; jr += 1) {
+                            orig[ir][jr] = original->L[ir][jr];
+                            orig1[ir][jr] = transformed->L[ir][jr];
+                        }
 
 
+                    tmpl = new LabImage(transformed->W, transformed->H);
+
+
+                }
             }
 
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
@@ -6929,10 +6997,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             if (!lp.invret) {
-                transit_shapedetect(4, bufreti, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(4, bufreti, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             } else {
-                InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 0);
+                InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
             }
 
             if (params->locallab.spots.at(sp).chrrt > 0) {
@@ -7013,10 +7081,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                 if (!lp.invret) {
-                    transit_shapedetect(5, tmpl, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(5, tmpl, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                 } else {
-                    InverseReti_Local(lp, original, transformed, tmpl, cx, cy, 1);
+                    InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
                 }
 
             }
@@ -7052,7 +7120,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             JaggedArray<float> buf_a_cat(bfw, bfh, true);
             JaggedArray<float> buf_b_cat(bfw, bfh, true);
             JaggedArray<float> blend2(bfw, bfh);
-
+            float meansob = 0.f;
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
 
@@ -7174,6 +7242,39 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         Median medianTypeL = Median::TYPE_3X3_STRONG;
                         Median_Denoise(blend2, blend2, wid, hei, medianTypeL, passes, multiThread, tmL);
+                        float sombel = 0.f;
+//                        float stdvsobel = 0.f;
+                        int ncsobel = 0;
+//                        int ncstdv = 0.f;
+                        float maxsob = -1.f;
+                        float minsob = 100000.f;
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                sombel +=  blend2[ir][jr];
+                                ncsobel++;
+
+                                if (blend2[ir][jr] > maxsob) {
+                                    maxsob = blend2[ir][jr];
+                                }
+
+                                if (blend2[ir][jr] < minsob) {
+                                    minsob = blend2[ir][jr];
+                                }
+                            }
+
+                        meansob = sombel / ncsobel;
+
+                        /*
+                        float dsob = 0;
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                            dsob +=  SQR(blend2[ir][jr] - meansob);
+                            ncstdv++;
+                        }
+                        stdvsobel =  sqrt(dsob / ncstdv);
+                        */
+                        printf("mean=%f max=%f min=%f\n", meansob, maxsob, minsob);
 
                         for (int i = 0; i < hei; ++i) {
                             delete[] tmL[i];
@@ -7203,7 +7304,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                     if (zone > 0) {
-                                        transformed->L[y][x] = blend2[loy - begy][lox - begx];
+                                        transformed->L[y][x] = CLIP(blend2[loy - begy][lox - begx]);
                                         transformed->a[y][x] = 0.f;
                                         transformed->b[y][x] = 0.f;
                                     }
@@ -7517,7 +7618,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                 }
 
-                transit_shapedetect(1, bufexporig, originalmaskexp, buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, blend2, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(1, bufexporig, originalmaskexp, buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
             }
 
             if (call <= 3) {
@@ -7538,10 +7639,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //local color and light
 
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
-//        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0  || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
 
-//provisory fixe for contrast slider does not work at all
-            //  lp.cont = 0;
 
             LabImage *bufcolorig = nullptr;
             LabImage *bufmaskorigcol = nullptr;
@@ -7567,7 +7665,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             JaggedArray<float> buf_b(bfw, bfh);
 
             float adjustr = 1.0f;
-
+            float meansob = 0.f;
 
 //adapt chroma to working profile
             if (params->icm.workingProfile == "ProPhoto")   {
@@ -7667,10 +7765,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                     float blur = 25 / sk * (10.f + 1.2f * lp.struco);
-                    printf("Blur=%f \n", blur);
+                    //    printf("Blur=%f \n", blur);
 
                     rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
-                    //    rtengine::guidedFilter(guid, blec, blec, blur, 0.001, multiThread);
 
 #ifdef _OPENMP
                     #pragma omp parallel for
@@ -7696,6 +7793,28 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         Median medianTypeL = Median::TYPE_3X3_STRONG;
                         Median_Denoise(blend2, blend2, wid, hei, medianTypeL, passes, multiThread, tmL);
+                        float sombel = 0.f;
+//                        float stdvsobel = 0.f;
+                        int ncsobel = 0;
+//                        int ncstdv = 0.f;
+                        float maxsob = -1.f;
+                        float minsob = 100000.f;
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                sombel +=  blend2[ir][jr];
+                                ncsobel++;
+
+                                if (blend2[ir][jr] > maxsob) {
+                                    maxsob = blend2[ir][jr];
+                                }
+
+                                if (blend2[ir][jr] < minsob) {
+                                    minsob = blend2[ir][jr];
+                                }
+                            }
+
+                        meansob = sombel / ncsobel;
 
                         for (int i = 0; i < hei; ++i) {
                             delete[] tmL[i];
@@ -8038,7 +8157,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     delete bufcolcalc;
                 }
 
-                transit_shapedetect(0, bufcolorig, originalmaskcol, buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, blend2, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect(0, bufcolorig, originalmaskcol, buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
 
 
                 if (call <= 3) {
