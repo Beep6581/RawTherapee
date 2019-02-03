@@ -820,9 +820,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 // Reference parameters computation
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
+                    ipf.calc_ref(0, sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 } else {
-                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
+                    ipf.calc_ref(0, sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
                 }
 
 //                printf("improc avg=%f\n", avg);
@@ -855,6 +855,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                                                       LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, 0, 0);
                 }
+                //recalculate references after
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
+                    ipf.calc_ref(1, sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
+                } else {
+                    ipf.calc_ref(1, sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lhist16loc, avg);
+                }
+                huerblu = huerefblurs[sp] = huerefblu;
+                chromarblu = chromarefblurs[sp] = chromarefblu;
+                lumarblu = lumarefblurs[sp] = lumarefblu;
+                huer = huerefs[sp] = huere;
+                chromar = chromarefs[sp] = chromare;
+                lumar = lumarefs[sp] = lumare ;
+                sobeler = sobelrefs[sp] = sobelre;
 
                 lllocalcurve.clear();
                 cclocalcurve.clear();

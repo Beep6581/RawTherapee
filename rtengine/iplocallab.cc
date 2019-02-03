@@ -3591,6 +3591,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         {
             varsens =  lp.senscb;
         }
+
         //printf("deltaE Weak=%f \n", lp.iterat);
         //sobel
         sobelref /= 100.;
@@ -4289,7 +4290,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 }
 
-void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram, float &avg)
+void ImProcFunctions::calc_ref(int befend, int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram, float &avg)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -4480,7 +4481,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
                 }
 
             sobelref = avesobel / nbs;
-          //  printf("sobelref=%f \n", sobelref);
+            //  printf("sobelref=%f \n", sobelref);
         }
 
         delete sobelL;
@@ -4522,7 +4523,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         chromaref = aveChro;
         lumaref = avL;
 
-        printf("Calcref => sp=%i huere=%f chromare=%f lumare=%f sobelref=%f\n", sp, hueref, chromaref, lumaref, sobelref /100.f);
+        printf("Calcref => sp=%i befend=%i huere=%2.1f chromare=%2.1f lumare=%2.1f sobelref=%2.1f\n", sp, befend, hueref, chromaref, lumaref, sobelref / 100.f);
 
         if (isdenoise) {
             delete origblur;
@@ -4823,7 +4824,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             ave = ave / n;
         }
 
-        printf("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f sobelref=%f\n", call, sp, hueref, chromaref, lumaref, sobelref / 100.f);
+        printf("call= %i sp=%i hueref=%2.1f chromaref=%2.1f lumaref=%2.1f sobelref=%2.1f\n", call, sp, hueref, chromaref, lumaref, sobelref / 100.f);
 //        struct local_contra lco;
 
 // we must here detect : general case, skin, sky,...foliages ???
