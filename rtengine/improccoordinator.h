@@ -230,7 +230,7 @@ protected:
     LUTf shtonecurveloc;
     LUTf tonecurveloc;
     LUTf lightCurveloc;
-    LUTu lhist16loc;
+//    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;

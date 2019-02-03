@@ -360,7 +360,7 @@ public:
 
                              int skip = 1);
 
-    static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double cont, LUTu & histogram, double lumare,
+    static void complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double cont, double lumare,
                                   LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc, float avg,
                                   int skip = 1);
 

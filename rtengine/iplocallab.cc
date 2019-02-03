@@ -4290,7 +4290,7 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
 
 }
 
-void ImProcFunctions::calc_ref(int befend, int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, LUTu & histogram, float &avg)
+void ImProcFunctions::calc_ref(int befend, int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, float &avg)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -4317,37 +4317,6 @@ void ImProcFunctions::calc_ref(int befend, int sp, LabImage * original, LabImage
         avg2 /= 32768.f;
         avg = avg2 / nc2;
 //        printf("calc avg=%f \n", avg);
-//claculate histogram for area selected
-#ifdef _OPENMP
-        const int numThreads = min(max(transformed->W * transformed->H / (int)histogram.getSize(), 1), omp_get_max_threads());
-        #pragma omp parallel num_threads(numThreads) if(numThreads>1)
-#endif
-        {
-            LUTu lhist16thrloc(histogram.getSize());
-            lhist16thrloc.clear();
-            histogram.clear();
-#ifdef _OPENMP
-            #pragma omp for nowait
-#endif
-
-            for (int y = 0; y < transformed->H ; y++) //{
-                for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
-                    int loy = cy + y;
-
-                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                        int pos = (int)(original->L[y][x]);
-                        lhist16thrloc[pos]++;
-                    }
-                }
-
-
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            histogram += lhist16thrloc;
-        }
-
 // double precision for large summations
         double aveA = 0.;
         double aveB = 0.;

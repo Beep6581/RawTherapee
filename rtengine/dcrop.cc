@@ -892,7 +892,6 @@ void Crop::update(int todo)
         LUTf shtonecurveloc2(65536, 0);
         LUTf tonecurveloc2(65536, 0);
         LUTf lightCurveloc2(32770, 0);
-        LUTu lhist16loc2(32770, 0);
         bool LHutili = parent->LHutili;
         bool HHutili = parent->HHutili;
         bool llmasutili = parent->llmasutili;
@@ -950,7 +949,6 @@ void Crop::update(int todo)
                 double br = params.locallab.spots.at(sp).lightness;
 
                 double cont = params.locallab.spots.at(sp).contrast;
-                lhist16loc2 = parent->lhist16loc;
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
                 huerefblu = parent->huerefblurs[sp];
                 chromarefblu = parent->chromarefblurs[sp];
@@ -959,7 +957,7 @@ void Crop::update(int todo)
                 chromare = parent->chromarefs[sp];
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
-                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lhist16loc2, lumare,
+                CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
                                                 hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avg,
                                                 sca);
                 // Locallab mask are only shown for selected spot
