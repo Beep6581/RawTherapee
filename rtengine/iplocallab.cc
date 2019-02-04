@@ -357,6 +357,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float rewe = ((float)locallab.spots.at(sp).rewei);
     float strlight = ((float)locallab.spots.at(sp).streng) / 100.f;
     float thre = locallab.spots.at(sp).thresh;
+
+    if (thre > 12 || thre < 1) {
+        thre = 4.f;
+    }
+
     double local_x = locallab.spots.at(sp).locX / 2000.0;
     double local_y = locallab.spots.at(sp).locY / 2000.0;
     double local_xL = locallab.spots.at(sp).locXL / 2000.0;
@@ -368,6 +373,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double local_dxx = locallab.spots.at(sp).iter / 8000.0; //for proxi = 2==> # 1 pixel
     double local_dyy = locallab.spots.at(sp).iter / 8000.0;
     float iterati = (float) locallab.spots.at(sp).iter / 10.f;
+
+    if (iterati > 4.f || iterati < 1.f) {
+        iterati = 2.f;
+    }
+
     float neigh = float (locallab.spots.at(sp).neigh);
     float chromaPastel = float (locallab.spots.at(sp).pastels)   / 100.0f;
     float chromaSatur  = float (locallab.spots.at(sp).saturated) / 100.0f;
