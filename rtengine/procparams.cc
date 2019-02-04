@@ -2342,7 +2342,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shape("ELI"),
     spotMethod("norm"),
     sensiexclu(12),
-    struc(0),
+    struc(4),
     shapeMethod("IND"),
     locX(250),
     locXL(250),
@@ -2353,7 +2353,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     circrad(18),
     qualityMethod("enh"),
     transit(60),
-    thresh(4),
+    thresh(2),
     iter(20),
     // Color & Light
     expcolor(false),

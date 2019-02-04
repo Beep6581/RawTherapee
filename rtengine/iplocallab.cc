@@ -155,6 +155,7 @@ struct local_params {
     float iterat;
     int cir;
     float thr;
+    float stru;
     int prox;
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf;
     float struco;
@@ -356,10 +357,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float scal_tm = ((float)locallab.spots.at(sp).scaltm) / 10.f;
     float rewe = ((float)locallab.spots.at(sp).rewei);
     float strlight = ((float)locallab.spots.at(sp).streng) / 100.f;
+    float strucc = locallab.spots.at(sp).struc;
+
     float thre = locallab.spots.at(sp).thresh;
 
-    if (thre > 12 || thre < 1) {
-        thre = 4.f;
+    if (thre > 6 || thre < 1) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
+        thre = 2.f;
     }
 
     double local_x = locallab.spots.at(sp).locX / 2000.0;
@@ -374,7 +377,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double local_dyy = locallab.spots.at(sp).iter / 8000.0;
     float iterati = (float) locallab.spots.at(sp).iter / 10.f;
 
-    if (iterati > 4.f || iterati < 1.f) {
+    if (iterati > 4.f || iterati < 1.f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
         iterati = 2.f;
     }
 
@@ -447,7 +450,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensitm = locallab.spots.at(sp).sensitm;
     int local_sensiexclu = locallab.spots.at(sp).sensiexclu;
     int local_sensilc = locallab.spots.at(sp).sensilc;
-    int local_struc = locallab.spots.at(sp).struc;
+//    int local_struc = locallab.spots.at(sp).struc;
     int local_warm = locallab.spots.at(sp).warm;
     int local_sensih = locallab.spots.at(sp).sensih;
     int local_dehaze = locallab.spots.at(sp).dehaz;
@@ -536,6 +539,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.dxx = w * local_dxx;
     lp.dyy = h * local_dyy;
     lp.thr = thre;
+    lp.stru = strucc;
     lp.noiself = local_noiself;
     lp.noiseldetail = local_noiseldetail;
     lp.noiselequal = local_noiselequal;
@@ -581,7 +585,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
     lp.expcomp = locallab.spots.at(sp).expcomp / 100.;
     lp.sensex = local_sensiex;
-    lp.strucc = local_struc;
+//    lp.strucc = local_struc;
     lp.war = local_warm;
 }
 
@@ -1968,8 +1972,8 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
                 float dEb = 0.f;
                 dEb = sqrt(1.f * SQR(refa - origblur->a[y][x] / 327.6f) + 1.2f * SQR(refb - origblur->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - rL));
 
-                float mindE = 2.f + 0.05f * lp.sensden;//between 2 and 7
-                float maxdE = 5.f + 1.5f * lp.sensden; // between 5 and 150, we can chnage this values
+                float mindE = 2.f + 0.025f * lp.sensden * lp.thr;//between 2 and 7
+                float maxdE = 5.f + 1.38f *  lp.sensden * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
                 float reducdEL = 1.f;
                 float reducdEa = 1.f;
                 float reducdEb = 1.f;
@@ -2618,8 +2622,8 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                 cli = (buflight[loy - begy][lox - begx]);
                 clc = (bufchro[loy - begy][lox - begx]);
                 float reducdE = 0.f;
-                float mindE = 2.f + 0.05f * lp.sensbn;//between 2 and 7
-                float maxdE = 5.f + 1.5f * lp.sensbn; // between 5 and 150, we can chnage this values
+                float mindE = 2.f + 0.025f * lp.sensbn * lp.thr;//between 2 and 7
+                float maxdE = 5.f + 1.38f * lp.sensbn * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -2820,8 +2824,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                 float reducdE = 0.f;
                 float dE = 0.f;
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-                float mindE = 2.f + 0.05f * lp.sensh;//between 2 and 7
-                float maxdE = 5.f + 1.5f * lp.sensh; // between 5 and 150, we can chnage this values
+                float mindE = 2.f + 0.025f * lp.sensh * lp.thr;//between 2 and 7
+                float maxdE = 5.f + 1.38f * lp.sensh * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -3096,8 +3100,8 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 float reducdE = 0.f;
                 float dE = 0.f;
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-                float mindE = 2.f + 0.05f * lp.senssha;//between 2 and 7
-                float maxdE = 5.f + 1.5f * lp.senssha; // between 5 and 150, we can chnage this values
+                float mindE = 2.f + 0.025f * lp.senssha * lp.thr;//between 2 and 7
+                float maxdE = 5.f + 1.38f * lp.senssha * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -3256,8 +3260,8 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
                 float reducdE = 0.f;
-                float mindE = 2.f + 0.05f * varsens;//between 2 and 7
-                float maxdE = 5.f + 1.5f * varsens; // between 5 and 150, we can chnage this values
+                float mindE = 2.f + 0.025f * varsens * lp.thr;//between 2 and 7
+                float maxdE = 5.f + 1.38f * varsens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -3434,8 +3438,8 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                     clc = (bufchro[loy - begy][lox - begx]);
 
                     float reducdE = 0.f;
-                    float mindE = 2.f + 0.05f * varsens;//between 2 and 7
-                    float maxdE = 5.f + 1.5f * varsens; // between 5 and 150, we can chnage this values
+                    float mindE = 2.f + 0.025f * varsens * lp.thr;//between 2 and 7
+                    float maxdE = 5.f + 1.38f * varsens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
 
                     float ar = 1.f / (mindE - maxdE);
 
@@ -3614,7 +3618,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
 
         float k = 1.f;
 
-        if (sobelref <  meansobel && sobelref < lp.thr)//does not always work wth noisy images
+        if (sobelref <  meansobel && sobelref < lp.stru)//does not always work wth noisy images
         {
             k = -1.f;
         }
@@ -3800,8 +3804,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     }
 
                     float reducdE = 0.f;
-                    float mindE = 2.f + 0.05f * varsens;//between 2 and 7
-                    float maxdE = 5.f + 1.5f * varsens; // between 5 and 150, we can change this values, with a slider ??
+                    float mindE = 2.f + 0.025f * varsens * lp.thr;//between 2 and 7
+                    float maxdE = 5.f + 1.38f * varsens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
 
                     float ar = 1.f / (mindE - maxdE);
 
@@ -4171,8 +4175,8 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
                 float reducdE = 0.f;
-                float mindE = 2.f + 0.05f * lp.sens;//between 2 and 7
-                float maxdE = 5.f + 1.5f * lp.sens; // between 5 and 150, we can chnage this values
+                float mindE = 2.f + 0.025f * lp.sens * lp.thr;//between 2 and 7
+                float maxdE = 5.f + 1.38f * lp.sens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -4754,7 +4758,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llExpMask);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
-        int strred = (lp.strucc - 1);
+        int strred = 1;//(lp.strucc - 1);
 
         if (strred > 1) {
             strred = 1;

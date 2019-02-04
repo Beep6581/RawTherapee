@@ -46,7 +46,7 @@ ControlSpotPanel::ControlSpotPanel():
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
-    struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUC"), 0, 5, 1, 0))),
+    struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1, 12, 1, 4))),
     locX_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 0, 2250, 1, 250))),
     locXL_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 0, 2250, 1, 250))),
     locY_(Gtk::manage(new Adjuster(M("TP_LOCAL_HEIGHT"), 0, 2250, 1, 250))),
@@ -55,7 +55,7 @@ ControlSpotPanel::ControlSpotPanel():
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),
-    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1, 12, 1, 4))),
+    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 1, 6, 1, 2))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 10, 40, 1, 20))),
 
     lastObject_(-1),
@@ -166,8 +166,6 @@ ControlSpotPanel::ControlSpotPanel():
     sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
     sensiexclu_->setAdjusterListener(this);
     excluBox->pack_start(*sensiexclu_);
-    struc_->set_tooltip_text(M("TP_LOCALLAB_STRUC_TOOLTIP"));
-    struc_->setAdjusterListener(this);
     // excluBox->pack_start(*struc_); // Uncomment this line to use the struc_ adjuster
     excluFrame->add(*excluBox);
     pack_start(*excluFrame);
@@ -230,8 +228,11 @@ ControlSpotPanel::ControlSpotPanel():
     artifFrame->set_label_align(0.025, 0.5);
     artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
-    artifBox->pack_start(*thresh_);
     thresh_->setAdjusterListener(this);
+  //  struc_->set_tooltip_text(M("TP_LOCALLAB_STRUC_TOOLTIP"));
+    struc_->setAdjusterListener(this);
+    artifBox->pack_start(*struc_);
+    artifBox->pack_start(*thresh_);
     artifBox->pack_start(*iter_);
     iter_->setAdjusterListener(this);
     artifFrame->add(*artifBox);

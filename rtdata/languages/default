@@ -765,7 +765,7 @@ HISTORY_MSG_508;L*a*b Spot circrad
 HISTORY_MSG_509;L*a*b Spot quality method
 HISTORY_MSG_510;L*a*b Spot transit
 HISTORY_MSG_511;L*a*b Spot thresh
-HISTORY_MSG_512;L*a*b Spot iter
+HISTORY_MSG_512;L*a*b Spot deltaE-weakening
 HISTORY_MSG_513;L*a*b Spot scope
 HISTORY_MSG_514;L*a*b Spot structure
 HISTORY_MSG_515;Local L*a*b*
@@ -2010,6 +2010,7 @@ TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_PROXI;DeltaE weakening
+TP_LOCALLAB_THRESDELTAE;Threshold deltaE-scope
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_MASK;Mask:
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
