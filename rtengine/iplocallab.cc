@@ -58,7 +58,8 @@
 #define blkrad 1    // radius of block averaging
 
 #define epsilon 0.001f/(TS*TS) //tolerance
-
+#define maxscope 1.25
+#define minscope 0.025
 
 #define CLIPC(a) ((a)>-42000?((a)<42000?(a):42000):-42000)  // limit a and b  to 130 probably enough ?
 #define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
@@ -361,7 +362,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     float thre = locallab.spots.at(sp).thresh;
 
-    if (thre > 6 || thre < 1) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
+    if (thre > 8 || thre < 0) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
         thre = 2.f;
     }
 
@@ -1972,8 +1973,8 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
                 float dEb = 0.f;
                 dEb = sqrt(1.f * SQR(refa - origblur->a[y][x] / 327.6f) + 1.2f * SQR(refb - origblur->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - rL));
 
-                float mindE = 2.f + 0.025f * lp.sensden * lp.thr;//between 2 and 7
-                float maxdE = 5.f + 1.38f *  lp.sensden * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                float mindE = 2.f + minscope * lp.sensden * lp.thr;
+                float maxdE = 5.f + maxscope *  lp.sensden * (1 + 0.1f * lp.thr);
                 float reducdEL = 1.f;
                 float reducdEa = 1.f;
                 float reducdEb = 1.f;
@@ -2622,8 +2623,8 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                 cli = (buflight[loy - begy][lox - begx]);
                 clc = (bufchro[loy - begy][lox - begx]);
                 float reducdE = 0.f;
-                float mindE = 2.f + 0.025f * lp.sensbn * lp.thr;//between 2 and 7
-                float maxdE = 5.f + 1.38f * lp.sensbn * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                float mindE = 2.f + minscope * lp.sensbn * lp.thr;
+                float maxdE = 5.f + maxscope * lp.sensbn * (1 + 0.1f * lp.thr);
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -2824,8 +2825,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                 float reducdE = 0.f;
                 float dE = 0.f;
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-                float mindE = 2.f + 0.025f * lp.sensh * lp.thr;//between 2 and 7
-                float maxdE = 5.f + 1.38f * lp.sensh * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                float mindE = 2.f + minscope * lp.sensh * lp.thr;
+                float maxdE = 5.f + maxscope * lp.sensh * (1 + 0.1f * lp.thr);
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -3100,8 +3101,8 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 float reducdE = 0.f;
                 float dE = 0.f;
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-                float mindE = 2.f + 0.025f * lp.senssha * lp.thr;//between 2 and 7
-                float maxdE = 5.f + 1.38f * lp.senssha * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                float mindE = 2.f + minscope * lp.senssha * lp.thr;
+                float maxdE = 5.f + maxscope * lp.senssha * (1 + 0.1f * lp.thr);
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -3260,8 +3261,8 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
                 float reducdE = 0.f;
-                float mindE = 2.f + 0.025f * varsens * lp.thr;//between 2 and 7
-                float maxdE = 5.f + 1.38f * varsens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                float mindE = 2.f + minscope * varsens * lp.thr;
+                float maxdE = 5.f + maxscope * varsens * (1 + 0.1f * lp.thr);
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -3438,8 +3439,8 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                     clc = (bufchro[loy - begy][lox - begx]);
 
                     float reducdE = 0.f;
-                    float mindE = 2.f + 0.025f * varsens * lp.thr;//between 2 and 7
-                    float maxdE = 5.f + 1.38f * varsens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                    float mindE = 2.f + minscope * varsens * lp.thr;
+                    float maxdE = 5.f + maxscope * varsens * (1 + 0.1f * lp.thr);
 
                     float ar = 1.f / (mindE - maxdE);
 
@@ -3804,8 +3805,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     }
 
                     float reducdE = 0.f;
-                    float mindE = 2.f + 0.025f * varsens * lp.thr;//between 2 and 7
-                    float maxdE = 5.f + 1.38f * varsens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                    float mindE = 2.f + minscope * varsens * lp.thr;
+                    float maxdE = 5.f + maxscope * varsens * (1 + 0.1f * lp.thr);
 
                     float ar = 1.f / (mindE - maxdE);
 
@@ -4175,8 +4176,8 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
                 float reducdE = 0.f;
-                float mindE = 2.f + 0.025f * lp.sens * lp.thr;//between 2 and 7
-                float maxdE = 5.f + 1.38f * lp.sens * (1 + 0.1f * lp.thr); // between 5 and 150, we can change this values, with a slider ??
+                float mindE = 2.f + minscope * lp.sens * lp.thr;
+                float maxdE = 5.f + maxscope * lp.sens * (1 + 0.1f * lp.thr);
 
                 float ar = 1.f / (mindE - maxdE);
 

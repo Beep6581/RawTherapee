@@ -55,7 +55,7 @@ ControlSpotPanel::ControlSpotPanel():
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),
-    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 1, 6, 1, 2))),
+    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0, 8, 1, 2))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 10, 40, 1, 20))),
 
     lastObject_(-1),
