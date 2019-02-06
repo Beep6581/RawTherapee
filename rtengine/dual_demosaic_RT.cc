@@ -91,9 +91,13 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
                                 { 0.019334, 0.119193, 0.950227 }
                                 };
 
+#ifdef _OPENMP
     #pragma omp parallel
+#endif
     {
+#ifdef _OPENMP
         #pragma omp for
+#endif
         for(int i = 0; i < winh; ++i) {
             Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, winw);
         }
@@ -106,19 +110,25 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
     contrast = contrastf * 100.f;
 
     // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for(int i = 0; i < winh; ++i) {
         for(int j = 0; j < winw; ++j) {
             red[i][j] = intp(blend[i][j], red[i][j], redTmp[i][j]);
         }
     }
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for(int i = 0; i < winh; ++i) {
         for(int j = 0; j < winw; ++j) {
             green[i][j] = intp(blend[i][j], green[i][j], greenTmp[i][j]);
         }
     }
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for(int i = 0; i < winh; ++i) {
         for(int j = 0; j < winw; ++j) {
             blue[i][j] = intp(blend[i][j], blue[i][j], blueTmp[i][j]);

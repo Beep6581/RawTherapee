@@ -63,13 +63,17 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
         // No highlight protection - simple mutiplication
 
         if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS)
+#ifdef _OPENMP
             #pragma omp parallel for
+#endif
             for (int row = 0; row < height; row++)
                 for (int col = 0; col < width; col++) {
                     rawData[row][col] *= expos;
                 }
         else
+#ifdef _OPENMP
             #pragma omp parallel for
+#endif
             for (int row = 0; row < height; row++)
                 for (int col = 0; col < width; col++) {
                     rawData[row][col * 3] *= expos;
@@ -88,12 +92,16 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
 
         // Find maximum to adjust LUTs. New float engines clips only at the very end
         float maxValFloat = 0.f;
+#ifdef _OPENMP
         #pragma omp parallel
+#endif
         {
             float maxValFloatThr = 0.f;
 
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS)
+#ifdef _OPENMP
                 #pragma omp for schedule(dynamic,16) nowait
+#endif
                 for(int row = 0; row < height; row++)
                     for (int col = 0; col < width; col++) {
                         if (rawData[row][col] > maxValFloatThr) {
@@ -101,7 +109,9 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
                         }
                     }
             else
+#ifdef _OPENMP
                 #pragma omp for schedule(dynamic,16) nowait
+#endif
                 for(int row = 0; row < height; row++)
                     for (int col = 0; col < width; col++) {
                         for (int c = 0; c < 3; c++)
@@ -110,7 +120,9 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
                             }
                     }
 
+#ifdef _OPENMP
             #pragma omp critical
+#endif
             {
                 if(maxValFloatThr > maxValFloat) {
                     maxValFloat = maxValFloatThr;
@@ -141,14 +153,18 @@ void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<flo
         }
 
         if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS)
+#ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
+#endif
             for(int row = 0; row < height; row++)
                 for(int col = 0; col < width; col++) {
                     float lumi = 0.299f * red[row][col] + 0.587f * green[row][col] + 0.114f * blue[row][col];
                     rawData[row][col] *= lumi < K ? expos : lut[lumi];
                 }
         else
+#ifdef _OPENMP
             #pragma omp parallel for
+#endif
             for(int row = 0; row < height; row++)
                 for(int col = 0; col < width; col++) {
                     float lumi = 0.299f * rawData[row][col * 3] + 0.587f * rawData[row][col * 3 + 1] + 0.114f * rawData[row][col * 3 + 2];

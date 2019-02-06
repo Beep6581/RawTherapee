@@ -127,7 +127,9 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
             dsum[FC(1, 0) + 4] += (int)(((W + 1) / 2) * (H / 2));
             dsum[FC(1, 1) + 4] += (int)((W / 2) * (H / 2));
 
+#ifdef _OPENMP
             #pragma omp parallel private(val)
+#endif
             {
                 double dsumthr[8];
                 memset(dsumthr, 0, sizeof dsumthr);
@@ -142,7 +144,9 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
                 }
 
                 float *tempdata = data[0];
+#ifdef _OPENMP
                 #pragma omp for nowait
+#endif
 
                 for (size_t row = 0; row < H; row += 8) {
                     size_t ymax = row + 8 < H ? row + 8 : H;
@@ -176,7 +180,9 @@ skip_block2:
                     }
                 }
 
+#ifdef _OPENMP
                 #pragma omp critical
+#endif
                 {
                     for (int c = 0; c < 4; c++) {
                         dsum[c] += dsumthr[c];
@@ -194,7 +200,9 @@ skip_block2:
             }
 
         } else if(isXtrans()) {
+#ifdef _OPENMP
             #pragma omp parallel
+#endif
             {
                 double dsumthr[8];
                 memset(dsumthr, 0, sizeof dsumthr);
@@ -209,7 +217,9 @@ skip_block2:
                     whitefloat[c] = this->get_white(c) - whiteThreshold;
                 }
 
+#ifdef _OPENMP
                 #pragma omp for nowait
+#endif
 
                 for (size_t row = 0; row < H; row += 8)
                     for (size_t col = 0; col < W ; col += 8)
@@ -239,7 +249,9 @@ skip_block3:
                         ;
                     }
 
+#ifdef _OPENMP
                 #pragma omp critical
+#endif
                 {
                     for (int c = 0; c < 8; c++)
                     {
@@ -716,7 +728,9 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
 
     // copy pixel raw data: the compressed format earns space
     if( float_raw_image ) {
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {
@@ -726,21 +740,27 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
         delete [] float_raw_image;
         float_raw_image = nullptr;
     } else if (filters != 0 && !isXtrans()) {
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {
                 this->data[row][col] = image[row * width + col][FC(row, col)];
             }
     } else if (isXtrans()) {
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {
                 this->data[row][col] = image[row * width + col][XTRANSFC(row, col)];
             }
     } else if (colors == 1) {
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {
@@ -751,7 +771,9 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
             height -= top_margin;
             width -= left_margin;
         }
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {

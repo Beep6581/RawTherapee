@@ -431,7 +431,9 @@ void RawImageSource::eahd_demosaic ()
         }
 
     // Interpolate R and B
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for (int i = 0; i < H; i++) {
         if (i == 0) {
             interpolate_row_rb_mul_pp (rawData, red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
