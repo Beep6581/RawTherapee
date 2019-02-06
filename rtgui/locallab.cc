@@ -1522,15 +1522,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "none";
                     } else if (qualitycurveMethod->get_active_row_number() == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "std";
-                    } /* else if (qualitycurveMethod->get_active_row_number() == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "enh";
-                    } else if (qualitycurveMethod->get_active_row_number() == 3) {
-                        pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "enhsup";
-                    } else if (qualitycurveMethod->get_active_row_number() == 4) {
-                        pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "contr";
-                    } else if (qualitycurveMethod->get_active_row_number() == 5) {
-                        pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "sob2";
-                    }*/
+                    } 
                  
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).cccurve = ccshape->getCurve();
@@ -3640,16 +3632,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             qualitycurveMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).qualitycurveMethod == "std") {
             qualitycurveMethod->set_active(1);
-        }  /* else if (pp->locallab.spots.at(index).qualitycurveMethod == "enh") {
-            qualitycurveMethod->set_active(2);
-        } else if (pp->locallab.spots.at(index).qualitycurveMethod == "enhsup") {
-            qualitycurveMethod->set_active(3);
-        } else if (pp->locallab.spots.at(index).qualitycurveMethod == "contr") {
-            qualitycurveMethod->set_active(4);
-        } else if (pp->locallab.spots.at(index).qualitycurveMethod == "sob2") {
-            qualitycurveMethod->set_active(5);
-        }
-*/
+        } 
+
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
         ccshape->setCurve(pp->locallab.spots.at(index).cccurve);
         LHshape->setCurve(pp->locallab.spots.at(index).LHcurve);

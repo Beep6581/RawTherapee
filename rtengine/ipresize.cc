@@ -54,7 +54,9 @@ void ImProcFunctions::Lanczos (const Imagefloat* src, Imagefloat* dst, float sca
     const float sc = min (scale, 1.0f);
     const int support = static_cast<int> (2.0f * a / sc) + 1;
 
+#ifdef _OPENMP
     #pragma omp parallel
+#endif
     {
         // storage for precomputed parameters for horisontal interpolation
         float * wwh = new float[support * dst->getWidth()];
@@ -97,7 +99,9 @@ void ImProcFunctions::Lanczos (const Imagefloat* src, Imagefloat* dst, float sca
         }
 
         // Phase 2: do actual interpolation
+#ifdef _OPENMP
         #pragma omp for
+#endif
 
         for (int i = 0; i < dst->getHeight(); i++) {
 

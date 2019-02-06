@@ -40,8 +40,6 @@ namespace rtengine
 
 using namespace procparams;
 
-extern const Settings* settings;
-
 void fillCurveArrayVib (DiagonalCurve* diagCurve, LUTf &outCurve)
 {
 
@@ -170,7 +168,9 @@ void ImProcFunctions::vibrance (LabImage* lab)
         {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
     };
 
+#ifdef _OPENMP
     #pragma omp parallel if (multiThread)
+#endif
     {
 
 #ifdef __SSE2__
@@ -179,7 +179,9 @@ void ImProcFunctions::vibrance (LabImage* lab)
 #endif
         float sathue[5], sathue2[4]; // adjust sat in function of hue
 
+#ifdef _OPENMP
         #pragma omp for schedule(dynamic, 16)
+#endif
 
         for (int i = 0; i < height; i++) {
 #ifdef __SSE2__

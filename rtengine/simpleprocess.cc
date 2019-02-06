@@ -29,10 +29,6 @@
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"
 #include "mytime.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include "jaggedarray.h"
 
 
 #undef THREAD_PRIORITY_NORMAL
@@ -341,13 +337,17 @@ private:
                 LUTf gamcurve(65536, 0);
                 float gam, gamthresh, gamslope;
                 ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
+#ifdef _OPENMP
                 #pragma omp parallel
+#endif
                 {
                     Imagefloat *origCropPart;//init auto noise
                     origCropPart = new Imagefloat(crW, crH); //allocate memory
                     Imagefloat *provicalc = new Imagefloat((crW + 1) / 2, (crH + 1) / 2);  //for denoise curves
                     int skipP = 1;
+#ifdef _OPENMP
                     #pragma omp for schedule(dynamic) collapse(2) nowait
+#endif
 
                     for (int wcr = 0; wcr < numtiles_W; wcr++) {
                         for (int hcr = 0; hcr < numtiles_H; hcr++) {
@@ -563,13 +563,17 @@ private:
                 coordH[0] = begH;
                 coordH[1] = fh / 2 - crH / 2;
                 coordH[2] = fh - crH - begH;
+#ifdef _OPENMP
                 #pragma omp parallel
+#endif
                 {
                     Imagefloat *origCropPart;//init auto noise
                     origCropPart = new Imagefloat(crW, crH); //allocate memory
                     Imagefloat *provicalc = new Imagefloat((crW + 1) / 2, (crH + 1) / 2);  //for denoise curves
 
+#ifdef _OPENMP
                     #pragma omp for schedule(dynamic) collapse(2) nowait
+#endif
 
                     for (int wcr = 0; wcr <= 2; wcr++) {
                         for (int hcr = 0; hcr <= 2; hcr++) {
@@ -814,7 +818,9 @@ private:
         if (denoiseParams.enabled  && (noiseLCurve || noiseCCurve)) {
             // we only need image reduced to 1/4 here
             calclum = new Imagefloat((fw + 1) / 2, (fh + 1) / 2);  //for luminance denoise curve
+#ifdef _OPENMP
             #pragma omp parallel for
+#endif
 
             for (int ii = 0; ii < fh; ii += 2) {
                 for (int jj = 0; jj < fw; jj += 2) {
@@ -1042,7 +1048,9 @@ private:
                         hist16thr[(int)((labView->L[i][j]))]++;
                     }
 
+#ifdef _OPENMP
                 #pragma omp critical
+#endif
                 {
                     hist16 += hist16thr;
                 }
@@ -1092,7 +1100,6 @@ private:
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
-             JaggedArray<float> blend(fw, fh);
 
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
                 if (params.locallab.spots.at(sp).inverssha) {
