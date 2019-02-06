@@ -1938,7 +1938,7 @@ TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ADJ;Equalizer blue-red
 TP_LOCALLAB_ARTIF;Shape detection
-TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold structure take into account the structure level of solid areas
+TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nThreshold structure take into account the structure level of solid areas
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLENDMASKCOL;Blend

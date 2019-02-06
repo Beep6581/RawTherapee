@@ -378,7 +378,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double local_dyy = locallab.spots.at(sp).iter / 8000.0;
     float iterati = (float) locallab.spots.at(sp).iter / 10.f;
 
-    if (iterati > 4.f || iterati < 1.f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
+    if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
         iterati = 2.f;
     }
 
