@@ -336,7 +336,9 @@ void RawImageSource::boxblur_resamp(float **src, float **dst, float ** temp, int
         }
 
         // process remaining columns
+#ifdef _OPENMP
         #pragma omp single
+#endif
         {
 
             //vertical blur

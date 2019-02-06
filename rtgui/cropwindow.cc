@@ -1493,7 +1493,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                             }
                         }
 
+#ifdef _OPENMP
                         #pragma omp critical
+#endif
                         {
                             if(maxthrstdDev_L2 > maxstdDev_L2) {
                                 maxstdDev_L2 = maxthrstdDev_L2;

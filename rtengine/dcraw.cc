@@ -1695,7 +1695,9 @@ void CLASS phase_one_correct()
             curve[i] = LIM(num+i,0,65535);
             }
             apply:					/* apply to whole image */
+#ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
+#endif
             for (int row=0; row < raw_height; row++) {
                 for (int col = (tag & 1)*ph1.split_col; col < raw_width; col++) {
                     RAW(row,col) = curve[RAW(row,col)];
@@ -1770,8 +1772,10 @@ void CLASS phase_one_correct()
 	                cx[17] = cf[17] = ((unsigned) ref[15] * 65535) / lc[qr][qc][15];
 	                cx[18] = cf[18] = 65535;
 	                cubic_spline(cx, cf, 19);
+#ifdef _OPENMP
 	                #pragma omp parallel for schedule(dynamic,16)
-                    for (int row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++)
+#endif
+	                for (int row = (qr ? ph1.split_row : 0); row < (qr ? raw_height : ph1.split_row); row++)
                         for (int col = (qc ? ph1.split_col : 0); col < (qc ? raw_width : ph1.split_col); col++)
                             RAW(row,col) = curve[RAW(row,col)];
 	            }
@@ -1787,7 +1791,9 @@ void CLASS phase_one_correct()
             qmult[1][0] = 1.0 + getreal(11);
             get4(); get4(); get4();
             qmult[1][1] = 1.0 + getreal(11);
+#ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
+#endif
             for (int row=0; row < raw_height; row++) {
                 for (int col=0; col < raw_width; col++) {
                     int i = qmult[row >= ph1.split_row][col >= ph1.split_col] * RAW(row,col);
@@ -2329,7 +2335,9 @@ void CLASS hasselblad_correct()
         }
 
         // apply flatfield
+#ifdef _OPENMP
 #pragma omp parallel for
+#endif
         for (int row = 0; row < raw_height; row++) {
             int ffs, cur_ffr, i, c;
             if (row < row_offset) {
@@ -4470,7 +4478,9 @@ void CLASS crop_masked_pixels()
       }
     }
   } else {
+#ifdef _OPENMP
 #pragma omp parallel for
+#endif
     for (int row=0; row < height; row++)
       for (int col=0; col < width; col++)
 	BAYER2(row,col) = RAW(row+top_margin,col+left_margin);

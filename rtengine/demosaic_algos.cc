@@ -1528,7 +1528,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     const int v1 = 1 * width, v2 = 2 * width, v3 = 3 * width, v4 = 4 * width, v5 = 5 * width, v6 = 6 * width;
     float* rgb[3];
     float* chr[2];
-    float (*rgbarray), *vdif, *hdif, (*chrarray);
+    float *rgbarray, *vdif, *hdif, *chrarray;
 
     rgbarray    = (float (*)) calloc(width * height * 3, sizeof( float));
     rgb[0] = rgbarray;
@@ -1789,7 +1789,9 @@ void RawImageSource::nodemosaic(bool bw)
     red(W, H);
     green(W, H);
     blue(W, H);
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
 
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {

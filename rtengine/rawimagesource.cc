@@ -3407,7 +3407,9 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 
             }
 
+#ifdef _OPENMP
             #pragma omp single
+#endif
 
             for (int col = W - (W % 8); col < W; col++) {
                 int len = boxH / 2 + 1;

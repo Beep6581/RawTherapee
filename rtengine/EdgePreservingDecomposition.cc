@@ -324,7 +324,9 @@ void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float*
         }
 
 #endif
+#ifdef _OPENMP
         #pragma omp single
+#endif
         {
 #ifdef __SSE2__
 

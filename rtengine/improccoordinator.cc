@@ -1048,9 +1048,13 @@ void ImProcCoordinator::updateLRGBHistograms()
     int x1, y1, x2, y2;
     params.crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 
+#ifdef _OPENMP
     #pragma omp parallel sections
+#endif
     {
+#ifdef _OPENMP
         #pragma omp section
+#endif
         {
             histChroma.clear();
 
@@ -1060,7 +1064,9 @@ void ImProcCoordinator::updateLRGBHistograms()
                     histChroma[(int)(sqrtf(SQR(nprevl->a[i][j]) + SQR(nprevl->b[i][j])) / 188.f)]++;      //188 = 48000/256
                 }
         }
+#ifdef _OPENMP
         #pragma omp section
+#endif
         {
             histLuma.clear();
 
@@ -1070,7 +1076,9 @@ void ImProcCoordinator::updateLRGBHistograms()
                     histLuma[(int)(nprevl->L[i][j] / 128.f)]++;
                 }
         }
+#ifdef _OPENMP
         #pragma omp section
+#endif
         {
             histRed.clear();
             histGreen.clear();
@@ -1302,7 +1310,9 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         int cy = params.crop.y;
         int cw = params.crop.w;
         int ch = params.crop.h;
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for (int i = cy; i < cy + ch; i++) {
             for (int j = cx; j < cx + cw; j++) {
@@ -1317,7 +1327,9 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     }
 
     // image may contain out of range samples, clip them to avoid wrap-arounds
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
 
     for (int i = 0; i < im->getHeight(); i++) {
         for (int j = 0; j < im->getWidth(); j++) {
