@@ -59,7 +59,6 @@ Locallab::Locallab():
     expcbdl(new MyExpander(true, new Gtk::HBox())),
     expdenoi(new MyExpander(true, new Gtk::HBox())),
 
-
     // CurveEditorGroup widgets
     // Color & Light
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
@@ -829,7 +828,6 @@ Locallab::Locallab():
     sharpImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
     sharpTitleHBox->pack_end(*sharpImage, Gtk::PACK_SHRINK, 0);
     expsharp->setLabel(sharpTitleHBox);
-
     expsharp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsharp));
     enablesharpConn = expsharp->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsharp));
 
