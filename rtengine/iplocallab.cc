@@ -4221,7 +4221,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
                 reducdE = pow(reducdE, lp.iterat);
 
-                if (lp.sens > 99) {
+                if (varsens > 99) {
                     reducdE = 1.f;
                 }
 
