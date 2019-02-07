@@ -512,6 +512,7 @@ public:
         bool structexp;
         bool blurexpde;
         bool excurve;
+        bool inversex;
         bool enaExpMask;
         bool CCmaskexpcurve;
         bool LLmaskexpcurve;

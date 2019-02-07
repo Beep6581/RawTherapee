@@ -973,6 +973,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structexp = locallab.spots.at(j).structexp && pSpot.structexp == otherSpot.structexp;
                 locallab.spots.at(j).blurexpde = locallab.spots.at(j).blurexpde && pSpot.blurexpde == otherSpot.blurexpde;
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
+                locallab.spots.at(j).inversex = locallab.spots.at(j).inversex && pSpot.invers == otherSpot.inversex;
                 locallab.spots.at(j).enaExpMask = locallab.spots.at(j).enaExpMask && pSpot.enaExpMask == otherSpot.enaExpMask;
                 locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
                 locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
@@ -2679,6 +2680,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
         }
 
+        if (locallab.spots.at(i).inversex) {
+            toEdit.locallab.spots.at(i).inversex = mods.locallab.spots.at(i).inversex;
+        }
+
         if (locallab.spots.at(i).enaExpMask) {
             toEdit.locallab.spots.at(i).enaExpMask = mods.locallab.spots.at(i).enaExpMask;
         }
@@ -3975,6 +3980,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structexp(v),
     blurexpde(v),
     excurve(v),
+    inversex(v),
     enaExpMask(v),
     CCmaskexpcurve(v),
     LLmaskexpcurve(v),
@@ -4114,6 +4120,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structexp = v;
     blurexpde = v;
     excurve = v;
+    inversex = v;
     enaExpMask = v;
     CCmaskexpcurve = v;
     LLmaskexpcurve = v;

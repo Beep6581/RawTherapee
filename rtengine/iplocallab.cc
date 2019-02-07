@@ -177,6 +177,7 @@ struct local_params {
     int trans;
     int dehaze;
     bool inv;
+    bool invex;
     bool curvact;
     bool invrad;
     bool invret;
@@ -478,6 +479,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool acti = locallab.spots.at(sp).activlum;
     bool cupas = false; // Provision
     int local_sensisf = locallab.spots.at(sp).sensisf;
+    bool inverseex = locallab.spots.at(sp).inversex;
 
     bool inverserad = false; // Provision
     bool inverseret = locallab.spots.at(sp).inversret;
@@ -525,6 +527,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senslc = local_sensilc;
     lp.lcamount = lcamount;
     lp.inv = inverse;
+    lp.invex = inverseex;
     lp.curvact = curvacti;
     lp.invrad = inverserad;
     lp.invret = inverseret;
@@ -4081,16 +4084,37 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
     }
 }
 
-void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LUTf & lightCurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
+void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct local_params & lp, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
     const float facc = (100.f + lp.chro) / 100.f; //chroma factor transition
+    //    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexptemp, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
+    float varsens = lp.sens;
+
+    if (senstype == 0) { //Color and Light
+        varsens =  lp.sens;
+    }
+
+    if (senstype == 1) { //exposure
+        varsens =  lp.sensex;
+    }
+
+    LabImage *temp = nullptr;
 
     int GW = transformed->W;
     int GH = transformed->H;
     float refa = chromaref * cos(hueref);
     float refb = chromaref * sin(hueref);
+
+    if (senstype == 1) { //exposure
+        temp = new LabImage(GW, GH);
+        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc);
+
+        if (lp.war != 0) {
+            ImProcFunctions::ciecamloc_02float(sp, temp, temp);
+        }
+    }
 
     LabImage *origblur = nullptr;
 
@@ -4176,8 +4200,8 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                 dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
 
                 float reducdE = 0.f;
-                float mindE = 2.f + minscope * lp.sens * lp.thr;
-                float maxdE = 5.f + maxscope * lp.sens * (1 + 0.1f * lp.thr);
+                float mindE = 2.f + minscope * varsens * lp.thr;
+                float maxdE = 5.f + maxscope * varsens * (1 + 0.1f * lp.thr);
 
                 float ar = 1.f / (mindE - maxdE);
 
@@ -4214,45 +4238,63 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                         }
 
                         case 1: { // inside transition zone
-                            float lumnew = original->L[y][x];
+                            float diflc = 0.f;
+                            float difa = 0.f;
+                            float difb = 0.f;
+                            float factorx = 1.f - localFactor;
+                            float fac = 1.f;
 
-                            if (lp.sens < 75.f) {
-                                float lightcont;
-
-                                if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                    calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
-                                    lightcont = lumnew;
-
-                                } else {
-                                    lightcont = lumnew;
-                                }
-
-                                float factorx = 1.f - localFactor;
-                                float fac = (100.f + factorx * lp.chro * reducdE) / 100.f; //chroma factor transition
-                                float diflc = (lightcont - original->L[y][x]) * reducdE;
-
-                                diflc *= factorx; //transition lightness
-                                transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
-
-                                transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
-                                transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
-                            } else {
-                                float factorx = 1.f - localFactor;
-                                float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
+                            if (senstype == 0) {
                                 float lumnew = original->L[y][x];
 
-                                if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                    calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
+                                if (lp.sens < 75.f) {
+                                    float lightcont;
+
+                                    if ((lp.ligh != 0.f || lp.cont != 0)) {
+                                        calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
+                                        lightcont = lumnew;
+
+                                    } else {
+                                        lightcont = lumnew;
+                                    }
+
+                                    fac = (100.f + factorx * lp.chro * reducdE) / 100.f; //chroma factor transition
+                                    diflc = (lightcont - original->L[y][x]) * reducdE;
+
+                                    diflc *= factorx; //transition lightness
+                                    transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
+
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+                                } else {
+                                    float factorx = 1.f - localFactor;
+                                    float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
+                                    float lumnew = original->L[y][x];
+
+                                    if ((lp.ligh != 0.f || lp.cont != 0)) {
+                                        calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
+                                    }
+
+                                    float lightcont = lumnew ; //apply lightness
+
+                                    float diflc = lightcont - original->L[y][x];
+                                    diflc *= factorx;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+
+
                                 }
-
-                                float lightcont = lumnew ; //apply lightness
-
-                                float diflc = lightcont - original->L[y][x];
+                            } else if (senstype == 1) {
+                                diflc = (temp->L[y][x] - original->L[y][x]) * reducdE;
                                 diflc *= factorx;
+                                difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
+                                difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
+                                difa *= factorx;
+                                difb *= factorx;
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                transformed->a[y][x] = CLIPC(original->a[y][x] * fac);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
-
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
                             }
 
@@ -4260,48 +4302,69 @@ void ImProcFunctions::InverseColorLight_Local(const struct local_params & lp, LU
                         }
 
                         case 0: { // inside selection => full effect, no transition
-                            float lumnew = original->L[y][x];
+                            float diflc = 0.f;
+                            float difa = 0.f;
+                            float difb = 0.f;
+                            float fac = 1.f;
 
-                            if (lp.sens < 75.f) {
+                            if (senstype == 0) {
+                                float lumnew = original->L[y][x];
 
-                                float lightcont;
+                                if (lp.sens < 75.f) {
 
-                                if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                    calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
-                                    lightcont = lumnew;
+                                    float lightcont;
+
+                                    if ((lp.ligh != 0.f || lp.cont != 0)) {
+                                        calclight(lumnew, lp.ligh, lumnew, lightCurveloc);  //replace L-curve
+                                        lightcont = lumnew;
+
+                                    } else {
+                                        lightcont = lumnew;
+                                    }
+
+                                    fac = (100.f + lp.chro * reducdE) / 100.f; //chroma factor transition
+                                    diflc = (lightcont - original->L[y][x]) * reducdE;
+
+                                    transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
+
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+
 
                                 } else {
-                                    lightcont = lumnew;
+                                    if ((lp.ligh != 0.f || lp.cont != 0)) {
+                                        calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
+                                    }
+
+                                    float lightcont = lumnew ;
+                                    transformed->L[y][x] = CLIP(lightcont);
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * facc);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * facc);
+
                                 }
+                            } else if (senstype == 1) {
 
-                                float fac = (100.f + lp.chro * reducdE) / 100.f; //chroma factor transition
-                                float diflc = (lightcont - original->L[y][x]) * reducdE;
-
-                                transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
-
-                                transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
-                                transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
-
-
-                            } else {
-                                if ((lp.ligh != 0.f || lp.cont != 0)) {
-                                    calclight(original->L[y][x], lp.ligh, lumnew, lightCurveloc);
-                                }
-
-                                float lightcont = lumnew ;
-                                transformed->L[y][x] = CLIP(lightcont);
-                                transformed->a[y][x] = CLIPC(original->a[y][x] * facc);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] * facc);
-
+                                diflc = (temp->L[y][x] - original->L[y][x]) * reducdE;
+                                difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
+                                difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
+                                transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                             }
+
                         }
                     }
+
                 }
 
             }
         }
     }
     delete origblur;
+
+    if (senstype == 1) {
+        delete temp;
+    }
 
 }
 
@@ -4779,7 +4842,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             noiscfactiv = false;
         }
 
-        if (lp.inv || lp.invret) { //exterior || lp.curvact
+        if (lp.inv || lp.invret  || lp.invex) { //exterior || lp.curvact
             ave = 0.f;
             n = 0;
             #pragma omp parallel for reduction(+:ave,n)
@@ -7087,7 +7150,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 
 
-        if (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4 || (exlocalcurve  && localexutili))) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
             LabImage *bufexptemp = nullptr;
@@ -7618,6 +7681,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
             }
 
+        }
+//inverse
+        else if (lp.invex  && (lp.expcomp != 0 || lp.war != 0) && lp.exposena) {
+
+            InverseColorLight_Local(sp, 1, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 
@@ -8159,7 +8227,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //inverse
         else if (lp.inv  && (lp.chro != 0 || lp.ligh != 0) && lp.colorena) {
 
-            InverseColorLight_Local(lp, lightCurveloc, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+            InverseColorLight_Local(sp, 0, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash

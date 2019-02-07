@@ -171,6 +171,8 @@ private:
     // Exposure
     Gtk::CheckButton* const enaExpMask;
     sigc::connection enaExpMaskConn;
+    Gtk::CheckButton* const inversex;
+    sigc::connection inversexConn;    
     // Vibrance
     Gtk::CheckButton* const protectSkins;
     Gtk::CheckButton* const avoidColorShift;
@@ -218,6 +220,7 @@ private:
     Gtk::Label* transLabels;
     Gtk::Label* transLabels2;
     Gtk::Frame* maskcolFrame;
+    Gtk::Frame* maskexpFrame;
     
     // Others
     /**
@@ -247,6 +250,7 @@ private:
     void enaColorMaskChanged();
     // Exposure
     void enaExpMaskChanged();
+    void inversexChanged();
     // Vibrance
     void protectskins_toggled();
     void avoidcolorshift_toggled();

@@ -873,6 +873,7 @@ HISTORY_MSG_617;Local - Blur Exp
 HISTORY_MSG_618;Local - Use Color Mask
 HISTORY_MSG_619;Local - Use Exp Mask
 HISTORY_MSG_620;Local - Blur col
+HISTORY_MSG_621;Local - Exp inverse
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
