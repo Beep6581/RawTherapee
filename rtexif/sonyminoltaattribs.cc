@@ -895,6 +895,9 @@ public:
             {6553, "Sigma 30mm f/1.4 DC DN | C"},
             {6553, "Sigma 85mm f/1.4 DG HSM | A"},
             {6553, "Sigma 16mm f/1.4 DC DN | C"},
+            {6553, "Sigma 105mm f/1.4 DG HSM | A"},
+            {6553, "Sigma 56mm f/1.4 DC DN | C"},
+            {6553, "Sigma 70-200mm f/2.8 DG OS HSM | S"},
             {6553, "Sigma 70mm f/2.8 DG MACRO | A"},
             {6553, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
             {6553, "Tamron 28-75mm f/2.8 Di III RXD"},
@@ -905,6 +908,7 @@ public:
             {6553, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
             {6553, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
             {6553, "Voigtlander NOKTON classic 35mm f/1.4"},
+            {6553, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"},
             {6553, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"},
             {6553, "Zeiss Touit 12mm f/2.8"},
             {6553, "Zeiss Touit 32mm f/1.8"},
@@ -1116,6 +1120,9 @@ public:
             {65535, "Sigma 30mm f/1.4 DC DN | C"},
             {65535, "Sigma 85mm f/1.4 DG HSM | A"},
             {65535, "Sigma 16mm f/1.4 DC DN | C"},
+            {65535, "Sigma 105mm f/1.4 DG HSM | A"},
+            {65535, "Sigma 56mm f/1.4 DC DN | C"},
+            {65535, "Sigma 70-200mm f/2.8 DG OS HSM | S"},
             {65535, "Sigma 70mm f/2.8 DG MACRO | A"},
             {65535, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
             {65535, "Tamron 28-75mm f/2.8 Di III RXD"},
@@ -1126,6 +1133,7 @@ public:
             {65535, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
             {65535, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
             {65535, "Voigtlander NOKTON classic 35mm f/1.4"},
+            {65535, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"},
             {65535, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"},
             {65535, "Zeiss Touit 12mm f/2.8"},
             {65535, "Zeiss Touit 32mm f/1.8"},
@@ -1146,7 +1154,7 @@ public:
             {65535, "Samyang 500mm Mirror f/8.0"},
             {65535, "Pentacon Auto 135mm f/2.8"},
             {65535, "Pentacon Auto 29mm f/2.8"},
-            {65535, "Helios 44-2 58mm f/2.0"}
+            {65535, "Helios 44-2 58mm f/2.0"},
         };
     }
 
@@ -1269,13 +1277,13 @@ public:
         choices.insert (p_t (49236, "Zeiss Loxia 25mm f/2.4"));
         choices.insert (p_t (49457, "Tamron 28-75mm f/2.8 Di III RXD"));
         choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C"));
-        choices.insert (p_t (50481, "Sigma 50mm f/1.4 DG HSM | A + MC-11"));
+        choices.insert (p_t (50481, "Sigma 50mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50482, "Sigma 18-300mm f/3.5-6.3 DC MACRO OS HSM | C + MC-11"));
         choices.insert (p_t (50483, "Sigma 18-35mm f/1.8 DC HSM | A + MC-11"));
         choices.insert (p_t (50484, "Sigma 24-35mm f/2 DG HSM | A + MC-11"));
         choices.insert (p_t (50486, "Sigma 150-600mm f/5-6.3 DG OS HSM | C + MC-11"));
         choices.insert (p_t (50487, "Sigma 20mm f/1.4 DG HSM | A + MC-11"));
-        choices.insert (p_t (50488, "Sigma 35mm f/1.4 DG HSM | A + MC-11"));
+        choices.insert (p_t (50488, "Sigma 35mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50489, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + MC-11"));
         choices.insert (p_t (50490, "Sigma 120-300mm f/2.8 DG OS HSM | S + MC-11"));
         choices.insert (p_t (50492, "Sigma 24-105mm f/4 DG OS HSM | A + MC-11"));
@@ -1284,6 +1292,9 @@ public:
         choices.insert (p_t (50499, "Sigma 85mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50501, "Sigma 100-400mm f/5-6.3 DG OS HSM | C + MC-11"));
         choices.insert (p_t (50503, "Sigma 16mm f/1.4 DC DN | C"));
+        choices.insert (p_t (50507, "Sigma 105mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (50508, "Sigma 56mm f/1.4 DC DN | C"));
+        choices.insert (p_t (50512, "Sigma 70-200mm f/2.8 DG OS HSM | S"));
         choices.insert (p_t (50513, "Sigma 70mm f/2.8 DG MACRO | A"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
@@ -1291,6 +1302,7 @@ public:
         choices.insert (p_t (50995, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"));
         choices.insert (p_t (50996, "Voigtlander NOKTON 40mm f/1.2 Aspherical"));
         choices.insert (p_t (50997, "Voigtlander NOKTON classic 35mm f/1.4"));
+        choices.insert (p_t (50998, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"));
         choices.insert (p_t (50999, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"));
         choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 FE or Samyang AF 35mm f/2.8 FE"));
         choices.insert (p_t (51505, "Samyang AF 35mm f/2.8 FE"));
