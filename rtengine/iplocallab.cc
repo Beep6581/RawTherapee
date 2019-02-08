@@ -4084,12 +4084,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
     }
 }
 
-void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct local_params & lp, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
+void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct local_params & lp, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & exlocalcurve, LUTf & cclocalcurve, float adjustr, bool localcutili, LUTf & lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
     const float facc = (100.f + lp.chro) / 100.f; //chroma factor transition
-    //    ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexptemp, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
     float varsens = lp.sens;
 
     if (senstype == 0) { //Color and Light
@@ -4101,6 +4100,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     }
 
     LabImage *temp = nullptr;
+    LabImage *tempCL = nullptr;
 
     int GW = transformed->W;
     int GH = transformed->H;
@@ -4111,9 +4111,74 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
         temp = new LabImage(GW, GH);
         ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc);
 
+        if (exlocalcurve) {
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < temp->H; y++) {
+                for (int x = 0; x < temp->W; x++) {
+                    float lighn =  temp->L[y][x];
+                    float lh = 0.5f * exlocalcurve[2.f * lighn]; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
+                    temp->L[y][x] = lh;
+                }
+            }
+        }
+
         if (lp.war != 0) {
             ImProcFunctions::ciecamloc_02float(sp, temp, temp);
         }
+    }
+
+    if (senstype == 0) { //Color and Light curves L C
+        tempCL = new LabImage(GW, GH);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < tempCL->H; y++) {
+            for (int x = 0; x < tempCL->W; x++) {
+                tempCL->a[y][x] = original->a[y][x];
+                tempCL->b[y][x] = original->b[y][x];
+                tempCL->L[y][x] = original->L[y][x];
+            }
+        }
+
+        if (cclocalcurve  && localcutili) { // C=f(C) curve
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < transformed->H; y++) {
+                for (int x = 0; x < transformed->W; x++) {
+                    //same as in "normal"
+                    float chromat = sqrt(SQR(original->a[y][x]) +  SQR(original->b[y][x]));
+                    float ch;
+                    float ampli = 25.f;
+                    ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+                    float chprocu = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                    tempCL->a[y][x] = original->a[y][x] * (1.f + 0.01f * (chprocu));
+                    tempCL->b[y][x] = original->b[y][x] * (1.f + 0.01f * (chprocu));
+
+                }
+            }
+
+        }
+
+        if (lllocalcurve && locallutili) {
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < transformed->H; y++) {
+                for (int x = 0; x < transformed->W; x++) {
+                    float lighn =  original->L[y][x];
+                    float lh = 0.5f * lllocalcurve[2.f * lighn];
+                    tempCL->L[y][x] = lh;
+                }
+            }
+        }
+
     }
 
     LabImage *origblur = nullptr;
@@ -4121,6 +4186,17 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     origblur = new LabImage(GW, GH);
 
     float radius = 3.f / sk;
+
+
+    if (senstype == 1) {
+        radius = (2.f + 0.2f * lp.blurexp) / sk;
+    }
+
+    if (senstype == 0) {
+        radius = (2.f + 0.2f * lp.blurcol) / sk;
+    }
+
+
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -4239,13 +4315,35 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
                         case 1: { // inside transition zone
                             float diflc = 0.f;
+                            float difL = 0.f;
                             float difa = 0.f;
                             float difb = 0.f;
                             float factorx = 1.f - localFactor;
                             float fac = 1.f;
+                            float facCa = 1.f;
+                            float facCb = 1.f;
+                            float epsia = 0.f;
+                            float epsib = 0.f;
 
                             if (senstype == 0) {
                                 float lumnew = original->L[y][x];
+                                difL = (tempCL->L[y][x] - original->L[y][x]) * reducdE;
+                                difa = (tempCL->a[y][x] - original->a[y][x]) * reducdE;
+                                difb = (tempCL->b[y][x] - original->b[y][x]) * reducdE;
+                                difL *= factorx;
+                                difa *= factorx;
+                                difb *= factorx;
+
+                                if (original->a[y][x] == 0.f) {
+                                    epsia = 0.0001f;
+                                }
+
+                                if (original->b[y][x] == 0.f) {
+                                    epsib = 0.0001f;
+                                }
+
+                                facCa = 1.f + (difa / (original->a[y][x] + epsia));
+                                facCb = 1.f + (difb / (original->b[y][x] + epsib));
 
                                 if (lp.sens < 75.f) {
                                     float lightcont;
@@ -4262,10 +4360,10 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                                     diflc = (lightcont - original->L[y][x]) * reducdE;
 
                                     diflc *= factorx; //transition lightness
-                                    transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
+                                    transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc + difL));
 
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac * facCa) ;
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac * facCb);
                                 } else {
                                     float factorx = 1.f - localFactor;
                                     float fac = (100.f + factorx * lp.chro) / 100.f; //chroma factor transition
@@ -4279,9 +4377,9 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
                                     float diflc = lightcont - original->L[y][x];
                                     diflc *= factorx;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc + difL);
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac * facCa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac * facCb);
 
 
                                 }
@@ -4303,12 +4401,31 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
                         case 0: { // inside selection => full effect, no transition
                             float diflc = 0.f;
+                            float difL = 0.f;
                             float difa = 0.f;
                             float difb = 0.f;
                             float fac = 1.f;
+                            float facCa = 1.f;
+                            float facCb = 1.f;
+                            float epsia = 0.f;
+                            float epsib = 0.f;
 
                             if (senstype == 0) {
                                 float lumnew = original->L[y][x];
+                                difL = (tempCL->L[y][x] - original->L[y][x]) * reducdE;
+                                difa = (tempCL->a[y][x] - original->a[y][x]) * reducdE;
+                                difb = (tempCL->b[y][x] - original->b[y][x]) * reducdE;
+
+                                if (original->a[y][x] == 0.f) {
+                                    epsia = 0.0001f;
+                                }
+
+                                if (original->b[y][x] == 0.f) {
+                                    epsib = 0.0001f;
+                                }
+
+                                facCa = 1.f + (difa / (original->a[y][x] + epsia));
+                                facCb = 1.f + (difb / (original->b[y][x] + epsib));
 
                                 if (lp.sens < 75.f) {
 
@@ -4325,10 +4442,10 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                                     fac = (100.f + lp.chro * reducdE) / 100.f; //chroma factor transition
                                     diflc = (lightcont - original->L[y][x]) * reducdE;
 
-                                    transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc));
+                                    transformed->L[y][x] = CLIP(1.f * (original->L[y][x] + diflc + difL));
 
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac) ;
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac);
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * fac * facCa) ;
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * fac * facCb);
 
 
                                 } else {
@@ -4337,9 +4454,9 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                                     }
 
                                     float lightcont = lumnew ;
-                                    transformed->L[y][x] = CLIP(lightcont);
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] * facc);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] * facc);
+                                    transformed->L[y][x] = CLIP(lightcont + difL) ;
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] * facc * facCa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] * facc * facCb);
 
                                 }
                             } else if (senstype == 1) {
@@ -4364,6 +4481,10 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
     if (senstype == 1) {
         delete temp;
+    }
+
+    if (senstype == 0) {
+        delete tempCL;
     }
 
 }
@@ -4804,7 +4925,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, const LocCCmaskexpCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskexpCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskexpCurve & lochhmasexpCurve, bool & lhmasexputili,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask)
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
@@ -7684,8 +7805,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 //inverse
         else if (lp.invex  && (lp.expcomp != 0 || lp.war != 0) && lp.exposena) {
-
-            InverseColorLight_Local(sp, 1, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+            float adjustr = 2.f;
+            InverseColorLight_Local(sp, 1, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 
@@ -8118,12 +8239,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufcolcalc->b[loy - begy][lox - begx] = bufcolorig->b[loy - begy][lox - begx];
                                 bufcolcalc->L[loy - begy][lox - begx] = bufcolorig->L[loy - begy][lox - begx];
 
-                                if (cclocalcurve  && lp.qualcurvemet != 0) { // C=f(C) curve
+                                if (cclocalcurve  && lp.qualcurvemet != 0  && localcutili) { // C=f(C) curve
                                     float chromat = sqrt(SQR(bufcolcalc->a[loy - begy][lox - begx]) +  SQR(bufcolcalc->b[loy - begy][lox - begx]));
 
                                     float ch;
                                     float ampli = 25.f;
-                                    ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+                                    ch = (cclocalcurve[chromat * adjustr])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
                                     chprocu = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
                                 }
 
@@ -8225,9 +8346,27 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
         }
 //inverse
-        else if (lp.inv  && (lp.chro != 0 || lp.ligh != 0) && lp.colorena) {
+        else if (lp.inv  && (lp.chro != 0 || lp.ligh != 0 || exlocalcurve) && lp.colorena) {
+            float adjustr = 1.0f;
 
-            InverseColorLight_Local(sp, 0, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+//adapt chroma to working profile
+            if (params->icm.workingProfile == "ProPhoto")   {
+                adjustr = 1.2f;   // 1.2 instead 1.0 because it's very rare to have C>170..
+            } else if (params->icm.workingProfile == "Adobe RGB")  {
+                adjustr = 1.8f;
+            } else if (params->icm.workingProfile == "sRGB")       {
+                adjustr = 2.0f;
+            } else if (params->icm.workingProfile == "WideGamut")  {
+                adjustr = 1.2f;
+            } else if (params->icm.workingProfile == "Beta RGB")   {
+                adjustr = 1.4f;
+            } else if (params->icm.workingProfile == "BestRGB")    {
+                adjustr = 1.4f;
+            } else if (params->icm.workingProfile == "BruceRGB")   {
+                adjustr = 1.8f;
+            }
+
+            InverseColorLight_Local(sp, 0, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash

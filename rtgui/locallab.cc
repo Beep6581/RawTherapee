@@ -61,6 +61,7 @@ Locallab::Locallab():
     // CurveEditorGroup widgets
     // Color & Light
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
+    HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     // Exposure
     curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
@@ -265,9 +266,11 @@ Locallab::Locallab():
     ccshape->setBottomBarBgGradient(mccshape);
     ccshape->setLeftBarBgGradient(mccshape);
 
-    llCurveEditorG->newLine();
+   // llCurveEditorG->newLine();
+    llCurveEditorG->curveListComplete();
+    HCurveEditorG->setCurveListener(this);
 
-    LHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true));
+    LHshape = static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true));
     LHshape->setIdentityValue(0.);
     LHshape->setResetCurve(FlatCurveType(defSpot.LHcurve.at(0)), defSpot.LHcurve);
     LHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
@@ -283,7 +286,7 @@ Locallab::Locallab():
     LHshape->setBottomBarBgGradient(mLHshape);
  //   llCurveEditorG->curveListComplete();
 
-    HHshape = static_cast<FlatCurveEditor*>(llCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
+    HHshape = static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
     HHshape->setIdentityValue(0.);
     HHshape->setResetCurve(FlatCurveType(defSpot.HHcurve.at(0)), defSpot.HHcurve);
     HHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
@@ -299,7 +302,7 @@ Locallab::Locallab():
 
     HHshape->setBottomBarBgGradient(mHHshape);
 
-    llCurveEditorG->curveListComplete();
+    HCurveEditorG->curveListComplete();
 
     inversConn  = invers->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversChanged));
 
@@ -357,6 +360,7 @@ Locallab::Locallab():
     qualcurvbox->pack_start(*qualitycurveMethod);
     colorBox->pack_start(*qualcurvbox);
     colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*invers);
     maskcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
@@ -844,6 +848,7 @@ Locallab::~Locallab()
     idle_register.destroy();
 
     delete llCurveEditorG;
+    delete HCurveEditorG;
     delete curveEditorG;
     delete curveEditorGG;
     delete LocalcurveEditorgainT;
@@ -2301,6 +2306,7 @@ void Locallab::inversChanged()
     if (multiImage && invers->get_inconsistent()) {
         sensi->show();
         llCurveEditorG->show();
+        HCurveEditorG->show();
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
@@ -2310,17 +2316,19 @@ void Locallab::inversChanged()
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (invers->get_active()) {
         sensi->show();
-        llCurveEditorG->hide();
+        llCurveEditorG->show();
+        HCurveEditorG->hide();
         curvactiv->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
         maskcolFrame->hide();
         structcol->hide();
-        blurcolde->hide();
+        blurcolde->show();
 
     } else {
         sensi->show();
         llCurveEditorG->show();
+        HCurveEditorG->show();
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
@@ -2368,10 +2376,10 @@ void Locallab::inversexChanged()
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
         sensiex->show();
-        curveEditorG->hide();
+        curveEditorG->show();
         maskexpFrame->hide();
         structexp->hide();
-        blurexpde->hide();
+        blurexpde->show();
 
     } else {
         sensiex->show();
@@ -4025,6 +4033,7 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && invers->get_inconsistent()) {
         sensi->show();
         llCurveEditorG->show();
+        HCurveEditorG->show();
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
@@ -4034,16 +4043,18 @@ void Locallab::updateSpecificGUIState()
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (invers->get_active()) {
         sensi->show();
-        llCurveEditorG->hide();
+        llCurveEditorG->show();
+        HCurveEditorG->hide();
         curvactiv->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
         maskcolFrame->hide();
         structcol->hide();
-        blurcolde->hide();
+        blurcolde->show();
     } else {
         sensi->show();
         llCurveEditorG->show();
+        HCurveEditorG->show();
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
@@ -4065,10 +4076,10 @@ void Locallab::updateSpecificGUIState()
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
         sensiex->show();
-        curveEditorG->hide();
+        curveEditorG->show();
         maskexpFrame->hide();
         structexp->hide();
-        blurexpde->hide();
+        blurexpde->show();
     } else {
         sensiex->show();
         curveEditorG->show();
