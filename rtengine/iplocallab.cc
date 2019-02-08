@@ -3644,7 +3644,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         origblur = new LabImage(GW, GH);
         LabImage *origblurmask = nullptr;
 
-        float radius = 3.f;
+        float radius = 3.f / sk;
 
         if (senstype == 1)
         {
@@ -4586,7 +4586,7 @@ void ImProcFunctions::calc_ref(int befend, int sp, LabImage * original, LabImage
                 }
             }
 
-            float radius = 2.f;
+            float radius = 3.f / sk;
             {
                 //No omp
                 gaussianBlur(origblur->L, blurorig->L, spotSi, spotSi, radius);
