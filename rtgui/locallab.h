@@ -261,8 +261,6 @@ private:
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
-//    Gtk::Label* transLabels;
-//    Gtk::Label* transLabels2;
     Gtk::Frame* maskcolFrame;
     Gtk::Frame* maskexpFrame;
     Gtk::Frame* maskSHFrame;

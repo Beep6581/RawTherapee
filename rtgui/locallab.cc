@@ -232,7 +232,6 @@ Locallab::Locallab():
     defparams(nullptr),
     defpedited(nullptr),
     pe(nullptr)
-
 {
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
 

@@ -165,7 +165,7 @@ void MyFlatCurve::draw ()
 
     Gdk::RGBA c;
 
-// Draw Locallab reference value in the background
+    // Draw Locallab reference value in the background
     if (locallabRef > 0.0) {
         cr->set_line_width(1.0);
         cr->move_to(double(graphX + 1), double(graphY - 1));
@@ -178,6 +178,7 @@ void MyFlatCurve::draw ()
         cr->fill();
         cr->stroke();
     }
+
     cr->set_line_width (1.0);
 
     // draw f(x)=0.5 line
