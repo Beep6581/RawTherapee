@@ -467,6 +467,7 @@ public:
         bool shape;
         bool spotMethod;
         bool sensiexclu;
+        bool structexclu;
         bool struc;
         bool shapeMethod;
         bool locX;

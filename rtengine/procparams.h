@@ -942,6 +942,7 @@ struct LocallabParams {
         Glib::ustring shape; // ELI, RECT
         Glib::ustring spotMethod; // norm, exc
         int sensiexclu;
+        int structexclu;
         int struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
         int locX;

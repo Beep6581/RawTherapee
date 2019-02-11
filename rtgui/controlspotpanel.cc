@@ -46,6 +46,8 @@ ControlSpotPanel::ControlSpotPanel():
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
+    structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
+    
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1, 12, 1, 4))),
     locX_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 0, 2250, 1, 250))),
     locXL_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 0, 2250, 1, 250))),
@@ -165,7 +167,9 @@ ControlSpotPanel::ControlSpotPanel():
     ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
     sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
     sensiexclu_->setAdjusterListener(this);
+    structexclu_->setAdjusterListener(this);
     excluBox->pack_start(*sensiexclu_);
+    excluBox->pack_start(*structexclu_);
     // excluBox->pack_start(*struc_); // Uncomment this line to use the struc_ adjuster
     excluFrame->add(*excluBox);
     pack_start(*excluFrame);
@@ -417,6 +421,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
     sensiexclu_->setValue(static_cast<double>(row[spots_.sensiexclu]));
+    structexclu_->setValue(static_cast<double>(row[spots_.structexclu]));
     struc_->setValue(static_cast<double>(row[spots_.struc]));
     shapeMethod_->set_active(row[spots_.shapeMethod]);
     locX_->setValue(static_cast<double>(row[spots_.locX]));
@@ -705,6 +710,14 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == structexclu_) {
+        row[spots_.structexclu] = (int) structexclu_->getValue();
+
+        if (listener) {
+            listener->panelChanged(Evlocallabstructexlu, structexclu_->getTextValue());
+        }
+    }
+    
     if (a == struc_) {
         row[spots_.struc] = (int) struc_->getValue();
 
@@ -840,6 +853,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
     sensiexclu_->block(cond);
+    structexclu_->block(cond);
     struc_->block(cond);
     shapeMethodconn_.block(cond);
     locX_->block(cond);
@@ -862,6 +876,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
     sensiexclu_->set_sensitive(cond);
+    structexclu_->set_sensitive(cond);
     struc_->set_sensitive(cond);
     shapeMethod_->set_sensitive(cond);
     locX_->set_sensitive(cond);
@@ -1537,6 +1552,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
             r->shape = row[spots_.shape];
             r->spotMethod = row[spots_.spotMethod];
             r->sensiexclu = row[spots_.sensiexclu];
+            r->structexclu = row[spots_.structexclu];
             r->struc = row[spots_.struc];
             r->shapeMethod = row[spots_.shapeMethod];
             r->locX = row[spots_.locX];
@@ -1655,6 +1671,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.shape] = newSpot->shape;
     row[spots_.spotMethod] = newSpot->spotMethod;
     row[spots_.sensiexclu] = newSpot->sensiexclu;
+    row[spots_.structexclu] = newSpot->structexclu;
     row[spots_.struc] = newSpot->struc;
     row[spots_.shapeMethod] = newSpot->shapeMethod;
     row[spots_.locX] = newSpot->locX;
@@ -1696,6 +1713,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.shape] = spot->shape;
             row[spots_.spotMethod] = spot->spotMethod;
             row[spots_.sensiexclu] = spot->sensiexclu;
+            row[spots_.structexclu] = spot->structexclu;
             row[spots_.struc] = spot->struc;
             row[spots_.shapeMethod] = spot->shapeMethod;
             row[spots_.locX] = spot->locX;
@@ -1783,6 +1801,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
     se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->sensiexclu = sensiexclu_->getEditedState();
+    se->structexclu = structexclu_->getEditedState();
     se->struc = struc_->getEditedState();
     se->shapeMethod = shapeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
     se->locX = locX_->getEditedState();
@@ -1839,6 +1858,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     }
 
     sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
+    structexclu_->setEditedState(se->structexclu ? Edited : UnEdited);
     struc_->setEditedState(se->struc ? Edited : UnEdited);
 
     if (!se->shapeMethod) {
@@ -1889,6 +1909,7 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
     }
 
     sensiexclu_->setDefault((double)defSpot->sensiexclu);
+    structexclu_->setDefault((double)defSpot->structexclu);
     struc_->setDefault((double)defSpot->struc);
     locX_->setDefault((double)defSpot->locX);
     locXL_->setDefault((double)defSpot->locXL);
@@ -1904,6 +1925,7 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
     // Set default edited states for adjusters
     if (!pedited) {
         sensiexclu_->setDefaultEditedState(Irrelevant);
+        structexclu_->setDefaultEditedState(Irrelevant);
         struc_->setDefaultEditedState(Irrelevant);
         locX_->setDefaultEditedState(Irrelevant);
         locXL_->setDefaultEditedState(Irrelevant);
@@ -1923,6 +1945,7 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
         }
 
         sensiexclu_->setDefaultEditedState(defSpotState->sensiexclu ? Edited : UnEdited);
+        structexclu_->setDefaultEditedState(defSpotState->structexclu ? Edited : UnEdited);
         struc_->setDefaultEditedState(defSpotState->struc ? Edited : UnEdited);
         locX_->setDefaultEditedState(defSpotState->locX ? Edited : UnEdited);
         locXL_->setDefaultEditedState(defSpotState->locXL ? Edited : UnEdited);
@@ -1943,6 +1966,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
 
     // Set batch mode for adjusters
     sensiexclu_->showEditedCB();
+    structexclu_->showEditedCB();
     struc_->showEditedCB();
     locX_->showEditedCB();
     locXL_->showEditedCB();
@@ -1975,6 +1999,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(shape);
     add(spotMethod);
     add(sensiexclu);
+    add(structexclu);
     add(struc);
     add(shapeMethod);
     add(locX);

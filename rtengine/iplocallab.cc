@@ -160,6 +160,7 @@ struct local_params {
     int prox;
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf;
     float struco;
+    float struexc;
     float blendmacol;
     float blendmaexp;
     float struexp;
@@ -451,6 +452,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensibn = locallab.spots.at(sp).sensibn;
     int local_sensitm = locallab.spots.at(sp).sensitm;
     int local_sensiexclu = locallab.spots.at(sp).sensiexclu;
+    float structexclude = (float) locallab.spots.at(sp).structexclu;
     int local_sensilc = locallab.spots.at(sp).sensilc;
 //    int local_struc = locallab.spots.at(sp).struc;
     int local_warm = locallab.spots.at(sp).warm;
@@ -501,6 +503,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.chro = local_chroma;
     lp.struco = structcolor;
     lp.blendmacol = blendmaskcolor;
+    lp.struexc = structexclude;
     lp.blendmaexp = blendmaskexpo;
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
@@ -3328,7 +3331,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
 
 
 
-void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, LabImage * reserv, int cx, int cy, int sk)
+void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, LabImage * reserv, int cx, int cy, int sk)
 {
 
     BENCHFUN {
@@ -3346,6 +3349,22 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
         float refa = chromaref * cos(hueref);
         float refb = chromaref * sin(hueref);
 
+        //sobel
+        sobelref /= 100.;
+
+        if (sobelref > 60.)
+        {
+            sobelref = 60.;
+        }
+
+        float k = 1.f;
+
+        if (sobelref <  meansobel && sobelref < lp.stru)//does not always work wth noisy images
+        {
+            k = -1.f;
+        }
+
+        sobelref = log(1.f + sobelref);
 
         LabImage *origblur = nullptr;
 
@@ -3432,11 +3451,48 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
 #else
 //                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
 #endif
-                    float rL = origblur->L[y][x] / 327.68f;
-                    float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                    float rL = original->L[y][x] / 327.68f;
 
                     float cli = 1.f;
                     float clc = 1.f;
+                    float csob = 0.f;
+                    float rs = 0.f;
+
+                    if (sen == 1) {
+                        csob = (deltaso[loy - begy][lox - begx]) / 100.f ;
+
+                        if (csob > 60.f) {
+                            csob = 60.f;
+                        }
+
+                        csob = log(1.f + csob + 0.001f);
+
+                        if (k == 1) {
+                            rs = sobelref / csob;
+                        } else {
+                            rs = csob / sobelref;
+                        }
+                    }
+
+                    float dE = 0.f;
+                    float rsob = 0.f;
+                    float affsob = 1.f;
+                    float affde = 1.f;
+                    float minrs = 0.f;
+
+                    if (lp.struexc > 0.f && rs > 0.f && sen == 1) {
+                        rsob =  0.002f *  lp.struexc * rs;
+                        minrs = 1.3f + 0.05f * lp.stru;
+
+                        if (rs < minrs) {
+                            affsob = 1.f;
+                        } else {
+                            affsob = 1.f / pow((1.f + rsob), SQR(SQR(rs - minrs)));
+                        }
+                    }
+
+                    dE = affde * sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+
 
                     cli = (buflight[loy - begy][lox - begx]);
                     clc = (bufchro[loy - begy][lox - begx]);
@@ -3487,37 +3543,18 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
 
                                 float difL;
                                 difL = rsv->L[loy - begy][lox - begx] - original->L[y][x];
-                                //  difL *= factorx * (100.f + realstr * falL) / 100.f;
-                                // difL *= kch * fach;
                                 difL *= factorx * (100.f + realstrdE) / 100.f;
 
-                                //   difL *= kch * fach;
-
-                                if (deltaso[loy - begy][lox - begx] == 0.f) {
-                                    transformed->L[y][x]  = original->L[y][x];
-                                } else {
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                }
+                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob);
 
                                 float difa, difb;
 
                                 difa = rsv->a[loy - begy][lox - begx] - original->a[y][x];
                                 difb = rsv->b[loy - begy][lox - begx] - original->b[y][x];
-                                //   difa *= factorx * (100.f + realstrch * falu * falL) / 100.f;
-                                //  difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
                                 difa *= factorx * (100.f +  realstrchdE) / 100.f;
                                 difb *= factorx * (100.f +  realstrchdE) / 100.f;
-
-                                //    difa *= kch * fach;
-                                //    difb *= kch * fach;
-
-                                if (deltaso[loy - begy][lox - begx] == 0.f) {
-                                    transformed->a[y][x] = original->a[y][x]; //rsv->a[loy - begy][lox - begx];
-                                    transformed->b[y][x] = original->b[y][x]; //rsv->b[loy - begy][lox - begx];
-                                } else {
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                }
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob);
 
                                 break;
 
@@ -3529,16 +3566,7 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                                 difL = rsv->L[loy - begy][lox - begx] - original->L[y][x];
                                 difL *= (100.f + realstrdE) / 100.f;
 
-                                //    difL *= kch * fach;
-
-                                if (deltaso[loy - begy][lox - begx] == 0.f) {
-                                    //  printf ("0");
-                                    transformed->L[y][x]  = original->L[y][x]; //rsv->L[loy - begy][lox - begx];
-                                } else {
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                }
-
-                                //  transformed->L[y][x] = original->L[y][x] + difL;
+                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob);
                                 float difa, difb;
 
                                 difa = rsv->a[loy - begy][lox - begx] - original->a[y][x];
@@ -3546,18 +3574,8 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                                 difa *= (100.f + realstrchdE) / 100.f;
                                 difb *= (100.f + realstrchdE) / 100.f;
 
-                                //   difa *= kch * fach;
-                                //   difb *= kch * fach;
-
-                                if (deltaso[loy - begy][lox - begx] == 0.f) {
-                                    // printf ("0");
-                                    transformed->a[y][x] = original->a[y][x]; //rsv->a[loy - begy][lox - begx];
-                                    transformed->b[y][x] = original->b[y][x]; //rsv->b[loy - begy][lox - begx];
-                                } else {
-                                    // printf ("1");
-                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                                }
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob);
 
                             }
                         }
@@ -5018,7 +5036,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             LabImage *bufreserv = nullptr;
             LabImage *bufexclu = nullptr;
             float *origBuffer = nullptr;
-
+            float meansob = 0.f;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
             int begy = lp.yc - lp.lyT;
@@ -5096,18 +5114,52 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             tmpsob = new LabImage(bfw, bfh);
             deltasobelL = new LabImage(bfw, bfh);
             SobelCannyLuma(tmpsob->L, bufsob->L, bfw, bfh, radiussob);
+            array2D<float> ble(bfw, bfh);
+            array2D<float> guid(bfw, bfh);
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
 
-            for (int ir = 0; ir < bfh; ir++) //fill with 0
+            for (int ir = 0; ir < bfh; ir++)
                 for (int jr = 0; jr < bfw; jr++) {
-                    deltasobelL->L[ir][jr] = 1.f;
+                    ble[ir][jr] = tmpsob->L[ir][jr] / 32768.f;
+                    guid[ir][jr] = bufsob->L[ir][jr] / 32768.f;
                 }
 
+            float blur = 25 / sk * (10.f + 1.2f * lp.struexp);
 
-            //then restore non modified area
+            rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
 
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    deltasobelL->L[ir][jr] = ble[ir][jr] * 32768.f;
+                }
+
+            float sombel = 0.f;
+//                        float stdvsobel = 0.f;
+            int ncsobel = 0;
+//                        int ncstdv = 0.f;
+            float maxsob = -1.f;
+            float minsob = 100000.f;
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    sombel += deltasobelL->L[ir][jr];
+                    ncsobel++;
+
+                    if (deltasobelL->L[ir][jr] > maxsob) {
+                        maxsob = deltasobelL->L[ir][jr];
+                    }
+
+                    if (deltasobelL->L[ir][jr] < minsob) {
+                        minsob = deltasobelL->L[ir][jr];
+                    }
+                }
+
+            meansob = sombel / ncsobel;
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -5143,7 +5195,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufchro[ir][jr] = rch ;
                 }
 
-            Exclude_Local(1, deltasobelL->L, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, bufreserv, reserved, cx, cy, sk);
+            Exclude_Local(1, deltasobelL->L, buflight, bufchro, hueref, chromaref, lumaref, sobelref, meansob, lp, original, transformed, bufreserv, reserved, cx, cy, sk);
 
 
             delete deltasobelL;

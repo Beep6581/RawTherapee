@@ -1111,6 +1111,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
+        r->structexclu = pp->locallab.spots.at(i).structexclu;
         r->struc = pp->locallab.spots.at(i).struc;
 
         if (pp->locallab.spots.at(i).shapeMethod == "IND") {
@@ -1212,6 +1213,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             }
 
             r->sensiexclu = newSpot->sensiexclu;
+            r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
 
             if (newSpot->shapeMethod == "IND") {
@@ -1398,6 +1400,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             }
 
             r->sensiexclu = newSpot->sensiexclu;
+            r->structexclu = newSpot->structexclu;
             r->struc = newSpot->struc;
 
             if (newSpot->shapeMethod == "IND") {
@@ -1486,6 +1489,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
+                    pp->locallab.spots.at(pp->locallab.selspot).structexclu = r->structexclu;
                     pp->locallab.spots.at(pp->locallab.selspot).struc = r->struc;
 
                     if (r->shapeMethod == 0) {
@@ -1671,6 +1675,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).shape = pe->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pe->locallab.spots.at(pp->locallab.selspot).spotMethod = pe->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
                         pe->locallab.spots.at(pp->locallab.selspot).sensiexclu = pe->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
+                        pe->locallab.spots.at(pp->locallab.selspot).structexclu = pe->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
                         pe->locallab.spots.at(pp->locallab.selspot).struc = pe->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
                         pe->locallab.spots.at(pp->locallab.selspot).shapeMethod = pe->locallab.spots.at(pp->locallab.selspot).shapeMethod || se->shapeMethod;
                         pe->locallab.spots.at(pp->locallab.selspot).locX = pe->locallab.spots.at(pp->locallab.selspot).locX || se->locX;
@@ -1819,6 +1824,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
                         pedited->locallab.spots.at(pp->locallab.selspot).spotMethod = pedited->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu = pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
+                        pedited->locallab.spots.at(pp->locallab.selspot).structexclu = pedited->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
                         pedited->locallab.spots.at(pp->locallab.selspot).struc = pedited->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
                         pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod = pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod || se->shapeMethod;
                         pedited->locallab.spots.at(pp->locallab.selspot).locX = pedited->locallab.spots.at(pp->locallab.selspot).locX || se->locX;
@@ -3863,6 +3869,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->shape = spotState->shape;
                 se->spotMethod = spotState->spotMethod;
                 se->sensiexclu = spotState->sensiexclu;
+                se->structexclu = spotState->structexclu;
                 se->struc = spotState->struc;
                 se->shapeMethod = spotState->shapeMethod;
                 se->locX = spotState->locX;

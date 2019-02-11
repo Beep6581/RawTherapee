@@ -928,6 +928,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).shape = locallab.spots.at(j).shape && pSpot.shape == otherSpot.shape;
                 locallab.spots.at(j).spotMethod = locallab.spots.at(j).spotMethod && pSpot.spotMethod == otherSpot.spotMethod;
                 locallab.spots.at(j).sensiexclu = locallab.spots.at(j).sensiexclu && pSpot.sensiexclu == otherSpot.sensiexclu;
+                locallab.spots.at(j).structexclu = locallab.spots.at(j).structexclu && pSpot.structexclu == otherSpot.structexclu;
                 locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
                 locallab.spots.at(j).shapeMethod = locallab.spots.at(j).shapeMethod && pSpot.shapeMethod == otherSpot.shapeMethod;
                 locallab.spots.at(j).locX = locallab.spots.at(j).locX && pSpot.locX == otherSpot.locX;
@@ -2506,6 +2507,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensiexclu = mods.locallab.spots.at(i).sensiexclu;
         }
 
+        if (locallab.spots.at(i).structexclu) {
+            toEdit.locallab.spots.at(i).structexclu = mods.locallab.spots.at(i).structexclu;
+        }
+
         if (locallab.spots.at(i).struc) {
             toEdit.locallab.spots.at(i).struc = mods.locallab.spots.at(i).struc;
         }
@@ -3935,6 +3940,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     shape(v),
     spotMethod(v),
     sensiexclu(v),
+    structexclu(v),
     struc(v),
     shapeMethod(v),
     locX(v),
@@ -4075,6 +4081,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     shape = v;
     spotMethod = v;
     sensiexclu = v;
+    structexclu = v;
     struc = v;
     shapeMethod = v;
     locX = v;

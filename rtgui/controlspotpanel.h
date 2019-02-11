@@ -48,6 +48,7 @@ public:
         int shape; // 0 = Ellipse, 1 = Rectangle
         int spotMethod; // 0 = Normal, 1 = Excluding
         int sensiexclu;
+        int structexclu;
         int struc;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         int locX;
@@ -74,6 +75,7 @@ public:
         bool shape;
         bool spotMethod;
         bool sensiexclu;
+        bool structexclu;
         bool struc;
         bool shapeMethod;
         bool locX;
@@ -258,6 +260,7 @@ private:
         Gtk::TreeModelColumn<int> shape; // 0 = Ellipse, 1 = Rectangle
         Gtk::TreeModelColumn<int> spotMethod; // 0 = Normal, 1 = Excluding
         Gtk::TreeModelColumn<int> sensiexclu;
+        Gtk::TreeModelColumn<int> structexclu;
         Gtk::TreeModelColumn<int> struc;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         Gtk::TreeModelColumn<int> locX;
@@ -314,6 +317,7 @@ private:
     sigc::connection qualityMethodconn_;
 
     Adjuster* const sensiexclu_;
+    Adjuster* const structexclu_;
     Adjuster* const struc_;
     Adjuster* const locX_;
     Adjuster* const locXL_;
