@@ -215,7 +215,7 @@ class PlanarWhateverData : virtual public ImageDatas
 private:
     AlignedBuffer<T> abData;
 
-    int rowstride;    // Plan size, in bytes (all padding bytes included)
+    size_t rowstride;    // Plan size, in bytes (all padding bytes included)
 
 public:
     T* data;
@@ -228,7 +228,7 @@ public:
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride () const
+    size_t getRowStride () const
     {
         return rowstride;
     }
@@ -259,7 +259,6 @@ public:
      * Can be safely used to reallocate an existing image */
     void allocate (int W, int H) override
     {
-
         if (W == width && H == height) {
             return;
         }
@@ -591,8 +590,8 @@ class PlanarRGBData : virtual public ImageDatas
 private:
     AlignedBuffer<T> abData;
 
-    int rowstride;    // Plan size, in bytes (all padding bytes included)
-    int planestride;  // Row length, in bytes (padding bytes included)
+    size_t rowstride;    // Plan size, in bytes (all padding bytes included)
+    size_t planestride;  // Row length, in bytes (padding bytes included)
 protected:
     T* data;
 
@@ -602,18 +601,18 @@ public:
     PlanarPtr<T> b;
 
     PlanarRGBData() : rowstride(0), planestride(0), data (nullptr) {}
-    PlanarRGBData(int w, int h) : rowstride(0), planestride(0), data (nullptr)
+    PlanarRGBData(size_t w, size_t h) : rowstride(0), planestride(0), data (nullptr)
     {
         allocate(w, h);
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride () const
+    size_t getRowStride () const
     {
         return rowstride;
     }
     // Send back the plane stride. WARNING: unit = byte, not element!
-    int getPlaneStride () const
+    size_t getPlaneStride () const
     {
         return planestride;
     }
@@ -710,7 +709,7 @@ public:
         char *bluestart  = (char*)(data) + 2 * planestride;
 
         for (int i = 0; i < height; ++i) {
-            int k = i * rowstride;
+            size_t k = i * rowstride;
             r(i) = (T*)(redstart   + k);
             g(i) = (T*)(greenstart + k);
             b(i) = (T*)(bluestart  + k);
