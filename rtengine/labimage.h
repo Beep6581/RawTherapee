@@ -25,7 +25,7 @@ namespace rtengine
 class LabImage
 {
 private:
-    void allocLab(int w, int h);
+    void allocLab(size_t w, size_t h);
 
 public:
     int W, H;
