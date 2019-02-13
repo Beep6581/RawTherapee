@@ -170,7 +170,6 @@ ControlSpotPanel::ControlSpotPanel():
     structexclu_->setAdjusterListener(this);
     excluBox->pack_start(*sensiexclu_);
     excluBox->pack_start(*structexclu_);
-    // excluBox->pack_start(*struc_); // Uncomment this line to use the struc_ adjuster
     excluFrame->add(*excluBox);
     pack_start(*excluFrame);
 

@@ -1132,13 +1132,10 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         r->centerY = pp->locallab.spots.at(i).centerY;
         r->circrad = pp->locallab.spots.at(i).circrad;
 
-      /*  if (pp->locallab.spots.at(i).qualityMethod == "std") {
-            r->qualityMethod = 0;
-        }*/
         if (pp->locallab.spots.at(i).qualityMethod == "enh") {
-            r->qualityMethod = 1;
+            r->qualityMethod = 0;
         } else {
-            r->qualityMethod = 2;
+            r->qualityMethod = 1;
         }
 
         r->transit = pp->locallab.spots.at(i).transit;
@@ -1234,12 +1231,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->centerY = newSpot->centerY;
             r->circrad = newSpot->circrad;
 
-        /*    if (newSpot->qualityMethod == "std") {
+            if (newSpot->qualityMethod == "enh") {
                 r->qualityMethod = 0;
-            } */ if (newSpot->qualityMethod == "enh") {
-                r->qualityMethod = 1;
             } else {
-                r->qualityMethod = 2;
+                r->qualityMethod = 1;
             }
 
             r->transit = newSpot->transit;
@@ -1421,12 +1416,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->centerY = newSpot->centerY;
             r->circrad = newSpot->circrad;
 
-            if (newSpot->qualityMethod == "std") {
+            if (newSpot->qualityMethod == "enh") {
                 r->qualityMethod = 0;
-            } else if (newSpot->qualityMethod == "enh") {
-                r->qualityMethod = 1;
             } else {
-                r->qualityMethod = 2;
+                r->qualityMethod = 1;
             }
 
             r->transit = newSpot->transit;
@@ -1510,9 +1503,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).centerY = r->centerY;
                     pp->locallab.spots.at(pp->locallab.selspot).circrad = r->circrad;
 
-               /*     if (r->qualityMethod == 0) {
-                        pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "std";
-                    } */ if (r->qualityMethod == 1) {
+                    if (r->qualityMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enh";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enhden";

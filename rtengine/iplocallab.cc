@@ -390,9 +390,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensiv = locallab.spots.at(sp).sensiv;
     int local_sensiex = locallab.spots.at(sp).sensiex;
 
-    if (locallab.spots.at(sp).qualityMethod == "std") {
-        lp.qualmet = 0;
-    } else if (locallab.spots.at(sp).qualityMethod == "enh") {
+    if (locallab.spots.at(sp).qualityMethod == "enh") {
         lp.qualmet = 1;
     } else if (locallab.spots.at(sp).qualityMethod == "enhden") {
         lp.qualmet = 2;
@@ -3451,7 +3449,8 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
 #else
 //                    float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
 #endif
-                    float rL = original->L[y][x] / 327.68f;
+                    float rL = origblur->L[y][x] / 327.68f;
+             //       float rLor = original->L[y][x] / 327.68f;
 
                     float cli = 1.f;
                     float clc = 1.f;
@@ -3490,14 +3489,15 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                             affsob = 1.f / pow((1.f + rsob), SQR(SQR(rs - minrs)));
                         }
                     }
-
-                    dE = affde * sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
-
+                  //  affsob = 1.f;
+                    dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                  // float dEor = affde * sqrt(SQR(refa - original->a[y][x] / 327.68f) + SQR(refb - original->b[y][x] / 327.68f) + SQR(lumaref - rLor));
 
                     cli = (buflight[loy - begy][lox - begx]);
                     clc = (bufchro[loy - begy][lox - begx]);
 
                     float reducdE = 0.f;
+//                    float reducdEor = 0.f;
                     float mindE = 2.f + minscope * varsens * lp.thr;
                     float maxdE = 5.f + maxscope * varsens * (1 + 0.1f * lp.thr);
 
@@ -3508,24 +3508,37 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                     if (dE > maxdE) {
                         reducdE = 0.f;
                     }
+//                    if (dEor > maxdE) {
+//                        reducdEor = 0.f;
+//                    }
 
                     if (dE > mindE && dE <= maxdE) {
                         reducdE = ar * dE + br;
                     }
+//                    if (dEor > mindE && dEor <= maxdE) {
+//                        reducdEor = ar * dEor + br;
+//                    }
 
                     if (dE <= mindE) {
                         reducdE = 1.f;
                     }
+//                    if (dEor <= mindE) {
+//                        reducdEor = 1.f;
+//                    }
 
                     reducdE = pow(reducdE, lp.iterat);
 
                     if (varsens > 99) {
                         reducdE = 1.f;
+//                        reducdEor = 1.f;
                     }
 
+                    affde = reducdE;
 
-                    float realstrdE = reducdE * cli;
-                    float realstrchdE = reducdE * clc;
+                //    float realstrdE = reducdE * cli;
+                //    float realstrchdE = reducdE * clc;
+                    float realstrdE =  cli;
+                    float realstrchdE = clc;
 
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
@@ -3543,18 +3556,18 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
 
                                 float difL;
                                 difL = rsv->L[loy - begy][lox - begx] - original->L[y][x];
-                                difL *= factorx * (100.f + realstrdE) / 100.f;
+                                difL *= factorx; // * (100.f + realstrdE) / 100.f;
 
-                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob);
+                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob * affde);
 
                                 float difa, difb;
 
                                 difa = rsv->a[loy - begy][lox - begx] - original->a[y][x];
                                 difb = rsv->b[loy - begy][lox - begx] - original->b[y][x];
-                                difa *= factorx * (100.f +  realstrchdE) / 100.f;
-                                difb *= factorx * (100.f +  realstrchdE) / 100.f;
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob);
+                                difa *= factorx; // * (100.f +  realstrchdE) / 100.f;
+                                difb *= factorx; // * (100.f +  realstrchdE) / 100.f;
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob * affde);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob * affde);
 
                                 break;
 
@@ -3564,18 +3577,18 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, 
                                 float difL;
 
                                 difL = rsv->L[loy - begy][lox - begx] - original->L[y][x];
-                                difL *= (100.f + realstrdE) / 100.f;
+                            //    difL *= (100.f + realstrdE) / 100.f;
 
-                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob);
+                                transformed->L[y][x] = CLIP(original->L[y][x] + difL * affsob* affde);
                                 float difa, difb;
 
                                 difa = rsv->a[loy - begy][lox - begx] - original->a[y][x];
                                 difb = rsv->b[loy - begy][lox - begx] - original->b[y][x];
-                                difa *= (100.f + realstrchdE) / 100.f;
-                                difb *= (100.f + realstrchdE) / 100.f;
+                            //    difa *= (100.f + realstrchdE) / 100.f;
+                            //    difb *= (100.f + realstrchdE) / 100.f;
 
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob);
+                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa * affsob * affde);
+                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb * affsob * affde);
 
                             }
                         }
