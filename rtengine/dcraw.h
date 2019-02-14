@@ -526,6 +526,8 @@ void shiftXtransMatrix( const int offsy, const int offsx) {
     }
 }
 
+void nikon_14bit_load_raw(); // ported from LibRaw
+
 };
 
 
