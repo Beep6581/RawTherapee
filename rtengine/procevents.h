@@ -649,6 +649,7 @@ enum ProcEventCode {
     Evlocallabblurcolde = 619,
     Evlocallabinversex = 620,
     Evlocallabstructexlu = 621,
+    Evlocallabexpchroma = 622,
     NUMOFEVENTS
 };
 

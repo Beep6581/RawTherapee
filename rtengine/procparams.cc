@@ -2383,6 +2383,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     hlcomprthresh(33),
     black(0),
     shcompr(50),
+    expchroma(0),
     warm(0),
     sensiex(15),
     structexp(0),
@@ -2527,6 +2528,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && hlcomprthresh == other.hlcomprthresh
         && black == other.black
         && shcompr == other.shcompr
+        && expchroma == other.expchroma
         && warm == other.warm
         && sensiex == other.sensiex
         && structexp == other.structexp
@@ -3624,6 +3626,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).hlcomprthresh, "Locallab", "Hlcomprthresh_" + std::to_string(i), spot.hlcomprthresh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).black, "Locallab", "Black_" + std::to_string(i), spot.black, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shcompr, "Locallab", "Shcompr_" + std::to_string(i), spot.shcompr, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shcompr, "Locallab", "Expchroma_" + std::to_string(i), spot.expchroma, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).warm, "Locallab", "Warm_" + std::to_string(i), spot.warm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiex, "Locallab", "Sensiex_" + std::to_string(i), spot.sensiex, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexp, "Locallab", "Structexp_" + std::to_string(i), spot.structexp, keyFile);
@@ -4853,6 +4856,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + std::to_string(i), pedited, spot.hlcomprthresh, spotEdited.hlcomprthresh);
                 assignFromKeyfile(keyFile, "Locallab", "Black_" + std::to_string(i), pedited, spot.black, spotEdited.black);
                 assignFromKeyfile(keyFile, "Locallab", "Shcompr_" + std::to_string(i), pedited, spot.shcompr, spotEdited.shcompr);
+                assignFromKeyfile(keyFile, "Locallab", "Expchroma_" + std::to_string(i), pedited, spot.expchroma, spotEdited.expchroma);
                 assignFromKeyfile(keyFile, "Locallab", "Warm_" + std::to_string(i), pedited, spot.warm, spotEdited.warm);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + std::to_string(i), pedited, spot.sensiex, spotEdited.sensiex);
                 assignFromKeyfile(keyFile, "Locallab", "Structexp_" + std::to_string(i), pedited, spot.structexp, spotEdited.structexp);

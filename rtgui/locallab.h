@@ -102,6 +102,7 @@ private:
     Adjuster* const hlcomprthresh;
     Adjuster* const black;
     Adjuster* const shcompr;
+    Adjuster* const expchroma;
     Adjuster* const warm;
     Adjuster* const sensiex;
     Adjuster* const structexp;

@@ -508,6 +508,7 @@ public:
         bool hlcomprthresh;
         bool black;
         bool shcompr;
+        bool expchroma;
         bool warm;
         bool sensiex;
         bool structexp;

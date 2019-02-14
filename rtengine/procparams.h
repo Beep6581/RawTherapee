@@ -983,6 +983,7 @@ struct LocallabParams {
         int hlcomprthresh;
         int black;
         int shcompr;
+        int expchroma;
         int warm;
         int sensiex;
         int structexp;

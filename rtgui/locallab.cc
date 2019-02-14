@@ -86,6 +86,7 @@ Locallab::Locallab():
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33))),
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0))),
     shcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50))),
+    expchroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EXPCHROMA"), -50, 100, 1, 0))),
     warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
@@ -390,6 +391,7 @@ Locallab::Locallab():
     black->setAdjusterListener(this);
 
     shcompr->setAdjusterListener(this);
+    expchroma->setAdjusterListener(this);
 
     warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
     warm->setAdjusterListener(this);
@@ -458,6 +460,7 @@ Locallab::Locallab():
     exposeBox->pack_start(*hlcomprthresh);
     exposeBox->pack_start(*black);
     exposeBox->pack_start(*shcompr);
+    exposeBox->pack_start(*expchroma);
     exposeBox->pack_start(*warm);
     exposeBox->pack_start(*sensiex);
     exposeBox->pack_start(*structexp);
@@ -1545,6 +1548,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = hlcomprthresh->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).black = black->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shcompr = shcompr->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).expchroma = expchroma->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).warm = warm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensiex = sensiex->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).structexp = structexp->getIntValue();
@@ -1707,6 +1711,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = pe->locallab.spots.at(pp->locallab.selspot).hlcomprthresh || hlcomprthresh->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).black = pe->locallab.spots.at(pp->locallab.selspot).black || black->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).shcompr = pe->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).expchroma = pe->locallab.spots.at(pp->locallab.selspot).expchroma || expchroma->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).warm = pe->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensiex = pe->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).structexp = pe->locallab.spots.at(pp->locallab.selspot).structexp || structexp->getEditedState();
@@ -1856,6 +1861,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = pedited->locallab.spots.at(pp->locallab.selspot).hlcomprthresh || hlcomprthresh->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).black = pedited->locallab.spots.at(pp->locallab.selspot).black || black->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).shcompr = pedited->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).expchroma = pedited->locallab.spots.at(pp->locallab.selspot).expchroma || expchroma->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).warm = pedited->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiex = pedited->locallab.spots.at(pp->locallab.selspot).sensiex || sensiex->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).structexp = pedited->locallab.spots.at(pp->locallab.selspot).structexp || structexp->getEditedState();
@@ -2603,6 +2609,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     hlcomprthresh->setDefault((double)defSpot->hlcomprthresh);
     black->setDefault((double)defSpot->black);
     shcompr->setDefault((double)defSpot->shcompr);
+    expchroma->setDefault((double)defSpot->expchroma);
     warm->setDefault((double)defSpot->warm);
     sensiex->setDefault((double)defSpot->sensiex);
     structexp->setDefault((double)defSpot->structexp);
@@ -2683,6 +2690,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         hlcomprthresh->setDefaultEditedState(Irrelevant);
         black->setDefaultEditedState(Irrelevant);
         shcompr->setDefaultEditedState(Irrelevant);
+        expchroma->setDefaultEditedState(Irrelevant);
         warm->setDefaultEditedState(Irrelevant);
         sensiex->setDefaultEditedState(Irrelevant);
         structexp->setDefaultEditedState(Irrelevant);
@@ -2767,6 +2775,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         hlcomprthresh->setDefaultEditedState(defSpotState->hlcomprthresh ? Edited : UnEdited);
         black->setDefaultEditedState(defSpotState->black ? Edited : UnEdited);
         shcompr->setDefaultEditedState(defSpotState->shcompr ? Edited : UnEdited);
+        expchroma->setDefaultEditedState(defSpotState->expchroma ? Edited : UnEdited);
         warm->setDefaultEditedState(defSpotState->warm ? Edited : UnEdited);
         sensiex->setDefaultEditedState(defSpotState->sensiex ? Edited : UnEdited);
         structexp->setDefaultEditedState(defSpotState->structexp ? Edited : UnEdited);
@@ -2956,6 +2965,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == shcompr) {
             if (listener) {
                 listener->panelChanged(Evlocallabshcompr, shcompr->getTextValue());
+            }
+        }
+
+        if (a == expchroma) {
+            if (listener) {
+                listener->panelChanged(Evlocallabexpchroma, expchroma->getTextValue());
             }
         }
 
@@ -3383,6 +3398,7 @@ void Locallab::setBatchMode(bool batchMode)
     hlcomprthresh->showEditedCB();
     black->showEditedCB();
     shcompr->showEditedCB();
+    expchroma->showEditedCB();
     warm->showEditedCB();
     sensiex->showEditedCB();
     structexp->showEditedCB();
@@ -3719,6 +3735,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         hlcomprthresh->setValue(pp->locallab.spots.at(index).hlcomprthresh);
         black->setValue(pp->locallab.spots.at(index).black);
         shcompr->setValue(pp->locallab.spots.at(index).shcompr);
+        expchroma->setValue(pp->locallab.spots.at(index).expchroma);
         warm->setValue(pp->locallab.spots.at(index).warm);
         sensiex->setValue(pp->locallab.spots.at(index).sensiex);
         structexp->setValue(pp->locallab.spots.at(index).structexp);
@@ -3909,6 +3926,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 black->setEditedState(spotState->black ? Edited : UnEdited);
                 warm->setEditedState(spotState->warm ? Edited : UnEdited);
                 shcompr->setEditedState(spotState->shcompr ? Edited : UnEdited);
+                expchroma->setEditedState(spotState->expchroma ? Edited : UnEdited);
                 sensiex->setEditedState(spotState->sensiex ? Edited : UnEdited);
                 structexp->setEditedState(spotState->structexp ? Edited : UnEdited);
                 blurexpde->setEditedState(spotState->blurexpde ? Edited : UnEdited);
