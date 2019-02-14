@@ -2244,9 +2244,8 @@ Camera constants:
         "make_model": "Sigma SD14",
         "dcraw_matrix": [ 16411,-4764,-2383,8110,2603,-645,3135,3878,1984 ], // experimental inverted icc wp12 - build with BL=15
         //"dcraw_matrix": [ 13804,-4156,-1896,6917,1909,-431,2768,2989,1741 ], // experimental inverted icc wp10 - build with BL=15
-        "ranges": { "black": 0, "white": 16383 }, // peripheral black stripes give BL around 37
-        "raw_crop": [ 0, 0, -0, -0 ]
-        //"raw_crop": [ 18, 12, 2652, 1768 ]
+        "ranges": { "black": 15, "white": 7000 },
+        "raw_crop": [ 18, 12, 2652, 1768 ]
     },
 
     { // Quality C, correction for frame width

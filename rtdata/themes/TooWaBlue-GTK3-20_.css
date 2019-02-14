@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2018 TooWaBoo
-  Version 3.00
+  Version 3.02
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -957,10 +957,9 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding-right: 0.25em;
 }
 
-#RightNotebook > stack > :nth-child(1) > * > box,
-#RightNotebook > stack > :nth-child(4) > * > box {
-    padding: 0.5em;
-    border: 0.083333333333333333em solid @bg-entry-border;
+#RightNotebook > stack > scrolledwindow > viewport {
+    padding: 0 0.5em;
+    border: 0.083333333333333333em solid @bg-dark-grey;
 }
 
 #PrefNotebook > header {
@@ -1061,7 +1060,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     min-width: 0;
     padding: 0;
 }
-#FileBrowserQueryToolbar {
+#FileBrowserQueryToolbar > viewport > box {
     margin: 0 0 0.416666666666666666em 0;
     min-height: 0;
     min-width: 0;
@@ -1646,7 +1645,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     min-width: 1.666666666666666666em;/*x*/
     margin: 0;
     border-radius: 0 0.2em 0.2em 0;
-    box-shadow: inset 0 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.09);
+    box-shadow: inset 0 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.07);
     border: 0.083333333333333333em solid @bg-entry-border;
     background-color: @bg-scale-entry;
     padding: 0;
@@ -1866,19 +1865,17 @@ spinbutton {
     min-height: 1.666666666666666666em;/*x*/
     min-width: 0;
     border-radius: 0.2em;
-    box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.09);
+    box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset -0.1em -0.1em rgba(230, 230, 230, 0.07);
     border: 0.083333333333333333em solid @bg-entry-border;
     background-color: @bg-scale-entry;
 }
 #FileBrowserQueryToolbar entry,
 #FileBrowserIconToolbar entry {
-    min-height: 1.666666666666666666em;/*x*/
-    min-width: 0;
     margin: 0;
     border-right: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset 0 -0.1em rgba(230, 230, 230, 0.09);
+    box-shadow: inset 0.1em 0.1em rgba(0, 0, 0, 0.1), inset 0 -0.1em rgba(230, 230, 230, 0.07);
 }
 
 #FileBrowserIconToolbar box > entry {

@@ -516,7 +516,7 @@ if(WIN32)
 endif()
 
 if(UNIX)
-    install(FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
+    install(FILES com.rawtherapee.RawTherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif()
 
 # check whether the used version of lensfun has lfDatabase::LoadDirectory
