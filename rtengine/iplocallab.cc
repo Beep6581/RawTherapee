@@ -7869,8 +7869,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 //inverse
-        else if (lp.invex  && (lp.expcomp != 0 || lp.war != 0) && lp.exposena) {
-            float adjustr = 2.f;
+        else if (lp.invex  && (lp.expcomp != 0 || lp.war != 0 || (exlocalcurve  && localexutili)) && lp.exposena) {
+            float adjustr = 2.f; 
             InverseColorLight_Local(sp, 1, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
