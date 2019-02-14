@@ -32,8 +32,7 @@
 #include "boxblur.h"
 #include "rescale.h"
 #include "imagefloat.h"
-#define BENCHMARK
-#include "StopWatch.h"
+
 namespace rtengine {
 
 #if 0
@@ -79,7 +78,7 @@ int calculate_subsampling(int w, int h, int r)
 
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling)
 {
-    BENCHFUN
+
     const int W = src.width();
     const int H = src.height();
 
