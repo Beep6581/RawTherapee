@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component type="desktop">
-    <id>com.rawtherapee.RawTherapee.desktop</id>
+<component type="desktop-application">
+    <id>com.rawtherapee.RawTherapee</id>
     <name>RawTherapee</name>
     <summary>An advanced raw photo development program</summary>
     <summary xml:lang="cs">Program pro konverzi a zpracování digitálních raw fotografií</summary>
