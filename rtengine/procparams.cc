@@ -2383,7 +2383,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     hlcomprthresh(33),
     black(0),
     shcompr(50),
-    expchroma(0),
+    expchroma(30),
     warm(0),
     sensiex(15),
     structexp(0),

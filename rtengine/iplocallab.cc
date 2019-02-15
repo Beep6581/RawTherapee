@@ -3330,7 +3330,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
 
 
 
-void ImProcFunctions::Exclude_Local(int sen, float **deltaso, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, LabImage * reserv, int cx, int cy, int sk)
+void ImProcFunctions::Exclude_Local(int sen, float **deltaso, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, const struct local_params & lp, LabImage * original, LabImage * transformed, LabImage * rsv, LabImage * reserv, int cx, int cy, int sk)
 {
 
     BENCHFUN {
@@ -4147,30 +4147,6 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     if (senstype == 1) { //exposure
         temp = new LabImage(GW, GH);
         float chprosl = 0.f;
-        /*
-                                if (lp.expchroma != 0.f) {
-                                    float ch;
-                                    float ampli = 70.f;
-                                    ch = (1.f + 0.03f * lp.expchroma) ;
-
-                                    if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                        chprosl = 99.f * ch - 99.f;
-                                    } else {
-                                        chprosl = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
-                                    }
-        #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-        #endif
-
-            for (int y = 0; y < transformed->H; y++) {
-                for (int x = 0; x < transformed->W; x++) {
-                    original->a[y][x] *= 0.01f * (100.f + 100.f * chprosl);
-                }
-            }
-        }
-
-                             //   }
-        */
 
         ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc);
 
@@ -4205,8 +4181,15 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
             for (int y = 0; y < transformed->H; y++) {
                 for (int x = 0; x < transformed->W; x++) {
-                    temp->a[y][x] *= 0.01f * (100.f + 100.f * chprosl);
-                    temp->b[y][x] *= 0.01f * (100.f + 100.f * chprosl);
+                    float epsi = 0.f;
+
+                    if (original->L[y][x] == 0.f) {
+                        epsi = 0.001f;
+                    }
+
+                    float rapexp = temp->L[y][x] / (original->L[y][x] + epsi);
+                    temp->a[y][x] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
+                    temp->b[y][x] *= 0.01f * (100.f + 100.f * chprosl * rapexp);
                 }
             }
         }
@@ -5263,7 +5246,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufchro[ir][jr] = rch ;
                 }
 
-            Exclude_Local(1, deltasobelL->L, buflight, bufchro, hueref, chromaref, lumaref, sobelref, meansob, lp, original, transformed, bufreserv, reserved, cx, cy, sk);
+            Exclude_Local(1, deltasobelL->L, hueref, chromaref, lumaref, sobelref, meansob, lp, original, transformed, bufreserv, reserved, cx, cy, sk);
 
 
             delete deltasobelL;
@@ -7885,6 +7868,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         for (int x = 0; x < transformed->W; x++) {
                             int lox = cx + x;
                             int loy = cy + y;
+                            float epsi = 0.f;
 
                             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                 if (lp.expchroma != 0.f) {
@@ -7898,7 +7882,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         chprosl = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
                                     }
 
-                                    bufl_ab[loy - begy][lox - begx] = chprosl;
+                                    if (bufexporig->L[loy - begy][lox - begx] == 0.f) {
+                                        epsi = 0.001f;
+                                    }
+
+                                    float rapexp = bufcat02fin->L[loy - begy][lox - begx] / (bufexporig->L[loy - begy][lox - begx] + epsi);
+                                    bufl_ab[loy - begy][lox - begx] = chprosl * rapexp;
                                 }
 
 
