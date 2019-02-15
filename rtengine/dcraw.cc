@@ -6866,13 +6866,15 @@ void CLASS apply_tiff()
 	} else if ((raw_width * 2 * tiff_bps / 16 + 8) * raw_height == tiff_ifd[raw].bytes) {
 	    // 14 bit uncompressed from Nikon Z7, still wrong
 	    // each line has 8 padding byte.
-	    row_padding = 8;
-	    load_raw = &CLASS packed_load_raw;
+	    //row_padding = 8;
+	    //load_raw = &CLASS packed_load_raw;
+            load_raw = &CLASS nikon_14bit_load_raw;
 	} else if ((raw_width * 2 * tiff_bps / 16 + 12) * raw_height == tiff_ifd[raw].bytes) {
 	    // 14 bit uncompressed from Nikon Z6, still wrong
 	    // each line has 12 padding byte.
-	    row_padding = 12;
-	    load_raw = &CLASS packed_load_raw;
+	    // row_padding = 12;
+	    // load_raw = &CLASS packed_load_raw;
+            load_raw = &CLASS nikon_14bit_load_raw;
 	} else
 	  load_raw = &CLASS nikon_load_raw;			break;
       case 65535:
@@ -10673,6 +10675,48 @@ struct tiff_hdr {
 };
 
 #include "fujicompressed.cc"
+
+//-----------------------------------------------------------------------------
+/* Taken from LibRaw
+
+LibRaw is free software; you can redistribute it and/or modify
+it under the terms of the one of two licenses as you choose:
+1. GNU LESSER GENERAL PUBLIC LICENSE version 2.1
+   (See file LICENSE.LGPL provided in LibRaw distribution archive for details).
+2. COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+   (See file LICENSE.CDDL provided in LibRaw distribution archive for details).
+ */
+
+namespace {
+
+inline void unpack7bytesto4x16_nikon(unsigned char *src, unsigned short *dest)
+{
+    dest[3] = (src[6] << 6) | (src[5] >> 2);
+    dest[2] = ((src[5] & 0x3) << 12) | (src[4] << 4) | (src[3] >> 4);
+    dest[1] = (src[3] & 0xf) << 10 | (src[2] << 2) | (src[1] >> 6);
+    dest[0] = ((src[1] & 0x3f) << 8) | src[0];
+}
+
+} // namespace
+
+void CLASS nikon_14bit_load_raw()
+{
+    const unsigned linelen = (unsigned)(ceilf((float)(raw_width * 7 / 4) / 16.0)) * 16; // 14512; // S.raw_width * 7 / 4;
+    const unsigned pitch = raw_width; //S.raw_pitch ? S.raw_pitch / 2 : S.raw_width;
+    unsigned char *buf = (unsigned char *)malloc(linelen);
+    merror(buf, "nikon_14bit_load_raw()");
+    for (int row = 0; row < raw_height; row++)
+    {
+        unsigned bytesread = fread(buf, 1, linelen, ifp);
+        unsigned short *dest = &raw_image[pitch * row];
+        //swab32arr((unsigned *)buf, bytesread / 4);
+        for (int sp = 0, dp = 0; dp < pitch - 3 && sp < linelen - 6 && sp < bytesread - 6; sp += 7, dp += 4)
+            unpack7bytesto4x16_nikon(buf + sp, dest + dp);
+    }
+    free(buf);
+}
+
+//-----------------------------------------------------------------------------
 
 /* RT: Delete from here */
 /*RT*/#undef SQR
