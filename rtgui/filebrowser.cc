@@ -1783,6 +1783,7 @@ void FileBrowser::openNextImage ()
                             std::vector<Thumbnail*> entries;
                             entries.push_back (thumb);
                             tbl->openRequested (entries);
+                            FileBrowser::selectImage(fd[k]->filename);
                             return;
                         }
                     }
@@ -1848,6 +1849,7 @@ void FileBrowser::openPrevImage ()
                             std::vector<Thumbnail*> entries;
                             entries.push_back (thumb);
                             tbl->openRequested (entries);
+                            FileBrowser::selectImage(fd[k]->filename);
                             return;
                         }
                     }
