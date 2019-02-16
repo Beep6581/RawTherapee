@@ -2672,43 +2672,92 @@ void CLASS canon_rmf_load_raw()
   maximum = curve[0x3ff];
 }
 
-unsigned CLASS pana_bits_t::operator() (int nbits)
+unsigned CLASS pana_bits_t::operator() (int nbits, unsigned *bytes)
 {
 /*RT  static uchar buf[0x4000]; */
 /*RT  static int vbits;*/
   int byte;
 
-  if (!nbits) return vbits=0;
+  if (!nbits && !bytes) return vbits=0;
   if (!vbits) {
     fread (buf+load_flags, 1, 0x4000-load_flags, ifp);
     fread (buf, 1, load_flags, ifp);
   }
-  vbits = (vbits - nbits) & 0x1ffff;
-  byte = vbits >> 3 ^ 0x3ff0;
-  return (buf[byte] | buf[byte+1] << 8) >> (vbits & 7) & ~(-1 << nbits);
+  if (encoding == 5) {
+    for (byte = 0; byte < 16; byte++)
+    {
+      bytes[byte] = buf[vbits++];
+      vbits &= 0x3FFF;
+    }
+    return 0;
+  } else {
+    vbits = (vbits - nbits) & 0x1ffff;
+    byte = vbits >> 3 ^ 0x3ff0;
+    return (buf[byte] | buf[byte+1] << 8) >> (vbits & 7) & ~(-1 << nbits);
+  }
 }
 
 void CLASS panasonic_load_raw()
 {
-  pana_bits_t pana_bits(ifp,load_flags);
+  pana_bits_t pana_bits(ifp,load_flags, RT_pana_info.encoding);
   int row, col, i, j, sh=0, pred[2], nonz[2];
+  unsigned bytes[16] = {};
+  ushort *raw_block_data;
 
-  pana_bits(0);
-  for (row=0; row < height; row++)
-    for (col=0; col < raw_width; col++) {
-      if ((i = col % 14) == 0)
-	pred[0] = pred[1] = nonz[0] = nonz[1] = 0;
-      if (i % 3 == 2) sh = 4 >> (3 - pana_bits(2));
-      if (nonz[i & 1]) {
-	if ((j = pana_bits(8))) {
-	  if ((pred[i & 1] -= 0x80 << sh) < 0 || sh == 4)
-	       pred[i & 1] &= ~(-1 << sh);
-	  pred[i & 1] += j << sh;
-	}
-      } else if ((nonz[i & 1] = pana_bits(8)) || i > 11)
-	pred[i & 1] = nonz[i & 1] << 4 | pana_bits(4);
-      if ((RAW(row,col) = pred[col & 1]) > 4098 && col < width) derror();
+  pana_bits(0, 0);
+  int enc_blck_size = RT_pana_info.bpp == 12 ? 10 : 9;
+  if (RT_pana_info.encoding == 5) {
+    for (row = 0; row < raw_height; row++)
+    {
+      raw_block_data = raw_image + row * raw_width;
+
+      for (col = 0; col < raw_width; col += enc_blck_size) {
+        pana_bits(0, bytes);
+
+        if (RT_pana_info.bpp == 12) {
+          raw_block_data[col] = ((bytes[1] & 0xF) << 8) + bytes[0];
+          raw_block_data[col + 1] = 16 * bytes[2] + (bytes[1] >> 4);
+          raw_block_data[col + 2] = ((bytes[4] & 0xF) << 8) + bytes[3];
+          raw_block_data[col + 3] = 16 * bytes[5] + (bytes[4] >> 4);
+          raw_block_data[col + 4] = ((bytes[7] & 0xF) << 8) + bytes[6];
+          raw_block_data[col + 5] = 16 * bytes[8] + (bytes[7] >> 4);
+          raw_block_data[col + 6] = ((bytes[10] & 0xF) << 8) + bytes[9];
+          raw_block_data[col + 7] = 16 * bytes[11] + (bytes[10] >> 4);
+          raw_block_data[col + 8] = ((bytes[13] & 0xF) << 8) + bytes[12];
+          raw_block_data[col + 9] = 16 * bytes[14] + (bytes[13] >> 4);
+        }
+        else if (RT_pana_info.bpp == 14) {
+          raw_block_data[col] = bytes[0] + ((bytes[1] & 0x3F) << 8);
+          raw_block_data[col + 1] = (bytes[1] >> 6) + 4 * (bytes[2]) +
+            ((bytes[3] & 0xF) << 10);
+          raw_block_data[col + 2] = (bytes[3] >> 4) + 16 * (bytes[4]) +
+            ((bytes[5] & 3) << 12);
+          raw_block_data[col + 3] = ((bytes[5] & 0xFC) >> 2) + (bytes[6] << 6);
+          raw_block_data[col + 4] = bytes[7] + ((bytes[8] & 0x3F) << 8);
+          raw_block_data[col + 5] = (bytes[8] >> 6) + 4 * bytes[9] + ((bytes[10] & 0xF) << 10);
+          raw_block_data[col + 6] = (bytes[10] >> 4) + 16 * bytes[11] + ((bytes[12] & 3) << 12);
+          raw_block_data[col + 7] = ((bytes[12] & 0xFC) >> 2) + (bytes[13] << 6);
+          raw_block_data[col + 8] = bytes[14] + ((bytes[15] & 0x3F) << 8);
+        }
+      }
     }
+  } else {
+    for (row=0; row < height; row++)
+      for (col=0; col < raw_width; col++) {
+        if ((i = col % 14) == 0)
+          pred[0] = pred[1] = nonz[0] = nonz[1] = 0;
+        if (i % 3 == 2) sh = 4 >> (3 - pana_bits(2));
+        if (nonz[i & 1]) {
+          if ((j = pana_bits(8))) {
+            if ((pred[i & 1] -= 0x80 << sh) < 0 || sh == 4)
+              pred[i & 1] &= ~(-1 << sh);
+            pred[i & 1] += j << sh;
+          }
+        } else if ((nonz[i & 1] = pana_bits(8)) || i > 11)
+          pred[i & 1] = nonz[i & 1] << 4 | pana_bits(4);
+        if ((RAW(row,col) = pred[col & 1]) > 4098 && col < width) derror();
+      }
+  }
 }
 
 void CLASS olympus_load_raw()
@@ -6081,6 +6130,7 @@ int CLASS parse_tiff_ifd (int base)
   unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
   struct jhead jh;
 /*RT*/  IMFILE *sfp;
+/*RT*/  int pana_raw = 0;
 
   if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
     return 1;
@@ -6096,10 +6146,16 @@ int CLASS parse_tiff_ifd (int base)
   while (entries--) {
     tiff_get (base, &tag, &type, &len, &save);
     switch (tag) {
+      case 1: if (len == 4) pana_raw = get4(); break;
       case 5:   width  = get2();  break;
       case 6:   height = get2();  break;
       case 7:   width += get2();  break;
       case 9:   if ((i = get2())) filters = i;  break;
+      case 10:
+          if (pana_raw && len == 1 && type == 3) {
+              RT_pana_info.bpp = get2();
+          }
+          break;
       case 17: case 18:
 	if (type == 3 && len == 1)
 	  cam_mul[(tag-17)*2] = get2() / 256.0;
@@ -6119,6 +6175,12 @@ int CLASS parse_tiff_ifd (int base)
 	fseek (ifp, 12, SEEK_CUR);
 	FORC3 cam_mul[c] = get2();
 	break;
+      case 45:
+          if (pana_raw && len == 1 && type == 3)
+          {
+              RT_pana_info.encoding = get2();
+          }
+          break;
       case 46:
 	if (type != 7 || fgetc(ifp) != 0xff || fgetc(ifp) != 0xd8) break;
 	thumb_offset = ftell(ifp) - 2;
@@ -6804,13 +6866,15 @@ void CLASS apply_tiff()
 	} else if ((raw_width * 2 * tiff_bps / 16 + 8) * raw_height == tiff_ifd[raw].bytes) {
 	    // 14 bit uncompressed from Nikon Z7, still wrong
 	    // each line has 8 padding byte.
-	    row_padding = 8;
-	    load_raw = &CLASS packed_load_raw;
+	    //row_padding = 8;
+	    //load_raw = &CLASS packed_load_raw;
+            load_raw = &CLASS nikon_14bit_load_raw;
 	} else if ((raw_width * 2 * tiff_bps / 16 + 12) * raw_height == tiff_ifd[raw].bytes) {
 	    // 14 bit uncompressed from Nikon Z6, still wrong
 	    // each line has 12 padding byte.
-	    row_padding = 12;
-	    load_raw = &CLASS packed_load_raw;
+	    // row_padding = 12;
+	    // load_raw = &CLASS packed_load_raw;
+            load_raw = &CLASS nikon_14bit_load_raw;
 	} else
 	  load_raw = &CLASS nikon_load_raw;			break;
       case 65535:
@@ -10611,6 +10675,48 @@ struct tiff_hdr {
 };
 
 #include "fujicompressed.cc"
+
+//-----------------------------------------------------------------------------
+/* Taken from LibRaw
+
+LibRaw is free software; you can redistribute it and/or modify
+it under the terms of the one of two licenses as you choose:
+1. GNU LESSER GENERAL PUBLIC LICENSE version 2.1
+   (See file LICENSE.LGPL provided in LibRaw distribution archive for details).
+2. COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+   (See file LICENSE.CDDL provided in LibRaw distribution archive for details).
+ */
+
+namespace {
+
+inline void unpack7bytesto4x16_nikon(unsigned char *src, unsigned short *dest)
+{
+    dest[3] = (src[6] << 6) | (src[5] >> 2);
+    dest[2] = ((src[5] & 0x3) << 12) | (src[4] << 4) | (src[3] >> 4);
+    dest[1] = (src[3] & 0xf) << 10 | (src[2] << 2) | (src[1] >> 6);
+    dest[0] = ((src[1] & 0x3f) << 8) | src[0];
+}
+
+} // namespace
+
+void CLASS nikon_14bit_load_raw()
+{
+    const unsigned linelen = (unsigned)(ceilf((float)(raw_width * 7 / 4) / 16.0)) * 16; // 14512; // S.raw_width * 7 / 4;
+    const unsigned pitch = raw_width; //S.raw_pitch ? S.raw_pitch / 2 : S.raw_width;
+    unsigned char *buf = (unsigned char *)malloc(linelen);
+    merror(buf, "nikon_14bit_load_raw()");
+    for (int row = 0; row < raw_height; row++)
+    {
+        unsigned bytesread = fread(buf, 1, linelen, ifp);
+        unsigned short *dest = &raw_image[pitch * row];
+        //swab32arr((unsigned *)buf, bytesread / 4);
+        for (int sp = 0, dp = 0; dp < pitch - 3 && sp < linelen - 6 && sp < bytesread - 6; sp += 7, dp += 4)
+            unpack7bytesto4x16_nikon(buf + sp, dest + dp);
+    }
+    free(buf);
+}
+
+//-----------------------------------------------------------------------------
 
 /* RT: Delete from here */
 /*RT*/#undef SQR

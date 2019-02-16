@@ -139,7 +139,7 @@ protected:
     AlignedBuffer<T*> ab;
 public:
 #if CHECK_BOUNDS
-    int width_, height_;
+    size_t width_, height_;
 #endif
     T** ptrs;
 
@@ -149,7 +149,7 @@ public:
     PlanarPtr() : ptrs (nullptr) {}
 #endif
 
-    bool resize(int newSize)
+    bool resize(size_t newSize)
     {
         if (ab.resize(newSize)) {
             ptrs = ab.data;
@@ -167,7 +167,7 @@ public:
         ptrs = tmpsPtrs;
 
 #if CHECK_BOUNDS
-        int tmp = other.width_;
+        size_t tmp = other.width_;
         other.width_ = width_;
         width_ = tmp;
         tmp = other.height_;
@@ -176,7 +176,7 @@ public:
 #endif
     }
 
-    T*&       operator() (unsigned row)
+    T*&       operator() (size_t row)
     {
 #if CHECK_BOUNDS
         assert (row < height_);
@@ -184,7 +184,7 @@ public:
         return ptrs[row];
     }
     // Will send back the start of a row, starting with a red, green or blue value
-    T*        operator() (unsigned row) const
+    T*        operator() (size_t row) const
     {
 #if CHECK_BOUNDS
         assert (row < height_);
@@ -192,14 +192,14 @@ public:
         return ptrs[row];
     }
     // Will send back a value at a given row, col position
-    T&        operator() (unsigned row, unsigned col)
+    T&        operator() (size_t row, size_t col)
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);
 #endif
         return ptrs[row][col];
     }
-    const T   operator() (unsigned row, unsigned col) const
+    const T   operator() (size_t row, size_t col) const
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);
@@ -215,7 +215,7 @@ class PlanarWhateverData : virtual public ImageDatas
 private:
     AlignedBuffer<T> abData;
 
-    int rowstride;    // Plan size, in bytes (all padding bytes included)
+    size_t rowstride;    // Plan size, in bytes (all padding bytes included)
 
 public:
     T* data;
@@ -228,7 +228,7 @@ public:
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride () const
+    size_t getRowStride () const
     {
         return rowstride;
     }
@@ -259,7 +259,6 @@ public:
      * Can be safely used to reallocate an existing image */
     void allocate (int W, int H) override
     {
-
         if (W == width && H == height) {
             return;
         }
@@ -591,8 +590,8 @@ class PlanarRGBData : virtual public ImageDatas
 private:
     AlignedBuffer<T> abData;
 
-    int rowstride;    // Plan size, in bytes (all padding bytes included)
-    int planestride;  // Row length, in bytes (padding bytes included)
+    size_t rowstride;    // Plan size, in bytes (all padding bytes included)
+    size_t planestride;  // Row length, in bytes (padding bytes included)
 protected:
     T* data;
 
@@ -602,18 +601,18 @@ public:
     PlanarPtr<T> b;
 
     PlanarRGBData() : rowstride(0), planestride(0), data (nullptr) {}
-    PlanarRGBData(int w, int h) : rowstride(0), planestride(0), data (nullptr)
+    PlanarRGBData(size_t w, size_t h) : rowstride(0), planestride(0), data (nullptr)
     {
         allocate(w, h);
     }
 
     // Send back the row stride. WARNING: unit = byte, not element!
-    int getRowStride () const
+    size_t getRowStride () const
     {
         return rowstride;
     }
     // Send back the plane stride. WARNING: unit = byte, not element!
-    int getPlaneStride () const
+    size_t getPlaneStride () const
     {
         return planestride;
     }
@@ -710,7 +709,7 @@ public:
         char *bluestart  = (char*)(data) + 2 * planestride;
 
         for (int i = 0; i < height; ++i) {
-            int k = i * rowstride;
+            size_t k = i * rowstride;
             r(i) = (T*)(redstart   + k);
             g(i) = (T*)(greenstart + k);
             b(i) = (T*)(bluestart  + k);
@@ -1180,10 +1179,10 @@ class ChunkyPtr
 {
 private:
     T* ptr;
-    int width;
+    ssize_t width;
 public:
 #if CHECK_BOUNDS
-    int width_, height_;
+    size_t width_, height_;
 #endif
 
 #if CHECK_BOUNDS
@@ -1191,7 +1190,7 @@ public:
 #else
     ChunkyPtr() : ptr (nullptr), width(-1) {}
 #endif
-    void init(T* base, int w = -1)
+    void init(T* base, ssize_t w = -1)
     {
         ptr = base;
         width = w;
@@ -1202,12 +1201,12 @@ public:
         other.ptr = ptr;
         ptr = tmpsPtr;
 
-        int tmpWidth = other.width;
+        ssize_t tmpWidth = other.width;
         other.width = width;
         width = tmpWidth;
 
 #if CHECK_BOUNDS
-        int tmp = other.width_;
+        size_t tmp = other.width_;
         other.width_ = width_;
         width_ = tmp;
         tmp = other.height_;
@@ -1218,7 +1217,7 @@ public:
     }
 
     // Will send back the start of a row, starting with a red, green or blue value
-    T* operator() (unsigned row) const
+    T* operator() (size_t row) const
     {
 #if CHECK_BOUNDS
         assert (row < height_);
@@ -1226,14 +1225,14 @@ public:
         return &ptr[3 * (row * width)];
     }
     // Will send back a value at a given row, col position
-    T& operator() (unsigned row, unsigned col)
+    T& operator() (size_t row, size_t col)
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);
 #endif
         return ptr[3 * (row * width + col)];
     }
-    const T  operator() (unsigned row, unsigned col) const
+    const T  operator() (size_t row, size_t col) const
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);
@@ -1315,7 +1314,7 @@ public:
         b.height_ = height;
 #endif
 
-        abData.resize(width * height * 3u);
+        abData.resize((size_t)width * (size_t)height * (size_t)3);
 
         if (!abData.isEmpty()) {
             data = abData.data;

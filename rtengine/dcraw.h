@@ -159,6 +159,13 @@ protected:
     std::string RT_software;
     double RT_baseline_exposure;
 
+    struct PanasonicRW2Info {
+        ushort bpp;
+        ushort encoding;
+        PanasonicRW2Info(): bpp(0), encoding(0) {}
+    };
+    PanasonicRW2Info RT_pana_info;
+
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
     int histogram[4][0x2000];
@@ -395,13 +402,15 @@ void nokia_load_raw();
 
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *i, unsigned &u): ifp(i), load_flags(u), vbits(0) {}
-   unsigned operator()(int nbits);
+   pana_bits_t(IMFILE *i, unsigned &u, unsigned enc):
+    ifp(i), load_flags(u), vbits(0), encoding(enc) {}
+   unsigned operator()(int nbits, unsigned *bytes=nullptr);
 private:
    IMFILE *ifp;
    unsigned &load_flags;
    uchar buf[0x4000];
    int vbits;
+   unsigned encoding;
 };
 
 void canon_rmf_load_raw();
@@ -516,6 +525,8 @@ void shiftXtransMatrix( const int offsy, const int offsx) {
         }
     }
 }
+
+void nikon_14bit_load_raw(); // ported from LibRaw
 
 };
 
