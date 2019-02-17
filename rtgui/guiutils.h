@@ -194,6 +194,8 @@ private:
     ExpanderBox* expBox;        /// Frame that includes the child and control its visibility
     Gtk::EventBox *imageEvBox;  /// Enable/Disable or Open/Close arrow event box
 
+    using Gtk::Container::add;
+
     /// Triggered on opened/closed event
     bool on_toggle(GdkEventButton* event);
     /// Triggered on enabled/disabled change -> will emit a toggle event to the connected objects

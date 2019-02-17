@@ -155,7 +155,7 @@ public:
 };
 NALensTypeInterpreter naLensTypeInterpreter;
 
-class NAFlashModeInterpreter : public ChoiceInterpreter
+class NAFlashModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     NAFlashModeInterpreter ()
@@ -170,7 +170,7 @@ public:
 };
 NAFlashModeInterpreter naFlashModeInterpreter;
 
-class NAHiISONRInterpreter : public ChoiceInterpreter
+class NAHiISONRInterpreter : public ChoiceInterpreter<>
 {
 public:
     // HighISONoiseReduction

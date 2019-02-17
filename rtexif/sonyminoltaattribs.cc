@@ -25,7 +25,7 @@
 namespace rtexif
 {
 
-class SANoYesInterpreter : public ChoiceInterpreter
+class SANoYesInterpreter : public ChoiceInterpreter<>
 {
 public:
     SANoYesInterpreter ()
@@ -36,7 +36,7 @@ public:
 };
 SANoYesInterpreter saNoYesInterpreter;
 
-class SAOnOffInterpreter : public ChoiceInterpreter
+class SAOnOffInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter ()
@@ -48,7 +48,7 @@ public:
 };
 SAOnOffInterpreter saOnOffInterpreter;
 
-class SAOnOffInterpreter2 : public ChoiceInterpreter
+class SAOnOffInterpreter2 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter2 ()
@@ -59,7 +59,7 @@ public:
 };
 SAOnOffInterpreter2 saOnOffInterpreter2;
 
-class SAOnOffInterpreter3 : public ChoiceInterpreter
+class SAOnOffInterpreter3 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter3 ()
@@ -71,7 +71,7 @@ public:
 };
 SAOnOffInterpreter3 saOnOffInterpreter3;
 
-class SAOnOffInterpreter4 : public ChoiceInterpreter
+class SAOnOffInterpreter4 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter4 ()
@@ -84,7 +84,7 @@ public:
 };
 SAOnOffInterpreter4 saOnOffInterpreter4;
 
-class SAOnOffInterpreter5 : public ChoiceInterpreter
+class SAOnOffInterpreter5 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter5 ()
@@ -95,7 +95,7 @@ public:
 };
 SAOnOffInterpreter5 saOnOffInterpreter5;
 
-class SAHighISONoiseReduction : public ChoiceInterpreter
+class SAHighISONoiseReduction : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction ()
@@ -110,7 +110,7 @@ public:
 };
 SAHighISONoiseReduction saHighISONoiseReduction;
 
-class SAHighISONoiseReduction2 : public ChoiceInterpreter
+class SAHighISONoiseReduction2 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction2 ()
@@ -124,7 +124,7 @@ public:
 };
 SAHighISONoiseReduction2 saHighISONoiseReduction2;
 
-class SAHighISONoiseReduction3 : public ChoiceInterpreter
+class SAHighISONoiseReduction3 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction3 ()
@@ -137,7 +137,7 @@ public:
 };
 SAHighISONoiseReduction3 saHighISONoiseReduction3;
 
-class SAHighISONoiseReduction4 : public ChoiceInterpreter
+class SAHighISONoiseReduction4 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction4 ()
@@ -150,7 +150,7 @@ public:
 };
 SAHighISONoiseReduction4 saHighISONoiseReduction4;
 
-class SAHighISONoiseReduction5 : public ChoiceInterpreter
+class SAHighISONoiseReduction5 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction5 ()
@@ -161,7 +161,7 @@ public:
 };
 SAHighISONoiseReduction5 saHighISONoiseReduction5;
 
-class SASmileShutterMode : public ChoiceInterpreter
+class SASmileShutterMode : public ChoiceInterpreter<>
 {
 public:
     SASmileShutterMode ()
@@ -173,7 +173,7 @@ public:
 };
 SASmileShutterMode saSmileShutterMode;
 
-class SAHDRLevel : public ChoiceInterpreter
+class SAHDRLevel : public ChoiceInterpreter<>
 {
 public:
     SAHDRLevel ()
@@ -191,7 +191,7 @@ public:
 };
 SAHDRLevel saHDRLevel;
 
-class SAViewingMode : public ChoiceInterpreter
+class SAViewingMode : public ChoiceInterpreter<>
 {
 public:
     SAViewingMode ()
@@ -204,7 +204,7 @@ public:
 };
 SAViewingMode saViewingMode;
 
-class SAFlashAction : public ChoiceInterpreter
+class SAFlashAction : public ChoiceInterpreter<>
 {
 public:
     SAFlashAction ()
@@ -215,7 +215,7 @@ public:
 };
 SAFlashAction saFlashAction;
 
-class SALiveViewFocusMode : public ChoiceInterpreter
+class SALiveViewFocusMode : public ChoiceInterpreter<>
 {
 public:
     SALiveViewFocusMode ()
@@ -227,7 +227,7 @@ public:
 };
 SALiveViewFocusMode saLiveViewFocusMode;
 
-class SALensMount : public ChoiceInterpreter
+class SALensMount : public ChoiceInterpreter<>
 {
 public:
     SALensMount ()
@@ -239,7 +239,7 @@ public:
 };
 SALensMount saLensMount;
 
-class SASweepPanoramaSize : public ChoiceInterpreter
+class SASweepPanoramaSize : public ChoiceInterpreter<>
 {
 public:
     SASweepPanoramaSize ()
@@ -250,7 +250,7 @@ public:
 };
 SASweepPanoramaSize saSweepPanoramaSize;
 
-class SASweepPanoramaDirection : public ChoiceInterpreter
+class SASweepPanoramaDirection : public ChoiceInterpreter<>
 {
 public:
     SASweepPanoramaDirection ()
@@ -263,7 +263,7 @@ public:
 };
 SASweepPanoramaDirection saSweepPanoramaDirection;
 
-class SALiveViewAFSetting : public ChoiceInterpreter
+class SALiveViewAFSetting : public ChoiceInterpreter<>
 {
 public:
     SALiveViewAFSetting ()
@@ -275,7 +275,7 @@ public:
 };
 SALiveViewAFSetting saLiveViewAFSetting;
 
-class SAPanoramaSize3D : public ChoiceInterpreter
+class SAPanoramaSize3D : public ChoiceInterpreter<>
 {
 public:
     SAPanoramaSize3D ()
@@ -288,7 +288,7 @@ public:
 };
 SAPanoramaSize3D saPanoramaSize3D;
 
-class SALiveViewMetering : public ChoiceInterpreter
+class SALiveViewMetering : public ChoiceInterpreter<>
 {
 public:
     SALiveViewMetering ()
@@ -300,7 +300,7 @@ public:
 };
 SALiveViewMetering saLiveViewMetering;
 
-class SAWhiteBalanceInterpreter: public ChoiceInterpreter
+class SAWhiteBalanceInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAWhiteBalanceInterpreter()
@@ -319,7 +319,7 @@ public:
 };
 SAWhiteBalanceInterpreter saWhiteBalanceInterpreter;
 
-class SAWhiteBalanceSettingInterpreter: public ChoiceInterpreter
+class SAWhiteBalanceSettingInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAWhiteBalanceSettingInterpreter()
@@ -379,7 +379,7 @@ public:
 };
 SAWhiteBalanceSettingInterpreter saWhiteBalanceSettingInterpreter;
 
-class SASceneModeInterpreter : public ChoiceInterpreter
+class SASceneModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     SASceneModeInterpreter ()
@@ -413,7 +413,7 @@ public:
 };
 SASceneModeInterpreter saSceneModeInterpreter;
 
-class SAZoneMatchingInterpreter : public ChoiceInterpreter
+class SAZoneMatchingInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAZoneMatchingInterpreter ()
@@ -425,7 +425,7 @@ public:
 };
 SAZoneMatchingInterpreter saZoneMatchingInterpreter;
 
-class SADynamicRangeOptimizerInterpreter : public ChoiceInterpreter
+class SADynamicRangeOptimizerInterpreter : public ChoiceInterpreter<>
 {
 public:
     SADynamicRangeOptimizerInterpreter ()
@@ -448,7 +448,7 @@ public:
 };
 SADynamicRangeOptimizerInterpreter saDynamicRangeOptimizerInterpreter;
 
-class SAColorModeInterpreter : public ChoiceInterpreter
+class SAColorModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAColorModeInterpreter ()
@@ -477,7 +477,7 @@ public:
 };
 SAColorModeInterpreter saColorModeInterpreter;
 
-class SAExposureModeInterpreter : public ChoiceInterpreter
+class SAExposureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAExposureModeInterpreter ()
@@ -517,7 +517,7 @@ public:
 };
 SAExposureModeInterpreter saExposureModeInterpreter;
 
-class SAQualityInterpreter : public ChoiceInterpreter
+class SAQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAQualityInterpreter ()
@@ -528,7 +528,7 @@ public:
 };
 SAQualityInterpreter saQualityInterpreter;
 
-class SAAntiBlurInterpreter : public ChoiceInterpreter
+class SAAntiBlurInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAAntiBlurInterpreter ()
@@ -1343,7 +1343,7 @@ public:
 };
 SALensID2Interpreter saLensID2Interpreter;
 
-class MATeleconverterInterpreter : public ChoiceInterpreter
+class MATeleconverterInterpreter : public ChoiceInterpreter<>
 {
 public:
     MATeleconverterInterpreter ()
@@ -1361,7 +1361,7 @@ public:
 };
 MATeleconverterInterpreter maTeleconverterInterpreter;
 
-class MAQualityInterpreter : public ChoiceInterpreter
+class MAQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     MAQualityInterpreter ()
@@ -1379,7 +1379,7 @@ public:
 };
 MAQualityInterpreter maQualityInterpreter;
 
-class MAImageSizeInterpreter : public ChoiceInterpreter
+class MAImageSizeInterpreter : public ChoiceInterpreter<>
 {
 public:
     MAImageSizeInterpreter ()
@@ -1394,7 +1394,7 @@ public:
 };
 MAImageSizeInterpreter maImageSizeInterpreter;
 
-class SAQualityInterpreter2 : public ChoiceInterpreter
+class SAQualityInterpreter2 : public ChoiceInterpreter<>
 {
 public:
     SAQualityInterpreter2 ()
@@ -1410,7 +1410,7 @@ public:
 };
 SAQualityInterpreter2 saQualityInterpreter2;
 
-class SAQualityInterpreter3 : public ChoiceInterpreter
+class SAQualityInterpreter3 : public ChoiceInterpreter<>
 {
 public:
     SAQualityInterpreter3 ()
@@ -1423,7 +1423,7 @@ public:
 };
 SAQualityInterpreter3 saQualityInterpreter3;
 
-class SADriveMode : public ChoiceInterpreter
+class SADriveMode : public ChoiceInterpreter<>
 {
 public:
     SADriveMode ()
@@ -1445,7 +1445,7 @@ public:
 };
 SADriveMode saDriveMode;
 
-class SADriveMode2 : public ChoiceInterpreter
+class SADriveMode2 : public ChoiceInterpreter<>
 {
 public:
     SADriveMode2 ()
@@ -1461,7 +1461,7 @@ public:
 };
 SADriveMode2 saDriveMode2;
 
-class SADriveMode3 : public ChoiceInterpreter
+class SADriveMode3 : public ChoiceInterpreter<>
 {
 public:
     SADriveMode3 ()
@@ -1487,7 +1487,7 @@ public:
 };
 SADriveMode3 saDriveMode3;
 
-class SAFocusMode: public ChoiceInterpreter
+class SAFocusMode: public ChoiceInterpreter<>
 {
 public:
     SAFocusMode ()
@@ -1502,7 +1502,7 @@ public:
 };
 SAFocusMode saFocusMode;
 
-class SAFocusMode2: public ChoiceInterpreter
+class SAFocusMode2: public ChoiceInterpreter<>
 {
 public:
     SAFocusMode2 ()
@@ -1516,7 +1516,7 @@ public:
 };
 SAFocusMode2 saFocusMode2;
 
-class SAFocusModeSetting3: public ChoiceInterpreter
+class SAFocusModeSetting3: public ChoiceInterpreter<>
 {
 public:
     SAFocusModeSetting3 ()
@@ -1531,7 +1531,7 @@ public:
 };
 SAFocusModeSetting3 saFocusModeSetting3;
 
-class SAAFMode: public ChoiceInterpreter
+class SAAFMode: public ChoiceInterpreter<>
 {
 public:
     SAAFMode()
@@ -1549,7 +1549,7 @@ public:
 };
 SAAFMode saAFMode;
 
-class SAAFAreaMode: public ChoiceInterpreter
+class SAAFAreaMode: public ChoiceInterpreter<>
 {
 public:
     SAAFAreaMode ()
@@ -1561,7 +1561,7 @@ public:
 };
 SAAFAreaMode saAFAreaMode;
 
-class SAAFAreaMode2: public ChoiceInterpreter
+class SAAFAreaMode2: public ChoiceInterpreter<>
 {
 public:
     SAAFAreaMode2 ()
@@ -1574,7 +1574,7 @@ public:
 };
 SAAFAreaMode2 saAFAreaMode2;
 
-class SAAFPointSelected: public ChoiceInterpreter
+class SAAFPointSelected: public ChoiceInterpreter<>
 {
 public:
     SAAFPointSelected ()
@@ -1594,7 +1594,7 @@ public:
 };
 SAAFPointSelected saAFPointSelected;
 
-class SACameraInfoAFPointSelected: public ChoiceInterpreter
+class SACameraInfoAFPointSelected: public ChoiceInterpreter<>
 {
 public:
     SACameraInfoAFPointSelected ()
@@ -1619,7 +1619,7 @@ public:
 };
 SACameraInfoAFPointSelected saCameraInfoAFPointSelected;
 
-class SACameraInfoAFPoint: public ChoiceInterpreter
+class SACameraInfoAFPoint: public ChoiceInterpreter<>
 {
 public:
     SACameraInfoAFPoint ()
@@ -1647,7 +1647,7 @@ public:
 };
 SACameraInfoAFPoint saCameraInfoAFPoint;
 
-class SAAFPointSelected2: public ChoiceInterpreter
+class SAAFPointSelected2: public ChoiceInterpreter<>
 {
 public:
     SAAFPointSelected2 ()
@@ -1665,7 +1665,7 @@ public:
 };
 SAAFPointSelected2 saAFPointSelected2;
 
-class SAMeteringMode0_3: public ChoiceInterpreter
+class SAMeteringMode0_3: public ChoiceInterpreter<>
 {
 public:
     SAMeteringMode0_3 ()
@@ -1677,7 +1677,7 @@ public:
 };
 SAMeteringMode0_3 saMeteringMode0_3;
 
-class SAMeteringMode1_3: public ChoiceInterpreter
+class SAMeteringMode1_3: public ChoiceInterpreter<>
 {
 public:
     SAMeteringMode1_3 ()
@@ -1689,7 +1689,7 @@ public:
 };
 SAMeteringMode1_3 saMeteringMode1_3;
 
-class SAMeteringMode1_4: public ChoiceInterpreter
+class SAMeteringMode1_4: public ChoiceInterpreter<>
 {
 public:
     SAMeteringMode1_4 ()
@@ -1701,7 +1701,7 @@ public:
 };
 SAMeteringMode1_4 saMeteringMode1_4;
 
-class SADynamicRangeOptimizerMode: public ChoiceInterpreter
+class SADynamicRangeOptimizerMode: public ChoiceInterpreter<>
 {
 public:
     SADynamicRangeOptimizerMode ()
@@ -1715,7 +1715,7 @@ public:
 };
 SADynamicRangeOptimizerMode saDynamicRangeOptimizerMode;
 
-class SADynamicRangeOptimizerSetting: public ChoiceInterpreter
+class SADynamicRangeOptimizerSetting: public ChoiceInterpreter<>
 {
 public:
     SADynamicRangeOptimizerSetting ()
@@ -1727,7 +1727,7 @@ public:
 };
 SADynamicRangeOptimizerSetting saDynamicRangeOptimizerSetting;
 
-class SACreativeStyle: public ChoiceInterpreter
+class SACreativeStyle: public ChoiceInterpreter<>
 {
 public:
     SACreativeStyle ()
@@ -1750,7 +1750,7 @@ public:
 };
 SACreativeStyle saCreativeStyle;
 
-class SACreativeStyle2: public ChoiceInterpreter
+class SACreativeStyle2: public ChoiceInterpreter<>
 {
 public:
     SACreativeStyle2 ()
@@ -1766,7 +1766,7 @@ public:
 };
 SACreativeStyle2 saCreativeStyle2;
 
-class SACreativeStyleSetting: public ChoiceInterpreter
+class SACreativeStyleSetting: public ChoiceInterpreter<>
 {
 public:
     SACreativeStyleSetting ()
@@ -1781,7 +1781,7 @@ public:
 };
 SACreativeStyleSetting saCreativeStyleSetting;
 
-class SAFlashControl: public ChoiceInterpreter
+class SAFlashControl: public ChoiceInterpreter<>
 {
 public:
     SAFlashControl ()
@@ -1792,7 +1792,7 @@ public:
 };
 SAFlashControl saFlashControl;
 
-class SAFlashMode: public ChoiceInterpreter
+class SAFlashMode: public ChoiceInterpreter<>
 {
 public:
     SAFlashMode ()
@@ -1803,7 +1803,7 @@ public:
 };
 SAFlashMode saFlashMode;
 
-class SAFlashMode2: public ChoiceInterpreter
+class SAFlashMode2: public ChoiceInterpreter<>
 {
 public:
     SAFlashMode2 ()
@@ -1818,7 +1818,7 @@ public:
 };
 SAFlashMode2 saFlashMode2;
 
-class SAExposureProgram: public ChoiceInterpreter
+class SAExposureProgram: public ChoiceInterpreter<>
 {
 public:
     SAExposureProgram ()
@@ -1841,7 +1841,7 @@ public:
 };
 SAExposureProgram saExposureProgram;
 
-class SAExposureProgram2: public ChoiceInterpreter
+class SAExposureProgram2: public ChoiceInterpreter<>
 {
 public:
     SAExposureProgram2 ()
@@ -1882,7 +1882,7 @@ public:
 };
 SAExposureProgram2 saExposureProgram2;
 
-class SARotation: public ChoiceInterpreter
+class SARotation: public ChoiceInterpreter<>
 {
 public:
     SARotation ()
@@ -1895,7 +1895,7 @@ public:
 };
 SARotation saRotation;
 
-class SASonyImageSize: public ChoiceInterpreter
+class SASonyImageSize: public ChoiceInterpreter<>
 {
 public:
     SASonyImageSize ()
@@ -1907,7 +1907,7 @@ public:
 };
 SASonyImageSize saSonyImageSize;
 
-class SASonyImageSize3: public ChoiceInterpreter
+class SASonyImageSize3: public ChoiceInterpreter<>
 {
 public:
     SASonyImageSize3 ()
@@ -1922,7 +1922,7 @@ public:
 };
 SASonyImageSize3 saSonyImageSize3;
 
-class SAAspectRatio: public ChoiceInterpreter
+class SAAspectRatio: public ChoiceInterpreter<>
 {
 public:
     SAAspectRatio ()
@@ -1933,7 +1933,7 @@ public:
 };
 SAAspectRatio saAspectRatio;
 
-class SAAspectRatio2: public ChoiceInterpreter
+class SAAspectRatio2: public ChoiceInterpreter<>
 {
 public:
     SAAspectRatio2 ()
@@ -1944,7 +1944,7 @@ public:
 };
 SAAspectRatio2 saAspectRatio2;
 
-class SAExposureLevelIncrements: public ChoiceInterpreter
+class SAExposureLevelIncrements: public ChoiceInterpreter<>
 {
 public:
     SAExposureLevelIncrements ()
@@ -1955,7 +1955,7 @@ public:
 };
 SAExposureLevelIncrements saExposureLevelIncrements;
 
-class SAAFIlluminator: public ChoiceInterpreter
+class SAAFIlluminator: public ChoiceInterpreter<>
 {
 public:
     SAAFIlluminator ()
@@ -1967,7 +1967,7 @@ public:
 };
 SAAFIlluminator saAFIlluminator;
 
-class SAColorSpace1_2: public ChoiceInterpreter
+class SAColorSpace1_2: public ChoiceInterpreter<>
 {
 public:
     SAColorSpace1_2 ()
@@ -1978,7 +1978,7 @@ public:
 };
 SAColorSpace1_2 saColorSpace1_2;
 
-class SAColorSpace0_5: public ChoiceInterpreter
+class SAColorSpace0_5: public ChoiceInterpreter<>
 {
 public:
     SAColorSpace0_5 ()
@@ -1990,7 +1990,7 @@ public:
 };
 SAColorSpace0_5 saColorSpace0_5;
 
-class SAColorSpace5_6: public ChoiceInterpreter
+class SAColorSpace5_6: public ChoiceInterpreter<>
 {
 public:
     SAColorSpace5_6 ()
@@ -2001,7 +2001,7 @@ public:
 };
 SAColorSpace5_6 saColorSpace5_6;
 
-class SAReleaseModeInterpreter: public ChoiceInterpreter
+class SAReleaseModeInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAReleaseModeInterpreter ()
@@ -2016,7 +2016,7 @@ public:
 };
 SAReleaseModeInterpreter saReleaseModeInterpreter;
 
-class SAImageStyleInterpreter: public ChoiceInterpreter
+class SAImageStyleInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAImageStyleInterpreter ()
@@ -2040,7 +2040,7 @@ public:
 };
 SAImageStyleInterpreter saImageStyleInterpreter;
 
-class SAPictureEffectInterpreter: public ChoiceInterpreter
+class SAPictureEffectInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAPictureEffectInterpreter()
@@ -2085,7 +2085,7 @@ public:
 };
 SAPictureEffectInterpreter saPictureEffectInterpreter;
 
-class SACameraInfoFocusStatusInterpreter : public ChoiceInterpreter
+class SACameraInfoFocusStatusInterpreter : public ChoiceInterpreter<>
 {
 public:
     SACameraInfoFocusStatusInterpreter()

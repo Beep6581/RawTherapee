@@ -19,15 +19,16 @@
 #ifndef _MEXIF3_
 #define _MEXIF3_
 
-#include <cstdio>
-#include <vector>
-#include <map>
-#include <string>
-#include <sstream>
-#include <iomanip>
-#include <cstdlib>
 #include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <iomanip>
+#include <map>
 #include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include <glibmm.h>
 
@@ -482,22 +483,26 @@ public:
 };
 
 extern Interpreter stdInterpreter;
+
+template<typename T = std::uint32_t>
 class ChoiceInterpreter : public Interpreter
 {
 protected:
-    std::map<int, std::string> choices;
+	using Choices = std::map<T, std::string>;
+	using ChoicesIterator = typename Choices::const_iterator;
+    Choices choices;
 public:
     ChoiceInterpreter () {};
     std::string toString (Tag* t) override
     {
-        std::map<int, std::string>::iterator r = choices.find (t->toInt());
+        const typename std::map<T, std::string>::const_iterator r = choices.find(t->toInt());
 
         if (r != choices.end()) {
             return r->second;
         } else {
             char buffer[1024];
-            t->toString (buffer);
-            return std::string (buffer);
+            t->toString(buffer);
+            return buffer;
         }
     }
 };
