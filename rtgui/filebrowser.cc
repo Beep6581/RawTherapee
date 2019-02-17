@@ -1758,32 +1758,19 @@ void FileBrowser::openNextImage ()
 
                             MYWRITERLOCK_ACQUIRE(l);
 
-                            // scroll to the selected position
-                            double h1, v1;
-                            getScrollPosition(h1, v1);
-
-                            double h2 = selected[0]->getStartX();
-                            double v2 = selected[0]->getStartY();
+                            double h = selected[0]->getStartX();
+                            double v = selected[0]->getStartY();
 
                             Thumbnail* thumb = (static_cast<FileBrowserEntry*>(fd[k]))->thumbnail;
-                            int minWidth = get_width() - fd[k]->getMinimalWidth();
 
                             MYWRITERLOCK_RELEASE(l);
 
-                            // scroll only when selected[0] is outside of the displayed bounds
-                            if (h2 + minWidth - h1 > get_width()) {
-                                setScrollPosition(h2 - minWidth, v2);
-                            }
-
-                            if (h1 > h2) {
-                                setScrollPosition(h2, v2);
-                            }
+                            setScrollPosition(h, v);
 
                             // open the selected image
                             std::vector<Thumbnail*> entries;
                             entries.push_back (thumb);
                             tbl->openRequested (entries);
-                            FileBrowser::selectImage(fd[k]->filename);
                             return;
                         }
                     }
@@ -1824,32 +1811,19 @@ void FileBrowser::openPrevImage ()
 
                             MYWRITERLOCK_ACQUIRE(l);
 
-                            // scroll to the selected position
-                            double h1, v1;
-                            getScrollPosition(h1, v1);
-
-                            double h2 = selected[0]->getStartX();
-                            double v2 = selected[0]->getStartY();
+                            double h = selected[0]->getStartX();
+                            double v = selected[0]->getStartY();
 
                             Thumbnail* thumb = (static_cast<FileBrowserEntry*>(fd[k]))->thumbnail;
-                            int minWidth = get_width() - fd[k]->getMinimalWidth();
 
                             MYWRITERLOCK_RELEASE(l);
 
-                            // scroll only when selected[0] is outside of the displayed bounds
-                            if (h2 + minWidth - h1 > get_width()) {
-                                setScrollPosition(h2 - minWidth, v2);
-                            }
-
-                            if (h1 > h2) {
-                                setScrollPosition(h2, v2);
-                            }
+                            setScrollPosition(h, v);
 
                             // open the selected image
                             std::vector<Thumbnail*> entries;
                             entries.push_back (thumb);
                             tbl->openRequested (entries);
-                            FileBrowser::selectImage(fd[k]->filename);
                             return;
                         }
                     }
