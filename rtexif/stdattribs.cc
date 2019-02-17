@@ -28,7 +28,7 @@
 namespace rtexif
 {
 
-class ColorSpaceInterpreter : public ChoiceInterpreter
+class ColorSpaceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -41,7 +41,7 @@ public:
 };
 ColorSpaceInterpreter colorSpaceInterpreter;
 
-class PreviewColorSpaceInterpreter : public ChoiceInterpreter
+class PreviewColorSpaceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -56,7 +56,7 @@ public:
 };
 PreviewColorSpaceInterpreter previewColorSpaceInterpreter;
 
-class LinearSRGBInterpreter : public ChoiceInterpreter
+class LinearSRGBInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -68,7 +68,7 @@ public:
 };
 LinearSRGBInterpreter linearSRGBInterpreter;
 
-class DefaultBlackRenderInterpreter : public ChoiceInterpreter
+class DefaultBlackRenderInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -80,7 +80,7 @@ public:
 };
 DefaultBlackRenderInterpreter defaultBlackRenderInterpreter;
 
-class ExposureProgramInterpreter : public ChoiceInterpreter
+class ExposureProgramInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -99,7 +99,7 @@ public:
 };
 ExposureProgramInterpreter exposureProgramInterpreter;
 
-class MeteringModeInterpreter : public ChoiceInterpreter
+class MeteringModeInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -117,7 +117,7 @@ public:
 };
 MeteringModeInterpreter meteringModeInterpreter;
 
-class ExposureModeInterpreter : public ChoiceInterpreter
+class ExposureModeInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -130,7 +130,7 @@ public:
 };
 ExposureModeInterpreter exposureModeInterpreter;
 
-class WhiteBalanceInterpreter : public ChoiceInterpreter
+class WhiteBalanceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -142,7 +142,7 @@ public:
 };
 WhiteBalanceInterpreter whiteBalanceInterpreter;
 
-class SceneCaptureInterpreter : public ChoiceInterpreter
+class SceneCaptureInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -156,7 +156,7 @@ public:
 };
 SceneCaptureInterpreter sceneCaptureInterpreter;
 
-class GainControlInterpreter : public ChoiceInterpreter
+class GainControlInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -171,7 +171,7 @@ public:
 };
 GainControlInterpreter gainControlInterpreter;
 
-class ContrastInterpreter : public ChoiceInterpreter
+class ContrastInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -184,7 +184,7 @@ public:
 };
 ContrastInterpreter contrastInterpreter;
 
-class SharpnessInterpreter : public ChoiceInterpreter
+class SharpnessInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -197,7 +197,7 @@ public:
 };
 SharpnessInterpreter sharpnessInterpreter;
 
-class SaturationInterpreter : public ChoiceInterpreter
+class SaturationInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -210,7 +210,7 @@ public:
 };
 SaturationInterpreter saturationInterpreter;
 
-class FlashInterpreter : public ChoiceInterpreter
+class FlashInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -242,7 +242,7 @@ public:
 };
 FlashInterpreter flashInterpreter;
 
-class LightSourceInterpreter : public ChoiceInterpreter
+class LightSourceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -273,7 +273,7 @@ public:
 };
 LightSourceInterpreter lightSourceInterpreter;
 
-class CompressionInterpreter : public ChoiceInterpreter
+class CompressionInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -285,7 +285,7 @@ public:
 };
 CompressionInterpreter compressionInterpreter;
 
-class PhotometricInterpreter : public ChoiceInterpreter
+class PhotometricInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -297,7 +297,7 @@ public:
 };
 PhotometricInterpreter photometricInterpreter;
 
-class ProfileEmbedPolicyInterpreter : public ChoiceInterpreter
+class ProfileEmbedPolicyInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -311,7 +311,7 @@ public:
 };
 ProfileEmbedPolicyInterpreter profileEmbedPolicyInterpreter;
 
-class PlanarConfigInterpreter : public ChoiceInterpreter
+class PlanarConfigInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -591,7 +591,7 @@ public:
 };
 CFAInterpreter cfaInterpreter;
 
-class OrientationInterpreter : public ChoiceInterpreter
+class OrientationInterpreter : public ChoiceInterpreter<>
 {
 public:
     OrientationInterpreter ()
@@ -610,7 +610,7 @@ public:
 };
 OrientationInterpreter orientationInterpreter;
 
-class UnitsInterpreter : public ChoiceInterpreter
+class UnitsInterpreter : public ChoiceInterpreter<>
 {
 public:
     UnitsInterpreter()

@@ -78,7 +78,7 @@ public:
 };
 CAApertureInterpreter caApertureInterpreter;
 
-class CAMacroModeInterpreter : public ChoiceInterpreter
+class CAMacroModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAMacroModeInterpreter()
@@ -107,7 +107,7 @@ public:
 };
 CASelfTimerInterpreter caSelfTimerInterpreter;
 
-class CAQualityInterpreter : public ChoiceInterpreter
+class CAQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAQualityInterpreter()
@@ -121,7 +121,7 @@ public:
 };
 CAQualityInterpreter caQualityInterpreter;
 
-class CAFlashModeInterpreter : public ChoiceInterpreter
+class CAFlashModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFlashModeInterpreter()
@@ -138,7 +138,7 @@ public:
 };
 CAFlashModeInterpreter caFlashModeInterpreter;
 
-class CAContinuousDriveInterpreter : public ChoiceInterpreter
+class CAContinuousDriveInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAContinuousDriveInterpreter()
@@ -156,7 +156,7 @@ public:
 };
 CAContinuousDriveInterpreter caContinuousDriveInterpreter;
 
-class CAFocusModeInterpreter : public ChoiceInterpreter
+class CAFocusModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocusModeInterpreter()
@@ -176,7 +176,7 @@ public:
 };
 CAFocusModeInterpreter caFocusModeInterpreter;
 
-class CARecordModeInterpreter : public ChoiceInterpreter
+class CARecordModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CARecordModeInterpreter()
@@ -194,7 +194,7 @@ public:
 };
 CARecordModeInterpreter caRecordModeInterpreter;
 
-class CAImageSizeInterpreter : public ChoiceInterpreter
+class CAImageSizeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAImageSizeInterpreter ()
@@ -220,7 +220,7 @@ public:
 };
 CAImageSizeInterpreter caImageSizeInterpreter;
 
-class CAEasyModeInterpreter : public ChoiceInterpreter
+class CAEasyModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAEasyModeInterpreter ()
@@ -300,7 +300,7 @@ public:
 };
 CAEasyModeInterpreter caEasyModeInterpreter;
 
-class CADigitalZoomInterpreter : public ChoiceInterpreter
+class CADigitalZoomInterpreter : public ChoiceInterpreter<>
 {
 public:
     CADigitalZoomInterpreter()
@@ -313,7 +313,7 @@ public:
 };
 CADigitalZoomInterpreter caDigitalZoomInterpreter;
 
-class CAMeteringModeInterpreter : public ChoiceInterpreter
+class CAMeteringModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAMeteringModeInterpreter()
@@ -328,7 +328,7 @@ public:
 };
 CAMeteringModeInterpreter caMeteringModeInterpreter;
 
-class CAFocusRangeInterpreter : public ChoiceInterpreter
+class CAFocusRangeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocusRangeInterpreter()
@@ -348,7 +348,7 @@ public:
 };
 CAFocusRangeInterpreter caFocusRangeInterpreter;
 
-class CAAFPointInterpreter : public ChoiceInterpreter
+class CAAFPointInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAFPointInterpreter()
@@ -365,7 +365,7 @@ public:
 };
 CAAFPointInterpreter caAFPointInterpreter;
 
-class CAExposureModeInterpreter : public ChoiceInterpreter
+class CAExposureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAExposureModeInterpreter()
@@ -431,7 +431,7 @@ public:
 };
 CAFlashBitsInterpreter caFlashBitsInterpreter;
 
-class CAFocusContinuousInterpreter : public ChoiceInterpreter
+class CAFocusContinuousInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocusContinuousInterpreter()
@@ -443,7 +443,7 @@ public:
 };
 CAFocusContinuousInterpreter caFocusContinuousInterpreter;
 
-class CAAESettingsInterpreter : public ChoiceInterpreter
+class CAAESettingsInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAESettingsInterpreter()
@@ -457,7 +457,7 @@ public:
 };
 CAAESettingsInterpreter caAESettingsInterpreter;
 
-class CAStabilizationInterpreter : public ChoiceInterpreter
+class CAStabilizationInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAStabilizationInterpreter()
@@ -476,7 +476,7 @@ public:
 };
 CAStabilizationInterpreter caStabilizationInterpreter;
 
-class CASpotMeteringInterpreter : public ChoiceInterpreter
+class CASpotMeteringInterpreter : public ChoiceInterpreter<>
 {
 public:
     CASpotMeteringInterpreter()
@@ -487,7 +487,7 @@ public:
 };
 CASpotMeteringInterpreter caSpotMeteringInterpreter;
 
-class CAPhotoEffectInterpreter : public ChoiceInterpreter
+class CAPhotoEffectInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAPhotoEffectInterpreter()
@@ -504,7 +504,7 @@ public:
 };
 CAPhotoEffectInterpreter caPhotoEffectInterpreter;
 
-class CAManualFlashInterpreter : public ChoiceInterpreter
+class CAManualFlashInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAManualFlashInterpreter()
@@ -518,7 +518,7 @@ public:
 };
 CAManualFlashInterpreter caManualFlashInterpreter;
 
-class CARAWQualityInterpreter : public ChoiceInterpreter
+class CARAWQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     CARAWQualityInterpreter()
@@ -1094,7 +1094,7 @@ public:
 };
 CALensInterpreter caLensInterpreter;
 
-class CAFocalTypeInterpreter : public ChoiceInterpreter
+class CAFocalTypeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocalTypeInterpreter()
@@ -1183,7 +1183,7 @@ public:
 };
 CABaseISOInterpreter caBaseISOInterpreter;
 
-class CAToneCurveInterpreter : public ChoiceInterpreter
+class CAToneCurveInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAToneCurveInterpreter()
@@ -1195,7 +1195,7 @@ public:
 };
 CAToneCurveInterpreter caToneCurveInterpreter;
 
-class CASharpnessFrequencyInterpreter : public ChoiceInterpreter
+class CASharpnessFrequencyInterpreter : public ChoiceInterpreter<>
 {
 public:
     CASharpnessFrequencyInterpreter()
@@ -1210,7 +1210,7 @@ public:
 };
 CASharpnessFrequencyInterpreter caSharpnessFrequencyInterpreter;
 
-class CAWhiteBalanceInterpreter : public ChoiceInterpreter
+class CAWhiteBalanceInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAWhiteBalanceInterpreter()
@@ -1241,7 +1241,7 @@ public:
 };
 CAWhiteBalanceInterpreter caWhiteBalanceInterpreter;
 
-class CAPictureStyleInterpreter : public ChoiceInterpreter
+class CAPictureStyleInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAPictureStyleInterpreter()
@@ -1272,7 +1272,7 @@ public:
 };
 CAPictureStyleInterpreter caPictureStyleInterpreter;
 
-class CASlowShutterInterpreter : public ChoiceInterpreter
+class CASlowShutterInterpreter : public ChoiceInterpreter<>
 {
 public:
     CASlowShutterInterpreter()
@@ -1303,7 +1303,7 @@ public:
 };
 CAFlashGuideNumberInterpreter caFlashGuideNumberInterpreter;
 
-class CAAFPointsInFocusInterpreter : public ChoiceInterpreter
+class CAAFPointsInFocusInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAFPointsInFocusInterpreter()
@@ -1320,7 +1320,7 @@ public:
 };
 CAAFPointsInFocusInterpreter caAFPointsInFocusInterpreter;
 
-class CAAutoExposureBracketingInterpreter : public ChoiceInterpreter
+class CAAutoExposureBracketingInterpreter : public ChoiceInterpreter<int>
 {
 public:
     CAAutoExposureBracketingInterpreter()
@@ -1334,7 +1334,7 @@ public:
 };
 CAAutoExposureBracketingInterpreter caAutoExposureBracketingInterpreter;
 
-class CAControModeInterpreter : public ChoiceInterpreter
+class CAControModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAControModeInterpreter()
@@ -1370,7 +1370,7 @@ public:
 };
 CAMeasuredEVInterpreter caMeasuredEVInterpreter;
 
-class CACameraTypeInterpreter : public ChoiceInterpreter
+class CACameraTypeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CACameraTypeInterpreter()
@@ -1383,7 +1383,7 @@ public:
 };
 CACameraTypeInterpreter caCameraTypeInterpreter;
 
-class CAAutoRotateInterpreter : public ChoiceInterpreter
+class CAAutoRotateInterpreter : public ChoiceInterpreter<int>
 {
 public:
     CAAutoRotateInterpreter()
@@ -1397,7 +1397,7 @@ public:
 };
 CAAutoRotateInterpreter caAutoRotateInterpreter;
 
-class CABracketModeInterpreter : public ChoiceInterpreter
+class CABracketModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CABracketModeInterpreter()
@@ -1411,7 +1411,7 @@ public:
 };
 CABracketModeInterpreter caBracketModeInterpreter;
 
-class CARAWJpegQualityInterpreter : public ChoiceInterpreter
+class CARAWJpegQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     CARAWJpegQualityInterpreter()
@@ -1427,7 +1427,7 @@ public:
 };
 CARAWJpegQualityInterpreter caRAWJpegQualityInterpreter;
 
-class CAJpegSizeInterpreter : public ChoiceInterpreter
+class CAJpegSizeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAJpegSizeInterpreter()
@@ -1453,7 +1453,7 @@ public:
 };
 CAJpegSizeInterpreter caJpegSizeInterpreter;
 
-class CAWBBracketModeInterpreter : public ChoiceInterpreter
+class CAWBBracketModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAWBBracketModeInterpreter()
@@ -1465,7 +1465,7 @@ public:
 };
 CAWBBracketModeInterpreter caWBBracketModeInterpreter;
 
-class CAFilterEffectInterpreter : public ChoiceInterpreter
+class CAFilterEffectInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFilterEffectInterpreter()
@@ -1479,7 +1479,7 @@ public:
 };
 CAFilterEffectInterpreter caFilterEffectInterpreter;
 
-class CAToningEffectInterpreter : public ChoiceInterpreter
+class CAToningEffectInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAToningEffectInterpreter()
@@ -1507,7 +1507,7 @@ public:
 CAFileNumberInterpreter caFileNumberInterpreter;
 
 // CanonModelID
-class CAModelIDInterpreter : public ChoiceInterpreter
+class CAModelIDInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAModelIDInterpreter ()
@@ -1843,7 +1843,7 @@ public:
 };
 CAModelIDInterpreter caModelIDInterpreter;
 
-class CAPanoramaDirectionInterpreter : public ChoiceInterpreter
+class CAPanoramaDirectionInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAPanoramaDirectionInterpreter()
@@ -1857,7 +1857,7 @@ public:
 };
 CAPanoramaDirectionInterpreter caPanoramaDirectionInterpreter;
 
-class CAAspectRatioInterpreter : public ChoiceInterpreter
+class CAAspectRatioInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAspectRatioInterpreter()

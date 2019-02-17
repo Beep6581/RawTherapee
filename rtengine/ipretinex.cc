@@ -394,7 +394,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 pond /= log(elogt);
             }
 
-            auto shmap = ((mapmet == 2 || mapmet == 3 || mapmet == 4) && it == 1) ? new SHMap(W_L, H_L, true) : nullptr;
+            auto shmap = ((mapmet == 2 || mapmet == 3 || mapmet == 4) && it == 1) ? new SHMap (W_L, H_L) : nullptr;
 
             float *buffer = new float[W_L * H_L];;
 
@@ -898,7 +898,7 @@ void ImProcFunctions::MSRLocal(int sp, float** luminance, float** templ, const f
             pond /= log(elogt);
         }
 
-        auto shmap = mapmet == 4 ? new SHMap(W_L, H_L, true) : nullptr;
+        auto shmap = mapmet == 4 ? new SHMap(W_L, H_L) : nullptr;
 
         float *buffer = new float[W_L * H_L];
 
