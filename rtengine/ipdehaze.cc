@@ -66,7 +66,7 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
     int npatches = 0;
 
 #ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
+    #pragma omp parallel for reduction(+:npatches) if (multithread)
 #endif
     for (int y = 0; y < H; y += patchsize) {
         int pH = min(y+patchsize, H);
