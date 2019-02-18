@@ -154,6 +154,9 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
             rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
             float **src = s;
             float **dst = d;
+#ifdef _OPENMP
+            #pragma omp parallel if (multithread)
+#endif
             boxblur<float, float>(src, dst, blur_buf.data, rad, rad, s.width(), s.height());
         };
 
