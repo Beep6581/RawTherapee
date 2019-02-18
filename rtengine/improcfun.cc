@@ -6010,7 +6010,7 @@ void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, in
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
     float b_base = params->colorToning.labgridBLow / scaling;
 
-#ifdef _OPENMP
+    #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
 

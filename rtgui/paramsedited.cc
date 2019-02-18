@@ -948,6 +948,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lightness = locallab.spots.at(j).lightness && pSpot.lightness == otherSpot.lightness;
                 locallab.spots.at(j).contrast = locallab.spots.at(j).contrast && pSpot.contrast == otherSpot.contrast;
                 locallab.spots.at(j).chroma = locallab.spots.at(j).chroma && pSpot.chroma == otherSpot.chroma;
+                locallab.spots.at(j).labgridALow = locallab.spots.at(j).labgridALow && pSpot.labgridALow == otherSpot.labgridALow;
+                locallab.spots.at(j).labgridBLow = locallab.spots.at(j).labgridBLow && pSpot.labgridBLow == otherSpot.labgridBLow;
+                locallab.spots.at(j).labgridAHigh = locallab.spots.at(j).labgridAHigh && pSpot.labgridAHigh == otherSpot.labgridAHigh;
+                locallab.spots.at(j).labgridBHigh = locallab.spots.at(j).labgridBHigh && pSpot.labgridBHigh == otherSpot.labgridBHigh;
                 locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
@@ -2585,6 +2589,19 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).chroma = mods.locallab.spots.at(i).chroma;
         }
 
+        if (locallab.spots.at(i).labgridALow) {
+            toEdit.locallab.spots.at(i).labgridALow = mods.locallab.spots.at(i).labgridALow;
+        }
+        if (locallab.spots.at(i).labgridBLow) {
+            toEdit.locallab.spots.at(i).labgridBLow = mods.locallab.spots.at(i).labgridBLow;
+        }
+        if (locallab.spots.at(i).labgridAHigh) {
+            toEdit.locallab.spots.at(i).labgridAHigh = mods.locallab.spots.at(i).labgridAHigh;
+        }
+        if (locallab.spots.at(i).labgridBHigh) {
+            toEdit.locallab.spots.at(i).labgridBHigh = mods.locallab.spots.at(i).labgridBHigh;
+        }
+
         if (locallab.spots.at(i).sensi) {
             toEdit.locallab.spots.at(i).sensi = mods.locallab.spots.at(i).sensi;
         }
@@ -3961,6 +3978,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lightness(v),
     contrast(v),
     chroma(v),
+    labgridALow(v),
+    labgridBLow(v),
+    labgridAHigh(v),
+    labgridBHigh(v),
     sensi(v),
     structcol(v),
     blurcolde(v),
@@ -4103,6 +4124,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lightness = v;
     contrast = v;
     chroma = v;
+    labgridALow = v;
+    labgridBLow = v;
+    labgridAHigh = v;
+    labgridBHigh = v;
     sensi = v;
     structcol = v;
     blurcolde = v;

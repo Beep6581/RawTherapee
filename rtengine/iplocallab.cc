@@ -167,6 +167,7 @@ struct local_params {
     float blurexp;
     float blurcol;
     float ligh;
+    float lowA, lowB, highA, highB;
     int shamo, shdamp, shiter, senssha, sensv;
     float neig;
     float strng;
@@ -460,6 +461,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensicb = locallab.spots.at(sp).sensicb;
     int local_contrast = locallab.spots.at(sp).contrast;
     float local_lightness = (float) locallab.spots.at(sp).lightness;
+    float labgridALowloc = locallab.spots.at(sp).labgridALow;
+    float labgridBLowloc = locallab.spots.at(sp).labgridBLow;
+    float labgridBHighloc = locallab.spots.at(sp).labgridBHigh;
+    float labgridAHighloc = locallab.spots.at(sp).labgridAHigh;
+
     float structcolor = (float) locallab.spots.at(sp).structcol;
     float blendmaskcolor = ((float) locallab.spots.at(sp).blendmaskcol) / 100.f ;
     float blendmaskexpo = ((float) locallab.spots.at(sp).blendmaskexp) / 100.f ;
@@ -513,6 +519,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senscb = local_sensicb;
     lp.cont = local_contrast;
     lp.ligh = local_lightness;
+    lp.lowA = labgridALowloc;
+    lp.lowB = labgridBLowloc;
+    lp.highB = labgridBHighloc;
+    lp.highA = labgridAHighloc;
+
     lp.senssf = local_sensisf;
     lp.strng = strlight;
     lp.neig = neigh;
@@ -1037,8 +1048,28 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 
 #endif
 }
+/*
+void ImProcFunctions::colorToningLabGridloc(LabImage *lab, int xs, int xe, int ys, int ye, bool MultiThread)
+{
+    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
+    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
+    float a_base = params->colorToning.labgridALow / scaling;
+    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
+    float b_base = params->colorToning.labgridBLow / scaling;
 
+#ifdef _OPENMP
+    #pragma omp parallel for if (multiThread)
+#endif
 
+    for (int y = ystart; y < yend; ++y) {
+        for (int x = xstart; x < xend; ++x) {
+            lab->a[y][x] += lab->L[y][x] * a_scale + a_base;
+            lab->b[y][x] += lab->L[y][x] * b_scale + b_base;
+        }
+    }
+}
+*/
 
 
 void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
@@ -3941,12 +3972,16 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     float chra = bufexporig->a[loy - begy][lox - begx];
                                     float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 0) {
+                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3) {
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                     } else if (senstype == 1) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+                                    } else if (senstype == 0) {
+                                        // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
+                                        flia = (100.f + 5.f * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 5.f * realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     difa = chra * flia - original->a[y][x];
@@ -4030,11 +4065,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     float chra = bufexporig->a[loy - begy][lox - begx];
                                     float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 0) {
+                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+                                    } else if (senstype == 0) {
+                                        flia = (100.f + 5.f * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 5.f * realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     difa = chra * flia - original->a[y][x];
@@ -7933,8 +7971,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 //local color and light
-
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+        const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
+        const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
+        float a_scale = 2.f * (lp.highA - lp.lowA) / factor / scaling;
+        float a_base = lp.lowA / scaling;
+        float b_scale = 2.f * (lp.highB - lp.lowB) / factor / scaling;
+        float b_base = lp.lowB / scaling;
+        bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
 
 
             LabImage *bufcolorig = nullptr;
@@ -8347,6 +8391,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     LabImage *bufcolcalc = nullptr;
                     bufcolcalc = new LabImage(bfw, bfh);
 
+                    //printf("a_s=%f a_b=%f b_s=%f b_b=%f \n", a_scale, a_base, b_scale, b_base);
+
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -8431,6 +8477,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     bufcolcalc->L[loy - begy][lox - begx] = l_r * 32768.f;
 
+                                }
+
+                                if (ctoning) {
+                                    bufcolcalc->a[loy - begy][lox - begx] = bufcolcalc->a[loy - begy][lox - begx] + bufcolcalc->L[loy - begy][lox - begx] * a_scale + a_base;
+                                    bufcolcalc->b[loy - begy][lox - begx] = bufcolcalc->b[loy - begy][lox - begx] + bufcolcalc->L[loy - begy][lox - begx] * b_scale + b_base;
                                 }
 
                                 float rL;

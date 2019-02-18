@@ -962,6 +962,13 @@ struct LocallabParams {
         int lightness;
         int contrast;
         int chroma;
+    double labgridALow;
+    double labgridBLow;
+    double labgridAHigh;
+    double labgridBHigh;
+    static const double LABGRID_CORR_MAX;
+    static const double LABGRID_CORR_SCALE;
+
         int sensi;
         int structcol;
         int blurcolde;
@@ -978,7 +985,8 @@ struct LocallabParams {
         std::vector<double> HHmaskcurve;
         // Exposure
         bool expexpose;
-        int expcomp;
+     //   int expcomp;
+        double expcomp;
         int hlcompr;
         int hlcomprthresh;
         int black;

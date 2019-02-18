@@ -30,6 +30,7 @@
 #include "options.h"
 #include "thresholdadjuster.h"
 #include "controlspotpanel.h"
+#include "labgrid.h"
 
 class Locallab :
     public ToolParamBlock,
@@ -51,7 +52,6 @@ private:
     MyExpander* const expexpose;
     MyExpander* const expvibrance;
     MyExpander* const expsoft;
-    MyExpander* const explabregion;
     MyExpander* const expblur;
     MyExpander* const exptonemap;
     MyExpander* const expreti;
@@ -59,7 +59,7 @@ private:
     MyExpander* const expcontrast;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
-    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enablesoftConn, enablelabregionConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
+    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
     // Color & Light
@@ -223,7 +223,8 @@ private:
     Gtk::Label* transLabels2;
     Gtk::Frame* maskcolFrame;
     Gtk::Frame* maskexpFrame;
-    
+    Gtk::Frame* gridFrame;
+    LabGrid *labgrid;    
     // Others
     /**
      * Used to store the default ProcParams when setDefaults function is called
@@ -290,43 +291,6 @@ private:
     double nextlumar;
     double nextchromar;
 
-/*
-    void onLabRegionSelectionChanged();
-    void labRegionAddPressed();
-    void labRegionRemovePressed();
-    void labRegionUpPressed();
-    void labRegionDownPressed();
-    void labRegionCopyPressed();
-    void labRegionShowMaskChanged();
-    void labRegionChannelChanged();
-    void labRegionPopulateList();
-    void labRegionShow(int idx, bool list_only=false);
-    void labRegionGet(int idx);
-
-    Gtk::VBox *labRegionBox;
-    Gtk::ListViewText *labRegionList;
-    Gtk::Button *labRegionAdd;
-    Gtk::Button *labRegionRemove;
-    Gtk::Button *labRegionUp;
-    Gtk::Button *labRegionDown;
-    Gtk::Button *labRegionCopy;
-    LabGrid *labRegionAB;
-    Adjuster *labRegionSaturation;
-    */
- //   Adjuster *labRegionSlope;
-    /*
-    Adjuster *labRegionOffset;
-    Adjuster *labRegionPower;
-    MyComboBoxText *labRegionChannel;
-    FlatCurveEditor *labRegionHueMask;
-    FlatCurveEditor *labRegionChromaticityMask;
-    FlatCurveEditor *labRegionLightnessMask;
-    Adjuster *labRegionMaskBlur;
-    Gtk::CheckButton *labRegionShowMask;
-    std::vector<rtengine::ColorToningParams::LabCorrectionRegion> labRegionData;
-    int labRegionSelected;
-    sigc::connection labRegionSelectionConn;
-*/
 
 public:
     Locallab();
