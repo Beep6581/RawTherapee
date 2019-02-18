@@ -181,12 +181,13 @@ public:
         return tbl ? tbl->isInTabMode() : false;
     }
 
-    void openNextImage ();
-    void openPrevImage ();
+    void openNextImage();
+    void openPrevImage();
+    void selectImage(Glib::ustring fname);
+
     void copyProfile ();
     void pasteProfile ();
     void partPasteProfile ();
-    void selectImage (Glib::ustring fname);
     void openNextPreviousEditorImage (Glib::ustring fname, eRTNav eNextPrevious);
 
 #ifdef WIN32
