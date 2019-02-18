@@ -66,7 +66,7 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
     int npatches = 0;
 
 #ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
+    #pragma omp parallel for reduction(+:npatches) if (multithread)
 #endif
     for (int y = 0; y < H; y += patchsize) {
         int pH = min(y+patchsize, H);
@@ -311,7 +311,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
             }
             float mt = max(t[y][x], t0, tl + teps, tu + teps);
             if (params->dehaze.showDepthMap) {
-                img->r(y, x) = img->g(y, x) = img->b(y, x) = 1.f - mt;
+                img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt);
             } else {
                 float r = (rgb[0] - ambient[0]) / mt + ambient[0];
                 float g = (rgb[1] - ambient[1]) / mt + ambient[1];
