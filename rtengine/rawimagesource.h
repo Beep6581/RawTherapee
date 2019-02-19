@@ -201,8 +201,13 @@ public:
     static void init ();
     static void cleanup ();
     void setCurrentFrame(unsigned int frameNum) override {
-        currFrame = std::min(numFrames - 1, frameNum);
-        ri = riFrames[currFrame];
+        if (numFrames == 2 && frameNum == 2) { // special case for averaging of two frames
+            currFrame = frameNum;
+            ri = riFrames[0];
+        } else  {
+            currFrame = std::min(numFrames - 1, frameNum);
+            ri = riFrames[currFrame];
+        }
     }
     int getFrameCount() override {return numFrames;}
     int getFlatFieldAutoClipValue() override {return flatFieldAutoClipValue;}

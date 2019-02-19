@@ -730,7 +730,10 @@ void BayerProcess::FrameCountChanged(int n, int frameNum)
                 entry << i;
                 imageNumber->append(entry.str());
             }
-            imageNumber->set_active(std::min(frameNum, n - 1));
+            if (n == 2) {
+                imageNumber->append(M("TP_RAW_IMAGENUM_SN"));
+            }
+            imageNumber->set_active(std::min(frameNum, n == 2 ? n : n - 1));
             if (n == 1) {
                 imageNumberBox->hide();
             } else {

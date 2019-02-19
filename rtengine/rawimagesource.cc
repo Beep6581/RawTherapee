@@ -1793,6 +1793,19 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
                 copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
             }
         }
+    } else if (numFrames == 2 && currFrame == 2) { // average the frames
+        if(!rawDataBuffer[0]) {
+            rawDataBuffer[0] = new array2D<float>;
+        }
+        rawDataFrames[1] = rawDataBuffer[0];
+        copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1]);
+        copyOriginalPixels(raw, ri, rid, rif, rawData);
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                rawData[i][j] = (rawData[i][j] + (*rawDataFrames[1])[i][j]) * 0.5f;
+            }
+        }
     } else {
         copyOriginalPixels(raw, ri, rid, rif, rawData);
     }
