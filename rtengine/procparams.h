@@ -962,12 +962,11 @@ struct LocallabParams {
         int lightness;
         int contrast;
         int chroma;
-    double labgridALow;
-    double labgridBLow;
-    double labgridAHigh;
-    double labgridBHigh;
-    static const double LABGRID_CORR_MAX;
-    static const double LABGRID_CORR_SCALE;
+        double labgridALow;
+        double labgridBLow;
+        double labgridAHigh;
+        double labgridBHigh;
+        int strengthgrid;
 
         int sensi;
         int structcol;

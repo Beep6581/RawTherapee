@@ -877,6 +877,7 @@ HISTORY_MSG_621;Local - Exp inverse
 HISTORY_MSG_622;Local - Exclude structure
 HISTORY_MSG_623;Local - Exp Chroma compensation
 HISTORY_MSG_624;Local - Color correction grid
+HISTORY_MSG_625;Local - Color correction strength
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2026,6 +2027,7 @@ TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RETI;Retinex
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_STREN;Strength
+TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_NEIGH;Radius

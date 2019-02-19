@@ -487,10 +487,11 @@ public:
         bool lightness;
         bool contrast;
         bool chroma;
-    bool labgridALow;
-    bool labgridBLow;
-    bool labgridAHigh;
-    bool labgridBHigh;
+        bool labgridALow;
+        bool labgridBLow;
+        bool labgridAHigh;
+        bool labgridBHigh;
+        bool strengthgrid;
         bool sensi;
         bool structcol;
         bool blurcolde;

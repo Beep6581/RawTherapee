@@ -160,6 +160,7 @@ struct local_params {
     int prox;
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf;
     float struco;
+    float strengrid;
     float struexc;
     float blendmacol;
     float blendmaexp;
@@ -465,6 +466,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float labgridBLowloc = locallab.spots.at(sp).labgridBLow;
     float labgridBHighloc = locallab.spots.at(sp).labgridBHigh;
     float labgridAHighloc = locallab.spots.at(sp).labgridAHigh;
+    float strengthgrid = (float) locallab.spots.at(sp).strengthgrid;
 
     float structcolor = (float) locallab.spots.at(sp).structcol;
     float blendmaskcolor = ((float) locallab.spots.at(sp).blendmaskcol) / 100.f ;
@@ -507,6 +509,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lyT = h * local_yT;
     lp.chro = local_chroma;
     lp.struco = structcolor;
+    lp.strengrid = strengthgrid;
     lp.blendmacol = blendmaskcolor;
     lp.struexc = structexclude;
     lp.blendmaexp = blendmaskexpo;
@@ -3958,8 +3961,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
                                     } else if (senstype == 0) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
-                                        flia = (100.f + 10.f * realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + 10.f * realstrbdE + realstrchdE) / 100.f;
+                                        flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     difa = chra * flia - original->a[y][x];
@@ -4049,8 +4052,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
                                     } else if (senstype == 0) {
-                                        flia = (100.f + 10.f * realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + 10.f * realstrbdE + realstrchdE) / 100.f;
+                                        flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     difa = chra * flia - original->a[y][x];

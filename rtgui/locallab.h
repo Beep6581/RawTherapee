@@ -92,6 +92,7 @@ private:
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;
+    Adjuster* const strengthgrid;
     Adjuster* const sensi;
     Adjuster* const structcol;
     Adjuster* const blurcolde;

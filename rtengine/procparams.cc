@@ -2366,6 +2366,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridBLow(0.0),
     labgridAHigh(0.0),
     labgridBHigh(0.0),
+    strengthgrid(20),
     sensi(15),
     structcol(0),
     blurcolde(5),
@@ -2515,6 +2516,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && labgridBLow == other.labgridBLow
         && labgridAHigh == other.labgridAHigh
         && labgridBHigh == other.labgridBHigh
+        && strengthgrid == other.strengthgrid
         && sensi == other.sensi
         && structcol == other.structcol
         && blendmaskcol == other.blendmaskcol
@@ -3618,6 +3620,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridBLow, "Locallab", "labgridBLow_" + std::to_string(i), spot.labgridBLow, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridAHigh, "Locallab", "labgridAHigh_" + std::to_string(i), spot.labgridAHigh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).labgridBHigh, "Locallab", "labgridBHigh_" + std::to_string(i), spot.labgridBHigh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strengthgrid, "Locallab", "Strengthgrid_" + std::to_string(i), spot.strengthgrid, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensi, "Locallab", "Sensi_" + std::to_string(i), spot.sensi, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structcol, "Locallab", "Structcol_" + std::to_string(i), spot.structcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurcolde, "Locallab", "Blurcolde_" + std::to_string(i), spot.blurcolde, keyFile);
@@ -4852,6 +4855,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "labgridBLow_" + std::to_string(i), pedited, spot.labgridBLow, spotEdited.labgridBLow);
                 assignFromKeyfile(keyFile, "Locallab", "labgridAHigh_" + std::to_string(i), pedited, spot.labgridAHigh, spotEdited.labgridAHigh);
                 assignFromKeyfile(keyFile, "Locallab", "labgridBHigh_" + std::to_string(i), pedited, spot.labgridBHigh, spotEdited.labgridBHigh);
+                assignFromKeyfile(keyFile, "Locallab", "Strengthgrid_" + std::to_string(i), pedited, spot.strengthgrid, spotEdited.strengthgrid);
                 assignFromKeyfile(keyFile, "Locallab", "Sensi_" + std::to_string(i), pedited, spot.sensi, spotEdited.sensi);
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + std::to_string(i), pedited, spot.structcol, spotEdited.structcol);
                 assignFromKeyfile(keyFile, "Locallab", "Blurcolde_" + std::to_string(i), pedited, spot.blurcolde, spotEdited.blurcolde);

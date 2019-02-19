@@ -952,6 +952,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).labgridBLow = locallab.spots.at(j).labgridBLow && pSpot.labgridBLow == otherSpot.labgridBLow;
                 locallab.spots.at(j).labgridAHigh = locallab.spots.at(j).labgridAHigh && pSpot.labgridAHigh == otherSpot.labgridAHigh;
                 locallab.spots.at(j).labgridBHigh = locallab.spots.at(j).labgridBHigh && pSpot.labgridBHigh == otherSpot.labgridBHigh;
+                locallab.spots.at(j).strengthgrid = locallab.spots.at(j).strengthgrid && pSpot.strengthgrid == otherSpot.strengthgrid;
                 locallab.spots.at(j).sensi = locallab.spots.at(j).sensi && pSpot.sensi == otherSpot.sensi;
                 locallab.spots.at(j).structcol = locallab.spots.at(j).structcol && pSpot.structcol == otherSpot.structcol;
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
@@ -2602,6 +2603,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).labgridBHigh = mods.locallab.spots.at(i).labgridBHigh;
         }
 
+        if (locallab.spots.at(i).strengthgrid) {
+            toEdit.locallab.spots.at(i).strengthgrid = mods.locallab.spots.at(i).strengthgrid;
+        }
+
         if (locallab.spots.at(i).sensi) {
             toEdit.locallab.spots.at(i).sensi = mods.locallab.spots.at(i).sensi;
         }
@@ -3982,6 +3987,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     labgridBLow(v),
     labgridAHigh(v),
     labgridBHigh(v),
+    strengthgrid(v),
     sensi(v),
     structcol(v),
     blurcolde(v),
@@ -4128,6 +4134,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     labgridBLow = v;
     labgridAHigh = v;
     labgridBHigh = v;
+    strengthgrid = v;
     sensi = v;
     structcol = v;
     blurcolde = v;

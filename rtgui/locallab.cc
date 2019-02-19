@@ -76,6 +76,7 @@ Locallab::Locallab():
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0))),
     contrast(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
+    strengthgrid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRGRID"), 0, 100, 1, 20))),
     sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
@@ -232,6 +233,7 @@ Locallab::Locallab():
     sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensi->setAdjusterListener(this);
 
+    strengthgrid->setAdjusterListener(this);
     structcol->setAdjusterListener(this);
     blurcolde->setAdjusterListener(this);
 
@@ -351,6 +353,7 @@ Locallab::Locallab():
     gridFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
     gridBox->pack_start(*labgrid);
+    gridBox->pack_start(*strengthgrid);
     gridFrame->add(*gridBox);
     superBox->pack_start(*gridFrame);
 
@@ -1505,6 +1508,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).contrast = contrast->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).chroma = chroma->getIntValue();
                     labgrid->getParams(pp->locallab.spots.at(pp->locallab.selspot).labgridALow, pp->locallab.spots.at(pp->locallab.selspot).labgridBLow, pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh, pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh);
+                    pp->locallab.spots.at(pp->locallab.selspot).strengthgrid = strengthgrid->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).labgridALow *= ColorToningParams::LABGRID_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh *= ColorToningParams::LABGRID_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).labgridBLow *= ColorToningParams::LABGRID_CORR_MAX;
@@ -1676,6 +1680,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).lightness = pe->locallab.spots.at(pp->locallab.selspot).lightness || lightness->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).contrast = pe->locallab.spots.at(pp->locallab.selspot).contrast || contrast->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).labgridALow = pe->locallab.spots.at(pp->locallab.selspot).labgridBLow = pe->locallab.spots.at(pp->locallab.selspot).labgridAHigh = pe->locallab.spots.at(pp->locallab.selspot).labgridBHigh = labgrid->getEdited();
+                        pe->locallab.spots.at(pp->locallab.selspot).strengthgrid = pe->locallab.spots.at(pp->locallab.selspot).strengthgrid || strengthgrid->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).chroma = pe->locallab.spots.at(pp->locallab.selspot).chroma || chroma->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensi = pe->locallab.spots.at(pp->locallab.selspot).sensi || sensi->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).structcol = pe->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1824,6 +1830,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).lightness = pedited->locallab.spots.at(pp->locallab.selspot).lightness || lightness->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).contrast = pedited->locallab.spots.at(pp->locallab.selspot).contrast || contrast->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).chroma = pedited->locallab.spots.at(pp->locallab.selspot).chroma || chroma->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strengthgrid = pedited->locallab.spots.at(pp->locallab.selspot).strengthgrid || strengthgrid->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensi = pedited->locallab.spots.at(pp->locallab.selspot).sensi || sensi->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).structcol = pedited->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2297,6 +2304,7 @@ void Locallab::inversChanged()
         labqualcurv->show();
         maskcolFrame->show();
         structcol->show();
+        strengthgrid->hide();
         blurcolde->show();
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         gridFrame->hide();
@@ -2311,6 +2319,7 @@ void Locallab::inversChanged()
         structcol->hide();
         blurcolde->show();
         gridFrame->hide();
+        strengthgrid->hide();
 
     } else {
         sensi->show();
@@ -2670,6 +2679,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         labgrid->setEdited(Edited);
         sensi->setDefaultEditedState(Irrelevant);
         structcol->setDefaultEditedState(Irrelevant);
+        strengthgrid->setDefault((double)defSpot->strengthgrid);
         blurcolde->setDefaultEditedState(Irrelevant);
         blendmaskcol->setDefaultEditedState(Irrelevant);
         // Exposure
@@ -2758,6 +2768,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         labgrid->setEdited((defSpotState->labgridALow || defSpotState->labgridBLow || defSpotState->labgridAHigh || defSpotState->labgridBHigh) ? Edited : UnEdited);
         sensi->setDefaultEditedState(defSpotState->sensi ? Edited : UnEdited);
         structcol->setDefaultEditedState(defSpotState->structcol ? Edited : UnEdited);
+        strengthgrid->setDefaultEditedState(defSpotState->strengthgrid ? Edited : UnEdited);
         blurcolde->setDefaultEditedState(defSpotState->blurcolde ? Edited : UnEdited);
         blendmaskcol->setDefaultEditedState(defSpotState->blendmaskcol ? Edited : UnEdited);
         // Exposure
@@ -2891,6 +2902,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == chroma) {
             if (listener) {
                 listener->panelChanged(Evlocallabchroma, chroma->getTextValue());
+            }
+        }
+
+        if (a == strengthgrid) {
+            if (listener) {
+                listener->panelChanged(EvLocallabLabstrengthgrid, strengthgrid->getTextValue());
             }
         }
 
@@ -3372,6 +3389,7 @@ void Locallab::setBatchMode(bool batchMode)
     chroma->showEditedCB();
     sensi->showEditedCB();
     structcol->showEditedCB();
+    strengthgrid->showEditedCB();
     blurcolde->showEditedCB();
     blendmaskcol->showEditedCB();
     // Exposure
@@ -3691,6 +3709,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         contrast->setValue(pp->locallab.spots.at(index).contrast);
         chroma->setValue(pp->locallab.spots.at(index).chroma);
         labgrid->setParams(pp->locallab.spots.at(index).labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->locallab.spots.at(index).labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->locallab.spots.at(index).labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->locallab.spots.at(index).labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, false);
+        strengthgrid->setValue(pp->locallab.spots.at(index).strengthgrid);
         sensi->setValue(pp->locallab.spots.at(index).sensi);
         structcol->setValue(pp->locallab.spots.at(index).structcol);
 
@@ -3884,6 +3903,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensi->setEditedState(spotState->sensi ? Edited : UnEdited);
                 structcol->setEditedState(spotState->structcol ? Edited : UnEdited);
                 labgrid->setEdited(spotState->labgridALow || spotState->labgridBLow || spotState->labgridAHigh || spotState->labgridBHigh);
+                strengthgrid->setEditedState(spotState->strengthgrid ? Edited : UnEdited);
 
                 if (!spotState->qualitycurveMethod) {
                     qualitycurveMethod->set_active_text(M("GENERAL_UNCHANGED"));
