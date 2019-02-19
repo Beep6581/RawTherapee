@@ -1048,28 +1048,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 
 #endif
 }
-/*
-void ImProcFunctions::colorToningLabGridloc(LabImage *lab, int xs, int xe, int ys, int ye, bool MultiThread)
-{
-    const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-    const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
-    float a_scale = (params->colorToning.labgridAHigh - params->colorToning.labgridALow) / factor / scaling;
-    float a_base = params->colorToning.labgridALow / scaling;
-    float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
-    float b_base = params->colorToning.labgridBLow / scaling;
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
-#endif
-
-    for (int y = ystart; y < yend; ++y) {
-        for (int x = xstart; x < xend; ++x) {
-            lab->a[y][x] += lab->L[y][x] * a_scale + a_base;
-            lab->b[y][x] += lab->L[y][x] * b_scale + b_base;
-        }
-    }
-}
-*/
 
 
 void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
@@ -3980,8 +3958,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
                                     } else if (senstype == 0) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
-                                        flia = (100.f + 5.f * realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + 5.f * realstrbdE + realstrchdE) / 100.f;
+                                        flia = (100.f + 10.f * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 10.f * realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     difa = chra * flia - original->a[y][x];
@@ -4071,8 +4049,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
                                     } else if (senstype == 0) {
-                                        flia = (100.f + 5.f * realstradE + realstrchdE) / 100.f;
-                                        flib = (100.f + 5.f * realstrbdE + realstrchdE) / 100.f;
+                                        flia = (100.f + 10.f * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 10.f * realstrbdE + realstrchdE) / 100.f;
                                     }
 
                                     difa = chra * flia - original->a[y][x];
@@ -8480,8 +8458,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 if (ctoning) {
-                                    bufcolcalc->a[loy - begy][lox - begx] = bufcolcalc->a[loy - begy][lox - begx] + bufcolcalc->L[loy - begy][lox - begx] * a_scale + a_base;
-                                    bufcolcalc->b[loy - begy][lox - begx] = bufcolcalc->b[loy - begy][lox - begx] + bufcolcalc->L[loy - begy][lox - begx] * b_scale + b_base;
+                                    bufcolcalc->a[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * a_scale + a_base;
+                                    bufcolcalc->b[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * b_scale + b_base;
                                 }
 
                                 float rL;
