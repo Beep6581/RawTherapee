@@ -488,8 +488,8 @@ template<typename T = std::uint32_t>
 class ChoiceInterpreter : public Interpreter
 {
 protected:
-	using Choices = std::map<T, std::string>;
-	using ChoicesIterator = typename Choices::const_iterator;
+    using Choices = std::map<T, std::string>;
+    using ChoicesIterator = typename Choices::const_iterator;
     Choices choices;
 public:
     ChoiceInterpreter () {};

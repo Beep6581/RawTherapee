@@ -647,7 +647,7 @@ bool HistogramRGBArea::on_button_press_event (GdkEventButton* event)
 
 void HistogramRGBArea::factorChanged (double newFactor)
 {
-	factor = newFactor;
+    factor = newFactor;
 }
 
 //

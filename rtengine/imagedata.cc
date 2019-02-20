@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <functional>
 #include <strings.h>
 #include <glib/gstdio.h>
 #include <tiff.h>
@@ -41,6 +42,22 @@ Glib::ustring to_utf8 (const std::string& str)
     } catch (Glib::Error&) {
         return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
     }
+}
+
+template<typename T>
+T getFromFrame(
+    const std::vector<std::unique_ptr<FrameData>>& frames,
+    std::size_t frame,
+    const std::function<T (const FrameData&)>& function
+)
+{
+    if (frame < frames.size()) {
+        return function(*frames[frame]);
+    }
+    if (!frames.empty()) {
+        return function(*frames[0]);
+    }
+    return {};
 }
 
 }
@@ -900,74 +917,196 @@ procparams::IPTCPairs FramesData::getIPTCData (unsigned int frame) const
     }
 }
 
-bool FramesData::hasExif (unsigned int frame) const
+bool FramesData::hasExif(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? false : frames.at(frame)->hasExif ();
-}
-bool FramesData::hasIPTC (unsigned int frame) const
-{
-    return frames.empty() || frame >= frames.size()  ?  false : frames.at(frame)->hasIPTC ();
+    return getFromFrame<bool>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.hasExif();
+        }
+    );
 }
 
-tm FramesData::getDateTime (unsigned int frame) const
+bool FramesData::hasIPTC(unsigned int frame) const
 {
-    if (frames.empty() || frame >= frames.size() ) {
-        return {};
-    } else {
-        return frames.at(frame)->getDateTime ();
-    }
+    return getFromFrame<bool>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.hasIPTC();
+        }
+    );
 }
+
+tm FramesData::getDateTime(unsigned int frame) const
+{
+    return getFromFrame<tm>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getDateTime();
+        }
+    );
+}
+
 time_t FramesData::getDateTimeAsTS(unsigned int frame) const
 {
-     return frames.empty() || frame >= frames.size()  ? 0 : frames.at(frame)->getDateTimeAsTS ();
+    return getFromFrame<time_t>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getDateTimeAsTS();
+        }
+    );
 }
-int FramesData::getISOSpeed (unsigned int frame) const
+
+int FramesData::getISOSpeed(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0 : frames.at(frame)->getISOSpeed ();
+    return getFromFrame<int>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getISOSpeed();
+        }
+    );
 }
-double FramesData::getFNumber  (unsigned int frame) const
+
+double FramesData::getFNumber(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getFNumber ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFNumber();
+        }
+    );
 }
-double FramesData::getFocalLen (unsigned int frame) const
+
+double FramesData::getFocalLen(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getFocalLen ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFocalLen();
+        }
+    );
 }
-double FramesData::getFocalLen35mm (unsigned int frame) const
+
+double FramesData::getFocalLen35mm(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getFocalLen35mm ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFocalLen35mm();
+        }
+    );
 }
-float FramesData::getFocusDist (unsigned int frame) const
+
+float FramesData::getFocusDist(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0.f : frames.at(frame)->getFocusDist ();
+    return getFromFrame<float>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFocusDist();
+        }
+    );
 }
-double FramesData::getShutterSpeed (unsigned int frame) const
+
+double FramesData::getShutterSpeed(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getShutterSpeed ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getShutterSpeed();
+        }
+    );
 }
-double FramesData::getExpComp  (unsigned int frame) const
+
+double FramesData::getExpComp(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getExpComp ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getExpComp();
+        }
+    );
 }
-std::string FramesData::getMake     (unsigned int frame) const
+
+std::string FramesData::getMake(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getMake ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getMake();
+        }
+    );
 }
-std::string FramesData::getModel    (unsigned int frame) const
+
+std::string FramesData::getModel(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getModel ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getModel();
+        }
+    );
 }
-std::string FramesData::getLens     (unsigned int frame) const
+
+std::string FramesData::getLens(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getLens ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getLens();
+        }
+    );
 }
-std::string FramesData::getSerialNumber (unsigned int frame) const
+
+std::string FramesData::getSerialNumber(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getSerialNumber ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getSerialNumber();
+        }
+    );
 }
-std::string FramesData::getOrientation (unsigned int frame) const
+
+std::string FramesData::getOrientation(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getOrientation ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getOrientation();
+        }
+    );
 }
 
 
