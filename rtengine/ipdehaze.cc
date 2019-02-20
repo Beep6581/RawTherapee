@@ -58,23 +58,20 @@ namespace {
 #endif
 
 
-int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, float *ambient, bool clip, bool multithread)
+int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, const float ambient[3], bool clip, bool multithread)
 {
     const int W = R.width();
     const int H = R.height();
 
-    int npatches = 0;
-
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(+:npatches) if (multithread)
+    #pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < H; y += patchsize) {
-        int pH = min(y+patchsize, H);
-        for (int x = 0; x < W; x += patchsize, ++npatches) {
+        const int pH = min(y + patchsize, H);
+        for (int x = 0; x < W; x += patchsize) {
             float val = RT_INFINITY_F;
-            int pW = min(x+patchsize, W);
+            const int pW = min(x + patchsize, W);
             for (int yy = y; yy < pH; ++yy) {
-                float yval = RT_INFINITY_F;
                 for (int xx = x; xx < pW; ++xx) {
                     float r = R[yy][xx];
                     float g = G[yy][xx];
@@ -84,20 +81,19 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
                         g /= ambient[1];
                         b /= ambient[2];
                     }
-                    yval = min(yval, r, g, b);
+                    val = min(val, r, g, b);
                 }
-                val = min(val, yval);
             }
             if (clip) {
                 val = LIM01(val);
             }
             for (int yy = y; yy < pH; ++yy) {
-                std::fill(dst[yy]+x, dst[yy]+pW, val);
+                std::fill(dst[yy] + x, dst[yy] + pW, val);
             }
         }
     }
 
-    return npatches;
+    return (W / patchsize + ((W % patchsize) > 0)) *  (H / patchsize + ((H % patchsize) > 0));
 }
 
 
@@ -121,7 +117,7 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
         std::priority_queue<float> p;
         for (int y = 0; y < H; y += patchsize) {
             for (int x = 0; x < W; x += patchsize) {
-                if (!OOG(dark[y][x], 1.f)) {
+                if (!OOG(dark[y][x], 1.f - 1e-5f)) {
                     p.push(dark[y][x]);
                 }
             }
@@ -221,7 +217,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
     
     const int W = img->getWidth();
     const int H = img->getHeight();
-    float strength = LIM01(float(params->dehaze.strength) / 100.f * 0.9f);
+    const float strength = LIM01(float(params->dehaze.strength) / 100.f * 0.9f);
 
     if (options.rtSettings.verbose) {
         std::cout << "dehaze: strength = " << strength << std::endl;
