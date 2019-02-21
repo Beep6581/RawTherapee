@@ -58,7 +58,7 @@ ControlSpotPanel::ControlSpotPanel():
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0, 8, 1, 2))),
-    iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 2, 40, 1, 20))),
+    iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 4., 0.1, 2.))),
 
     lastObject_(-1),
     lastCoord_(new Coord()),
@@ -831,7 +831,8 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == iter_) {
-        row[spots_.iter] = (int) iter_->getValue();
+      //  row[spots_.iter] = (int) iter_->getValue();
+        row[spots_.iter] = iter_->getValue();
 
         if (listener) {
             listener->panelChanged(EvLocallabSpotIter, iter_->getTextValue());
@@ -1919,7 +1920,8 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
     circrad_->setDefault((double)defSpot->circrad);
     transit_->setDefault((double)defSpot->transit);
     thresh_->setDefault((double)defSpot->thresh);
-    iter_->setDefault((double)defSpot->iter);
+   // iter_->setDefault((double)defSpot->iter);
+    iter_->setDefault(defSpot->iter);
 
     // Set default edited states for adjusters
     if (!pedited) {

@@ -381,7 +381,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double local_center_ybuf = 0.0; // Provision
     double local_dxx = locallab.spots.at(sp).iter / 8000.0; //for proxi = 2==> # 1 pixel
     double local_dyy = locallab.spots.at(sp).iter / 8000.0;
-    float iterati = (float) locallab.spots.at(sp).iter / 10.f;
+    float iterati = (float) locallab.spots.at(sp).iter;
 
     if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
         iterati = 2.f;
@@ -476,9 +476,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
     int local_transit = locallab.spots.at(sp).transit;
     double radius = (double) locallab.spots.at(sp).radius;
-    double sharradius = ((double) locallab.spots.at(sp).sharradius) / 100. ;
-    double lcamount = ((double) locallab.spots.at(sp).lcamount) / 100. ;
-    double sharblurr = ((double) locallab.spots.at(sp).sharblur) / 100. ;
+    double sharradius = ((double) locallab.spots.at(sp).sharradius);
+    double lcamount = ((double) locallab.spots.at(sp).lcamount) / 100.;
+    double sharblurr = ((double) locallab.spots.at(sp).sharblur);
     int local_sensisha = locallab.spots.at(sp).sensisha;
     int local_sharamount = locallab.spots.at(sp).sharamount;
     int local_shardamping = locallab.spots.at(sp).shardamping;
@@ -603,7 +603,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.shcomp = locallab.spots.at(sp).shcompr;
     lp.hlcomp = locallab.spots.at(sp).hlcompr;
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
-    lp.expcomp = locallab.spots.at(sp).expcomp / 100.;
+    lp.expcomp = locallab.spots.at(sp).expcomp;
+    printf("lp.expcomp=%f\n", lp.expcomp);
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
 //    lp.strucc = local_struc;
@@ -7089,10 +7090,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 //   }
 
                 //sharpen only square area instaed of all image
-                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur / 100.);
+                ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur);
             } else { //call from dcrop.cc
 
-                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur / 100.);
+                ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur);
 
             }
 
@@ -7105,7 +7106,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int GH = original->H;
             JaggedArray<float> loctemp(GW, GH);
 
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius / 100., params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur / 100.);
+            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur);
 
 
             InverseSharp_Local(loctemp, hueref, lumaref, chromaref, lp, original, transformed, cx, cy, sk);
@@ -7945,7 +7946,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 //inverse
-        else if (lp.invex  && (lp.expcomp != 0 || lp.war != 0 || (exlocalcurve  && localexutili)) && lp.exposena) {
+        else if (lp.invex  && (lp.expcomp != 0.0 || lp.war != 0 || (exlocalcurve  && localexutili)) && lp.exposena) {
             float adjustr = 2.f;
             InverseColorLight_Local(sp, 1, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }

@@ -2355,7 +2355,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     qualityMethod("enh"),
     transit(60),
     thresh(2),
-    iter(20),
+    iter(2.0),
     // Color & Light
     expcolor(false),
     curvactiv(false),
@@ -2446,11 +2446,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Sharpening
     expsharp(false),
     sharcontrast(20),
-    sharradius(40),
+    sharradius(0.42),
     sharamount(75),
     shardamping(75),
     shariter(30),
-    sharblur(20),
+    sharblur(0.2),
     sensisha(19),
     inverssha(false),
     // Local Contrast

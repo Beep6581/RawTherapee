@@ -1068,7 +1068,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     const float add = 0.055f;
     float maxran = 65536.f; //65536
 
-    ecomp /= 100.;
+ //   ecomp /= 100.;
 
     // check if brightness curve is needed
     if (br > 0.00001 || br < -0.00001) {

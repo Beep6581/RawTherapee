@@ -955,7 +955,7 @@ struct LocallabParams {
         Glib::ustring qualityMethod; // none, std, enh, enhsup, contr, sob2
         int transit;
         int thresh;
-        int iter;
+        double iter;
         // Color & Light
         bool expcolor;
         bool curvactiv;
@@ -1048,11 +1048,11 @@ struct LocallabParams {
         // Sharpening
         bool expsharp;
         int sharcontrast;
-        int sharradius;
+        double sharradius;
         int sharamount;
         int shardamping;
         int shariter;
-        int sharblur;
+        double sharblur;
         int sensisha;
         bool inverssha;
         // Local Contrast

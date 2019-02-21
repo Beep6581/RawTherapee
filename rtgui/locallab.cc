@@ -82,7 +82,7 @@ Locallab::Locallab():
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     blendmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     // Exposure
-    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -200, 400, 5, 0))),
+    expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 4.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 60))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33))),
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0))),
@@ -120,11 +120,11 @@ Locallab::Locallab():
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 15))),
     // Sharpening
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
-    sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 42, 500, 1, 4))),
+    sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.42, 3.50, 0.01, 0.42))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
-    sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 20, 200, 1, 20))),
+    sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.1, 0.2))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Local Contrast
     lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 200, 1, 80))),
@@ -1611,11 +1611,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     // Sharpening
                     pp->locallab.spots.at(pp->locallab.selspot).expsharp = expsharp->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).sharcontrast = sharcontrast->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).sharradius = sharradius->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sharradius = sharradius->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sharamount = sharamount->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shardamping = shardamping->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shariter = shariter->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).sharblur = sharblur->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sharblur = sharblur->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensisha = sensisha->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).inverssha = inverssha->get_active();
                     // Local Contrast
@@ -2637,11 +2637,11 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     sensih->setDefault((double)defSpot->sensih);
     // Sharpening
     sharcontrast->setDefault((double)defSpot->sharcontrast);
-    sharradius->setDefault((double)defSpot->sharradius);
+    sharradius->setDefault(defSpot->sharradius);
     sharamount->setDefault((double)defSpot->sharamount);
     shardamping->setDefault((double)defSpot->shardamping);
     shariter->setDefault((double)defSpot->shariter);
-    sharblur->setDefault((double)defSpot->sharblur);
+    sharblur->setDefault(defSpot->sharblur);
     sensisha->setDefault((double)defSpot->sensisha);
     // Local Contrast
     lcradius->setDefault((double)defSpot->lcradius);

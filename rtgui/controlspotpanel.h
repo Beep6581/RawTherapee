@@ -61,7 +61,7 @@ public:
         int qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
         int transit;
         int thresh;
-        int iter;
+        double iter;
     };
 
     /**
@@ -273,7 +273,7 @@ private:
         Gtk::TreeModelColumn<int> qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
         Gtk::TreeModelColumn<int> transit;
         Gtk::TreeModelColumn<int> thresh;
-        Gtk::TreeModelColumn<int> iter;
+        Gtk::TreeModelColumn<double> iter;
     };
 
     class RenameDialog:
