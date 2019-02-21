@@ -2366,6 +2366,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridBLow(0.0),
     labgridAHigh(0.0),
     labgridBHigh(0.0),
+
     strengthgrid(20),
     sensi(15),
     structcol(0),
@@ -2645,6 +2646,9 @@ bool LocallabParams::LocallabSpot::operator !=(const LocallabSpot& other) const
 {
     return !(*this == other);
 }
+
+const double LocallabParams::LABGRIDL_CORR_MAX = 10000.f;
+const double LocallabParams::LABGRIDL_CORR_SCALE = 3.28f;
 
 LocallabParams::LocallabParams() :
     enabled(false),

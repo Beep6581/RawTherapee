@@ -7952,11 +7952,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 //local color and light
-        const float factor = ColorToningParams::LABGRID_CORR_MAX * 3.f;
-        const float scaling = ColorToningParams::LABGRID_CORR_SCALE;
-        float a_scale = 2.f * (lp.highA - lp.lowA) / factor / scaling;
+        const float factor = LocallabParams::LABGRIDL_CORR_MAX * 3.28f;
+        const float scaling = LocallabParams::LABGRIDL_CORR_SCALE;
+        float a_scale = (lp.highA - lp.lowA) / factor / scaling;
         float a_base = lp.lowA / scaling;
-        float b_scale = 2.f * (lp.highB - lp.lowB) / factor / scaling;
+        float b_scale = (lp.highB - lp.lowB) / factor / scaling;
         float b_base = lp.lowB / scaling;
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
@@ -8372,7 +8372,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     LabImage *bufcolcalc = nullptr;
                     bufcolcalc = new LabImage(bfw, bfh);
 
-                    //printf("a_s=%f a_b=%f b_s=%f b_b=%f \n", a_scale, a_base, b_scale, b_base);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)

@@ -1509,10 +1509,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chroma = chroma->getIntValue();
                     labgrid->getParams(pp->locallab.spots.at(pp->locallab.selspot).labgridALow, pp->locallab.spots.at(pp->locallab.selspot).labgridBLow, pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh, pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh);
                     pp->locallab.spots.at(pp->locallab.selspot).strengthgrid = strengthgrid->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridALow *= ColorToningParams::LABGRID_CORR_MAX;
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh *= ColorToningParams::LABGRID_CORR_MAX;
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridBLow *= ColorToningParams::LABGRID_CORR_MAX;
-                    pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh *= ColorToningParams::LABGRID_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridALow *= LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridAHigh *= LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridBLow *= LocallabParams::LABGRIDL_CORR_MAX;
+                    pp->locallab.spots.at(pp->locallab.selspot).labgridBHigh *= LocallabParams::LABGRIDL_CORR_MAX;
                     pp->locallab.spots.at(pp->locallab.selspot).sensi = sensi->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).structcol = structcol->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurcolde = blurcolde->getIntValue();
@@ -2591,7 +2591,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     lightness->setDefault((double)defSpot->lightness);
     contrast->setDefault((double)defSpot->contrast);
     chroma->setDefault((double)defSpot->chroma);
-    labgrid->setDefault(defSpot->labgridALow / ColorToningParams::LABGRID_CORR_MAX, defSpot->labgridBLow / ColorToningParams::LABGRID_CORR_MAX, defSpot->labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, defSpot->labgridBHigh / ColorToningParams::LABGRID_CORR_MAX);
+    labgrid->setDefault(defSpot->labgridALow / LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBLow / LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX, defSpot->labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX);
     sensi->setDefault((double)defSpot->sensi);
     structcol->setDefault((double)defSpot->structcol);
     blurcolde->setDefault((double)defSpot->blurcolde);
@@ -3708,7 +3708,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         lightness->setValue(pp->locallab.spots.at(index).lightness);
         contrast->setValue(pp->locallab.spots.at(index).contrast);
         chroma->setValue(pp->locallab.spots.at(index).chroma);
-        labgrid->setParams(pp->locallab.spots.at(index).labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->locallab.spots.at(index).labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->locallab.spots.at(index).labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->locallab.spots.at(index).labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, false);
+        labgrid->setParams(pp->locallab.spots.at(index).labgridALow / LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBLow / LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX, pp->locallab.spots.at(index).labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, false);
         strengthgrid->setValue(pp->locallab.spots.at(index).strengthgrid);
         sensi->setValue(pp->locallab.spots.at(index).sensi);
         structcol->setValue(pp->locallab.spots.at(index).structcol);

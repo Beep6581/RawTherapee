@@ -1090,6 +1090,8 @@ struct LocallabParams {
     };
 
     bool enabled;
+    static const double LABGRIDL_CORR_MAX;
+    static const double LABGRIDL_CORR_SCALE;
     int nbspot;
     int selspot;
     std::vector<LocallabSpot> spots;
