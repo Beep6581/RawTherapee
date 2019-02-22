@@ -852,6 +852,7 @@ HISTORY_MSG_RAWCACORR_AUTOIT;(Sensor-Matrix)\nChromatische Aberration\nIteration
 HISTORY_MSG_RAWCACORR_COLORSHIFT;(Sensor-Matrix)\nChromatische Aberration\nFarbverschiebungen\nvermeiden
 HISTORY_MSG_RAW_BORDER;(Sensor-Matrix)\nFarbinterpolation\nBildrand
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;(Skalieren)\nHochskalieren zulassen
+HISTORY_MSG_SHARPENING_BLUR;(Schärfung)\nWeichzeichnerradius
 HISTORY_MSG_SHARPENING_CONTRAST;(Schärfung)\nKontrastschwelle
 HISTORY_MSG_SH_COLORSPACE;Farbraum
 HISTORY_MSG_SOFTLIGHT_ENABLED;(Weiches Licht)
@@ -992,6 +993,8 @@ MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPORT; Exportieren 
 MAIN_TAB_EXPOSURE;Belichtung
 MAIN_TAB_EXPOSURE_TOOLTIP;Taste: <b>Alt</b> + <b>e</b>
+MAIN_TAB_FAVORITES;Favoriten
+MAIN_TAB_FAVORITES_TOOLTIP;Taste: <b>Alt</b> + <b>u</b>
 MAIN_TAB_FILTER; Filter 
 MAIN_TAB_INSPECT; Prüfen 
 MAIN_TAB_IPTC;IPTC
@@ -2139,6 +2142,7 @@ TP_SHARPENEDGE_LABEL;Kantenschärfung
 TP_SHARPENEDGE_PASSES;Iterationen
 TP_SHARPENEDGE_THREE;Nur Luminanz
 TP_SHARPENING_AMOUNT;Intensität
+TP_SHARPENING_BLUR;Weichzeichnerradius
 TP_SHARPENING_CONTRAST;Kontrastschwelle
 TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
@@ -2413,7 +2417,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-HISTORY_MSG_SHARPENING_BLUR;(Schärfung)\nWeichzeichnerradius
-MAIN_TAB_FAVORITES;Favoriten
-MAIN_TAB_FAVORITES_TOOLTIP;Taste: <b>Alt</b> + <b>u</b>
-TP_SHARPENING_BLUR;Weichzeichnerradius
+!TP_RAW_IMAGENUM_SN;SN mode
