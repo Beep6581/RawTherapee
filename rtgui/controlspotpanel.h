@@ -49,7 +49,7 @@ public:
         int spotMethod; // 0 = Normal, 1 = Excluding
         int sensiexclu;
         int structexclu;
-        int struc;
+        double struc;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         int locX;
         int locXL;
@@ -60,7 +60,7 @@ public:
         int circrad;
         int qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
         int transit;
-        int thresh;
+        double thresh;
         double iter;
     };
 
@@ -261,7 +261,7 @@ private:
         Gtk::TreeModelColumn<int> spotMethod; // 0 = Normal, 1 = Excluding
         Gtk::TreeModelColumn<int> sensiexclu;
         Gtk::TreeModelColumn<int> structexclu;
-        Gtk::TreeModelColumn<int> struc;
+        Gtk::TreeModelColumn<double> struc;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         Gtk::TreeModelColumn<int> locX;
         Gtk::TreeModelColumn<int> locXL;
@@ -272,7 +272,7 @@ private:
         Gtk::TreeModelColumn<int> circrad;
         Gtk::TreeModelColumn<int> qualityMethod; // 0 = Standard, 1 = Enhanced, 2 = Enhanced + chroma denoise
         Gtk::TreeModelColumn<int> transit;
-        Gtk::TreeModelColumn<int> thresh;
+        Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
     };
 

@@ -128,13 +128,13 @@ Locallab::Locallab():
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Local Contrast
     lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 200, 1, 80))),
-    lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 100, 1, 0))),
-    lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 300, 1, 100))),
-    lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 300, 1, 100))),
+    lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
+    lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
+    lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Contrast by detail levels
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
-    threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20))),
+    threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
     // Denoise
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0))),
@@ -744,7 +744,7 @@ Locallab::Locallab():
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
         }
 
-        multiplier[i] = Gtk::manage(new Adjuster(ss, 0, 400, 1, 100));
+        multiplier[i] = Gtk::manage(new Adjuster(ss, 0.0, 4.0, 0.01, 1.0));
         multiplier[i]->setAdjusterListener(this);
     }
 
@@ -1026,7 +1026,7 @@ void Locallab::lumaneutralPressed()
     // printf("lumaneutralPressed\n");
 
     for (int i = 0; i < 5; i++) {
-        multiplier[i]->setValue(100);
+        multiplier[i]->setValue(1.0);
     }
 
     // Raise event (only for first multiplier because associated event concerns all multipliers)
@@ -1621,15 +1621,15 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     // Local Contrast
                     pp->locallab.spots.at(pp->locallab.selspot).expcontrast = expcontrast->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).lcradius = lcradius->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).lcamount = lcamount->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).lcdarkness = lcdarkness->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).lclightness = lclightness->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lcamount = lcamount->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lcdarkness = lcdarkness->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lclightness = lclightness->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensilc = sensilc->getIntValue();
                     // Contrast by detail levels
                     pp->locallab.spots.at(pp->locallab.selspot).expcbdl = expcbdl->getEnabled();
 
                     for (int i = 0; i < 5; i++) {
-                        pp->locallab.spots.at(pp->locallab.selspot).mult[i] = multiplier[i]->getIntValue();
+                        pp->locallab.spots.at(pp->locallab.selspot).mult[i] = multiplier[i]->getValue();
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).chromacbdl = chromacbdl->getIntValue();
@@ -2645,9 +2645,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     sensisha->setDefault((double)defSpot->sensisha);
     // Local Contrast
     lcradius->setDefault((double)defSpot->lcradius);
-    lcamount->setDefault((double)defSpot->lcamount);
-    lcdarkness->setDefault((double)defSpot->lcdarkness);
-    lclightness->setDefault((double)defSpot->lclightness);
+    lcamount->setDefault(defSpot->lcamount);
+    lcdarkness->setDefault(defSpot->lcdarkness);
+    lclightness->setDefault(defSpot->lclightness);
     sensilc->setDefault((double)defSpot->sensilc);
 
     // Contrast by detail levels

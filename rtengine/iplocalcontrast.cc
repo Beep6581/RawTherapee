@@ -69,14 +69,14 @@ void ImProcFunctions::localContrast(LabImage *lab)
     }
 }
 
-void ImProcFunctions::localContrastloc(LabImage *lab, int scale, int rad, int amo, int darkn, int lightn, float **loctemp)
+void ImProcFunctions::localContrastloc(LabImage *lab, int scale, int rad, float amo, float darkn, float lightn, float **loctemp)
 {
 
     const int width = lab->W;
     const int height = lab->H;
-    const float a = (float)(amo) / 100.f;
-    const float dark = (float)(darkn) / 100.f;
-    const float light = (float)(lightn) / 100.f;
+    const float a = amo;
+    const float dark = darkn;
+    const float light = lightn;
     array2D<float> buf(width, height);
     const float sigma = (float)(rad) / scale;
 
@@ -97,7 +97,6 @@ void ImProcFunctions::localContrastloc(LabImage *lab, int scale, int rad, int am
                 bufval *= (bufval > 0.f) ? light : dark;
             }
 
-            // lab->L[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
             loctemp[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
 
         }

@@ -367,7 +367,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     float thre = locallab.spots.at(sp).thresh;
 
-    if (thre > 8 || thre < 0) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
+    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
         thre = 2.f;
     }
 
@@ -442,10 +442,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float multi[5];
 
     for (int y = 0; y < 5; y++) {
-        multi[y] = ((float) locallab.spots.at(sp).mult[y]) / 100.f;
+        multi[y] = ((float) locallab.spots.at(sp).mult[y]);
     }
 
-    float thresho = ((float)locallab.spots.at(sp).threshold) / 100.f;
+    float thresho = ((float)locallab.spots.at(sp).threshold);
     float chromcbdl = (float)locallab.spots.at(sp).chromacbdl;
 
     int local_chroma = locallab.spots.at(sp).chroma;
@@ -477,7 +477,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_transit = locallab.spots.at(sp).transit;
     double radius = (double) locallab.spots.at(sp).radius;
     double sharradius = ((double) locallab.spots.at(sp).sharradius);
-    double lcamount = ((double) locallab.spots.at(sp).lcamount) / 100.;
+    double lcamount = ((double) locallab.spots.at(sp).lcamount);
     double sharblurr = ((double) locallab.spots.at(sp).sharblur);
     int local_sensisha = locallab.spots.at(sp).sensisha;
     int local_sharamount = locallab.spots.at(sp).sharamount;

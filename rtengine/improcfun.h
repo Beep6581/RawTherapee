@@ -392,7 +392,7 @@ public:
     void dehazeloc(Imagefloat *rgb, float deha, float depth);
     void ToneMapFattal02(Imagefloat *rgb);
     void localContrast(LabImage *lab);
-    void localContrastloc(LabImage *lab, int scale,  int rad, int amo, int darkn, int lightn, float **loctemp);
+    void localContrastloc(LabImage *lab, int scale,  int rad, float amo, float darkn, float lightn, float **loctemp);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
     void shadowsHighlights(LabImage *lab);
     void softLight(LabImage *lab);

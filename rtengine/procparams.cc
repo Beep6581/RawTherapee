@@ -2343,7 +2343,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     spotMethod("norm"),
     sensiexclu(12),
     structexclu(0),
-    struc(4),
+    struc(4.0),
     shapeMethod("IND"),
     locX(250),
     locXL(250),
@@ -2354,7 +2354,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     circrad(18),
     qualityMethod("enh"),
     transit(60),
-    thresh(2),
+    thresh(2.0),
     iter(2.0),
     // Color & Light
     expcolor(false),
@@ -2456,15 +2456,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Local Contrast
     expcontrast(false),
     lcradius(80),
-    lcamount(0),
-    lcdarkness(100),
-    lclightness(100),
+    lcamount(0.0),
+    lcdarkness(1.0),
+    lclightness(1.0),
     sensilc(19),
     // Contrast by detail levels
     expcbdl(false),
-    mult{100.0, 100.0, 100.0, 100.0, 100.0},
+    mult{1.0, 1.0, 1.0, 1.0, 1.0},
     chromacbdl(0),
-    threshold(20.0),
+    threshold(0.2),
     sensicb(15),
     // Denoise
     expdenoi(false),

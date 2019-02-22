@@ -943,7 +943,7 @@ struct LocallabParams {
         Glib::ustring spotMethod; // norm, exc
         int sensiexclu;
         int structexclu;
-        int struc;
+        double struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
         int locX;
         int locXL;
@@ -954,7 +954,7 @@ struct LocallabParams {
         int circrad;
         Glib::ustring qualityMethod; // none, std, enh, enhsup, contr, sob2
         int transit;
-        int thresh;
+        double thresh;
         double iter;
         // Color & Light
         bool expcolor;
@@ -1058,9 +1058,9 @@ struct LocallabParams {
         // Local Contrast
         bool expcontrast;
         int lcradius;
-        int lcamount;
-        int lcdarkness;
-        int lclightness;
+        double lcamount;
+        double lcdarkness;
+        double lclightness;
         int sensilc;
         // Contrast by detail levels
         bool expcbdl;
