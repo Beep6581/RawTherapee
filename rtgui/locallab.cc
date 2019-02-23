@@ -172,6 +172,7 @@ Locallab::Locallab():
     // ComboBox widgets
     // Color & Light
     qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
+    gridMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     //Exposure
     showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
@@ -244,6 +245,12 @@ Locallab::Locallab():
     qualitycurveMethod->set_active(0);
     qualitycurveMethod->set_tooltip_markup(M("TP_LOCALLAB_CURVEMETHOD_TOOLTIP"));
     qualitycurveMethodConn = qualitycurveMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::qualitycurveMethodChanged));
+
+    gridMethod->append(M("TP_LOCALLAB_GRIDONE"));
+    gridMethod->append(M("TP_LOCALLAB_GRIDTWO"));
+    gridMethod->set_active(0);
+//    gridMethod->set_tooltip_markup(M("TP_LOCALLAB_GRIDMETHOD_TOOLTIP"));
+    gridMethodConn = gridMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::gridMethodChanged));
 
     llCurveEditorG->setCurveListener(this);
 
@@ -353,6 +360,7 @@ Locallab::Locallab():
     gridFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
     gridBox->pack_start(*labgrid);
+    gridBox->pack_start(*gridMethod);
     gridBox->pack_start(*strengthgrid);
     gridFrame->add(*gridBox);
     superBox->pack_start(*gridFrame);
@@ -1523,6 +1531,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = "std";
                     }
 
+                    if (gridMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).gridMethod = "one";
+                    } else if (gridMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).gridMethod = "two";
+                    }
+
                     pp->locallab.spots.at(pp->locallab.selspot).llcurve = llshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).cccurve = ccshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).LHcurve = LHshape->getCurve();
@@ -1685,6 +1699,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).sensi = pe->locallab.spots.at(pp->locallab.selspot).sensi || sensi->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).structcol = pe->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pe->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).gridMethod = pe->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).llcurve = pe->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).cccurve = pe->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LHcurve = pe->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
@@ -1834,6 +1849,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).sensi = pedited->locallab.spots.at(pp->locallab.selspot).sensi || sensi->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).structcol = pedited->locallab.spots.at(pp->locallab.selspot).structcol || structcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualitycurveMethod || qualitycurveMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).gridMethod = pedited->locallab.spots.at(pp->locallab.selspot).gridMethod || gridMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).llcurve = pedited->locallab.spots.at(pp->locallab.selspot).llcurve || !llshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).cccurve = pedited->locallab.spots.at(pp->locallab.selspot).cccurve || !ccshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LHcurve = pedited->locallab.spots.at(pp->locallab.selspot).LHcurve || !LHshape->isUnChanged();
@@ -2182,6 +2198,17 @@ void Locallab::qualitycurveMethodChanged()
     if (getEnabled() && expcolor->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text());
+        }
+    }
+}
+
+void Locallab::gridMethodChanged()
+{
+    // printf("qualitycurveMethodChanged\n");
+
+    if (getEnabled() && expcolor->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvLocallabgridMethod, gridMethod->get_active_text());
         }
     }
 }
@@ -3467,6 +3494,7 @@ void Locallab::setBatchMode(bool batchMode)
     // Set batch mode for comboBoxText
     // Color & Light
     qualitycurveMethod->append(M("GENERAL_UNCHANGED"));
+    gridMethod->append(M("GENERAL_UNCHANGED"));
     // Blur & Noise
     blurMethod->append(M("GENERAL_UNCHANGED"));
     // Retinex
@@ -3612,6 +3640,7 @@ void Locallab::enableListener()
     enablecolorConn.block(false);
     curvactivConn.block(false);
     qualitycurveMethodConn.block(false);
+    gridMethodConn.block(false);
     inversConn.block(false);
     showmaskcolMethodConn.block(false);
     enaColorMaskConn.block(false);
@@ -3658,6 +3687,7 @@ void Locallab::disableListener()
     enablecolorConn.block(true);
     curvactivConn.block(true);
     qualitycurveMethodConn.block(true);
+    gridMethodConn.block(true);
     inversConn.block(true);
     showmaskcolMethodConn.block(true);
     enaColorMaskConn.block(true);
@@ -3717,6 +3747,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             qualitycurveMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).qualitycurveMethod == "std") {
             qualitycurveMethod->set_active(1);
+        }
+
+        if (pp->locallab.spots.at(index).gridMethod == "one") {
+            gridMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).gridMethod == "two") {
+            gridMethod->set_active(1);
         }
 
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
@@ -3907,6 +3943,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
                 if (!spotState->qualitycurveMethod) {
                     qualitycurveMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
+                if (!spotState->gridMethod) {
+                    gridMethod->set_active_text(M("GENERAL_UNCHANGED"));
                 }
 
                 llshape->setUnChanged(!spotState->llcurve);

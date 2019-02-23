@@ -958,6 +958,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
                 locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
+                locallab.spots.at(j).gridMethod = locallab.spots.at(j).gridMethod && pSpot.gridMethod == otherSpot.gridMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
                 locallab.spots.at(j).cccurve = locallab.spots.at(j).cccurve && pSpot.cccurve == otherSpot.cccurve;
                 locallab.spots.at(j).LHcurve = locallab.spots.at(j).LHcurve && pSpot.LHcurve == otherSpot.LHcurve;
@@ -2627,6 +2628,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).qualitycurveMethod = mods.locallab.spots.at(i).qualitycurveMethod;
         }
 
+        if (locallab.spots.at(i).gridMethod) {
+            toEdit.locallab.spots.at(i).gridMethod = mods.locallab.spots.at(i).gridMethod;
+        }
+
         if (locallab.spots.at(i).llcurve) {
             toEdit.locallab.spots.at(i).llcurve = mods.locallab.spots.at(i).llcurve;
         }
@@ -3993,6 +3998,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blurcolde(v),
     blendmaskcol(v),
     qualitycurveMethod(v),
+    gridMethod(v),
     llcurve(v),
     cccurve(v),
     LHcurve(v),
@@ -4140,6 +4146,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blurcolde = v;
     blendmaskcol = v;
     qualitycurveMethod = v;
+    gridMethod = v;
     llcurve = v;
     cccurve = v;
     LHcurve = v;

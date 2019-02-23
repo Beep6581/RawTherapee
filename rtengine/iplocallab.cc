@@ -190,6 +190,7 @@ struct local_params {
     float str;
     int qualmet;
     int qualcurvemet;
+    int gridmet;
     int showmaskcolmet;
     int showmaskexpmet;
     int blurmet;
@@ -403,6 +404,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.qualcurvemet = 0;
     } else if (locallab.spots.at(sp).qualitycurveMethod == "std") {
         lp.qualcurvemet = 1;
+    }
+
+    if (locallab.spots.at(sp).gridMethod == "one") {
+        lp.gridmet = 0;
+    } else if (locallab.spots.at(sp).gridMethod == "two") {
+        lp.gridmet = 1;
     }
 
     lp.showmaskcolmet = llColorMask;
@@ -8461,8 +8468,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 if (ctoning) {
+                                 if(lp.gridmet == 0) {   
                                     bufcolcalc->a[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * a_scale + a_base;
                                     bufcolcalc->b[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * b_scale + b_base;
+                                 } else if(lp.gridmet == 1) {
+                                    bufcolcalc->a[loy - begy][lox - begx] += 35000.f * a_scale;
+                                    bufcolcalc->b[loy - begy][lox - begx] += 35000.f * b_scale;
+                                 }
                                 }
 
                                 float rL;

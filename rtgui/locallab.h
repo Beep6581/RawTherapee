@@ -198,6 +198,8 @@ private:
     // Color & Light
     MyComboBoxText* const qualitycurveMethod;
     sigc::connection qualitycurveMethodConn;
+    MyComboBoxText* const gridMethod;
+    sigc::connection gridMethodConn;
     MyComboBoxText* const showmaskcolMethod;
     sigc::connection showmaskcolMethodConn;
     //Exposure
@@ -271,6 +273,7 @@ private:
     // ComboBox event functions
     // Color & Light
     void qualitycurveMethodChanged();
+    void gridMethodChanged();
     void showmaskcolMethodChanged();
     //Exposure
     void showmaskexpMethodChanged();
