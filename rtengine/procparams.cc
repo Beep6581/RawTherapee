@@ -2665,7 +2665,6 @@ RAWParams::RAWParams() :
     cared(0.0),
     cablue(0.0),
     expos(1.0),
-    preser(0.0),
     hotPixelFilter(false),
     deadPixelFilter(false),
     hotdeadpix_thresh(100)
@@ -2691,7 +2690,6 @@ bool RAWParams::operator ==(const RAWParams& other) const
         && cared == other.cared
         && cablue == other.cablue
         && expos == other.expos
-        && preser == other.preser
         && hotPixelFilter == other.hotPixelFilter
         && deadPixelFilter == other.deadPixelFilter
         && hotdeadpix_thresh == other.hotdeadpix_thresh;
@@ -3561,7 +3559,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Raw exposition
         saveToKeyfile(!pedited || pedited->raw.exPos, "RAW", "PreExposure", raw.expos, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.exPreser, "RAW", "PrePreserv", raw.preser, keyFile);
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
@@ -4991,7 +4988,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW", "DeadPixelFilter", pedited, raw.deadPixelFilter, pedited->raw.deadPixelFilter);
             assignFromKeyfile(keyFile, "RAW", "HotDeadPixelThresh", pedited, raw.hotdeadpix_thresh, pedited->raw.hotdeadpix_thresh);
             assignFromKeyfile(keyFile, "RAW", "PreExposure", pedited, raw.expos, pedited->raw.exPos);
-            assignFromKeyfile(keyFile, "RAW", "PrePreserv", pedited, raw.preser, pedited->raw.exPreser);
 
             if (ppVersion < 320) {
                 assignFromKeyfile(keyFile, "RAW", "Method", pedited, raw.bayersensor.method, pedited->raw.bayersensor.method);

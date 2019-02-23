@@ -252,7 +252,6 @@ protected:
         bool freeBuffer
     );
     void ddct8x8s(int isgn, float a[8][8]);
-    void processRawWhitepoint (float expos, float preser, array2D<float> &rawData);  // exposure before interpolation
 
     int  interpolateBadPixelsBayer( PixelsMap &bitmapBads, array2D<float> &rawData );
     int  interpolateBadPixelsNColours( PixelsMap &bitmapBads, const int colours );

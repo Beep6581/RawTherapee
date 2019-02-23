@@ -151,7 +151,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DARKFRAME,        // EvPreProcessAutoDF
     DARKFRAME,        // EvPreProcessDFFile
     DARKFRAME,        // EvPreProcessExpCorrLinear
-    DARKFRAME,        // EvPreProcessExpCorrPH
+    0,                // --unused--
     FLATFIELD,        // EvFlatFieldFile,
     FLATFIELD,        // EvFlatFieldAutoSelect,
     FLATFIELD,        // EvFlatFieldBlurRadius,
