@@ -3522,10 +3522,9 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
         cblacksom[i] = max( c_black[i] + black_lev[i], 0.0f );    // adjust black level
     }
 
-    c_white[0] = (ri->get_white(0) - cblacksom[0]) / raw.expos + cblacksom[0];
-    c_white[1] = (ri->get_white(1) - cblacksom[1]) / raw.expos + cblacksom[1];
-    c_white[2] = (ri->get_white(2) - cblacksom[2]) / raw.expos + cblacksom[2];
-    c_white[3] = (ri->get_white(3) - cblacksom[3]) / raw.expos + cblacksom[3];
+    for (int i = 0; i < 4; ++i) {
+        c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
+    }
 
     initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
 
