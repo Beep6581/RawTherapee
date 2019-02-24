@@ -77,6 +77,7 @@
 #76 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
 #77 16.12.2018 Korrektur Farbwähler-Tooltip (TooWaBoo) RT 5.5
 #78 19.01.2019 Erweiterung (TooWaBoo) RT 5.5
+#79 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2417,4 +2418,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!TP_RAW_IMAGENUM_SN;SN mode
+TP_RAW_IMAGENUM_SN;SN-Mode
