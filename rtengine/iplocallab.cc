@@ -7960,13 +7960,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 //local color and light
-        const float factor = LocallabParams::LABGRIDL_CORR_MAX * 3.28f;
+        const float factor = LocallabParams::LABGRIDL_CORR_MAX * 3.276f;
         const float scaling = LocallabParams::LABGRIDL_CORR_SCALE;
+        const float scaledirect = LocallabParams::LABGRIDL_DIRECT_SCALE;
         float a_scale = (lp.highA - lp.lowA) / factor / scaling;
         float a_base = lp.lowA / scaling;
         float b_scale = (lp.highB - lp.lowB) / factor / scaling;
         float b_base = lp.lowB / scaling;
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
+
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
 
 
@@ -8468,13 +8470,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 if (ctoning) {
-                                 if(lp.gridmet == 0) {   
-                                    bufcolcalc->a[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * a_scale + a_base;
-                                    bufcolcalc->b[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * b_scale + b_base;
-                                 } else if(lp.gridmet == 1) {
-                                    bufcolcalc->a[loy - begy][lox - begx] += 35000.f * a_scale;
-                                    bufcolcalc->b[loy - begy][lox - begx] += 35000.f * b_scale;
-                                 }
+                                    if (lp.gridmet == 0) {
+                                        bufcolcalc->a[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * a_scale + a_base;
+                                        bufcolcalc->b[loy - begy][lox - begx] += bufcolcalc->L[loy - begy][lox - begx] * b_scale + b_base;
+                                    } else if (lp.gridmet == 1) {
+                                        bufcolcalc->a[loy - begy][lox - begx] += scaledirect * a_scale;
+                                        bufcolcalc->b[loy - begy][lox - begx] += scaledirect * b_scale;
+                                    }
+
+                                    bufcolcalc->a[loy - begy][lox - begx] = CLIPC(bufcolcalc->a[loy - begy][lox - begx]);
+                                    bufcolcalc->b[loy - begy][lox - begx] = CLIPC(bufcolcalc->b[loy - begy][lox - begx]);
+
                                 }
 
                                 float rL;
