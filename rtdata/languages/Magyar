@@ -295,7 +295,6 @@ HISTORY_MSG_121;Auto CA
 HISTORY_MSG_122;Auto ref. feketekép (dark frame)
 HISTORY_MSG_123;Ref. feketekép állománya
 HISTORY_MSG_124;Lineáris exp. korrekció
-HISTORY_MSG_125;Exp. korrekció  csúcsfények megőrzésével
 HISTORY_MSG_126;Flat Field állomány
 HISTORY_MSG_127;Flat Field automatikus kivál.
 HISTORY_MSG_128;Flat Field elmosás sugara
@@ -454,7 +453,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Soronkénti zajszűrés
 PARTIALPASTE_RAWCACORR_AUTO;CA autokorrekció
 PARTIALPASTE_RAWEXPOS_BLACK;Feketeszint
 PARTIALPASTE_RAWEXPOS_LINEAR;Raw fehérszint lineáris korrekciós faktor (FÉ)
-PARTIALPASTE_RAWEXPOS_PRESER;Raw fehérszint csúcsfény-megőrző faktor (FÉ)
 PARTIALPASTE_RAWGROUP;Raw beállítások
 PARTIALPASTE_RAW_DCBENHANCE;DCB javítási lépés alkalmazása
 PARTIALPASTE_RAW_DCBITERATIONS;DCB iterációk száma
@@ -729,7 +727,6 @@ TP_RAWCACORR_CABLUE;Kék
 TP_RAWCACORR_CARED;Vörös
 TP_RAWEXPOS_BLACKS;Feketeszintek
 TP_RAWEXPOS_LINEAR;Fehérszint: lineáris korrelációs faktor
-TP_RAWEXPOS_PRESER;Fehérszint: csúcsfény-megőrző korrekció (FÉ)
 TP_RAWEXPOS_TWOGREEN;Zöldek együtt
 TP_RAW_DCBENHANCE;DCB helyesbítő lépés alkalmazása
 TP_RAW_DCBITERATIONS;DCB iterációk száma
@@ -2000,7 +1997,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.

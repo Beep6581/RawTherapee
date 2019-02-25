@@ -143,7 +143,9 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
         }
 
 #ifdef __SSE2__
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for(int i = 0; i < srcheight; i++) {
             int j;
@@ -158,7 +160,9 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
         }
 
 #else
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for(int i = 0; i < srcheight; i++) {
             for(int j = 0; j < srcwidth; j++) {
@@ -174,10 +178,14 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
         }
 
 #ifdef __SSE2__
+#ifdef _OPENMP
         #pragma omp parallel
+#endif
         {
             __m128 div = _mm_set1_ps(327.68f);
+#ifdef _OPENMP
             #pragma omp for
+#endif
 
             for(int i = 0; i < srcheight; i++) {
                 int j;
@@ -192,7 +200,9 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
             }
         }
 #else
+#ifdef _OPENMP
         #pragma omp parallel for
+#endif
 
         for(int i = 0; i < srcheight; i++) {
             for(int j = 0; j < srcwidth; j++) {
@@ -228,7 +238,9 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
         delete [] tmpHue;
     }
 
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
 
     for (int i = 0; i < srcheight; i++)
         for (int j = 0; j < srcwidth; j++) {

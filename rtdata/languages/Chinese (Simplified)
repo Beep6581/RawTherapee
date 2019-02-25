@@ -463,7 +463,6 @@ PARTIALPASTE_RAWCACORR_AUTO;CA自动更正
 PARTIALPASTE_RAWCACORR_CAREDBLUE;红蓝色散
 PARTIALPASTE_RAWEXPOS_BLACK;黑色等级
 PARTIALPASTE_RAWEXPOS_LINEAR;白点纠正
-PARTIALPASTE_RAWEXPOS_PRESER;高光补偿
 PARTIALPASTE_RAWGROUP;Raw设置
 PARTIALPASTE_RAW_DCBENHANCE;DCB 增强
 PARTIALPASTE_RAW_DCBITERATIONS;DCB 反复
@@ -1055,7 +1054,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_118;Raw CA correction - Blue
 !HISTORY_MSG_120;Green equilibration
 !HISTORY_MSG_121;Raw CA Correction - Auto
-!HISTORY_MSG_125;Highlight preservation
 !HISTORY_MSG_131;NR - Luma
 !HISTORY_MSG_132;NR - Chroma
 !HISTORY_MSG_133;Output gamma
@@ -1950,7 +1948,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAWEXPOS_BLACK_GREEN;Green
 !TP_RAWEXPOS_BLACK_RED;Red
 !TP_RAWEXPOS_LINEAR;White-point correction
-!TP_RAWEXPOS_PRESER;Highlight preservation
 !TP_RAWEXPOS_RGB;Red, Green, Blue
 !TP_RAWEXPOS_TWOGREEN;Link greens
 !TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
@@ -1980,7 +1977,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LABEL;Demosaicing
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps

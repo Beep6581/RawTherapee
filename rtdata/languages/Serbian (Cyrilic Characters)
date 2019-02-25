@@ -312,7 +312,6 @@ HISTORY_MSG_121;Сам исправи аберације
 HISTORY_MSG_122;Сам примени тамни кадар
 HISTORY_MSG_123;Датотека за тамни кадар
 HISTORY_MSG_124;Линеарна исправка експ.
-HISTORY_MSG_125;Поправка експ. уз очување светлог
 HISTORY_MSG_126;Датотека са равним пољем
 HISTORY_MSG_127;Сам изабери равно поље
 HISTORY_MSG_128;Полупречник равног поља
@@ -570,7 +569,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Линијски филтер шума
 PARTIALPASTE_RAWCACORR_AUTO;Ауто хроматске аберације
 PARTIALPASTE_RAWEXPOS_BLACK;Ниво црне
 PARTIALPASTE_RAWEXPOS_LINEAR;Линеарни фактор исправке RAW беле тачке
-PARTIALPASTE_RAWEXPOS_PRESER;Raw тачка беле уз очување светлих делова
 PARTIALPASTE_RAWGROUP;Raw подешавања
 PARTIALPASTE_RAW_DCBENHANCE;Примени корак ДЦБ побољшања
 PARTIALPASTE_RAW_DCBITERATIONS;Број ДЦБ понављања
@@ -1092,7 +1090,6 @@ TP_RAWCACORR_CABLUE;Плава
 TP_RAWCACORR_CARED;Црвена
 TP_RAWEXPOS_BLACKS;Ниво црне
 TP_RAWEXPOS_LINEAR;Линеарни фактор корекције
-TP_RAWEXPOS_PRESER;Очување светлих делова
 TP_RAWEXPOS_TWOGREEN;Обе зелене
 TP_RAW_DCBENHANCE;Примени ДЦБ побољшање
 TP_RAW_DCBITERATIONS;Број ДЦБ пролаза
@@ -2024,7 +2021,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_MONO;Mono
 !TP_RAW_NONE;None (Shows sensor pattern)

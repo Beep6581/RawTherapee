@@ -379,7 +379,6 @@ HISTORY_MSG_121;A.C. Raw - Auto
 HISTORY_MSG_122;Sélection auto de trame noire
 HISTORY_MSG_123;Fichier de trame noire
 HISTORY_MSG_124;Correct. du point blanc
-HISTORY_MSG_125;Préservation des HL
 HISTORY_MSG_126;Champ Uniforme - Fichier
 HISTORY_MSG_127;Champ Uniforme - Sélection auto
 HISTORY_MSG_128;Champ Uniforme - Rayon
@@ -1018,7 +1017,6 @@ PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;A.C. Raw - Éviter les dérives couleurs
 PARTIALPASTE_RAWCACORR_CAREDBLUE;A.C. Raw - Rouge et bleu
 PARTIALPASTE_RAWEXPOS_BLACK;Niveaux de noir
 PARTIALPASTE_RAWEXPOS_LINEAR;Correction du point blanc
-PARTIALPASTE_RAWEXPOS_PRESER;Préservation des hautes humières
 PARTIALPASTE_RAWGROUP;Réglages RAW
 PARTIALPASTE_RAW_BORDER;Bord Raw
 PARTIALPASTE_RAW_DCBENHANCE;Amélioration de DCB
@@ -1852,7 +1850,6 @@ TP_RAWEXPOS_BLACK_BLUE;Bleu
 TP_RAWEXPOS_BLACK_GREEN;Vert
 TP_RAWEXPOS_BLACK_RED;Rouge
 TP_RAWEXPOS_LINEAR;Corr. du Point Blanc
-TP_RAWEXPOS_PRESER;Préservation des HL
 TP_RAWEXPOS_RGB;Rouge, Vert, Bleu
 TP_RAWEXPOS_TWOGREEN;Lier les verts
 TP_RAW_1PASSMEDIUM;1-Passe (Medium)
@@ -2340,4 +2337,5 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
+!TP_RAW_IMAGENUM_SN;SN mode
 !TP_SHARPENING_BLUR;Blur radius

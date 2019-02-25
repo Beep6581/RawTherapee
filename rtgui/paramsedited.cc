@@ -453,7 +453,6 @@ void ParamsEdited::set(bool v)
     raw.ff_AutoClipControl = v;
     raw.ff_clipControl = v;
     raw.exPos = v;
-    raw.exPreser = v;
     wavelet.enabled = v;
     wavelet.strength = v;
     wavelet.balance = v;
@@ -1020,7 +1019,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.ff_AutoClipControl = raw.ff_AutoClipControl && p.raw.ff_AutoClipControl == other.raw.ff_AutoClipControl;
         raw.ff_clipControl = raw.ff_clipControl && p.raw.ff_clipControl == other.raw.ff_clipControl;
         raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
-        raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
         wavelet.enabled = wavelet.enabled && p.wavelet.enabled == other.wavelet.enabled;
         wavelet.strength = wavelet.strength && p.wavelet.strength == other.wavelet.strength;
         wavelet.balance = wavelet.balance && p.wavelet.balance == other.wavelet.balance;
@@ -2694,10 +2692,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.expos           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_LINEAR] ? toEdit.raw.expos + mods.raw.expos : mods.raw.expos;
     }
 
-    if (raw.exPreser) {
-        toEdit.raw.preser          = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_PRESER] ? toEdit.raw.preser + mods.raw.preser : mods.raw.preser;
-    }
-
     if (raw.hotPixelFilter) {
         toEdit.raw.hotPixelFilter    = mods.raw.hotPixelFilter;
     }
@@ -3200,7 +3194,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 bool RAWParamsEdited::isUnchanged() const
 {
     return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && ca_avoidcolourshift && caautoiterations && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
-            && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
+            && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && ff_AutoClipControl && ff_clipControl;
 }
 
 bool LensProfParamsEdited::isUnchanged() const

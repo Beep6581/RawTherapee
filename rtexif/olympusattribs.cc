@@ -214,7 +214,7 @@ public:
 };
 OLLensTypeInterpreter olLensTypeInterpreter;
 
-class OLFlashTypeInterpreter : public ChoiceInterpreter
+class OLFlashTypeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFlashTypeInterpreter ()
@@ -226,7 +226,7 @@ public:
 };
 OLFlashTypeInterpreter olFlashTypeInterpreter;
 
-class OLExposureModeInterpreter : public ChoiceInterpreter
+class OLExposureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLExposureModeInterpreter ()
@@ -240,7 +240,7 @@ public:
 };
 OLExposureModeInterpreter olExposureModeInterpreter;
 
-class OLMeteringModeInterpreter : public ChoiceInterpreter
+class OLMeteringModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLMeteringModeInterpreter ()
@@ -255,7 +255,7 @@ public:
 };
 OLMeteringModeInterpreter olMeteringModeInterpreter;
 
-class OLFocusModeInterpreter : public ChoiceInterpreter
+class OLFocusModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFocusModeInterpreter ()
@@ -270,7 +270,7 @@ public:
 };
 OLFocusModeInterpreter olFocusModeInterpreter;
 
-class OLWhitebalance2Interpreter : public ChoiceInterpreter
+class OLWhitebalance2Interpreter : public ChoiceInterpreter<>
 {
 public:
     OLWhitebalance2Interpreter ()
@@ -302,7 +302,7 @@ public:
 };
 OLWhitebalance2Interpreter olWhitebalance2Interpreter;
 
-class OLSceneModeInterpreter : public ChoiceInterpreter
+class OLSceneModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLSceneModeInterpreter ()
@@ -368,7 +368,7 @@ public:
 };
 OLSceneModeInterpreter olSceneModeInterpreter;
 
-class OLPictureModeBWFilterInterpreter : public ChoiceInterpreter
+class OLPictureModeBWFilterInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeBWFilterInterpreter ()
@@ -383,7 +383,7 @@ public:
 };
 OLPictureModeBWFilterInterpreter olPictureModeBWFilterInterpreter;
 
-class OLPictureModeToneInterpreter : public ChoiceInterpreter
+class OLPictureModeToneInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeToneInterpreter ()
@@ -398,7 +398,7 @@ public:
 };
 OLPictureModeToneInterpreter olPictureModeToneInterpreter;
 
-class OLImageQuality2Interpreter : public ChoiceInterpreter
+class OLImageQuality2Interpreter : public ChoiceInterpreter<>
 {
 public:
     OLImageQuality2Interpreter ()
@@ -412,7 +412,7 @@ public:
 };
 OLImageQuality2Interpreter olImageQuality2Interpreter;
 
-class OLDevEngineInterpreter : public ChoiceInterpreter
+class OLDevEngineInterpreter : public ChoiceInterpreter<>
 {
 public:
     // RawDevEngine
@@ -426,7 +426,7 @@ public:
 };
 OLDevEngineInterpreter olDevEngineInterpreter;
 
-class OLPictureModeInterpreter : public ChoiceInterpreter
+class OLPictureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeInterpreter ()
@@ -449,7 +449,7 @@ public:
 };
 OLPictureModeInterpreter olPictureModeInterpreter;
 
-class OLColorSpaceInterpreter : public ChoiceInterpreter
+class OLColorSpaceInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLColorSpaceInterpreter ()
@@ -522,7 +522,7 @@ public:
 };
 OLNoiseReductionInterpreter olNoiseReductionInterpreter;
 
-class OLFlashModelInterpreter : public ChoiceInterpreter
+class OLFlashModelInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFlashModelInterpreter ()

@@ -370,7 +370,6 @@ HISTORY_MSG_121;Raw CA Correção - Automática
 HISTORY_MSG_122;Quadro Escuro - Seleção Automática
 HISTORY_MSG_123;Quadro Escuro - Arquivo
 HISTORY_MSG_124;Correção de ponto branco
-HISTORY_MSG_125;Preservação da nitidez
 HISTORY_MSG_126;Flat-Field - Arquivo
 HISTORY_MSG_127;Flat-Field - Seleção automática
 HISTORY_MSG_128;Flat-Field - Raio de desfoque
@@ -982,7 +981,6 @@ PARTIALPASTE_RAWCACORR_AUTO;Auto correção CA
 PARTIALPASTE_RAWCACORR_CAREDBLUE;vermelho & azul CA
 PARTIALPASTE_RAWEXPOS_BLACK;Níveis de preto
 PARTIALPASTE_RAWEXPOS_LINEAR;Correção de ponto branco
-PARTIALPASTE_RAWEXPOS_PRESER;preservação do realce
 PARTIALPASTE_RAWGROUP;Configurações Raw
 PARTIALPASTE_RAW_BORDER;Borda raw
 PARTIALPASTE_RAW_DCBENHANCE;Aprimoramento DCB
@@ -1758,7 +1756,6 @@ TP_RAWEXPOS_BLACK_BLUE;Azul
 TP_RAWEXPOS_BLACK_GREEN;Verde
 TP_RAWEXPOS_BLACK_RED;Vermelho
 TP_RAWEXPOS_LINEAR;Correção de ponto branco
-TP_RAWEXPOS_PRESER;Preservação do realce
 TP_RAWEXPOS_RGB;Vermelho, Verde, Azul
 TP_RAWEXPOS_TWOGREEN;Ligações verdes
 TP_RAW_1PASSMEDIUM;1-Passar (Medio)
@@ -2313,6 +2310,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
+!TP_RAW_IMAGENUM_SN;SN mode
 !TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
 !TP_RETINEX_MAP;Method

@@ -302,7 +302,6 @@ HISTORY_MSG_121;Raw auto CA
 HISTORY_MSG_122;Auto marc fosc
 HISTORY_MSG_123;Fitxer de camp fosc
 HISTORY_MSG_124;Correc. expo. linear
-HISTORY_MSG_125;Correc. exposició preservant HL
 HISTORY_MSG_126;Fitxer de camp pla
 HISTORY_MSG_127;Auto-sel. camp pla
 HISTORY_MSG_128;Camp pla borrós - radi
@@ -470,7 +469,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre línia de soroll
 PARTIALPASTE_RAWCACORR_AUTO;Auto-correcció AC
 PARTIALPASTE_RAWEXPOS_BLACK;Nivell negre
 PARTIALPASTE_RAWEXPOS_LINEAR;Factor de corr. linear de punt blanc
-PARTIALPASTE_RAWEXPOS_PRESER;Corr. punt blanc preservant HL (EV)
 PARTIALPASTE_RAWGROUP;Ajustos raw
 PARTIALPASTE_RAW_DCBENHANCE;Aplica pas de millora DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'iteracions DCB
@@ -798,7 +796,6 @@ TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Vermell
 TP_RAWEXPOS_BLACKS;Nivells negres
 TP_RAWEXPOS_LINEAR;Punt blanc: factor de correcció linear
-TP_RAWEXPOS_PRESER;Punt blanc: correc. clars preservant (EV)
 TP_RAWEXPOS_TWOGREEN;Dos verds junts
 TP_RAW_DCBENHANCE;Aplica pas de millora  DCB
 TP_RAW_DCBITERATIONS;Nombre d'iteracions DCB
@@ -2008,7 +2005,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.

@@ -346,7 +346,6 @@ HISTORY_MSG_121;Automat. CA-reducering
 HISTORY_MSG_122;Automat. svartbildsval
 HISTORY_MSG_123;Svartbildsfil
 HISTORY_MSG_124;Vitpunktskorrigering
-HISTORY_MSG_125;Högdagerbevarande
 HISTORY_MSG_126;Plattfältsfil
 HISTORY_MSG_127;Automatiskt val av plattfält
 HISTORY_MSG_128;Oskärperadie för plattfält
@@ -788,7 +787,6 @@ PARTIALPASTE_PRSHARPENING;Skärpning efter storleksändring
 PARTIALPASTE_RAWCACORR_AUTO;Reducera kromatiska abberationer automatiskt
 PARTIALPASTE_RAWEXPOS_BLACK;Svärta
 PARTIALPASTE_RAWEXPOS_LINEAR;Vitpunktskorrigering
-PARTIALPASTE_RAWEXPOS_PRESER;Korrigering av högdagrar
 PARTIALPASTE_RAWGROUP;Råbildsinställningar
 PARTIALPASTE_RAW_DCBENHANCE;DCB-förbättringssteg
 PARTIALPASTE_RAW_DCBITERATIONS;Antal DCB-iterationer
@@ -1458,7 +1456,6 @@ TP_RAWEXPOS_BLACK_BLUE;Blå
 TP_RAWEXPOS_BLACK_GREEN;Grön
 TP_RAWEXPOS_BLACK_RED;Röd
 TP_RAWEXPOS_LINEAR;Vitpunktskorrigering
-TP_RAWEXPOS_PRESER;Bevara högdagrar
 TP_RAWEXPOS_RGB;Röd, grön, blå
 TP_RAWEXPOS_TWOGREEN;Två gröna tillsammans
 TP_RAW_DCBENHANCE;DCB-förbättringssteg
@@ -2213,7 +2210,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_MONO;Mono
 !TP_RAW_NONE;None (Shows sensor pattern)

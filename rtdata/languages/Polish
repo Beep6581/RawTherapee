@@ -336,7 +336,6 @@ HISTORY_MSG_121;Autokorekcja aberracji chromatycznej
 HISTORY_MSG_122;Czarna klatka - Auto-wybór
 HISTORY_MSG_123;Czarna klatka - Wybór
 HISTORY_MSG_124;Korekcja punktu bieli
-HISTORY_MSG_125;Zachowanie prześwietleń
 HISTORY_MSG_126;Puste pole - Wybór
 HISTORY_MSG_127;Puste pole - Auto-wybór
 HISTORY_MSG_128;Puste pole - Promień rozmycia
@@ -649,7 +648,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Redukcja szumów liniowych
 PARTIALPASTE_RAWCACORR_AUTO;Autokorekcja aberracji chr.
 PARTIALPASTE_RAWEXPOS_BLACK;Poziomy czerni
 PARTIALPASTE_RAWEXPOS_LINEAR;Korekcja punktu bieli
-PARTIALPASTE_RAWEXPOS_PRESER;Zachowanie prześwietleń
 PARTIALPASTE_RAWGROUP;Ustawienia raw
 PARTIALPASTE_RAW_DCBENHANCE;Zastosuj poprawę DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Liczba powtórzeń DCB
@@ -1252,7 +1250,6 @@ TP_RAWEXPOS_BLACK_BLUE;Niebieski
 TP_RAWEXPOS_BLACK_GREEN;Zielony
 TP_RAWEXPOS_BLACK_RED;Czerwony
 TP_RAWEXPOS_LINEAR;Liniowy współczynnik korekcji
-TP_RAWEXPOS_PRESER;Zachowanie prześwietleń
 TP_RAWEXPOS_RGB;Czerwony, Zielony, Niebieski
 TP_RAWEXPOS_TWOGREEN;Połącz obie zielenie
 TP_RAW_DCBENHANCE;Zastosuj poprawę DCB
@@ -2032,7 +2029,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_MONO;Mono
 !TP_RAW_NONE;None (Shows sensor pattern)

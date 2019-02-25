@@ -368,7 +368,6 @@ HISTORY_MSG_121;(raw) Авто ХА
 HISTORY_MSG_122;Авто темновой кадр
 HISTORY_MSG_123;Файл темнового кадра
 HISTORY_MSG_124;Коррекция баланса белого
-HISTORY_MSG_125;Сохранение пересветов
 HISTORY_MSG_126;Файл плоского поля
 HISTORY_MSG_127;Автовыбор плоского поля
 HISTORY_MSG_128;Радиус размытия плоского поля
@@ -704,7 +703,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Фильтр полосообразного 
 PARTIALPASTE_RAWCACORR_AUTO;Автоматическая коррекция ХА
 PARTIALPASTE_RAWEXPOS_BLACK;Уровень черного
 PARTIALPASTE_RAWEXPOS_LINEAR;Коррекция точки белого
-PARTIALPASTE_RAWEXPOS_PRESER;Сохранение пересветов
 PARTIALPASTE_RAWGROUP;Настройки Raw
 PARTIALPASTE_RAW_DCBENHANCE;Применить расширенный DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Количество проходов DCB
@@ -1322,7 +1320,6 @@ TP_RAWEXPOS_BLACK_BLUE;Синий
 TP_RAWEXPOS_BLACK_GREEN;Зелёный
 TP_RAWEXPOS_BLACK_RED;Красный
 TP_RAWEXPOS_LINEAR;Коррекция точки белого
-TP_RAWEXPOS_PRESER;Сохранение пересветов
 TP_RAWEXPOS_RGB;Красный, Зелёный, Синий
 TP_RAWEXPOS_TWOGREEN;Два зеленых совместно
 TP_RAW_AHD;AHD
@@ -2054,7 +2051,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 !TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
 !TP_RAW_PIXELSHIFTEPERISO;Sensitivity

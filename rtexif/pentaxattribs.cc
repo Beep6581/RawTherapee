@@ -31,7 +31,7 @@ namespace rtexif
 {
 
 
-class PAQualityInterpreter : public ChoiceInterpreter
+class PAQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAQualityInterpreter ()
@@ -50,7 +50,7 @@ public:
 };
 PAQualityInterpreter paQualityInterpreter;
 
-class PAOnOffInterpreter : public ChoiceInterpreter
+class PAOnOffInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAOnOffInterpreter ()
@@ -61,7 +61,7 @@ public:
 };
 PAOnOffInterpreter paOnOffInterpreter;
 
-class PAShakeReductionInterpreter : public ChoiceInterpreter
+class PAShakeReductionInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAShakeReductionInterpreter ()
@@ -80,7 +80,7 @@ public:
 };
 PAShakeReductionInterpreter paShakeReductionInterpreter;
 
-class PAShakeReduction2Interpreter : public ChoiceInterpreter
+class PAShakeReduction2Interpreter : public ChoiceInterpreter<>
 {
 public:
     // ShakeReduction
@@ -100,7 +100,7 @@ public:
 };
 PAShakeReduction2Interpreter paShakeReduction2Interpreter;
 
-class PAPictureModeInterpreter : public ChoiceInterpreter
+class PAPictureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAPictureModeInterpreter ()
@@ -164,7 +164,7 @@ public:
 };
 PAPictureModeInterpreter paPictureModeInterpreter;
 
-class PASceneModeInterpreter : public ChoiceInterpreter
+class PASceneModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     PASceneModeInterpreter ()
@@ -196,7 +196,7 @@ public:
 };
 PASceneModeInterpreter paSceneModeInterpreter;
 
-class PAAEProgramModeInterpreter : public ChoiceInterpreter
+class PAAEProgramModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAAEProgramModeInterpreter ()
@@ -235,7 +235,7 @@ public:
 };
 PAAEProgramModeInterpreter paAEProgramModeInterpreter;
 
-class PAFlashModeInterpreter : public ChoiceInterpreter
+class PAFlashModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAFlashModeInterpreter ()
@@ -259,7 +259,7 @@ public:
 };
 PAFlashModeInterpreter paFlashModeInterpreter;
 
-class PAFocusModeInterpreter : public ChoiceInterpreter
+class PAFocusModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAFocusModeInterpreter ()
@@ -283,7 +283,7 @@ public:
 };
 PAFocusModeInterpreter paFocusModeInterpreter;
 
-class PAAFPointInterpreter : public ChoiceInterpreter
+class PAAFPointInterpreter : public ChoiceInterpreter<>
 {
 public:
     // AFPointSelected
@@ -310,7 +310,7 @@ public:
 };
 PAAFPointInterpreter paAFPointInterpreter;
 
-class PAAFFocusInterpreter : public ChoiceInterpreter
+class PAAFFocusInterpreter : public ChoiceInterpreter<>
 {
 public:
     // AFPointsInFocus
@@ -331,7 +331,7 @@ public:
 };
 PAAFFocusInterpreter paAFFocusInterpreter;
 
-class PAISOInterpreter : public ChoiceInterpreter
+class PAISOInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAISOInterpreter        ()
@@ -430,7 +430,7 @@ public:
 };
 PAFNumberInterpreter paFNumberInterpreter;
 
-class PAMeteringModeInterpreter : public ChoiceInterpreter
+class PAMeteringModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAMeteringModeInterpreter ()
@@ -442,7 +442,7 @@ public:
 };
 PAMeteringModeInterpreter paMeteringModeInterpreter;
 
-class PAWhiteBalanceInterpreter : public ChoiceInterpreter
+class PAWhiteBalanceInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAWhiteBalanceInterpreter ()
@@ -468,7 +468,7 @@ public:
 };
 PAWhiteBalanceInterpreter paWhiteBalanceInterpreter;
 
-class PAWhiteBalanceModeInterpreter : public ChoiceInterpreter
+class PAWhiteBalanceModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAWhiteBalanceModeInterpreter ()
@@ -487,7 +487,7 @@ public:
 };
 PAWhiteBalanceModeInterpreter paWhiteBalanceModeInterpreter;
 
-class PASaturationInterpreter : public ChoiceInterpreter
+class PASaturationInterpreter : public ChoiceInterpreter<>
 {
 public:
     PASaturationInterpreter ()
@@ -506,7 +506,7 @@ public:
 };
 PASaturationInterpreter paSaturationInterpreter;
 
-class PAContrastInterpreter : public ChoiceInterpreter
+class PAContrastInterpreter : public ChoiceInterpreter<>
 {
 public:
     PAContrastInterpreter ()
@@ -525,7 +525,7 @@ public:
 };
 PAContrastInterpreter paContrastInterpreter;
 
-class PASharpnessInterpreter : public ChoiceInterpreter
+class PASharpnessInterpreter : public ChoiceInterpreter<>
 {
 public:
     PASharpnessInterpreter ()
@@ -543,7 +543,7 @@ public:
 };
 PASharpnessInterpreter paSharpnessInterpreter;
 
-class PAPictureModeInterpreter2: public ChoiceInterpreter
+class PAPictureModeInterpreter2: public ChoiceInterpreter<>
 {
 public:
     PAPictureModeInterpreter2()
@@ -613,7 +613,7 @@ public:
     std::string toString (Tag* t) override
     {
         int c = 256 * t->toInt (0, BYTE) + t->toInt (1, BYTE);
-        std::map<int, std::string>::iterator r = choices.find (c);
+        const ChoicesIterator r = choices.find (c);
 
         if (r != choices.end()) {
             std::ostringstream s;
@@ -635,7 +635,7 @@ public:
 };
 PAPictureModeInterpreter2 paPictureModeInterpreter2;
 
-class PADriveModeInterpreter : public ChoiceInterpreter
+class PADriveModeInterpreter : public ChoiceInterpreter<>
 {
     std::map<int, std::string> choices1;
     std::map<int, std::string> choices2;
@@ -671,7 +671,7 @@ public:
     }
     std::string toString (Tag* t) override
     {
-        std::map<int, std::string>::iterator r  = choices.find (t->toInt (0, BYTE));
+        const ChoicesIterator r  = choices.find (t->toInt (0, BYTE));
         std::map<int, std::string>::iterator r1 = choices1.find (t->toInt (1, BYTE));
         std::map<int, std::string>::iterator r2 = choices2.find (t->toInt (2, BYTE));
         std::map<int, std::string>::iterator r3 = choices3.find (t->toInt (3, BYTE));
@@ -685,7 +685,7 @@ public:
 };
 PADriveModeInterpreter paDriveModeInterpreter;
 
-class PAColorSpaceInterpreter: public ChoiceInterpreter
+class PAColorSpaceInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAColorSpaceInterpreter()
@@ -1079,7 +1079,7 @@ public:
 };
 PASRResultInterpreter paSRResultInterpreter;
 
-class PAHighISONoiseInterpreter: public ChoiceInterpreter
+class PAHighISONoiseInterpreter: public ChoiceInterpreter<>
 {
 public:
     // HighISONoiseReduction
@@ -1095,7 +1095,7 @@ public:
 };
 PAHighISONoiseInterpreter paHighISONoiseInterpreter;
 
-class PAMonochromeFilterEffectInterpreter: public ChoiceInterpreter
+class PAMonochromeFilterEffectInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAMonochromeFilterEffectInterpreter()
@@ -1113,7 +1113,7 @@ public:
 };
 PAMonochromeFilterEffectInterpreter paMonochromeFilterEffectInterpreter;
 
-class PAMonochromeToningInterpreter: public ChoiceInterpreter
+class PAMonochromeToningInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAMonochromeToningInterpreter()
@@ -1132,7 +1132,7 @@ public:
 };
 PAMonochromeToningInterpreter paMonochromeToningInterpreter;
 
-class PAShadowCorrectionInterpreter: public ChoiceInterpreter
+class PAShadowCorrectionInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAShadowCorrectionInterpreter()
@@ -1156,7 +1156,7 @@ public:
             idx = t->toInt (0, BYTE) << 8 | t->toInt (1, BYTE);
         }
 
-        std::map<int, std::string>::iterator r  = choices.find (idx);
+        const ChoicesIterator r  = choices.find (idx);
         std::ostringstream s;
         s << ((r != choices.end()) ? r->second : "n/a");
         return s.str();
@@ -1164,7 +1164,7 @@ public:
 };
 PAShadowCorrectionInterpreter paShadowCorrectionInterpreter;
 
-class PAISOAutoParametersInterpreter: public ChoiceInterpreter
+class PAISOAutoParametersInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAISOAutoParametersInterpreter()
@@ -1175,7 +1175,7 @@ public:
     }
     std::string toString (Tag* t) override
     {
-        std::map<int, std::string>::iterator r  = choices.find (t->toInt (0, BYTE));
+        const ChoicesIterator r  = choices.find (t->toInt (0, BYTE));
         std::ostringstream s;
         s << ((r != choices.end()) ? r->second : "n/a");
         return s.str();
@@ -1183,7 +1183,7 @@ public:
 };
 PAISOAutoParametersInterpreter paISOAutoParametersInterpreter;
 
-class PABleachBypassToningInterpreter: public ChoiceInterpreter
+class PABleachBypassToningInterpreter: public ChoiceInterpreter<>
 {
 public:
     PABleachBypassToningInterpreter()
@@ -1201,7 +1201,7 @@ public:
 };
 PABleachBypassToningInterpreter paBleachBypassToningInterpreter;
 
-class PABlurControlInterpreter: public ChoiceInterpreter
+class PABlurControlInterpreter: public ChoiceInterpreter<>
 {
 public:
     PABlurControlInterpreter()
@@ -1213,7 +1213,7 @@ public:
     }
     std::string toString (Tag* t) override
     {
-        std::map<int, std::string>::iterator r  = choices.find (t->toInt (0, BYTE));
+        const ChoicesIterator r  = choices.find (t->toInt (0, BYTE));
         std::ostringstream s;
         s << ((r != choices.end()) ? r->second : "n/a");
         return s.str();
@@ -1221,7 +1221,7 @@ public:
 };
 PABlurControlInterpreter paBlurControlInterpreter;
 
-class PAHDRInterpreter: public ChoiceInterpreter
+class PAHDRInterpreter: public ChoiceInterpreter<>
 {
     std::map<int, std::string> choices1;
     std::map<int, std::string> choices2;
@@ -1245,7 +1245,7 @@ public:
     }
     std::string toString (Tag* t) override
     {
-        std::map<int, std::string>::iterator r  = choices.find  (t->toInt (0, BYTE));
+        const ChoicesIterator r  = choices.find  (t->toInt (0, BYTE));
         std::map<int, std::string>::iterator r1 = choices1.find (t->toInt (1, BYTE));
         std::map<int, std::string>::iterator r2 = choices2.find (t->toInt (2, BYTE));
         std::ostringstream s;
@@ -1257,7 +1257,7 @@ public:
 };
 PAHDRInterpreter paHDRInterpreter;
 
-class PACrossProcessInterpreter: public ChoiceInterpreter
+class PACrossProcessInterpreter: public ChoiceInterpreter<>
 {
 public:
     PACrossProcessInterpreter()
@@ -1274,7 +1274,7 @@ public:
 };
 PACrossProcessInterpreter paCrossProcessInterpreter;
 
-class PAPowerSourceInterpreter: public ChoiceInterpreter
+class PAPowerSourceInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAPowerSourceInterpreter()
@@ -1592,7 +1592,7 @@ public:
 };
 PANominalMaxApertureInterpreter paNominalMaxApertureInterpreter;
 
-class PAFlashStatusInterpreter: public ChoiceInterpreter
+class PAFlashStatusInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAFlashStatusInterpreter()
@@ -1608,7 +1608,7 @@ public:
 };
 PAFlashStatusInterpreter paFlashStatusInterpreter;
 
-class PAInternalFlashModeInterpreter: public ChoiceInterpreter
+class PAInternalFlashModeInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAInternalFlashModeInterpreter()
@@ -1638,7 +1638,7 @@ public:
 };
 PAInternalFlashModeInterpreter paInternalFlashModeInterpreter;
 
-class PAExternalFlashModeInterpreter: public ChoiceInterpreter
+class PAExternalFlashModeInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAExternalFlashModeInterpreter()
@@ -1658,7 +1658,7 @@ public:
 };
 PAExternalFlashModeInterpreter paExternalFlashModeInterpreter;
 
-class PAExternalFlashExposureCompInterpreter: public ChoiceInterpreter
+class PAExternalFlashExposureCompInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAExternalFlashExposureCompInterpreter()
@@ -1678,7 +1678,7 @@ public:
 };
 PAExternalFlashExposureCompInterpreter paExternalFlashExposureCompInterpreter;
 
-class PAExternalFlashBounceInterpreter: public ChoiceInterpreter
+class PAExternalFlashBounceInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAExternalFlashBounceInterpreter()
@@ -1761,7 +1761,7 @@ public:
 };
 PAApertureRingUseInterpreter paApertureRingUseInterpreter;
 
-class PAFlashOptionInterpreter: public ChoiceInterpreter
+class PAFlashOptionInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAFlashOptionInterpreter()
@@ -1778,7 +1778,7 @@ public:
     }
     std::string toString (Tag* t) override
     {
-        std::map<int, std::string>::iterator r = choices.find (t->toInt (0, BYTE) >> 4);
+        const ChoicesIterator r = choices.find (t->toInt (0, BYTE) >> 4);
 
         if (r != choices.end()) {
             return r->second;
@@ -1813,7 +1813,7 @@ public:
 };
 PAMeteringMode2Interpreter paMeteringMode2Interpreter;
 
-class PAExposureBracketStepSizeInterpreter: public ChoiceInterpreter
+class PAExposureBracketStepSizeInterpreter: public ChoiceInterpreter<>
 {
 public:
     PAExposureBracketStepSizeInterpreter()
@@ -1830,7 +1830,7 @@ public:
 };
 PAExposureBracketStepSizeInterpreter paExposureBracketStepSizeInterpreter;
 
-class PAPictureMode2Interpreter: public ChoiceInterpreter
+class PAPictureMode2Interpreter: public ChoiceInterpreter<>
 {
 public:
     PAPictureMode2Interpreter()

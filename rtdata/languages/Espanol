@@ -440,7 +440,6 @@ HISTORY_MSG_121;Corrección automática AC
 HISTORY_MSG_122;Auto selección de arch. de Toma Negra
 HISTORY_MSG_123;Archivo de Toma Negra
 HISTORY_MSG_124;Corrección de punto blanco
-HISTORY_MSG_125;Preservar Luces Altas
 HISTORY_MSG_126;Archivo de campo plano
 HISTORY_MSG_127;Auto selección archivo de campo plano
 HISTORY_MSG_128;Radio de difuminado de campo plano
@@ -1081,7 +1080,6 @@ PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA evitar el cambio de color
 PARTIALPASTE_RAWCACORR_CAREDBLUE;CA Rojo & Azul
 PARTIALPASTE_RAWEXPOS_BLACK;Nivel de negro
 PARTIALPASTE_RAWEXPOS_LINEAR;Corrección de punto blanco
-PARTIALPASTE_RAWEXPOS_PRESER;Preservar Luces Altas
 PARTIALPASTE_RAWGROUP;Ajustes Raw
 PARTIALPASTE_RAW_BORDER;Raw margen/borde
 PARTIALPASTE_RAW_DCBENHANCE;Aplicar paso de mejora DCB
@@ -1972,7 +1970,6 @@ TP_RAWEXPOS_BLACK_BLUE;Azul
 TP_RAWEXPOS_BLACK_GREEN;Verde
 TP_RAWEXPOS_BLACK_RED;Rojo
 TP_RAWEXPOS_LINEAR;Corrección de punto blanco
-TP_RAWEXPOS_PRESER;Preservación de Luces Altas
 TP_RAWEXPOS_RGB;Rojo, Verde, Azul
 TP_RAWEXPOS_TWOGREEN;Vincular verdes
 TP_RAW_1PASSMEDIUM;1-pasaje (medio)
@@ -2462,4 +2459,5 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
+!TP_RAW_IMAGENUM_SN;SN mode
 !TP_SHARPENING_BLUR;Blur radius

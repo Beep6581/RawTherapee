@@ -116,7 +116,7 @@ EXPORT_BYPASS;迂回させる機能
 EXPORT_BYPASS_ALL;全て選択 / 全て解除
 EXPORT_BYPASS_DEFRINGE;フリンジ低減を迂回
 EXPORT_BYPASS_DIRPYRDENOISE;ノイズ低減を迂回
-EXPORT_BYPASS_DIRPYREQUALIZER;ディテール・レベルのコントラストを迂回
+EXPORT_BYPASS_DIRPYREQUALIZER;詳細レベルによるコントラスト調整を迂回
 EXPORT_BYPASS_EQUALIZER;ウェーブレットのレベルを迂回
 EXPORT_BYPASS_RAW_CA;[raw] 色収差補正を迂回
 EXPORT_BYPASS_RAW_CCSTEPS;[raw] 偽色抑制を迂回
@@ -127,8 +127,8 @@ EXPORT_BYPASS_RAW_FF;[raw] フラットフィールドを迂回
 EXPORT_BYPASS_RAW_GREENTHRESH;[raw] グリーン平衡化を迂回
 EXPORT_BYPASS_RAW_LINENOISE;[raw] ラインノイズ フィルタを迂回
 EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;[raw] LMMSE 拡張処理を迂回
-EXPORT_BYPASS_SHARPENEDGE;エッジ・シャープ化を迂回
-EXPORT_BYPASS_SHARPENING;シャープ化を迂回
+EXPORT_BYPASS_SHARPENEDGE;エッジ・シャープニングを迂回
+EXPORT_BYPASS_SHARPENING;シャープニングを迂回
 EXPORT_BYPASS_SHARPENMICRO;マイクロコントラストを迂回
 EXPORT_BYPASS_SH_HQ;シャドウ/ハイライト(高画質)を迂回
 EXPORT_FASTEXPORTOPTIONS;<b>高速書き出しオプション</b>
@@ -307,16 +307,16 @@ HISTORY_MSG_16;輝度 黒レベル
 HISTORY_MSG_17;輝度 ハイライト圧縮
 HISTORY_MSG_18;輝度 シャドウ圧縮
 HISTORY_MSG_19;L*a*b* - L*カーブ
-HISTORY_MSG_20;シャープ化
-HISTORY_MSG_21;シャープ化 半径
-HISTORY_MSG_22;シャープ化 適用量
-HISTORY_MSG_23;シャープ化 しきい値
-HISTORY_MSG_24;シャープ化 エッジのみ
-HISTORY_MSG_25;シャープ化 エッジ検出 半径
-HISTORY_MSG_26;シャープ化 エッジ許容
-HISTORY_MSG_27;シャープ化 ハロ抑制
+HISTORY_MSG_20;シャープニング
+HISTORY_MSG_21;シャープニング 半径
+HISTORY_MSG_22;シャープニング 適用量
+HISTORY_MSG_23;シャープニング しきい値
+HISTORY_MSG_24;シャープニング エッジのみ
+HISTORY_MSG_25;シャープニング エッジ検出 半径
+HISTORY_MSG_26;シャープニング エッジ許容
+HISTORY_MSG_27;シャープニング ハロ抑制
 HISTORY_MSG_28;ハロ抑制 適用量
-HISTORY_MSG_29;シャープ化 方式
+HISTORY_MSG_29;シャープニング 方式
 HISTORY_MSG_30;デコンボリューション 半径
 HISTORY_MSG_31;デコンボリューション 適用量
 HISTORY_MSG_32;デコンボリューション 減衰
@@ -380,8 +380,8 @@ HISTORY_MSG_89;ノイズ低減
 HISTORY_MSG_90;輝度ノイズの低減
 HISTORY_MSG_91;色ノイズの低減
 HISTORY_MSG_92;ノイズ低減のガンマ
-HISTORY_MSG_93;ディテールのコントラスト係数
-HISTORY_MSG_94;ディテールのコントラスト
+HISTORY_MSG_93;詳細レベルコントラスト係数
+HISTORY_MSG_94;詳細レベルコントラスト
 HISTORY_MSG_95;L*a*b* - 色度
 HISTORY_MSG_96;L*a*b* - a*カーブ
 HISTORY_MSG_97;L*a*b* - b*カーブ
@@ -412,7 +412,6 @@ HISTORY_MSG_121;raw 色収差 自動
 HISTORY_MSG_122;ダークフレーム 自動
 HISTORY_MSG_123;ダークフレーム ファイル
 HISTORY_MSG_124;リニア露光補正
-HISTORY_MSG_125;露光補正 HLを保持
 HISTORY_MSG_126;フラットフィールド ファイル
 HISTORY_MSG_127;フラットフィールド 自動選択
 HISTORY_MSG_128;フラットフィールド・ぼかし半径
@@ -429,12 +428,12 @@ HISTORY_MSG_138;黒レベル レッド
 HISTORY_MSG_139;黒レベル ブルー
 HISTORY_MSG_140;黒レベル グリーン 2
 HISTORY_MSG_141;黒レベル グリーン 連動
-HISTORY_MSG_142;エッジ シャープ化 - 反復
-HISTORY_MSG_143;エッジ シャープ化 - 適用量
+HISTORY_MSG_142;エッジ シャープニング - 反復
+HISTORY_MSG_143;エッジ シャープニング - 適用量
 HISTORY_MSG_144;マイクロコントラスト - 適用量
 HISTORY_MSG_145;マイクロコントラスト - 均等
-HISTORY_MSG_146;エッジ シャープ化
-HISTORY_MSG_147;エッジ シャープ化 - 輝度のみ
+HISTORY_MSG_146;エッジ シャープニング
+HISTORY_MSG_147;エッジ シャープニング - 輝度のみ
 HISTORY_MSG_148;マイクロコントラスト
 HISTORY_MSG_149;マイクロコントラスト - 3×3 マトリクス
 HISTORY_MSG_150;デモザイク後にアーティファクトとノイズを軽減
@@ -535,7 +534,7 @@ HISTORY_MSG_245;ビネットフィルター　中央
 HISTORY_MSG_246;L*a*b* CL カーブ
 HISTORY_MSG_247;L*a*b* LH カーブ
 HISTORY_MSG_248;L*a*b* HH カーブ
-HISTORY_MSG_249;ディテールレベルのコントラスト - しきい値
+HISTORY_MSG_249;詳細レベルによるコントラスト調整 - しきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
 HISTORY_MSG_251;白黒 - アルゴリズム
 HISTORY_MSG_252;CbDL 肌色の目標/保護
@@ -549,15 +548,15 @@ HISTORY_MSG_259;カラートーン調整　-　不透明度のカーブ
 HISTORY_MSG_260;カラートーン調整　- a*(b*)の不透明度
 HISTORY_MSG_261;カラートーン調整　-　方法
 HISTORY_MSG_262;カラートーン調整　-　b*の不透明度
-HISTORY_MSG_263;カラートーン調整　-　シャドウのレッド
-HISTORY_MSG_264;カラートーン調整　-　シャドウのグリーン
-HISTORY_MSG_265;カラートーン調整　-　シャドウのブルー
+HISTORY_MSG_263;カラートーン調整　- シャドウのレッド
+HISTORY_MSG_264;カラートーン調整　- シャドウのグリーン
+HISTORY_MSG_265;カラートーン調整　- シャドウのブルー
 HISTORY_MSG_266;カラートーン調整　-　中間トーンのレッド
 HISTORY_MSG_267;カラートーン調整　-　中間トーンのグリーン
 HISTORY_MSG_268;カラートーン調整　-　中間トーンのブルー
-HISTORY_MSG_269;カラートーン調整　-　ハイライトのレッド
-HISTORY_MSG_270;カラートーン調整　-　ハイライトのグリーン
-HISTORY_MSG_271;カラートーン調整　-　ハイライトのブルー
+HISTORY_MSG_269;カラートーン調整　- ハイライトのレッド
+HISTORY_MSG_270;カラートーン調整　- ハイライトのグリーン
+HISTORY_MSG_271;カラートーン調整　- ハイライトのブルー
 HISTORY_MSG_272;カラートーン調整　- バランス
 HISTORY_MSG_273;カラートーン調整 - SMHでカラーバランス
 HISTORY_MSG_274;カラートーン調整　-　シャドウの彩度
@@ -599,7 +598,7 @@ HISTORY_MSG_309;W- ES ディテール
 HISTORY_MSG_310;W- 残差 青空の目標/保護
 HISTORY_MSG_311;W- ウェーブレットのレベル
 HISTORY_MSG_312;W- 残差　シャドウのしきい値
-HISTORY_MSG_313;W- 色度　明星色/純色
+HISTORY_MSG_313;W- 色度　明清色/純色
 HISTORY_MSG_314;W- 色域　アーティファクトの軽減
 HISTORY_MSG_315;W- 残差　コントラスト
 HISTORY_MSG_316;W- 色域　肌色の目標/保護
@@ -610,7 +609,7 @@ HISTORY_MSG_320;W- コントラスト シャドウ範囲
 HISTORY_MSG_321;W- コントラスト シャドウレベル
 HISTORY_MSG_322;W- 色域　色ずれの回避
 HISTORY_MSG_323;W- ES　ローカルコントラスト
-HISTORY_MSG_324;W- 色度　明星色
+HISTORY_MSG_324;W- 色度　明清色
 HISTORY_MSG_325;W- 色度　純色
 HISTORY_MSG_326;W- 色度　方法
 HISTORY_MSG_327;W- コントラスト　適用先
@@ -657,7 +656,7 @@ HISTORY_MSG_367;W- ES ローカルコントラストカーブ
 HISTORY_MSG_368;W- 最終　コントラストバランス
 HISTORY_MSG_369;W- 最終　バランスの方法
 HISTORY_MSG_370;W- 最終　ローカルコントラストカーブ
-HISTORY_MSG_371;リサイズ後のシャープ化（PRS）
+HISTORY_MSG_371;リサイズ後のシャープニング（PRS）
 HISTORY_MSG_372;PRS アンシャープマスク - 半径
 HISTORY_MSG_373;PRS アンシャープマスク - 適用量
 HISTORY_MSG_374;PRS アンシャープマスク - しきい値
@@ -726,7 +725,7 @@ HISTORY_MSG_436;レティネックス - M - 半径
 HISTORY_MSG_437;レティネックス - M - 方式
 HISTORY_MSG_438;レティネックス - M - イコライザ
 HISTORY_MSG_439;レティネックス - プロセス
-HISTORY_MSG_440;ディテールのコントラスト - 適用
+HISTORY_MSG_440;詳細レベルコントラスト - 適用
 HISTORY_MSG_441;レティネックス - 透過率の増加
 HISTORY_MSG_442;レティネックス - スケール
 HISTORY_MSG_443;出力のブラックポイント補正
@@ -759,7 +758,7 @@ HISTORY_MSG_485;レンズ補正
 HISTORY_MSG_486;レンズ補正 - カメラ
 HISTORY_MSG_487;レンズ補正 - レンズ
 HISTORY_MSG_488;ダイナミックレンジ圧縮
-HISTORY_MSG_489;DRC - ディテール
+HISTORY_MSG_489;DRC - CbDL
 HISTORY_MSG_490;DRC - 量
 HISTORY_MSG_491;ホワイトバランス
 HISTORY_MSG_492;RGBカーブ
@@ -807,7 +806,8 @@ HISTORY_MSG_RAWCACORR_AUTOIT;Rawの色収差補正 - 繰り返し
 HISTORY_MSG_RAWCACORR_COLORSHIFT;Rawの色収差補正 - 色ずれを回避
 HISTORY_MSG_RAW_BORDER;Rawの境界
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;リサイズ - アップスケーリングを可能にする
-HISTORY_MSG_SHARPENING_CONTRAST;シャープ化 - コントラストのしきい値
+HISTORY_MSG_SHARPENING_BLUR;シャープニング - ぼかしの半径
+HISTORY_MSG_SHARPENING_CONTRAST;シャープニング - コントラストのしきい値
 HISTORY_MSG_SH_COLORSPACE;S/H - 色空間
 HISTORY_MSG_SOFTLIGHT_ENABLED;ソフトライト
 HISTORY_MSG_SOFTLIGHT_STRENGTH;ソフトライト - 強さ
@@ -940,13 +940,15 @@ MAIN_TAB_ADVANCED;高度な機能
 MAIN_TAB_ADVANCED_TOOLTIP;ショートカット: <b>Alt-w</b>
 MAIN_TAB_COLOR;カラー
 MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-c</b>
-MAIN_TAB_DETAIL;ディテール
+MAIN_TAB_DETAIL;CbDL
 MAIN_TAB_DETAIL_TOOLTIP;ショートカット: <b>Alt-d</b>
 MAIN_TAB_DEVELOP;一括編集
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPORT;高速書き出し
 MAIN_TAB_EXPOSURE;露光
 MAIN_TAB_EXPOSURE_TOOLTIP;ショートカット: <b>Alt-e</b>
+MAIN_TAB_FAVORITES;お気に入り
+MAIN_TAB_FAVORITES_TOOLTIP;ショートカット: <b>Alt-u</b>
 MAIN_TAB_FILTER;絞り込み
 MAIN_TAB_INSPECT;カメラ出しJPEG
 MAIN_TAB_IPTC;IPTC
@@ -969,7 +971,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;<b>フォーカス・マスク</b>表示\nショ�
 MAIN_TOOLTIP_PREVIEWG;<b>グリーン チャンネル</b>表示\nショートカット: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;<b>輝度</b>表示\nショートカット: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;<b>レッド チャンネル</b>表示\nショートカット: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;プレビューで見る<b>シャープ化機能のコントラストマスク</b>\nショートカット： <b>p</b>\n\nこの機能が使えるのはシャープ化機能が有効で、画像が100％以上に拡大されている場合だけ
+MAIN_TOOLTIP_PREVIEWSHARPMASK;プレビューで見る<b>シャープニング機能のコントラストマスク</b>\nショートカット： <b>p</b>\n\nこの機能が使えるのはシャープニング機能が有効で、画像が100％以上に拡大されている場合だけ
 MAIN_TOOLTIP_QINFO;画像の情報\nショートカット: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;表示/非表示 左パネル\nショートカット: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル\nショートカット: <b>Alt-l</b>
@@ -1011,7 +1013,7 @@ PARTIALPASTE_DEHAZE;霞除去
 PARTIALPASTE_DETAILGROUP;ディテールの設定
 PARTIALPASTE_DIALOGLABEL;処理プロファイルの部分ペースト
 PARTIALPASTE_DIRPYRDENOISE;ノイズ低減
-PARTIALPASTE_DIRPYREQUALIZER;ディテール・レベルのコントラスト
+PARTIALPASTE_DIRPYREQUALIZER;詳細レベルによるコントラスト調整
 PARTIALPASTE_DISTORTION;歪曲補正
 PARTIALPASTE_EPD;トーンマッピング
 PARTIALPASTE_EQUALIZER;ウェーブレット
@@ -1042,13 +1044,12 @@ PARTIALPASTE_PREPROCESS_GREENEQUIL;グリーン 平衡化
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;ホットピクセルフィルターを適用
 PARTIALPASTE_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
 PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF ラインフィルタ
-PARTIALPASTE_PRSHARPENING;リサイズ後のシャープ化
+PARTIALPASTE_PRSHARPENING;リサイズ後のシャープニング
 PARTIALPASTE_RAWCACORR_AUTO;自動色収差補正
 PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA 色ずれを回避
 PARTIALPASTE_RAWCACORR_CAREDBLUE;色収差 レッドとブルー
 PARTIALPASTE_RAWEXPOS_BLACK;黒レベル
 PARTIALPASTE_RAWEXPOS_LINEAR;raw ホワイトポイント リニア補正係数
-PARTIALPASTE_RAWEXPOS_PRESER;raw ホワイトポイント ハイライトを保持したまま補正 (EV)
 PARTIALPASTE_RAWGROUP;raw 設定
 PARTIALPASTE_RAW_BORDER;Rawの境界
 PARTIALPASTE_RAW_DCBENHANCE;DCB 拡張処理適用
@@ -1064,7 +1065,7 @@ PARTIALPASTE_RGBCURVES;RGB カーブ
 PARTIALPASTE_ROTATION;回転
 PARTIALPASTE_SHADOWSHIGHLIGHTS;シャドウ/ハイライト
 PARTIALPASTE_SHARPENEDGE;エッジ
-PARTIALPASTE_SHARPENING;シャープ化 (USM/RL)
+PARTIALPASTE_SHARPENING;シャープニング (USM/RL)
 PARTIALPASTE_SHARPENMICRO;マイクロコントラスト
 PARTIALPASTE_SOFTLIGHT;ソフトな明るさ
 PARTIALPASTE_TM_FATTAL;ダイナミックレンジ圧縮
@@ -1411,7 +1412,7 @@ TP_CACORRECTION_RED;レッド
 TP_CBDL_AFT;白黒適用の後
 TP_CBDL_BEF;白黒適用の前
 TP_CBDL_METHOD;処理の順番
-TP_CBDL_METHOD_TOOLTIP;ディテールレベルのコントラストの処理を白黒処理の前に行うか、後に行うか選びます。前を選んだ場合は同機能の作業色空間はRGBとなり、後を選んだ場合はL*a*b*となります。
+TP_CBDL_METHOD_TOOLTIP;詳細レベルによるコントラスト調整の処理を白黒処理の前に行うか、後に行うか選びます。前を選んだ場合は同機能の作業色空間はRGBとなり、後を選んだ場合はL*a*b*となります。
 TP_CHMIXER_BLUE;ブルー
 TP_CHMIXER_GREEN;グリーン
 TP_CHMIXER_LABEL;チャンネルミキサー
@@ -1639,7 +1640,7 @@ TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に
 TP_DIRPYREQUALIZER_ARTIF;アーティファクトを軽減
 TP_DIRPYREQUALIZER_HUESKIN;肌色の色相
 TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;このカーブは上部ほど、アルゴリズムが効率良く働くことを示しています。\n下部ほど、色相の遷移が見られる部分です。\nコントロールポイントを左右に大きく動かす必要が生じたり、アーティファクトが生じたりする場合は、<b>ホワイトバランスが妥当ではない</b>時です。\n他の色への影響を避けるには、調整範囲を少し減らします
-TP_DIRPYREQUALIZER_LABEL;ディテールレベルのコントラスト
+TP_DIRPYREQUALIZER_LABEL;詳細レベルによるコントラスト調整
 TP_DIRPYREQUALIZER_LUMACOARSEST;粗い
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト+
@@ -1857,8 +1858,8 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;垂直方向
 TP_PREPROCESS_NO_FOUND;未検出
 TP_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
 TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Sonyのミラーレスカメラの一部では、PDAFイメージセンサが原因で、ゴーストが出るバックライトの画像でストライプノイズが発生することがあり、これを軽減します。
-TP_PRSHARPENING_LABEL;リサイズ後のシャープ化
-TP_PRSHARPENING_TOOLTIP;リサイズ後の画像をシャープ化します。但し、リサイズの方式がランチョスの場合に限ります。プレビュー画面でこの機能の効果を見ることは出来ません。使用法に関してはRawPediaを参照して下さい。
+TP_PRSHARPENING_LABEL;リサイズ後のシャープニング
+TP_PRSHARPENING_TOOLTIP;リサイズ後の画像をシャープニングします。但し、リサイズの方式がランチョスの場合に限ります。プレビュー画面でこの機能の効果を見ることは出来ません。使用法に関してはRawPediaを参照して下さい。
 TP_RAWCACORR_AUTO;自動補正
 TP_RAWCACORR_AUTOIT;繰り返し
 TP_RAWCACORR_AUTOIT_TOOLTIP;”自動補正”が有効になっている場合にこの設定が可能です。\n自動補正の作用は控えめなため、全ての色収差が常に補正されるとは限りません。\n残りの色収差を補正するためには、自動色収差補正の繰り返しを最大5回行います。\n繰り返すたびに、直前の繰り返しで残った色収差を軽減しますが、その分処理時間は増えます。
@@ -1875,7 +1876,6 @@ TP_RAWEXPOS_BLACK_BLUE;ブルー
 TP_RAWEXPOS_BLACK_GREEN;グリーン
 TP_RAWEXPOS_BLACK_RED;レッド
 TP_RAWEXPOS_LINEAR;ホワイトポイント補正
-TP_RAWEXPOS_PRESER;ハイライトを保持
 TP_RAWEXPOS_RGB;レッド、グリーン、ブルー
 TP_RAWEXPOS_TWOGREEN;2つのグリーンを連動
 TP_RAW_1PASSMEDIUM;1-パス (Markesteijn)
@@ -2067,14 +2067,15 @@ TP_SHARPENEDGE_LABEL;エッジ
 TP_SHARPENEDGE_PASSES;反復
 TP_SHARPENEDGE_THREE;輝度のみ
 TP_SHARPENING_AMOUNT;適用量
+TP_SHARPENING_BLUR;ぼかしの半径
 TP_SHARPENING_CONTRAST;コントラストのしきい値
 TP_SHARPENING_EDRADIUS;半径
 TP_SHARPENING_EDTOLERANCE;エッジ許容
 TP_SHARPENING_HALOCONTROL;ハロ抑制
 TP_SHARPENING_HCAMOUNT;適用量
-TP_SHARPENING_LABEL;シャープ化
+TP_SHARPENING_LABEL;シャープニング
 TP_SHARPENING_METHOD;方式
-TP_SHARPENING_ONLYEDGES;エッジのみシャープ化
+TP_SHARPENING_ONLYEDGES;エッジのみシャープニング
 TP_SHARPENING_RADIUS;半径
 TP_SHARPENING_RLD;RL デコンボリューション
 TP_SHARPENING_RLD_AMOUNT;適用量
@@ -2198,7 +2199,7 @@ TP_WAVELET_EDGREINF_TOOLTIP;最初のレベルに対する作用を強めたり�
 TP_WAVELET_EDGTHRESH;ディテール
 TP_WAVELET_EDGTHRESH_TOOLTIP;低いレベルと他のレベルの区分を変更します。しきい値を高くするほど、低いレベルに作用の重点が置かれます。注意：マイナス値の設定は高いレベルに重点が置かれ、アーティファクトが発生することがあります。
 TP_WAVELET_EDRAD;半径
-TP_WAVELET_EDRAD_TOOLTIP;この機能の半径は、他のシャープ化機能の半径とは大きく異なります。複雑な関数を使って各レベルの値を比較します。そのため、半径がゼロでも何らかの効果があります
+TP_WAVELET_EDRAD_TOOLTIP;この機能の半径は、他のシャープニング機能の半径とは大きく異なります。複雑な関数を使って各レベルの値を比較します。そのため、半径がゼロでも何らかの効果があります
 TP_WAVELET_EDSL;しきい値スライダー
 TP_WAVELET_EDTYPE;ローカルコントラストの方式
 TP_WAVELET_EDVAL;強さ
@@ -2341,7 +2342,4 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
-!MAIN_TAB_FAVORITES;Favorites
-!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
-!TP_SHARPENING_BLUR;Blur radius
+!TP_RAW_IMAGENUM_SN;SN mode

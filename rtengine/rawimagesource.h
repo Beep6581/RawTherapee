@@ -93,9 +93,6 @@ protected:
     std::vector<double> histMatchingCache;
     ColorManagementParams histMatchingParams;
 
-    void hphd_vertical       (float** hpmap, int col_from, int col_to);
-    void hphd_horizontal     (float** hpmap, int row_from, int row_to);
-    void hphd_green          (float** hpmap);
     void processFalseColorCorrectionThread (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
     void hlRecovery          (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
     void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
@@ -204,8 +201,13 @@ public:
     static void init ();
     static void cleanup ();
     void setCurrentFrame(unsigned int frameNum) override {
-        currFrame = std::min(numFrames - 1, frameNum);
-        ri = riFrames[currFrame];
+        if (numFrames == 2 && frameNum == 2) { // special case for averaging of two frames
+            currFrame = frameNum;
+            ri = riFrames[0];
+        } else  {
+            currFrame = std::min(numFrames - 1, frameNum);
+            ri = riFrames[currFrame];
+        }
     }
     int getFrameCount() override {return numFrames;}
     int getFlatFieldAutoClipValue() override {return flatFieldAutoClipValue;}
@@ -250,7 +252,6 @@ protected:
         bool freeBuffer
     );
     void ddct8x8s(int isgn, float a[8][8]);
-    void processRawWhitepoint (float expos, float preser, array2D<float> &rawData);  // exposure before interpolation
 
     int  interpolateBadPixelsBayer( PixelsMap &bitmapBads, array2D<float> &rawData );
     int  interpolateBadPixelsNColours( PixelsMap &bitmapBads, const int colours );

@@ -421,7 +421,6 @@ HISTORY_MSG_121;Raw korekce CA - automatická
 HISTORY_MSG_122;Tmavé snímky - Automatický výběr
 HISTORY_MSG_123;Tmavé snímky - Soubor
 HISTORY_MSG_124;Korekce bílého bodu
-HISTORY_MSG_125;Zachování světel
 HISTORY_MSG_126;Flat Field - Soubor
 HISTORY_MSG_127;Flat Field - Automatický výběr
 HISTORY_MSG_128;Flat Field - Poloměr rozostření
@@ -1056,7 +1055,6 @@ PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA zabránit posunu barev
 PARTIALPASTE_RAWCACORR_CAREDBLUE;CA červená a modrá
 PARTIALPASTE_RAWEXPOS_BLACK;Úrovně černé
 PARTIALPASTE_RAWEXPOS_LINEAR;Korekce bílého bodu
-PARTIALPASTE_RAWEXPOS_PRESER;Zachování světel
 PARTIALPASTE_RAWGROUP;Nastavení Raw
 PARTIALPASTE_RAW_BORDER;Okraj Raw
 PARTIALPASTE_RAW_DCBENHANCE;Vylepšení DCB
@@ -1882,7 +1880,6 @@ TP_RAWEXPOS_BLACK_BLUE;Modrá
 TP_RAWEXPOS_BLACK_GREEN;Zelená
 TP_RAWEXPOS_BLACK_RED;Červená
 TP_RAWEXPOS_LINEAR;Korekce bílého bodu
-TP_RAWEXPOS_PRESER;Zachování světel
 TP_RAWEXPOS_RGB;Červená, telená, modrá
 TP_RAWEXPOS_TWOGREEN;Spojit zelené
 TP_RAW_1PASSMEDIUM;Jeden průchod (Markesteijn)
@@ -2351,4 +2348,5 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
+!TP_RAW_IMAGENUM_SN;SN mode
 !TP_SHARPENING_BLUR;Blur radius

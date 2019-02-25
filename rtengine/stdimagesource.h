@@ -101,6 +101,7 @@ public:
 
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override { R = G = B = 0;}
 
+    void        flushRGB          () override;
 
 };
 }

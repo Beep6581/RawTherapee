@@ -99,6 +99,8 @@ private:
     bool saveBatchQueue ();
     void notifyListener ();
 
+    using ThumbBrowserBase::redrawNeeded;
+
     BatchQueueEntry* processing;  // holds the currently processed image
     FileCatalog* fileCatalog;
     int sequence; // holds the current sequence index

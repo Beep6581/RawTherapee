@@ -1055,13 +1055,13 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 //              pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
             int imwidth = cropHandler.cropPixbuftrue->get_width();
             int imheight = cropHandler.cropPixbuftrue->get_height();
-            guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy * cropHandler.cropPixbuftrue->get_rowstride() + vx * 3;
 
-            int rval = pix[0];
-            int gval = pix[1];
-            int bval = pix[2];
-            bool isRaw = false;
             if (vx < imwidth && vy < imheight) {
+                guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy * cropHandler.cropPixbuftrue->get_rowstride() + vx * 3;
+                int rval = pix[0];
+                int gval = pix[1];
+                int bval = pix[2];
+                bool isRaw = false;
                 rtengine::StagedImageProcessor* ipc = iarea->getImProcCoordinator();
                 if(ipc) {
                     procparams::ProcParams params;
@@ -1493,7 +1493,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                             }
                         }
 
+#ifdef _OPENMP
                         #pragma omp critical
+#endif
                         {
                             if(maxthrstdDev_L2 > maxstdDev_L2) {
                                 maxstdDev_L2 = maxthrstdDev_L2;

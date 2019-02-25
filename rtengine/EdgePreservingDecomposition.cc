@@ -324,7 +324,9 @@ void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float*
         }
 
 #endif
+#ifdef _OPENMP
         #pragma omp single
+#endif
         {
 #ifdef __SSE2__
 
@@ -892,12 +894,12 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
 #endif
 
         for(int ii = 0; ii < n - 3; ii += 4) {
-            _mm_storeu_ps( &Source[ii], xlogf(LVFU(Source[ii]) + epsv));
+            _mm_storeu_ps( &Source[ii], xlogf(vmaxf(LVFU(Source[ii]), ZEROV) + epsv));
         }
     }
 
     for(int ii = n - (n % 4); ii < n; ii++) {
-        Source[ii] = xlogf(Source[ii] + eps);
+        Source[ii] = xlogf(std::max(Source[ii], 0.f) + eps);
     }
 
 #else
@@ -906,7 +908,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
 #endif
 
     for(int ii = 0; ii < n; ii++) {
-        Source[ii] = xlogf(Source[ii] + eps);
+        Source[ii] = xlogf(std::max(Source[ii], 0.f) + eps);
     }
 
 #endif

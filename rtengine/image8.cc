@@ -69,7 +69,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int 
                 data[row * width * 3 + 3 * i] = data[row * width * 3 + 3 * i + 1] = data[row * width * 3 + 3 * i + 2] = buffer[i];
             }
         } else {
-            memcpy (data + row * width * 3u, buffer, width * 3);
+            memcpy (data + (uint64_t)row * (uint64_t)width * (uint64_t)3u, buffer, width * 3);
         }
         break;
 

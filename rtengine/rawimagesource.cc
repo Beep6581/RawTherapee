@@ -428,7 +428,6 @@ RawImageSource::RawImageSource ()
     , plistener(nullptr)
     , scale_mul{}
     , c_black{}
-    , c_white{}
     , cblacksom{}
     , ref_pre_mul{}
     , refwb_red(0.0)
@@ -637,6 +636,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
         bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                       || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+
+        for (int i = 0; i < 4; ++i) {
+            c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
+        }
+
         float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
@@ -1616,10 +1620,6 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     camProfile = ICCStore::getInstance()->createFromMatrix (imatrices.xyz_cam, false, "Camera");
     inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
 
-    for (int c = 0; c < 4; c++) {
-        c_white[c] = ri->get_white(c);
-    }
-
     // First we get the "as shot" ("Camera") white balance and store it
     float pre_mul[4];
     // FIXME: get_colorsCoeff not so much used nowadays, when we have calculate_scale_mul() function here
@@ -1791,6 +1791,19 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
                 rawDataFrames[i] = rawDataBuffer[bufferNumber];
                 ++bufferNumber;
                 copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
+            }
+        }
+    } else if (numFrames == 2 && currFrame == 2) { // average the frames
+        if(!rawDataBuffer[0]) {
+            rawDataBuffer[0] = new array2D<float>;
+        }
+        rawDataFrames[1] = rawDataBuffer[0];
+        copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1]);
+        copyOriginalPixels(raw, ri, rid, rif, rawData);
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                rawData[i][j] = (rawData[i][j] + (*rawDataFrames[1])[i][j]) * 0.5f;
             }
         }
     } else {
@@ -2025,16 +2038,6 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], fitParams, true, false, buffer, true);
         } else {
             CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, nullptr, false, false, nullptr, true);
-        }
-    }
-
-    if ( raw.expos != 1 ) {
-        if(numFrames == 4) {
-            for(int i = 0; i < 4; ++i) {
-                processRawWhitepoint(raw.expos, raw.preser, *rawDataFrames[i]);
-            }
-        } else {
-            processRawWhitepoint(raw.expos, raw.preser, rawData);
         }
     }
 
@@ -3407,7 +3410,9 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 
             }
 
+#ifdef _OPENMP
             #pragma omp single
+#endif
 
             for (int col = W - (W % 8); col < W; col++) {
                 int len = boxH / 2 + 1;
@@ -3515,6 +3520,10 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
     for(int i = 0; i < 4 ; i++) {
         cblacksom[i] = max( c_black[i] + black_lev[i], 0.0f );    // adjust black level
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
     }
 
     initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
@@ -4721,13 +4730,13 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     histGreenRaw.clear();
     histBlueRaw.clear();
 
-    const float maxWhite = rtengine::max(ri->get_white(0), ri->get_white(1), ri->get_white(2), ri->get_white(3));
+    const float maxWhite = rtengine::max(c_white[0], c_white[1], c_white[2], c_white[3]);
     const float scale = maxWhite <= 1.f ? 65535.f : 1.f; // special case for float raw images in [0.0;1.0] range
     const float multScale = maxWhite <= 1.f ? 1.f / 255.f : 255.f;
-    const float mult[4] = { multScale / (ri->get_white(0) - cblacksom[0]),
-                            multScale / (ri->get_white(1) - cblacksom[1]),
-                            multScale / (ri->get_white(2) - cblacksom[2]),
-                            multScale / (ri->get_white(3) - cblacksom[3])
+    const float mult[4] = { multScale / (c_white[0] - cblacksom[0]),
+                            multScale / (c_white[1] - cblacksom[1]),
+                            multScale / (c_white[2] - cblacksom[2]),
+                            multScale / (c_white[3] - cblacksom[3])
                           };
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
