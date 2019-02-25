@@ -368,7 +368,6 @@ HISTORY_MSG_121;(raw) Авто ХА
 HISTORY_MSG_122;Авто темновой кадр
 HISTORY_MSG_123;Файл темнового кадра
 HISTORY_MSG_124;Коррекция баланса белого
-HISTORY_MSG_125;Сохранение пересветов
 HISTORY_MSG_126;Файл плоского поля
 HISTORY_MSG_127;Автовыбор плоского поля
 HISTORY_MSG_128;Радиус размытия плоского поля
@@ -704,7 +703,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Фильтр полосообразного 
 PARTIALPASTE_RAWCACORR_AUTO;Автоматическая коррекция ХА
 PARTIALPASTE_RAWEXPOS_BLACK;Уровень черного
 PARTIALPASTE_RAWEXPOS_LINEAR;Коррекция точки белого
-PARTIALPASTE_RAWEXPOS_PRESER;Сохранение пересветов
 PARTIALPASTE_RAWGROUP;Настройки Raw
 PARTIALPASTE_RAW_DCBENHANCE;Применить расширенный DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Количество проходов DCB
@@ -1322,7 +1320,6 @@ TP_RAWEXPOS_BLACK_BLUE;Синий
 TP_RAWEXPOS_BLACK_GREEN;Зелёный
 TP_RAWEXPOS_BLACK_RED;Красный
 TP_RAWEXPOS_LINEAR;Коррекция точки белого
-TP_RAWEXPOS_PRESER;Сохранение пересветов
 TP_RAWEXPOS_RGB;Красный, Зелёный, Синий
 TP_RAWEXPOS_TWOGREEN;Два зеленых совместно
 TP_RAW_AHD;AHD

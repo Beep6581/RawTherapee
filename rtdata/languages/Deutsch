@@ -457,7 +457,6 @@ HISTORY_MSG_121;(Sensor-Matrix)\nChromatische Aberration\nAutomatische Korrektur
 HISTORY_MSG_122;(Dunkelbild)\nAutomatische Auswahl
 HISTORY_MSG_123;(Dunkelbild) - Datei
 HISTORY_MSG_124;(Weißpunkt)\nKorrekturfaktor
-HISTORY_MSG_125;(Belichtungskorrektur)\nLichter schützen
 HISTORY_MSG_126;(Weißbild) - Datei
 HISTORY_MSG_127;(Weißbild)\nAutomatische Auswahl
 HISTORY_MSG_128;(Weißbild)\nUnschärferadius
@@ -1098,7 +1097,6 @@ PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;Chromatische Aberration: Farbverschiebung
 PARTIALPASTE_RAWCACORR_CAREDBLUE;Chromatische Aberration: Rot & Blau
 PARTIALPASTE_RAWEXPOS_BLACK;Weißpunkt: Schwarzpegel
 PARTIALPASTE_RAWEXPOS_LINEAR;Weißpunkt: Korrekturfaktor
-PARTIALPASTE_RAWEXPOS_PRESER;Weißpunkt: Lichter schützen (EV)
 PARTIALPASTE_RAWGROUP;RAW
 PARTIALPASTE_RAW_BORDER;Farbinterpolation: Bildrand
 PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verbesserung
@@ -1931,7 +1929,6 @@ TP_RAWEXPOS_BLACK_BLUE;Blau
 TP_RAWEXPOS_BLACK_GREEN;Grün
 TP_RAWEXPOS_BLACK_RED;Rot
 TP_RAWEXPOS_LINEAR;Korrekturfaktor
-TP_RAWEXPOS_PRESER;Weißpunkt: Lichter schützen
 TP_RAWEXPOS_RGB;Rot, Grün, Blau
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
 TP_RAW_1PASSMEDIUM;1-Pass (Markesteijn)
