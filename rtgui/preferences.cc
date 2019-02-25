@@ -404,7 +404,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_EXPOS_WHITEPOINT_LABEL"));
     appendBehavList (mi, M ("TP_RAWEXPOS_LINEAR"), ADDSET_RAWEXPOS_LINEAR, false);
-    appendBehavList (mi, M ("TP_RAWEXPOS_PRESER"), ADDSET_RAWEXPOS_PRESER, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_RAWEXPOS_BLACKS"));
