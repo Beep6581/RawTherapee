@@ -289,7 +289,6 @@ Locallab::Locallab():
     }
 
     LHshape->setBottomBarBgGradient(mLHshape);
-//   llCurveEditorG->curveListComplete();
 
     HHshape = static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true));
     HHshape->setIdentityValue(0.);
@@ -480,7 +479,6 @@ Locallab::Locallab():
     exposeBox->pack_start(*blurexpde);
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);
-//    Gtk::Frame* const maskexpFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")));
     maskexpFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*transLabels2, Gtk::PACK_SHRINK, 4);

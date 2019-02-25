@@ -112,25 +112,6 @@ float calcLocalFactorrect(const float lox, const float loy, const float lcx, con
 
 }
 
-/*
-float calcLocalFactorinv (const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
-{
-//elipse x2/a2 + y2/b2=1
-//transition elipsoidal
-//x==>lox y==>loy
-// a==> dx  b==>dy
-
-    float kelip = dx / dy;
-    float belip = sqrt ((rtengine::SQR ((lox - lcx) / kelip) + rtengine::SQR (loy - lcy))); //determine position ellipse ==> a and b
-    float aelip = belip * kelip;
-    float degrad = aelip / dx;
-    float ap = rtengine::RT_PI / (ach);
-//    float bp = rtengine::RT_PI - ap;
-    return 0.5f * (1.f + xcosf (degrad * ap)); //trigo cos transition
-
-}
-
-*/
 }
 
 namespace rtengine
@@ -611,7 +592,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.hlcomp = locallab.spots.at(sp).hlcompr;
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
     lp.expcomp = locallab.spots.at(sp).expcomp;
-    printf("lp.expcomp=%f\n", lp.expcomp);
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
 //    lp.strucc = local_struc;
@@ -717,65 +697,6 @@ static void calcTransition(const float lox, const float loy, const float ach, co
     }
 }
 
-/*
-static void calcTransitioninv (const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
-{
-    // returns the zone (0 = outside selection, 1 = zone between outside and inside selection, 2 = inside selection with transition)
-    // and a factor to calculate the transition in case zone == 2
-
-    zone = 0;
-
-    if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
-        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lx)) + SQR ((loy - lp.yc) / (ach * lp.ly));
-        zone = zoneVal < 1.f ? 2 : 0;
-
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lx)) + SQR ((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
-        }
-
-        if (zone == 2) {
-            localFactor = calcLocalFactorinv (lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
-        }
-
-    } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
-        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lx)) + SQR ((loy - lp.yc) / (ach * lp.lyT));
-        zone = zoneVal < 1.f ? 2 : 0;
-
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lx)) + SQR ((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
-        }
-
-        if (zone == 2) {
-            localFactor = calcLocalFactorinv (lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
-        }
-
-    } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
-        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lxL)) + SQR ((loy - lp.yc) / (ach * lp.lyT));
-        zone = zoneVal < 1.f ? 2 : 0;
-
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lxL)) + SQR ((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
-        }
-
-        if (zone == 2) {
-            localFactor = calcLocalFactorinv (lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
-        }
-
-    } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
-        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lxL)) + SQR ((loy - lp.yc) / (ach * lp.ly));
-        zone = zoneVal < 1.f ? 2 : 0;
-
-        if (!zone) {
-            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lxL)) + SQR ((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
-        }
-
-        if (zone == 2) {
-            localFactor = calcLocalFactorinv (lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
-        }
-
-    }
-}
-*/
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 {
@@ -1983,14 +1904,6 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
 #endif
 
                 float rL = original->L[y][x] / 327.6f;
-                /*
-                    float cli = 0.f;
-                    float cla = 0.f;
-                    float clb = 0.f;
-                    cli = (buflight[loy - begy][lox - begx]);
-                    cla = (buf_a[loy - begy][lox - begx]);
-                    clb = (buf_b[loy - begy][lox - begx]);
-                */
                 float dEL = 0.f;
                 dEL = sqrt(0.9f * SQR(refa - origblur->a[y][x] / 327.6f) + 0.9f * SQR(refb - origblur->b[y][x] / 327.8f) + 1.2f * SQR(lumaref - rL));
                 float dEa = 0.f;
@@ -4585,7 +4498,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
 }
 
-void ImProcFunctions::calc_ref(int befend, int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, float &avg)
+void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, float &avg)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -4787,7 +4700,7 @@ void ImProcFunctions::calc_ref(int befend, int sp, LabImage * original, LabImage
         chromaref = aveChro;
         lumaref = avL;
 
-        printf("Calcref => sp=%i befend=%i huere=%2.1f chromare=%2.1f lumare=%2.1f sobelref=%2.1f\n", sp, befend, hueref, chromaref, lumaref, sobelref / 100.f);
+      //  printf("Calcref => sp=%i befend=%i huere=%2.1f chromare=%2.1f lumare=%2.1f sobelref=%2.1f\n", sp, befend, hueref, chromaref, lumaref, sobelref / 100.f);
 
         if (isdenoise) {
             delete origblur;
@@ -5088,13 +5001,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             ave = ave / n;
         }
 
-        printf("call= %i sp=%i hueref=%2.1f chromaref=%2.1f lumaref=%2.1f sobelref=%2.1f\n", call, sp, hueref, chromaref, lumaref, sobelref / 100.f);
-//        struct local_contra lco;
+      //  printf("call= %i sp=%i hueref=%2.1f chromaref=%2.1f lumaref=%2.1f sobelref=%2.1f\n", call, sp, hueref, chromaref, lumaref, sobelref / 100.f);
 
 // we must here detect : general case, skin, sky,...foliages ???
-// delta dhue, luminance and chroma
 
-//sens, sensh, senscb, sensbn, senstm;
         constexpr float ared = (rtengine::RT_PI - 0.05f) / 100.f;
 
         constexpr float bred = 0.05f;
@@ -7573,7 +7483,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                         stdvsobel =  sqrt(dsob / ncstdv);
                         */
-                        printf("mean=%f max=%f min=%f\n", meansob, maxsob, minsob);
+                      //  printf("mean=%f max=%f min=%f\n", meansob, maxsob, minsob);
 
                         for (int i = 0; i < hei; ++i) {
                             delete[] tmL[i];
