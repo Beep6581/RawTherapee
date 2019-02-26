@@ -332,7 +332,6 @@ HISTORY_MSG_121;AC automatica (Raw)
 HISTORY_MSG_122;Dark Frame - Automatico
 HISTORY_MSG_123;Dark Frame - File
 HISTORY_MSG_124;Correzione Punto di Bianco
-HISTORY_MSG_125;Protezione AlteLuci
 HISTORY_MSG_126;Flat Field - File
 HISTORY_MSG_127;Flat Field - Automatico
 HISTORY_MSG_128;Flat Field - Raggio di Sfocamento
@@ -600,7 +599,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 PARTIALPASTE_RAWCACORR_AUTO;Autocorrezione AC
 PARTIALPASTE_RAWEXPOS_BLACK;Punto del Nero
 PARTIALPASTE_RAWEXPOS_LINEAR;Correzione Punto del Bianco
-PARTIALPASTE_RAWEXPOS_PRESER;Conservazione Alteluci
 PARTIALPASTE_RAWGROUP;Impostazioni del Raw
 PARTIALPASTE_RAW_DCBENHANCE;Miglioramento DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Numero di iterazioni DCB
@@ -1135,7 +1133,6 @@ TP_RAWCACORR_CABLUE;Blu
 TP_RAWCACORR_CARED;Rosso
 TP_RAWEXPOS_BLACKS;Livelli del nero
 TP_RAWEXPOS_LINEAR;Punto del Bianco - Correzione
-TP_RAWEXPOS_PRESER;Punto del Bianco - Protezione Alteluci
 TP_RAWEXPOS_TWOGREEN;Valori del verde uniti
 TP_RAW_DCBENHANCE;Miglioramento DCB
 TP_RAW_DCBITERATIONS;Numero di iterazioni DCB

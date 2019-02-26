@@ -1604,7 +1604,6 @@ struct RAWParams {
 
     // exposure before interpolation
     double expos;
-    double preser;
 
     bool hotPixelFilter;
     bool deadPixelFilter;

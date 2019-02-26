@@ -312,7 +312,6 @@ HISTORY_MSG_121;Sam ispravi aberacije
 HISTORY_MSG_122;Sam primeni tamni kadar
 HISTORY_MSG_123;Datoteka za tamni kadar
 HISTORY_MSG_124;Linearna ispravka eksp.
-HISTORY_MSG_125;Popravka eksp. uz očuvanje svetlog
 HISTORY_MSG_126;Datoteka sa ravnim poljem
 HISTORY_MSG_127;Sam izaberi ravno polje
 HISTORY_MSG_128;Poluprečnik ravnog polja
@@ -570,7 +569,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Linijski filter šuma
 PARTIALPASTE_RAWCACORR_AUTO;Auto hromatske aberacije
 PARTIALPASTE_RAWEXPOS_BLACK;Nivo crne
 PARTIALPASTE_RAWEXPOS_LINEAR;Linearni faktor ispravke RAW bele tačke
-PARTIALPASTE_RAWEXPOS_PRESER;Raw tačka bele uz očuvanje svetlih delova
 PARTIALPASTE_RAWGROUP;Raw podešavanja
 PARTIALPASTE_RAW_DCBENHANCE;Primeni korak DCB poboljšanja
 PARTIALPASTE_RAW_DCBITERATIONS;Broj DCB ponavljanja
@@ -1092,7 +1090,6 @@ TP_RAWCACORR_CABLUE;Plava
 TP_RAWCACORR_CARED;Crvena
 TP_RAWEXPOS_BLACKS;Nivo crne
 TP_RAWEXPOS_LINEAR;Linearni faktor korekcije
-TP_RAWEXPOS_PRESER;Očuvanje svetlih delova
 TP_RAWEXPOS_TWOGREEN;Obe zelene
 TP_RAW_DCBENHANCE;Primeni DCB poboljšanje
 TP_RAW_DCBITERATIONS;Broj DCB prolaza

@@ -356,7 +356,14 @@ void Options::setDefaults()
     fbShowDateTime = true;
     fbShowBasicExif = true;
     fbShowExpComp = false;
+#ifdef WIN32
+    // use windows setting for visibility of hidden files/folders
+    SHELLFLAGSTATE sft = { 0 };
+    SHGetSettings(&sft, SSF_SHOWALLOBJECTS);
+    fbShowHidden = sft.fShowAllObjects;
+#else
     fbShowHidden = false;
+#endif
     fbArrangement = 2;                  // was 0
     navRGBUnit = NavigatorUnit::PERCENT;
     navHSVUnit = NavigatorUnit::PERCENT;
@@ -959,9 +966,11 @@ void Options::readFromFile(Glib::ustring fname)
                     fbShowExpComp = keyFile.get_boolean("File Browser", "BrowserShowsExpComp");
                 }
 
+#ifndef WIN32
                 if (keyFile.has_key("File Browser", "BrowserShowsHidden")) {
                     fbShowHidden = keyFile.get_boolean("File Browser", "BrowserShowsHidden");
                 }
+#endif
 
                 if (keyFile.has_key("File Browser", "MaxPreviewHeight")) {
                     maxThumbnailHeight = keyFile.get_integer("File Browser", "MaxPreviewHeight");
@@ -1937,7 +1946,9 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("File Browser", "BrowserShowsDate", fbShowDateTime);
         keyFile.set_boolean("File Browser", "BrowserShowsExif", fbShowBasicExif);
         keyFile.set_boolean("File Browser", "BrowserShowsExpComp", fbShowExpComp);
+#ifndef WIN32
         keyFile.set_boolean("File Browser", "BrowserShowsHidden", fbShowHidden);
+#endif
         keyFile.set_integer("File Browser", "ThumbnailSize", thumbSize);
         keyFile.set_integer("File Browser", "ThumbnailSizeTab", thumbSizeTab);
         keyFile.set_integer("File Browser", "ThumbnailSizeQueue", thumbSizeQueue);

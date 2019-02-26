@@ -336,7 +336,6 @@ HISTORY_MSG_121;Autokorekcja aberracji chromatycznej
 HISTORY_MSG_122;Czarna klatka - Auto-wybór
 HISTORY_MSG_123;Czarna klatka - Wybór
 HISTORY_MSG_124;Korekcja punktu bieli
-HISTORY_MSG_125;Zachowanie prześwietleń
 HISTORY_MSG_126;Puste pole - Wybór
 HISTORY_MSG_127;Puste pole - Auto-wybór
 HISTORY_MSG_128;Puste pole - Promień rozmycia
@@ -649,7 +648,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Redukcja szumów liniowych
 PARTIALPASTE_RAWCACORR_AUTO;Autokorekcja aberracji chr.
 PARTIALPASTE_RAWEXPOS_BLACK;Poziomy czerni
 PARTIALPASTE_RAWEXPOS_LINEAR;Korekcja punktu bieli
-PARTIALPASTE_RAWEXPOS_PRESER;Zachowanie prześwietleń
 PARTIALPASTE_RAWGROUP;Ustawienia raw
 PARTIALPASTE_RAW_DCBENHANCE;Zastosuj poprawę DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Liczba powtórzeń DCB
@@ -1252,7 +1250,6 @@ TP_RAWEXPOS_BLACK_BLUE;Niebieski
 TP_RAWEXPOS_BLACK_GREEN;Zielony
 TP_RAWEXPOS_BLACK_RED;Czerwony
 TP_RAWEXPOS_LINEAR;Liniowy współczynnik korekcji
-TP_RAWEXPOS_PRESER;Zachowanie prześwietleń
 TP_RAWEXPOS_RGB;Czerwony, Zielony, Niebieski
 TP_RAWEXPOS_TWOGREEN;Połącz obie zielenie
 TP_RAW_DCBENHANCE;Zastosuj poprawę DCB

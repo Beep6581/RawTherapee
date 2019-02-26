@@ -376,7 +376,6 @@ HISTORY_MSG_121;RAW CA-correctie - Auto
 HISTORY_MSG_122;Donkerframe - Autom. selectie
 HISTORY_MSG_123;Donkerframe - Bestand
 HISTORY_MSG_124;Witpunt correctie
-HISTORY_MSG_125;Hoge lichten behouden
 HISTORY_MSG_126;Vlakveld - Bestand
 HISTORY_MSG_127;Vlakveld - Autom. selectie
 HISTORY_MSG_128;Vlakveld - Verzachten straal
@@ -881,7 +880,6 @@ PARTIALPASTE_RAWCACORR_AUTO;Autom. C/A-correctie
 PARTIALPASTE_RAWCACORR_CAREDBLUE;CA rood & blauw
 PARTIALPASTE_RAWEXPOS_BLACK;Zwartniveau
 PARTIALPASTE_RAWEXPOS_LINEAR;Raw witpunt- lineaire corr. factor
-PARTIALPASTE_RAWEXPOS_PRESER;Raw witpunt- herstel hoge lichten (EV)
 PARTIALPASTE_RAWGROUP;Raw-instellingen
 PARTIALPASTE_RAW_DCBENHANCE;Pas DCB-verbetering toe
 PARTIALPASTE_RAW_DCBITERATIONS;aantal DCB-herhalingen
@@ -1593,7 +1591,6 @@ TP_RAWEXPOS_BLACK_BLUE;Blauw
 TP_RAWEXPOS_BLACK_GREEN;Groen
 TP_RAWEXPOS_BLACK_RED;Rood
 TP_RAWEXPOS_LINEAR;Witpunt Correctie
-TP_RAWEXPOS_PRESER;Herstel hoge lichten
 TP_RAWEXPOS_RGB;Rood, Groen, Blauw
 TP_RAWEXPOS_TWOGREEN;Koppel Groen 1 en 2
 TP_RAW_1PASSMEDIUM;1 keer (Gemiddeld)

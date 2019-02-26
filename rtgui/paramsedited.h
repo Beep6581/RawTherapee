@@ -978,7 +978,6 @@ public:
     bool ff_AutoClipControl;
     bool ff_clipControl;
     bool exPos;
-    bool exPreser;
 
     bool isUnchanged() const;
 };

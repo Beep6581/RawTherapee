@@ -346,7 +346,6 @@ HISTORY_MSG_121;Automat. CA-reducering
 HISTORY_MSG_122;Automat. svartbildsval
 HISTORY_MSG_123;Svartbildsfil
 HISTORY_MSG_124;Vitpunktskorrigering
-HISTORY_MSG_125;Högdagerbevarande
 HISTORY_MSG_126;Plattfältsfil
 HISTORY_MSG_127;Automatiskt val av plattfält
 HISTORY_MSG_128;Oskärperadie för plattfält
@@ -788,7 +787,6 @@ PARTIALPASTE_PRSHARPENING;Skärpning efter storleksändring
 PARTIALPASTE_RAWCACORR_AUTO;Reducera kromatiska abberationer automatiskt
 PARTIALPASTE_RAWEXPOS_BLACK;Svärta
 PARTIALPASTE_RAWEXPOS_LINEAR;Vitpunktskorrigering
-PARTIALPASTE_RAWEXPOS_PRESER;Korrigering av högdagrar
 PARTIALPASTE_RAWGROUP;Råbildsinställningar
 PARTIALPASTE_RAW_DCBENHANCE;DCB-förbättringssteg
 PARTIALPASTE_RAW_DCBITERATIONS;Antal DCB-iterationer
@@ -1458,7 +1456,6 @@ TP_RAWEXPOS_BLACK_BLUE;Blå
 TP_RAWEXPOS_BLACK_GREEN;Grön
 TP_RAWEXPOS_BLACK_RED;Röd
 TP_RAWEXPOS_LINEAR;Vitpunktskorrigering
-TP_RAWEXPOS_PRESER;Bevara högdagrar
 TP_RAWEXPOS_RGB;Röd, grön, blå
 TP_RAWEXPOS_TWOGREEN;Två gröna tillsammans
 TP_RAW_DCBENHANCE;DCB-förbättringssteg
