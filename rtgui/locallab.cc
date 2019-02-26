@@ -1044,7 +1044,7 @@ void Locallab::lumacontrastPlusPressed()
 
     for (int i = 0; i < 5; i++) {
         float inc = (5 - i);
-        multiplier[i]->setValue(multiplier[i]->getValue() + inc);
+        multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc );
     }
 
     // Raise event (only for first multiplier because associated event concerns all multipliers)
@@ -1057,7 +1057,7 @@ void Locallab::lumacontrastMinusPressed()
 
     for (int i = 0; i < 5; i++) {
         float inc = - (5 - i);
-        multiplier[i]->setValue(multiplier[i]->getValue() + inc);
+        multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc);
     }
 
     // Raise event (only for first multiplier because associated event concerns all multipliers)
