@@ -622,7 +622,7 @@ Locallab::Locallab():
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
 
-    // panel->pack_start(*exptonemap, false, false);
+ //   panel->pack_start(*exptonemap, false, false);
 
     // Retinex
     expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
