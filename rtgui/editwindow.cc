@@ -53,15 +53,7 @@ EditWindow* EditWindow::getInstance(RTWindow* p, bool restore)
 EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false), isClosed(true)
 {
 
-    Glib::ustring fName = "rawtherapee-logo-24.png";
-    Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName);
-
-    try {
-        set_default_icon_from_file (fullPath);
-    } catch(Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
-    }
-
+    set_default_icon(p->get_icon());
     set_title_decorated("");
     set_modal(false);
     set_resizable(true);
@@ -69,16 +61,16 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false), isClosed
 
     property_destroy_with_parent().set_value(false);
 
-    mainNB = Gtk::manage (new Gtk::Notebook ());
-    mainNB->set_scrollable (true);
-    mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &EditWindow::on_mainNB_switch_page) );
+    mainNB = Gtk::manage(new Gtk::Notebook ());
+    mainNB->set_scrollable(true);
+    mainNB->signal_switch_page().connect_notify(sigc::mem_fun(*this, &EditWindow::on_mainNB_switch_page));
 
-    signal_key_press_event().connect( sigc::mem_fun(*this, &EditWindow::keyPressed) );
+    signal_key_press_event().connect(sigc::mem_fun(*this, &EditWindow::keyPressed));
 
-    Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
-    mainBox->pack_start (*mainNB);
+    Gtk::VBox* mainBox = Gtk::manage(new Gtk::VBox());
+    mainBox->pack_start(*mainNB);
 
-    add (*mainBox);
+    add(*mainBox);
 
 }
 
