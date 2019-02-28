@@ -20,7 +20,6 @@
 #define _THUMBPROCESSINGPARAMETERS_
 
 #include "rawmetadatalocation.h"
-#include "procparams.h"
 #include <glibmm.h>
 #include <lcms2.h>
 #include "image8.h"

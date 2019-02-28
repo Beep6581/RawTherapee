@@ -32,9 +32,18 @@
 
 #include <glibmm.h>
 
-#include "../rtengine/procparams.h"
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rawmetadatalocation.h"
+
+namespace rtengine
+{
+
+namespace procparams
+{
+    class ExifPairs;
+}
+
+}
 
 class CacheImageData;
 

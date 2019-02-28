@@ -623,7 +623,7 @@ void IPTCPanel::applyChangeList ()
     keyword->get_entry()->set_text ("");
     suppCategory->get_entry()->set_text ("");
 
-    for (rtengine::procparams::IPTCPairs::iterator i = changeList.begin(); i != changeList.end(); ++i) {
+    for (rtengine::procparams::IPTCPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
         if (i->first == "Caption" && !i->second.empty()) {
             captionText->set_text (i->second.at(0));
         } else if (i->first == "CaptionWriter" && !i->second.empty()) {

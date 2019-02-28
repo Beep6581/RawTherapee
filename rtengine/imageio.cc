@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <libiptcdata/iptc-jpeg.h>
 #include "rt_math.h"
+#include "procparams.h"
 #include "../rtgui/options.h"
 #include "../rtgui/version.h"
 
@@ -103,8 +104,8 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
 {
 
     // store exif info
-    exifChange.clear();
-    exifChange = exif;
+    exifChange->clear();
+    *exifChange = exif;
 
     if (exifRoot != nullptr) {
         delete exifRoot;
@@ -183,6 +184,22 @@ void ImageIO::setOutputProfile  (const char* pdata, int plen)
     }
 
     profileLength = plen;
+}
+
+ImageIO::ImageIO() :
+    pl(nullptr),
+    embProfile(nullptr),
+    profileData(nullptr),
+    profileLength(0),
+    loadedProfileData(nullptr),
+    loadedProfileDataJpg(false),
+    loadedProfileLength(0),
+    exifChange(new procparams::ExifPairs),
+    iptc(nullptr),
+    exifRoot(nullptr),
+    sampleFormat(IIOSF_UNKNOWN),
+    sampleArrangement(IIOSA_UNKNOWN)
+{
 }
 
 ImageIO::~ImageIO ()
@@ -1055,7 +1072,7 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
             iptcdata = nullptr;
         }
 
-        int size = rtexif::ExifManager::createPNGMarker(exifRoot, exifChange, width, height, bps, (char*)iptcdata, iptclen, buffer, bufferSize);
+        int size = rtexif::ExifManager::createPNGMarker(exifRoot, *exifChange, width, height, bps, (char*)iptcdata, iptclen, buffer, bufferSize);
 
         if (iptcdata) {
             iptc_data_free_buf (iptc, iptcdata);
@@ -1205,7 +1222,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
 
     // assemble and write exif marker
     if (exifRoot) {
-        int size = rtexif::ExifManager::createJPEGMarker (exifRoot, exifChange, cinfo.image_width, cinfo.image_height, buffer);
+        int size = rtexif::ExifManager::createJPEGMarker (exifRoot, *exifChange, cinfo.image_width, cinfo.image_height, buffer);
 
         if (size > 0 && size < 65530) {
             jpeg_write_marker(&cinfo, JPEG_APP0 + 1, buffer, size);
@@ -1361,7 +1378,7 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
 
         // ------------------ Apply list of change -----------------
 
-        for (auto currExifChange : exifChange) {
+        for (auto currExifChange : *exifChange) {
             cl->applyChange (currExifChange.first, currExifChange.second);
         }
 

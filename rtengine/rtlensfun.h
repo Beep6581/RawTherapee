@@ -29,9 +29,15 @@
 
 #include "lcp.h"
 #include "noncopyable.h"
-#include "procparams.h"
 
 namespace rtengine {
+
+namespace procparams
+{
+
+struct LensProfParams;
+
+}
 
 class LFModifier final :
     public LensCorrection,
@@ -113,7 +119,7 @@ public:
     LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
     LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
 
-    static std::unique_ptr<LFModifier> findModifier(const LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg);
+    static std::unique_ptr<LFModifier> findModifier(const procparams::LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg);
 
 private:
     std::unique_ptr<LFModifier> getModifier(const LFCamera &camera, const LFLens &lens,

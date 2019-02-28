@@ -24,6 +24,7 @@
 #include "iccstore.h"
 #include "clutstore.h"
 #include "processingjob.h"
+#include "procparams.h"
 #include <glibmm.h>
 #include "../rtgui/options.h"
 #include "rawimagesource.h"
@@ -768,7 +769,7 @@ private:
             }
 
             params.toneCurve.autoexp = false;
-            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curveMode = ToneCurveMode::FILMLIKE;
             params.toneCurve.curve2 = { 0 };
             params.toneCurve.brightness = 0;
             params.toneCurve.contrast = 0;

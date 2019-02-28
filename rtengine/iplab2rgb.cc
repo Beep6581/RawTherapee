@@ -26,6 +26,8 @@
 #include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
+#include "procparams.h"
+
 namespace rtengine
 {
 

@@ -23,13 +23,17 @@
 #include "guiutils.h"
 #include "cropwindow.h"
 #include "imagearea.h"
+
 #include "../rtengine/dcrop.h"
+#include "../rtengine/procparams.h"
 #include "../rtengine/refreshmap.h"
 #include "../rtengine/rt_math.h"
 
 using namespace rtengine;
 
 CropHandler::CropHandler() :
+    cropParams(new procparams::CropParams),
+    colorParams(new procparams::ColorManagementParams),
     zoom(100),
     ww(0),
     wh(0),
@@ -123,8 +127,8 @@ bool CropHandler::isFullDisplay ()
 
 double CropHandler::getFitCropZoom ()
 {
-    double z1 = (double) wh / cropParams.h;
-    double z2 = (double) ww / cropParams.w;
+    double z1 = (double) wh / cropParams->h;
+    double z2 = (double) ww / cropParams->w;
     return z1 < z2 ? z1 : z2;
 }
 
@@ -312,8 +316,8 @@ void CropHandler::setDetailedCrop(
 
     cimg.lock ();
 
-    cropParams = cp;
-    colorParams = cmp;
+    *cropParams = cp;
+    *colorParams = cmp;
 
     if (!cropimg.empty()) {
         cropimg.clear();

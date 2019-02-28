@@ -26,7 +26,6 @@
 #include "imagedimensions.h"
 #include "LUT.h"
 #include "coord2d.h"
-#include "procparams.h"
 #include "color.h"
 #include "../rtgui/threadutils.h"
 
@@ -43,12 +42,21 @@
 namespace rtengine
 {
 
+namespace procparams
+{
+
+    class CoarseTransformParams;
+
+}
+
+class ProgressListener;
+class Color;
+
 extern const char sImage8[];
 extern const char sImage16[];
 extern const char sImagefloat[];
-int getCoarseBitMask( const procparams::CoarseTransformParams &coarse);
-class ProgressListener;
-class Color;
+
+int getCoarseBitMask(const procparams::CoarseTransformParams& coarse);
 
 enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 

@@ -1187,7 +1187,7 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
                     params.icm.inputProfile = options.fastexport_icm_input_profile;
                     params.icm.workingProfile = options.fastexport_icm_working_profile;
                     params.icm.outputProfile = options.fastexport_icm_output_profile;
-                    params.icm.outputIntent = options.fastexport_icm_outputIntent;
+                    params.icm.outputIntent = rtengine::RenderingIntent(options.fastexport_icm_outputIntent);
                     params.icm.outputBPC = options.fastexport_icm_outputBPC;
                 }
 

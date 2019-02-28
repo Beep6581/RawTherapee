@@ -22,6 +22,8 @@
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
 
+class ParamsEdited;
+
 class PartialPasteDlg : public Gtk::Dialog
 {
 

@@ -17,9 +17,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dcrop.h"
 #include "curves.h"
+#include "dcrop.h"
 #include "mytime.h"
+#include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
 
@@ -131,7 +132,7 @@ void Crop::update(int todo)
 {
     MyMutex::MyLock cropLock(cropMutex);
 
-    ProcParams& params = parent->params;
+    ProcParams& params = *parent->params;
 //       CropGUIListener* cropgl;
 
     // No need to update todo here, since it has already been changed in ImprocCoordinator::updatePreviewImage,
@@ -1116,7 +1117,7 @@ void Crop::freeAll()
 namespace
 {
 
-bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int w, int h, const ProcParams &params)
+bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int w, int h, const procparams::ProcParams &params)
 {
     if (x == 0 && y == 0 && w == fw && h == fh) {
         return false;
@@ -1177,7 +1178,7 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
     parent->ipf.transCoord(parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
 
-    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
+    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, *parent->params)) {
         // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
         int dW = int (double (parent->fw) * 0.15 / (2 * skip));
         int dH = int (double (parent->fh) * 0.15 / (2 * skip));

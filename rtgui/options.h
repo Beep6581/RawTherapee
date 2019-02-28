@@ -363,7 +363,7 @@ public:
     Glib::ustring fastexport_icm_input_profile;
     Glib::ustring fastexport_icm_working_profile;
     Glib::ustring fastexport_icm_output_profile;
-    rtengine::RenderingIntent fastexport_icm_outputIntent;
+    int fastexport_icm_outputIntent;
     bool          fastexport_icm_outputBPC;
     Glib::ustring fastexport_icm_custom_output_profile;
     bool          fastexport_resize_enabled;

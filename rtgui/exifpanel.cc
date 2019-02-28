@@ -684,7 +684,7 @@ void ExifPanel::updateChangeList ()
 void ExifPanel::applyChangeList ()
 {
 
-    for (rtengine::procparams::ExifPairs::iterator i = changeList.begin(); i != changeList.end(); ++i) {
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
         editTag (exifTreeModel->children(), i->first, i->second);
     }
 }

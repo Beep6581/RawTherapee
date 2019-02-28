@@ -20,6 +20,7 @@
 #define _PROCESSINGJOB_
 
 #include "rtengine.h"
+#include "procparams.h"
 
 namespace rtengine
 {

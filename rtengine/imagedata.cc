@@ -25,6 +25,8 @@
 #include "iptcpairs.h"
 #include "imagesource.h"
 #include "rt_math.h"
+#include "procparams.h"
+
 #pragma GCC diagnostic warning "-Wextra"
 #define PRINT_HDR_PS_DETECTION 0
 

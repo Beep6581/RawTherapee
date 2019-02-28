@@ -24,6 +24,7 @@
 #include "color.h"
 #include "rt_math.h"
 #include "iccstore.h"
+#include "procparams.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "improcfun.h"
 //#define BENCHMARK
@@ -248,7 +249,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                     && a.dcpIlluminant == b.dcpIlluminant);
         };
 
-    if (!histMatchingCache.empty() && same_profile(histMatchingParams, cp)) {
+    if (!histMatchingCache.empty() && same_profile(*histMatchingParams, cp)) {
         if (settings->verbose) {
             std::cout << "tone curve found in cache" << std::endl;
         }
@@ -286,14 +287,14 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                 std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
-            histMatchingParams = cp;
+            *histMatchingParams = cp;
             return;
         } else if (w * 10 < fw) {
             if (settings->verbose) {
                 std::cout << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
             }
             histMatchingCache = outCurve;
-            histMatchingParams = cp;
+            *histMatchingParams = cp;
             return;
         }
         skip = LIM(skip * fh / h, 6, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
@@ -316,7 +317,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                 std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
-            histMatchingParams = cp;
+            *histMatchingParams = cp;
             return;
         }
         target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false, true));
@@ -388,7 +389,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     }
 
     histMatchingCache = outCurve;
-    histMatchingParams = cp;
+    *histMatchingParams = cp;
 }
 
 } // namespace rtengine

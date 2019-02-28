@@ -30,7 +30,6 @@
 #include "../rtgui/myflatcurve.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "color.h"
-#include "procparams.h"
 #include "pipettebuffer.h"
 
 #include "LUT.h"

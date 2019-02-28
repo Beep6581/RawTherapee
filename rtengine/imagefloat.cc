@@ -27,6 +27,7 @@
 #include "alignedbuffer.h"
 #include "rt_math.h"
 #include "color.h"
+#include "procparams.h"
 
 using namespace rtengine;
 
