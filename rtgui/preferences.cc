@@ -889,7 +889,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     Gtk::Label* flayoutlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_EDITORLAYOUT") + ":"));
     setExpandAlignProperties (flayoutlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    editorLayout = Gtk::manage (new Gtk::ComboBoxText ());
+    editorLayout = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties (editorLayout, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     editorLayout->append (M ("PREFERENCES_SINGLETAB"));
     editorLayout->append (M ("PREFERENCES_SINGLETABVERTAB"));

@@ -412,8 +412,9 @@ void HistogramRGBArea::get_preferred_height_vfunc (int &minimum_height, int &nat
 
 void HistogramRGBArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 60 * RTScalable::getScale();
-    natural_width = 200 * RTScalable::getScale();
+    int s = RTScalable::getScale();
+    minimum_width = 60 * s;
+    natural_width = 200 * s;
 }
 
 void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
@@ -699,16 +700,17 @@ Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 
 void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-
-    minimum_height = 100 * RTScalable::getScale();
-    natural_height = 200 * RTScalable::getScale();
+    int s = (int)RTScalable::getScale();
+    minimum_height = 100 * s;
+    natural_height = 200 * s;
 }
 
 void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
 
-    minimum_width = 200 * RTScalable::getScale();
-    natural_width = 400 * RTScalable::getScale();
+    int s = (int)RTScalable::getScale();
+    minimum_width = 200 * s;
+    natural_width = 400 * s;
 }
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
@@ -928,7 +930,6 @@ void HistogramArea::updateBackBuffer ()
 
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         cr->set_line_width (1.0 * s);
-        //cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
         cr->set_operator (Cairo::OPERATOR_OVER);
 
         int ui = 0, oi = 0;
@@ -992,6 +993,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 {
     double s = RTScalable::getScale();
 
+    cr->set_line_width(s);
     cr->move_to (0, vsize - 1);
     scale = scale <= 0.f ? 0.001f : scale; // avoid division by zero and negative values
 
