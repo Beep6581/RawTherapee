@@ -197,12 +197,6 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
     const int height = H, width = W;
 
-//    if (settings->verbose) {
-//        printf("%d-pass X-Trans interpolation using %s conversion...\n", passes, useCieLab ? "lab" : "yuv");
-//    }
-
-    xtransborder_interpolate(6, red, green, blue);
-
     float xyz_cam[3][3];
     {
         float rgb_cam[3][4];
@@ -956,6 +950,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
         free(buffer);
     }
 
+    xtransborder_interpolate(8, red, green, blue);
 }
 #undef CLIP
 void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
