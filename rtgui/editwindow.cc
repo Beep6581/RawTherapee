@@ -63,16 +63,16 @@ EditWindow::EditWindow (RTWindow* p) : resolution(96.), parent(p) , isFullscreen
 
     property_destroy_with_parent().set_value(false);
 
-    mainNB = Gtk::manage (new Gtk::Notebook ());
-    mainNB->set_scrollable (true);
-    mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &EditWindow::on_mainNB_switch_page) );
+    mainNB = Gtk::manage(new Gtk::Notebook ());
+    mainNB->set_scrollable(true);
+    mainNB->signal_switch_page().connect_notify(sigc::mem_fun(*this, &EditWindow::on_mainNB_switch_page));
 
-    signal_key_press_event().connect( sigc::mem_fun(*this, &EditWindow::keyPressed) );
+    signal_key_press_event().connect(sigc::mem_fun(*this, &EditWindow::keyPressed));
 
-    Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
-    mainBox->pack_start (*mainNB);
+    Gtk::VBox* mainBox = Gtk::manage(new Gtk::VBox());
+    mainBox->pack_start(*mainNB);
 
-    add (*mainBox);
+    add(*mainBox);
 
 }
 
