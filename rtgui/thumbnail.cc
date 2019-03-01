@@ -37,10 +37,21 @@
 
 using namespace rtengine::procparams;
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf)
-    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr),
-      pparamsValid(false), pparams(new ProcParams), imageLoading(false), lastImg(nullptr),
-      lastW(0), lastH(0), lastScale(0), initial_(false)
+Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) :
+    fname(fname),
+    cfs(*cf),
+    cachemgr(cm),
+    ref(1),
+    enqueueNumber(0),
+    tpp(nullptr),
+    pparams(new ProcParams),
+    pparamsValid(false),
+    imageLoading(false),
+    lastImg(nullptr),
+    lastW(0),
+    lastH(0),
+    lastScale(0),
+    initial_(false)
 {
 
     loadProcParams ();
@@ -65,10 +76,20 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     tpp = nullptr;
 }
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr), pparamsValid(false),
-      pparams(new ProcParams), imageLoading(false), lastImg(nullptr),
-      lastW(0), lastH(0), lastScale(0.0), initial_(true)
+Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::string& md5) :
+    fname(fname),
+    cachemgr(cm),
+    ref(1),
+    enqueueNumber(0),
+    tpp(nullptr),
+    pparams(new ProcParams),
+    pparamsValid(false),
+    imageLoading(false),
+    lastImg(nullptr),
+    lastW(0),
+    lastH(0),
+    lastScale(0.0),
+    initial_(true)
 {
 
 
