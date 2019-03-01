@@ -1,0 +1,27 @@
+[Version]
+AppVersion=5.5-151-g1786731f4
+Version=346
+
+[Exposure]
+ClampOOG=false
+Curve=0;
+Curve2=0;
+
+[Black & White]
+BeforeCurve=0;
+AfterCurve=0;
+
+[Vibrance]
+Enabled=false
+
+[Color appearance]
+Enabled=false
+
+[Film Simulation]
+Enabled=false
+
+[RGB Curves]
+LumaMode=false
+
+[Color Management]
+ApplyLookTable=false
