@@ -1,7 +1,3 @@
-[Version]
-AppVersion=5.5-151-g1786731f4
-Version=346
-
 [Exposure]
 ClampOOG=false
 Curve=0;
