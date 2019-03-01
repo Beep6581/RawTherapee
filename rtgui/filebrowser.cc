@@ -18,18 +18,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "filebrowser.h"
 #include <map>
+
 #include <glibmm.h>
-#include "options.h"
-#include "multilangmgr.h"
-#include "clipboard.h"
-#include "procparamchangers.h"
+
+#include "filebrowser.h"
+
 #include "batchqueue.h"
-#include "../rtengine/dfmanager.h"
-#include "../rtengine/ffmanager.h"
+#include "clipboard.h"
+#include "multilangmgr.h"
+#include "options.h"
+#include "procparamchangers.h"
 #include "rtimage.h"
 #include "threadutils.h"
+
+#include "../rtengine/dfmanager.h"
+#include "../rtengine/ffmanager.h"
+#include "../rtengine/procparams.h"
 
 extern Options options;
 

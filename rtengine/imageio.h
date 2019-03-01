@@ -56,7 +56,7 @@ protected:
     char* loadedProfileData;
     bool loadedProfileDataJpg;
     int loadedProfileLength;
-    std::unique_ptr<procparams::ExifPairs> exifChange;
+    const std::unique_ptr<procparams::ExifPairs> exifChange;
     IptcData* iptc;
     const rtexif::TagDirectory* exifRoot;
     MyMutex imutex;

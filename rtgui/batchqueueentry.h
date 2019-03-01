@@ -48,7 +48,7 @@ public:
     static Glib::RefPtr<Gdk::Pixbuf> savedAsIcon;
 
     rtengine::ProcessingJob* job;
-    std::unique_ptr<rtengine::procparams::ProcParams> params;
+    const std::unique_ptr<rtengine::procparams::ProcParams> params;
     Glib::ustring savedParamsFile;
     double progress;
     Glib::ustring outFileName;

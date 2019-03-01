@@ -32,7 +32,7 @@
 #include "threadutils.h"
 
 class CacheManager;
-class ParamsEdited;
+struct ParamsEdited;
 
 class Thumbnail
 {
@@ -51,7 +51,7 @@ class Thumbnail
     float           imgRatio;           // hack to avoid rounding error
 //        double          scale;            // portion of the sizes of the processed thumbnail image and the full scale image
 
-    std::unique_ptr<rtengine::procparams::ProcParams>      pparams;
+    const std::unique_ptr<rtengine::procparams::ProcParams>      pparams;
     bool            pparamsValid;
     bool            imageLoading;
 

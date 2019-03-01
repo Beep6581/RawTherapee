@@ -16,13 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "tonecurve.h"
-#include "adjuster.h"
-#include <sigc++/slot.h>
 #include <iomanip>
-#include "ppversion.h"
+
+#include <sigc++/slot.h>
+
+#include "tonecurve.h"
+
+#include "adjuster.h"
 #include "edit.h"
 #include "eventmapper.h"
+#include "ppversion.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

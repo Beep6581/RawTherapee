@@ -17,9 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "bayerprocess.h"
+
 #include "eventmapper.h"
-#include "options.h"
 #include "guiutils.h"
+#include "options.h"
+
+#include "../rtengine/procparams.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 

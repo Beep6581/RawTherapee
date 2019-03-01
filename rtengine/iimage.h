@@ -45,7 +45,7 @@ namespace rtengine
 namespace procparams
 {
 
-    class CoarseTransformParams;
+struct CoarseTransformParams;
 
 }
 

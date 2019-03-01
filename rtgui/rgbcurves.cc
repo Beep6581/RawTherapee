@@ -18,6 +18,8 @@
  */
 #include "rgbcurves.h"
 
+#include "../rtengine/procparams.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 

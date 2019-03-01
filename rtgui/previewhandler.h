@@ -55,7 +55,7 @@ private:
 
 protected:
     rtengine::IImage8* image;
-    std::unique_ptr<rtengine::procparams::CropParams> cropParams;
+    const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
     double previewScale;
     PreviewHandlerIdleHelper* pih;
     std::list<PreviewListener*> listeners;

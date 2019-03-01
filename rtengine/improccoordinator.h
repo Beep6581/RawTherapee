@@ -185,7 +185,7 @@ protected:
     void updatePreviewImage (int todo, bool panningRelatedChange);
 
     MyMutex mProcessing;
-    std::unique_ptr<ProcParams> params;
+    const std::unique_ptr<ProcParams> params;
 
     // for optimization purpose, the output profile, output rendering intent and
     // output BPC will trigger a regeneration of the profile on parameter change only
@@ -200,7 +200,7 @@ protected:
     MyMutex paramsUpdateMutex;
     int  changeSinceLast;
     bool updaterRunning;
-    std::unique_ptr<ProcParams> nextParams;
+    const std::unique_ptr<ProcParams> nextParams;
     bool destroying;
     bool utili;
     bool autili;

@@ -37,7 +37,6 @@
 #include "ciecam02.h"
 #include "color.h"
 #include "iccstore.h"
-#include "procparams.h"
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 

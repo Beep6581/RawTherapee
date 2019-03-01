@@ -28,7 +28,7 @@
 
 #include "noncopyable.h"
 
-class ParamsEdited;
+struct ParamsEdited;
 
 namespace rtengine
 {
@@ -473,7 +473,7 @@ struct ColorToningParams {
     };
     std::vector<LabCorrectionRegion> labregions;
     int labregionsShowMask;
-    
+
     ColorToningParams();
 
     bool operator ==(const ColorToningParams& other) const;

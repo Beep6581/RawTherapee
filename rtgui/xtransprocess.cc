@@ -16,10 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "eventmapper.h"
 #include "xtransprocess.h"
-#include "options.h"
+
+#include "eventmapper.h"
 #include "guiutils.h"
+#include "options.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
