@@ -653,6 +653,13 @@ enum ProcEventCode {
     EvLocallabLabGridValue = 623,
     EvLocallabLabstrengthgrid = 624,
     EvLocallabgridMethod = 625,
+    EvLocenashadhigh = 626,
+    Evlocallabhighlights = 627,
+    Evlocallabh_tonalwidth = 628,
+    Evlocallabshadows = 629,
+    Evlocallabs_tonalwidth = 630,
+    Evlocallabsh_radius = 631,
+    Evlocallabsensihs = 632,
     NUMOFEVENTS
 };
 

@@ -986,6 +986,14 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
                 locallab.spots.at(j).HHmaskexpcurve = locallab.spots.at(j).HHmaskexpcurve && pSpot.HHmaskexpcurve == otherSpot.HHmaskexpcurve;
                 locallab.spots.at(j).blendmaskexp = locallab.spots.at(j).blendmaskexp && pSpot.blendmaskexp == otherSpot.blendmaskexp;
+                // Shadow highlight
+                locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
+                locallab.spots.at(j).highlights = locallab.spots.at(j).highlights && pSpot.highlights == otherSpot.highlights;
+                locallab.spots.at(j).h_tonalwidth = locallab.spots.at(j).h_tonalwidth && pSpot.h_tonalwidth == otherSpot.h_tonalwidth;
+                locallab.spots.at(j).shadows = locallab.spots.at(j).shadows&& pSpot.shadows == otherSpot.shadows;
+                locallab.spots.at(j).s_tonalwidth = locallab.spots.at(j).s_tonalwidth && pSpot.s_tonalwidth == otherSpot.s_tonalwidth;
+                locallab.spots.at(j).sh_radius = locallab.spots.at(j).sh_radius && pSpot.sh_radius == otherSpot.sh_radius;
+                locallab.spots.at(j).sensihs = locallab.spots.at(j).sensihs && pSpot.sensihs == otherSpot.sensihs;
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -1000,8 +1008,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expsoft = locallab.spots.at(j).expsoft && pSpot.expsoft == otherSpot.expsoft;
                 locallab.spots.at(j).streng = locallab.spots.at(j).streng && pSpot.streng == otherSpot.streng;
                 locallab.spots.at(j).sensisf = locallab.spots.at(j).sensisf && pSpot.sensisf == otherSpot.sensisf;
-                // Lab Region
-                locallab.spots.at(j).explabregion = locallab.spots.at(j).explabregion && pSpot.explabregion == otherSpot.explabregion;
                 // Blur & Noise
                 locallab.spots.at(j).expblur = locallab.spots.at(j).expblur && pSpot.expblur == otherSpot.expblur;
                 locallab.spots.at(j).radius = locallab.spots.at(j).radius && pSpot.radius == otherSpot.radius;
@@ -2735,6 +2741,36 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blendmaskexp = mods.locallab.spots.at(i).blendmaskexp;
         }
 
+
+        // Shadow highlight
+        if (locallab.spots.at(i).expshadhigh) {
+            toEdit.locallab.spots.at(i).expshadhigh = mods.locallab.spots.at(i).expshadhigh;
+        }
+
+        if (locallab.spots.at(i).highlights) {
+            toEdit.locallab.spots.at(i).highlights = mods.locallab.spots.at(i).highlights;
+        }
+
+        if (locallab.spots.at(i).h_tonalwidth) {
+            toEdit.locallab.spots.at(i).h_tonalwidth = mods.locallab.spots.at(i).h_tonalwidth;
+        }
+
+        if (locallab.spots.at(i).shadows) {
+            toEdit.locallab.spots.at(i).shadows = mods.locallab.spots.at(i).shadows;
+        }
+
+        if (locallab.spots.at(i).s_tonalwidth) {
+            toEdit.locallab.spots.at(i).s_tonalwidth = mods.locallab.spots.at(i).s_tonalwidth;
+        }
+
+        if (locallab.spots.at(i).sh_radius) {
+            toEdit.locallab.spots.at(i).sh_radius = mods.locallab.spots.at(i).sh_radius;
+        }
+
+        if (locallab.spots.at(i).sensihs) {
+            toEdit.locallab.spots.at(i).sensihs = mods.locallab.spots.at(i).sensihs;
+        }
+
         // Vibrance
         if (locallab.spots.at(i).expvibrance) {
             toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
@@ -2783,11 +2819,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).sensisf) {
             toEdit.locallab.spots.at(i).sensisf = mods.locallab.spots.at(i).sensisf;
-        }
-
-        // Lab Region
-        if (locallab.spots.at(i).explabregion) {
-            toEdit.locallab.spots.at(i).explabregion = mods.locallab.spots.at(i).explabregion;
         }
 
         // Blur & Noise
@@ -4021,6 +4052,14 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LLmaskexpcurve(v),
     HHmaskexpcurve(v),
     blendmaskexp(v),
+    // Shadow highlight
+    expshadhigh(v),
+    highlights(v),
+    h_tonalwidth(v),
+    shadows(v),
+    s_tonalwidth(v),
+    sh_radius(v),
+    sensihs(v),
     // Vibrance
     expvibrance(v),
     saturated(v),
@@ -4035,8 +4074,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expsoft(v),
     streng(v),
     sensisf(v),
-    // Lab Region
-    explabregion(v),
     // Blur & Noise
     expblur(v),
     radius(v),
@@ -4169,6 +4206,14 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LLmaskexpcurve = v;
     HHmaskexpcurve = v;
     blendmaskexp = v;
+    // Shadow highlight
+    expshadhigh = v;
+    highlights = v;
+    h_tonalwidth = v;
+    shadows = v;
+    s_tonalwidth = v;
+    sh_radius = v;
+    sensihs = v;
     // Vibrance
     expvibrance = v;
     saturated = v;
@@ -4183,8 +4228,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expsoft = v;
     streng = v;
     sensisf = v;
-    // Lab Region
-    explabregion = v;
     // Blur & Noise
     expblur = v;
     radius = v;

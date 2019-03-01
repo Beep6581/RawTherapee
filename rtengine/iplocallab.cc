@@ -139,7 +139,7 @@ struct local_params {
     float thr;
     float stru;
     int prox;
-    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf;
+    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs;
     float struco;
     float strengrid;
     float struexc;
@@ -219,6 +219,11 @@ struct local_params {
     bool enaColorMask;
     bool enaExpMask;
     bool enaColMask;
+    int highlihs;
+    int shadowhs;
+    int radiushs;
+    int hltonalhs;
+    int shtonalhs;
 };
 
 static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius)
@@ -484,6 +489,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double strength = (double) locallab.spots.at(sp).strength;
     float str = (float)locallab.spots.at(sp).str;
 
+    int local_sensihs = locallab.spots.at(sp).sensihs;
+    int highhs = locallab.spots.at(sp).highlights;
+    int hltonahs = locallab.spots.at(sp).h_tonalwidth;
+    int shadhs = locallab.spots.at(sp).shadows;
+    int shtonals = locallab.spots.at(sp).s_tonalwidth;
+    int radhs = locallab.spots.at(sp).sh_radius;
+    
     lp.cir = circr;
     lp.actsp = acti;
     lp.xc = w * local_center_x;
@@ -596,6 +608,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sensex = local_sensiex;
 //    lp.strucc = local_struc;
     lp.war = local_warm;
+    
+    lp.highlihs = highhs;
+    lp.shadowhs = shadhs;
+    lp.radiushs = radhs;
+    lp.hltonalhs = hltonahs;
+    lp.shtonalhs = shtonals;
+    lp.senshs = local_sensihs;
 }
 
 

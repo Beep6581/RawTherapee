@@ -1003,6 +1003,14 @@ struct LocallabParams {
         std::vector<double> LLmaskexpcurve;
         std::vector<double> HHmaskexpcurve;
         int blendmaskexp;
+        // Shadow highlight
+        bool expshadhigh;
+        int highlights;
+        int h_tonalwidth;
+        int shadows;
+        int s_tonalwidth;
+        int sh_radius;
+        int sensihs;
         // Vibrance
         bool expvibrance;
         int saturated;
@@ -1017,9 +1025,6 @@ struct LocallabParams {
         bool expsoft;
         int streng;
         int sensisf;
-        // Lab Region
-        bool explabregion;
-        // ColorToningParams::LabCorrectionRegion Labcorr;
         // Blur & Noise
         bool expblur;
         double radius;

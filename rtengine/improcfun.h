@@ -393,7 +393,9 @@ public:
     void localContrast(LabImage *lab);
     void localContrastloc(LabImage *lab, int scale,  int rad, float amo, float darkn, float lightn, float **loctemp);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
-    void shadowsHighlights(LabImage *lab);
+   // void shadowsHighlights(LabImage *lab);
+    void shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal);
+    
     void softLight(LabImage *lab);
     void softLightloc(LabImage *lab, LabImage *dst, float blend);
     void labColorCorrectionRegions(LabImage *lab);

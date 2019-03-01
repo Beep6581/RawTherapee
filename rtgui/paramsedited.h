@@ -526,6 +526,14 @@ public:
         bool LLmaskexpcurve;
         bool HHmaskexpcurve;
         bool blendmaskexp;
+        // Shadow highlight
+        bool expshadhigh;
+        bool highlights;
+        bool h_tonalwidth;
+        bool shadows;
+        bool s_tonalwidth;
+        bool sh_radius;
+        bool sensihs;
         // Vibrance
         bool expvibrance;
         bool saturated;
@@ -540,8 +548,6 @@ public:
         bool expsoft;
         bool streng;
         bool sensisf;
-        // Lab Region
-        bool explabregion;
         // Blur & Noise
         bool expblur;
         bool radius;

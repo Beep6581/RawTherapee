@@ -2402,6 +2402,14 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     blendmaskexp(0),
+    // Shadow highlight
+    expshadhigh(false),
+    highlights(0),
+    h_tonalwidth(70),
+    shadows(0),
+    s_tonalwidth(30),
+    sh_radius(40),
+    sensihs(15),
     // Vibrance
     expvibrance(false),
     saturated(0),
@@ -2416,8 +2424,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expsoft(false),
     streng(0),
     sensisf(15),
-    // Lab Region
-    explabregion(false),
     // Blur & Noise
     expblur(false),
     radius(1.0),
@@ -2553,6 +2559,14 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && LLmaskexpcurve == other.LLmaskexpcurve
         && HHmaskexpcurve == other.HHmaskexpcurve
         && blendmaskexp == other.blendmaskexp
+        // Shadow highlight
+        && expshadhigh == other.expshadhigh
+        && highlights == other.highlights
+        && h_tonalwidth == other.h_tonalwidth
+        && shadows == other.shadows
+        && s_tonalwidth == other.s_tonalwidth
+        && sh_radius == other.sh_radius
+        && sensihs == other.sensihs
         // Vibrance
         && expvibrance == other.expvibrance
         && saturated == other.saturated
@@ -2567,8 +2581,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && expsoft == other.expsoft
         && streng == other.streng
         && sensisf == other.sensisf
-        //Lab region
-        && explabregion == other.explabregion
         // Blur & Noise
         && expblur == other.expblur
         && radius == other.radius
@@ -3659,6 +3671,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskexpcurve, "Locallab", "LLmaskexpCurve_" + std::to_string(i), spot.LLmaskexpcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskexpcurve, "Locallab", "HHmaskexpCurve_" + std::to_string(i), spot.HHmaskexpcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskexp, "Locallab", "Blendmaskexp_" + std::to_string(i), spot.blendmaskexp, keyFile);
+                // Shadow highlight
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expshadhigh, "Locallab", "Expshadhigh_" + std::to_string(i), spot.expshadhigh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).highlights, "Locallab", "highlights_" + std::to_string(i), spot.highlights, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).h_tonalwidth, "Locallab", "h_tonalwidth_" + std::to_string(i), spot.h_tonalwidth, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shadows, "Locallab", "shadows_" + std::to_string(i), spot.shadows, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).s_tonalwidth, "Locallab", "s_tonalwidth_" + std::to_string(i), spot.s_tonalwidth, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sh_radius, "Locallab", "sh_radius_" + std::to_string(i), spot.sh_radius, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensihs, "Locallab", "sensihs_" + std::to_string(i), spot.sensihs, keyFile);
                 // Vibrance
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expvibrance, "Locallab", "Expvibrance_" + std::to_string(i), spot.expvibrance, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).saturated, "Locallab", "Saturated_" + std::to_string(i), spot.saturated, keyFile);
@@ -3673,8 +3693,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsoft, "Locallab", "Expsoft_" + std::to_string(i), spot.expsoft, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).streng, "Locallab", "Streng_" + std::to_string(i), spot.streng, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensisf, "Locallab", "Sensisf_" + std::to_string(i), spot.sensisf, keyFile);
-                // Lab Region
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).explabregion, "Locallab", "Explabregion_" + std::to_string(i), spot.explabregion, keyFile);
                 // Blur & Noise
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expblur, "Locallab", "Expblur_" + std::to_string(i), spot.expblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radius, "Locallab", "Radius_" + std::to_string(i), spot.radius, keyFile);
@@ -4894,6 +4912,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskexpCurve_" + std::to_string(i), pedited, spot.LLmaskexpcurve, spotEdited.LLmaskexpcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskexpCurve_" + std::to_string(i), pedited, spot.HHmaskexpcurve, spotEdited.HHmaskexpcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskexp_" + std::to_string(i), pedited, spot.blendmaskexp, spotEdited.blendmaskexp);
+                // Shadow highlight
+                assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + std::to_string(i), pedited, spot.expshadhigh, spotEdited.expshadhigh);
+                assignFromKeyfile(keyFile, "Locallab", "highlights_" + std::to_string(i), pedited, spot.highlights, spotEdited.highlights);
+                assignFromKeyfile(keyFile, "Locallab", "h_tonalwidth_" + std::to_string(i), pedited, spot.h_tonalwidth, spotEdited.h_tonalwidth);
+                assignFromKeyfile(keyFile, "Locallab", "shadows_" + std::to_string(i), pedited, spot.shadows, spotEdited.shadows);
+                assignFromKeyfile(keyFile, "Locallab", "s_tonalwidth_" + std::to_string(i), pedited, spot.s_tonalwidth, spotEdited.s_tonalwidth);
+                assignFromKeyfile(keyFile, "Locallab", "sh_radius_" + std::to_string(i), pedited, spot.sh_radius, spotEdited.sh_radius);
+                assignFromKeyfile(keyFile, "Locallab", "sensihs_" + std::to_string(i), pedited, spot.sensihs, spotEdited.sensihs);
                 // Vibrance
                 assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
                 assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, spot.saturated, spotEdited.saturated);
@@ -4920,8 +4946,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, spot.expsoft, spotEdited.expsoft);
                 assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, spot.streng, spotEdited.streng);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, spot.sensisf, spotEdited.sensisf);
-                // Lab Region
-                assignFromKeyfile(keyFile, "Locallab", "Explabregion_" + std::to_string(i), pedited, spot.explabregion, spotEdited.explabregion);
                 // Blur & Noise
                 assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, spot.expblur, spotEdited.expblur);
                 assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, spot.radius, spotEdited.radius);

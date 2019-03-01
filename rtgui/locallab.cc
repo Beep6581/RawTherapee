@@ -48,6 +48,7 @@ Locallab::Locallab():
     expsettings(new ControlSpotPanel()),
     expcolor(new MyExpander(true, M("TP_LOCALLAB_COFR"))),
     expexpose(new MyExpander(true, M("TP_LOCALLAB_EXPOSE"))),
+    expshadhigh(new MyExpander(true, M("TP_LOCALLAB_SHADHIGH"))),
     expvibrance(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE"))),
     expsoft(new MyExpander(true, M("TP_LOCALLAB_SOFT"))),
     expblur(new MyExpander(true, M("TP_LOCALLAB_BLUFR"))),
@@ -57,6 +58,7 @@ Locallab::Locallab():
     expcontrast(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST"))),
     expcbdl(new MyExpander(true, M("TP_LOCALLAB_CBDL"))),
     expdenoi(new MyExpander(true, M("TP_LOCALLAB_DENOIS"))),
+
 
     // CurveEditorGroup widgets
     // Color & Light
@@ -93,6 +95,13 @@ Locallab::Locallab():
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     blendmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    //Shadow hightlights
+    highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
+    h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
+    shadows(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0))),
+    s_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30))),
+    sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
+    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     // Vibrance
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
@@ -494,6 +503,32 @@ Locallab::Locallab():
 
     panel->pack_start(*expexpose, false, false);
 
+
+
+//shadow highlight
+    expshadhigh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expshadhigh));
+    enableshadhighConn = expshadhigh->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expshadhigh));
+
+    highlights->setAdjusterListener(this);
+    h_tonalwidth->setAdjusterListener(this);
+    shadows->setAdjusterListener(this);
+    s_tonalwidth->setAdjusterListener(this);
+    sh_radius->setAdjusterListener(this);
+    sensihs->setAdjusterListener(this);
+
+    ToolParamBlock* const shadhighBox = Gtk::manage(new ToolParamBlock());
+    shadhighBox->pack_start(*highlights);
+    shadhighBox->pack_start(*h_tonalwidth);
+    shadhighBox->pack_start(*shadows);
+    shadhighBox->pack_start(*s_tonalwidth);
+    shadhighBox->pack_start(*sh_radius);
+    shadhighBox->pack_start(*sensihs);
+
+    expshadhigh->add(*shadhighBox);
+    expshadhigh->setLevel(2);
+
+//    panel->pack_start(*expshadhigh, false, false);
+
     // Vibrance
     expvibrance->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expvibrance));
     enablevibranceConn = expvibrance->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expvibrance));
@@ -858,6 +893,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expsettings->setExpanded(expsettings->getExpander() == expander);
         expcolor->set_expanded(expcolor == expander);
         expexpose->set_expanded(expexpose == expander);
+        expshadhigh->set_expanded(expshadhigh == expander);
         expvibrance->set_expanded(expvibrance == expander);
         expsoft->set_expanded(expsoft == expander);
         expblur->set_expanded(expblur == expander);
@@ -884,6 +920,9 @@ void Locallab::enableToggled(MyExpander *expander)
     } else if (expander == expexpose) {
         event = EvLocenaexpose;
         expConn = &enableexposeConn;
+    } else if (expander == expshadhigh) {
+        event = EvLocenashadhigh;
+        expConn = &enableshadhighConn;
     } else if (expander == expvibrance) {
         event = EvLocenavibrance;
         expConn = &enablevibranceConn;
@@ -940,6 +979,7 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expsettings->getExpanded());
     tpOpen.push_back(expcolor->get_expanded());
     tpOpen.push_back(expexpose->get_expanded());
+    tpOpen.push_back(expshadhigh->get_expanded());
     tpOpen.push_back(expvibrance->get_expanded());
     tpOpen.push_back(expsoft->get_expanded());
     tpOpen.push_back(expblur->get_expanded());
@@ -1010,19 +1050,20 @@ void Locallab::updateLabel()
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 13) {
+    if (tpOpen.size() >= 14) {
         expsettings->setExpanded(tpOpen.at(0));
         expcolor->set_expanded(tpOpen.at(1));
         expexpose->set_expanded(tpOpen.at(2));
-        expvibrance->set_expanded(tpOpen.at(3));
-        expsoft->set_expanded(tpOpen.at(4));
-        expblur->set_expanded(tpOpen.at(5));
-        exptonemap->set_expanded(tpOpen.at(6));
-        expreti->set_expanded(tpOpen.at(7));
-        expsharp->set_expanded(tpOpen.at(8));
-        expcontrast->set_expanded(tpOpen.at(9));
-        expcbdl->set_expanded(tpOpen.at(10));
-        expdenoi->set_expanded(tpOpen.at(11));
+        expshadhigh->set_expanded(tpOpen.at(3));
+        expvibrance->set_expanded(tpOpen.at(4));
+        expsoft->set_expanded(tpOpen.at(5));
+        expblur->set_expanded(tpOpen.at(6));
+        exptonemap->set_expanded(tpOpen.at(7));
+        expreti->set_expanded(tpOpen.at(8));
+        expsharp->set_expanded(tpOpen.at(9));
+        expcontrast->set_expanded(tpOpen.at(10));
+        expcbdl->set_expanded(tpOpen.at(11));
+        expdenoi->set_expanded(tpOpen.at(12));
     }
 }
 
@@ -1563,6 +1604,15 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = CCmaskexpshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = HHmaskexpshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).blendmaskexp = blendmaskexp->getIntValue();
+                    // Shadow highlight
+                    pp->locallab.spots.at(pp->locallab.selspot).expshadhigh = expshadhigh->getEnabled();
+                    pp->locallab.spots.at(pp->locallab.selspot).highlights = highlights->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).h_tonalwidth = h_tonalwidth->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).shadows = shadows->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).s_tonalwidth = s_tonalwidth->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sh_radius = sh_radius->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sensihs = sensihs->getIntValue();
+
                     // Vibrance
                     pp->locallab.spots.at(pp->locallab.selspot).expvibrance = expvibrance->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).saturated = saturated->getIntValue();
@@ -1727,6 +1777,14 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).blendmaskexp = pe->locallab.spots.at(pp->locallab.selspot).blendmaskexp || blendmaskexp->getEditedState();
+                        // Shadow highlight
+                        pe->locallab.spots.at(pp->locallab.selspot).expshadhigh = pe->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).highlights = pe->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).h_tonalwidth = pe->locallab.spots.at(pp->locallab.selspot).h_tonalwidth || h_tonalwidth->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).shadows = pe->locallab.spots.at(pp->locallab.selspot).shadows || shadows->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).s_tonalwidth = pe->locallab.spots.at(pp->locallab.selspot).s_tonalwidth || s_tonalwidth->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sh_radius = pe->locallab.spots.at(pp->locallab.selspot).sh_radius || sh_radius->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sensihs = pe->locallab.spots.at(pp->locallab.selspot).sensihs || sensihs->getEditedState();
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -1877,6 +1935,14 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).blendmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskexp || blendmaskexp->getEditedState();
+                        // Shadow highlight
+                        pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh = pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).highlights = pedited->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).h_tonalwidth = pedited->locallab.spots.at(pp->locallab.selspot).h_tonalwidth || h_tonalwidth->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).shadows = pedited->locallab.spots.at(pp->locallab.selspot).shadows || shadows->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).s_tonalwidth = pedited->locallab.spots.at(pp->locallab.selspot).s_tonalwidth || s_tonalwidth->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sh_radius = pedited->locallab.spots.at(pp->locallab.selspot).sh_radius || sh_radius->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensihs = pedited->locallab.spots.at(pp->locallab.selspot).sensihs || sensihs->getEditedState();
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -2131,6 +2197,7 @@ void Locallab::curveChanged(CurveEditor* ce)
             }
         }
     }
+
 
     // Vibrance
     if (getEnabled() && expvibrance->getEnabled()) {
@@ -2552,6 +2619,8 @@ void Locallab::setParamEditable(bool cond)
     expcolor->set_sensitive(cond);
     // Exposure
     expexpose->set_sensitive(cond);
+    // Shadow highlight
+    expshadhigh->set_sensitive(cond);
     // Vibrance
     expvibrance->set_sensitive(cond);
     // Soft Light
@@ -2633,6 +2702,13 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     structexp->setDefault((double)defSpot->structexp);
     blurexpde->setDefault((double)defSpot->blurexpde);
     blendmaskexp->setDefault((double)defSpot->blendmaskexp);
+    //Shadow highlight
+    highlights->setDefault((double)defSpot->highlights);
+    h_tonalwidth->setDefault((double)defSpot->h_tonalwidth);
+    shadows->setDefault((double)defSpot->shadows);
+    s_tonalwidth->setDefault((double)defSpot->s_tonalwidth);
+    sh_radius->setDefault((double)defSpot->sh_radius);
+    sensihs->setDefault((double)defSpot->sensihs);
     // Vibrance
     saturated->setDefault((double)defSpot->saturated);
     pastels->setDefault((double)defSpot->pastels);
@@ -2718,6 +2794,13 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         structexp->setDefaultEditedState(Irrelevant);
         blurexpde->setDefaultEditedState(Irrelevant);
         blendmaskexp->setDefaultEditedState(Irrelevant);
+        //Shadow highlight
+        highlights->setDefaultEditedState(Irrelevant);
+        h_tonalwidth->setDefaultEditedState(Irrelevant);
+        shadows->setDefaultEditedState(Irrelevant);
+        s_tonalwidth->setDefaultEditedState(Irrelevant);
+        sh_radius->setDefaultEditedState(Irrelevant);
+        sensihs->setDefaultEditedState(Irrelevant);
         // Vibrance
         saturated->setDefaultEditedState(Irrelevant);
         pastels->setDefaultEditedState(Irrelevant);
@@ -2807,6 +2890,13 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         structexp->setDefaultEditedState(defSpotState->structexp ? Edited : UnEdited);
         blurexpde->setDefaultEditedState(defSpotState->blurexpde ? Edited : UnEdited);
         blendmaskexp->setDefaultEditedState(defSpotState->blendmaskexp ? Edited : UnEdited);
+        //Shadow highlight
+        highlights->setDefaultEditedState(defSpotState->highlights ? Edited : UnEdited);
+        h_tonalwidth->setDefaultEditedState(defSpotState->h_tonalwidth ? Edited : UnEdited);
+        shadows->setDefaultEditedState(defSpotState->shadows ? Edited : UnEdited);
+        s_tonalwidth->setDefaultEditedState(defSpotState->s_tonalwidth ? Edited : UnEdited);
+        sh_radius->setDefaultEditedState(defSpotState->sh_radius ? Edited : UnEdited);
+        sensihs->setDefaultEditedState(defSpotState->sensihs ? Edited : UnEdited);
         // Vibrance
         saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
         pastels->setDefaultEditedState(defSpotState->pastels ? Edited : UnEdited);
@@ -3040,6 +3130,45 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
 
     }
 
+    if (getEnabled() && expshadhigh->getEnabled()) {
+
+        if (a == highlights) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhighlights, highlights->getTextValue());
+            }
+        }
+
+        if (a == h_tonalwidth) {
+            if (listener) {
+                listener->panelChanged(Evlocallabh_tonalwidth, h_tonalwidth->getTextValue());
+            }
+        }
+
+        if (a == shadows) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshadows, shadows->getTextValue());
+            }
+        }
+
+        if (a == s_tonalwidth) {
+            if (listener) {
+                listener->panelChanged(Evlocallabs_tonalwidth, s_tonalwidth->getTextValue());
+            }
+        }
+
+        if (a == sh_radius) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsh_radius, sh_radius->getTextValue());
+            }
+        }
+
+        if (a == sensihs) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensihs, sensihs->getTextValue());
+            }
+        }
+
+    }
     // Vibrance
     if (a == pastels && pastSatTog->get_active() && !(multiImage && pastSatTog->get_inconsistent())) {
         saturated->setValue(newval);
@@ -3428,6 +3557,13 @@ void Locallab::setBatchMode(bool batchMode)
     structexp->showEditedCB();
     blurexpde->showEditedCB();
     blendmaskexp->showEditedCB();
+    //Shadow Highlight
+    highlights->showEditedCB();
+    h_tonalwidth->showEditedCB();
+    shadows->showEditedCB();
+    s_tonalwidth->showEditedCB();
+    sh_radius->showEditedCB();
+    sensihs->showEditedCB();
     // Vibrance
     saturated->showEditedCB();
     pastels->showEditedCB();
@@ -3646,6 +3782,8 @@ void Locallab::enableListener()
     inversexConn.block(false);
     showmaskexpMethodConn.block(false);
     enaExpMaskConn.block(false);
+    // Shadow highlight
+    enableshadhighConn.block(false);
     // Vibrance
     enablevibranceConn.block(false);
     pskinsconn.block(false);
@@ -3693,6 +3831,8 @@ void Locallab::disableListener()
     inversexConn.block(true);
     showmaskexpMethodConn.block(true);
     enaExpMaskConn.block(true);
+    // Shadow highlight
+    enableshadhighConn.block(true);
     // Vibrance
     enablevibranceConn.block(true);
     pskinsconn.block(true);
@@ -3700,7 +3840,6 @@ void Locallab::disableListener()
     pastsattogconn.block(true);
     // Soft Light
     enablesoftConn.block(true);
-    // Lab Region
     // Blur & Noise
     enableblurConn.block(true);
     blurMethodConn.block(true);
@@ -3783,7 +3922,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         LLmaskexpshape->setCurve(pp->locallab.spots.at(index).LLmaskexpcurve);
         HHmaskexpshape->setCurve(pp->locallab.spots.at(index).HHmaskexpcurve);
         blendmaskexp->setValue(pp->locallab.spots.at(index).blendmaskexp);
-
+        // Shadow highlight
+        expshadhigh->setEnabled(pp->locallab.spots.at(index).expshadhigh);
+        highlights->setValue(pp->locallab.spots.at(index).highlights);
+        h_tonalwidth->setValue(pp->locallab.spots.at(index).h_tonalwidth);
+        shadows->setValue(pp->locallab.spots.at(index).shadows);
+        s_tonalwidth->setValue(pp->locallab.spots.at(index).s_tonalwidth);
+        sh_radius->setValue(pp->locallab.spots.at(index).sh_radius);
+        sensihs->setValue(pp->locallab.spots.at(index).sensihs);
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
         saturated->setValue(pp->locallab.spots.at(index).saturated);
@@ -3977,6 +4123,15 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 LLmaskexpshape->setUnChanged(!spotState->LLmaskexpcurve);
                 HHmaskexpshape->setUnChanged(!spotState->HHmaskexpcurve);
                 blendmaskexp->setEditedState(spotState->blendmaskexp ? Edited : UnEdited);
+
+                // Shadow highlight
+                expshadhigh->set_inconsistent(!spotState->expshadhigh);
+                highlights->setEditedState(spotState->highlights ? Edited : UnEdited);
+                h_tonalwidth->setEditedState(spotState->h_tonalwidth ? Edited : UnEdited);
+                shadows->setEditedState(spotState->shadows ? Edited : UnEdited);
+                s_tonalwidth->setEditedState(spotState->s_tonalwidth ? Edited : UnEdited);
+                sh_radius->setEditedState(spotState->sh_radius ? Edited : UnEdited);
+                sensihs->setEditedState(spotState->sensihs ? Edited : UnEdited);
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);

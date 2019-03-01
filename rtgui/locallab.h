@@ -50,6 +50,7 @@ private:
     ControlSpotPanel* const expsettings;
     MyExpander* const expcolor;
     MyExpander* const expexpose;
+    MyExpander* const expshadhigh;
     MyExpander* const expvibrance;
     MyExpander* const expsoft;
     MyExpander* const expblur;
@@ -59,7 +60,7 @@ private:
     MyExpander* const expcontrast;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
-    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
+    sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
     // Color & Light
@@ -109,6 +110,13 @@ private:
     Adjuster* const structexp;
     Adjuster* const blurexpde;
     Adjuster* const blendmaskexp;
+    //Shadow highlight
+    Adjuster* const highlights;
+    Adjuster* const h_tonalwidth;
+    Adjuster* const shadows;
+    Adjuster* const s_tonalwidth;
+    Adjuster* const sh_radius;
+    Adjuster* const sensihs;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;
