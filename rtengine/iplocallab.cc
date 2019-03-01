@@ -463,7 +463,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurexpo = (float) locallab.spots.at(sp).blurexpde;
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
     int local_transit = locallab.spots.at(sp).transit;
-    double radius = (double) locallab.spots.at(sp).radius;
+    double radius = locallab.spots.at(sp).radius;
     double sharradius = ((double) locallab.spots.at(sp).sharradius);
     double lcamount = ((double) locallab.spots.at(sp).lcamount);
     double sharblurr = ((double) locallab.spots.at(sp).sharblur);
@@ -4601,7 +4601,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             noiscfactiv = false;
         }
 
-        if (lp.inv || lp.invret  || lp.invex) { //exterior || lp.curvact
+        if (lp.inv || lp.invret  || lp.invex) { //exterior
             ave = 0.f;
             n = 0;
             #pragma omp parallel for reduction(+:ave,n)

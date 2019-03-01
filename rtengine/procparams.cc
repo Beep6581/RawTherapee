@@ -2420,7 +2420,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     explabregion(false),
     // Blur & Noise
     expblur(false),
-    radius(1),
+    radius(1.0),
     strength(0),
     sensibn(40),
     blurMethod("norm"),

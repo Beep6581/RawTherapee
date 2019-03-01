@@ -101,7 +101,7 @@ Locallab::Locallab():
     streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
     // Blur & Noise
-    radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1, 100, 1, 1))),
+    radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.0, 100.0, 0.1, 1.0))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     // Tone Mapping
@@ -1579,7 +1579,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).sensisf = sensisf->getIntValue();
                     // Blur & Noise
                     pp->locallab.spots.at(pp->locallab.selspot).expblur = expblur->getEnabled();
-                    pp->locallab.spots.at(pp->locallab.selspot).radius = radius->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).radius = radius->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).strength = strength->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensibn = sensibn->getIntValue();
 
@@ -2642,7 +2642,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     streng->setDefault((double)defSpot->streng);
     sensisf->setDefault((double)defSpot->sensisf);
     // Blur & Noise
-    radius->setDefault((double)defSpot->radius);
+    radius->setDefault(defSpot->radius);
     strength->setDefault((double)defSpot->strength);
     sensibn->setDefault((double)defSpot->sensibn);
     // Tone Mapping

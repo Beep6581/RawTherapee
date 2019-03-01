@@ -1022,7 +1022,7 @@ struct LocallabParams {
         // ColorToningParams::LabCorrectionRegion Labcorr;
         // Blur & Noise
         bool expblur;
-        int radius;
+        double radius;
         int strength;
         int sensibn;
         Glib::ustring blurMethod;
