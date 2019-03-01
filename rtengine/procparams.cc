@@ -2609,6 +2609,7 @@ RAWParams::XTransSensor::XTransSensor() :
     method(getMethodString(Method::THREE_PASS)),
     dualDemosaicAutoContrast(true),
     dualDemosaicContrast(20),
+    border(7),
     ccSteps(0),
     blackred(0.0),
     blackgreen(0.0),
@@ -2622,6 +2623,7 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
         method == other.method
         && dualDemosaicAutoContrast == other.dualDemosaicAutoContrast
         && dualDemosaicContrast == other.dualDemosaicContrast
+        && border == other.border
         && ccSteps == other.ccSteps
         && blackred == other.blackred
         && blackgreen == other.blackgreen
@@ -3552,6 +3554,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.method, "RAW X-Trans", "Method", raw.xtranssensor.method, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicAutoContrast, "RAW X-Trans", "DualDemosaicAutoContrast", raw.xtranssensor.dualDemosaicAutoContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicContrast, "RAW X-Trans", "DualDemosaicContrast", raw.xtranssensor.dualDemosaicContrast, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.border, "RAW X-Trans", "Border", raw.xtranssensor.border, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.ccSteps, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, keyFile);
@@ -5099,6 +5102,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicContrast", pedited, raw.xtranssensor.dualDemosaicContrast, pedited->raw.xtranssensor.dualDemosaicContrast);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "Border", pedited, raw.xtranssensor.border, pedited->raw.xtranssensor.border);
             assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", pedited, raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", pedited, raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", pedited, raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);

@@ -432,6 +432,7 @@ void ParamsEdited::set(bool v)
     raw.xtranssensor.method = v;
     raw.xtranssensor.dualDemosaicAutoContrast = v;
     raw.xtranssensor.dualDemosaicContrast = v;
+    raw.xtranssensor.border = v;
     raw.xtranssensor.ccSteps = v;
     raw.xtranssensor.exBlackRed = v;
     raw.xtranssensor.exBlackGreen = v;
@@ -998,6 +999,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
         raw.xtranssensor.dualDemosaicAutoContrast = raw.xtranssensor.dualDemosaicAutoContrast && p.raw.xtranssensor.dualDemosaicAutoContrast == other.raw.xtranssensor.dualDemosaicAutoContrast;
         raw.xtranssensor.dualDemosaicContrast = raw.xtranssensor.dualDemosaicContrast && p.raw.xtranssensor.dualDemosaicContrast == other.raw.xtranssensor.dualDemosaicContrast;
+        raw.xtranssensor.border = raw.xtranssensor.border && p.raw.xtranssensor.border == other.raw.xtranssensor.border;
         raw.xtranssensor.ccSteps = raw.xtranssensor.ccSteps && p.raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps;
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
@@ -2656,6 +2658,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.xtranssensor.ccSteps         = mods.raw.xtranssensor.ccSteps;
     }
 
+    if (raw.xtranssensor.border) {
+        toEdit.raw.xtranssensor.border         = mods.raw.xtranssensor.border;
+    }
+
     if (raw.xtranssensor.exBlackRed) {
         toEdit.raw.xtranssensor.blackred        = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.xtranssensor.blackred + mods.raw.xtranssensor.blackred : mods.raw.xtranssensor.blackred;
     }
@@ -3188,7 +3194,7 @@ bool RAWParamsEdited::BayerSensor::isUnchanged() const
 
 bool RAWParamsEdited::XTransSensor::isUnchanged() const
 {
-    return method && exBlackRed && exBlackGreen && exBlackBlue && dualDemosaicAutoContrast && dualDemosaicContrast;
+    return method && border && exBlackRed && exBlackGreen && exBlackBlue && dualDemosaicAutoContrast && dualDemosaicContrast;
 }
 
 bool RAWParamsEdited::isUnchanged() const

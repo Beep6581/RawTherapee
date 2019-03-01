@@ -165,6 +165,8 @@ private:
             } else {
                 imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
             }
+        } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+            imgsrc->setBorder(params.raw.xtranssensor.border);
         }
         imgsrc->getFullSize (fw, fh, tr);
 
