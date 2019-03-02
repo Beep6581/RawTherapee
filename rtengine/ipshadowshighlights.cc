@@ -25,7 +25,7 @@
 #include "guidedfilter.h"
 
 namespace rtengine {
-
+//modifications to pass parameters needs by locallab, to avoid 2 functions - no change in process - J.Desmis march 2019
 void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal)
 {
     if (!ena || (!hightli && !shado)){

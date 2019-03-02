@@ -527,7 +527,7 @@ Locallab::Locallab():
     expshadhigh->add(*shadhighBox);
     expshadhigh->setLevel(2);
 
-//    panel->pack_start(*expshadhigh, false, false);
+    panel->pack_start(*expshadhigh, false, false);
 
     // Vibrance
     expvibrance->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expvibrance));

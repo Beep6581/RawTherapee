@@ -878,6 +878,13 @@ HISTORY_MSG_623;Local - Exp Chroma compensation
 HISTORY_MSG_624;Local - Color correction grid
 HISTORY_MSG_625;Local - Color correction strength
 HISTORY_MSG_626;Local - Color correction Method
+HISTORY_MSG_627;Local - Shadow Highlight
+HISTORY_MSG_628;Local - SH Highlight
+HISTORY_MSG_629;Local - SH H tonalwidth
+HISTORY_MSG_630;Local - SH Shadows
+HISTORY_MSG_631;Local - SH S tonalwidth
+HISTORY_MSG_632;Local - SH radius
+HISTORY_MSG_633;Local - SH Scope
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

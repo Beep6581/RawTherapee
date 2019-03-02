@@ -202,6 +202,7 @@ struct local_params {
     bool denoiena;
     bool expvib;
     bool exposena;
+    bool hsena;
     bool cut_past;
     float past;
     float satur;
@@ -495,7 +496,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int shadhs = locallab.spots.at(sp).shadows;
     int shtonals = locallab.spots.at(sp).s_tonalwidth;
     int radhs = locallab.spots.at(sp).sh_radius;
-    
+
     lp.cir = circr;
     lp.actsp = acti;
     lp.xc = w * local_center_x;
@@ -608,7 +609,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sensex = local_sensiex;
 //    lp.strucc = local_struc;
     lp.war = local_warm;
-    
+    lp.hsena = locallab.spots.at(sp).expshadhigh;
     lp.highlihs = highhs;
     lp.shadowhs = shadhs;
     lp.radiushs = radhs;
@@ -3227,6 +3228,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
             varsens =  lp.senstm;
         }
 
+        if (senstype == 9) //Shadow highlight
+        {
+            varsens =  lp.senshs;
+        }
+
         //printf("deltaE Weak=%f \n", lp.iterat);
         //sobel
         sobelref /= 100.;
@@ -3484,14 +3490,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
+                                if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {//all except color and light (TODO) and exposure
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
 
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
                                     diflc *= factorx;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                } else if (senstype == 1 || senstype == 0 ) {
+                                } else if (senstype == 1 || senstype == 0) {
                                     transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);
                                     diflc = 328.f * factorx * realstrdE;
                                 }
@@ -3522,7 +3528,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     float chra = bufexporig->a[loy - begy][lox - begx];
                                     float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {
+                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                     } else if (senstype == 1) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
@@ -3580,7 +3586,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8) {//retinex & cbdl
+                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {//retinex & cbdl
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
@@ -3615,7 +3621,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     float chra = bufexporig->a[loy - begy][lox - begx];
                                     float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {
+                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
@@ -4348,7 +4354,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         chromaref = aveChro;
         lumaref = avL;
 
-      //  printf("Calcref => sp=%i befend=%i huere=%2.1f chromare=%2.1f lumare=%2.1f sobelref=%2.1f\n", sp, befend, hueref, chromaref, lumaref, sobelref / 100.f);
+        //  printf("Calcref => sp=%i befend=%i huere=%2.1f chromare=%2.1f lumare=%2.1f sobelref=%2.1f\n", sp, befend, hueref, chromaref, lumaref, sobelref / 100.f);
 
         if (isdenoise) {
             delete origblur;
@@ -4649,7 +4655,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             ave = ave / n;
         }
 
-      //  printf("call= %i sp=%i hueref=%2.1f chromaref=%2.1f lumaref=%2.1f sobelref=%2.1f\n", call, sp, hueref, chromaref, lumaref, sobelref / 100.f);
+        //  printf("call= %i sp=%i hueref=%2.1f chromaref=%2.1f lumaref=%2.1f sobelref=%2.1f\n", call, sp, hueref, chromaref, lumaref, sobelref / 100.f);
 
 // we must here detect : general case, skin, sky,...foliages ???
 
@@ -6295,7 +6301,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float rL = CLIPRET((tmp1->L[loy - begy][lox - begx] - original->L[y][x]) / 400.f);
 
                         buflight[loy - begy][lox - begx]  = rL;
-                        
+
                         float chp;
                         chp = CLIPRET((sqrt(SQR(tmp1->a[loy - begy][lox - begx]) + SQR(tmp1->b[loy - begy][lox - begx])) - sqrt(SQR(bufgb->a[loy - begy][lox - begx]) + SQR(bufgb->b[loy - begy][lox - begx]))) / 250.f);
 
@@ -6461,6 +6467,111 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //end cbdl_Local
 
+//shadow highlight
+
+        if ((lp.highlihs > 0.f || lp.shadowhs > 0.f) && call < 3  && lp.hsena) {
+            LabImage *bufexporig = nullptr;
+            LabImage *bufexpfin = nullptr;
+
+            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            int bfw = int (lp.lx + lp.lxL) + del;
+
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufl_ab(bfw, bfh);
+
+            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
+
+
+                bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
+                bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int jr = 0; jr < bfw; jr++) {
+                        bufexporig->L[ir][jr] = 0.f;
+                        bufexporig->a[ir][jr] = 0.f;
+                        bufexporig->b[ir][jr] = 0.f;
+                        bufexpfin->L[ir][jr] = 0.f;
+                        bufexpfin->a[ir][jr] = 0.f;
+                        bufexpfin->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufl_ab[ir][jr] = 0.f;
+
+
+                    }
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufexpfin->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexpfin->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexpfin->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+
+                        }
+                    }
+
+                ImProcFunctions::shadowsHighlights(bufexpfin, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                            float rL;
+                            rL = CLIPRET((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
+
+                            buflight[loy - begy][lox - begx] = rL;
+
+
+                            float chp;
+                            chp = CLIPRET((sqrt(SQR(bufexpfin->a[loy - begy][lox - begx]) + SQR(bufexpfin->b[loy - begy][lox - begx])) - sqrt(SQR(bufexporig->a[loy - begy][lox - begx]) + SQR(bufexporig->b[loy - begy][lox - begx]))) / 250.f);
+
+                            bufl_ab[loy - begy][lox - begx] = chp;
+
+                        }
+                    }
+
+                transit_shapedetect(9, bufexpfin, nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+
+            }
+
+            if (call <= 3) {
+
+                delete bufexporig;
+                delete bufexpfin;
+
+
+            }
+        }
+
+
+
+
 // soft light
         if (lp.strng > 0.f && call < 3  && lp.sfena) {
 
@@ -6564,6 +6675,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
         }
+
 
 //local contrast
         if (lp.lcamount > 0.f && call < 3  && lp.lcena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
@@ -7119,7 +7231,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                         stdvsobel =  sqrt(dsob / ncstdv);
                         */
-                      //  printf("mean=%f max=%f min=%f\n", meansob, maxsob, minsob);
+                        //  printf("mean=%f max=%f min=%f\n", meansob, maxsob, minsob);
 
                         for (int i = 0; i < hei; ++i) {
                             delete[] tmL[i];
