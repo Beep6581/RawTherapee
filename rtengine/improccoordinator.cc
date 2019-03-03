@@ -251,6 +251,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
                 }
+            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+                imgsrc->setBorder(params.raw.xtranssensor.border);
             }
             bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
             double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;

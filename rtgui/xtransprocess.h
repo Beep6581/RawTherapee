@@ -32,6 +32,8 @@ class XTransProcess : public ToolParamBlock, public AdjusterListener, public Che
 protected:
 
     MyComboBoxText* method;
+    Gtk::HBox* borderbox;
+    Adjuster* border;
     Adjuster* ccSteps;
     Gtk::VBox *dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
@@ -40,6 +42,8 @@ protected:
     int oldSelection;
     sigc::connection methodconn;
     IdleRegister idle_register;
+
+    rtengine::ProcEvent EvDemosaicBorder;
     rtengine::ProcEvent EvDemosaicAutoContrast;
     rtengine::ProcEvent EvDemosaicContrast;
 

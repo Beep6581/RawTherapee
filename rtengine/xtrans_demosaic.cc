@@ -120,6 +120,11 @@ void RawImageSource::xtransborder_interpolate (int border, array2D<float> &red, 
 
     int xtrans[6][6];
     ri->getXtransMatrix(xtrans);
+    const float weight[3][3] = {
+                                {0.25f, 0.5f, 0.25f},
+                                {0.5f,  0.f,  0.5f},
+                                {0.25f, 0.5f, 0.25f}
+                               };
 
     for (int row = 0; row < height; row++)
         for (int col = 0; col < width; col++) {
@@ -129,11 +134,11 @@ void RawImageSource::xtransborder_interpolate (int border, array2D<float> &red, 
 
             float sum[6] = {0.f};
 
-            for (int y = MAX(0, row - 1); y <= MIN(row + 1, height - 1); y++)
-                for (int x = MAX(0, col - 1); x <= MIN(col + 1, width - 1); x++) {
+            for (int y = MAX(0, row - 1), v = row == 0 ? 0 : -1; y <= MIN(row + 1, height - 1); y++, v++)
+                for (int x = MAX(0, col - 1), h = col == 0 ? 0 : -1; x <= MIN(col + 1, width - 1); x++, h++) {
                     int f = fcol(y, x);
-                    sum[f] += rawData[y][x];
-                    sum[f + 3]++;
+                    sum[f] += rawData[y][x] * weight[v + 1][h + 1];
+                    sum[f + 3] += weight[v + 1][h + 1];
                 }
 
             switch(fcol(row, col)) {
@@ -196,12 +201,6 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
     ushort sgrow = 0, sgcol = 0;
 
     const int height = H, width = W;
-
-//    if (settings->verbose) {
-//        printf("%d-pass X-Trans interpolation using %s conversion...\n", passes, useCieLab ? "lab" : "yuv");
-//    }
-
-    xtransborder_interpolate(6, red, green, blue);
 
     float xyz_cam[3][3];
     {
@@ -956,6 +955,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
         free(buffer);
     }
 
+    xtransborder_interpolate(8, red, green, blue);
 }
 #undef CLIP
 void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
