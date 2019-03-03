@@ -144,6 +144,7 @@ struct local_params {
     float strengrid;
     float struexc;
     float blendmacol;
+    float radmacol;
     float blendmaexp;
     float struexp;
     float blurexp;
@@ -464,6 +465,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     float structcolor = (float) locallab.spots.at(sp).structcol;
     float blendmaskcolor = ((float) locallab.spots.at(sp).blendmaskcol) / 100.f ;
+    float radmaskcolor = ((float) locallab.spots.at(sp).radmaskcol);
     float blendmaskexpo = ((float) locallab.spots.at(sp).blendmaskexp) / 100.f ;
     float structexpo = (float) locallab.spots.at(sp).structexp;
     float blurexpo = (float) locallab.spots.at(sp).blurexpde;
@@ -512,6 +514,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.struco = structcolor;
     lp.strengrid = strengthgrid;
     lp.blendmacol = blendmaskcolor;
+    lp.radmacol = radmaskcolor;
     lp.struexc = structexclude;
     lp.blendmaexp = blendmaskexpo;
     lp.struexp = structexpo;
@@ -7846,6 +7849,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 }
 
+                array2D<float> ble(bfw, bfh);
+                array2D<float> guid(bfw, bfh);
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7917,13 +7923,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufmaskblurcol->L[loy - begy][lox - begx] = CLIPLOC(kmaskL + kmaskHL);
                                 bufmaskblurcol->a[loy - begy][lox - begx] = CLIPC(kmaskCa + kmaskHa);
                                 bufmaskblurcol->b[loy - begy][lox - begx] = CLIPC(kmaskCb + kmaskHb);
-
-
+                                ble[loy - begy][lox - begx] = bufmaskblurcol->L[loy - begy][lox - begx] / 32768.f;
+                                guid[loy - begy][lox - begx] = bufcolorig->L[loy - begy][lox - begx] / 32768.f;
                             }
                         }
                     }
 
-                float radiusb = 3.f / sk;
+                if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3)  && lp.radmacol > 0.f) { 
+
+                    guidedFilter(guid, ble, ble, lp.radmacol * 10.f / sk, 0.075, multiThread, 4);
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < transformed->H ; y++) //{
+                        for (int x = 0; x < transformed->W; x++) {
+                            int lox = cx + x;
+                            int loy = cy + y;
+
+                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                bufmaskblurcol->L[loy - begy][lox - begx] = ble[loy - begy][lox - begx] * 32768.f;
+                            }
+                        }
+                }
+
+                float radiusb = 1.f / sk;
 
                 if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3) {
 #ifdef _OPENMP
@@ -7931,8 +7956,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                     {
                         gaussianBlur(bufmaskblurcol->L, bufmaskorigcol->L, bfw, bfh, radiusb);
-                        gaussianBlur(bufmaskblurcol->a, bufmaskorigcol->a, bfw, bfh, radiusb);
-                        gaussianBlur(bufmaskblurcol->b, bufmaskorigcol->b, bfw, bfh, radiusb);
+                        gaussianBlur(bufmaskblurcol->a, bufmaskorigcol->a, bfw, bfh, 1.f + (0.2f * lp.radmacol) / sk);
+                        gaussianBlur(bufmaskblurcol->b, bufmaskorigcol->b, bfw, bfh, 1.f + (0.2f * lp.radmacol) / sk);
                     }
                     delete bufmaskblurcol;
 

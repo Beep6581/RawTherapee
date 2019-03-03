@@ -496,6 +496,7 @@ public:
         bool structcol;
         bool blurcolde;
         bool blendmaskcol;
+        bool radmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;
         bool llcurve;

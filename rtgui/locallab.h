@@ -98,6 +98,7 @@ private:
     Adjuster* const structcol;
     Adjuster* const blurcolde;
     Adjuster* const blendmaskcol;
+    Adjuster* const radmaskcol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;

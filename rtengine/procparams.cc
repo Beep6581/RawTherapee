@@ -2372,6 +2372,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structcol(0),
     blurcolde(5),
     blendmaskcol(0),
+    radmaskcol(10.0),
     qualitycurveMethod("none"),
     gridMethod("one"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
@@ -2528,6 +2529,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensi == other.sensi
         && structcol == other.structcol
         && blendmaskcol == other.blendmaskcol
+        && radmaskcol == other.radmaskcol
         && qualitycurveMethod == other.qualitycurveMethod
         && gridMethod == other.gridMethod
         && llcurve == other.llcurve
@@ -3641,6 +3643,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structcol, "Locallab", "Structcol_" + std::to_string(i), spot.structcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurcolde, "Locallab", "Blurcolde_" + std::to_string(i), spot.blurcolde, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskcol, "Locallab", "Blendmaskcol_" + std::to_string(i), spot.blendmaskcol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskcol, "Locallab", "Radmaskcol_" + std::to_string(i), spot.radmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gridMethod, "Locallab", "gridMethod_" + std::to_string(i), spot.gridMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
@@ -4882,6 +4885,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + std::to_string(i), pedited, spot.structcol, spotEdited.structcol);
                 assignFromKeyfile(keyFile, "Locallab", "Blurcolde_" + std::to_string(i), pedited, spot.blurcolde, spotEdited.blurcolde);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskcol_" + std::to_string(i), pedited, spot.blendmaskcol, spotEdited.blendmaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskcol_" + std::to_string(i), pedited, spot.radmaskcol, spotEdited.radmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + std::to_string(i), pedited, spot.gridMethod, spotEdited.gridMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);

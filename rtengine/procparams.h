@@ -972,6 +972,7 @@ struct LocallabParams {
         int structcol;
         int blurcolde;
         int blendmaskcol;
+        double radmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;
         std::vector<double> llcurve;
