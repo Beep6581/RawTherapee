@@ -661,6 +661,7 @@ enum ProcEventCode {
     Evlocallabsh_radius = 631,
     Evlocallabsensihs = 632,
     Evlocallabradmaskcol = 633,
+    Evlocallabradmaskexp = 634,
     NUMOFEVENTS
 };
 

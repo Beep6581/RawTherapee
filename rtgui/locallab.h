@@ -111,6 +111,7 @@ private:
     Adjuster* const structexp;
     Adjuster* const blurexpde;
     Adjuster* const blendmaskexp;
+    Adjuster* const radmaskexp;
     //Shadow highlight
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;

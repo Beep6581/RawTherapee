@@ -96,6 +96,7 @@ Locallab::Locallab():
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     blendmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    radmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
     //Shadow hightlights
     highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
     h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
@@ -429,6 +430,7 @@ Locallab::Locallab():
     blurexpde->setAdjusterListener(this);
 
     blendmaskexp->setAdjusterListener(this);
+    radmaskexp->setAdjusterListener(this);
 
     curveEditorG->setCurveListener(this);
 
@@ -498,6 +500,7 @@ Locallab::Locallab():
     maskexpBox->pack_start(*enaExpMask, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskexpBox->pack_start(*blendmaskexp, Gtk::PACK_SHRINK, 0);
+    maskexpBox->pack_start(*radmaskexp, Gtk::PACK_SHRINK, 0);
     maskexpFrame->add(*maskexpBox);
     exposeBox->pack_start(*maskexpFrame);
 
@@ -1608,6 +1611,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = CCmaskexpshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = HHmaskexpshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).blendmaskexp = blendmaskexp->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).radmaskexp = radmaskexp->getValue();
                     // Shadow highlight
                     pp->locallab.spots.at(pp->locallab.selspot).expshadhigh = expshadhigh->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).highlights = highlights->getIntValue();
@@ -1782,6 +1786,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).blendmaskexp = pe->locallab.spots.at(pp->locallab.selspot).blendmaskexp || blendmaskexp->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).radmaskexp = pe->locallab.spots.at(pp->locallab.selspot).radmaskexp || radmaskexp->getEditedState();
                         // Shadow highlight
                         pe->locallab.spots.at(pp->locallab.selspot).expshadhigh = pe->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).highlights = pe->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
@@ -1941,6 +1946,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).blendmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskexp || blendmaskexp->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).radmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).radmaskexp || radmaskexp->getEditedState();
                         // Shadow highlight
                         pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh = pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).highlights = pedited->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
@@ -2708,6 +2714,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     structexp->setDefault((double)defSpot->structexp);
     blurexpde->setDefault((double)defSpot->blurexpde);
     blendmaskexp->setDefault((double)defSpot->blendmaskexp);
+    radmaskexp->setDefault(defSpot->radmaskexp);
     //Shadow highlight
     highlights->setDefault((double)defSpot->highlights);
     h_tonalwidth->setDefault((double)defSpot->h_tonalwidth);
@@ -2801,6 +2808,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         structexp->setDefaultEditedState(Irrelevant);
         blurexpde->setDefaultEditedState(Irrelevant);
         blendmaskexp->setDefaultEditedState(Irrelevant);
+        radmaskexp->setDefaultEditedState(Irrelevant);
         //Shadow highlight
         highlights->setDefaultEditedState(Irrelevant);
         h_tonalwidth->setDefaultEditedState(Irrelevant);
@@ -2898,6 +2906,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         structexp->setDefaultEditedState(defSpotState->structexp ? Edited : UnEdited);
         blurexpde->setDefaultEditedState(defSpotState->blurexpde ? Edited : UnEdited);
         blendmaskexp->setDefaultEditedState(defSpotState->blendmaskexp ? Edited : UnEdited);
+        radmaskexp->setDefaultEditedState(defSpotState->radmaskexp ? Edited : UnEdited);
         //Shadow highlight
         highlights->setDefaultEditedState(defSpotState->highlights ? Edited : UnEdited);
         h_tonalwidth->setDefaultEditedState(defSpotState->h_tonalwidth ? Edited : UnEdited);
@@ -3139,6 +3148,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == blendmaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskexp, blendmaskexp->getTextValue());
+            }
+        }
+
+        if (a == radmaskexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradmaskexp, radmaskexp->getTextValue());
             }
         }
 
@@ -3572,6 +3587,7 @@ void Locallab::setBatchMode(bool batchMode)
     structexp->showEditedCB();
     blurexpde->showEditedCB();
     blendmaskexp->showEditedCB();
+    radmaskexp->showEditedCB();
     //Shadow Highlight
     highlights->showEditedCB();
     h_tonalwidth->showEditedCB();
@@ -3938,6 +3954,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         LLmaskexpshape->setCurve(pp->locallab.spots.at(index).LLmaskexpcurve);
         HHmaskexpshape->setCurve(pp->locallab.spots.at(index).HHmaskexpcurve);
         blendmaskexp->setValue(pp->locallab.spots.at(index).blendmaskexp);
+        radmaskexp->setValue(pp->locallab.spots.at(index).radmaskexp);
         // Shadow highlight
         expshadhigh->setEnabled(pp->locallab.spots.at(index).expshadhigh);
         highlights->setValue(pp->locallab.spots.at(index).highlights);
@@ -4140,6 +4157,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 LLmaskexpshape->setUnChanged(!spotState->LLmaskexpcurve);
                 HHmaskexpshape->setUnChanged(!spotState->HHmaskexpcurve);
                 blendmaskexp->setEditedState(spotState->blendmaskexp ? Edited : UnEdited);
+                radmaskexp->setEditedState(spotState->radmaskexp ? Edited : UnEdited);
 
                 // Shadow highlight
                 expshadhigh->set_inconsistent(!spotState->expshadhigh);

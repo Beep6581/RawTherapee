@@ -987,6 +987,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
                 locallab.spots.at(j).HHmaskexpcurve = locallab.spots.at(j).HHmaskexpcurve && pSpot.HHmaskexpcurve == otherSpot.HHmaskexpcurve;
                 locallab.spots.at(j).blendmaskexp = locallab.spots.at(j).blendmaskexp && pSpot.blendmaskexp == otherSpot.blendmaskexp;
+                locallab.spots.at(j).radmaskexp = locallab.spots.at(j).radmaskexp && pSpot.radmaskexp == otherSpot.radmaskexp;
                 // Shadow highlight
                 locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
                 locallab.spots.at(j).highlights = locallab.spots.at(j).highlights && pSpot.highlights == otherSpot.highlights;
@@ -2746,6 +2747,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blendmaskexp = mods.locallab.spots.at(i).blendmaskexp;
         }
 
+        if (locallab.spots.at(i).radmaskexp) {
+            toEdit.locallab.spots.at(i).radmaskexp = mods.locallab.spots.at(i).radmaskexp;
+        }
+
 
         // Shadow highlight
         if (locallab.spots.at(i).expshadhigh) {
@@ -4058,6 +4063,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LLmaskexpcurve(v),
     HHmaskexpcurve(v),
     blendmaskexp(v),
+    radmaskexp(v),
     // Shadow highlight
     expshadhigh(v),
     highlights(v),
@@ -4213,6 +4219,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LLmaskexpcurve = v;
     HHmaskexpcurve = v;
     blendmaskexp = v;
+    radmaskexp = v;
     // Shadow highlight
     expshadhigh = v;
     highlights = v;

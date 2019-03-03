@@ -886,6 +886,7 @@ HISTORY_MSG_631;Local - SH S tonalwidth
 HISTORY_MSG_632;Local - SH radius
 HISTORY_MSG_633;Local - SH Scope
 HISTORY_MSG_634;Local - radius color
+HISTORY_MSG_635;Local - radius Exp
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
