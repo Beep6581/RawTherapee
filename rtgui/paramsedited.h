@@ -958,6 +958,7 @@ public:
         bool method;
         bool dualDemosaicAutoContrast;
         bool dualDemosaicContrast;
+        bool border;
         bool ccSteps;
         bool exBlackRed;
         bool exBlackGreen;
