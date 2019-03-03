@@ -249,7 +249,8 @@ protected:
         bool fitParamsIn,
         bool fitParamsOut,
         float* buffer,
-        bool freeBuffer
+        bool freeBuffer,
+        size_t chunkSize = 1
     );
     void ddct8x8s(int isgn, float a[8][8]);
 

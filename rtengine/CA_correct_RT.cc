@@ -27,7 +27,7 @@
 #include "rt_math.h"
 #include "gauss.h"
 #include "median.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 namespace {
 
@@ -121,7 +121,8 @@ float* RawImageSource::CA_correct_RT(
     bool fitParamsIn,
     bool fitParamsOut,
     float* buffer,
-    bool freeBuffer
+    bool freeBuffer,
+    size_t chunkSize
 )
 {
     BENCHFUN
@@ -279,7 +280,7 @@ float* RawImageSource::CA_correct_RT(
                 float blockdenomthr[2][2] = {};
 
 #ifdef _OPENMP
-                #pragma omp for collapse(2) schedule(dynamic) nowait
+                #pragma omp for collapse(2) schedule(dynamic, chunkSize) nowait
 #endif
                 for (int top = -border ; top < height; top += ts - border2) {
                     for (int left = -border; left < width - (W & 1); left += ts - border2) {
@@ -821,7 +822,7 @@ float* RawImageSource::CA_correct_RT(
                 //green interpolated to optical sample points for R/B
                 float* gshift  = (float (*)) (data + 2 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64); // there is no overlap in buffer usage => share
 #ifdef _OPENMP
-                #pragma omp for schedule(dynamic) collapse(2)
+                #pragma omp for schedule(dynamic, chunkSize) collapse(2)
 #endif
                 for (int top = -border; top < height; top += ts - border2) {
                     for (int left = -border; left < width - (W & 1); left += ts - border2) {

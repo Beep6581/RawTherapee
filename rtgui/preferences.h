@@ -161,6 +161,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
     Gtk::SpinButton*  threadsSpinBtn;
     Gtk::SpinButton*  clutCacheSizeSB;
+    Gtk::SpinButton*  chunkSizeCASB;
     Gtk::SpinButton*  maxInspectorBuffersSB;
     Gtk::ComboBoxText *thumbnailInspectorMode;
 

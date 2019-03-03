@@ -448,7 +448,7 @@ void Options::setDefaults()
     maxInspectorBuffers = 2; //  a rather conservative value for low specced systems...
     inspectorDelay = 0;
     serializeTiffRead = true;
-
+    chunkSizeCA = 1;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     whiteBalanceSpotSize = 8;
@@ -1077,6 +1077,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Performance", "SerializeTiffRead")) {
                     serializeTiffRead = keyFile.get_boolean("Performance", "SerializeTiffRead");
+                }
+
+                if (keyFile.has_key("Performance", "ChunkSizeCA")) {
+                    chunkSizeCA = keyFile.get_integer("Performance", "ChunkSizeCA");
                 }
 
                 if (keyFile.has_key("Performance", "ThumbnailInspectorMode")) {
@@ -1949,6 +1953,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Performance", "InspectorDelay", inspectorDelay);
         keyFile.set_integer("Performance", "PreviewDemosaicFromSidecar", prevdemo);
         keyFile.set_boolean("Performance", "SerializeTiffRead", serializeTiffRead);
+        keyFile.set_integer("Performance", "ChunkSizeCA", chunkSizeCA);
         keyFile.set_integer("Performance", "ThumbnailInspectorMode", int(rtSettings.thumbnail_inspector_mode));
 
         keyFile.set_string("Output", "Format", saveFormat.format);
