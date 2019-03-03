@@ -1064,6 +1064,9 @@ PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing pr
 PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
+PREFERENCES_CHUNKSIZES;Tiles per thread
+PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -1202,8 +1205,6 @@ PREFERENCES_PRTPROFILE;Color profile
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-PREFERENCES_RAWCA;Raw CA correction
-PREFERENCES_RAWCA_CHUNKSIZE;Tiles per thread
 PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
 PREFERENCES_SELECTLANG;Select language
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings

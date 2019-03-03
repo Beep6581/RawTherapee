@@ -449,6 +449,7 @@ void Options::setDefaults()
     inspectorDelay = 0;
     serializeTiffRead = true;
     chunkSizeCA = 1;
+    chunkSizeRCD = 1;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     whiteBalanceSpotSize = 8;
@@ -1080,7 +1081,11 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("Performance", "ChunkSizeCA")) {
-                    chunkSizeCA = keyFile.get_integer("Performance", "ChunkSizeCA");
+                    chunkSizeCA = std::min(16, std::max(1, keyFile.get_integer("Performance", "ChunkSizeCA")));
+                }
+
+                if (keyFile.has_key("Performance", "ChunkSizeRCD")) {
+                    chunkSizeRCD = std::min(16, std::max(1, keyFile.get_integer("Performance", "ChunkSizeRCD")));
                 }
 
                 if (keyFile.has_key("Performance", "ThumbnailInspectorMode")) {
@@ -1953,7 +1958,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Performance", "InspectorDelay", inspectorDelay);
         keyFile.set_integer("Performance", "PreviewDemosaicFromSidecar", prevdemo);
         keyFile.set_boolean("Performance", "SerializeTiffRead", serializeTiffRead);
-        keyFile.set_integer("Performance", "ChunkSizeCA", chunkSizeCA);
+        keyFile.set_integer("Performance", "ChunkSizeRCD", chunkSizeRCD);
         keyFile.set_integer("Performance", "ThumbnailInspectorMode", int(rtSettings.thumbnail_inspector_mode));
 
         keyFile.set_string("Output", "Format", saveFormat.format);

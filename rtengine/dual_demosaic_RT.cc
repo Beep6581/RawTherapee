@@ -48,7 +48,7 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
                 dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
-                rcd_demosaic();
+                rcd_demosaic(options.chunkSizeCA);
             }
         } else {
             if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
@@ -74,7 +74,7 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const RAWParams &raw, int wi
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4) ) {
-            rcd_demosaic();
+            rcd_demosaic(options.chunkSizeCA);
         }
     } else {
         if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {

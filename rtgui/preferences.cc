@@ -666,10 +666,11 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     fclut->add (*clutCacheSizeHB);
     vbPerformance->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* fca = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_RAWCA")) );
+    Gtk::Frame* fchunksize = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CHUNKSIZES")) );
+    Gtk::VBox* chunkSizeVB = Gtk::manage ( new Gtk::VBox () );
     Gtk::HBox* cachunkSizeHB = Gtk::manage ( new Gtk::HBox () );
     cachunkSizeHB->set_spacing (4);
-    Gtk::Label* CALl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_RAWCA_CHUNKSIZE") + ":", Gtk::ALIGN_START));
+    Gtk::Label* CALl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_CHUNKSIZE_RAW_CA") + ":", Gtk::ALIGN_START));
     chunkSizeCASB = Gtk::manage ( new Gtk::SpinButton () );
     chunkSizeCASB->set_digits (0);
     chunkSizeCASB->set_increments (1, 5);
@@ -677,8 +678,23 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     chunkSizeCASB->set_range (1, 16);
     cachunkSizeHB->pack_start (*CALl, Gtk::PACK_SHRINK, 0);
     cachunkSizeHB->pack_end (*chunkSizeCASB, Gtk::PACK_SHRINK, 0);
-    fca->add (*cachunkSizeHB);
-    vbPerformance->pack_start (*fca, Gtk::PACK_SHRINK, 4);
+    chunkSizeVB->add(*cachunkSizeHB);
+
+    Gtk::HBox* rcdchunkSizeHB = Gtk::manage ( new Gtk::HBox () );
+    rcdchunkSizeHB->set_spacing (4);
+    Gtk::Label* RCDLl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_CHUNKSIZE_RAW_RCD") + ":", Gtk::ALIGN_START));
+    chunkSizeRCDSB = Gtk::manage ( new Gtk::SpinButton () );
+    chunkSizeRCDSB->set_digits (0);
+    chunkSizeRCDSB->set_increments (1, 5);
+    chunkSizeRCDSB->set_max_length (2); // Will this be sufficient? :)
+    chunkSizeRCDSB->set_range (1, 16);
+    rcdchunkSizeHB->pack_start (*RCDLl, Gtk::PACK_SHRINK, 0);
+    rcdchunkSizeHB->pack_end (*chunkSizeRCDSB, Gtk::PACK_SHRINK, 0);
+    chunkSizeVB->add(*rcdchunkSizeHB);
+
+    fchunksize->add (*chunkSizeVB);
+
+    vbPerformance->pack_start (*fchunksize, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* finspect = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_INSPECT_LABEL")) );
     Gtk::HBox* maxIBuffersHB = Gtk::manage ( new Gtk::HBox () );
@@ -1798,6 +1814,7 @@ void Preferences::storePreferences ()
     moptions.rgbDenoiseThreadLimit = threadsSpinBtn->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
     moptions.chunkSizeCA = chunkSizeCASB->get_value_as_int();
+    moptions.chunkSizeRCD= chunkSizeRCDSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
     moptions.rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(thumbnailInspectorMode->get_active_row_number());
 
@@ -2003,6 +2020,7 @@ void Preferences::fillPreferences ()
     threadsSpinBtn->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     chunkSizeCASB->set_value (moptions.chunkSizeCA);
+    chunkSizeRCDSB->set_value (moptions.chunkSizeRCD);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
     thumbnailInspectorMode->set_active(int(moptions.rtSettings.thumbnail_inspector_mode));
 

@@ -2103,7 +2103,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) ) {
             nodemosaic(true);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD) ) {
-            rcd_demosaic ();
+            rcd_demosaic(options.chunkSizeRCD);
         } else {
             nodemosaic(false);
         }

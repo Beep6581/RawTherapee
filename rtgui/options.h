@@ -315,6 +315,7 @@ public:
     prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
     bool serializeTiffRead;
     size_t chunkSizeCA;
+    size_t chunkSizeRCD;
     bool menuGroupRank;
     bool menuGroupLabel;
     bool menuGroupFileOperations;

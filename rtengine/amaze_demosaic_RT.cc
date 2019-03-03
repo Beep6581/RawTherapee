@@ -33,6 +33,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
+#define BENCHMARK
 #include "StopWatch.h"
 
 namespace rtengine
@@ -176,7 +177,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
         // Main algorithm: Tile loop
         // use collapse(2) to collapse the 2 loops to one large loop, so there is better scaling
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2) nowait
+        #pragma omp for schedule(dynamic, 8) collapse(2) nowait
 #endif
 
         for (int top = winy - 16; top < winy + height; top += ts - 32) {
