@@ -554,6 +554,13 @@ void FlatCurveEditorSubGroup::restoreDisplayedHistogram()
 
 }
 
+void FlatCurveEditorSubGroup::restoreLocallabBackground()
+{
+    if (parent->displayedCurve) {
+        CPointsCurve->updateLocallabBackground(parent->displayedCurve->locallabRef);
+    }
+}
+
 void FlatCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p)
 {
     if (!p.empty()) {
@@ -625,6 +632,13 @@ bool FlatCurveEditorSubGroup::curveReset(CurveEditor *ce)
     }
 
     return true;
+}
+
+void FlatCurveEditorSubGroup::updateLocallabBackground(CurveEditor* ce)
+{
+    if (ce == parent->displayedCurve) {
+        CPointsCurve->updateLocallabBackground(ce->locallabRef);
+    }
 }
 
 /*void FlatCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {

@@ -53,11 +53,11 @@ Locallab::Locallab():
     expsoft(new MyExpander(true, M("TP_LOCALLAB_SOFT"))),
     expblur(new MyExpander(true, M("TP_LOCALLAB_BLUFR"))),
     exptonemap(new MyExpander(true, M("TP_LOCALLAB_TM"))),
-    expreti(new MyExpander(true, M("TP_LOCALLAB_RETI"))),
-    expsharp(new MyExpander(true, M("TP_LOCALLAB_SHARP"))),
+    expreti(new MyExpander(true, new Gtk::HBox())),
+    expsharp(new MyExpander(true, new Gtk::HBox())),
     expcontrast(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST"))),
-    expcbdl(new MyExpander(true, M("TP_LOCALLAB_CBDL"))),
-    expdenoi(new MyExpander(true, M("TP_LOCALLAB_DENOIS"))),
+    expcbdl(new MyExpander(true, new Gtk::HBox())),
+    expdenoi(new MyExpander(true, new Gtk::HBox())),
 
 
     // CurveEditorGroup widgets
@@ -201,8 +201,6 @@ Locallab::Locallab():
     lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
     lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
     lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
-    transLabels(Gtk::manage(new Gtk::Label("---"))),
-    transLabels2(Gtk::manage(new Gtk::Label("---"))),
     maskcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")))),
     maskexpFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")))),
     gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
@@ -210,10 +208,7 @@ Locallab::Locallab():
     // Others
     defparams(nullptr),
     defpedited(nullptr),
-    pe(nullptr),
-    nexthuer(0.),
-    nextlumar(0.),
-    nextchromar(0.)
+    pe(nullptr)
 
 {
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
@@ -389,8 +384,9 @@ Locallab::Locallab():
     colorBox->pack_start(*invers);
     maskcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
-    maskcolBox->pack_start(*transLabels, Gtk::PACK_SHRINK, 4);
-    maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 0);
+//    maskcolBox->pack_start(*transLabels, Gtk::PACK_SHRINK, 4);
+//    maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 0);
+    maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
@@ -495,8 +491,9 @@ Locallab::Locallab():
     exposeBox->pack_start(*inversex);
     maskexpFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
-    maskexpBox->pack_start(*transLabels2, Gtk::PACK_SHRINK, 4);
-    maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 0);
+    maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
+//    maskexpBox->pack_start(*transLabels2, Gtk::PACK_SHRINK, 4);
+//    maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*enaExpMask, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskexpBox->pack_start(*blendmaskexp, Gtk::PACK_SHRINK, 0);
@@ -663,9 +660,18 @@ Locallab::Locallab():
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
 
- //   panel->pack_start(*exptonemap, false, false);
+//   panel->pack_start(*exptonemap, false, false);
 
     // Retinex
+    Gtk::HBox* const retiTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const retiLabel = Gtk::manage(new Gtk::Label());
+    retiLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_RETI")) + Glib::ustring("</b>"));
+    retiLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    retiTitleHBox->pack_start(*retiLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    RTImage *retiImage = Gtk::manage (new RTImage("one-to-one-small.png"));
+    retiImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+    retiTitleHBox->pack_end(*retiImage, Gtk::PACK_SHRINK, 0);
+    expreti->setLabel(retiTitleHBox);
     expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
     enableretiConn = expreti->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expreti));
 
@@ -716,6 +722,16 @@ Locallab::Locallab():
     panel->pack_start(*expreti, false, false);
 
     // Sharpening
+    Gtk::HBox* const sharpTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const sharpLabel = Gtk::manage(new Gtk::Label());
+    sharpLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_SHARP")) + Glib::ustring("</b>"));
+    sharpLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    sharpTitleHBox->pack_start(*sharpLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    RTImage *sharpImage = Gtk::manage (new RTImage("one-to-one-small.png"));
+    sharpImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+    sharpTitleHBox->pack_end(*sharpImage, Gtk::PACK_SHRINK, 0);
+    expsharp->setLabel(sharpTitleHBox);
+    
     expsharp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsharp));
     enablesharpConn = expsharp->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsharp));
 
@@ -776,6 +792,15 @@ Locallab::Locallab():
     panel->pack_start(*expcontrast, false, false);
 
     // Contrast by detail levels
+    Gtk::HBox* const cbdlTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const cbdlLabel = Gtk::manage(new Gtk::Label());
+    cbdlLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_CBDL")) + Glib::ustring("</b>"));
+    cbdlLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    cbdlTitleHBox->pack_start(*cbdlLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    RTImage *cbdlImage = Gtk::manage (new RTImage("one-to-one-small.png"));
+    cbdlImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+    cbdlTitleHBox->pack_end(*cbdlImage, Gtk::PACK_SHRINK, 0);
+    expcbdl->setLabel(cbdlTitleHBox);   
     expcbdl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcbdl));
     enablecbdlConn = expcbdl->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcbdl));
     expcbdl->set_tooltip_text(M("TP_LOCALLAB_EXPCBDL_TOOLTIP"));
@@ -827,6 +852,15 @@ Locallab::Locallab():
     panel->pack_start(*expcbdl, false, false);
 
     // Denoise
+    Gtk::HBox* const denoiTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const denoiLabel = Gtk::manage(new Gtk::Label());
+    denoiLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_DENOIS")) + Glib::ustring("</b>"));
+    denoiLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    denoiTitleHBox->pack_start(*denoiLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    RTImage *denoiImage = Gtk::manage (new RTImage("one-to-one-small.png"));
+    denoiImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+    denoiTitleHBox->pack_end(*denoiImage, Gtk::PACK_SHRINK, 0);
+    expdenoi->setLabel(denoiTitleHBox);
     expdenoi->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expdenoi));
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expdenoi));
 
@@ -998,59 +1032,44 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
 
 }
 
-void Locallab::refChanged(double huer, double lumar, double chromar)
-{
-    nexthuer = huer;
-    nextlumar = lumar / 100.f;
-    nextchromar = chromar / 137.4f;
-    float h = Color::huelab_to_huehsv2(nexthuer);
-    h += 1.f / 6.f;
-
-    if (h > 1.f) {
-        h -= 1.f;
-    }
-
-    nexthuer = h;
-    //printf("nh=%f nl=%f nc=%f\n", nexthuer, nextlumar, nextchromar);
-
-
-    idle_register.add(
-    [this]() -> bool {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        // FIXME: The above can't be true?!
-        disableListener();
-        enableListener();
-        updateLabel();
-        return false;
-    }
-    );
-
-
-}
-
-
-void Locallab::updateLabel()
+void Locallab::refChanged (double huer, double lumar, double chromar)
 {
     if (!batchMode) {
-        float nX, nY, nZ;
-
-        nY = nextlumar;
-        nX = nextchromar;
-        nZ = nexthuer;
-        {
-            transLabels->set_text(
-                Glib::ustring::compose(M("TP_LOCALLAB_REFLABEL"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(3), nX),
-                                       Glib::ustring::format(std::fixed, std::setprecision(3), nY),
-                                       Glib::ustring::format(std::fixed, std::setprecision(3), nZ))
-            );
-            transLabels2->set_text(
-                Glib::ustring::compose(M("TP_LOCALLAB_REFLABEL"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(3), nX),
-                                       Glib::ustring::format(std::fixed, std::setprecision(3), nY),
-                                       Glib::ustring::format(std::fixed, std::setprecision(3), nZ))
-            );
+        // Hue reference normalization (between 0 and 1)
+        double normHuer = huer;
+        float h = Color::huelab_to_huehsv2(normHuer);
+        h += 1.f/6.f;
+        if (h > 1.f) {
+            h -= 1.f;
         }
+        normHuer = h;
+
+        // Luma reference normalization (between 0 and 1)
+        double normLumar = lumar / 100.f;
+
+        // Chroma reference normalization (between 0 and 1)
+        double normChromar = chromar / 137.4f;
+
+        // printf("nh=%f nl=%f nc=%f\n", normHuer, normLumar, normChromar);
+
+        idle_register.add(
+            [this, normHuer, normLumar, normChromar]() -> bool
+            {
+                GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+                // Update Color & Light mask background
+                CCmaskshape->updateLocallabBackground(normChromar);
+                LLmaskshape->updateLocallabBackground(normLumar);
+                HHmaskshape->updateLocallabBackground(normHuer);
+
+                // Update Exposure mask background
+                CCmaskexpshape->updateLocallabBackground(normChromar);
+                LLmaskexpshape->updateLocallabBackground(normLumar);
+                HHmaskexpshape->updateLocallabBackground(normHuer);
+
+                return false;
+            }
+        );
     }
 }
 
@@ -1091,7 +1110,7 @@ void Locallab::lumacontrastPlusPressed()
 
     for (int i = 0; i < 5; i++) {
         float inc = (5 - i);
-        multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc );
+        multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc);
     }
 
     // Raise event (only for first multiplier because associated event concerns all multipliers)
@@ -3198,6 +3217,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         }
 
     }
+
     // Vibrance
     if (a == pastels && pastSatTog->get_active() && !(multiImage && pastSatTog->get_inconsistent())) {
         saturated->setValue(newval);

@@ -232,8 +232,8 @@ private:
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
-    Gtk::Label* transLabels;
-    Gtk::Label* transLabels2;
+//    Gtk::Label* transLabels;
+//    Gtk::Label* transLabels2;
     Gtk::Frame* maskcolFrame;
     Gtk::Frame* maskexpFrame;
     Gtk::Frame* gridFrame;
@@ -301,9 +301,6 @@ private:
     void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);
     void updateSpecificGUIState();
     void setParamEditable(bool cond);
-    double nexthuer;
-    double nextlumar;
-    double nextchromar;
 
 
 public:
@@ -323,7 +320,6 @@ public:
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);
     void refChanged(double huer, double lumar, double chromar);
-    void updateLabel();
 
     // Mask visibility management functions
     struct llMaskVisibility {

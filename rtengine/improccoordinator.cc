@@ -835,11 +835,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 sca);
-
-                if (locallListener) {
-                    locallListener->refChanged(huer, lumar, chromar);
+                if (sp == params.locallab.selspot) {
+                    if (locallListener) {
+                        locallListener->refChanged(huer, lumar, chromar);
+                    }
                 }
-
 
                 // Locallab tools computation
                 /* Notes:
