@@ -7282,6 +7282,53 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
+//                float maxfab = -100.f;
+                float meanfab = 0.f;
+                int nbfab = 0;
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
+/*
+                            if (fabs(bufexporig->a[loy - begy][lox - begx]) > maxfab) {
+                                maxfab = fabs(bufexporig->a[loy - begy][lox - begx]);
+                            }
+
+                            if (fabs(bufexporig->b[loy - begy][lox - begx]) > maxfab) {
+                                maxfab = fabs(bufexporig->b[loy - begy][lox - begx]);
+                            }
+*/
+                            meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
+                            meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
+                            nbfab++;
+                        }
+                    }
+
+                meanfab = meanfab / (2.f * nbfab);
+                float stddv = 0.f;
+                float som = 0.f;
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
+                        }
+                    }
+
+                stddv = sqrt(som / nbfab);
+                //         printf("maxfab=%f mean=%f\n", maxfab, meanfab);
+
+                //         printf("stadv=%f\n", stddv);
+                float fab = meanfab + 1.5f * stddv;
+                //         printf("fab=%f\n", fab);
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -7303,8 +7350,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                             bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
-                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
-                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
 
                             float valLLexp = 0.f;
                             float valCC = 0.f;
@@ -7328,8 +7373,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 if (locccmasexpCurve && lcmasexputili) {
-                                    float chromask = 0.0001f + (sqrt(SQR(bufexporig->a[loy - begy][lox - begx]) + SQR(bufexporig->b[loy - begy][lox - begx])));
-                                    float chromaskr = chromask / 45000.f;
+                                    float chromask = 0.0001f + sqrt(SQR((bufexporig->a[loy - begy][lox - begx]) / fab) + SQR((bufexporig->b[loy - begy][lox - begx]) / fab));
+                                    float chromaskr = chromask;
                                     valCC = float (locccmasexpCurve[500.f *  chromaskr]);
                                     valCC = LIM01(1.f - valCC);
                                     kmaskCa = valCC;
@@ -7354,17 +7399,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 bufmaskblurexp->L[loy - begy][lox - begx] = CLIPLOC(kmaskLexp + kmaskHL);
-                                bufmaskblurexp->a[loy - begy][lox - begx] = CLIPC(kmaskCa + kmaskHa);
-                                bufmaskblurexp->b[loy - begy][lox - begx] = CLIPC(kmaskCb + kmaskHb);
+                                bufmaskblurexp->a[loy - begy][lox - begx] = (kmaskCa + kmaskHa);
+                                bufmaskblurexp->b[loy - begy][lox - begx] = (kmaskCb + kmaskHb);
                                 ble[loy - begy][lox - begx] = bufmaskblurexp->L[loy - begy][lox - begx] / 32768.f;
                                 guid[loy - begy][lox - begx] = bufexporig->L[loy - begy][lox - begx] / 32768.f;
-
-
                             }
 
                         }
                     }
-                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3)  && lp.radmaexp > 0.f) { 
+
+                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3)  && lp.radmaexp > 0.f) {
 
                     guidedFilter(guid, ble, ble, lp.radmaexp * 10.f / sk, 0.075, multiThread, 4);
 
@@ -7379,8 +7423,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                 bufmaskblurexp->L[loy - begy][lox - begx] = LIM01(ble[loy - begy][lox - begx]) * 32768.f;
-                                bufmaskblurexp->a[loy - begy][lox - begx] *= LIM01(ble[loy - begy][lox - begx]);
-                                bufmaskblurexp->b[loy - begy][lox - begx] *= LIM01(ble[loy - begy][lox - begx]);
                             }
                         }
                 }
@@ -7394,8 +7436,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                     {
                         gaussianBlur(bufmaskblurexp->L, bufmaskorigexp->L, bfw, bfh, radiusb);
-                        gaussianBlur(bufmaskblurexp->a, bufmaskorigexp->a, bfw, bfh, radiusb); //1.f + (0.2f * lp.radmaexp) / sk);
-                        gaussianBlur(bufmaskblurexp->b, bufmaskorigexp->b, bfw, bfh, radiusb);//1.f + (0.2f * lp.radmaexp) / sk);
+                        gaussianBlur(bufmaskblurexp->a, bufmaskorigexp->a, bfw, bfh, 1.f + (0.5f * lp.radmaexp) / sk);
+                        gaussianBlur(bufmaskblurexp->b, bufmaskorigexp->b, bfw, bfh, 1.f + (0.5f * lp.radmaexp) / sk);
                     }
 
                     delete bufmaskblurexp;
@@ -7771,7 +7813,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if (bfw > 2 * spotSi && bfh > 2 * spotSi  && lp.struco > 0.f) {
                     SobelCannyLuma(blend2, bufcolorig->L, bfw, bfh, radius);
                     array2D<float> ble(bfw, bfh);
-                    array2D<float> blec(bfw, bfh);
                     array2D<float> guid(bfw, bfh);
 #ifdef _OPENMP
                     #pragma omp parallel for
@@ -7878,6 +7919,54 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
+//                float maxfab = -100.f;
+                float meanfab = 0.f;
+                int nbfab = 0;
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];
+/*
+                            if (fabs(bufcolorig->a[loy - begy][lox - begx]) > maxfab) {
+                                maxfab = fabs(bufcolorig->a[loy - begy][lox - begx]);
+                            }
+
+                            if (fabs(bufcolorig->b[loy - begy][lox - begx]) > maxfab) {
+                                maxfab = fabs(bufcolorig->b[loy - begy][lox - begx]);
+                            }
+*/
+                            meanfab += fabs(bufcolorig->a[loy - begy][lox - begx]);
+                            meanfab += fabs(bufcolorig->b[loy - begy][lox - begx]);
+                            nbfab++;
+                        }
+                    }
+
+                meanfab = meanfab / (2.f * nbfab);
+                float stddv = 0.f;
+                float som = 0.f;
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            som += SQR(fabs(bufcolorig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufcolorig->b[loy - begy][lox - begx]) - meanfab);
+                        }
+                    }
+
+                stddv = sqrt(som / nbfab);
+                //        printf("maxfab=%f mean=%f\n", maxfab, meanfab);
+
+                //        printf("stadv=%f\n", stddv);
+                float fab = meanfab + 1.5f * stddv;
+                //        printf("fab=%f\n", fab);
+
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -7899,8 +7988,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                             bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];
-                            bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];
-                            bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];
 
                             float valLL = 0.f;
                             float valCC = 0.f;
@@ -7923,8 +8010,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 if (locccmasCurve && lcmasutili) {
-                                    float chromask = 0.0001f + (sqrt(SQR(bufcolorig->a[loy - begy][lox - begx]) + SQR(bufcolorig->b[loy - begy][lox - begx])));
-                                    float chromaskr = chromask / 45000.f;
+                                    float chromask = 0.0001f + (sqrt(SQR(bufcolorig->a[loy - begy][lox - begx] / fab) + SQR(bufcolorig->b[loy - begy][lox - begx] / fab)));
+                                    float chromaskr = chromask;// / 45000.f;
                                     valCC = float (locccmasCurve[500.f *  chromaskr]);
                                     valCC = LIM01(1.f - valCC);
                                     kmaskCa = valCC;
@@ -7956,7 +8043,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3)  && lp.radmacol > 0.f) { 
+                if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3)  && lp.radmacol > 0.f) {
 
                     guidedFilter(guid, ble, ble, lp.radmacol * 10.f / sk, 0.075, multiThread, 4);
 
@@ -7971,8 +8058,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                 bufmaskblurcol->L[loy - begy][lox - begx] = LIM01(ble[loy - begy][lox - begx]) * 32768.f;
-                                bufmaskblurcol->a[loy - begy][lox - begx] *= LIM01(ble[loy - begy][lox - begx]);
-                                bufmaskblurcol->b[loy - begy][lox - begx] *= LIM01(ble[loy - begy][lox - begx]);
                             }
                         }
                 }
@@ -7985,8 +8070,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                     {
                         gaussianBlur(bufmaskblurcol->L, bufmaskorigcol->L, bfw, bfh, radiusb);
-                        gaussianBlur(bufmaskblurcol->a, bufmaskorigcol->a, bfw, bfh, radiusb); //1.f + (0.2f * lp.radmacol) / sk);
-                        gaussianBlur(bufmaskblurcol->b, bufmaskorigcol->b, bfw, bfh, radiusb); //1.f + (0.2f * lp.radmacol) / sk);
+                        gaussianBlur(bufmaskblurcol->a, bufmaskorigcol->a, bfw, bfh, 1.f + (0.5f * lp.radmacol) / sk);
+                        gaussianBlur(bufmaskblurcol->b, bufmaskorigcol->b, bfw, bfh, 1.f + (0.5f * lp.radmacol) / sk);
                     }
                     delete bufmaskblurcol;
 
