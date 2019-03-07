@@ -471,11 +471,13 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                         }
                     }
                     if (mnote->getTag ("LensType")) {
-                        if (mnote->getTag("LensType")->toInt()) {
-                            lens = mnote->getTag ("LensType")->valueToString();
-                        } else {
+                        lens = mnote->getTag ("LensType")->valueToString();
+                        if (!mnote->getTag("LensType")->toInt()) {
+                            // try to find something better than "M-42 or No Lens"
                             lens_from_make_and_model();
                         }
+                    } else {
+                        lens_from_make_and_model();
                     }
 
                     // Try to get the FocalLength from the LensInfo structure, where length below 10mm will be correctly set
@@ -520,10 +522,8 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 }
             } else if (exif->getTag ("DNGLensInfo")) {
                 lens = exif->getTag ("DNGLensInfo")->valueToString ();
-            } else if (exif->getTag ("LensInfo")) {
+            } else if (!lens_from_make_and_model() && exif->getTag ("LensInfo")) {
                 lens = exif->getTag ("LensInfo")->valueToString ();
-            } else {
-                lens_from_make_and_model();
             }
         }
     }
