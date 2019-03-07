@@ -32,7 +32,7 @@ namespace rtexif
 class CAOnOffInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int n = t->toInt();
 
@@ -51,7 +51,7 @@ class CAIntSerNumInterpreter : public Interpreter
 {
 public:
     CAIntSerNumInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         return "";
     }
@@ -63,7 +63,7 @@ class CAApertureInterpreter : public Interpreter
 {
 public:
     CAApertureInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = pow (2.0, t->toDouble() / 64.0);
@@ -92,7 +92,7 @@ CAMacroModeInterpreter caMacroModeInterpreter;
 class CASelfTimerInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int sec = t->toInt (0, SHORT);
 
@@ -385,7 +385,7 @@ CAExposureModeInterpreter caExposureModeInterpreter;
 class CAFlashBitsInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream s;
         unsigned bits = t->toInt (0, SHORT);
@@ -533,7 +533,7 @@ CARAWQualityInterpreter caRAWQualityInterpreter;
 class CAFocalInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         Tag *unitTag = t->getParent()->getRoot()->findTag ("FocalUnits");
         double v = unitTag ? unitTag->toDouble() : 1.;
@@ -957,7 +957,7 @@ public:
         };
     }
 
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int lensID = t->toInt();
 
@@ -1109,7 +1109,7 @@ CAFocalTypeInterpreter caFocalTypeInterpreter;
 class CAFocalPlaneInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int val = t->toInt();
 
@@ -1127,7 +1127,7 @@ CAFocalPlaneInterpreter caFocalPlaneInterpreter;
 class CAExposureTimeInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double d = pow (2, - t->toInt() / 32.0);
@@ -1139,7 +1139,7 @@ CAExposureTimeInterpreter caExposureTimeInterpreter;
 
 class CAEVInterpreter : public Interpreter
 {
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%.1f", t->toDouble() / 32.0  );
@@ -1151,7 +1151,7 @@ CAEVInterpreter caEVInterpreter;
 class CABaseISOInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         int a = t->toInt();
@@ -1288,7 +1288,7 @@ CASlowShutterInterpreter caSlowShutterInterpreter;
 class CAFlashGuideNumberInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int n = t->toInt();
 
@@ -1349,7 +1349,7 @@ CAControModeInterpreter caControModeInterpreter;
 class CAFocusDistanceInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%.2f", t->toDouble() / 100 );
@@ -1361,7 +1361,7 @@ CAFocusDistanceInterpreter caFocusDistanceInterpreter;
 class CAMeasuredEVInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%.1f", t->toDouble() / 8 - 6 );
@@ -1496,7 +1496,7 @@ CAToningEffectInterpreter caToningEffectInterpreter;
 class CAFileNumberInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         unsigned long val = t->toInt (0, LONG);
         char buffer[32];

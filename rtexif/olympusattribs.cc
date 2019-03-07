@@ -33,7 +33,7 @@ class OLOnOffInterpreter : public Interpreter
 {
 public:
     OLOnOffInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         if (t->toInt() == 0) {
             return "Off";
@@ -48,7 +48,7 @@ class OLYesNoInterpreter : public Interpreter
 {
 public:
     OLYesNoInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         if (t->toInt() == 0) {
             return "No";
@@ -63,7 +63,7 @@ class OLApertureInterpreter : public Interpreter
 {
 public:
     OLApertureInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         str.precision (2);
@@ -194,7 +194,7 @@ public:
         lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         lenses["05 01 10"] = "Tamron 14-150mm f/3.5-5.8 Di III";
     }
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream lid;
         lid.setf (std::ios_base::hex, std::ios_base::basefield);
@@ -203,7 +203,7 @@ public:
         lid << std::setw (2) << std::setfill ('0') << t->toInt (2) << ' '; //model
         lid << std::setw (2) << std::setfill ('0') << t->toInt (3); // submodel
 
-        std::map<std::string, std::string>::iterator r = lenses.find (lid.str());
+        std::map<std::string, std::string>::const_iterator r = lenses.find (lid.str());
 
         if (r != lenses.end()) {
             return r->second;
@@ -465,7 +465,7 @@ class OLNoiseFilterInterpreter : public Interpreter
 {
 public:
     OLNoiseFilterInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt (0);
         int b = t->toInt (2);
@@ -490,7 +490,7 @@ class OLFlashModeInterpreter : public Interpreter
 {
 public:
     OLFlashModeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         int a = t->toInt ();
@@ -509,7 +509,7 @@ class OLNoiseReductionInterpreter : public Interpreter
 {
 public:
     OLNoiseReductionInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         int a = t->toInt ();

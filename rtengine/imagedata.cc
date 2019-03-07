@@ -298,6 +298,38 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         }
 
         if (lens == "Unknown") {
+            const auto lens_from_make_and_model =
+                [this, exif]() -> bool
+                {
+                    if (!exif) {
+                        return false;
+                    }
+
+                    const rtexif::Tag* const lens_model = exif->getTag(0xA434);
+
+                    if (lens_model) {
+                        const rtexif::Tag* const lens_make = exif->getTag(0xA433);
+                        const std::string make =
+                            lens_make
+                                ? lens_make->valueToString()
+                                : std::string();
+                        const std::string model = lens_model->valueToString();
+
+                        if (!model.empty()) {
+                            lens = make;
+
+                            if (!lens.empty()) {
+                                lens += ' ';
+                            }
+
+                            lens += model;
+
+                            return true;
+                        }
+                    }
+
+                    return false;
+                };
 
             if (mnote) {
 
@@ -404,11 +436,15 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                     rtexif::Tag *lt = mnote->getTag("LensType");
 
                     if ( lt ) {
-                        std::string ldata = lt->valueToString ();
+                        if (lt->toInt()) {
+                            std::string ldata = lt->valueToString ();
 
-                        if (ldata.size() > 1) {
-                            found = true;
-                            lens = "Canon " + ldata;
+                            if (ldata.size() > 1) {
+                                found = true;
+                                lens = "Canon " + ldata;
+                            }
+                        } else {
+                            found = lens_from_make_and_model();
                         }
                     }
 
@@ -435,7 +471,11 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                         }
                     }
                     if (mnote->getTag ("LensType")) {
-                        lens = mnote->getTag ("LensType")->valueToString ();
+                        if (mnote->getTag("LensType")->toInt()) {
+                            lens = mnote->getTag ("LensType")->valueToString();
+                        } else {
+                            lens_from_make_and_model();
+                        }
                     }
 
                     // Try to get the FocalLength from the LensInfo structure, where length below 10mm will be correctly set
@@ -480,10 +520,10 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 }
             } else if (exif->getTag ("DNGLensInfo")) {
                 lens = exif->getTag ("DNGLensInfo")->valueToString ();
-            } else if (exif->getTag ("LensModel")) {
-                lens = exif->getTag ("LensModel")->valueToString ();
             } else if (exif->getTag ("LensInfo")) {
                 lens = exif->getTag ("LensInfo")->valueToString ();
+            } else {
+                lens_from_make_and_model();
             }
         }
     }
