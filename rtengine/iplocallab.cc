@@ -7528,7 +7528,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                     if (zone > 0) {
-                                        transformed->L[y][x] = CLIPLOC(bufmaskorigexp->L[loy - begy][lox - begx]);
+                                        transformed->L[y][x] = 6000.f + CLIPLOC(bufmaskorigexp->L[loy - begy][lox - begx]);
                                         transformed->a[y][x] = bufexporig->a[loy - begy][lox - begx] * (bufmaskorigexp->a[loy - begy][lox - begx]);
                                         transformed->b[y][x] = bufexporig->b[loy - begy][lox - begx] * (bufmaskorigexp->b[loy - begy][lox - begx]);
                                     }
@@ -8160,7 +8160,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                     if (zone > 0) {
-                                        transformed->L[y][x] = CLIPLOC(bufmaskorigcol->L[loy - begy][lox - begx]);
+                                        transformed->L[y][x] = 6000.f + CLIPLOC(bufmaskorigcol->L[loy - begy][lox - begx]);
                                         transformed->a[y][x] = bufcolorig->a[loy - begy][lox - begx] * (bufmaskorigcol->a[loy - begy][lox - begx]);
                                         transformed->b[y][x] = bufcolorig->b[loy - begy][lox - begx] * (bufmaskorigcol->b[loy - begy][lox - begx]);
                                     }
