@@ -1265,7 +1265,7 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                     float cnewb = FCLIP(newb);
 
                     float h, s, v;
-                    Color::rgb2hsvdcp(cnewr, cnewg, cnewb, h, s, v);
+                    Color::rgb2hsvtc(cnewr, cnewg, cnewb, h, s, v);
 
                     hsdApply(look_info, look_table, h, s, v);
                     s = CLIP01(s);
@@ -1648,7 +1648,7 @@ std::vector<DCPProfile::HsbModify> DCPProfile::makeHueSatMap(const ColorTemp& wh
     return res;
 }
 
-void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
+inline void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
 {
     // Apply the HueSatMap. Ported from Adobes reference implementation.
     float hue_shift;
