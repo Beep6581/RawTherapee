@@ -327,7 +327,7 @@ class FNumberInterpreter : public Interpreter
 {
 public:
     FNumberInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -346,7 +346,7 @@ class ApertureInterpreter : public Interpreter
 {
 public:
     ApertureInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = pow (2.0, t->toDouble() / 2.0);
@@ -365,7 +365,7 @@ class ExposureBiasInterpreter : public Interpreter
 {
 public:
     ExposureBiasInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -384,7 +384,7 @@ class ShutterSpeedInterpreter : public Interpreter
 {
 public:
     ShutterSpeedInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double d = pow (2.0, -t->toDouble());
@@ -404,7 +404,7 @@ class ExposureTimeInterpreter : public Interpreter
 {
 public:
     ExposureTimeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double d = t->toDouble();
@@ -424,7 +424,7 @@ class FocalLengthInterpreter : public Interpreter
 {
 public:
     FocalLengthInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -443,7 +443,7 @@ class UserCommentInterpreter : public Interpreter
 {
 public:
     UserCommentInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int count = t->getCount();
 
@@ -575,7 +575,7 @@ class CFAInterpreter : public Interpreter
 {
 public:
     CFAInterpreter() {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char colors[] = "RGB";
         char buffer[1024];
@@ -632,7 +632,7 @@ UTF8BinInterpreter utf8BinInterpreter;
 class RawImageSegmentationInterpreter : public Interpreter
 {
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int segmentNumber = t->toInt(0, SHORT);
         int segmentWidth = t->toInt(2, SHORT);
