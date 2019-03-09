@@ -2003,6 +2003,7 @@ TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\nExcluding spot re
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
+TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
@@ -2051,7 +2052,7 @@ TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
 TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_RECT;Rectangle
-TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows
 TP_LOCALLAB_SHARP;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
 TP_LOCALLAB_SHARAMOUNT;Amount

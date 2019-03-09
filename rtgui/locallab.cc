@@ -384,8 +384,6 @@ Locallab::Locallab():
     colorBox->pack_start(*invers);
     maskcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
-//    maskcolBox->pack_start(*transLabels, Gtk::PACK_SHRINK, 4);
-//    maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
@@ -402,6 +400,7 @@ Locallab::Locallab():
     // Exposure
     expexpose->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expexpose));
     enableexposeConn = expexpose->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expexpose));
+    expexpose->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
 
     expcomp->setAdjusterListener(this);
 
@@ -492,8 +491,6 @@ Locallab::Locallab():
     maskexpFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
-//    maskexpBox->pack_start(*transLabels2, Gtk::PACK_SHRINK, 4);
-//    maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*enaExpMask, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskexpBox->pack_start(*blendmaskexp, Gtk::PACK_SHRINK, 0);
