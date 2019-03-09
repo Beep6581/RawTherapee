@@ -371,6 +371,11 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                                     }
                                 }
                             }
+                            // If MakeNotes are vague, fall back to Exif LensMake and LensModel if set
+                            // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#LensType
+                            if (lens == "Manual Lens No CPU") {
+                                lens_from_make_and_model();
+                            }
                         }
                     }
 
@@ -472,8 +477,9 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                     }
                     if (mnote->getTag ("LensType")) {
                         lens = mnote->getTag ("LensType")->valueToString();
-                        if (!mnote->getTag("LensType")->toInt()) {
-                            // try to find something better than "M-42 or No Lens"
+                        // If MakeNotes are vague, fall back to Exif LensMake and LensModel if set
+                        // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Pentax.html#LensType
+                        if (lens == "M-42 or No Lens" || lens == "K or M Lens" || lens == "A Series Lens" || lens == "Sigma") {
                             lens_from_make_and_model();
                         }
                     } else {
@@ -499,6 +505,9 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 } else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
                     if (mnote->getTag ("LensID")) {
                         lens = mnote->getTag ("LensID")->valueToString ();
+                        if (lens == "Unknown") {
+                            lens_from_make_and_model();
+                        }
                     }
                 } else if (!make.compare (0, 7, "OLYMPUS")) {
                     if (mnote->getTag ("Equipment"))  {
@@ -507,6 +516,9 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                         if (eq->getTag ("LensType")) {
                             lens = eq->getTag ("LensType")->valueToString ();
                         }
+                    }
+                    if (lens == "Unknown") {
+                        lens_from_make_and_model();
                     }
                 } else if (mnote && !make.compare (0, 9, "Panasonic")) {
                     if (mnote->getTag ("LensType")) {
