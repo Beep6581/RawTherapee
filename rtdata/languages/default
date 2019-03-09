@@ -2051,6 +2051,7 @@ TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
 TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_RECT;Rectangle
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases
 TP_LOCALLAB_SHARP;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
 TP_LOCALLAB_SHARAMOUNT;Amount

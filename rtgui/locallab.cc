@@ -511,6 +511,7 @@ Locallab::Locallab():
 //shadow highlight
     expshadhigh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expshadhigh));
     enableshadhighConn = expshadhigh->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expshadhigh));
+    expshadhigh->set_tooltip_text(M("TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP"));
 
     highlights->setAdjusterListener(this);
     h_tonalwidth->setAdjusterListener(this);
