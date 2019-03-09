@@ -276,7 +276,7 @@ protected:
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, size_t chunkSize = 1, bool measure = false);//Emil's code for AMaZE
     void dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false);
     void fast_demosaic();//Emil's code for fast demosaicing
-    void dcb_demosaic(int iterations, bool dcb_enhance, size_t chunkSize = 1, bool measure =  false);
+    void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();
     void rcd_demosaic(size_t chunkSize = 1, bool measure = false);
     void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
