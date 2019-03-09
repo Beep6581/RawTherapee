@@ -27,7 +27,6 @@
 #include "rt_math.h"
 #include "gauss.h"
 #include "median.h"
-#define BENCHMARK
 #include "StopWatch.h"
 namespace {
 
@@ -122,10 +121,18 @@ float* RawImageSource::CA_correct_RT(
     bool fitParamsOut,
     float* buffer,
     bool freeBuffer,
-    size_t chunkSize
+    size_t chunkSize,
+    bool measure
 )
 {
-    BENCHFUN
+
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << "CA correcting " << W << "x" << H << " image with " << chunkSize << " tiles per thread" << std::endl;
+        stop.reset(new StopWatch("CA correction"));
+    }
+
     // multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;

@@ -22,7 +22,6 @@
 #include "rt_math.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
-#define BENCHMARK
 #include "StopWatch.h"
 
 using namespace std;
@@ -40,9 +39,14 @@ namespace rtengine
 * Licensed under the GNU GPL version 3
 */
 // Tiled version by Ingo Weyrich (heckflosse67@gmx.de)
-void RawImageSource::rcd_demosaic(size_t chunkSize)
+void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 {
-    BENCHFUN
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << "Demosaicing " << W << "x" << H << " image using rcd with " << chunkSize << " tiles per thread" << std::endl;
+        stop.reset(new StopWatch("rcd demosaic"));
+    }
 
     volatile double progress = 0.0;
 
