@@ -581,6 +581,15 @@ void MyExpander::init()
     }
 }
 
+void MyExpander::cleanup()
+{
+    inconsistentImage.reset();
+    enabledImage.reset();
+    disabledImage.reset();
+    openedImage.reset();
+    closedImage.reset();
+}
+
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
     child(nullptr), headerWidget(nullptr), statusImage(nullptr),

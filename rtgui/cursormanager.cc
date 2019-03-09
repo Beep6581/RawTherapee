@@ -81,6 +81,29 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     window = mainWindow;
 }
 
+void CursorManager::cleanup()
+{
+    cAdd.reset();
+    cAddPicker.reset();
+    cCropDraw.reset();
+    cCrosshair.reset();
+    cHandClosed.reset();
+    cHandOpen.reset();
+    cEmpty.reset();
+    cMoveBL.reset();
+    cMoveBR.reset();
+    cMoveL.reset();
+    cMoveR.reset();
+    cMoveTL.reset();
+    cMoveTR.reset();
+    cMoveX.reset();
+    cMoveY.reset();
+    cMoveXY.reset();
+    cRotate.reset();
+    cWB.reset();
+    cWait.reset();
+}
+
 /* Set the cursor of the given window */
 void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape)
 {

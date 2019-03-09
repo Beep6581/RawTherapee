@@ -231,6 +231,7 @@ public:
 
     /// Initialize the class by loading the images
     static void init();
+    static void cleanup();
 
     Glib::SignalProxy1< bool, GdkEventButton* > signal_button_release_event()
     {

@@ -262,10 +262,17 @@ void ClutComboBox::setBatchMode(bool yes)
 }
 
 
+void ClutComboBox::cleanup()
+{
+    cm.reset();
+    cm2.reset();
+}
+
+
 void ClutComboBox::updateUnchangedEntry()
 {
     auto c = m_model()->children();
-    
+
     if (batchMode) {
         if (c.empty() || c[c.size()-1][m_columns().clutFilename] != "NULL") {
             Gtk::TreeModel::Row row = *(m_model()->append());

@@ -857,6 +857,16 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     cacheMgr->closeCache ();  // also makes cleanup if too large
     WhiteBalance::cleanup();
     ProfilePanel::cleanup();
+    ClutComboBox::cleanup();
+    MyExpander::cleanup();
+    mainWindowCursorManager.cleanup();
+    editWindowCursorManager.cleanup();
+    BatchQueueEntry::savedAsIcon.reset();
+    FileBrowserEntry::editedIcon.reset();
+    FileBrowserEntry::recentlySavedIcon.reset();
+    FileBrowserEntry::enqueuedIcon.reset();
+    FileBrowserEntry::hdr.reset();
+    FileBrowserEntry::ps.reset();
 
     if (!options.windowMaximized) {
         get_size (options.windowWidth, options.windowHeight);
