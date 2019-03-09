@@ -44,6 +44,8 @@ LUTf Color::igammatab_srgb1;
 LUTf Color::gammatab_srgb;
 LUTf Color::gammatab_srgb1;
 LUTf Color::gammatab_srgb327;
+LUTf Color::gammatab_bt709;
+LUTf Color::igammatab_bt709;
 
 LUTf Color::denoiseGammaTab;
 LUTf Color::denoiseIGammaTab;
@@ -129,8 +131,10 @@ void Color::init()
     gammatabThumb(maxindex, 0);
 
     igammatab_srgb(maxindex, 0);
+    igammatab_bt709(maxindex, 0);
     igammatab_srgb1(maxindex, 0);
     gammatab_srgb(maxindex, 0);
+    gammatab_bt709(maxindex, 0);
     gammatab_srgb1(maxindex, 0);
     gammatab_srgb327(32768, 0);
 
@@ -295,6 +299,21 @@ void Color::init()
                 break;
         }
 
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            gammatab_bt709[i] = 65535.0 * gamma709(i / 65535.0);
+        }
+
+#ifdef _OPENMP
+        #pragma omp section
+#endif
+
+        for (int i = 0; i < maxindex; i++) {
+            igammatab_bt709[i] = 65535.0 * igamma709(i / 65535.0);
+        }
 #ifdef _OPENMP
         #pragma omp section
 #endif

@@ -3495,15 +3495,13 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float factorx = localFactor;
                                 float diflc = 0.f;
                                 float newhr = 0.f;
-
-                                if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {//all except color and light (TODO) and exposure
+                                if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
-
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
                                     diflc *= factorx;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                } else if (senstype == 1 || senstype == 0) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9) {
                                     transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);
                                     diflc = 328.f * factorx * realstrdE;
                                 }
@@ -3592,12 +3590,12 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {//retinex & cbdl
+                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8 ) {//retinex & cbdl
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
                                     transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                } else if (senstype == 1 || senstype == 0) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9) {
                                     transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE);//kch fach
                                     diflc = 328.f * realstrdE;
                                 }
@@ -7565,7 +7563,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-//to do Modulate bufexporig and bufexptemp with blend L, H, C and masks
 
                     float chprosl = 1.f;
 

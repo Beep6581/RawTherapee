@@ -2387,8 +2387,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Exposure
     expexpose(false),
     expcomp(0.0),
-    hlcompr(60),
-    hlcomprthresh(33),
+    hlcompr(0),
+    hlcomprthresh(0),
     black(0),
     shcompr(50),
     expchroma(30),

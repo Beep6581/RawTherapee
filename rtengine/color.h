@@ -164,11 +164,13 @@ public:
     static LUTf gammatab_srgb;
     static LUTf gammatab_srgb327;
     static LUTf gammatab_srgb1;
+    static LUTf gammatab_bt709;
 
     static LUTf denoiseGammaTab;
     static LUTf denoiseIGammaTab;
 
     static LUTf igammatab_24_17;
+    static LUTf igammatab_bt709;
     static LUTf gammatab_24_17a;
     static LUTf gammatab_13_2;
     static LUTf igammatab_13_2;
@@ -1159,23 +1161,25 @@ public:
     }
 
 
-    /*
+    /**
     * @brief Get the gamma value for Gamma=2.2 Slope=4.5
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the gamma modified's value [0 ; 1]
     *
+    **/
     static inline double gamma709     (double x) {
                                             return x <= 0.0176 ? x*4.5 : 1.0954*exp(log(x)/2.2)-0.0954;
                                     }
-
+    /**
     * @brief Get the inverse gamma value for Gamma=2.2 Slope=4.5
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the inverse gamma modified's value [0 ; 1]
     *
+    **/
     static inline double igamma709    (double x) {
                                         return x <= 0.0795 ? x/4.5 : exp(log((x+0.0954)/1.0954)*2.2);
                                     }
-    */
+    
 
 
 

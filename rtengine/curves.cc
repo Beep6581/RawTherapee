@@ -1059,13 +1059,11 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
                                      int skip)
 {
 
-    // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
-    // hence we do both forward and inverse gamma conversions here.
-    const float gamma_ = Color::sRGBGammaCurve;
-    const float start = expf(gamma_ * logf(-0.055f / ((1.0f / gamma_ - 1.0f) * 1.055f)));
-    const float slope = 1.055f * powf(start, 1.0f / gamma_ - 1.f) - 0.055f / start;
-    const float mul = 1.055f;
-    const float add = 0.055f;
+    const float gamma_ = 2.22; //BT 709
+    const float start = expf(gamma_ * logf(-0.0954f / ((1.0f / gamma_ - 1.0f) * 1.0954f)));
+    const float slope = 1.0954f * powf(start, 1.0f / gamma_ - 1.f) - 0.0954f / start;
+    const float mul = 1.0954f;
+    const float add = 0.0954f;
     float maxran = 65536.f; //65536
 
  //   ecomp /= 100.;
@@ -1255,7 +1253,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     shCurve[0] = CLIPD(val2) / val;
     // gamma correction
 
-    val = Color::gammatab_srgb[0] / maxran;
+    val = Color::gammatab_bt709[0] / maxran;
     // store result in a temporary array
     dcurve[0] = CLIPD(val);
 
@@ -1266,7 +1264,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         shCurve[i] = val2 / val;
 
         // gamma correction
-        val = Color::gammatab_srgb[i] / maxran;
+        val = Color::gammatab_bt709[i] / maxran;
         // store result in a temporary array
         dcurve[i] = val;
     }
