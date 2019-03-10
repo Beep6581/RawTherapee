@@ -25,3 +25,94 @@ The most useful feedback is based on the latest development code, and in the cas
   - *Enum values* should be named with `UPPER_UNDERSCORES`.
   - Be consistent, even when not sticking to the rules.
 - Code may be run through astyle version 3 or newer. If using astyle, it is important that the astyle changes go into their own commit, so that style changes are not mixed with actual code changes. Command: `astyle --options=rawtherapee.astylerc code.cc`
+- Forward-declare instead of including, to avoid dependency chains where a single header change results in a full tree compilation.  
+  Forward declarations are sufficient for:
+  - Parameters or members passed or stored as references or pointers.
+  - Return types.
+  - Template parameters if the instances are passed or stored as references or pointer.
+
+  You can forward declare:
+  - Classes
+  - Structs
+  - Enums with an underlying type
+  - Templates
+
+  You can't forward declare:
+  - Typedefs
+  - Inner classes/structs/enums
+
+  When you write a header file, forward the types your interface needs instead of including the corresponding headers. STL types are hard to get right, so forward declaring them is usually not recommended. The same might be true for glibmm types.
+  
+  A basic opaque pointer implementation:
+  ```c++
+  // Header
+
+  #include <memory>
+
+  class OtherClass;
+
+  class MyClass final
+  {
+  public:
+      MyClass();
+      ~MyClass();
+      
+      void consume(const OtherClass& other);
+      OtherClass returnOther() const;
+
+  private:
+      class Implementation;
+      
+      const std::unique_ptr<Implementation> implementation;
+  };
+
+
+  // Implemenation
+
+  #include "OtherClass.h"
+  #include "ALotOfOtherStuff.h"
+
+  class MyClass::Implementation final
+  {
+  public:
+      Implementation() :
+          init_everything()
+      {
+      }
+      
+      ~Implementation()
+      {
+          cleanEverythingUp();
+      }
+      
+      void consume(const OtherClass& other)
+      {
+          // Do everything that needs to be done
+      }
+      
+      OtherClass returnOther() const
+      {
+          return {}; // Or do more ;)
+      }
+
+  private:
+      // Arbitrary members
+  };
+
+  MyClass::MyClass() :
+      implementation(new Implementation)
+  {
+  }
+
+  MyClass::~MyClass() = default;
+
+  void MyClass::consume(const OtherClass& other)
+  {
+      implementation->consume(other);
+  }
+
+  OtherClass MyClass::returnOther() const
+  {
+      return implementation->returnOther();
+  }
+  ```
