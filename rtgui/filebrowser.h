@@ -183,7 +183,7 @@ public:
 
     void openNextImage();
     void openPrevImage();
-    void selectImage(const Glib::ustring& fname, bool doScroll);
+    void selectImage(const Glib::ustring& fname, bool doScroll = true);
 
     void copyProfile ();
     void pasteProfile ();
