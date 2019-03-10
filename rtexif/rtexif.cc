@@ -2116,6 +2116,7 @@ void ExifManager::parseCIFF ()
     }
     parseCIFF (rml->ciffLength, root);
     root->sort ();
+    parse(true);
 }
 
 Tag* ExifManager::saveCIFFMNTag (TagDirectory* root, int len, const char* name)

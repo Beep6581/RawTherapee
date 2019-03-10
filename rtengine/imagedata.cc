@@ -1293,35 +1293,31 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
         FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
-            const bool has_rml_exif_base = rml->exifBase >= 0;
             rtexif::ExifManager exifManager (f, std::move(rml), firstFrameOnly);
-
-            if (has_rml_exif_base) {
-                if (exifManager.f && exifManager.rml) {
-                    if (exifManager.rml->exifBase >= 0) {
-                        exifManager.parseRaw ();
-
-                    } else if (exifManager.rml->ciffBase >= 0) {
-                        exifManager.parseCIFF ();
-                    }
-                }
-
-                // copying roots
-                roots = exifManager.roots;
-
-                // creating FrameData
-                for (auto currFrame : exifManager.frames) {
-                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
-                }
-                for (auto currRoot : roots) {
-                    rtexif::Tag* t = currRoot->getTag(0x83BB);
-
-                    if (t && !iptc) {
-                        iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
-                        break;
-                    }
+            if (exifManager.f && exifManager.rml) {
+                if (exifManager.rml->exifBase >= 0) {
+                    exifManager.parseRaw ();
+                } else if (exifManager.rml->ciffBase >= 0) {
+                    exifManager.parseCIFF ();
                 }
             }
+
+            // copying roots
+            roots = exifManager.roots;
+
+            // creating FrameData
+            for (auto currFrame : exifManager.frames) {
+                frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
+            }
+            for (auto currRoot : roots) {
+                rtexif::Tag* t = currRoot->getTag(0x83BB);
+
+                if (t && !iptc) {
+                    iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
+                    break;
+                }
+            }
+
             fclose (f);
         }
     } else if (hasJpegExtension(fname)) {
