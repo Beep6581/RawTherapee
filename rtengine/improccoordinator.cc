@@ -314,7 +314,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     imgsrc->setBorder(std::max(params->raw.bayersensor.border, 2));
                 }
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                imgsrc->setBorder(params.raw.xtranssensor.border);
+                imgsrc->setBorder(params->raw.xtranssensor.border);
             }
             bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicAutoContrast : params->raw.xtranssensor.dualDemosaicAutoContrast;
             double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicContrast : params->raw.xtranssensor.dualDemosaicContrast;
@@ -852,7 +852,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
         ipf.softLight(nprevl);
-        
+
             if (params->colorappearance.enabled) {
                 //L histo  and Chroma histo for ciecam
                 // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
