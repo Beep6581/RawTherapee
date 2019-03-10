@@ -887,9 +887,14 @@ class AdobeToneCurve : public ToneCurve
 {
 private:
     void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
-
+#ifdef __SSE2__
+    void RGBTone(vfloat& r, vfloat& g, vfloat& b) const;  // helper for tone curve
+#endif
 public:
     void Apply(float& r, float& g, float& b) const;
+    void BatchApply(
+            const size_t start, const size_t end,
+            float *r, float *g, float *b) const;
 };
 
 class SatAndValueBlendingToneCurve : public ToneCurve
@@ -1022,7 +1027,7 @@ inline void AdobeToneCurve::Apply (float& ir, float& ig, float& ib) const
             RGBTone (b, r, g);    // Case 2: b >  r >= g
         } else if (b > g) {
             RGBTone (r, b, g);    // Case 3: r >= b >  g
-        } else {                           // Case 4: r >= g == b
+        } else {                           // Case 4: r == g == b
             r = lutToneCurve[r];
             g = lutToneCurve[g];
             b = g;
@@ -1040,15 +1045,88 @@ inline void AdobeToneCurve::Apply (float& ir, float& ig, float& ib) const
     setUnlessOOG(ir, ig, ib, r, g, b);
 }
 
-inline void AdobeToneCurve::RGBTone (float& r, float& g, float& b) const
-{
-    float rold = r, gold = g, bold = b;
+inline void AdobeToneCurve::BatchApply(
+        const size_t start, const size_t end,
+        float *r, float *g, float *b) const {
+    assert (lutToneCurve);
+    assert (lutToneCurve.getClip() & LUT_CLIP_BELOW);
+    assert (lutToneCurve.getClip() & LUT_CLIP_ABOVE);
 
-    r = lutToneCurve[rold];
-    b = lutToneCurve[bold];
-    g = b + ((r - b) * (gold - bold) / (rold - bold));
+    // All pointers must have the same alignment for SSE usage. In the loop body below,
+    // we will only check `r`, assuming that the same result would hold for `g` and `b`.
+    assert (reinterpret_cast<uintptr_t>(r) % 16 == reinterpret_cast<uintptr_t>(g) % 16);
+    assert (reinterpret_cast<uintptr_t>(g) % 16 == reinterpret_cast<uintptr_t>(b) % 16);
+
+    size_t i = start;
+    while (true) {
+        if (i >= end) {
+            // If we get to the end before getting to an aligned address, just return.
+            // (Or, for non-SSE mode, if we get to the end.)
+            return;
+#ifdef __SSE2__
+        } else if (reinterpret_cast<uintptr_t>(&r[i]) % 16 == 0) {
+            // Otherwise, we get to the first aligned address; go to the SSE part.
+            break;
+#endif
+        }
+        Apply(r[i], g[i], b[i]);
+        i++;
+    }
+#ifdef __SSE2__
+    const vfloat upperv = F2V(MAXVALF);
+    for (; i + 3 < end; i += 4) {
+
+        vfloat rc = vclampf(LVF(r[i]), ZEROV, upperv);
+        vfloat gc = vclampf(LVF(g[i]), ZEROV, upperv);
+        vfloat bc = vclampf(LVF(b[i]), ZEROV, upperv);
+
+        vfloat minval = vminf(vminf(rc, gc), bc);
+        vfloat maxval = vmaxf(vmaxf(rc, gc), bc);
+        vfloat medval = vmaxf(vminf(rc, gc), vminf(bc, vmaxf(rc, gc)));
+
+        const vfloat minvalold = minval;
+        const vfloat maxvalold = maxval;
+
+        RGBTone(maxval, medval, minval);
+
+        const vfloat nr = vself(vmaskf_eq(rc, maxvalold), maxval, vself(vmaskf_eq(rc, minvalold), minval, medval));
+        const vfloat ng = vself(vmaskf_eq(gc, maxvalold), maxval, vself(vmaskf_eq(gc, minvalold), minval, medval));
+        const vfloat nb = vself(vmaskf_eq(bc, maxvalold), maxval, vself(vmaskf_eq(bc, minvalold), minval, medval));
+
+        rc = LVF(r[i]);
+        gc = LVF(g[i]);
+        bc = LVF(b[i]);
+        setUnlessOOG(rc, gc, bc, nr, ng, nb);
+        STVF(r[i], rc);
+        STVF(g[i], gc);
+        STVF(b[i], bc);
+    }
+    // Remainder in non-SSE.
+    for (; i < end; ++i) {
+        Apply(r[i], g[i], b[i]);
+    }
+#endif
 }
 
+inline void AdobeToneCurve::RGBTone (float& maxval, float& medval, float& minval) const
+{
+    float minvalold = minval, medvalold = medval, maxvalold = maxval;
+
+    maxval = lutToneCurve[maxvalold];
+    minval = lutToneCurve[minvalold];
+    medval = minval + ((maxval - minval) * (medvalold - minvalold) / (maxvalold - minvalold));
+}
+#ifdef __SSE2__
+inline void AdobeToneCurve::RGBTone (vfloat& maxval, vfloat& medval, vfloat& minval) const
+{
+    const vfloat minvalold = minval, maxvalold = maxval;
+
+    maxval = lutToneCurve[maxvalold];
+    minval = lutToneCurve[minvalold];
+    medval = minval + ((maxval - minval) * (medval - minvalold) / (maxvalold - minvalold));
+    medval = vself(vmaskf_eq(minvalold, maxvalold), minval, medval);
+}
+#endif
 // Modifying the Luminance channel only
 inline void LuminanceToneCurve::Apply(float &ir, float &ig, float &ib) const
 {
