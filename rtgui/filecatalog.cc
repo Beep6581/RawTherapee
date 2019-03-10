@@ -829,7 +829,7 @@ void FileCatalog::previewsFinishedUI ()
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"), 0);
 
     if (!imageToSelect_fname.empty()) {
-        fileBrowser->selectImage(imageToSelect_fname);
+        fileBrowser->selectImage(imageToSelect_fname, true);
         imageToSelect_fname = "";
     }
 
@@ -2144,7 +2144,7 @@ void FileCatalog::selectImage (Glib::ustring fname, bool clearFilters)
             imageToSelect_fname = fname;
         } else {
             // FileCatalog::filterChanged ();//this will be replaced by queue_draw() in fileBrowser->selectImage
-            fileBrowser->selectImage(fname);
+            fileBrowser->selectImage(fname, true);
             imageToSelect_fname = "";
         }
     }

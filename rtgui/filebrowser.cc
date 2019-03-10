@@ -1853,7 +1853,7 @@ void FileBrowser::openPrevImage()
     }
 }
 
-void FileBrowser::selectImage(const Glib::ustring& fname)
+void FileBrowser::selectImage(const Glib::ustring& fname, bool doScroll)
 {
     MYWRITERLOCK(l, entryRW);
 
@@ -1891,7 +1891,10 @@ void FileBrowser::selectImage(const Glib::ustring& fname)
 
                 MYWRITERLOCK_RELEASE(l);
 
-                setScrollPosition(x - (ww - tw) / 2, y);
+                if (doScroll) {
+                    // Center thumb
+                    setScrollPosition(x - (ww - tw) / 2, y);
+                }
 
                 return;
             }
@@ -1903,7 +1906,7 @@ void FileBrowser::openNextPreviousEditorImage (const Glib::ustring& fname, eRTNa
 {
 
     // let FileBrowser acquire Editor's perspective
-    selectImage (fname);
+    selectImage (fname, false);
 
     // now switch to the requested image
     if (nextPrevious == NAV_NEXT) {
