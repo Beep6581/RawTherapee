@@ -314,7 +314,12 @@ public:
     bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
     prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
     bool serializeTiffRead;
-
+    bool measure;
+    size_t chunkSizeAMAZE;
+    size_t chunkSizeCA;
+    size_t chunkSizeRCD;
+    size_t chunkSizeRGB;
+    size_t chunkSizeXT;
     bool menuGroupRank;
     bool menuGroupLabel;
     bool menuGroupFileOperations;
