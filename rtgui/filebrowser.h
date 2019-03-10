@@ -183,12 +183,12 @@ public:
 
     void openNextImage();
     void openPrevImage();
-    void selectImage(Glib::ustring fname);
+    void selectImage(const Glib::ustring& fname);
 
     void copyProfile ();
     void pasteProfile ();
     void partPasteProfile ();
-    void openNextPreviousEditorImage (Glib::ustring fname, eRTNav eNextPrevious);
+    void openNextPreviousEditorImage(const Glib::ustring& fname, eRTNav eNextPrevious);
 
 #ifdef WIN32
     void openDefaultViewer (int destination);

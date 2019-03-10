@@ -1779,9 +1779,7 @@ void FileBrowser::openNextImage()
                             }
 
                             // open the selected image
-                            std::vector<Thumbnail*> entries;
-                            entries.push_back(thumb);
-                            tbl->openRequested(entries);
+                            tbl->openRequested({thumb});
 
                             return;
                         }
@@ -1844,9 +1842,7 @@ void FileBrowser::openPrevImage()
                             }
 
                             // open the selected image
-                            std::vector<Thumbnail*> entries;
-                            entries.push_back(thumb);
-                            tbl->openRequested(entries);
+                            tbl->openRequested({thumb});
 
                             return;
                         }
@@ -1857,7 +1853,7 @@ void FileBrowser::openPrevImage()
     }
 }
 
-void FileBrowser::selectImage(Glib::ustring fname)
+void FileBrowser::selectImage(const Glib::ustring& fname)
 {
     MYWRITERLOCK(l, entryRW);
 
@@ -1903,7 +1899,7 @@ void FileBrowser::selectImage(Glib::ustring fname)
     }
 }
 
-void FileBrowser::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextPrevious)
+void FileBrowser::openNextPreviousEditorImage (const Glib::ustring& fname, eRTNav nextPrevious)
 {
 
     // let FileBrowser acquire Editor's perspective
