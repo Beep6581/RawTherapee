@@ -449,11 +449,11 @@ void Options::setDefaults()
     inspectorDelay = 0;
     serializeTiffRead = true;
     measure = false;
-    chunkSizeAMAZE = 1;
-    chunkSizeCA = 1;
-    chunkSizeRCD = 1;
-    chunkSizeRGB = 1;
-    chunkSizeXT = 1;
+    chunkSizeAMAZE = 2;
+    chunkSizeCA = 2;
+    chunkSizeRCD = 2;
+    chunkSizeRGB = 2;
+    chunkSizeXT = 2;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     whiteBalanceSpotSize = 8;
