@@ -448,8 +448,6 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                                 found = true;
                                 lens = "Canon " + ldata;
                             }
-                        } else {
-                            found = lens_from_make_and_model();
                         }
                     }
 
@@ -463,6 +461,10 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                                 lens = ldata;
                             }
                         }
+                    }
+
+                    if (!found) {
+                        lens_from_make_and_model();
                     }
                 } else if (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX"))) {
                     // ISO at max value supported, check manufacturer specific
