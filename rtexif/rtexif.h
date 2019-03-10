@@ -67,7 +67,7 @@ const enum ByteOrder HOSTORDER = MOTOROLA;
 #endif
 enum MNKind {NOMK, IFD, HEADERIFD, NIKON3, OLYMPUS2, FUJI, TABLESUBDIR};
 
-bool extractLensInfo (std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
+bool extractLensInfo (const std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
 
 unsigned short sget2 (unsigned char *s, ByteOrder order);
 int sget4 (unsigned char *s, ByteOrder order);
@@ -302,7 +302,7 @@ public:
     int     getDistanceFrom (const TagDirectory *root);
 
     // additional getter/setter for more comfortable use
-    std::string valueToString         ();
+    std::string valueToString         () const;
     std::string nameToString          (int i = 0);
     void        valueFromString       (const std::string& value);
     void        userCommentFromString (const Glib::ustring& text);
@@ -381,7 +381,7 @@ class Interpreter
 public:
     Interpreter () {}
     virtual ~Interpreter() {};
-    virtual std::string toString (Tag* t)
+    virtual std::string toString (const Tag* t) const
     {
         char buffer[1024];
         t->toString (buffer);
@@ -502,7 +502,7 @@ protected:
     Choices choices;
 public:
     ChoiceInterpreter () {};
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         const typename std::map<T, std::string>::const_iterator r = choices.find(t->toInt());
 
@@ -521,11 +521,11 @@ class IntLensInterpreter : public Interpreter
 {
 protected:
     typedef std::multimap< T, std::string> container_t;
-    typedef typename std::multimap< T, std::string>::iterator it_t;
+    typedef typename std::multimap< T, std::string>::const_iterator it_t;
     typedef std::pair< T, std::string> p_t;
     container_t choices;
 
-    virtual std::string guess (const T lensID, double focalLength, double maxApertureAtFocal, double *lensInfoArray)
+    virtual std::string guess (const T lensID, double focalLength, double maxApertureAtFocal, double *lensInfoArray) const
     {
         it_t r;
         size_t nFound = choices.count ( lensID );

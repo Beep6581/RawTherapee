@@ -841,6 +841,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!raw_border->get_active ()) {
         filterPE.raw.bayersensor.border = falsePE.raw.bayersensor.border;
+        filterPE.raw.xtranssensor.border = falsePE.raw.xtranssensor.border;
     }
 
     if (!raw_imagenum->get_active ()) {

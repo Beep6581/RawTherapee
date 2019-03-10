@@ -564,7 +564,7 @@ void Options::setDefaults()
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
     rtSettings.widegamut = "RTv2_Wide";
-    rtSettings.srgb = "RTv2_sRGB";
+    rtSettings.srgb = "RTv4_sRGB";
     rtSettings.bruce = "RTv2_Bruce";
     rtSettings.beta = "RTv2_Beta";
     rtSettings.best = "RTv2_Best";
@@ -1485,8 +1485,8 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "sRGB")) {
                     rtSettings.srgb = keyFile.get_string("Color Management", "sRGB");
-                    if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv4_sRGB") {
-                        rtSettings.srgb = "RTv2_sRGB";
+                    if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv2_sRGB") {
+                        rtSettings.srgb = "RTv4_sRGB";
                     }
                 }
 

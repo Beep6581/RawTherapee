@@ -34,7 +34,7 @@ class NAISOInterpreter : public Interpreter
 {
 public:
     NAISOInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->toInt (2));
@@ -47,7 +47,7 @@ class NAISOInfoISOInterpreter : public Interpreter
 {
 public:
     NAISOInfoISOInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         int a = t->toInt();
@@ -83,7 +83,7 @@ class NAISOExpansionInterpreter : public Interpreter
 {
 public:
     NAISOExpansionInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
 
@@ -142,7 +142,7 @@ class NALensTypeInterpreter : public Interpreter
 {
 public:
     NALensTypeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
         std::ostringstream str;
@@ -191,7 +191,7 @@ class NAShootingModeInterpreter : public Interpreter
 {
 public:
     NAShootingModeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
         std::ostringstream str;
@@ -234,14 +234,26 @@ public:
         afpchoices[0x9] = "Far Left";
         afpchoices[0xa] = "Far Right";
     }
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
+        const auto get_from_choices =
+            [](const std::map<int, std::string>& choices, int index) -> std::string
+            {
+                const std::map<int, std::string>::const_iterator choice = choices.find(index);
+
+                if (choice != choices.end()) {
+                    return choice->second;
+                }
+
+                return {};
+            };
+
         int am = t->toInt (0, BYTE);
         int afp = t->toInt (1, BYTE);
         int aff = t->toInt (2, SHORT);
         std::ostringstream str;
-        str << "AFAreaMode = " << amchoices[am] << std::endl;
-        str << "AFAreaMode = " << afpchoices[afp] << std::endl;
+        str << "AFAreaMode = " << get_from_choices(amchoices, am) << std::endl;
+        str << "AFAreaMode = " << get_from_choices(afpchoices, afp) << std::endl;
 
         std::ostringstream af;
 
@@ -314,7 +326,7 @@ class NALensDataInterpreter : public Interpreter
     static const std::map<std::string, std::string> lenses;
 
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
 
         static const unsigned char xlat[2][256] = {
