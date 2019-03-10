@@ -40,6 +40,7 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
+#define BENCHMARK
 #include "StopWatch.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/guiutils.h"
@@ -215,9 +216,7 @@ void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode c
     } else if (curveMode == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
         const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
-            }
+            userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
     } else if (curveMode == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
         const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurve);
@@ -1985,7 +1984,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
 void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
 {
-    BENCHFUN
+//    BENCHFUN
 
     int tHh = working->getHeight();
     int tWw = working->getWidth();
