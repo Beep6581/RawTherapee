@@ -40,7 +40,6 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
-#define BENCHMARK
 #include "StopWatch.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/guiutils.h"
@@ -1984,7 +1983,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
 void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
 {
-//    BENCHFUN
+    BENCHFUN
 
     int tHh = working->getHeight();
     int tWw = working->getWidth();
