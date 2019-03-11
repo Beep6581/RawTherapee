@@ -411,7 +411,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskSHmet = llSHMask;
 //    lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llColorMask == 0 && llExpMask == 0 && llSHMask == 0; // Color & Light mask is deactivated if Exposure mask is visible
 //    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0; // Exposure mask is deactivated if Color & Light mask is visible
- //   lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0; // SH mask is deactivated if Color & Light mask is visible
+//   lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0; // SH mask is deactivated if Color & Light mask is visible
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llColorMask == 0 && llExpMask == 0; // Color & Light mask is deactivated if Exposure mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0; // Exposure mask is deactivated if Color & Light mask is visible
     lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0; // SH mask is deactivated if Color & Light mask is visible
@@ -538,7 +538,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blendmaexp = blendmaskexpo;
     lp.blendmaSH = blendmaskSH;
     lp.radmaSH = radmaskSH;
-    
+
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
     lp.blurcol = blurcolor;
@@ -635,7 +635,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sensex = local_sensiex;
 //    lp.strucc = local_struc;
     lp.war = local_warm;
-    lp.hsena = locallab.spots.at(sp).expshadhigh && llColorMask == 0; //&& llExpMask == 0; 
+    lp.hsena = locallab.spots.at(sp).expshadhigh && llColorMask == 0; //&& llExpMask == 0;
     lp.highlihs = highhs;
     lp.shadowhs = shadhs;
     lp.radiushs = radhs;
@@ -2627,98 +2627,136 @@ static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurvel
 
 }
 
+static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, float & fab, float & meanfab)
+{
+    int nbfab = 0;
+
+    for (int y = 0; y < transformed->H ; y++) //{
+        for (int x = 0; x < transformed->W; x++) {
+            int lox = cx + x;
+            int loy = cy + y;
+
+            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
+                bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
+                meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
+                meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
+                nbfab++;
+            }
+        }
+
+    meanfab = meanfab / (2.f * nbfab);
+    float stddv = 0.f;
+    float som = 0.f;
+
+    for (int y = 0; y < transformed->H ; y++) //{
+        for (int x = 0; x < transformed->W; x++) {
+            int lox = cx + x;
+            int loy = cy + y;
+
+            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
+            }
+        }
+
+    stddv = sqrt(som / nbfab);
+    fab = meanfab + 1.5f * stddv;
+}
+
+
+
 static void blendmask(const local_params& lp, int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, LabImage* bufmaskorigSH, LabImage* originalmaskSH, float bl)
 {
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int y = 0; y < transformed->H ; y++) //{
-                            for (int x = 0; x < transformed->W; x++) {
-                                int lox = cx + x;
-                                int loy = cy + y;
-                                int zone = 0;
+    for (int y = 0; y < transformed->H ; y++) //{
+        for (int x = 0; x < transformed->W; x++) {
+            int lox = cx + x;
+            int loy = cy + y;
+            int zone = 0;
 
-                                float localFactor = 1.f;
-                                const float achm = (float)lp.trans / 100.f;
+            float localFactor = 1.f;
+            const float achm = (float)lp.trans / 100.f;
 
-                                if (lp.shapmet == 0) {
-                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else if (lp.shapmet == 1) {
-                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
-                                }
+            if (lp.shapmet == 0) {
+                calcTransition(lox, loy, achm, lp, zone, localFactor);
+            } else if (lp.shapmet == 1) {
+                calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+            }
 
-                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    if (zone > 0) {
-                                        bufexporig->L[loy - begy][lox - begx] += (bl * bufmaskorigSH->L[loy - begy][lox - begx]);
-                                        bufexporig->a[loy - begy][lox - begx] *= (1.f + bl * bufmaskorigSH->a[loy - begy][lox - begx]);
-                                        bufexporig->b[loy - begy][lox - begx] *= (1.f + bl * bufmaskorigSH->b[loy - begy][lox - begx]);
+            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                if (zone > 0) {
+                    bufexporig->L[loy - begy][lox - begx] += (bl * bufmaskorigSH->L[loy - begy][lox - begx]);
+                    bufexporig->a[loy - begy][lox - begx] *= (1.f + bl * bufmaskorigSH->a[loy - begy][lox - begx]);
+                    bufexporig->b[loy - begy][lox - begx] *= (1.f + bl * bufmaskorigSH->b[loy - begy][lox - begx]);
 
-                                        bufexporig->L[loy - begy][lox - begx] = CLIP(bufexporig->L[loy - begy][lox - begx]);
-                                        bufexporig->a[loy - begy][lox - begx] = CLIPC(bufexporig->a[loy - begy][lox - begx]);
-                                        bufexporig->b[loy - begy][lox - begx] = CLIPC(bufexporig->b[loy - begy][lox - begx]);
+                    bufexporig->L[loy - begy][lox - begx] = CLIP(bufexporig->L[loy - begy][lox - begx]);
+                    bufexporig->a[loy - begy][lox - begx] = CLIPC(bufexporig->a[loy - begy][lox - begx]);
+                    bufexporig->b[loy - begy][lox - begx] = CLIPC(bufexporig->b[loy - begy][lox - begx]);
 
-                                        originalmaskSH->L[y][x] = CLIP(bufexporig->L[loy - begy][lox - begx] -  bufmaskorigSH->L[loy - begy][lox - begx]);
-                                        originalmaskSH->a[y][x] = CLIPC(bufexporig->a[loy - begy][lox - begx] * (1.f - bufmaskorigSH->a[loy - begy][lox - begx]));
-                                        originalmaskSH->b[y][x] = CLIPC(bufexporig->b[loy - begy][lox - begx] * (1.f - bufmaskorigSH->b[loy - begy][lox - begx]));
+                    originalmaskSH->L[y][x] = CLIP(bufexporig->L[loy - begy][lox - begx] -  bufmaskorigSH->L[loy - begy][lox - begx]);
+                    originalmaskSH->a[y][x] = CLIPC(bufexporig->a[loy - begy][lox - begx] * (1.f - bufmaskorigSH->a[loy - begy][lox - begx]));
+                    originalmaskSH->b[y][x] = CLIPC(bufexporig->b[loy - begy][lox - begx] * (1.f - bufmaskorigSH->b[loy - begy][lox - begx]));
 
-                                        switch (zone) {
+                    switch (zone) {
 
-                                            case 1: {
-                                                original->L[y][x] += (bl * localFactor * bufmaskorigSH->L[loy - begy][lox - begx]);
-                                                original->a[y][x] *= (1.f + bl * localFactor * bufmaskorigSH->a[loy - begy][lox - begx]);
-                                                original->b[y][x] *= (1.f + bl * localFactor * bufmaskorigSH->b[loy - begy][lox - begx]);
-                                                original->L[y][x] = CLIP(original->L[y][x]);
-                                                original->a[y][x] = CLIPC(original->a[y][x]);
-                                                original->b[y][x] = CLIPC(original->b[y][x]);
-                                                break;
-                                            }
+                        case 1: {
+                            original->L[y][x] += (bl * localFactor * bufmaskorigSH->L[loy - begy][lox - begx]);
+                            original->a[y][x] *= (1.f + bl * localFactor * bufmaskorigSH->a[loy - begy][lox - begx]);
+                            original->b[y][x] *= (1.f + bl * localFactor * bufmaskorigSH->b[loy - begy][lox - begx]);
+                            original->L[y][x] = CLIP(original->L[y][x]);
+                            original->a[y][x] = CLIPC(original->a[y][x]);
+                            original->b[y][x] = CLIPC(original->b[y][x]);
+                            break;
+                        }
 
-                                            case 2: {
+                        case 2: {
 
-                                                original->L[y][x] = bufexporig->L[loy - begy][lox - begx];
-                                                original->a[y][x] = bufexporig->a[loy - begy][lox - begx];
-                                                original->b[y][x] = bufexporig->b[loy - begy][lox - begx];
+                            original->L[y][x] = bufexporig->L[loy - begy][lox - begx];
+                            original->a[y][x] = bufexporig->a[loy - begy][lox - begx];
+                            original->b[y][x] = bufexporig->b[loy - begy][lox - begx];
 
-                                            }
+                        }
 
-                                        }
-                                    }
+                    }
+                }
 
 
-                                }
-                            }
-    
+            }
+        }
+
 }
 
 static void showmask(const local_params& lp, int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* bufmaskorigSH)
 {
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int y = 0; y < transformed->H ; y++) //{
-                            for (int x = 0; x < transformed->W; x++) {
-                                int lox = cx + x;
-                                int loy = cy + y;
-                                int zone = 0;
-                                float localFactor = 1.f;
-                                const float achm = (float)lp.trans / 100.f;
+    for (int y = 0; y < transformed->H ; y++) //{
+        for (int x = 0; x < transformed->W; x++) {
+            int lox = cx + x;
+            int loy = cy + y;
+            int zone = 0;
+            float localFactor = 1.f;
+            const float achm = (float)lp.trans / 100.f;
 
-                                if (lp.shapmet == 0) {
-                                    calcTransition(lox, loy, achm, lp, zone, localFactor);
-                                } else if (lp.shapmet == 1) {
-                                    calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
-                                }
+            if (lp.shapmet == 0) {
+                calcTransition(lox, loy, achm, lp, zone, localFactor);
+            } else if (lp.shapmet == 1) {
+                calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+            }
 
-                                if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    if (zone > 0) {
-                                        transformed->L[y][x] = 6000.f + CLIPLOC(bufmaskorigSH->L[loy - begy][lox - begx]);
-                                        transformed->a[y][x] = bufexporig->a[loy - begy][lox - begx] * (bufmaskorigSH->a[loy - begy][lox - begx]);
-                                        transformed->b[y][x] = bufexporig->b[loy - begy][lox - begx] * (bufmaskorigSH->b[loy - begy][lox - begx]);
-                                    }
-                                }
-                            }    
+            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                if (zone > 0) {
+                    transformed->L[y][x] = 6000.f + CLIPLOC(bufmaskorigSH->L[loy - begy][lox - begx]);
+                    transformed->a[y][x] = bufexporig->a[loy - begy][lox - begx] * (bufmaskorigSH->a[loy - begy][lox - begx]);
+                    transformed->b[y][x] = bufexporig->b[loy - begy][lox - begx] * (bufmaskorigSH->b[loy - begy][lox - begx]);
+                }
+            }
+        }
 }
 
 
@@ -3527,7 +3565,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
 
                     if (lp.struexp > 0.f && rs > 0.f && senstype == 1) {
                         rsob =  1.1f * lp.struexp * rs;
-                    } 
+                    }
 
                     if (lp.struco > 0.f && rs > 0.f && senstype == 0) {
                         rsob =  1.1f * lp.struco * rs;
@@ -3616,6 +3654,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float factorx = localFactor;
                                 float diflc = 0.f;
                                 float newhr = 0.f;
+
                                 if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
                                     float fli = ((100.f + realstrdE) / 100.f);
@@ -3694,7 +3733,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         transformed->b[y][x] = CLIPC(chromhr * sincosval.x * facb);
                                         difa = transformed->a[y][x] - tempa;
                                         difb = transformed->b[y][x] - tempb;
-                                    } 
+                                    }
 
                                     if (expshow  || colshow || SHshow) {
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
@@ -3711,7 +3750,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8 ) {//retinex & cbdl
+                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
                                     float lightc = bufexporig->L[loy - begy][lox - begx];
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     float diflc = lightc * fli - original->L[y][x];
@@ -6612,7 +6651,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
-                
+
                 if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3) {
                     int GWm = transformed->W;
                     int GHm = transformed->H;
@@ -6631,6 +6670,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufexporig->L[ir][jr] = 0.f;
                         bufexporig->a[ir][jr] = 0.f;
                         bufexporig->b[ir][jr] = 0.f;
+
                         if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3) {
                             bufmaskorigSH->L[ir][jr] = 0.f;
                             bufmaskorigSH->a[ir][jr] = 0.f;
@@ -6639,7 +6679,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufmaskblurSH->a[ir][jr] = 0.f;
                             bufmaskblurSH->b[ir][jr] = 0.f;
                         }
-                        
+
                         bufexpfin->L[ir][jr] = 0.f;
                         bufexpfin->a[ir][jr] = 0.f;
                         bufexpfin->b[ir][jr] = 0.f;
@@ -6653,44 +6693,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int begx = lp.xc - lp.lxL;
                 int yEn = lp.yc + lp.ly;
                 int xEn = lp.xc + lp.lx;
-                
+
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
                 float meanfab = 0.f;
-                int nbfab = 0;
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
-                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
-                            meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
-                            meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
-                            nbfab++;
-                        }
-                    }
-
-                meanfab = meanfab / (2.f * nbfab);
-                float stddv = 0.f;
-                float som = 0.f;
+                float fab = 0.f;
                 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab);
 
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
-                        }
-                    }
-
-                stddv = sqrt(som / nbfab);
-                float fab = meanfab + 1.5f * stddv;
-                
-                
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -6768,7 +6778,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         }
                     }
-                
+
                 if ((lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3)  && lp.radmaSH > 0.f) {
 
                     guidedFilter(guid, ble, ble, lp.radmaSH * 10.f / sk, 0.075, multiThread, 4);
@@ -6810,65 +6820,66 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         delete bufmaskorigSH;
 
                     } else if (lp.showmaskSHmet == 3) {
-                        showmask(lp,begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, bufmaskorigSH);
+                        showmask(lp, begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, bufmaskorigSH);
                         delete bufmaskorigSH;
                         delete bufexporig;
 
                         return;
                     }
                 }
-                
-                
+
+
                 if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1  || lp.showmaskSHmet == 2 || lp.enaSHMask) {
-              
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-
-                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                            bufexpfin->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufexpfin->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufexpfin->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-
-                        }
-                    }
-
-                ImProcFunctions::shadowsHighlights(bufexpfin, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
+                    for (int y = 0; y < transformed->H ; y++) //{
+                        for (int x = 0; x < transformed->W; x++) {
+                            int lox = cx + x;
+                            int loy = cy + y;
 
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                            float rL;
-                            rL = CLIPRET((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
+                                bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                                bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                                bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                                bufexpfin->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                                bufexpfin->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                                bufexpfin->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
 
-                            buflight[loy - begy][lox - begx] = rL;
-
-
-                            float chp;
-                            chp = CLIPRET((sqrt(SQR(bufexpfin->a[loy - begy][lox - begx]) + SQR(bufexpfin->b[loy - begy][lox - begx])) - sqrt(SQR(bufexporig->a[loy - begy][lox - begx]) + SQR(bufexporig->b[loy - begy][lox - begx]))) / 250.f);
-
-                            bufl_ab[loy - begy][lox - begx] = chp;
-
+                            }
                         }
-                    }
+
+                    ImProcFunctions::shadowsHighlights(bufexpfin, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < transformed->H ; y++) //{
+                        for (int x = 0; x < transformed->W; x++) {
+                            int lox = cx + x;
+                            int loy = cy + y;
+
+                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                                float rL;
+                                rL = CLIPRET((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
+
+                                buflight[loy - begy][lox - begx] = rL;
+
+
+                                float chp;
+                                chp = CLIPRET((sqrt(SQR(bufexpfin->a[loy - begy][lox - begx]) + SQR(bufexpfin->b[loy - begy][lox - begx])) - sqrt(SQR(bufexporig->a[loy - begy][lox - begx]) + SQR(bufexporig->b[loy - begy][lox - begx]))) / 250.f);
+
+                                bufl_ab[loy - begy][lox - begx] = chp;
+
+                            }
+                        }
                 }
+
                 transit_shapedetect(9, bufexpfin, originalmaskSH, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
 
             }
@@ -7592,8 +7603,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
-//                float maxfab = -100.f;
                 float meanfab = 0.f;
+                float fab = 0.f;
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab);
+
+//static void meanfab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, float & fab, float & meanfab)
+/*
                 int nbfab = 0;
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -7604,15 +7619,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
                             bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
-/*
-                            if (fabs(bufexporig->a[loy - begy][lox - begx]) > maxfab) {
-                                maxfab = fabs(bufexporig->a[loy - begy][lox - begx]);
-                            }
-
-                            if (fabs(bufexporig->b[loy - begy][lox - begx]) > maxfab) {
-                                maxfab = fabs(bufexporig->b[loy - begy][lox - begx]);
-                            }
-*/
                             meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
                             meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
                             nbfab++;
@@ -7634,12 +7640,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                 stddv = sqrt(som / nbfab);
-                //         printf("maxfab=%f mean=%f\n", maxfab, meanfab);
-
-                //         printf("stadv=%f\n", stddv);
-                float fab = meanfab + 1.5f * stddv;
-                //         printf("fab=%f\n", fab);
-
+                fab = meanfab + 1.5f * stddv;
+*/
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7759,7 +7761,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         delete bufmaskorigexp;
 
                     } else if (lp.showmaskexpmet == 3) {
-                        showmask(lp,begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, bufmaskorigexp);
+                        showmask(lp, begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, bufmaskorigexp);
 
                         delete bufmaskorigexp;
                         delete bufexporig;
@@ -8050,7 +8052,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                     float blur = 25 / sk * (10.f + 1.2f * lp.struco);
-                    //    printf("Blur=%f \n", blur);
 
                     rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
 
@@ -8144,53 +8145,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
-//                float maxfab = -100.f;
                 float meanfab = 0.f;
-                int nbfab = 0;
+                float fab = 0.f;
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];
-                            bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];
-/*
-                            if (fabs(bufcolorig->a[loy - begy][lox - begx]) > maxfab) {
-                                maxfab = fabs(bufcolorig->a[loy - begy][lox - begx]);
-                            }
-
-                            if (fabs(bufcolorig->b[loy - begy][lox - begx]) > maxfab) {
-                                maxfab = fabs(bufcolorig->b[loy - begy][lox - begx]);
-                            }
-*/
-                            meanfab += fabs(bufcolorig->a[loy - begy][lox - begx]);
-                            meanfab += fabs(bufcolorig->b[loy - begy][lox - begx]);
-                            nbfab++;
-                        }
-                    }
-
-                meanfab = meanfab / (2.f * nbfab);
-                float stddv = 0.f;
-                float som = 0.f;
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            som += SQR(fabs(bufcolorig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufcolorig->b[loy - begy][lox - begx]) - meanfab);
-                        }
-                    }
-
-                stddv = sqrt(som / nbfab);
-                //        printf("maxfab=%f mean=%f\n", maxfab, meanfab);
-
-                //        printf("stadv=%f\n", stddv);
-                float fab = meanfab + 1.5f * stddv;
-                //        printf("fab=%f\n", fab);
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, fab, meanfab);
 
 
 #ifdef _OPENMP
@@ -8306,7 +8264,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         delete bufmaskorigcol;
 
                     } else if (lp.showmaskcolmet == 3) {
-                        showmask(lp,begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, bufmaskorigcol);
+                        showmask(lp, begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, bufmaskorigcol);
 
                         delete bufmaskorigcol;
                         delete bufcolorig;
