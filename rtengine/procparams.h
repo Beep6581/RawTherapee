@@ -489,7 +489,7 @@ struct ColorToningParams {
     };
     std::vector<LabCorrectionRegion> labregions;
     int labregionsShowMask;
-    
+
     ColorToningParams();
 
     bool operator ==(const ColorToningParams& other) const;
@@ -986,7 +986,7 @@ struct LocallabParams {
         std::vector<double> HHmaskcurve;
         // Exposure
         bool expexpose;
-     //   int expcomp;
+        //   int expcomp;
         double expcomp;
         int hlcompr;
         int hlcomprthresh;
@@ -1013,6 +1013,12 @@ struct LocallabParams {
         int s_tonalwidth;
         int sh_radius;
         int sensihs;
+        bool enaSHMask;
+        std::vector<double> CCmaskSHcurve;
+        std::vector<double> LLmaskSHcurve;
+        std::vector<double> HHmaskSHcurve;
+        int blendmaskSH;
+        double radmaskSH;
         // Vibrance
         bool expvibrance;
         int saturated;

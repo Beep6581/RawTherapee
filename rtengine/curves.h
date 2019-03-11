@@ -76,7 +76,8 @@ inline void setUnlessOOG(vfloat &r, vfloat &g, vfloat &b, const vfloat rr, const
 
 bool sanitizeCurve(std::vector<double>& curve);
 
-namespace curves {
+namespace curves
+{
 
 inline void setLutVal(const LUTf &lut, float &val)
 {
@@ -488,11 +489,11 @@ protected:
 
 public:
     DiagonalCurve(const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
-    ~DiagonalCurve () override;
+    ~DiagonalCurve() override;
 
-    double getVal     (double t) const override;
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const override;
-    bool   isIdentity () const override
+    double getVal(double t) const override;
+    void   getVal(const std::vector<double>& t, std::vector<double>& res) const override;
+    bool   isIdentity() const override
     {
         return kind == DCT_Empty;
     };
@@ -513,12 +514,12 @@ private:
 public:
 
     FlatCurve(const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
-    ~FlatCurve () override;
+    ~FlatCurve() override;
 
-    double getVal     (double t) const override;
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const override;
+    double getVal(double t) const override;
+    void   getVal(const std::vector<double>& t, std::vector<double>& res) const override;
     bool   setIdentityValue(double iVal);
-    bool   isIdentity () const override
+    bool   isIdentity() const override
     {
         return kind == FCT_Empty;
     };
@@ -731,6 +732,95 @@ public:
         return lutLocLLmaskexpCurve;
     }
 };
+
+
+class LocHHmaskSHCurve
+{
+private:
+    LUTf lutLocHHmaskSHCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocHHmaskSHCurve() {};
+    LocHHmaskSHCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool & lhmasSHutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocHHmaskSHCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocHHmaskSHCurve;
+    }
+};
+
+
+class LocCCmaskSHCurve
+{
+private:
+    LUTf lutLocCCmaskSHCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocCCmaskSHCurve() {};
+    LocCCmaskSHCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints,  bool & lcmasSHutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocCCmaskSHCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocCCmaskSHCurve;
+    }
+};
+
+class LocLLmaskSHCurve
+{
+private:
+    LUTf lutLocLLmaskSHCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocLLmaskSHCurve() {};
+    LocLLmaskSHCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool & llmasSHutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocLLmaskSHCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocLLmaskSHCurve;
+    }
+};
+
+
+
 
 class LocHHmaskCurve
 {
@@ -1286,11 +1376,13 @@ inline void StandardToneCurve::BatchApply(
             break;
 #endif
         }
+
         setUnlessOOG(r[i], g[i], b[i], lutToneCurve[r[i]], lutToneCurve[g[i]], lutToneCurve[b[i]]);
         i++;
     }
 
 #ifdef __SSE2__
+
     for (; i + 3 < end; i += 4) {
         vfloat r_val = LVF(r[i]);
         vfloat g_val = LVF(g[i]);
@@ -1312,7 +1404,7 @@ inline void StandardToneCurve::BatchApply(
 // Tone curve according to Adobe's reference implementation
 // values in 0xffff space
 // inlined to make sure there will be no cache flush when used
-inline void AdobeToneCurve::Apply (float& ir, float& ig, float& ib) const
+inline void AdobeToneCurve::Apply(float& ir, float& ig, float& ib) const
 {
 
     assert(lutToneCurve);
@@ -1396,18 +1488,18 @@ inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const
 #ifdef __SSE2__
 inline vfloat WeightedStdToneCurve::Triangle(vfloat a, vfloat a1, vfloat b) const
 {
-        vmask eqmask = vmaskf_eq(b, a);
+    vmask eqmask = vmaskf_eq(b, a);
     vfloat a2 = a1 - a;
     vmask cmask = vmaskf_lt(b, a);
     vfloat b3 = vself(cmask, b, F2V(65535.f) - b);
     vfloat a3 = vself(cmask, a, F2V(65535.f) - a);
-        return vself(eqmask, a1, b + a2 * b3 / a3);
+    return vself(eqmask, a1, b + a2 * b3 / a3);
 }
 #endif
 
 // Tone curve modifying the value channel only, preserving hue and saturation
 // values in 0xffff space
-inline void WeightedStdToneCurve::Apply (float& ir, float& ig, float& ib) const
+inline void WeightedStdToneCurve::Apply(float& ir, float& ig, float& ib) const
 {
 
     assert(lutToneCurve);
@@ -1506,7 +1598,7 @@ inline void WeightedStdToneCurve::BatchApply(const size_t start, const size_t en
 
 // Tone curve modifying the value channel only, preserving hue and saturation
 // values in 0xffff space
-inline void SatAndValueBlendingToneCurve::Apply (float& ir, float& ig, float& ib) const
+inline void SatAndValueBlendingToneCurve::Apply(float& ir, float& ig, float& ib) const
 {
 
     assert(lutToneCurve);

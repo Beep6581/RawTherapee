@@ -1091,6 +1091,9 @@ private:
             LocCCmaskexpCurve locccmasexpCurve;
             LocLLmaskexpCurve locllmasexpCurve;
             LocHHmaskexpCurve lochhmasexpCurve;
+            LocCCmaskSHCurve locccmasSHCurve;
+            LocLLmaskSHCurve locllmasSHCurve;
+            LocHHmaskSHCurve lochhmasSHCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf sklocalcurve(65536, 0);
@@ -1123,6 +1126,9 @@ private:
                 bool lcmasexputili = false;
                 bool lhmasexputili = false;
                 bool llmasexputili = false;
+                bool lcmasSHutili = false;
+                bool lhmasSHutili = false;
+                bool llmasSHutili = false;
                 bool lcmasutili = false;
                 bool lhmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1134,6 +1140,9 @@ private:
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
                 lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
+                locccmasSHCurve.Set(params.locallab.spots.at(sp).CCmaskSHcurve, lcmasSHutili);
+                locllmasSHCurve.Set(params.locallab.spots.at(sp).LLmaskSHcurve, llmasSHutili);
+                lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);
@@ -1161,7 +1170,9 @@ private:
 
                 // No Locallab mask is shown in exported picture
                 ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                              LHutili, HHutili, cclocalcurve, localcutili, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0);
+                              locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                              LHutili, HHutili, cclocalcurve, localcutili, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0);
+
 
                 // Clear local curves
                 lllocalcurve.clear();

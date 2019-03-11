@@ -43,7 +43,7 @@ class Locallab :
     public ThresholdAdjusterListener
 
 {
-private: 
+private:
     IdleRegister idle_register;
 
     // Expander widgets
@@ -81,6 +81,11 @@ private:
     FlatCurveEditor* CCmaskexpshape;
     FlatCurveEditor* LLmaskexpshape;
     FlatCurveEditor* HHmaskexpshape;
+    //Shadows Highlight
+    CurveEditorGroup* const maskSHCurveEditorG;
+    FlatCurveEditor* CCmaskSHshape;
+    FlatCurveEditor* LLmaskSHshape;
+    FlatCurveEditor* HHmaskSHshape;
     // Vibrance
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* skinTonesCurve;
@@ -119,6 +124,8 @@ private:
     Adjuster* const s_tonalwidth;
     Adjuster* const sh_radius;
     Adjuster* const sensihs;
+    Adjuster* const blendmaskSH;
+    Adjuster* const radmaskSH;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;
@@ -142,7 +149,7 @@ private:
     Adjuster* const chrrt;
     Adjuster* const neigh;
     Adjuster* const vart;
-    Adjuster* const dehaz;    
+    Adjuster* const dehaz;
     Adjuster* const sensih;
     // Sharpening
     Adjuster* const sharcontrast;
@@ -185,7 +192,10 @@ private:
     Gtk::CheckButton* const enaExpMask;
     sigc::connection enaExpMaskConn;
     Gtk::CheckButton* const inversex;
-    sigc::connection inversexConn;    
+    sigc::connection inversexConn;
+    //Shadows highlight
+    Gtk::CheckButton* const enaSHMask;
+    sigc::connection enaSHMaskConn;
     // Vibrance
     Gtk::CheckButton* const protectSkins;
     Gtk::CheckButton* const avoidColorShift;
@@ -215,6 +225,9 @@ private:
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
     sigc::connection showmaskexpMethodConn;
+    //Shadows Highlight
+    MyComboBoxText* const showmaskSHMethod;
+    sigc::connection showmaskSHMethodConn;
     // Blur & Noise
     MyComboBoxText* const blurMethod;
     sigc::connection blurMethodConn;
@@ -236,8 +249,9 @@ private:
 //    Gtk::Label* transLabels2;
     Gtk::Frame* maskcolFrame;
     Gtk::Frame* maskexpFrame;
+    Gtk::Frame* maskSHFrame;
     Gtk::Frame* gridFrame;
-    LabGrid *labgrid;    
+    LabGrid *labgrid;
     // Others
     /**
      * Used to store the default ProcParams when setDefaults function is called
@@ -267,6 +281,8 @@ private:
     // Exposure
     void enaExpMaskChanged();
     void inversexChanged();
+    //Shadows Highlight
+    void enaSHMaskChanged();
     // Vibrance
     void protectskins_toggled();
     void avoidcolorshift_toggled();
@@ -287,6 +303,8 @@ private:
     void showmaskcolMethodChanged();
     //Exposure
     void showmaskexpMethodChanged();
+    //Shadows Highlight
+    void showmaskSHMethodChanged();
     // Blur & Noise
     void blurMethodChanged();
     // Retinex
@@ -325,6 +343,7 @@ public:
     struct llMaskVisibility {
         int colorMask;
         int expMask;
+        int SHMask;
     };
 
     void resetMaskVisibility();

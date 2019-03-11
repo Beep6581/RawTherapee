@@ -536,6 +536,12 @@ public:
         bool s_tonalwidth;
         bool sh_radius;
         bool sensihs;
+        bool enaSHMask;
+        bool CCmaskSHcurve;
+        bool LLmaskSHcurve;
+        bool HHmaskSHcurve;
+        bool blendmaskSH;
+        bool radmaskSH;
         // Vibrance
         bool expvibrance;
         bool saturated;

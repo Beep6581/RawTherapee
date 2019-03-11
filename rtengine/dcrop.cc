@@ -900,6 +900,9 @@ void Crop::update(int todo)
         bool lhmasexputili = parent->lhmasexputili;
         bool lcmasexputili = parent->lcmasexputili;
         bool llmasexputili = parent->llmasexputili;
+        bool lhmasSHutili = parent->lhmasSHutili;
+        bool lcmasSHutili = parent->lcmasSHutili;
+        bool llmasSHutili = parent->llmasSHutili;
         
         float avg = parent->avg;
         LUTu dummy;
@@ -913,6 +916,9 @@ void Crop::update(int todo)
         LocCCmaskexpCurve locccmasexpCurve;
         LocLLmaskexpCurve locllmasexpCurve;
         LocHHmaskexpCurve lochhmasexpCurve;
+        LocCCmaskSHCurve locccmasSHCurve;
+        LocLLmaskSHCurve locllmasSHCurve;
+        LocHHmaskSHCurve lochhmasSHCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -932,6 +938,9 @@ void Crop::update(int todo)
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
                 lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
+                locccmasSHCurve.Set(params.locallab.spots.at(sp).CCmaskSHcurve, lcmasSHutili);
+                locllmasSHCurve.Set(params.locallab.spots.at(sp).LLmaskSHcurve, llmasSHutili);
+                lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localcutili = false;
@@ -963,10 +972,14 @@ void Crop::update(int todo)
                 // Locallab mask are only shown for selected spot
                 if (sp == parent->params.locallab.selspot) {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,locallutili,
-                                      loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, LHutili, HHutili, cclocalcurve2, localcutili, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, parent->locallColorMask, parent->locallExpMask);
+                                      loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                                      locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                      LHutili, HHutili, cclocalcurve2, localcutili, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, parent->locallColorMask, parent->locallExpMask, parent->locallSHMask);
                 } else {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,locallutili,
-                                      loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, LHutili, HHutili, cclocalcurve2, localcutili, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0);
+                                      loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
+                                      locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                      LHutili, HHutili, cclocalcurve2, localcutili, localskutili, sklocalcurve2, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0);
                 }
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();

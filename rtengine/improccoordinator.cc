@@ -126,6 +126,7 @@ ImProcCoordinator::ImProcCoordinator()
       lastspotdup(false),
       locallColorMask(0),
       locallExpMask(0),
+      locallSHMask(0),
       avg(0),
       retistrsav(nullptr)
 {}
@@ -794,6 +795,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 lcmasexputili = false;
                 lhmasexputili = false;
                 llmasexputili = false;
+                lcmasSHutili = false;
+                lhmasSHutili = false;
+                llmasSHutili = false;
                 lhmasutili = false;
                 lcmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -805,6 +809,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve, llmasexputili);
                 locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve, lcmasexputili);
                 lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve, lhmasexputili);
+                locllmasSHCurve.Set(params.locallab.spots.at(sp).LLmaskSHcurve, llmasSHutili);
+                locccmasSHCurve.Set(params.locallab.spots.at(sp).CCmaskSHcurve, lcmasSHutili);
+                lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, sca);
                 CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, sca);
@@ -848,10 +855,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 // Locallab mask are only shown for selected spot
                 if (sp == params.locallab.selspot) {
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                                                  LHutili, HHutili, cclocalcurve, localcutili, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, locallColorMask, locallExpMask);
+                                                    locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                                    LHutili, HHutili, cclocalcurve, localcutili, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, locallColorMask, locallExpMask, locallSHMask);
                 } else {
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                                                                      LHutili, HHutili, cclocalcurve, localcutili, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, 0, 0);
+                                                    locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                                    LHutili, HHutili, cclocalcurve, localcutili, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, 0, 0, 0);
                 }
                 //recalculate references after
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
