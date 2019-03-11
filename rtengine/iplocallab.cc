@@ -2663,6 +2663,76 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
     fab = meanfab + 1.5f * stddv;
 }
 
+void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, JaggedArray<float> & blend2, int sk, bool multiThread, float & meansob)
+{
+    SobelCannyLuma(blend2, bufcolorig->L, bfw, bfh, radius);
+    array2D<float> ble(bfw, bfh);
+    array2D<float> guid(bfw, bfh);
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            ble[ir][jr] = blend2[ir][jr] / 32768.f;
+            guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
+        }
+
+    float blur = 25 / sk * (10.f + 1.2f * stru);
+
+    rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            blend2[ir][jr] = ble[ir][jr] * 32768.f;
+        }
+
+    bool execmedian = true;
+    int passes = 1;
+
+    if (execmedian) {
+        float** tmL;
+        int wid = bfw;
+        int hei = bfh;
+        tmL = new float*[hei];
+
+        for (int i = 0; i < hei; ++i) {
+            tmL[i] = new float[wid];
+        }
+        Median medianTypeL = Median::TYPE_3X3_STRONG;
+        Median_Denoise(blend2, blend2, wid, hei, medianTypeL, passes, multiThread, tmL);
+        float sombel = 0.f;
+        int ncsobel = 0;
+        float maxsob = -1.f;
+        float minsob = 100000.f;
+
+        for (int ir = 0; ir < bfh; ir++)
+            for (int jr = 0; jr < bfw; jr++) {
+                sombel +=  blend2[ir][jr];
+                ncsobel++;
+
+                if (blend2[ir][jr] > maxsob) {
+                    maxsob = blend2[ir][jr];
+                }
+
+                if (blend2[ir][jr] < minsob) {
+                    minsob = blend2[ir][jr];
+                }
+            }
+
+        meansob = sombel / ncsobel;
+
+        for (int i = 0; i < hei; ++i) {
+            delete[] tmL[i];
+        }
+
+        delete[] tmL;
+    }
+}
 
 
 static void blendmask(const local_params& lp, int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, LabImage* bufmaskorigSH, LabImage* originalmaskSH, float bl)
@@ -6698,7 +6768,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 array2D<float> guid(bfw, bfh);
                 float meanfab = 0.f;
                 float fab = 0.f;
-                
+
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab);
 
 #ifdef _OPENMP
@@ -7485,87 +7555,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 if (bfw > 2 * spotSi && bfh > 2 * spotSi  && lp.struexp > 0.f) {
-                    SobelCannyLuma(blend2, bufexporig->L, bfw, bfh, radius);
-                    array2D<float> ble(bfw, bfh);
-                    array2D<float> guid(bfw, bfh);
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < bfh; ir++)
-                        for (int jr = 0; jr < bfw; jr++) {
-                            ble[ir][jr] = blend2[ir][jr] / 32768.f;
-                            guid[ir][jr] = bufexporig->L[ir][jr] / 32768.f;
-                        }
-
-                    float blur = 25 / sk * (10.f + 1.2f * lp.struexp);
-
-                    rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
-
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < bfh; ir++)
-                        for (int jr = 0; jr < bfw; jr++) {
-                            blend2[ir][jr] = ble[ir][jr] * 32768.f;
-                        }
-
-                    bool execmedian = true;
-                    int passes = 1;
-
-                    if (execmedian) {
-                        float** tmL;
-                        int wid = bfw;
-                        int hei = bfh;
-                        tmL = new float*[hei];
-
-                        for (int i = 0; i < hei; ++i) {
-                            tmL[i] = new float[wid];
-                        }
-
-                        Median medianTypeL = Median::TYPE_3X3_STRONG;
-                        Median_Denoise(blend2, blend2, wid, hei, medianTypeL, passes, multiThread, tmL);
-                        float sombel = 0.f;
-//                        float stdvsobel = 0.f;
-                        int ncsobel = 0;
-//                        int ncstdv = 0.f;
-                        float maxsob = -1.f;
-                        float minsob = 100000.f;
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                sombel +=  blend2[ir][jr];
-                                ncsobel++;
-
-                                if (blend2[ir][jr] > maxsob) {
-                                    maxsob = blend2[ir][jr];
-                                }
-
-                                if (blend2[ir][jr] < minsob) {
-                                    minsob = blend2[ir][jr];
-                                }
-                            }
-
-                        meansob = sombel / ncsobel;
-
-                        /*
-                        float dsob = 0;
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                            dsob +=  SQR(blend2[ir][jr] - meansob);
-                            ncstdv++;
-                        }
-                        stdvsobel =  sqrt(dsob / ncstdv);
-                        */
-                        //  printf("mean=%f max=%f min=%f\n", meansob, maxsob, minsob);
-
-                        for (int i = 0; i < hei; ++i) {
-                            delete[] tmL[i];
-                        }
-
-                        delete[] tmL;
-                    }
+                    float meansob = 0.f;
+                    ImProcFunctions::blendstruc(bfw, bfh, bufexporig, radius, lp.struexp, blend2, sk, multiThread, meansob);
 
                     if (lp.showmaskexpmet == 4) {
 #ifdef _OPENMP
@@ -7608,40 +7599,40 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab);
 
 //static void meanfab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, float & fab, float & meanfab)
-/*
-                int nbfab = 0;
+                /*
+                                int nbfab = 0;
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
+                                for (int y = 0; y < transformed->H ; y++) //{
+                                    for (int x = 0; x < transformed->W; x++) {
+                                        int lox = cx + x;
+                                        int loy = cy + y;
 
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
-                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
-                            meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
-                            meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
-                            nbfab++;
-                        }
-                    }
+                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
+                                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
+                                            meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
+                                            meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
+                                            nbfab++;
+                                        }
+                                    }
 
-                meanfab = meanfab / (2.f * nbfab);
-                float stddv = 0.f;
-                float som = 0.f;
+                                meanfab = meanfab / (2.f * nbfab);
+                                float stddv = 0.f;
+                                float som = 0.f;
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
+                                for (int y = 0; y < transformed->H ; y++) //{
+                                    for (int x = 0; x < transformed->W; x++) {
+                                        int lox = cx + x;
+                                        int loy = cy + y;
 
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
-                        }
-                    }
+                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                            som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
+                                        }
+                                    }
 
-                stddv = sqrt(som / nbfab);
-                fab = meanfab + 1.5f * stddv;
-*/
+                                stddv = sqrt(som / nbfab);
+                                fab = meanfab + 1.5f * stddv;
+                */
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -8038,76 +8029,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 if (bfw > 2 * spotSi && bfh > 2 * spotSi  && lp.struco > 0.f) {
-                    SobelCannyLuma(blend2, bufcolorig->L, bfw, bfh, radius);
-                    array2D<float> ble(bfw, bfh);
-                    array2D<float> guid(bfw, bfh);
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < bfh; ir++)
-                        for (int jr = 0; jr < bfw; jr++) {
-                            ble[ir][jr] = blend2[ir][jr] / 32768.f;
-                            guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
-                        }
-
-                    float blur = 25 / sk * (10.f + 1.2f * lp.struco);
-
-                    rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
-
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < bfh; ir++)
-                        for (int jr = 0; jr < bfw; jr++) {
-                            blend2[ir][jr] = ble[ir][jr] * 32768.f;
-                        }
-
-                    bool execmedian = true;
-                    int passes = 1;
-
-                    if (execmedian) {
-                        float** tmL;
-                        int wid = bfw;
-                        int hei = bfh;
-                        tmL = new float*[hei];
-
-                        for (int i = 0; i < hei; ++i) {
-                            tmL[i] = new float[wid];
-                        }
-
-                        Median medianTypeL = Median::TYPE_3X3_STRONG;
-                        Median_Denoise(blend2, blend2, wid, hei, medianTypeL, passes, multiThread, tmL);
-                        float sombel = 0.f;
-//                        float stdvsobel = 0.f;
-                        int ncsobel = 0;
-//                        int ncstdv = 0.f;
-                        float maxsob = -1.f;
-                        float minsob = 100000.f;
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                sombel +=  blend2[ir][jr];
-                                ncsobel++;
-
-                                if (blend2[ir][jr] > maxsob) {
-                                    maxsob = blend2[ir][jr];
-                                }
-
-                                if (blend2[ir][jr] < minsob) {
-                                    minsob = blend2[ir][jr];
-                                }
-                            }
-
-                        meansob = sombel / ncsobel;
-
-                        for (int i = 0; i < hei; ++i) {
-                            delete[] tmL[i];
-                        }
-
-                        delete[] tmL;
-                    }
+                    float meansob = 0.f;
+                    ImProcFunctions::blendstruc(bfw, bfh, bufcolorig, radius, lp.struco, blend2, sk, multiThread, meansob);
 
                     if (lp.showmaskcolmet == 4) {
 #ifdef _OPENMP
