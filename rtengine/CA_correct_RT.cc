@@ -442,7 +442,8 @@ float* RawImageSource::CA_correct_RT(
                                 vfloat wtrv = onev / SQRV(temp2v + vabsf(rgbcv - LVFU(rgb[c][(indx + 2) >> 1])) + vabsf(rgb1p1v - LC2VFU(rgb[1][indx + 3])));
 
                                 //store in rgb array the interpolated G value at R/B grid points using directional weighted average
-                                STC2VFU(rgb[1][indx], (wtuv * rgb1mv1v + wtdv * rgb1pv1v + wtlv * rgb1m1v + wtrv * rgb1p1v) / (wtuv + wtdv + wtlv + wtrv));
+                                vfloat result = (wtuv * rgb1mv1v + wtdv * rgb1pv1v + wtlv * rgb1m1v + wtrv * rgb1p1v) / (wtuv + wtdv + wtlv + wtrv);
+                                STC2VFU(rgb[1][indx], result);
                             }
 
 #endif
@@ -1004,7 +1005,8 @@ float* RawImageSource::CA_correct_RT(
                                     vfloat wtrv = onev / SQRV(val2v + vabsf(LVFU(rgb[c][indx >> 1]) - LVFU(rgb[c][(indx + 2) >> 1])) + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx + 3])));
 
                                     //store in rgb array the interpolated G value at R/B grid points using directional weighted average
-                                    STC2VFU(rgb[1][indx], (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv));
+                                    vfloat result = (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv);
+                                    STC2VFU(rgb[1][indx], result);
                                 }
 #endif
                                 for (; cc < cc1 - 3; cc += 2, indx += 2) {
@@ -1243,7 +1245,8 @@ float* RawImageSource::CA_correct_RT(
                     int indx = (row * width + col) >> 1;
 #ifdef __SSE2__
                     for (; col < width - 7 - cb; col += 8, indx += 4) {
-                        STC2VFU(rawData[row][col], LVFU(RawDataTmp[indx]));
+                        vfloat val = LVFU(RawDataTmp[indx]);
+                        STC2VFU(rawData[row][col], val);
                     }
 #endif
                     for (; col < width - cb; col += 2, indx++) {
