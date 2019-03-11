@@ -18,7 +18,7 @@
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    inkscape:version="0.92.2 2405546, 2018-03-11"
-   sodipodi:docname="square-toggle-luminosity-on.svg">
+   sodipodi:docname="square-toggle-luminosity-on-narrow.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#E0E1E2"
@@ -27,13 +27,13 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="34.25"
-     inkscape:cx="5"
+     inkscape:cx="0.37226277"
      inkscape:cy="12"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1019"
+     inkscape:window-height="1021"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -113,16 +113,25 @@
        width="6"
        id="rect10216"
        style="opacity:1;fill:#77777f;fill-opacity:0.94117647;stroke:none;stroke-width:0;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <text
-       xml:space="preserve"
+    <g
+       aria-label="L"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.58799458px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13969988px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="3.2905865"
+       id="text7395">
+      <path
+         d="M 3.6643927,6.9999771 V 3.1555023 h 0.8049114 v 3.2223739 h 2.0627558 v 0.6221009 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.13969988px"
+         id="path16" />
+    </g>
+    <text
+       id="text14"
        y="6.9999771"
-       id="text7395"><tspan
-         sodipodi:role="line"
-         id="tspan7393"
-         x="3.2905865"
+       x="23.290586"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.58799458px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13969988px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.13969988px"
          y="6.9999771"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.13969988px">L</tspan></text>
+         x="23.290586"
+         id="tspan12"
+         sodipodi:role="line">L</tspan></text>
   </g>
 </svg>
