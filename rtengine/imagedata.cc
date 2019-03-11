@@ -450,10 +450,18 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                                 found = true;
                                 lens = "Canon " + ldata;
                             }
+                        } else {
+                            found = lens_from_make_and_model();
                         }
                     }
 
-                    if( !found || lens.substr(lens.find(' ')).length() < 7 ) {
+                    const std::string::size_type first_space_pos = lens.find(' ');
+                    const std::string::size_type remaining_size =
+                        first_space_pos != std::string::npos
+                            ? lens.size() - first_space_pos
+                            : 0;
+
+                    if( !found || remaining_size < 7U ) {
                         lt = mnote->findTag("LensID");
 
                         if ( lt ) {
@@ -463,10 +471,6 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                                 lens = ldata;
                             }
                         }
-                    }
-
-                    if (!found) {
-                        lens_from_make_and_model();
                     }
                 } else if (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX"))) {
                     // ISO at max value supported, check manufacturer specific
