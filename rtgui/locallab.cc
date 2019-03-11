@@ -108,6 +108,7 @@ Locallab::Locallab():
     sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     blendmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
+    blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     // Vibrance
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
@@ -527,6 +528,7 @@ Locallab::Locallab():
     sensihs->setAdjusterListener(this);
     blendmaskSH->setAdjusterListener(this);
     radmaskSH->setAdjusterListener(this);
+    blurSHde->setAdjusterListener(this);
 
     enaSHMaskConn = enaSHMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaSHMaskChanged));
 
@@ -570,6 +572,7 @@ Locallab::Locallab():
     shadhighBox->pack_start(*s_tonalwidth);
     shadhighBox->pack_start(*sh_radius);
     shadhighBox->pack_start(*sensihs);
+    shadhighBox->pack_start(*blurSHde);
     maskSHFrame->set_label_align(0.025, 0.5);
 
     ToolParamBlock* const maskSHBox = Gtk::manage(new ToolParamBlock());
@@ -1705,6 +1708,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskSHcurve = HHmaskSHshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).blendmaskSH = blendmaskSH->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).radmaskSH = radmaskSH->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).blurSHde = blurSHde->getIntValue();
 
                     // Vibrance
                     pp->locallab.spots.at(pp->locallab.selspot).expvibrance = expvibrance->getEnabled();
@@ -1887,6 +1891,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).HHmaskSHcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskSHcurve || !HHmaskSHshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).blendmaskSH = pe->locallab.spots.at(pp->locallab.selspot).blendmaskSH || blendmaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).radmaskSH = pe->locallab.spots.at(pp->locallab.selspot).radmaskSH || radmaskSH->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).blurSHde = pe->locallab.spots.at(pp->locallab.selspot).blurSHde || blurSHde->getEditedState();
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -2054,6 +2059,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmaskSHcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskSHcurve || !HHmaskSHshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).blendmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskSH || blendmaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).radmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).radmaskSH || radmaskSH->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).blurSHde = pedited->locallab.spots.at(pp->locallab.selspot).blurSHde || blurSHde->getEditedState();
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -2883,6 +2889,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     sensihs->setDefault((double)defSpot->sensihs);
     blendmaskSH->setDefault((double)defSpot->blendmaskSH);
     radmaskSH->setDefault(defSpot->radmaskSH);
+    blurSHde->setDefault((double)defSpot->blurSHde);
     // Vibrance
     saturated->setDefault((double)defSpot->saturated);
     pastels->setDefault((double)defSpot->pastels);
@@ -2979,6 +2986,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         sensihs->setDefaultEditedState(Irrelevant);
         blendmaskSH->setDefaultEditedState(Irrelevant);
         radmaskSH->setDefaultEditedState(Irrelevant);
+        blurSHde->setDefaultEditedState(Irrelevant);
         // Vibrance
         saturated->setDefaultEditedState(Irrelevant);
         pastels->setDefaultEditedState(Irrelevant);
@@ -3079,6 +3087,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         sensihs->setDefaultEditedState(defSpotState->sensihs ? Edited : UnEdited);
         blendmaskSH->setDefaultEditedState(defSpotState->blendmaskSH ? Edited : UnEdited);
         radmaskSH->setDefaultEditedState(defSpotState->radmaskSH ? Edited : UnEdited);
+        blurSHde->setDefaultEditedState(defSpotState->blurSHde ? Edited : UnEdited);
         // Vibrance
         saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
         pastels->setDefaultEditedState(defSpotState->pastels ? Edited : UnEdited);
@@ -3371,6 +3380,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == radmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabradmaskSH, radmaskSH->getTextValue());
+            }
+        }
+
+        if (a == blurSHde) {
+            if (listener) {
+                listener->panelChanged(EvlocallabblurSHde, blurSHde->getTextValue());
             }
         }
 
@@ -3776,6 +3791,7 @@ void Locallab::setBatchMode(bool batchMode)
     sensihs->showEditedCB();
     blendmaskSH->showEditedCB();
     radmaskSH->showEditedCB();
+    blurSHde->showEditedCB();
     // Vibrance
     saturated->showEditedCB();
     pastels->showEditedCB();
@@ -4156,6 +4172,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         HHmaskSHshape->setCurve(pp->locallab.spots.at(index).HHmaskSHcurve);
         blendmaskSH->setValue(pp->locallab.spots.at(index).blendmaskSH);
         radmaskSH->setValue(pp->locallab.spots.at(index).radmaskSH);
+        blurSHde->setValue(pp->locallab.spots.at(index).blurSHde);
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
         saturated->setValue(pp->locallab.spots.at(index).saturated);
@@ -4366,6 +4383,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 HHmaskSHshape->setUnChanged(!spotState->HHmaskSHcurve);
                 blendmaskSH->setEditedState(spotState->blendmaskSH ? Edited : UnEdited);
                 radmaskSH->setEditedState(spotState->radmaskSH ? Edited : UnEdited);
+                blurSHde->setEditedState(spotState->blurSHde ? Edited : UnEdited);
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);

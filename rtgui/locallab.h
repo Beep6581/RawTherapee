@@ -126,6 +126,7 @@ private:
     Adjuster* const sensihs;
     Adjuster* const blendmaskSH;
     Adjuster* const radmaskSH;
+    Adjuster* const blurSHde;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;

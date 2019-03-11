@@ -2418,6 +2418,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     HHmaskSHcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     blendmaskSH(0),
     radmaskSH(10.0),
+    blurSHde(5),
     // Vibrance
     expvibrance(false),
     saturated(0),
@@ -2583,6 +2584,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && HHmaskSHcurve == other.HHmaskSHcurve
         && blendmaskSH == other.blendmaskSH
         && radmaskSH == other.radmaskSH
+        && blurSHde == other.blurSHde
         // Vibrance
         && expvibrance == other.expvibrance
         && saturated == other.saturated
@@ -3705,6 +3707,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskSHcurve, "Locallab", "HHmaskSHCurve_" + std::to_string(i), spot.HHmaskSHcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskSH, "Locallab", "BlendmaskSH_" + std::to_string(i), spot.blendmaskSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskSH, "Locallab", "RadmaskSH_" + std::to_string(i), spot.radmaskSH, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurSHde, "Locallab", "BlurSHde_" + std::to_string(i), spot.blurSHde, keyFile);
                 // Vibrance
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expvibrance, "Locallab", "Expvibrance_" + std::to_string(i), spot.expvibrance, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).saturated, "Locallab", "Saturated_" + std::to_string(i), spot.saturated, keyFile);
@@ -4955,6 +4958,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskSHCurve_" + std::to_string(i), pedited, spot.HHmaskSHcurve, spotEdited.HHmaskSHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "BlendmaskSH_" + std::to_string(i), pedited, spot.blendmaskSH, spotEdited.blendmaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "RadmaskSH_" + std::to_string(i), pedited, spot.radmaskSH, spotEdited.radmaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "BlurSHde_" + std::to_string(i), pedited, spot.blurSHde, spotEdited.blurSHde);
                 // Vibrance
                 assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
                 assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, spot.saturated, spotEdited.saturated);

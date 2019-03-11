@@ -152,6 +152,7 @@ struct local_params {
     float struexp;
     float blurexp;
     float blurcol;
+    float blurSH;
     float ligh;
     float lowA, lowB, highA, highB;
     int shamo, shdamp, shiter, senssha, sensv;
@@ -486,6 +487,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float structexpo = (float) locallab.spots.at(sp).structexp;
     float blurexpo = (float) locallab.spots.at(sp).blurexpde;
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
+    float blurSH = (float) locallab.spots.at(sp).blurSHde;
     int local_transit = locallab.spots.at(sp).transit;
     double radius = locallab.spots.at(sp).radius;
     double sharradius = ((double) locallab.spots.at(sp).sharradius);
@@ -540,6 +542,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
     lp.blurcol = blurcolor;
+    lp.blurSH = blurSH;
     lp.sens = local_sensi;
     lp.sensh = local_sensih;
     lp.dehaze = local_dehaze;
@@ -3395,6 +3398,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         if (senstype == 0)
         {
             radius = (2.f + 0.2f * lp.blurcol) / sk;
+        }
+
+        if (senstype == 9)
+        {
+            radius = (2.f + 0.2f * lp.blurSH) / sk;
         }
 
         bool usemask = (lp.showmaskexpmet == 2 || lp.enaExpMask) && senstype == 1;

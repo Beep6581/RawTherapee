@@ -1019,6 +1019,7 @@ struct LocallabParams {
         std::vector<double> HHmaskSHcurve;
         int blendmaskSH;
         double radmaskSH;
+        int blurSHde;
         // Vibrance
         bool expvibrance;
         int saturated;

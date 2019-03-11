@@ -542,6 +542,7 @@ public:
         bool HHmaskSHcurve;
         bool blendmaskSH;
         bool radmaskSH;
+        bool blurSHde;
         // Vibrance
         bool expvibrance;
         bool saturated;
