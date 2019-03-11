@@ -16,21 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "cropwindow.h"
-
 #include <iomanip>
 
-#include "../rtengine/mytime.h"
-#include "../rtengine/rt_math.h"
-#include "../rtengine/dcrop.h"
+#include "cropwindow.h"
 
-#include "guiutils.h"
-#include "threadutils.h"
-#include "rtimage.h"
 #include "cursormanager.h"
-#include "options.h"
+#include "guiutils.h"
 #include "imagearea.h"
 #include "lockablecolorpicker.h"
+#include "options.h"
+#include "rtimage.h"
+#include "threadutils.h"
+
+#include "../rtengine/dcrop.h"
+#include "../rtengine/mytime.h"
+#include "../rtengine/procparams.h"
+#include "../rtengine/rt_math.h"
 
 using namespace rtengine;
 
@@ -352,8 +353,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
             } else {
                 if (onArea (CropImage, x, y)) {  // events inside of the image domain
                     crop_custom_ratio = 0.f;
-                    if ((bstate & GDK_SHIFT_MASK) && cropHandler.cropParams.w > 0 && cropHandler.cropParams.h > 0) {
-                        crop_custom_ratio = float(cropHandler.cropParams.w) / float(cropHandler.cropParams.h);
+                    if ((bstate & GDK_SHIFT_MASK) && cropHandler.cropParams->w > 0 && cropHandler.cropParams->h > 0) {
+                        crop_custom_ratio = float(cropHandler.cropParams->w) / float(cropHandler.cropParams->h);
                     }
 
                     if (iarea->getToolMode () == TMColorPicker) {
@@ -373,7 +374,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             // Add a new Color Picker
                             rtengine::Coord imgPos;
                             screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams.outputProfile, &cropHandler.colorParams.workingProfile);
+                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams->outputProfile, &cropHandler.colorParams->workingProfile);
                             colorPickers.push_back(newPicker);
                             hoveredPicker = newPicker;
                             updateHoveredPicker(&imgPos);
@@ -387,49 +388,49 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     } else if (onArea (CropTopLeft, x, y)) {
                         state = SResizeTL;
                         press_x = x;
-                        action_x = cropHandler.cropParams.x;
+                        action_x = cropHandler.cropParams->x;
                         press_y = y;
-                        action_y = cropHandler.cropParams.y;
+                        action_y = cropHandler.cropParams->y;
                     } else if (onArea (CropTopRight, x, y)) {
                         state = SResizeTR;
                         press_x = x;
-                        action_x = cropHandler.cropParams.w;
+                        action_x = cropHandler.cropParams->w;
                         press_y = y;
-                        action_y = cropHandler.cropParams.y;
+                        action_y = cropHandler.cropParams->y;
                     } else if (onArea (CropBottomLeft, x, y)) {
                         state = SResizeBL;
                         press_x = x;
-                        action_x = cropHandler.cropParams.x;
+                        action_x = cropHandler.cropParams->x;
                         press_y = y;
-                        action_y = cropHandler.cropParams.h;
+                        action_y = cropHandler.cropParams->h;
                     } else if (onArea (CropBottomRight, x, y)) {
                         state = SResizeBR;
                         press_x = x;
-                        action_x = cropHandler.cropParams.w;
+                        action_x = cropHandler.cropParams->w;
                         press_y = y;
-                        action_y = cropHandler.cropParams.h;
+                        action_y = cropHandler.cropParams->h;
                     } else if (onArea (CropTop, x, y)) {
                         state = SResizeH1;
                         press_y = y;
-                        action_y = cropHandler.cropParams.y;
+                        action_y = cropHandler.cropParams->y;
                     } else if (onArea (CropBottom, x, y)) {
                         state = SResizeH2;
                         press_y = y;
-                        action_y = cropHandler.cropParams.h;
+                        action_y = cropHandler.cropParams->h;
                     } else if (onArea (CropLeft, x, y)) {
                         state = SResizeW1;
                         press_x = x;
-                        action_x = cropHandler.cropParams.x;
+                        action_x = cropHandler.cropParams->x;
                     } else if (onArea (CropRight, x, y)) {
                         state = SResizeW2;
                         press_x = x;
-                        action_x = cropHandler.cropParams.w;
+                        action_x = cropHandler.cropParams->w;
                     } else if ((bstate & GDK_SHIFT_MASK) && onArea (CropInside, x, y)) {
                         state = SCropMove;
                         press_x = x;
                         press_y = y;
-                        action_x = cropHandler.cropParams.x;
-                        action_y = cropHandler.cropParams.y;
+                        action_x = cropHandler.cropParams->x;
+                        action_y = cropHandler.cropParams->y;
                     } else if (onArea (CropObserved, x, y)) {
                         state = SObservedMove;
                         press_x = x;
@@ -450,11 +451,11 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     } else if (iarea->getToolMode () == TMCropSelect && cropgl) {
                         state = SCropSelecting;
                         screenCoordToImage (x, y, press_x, press_y);
-                        cropHandler.cropParams.enabled = true;
-                        cropHandler.cropParams.x = press_x;
-                        cropHandler.cropParams.y = press_y;
-                        cropHandler.cropParams.w = cropHandler.cropParams.h = 1;
-                        cropgl->cropInit (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h);
+                        cropHandler.cropParams->enabled = true;
+                        cropHandler.cropParams->x = press_x;
+                        cropHandler.cropParams->y = press_y;
+                        cropHandler.cropParams->w = cropHandler.cropParams->h = 1;
+                        cropgl->cropInit (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h);
                     } else if (iarea->getToolMode () == TMHand) {
                         if (editSubscriber) {
                             if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) || editSubscriber->getEditingType() == ET_OBJECTS) {
@@ -827,57 +828,57 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
         action_y = y;
         iarea->redraw ();
     } else if (state == SResizeH1 && cropgl) {
-        int oy = cropHandler.cropParams.y;
-        cropHandler.cropParams.y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.h += oy - cropHandler.cropParams.y;
-        cropgl->cropHeight1Resized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        int oy = cropHandler.cropParams->y;
+        cropHandler.cropParams->y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->h += oy - cropHandler.cropParams->y;
+        cropgl->cropHeight1Resized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SResizeH2 && cropgl) {
-        cropHandler.cropParams.h = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
-        cropgl->cropHeight2Resized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        cropHandler.cropParams->h = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
+        cropgl->cropHeight2Resized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SResizeW1 && cropgl) {
-        int ox = cropHandler.cropParams.x;
-        cropHandler.cropParams.x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.w += ox - cropHandler.cropParams.x;
-        cropgl->cropWidth1Resized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        int ox = cropHandler.cropParams->x;
+        cropHandler.cropParams->x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->w += ox - cropHandler.cropParams->x;
+        cropgl->cropWidth1Resized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SResizeW2 && cropgl) {
-        cropHandler.cropParams.w = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
-        cropgl->cropWidth2Resized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        cropHandler.cropParams->w = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
+        cropgl->cropWidth2Resized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SResizeTL && cropgl) {
-        int ox = cropHandler.cropParams.x;
-        cropHandler.cropParams.x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.w += ox - cropHandler.cropParams.x;
-        int oy = cropHandler.cropParams.y;
-        cropHandler.cropParams.y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.h += oy - cropHandler.cropParams.y;
-        cropgl->cropTopLeftResized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        int ox = cropHandler.cropParams->x;
+        cropHandler.cropParams->x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->w += ox - cropHandler.cropParams->x;
+        int oy = cropHandler.cropParams->y;
+        cropHandler.cropParams->y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->h += oy - cropHandler.cropParams->y;
+        cropgl->cropTopLeftResized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SResizeTR && cropgl) {
-        cropHandler.cropParams.w = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
-        int oy = cropHandler.cropParams.y;
-        cropHandler.cropParams.y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.h += oy - cropHandler.cropParams.y;
-        cropgl->cropTopRightResized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        cropHandler.cropParams->w = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
+        int oy = cropHandler.cropParams->y;
+        cropHandler.cropParams->y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->h += oy - cropHandler.cropParams->y;
+        cropgl->cropTopRightResized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SResizeBL && cropgl) {
-        int ox = cropHandler.cropParams.x;
-        cropHandler.cropParams.x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.w += ox - cropHandler.cropParams.x;
-        cropHandler.cropParams.h = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
-        cropgl->cropBottomLeftResized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        int ox = cropHandler.cropParams->x;
+        cropHandler.cropParams->x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->w += ox - cropHandler.cropParams->x;
+        cropHandler.cropParams->h = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
+        cropgl->cropBottomLeftResized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SResizeBR && cropgl) {
-        cropHandler.cropParams.w = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.h = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
-        cropgl->cropBottomRightResized (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h, crop_custom_ratio);
+        cropHandler.cropParams->w = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->h = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
+        cropgl->cropBottomRightResized (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h, crop_custom_ratio);
         iarea->redraw ();
     } else if (state == SCropMove && cropgl) {
-        cropHandler.cropParams.x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
-        cropHandler.cropParams.y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
-        cropgl->cropMoved (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h);
+        cropHandler.cropParams->x = action_x + (x - press_x) / zoomSteps[cropZoom].zoom;
+        cropHandler.cropParams->y = action_y + (y - press_y) / zoomSteps[cropZoom].zoom;
+        cropgl->cropMoved (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h);
         iarea->redraw ();
     } else if (state == SCropSelecting && cropgl) {
         screenCoordToImage (x, y, action_x, action_y);
@@ -886,19 +887,19 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
         cropgl->cropResized (cx1, cy1, cx2, cy2);
 
         if (cx2 > cx1) {
-            cropHandler.cropParams.x = cx1;
-            cropHandler.cropParams.w = cx2 - cx1 + 1;
+            cropHandler.cropParams->x = cx1;
+            cropHandler.cropParams->w = cx2 - cx1 + 1;
         } else {
-            cropHandler.cropParams.x = cx2;
-            cropHandler.cropParams.w = cx1 - cx2 + 1;
+            cropHandler.cropParams->x = cx2;
+            cropHandler.cropParams->w = cx1 - cx2 + 1;
         }
 
         if (cy2 > cy1) {
-            cropHandler.cropParams.y = cy1;
-            cropHandler.cropParams.h = cy2 - cy1 + 1;
+            cropHandler.cropParams->y = cy1;
+            cropHandler.cropParams->h = cy2 - cy1 + 1;
         } else {
-            cropHandler.cropParams.y = cy2;
-            cropHandler.cropParams.h = cy1 - cy2 + 1;
+            cropHandler.cropParams->y = cy2;
+            cropHandler.cropParams->h = cy1 - cy2 + 1;
         }
 
         iarea->redraw ();
@@ -1018,17 +1019,17 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
         if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuftrue) {
             cropHandler.getFullImageSize(mx, my);
-            //    pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-            //   if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+            //    pmlistener->pointerMoved (false, cropHandler.colorParams->working, mx, my, -1, -1, -1);
+            //   if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams->working, mx, my, -1, -1, -1);
             /*    Glib::ustring outputProfile;
-                outputProfile =cropHandler.colorParams.output ;
+                outputProfile =cropHandler.colorParams->output ;
                 printf("Using \"%s\" output\n", outputProfile.c_str());
                 if(outputProfile==options.rtSettings.srgb) printf("OK SRGB2");
             */
-            pmlistener->pointerMoved (false, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, -1, -1, -1);
+            pmlistener->pointerMoved (false, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, -1, -1, -1);
 
             if (pmhlistener) {
-                pmhlistener->pointerMoved (false, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, -1, -1, -1);
+                pmhlistener->pointerMoved (false, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, -1, -1, -1);
             }
 
         } else {
@@ -1075,11 +1076,11 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
                 // Updates the Navigator
                 // TODO: possible double color conversion if rval, gval, bval come from cropHandler.cropPixbuftrue ? see issue #4583
-                pmlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval, isRaw);
+                pmlistener->pointerMoved (true, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, rval, gval, bval, isRaw);
 
                 if (pmhlistener) {
                     // Updates the HistogramRGBArea
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams.outputProfile, cropHandler.colorParams.workingProfile, mx, my, rval, gval, bval);
+                    pmhlistener->pointerMoved (true, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, rval, gval, bval);
                 }
             }
         }
@@ -1119,87 +1120,87 @@ bool CropWindow::onArea (CursorArea a, int x, int y)
 
     case CropTopLeft:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               y1 >= cropHandler.cropParams.y - CROPRESIZEBORDER &&
-               y1 <= cropHandler.cropParams.y + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               y1 >= cropHandler.cropParams->y - CROPRESIZEBORDER &&
+               y1 <= cropHandler.cropParams->y + CROPRESIZEBORDER &&
                y >= ypos + imgY &&
-               x1 >= cropHandler.cropParams.x - CROPRESIZEBORDER &&
-               x1 <= cropHandler.cropParams.x + CROPRESIZEBORDER &&
+               x1 >= cropHandler.cropParams->x - CROPRESIZEBORDER &&
+               x1 <= cropHandler.cropParams->x + CROPRESIZEBORDER &&
                x >= xpos + imgX;
 
     case CropTopRight:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               y1 >= cropHandler.cropParams.y - CROPRESIZEBORDER &&
-               y1 <= cropHandler.cropParams.y + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               y1 >= cropHandler.cropParams->y - CROPRESIZEBORDER &&
+               y1 <= cropHandler.cropParams->y + CROPRESIZEBORDER &&
                y >= ypos + imgY &&
-               x1 >= cropHandler.cropParams.x + cropHandler.cropParams.w - 1 - CROPRESIZEBORDER &&
-               x1 <= cropHandler.cropParams.x + cropHandler.cropParams.w - 1 + CROPRESIZEBORDER &&
+               x1 >= cropHandler.cropParams->x + cropHandler.cropParams->w - 1 - CROPRESIZEBORDER &&
+               x1 <= cropHandler.cropParams->x + cropHandler.cropParams->w - 1 + CROPRESIZEBORDER &&
                x < xpos + imgX + imgW;
 
     case CropBottomLeft:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               y1 >= cropHandler.cropParams.y + cropHandler.cropParams.h - 1 - CROPRESIZEBORDER &&
-               y1 <= cropHandler.cropParams.y + cropHandler.cropParams.h - 1 + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               y1 >= cropHandler.cropParams->y + cropHandler.cropParams->h - 1 - CROPRESIZEBORDER &&
+               y1 <= cropHandler.cropParams->y + cropHandler.cropParams->h - 1 + CROPRESIZEBORDER &&
                y < ypos + imgY + imgH &&
-               x1 >= cropHandler.cropParams.x - CROPRESIZEBORDER &&
-               x1 <= cropHandler.cropParams.x + CROPRESIZEBORDER &&
+               x1 >= cropHandler.cropParams->x - CROPRESIZEBORDER &&
+               x1 <= cropHandler.cropParams->x + CROPRESIZEBORDER &&
                x >= xpos + imgX;
 
     case CropBottomRight:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               y1 >= cropHandler.cropParams.y + cropHandler.cropParams.h - 1 - CROPRESIZEBORDER &&
-               y1 <= cropHandler.cropParams.y + cropHandler.cropParams.h - 1 + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               y1 >= cropHandler.cropParams->y + cropHandler.cropParams->h - 1 - CROPRESIZEBORDER &&
+               y1 <= cropHandler.cropParams->y + cropHandler.cropParams->h - 1 + CROPRESIZEBORDER &&
                y < ypos + imgY + imgH &&
-               x1 >= cropHandler.cropParams.x + cropHandler.cropParams.w - 1 - CROPRESIZEBORDER &&
-               x1 <= cropHandler.cropParams.x + cropHandler.cropParams.w - 1 + CROPRESIZEBORDER &&
+               x1 >= cropHandler.cropParams->x + cropHandler.cropParams->w - 1 - CROPRESIZEBORDER &&
+               x1 <= cropHandler.cropParams->x + cropHandler.cropParams->w - 1 + CROPRESIZEBORDER &&
                x < xpos + imgX + imgW;
 
     case CropTop:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               x1 > cropHandler.cropParams.x + CROPRESIZEBORDER &&
-               x1 < cropHandler.cropParams.x + cropHandler.cropParams.w - 1 - CROPRESIZEBORDER &&
-               y1 > cropHandler.cropParams.y - CROPRESIZEBORDER &&
-               y1 < cropHandler.cropParams.y + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               x1 > cropHandler.cropParams->x + CROPRESIZEBORDER &&
+               x1 < cropHandler.cropParams->x + cropHandler.cropParams->w - 1 - CROPRESIZEBORDER &&
+               y1 > cropHandler.cropParams->y - CROPRESIZEBORDER &&
+               y1 < cropHandler.cropParams->y + CROPRESIZEBORDER &&
                y >= ypos + imgY;
 
     case CropBottom:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               x1 > cropHandler.cropParams.x + CROPRESIZEBORDER &&
-               x1 < cropHandler.cropParams.x + cropHandler.cropParams.w - 1 - CROPRESIZEBORDER &&
-               y1 > cropHandler.cropParams.y + cropHandler.cropParams.h - 1 - CROPRESIZEBORDER &&
-               y1 < cropHandler.cropParams.y + cropHandler.cropParams.h - 1 + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               x1 > cropHandler.cropParams->x + CROPRESIZEBORDER &&
+               x1 < cropHandler.cropParams->x + cropHandler.cropParams->w - 1 - CROPRESIZEBORDER &&
+               y1 > cropHandler.cropParams->y + cropHandler.cropParams->h - 1 - CROPRESIZEBORDER &&
+               y1 < cropHandler.cropParams->y + cropHandler.cropParams->h - 1 + CROPRESIZEBORDER &&
                y < ypos + imgY + imgH;
 
     case CropLeft:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               y1 > cropHandler.cropParams.y + CROPRESIZEBORDER &&
-               y1 < cropHandler.cropParams.y + cropHandler.cropParams.h - 1 - CROPRESIZEBORDER &&
-               x1 > cropHandler.cropParams.x - CROPRESIZEBORDER &&
-               x1 < cropHandler.cropParams.x + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               y1 > cropHandler.cropParams->y + CROPRESIZEBORDER &&
+               y1 < cropHandler.cropParams->y + cropHandler.cropParams->h - 1 - CROPRESIZEBORDER &&
+               x1 > cropHandler.cropParams->x - CROPRESIZEBORDER &&
+               x1 < cropHandler.cropParams->x + CROPRESIZEBORDER &&
                x >= xpos + imgX;
 
     case CropRight:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               y1 > cropHandler.cropParams.y + CROPRESIZEBORDER &&
-               y1 < cropHandler.cropParams.y + cropHandler.cropParams.h - 1 - CROPRESIZEBORDER &&
-               x1 > cropHandler.cropParams.x + cropHandler.cropParams.w - 1 - CROPRESIZEBORDER &&
-               x1 < cropHandler.cropParams.x + cropHandler.cropParams.w - 1 + CROPRESIZEBORDER &&
+        return cropHandler.cropParams->enabled &&
+               y1 > cropHandler.cropParams->y + CROPRESIZEBORDER &&
+               y1 < cropHandler.cropParams->y + cropHandler.cropParams->h - 1 - CROPRESIZEBORDER &&
+               x1 > cropHandler.cropParams->x + cropHandler.cropParams->w - 1 - CROPRESIZEBORDER &&
+               x1 < cropHandler.cropParams->x + cropHandler.cropParams->w - 1 + CROPRESIZEBORDER &&
                x < xpos + imgX + imgW;
 
     case CropInside:
         screenCoordToImage (x, y, x1, y1);
-        return cropHandler.cropParams.enabled &&
-               y1 > cropHandler.cropParams.y &&
-               y1 < cropHandler.cropParams.y + cropHandler.cropParams.h - 1 &&
-               x1 > cropHandler.cropParams.x &&
-               x1 < cropHandler.cropParams.x + cropHandler.cropParams.w - 1;
+        return cropHandler.cropParams->enabled &&
+               y1 > cropHandler.cropParams->y &&
+               y1 < cropHandler.cropParams->y + cropHandler.cropParams->h - 1 &&
+               x1 > cropHandler.cropParams->x &&
+               x1 < cropHandler.cropParams->x + cropHandler.cropParams->w - 1;
 
     case CropResize:
         return decorated && x >= xpos + width - 16 && y >= ypos + height - 16 && x < xpos + width && y < ypos + height;
@@ -1367,7 +1368,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             Gdk::Cairo::set_source_pixbuf(cr, rough, posX, posY);
             cr->rectangle(posX, posY, rtengine::min (rough->get_width (), imgAreaW-imgX), rtengine::min (rough->get_height (), imgAreaH-imgY));
             cr->fill();
-//            if (cropHandler.cropParams.enabled)
+//            if (cropHandler.cropParams->enabled)
 //                drawCrop (cr, x+imgX, y+imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
         }
 
@@ -1375,7 +1376,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             drawObservedFrame (cr);
         }
     } else {
-        CropParams cropParams = cropHandler.cropParams;
+        CropParams cropParams = *cropHandler.cropParams;
         if (state == SNormal) {
             switch (options.cropGuides) {
             case Options::CROP_GUIDE_NONE:
@@ -1805,7 +1806,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 cr->fill();
             }
 
-            if (cropHandler.cropParams.enabled) {
+            if (cropHandler.cropParams->enabled) {
                 int cropX, cropY;
                 cropHandler.getPosition (cropX, cropY);
                 drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropParams, (this == iarea->mainCropWindow), useBgColor, cropHandler.isFullDisplay ());
@@ -1888,7 +1889,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 cr->rectangle(posX, posY, rtengine::min (rough->get_width (), imgAreaW-imgX), rtengine::min (rough->get_height (), imgAreaH-imgY));
                 cr->fill();
 
-                if (cropHandler.cropParams.enabled) {
+                if (cropHandler.cropParams->enabled) {
                     drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropParams, (this == iarea->mainCropWindow), useBgColor, cropHandler.isFullDisplay ());
                 }
 
@@ -1947,9 +1948,9 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY)
         y = cursorY;
     } else {
         if (zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom()) {
-            if (cropHandler.cropParams.enabled) {
-                x = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
-                y = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+            if (cropHandler.cropParams->enabled) {
+                x = cropHandler.cropParams->x + cropHandler.cropParams->w / 2;
+                y = cropHandler.cropParams->y + cropHandler.cropParams->h / 2;
             } else {
                 int fw, fh;
                 cropHandler.getFullImageSize(fw, fh);
@@ -1961,11 +1962,11 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY)
         } else if (zoomVersion != exposeVersion) {
             screenCoordToImage(xpos + imgX + imgW / 2, ypos + imgY + imgH / 2, x, y);
 
-            if (cropHandler.cropParams.enabled) {
+            if (cropHandler.cropParams->enabled) {
                 // add some gravity towards crop center
-                int x1 = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
-                int y1 = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
-                double cropd = sqrt(cropHandler.cropParams.h * cropHandler.cropParams.h + cropHandler.cropParams.w * cropHandler.cropParams.w) * zoomSteps[cropZoom].zoom;
+                int x1 = cropHandler.cropParams->x + cropHandler.cropParams->w / 2;
+                int y1 = cropHandler.cropParams->y + cropHandler.cropParams->h / 2;
+                double cropd = sqrt(cropHandler.cropParams->h * cropHandler.cropParams->h + cropHandler.cropParams->w * cropHandler.cropParams->w) * zoomSteps[cropZoom].zoom;
                 double imd = sqrt(imgW * imgW + imgH * imgH);
                 double d;
 
@@ -2023,9 +2024,9 @@ void CropWindow::zoom11 (bool notify)
     int y = -1;
 
     if (zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom()) {
-        if (cropHandler.cropParams.enabled) {
-            x = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
-            y = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+        if (cropHandler.cropParams->enabled) {
+            x = cropHandler.cropParams->x + cropHandler.cropParams->w / 2;
+            y = cropHandler.cropParams->y + cropHandler.cropParams->h / 2;
         } else {
             int fw, fh;
             cropHandler.getFullImageSize(fw, fh);
@@ -2114,7 +2115,7 @@ void CropWindow::zoomFit ()
 
 void CropWindow::zoomFitCrop ()
 {
-    if(cropHandler.cropParams.enabled) {
+    if(cropHandler.cropParams->enabled) {
         double z = cropHandler.getFitCropZoom ();
         int cz = int(zoomSteps.size())-1;
 
@@ -2129,8 +2130,8 @@ void CropWindow::zoomFitCrop ()
 
         zoomVersion = exposeVersion;
         int centerX, centerY;
-        centerX = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
-        centerY = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+        centerX = cropHandler.cropParams->x + cropHandler.cropParams->w / 2;
+        centerY = cropHandler.cropParams->y + cropHandler.cropParams->h / 2;
         setCropAnchorPosition(centerX, centerY);
         changeZoom (cz, true, centerX, centerY);
         fitZoom = options.cropAutoFit;

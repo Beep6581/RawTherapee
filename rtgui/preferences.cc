@@ -2404,7 +2404,7 @@ void Preferences::workflowUpdate ()
             || moptions.rtSettings.printerBPC     != options.rtSettings.printerBPC
             || moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent) {
         // Update the position of the Histogram
-        parent->updateProfiles (moptions.rtSettings.printerProfile, moptions.rtSettings.printerIntent, moptions.rtSettings.printerBPC);
+        parent->updateProfiles (moptions.rtSettings.printerProfile, rtengine::RenderingIntent(moptions.rtSettings.printerIntent), moptions.rtSettings.printerBPC);
     }
 
 }

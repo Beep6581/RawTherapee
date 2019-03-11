@@ -18,6 +18,7 @@
  */
 #include "rtengine.h"
 #include "improcfun.h"
+#include "procparams.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

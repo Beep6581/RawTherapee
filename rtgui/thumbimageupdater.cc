@@ -27,6 +27,8 @@
 #include "guiutils.h"
 #include "threadutils.h"
 
+#include "../rtengine/procparams.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif

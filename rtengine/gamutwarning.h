@@ -31,6 +31,8 @@
 
 namespace rtengine {
 
+enum RenderingIntent : int;
+
 class GamutWarning: public NonCopyable {
 public:
     GamutWarning(cmsHPROFILE iprof, cmsHPROFILE gamutprof, RenderingIntent intent, bool bpc);

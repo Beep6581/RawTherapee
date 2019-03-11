@@ -19,6 +19,7 @@
  */
 
 #include "rtlensfun.h"
+#include "procparams.h"
 #include "settings.h"
 #include <iostream>
 

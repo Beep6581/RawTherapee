@@ -32,6 +32,8 @@
 
 #include "rtexif.h"
 
+#include "../rtengine/procparams.h"
+
 #include "../rtgui/cacheimagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"

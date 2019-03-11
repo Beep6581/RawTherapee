@@ -22,6 +22,8 @@
 #include "options.h"
 #include "rtimage.h"
 
+#include "../rtengine/procparams.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 

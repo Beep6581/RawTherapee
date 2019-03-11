@@ -19,11 +19,15 @@
 #include "previewhandler.h"
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PreviewHandler::PreviewHandler () : image(nullptr), previewScale(1.)
+PreviewHandler::PreviewHandler () :
+    image(nullptr),
+    cropParams(new procparams::CropParams),
+    previewScale(1.)
 {
 
     pih = new PreviewHandlerIdleHelper;
@@ -72,7 +76,7 @@ void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const rtengine
                 pih->phandler->image = i;
             }
 
-            pih->phandler->cropParams = cp;
+            *pih->phandler->cropParams = cp;
             pih->phandler->previewScale = scale;
             --pih->pending;
 
@@ -139,7 +143,7 @@ void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
             pih->phandler->previewImg = Gdk::Pixbuf::create_from_data(pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3 * pih->phandler->image->getWidth());
             pih->phandler->previewImgMutex.unlock ();
 
-            pih->phandler->cropParams = cp;
+            *pih->phandler->cropParams = cp;
             pih->phandler->previewImageChanged ();
             --pih->pending;
 
@@ -203,4 +207,9 @@ void PreviewHandler::previewImageChanged ()
     for (std::list<PreviewListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
         (*i)->previewImageChanged ();
     }
+}
+
+rtengine::procparams::CropParams PreviewHandler::getCropParams()
+{
+    return *cropParams;
 }

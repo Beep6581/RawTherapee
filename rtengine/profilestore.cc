@@ -19,6 +19,8 @@
 #include "profilestore.h"
 
 #include "dynamicprofile.h"
+#include "procparams.h"
+
 #include "../rtgui/options.h"
 #include "../rtgui/multilangmgr.h"
 

@@ -32,6 +32,7 @@
 #include "profilestore.h"
 #include "../rtgui/threadutils.h"
 #include "rtlensfun.h"
+#include "procparams.h"
 
 namespace rtengine
 {

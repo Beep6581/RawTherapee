@@ -23,6 +23,7 @@
 #include "multilangmgr.h"
 #include "cropwindow.h"
 #include "../rtengine/refreshmap.h"
+#include "../rtengine/procparams.h"
 #include "options.h"
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullImageHeight(0)
@@ -659,7 +660,7 @@ void ImageArea::initialImageArrived ()
             } else {
                 mainCropWindow->zoomFit();
             }
-        } else if ((options.cropAutoFit || options.bgcolor != 0) && mainCropWindow->cropHandler.cropParams.enabled) {
+        } else if ((options.cropAutoFit || options.bgcolor != 0) && mainCropWindow->cropHandler.cropParams->enabled) {
             mainCropWindow->zoomFitCrop();
         }
         fullImageWidth = w;

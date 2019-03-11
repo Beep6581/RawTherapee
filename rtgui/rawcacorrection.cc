@@ -17,9 +17,12 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "rawcacorrection.h"
+
 #include "eventmapper.h"
 #include "guiutils.h"
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

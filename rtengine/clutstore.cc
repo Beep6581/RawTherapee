@@ -5,6 +5,7 @@
 #include "iccstore.h"
 #include "imagefloat.h"
 #include "opthelper.h"
+#include "procparams.h"
 #include "rt_math.h"
 #include "stdimagesource.h"
 

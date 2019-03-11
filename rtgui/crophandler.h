@@ -21,6 +21,7 @@
 
 #include <atomic>
 #include <vector>
+#include <memory>
 
 #include <gtkmm.h>
 
@@ -105,8 +106,8 @@ public:
     void    update  ();
 
 
-    rtengine::procparams::CropParams cropParams;
-    rtengine::procparams::ColorManagementParams colorParams;
+    const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
+    const std::unique_ptr<rtengine::procparams::ColorManagementParams> colorParams;
     Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;     // image displayed on monitor, using the monitor profile (i.e. lab to monitor profile)
     Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue; // internal image in output color space for analysis (i.e. lab to either Working profile or Output profile, depending on options.rtSettings.HistogramWorking)
 

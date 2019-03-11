@@ -18,11 +18,13 @@
  */
 
 #include "previewimage.h"
+
 #include "iimage.h"
-#include "utils.h"
 #include "iimage.h"
-#include "rtthumbnail.h"
+#include "procparams.h"
 #include "rawimagesource.h"
+#include "rtthumbnail.h"
+#include "utils.h"
 
 using namespace rtengine;
 using namespace procparams;

@@ -17,11 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "stdimagesource.h"
-#include "mytime.h"
+
+#include "color.h"
+#include "curves.h"
 #include "iccstore.h"
 #include "imageio.h"
-#include "curves.h"
-#include "color.h"
+#include "mytime.h"
+#include "procparams.h"
 
 #undef THREAD_PRIORITY_NORMAL
 

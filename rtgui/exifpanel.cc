@@ -21,13 +21,17 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
+#include "../rtengine/procparams.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 using namespace rtexif;
 
-ExifPanel::ExifPanel () : idata (nullptr)
+ExifPanel::ExifPanel() :
+    idata(nullptr),
+    changeList(new rtengine::procparams::ExifPairs),
+    defChangeList(new rtengine::procparams::ExifPairs)
 {
-
     recursiveOp = true;
 
     exifTree = Gtk::manage (new Gtk::TreeView());
@@ -166,7 +170,7 @@ void ExifPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener ();
 
-    changeList = pp->exif;
+    *changeList = pp->exif;
     setImageData (idata);
     applyChangeList ();
     exifSelectionChanged ();
@@ -178,13 +182,13 @@ void ExifPanel::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
 //    updateChangeList ();
-    pp->exif = changeList;
+    pp->exif = *changeList;
 }
 
 void ExifPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
 
-    defChangeList = defParams->exif;
+    *defChangeList = defParams->exif;
 }
 
 void ExifPanel::setImageData (const FramesMetaData* id)
@@ -457,7 +461,7 @@ void ExifPanel::resetAllPressed ()
 {
 
     setImageData (idata);
-    changeList = defChangeList;
+    *changeList = *defChangeList;
     applyChangeList ();
     exifSelectionChanged ();
     notifyListener ();
@@ -661,11 +665,11 @@ void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string pre
 
     for (iter = root.begin(); iter != root.end(); ++iter)  {
         if (iter->get_value (exifColumns.edited)) {
-            changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
+            (*changeList)[ prefix + iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
         } else if (iter->get_value (exifColumns.action) == AC_WRITE && iter->get_value (exifColumns.icon) == delicon) {
-            changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#delete";
+            (*changeList)[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#delete";
         } else if (iter->get_value (exifColumns.action) == AC_DONTWRITE && iter->get_value (exifColumns.icon) == keepicon) {
-            changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#keep";
+            (*changeList)[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#keep";
         }
 
         if (iter->get_value (exifColumns.icon) == keepicon) {
@@ -677,14 +681,14 @@ void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string pre
 void ExifPanel::updateChangeList ()
 {
 
-    changeList.clear ();
+    changeList->clear ();
     updateChangeList (exifTreeModel->children(), "");
 }
 
 void ExifPanel::applyChangeList ()
 {
 
-    for (rtengine::procparams::ExifPairs::iterator i = changeList.begin(); i != changeList.end(); ++i) {
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList->begin(); i != changeList->end(); ++i) {
         editTag (exifTreeModel->children(), i->first, i->second);
     }
 }
