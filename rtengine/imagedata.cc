@@ -379,6 +379,11 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                                     }
                                 }
                             }
+                            // If MakeNotes are vague, fall back to Exif LensMake and LensModel if set
+                            // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#LensType
+                            if (lens == "Manual Lens No CPU") {
+                                lens_from_make_and_model();
+                            }
                         }
                     }
 
@@ -451,8 +456,6 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                                 found = true;
                                 lens = "Canon " + ldata;
                             }
-                        } else {
-                            found = lens_from_make_and_model();
                         }
                     }
 
@@ -466,6 +469,10 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                                 lens = ldata;
                             }
                         }
+                    }
+
+                    if (!found) {
+                        lens_from_make_and_model();
                     }
                 } else if (!make.compare(0, 6, "PENTAX") || (!make.compare(0, 5, "RICOH") && !model.compare(0, 6, "PENTAX"))) {
                     // ISO at max value supported, check manufacturer specific
@@ -483,8 +490,9 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
 
                     if (mnote->getTag("LensType")) {
                         lens = mnote->getTag ("LensType")->valueToString();
-                        if (!mnote->getTag("LensType")->toInt()) {
-                            // try to find something better than "M-42 or No Lens"
+                        // If MakeNotes are vague, fall back to Exif LensMake and LensModel if set
+                        // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Pentax.html#LensType
+                        if (lens == "M-42 or No Lens" || lens == "K or M Lens" || lens == "A Series Lens" || lens == "Sigma") {
                             lens_from_make_and_model();
                         }
                     } else {
@@ -510,6 +518,9 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 } else if (mnote && (!make.compare(0, 4, "SONY") || !make.compare(0, 6, "KONICA"))) {
                     if (mnote->getTag("LensID")) {
                         lens = mnote->getTag("LensID")->valueToString();
+                        if (lens == "Unknown") {
+                            lens_from_make_and_model();
+                        }
                     }
                 } else if (!make.compare(0, 7, "OLYMPUS")) {
                     if (mnote->getTag("Equipment"))  {
@@ -518,6 +529,9 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                         if (eq->getTag("LensType")) {
                             lens = eq->getTag("LensType")->valueToString();
                         }
+                    }
+                    if (lens == "Unknown") {
+                        lens_from_make_and_model();
                     }
                 } else if (mnote && !make.compare(0, 9, "Panasonic")) {
                     if (mnote->getTag("LensType")) {
@@ -1302,36 +1316,32 @@ FramesData::FramesData(const Glib::ustring& fname, std::unique_ptr<RawMetaDataLo
         FILE* f = g_fopen(fname.c_str(), "rb");
 
         if (f) {
-            const bool has_rml_exif_base = rml->exifBase >= 0;
             rtexif::ExifManager exifManager(f, std::move(rml), firstFrameOnly);
-
-            if (has_rml_exif_base) {
-                if (exifManager.f && exifManager.rml) {
-                    if (exifManager.rml->exifBase >= 0) {
-                        exifManager.parseRaw();
-
-                    } else if (exifManager.rml->ciffBase >= 0) {
-                        exifManager.parseCIFF();
-                    }
-                }
-
-                // copying roots
-                roots = exifManager.roots;
-
-                // creating FrameData
-                for (auto currFrame : exifManager.frames) {
-                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
-                }
-
-                for (auto currRoot : roots) {
-                    rtexif::Tag* t = currRoot->getTag(0x83BB);
-
-                    if (t && !iptc) {
-                        iptc = iptc_data_new_from_data((unsigned char*)t->getValue(), (unsigned)t->getValueSize());
-                        break;
-                    }
+            if (exifManager.f && exifManager.rml) {
+                if (exifManager.rml->exifBase >= 0) {
+                    exifManager.parseRaw ();
+                } else if (exifManager.rml->ciffBase >= 0) {
+                    exifManager.parseCIFF ();
                 }
             }
+
+            // copying roots
+            roots = exifManager.roots;
+
+            // creating FrameData
+            for (auto currFrame : exifManager.frames) {
+                frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
+            }
+
+            for (auto currRoot : roots) {
+                rtexif::Tag* t = currRoot->getTag(0x83BB);
+
+                if (t && !iptc) {
+                    iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
+                    break;
+                }
+            }
+
 
             fclose(f);
         }

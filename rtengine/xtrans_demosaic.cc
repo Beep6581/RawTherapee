@@ -43,6 +43,7 @@ void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b
 
     if (!rgb) {
         if(!cbrtinit) {
+        #pragma omp parallel for
             for (int i = 0; i < 0x14000; i++) {
                 double r = i / 65535.0;
                 cbrt[i] = r > Color::eps ? std::cbrt(r) : (Color::kappa * r + 16.0) / 116.0;
@@ -173,9 +174,16 @@ void RawImageSource::xtransborder_interpolate (int border, array2D<float> &red, 
 */
 // override CLIP function to test unclipped output
 #define CLIP(x) (x)
-void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
+void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab, size_t chunkSize, bool measure)
 {
-    BENCHFUN
+
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << passes << "-pass Xtrans Demosaicing " << W << "x" << H << " image with " << chunkSize << " tiles per thread" << std::endl;
+        stop.reset(new StopWatch("xtrans demosaic"));
+    }
+
     constexpr int ts = 114;      /* Tile Size */
     constexpr int tsh = ts / 2;  /* half of Tile Size */
 
@@ -296,7 +304,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
         uint8_t (*homosummax)[ts] = (uint8_t (*)[ts]) homo[ndir - 1]; // we can reuse the homo-buffer because they are not used together
 
 #ifdef _OPENMP
-        #pragma omp for collapse(2) schedule(dynamic) nowait
+        #pragma omp for collapse(2) schedule(dynamic, chunkSize) nowait
 #endif
 
         for (int top = 3; top < height - 19; top += ts - 16)

@@ -1225,6 +1225,12 @@ PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing pr
 PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
+PREFERENCES_CHUNKSIZES;Tiles per thread
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
+PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
+PREFERENCES_CHUNKSIZE_RGB;RGB processing
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -1341,6 +1347,8 @@ PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.
 PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+PREFERENCES_PERFORMANCE_MEASURE;Measure
+PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 PREFERENCES_PERFORMANCE_THREADS;Threads
 PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 PREFERENCES_PREVDEMO;Preview Demosaic Method
