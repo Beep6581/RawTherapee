@@ -69,8 +69,12 @@ notebook > header tab {
     padding: 0 0.333333333333333333em;
 }
 notebook > header.left tab {
-    margin: 0.25em 0.416666666666666666em;
-    padding: 0.333333333333333333em 0;
+    margin: 0.2em;
+    padding: 0.333333333333333333em;
+}
+notebook > header.left tabs {
+    margin: 0;
+    padding: 0;
 }
 notebook > header tab > grid > image {
     min-height: 2em;
@@ -91,7 +95,7 @@ notebook > header.left > tabs > arrow {
 
 /*?win*/
 #MainNotebook > stack {
-    padding: 0.416666666666666666em;
+    padding: 0.25em;
 }
 
 #MainNotebook > stack > :nth-child(2) > box:nth-child(3) {
@@ -132,11 +136,11 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0;
 }
 #ToolPanelNotebook > stack {
-    padding: 0.5em 0 0 0;
+    padding: 0;
 }
 
 #RightNotebook > header {
-    margin: 0 0.416666666666666666em 0 0;
+    margin: 0 0.2em 0 0;
 }
 #RightNotebook > stack {
     padding: 0;
@@ -311,7 +315,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #ToolPanelNotebook > stack > scrolledwindow > viewport.frame {
-    padding: 0 0.25em 0 0.5em;
+    padding: 0 0.25em;
 }
 
 #MyExpander {
@@ -527,8 +531,11 @@ button image:not(.dummy),
     margin-right: 0;
 }
 
+#ProfilePanel {
+    margin-bottom: 0.35em;
+}
 #ProfilePanel > grid {
-    margin-bottom: calc(0.416666666666666666em -2px);
+    margin-bottom: 0.2em;
 }
 
 /* Reset button */

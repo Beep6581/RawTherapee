@@ -176,7 +176,9 @@ RTWindow::RTWindow ()
             #endif
             //GTK318
             fontScale = options.fontSize / 9.f;
-            printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
+            if (options.rtSettings.verbose) {
+                printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
+            }
         } else {
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
             Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
@@ -202,14 +204,18 @@ RTWindow::RTWindow ()
                 fontScale = (float)pt / 9.f;
                 if ((int)initialGdkScale > 1 || pt != 9) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
-                    printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
+                    if (options.rtSettings.verbose) {
+                        printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
+                    }
                 }
             } else {
                 fontScale = 1.f;
             }
         }
         if (!css.empty()) {
-            printf("CSS:\n%s\n\n", css.c_str());
+            if (options.rtSettings.verbose) {
+                printf("CSS:\n%s\n\n", css.c_str());
+            }
             try {
                 cssForced = Gtk::CssProvider::create();
                 cssForced->load_from_data (css);
@@ -539,9 +545,6 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
         get_position (options.windowX, options.windowY);
     }
 
-    //int newScale = rtengine::max((int)initialGdkScale, get_window()->get_scale_factor());
-    //double newDPI = get_window()->get_screen()->get_resolution();
-    printf("RTWindow::on_configure_event  /  newScale:%d  /  newDPI: %.3f\n", RTScalable::getScale(), RTScalable::getDPI());
     RTImage::setDPInScale(RTScalable::getDPI(), RTScalable::getScale());   // will update the RTImage   on scale/resolution change
     RTSurface::setDPInScale(RTScalable::getDPI(), RTScalable::getScale()); // will update the RTSurface on scale/resolution change
 
@@ -610,7 +613,9 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         closeb->set_focus_on_click (false);
         closeb->signal_clicked().connect ( sigc::bind (sigc::mem_fun (*this, &RTWindow::remEditorPanel), ep));
 
-        titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), Gtk::POS_RIGHT, 1, 1);
+        if (!EditWindow::isMultiDisplayEnabled()) {
+            titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), Gtk::POS_RIGHT, 1, 1);
+        }
         titleGrid->attach_next_to (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to (*closeb, Gtk::POS_RIGHT, 1, 1);
         titleGrid->show_all ();
@@ -1158,7 +1163,7 @@ void RTWindow::createSetmEditor()
         el->set_angle (90);
     }
 
-    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("rawtherapee-logo-24.png")), pos, 1, 1);
+    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), pos, 1, 1);
     editorLabelGrid->attach_next_to (*el, pos, 1, 1);
 
     editorLabelGrid->set_tooltip_markup (M ("MAIN_FRAME_EDITOR_TOOLTIP"));

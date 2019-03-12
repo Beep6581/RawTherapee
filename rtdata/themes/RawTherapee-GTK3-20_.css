@@ -133,7 +133,7 @@ frame {
     border-style: solid;
     /*border-style: none none none solid;*/
     padding: 0;
-    margin: 0.25em 0 ;
+    margin: 0;
     background-color: rgba(0,0,0,0.);
     min-height: 0;
     min-width: 0;
@@ -200,7 +200,7 @@ paned.horizontal > separator {
 }
 /* Double line separator */
 paned.vertical > separator {
-    margin: 0.5em 0;
+    margin: 0.25em 0;
 }
 
 dialog paned.horizontal > separator {
@@ -728,7 +728,7 @@ flowboxchild:selected {
     padding: 0;
 }
 #MyExpander.withScrollbar {
-    margin-right: 0.5em;
+    margin-right: 0.25em;
 }
 
 /* Tool background */
@@ -1010,7 +1010,7 @@ fontchooser scrolledwindow,
 #MyExpander frame,
 dialog frame {
     margin: 0;
-    padding: 0.19em 0.75em;
+    padding: 0.19em 0.5em;
 }
 #RightNotebook > stack > scrolledwindow frame > border,
 #BatchQueueButtonsMainContainer > frame > border,
@@ -1173,16 +1173,12 @@ dialog frame > label:not(.dummy) {
     padding: 0 0.1666666666666666em 0.1666666666666666em;
 }
 
-#EditorLeftPaned:first-child {
-    padding: 0 0 0 0.25em;
-}
-
 #EditorLeftPaned:last-child {
     padding: 0.8333333333333333em 0 0 0.8333333333333333em;
 }
 
 #EditorRightPaned:last-child {
-    padding: 0 0.3333333333333333em 0 0;
+    padding: 0;
 }
 
 #MainNotebook > header #CloseButton {
@@ -1204,7 +1200,7 @@ dialog frame > label:not(.dummy) {
 }
 
 #RightNotebook scrolledwindow {
-    padding: 0.3333333333333333em;
+    padding: 0;
 }
 #HistoryPanel {
     margin-top: 0.25em;

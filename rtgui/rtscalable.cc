@@ -51,7 +51,6 @@ void RTScalable::setDPInScale (const double newDPI, const int newScale)
                 dpi *= 2.;
             }
         }
-        //printf("RTScalable::setDPInScale  /  New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTScalable\n", scale, dpi, newDPI);
     }
 }
 
@@ -80,7 +79,6 @@ void RTScalable::init(Gtk::Window *window)
     dpi = 0.;
     scale = 0;
 
-    printf("RTScalable::init / setDPInScale(scale:%d, DPI:%.3f)\n", rtengine::max((int)initialGdkScale, window->get_scale_factor()), window->get_screen()->get_resolution());
     setDPInScale(window->get_screen()->get_resolution(), rtengine::max((int)initialGdkScale, window->get_scale_factor()));
     direction = window->get_direction();
 }
