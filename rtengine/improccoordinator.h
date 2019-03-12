@@ -167,7 +167,7 @@ protected:
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
-    LocallabListener* locallListener;
+//    LocallabListener* locallListener;
 
     
     HistogramListener* hListener;
@@ -220,6 +220,7 @@ protected:
     cmsHTRANSFORM customTransformOut;
     
     //locallab
+    LocallabListener* locallListener;
     LabImage *reserv;       
     int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
@@ -244,7 +245,7 @@ protected:
     LocCCmaskSHCurve locccmasSHCurve;
     LocLLmaskSHCurve locllmasSHCurve;
     LocHHmaskSHCurve lochhmasSHCurve;
-    ProcParams nextParams2;
+//    ProcParams nextParams2;
     bool locallutili;
     bool localcutili;
     bool localskutili;

@@ -894,6 +894,7 @@ HISTORY_MSG_640;Local - SH blend
 HISTORY_MSG_641;Local - Use SH mask
 HISTORY_MSG_642;Local - radius SH
 HISTORY_MSG_643;Local - Blur SH
+HISTORY_MSG_644;Local - inverse SH
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

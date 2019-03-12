@@ -1020,6 +1020,7 @@ struct LocallabParams {
         int blendmaskSH;
         double radmaskSH;
         int blurSHde;
+        bool inverssh;
         // Vibrance
         bool expvibrance;
         int saturated;

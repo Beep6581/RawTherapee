@@ -197,6 +197,8 @@ private:
     //Shadows highlight
     Gtk::CheckButton* const enaSHMask;
     sigc::connection enaSHMaskConn;
+    Gtk::CheckButton* const inverssh;
+    sigc::connection inversshConn;
     // Vibrance
     Gtk::CheckButton* const protectSkins;
     Gtk::CheckButton* const avoidColorShift;
@@ -284,6 +286,7 @@ private:
     void inversexChanged();
     //Shadows Highlight
     void enaSHMaskChanged();
+    void inversshChanged();
     // Vibrance
     void protectskins_toggled();
     void avoidcolorshift_toggled();

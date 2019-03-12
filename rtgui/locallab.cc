@@ -174,6 +174,7 @@ Locallab::Locallab():
     inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     //Shadows Highlight
     enaSHMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    inverssh(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     // Vibrance
     protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
     avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
@@ -531,6 +532,7 @@ Locallab::Locallab():
     blurSHde->setAdjusterListener(this);
 
     enaSHMaskConn = enaSHMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaSHMaskChanged));
+    inversshConn  = inverssh->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversshChanged));
 
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -573,6 +575,8 @@ Locallab::Locallab():
     shadhighBox->pack_start(*sh_radius);
     shadhighBox->pack_start(*sensihs);
     shadhighBox->pack_start(*blurSHde);
+    shadhighBox->pack_start(*inverssh);
+
     maskSHFrame->set_label_align(0.025, 0.5);
 
     ToolParamBlock* const maskSHBox = Gtk::manage(new ToolParamBlock());
@@ -1709,6 +1713,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).blendmaskSH = blendmaskSH->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).radmaskSH = radmaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurSHde = blurSHde->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).inverssh = inverssh->get_active();
 
                     // Vibrance
                     pp->locallab.spots.at(pp->locallab.selspot).expvibrance = expvibrance->getEnabled();
@@ -1892,6 +1897,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).blendmaskSH = pe->locallab.spots.at(pp->locallab.selspot).blendmaskSH || blendmaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).radmaskSH = pe->locallab.spots.at(pp->locallab.selspot).radmaskSH || radmaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blurSHde = pe->locallab.spots.at(pp->locallab.selspot).blurSHde || blurSHde->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).inverssh = pe->locallab.spots.at(pp->locallab.selspot).inverssh || !inverssh->get_inconsistent();
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -2060,6 +2066,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).blendmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskSH || blendmaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).radmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).radmaskSH || radmaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurSHde = pedited->locallab.spots.at(pp->locallab.selspot).blurSHde || blurSHde->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).inverssh = pedited->locallab.spots.at(pp->locallab.selspot).inverssh || !inverssh->get_inconsistent();
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -2664,6 +2671,53 @@ void Locallab::inversexChanged()
                 listener->panelChanged(Evlocallabinversex, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(Evlocallabinversex, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::inversshChanged()
+{
+    // printf("inversChanged\n");
+
+    if (multiImage) {
+        if (inverssh->get_inconsistent()) {
+            inverssh->set_inconsistent(false);
+            inversshConn.block(true);
+            inverssh->set_active(false);
+            inversshConn.block(false);
+        }
+    }
+
+    // Update Color & Light GUI according to invers button state (to be compliant with updateSpecificGUIState function)
+    if (multiImage && inverssh->get_inconsistent()) {
+        
+        sensihs->show();
+        blurSHde->show();
+        maskSHFrame->show();
+
+        showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+    } else if (inverssh->get_active()) {
+        sensihs->show();
+        maskSHFrame->hide();
+        blurSHde->show();
+
+    } else {
+        sensihs->show();
+        maskSHFrame->show();
+        blurSHde->show();
+
+        if (batchMode) {
+            showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+        }
+    }
+
+    if (getEnabled() && expshadhigh->getEnabled()) {
+        if (listener) {
+            if (inverssh->get_active()) {
+                listener->panelChanged(Evlocallabinverssh, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabinverssh, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -4015,6 +4069,7 @@ void Locallab::enableListener()
     enableshadhighConn.block(false);
     showmaskSHMethodConn.block(false);
     enaSHMaskConn.block(false);
+    inversshConn.block(false);
     // Vibrance
     enablevibranceConn.block(false);
     pskinsconn.block(false);
@@ -4066,6 +4121,7 @@ void Locallab::disableListener()
     enableshadhighConn.block(true);
     showmaskSHMethodConn.block(true);
     enaSHMaskConn.block(true);
+    inversshConn.block(true);
     // Vibrance
     enablevibranceConn.block(true);
     pskinsconn.block(true);
@@ -4173,6 +4229,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         blendmaskSH->setValue(pp->locallab.spots.at(index).blendmaskSH);
         radmaskSH->setValue(pp->locallab.spots.at(index).radmaskSH);
         blurSHde->setValue(pp->locallab.spots.at(index).blurSHde);
+        inverssh->set_active(pp->locallab.spots.at(index).inverssh);
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
         saturated->setValue(pp->locallab.spots.at(index).saturated);
@@ -4384,6 +4441,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 blendmaskSH->setEditedState(spotState->blendmaskSH ? Edited : UnEdited);
                 radmaskSH->setEditedState(spotState->radmaskSH ? Edited : UnEdited);
                 blurSHde->setEditedState(spotState->blurSHde ? Edited : UnEdited);
+                inverssh->set_inconsistent(multiImage && !spotState->inverssh);
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);
@@ -4557,6 +4615,25 @@ void Locallab::updateSpecificGUIState()
         }
     }
 
+    // Update SH GUI according to black adjuster state (to be compliant with adjusterChanged function)
+    if (multiImage && inversex->get_inconsistent()) {
+        sensihs->show();
+        maskSHFrame->show();
+        blurSHde->show();
+        showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+    } else if (inverssh->get_active()) {
+        sensihs->show();
+        maskSHFrame->hide();
+        blurSHde->show();
+    } else {
+        sensihs->show();
+        maskSHFrame->show();
+        blurSHde->show();
+
+        if (batchMode) {
+            showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+        }
+    }
 
 
     if (multiImage && black->getEditedState() != Edited) {

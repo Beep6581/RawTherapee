@@ -167,6 +167,7 @@ struct local_params {
     int dehaze;
     bool inv;
     bool invex;
+    bool invsh;
     bool curvact;
     bool invrad;
     bool invret;
@@ -503,6 +504,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool cupas = false; // Provision
     int local_sensisf = locallab.spots.at(sp).sensisf;
     bool inverseex = locallab.spots.at(sp).inversex;
+    bool inversesh = locallab.spots.at(sp).inverssh;
 
     bool inverserad = false; // Provision
     bool inverseret = locallab.spots.at(sp).inversret;
@@ -571,6 +573,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lcamount = lcamount;
     lp.inv = inverse;
     lp.invex = inverseex;
+    lp.invsh = inversesh;
     lp.curvact = curvacti;
     lp.invrad = inverserad;
     lp.invret = inverseret;
@@ -3964,6 +3967,10 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
         varsens =  lp.sensex;
     }
 
+    if (senstype == 2) { //shadows highlight
+        varsens =  lp.senshs;
+    }
+
     LabImage *temp = nullptr;
     LabImage *tempCL = nullptr;
 
@@ -3971,6 +3978,18 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     int GH = transformed->H;
     float refa = chromaref * cos(hueref);
     float refb = chromaref * sin(hueref);
+    if (senstype == 2) { // Shadows highlight
+        temp = new LabImage(GW, GH);
+            for (int y = 0; y < transformed->H; y++) {
+                for (int x = 0; x < transformed->W; x++) {
+                     temp->L[y][x] = original->L[y][x];
+                     temp->a[y][x] = original->a[y][x];
+                     temp->b[y][x] = original->b[y][x];
+                }
+            }
+
+        ImProcFunctions::shadowsHighlights(temp, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
+    }
 
     if (senstype == 1) { //exposure
         temp = new LabImage(GW, GH);
@@ -4093,6 +4112,9 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
         radius = (2.f + 0.2f * lp.blurcol) / sk;
     }
 
+    if (senstype == 2) {
+        radius = (2.f + 0.2f * lp.blurSH) / sk;
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -4280,7 +4302,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
 
                                 }
-                            } else if (senstype == 1) {
+                            } else if (senstype == 1 || senstype == 2) {
                                 diflc = (temp->L[y][x] - original->L[y][x]) * reducdE;
                                 diflc *= factorx;
                                 difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
@@ -4291,7 +4313,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                                 transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
                                 transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
-                            }
+                            } 
 
                             break;
                         }
@@ -4356,15 +4378,14 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                                     transformed->b[y][x] = CLIPC(original->b[y][x] * facc * facCb);
 
                                 }
-                            } else if (senstype == 1) {
-
+                            } else if (senstype == 1  || senstype == 2) {
                                 diflc = (temp->L[y][x] - original->L[y][x]) * reducdE;
                                 difa = (temp->a[y][x] - original->a[y][x]) * reducdE;
                                 difb = (temp->b[y][x] - original->b[y][x]) * reducdE;
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
                                 transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                            }
+                            } 
 
                         }
                     }
@@ -4376,7 +4397,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     }
     delete origblur;
 
-    if (senstype == 1) {
+    if (senstype == 1 || senstype ==2) {
         delete temp;
     }
 
@@ -6704,7 +6725,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //shadow highlight
 
-        if ((lp.highlihs > 0.f || lp.shadowhs > 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3) && call < 3  && lp.hsena) {
+        if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3) && call < 3  && lp.hsena) {
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
             LabImage *bufmaskorigSH = nullptr;
@@ -6964,7 +6985,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
             }
+        } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f) && call < 3  && lp.hsena) {
+           
+            float adjustr = 2.f;
+            InverseColorLight_Local(sp, 2, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
+        
 
 
 
