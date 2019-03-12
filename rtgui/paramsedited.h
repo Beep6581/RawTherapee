@@ -871,7 +871,7 @@ struct ParamsEdited {
     LensProfParamsEdited lensProf;
     PerspectiveParamsEdited perspective;
     GradientParamsEdited gradient;
-    LocallabParamsEdited          locallab;
+    LocallabParamsEdited locallab;
     PCVignetteParamsEdited pcvignette;
     CACorrParamsEdited cacorrection;
     VignettingParamsEdited vignetting;

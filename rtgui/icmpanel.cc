@@ -17,14 +17,17 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iomanip>
-#include "icmpanel.h"
-#include "options.h"
-#include "eventmapper.h"
 
+#include "icmpanel.h"
+
+#include "eventmapper.h"
 #include "guiutils.h"
-#include "../rtengine/iccstore.h"
-#include "../rtengine/dcp.h"
+#include "options.h"
 #include "rtimage.h"
+
+#include "../rtengine/dcp.h"
+#include "../rtengine/iccstore.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

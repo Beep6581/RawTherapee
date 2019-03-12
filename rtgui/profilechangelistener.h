@@ -23,6 +23,18 @@
 
 #include "../rtengine/rtengine.h"
 
+namespace rtengine
+{
+
+namespace procparams
+{
+
+class PartialProfile;
+
+}
+
+}
+
 class ProfileChangeListener
 {
 public:

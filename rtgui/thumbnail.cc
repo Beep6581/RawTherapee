@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <glibmm.h>
 #include "../rtengine/imagedata.h"
+#include "../rtengine/procparams.h"
 #include <glib/gstdio.h>
 
 #include "../rtengine/dynamicprofile.h"
@@ -37,10 +38,21 @@
 
 using namespace rtengine::procparams;
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf)
-    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr),
-      pparamsValid(false), imageLoading(false), lastImg(nullptr),
-      lastW(0), lastH(0), lastScale(0), initial_(false)
+Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) :
+    fname(fname),
+    cfs(*cf),
+    cachemgr(cm),
+    ref(1),
+    enqueueNumber(0),
+    tpp(nullptr),
+    pparams(new ProcParams),
+    pparamsValid(false),
+    imageLoading(false),
+    lastImg(nullptr),
+    lastW(0),
+    lastH(0),
+    lastScale(0),
+    initial_(false)
 {
 
     loadProcParams ();
@@ -65,10 +77,20 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     tpp = nullptr;
 }
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr), pparamsValid(false),
-      imageLoading(false), lastImg(nullptr),
-      lastW(0), lastH(0), lastScale(0.0), initial_(true)
+Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::string& md5) :
+    fname(fname),
+    cachemgr(cm),
+    ref(1),
+    enqueueNumber(0),
+    tpp(nullptr),
+    pparams(new ProcParams),
+    pparamsValid(false),
+    imageLoading(false),
+    lastImg(nullptr),
+    lastW(0),
+    lastH(0),
+    lastScale(0.0),
+    initial_(true)
 {
 
 
@@ -108,20 +130,20 @@ void Thumbnail::_generateThumbnailImage ()
 
     if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
     } else if (ext.lowercase() == "png") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Png;
         }
     } else if (ext.lowercase() == "tif" || ext.lowercase() == "tiff") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Tiff;
@@ -142,7 +164,7 @@ void Thumbnail::_generateThumbnailImage ()
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams.wb.equal, TRUE);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams->wb.equal, TRUE);
         }
 
         cfs.sensortype = sensorType;
@@ -179,22 +201,22 @@ const ProcParams& Thumbnail::getProcParams ()
 const ProcParams& Thumbnail::getProcParamsU ()
 {
     if (pparamsValid) {
-        return pparams;
+        return *pparams;
     } else {
-        pparams = *(ProfileStore::getInstance()->getDefaultProcParams (getType() == FT_Raw));
+        *pparams = *(ProfileStore::getInstance()->getDefaultProcParams (getType() == FT_Raw));
 
-        if (pparams.wb.method == "Camera") {
+        if (pparams->wb.method == "Camera") {
             double ct;
-            getCamWB (ct, pparams.wb.green);
-            pparams.wb.temperature = ct;
-        } else if (pparams.wb.method == "Auto") {
+            getCamWB (ct, pparams->wb.green);
+            pparams->wb.temperature = ct;
+        } else if (pparams->wb.method == "Auto") {
             double ct;
-            getAutoWB (ct, pparams.wb.green, pparams.wb.equal, pparams.wb.tempBias);
-            pparams.wb.temperature = ct;
+            getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.tempBias);
+            pparams->wb.temperature = ct;
         }
     }
 
-    return pparams; // there is no valid pp to return, but we have to return something
+    return *pparams; // there is no valid pp to return, but we have to return something
 }
 
 /** @brief  Create default params on demand and returns a new updatable object
@@ -321,27 +343,27 @@ void Thumbnail::loadProcParams ()
     MyMutex::MyLock lock(mutex);
 
     pparamsValid = false;
-    pparams.setDefaults();
+    pparams->setDefaults();
     const PartialProfile *defaultPP = ProfileStore::getInstance()->getDefaultPartialProfile(getType() == FT_Raw);
-    defaultPP->applyTo(&pparams);
+    defaultPP->applyTo(pparams.get());
 
     if (options.paramsLoadLocation == PLL_Input) {
         // try to load it from params file next to the image file
-        int ppres = pparams.load (fname + paramFileExtension);
-        pparamsValid = !ppres && pparams.ppVersion >= 220;
+        int ppres = pparams->load (fname + paramFileExtension);
+        pparamsValid = !ppres && pparams->ppVersion >= 220;
 
         // if no success, try to load the cached version of the procparams
         if (!pparamsValid) {
-            pparamsValid = !pparams.load (getCacheFileName ("profiles", paramFileExtension));
+            pparamsValid = !pparams->load (getCacheFileName ("profiles", paramFileExtension));
         }
     } else {
         // try to load it from cache
-        pparamsValid = !pparams.load (getCacheFileName ("profiles", paramFileExtension));
+        pparamsValid = !pparams->load (getCacheFileName ("profiles", paramFileExtension));
 
         // if no success, try to load it from params file next to the image file
         if (!pparamsValid) {
-            int ppres = pparams.load (fname + paramFileExtension);
-            pparamsValid = !ppres && pparams.ppVersion >= 220;
+            int ppres = pparams->load (fname + paramFileExtension);
+            pparamsValid = !ppres && pparams->ppVersion >= 220;
         }
     }
 }
@@ -374,7 +396,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
         // probably not as this is the only option to set param values to default
 
         // reset the params to defaults
-        pparams.setDefaults();
+        pparams->setDefaults();
 
         // and restore rank and inTrash
         setRank(rank);
@@ -423,43 +445,43 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 {
     const bool needsReprocessing =
            resetToDefault
-        || pparams.toneCurve != pp.toneCurve
-        || pparams.locallab != pp.locallab
-        || pparams.labCurve != pp.labCurve
-        || pparams.localContrast != pp.localContrast
-        || pparams.rgbCurves != pp.rgbCurves
-        || pparams.colorToning != pp.colorToning
-        || pparams.vibrance != pp.vibrance
-        || pparams.wb != pp.wb
-        || pparams.colorappearance != pp.colorappearance
-        || pparams.epd != pp.epd
-        || pparams.fattal != pp.fattal
-        || pparams.sh != pp.sh
-        || pparams.crop != pp.crop
-        || pparams.coarse != pp.coarse
-        || pparams.commonTrans != pp.commonTrans
-        || pparams.rotate != pp.rotate
-        || pparams.distortion != pp.distortion
-        || pparams.lensProf != pp.lensProf
-        || pparams.perspective != pp.perspective
-        || pparams.gradient != pp.gradient
-        || pparams.pcvignette != pp.pcvignette
-        || pparams.cacorrection != pp.cacorrection
-        || pparams.vignetting != pp.vignetting
-        || pparams.chmixer != pp.chmixer
-        || pparams.blackwhite != pp.blackwhite
-        || pparams.icm != pp.icm
-        || pparams.hsvequalizer != pp.hsvequalizer
-        || pparams.filmSimulation != pp.filmSimulation
-        || pparams.softlight != pp.softlight
-        || pparams.dehaze != pp.dehaze
+        || pparams->toneCurve != pp.toneCurve
+        || pparams->locallab != pp.locallab
+        || pparams->labCurve != pp.labCurve
+        || pparams->localContrast != pp.localContrast
+        || pparams->rgbCurves != pp.rgbCurves
+        || pparams->colorToning != pp.colorToning
+        || pparams->vibrance != pp.vibrance
+        || pparams->wb != pp.wb
+        || pparams->colorappearance != pp.colorappearance
+        || pparams->epd != pp.epd
+        || pparams->fattal != pp.fattal
+        || pparams->sh != pp.sh
+        || pparams->crop != pp.crop
+        || pparams->coarse != pp.coarse
+        || pparams->commonTrans != pp.commonTrans
+        || pparams->rotate != pp.rotate
+        || pparams->distortion != pp.distortion
+        || pparams->lensProf != pp.lensProf
+        || pparams->perspective != pp.perspective
+        || pparams->gradient != pp.gradient
+        || pparams->pcvignette != pp.pcvignette
+        || pparams->cacorrection != pp.cacorrection
+        || pparams->vignetting != pp.vignetting
+        || pparams->chmixer != pp.chmixer
+        || pparams->blackwhite != pp.blackwhite
+        || pparams->icm != pp.icm
+        || pparams->hsvequalizer != pp.hsvequalizer
+        || pparams->filmSimulation != pp.filmSimulation
+        || pparams->softlight != pp.softlight
+        || pparams->dehaze != pp.dehaze
         || whoChangedIt == FILEBROWSER
         || whoChangedIt == BATCHEDITOR;
 
     {
         MyMutex::MyLock lock(mutex);
 
-        if (pparams != pp) {
+        if (*pparams != pp) {
             cfs.recentlySaved = false;
         } else if (pparamsValid && !updateCacheNow) {
             // nothing to do
@@ -472,9 +494,9 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         const int inTrash = getStage();
 
         if (pe) {
-            pe->combine(pparams, pp, true);
+            pe->combine(*pparams, pp, true);
         } else {
-            pparams = pp;
+            *pparams = pp;
         }
 
         pparamsValid = true;
@@ -508,7 +530,7 @@ void Thumbnail::imageDeveloped ()
     cfs.save (getCacheFileName ("data", ".txt"));
 
     if (options.saveParamsCache) {
-        pparams.save (getCacheFileName ("profiles", paramFileExtension));
+        pparams->save (getCacheFileName ("profiles", paramFileExtension));
     }
 }
 
@@ -576,7 +598,7 @@ void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::Pr
             ppCoarse -= 180;
         }
 
-        int thisCoarse = this->pparams.coarse.rotate;
+        int thisCoarse = this->pparams->coarse.rotate;
 
         if (thisCoarse >= 180) {
             thisCoarse -= 180;
@@ -950,7 +972,7 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
 {
 
     if (updatePParams && pparamsValid) {
-        pparams.save (
+        pparams->save (
             options.saveParamsFile  ? fname + paramFileExtension : "",
             options.saveParamsCache ? getCacheFileName ("profiles", paramFileExtension) : "",
             true
@@ -981,6 +1003,45 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
 
     fname = fn;
     cfs.md5 = ::getMD5 (fname);
+}
+
+int Thumbnail::getRank  () const
+{
+    return pparams->rank;
+}
+
+void Thumbnail::setRank  (int rank)
+{
+    if (pparams->rank != rank) {
+        pparams->rank = rank;
+        pparamsValid = true;
+    }
+}
+
+int Thumbnail::getColorLabel  () const
+{
+    return pparams->colorlabel;
+}
+
+void Thumbnail::setColorLabel  (int colorlabel)
+{
+    if (pparams->colorlabel != colorlabel) {
+        pparams->colorlabel = colorlabel;
+        pparamsValid = true;
+    }
+}
+
+int Thumbnail::getStage () const
+{
+    return pparams->inTrash;
+}
+
+void Thumbnail::setStage (bool stage)
+{
+    if (pparams->inTrash != stage) {
+        pparams->inTrash = stage;
+        pparamsValid = true;
+    }
 }
 
 void Thumbnail::addThumbnailListener (ThumbnailListener* tnl)

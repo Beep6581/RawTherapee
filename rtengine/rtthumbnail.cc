@@ -37,6 +37,7 @@
 #include "../rtgui/ppversion.h"
 #include "improccoordinator.h"
 #include "settings.h"
+#include "procparams.h"
 #include <locale.h>
 #include "StopWatch.h"
 #include "median.h"
@@ -1220,7 +1221,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
     ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), options.rtSettings.monitorIntent, false, false);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(options.rtSettings.monitorIntent), false, false);
 
     LUTu hist16 (65536);
 

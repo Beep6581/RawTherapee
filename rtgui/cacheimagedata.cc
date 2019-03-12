@@ -22,6 +22,8 @@
 #include "version.h"
 #include <locale.h>
 
+#include "../rtengine/procparams.h"
+
 CacheImageData::CacheImageData ()
     : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
       timeValid(false), year(0), month(0), day(0), hour(0), min(0), sec(0), exifValid(false), frameCount(1),
@@ -301,3 +303,7 @@ int CacheImageData::save (const Glib::ustring& fname)
     }
 }
 
+rtengine::procparams::IPTCPairs CacheImageData::getIPTCData(unsigned int frame) const
+{
+    return {};
+}

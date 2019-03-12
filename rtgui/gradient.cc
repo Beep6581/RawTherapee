@@ -2,7 +2,10 @@
  *  This file is part of RawTherapee.
  */
 #include "gradient.h"
+
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
 using namespace rtengine;

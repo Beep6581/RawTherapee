@@ -28,11 +28,12 @@
 #define IMIO_FILETYPENOTSUPPORTED  6
 #define IMIO_CANNOTWRITEFILE       7
 
+#include <memory>
+
 #include <glibmm.h>
 #include <libiptcdata/iptc-data.h>
 #include "rtengine.h"
 #include "imageformat.h"
-#include "procparams.h"
 #include "../rtexif/rtexif.h"
 #include "imagedimensions.h"
 #include "iimage.h"
@@ -55,7 +56,7 @@ protected:
     char* loadedProfileData;
     bool loadedProfileDataJpg;
     int loadedProfileLength;
-    procparams::ExifPairs exifChange;
+    const std::unique_ptr<procparams::ExifPairs> exifChange;
     IptcData* iptc;
     const rtexif::TagDirectory* exifRoot;
     MyMutex imutex;
@@ -68,11 +69,8 @@ private:
 public:
     static Glib::ustring errorMsg[6];
 
-    ImageIO () : pl (nullptr), embProfile(nullptr), profileData(nullptr), profileLength(0), loadedProfileData(nullptr), loadedProfileDataJpg(false),
-        loadedProfileLength(0), iptc(nullptr), exifRoot (nullptr), sampleFormat(IIOSF_UNKNOWN),
-        sampleArrangement(IIOSA_UNKNOWN) {}
-
-    ~ImageIO () override;
+    ImageIO();
+    ~ImageIO() override;
 
     void setProgressListener (ProgressListener* l);
     void setSampleFormat(IIOSampleFormat sFormat);

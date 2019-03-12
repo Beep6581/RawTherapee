@@ -315,8 +315,8 @@ ToneCurveParams::ToneCurveParams() :
     curve2{
         DCT_Linear
     },
-    curveMode(ToneCurveParams::TcMode::STD),
-    curveMode2(ToneCurveParams::TcMode::STD),
+    curveMode(ToneCurveMode::STD),
+    curveMode2(ToneCurveMode::STD),
     brightness(0),
     black(0),
     contrast(0),
@@ -3254,13 +3254,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
 
-        const std::map<ToneCurveParams::TcMode, const char*> tc_mapping = {
-            {ToneCurveParams::TcMode::STD, "Standard"},
-            {ToneCurveParams::TcMode::FILMLIKE, "FilmLike"},
-            {ToneCurveParams::TcMode::SATANDVALBLENDING, "SatAndValueBlending"},
-            {ToneCurveParams::TcMode::WEIGHTEDSTD, "WeightedStd"},
-            {ToneCurveParams::TcMode::LUMINANCE, "Luminance"},
-            {ToneCurveParams::TcMode::PERCEPTUAL, "Perceptual"}
+        const std::map<ToneCurveMode, const char*> tc_mapping = {
+            {ToneCurveMode::STD, "Standard"},
+            {ToneCurveMode::FILMLIKE, "FilmLike"},
+            {ToneCurveMode::SATANDVALBLENDING, "SatAndValueBlending"},
+            {ToneCurveMode::WEIGHTEDSTD, "WeightedStd"},
+            {ToneCurveMode::LUMINANCE, "Luminance"},
+            {ToneCurveMode::PERCEPTUAL, "Perceptual"}
         };
 
         saveToKeyfile(!pedited || pedited->toneCurve.curveMode, "Exposure", "CurveMode", tc_mapping, toneCurve.curveMode, keyFile);
@@ -4211,13 +4211,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 toneCurve.shcompr = 100; // older pp3 files can have values above 100.
             }
 
-            const std::map<std::string, ToneCurveParams::TcMode> tc_mapping = {
-                {"Standard", ToneCurveParams::TcMode::STD},
-                {"FilmLike", ToneCurveParams::TcMode::FILMLIKE},
-                {"SatAndValueBlending", ToneCurveParams::TcMode::SATANDVALBLENDING},
-                {"WeightedStd", ToneCurveParams::TcMode::WEIGHTEDSTD},
-                {"Luminance", ToneCurveParams::TcMode::LUMINANCE},
-                {"Perceptual", ToneCurveParams::TcMode::PERCEPTUAL}
+            const std::map<std::string, ToneCurveMode> tc_mapping = {
+                {"Standard", ToneCurveMode::STD},
+                {"FilmLike", ToneCurveMode::FILMLIKE},
+                {"SatAndValueBlending", ToneCurveMode::SATANDVALBLENDING},
+                {"WeightedStd", ToneCurveMode::WEIGHTEDSTD},
+                {"Luminance", ToneCurveMode::LUMINANCE},
+                {"Perceptual", ToneCurveMode::PERCEPTUAL}
             };
 
             assignFromKeyfile(keyFile, "Exposure", "CurveMode", pedited, tc_mapping, toneCurve.curveMode, pedited->toneCurve.curveMode);

@@ -16,13 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "tonecurve.h"
-#include "adjuster.h"
-#include <sigc++/slot.h>
 #include <iomanip>
-#include "ppversion.h"
+
+#include <sigc++/slot.h>
+
+#include "tonecurve.h"
+
+#include "adjuster.h"
 #include "edit.h"
 #include "eventmapper.h"
+#include "ppversion.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -347,33 +352,33 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
     int tcMode = toneCurveMode->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->toneCurve.curveMode = ToneCurveParams::TcMode::STD;
+        pp->toneCurve.curveMode = ToneCurveMode::STD;
     } else if (tcMode == 1) {
-        pp->toneCurve.curveMode = ToneCurveParams::TcMode::WEIGHTEDSTD;
+        pp->toneCurve.curveMode = ToneCurveMode::WEIGHTEDSTD;
     } else if (tcMode == 2) {
-        pp->toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+        pp->toneCurve.curveMode = ToneCurveMode::FILMLIKE;
     } else if (tcMode == 3) {
-        pp->toneCurve.curveMode = ToneCurveParams::TcMode::SATANDVALBLENDING;
+        pp->toneCurve.curveMode = ToneCurveMode::SATANDVALBLENDING;
     } else if (tcMode == 4) {
-        pp->toneCurve.curveMode = ToneCurveParams::TcMode::LUMINANCE;
+        pp->toneCurve.curveMode = ToneCurveMode::LUMINANCE;
     } else if (tcMode == 5) {
-        pp->toneCurve.curveMode = ToneCurveParams::TcMode::PERCEPTUAL;
+        pp->toneCurve.curveMode = ToneCurveMode::PERCEPTUAL;
     }
 
     tcMode = toneCurveMode2->get_active_row_number();
 
     if      (tcMode == 0) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::STD;
+        pp->toneCurve.curveMode2 = ToneCurveMode::STD;
     } else if (tcMode == 1) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::WEIGHTEDSTD;
+        pp->toneCurve.curveMode2 = ToneCurveMode::WEIGHTEDSTD;
     } else if (tcMode == 2) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::FILMLIKE;
+        pp->toneCurve.curveMode2 = ToneCurveMode::FILMLIKE;
     } else if (tcMode == 3) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::SATANDVALBLENDING;
+        pp->toneCurve.curveMode2 = ToneCurveMode::SATANDVALBLENDING;
     } else if (tcMode == 4) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::LUMINANCE;
+        pp->toneCurve.curveMode2 = ToneCurveMode::LUMINANCE;
     } else if (tcMode == 5) {
-        pp->toneCurve.curveMode2 = ToneCurveParams::TcMode::PERCEPTUAL;
+        pp->toneCurve.curveMode2 = ToneCurveMode::PERCEPTUAL;
     }
 
     pp->toneCurve.histmatching = histmatching->get_active();
@@ -979,7 +984,7 @@ void ToneCurve::autoExpChanged(double expcomp, int bright, int contr, int black,
     );
 }
 
-void ToneCurve::autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve)
+void ToneCurve::autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveMode curveMode, const std::vector<double>& curve)
 {
     nextToneCurveMode = curveMode;
     nextToneCurve = curve;

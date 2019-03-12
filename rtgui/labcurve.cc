@@ -16,10 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "labcurve.h"
 #include <iomanip>
-#include "../rtengine/improcfun.h"
+
+#include "labcurve.h"
+
 #include "edit.h"
+
+#include "../rtengine/improcfun.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

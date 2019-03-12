@@ -25,7 +25,6 @@
 #include <string>
 #include <glibmm.h>
 #include "../rtexif/rtexif.h"
-#include "procparams.h"
 #include <libiptcdata/iptc-data.h>
 #include "rtengine.h"
 

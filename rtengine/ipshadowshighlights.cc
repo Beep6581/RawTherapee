@@ -19,10 +19,12 @@
  */
 
 #include "improcfun.h"
+
 #include "gauss.h"
-#include "sleef.c"
-#include "opthelper.h"
 #include "guidedfilter.h"
+#include "opthelper.h"
+#include "procparams.h"
+#include "sleef.c"
 
 namespace rtengine {
 //modifications to pass parameters needs by locallab, to avoid 2 functions - no change in process - J.Desmis march 2019

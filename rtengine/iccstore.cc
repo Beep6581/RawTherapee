@@ -32,7 +32,6 @@
 #include "iccstore.h"
 
 #include "iccmatrices.h"
-#include "procparams.h"
 
 #include "../rtgui/options.h"
 #include "../rtgui/threadutils.h"

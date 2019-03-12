@@ -28,12 +28,14 @@
  *
  */  
 
-#include "improcfun.h"
-#include "guidedfilter.h"
-#include "rt_math.h"
-#include "rt_algo.h"
 #include <iostream>
 #include <queue>
+
+#include "guidedfilter.h"
+#include "improcfun.h"
+#include "procparams.h"
+#include "rt_algo.h"
+#include "rt_math.h"
 
 extern Options options;
 

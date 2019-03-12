@@ -21,6 +21,8 @@
 #include "imagearea.h"
 #include "cursormanager.h"
 
+#include "../rtengine/procparams.h"
+
 PreviewWindow::PreviewWindow () : previewHandler(nullptr), mainCropWin(nullptr), imageArea(nullptr), imgX(0), imgY(0), imgW(0), imgH(0),
     zoom(0.0), press_x(0), press_y(0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
 

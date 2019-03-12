@@ -22,6 +22,7 @@
 
 #include "rtengine.h"
 #include "rawimagesource.h"
+#include "procparams.h"
 #include "../rtgui/multilangmgr.h"
 //#define BENCHMARK
 #include "StopWatch.h"

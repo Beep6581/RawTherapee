@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "procparams.h"
 #include "rtengine.h"
 
 const char rtengine::sImage8[] =     "Image8";

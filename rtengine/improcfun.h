@@ -22,9 +22,6 @@
 #include "imagefloat.h"
 #include "image16.h"
 #include "image8.h"
-#include "procparams.h"
-#include <fftw3.h>
-
 #include "shmap.h"
 #include "coord2d.h"
 #include "color.h"
@@ -42,19 +39,23 @@
 namespace rtengine
 {
 
-using namespace procparams;
+namespace procparams
+{
+
+class ProcParams;
+
+struct DirPyrDenoiseParams;
+struct SharpeningParams;
+struct VignettingParams;
+struct WaveletParams;
+struct LocallabParams;
+
+}
+
+enum RenderingIntent : int;
 
 class ImProcFunctions
 {
-
-
-
-    bool lastcutpast;
-    int lastcxbuf;
-    int lastcybuf;
-    int lastcount;
-    LabImage *spotbuffer;
-
     cmsHTRANSFORM monitorTransform;
     std::unique_ptr<GamutWarning> gamutWarning;
 
@@ -62,7 +63,13 @@ class ImProcFunctions
     double scale;
     bool multiThread;
 
-    void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
+    bool lastcutpast;
+    int lastcxbuf;
+    int lastcybuf;
+    int lastcount;
+    LabImage *spotbuffer;
+
+    void calcVignettingParams(int oW, int oH, const procparams::VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
 
     void transformLuminanceOnly(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);
     void transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap);
@@ -214,7 +221,7 @@ public:
     bool needsTransform();
     bool needsPCVignetting();
 
-    void firstAnalysis(const Imagefloat* const working, const ProcParams &params, LUTu & vhist16);
+    void firstAnalysis(const Imagefloat* const working, const procparams::ProcParams &params, LUTu & vhist16);
     void updateColorProfiles(const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck);
     void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                  int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clcurve, LUTf & cl2curve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
@@ -244,7 +251,7 @@ public:
     void chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve, LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
     void vibrance(LabImage* lab);         //Jacques' vibrance
 //    void colorCurve       (LabImage* lold, LabImage* lnew);
-    void sharpening(LabImage* lab, const SharpeningParams &sharpenParam, bool showMask = false);
+    void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
     float resizeScale(const ProcParams* params, int fw, int fh, int &imw, int &imh);
@@ -253,7 +260,7 @@ public:
     void Lanczos(const LabImage* src, LabImage* dst, float scale);
     void Lanczos(const Imagefloat* src, Imagefloat* dst, float scale);
 
-    void deconvsharpening(float** luminance, float** buffer, int W, int H, const SharpeningParams &sharpenParam);
+    void deconvsharpening(float** luminance, float** buffer, int W, int H, const procparams::SharpeningParams &sharpenParam);
     void deconvsharpeningloc(float** luminance, float** buffer, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast, double blurrad);
 
     void MLsharpen(LabImage* lab); // Manuel's clarity / sharpening
@@ -279,13 +286,13 @@ public:
     void EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid, int Hei, float minQ, float maxQ, unsigned int Iterates = 0, int skip = 1);
 
     // pyramid denoise
-    procparams::DirPyrDenoiseParams dnparams;
+//    procparams::DirPyrDenoiseParams dnparams;
     void dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab,
                 int pitch, int scale, const int luma, int chroma); 
     void idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
                  int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/);
     //locallab
-    void MSRLocal(int sp, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+    void MSRLocal(int sp, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &huere, double &chromare, double &lumare, double &sobelref, float &avg);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref(LabImage* spotbuffer, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp);

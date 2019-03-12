@@ -29,6 +29,7 @@
 
 #include "lcp.h"
 
+#include "procparams.h"
 #include "settings.h"
 
 namespace rtengine

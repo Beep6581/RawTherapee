@@ -16,10 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "rotate.h"
 #include <iomanip>
+
+#include "rotate.h"
+
 #include "guiutils.h"
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

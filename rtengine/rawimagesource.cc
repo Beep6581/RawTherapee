@@ -36,6 +36,7 @@
 #include "rtlensfun.h"
 #include "pdaflinesfilter.h"
 #include "camconst.h"
+#include "procparams.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -452,6 +453,7 @@ RawImageSource::RawImageSource()
     , red(0, 0)
     , blue(0, 0)
     , rawDirty(true)
+    , histMatchingParams(new procparams::ColorManagementParams)
 {
     camProfile = nullptr;
     embProfile = nullptr;

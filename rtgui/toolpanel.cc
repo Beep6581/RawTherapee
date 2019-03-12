@@ -20,6 +20,8 @@
 #include "toolpanelcoord.h"
 #include "guiutils.h"
 
+#include "../rtengine/procparams.h"
+
 using namespace rtengine::procparams;
 
 

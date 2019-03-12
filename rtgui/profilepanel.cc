@@ -17,11 +17,14 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "profilepanel.h"
-#include "options.h"
+
 #include "clipboard.h"
 #include "multilangmgr.h"
+#include "options.h"
 #include "profilestorecombobox.h"
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

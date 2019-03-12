@@ -19,7 +19,10 @@
 #ifndef _EXIFPANEL_
 #define _EXIFPANEL_
 
+#include <memory>
+
 #include <gtkmm.h>
+
 #include "toolpanel.h"
 
 class ExifPanel : public Gtk::VBox, public ToolPanel
@@ -27,8 +30,8 @@ class ExifPanel : public Gtk::VBox, public ToolPanel
 
 private:
     const rtengine::FramesMetaData* idata;
-    rtengine::procparams::ExifPairs changeList;
-    rtengine::procparams::ExifPairs defChangeList;
+    const std::unique_ptr<rtengine::procparams::ExifPairs> changeList;
+    const std::unique_ptr<rtengine::procparams::ExifPairs> defChangeList;
     bool recursiveOp;
 
     class ExifColumns : public Gtk::TreeModelColumnRecord
