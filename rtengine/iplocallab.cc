@@ -7754,7 +7754,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 double ts = lp.slomaexp;
                 double gamm2 = lp.gammaexp;
 
-                gamma_mask(lutTonemask, pwr, gamm, ts, gamm2)
+                gamma_mask(lutTonemask, pwr, gamm, ts, gamm2);
                 gammamask = &lutTonemask;
 
 
