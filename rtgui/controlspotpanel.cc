@@ -59,6 +59,7 @@ ControlSpotPanel::ControlSpotPanel():
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 8.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 4.0, 0.1, 2.0))),
+    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.3, 1.7, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
 
     lastObject_(-1),
     lastCoord_(new Coord()),
@@ -236,7 +237,9 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*struc_);
     artifBox->pack_start(*thresh_);
     artifBox->pack_start(*iter_);
+    artifBox->pack_start(*balan_);
     iter_->setAdjusterListener(this);
+    balan_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
 
@@ -433,6 +436,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     transit_->setValue(static_cast<double>(row[spots_.transit]));
     thresh_->setValue(static_cast<double>(row[spots_.thresh]));
     iter_->setValue(static_cast<double>(row[spots_.iter]));
+    balan_->setValue(static_cast<double>(row[spots_.balan]));
 }
 
 void ControlSpotPanel::controlspotChanged()
@@ -837,6 +841,15 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvLocallabSpotIter, iter_->getTextValue());
         }
     }
+
+    if (a == balan_) {
+        row[spots_.balan] = balan_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotbalan, balan_->getTextValue());
+        }
+    }
+    
 }
 
 void ControlSpotPanel::disableParamlistener(bool cond)
@@ -866,6 +879,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     transit_->block(cond);
     thresh_->block(cond);
     iter_->block(cond);
+    balan_->block(cond);
 }
 
 void ControlSpotPanel::setParamEditable(bool cond)
@@ -889,6 +903,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     transit_->set_sensitive(cond);
     thresh_->set_sensitive(cond);
     iter_->set_sensitive(cond);
+    balan_->set_sensitive(cond);
 }
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row row)
@@ -1565,6 +1580,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
             r->transit = row[spots_.transit];
             r->thresh = row[spots_.thresh];
             r->iter = row[spots_.iter];
+            r->balan = row[spots_.balan];
 
             return r;
         }
@@ -1684,6 +1700,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.transit] = newSpot->transit;
     row[spots_.thresh] = newSpot->thresh;
     row[spots_.iter] = newSpot->iter;
+    row[spots_.balan] = newSpot->balan;
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -1726,6 +1743,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.transit] = spot->transit;
             row[spots_.thresh] = spot->thresh;
             row[spots_.iter] = spot->iter;
+            row[spots_.balan] = spot->balan;
 
             updateControlSpotCurve(row);
             updateParamVisibility();
@@ -1814,6 +1832,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->transit = transit_->getEditedState();
     se->thresh = thresh_->getEditedState();
     se->iter = iter_->getEditedState();
+    se->balan = balan_->getEditedState();
 
     return se;
 }
@@ -1879,6 +1898,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     transit_->setEditedState(se->transit ? Edited : UnEdited);
     thresh_->setEditedState(se->thresh ? Edited : UnEdited);
     iter_->setEditedState(se->iter ? Edited : UnEdited);
+    balan_->setEditedState(se->balan ? Edited : UnEdited);
 
     // Update Control Spot GUI according to widgets edited states
     updateParamVisibility();
@@ -1919,8 +1939,8 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
     circrad_->setDefault((double)defSpot->circrad);
     transit_->setDefault((double)defSpot->transit);
     thresh_->setDefault(defSpot->thresh);
-   // iter_->setDefault((double)defSpot->iter);
     iter_->setDefault(defSpot->iter);
+    balan_->setDefault(defSpot->balan);
 
     // Set default edited states for adjusters
     if (!pedited) {
@@ -1937,6 +1957,7 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
         transit_->setDefaultEditedState(Irrelevant);
         thresh_->setDefaultEditedState(Irrelevant);
         iter_->setDefaultEditedState(Irrelevant);
+        balan_->setDefaultEditedState(Irrelevant);
     } else {
         const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
 
@@ -1957,6 +1978,7 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
         transit_->setDefaultEditedState(defSpotState->transit ? Edited : UnEdited);
         thresh_->setDefaultEditedState(defSpotState->thresh ? Edited : UnEdited);
         iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
+        balan_->setDefaultEditedState(defSpotState->balan ? Edited : UnEdited);
     }
 }
 
@@ -1978,6 +2000,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     transit_->showEditedCB();
     thresh_->showEditedCB();
     iter_->showEditedCB();
+    balan_->showEditedCB();
 
     // Set batch mode for comboBoxText
     shape_->append(M("GENERAL_UNCHANGED"));
@@ -2013,6 +2036,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(transit);
     add(thresh);
     add(iter);
+    add(balan);
 }
 
 //-----------------------------------------------------------------------------

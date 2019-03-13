@@ -373,6 +373,7 @@ public:
         bool transit;
         bool thresh;
         bool iter;
+        bool balan;
         // Color & Light
         bool expcolor;
         bool curvactiv;

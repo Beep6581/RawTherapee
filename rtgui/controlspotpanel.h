@@ -62,6 +62,7 @@ public:
         int transit;
         double thresh;
         double iter;
+        double balan;
     };
 
     /**
@@ -89,6 +90,7 @@ public:
         bool transit;
         bool thresh;
         bool iter;
+        bool balan;
     };
 
     // Constructor and management functions
@@ -274,6 +276,7 @@ private:
         Gtk::TreeModelColumn<int> transit;
         Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
+        Gtk::TreeModelColumn<double> balan;
     };
 
     class RenameDialog:
@@ -329,6 +332,7 @@ private:
     Adjuster* const transit_;
     Adjuster* const thresh_;
     Adjuster* const iter_;
+    Adjuster* const balan_;
 
     // Internal variables
     int lastObject_;

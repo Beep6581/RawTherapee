@@ -1268,6 +1268,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         r->transit = pp->locallab.spots.at(i).transit;
         r->thresh = pp->locallab.spots.at(i).thresh;
         r->iter = pp->locallab.spots.at(i).iter;
+        r->balan = pp->locallab.spots.at(i).balan;
 
         expsettings->addControlSpot(r);
     }
@@ -1367,6 +1368,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transit = newSpot->transit;
             r->thresh = newSpot->thresh;
             r->iter = newSpot->iter;
+            r->balan = newSpot->balan;
             expsettings->addControlSpot(r);
 
             // ProcParams update
@@ -1552,6 +1554,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transit = newSpot->transit;
             r->thresh = newSpot->thresh;
             r->iter = newSpot->iter;
+            r->balan = newSpot->balan;
             expsettings->addControlSpot(r);
 
             // ProcParams update
@@ -1639,6 +1642,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).transit = r->transit;
                     pp->locallab.spots.at(pp->locallab.selspot).thresh = r->thresh;
                     pp->locallab.spots.at(pp->locallab.selspot).iter = r->iter;
+                    pp->locallab.spots.at(pp->locallab.selspot).balan = r->balan;
                     // Color & Light
                     pp->locallab.spots.at(pp->locallab.selspot).expcolor = expcolor->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).curvactiv = curvactiv->get_active();
@@ -1837,6 +1841,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).transit = pe->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
                         pe->locallab.spots.at(pp->locallab.selspot).thresh = pe->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
                         pe->locallab.spots.at(pp->locallab.selspot).iter = pe->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
+                        pe->locallab.spots.at(pp->locallab.selspot).balan = pe->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
                         // Color & Light
                         pe->locallab.spots.at(pp->locallab.selspot).expcolor = pe->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).curvactiv = pe->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -2007,6 +2012,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).transit = pedited->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
                         pedited->locallab.spots.at(pp->locallab.selspot).thresh = pedited->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
                         pedited->locallab.spots.at(pp->locallab.selspot).iter = pedited->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
+                        pedited->locallab.spots.at(pp->locallab.selspot).balan = pedited->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
                         // Color & Light
                         pedited->locallab.spots.at(pp->locallab.selspot).expcolor = pedited->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).curvactiv = pedited->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -4371,6 +4377,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->transit = spotState->transit;
                 se->thresh = spotState->thresh;
                 se->iter = spotState->iter;
+                se->balan = spotState->balan;
                 expsettings->setEditedStates(se);
 
                 // Color & Light

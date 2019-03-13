@@ -135,6 +135,7 @@ struct local_params {
     float lxL, lyT;
     float dxx, dyy;
     float iterat;
+    float balance;
     int cir;
     float thr;
     float stru;
@@ -378,6 +379,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     double local_dxx = locallab.spots.at(sp).iter / 8000.0; //for proxi = 2==> # 1 pixel
     double local_dyy = locallab.spots.at(sp).iter / 8000.0;
     float iterati = (float) locallab.spots.at(sp).iter;
+    float balanc = (float) locallab.spots.at(sp).balan;
 
     if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
         iterati = 2.f;
@@ -413,9 +415,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llColorMask == 0 && llExpMask == 0 && llSHMask == 0; // Color & Light mask is deactivated if Exposure mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0; // Exposure mask is deactivated if Color & Light mask is visible
     lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0; // SH mask is deactivated if Color & Light mask is visible
- //   lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llColorMask == 0 && llExpMask == 0; // Color & Light mask is deactivated if Exposure mask is visible
- //   lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0; // Exposure mask is deactivated if Color & Light mask is visible
- //   lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0; // SH mask is deactivated if Color & Light mask is visible
+//   lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llColorMask == 0 && llExpMask == 0; // Color & Light mask is deactivated if Exposure mask is visible
+//   lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0; // Exposure mask is deactivated if Color & Light mask is visible
+//   lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0; // SH mask is deactivated if Color & Light mask is visible
 
 
     if (locallab.spots.at(sp).blurMethod == "norm") {
@@ -584,6 +586,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.shdamp = local_shardamping;
     lp.shiter = local_shariter;
     lp.iterat = iterati;
+    lp.balance = balanc;
     lp.dxx = w * local_dxx;
     lp.dyy = h * local_dyy;
     lp.thr = thre;
@@ -1842,6 +1845,16 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     }
 }
 
+static void balancedeltaE(float kL, float &kab)
+{
+    float mincurs = 0.3f;//minimum slider balan_
+    float maxcurs = 1.7f;//maximum slider balan_
+    float maxkab = 1.35;//0.5 * (3 - 0.3)
+    float minkab = 0.65;//0.5 * (3 - 1.7)
+    float abal = (maxkab - minkab) / (mincurs - maxcurs);
+    float bbal = maxkab - mincurs * abal;
+    kab = abal * kL + bbal;
+}
 
 void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
 {
@@ -2096,6 +2109,11 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
     int GH = transformed->H;
     float refa = chromaref * cos(hueref);
     float refb = chromaref * sin(hueref);
+    //balance deltaE
+    float kL = 1.f;
+    float kab = 1.f;
+    kL = lp.balance;
+    balancedeltaE(kL, kab);
 
     LabImage *origblur = nullptr;
 
@@ -2224,7 +2242,7 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
 #endif
 
                 float rL = origblur->L[y][x] / 327.68f;
-                float dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
 
                 float cli = 0.f;
                 float clc = 0.f;
@@ -2370,6 +2388,12 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     float refa = chromaref * cos(hueref);
     float refb = chromaref * sin(hueref);
 
+    //balance deltaE
+    float kL = 1.f;
+    float kab = 1.f;
+    kL = lp.balance;
+    balancedeltaE(kL, kab);
+
     LabImage *origblur = nullptr;
 
     origblur = new LabImage(GW, GH);
@@ -2433,7 +2457,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                 float rL = origblur->L[y][x] / 327.68f;
                 float reducdE = 0.f;
                 float dE = 0.f;
-                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                 float mindE = 2.f + minscope * lp.sensh * lp.thr;
                 float maxdE = 5.f + maxscope * lp.sensh * (1 + 0.1f * lp.thr);
 
@@ -2628,6 +2652,7 @@ static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurvel
 
 }
 
+
 static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, float & fab, float & meanfab)
 {
     int nbfab = 0;
@@ -2704,6 +2729,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
         for (int i = 0; i < hei; ++i) {
             tmL[i] = new float[wid];
         }
+
         Median medianTypeL = Median::TYPE_3X3_STRONG;
         Median_Denoise(blend2, blend2, wid, hei, medianTypeL, passes, multiThread, tmL);
         float sombel = 0.f;
@@ -2840,6 +2866,11 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     int GH = transformed->H;
     float refa = chromaref * cos(hueref);
     float refb = chromaref * sin(hueref);
+    //balance deltaE
+    float kL = 1.f;
+    float kab = 1.f;
+    kL = lp.balance;
+    balancedeltaE(kL, kab);
 
     LabImage *origblur = nullptr;
 
@@ -2911,7 +2942,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 float rL = origblur->L[y][x] / 327.68f;
                 float reducdE = 0.f;
                 float dE = 0.f;
-                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                 float mindE = 2.f + minscope * lp.senssha * lp.thr;
                 float maxdE = 5.f + maxscope * lp.senssha * (1 + 0.1f * lp.thr);
 
@@ -2979,6 +3010,11 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
         varsens = lp.senslc;
     }
 
+    //balance deltaE
+    float kL = 1.f;
+    float kab = 1.f;
+    kL = lp.balance;
+    balancedeltaE(kL, kab);
 
     int GW = transformed->W;
     int GH = transformed->H;
@@ -3069,7 +3105,7 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
 #endif
                 float dE = 0.f;
                 float rL = origblur->L[y][x] / 327.68f;
-                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
 
                 float reducdE = 0.f;
                 float mindE = 2.f + minscope * varsens * lp.thr;
@@ -3153,6 +3189,11 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, const float hueref
 
         float refa = chromaref * cos(hueref);
         float refb = chromaref * sin(hueref);
+        //balance deltaE
+        float kL = 1.f;
+        float kab = 1.f;
+        kL = lp.balance;
+        balancedeltaE(kL, kab);
 
         //sobel
         sobelref /= 100.;
@@ -3298,7 +3339,7 @@ void ImProcFunctions::Exclude_Local(int sen, float **deltaso, const float hueref
                     }
 
                     //  affsob = 1.f;
-                    dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                    dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                     // float dEor = affde * sqrt(SQR(refa - original->a[y][x] / 327.68f) + SQR(refb - original->b[y][x] / 327.68f) + SQR(lumaref - rLor));
 
                     //    cli = (buflight[loy - begy][lox - begx]);
@@ -3514,6 +3555,12 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
             radius = (2.f + 0.2f * lp.blurSH) / sk;
         }
 
+        //balance deltaE
+        float kL = 1.f;
+        float kab = 1.f;
+        kL = lp.balance;
+        balancedeltaE(kL, kab);
+
         bool usemask = (lp.showmaskexpmet == 2 || lp.enaExpMask) && senstype == 1;
         bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask) && senstype == 0;
         bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask) && senstype == 9;
@@ -3643,9 +3690,9 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     }
 
                     if (usemask  || usemaskcol || usemaskSH) {
-                        dE = rsob + sqrt(SQR(refa - origblurmask->a[y][x] / 327.68f) + SQR(refb - origblurmask->b[y][x] / 327.68f) + SQR(lumaref - origblurmask->L[y][x] / 327.68f));
+                        dE = rsob + sqrt(kab * SQR(refa - origblurmask->a[y][x] / 327.68f) + kab * SQR(refb - origblurmask->b[y][x] / 327.68f) + kL * SQR(lumaref - origblurmask->L[y][x] / 327.68f));
                     } else {
-                        dE = rsob + sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                        dE = rsob + sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                     }
 
                     float cli = 0.f;
@@ -3976,18 +4023,20 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     int GH = transformed->H;
     float refa = chromaref * cos(hueref);
     float refb = chromaref * sin(hueref);
+
     if (senstype == 2) { // Shadows highlight
         temp = new LabImage(GW, GH);
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
+        #pragma omp parallel for schedule(dynamic,16)
 #endif
-            for (int y = 0; y < transformed->H; y++) {
-                for (int x = 0; x < transformed->W; x++) {
-                     temp->L[y][x] = original->L[y][x];
-                     temp->a[y][x] = original->a[y][x];
-                     temp->b[y][x] = original->b[y][x];
-                }
+
+        for (int y = 0; y < transformed->H; y++) {
+            for (int x = 0; x < transformed->W; x++) {
+                temp->L[y][x] = original->L[y][x];
+                temp->a[y][x] = original->a[y][x];
+                temp->b[y][x] = original->b[y][x];
             }
+        }
 
         ImProcFunctions::shadowsHighlights(temp, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
     }
@@ -4098,6 +4147,12 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
     }
 
+    //balance deltaE
+    float kL = 1.f;
+    float kab = 1.f;
+    kL = lp.balance;
+    balancedeltaE(kL, kab);
+
     LabImage *origblur = nullptr;
 
     origblur = new LabImage(GW, GH);
@@ -4193,7 +4248,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                 }
 
                 float dE = 0.f;
-                dE = sqrt(SQR(refa - origblur->a[y][x] / 327.68f) + SQR(refb - origblur->b[y][x] / 327.68f) + SQR(lumaref - rL));
+                dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
 
                 float reducdE = 0.f;
                 float mindE = 2.f + minscope * varsens * lp.thr;
@@ -4314,7 +4369,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                                 transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
                                 transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
 
-                            } 
+                            }
 
                             break;
                         }
@@ -4386,7 +4441,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                                 transformed->a[y][x] = CLIPC(original->a[y][x] + difa) ;
                                 transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                            } 
+                            }
 
                         }
                     }
@@ -4398,7 +4453,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     }
     delete origblur;
 
-    if (senstype == 1 || senstype ==2) {
+    if (senstype == 1 || senstype == 2) {
         delete temp;
     }
 
@@ -6987,11 +7042,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }
         } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f) && call < 3  && lp.hsena) {
-           
+
             float adjustr = 2.f;
             InverseColorLight_Local(sp, 2, lp, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
-        
+
 
 
 
@@ -7625,41 +7680,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float fab = 0.f;
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab);
 
-//static void meanfab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, float & fab, float & meanfab)
-                /*
-                                int nbfab = 0;
-
-                                for (int y = 0; y < transformed->H ; y++) //{
-                                    for (int x = 0; x < transformed->W; x++) {
-                                        int lox = cx + x;
-                                        int loy = cy + y;
-
-                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
-                                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
-                                            meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
-                                            meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
-                                            nbfab++;
-                                        }
-                                    }
-
-                                meanfab = meanfab / (2.f * nbfab);
-                                float stddv = 0.f;
-                                float som = 0.f;
-
-                                for (int y = 0; y < transformed->H ; y++) //{
-                                    for (int x = 0; x < transformed->W; x++) {
-                                        int lox = cx + x;
-                                        int loy = cy + y;
-
-                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                            som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
-                                        }
-                                    }
-
-                                stddv = sqrt(som / nbfab);
-                                fab = meanfab + 1.5f * stddv;
-                */
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif

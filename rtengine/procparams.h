@@ -956,6 +956,7 @@ struct LocallabParams {
         int transit;
         double thresh;
         double iter;
+        double balan;
         // Color & Light
         bool expcolor;
         bool curvactiv;

@@ -895,6 +895,7 @@ HISTORY_MSG_641;Local - Use SH mask
 HISTORY_MSG_642;Local - radius SH
 HISTORY_MSG_643;Local - Blur SH
 HISTORY_MSG_644;Local - inverse SH
+HISTORY_MSG_645;Local - balance deltaE
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1969,6 +1970,7 @@ TP_LOCALLAB_ADJ;Equalizer blue-red
 TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nThreshold structure take into account the structure level of solid areas
 TP_LOCALLAB_AVOID;Avoid color shift
+TP_LOCALLAB_BALAN;Balance deltaE C-L
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
