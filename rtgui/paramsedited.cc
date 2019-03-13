@@ -994,6 +994,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).HHmaskexpcurve = locallab.spots.at(j).HHmaskexpcurve && pSpot.HHmaskexpcurve == otherSpot.HHmaskexpcurve;
                 locallab.spots.at(j).blendmaskexp = locallab.spots.at(j).blendmaskexp && pSpot.blendmaskexp == otherSpot.blendmaskexp;
                 locallab.spots.at(j).radmaskexp = locallab.spots.at(j).radmaskexp && pSpot.radmaskexp == otherSpot.radmaskexp;
+                locallab.spots.at(j).chromaskexp = locallab.spots.at(j).chromaskexp && pSpot.chromaskexp == otherSpot.chromaskexp;
+                locallab.spots.at(j).gammaskexp = locallab.spots.at(j).gammaskexp && pSpot.gammaskexp == otherSpot.gammaskexp;
+                locallab.spots.at(j).slomaskexp = locallab.spots.at(j).slomaskexp && pSpot.slomaskexp == otherSpot.slomaskexp;
                 // Shadow highlight
                 locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
                 locallab.spots.at(j).highlights = locallab.spots.at(j).highlights && pSpot.highlights == otherSpot.highlights;
@@ -2774,6 +2777,17 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).radmaskexp = mods.locallab.spots.at(i).radmaskexp;
         }
 
+        if (locallab.spots.at(i).chromaskexp) {
+            toEdit.locallab.spots.at(i).chromaskexp = mods.locallab.spots.at(i).chromaskexp;
+        }
+
+        if (locallab.spots.at(i).gammaskexp) {
+            toEdit.locallab.spots.at(i).gammaskexp = mods.locallab.spots.at(i).gammaskexp;
+        }
+
+        if (locallab.spots.at(i).slomaskexp) {
+            toEdit.locallab.spots.at(i).slomaskexp = mods.locallab.spots.at(i).slomaskexp;
+        }
 
         // Shadow highlight
         if (locallab.spots.at(i).expshadhigh) {
@@ -4124,6 +4138,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     HHmaskexpcurve(v),
     blendmaskexp(v),
     radmaskexp(v),
+    chromaskexp(v),
+    gammaskexp(v),
+    slomaskexp(v),
     // Shadow highlight
     expshadhigh(v),
     highlights(v),
@@ -4289,6 +4306,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     HHmaskexpcurve = v;
     blendmaskexp = v;
     radmaskexp = v;
+    chromaskexp = v;
+    gammaskexp = v;
+    slomaskexp = v;
     // Shadow highlight
     expshadhigh = v;
     highlights = v;

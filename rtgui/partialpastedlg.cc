@@ -19,7 +19,6 @@
 #include "partialpastedlg.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
-#include "../rtengine/procparams.h"
 #include "guiutils.h"
 
 PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent)
@@ -663,9 +662,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 {
 
     ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
-    falsePE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(false));
+    falsePE.locallab.spots.resize(srcPE->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(false));
     ParamsEdited filterPE(true); // Contains the initial information about the loaded values
-    filterPE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(true));
+    filterPE.locallab.spots.resize(srcPE->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
 
     if (srcPE) {
         filterPE = *srcPE;

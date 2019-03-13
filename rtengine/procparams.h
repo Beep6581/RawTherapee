@@ -1006,6 +1006,9 @@ struct LocallabParams {
         std::vector<double> HHmaskexpcurve;
         int blendmaskexp;
         double radmaskexp;
+        double chromaskexp;
+        double gammaskexp;
+        double slomaskexp;
         // Shadow highlight
         bool expshadhigh;
         int highlights;

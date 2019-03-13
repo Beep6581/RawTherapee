@@ -896,6 +896,9 @@ HISTORY_MSG_642;Local - radius SH
 HISTORY_MSG_643;Local - Blur SH
 HISTORY_MSG_644;Local - inverse SH
 HISTORY_MSG_645;Local - balance deltaE
+HISTORY_MSG_646;Local - Exp mask chroma
+HISTORY_MSG_647;Local - Exp mask gamma
+HISTORY_MSG_648;Local - Exp mask slope
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1984,6 +1987,9 @@ TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CBDL;Contrast by detail levels -Dist.defects:grease..
 TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) put the selection spot on a pronounced default (adapting its size if necessary); b) choose a wide selection area to cover most of the area affected by the defects; c) Select a fairly large transition value; d) act on levels 3 and 4 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary.
 TP_LOCALLAB_CHROMA;Chrominance
+TP_LOCALLAB_CHROMASKCOL;Chroma mask
+TP_LOCALLAB_GAMMASKCOL;Gamma mask
+TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_COFR;Color & Light -Small defects:red eyes,dust

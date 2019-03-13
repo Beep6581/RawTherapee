@@ -421,6 +421,9 @@ public:
         bool HHmaskexpcurve;
         bool blendmaskexp;
         bool radmaskexp;
+        bool chromaskexp;
+        bool gammaskexp;
+        bool slomaskexp;
         // Shadow highlight
         bool expshadhigh;
         bool highlights;
