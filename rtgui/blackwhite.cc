@@ -16,13 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "blackwhite.h"
-#include "rtimage.h"
-#include "../rtengine/color.h"
 #include <iomanip>
 #include <cmath>
-#include "guiutils.h"
+
+#include "blackwhite.h"
+
 #include "edit.h"
+#include "guiutils.h"
+#include "rtimage.h"
+
+#include "../rtengine/color.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

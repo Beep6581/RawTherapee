@@ -20,6 +20,7 @@
 
 #include "rawimagesource.h"
 #include "rt_math.h"
+#include "procparams.h"
 #include "../rtgui/multilangmgr.h"
 #include "opthelper.h"
 #include "StopWatch.h"
@@ -39,9 +40,14 @@ namespace rtengine
 * Licensed under the GNU GPL version 3
 */
 // Tiled version by Ingo Weyrich (heckflosse67@gmx.de)
-void RawImageSource::rcd_demosaic()
+void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 {
-    BENCHFUN
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << "Demosaicing " << W << "x" << H << " image using rcd with " << chunkSize << " tiles per thread" << std::endl;
+        stop.reset(new StopWatch("rcd demosaic"));
+    }
 
     volatile double progress = 0.0;
 
@@ -72,7 +78,7 @@ void RawImageSource::rcd_demosaic()
     float *lpf = PQ_Dir; // reuse buffer, they don't overlap in usage
 
 #ifdef _OPENMP
-    #pragma omp for schedule(dynamic) collapse(2) nowait
+    #pragma omp for schedule(dynamic, chunkSize) collapse(2) nowait
 #endif
     for(int tr = 0; tr < numTh; ++tr) {
         for(int tc = 0; tc < numTw; ++tc) {

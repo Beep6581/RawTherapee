@@ -22,6 +22,7 @@
 #include "options.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
+#include "../rtengine/procparams.h"
 #include "rtimage.h"
 #include "multilangmgr.h"
 

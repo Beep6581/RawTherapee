@@ -24,6 +24,7 @@
 #include "iccstore.h"
 #include "clutstore.h"
 #include "processingjob.h"
+#include "procparams.h"
 #include <glibmm.h>
 #include "../rtgui/options.h"
 #include "rawimagesource.h"
@@ -165,6 +166,8 @@ private:
             } else {
                 imgsrc->setBorder(std::max(params.raw.bayersensor.border, 2));
             }
+        } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+            imgsrc->setBorder(params.raw.xtranssensor.border);
         }
         imgsrc->getFullSize (fw, fh, tr);
 
@@ -768,7 +771,7 @@ private:
             }
 
             params.toneCurve.autoexp = false;
-            params.toneCurve.curveMode = ToneCurveParams::TcMode::FILMLIKE;
+            params.toneCurve.curveMode = ToneCurveMode::FILMLIKE;
             params.toneCurve.curve2 = { 0 };
             params.toneCurve.brightness = 0;
             params.toneCurve.contrast = 0;
@@ -989,7 +992,7 @@ private:
 
         LUTu histToneCurve;
 
-        ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
+        ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
 
         if (settings->verbose) {
             printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);

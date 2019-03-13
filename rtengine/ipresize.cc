@@ -22,6 +22,7 @@
 #include "alignedbuffer.h"
 #include "opthelper.h"
 #include "rt_math.h"
+#include "procparams.h"
 #include "sleef.c"
 
 //#define PROFILE

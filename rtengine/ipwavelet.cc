@@ -40,6 +40,7 @@
 #include "median.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"
+#include "procparams.h"
 
 #ifdef _OPENMP
 #include <omp.h>

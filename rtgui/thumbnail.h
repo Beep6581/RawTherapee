@@ -19,7 +19,9 @@
 #ifndef _THUMBNAIL_
 #define _THUMBNAIL_
 
+#include <memory>
 #include <string>
+
 #include <glibmm.h>
 #include "cachemanager.h"
 #include "options.h"
@@ -30,6 +32,8 @@
 #include "threadutils.h"
 
 class CacheManager;
+struct ParamsEdited;
+
 class Thumbnail
 {
 
@@ -47,7 +51,7 @@ class Thumbnail
     float           imgRatio;           // hack to avoid rounding error
 //        double          scale;            // portion of the sizes of the processed thumbnail image and the full scale image
 
-    rtengine::procparams::ProcParams      pparams;
+    const std::unique_ptr<rtengine::procparams::ProcParams>      pparams;
     bool            pparamsValid;
     bool            imageLoading;
 
@@ -160,41 +164,14 @@ public:
         return cfs.md5;
     }
 
-    int             getRank  () const
-    {
-        return pparams.rank;
-    }
-    void            setRank  (int rank)
-    {
-        if (pparams.rank != rank) {
-            pparams.rank = rank;
-            pparamsValid = true;
-        }
-    }
+    int             getRank  () const;
+    void            setRank  (int rank);
 
-    int             getColorLabel  () const
-    {
-        return pparams.colorlabel;
-    }
-    void            setColorLabel  (int colorlabel)
-    {
-        if (pparams.colorlabel != colorlabel) {
-            pparams.colorlabel = colorlabel;
-            pparamsValid = true;
-        }
-    }
+    int             getColorLabel  () const;
+    void            setColorLabel  (int colorlabel);
 
-    int             getStage () const
-    {
-        return pparams.inTrash;
-    }
-    void            setStage (bool stage)
-    {
-        if (pparams.inTrash != stage) {
-            pparams.inTrash = stage;
-            pparamsValid = true;
-        }
-    }
+    int             getStage () const;
+    void            setStage (bool stage);
 
     void            addThumbnailListener (ThumbnailListener* tnl);
     void            removeThumbnailListener (ThumbnailListener* tnl);

@@ -36,6 +36,7 @@
 #include "median.h"
 #include "jaggedarray.h"
 #include "StopWatch.h"
+#include "procparams.h"
 
 namespace rtengine
 {

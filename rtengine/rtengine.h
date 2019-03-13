@@ -21,7 +21,6 @@
 
 #include "imageformat.h"
 #include "rt_math.h"
-#include "procparams.h"
 #include "procevents.h"
 #include <lcms2.h>
 #include <string>
@@ -44,6 +43,22 @@ class EditDataProvider;
 
 namespace rtengine
 {
+
+enum RenderingIntent : int;
+
+namespace procparams
+{
+
+class ProcParams;
+class IPTCPairs;
+
+struct RAWParams;
+struct ColorManagementParams;
+struct CropParams;
+
+enum class ToneCurveMode : int;
+
+}
 
 class IImage8;
 class IImage16;
@@ -315,7 +330,7 @@ public:
       * @param hlrecons set to true if HighLight Reconstruction is enabled */
     virtual void autoExpChanged(double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh, bool hlrecons) = 0;
 
-    virtual void autoMatchedToneCurveChanged(procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve) = 0;
+    virtual void autoMatchedToneCurveChanged(procparams::ToneCurveMode curveMode, const std::vector<double>& curve) = 0;
 };
 
 class AutoCamListener

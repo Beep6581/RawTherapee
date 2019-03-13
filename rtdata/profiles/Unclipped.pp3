@@ -1,0 +1,27 @@
+[Exposure]
+ClampOOG=false
+Curve=0;
+Curve2=0;
+
+[Black & White]
+BeforeCurve=0;
+AfterCurve=0;
+
+[Vibrance]
+Enabled=false
+
+[Color appearance]
+Enabled=false
+
+[Film Simulation]
+Enabled=false
+
+[RGB Curves]
+LumaMode=false
+
+[Color Management]
+ApplyLookTable=false
+
+[RAW]
+CA=true
+CAAutoIterations=2

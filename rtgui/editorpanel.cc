@@ -1057,14 +1057,14 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     } else {
         Gtk::Allocation alloc;
         iareapanel->imageArea->on_resized (alloc);
+
+        // When passing a photo as an argument to the RawTherapee executable, the user wants
+        // this auto-loaded photo's thumbnail to be selected and visible in the Filmstrip.
+        EditorPanel::syncFileBrowser();
     }
 
     history->resetSnapShotNumber();
     navigator->setInvalid(ipc->getFullWidth(),ipc->getFullHeight());
-
-    // When passing a photo as an argument to the RawTherapee executable, the user wants
-    // this auto-loaded photo's thumbnail to be selected and visible in the Filmstrip.
-    EditorPanel::syncFileBrowser();
 }
 
 void EditorPanel::close ()

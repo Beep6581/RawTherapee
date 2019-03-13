@@ -25,6 +25,8 @@
 #include "guiutils.h"
 #include "version.h"
 
+#include "../rtengine/procparams.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -448,7 +450,12 @@ void Options::setDefaults()
     maxInspectorBuffers = 2; //  a rather conservative value for low specced systems...
     inspectorDelay = 0;
     serializeTiffRead = true;
-
+    measure = false;
+    chunkSizeAMAZE = 2;
+    chunkSizeCA = 2;
+    chunkSizeRCD = 2;
+    chunkSizeRGB = 2;
+    chunkSizeXT = 2;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     whiteBalanceSpotSize = 8;
@@ -562,7 +569,7 @@ void Options::setDefaults()
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
     rtSettings.widegamut = "RTv2_Wide";
-    rtSettings.srgb = "RTv2_sRGB";
+    rtSettings.srgb = "RTv4_sRGB";
     rtSettings.bruce = "RTv2_Bruce";
     rtSettings.beta = "RTv2_Beta";
     rtSettings.best = "RTv2_Best";
@@ -1079,6 +1086,30 @@ void Options::readFromFile(Glib::ustring fname)
                     serializeTiffRead = keyFile.get_boolean("Performance", "SerializeTiffRead");
                 }
 
+                if (keyFile.has_key("Performance", "Measure")) {
+                    measure = keyFile.get_boolean("Performance", "Measure");
+                }
+
+                if (keyFile.has_key("Performance", "ChunkSizeAMAZE")) {
+                    chunkSizeAMAZE = std::min(16, std::max(1, keyFile.get_integer("Performance", "ChunkSizeAMAZE")));
+                }
+
+                if (keyFile.has_key("Performance", "ChunkSizeCA")) {
+                    chunkSizeCA = std::min(16, std::max(1, keyFile.get_integer("Performance", "ChunkSizeCA")));
+                }
+
+                if (keyFile.has_key("Performance", "ChunkSizeRCD")) {
+                    chunkSizeRCD = std::min(16, std::max(1, keyFile.get_integer("Performance", "ChunkSizeRCD")));
+                }
+
+                if (keyFile.has_key("Performance", "ChunkSizeRGB")) {
+                    chunkSizeRGB = std::min(16, std::max(1, keyFile.get_integer("Performance", "ChunkSizeRGB")));
+                }
+
+                if (keyFile.has_key("Performance", "ChunkSizeXT")) {
+                    chunkSizeXT = std::min(16, std::max(1, keyFile.get_integer("Performance", "ChunkSizeXT")));
+                }
+
                 if (keyFile.has_key("Performance", "ThumbnailInspectorMode")) {
                     rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(keyFile.get_integer("Performance", "ThumbnailInspectorMode"));
                 }
@@ -1483,8 +1514,8 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "sRGB")) {
                     rtSettings.srgb = keyFile.get_string("Color Management", "sRGB");
-                    if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv4_sRGB") {
-                        rtSettings.srgb = "RTv2_sRGB";
+                    if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv2_sRGB") {
+                        rtSettings.srgb = "RTv4_sRGB";
                     }
                 }
 
@@ -1949,6 +1980,12 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Performance", "InspectorDelay", inspectorDelay);
         keyFile.set_integer("Performance", "PreviewDemosaicFromSidecar", prevdemo);
         keyFile.set_boolean("Performance", "SerializeTiffRead", serializeTiffRead);
+        keyFile.set_integer("Performance", "Measure", measure);
+        keyFile.set_integer("Performance", "ChunkSizeAMAZE", chunkSizeAMAZE);
+        keyFile.set_integer("Performance", "ChunkSizeRCD", chunkSizeRCD);
+        keyFile.set_integer("Performance", "ChunkSizeRGB", chunkSizeRGB);
+        keyFile.set_integer("Performance", "ChunkSizeXT", chunkSizeXT);
+        keyFile.set_integer("Performance", "ChunkSizeCA", chunkSizeCA);
         keyFile.set_integer("Performance", "ThumbnailInspectorMode", int(rtSettings.thumbnail_inspector_mode));
 
         keyFile.set_string("Output", "Format", saveFormat.format);

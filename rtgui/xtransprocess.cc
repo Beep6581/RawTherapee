@@ -16,10 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "eventmapper.h"
 #include "xtransprocess.h"
-#include "options.h"
+
+#include "eventmapper.h"
 #include "guiutils.h"
+#include "options.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -27,6 +30,7 @@ using namespace rtengine::procparams;
 XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP_RAW_LABEL"), true)
 {
     auto m = ProcEventMapper::getInstance();
+    EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
 
@@ -83,6 +87,18 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     dualDemosaicOptions->pack_start(*dualDemosaicContrast);
     pack_start( *dualDemosaicOptions, Gtk::PACK_SHRINK, 4);
 
+    borderbox = Gtk::manage(new Gtk::HBox());
+    border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 7));
+    border->setAdjusterListener (this);
+
+    if (border->delay < options.adjusterMaxDelay) {
+        border->delay = options.adjusterMaxDelay;
+    }
+
+    border->show();
+    borderbox->pack_start(*border);
+    pack_start(*borderbox, Gtk::PACK_SHRINK, 4);
+
     pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
     ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
     ccSteps->setAdjusterListener (this);
@@ -106,6 +122,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
     disableListener ();
     methodconn.block (true);
 
+    border->setValue(pp->raw.xtranssensor.border);
     for (size_t i = 0; i < RAWParams::XTransSensor::getMethodStrings().size(); ++i)
         if( pp->raw.xtranssensor.method == RAWParams::XTransSensor::getMethodStrings()[i]) {
             method->set_active(i);
@@ -114,6 +131,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
         }
 
     if(pedited ) {
+        border->setEditedState (pedited->raw.xtranssensor.border ? Edited : UnEdited);
         dualDemosaicContrast->setAutoInconsistent   (multiImage && !pedited->raw.xtranssensor.dualDemosaicAutoContrast);
         dualDemosaicContrast->setEditedState ( pedited->raw.xtranssensor.dualDemosaicContrast ? Edited : UnEdited);
         ccSteps->setEditedState (pedited->raw.xtranssensor.ccSteps ? Edited : UnEdited);
@@ -126,7 +144,7 @@ void XTransProcess::read(const rtengine::procparams::ProcParams* pp, const Param
     dualDemosaicContrast->setValue (pp->raw.xtranssensor.dualDemosaicContrast);
     ccSteps->setValue (pp->raw.xtranssensor.ccSteps);
 
-    lastAutoContrast = pp->raw.bayersensor.dualDemosaicAutoContrast;
+    lastAutoContrast = pp->raw.xtranssensor.dualDemosaicAutoContrast;
 
     if (!batchMode) {
         dualDemosaicOptions->set_visible(pp->raw.xtranssensor.method == procparams::RAWParams::XTransSensor::getMethodString(procparams::RAWParams::XTransSensor::Method::FOUR_PASS)
@@ -142,6 +160,7 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
 {
     pp->raw.xtranssensor.dualDemosaicAutoContrast = dualDemosaicContrast->getAutoValue();
     pp->raw.xtranssensor.dualDemosaicContrast = dualDemosaicContrast->getValue();
+    pp->raw.xtranssensor.border = border->getIntValue();
     pp->raw.xtranssensor.ccSteps = ccSteps->getIntValue();
 
     int currentRow = method->get_active_row_number();
@@ -151,6 +170,7 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
     }
 
     if (pedited) {
+        pedited->raw.xtranssensor.border = border->getEditedState ();
         pedited->raw.xtranssensor.method = method->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->raw.xtranssensor.dualDemosaicAutoContrast = !dualDemosaicContrast->getAutoInconsistent ();
         pedited->raw.xtranssensor.dualDemosaicContrast = dualDemosaicContrast->getEditedState ();
@@ -160,6 +180,7 @@ void XTransProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* p
 
 void XTransProcess::setAdjusterBehavior (bool falsecoloradd, bool dualDemosaicContrastAdd)
 {
+    border->setAddMode(false);
     dualDemosaicContrast->setAddMode(dualDemosaicContrastAdd);
     ccSteps->setAddMode(falsecoloradd);
 }
@@ -170,19 +191,23 @@ void XTransProcess::setBatchMode(bool batchMode)
     method->set_active_text(M("GENERAL_UNCHANGED"));
     ToolPanel::setBatchMode (batchMode);
     dualDemosaicContrast->showEditedCB ();
+    border->showEditedCB ();
     ccSteps->showEditedCB ();
 }
 
 void XTransProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
     dualDemosaicContrast->setDefault( defParams->raw.xtranssensor.dualDemosaicContrast);
+    border->setDefault (defParams->raw.xtranssensor.border);
     ccSteps->setDefault (defParams->raw.xtranssensor.ccSteps);
 
     if (pedited) {
         dualDemosaicContrast->setDefaultEditedState( pedited->raw.xtranssensor.dualDemosaicContrast ? Edited : UnEdited);
+        border->setDefaultEditedState(pedited->raw.xtranssensor.border ? Edited : UnEdited);
         ccSteps->setDefaultEditedState(pedited->raw.xtranssensor.ccSteps ? Edited : UnEdited);
     } else {
         dualDemosaicContrast->setDefaultEditedState(Irrelevant );
+        border->setDefaultEditedState(Irrelevant);
         ccSteps->setDefaultEditedState(Irrelevant );
     }
 }
@@ -194,6 +219,8 @@ void XTransProcess::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvDemosaicFalseColorIter, a->getTextValue() );
         } else if (a == dualDemosaicContrast) {
             listener->panelChanged (EvDemosaicContrast, a->getTextValue() );
+        } else if (a == border) {
+            listener->panelChanged (EvDemosaicBorder, a->getTextValue() );
         }
     }
 }

@@ -16,10 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "colorappearance.h"
 #include <cmath>
+
+#include "colorappearance.h"
+
 #include "guiutils.h"
+
 #include "../rtengine/color.h"
+#include "../rtengine/procparams.h"
 
 #define MINTEMP0 2000   //1200
 #define MAXTEMP0 12000  //12000

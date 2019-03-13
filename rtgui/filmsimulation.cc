@@ -1,12 +1,13 @@
+#include <chrono>
 #include <map>
 #include <set>
 
 #include "filmsimulation.h"
 
-#include <chrono>
-
 #include "options.h"
+
 #include "../rtengine/clutstore.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

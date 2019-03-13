@@ -17,6 +17,7 @@ The most useful feedback is based on the latest development code, and in the cas
 - Work in a new branch. Fork if necessary.
 - Keep branches small so that completed and working features can be merged into the "dev" branch often, and so that they can be abandoned if they head in the wrong direction.
 - Use C++11.
+- To break header dependencies use forward declarations as much as possible. See [#5197](https://github.com/Beep6581/RawTherapee/pull/5197#issuecomment-468938190) for some tips.
 - The naming isn't homogeneous throughout the code but here is a rough guideline:
   - *Identifiers* (variables, functions, methods, keys, enums, etc.) should be clear and unambiguous. Make them as long as necessary to ensure that your code is understandable to others.
   - *Types* (classes, structs, enums, typedefs...) should be named with `UpperCamelCase`.

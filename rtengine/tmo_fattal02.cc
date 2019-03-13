@@ -74,6 +74,7 @@
 #include "opthelper.h"
 #include "rt_algo.h"
 #include "rescale.h"
+#include "procparams.h"
 
 namespace rtengine
 {

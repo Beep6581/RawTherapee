@@ -27,7 +27,6 @@
 #include "rt_math.h"
 #include "gauss.h"
 #include "median.h"
-//#define BENCHMARK
 #include "StopWatch.h"
 namespace {
 
@@ -121,10 +120,19 @@ float* RawImageSource::CA_correct_RT(
     bool fitParamsIn,
     bool fitParamsOut,
     float* buffer,
-    bool freeBuffer
+    bool freeBuffer,
+    size_t chunkSize,
+    bool measure
 )
 {
-    BENCHFUN
+
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << "CA correcting " << W << "x" << H << " image with " << chunkSize << " tiles per thread" << std::endl;
+        stop.reset(new StopWatch("CA correction"));
+    }
+
     // multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
@@ -279,7 +287,7 @@ float* RawImageSource::CA_correct_RT(
                 float blockdenomthr[2][2] = {};
 
 #ifdef _OPENMP
-                #pragma omp for collapse(2) schedule(dynamic) nowait
+                #pragma omp for collapse(2) schedule(dynamic, chunkSize) nowait
 #endif
                 for (int top = -border ; top < height; top += ts - border2) {
                     for (int left = -border; left < width - (W & 1); left += ts - border2) {
@@ -434,7 +442,8 @@ float* RawImageSource::CA_correct_RT(
                                 vfloat wtrv = onev / SQRV(temp2v + vabsf(rgbcv - LVFU(rgb[c][(indx + 2) >> 1])) + vabsf(rgb1p1v - LC2VFU(rgb[1][indx + 3])));
 
                                 //store in rgb array the interpolated G value at R/B grid points using directional weighted average
-                                STC2VFU(rgb[1][indx], (wtuv * rgb1mv1v + wtdv * rgb1pv1v + wtlv * rgb1m1v + wtrv * rgb1p1v) / (wtuv + wtdv + wtlv + wtrv));
+                                vfloat result = (wtuv * rgb1mv1v + wtdv * rgb1pv1v + wtlv * rgb1m1v + wtrv * rgb1p1v) / (wtuv + wtdv + wtlv + wtrv);
+                                STC2VFU(rgb[1][indx], result);
                             }
 
 #endif
@@ -821,7 +830,7 @@ float* RawImageSource::CA_correct_RT(
                 //green interpolated to optical sample points for R/B
                 float* gshift  = (float (*)) (data + 2 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64); // there is no overlap in buffer usage => share
 #ifdef _OPENMP
-                #pragma omp for schedule(dynamic) collapse(2)
+                #pragma omp for schedule(dynamic, chunkSize) collapse(2)
 #endif
                 for (int top = -border; top < height; top += ts - border2) {
                     for (int left = -border; left < width - (W & 1); left += ts - border2) {
@@ -996,7 +1005,8 @@ float* RawImageSource::CA_correct_RT(
                                     vfloat wtrv = onev / SQRV(val2v + vabsf(LVFU(rgb[c][indx >> 1]) - LVFU(rgb[c][(indx + 2) >> 1])) + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx + 3])));
 
                                     //store in rgb array the interpolated G value at R/B grid points using directional weighted average
-                                    STC2VFU(rgb[1][indx], (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv));
+                                    vfloat result = (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv);
+                                    STC2VFU(rgb[1][indx], result);
                                 }
 #endif
                                 for (; cc < cc1 - 3; cc += 2, indx += 2) {
@@ -1235,7 +1245,8 @@ float* RawImageSource::CA_correct_RT(
                     int indx = (row * width + col) >> 1;
 #ifdef __SSE2__
                     for (; col < width - 7 - cb; col += 8, indx += 4) {
-                        STC2VFU(rawData[row][col], LVFU(RawDataTmp[indx]));
+                        vfloat val = LVFU(RawDataTmp[indx]);
+                        STC2VFU(rawData[row][col], val);
                     }
 #endif
                     for (; col < width - cb; col += 2, indx++) {

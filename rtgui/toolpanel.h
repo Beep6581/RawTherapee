@@ -22,7 +22,6 @@
 #include <gtkmm.h>
 #include <glibmm.h>
 #include "../rtengine/rtengine.h"
-#include "../rtengine/procparams.h"
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"

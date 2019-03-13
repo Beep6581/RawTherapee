@@ -1158,7 +1158,7 @@ public:
         };
     }
 
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int lensID = t->toInt();
         Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
@@ -1309,7 +1309,7 @@ public:
         choices.insert (p_t (51507, "Samyang AF 35mm f/1.4"));
     }
 
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int lensID = t->toInt();
         Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
@@ -2103,7 +2103,7 @@ class SAExposureTimeInterpreter : public Interpreter
 {
 public:
     SAExposureTimeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         double a = t->toDouble();
 
@@ -2163,7 +2163,7 @@ class SAFNumberInterpreter : public Interpreter
 {
 public:
     SAFNumberInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         double a = double (t->toDouble());
 
@@ -2223,7 +2223,7 @@ class SAISOSettingInterpreter : public Interpreter
 {
 public:
     SAISOSettingInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
 
@@ -2264,7 +2264,7 @@ class SAExposureCompSetInterpreter : public Interpreter
 {
 public:
     SAExposureCompSetInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         double a = t->toDouble();
         char buffer[32];
@@ -2285,7 +2285,7 @@ class SAAFMicroAdjValueInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjValueInterpreter() {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] - 20);
@@ -2302,7 +2302,7 @@ class SAAFMicroAdjModeInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjModeInterpreter() {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->getValue()[0] & 0x80;
 
@@ -2324,7 +2324,7 @@ class SAAFMicroAdjRegisteredLensesInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjRegisteredLensesInterpreter() {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
@@ -2341,7 +2341,7 @@ class SAFocusStatusInterpreter : public Interpreter
 {
 public:
     SAFocusStatusInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::string retval;
         int a = t->toInt();
@@ -2380,7 +2380,7 @@ class SAColorTemperatureSettingInterpreter : public Interpreter
 {
 public:
     SAColorTemperatureSettingInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->toInt());

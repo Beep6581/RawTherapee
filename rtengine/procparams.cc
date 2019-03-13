@@ -315,8 +315,8 @@ ToneCurveParams::ToneCurveParams() :
     curve2{
         DCT_Linear
     },
-    curveMode(ToneCurveParams::TcMode::STD),
-    curveMode2(ToneCurveParams::TcMode::STD),
+    curveMode(ToneCurveMode::STD),
+    curveMode2(ToneCurveMode::STD),
     brightness(0),
     black(0),
     contrast(0),
@@ -2609,6 +2609,7 @@ RAWParams::XTransSensor::XTransSensor() :
     method(getMethodString(Method::THREE_PASS)),
     dualDemosaicAutoContrast(true),
     dualDemosaicContrast(20),
+    border(7),
     ccSteps(0),
     blackred(0.0),
     blackgreen(0.0),
@@ -2622,6 +2623,7 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
         method == other.method
         && dualDemosaicAutoContrast == other.dualDemosaicAutoContrast
         && dualDemosaicContrast == other.dualDemosaicContrast
+        && border == other.border
         && ccSteps == other.ccSteps
         && blackred == other.blackred
         && blackgreen == other.blackgreen
@@ -2875,13 +2877,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
 
-        const std::map<ToneCurveParams::TcMode, const char*> tc_mapping = {
-            {ToneCurveParams::TcMode::STD, "Standard"},
-            {ToneCurveParams::TcMode::FILMLIKE, "FilmLike"},
-            {ToneCurveParams::TcMode::SATANDVALBLENDING, "SatAndValueBlending"},
-            {ToneCurveParams::TcMode::WEIGHTEDSTD, "WeightedStd"},
-            {ToneCurveParams::TcMode::LUMINANCE, "Luminance"},
-            {ToneCurveParams::TcMode::PERCEPTUAL, "Perceptual"}
+        const std::map<ToneCurveMode, const char*> tc_mapping = {
+            {ToneCurveMode::STD, "Standard"},
+            {ToneCurveMode::FILMLIKE, "FilmLike"},
+            {ToneCurveMode::SATANDVALBLENDING, "SatAndValueBlending"},
+            {ToneCurveMode::WEIGHTEDSTD, "WeightedStd"},
+            {ToneCurveMode::LUMINANCE, "Luminance"},
+            {ToneCurveMode::PERCEPTUAL, "Perceptual"}
         };
 
         saveToKeyfile(!pedited || pedited->toneCurve.curveMode, "Exposure", "CurveMode", tc_mapping, toneCurve.curveMode, keyFile);
@@ -3552,6 +3554,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.method, "RAW X-Trans", "Method", raw.xtranssensor.method, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicAutoContrast, "RAW X-Trans", "DualDemosaicAutoContrast", raw.xtranssensor.dualDemosaicAutoContrast, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.dualDemosaicContrast, "RAW X-Trans", "DualDemosaicContrast", raw.xtranssensor.dualDemosaicContrast, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.border, "RAW X-Trans", "Border", raw.xtranssensor.border, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.ccSteps, "RAW X-Trans", "CcSteps", raw.xtranssensor.ccSteps, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, keyFile);
@@ -3659,13 +3662,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 toneCurve.shcompr = 100; // older pp3 files can have values above 100.
             }
 
-            const std::map<std::string, ToneCurveParams::TcMode> tc_mapping = {
-                {"Standard", ToneCurveParams::TcMode::STD},
-                {"FilmLike", ToneCurveParams::TcMode::FILMLIKE},
-                {"SatAndValueBlending", ToneCurveParams::TcMode::SATANDVALBLENDING},
-                {"WeightedStd", ToneCurveParams::TcMode::WEIGHTEDSTD},
-                {"Luminance", ToneCurveParams::TcMode::LUMINANCE},
-                {"Perceptual", ToneCurveParams::TcMode::PERCEPTUAL}
+            const std::map<std::string, ToneCurveMode> tc_mapping = {
+                {"Standard", ToneCurveMode::STD},
+                {"FilmLike", ToneCurveMode::FILMLIKE},
+                {"SatAndValueBlending", ToneCurveMode::SATANDVALBLENDING},
+                {"WeightedStd", ToneCurveMode::WEIGHTEDSTD},
+                {"Luminance", ToneCurveMode::LUMINANCE},
+                {"Perceptual", ToneCurveMode::PERCEPTUAL}
             };
 
             assignFromKeyfile(keyFile, "Exposure", "CurveMode", pedited, tc_mapping, toneCurve.curveMode, pedited->toneCurve.curveMode);
@@ -5099,6 +5102,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "RAW X-Trans", "DualDemosaicContrast", pedited, raw.xtranssensor.dualDemosaicContrast, pedited->raw.xtranssensor.dualDemosaicContrast);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "Border", pedited, raw.xtranssensor.border, pedited->raw.xtranssensor.border);
             assignFromKeyfile(keyFile, "RAW X-Trans", "CcSteps", pedited, raw.xtranssensor.ccSteps, pedited->raw.xtranssensor.ccSteps);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", pedited, raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", pedited, raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);

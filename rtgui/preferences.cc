@@ -30,6 +30,25 @@
 #include <omp.h>
 #endif
 
+namespace {
+void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
+    Gtk::HBox* HB = Gtk::manage ( new Gtk::HBox () );
+    HB->set_spacing (4);
+    if (!toolTip.empty()) {
+        HB->set_tooltip_text (M (toolTip));
+    }
+    Gtk::Label* label = Gtk::manage ( new Gtk::Label (M (labelText) + ":", Gtk::ALIGN_START));
+    spin = Gtk::manage ( new Gtk::SpinButton () );
+    spin->set_digits (digits);
+    spin->set_increments (inc0, inc1);
+    spin->set_max_length (maxLength); // Will this be sufficient? :)
+    spin->set_range (range0, range1);
+    HB->pack_start (*label, Gtk::PACK_SHRINK, 0);
+    HB->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+    where->add(*HB);
+}
+}
+
 extern Options options;
 extern Glib::ustring argv0;
 Glib::RefPtr<Gtk::CssProvider> themecss;
@@ -648,38 +667,36 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     vbPerformance->pack_start (*ftiffserialize, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fclut = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CLUTSCACHE")) );
-    Gtk::HBox* clutCacheSizeHB = Gtk::manage ( new Gtk::HBox () );
-    clutCacheSizeHB->set_spacing (4);
-    Gtk::Label* CLUTLl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_CLUTSCACHE_LABEL") + ":", Gtk::ALIGN_START));
-    clutCacheSizeSB = Gtk::manage ( new Gtk::SpinButton () );
-    clutCacheSizeSB->set_digits (0);
-    clutCacheSizeSB->set_increments (1, 5);
-    clutCacheSizeSB->set_max_length (2); // Will this be sufficient? :)
 #ifdef _OPENMP
-    clutCacheSizeSB->set_range (1, 3 * omp_get_num_procs());
+    placeSpinBox(fclut, clutCacheSizeSB, "PREFERENCES_CLUTSCACHE_LABEL", 0, 1, 5, 2, 1, 3 * omp_get_num_procs());
 #else
-    clutCacheSizeSB->set_range (1, 12);
+    placeSpinBox(fclut, clutCacheSizeSB, "PREFERENCES_CLUTSCACHE_LABEL", 0, 1, 5, 2, 1, 12);
 #endif
-    clutCacheSizeHB->pack_start (*CLUTLl, Gtk::PACK_SHRINK, 0);
-    clutCacheSizeHB->pack_end (*clutCacheSizeSB, Gtk::PACK_SHRINK, 0);
-    fclut->add (*clutCacheSizeHB);
     vbPerformance->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* finspect = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_INSPECT_LABEL")) );
-    Gtk::HBox* maxIBuffersHB = Gtk::manage ( new Gtk::HBox () );
-    maxIBuffersHB->set_spacing (4);
-    maxIBuffersHB->set_tooltip_text (M ("PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP"));
-    Gtk::Label* maxIBufferLbl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_INSPECT_MAXBUFFERS_LABEL") + ":", Gtk::ALIGN_START));
-    maxInspectorBuffersSB = Gtk::manage ( new Gtk::SpinButton () );
-    maxInspectorBuffersSB->set_digits (0);
-    maxInspectorBuffersSB->set_increments (1, 5);
-    maxInspectorBuffersSB->set_max_length (2);
-    maxInspectorBuffersSB->set_range (1, 12); // ... we have to set a limit, 12 seem to be enough even for systems with tons of RAM
-    maxIBuffersHB->pack_start (*maxIBufferLbl, Gtk::PACK_SHRINK, 0);
-    maxIBuffersHB->pack_end (*maxInspectorBuffersSB, Gtk::PACK_SHRINK, 0);
+    Gtk::Frame* fchunksize = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CHUNKSIZES")) );
+    Gtk::VBox* chunkSizeVB = Gtk::manage ( new Gtk::VBox () );
 
+    Gtk::HBox* measureHB = Gtk::manage ( new Gtk::HBox () );
+    measureHB->set_spacing (4);
+    measureCB = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_PERFORMANCE_MEASURE")) );
+    measureCB->set_tooltip_text (M ("PREFERENCES_PERFORMANCE_MEASURE_HINT"));
+    measureHB->pack_start(*measureCB, Gtk::PACK_SHRINK, 0);
+    chunkSizeVB->add(*measureHB);
+
+    placeSpinBox(chunkSizeVB, chunkSizeAMSB, "PREFERENCES_CHUNKSIZE_RAW_AMAZE", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeCASB, "PREFERENCES_CHUNKSIZE_RAW_CA", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeRCDSB, "PREFERENCES_CHUNKSIZE_RAW_RCD", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeRGBSB, "PREFERENCES_CHUNKSIZE_RGB", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeXTSB, "PREFERENCES_CHUNKSIZE_RAW_XT", 0, 1, 5, 2, 1, 16);
+
+    fchunksize->add (*chunkSizeVB);
+
+    vbPerformance->pack_start (*fchunksize, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Frame* finspect = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_INSPECT_LABEL")) );
     Gtk::VBox *inspectorvb = Gtk::manage(new Gtk::VBox());
-    inspectorvb->add(*maxIBuffersHB);
+    placeSpinBox(inspectorvb, maxInspectorBuffersSB, "PREFERENCES_INSPECT_MAXBUFFERS_LABEL", 0, 1, 5, 2, 1, 12, "PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP");
 
     Gtk::HBox *insphb = Gtk::manage(new Gtk::HBox());
     thumbnailInspectorMode = Gtk::manage(new Gtk::ComboBoxText());
@@ -695,23 +712,14 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     Gtk::Frame* threadsFrame = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PERFORMANCE_THREADS")) );
     Gtk::VBox* threadsVBox = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
 
-    Gtk::HBox* threadsHBox = Gtk::manage (new Gtk::HBox (Gtk::PACK_SHRINK, 4));
-    Gtk::Label* threadsLbl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_PERFORMANCE_THREADS_LABEL") + ":", Gtk::ALIGN_START));
-    threadsSpinBtn = Gtk::manage ( new Gtk::SpinButton () );
-    threadsSpinBtn->set_digits (0);
-    threadsSpinBtn->set_increments (1, 5);
-    threadsSpinBtn->set_max_length (2); // Will this be sufficient? :)
 #ifdef _OPENMP
     int maxThreadNumber = omp_get_max_threads();
 #else
     int maxThreadNumber = 10;
 #endif
-    threadsSpinBtn->set_range (0, maxThreadNumber);
 
-    threadsHBox->pack_start (*threadsLbl, Gtk::PACK_SHRINK, 2);
-    threadsHBox->pack_end (*threadsSpinBtn, Gtk::PACK_SHRINK, 2);
+    placeSpinBox(threadsVBox, threadsSpinBtn, "PREFERENCES_PERFORMANCE_THREADS_LABEL", 0, 1, 5, 2, 0, maxThreadNumber);
 
-    threadsVBox->pack_start (*threadsHBox, Gtk::PACK_SHRINK);
     threadsFrame->add (*threadsVBox);
 
     vbPerformance->pack_start (*threadsFrame, Gtk::PACK_SHRINK, 4);
@@ -1782,6 +1790,12 @@ void Preferences::storePreferences ()
 
     moptions.rgbDenoiseThreadLimit = threadsSpinBtn->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
+    moptions.measure = measureCB->get_active();
+    moptions.chunkSizeAMAZE = chunkSizeAMSB->get_value_as_int();
+    moptions.chunkSizeCA = chunkSizeCASB->get_value_as_int();
+    moptions.chunkSizeRCD = chunkSizeRCDSB->get_value_as_int();
+    moptions.chunkSizeRGB = chunkSizeRGBSB->get_value_as_int();
+    moptions.chunkSizeXT = chunkSizeXTSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
     moptions.rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(thumbnailInspectorMode->get_active_row_number());
 
@@ -1986,6 +2000,12 @@ void Preferences::fillPreferences ()
 
     threadsSpinBtn->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
+    measureCB->set_active (moptions.measure);
+    chunkSizeAMSB->set_value (moptions.chunkSizeAMAZE);
+    chunkSizeCASB->set_value (moptions.chunkSizeCA);
+    chunkSizeRGBSB->set_value (moptions.chunkSizeRGB);
+    chunkSizeRCDSB->set_value (moptions.chunkSizeRCD);
+    chunkSizeXTSB->set_value (moptions.chunkSizeXT);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
     thumbnailInspectorMode->set_active(int(moptions.rtSettings.thumbnail_inspector_mode));
 
@@ -2381,7 +2401,7 @@ void Preferences::workflowUpdate ()
             || moptions.rtSettings.printerBPC     != options.rtSettings.printerBPC
             || moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent) {
         // Update the position of the Histogram
-        parent->updateProfiles (moptions.rtSettings.printerProfile, moptions.rtSettings.printerIntent, moptions.rtSettings.printerBPC);
+        parent->updateProfiles (moptions.rtSettings.printerProfile, rtengine::RenderingIntent(moptions.rtSettings.printerIntent), moptions.rtSettings.printerBPC);
     }
 
 }

@@ -41,6 +41,7 @@
 #include "clutstore.h"
 #include "ciecam02.h"
 #include "StopWatch.h"
+#include "procparams.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/guiutils.h"
 
@@ -205,33 +206,31 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
     }
 }
 
-void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode curveMode, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, PerceptualToneCurveState ptcApplyState) {
+void customToneCurve(const ToneCurve &customToneCurve, ToneCurveMode curveMode, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, PerceptualToneCurveState ptcApplyState) {
 
-    if (curveMode == ToneCurveParams::TcMode::STD) { // Standard
+    if (curveMode == ToneCurveMode::STD) { // Standard
         const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
-    } else if (curveMode == ToneCurveParams::TcMode::FILMLIKE) { // Adobe like
+    } else if (curveMode == ToneCurveMode::FILMLIKE) { // Adobe like
         const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
-            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
-            }
+            userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
-    } else if (curveMode == ToneCurveParams::TcMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
+    } else if (curveMode == ToneCurveMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
         const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                 userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
             }
         }
-    } else if (curveMode == ToneCurveParams::TcMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
+    } else if (curveMode == ToneCurveMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
         const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
-    } else if (curveMode == ToneCurveParams::TcMode::LUMINANCE) { // apply the curve to the luminance channel
+    } else if (curveMode == ToneCurveMode::LUMINANCE) { // apply the curve to the luminance channel
         const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&> (customToneCurve);
 
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -239,7 +238,7 @@ void customToneCurve(const ToneCurve &customToneCurve, ToneCurveParams::TcMode c
                 userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
             }
         }
-    } else if (curveMode == ToneCurveParams::TcMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
+    } else if (curveMode == ToneCurveMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve);
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize], ptcApplyState);
@@ -322,7 +321,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
                 if (settings->printerBPC) {
                     flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
                 }
-                outIntent = settings->printerIntent;
+                outIntent = RenderingIntent(settings->printerIntent);
             } else {
                 oprof = ICCStore::getInstance()->getProfile(params->icm.outputProfile);
                 if (params->icm.outputBPC) {
@@ -2052,17 +2051,24 @@ filmlike_clip (float *r, float *g, float *b)
 
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
-                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve )
+                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve, size_t chunkSize, bool measure)
 {
-    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve);
+    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve, chunkSize, measure);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
-                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve )
+                               const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve, size_t chunkSize, bool measure)
 {
-    BENCHFUN
+
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << "rgb processing " << working->getWidth() << "x" << working->getHeight() << " image with " << chunkSize << " tiles per thread" << std::endl;
+        stop.reset(new StopWatch("rgb processing"));
+    }
+
     Imagefloat *tmpImage = nullptr;
 
     Imagefloat* editImgFloat = nullptr;
@@ -2225,8 +2231,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     const float hlrange = 65536.0 - shoulder;
     const bool isProPhoto = (params->icm.workingProfile == "ProPhoto");
     // extracting datas from 'params' to avoid cache flush (to be confirmed)
-    ToneCurveParams::TcMode curveMode = params->toneCurve.curveMode;
-    ToneCurveParams::TcMode curveMode2 = params->toneCurve.curveMode2;
+    ToneCurveMode curveMode = params->toneCurve.curveMode;
+    ToneCurveMode curveMode2 = params->toneCurve.curveMode2;
     bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
     bool hasToneCurve1 = bool (customToneCurve1);
     bool hasToneCurve2 = bool (customToneCurve2);
@@ -2238,12 +2244,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     PerceptualToneCurveState ptc1ApplyState, ptc2ApplyState;
 
-    if (hasToneCurve1 && curveMode == ToneCurveParams::TcMode::PERCEPTUAL) {
+    if (hasToneCurve1 && curveMode == ToneCurveMode::PERCEPTUAL) {
         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve1);
         userToneCurve.initApplyState (ptc1ApplyState, params->icm.workingProfile);
     }
 
-    if (hasToneCurve2 && curveMode2 == ToneCurveParams::TcMode::PERCEPTUAL) {
+    if (hasToneCurve2 && curveMode2 == ToneCurveMode::PERCEPTUAL) {
         const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve2);
         userToneCurve.initApplyState (ptc2ApplyState, params->icm.workingProfile);
     }
@@ -2432,7 +2438,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         }
 
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2)
+        #pragma omp for schedule(dynamic, chunkSize) collapse(2)
 #endif
 
         for (int ii = 0; ii < working->getHeight(); ii += TS)

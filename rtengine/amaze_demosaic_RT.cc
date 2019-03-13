@@ -33,14 +33,21 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
+#include "procparams.h"
 #include "StopWatch.h"
 
 namespace rtengine
 {
 
-void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, size_t chunkSize, bool measure)
 {
-    BENCHFUN
+
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << "Demosaicing " << W << "x" << H << " image using AMaZE with " << chunkSize << " Tiles per Thread" << std::endl;
+        stop.reset(new StopWatch("amaze demosaic"));
+    }
 
     volatile double progress = 0.0;
 
@@ -176,7 +183,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
         // Main algorithm: Tile loop
         // use collapse(2) to collapse the 2 loops to one large loop, so there is better scaling
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2) nowait
+        #pragma omp for schedule(dynamic, chunkSize) collapse(2) nowait
 #endif
 
         for (int top = winy - 16; top < winy + height; top += ts - 32) {
