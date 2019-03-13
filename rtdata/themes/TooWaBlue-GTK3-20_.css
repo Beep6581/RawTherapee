@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2019 TooWaBoo
-  Version 3.03
+  Version 3.04
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ textview:selected, treeview:selected {
 /**/
 
 #PlacesPaned  > box:nth-child(3) treeview {
-    padding: 0.25em 0.333333333333333333em 0.25em 0.333333333333333333em;
+    padding: 0.25em 0;
 }
 
 #HistoryPanel {
