@@ -1854,6 +1854,55 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
     }
 }
 
+static void gamma_mask(LUTf & lutTonemask, double pwr, double gamm, double ts, double gamm2)
+{
+
+
+    GammaValues g_a;
+
+    /*        double pwr = 1.0 / lp.gammaexp;
+            double gamm = lp.gammaexp;
+            double ts = lp.slomaexp;
+            double gamm2 = lp.gammaexp;
+    */
+    if (gamm2 < 1.) {
+        std::swap(pwr, gamm);
+    }
+
+    int mode = 0;
+    Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+
+    //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+    double start;
+    double add;
+
+    if (gamm2 < 1.) {
+        start = g_a[2];
+        add = g_a[4];
+    } else {
+        start = g_a[3];
+        add = g_a[4];
+    }
+
+    double mul = 1. + g_a[4];
+
+//        lutTonemask(65536);
+
+    for (int i = 0; i < 65536; i++) {
+        double val = (i) / 65535.;
+        double x;
+
+        if (gamm2 < 1.) {
+            x = Color::igammareti(val, gamm, start, ts, mul, add);
+        } else {
+            x = Color::gammareti(val, gamm, start, ts, mul, add);
+        }
+
+        lutTonemask[i] = CLIP(x * 65535.);  // CLIP avoid in some case extra values
+    }
+
+}
+
 static void balancedeltaE(float kL, float &kab)
 {
     float mincurs = 0.3f;//minimum slider balan_
@@ -2666,6 +2715,7 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
 {
     int nbfab = 0;
     float multsigma = -0.015f * chrom + 1.f;
+
     for (int y = 0; y < transformed->H ; y++) //{
         for (int x = 0; x < transformed->W; x++) {
             int lox = cx + x;
@@ -2696,7 +2746,10 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
 
     stddv = sqrt(som / nbfab);
     fab = meanfab + multsigma * stddv;
-    if(fab < 0.f) fab = 10.f;
+
+    if (fab < 0.f) {
+        fab = 10.f;
+    }
 }
 
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, JaggedArray<float> & blend2, int sk, bool multiThread, float & meansob)
@@ -6951,10 +7004,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                 bufmaskblurSH->L[loy - begy][lox - begx] = LIM01(ble[loy - begy][lox - begx]) * 32768.f;
-                             //   if(bufmaskblurSH->L[loy - begy][lox - begx] > maxsh) maxsh = bufmaskblurSH->L[loy - begy][lox - begx];
+                                //   if(bufmaskblurSH->L[loy - begy][lox - begx] > maxsh) maxsh = bufmaskblurSH->L[loy - begy][lox - begx];
                             }
                         }
-                     //   printf("maxsh=%f \n", maxsh);
+
+                    //   printf("maxsh=%f \n", maxsh);
                 }
 
                 float radiusb = 1.f / sk;
@@ -7692,50 +7746,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float fab = 0.f;
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab, lp.chromaexp);
 
-        LUTf *gammamask = nullptr;
-        LUTf lutTonemask;
+                LUTf *gammamask = nullptr;
+                LUTf lutTonemask;
+                lutTonemask(65536);
+                double pwr = 1.0 / lp.gammaexp;
+                double gamm = lp.gammaexp;
+                double ts = lp.slomaexp;
+                double gamm2 = lp.gammaexp;
 
-        GammaValues g_a;
-        double pwr = 1.0 / lp.gammaexp;
-        double gamm = lp.gammaexp;
-        double ts = lp.slomaexp;
-        double gamm2 = lp.gammaexp;
-
-        if (gamm2 < 1.) {
-            std::swap(pwr, gamm);
-        }
-        int mode = 0;
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
-
-   //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
-        double start;
-        double add;
-
-        if (gamm2 < 1.) {
-            start = g_a[2];
-            add = g_a[4];
-        } else {
-            start = g_a[3];
-            add = g_a[4];
-        }
-
-        double mul = 1. + g_a[4];
-    
-        lutTonemask(65536);
-
-        for (int i = 0; i < 65536; i++) {
-            double val = (i) / 65535.;
-            double x;
-
-            if (gamm2 < 1.) {
-                x = Color::igammareti(val, gamm, start, ts, mul, add);
-            } else {
-                x = Color::gammareti(val, gamm, start, ts, mul, add);
-            }
-
-            lutTonemask[i] = CLIP(x * 65535.);  // CLIP avoid in some case extra values
-        }
-        gammamask = &lutTonemask;
+                gamma_mask(lutTonemask, pwr, gamm, ts, gamm2)
+                gammamask = &lutTonemask;
 
 
 #ifdef _OPENMP
@@ -7832,9 +7852,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                 float L_;
                                 bufmaskblurexp->L[loy - begy][lox - begx] = LIM01(ble[loy - begy][lox - begx]) * 32768.f;
-                                L_= 2.f * bufmaskblurexp->L[loy - begy][lox - begx];;
+                                L_ = 2.f * bufmaskblurexp->L[loy - begy][lox - begx];;
                                 bufmaskblurexp->L[loy - begy][lox - begx] = 0.5f * (*gammamask)[L_];//(*retinexgamtab)[R_];
-                   }
+                            }
                         }
                 }
 
