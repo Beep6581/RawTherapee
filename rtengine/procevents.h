@@ -675,6 +675,7 @@ enum ProcEventCode {
     Evlocallabchromaskexp = 645,
     Evlocallabgammaskexp = 646,
     Evlocallabslomaskexp = 647,
+    Evlocallabsoftradiusexp = 648,
 
     NUMOFEVENTS
 };

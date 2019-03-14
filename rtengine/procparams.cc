@@ -2408,6 +2408,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromaskexp(0.0),
     gammaskexp(1.0),
     slomaskexp(0.0),
+    softradiusexp(5.0),
     // Shadow highlight
     expshadhigh(false),
     highlights(0),
@@ -2579,6 +2580,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chromaskexp == other.chromaskexp
         && gammaskexp == other.gammaskexp
         && slomaskexp == other.slomaskexp
+        && softradiusexp == other.softradiusexp
         // Shadow highlight
         && expshadhigh == other.expshadhigh
         && highlights == other.highlights
@@ -3707,6 +3709,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskexp, "Locallab", "Chromaskexp_" + std::to_string(i), spot.chromaskexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskexp, "Locallab", "Gammaskexp_" + std::to_string(i), spot.gammaskexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskexp, "Locallab", "Slomaskexp_" + std::to_string(i), spot.slomaskexp, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiusexp, "Locallab", "Softradiusexp_" + std::to_string(i), spot.softradiusexp, keyFile);
                 // Shadow highlight
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expshadhigh, "Locallab", "Expshadhigh_" + std::to_string(i), spot.expshadhigh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).highlights, "Locallab", "highlights_" + std::to_string(i), spot.highlights, keyFile);
@@ -4963,6 +4966,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskexp_" + std::to_string(i), pedited, spot.chromaskexp, spotEdited.chromaskexp);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskexp_" + std::to_string(i), pedited, spot.gammaskexp, spotEdited.gammaskexp);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskexp_" + std::to_string(i), pedited, spot.slomaskexp, spotEdited.slomaskexp);
+                assignFromKeyfile(keyFile, "Locallab", "Softradiusexp_" + std::to_string(i), pedited, spot.softradiusexp, spotEdited.softradiusexp);
                 // Shadow highlight
                 assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + std::to_string(i), pedited, spot.expshadhigh, spotEdited.expshadhigh);
                 assignFromKeyfile(keyFile, "Locallab", "highlights_" + std::to_string(i), pedited, spot.highlights, spotEdited.highlights);

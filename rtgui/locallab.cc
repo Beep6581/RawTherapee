@@ -102,6 +102,7 @@ Locallab::Locallab():
     chromaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 5.))),
     //Shadow hightlights
     highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
     h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
@@ -443,6 +444,7 @@ Locallab::Locallab():
     chromaskexp->setAdjusterListener(this);
     gammaskexp->setAdjusterListener(this);
     slomaskexp->setAdjusterListener(this);
+    softradiusexp->setAdjusterListener(this);
 
     curveEditorG->setCurveListener(this);
 
@@ -503,6 +505,7 @@ Locallab::Locallab():
     exposeBox->pack_start(*sensiex);
     exposeBox->pack_start(*structexp);
     exposeBox->pack_start(*blurexpde);
+    exposeBox->pack_start(*softradiusexp);
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);
     maskexpFrame->set_label_align(0.025, 0.5);
@@ -1714,6 +1717,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskexp = chromaskexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskexp = gammaskexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskexp = slomaskexp->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).softradiusexp = softradiusexp->getValue();
                     // Shadow highlight
                     pp->locallab.spots.at(pp->locallab.selspot).expshadhigh = expshadhigh->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).highlights = highlights->getIntValue();
@@ -1901,6 +1905,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromaskexp = pe->locallab.spots.at(pp->locallab.selspot).chromaskexp || chromaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskexp = pe->locallab.spots.at(pp->locallab.selspot).gammaskexp || gammaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskexp = pe->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).softradiusexp = pe->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
                         // Shadow highlight
                         pe->locallab.spots.at(pp->locallab.selspot).expshadhigh = pe->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).highlights = pe->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
@@ -2074,6 +2079,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromaskexp = pedited->locallab.spots.at(pp->locallab.selspot).chromaskexp || chromaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskexp = pedited->locallab.spots.at(pp->locallab.selspot).gammaskexp || gammaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp = pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp = pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
                         // Shadow highlight
                         pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh = pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).highlights = pedited->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
@@ -2961,6 +2967,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromaskexp->setDefault(defSpot->chromaskexp);
     gammaskexp->setDefault(defSpot->gammaskexp);
     slomaskexp->setDefault(defSpot->slomaskexp);
+    softradiusexp->setDefault(defSpot->softradiusexp);
     //Shadow highlight
     highlights->setDefault((double)defSpot->highlights);
     h_tonalwidth->setDefault((double)defSpot->h_tonalwidth);
@@ -3061,6 +3068,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskexp->setDefaultEditedState(Irrelevant);
         gammaskexp->setDefaultEditedState(Irrelevant);
         slomaskexp->setDefaultEditedState(Irrelevant);
+        softradiusexp->setDefaultEditedState(Irrelevant);
         //Shadow highlight
         highlights->setDefaultEditedState(Irrelevant);
         h_tonalwidth->setDefaultEditedState(Irrelevant);
@@ -3165,6 +3173,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskexp->setDefaultEditedState(defSpotState->chromaskexp ? Edited : UnEdited);
         gammaskexp->setDefaultEditedState(defSpotState->gammaskexp ? Edited : UnEdited);
         slomaskexp->setDefaultEditedState(defSpotState->slomaskexp ? Edited : UnEdited);
+        softradiusexp->setDefaultEditedState(defSpotState->softradiusexp ? Edited : UnEdited);
         //Shadow highlight
         highlights->setDefaultEditedState(defSpotState->highlights ? Edited : UnEdited);
         h_tonalwidth->setDefaultEditedState(defSpotState->h_tonalwidth ? Edited : UnEdited);
@@ -3433,6 +3442,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == slomaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskexp, slomaskexp->getTextValue());
+            }
+        }
+
+        if (a == softradiusexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsoftradiusexp, softradiusexp->getTextValue());
             }
         }
 
@@ -3890,6 +3905,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromaskexp->showEditedCB();
     gammaskexp->showEditedCB();
     slomaskexp->showEditedCB();
+    softradiusexp->showEditedCB();
     //Shadow Highlight
     highlights->showEditedCB();
     h_tonalwidth->showEditedCB();
@@ -4270,6 +4286,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromaskexp->setValue(pp->locallab.spots.at(index).chromaskexp);
         gammaskexp->setValue(pp->locallab.spots.at(index).gammaskexp);
         slomaskexp->setValue(pp->locallab.spots.at(index).slomaskexp);
+        softradiusexp->setValue(pp->locallab.spots.at(index).softradiusexp);
         // Shadow highlight
         expshadhigh->setEnabled(pp->locallab.spots.at(index).expshadhigh);
         highlights->setValue(pp->locallab.spots.at(index).highlights);
@@ -4486,6 +4503,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromaskexp->setEditedState(spotState->chromaskexp ? Edited : UnEdited);
                 gammaskexp->setEditedState(spotState->gammaskexp ? Edited : UnEdited);
                 slomaskexp->setEditedState(spotState->slomaskexp ? Edited : UnEdited);
+                softradiusexp->setEditedState(spotState->softradiusexp ? Edited : UnEdited);
 
                 // Shadow highlight
                 expshadhigh->set_inconsistent(!spotState->expshadhigh);

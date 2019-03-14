@@ -1009,6 +1009,7 @@ struct LocallabParams {
         double chromaskexp;
         double gammaskexp;
         double slomaskexp;
+        double softradiusexp;
         // Shadow highlight
         bool expshadhigh;
         int highlights;

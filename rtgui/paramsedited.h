@@ -424,6 +424,7 @@ public:
         bool chromaskexp;
         bool gammaskexp;
         bool slomaskexp;
+        bool softradiusexp;
         // Shadow highlight
         bool expshadhigh;
         bool highlights;

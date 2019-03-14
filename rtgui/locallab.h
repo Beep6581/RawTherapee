@@ -120,6 +120,7 @@ private:
     Adjuster* const chromaskexp;
     Adjuster* const gammaskexp;
     Adjuster* const slomaskexp;
+    Adjuster* const softradiusexp;
     //Shadow highlight
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;

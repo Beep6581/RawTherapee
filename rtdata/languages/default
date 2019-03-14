@@ -899,6 +899,7 @@ HISTORY_MSG_645;Local - balance deltaE ab-L
 HISTORY_MSG_646;Local - Exp mask chroma
 HISTORY_MSG_647;Local - Exp mask gamma
 HISTORY_MSG_648;Local - Exp mask slope
+HISTORY_MSG_649;Local - Exp soft radius
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2098,6 +2099,7 @@ TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWSTRUC;Show structure
 TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_SHADHIGH;Shadows Highlights
+TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
 TP_LOCALLAB_SOFT;Soft Light
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGTH;Noise
