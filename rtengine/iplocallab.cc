@@ -7852,8 +7852,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                                 float L_;
                                 bufmaskblurexp->L[loy - begy][lox - begx] = LIM01(ble[loy - begy][lox - begx]) * 32768.f;
-                                L_ = 2.f * bufmaskblurexp->L[loy - begy][lox - begx];;
-                                bufmaskblurexp->L[loy - begy][lox - begx] = 0.5f * (*gammamask)[L_];//(*retinexgamtab)[R_];
+                                L_ = 2.f * bufmaskblurexp->L[loy - begy][lox - begx];
+                                bufmaskblurexp->L[loy - begy][lox - begx] = 0.5f * (*gammamask)[L_];
                             }
                         }
                 }
