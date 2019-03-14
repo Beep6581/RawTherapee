@@ -900,6 +900,9 @@ HISTORY_MSG_646;Local - Exp mask chroma
 HISTORY_MSG_647;Local - Exp mask gamma
 HISTORY_MSG_648;Local - Exp mask slope
 HISTORY_MSG_649;Local - Exp soft radius
+HISTORY_MSG_650;Local - Color mask chroma
+HISTORY_MSG_651;Local - Color mask gamma
+HISTORY_MSG_652;Local - Color mask slope
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

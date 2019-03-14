@@ -146,6 +146,9 @@ struct local_params {
     float struexc;
     float blendmacol;
     float radmacol;
+    float chromacol;
+    float gammacol;
+    float slomacol;
     float radmaexp;
     float chromaexp;
     float gammaexp;
@@ -482,6 +485,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float structcolor = (float) locallab.spots.at(sp).structcol;
     float blendmaskcolor = ((float) locallab.spots.at(sp).blendmaskcol) / 100.f ;
     float radmaskcolor = ((float) locallab.spots.at(sp).radmaskcol);
+    float chromaskcolor = ((float) locallab.spots.at(sp).chromaskcol);
+    float gammaskcolor = ((float) locallab.spots.at(sp).gammaskcol);
+    float slomaskcolor = ((float) locallab.spots.at(sp).slomaskcol);
     float blendmaskexpo = ((float) locallab.spots.at(sp).blendmaskexp) / 100.f ;
     float radmaskexpo = ((float) locallab.spots.at(sp).radmaskexp);
     float chromaskexpo = ((float) locallab.spots.at(sp).chromaskexp);
@@ -540,6 +546,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.strengrid = strengthgrid;
     lp.blendmacol = blendmaskcolor;
     lp.radmacol = radmaskcolor;
+    lp.chromacol = chromaskcolor;
+    lp.gammacol = gammaskcolor;
+    lp.slomacol = slomaskcolor;
     lp.radmaexp = radmaskexpo;
     lp.chromaexp = chromaskexpo;
     lp.gammaexp = gammaskexpo;
@@ -8236,8 +8245,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float meanfab = 0.f;
                 float fab = 0.f;
 
-                mean_fab(begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, fab, meanfab, 0.f);
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, fab, meanfab, lp.chromacol);
 
+                LUTf *gammamask = nullptr;
+                LUTf lutTonemask;
+                lutTonemask(65536);
+                double pwr = 1.0 / lp.gammacol;
+                double gamm = lp.gammacol;
+                double ts = lp.slomacol;
+                double gamm2 = lp.gammacol;
+
+                gamma_mask(lutTonemask, pwr, gamm, ts, gamm2);
+                gammamask = &lutTonemask;
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -8321,7 +8340,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
                         }
 
-                        //    }
                     }
 
                 if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3)  && lp.radmacol > 0.f) {
@@ -8334,7 +8352,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     for (int ir = 0; ir < bfh; ir++) //fill with 0
                         for (int jr = 0; jr < bfw; jr++) {
+                            float L_;
                             bufmaskblurcol->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
+                            L_ = 2.f * bufmaskblurcol->L[ir][jr];
+                            bufmaskblurcol->L[ir][jr] = 0.5f * (*gammamask)[L_];
                         }
                 }
 

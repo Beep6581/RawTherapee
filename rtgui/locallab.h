@@ -104,6 +104,9 @@ private:
     Adjuster* const blurcolde;
     Adjuster* const blendmaskcol;
     Adjuster* const radmaskcol;
+    Adjuster* const chromaskcol;
+    Adjuster* const gammaskcol;
+    Adjuster* const slomaskcol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;

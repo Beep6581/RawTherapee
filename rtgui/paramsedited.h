@@ -390,6 +390,9 @@ public:
         bool blurcolde;
         bool blendmaskcol;
         bool radmaskcol;
+        bool chromaskcol;
+        bool gammaskcol;
+        bool slomaskcol;
         bool qualitycurveMethod;
         bool gridMethod;
         bool llcurve;

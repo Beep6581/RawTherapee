@@ -249,6 +249,8 @@ private:
     bool button1Released();
     bool drag1(int modifierKey);
 
+    using ToolPanel::setDefaults;
+
     class ControlSpots:
         public Gtk::TreeModel::ColumnRecord
     {

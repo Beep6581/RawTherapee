@@ -963,6 +963,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
                 locallab.spots.at(j).blendmaskcol = locallab.spots.at(j).blendmaskcol && pSpot.blendmaskcol == otherSpot.blendmaskcol;
                 locallab.spots.at(j).radmaskcol = locallab.spots.at(j).radmaskcol && pSpot.radmaskcol == otherSpot.radmaskcol;
+                locallab.spots.at(j).chromaskcol = locallab.spots.at(j).chromaskcol && pSpot.chromaskcol == otherSpot.chromaskcol;
+                locallab.spots.at(j).gammaskcol = locallab.spots.at(j).gammaskcol && pSpot.gammaskcol == otherSpot.gammaskcol;
+                locallab.spots.at(j).slomaskcol = locallab.spots.at(j).slomaskcol && pSpot.slomaskcol == otherSpot.slomaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).gridMethod = locallab.spots.at(j).gridMethod && pSpot.gridMethod == otherSpot.gridMethod;
                 locallab.spots.at(j).llcurve = locallab.spots.at(j).llcurve && pSpot.llcurve == otherSpot.llcurve;
@@ -2661,6 +2664,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).radmaskcol = mods.locallab.spots.at(i).radmaskcol;
         }
 
+        if (locallab.spots.at(i).chromaskcol) {
+            toEdit.locallab.spots.at(i).chromaskcol = mods.locallab.spots.at(i).chromaskcol;
+        }
+
+        if (locallab.spots.at(i).gammaskcol) {
+            toEdit.locallab.spots.at(i).gammaskcol = mods.locallab.spots.at(i).gammaskcol;
+        }
+
+        if (locallab.spots.at(i).slomaskcol) {
+            toEdit.locallab.spots.at(i).slomaskcol = mods.locallab.spots.at(i).slomaskcol;
+        }
+
         if (locallab.spots.at(i).qualitycurveMethod) {
             toEdit.locallab.spots.at(i).qualitycurveMethod = mods.locallab.spots.at(i).qualitycurveMethod;
         }
@@ -4112,6 +4127,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blurcolde(v),
     blendmaskcol(v),
     radmaskcol(v),
+    chromaskcol(v),
+    gammaskcol(v),
+    slomaskcol(v),
     qualitycurveMethod(v),
     gridMethod(v),
     llcurve(v),
@@ -4281,6 +4299,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blurcolde = v;
     blendmaskcol = v;
     radmaskcol = v;
+    chromaskcol = v;
+    gammaskcol = v;
+    slomaskcol = v;
     qualitycurveMethod = v;
     gridMethod = v;
     llcurve = v;
