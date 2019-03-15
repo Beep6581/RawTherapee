@@ -154,6 +154,7 @@ struct local_params {
     float gammaexp;
     float slomaexp;
     float softradiusexp;
+    float softradiuscol;
     float blendmaexp;
     float radmaSH;
     float blendmaSH;
@@ -497,6 +498,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float gammaskexpo = ((float) locallab.spots.at(sp).gammaskexp);
     float slomaskexpo = ((float) locallab.spots.at(sp).slomaskexp);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
+    float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float blendmaskSH = ((float) locallab.spots.at(sp).blendmaskSH) / 100.f ;
     float radmaskSH = ((float) locallab.spots.at(sp).radmaskSH);
     float chromaskSH = ((float) locallab.spots.at(sp).chromaskSH);
@@ -560,6 +562,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.gammaexp = gammaskexpo;
     lp.slomaexp = slomaskexpo;
     lp.softradiusexp = softradiusexpo;
+    lp.softradiuscol = softradiuscolor;
     lp.struexc = structexclude;
     lp.blendmaexp = blendmaskexpo;
     lp.blendmaSH = blendmaskSH;
@@ -8628,6 +8631,52 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                     delete bufcolcalc;
+
+                    if (lp.softradiuscol > 0.f) {
+                        float maxlig = -50000.f;
+                        float minlig = 50000.f;
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                if (buflight[ir][jr] > maxlig) {
+                                    maxlig = buflight[ir][jr];
+                                }
+
+                                if (buflight[ir][jr] < minlig) {
+                                    minlig = buflight[ir][jr];
+                                }
+                            }
+
+
+                        array2D<float> blesoft(bfw, bfh);
+                        array2D<float> guidsoft(bfw, bfh);
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                blesoft[ir][jr] = LIM01((buflight[ir][jr] - minlig) / (100.f - minlig));
+                                guidsoft[ir][jr] = ((bufcolorig->L[ir][jr]) / 32768.f);
+
+                            }
+
+                        guidedFilter(guidsoft, blesoft, blesoft, lp.softradiuscol * 10.f / sk, 0.04, multiThread, 4); //lp.softradiuscol
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                buflight[ir][jr] = ((100.f - minlig) * blesoft[ir][jr]) + minlig;
+                            }
+
+                        guidsoft(0, 0);
+                        blesoft(0, 0);
+
+                    }
                 }
 
                 transit_shapedetect(0, bufcolorig, originalmaskcol, buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);

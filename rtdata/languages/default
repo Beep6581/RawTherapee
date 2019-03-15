@@ -906,6 +906,7 @@ HISTORY_MSG_652;Local - Color mask slope
 HISTORY_MSG_653;Local - SH mask chroma
 HISTORY_MSG_654;Local - SH mask gamma
 HISTORY_MSG_655;Local - SH mask slope
+HISTORY_MSG_656;Local - Color soft radius
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

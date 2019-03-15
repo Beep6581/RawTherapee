@@ -404,6 +404,7 @@ public:
         bool CCmaskcurve;
         bool LLmaskcurve;
         bool HHmaskcurve;
+        bool softradiuscol;
         // Exposure
         bool expexpose;
         bool expcomp;

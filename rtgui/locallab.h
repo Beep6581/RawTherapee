@@ -107,6 +107,7 @@ private:
     Adjuster* const chromaskcol;
     Adjuster* const gammaskcol;
     Adjuster* const slomaskcol;
+    Adjuster* const softradiuscol;
     // Exposure
     Adjuster* const expcomp;
     Adjuster* const hlcompr;

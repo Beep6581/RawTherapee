@@ -89,6 +89,7 @@ Locallab::Locallab():
     chromaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 5.))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 4.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
@@ -270,6 +271,7 @@ Locallab::Locallab():
     chromaskcol->setAdjusterListener(this);
     gammaskcol->setAdjusterListener(this);
     slomaskcol->setAdjusterListener(this);
+    softradiuscol->setAdjusterListener(this);
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
@@ -397,8 +399,9 @@ Locallab::Locallab():
     superFrame->add(*superBox);
     colorBox->pack_start(*superFrame);
     colorBox->pack_start(*sensi);
-    colorBox->pack_start(*blurcolde);
     colorBox->pack_start(*structcol);
+    colorBox->pack_start(*blurcolde);
+    colorBox->pack_start(*softradiuscol);
     Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
@@ -1715,6 +1718,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskcol = chromaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskcol = gammaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskcol = slomaskcol->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
                     // Exposure
                     pp->locallab.spots.at(pp->locallab.selspot).expexpose = expexpose->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).expcomp = expcomp->getValue();
@@ -1909,6 +1913,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromaskcol = pe->locallab.spots.at(pp->locallab.selspot).chromaskcol || chromaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskcol = pe->locallab.spots.at(pp->locallab.selspot).gammaskcol || gammaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskcol = pe->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).softradiuscol = pe->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         // Exposure
                         pe->locallab.spots.at(pp->locallab.selspot).expexpose = pe->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).expcomp = pe->locallab.spots.at(pp->locallab.selspot).expcomp || expcomp->getEditedState();
@@ -2089,6 +2094,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromaskcol = pedited->locallab.spots.at(pp->locallab.selspot).chromaskcol || chromaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskcol = pedited->locallab.spots.at(pp->locallab.selspot).gammaskcol || gammaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol = pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         // Exposure
                         pedited->locallab.spots.at(pp->locallab.selspot).expexpose = pedited->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).expcomp = pedited->locallab.spots.at(pp->locallab.selspot).expcomp || expcomp->getEditedState();
@@ -2647,6 +2653,7 @@ void Locallab::inversChanged()
         structcol->show();
         strengthgrid->hide();
         blurcolde->show();
+        softradiuscol->show();
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         gridFrame->hide();
     } else if (invers->get_active()) {
@@ -2661,6 +2668,7 @@ void Locallab::inversChanged()
         blurcolde->show();
         gridFrame->hide();
         strengthgrid->hide();
+        softradiuscol->hide();
 
     } else {
         sensi->show();
@@ -2673,6 +2681,7 @@ void Locallab::inversChanged()
         structcol->show();
         blurcolde->show();
         gridFrame->show();
+        softradiuscol->show();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -2993,6 +3002,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromaskcol->setDefault(defSpot->chromaskcol);
     gammaskcol->setDefault(defSpot->gammaskcol);
     slomaskcol->setDefault(defSpot->slomaskcol);
+    softradiuscol->setDefault(defSpot->softradiuscol);
     // Exposure
     expcomp->setDefault(defSpot->expcomp);
     hlcompr->setDefault((double)defSpot->hlcompr);
@@ -3100,6 +3110,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskcol->setDefaultEditedState(Irrelevant);
         gammaskcol->setDefaultEditedState(Irrelevant);
         slomaskcol->setDefaultEditedState(Irrelevant);
+        softradiuscol->setDefaultEditedState(Irrelevant);
         // Exposure
         expcomp->setDefaultEditedState(Irrelevant);
         hlcompr->setDefaultEditedState(Irrelevant);
@@ -3211,6 +3222,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskcol->setDefaultEditedState(defSpotState->chromaskcol ? Edited : UnEdited);
         gammaskcol->setDefaultEditedState(defSpotState->gammaskcol ? Edited : UnEdited);
         slomaskcol->setDefaultEditedState(defSpotState->slomaskcol ? Edited : UnEdited);
+        softradiuscol->setDefaultEditedState(defSpotState->softradiuscol ? Edited : UnEdited);
         // Exposure
         expcomp->setDefaultEditedState(defSpotState->expcomp ? Edited : UnEdited);
         hlcompr->setDefaultEditedState(defSpotState->hlcompr ? Edited : UnEdited);
@@ -3414,6 +3426,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == slomaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskcol, slomaskcol->getTextValue());
+            }
+        }
+
+        if (a == softradiuscol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsoftradiuscol, softradiuscol->getTextValue());
             }
         }
 
@@ -3984,6 +4002,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromaskcol->showEditedCB();
     gammaskcol->showEditedCB();
     slomaskcol->showEditedCB();
+    softradiuscol->showEditedCB();
     // Exposure
     expcomp->showEditedCB();
     hlcompr->showEditedCB();
@@ -4365,6 +4384,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromaskcol->setValue(pp->locallab.spots.at(index).chromaskcol);
         gammaskcol->setValue(pp->locallab.spots.at(index).gammaskcol);
         slomaskcol->setValue(pp->locallab.spots.at(index).slomaskcol);
+        softradiuscol->setValue(pp->locallab.spots.at(index).softradiuscol);
 
         // Exposure
         expexpose->setEnabled(pp->locallab.spots.at(index).expexpose);
@@ -4588,6 +4608,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromaskcol->setEditedState(spotState->chromaskcol ? Edited : UnEdited);
                 gammaskcol->setEditedState(spotState->gammaskcol ? Edited : UnEdited);
                 slomaskcol->setEditedState(spotState->slomaskcol ? Edited : UnEdited);
+                softradiuscol->setEditedState(spotState->softradiuscol ? Edited : UnEdited);
 
                 // Exposure
                 expexpose->set_inconsistent(!spotState->expexpose);
@@ -4750,6 +4771,7 @@ void Locallab::updateSpecificGUIState()
         maskcolFrame->show();
         structcol->show();
         blurcolde->show();
+        softradiuscol->show();
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         gridFrame->hide();
     } else if (invers->get_active()) {
@@ -4760,6 +4782,7 @@ void Locallab::updateSpecificGUIState()
         qualitycurveMethod->hide();
         labqualcurv->hide();
         maskcolFrame->hide();
+        softradiuscol->hide();
         structcol->hide();
         blurcolde->show();
         gridFrame->hide();
@@ -4774,6 +4797,7 @@ void Locallab::updateSpecificGUIState()
         structcol->show();
         blurcolde->show();
         gridFrame->show();
+        softradiuscol->show();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
