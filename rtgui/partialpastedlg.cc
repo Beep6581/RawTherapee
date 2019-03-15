@@ -17,9 +17,12 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "partialpastedlg.h"
+
+#include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
-#include "guiutils.h"
+
+#include "../rtengine/procparams.h"
 
 PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent)
     : Gtk::Dialog (title, *parent, true)
@@ -662,9 +665,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 {
 
     ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
-    falsePE.locallab.spots.resize(srcPE->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(false));
+    falsePE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(false));
     ParamsEdited filterPE(true); // Contains the initial information about the loaded values
-    filterPE.locallab.spots.resize(srcPE->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
+    filterPE.locallab.spots.resize(srcPP->locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(true));
 
     if (srcPE) {
         filterPE = *srcPE;
