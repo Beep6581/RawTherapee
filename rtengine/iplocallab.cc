@@ -1862,18 +1862,13 @@ void ImProcFunctions::addGaNoise(LabImage *lab, LabImage *dst, const float mean,
         }
     }
 }
-
+/*
 static void gamma_mask(LUTf & lutTonemask, double pwr, double gamm, double ts, double gamm2)
 {
 
 
     GammaValues g_a;
 
-    /*        double pwr = 1.0 / lp.gammaexp;
-            double gamm = lp.gammaexp;
-            double ts = lp.slomaexp;
-            double gamm2 = lp.gammaexp;
-    */
     if (gamm2 < 1.) {
         std::swap(pwr, gamm);
     }
@@ -1911,7 +1906,7 @@ static void gamma_mask(LUTf & lutTonemask, double pwr, double gamm, double ts, d
     }
 
 }
-
+*/
 static void balancedeltaE(float kL, float &kab)
 {
     float mincurs = 0.3f;//minimum slider balan_
@@ -7010,7 +7005,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                 if ((lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3)  && lp.radmaSH > 0.f) {
-
                     guidedFilter(guid, ble, ble, lp.radmaSH * 10.f / sk, 0.001, multiThread, 4);
 //float maxsh = -100.f;
 #ifdef _OPENMP
@@ -7758,8 +7752,42 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 double gamm = lp.gammaexp;
                 double ts = lp.slomaexp;
                 double gamm2 = lp.gammaexp;
+                GammaValues g_a;
+                if (gamm2 < 1.) {
+                    std::swap(pwr, gamm);
+                }
 
-                gamma_mask(lutTonemask, pwr, gamm, ts, gamm2);
+                int mode = 0;
+                Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+
+                double start;
+                double add;
+
+                if (gamm2 < 1.) {
+                    start = g_a[2];
+                    add = g_a[4];
+                } else {
+                    start = g_a[3];
+                    add = g_a[4];
+                }
+
+                double mul = 1. + g_a[4];
+
+
+                for (int i = 0; i < 65536; i++) {
+                    double val = (i) / 65535.;
+                    double x;
+
+                    if (gamm2 < 1.) {
+                        x = Color::igammareti(val, gamm, start, ts, mul, add);
+                    } else {
+                        x = Color::gammareti(val, gamm, start, ts, mul, add);
+                    }
+
+                    lutTonemask[i] = CLIP(x * 65535.);  // CLIP avoid in some case extra values
+                }
+
+//               gamma_mask(lutTonemask, pwr, gamm, ts, gamm2);
                 gammamask = &lutTonemask;
 
 
@@ -7849,9 +7877,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3)  && lp.radmaexp > 0.f) {
-
-                    guidedFilter(guid, ble, ble, lp.radmaexp * 10.f / sk, 0.001, multiThread, 4);
+                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3) /* && lp.radmaexp > 0.f*/) {
+                    if (lp.radmaexp > 0.f) {
+                        guidedFilter(guid, ble, ble, lp.radmaexp * 10.f / sk, 0.001, multiThread, 4);
+                    }
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -8026,7 +8055,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                             }
 
-                    //    printf("maxlig=%f minlig=%f\n", maxlig, minlig);
+                        //    printf("maxlig=%f minlig=%f\n", maxlig, minlig);
 
                         array2D<float> blesoft(bfw, bfh);
                         array2D<float> guidsoft(bfw, bfh);
@@ -8247,16 +8276,52 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, fab, meanfab, lp.chromacol);
 
-                LUTf *gammamask = nullptr;
-                LUTf lutTonemask;
-                lutTonemask(65536);
+                LUTf *gammamaskexp = nullptr;
+                LUTf lutTonemaskexp;
+                lutTonemaskexp(65536);
                 double pwr = 1.0 / lp.gammacol;
                 double gamm = lp.gammacol;
                 double ts = lp.slomacol;
                 double gamm2 = lp.gammacol;
+                GammaValues g_a;
 
-                gamma_mask(lutTonemask, pwr, gamm, ts, gamm2);
-                gammamask = &lutTonemask;
+                if (gamm2 < 1.) {
+                    std::swap(pwr, gamm);
+                }
+
+                int mode = 0;
+                Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+
+                //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+                double start;
+                double add;
+
+                if (gamm2 < 1.) {
+                    start = g_a[2];
+                    add = g_a[4];
+                } else {
+                    start = g_a[3];
+                    add = g_a[4];
+                }
+
+                double mul = 1. + g_a[4];
+
+
+                for (int i = 0; i < 65536; i++) {
+                    double val = (i) / 65535.;
+                    double x;
+
+                    if (gamm2 < 1.) {
+                        x = Color::igammareti(val, gamm, start, ts, mul, add);
+                    } else {
+                        x = Color::gammareti(val, gamm, start, ts, mul, add);
+                    }
+
+                    lutTonemaskexp[i] = CLIP(x * 65535.);  // CLIP avoid in some case extra values
+                }
+
+//                gamma_mask(lutTonemask, pwr, gamm, ts, gamm2);
+                gammamaskexp = &lutTonemaskexp;
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -8342,9 +8407,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3)  && lp.radmacol > 0.f) {
-
-                    guidedFilter(guid, ble, ble, lp.radmacol * 10.f / sk, 0.001, multiThread, 4);
+                if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3)  /*&& lp.radmacol > 0.f*/) {
+                    if (lp.radmacol > 0.f) {
+                        guidedFilter(guid, ble, ble, lp.radmacol * 10.f / sk, 0.001, multiThread, 4);
+                    }
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -8355,7 +8421,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             float L_;
                             bufmaskblurcol->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
                             L_ = 2.f * bufmaskblurcol->L[ir][jr];
-                            bufmaskblurcol->L[ir][jr] = 0.5f * (*gammamask)[L_];
+                            bufmaskblurcol->L[ir][jr] = 0.5f * (*gammamaskexp)[L_];
                         }
                 }
 
