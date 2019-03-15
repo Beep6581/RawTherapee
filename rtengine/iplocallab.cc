@@ -157,6 +157,9 @@ struct local_params {
     float blendmaexp;
     float radmaSH;
     float blendmaSH;
+    float chromaSH;
+    float gammaSH;
+    float slomaSH;
     float struexp;
     float blurexp;
     float blurcol;
@@ -496,6 +499,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float blendmaskSH = ((float) locallab.spots.at(sp).blendmaskSH) / 100.f ;
     float radmaskSH = ((float) locallab.spots.at(sp).radmaskSH);
+    float chromaskSH = ((float) locallab.spots.at(sp).chromaskSH);
+    float gammaskSH = ((float) locallab.spots.at(sp).gammaskSH);
+    float slomaskSH = ((float) locallab.spots.at(sp).slomaskSH);
     float structexpo = (float) locallab.spots.at(sp).structexp;
     float blurexpo = (float) locallab.spots.at(sp).blurexpde;
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
@@ -558,6 +564,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blendmaexp = blendmaskexpo;
     lp.blendmaSH = blendmaskSH;
     lp.radmaSH = radmaskSH;
+    lp.chromaSH = chromaskSH;
+    lp.gammaSH = gammaskSH;
+    lp.slomaSH = slomaskSH;
 
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
@@ -6915,7 +6924,52 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float meanfab = 0.f;
                 float fab = 0.f;
 
-                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab, 0.f);
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab, lp.chromaSH);
+
+                LUTf *gammamaskSH = nullptr;
+                LUTf lutTonemaskSH;
+                lutTonemaskSH(65536);
+                double pwr = 1.0 / lp.gammaSH;
+                double gamm = lp.gammaSH;
+                double ts = lp.slomaSH;
+                double gamm2 = lp.gammaSH;
+                GammaValues g_a;
+                if (gamm2 < 1.) {
+                    std::swap(pwr, gamm);
+                }
+
+                int mode = 0;
+                Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+
+                double start;
+                double add;
+
+                if (gamm2 < 1.) {
+                    start = g_a[2];
+                    add = g_a[4];
+                } else {
+                    start = g_a[3];
+                    add = g_a[4];
+                }
+
+                double mul = 1. + g_a[4];
+
+
+                for (int i = 0; i < 65536; i++) {
+                    double val = (i) / 65535.;
+                    double x;
+
+                    if (gamm2 < 1.) {
+                        x = Color::igammareti(val, gamm, start, ts, mul, add);
+                    } else {
+                        x = Color::gammareti(val, gamm, start, ts, mul, add);
+                    }
+
+                    lutTonemaskSH[i] = CLIP(x * 65535.);  // CLIP avoid in some case extra values
+                }
+
+//               gamma_mask(lutTonemask, pwr, gamm, ts, gamm2);
+                gammamaskSH = &lutTonemaskSH;
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -6939,7 +6993,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
                         }
                     }
-
+//printf("fab=%f \n", fab);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7001,23 +7055,24 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             guid[ir][jr] = bufexporig->L[ir][jr] / 32768.f;
                         }
 
-                        //    }
                     }
 
-                if ((lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3)  && lp.radmaSH > 0.f) {
-                    guidedFilter(guid, ble, ble, lp.radmaSH * 10.f / sk, 0.001, multiThread, 4);
-//float maxsh = -100.f;
+                if ((lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3)  /*&& lp.radmaSH > 0.f*/) {
+                    if (lp.radmaSH > 0.f) {
+                        guidedFilter(guid, ble, ble, lp.radmaSH * 10.f / sk, 0.001, multiThread, 4);
+                    }
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int ir = 0; ir < bfh; ir++) 
                         for (int jr = 0; jr < bfw; jr++) {
-
+                            float L_;
                             bufmaskblurSH->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
+                            L_ = 2.f * bufmaskblurSH->L[ir][jr];
+                            bufmaskblurSH->L[ir][jr] = 0.5f * (*gammamaskSH)[L_];
                         }
 
-                    //   printf("maxsh=%f \n", maxsh);
                 }
 
                 float radiusb = 1.f / sk;

@@ -444,6 +444,9 @@ public:
         bool radmaskSH;
         bool blurSHde;
         bool inverssh;
+        bool chromaskSH;
+        bool gammaskSH;
+        bool slomaskSH;
         // Vibrance
         bool expvibrance;
         bool saturated;

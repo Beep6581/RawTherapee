@@ -134,6 +134,9 @@ private:
     Adjuster* const blendmaskSH;
     Adjuster* const radmaskSH;
     Adjuster* const blurSHde;
+    Adjuster* const chromaskSH;
+    Adjuster* const gammaskSH;
+    Adjuster* const slomaskSH;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;

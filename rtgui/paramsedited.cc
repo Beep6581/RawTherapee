@@ -1017,6 +1017,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).radmaskSH = locallab.spots.at(j).radmaskSH && pSpot.radmaskSH == otherSpot.radmaskSH;
                 locallab.spots.at(j).blurSHde = locallab.spots.at(j).blurSHde && pSpot.blurSHde == otherSpot.blurSHde;
                 locallab.spots.at(j).inverssh = locallab.spots.at(j).inverssh && pSpot.inverssh == otherSpot.inverssh;
+                locallab.spots.at(j).chromaskSH = locallab.spots.at(j).chromaskSH && pSpot.chromaskSH == otherSpot.chromaskSH;
+                locallab.spots.at(j).gammaskSH = locallab.spots.at(j).gammaskSH && pSpot.gammaskSH == otherSpot.gammaskSH;
+                locallab.spots.at(j).slomaskSH = locallab.spots.at(j).slomaskSH && pSpot.slomaskSH == otherSpot.slomaskSH;
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -2870,6 +2873,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).inverssh = mods.locallab.spots.at(i).inverssh;
         }
 
+        if (locallab.spots.at(i).chromaskSH) {
+            toEdit.locallab.spots.at(i).chromaskSH = mods.locallab.spots.at(i).chromaskSH;
+        }
+
+        if (locallab.spots.at(i).gammaskSH) {
+            toEdit.locallab.spots.at(i).gammaskSH = mods.locallab.spots.at(i).gammaskSH;
+        }
+
+        if (locallab.spots.at(i).slomaskSH) {
+            toEdit.locallab.spots.at(i).slomaskSH = mods.locallab.spots.at(i).slomaskSH;
+        }
+
         // Vibrance
         if (locallab.spots.at(i).expvibrance) {
             toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
@@ -4181,6 +4196,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     radmaskSH(v),
     blurSHde(v),
     inverssh(v),
+    chromaskSH(v),
+    gammaskSH(v),
+    slomaskSH(v),
     // Vibrance
     expvibrance(v),
     saturated(v),
@@ -4353,6 +4371,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     radmaskSH = v;
     blurSHde = v;
     inverssh = v;
+    chromaskSH = v;
+    gammaskSH = v;
+    slomaskSH = v;
     // Vibrance
     expvibrance = v;
     saturated = v;

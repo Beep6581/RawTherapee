@@ -2428,6 +2428,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     radmaskSH(10.0),
     blurSHde(5),
     inverssh(false),
+    chromaskSH(0.0),
+    gammaskSH(1.0),
+    slomaskSH(0.0),
     // Vibrance
     expvibrance(false),
     saturated(0),
@@ -2603,6 +2606,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && radmaskSH == other.radmaskSH
         && blurSHde == other.blurSHde
         && inverssh == other.inverssh
+        && chromaskSH == other.chromaskSH
+        && gammaskSH == other.gammaskSH
+        && slomaskSH == other.slomaskSH
         // Vibrance
         && expvibrance == other.expvibrance
         && saturated == other.saturated
@@ -3735,6 +3741,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskSH, "Locallab", "RadmaskSH_" + std::to_string(i), spot.radmaskSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurSHde, "Locallab", "BlurSHde_" + std::to_string(i), spot.blurSHde, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inverssh, "Locallab", "Inverssh_" + std::to_string(i), spot.inverssh, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskSH, "Locallab", "ChromaskSH_" + std::to_string(i), spot.chromaskSH, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskSH, "Locallab", "GammaskSH_" + std::to_string(i), spot.gammaskSH, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskSH, "Locallab", "SlomaskSH_" + std::to_string(i), spot.slomaskSH, keyFile);
                 // Vibrance
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expvibrance, "Locallab", "Expvibrance_" + std::to_string(i), spot.expvibrance, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).saturated, "Locallab", "Saturated_" + std::to_string(i), spot.saturated, keyFile);
@@ -4995,6 +5004,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "RadmaskSH_" + std::to_string(i), pedited, spot.radmaskSH, spotEdited.radmaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "BlurSHde_" + std::to_string(i), pedited, spot.blurSHde, spotEdited.blurSHde);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssh_" + std::to_string(i), pedited, spot.inverssh, spotEdited.inverssh);
+                assignFromKeyfile(keyFile, "Locallab", "ChromaskSH_" + std::to_string(i), pedited, spot.chromaskSH, spotEdited.chromaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "GammaskSH_" + std::to_string(i), pedited, spot.gammaskSH, spotEdited.gammaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + std::to_string(i), pedited, spot.slomaskSH, spotEdited.slomaskSH);
                 // Vibrance
                 assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
                 assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, spot.saturated, spotEdited.saturated);
