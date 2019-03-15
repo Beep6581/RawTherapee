@@ -34,6 +34,7 @@
 
 *:disabled {
     color: #666666;
+    opacity: 0.7;
 }
 
 .view:selected:not(check):not(radio) {
@@ -43,7 +44,7 @@
 
 /* The Places and Dir browser panels */
 textview.view, treeview.view {
-    padding: 0.166666666666666666em;
+    padding: 0;
     margin: 0;
 }
 .view, .textview, textview, textview.view {
@@ -409,10 +410,8 @@ button  {
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
 }
 
-/* Curve mode buttons and drop-downs */
-button:checked.Left {
-    background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
-    background-color: #585858;
+button:disabled {
+    opacity: 1;
 }
 
 button.flat  {
@@ -960,11 +959,11 @@ fontchooser scrolledwindow,
     padding: 0 0.4166666666666666em 0 0;
 }
 #PlacesPaned > box:nth-child(1) scrolledwindow + grid {
-    margin: -2px 0 -2px 0;
+    margin: 0;
     border-top-width: 0.083333333333333333em;
 }
 #PlacesPaned  > box:nth-child(3) treeview {
-    padding: 0.25em 0.333333333333333333em 0.25em 0.333333333333333333em;
+    padding: 0;
 }
 
 #MainNotebook > header.left tab image {

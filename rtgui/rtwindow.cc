@@ -96,12 +96,7 @@ RTWindow::RTWindow ()
 {
 
     cacheMgr->init ();
-    RTScalable::init(this);
-    RTSurface::init();
-    RTImage::init();
-    WhiteBalance::init();
     ProfilePanel::init (this);
-    MyExpander::init();
 
     // ------- loading theme files
 
@@ -238,6 +233,12 @@ RTWindow::RTWindow ()
 #endif
 
     // ------- end loading theme files
+
+    RTScalable::init(this);
+    RTSurface::init();
+    RTImage::init();
+    WhiteBalance::init();
+    MyExpander::init();
 
 #ifndef WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {

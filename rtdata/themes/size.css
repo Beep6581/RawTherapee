@@ -11,34 +11,33 @@ progressbar.vertical {
 }
 progressbar trough {
     border-width: 0.083333333333333333em;
-    border-radius: 0.416666666666666666em;
+    border-radius: 0.3em;
 }
 
 progressbar trough progress {
-    border-radius: 0.416666666666666666em;
     border-width: 0.083333333333333333em;
+    border-radius: 0.3em;
 }
 
 progressbar.vertical trough {
-    min-width: 0.416666666666666666em;
+    min-width: 0.6em;
 }
 progressbar.vertical trough progress {
-    min-width: 0.416666666666666666em;
-    margin: -0.083333333333333333em 0;
+    min-width: 0.6em;
+    margin: 0;
 }
 
-
 progressbar.horizontal trough {
-    min-height: 0.416666666666666666em;
-    margin-top: 0.416666666666666666em;
+    min-height: 0.6em;
+    margin-top: 0;
 }
 #IopsPanel progressbar.horizontal trough {
     margin-top: 0;
 }
 
 progressbar.horizontal trough progress {
-    min-height: 0.416666666666666666em;
-    margin: 0 -1px;
+    min-height: 0.6em;
+    margin: 0;
 }
 
 /* #IopsPanel progressbar trough.empty, */
@@ -360,6 +359,7 @@ menu {
     border-width: 0.083333333333333333em;
     padding: 0.083333333333333333em;
     margin: 0;
+    border-radius: 0;
 }
 menu > arrow.top,
 menu > arrow.top:hover,
@@ -740,7 +740,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     padding: 0;
     border-width: 0.083333333333333333em;
     border-radius: 0;
-    min-height: 1.666666666666666666em;/*x*/
+    min-height: 0.5em;/*x*/
 }
 /**/
 

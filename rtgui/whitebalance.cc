@@ -35,11 +35,6 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM) + 1];
-/*
-Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, WhiteBalance::wbSunPB, WhiteBalance::wbTungstenPB,
-                          WhiteBalance::wbCloudyPB, WhiteBalance::wbShadePB, WhiteBalance::wbFluorescentPB, WhiteBalance::wbLampPB,
-                          WhiteBalance::wbFlashPB, WhiteBalance::wbLedPB, WhiteBalance::wbCustomPB;
-*/
 
 void WhiteBalance::init ()
 {
