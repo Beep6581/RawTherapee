@@ -773,6 +773,7 @@ HISTORY_MSG_RAWCACORR_AUTOIT;A.C. Raw - Itérations
 HISTORY_MSG_RAWCACORR_COLORSHIFT;A.C. Raw - Éviter les dérives de teinte
 HISTORY_MSG_RAW_BORDER;Bord Raw
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;Redim. - Autoriser l'agrandissement
+HISTORY_MSG_SHARPENING_BLUR;Netteté - Rayon de floutage
 HISTORY_MSG_SHARPENING_CONTRAST;Netteté - Seuil de contraste
 HISTORY_MSG_SH_COLORSPACE;O/HL - Espace couleur
 HISTORY_MSG_SOFTLIGHT_ENABLED;Lumière douce
@@ -914,6 +915,8 @@ MAIN_TAB_EXIF;EXIF
 MAIN_TAB_EXPORT; Export Rapide 
 MAIN_TAB_EXPOSURE;Exposition
 MAIN_TAB_EXPOSURE_TOOLTIP;Raccourci:<b>Alt-e</b>
+MAIN_TAB_FAVORITES;Favoris
+MAIN_TAB_FAVORITES_TOOLTIP;Raccourci: <b>Alt-u</b>
 MAIN_TAB_FILTER; Filtrer 
 MAIN_TAB_INSPECT; Inspecter 
 MAIN_TAB_IPTC;IPTC
@@ -1065,6 +1068,12 @@ PREFERENCES_CACHECLEAR_SAFETY;Seuls les fichiers mis en cache sont effacés. Les
 PREFERENCES_CACHEMAXENTRIES;Nombre maximal d'éléments dans le Cache
 PREFERENCES_CACHEOPTS;Options du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
+PREFERENCES_CHUNKSIZES;Tuiles par thread
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;Dématriçage AMaZE
+PREFERENCES_CHUNKSIZE_RAW_CA;Correction AC Raw
+PREFERENCES_CHUNKSIZE_RAW_RCD;Dématriçage RCD
+PREFERENCES_CHUNKSIZE_RAW_XT;Dématriçage Xtrans
+PREFERENCES_CHUNKSIZE_RGB;Traitement RVB
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CLUTSCACHE;Cache HaldCLUT
 PREFERENCES_CLUTSCACHE_LABEL;Nombre maximum de chache CLUT
@@ -1181,6 +1190,8 @@ PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajo
 PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
 PREFERENCES_PARSEDEXTDOWNHINT;Déplacer l'extension sélectionnée plus bas dans la liste.
 PREFERENCES_PARSEDEXTUPHINT;Déplacer l'extension sélectionnée plus haut dans la liste.
+PREFERENCES_PERFORMANCE_MEASURE;Mesure
+PREFERENCES_PERFORMANCE_MEASURE_HINT;Indique les temps de traitement dans une console
 PREFERENCES_PERFORMANCE_THREADS;Unités d'exécution (Threads)
 PREFERENCES_PERFORMANCE_THREADS_LABEL;Nombre maximum d'unité d'exécution pour la Réduction de Bruit et les Niveaux d'Ondelettes (0 = Automatique)
 PREFERENCES_PREVDEMO;Méthode de Dématriçage de l'Aperçu
@@ -1879,6 +1890,7 @@ TP_RAW_HD_TOOLTIP;Des valeurs basses rendront la détection de pixel chaud/mort 
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Sous-image
+TP_RAW_IMAGENUM_SN;Mode SN
 TP_RAW_IMAGENUM_TOOLTIP;Certains fichiers RAW consistent en plusieurs sous-images (Pentax Pixel Shift, Pentax HDR 3-en-1, Canon Dual Pixel).\n\nLors de l'usage d'une méthode de dématriçage autre que Pixel Shift, ceci sélectionne quel sous-image est utilisée.\n\nLors de l'usage de la méthode de dématriçage Pixel Shift sur un fichier RAW Pixel, toutes les sous-images sont utilisées, et ceci sélectionne quelle sous-image devrait être utilisé pour la détection de mouvement.
 TP_RAW_LABEL;Dématriçage
 TP_RAW_LMMSE;LMMSE
@@ -2060,6 +2072,7 @@ TP_SHARPENEDGE_LABEL;Bords
 TP_SHARPENEDGE_PASSES;Itérations
 TP_SHARPENEDGE_THREE;Luminance uniquement
 TP_SHARPENING_AMOUNT;Quantité
+TP_SHARPENING_BLUR;Rayon de floutage
 TP_SHARPENING_CONTRAST;Seuil de contraste
 TP_SHARPENING_EDRADIUS;Rayon
 TP_SHARPENING_EDTOLERANCE;Tolérance des bords
@@ -2330,12 +2343,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
-!MAIN_TAB_FAVORITES;Favorites
-!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
-!TP_RAW_IMAGENUM_SN;SN mode
-!TP_SHARPENING_BLUR;Blur radius
