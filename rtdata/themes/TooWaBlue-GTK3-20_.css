@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2019 TooWaBoo
-  Version 3.04
+  Version 3.05
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -84,15 +84,13 @@
     box-shadow: none;
 }
 
-/*GTK+4 now supports a more versatile -gtk-icon-filter instead. Replace
--gtk-icon-effect: dim; with -gtk-icon-filter: opacity(0.5); and
--gtk-icon-effect: highlight; with -gtk-icon-filter: brightness(1.2);.*/
 *:disabled {
     color: @fg-disabled;
-    -gtk-icon-effect: dim;
+    -gtk-icon-effect: none;
 }
-*:hover {
-    -gtk-icon-effect: highlight;
+
+image:disabled {
+    opacity: .45;
 }
 
 #ToolPanelNotebook {
