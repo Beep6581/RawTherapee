@@ -16,9 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EDIT_H_
-#define _EDIT_H_
-
+#pragma once
 #include <gtkmm.h>
 #include "../rtengine/imagefloat.h"
 #include "editid.h"
@@ -27,6 +25,10 @@
 #include "../rtengine/coord.h"
 #include "guiutils.h"
 #include "options.h"
+
+#ifdef GUIVERSION
+#include "rtsurface.h"
+#endif
 
 class EditDataProvider;
 class EditSubscriber;
@@ -336,6 +338,8 @@ public:
     virtual void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) = 0;
 };
 
+#ifdef GUIVERSION
+
 class Circle : public Geometry
 {
 public:
@@ -403,34 +407,34 @@ class OPIcon : public Geometry    // OP stands for "On Preview"
 {
 
 private:
-    Cairo::RefPtr<Cairo::ImageSurface> normalImg;
-    Cairo::RefPtr<Cairo::ImageSurface> prelightImg;
-    Cairo::RefPtr<Cairo::ImageSurface> activeImg;
-    Cairo::RefPtr<Cairo::ImageSurface> draggedImg;
-    Cairo::RefPtr<Cairo::ImageSurface> insensitiveImg;
+    Cairo::RefPtr<RTSurface> normalImg;
+    Cairo::RefPtr<RTSurface> prelightImg;
+    Cairo::RefPtr<RTSurface> activeImg;
+    Cairo::RefPtr<RTSurface> draggedImg;
+    Cairo::RefPtr<RTSurface> insensitiveImg;
 
     static void updateImages();
     void changeImage(Glib::ustring &newImage);
-    void drawImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
-    void drawMOImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawImage (Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawMOImage (Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drivenPointToRectangle(const rtengine::Coord &pos, rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H);
 
 public:
     DrivenPoint drivenPoint;
     rtengine::Coord position;
 
-    OPIcon (const Cairo::RefPtr<Cairo::ImageSurface> &normal,
-            const Cairo::RefPtr<Cairo::ImageSurface> &active,
-            const Cairo::RefPtr<Cairo::ImageSurface> &prelight = {},
-            const Cairo::RefPtr<Cairo::ImageSurface> &dragged = {},
-            const Cairo::RefPtr<Cairo::ImageSurface> &insensitive = {},
+    OPIcon (const Cairo::RefPtr<RTSurface> &normal,
+            const Cairo::RefPtr<RTSurface> &active,
+            const Cairo::RefPtr<RTSurface> &prelight = {},
+            const Cairo::RefPtr<RTSurface> &dragged = {},
+            const Cairo::RefPtr<RTSurface> &insensitive = {},
             DrivenPoint drivenPoint = DP_CENTERCENTER);
     OPIcon (Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustring  prelightImage = "", Glib::ustring  draggedImage = "", Glib::ustring insensitiveImage = "", DrivenPoint drivenPoint = DP_CENTERCENTER);
-    const Cairo::RefPtr<Cairo::ImageSurface> getNormalImg();
-    const Cairo::RefPtr<Cairo::ImageSurface> getPrelightImg();
-    const Cairo::RefPtr<Cairo::ImageSurface> getActiveImg();
-    const Cairo::RefPtr<Cairo::ImageSurface> getDraggedImg();
-    const Cairo::RefPtr<Cairo::ImageSurface> getInsensitiveImg();
+    const Cairo::RefPtr<RTSurface> getNormalImg();
+    const Cairo::RefPtr<RTSurface> getPrelightImg();
+    const Cairo::RefPtr<RTSurface> getActiveImg();
+    const Cairo::RefPtr<RTSurface> getDraggedImg();
+    const Cairo::RefPtr<RTSurface> getInsensitiveImg();
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
     void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
@@ -440,6 +444,8 @@ class OPAdjuster : public Geometry    // OP stands for "On Preview"
 {
 
 };
+
+#endif
 
 /// @brief Method for client tools needing Edit information
 class EditSubscriber
@@ -791,23 +797,6 @@ inline Geometry::Geometry () :
                 IMAGE), state (NORMAL) {
 }
 
-inline Circle::Circle () :
-        center (100, 100), radius (10), filled (false), radiusInImageSpace (
-                false) {
-}
-
-inline Rectangle::Rectangle () :
-        topLeft (0, 0), bottomRight (10, 10), filled (false) {
-}
-
-inline Polyline::Polyline () :
-        filled (false) {
-}
-
-inline Line::Line () :
-        begin (10, 10), end (100, 100) {
-}
-
 inline RGBAColor::RGBAColor () :
         RGBColor (0., 0., 0.), a (0.) {
 }
@@ -830,6 +819,25 @@ inline RGBAColor::RGBAColor (double r, double g, double b, double a) :
 
 inline RGBAColor::RGBAColor (char r, char g, char b, char a) :
         RGBColor (r, g, b), a (double (a) / 255.) {
+}
+
+#ifdef GUIVERSION
+
+inline Circle::Circle () :
+        center (100, 100), radius (10), filled (false), radiusInImageSpace (
+                false) {
+}
+
+inline Rectangle::Rectangle () :
+        topLeft (0, 0), bottomRight (10, 10), filled (false) {
+}
+
+inline Polyline::Polyline () :
+        filled (false) {
+}
+
+inline Line::Line () :
+        begin (10, 10), end (100, 100) {
 }
 
 inline Circle::Circle (rtengine::Coord& center, int radius, bool filled,

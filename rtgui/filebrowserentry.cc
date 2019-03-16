@@ -58,11 +58,11 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     scale = 1;
 
     if (!iconsLoaded) {
-        editedIcon = RTImage::createFromFile ("tick-small.png");
-        recentlySavedIcon = RTImage::createFromFile ("save-small.png");
-        enqueuedIcon = RTImage::createFromFile ("gears-small.png");
-        hdr = RTImage::createFromFile ("filetype-hdr.png");
-        ps = RTImage::createFromFile ("filetype-ps.png");
+        editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
+        recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
+        enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
+        hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
+        ps = RTImage::createPixbufFromFile ("filetype-ps.png");
         iconsLoaded = true;
     }
 

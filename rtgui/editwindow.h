@@ -26,7 +26,9 @@ class EditWindow : public Gtk::Window
 {
 
 private:
+    double resolution;
     RTWindow* parent;
+    RTImage appIcon;
 
     Gtk::Notebook* mainNB;
     std::set<Glib::ustring> filesEdited;
@@ -36,6 +38,8 @@ private:
     bool isClosed;
     void toggleFullscreen ();
     void restoreWindow();
+    bool updateResolution();
+    void setAppIcon();
 
 public:
     // Check if the system has more than one display and option is set

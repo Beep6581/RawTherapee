@@ -732,6 +732,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
                 dCurve->paramCurveEd.at(3)
             );
 
+            double s = (double)RTScalable::getScale();
             highlights->setValue (dCurve->paramCurveEd.at(4));
             highlights->setLabel(label[3]);
             lights->setValue (dCurve->paramCurveEd.at(5));
@@ -742,7 +743,10 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             shadows->setLabel(label[0]);
             shcSelector->coloredBar.setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
             shcSelector->coloredBar.setBgGradient(bgGradient);
-            shcSelector->setMargins( (leftBar ? CBAR_WIDTH + CBAR_MARGIN : RADIUS), RADIUS );
+            shcSelector->setMargins(
+                    (int)( ((leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN + RADIUS : RADIUS) - 1.5) * s ),
+                    (int)((RADIUS - 1.5) * s)
+                    );
             paramCurve->setColoredBar(leftBar, nullptr);
             paramCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editParam, editParamConn);

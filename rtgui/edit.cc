@@ -18,7 +18,6 @@
  */
 
 #include "edit.h"
-#include "../rtengine/icons.h"
 
 ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {}
 
@@ -165,6 +164,8 @@ RGBColor Geometry::getOuterLineColor ()
 
     return color;
 }
+
+#ifdef GUIVERSION
 
 void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
@@ -801,11 +802,11 @@ void OPIcon::drivenPointToRectangle(const rtengine::Coord &pos,
     bottomRight.y = topLeft.y + H - 1;
 }
 
-OPIcon::OPIcon(const Cairo::RefPtr<Cairo::ImageSurface> &normal,
-               const Cairo::RefPtr<Cairo::ImageSurface> &active,
-               const Cairo::RefPtr<Cairo::ImageSurface> &prelight,
-               const Cairo::RefPtr<Cairo::ImageSurface> &dragged,
-               const Cairo::RefPtr<Cairo::ImageSurface> &insensitive,
+OPIcon::OPIcon(const Cairo::RefPtr<RTSurface> &normal,
+               const Cairo::RefPtr<RTSurface> &active,
+               const Cairo::RefPtr<RTSurface> &prelight,
+               const Cairo::RefPtr<RTSurface> &dragged,
+               const Cairo::RefPtr<RTSurface> &insensitive,
                DrivenPoint drivenPoint) :
     drivenPoint(drivenPoint)
 {
@@ -834,53 +835,53 @@ OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustri
                Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
 {
     if (!normalImage.empty()) {
-        normalImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(normalImage) );
+        normalImg->setImage(normalImage);
     }
 
     if (!prelightImage.empty()) {
-        prelightImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(prelightImage) );
+        prelightImg->setImage(prelightImage);
     }
 
     if (!activeImage.empty()) {
-        activeImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(activeImage) );
+        activeImg->setImage(activeImage);
     }
 
     if (!draggedImage.empty()) {
-        draggedImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(draggedImage) );
+        draggedImg->setImage(draggedImage);
     }
 
     if (!insensitiveImage.empty()) {
-        insensitiveImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(insensitiveImage) );
+        insensitiveImg->setImage(insensitiveImage);
     }
 }
 
-const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getNormalImg()
+const Cairo::RefPtr<RTSurface> OPIcon::getNormalImg()
 {
     return normalImg;
 }
-const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getPrelightImg()
+const Cairo::RefPtr<RTSurface> OPIcon::getPrelightImg()
 {
     return prelightImg;
 }
-const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getActiveImg()
+const Cairo::RefPtr<RTSurface> OPIcon::getActiveImg()
 {
     return activeImg;
 }
-const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getDraggedImg()
+const Cairo::RefPtr<RTSurface> OPIcon::getDraggedImg()
 {
     return draggedImg;
 }
-const Cairo::RefPtr<Cairo::ImageSurface> OPIcon::getInsensitiveImg()
+const Cairo::RefPtr<RTSurface> OPIcon::getInsensitiveImg()
 {
     return insensitiveImg;
 }
 
-void OPIcon::drawImage(const Cairo::RefPtr<Cairo::ImageSurface> &img,
+void OPIcon::drawImage(Cairo::RefPtr<RTSurface> &img,
                        Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer,
                        EditCoordSystem &coordSystem)
 {
-    int imgW = img->get_width();
-    int imgH = img->get_height();
+    int imgW = img->getWidth();
+    int imgH = img->getHeight();
 
     rtengine::Coord pos;
 
@@ -895,19 +896,19 @@ void OPIcon::drawImage(const Cairo::RefPtr<Cairo::ImageSurface> &img,
     rtengine::Coord tl, br; // Coordinate of the rectangle in the CropBuffer coordinate system
     drivenPointToRectangle(pos, tl, br, imgW, imgH);
 
-    cr->set_source(img, tl.x, tl.y);
+    cr->set_source(img->surface, tl.x, tl.y);
     cr->set_line_width(0.);
     cr->rectangle(tl.x, tl.y, imgW, imgH);
     cr->fill();
 }
 
-void OPIcon::drawMOImage(const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
+void OPIcon::drawMOImage(Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
                          unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     // test of F_HOVERABLE has already been done
 
-    int imgW = img->get_width();
-    int imgH = img->get_height();
+    int imgW = img->getWidth();
+    int imgH = img->getHeight();
 
     rtengine::Coord pos;
 
@@ -1034,6 +1035,8 @@ void OPIcon::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short i
         }
     }
 }
+
+#endif
 
 EditSubscriber::EditSubscriber (EditType editType) : ID(EUID_None), editingType(editType), bufferType(BT_SINGLEPLANE_FLOAT), provider(nullptr), action(ES_ACTION_NONE) {}
 

@@ -8,14 +8,9 @@ file(GLOB FONTS "fonts/*")
 set(PROFILESDIR "profiles")
 set(THEMEDIR "themes")
 
-# Images, mostly icons, which are generated using the generatePngIcons script:
-set(IMAGES_THEMED
-    "images/themed/png/dark"
-    "images/themed/png/light"
-    )
-
-# Other images which are generated manually:
-file(GLOB IMAGES_NONTHEMED "images/non-themed/png/*")
+file(GLOB IMG_SVG LIST_DIRECTORIES false "images/svg/*")
+file(GLOB IMG_PNG LIST_DIRECTORIES false "images/png/*")
+file(GLOB IMG_ICO LIST_DIRECTORIES false "images/*")
 
 if(WIN32)
     set(OPTIONSFILE "options/options.win")
@@ -32,11 +27,11 @@ endif()
 if(UNIX)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/rawtherapee.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/rawtherapee.desktop")
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/rawtherapee.desktop" DESTINATION ${DESKTOPDIR})
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/non-themed/png/rawtherapee-logo-16.png" DESTINATION "${ICONSDIR}/hicolor/16x16/apps" RENAME rawtherapee.png)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/non-themed/png/rawtherapee-logo-24.png" DESTINATION "${ICONSDIR}/hicolor/24x24/apps" RENAME rawtherapee.png)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/non-themed/png/rawtherapee-logo-48.png" DESTINATION "${ICONSDIR}/hicolor/48x48/apps" RENAME rawtherapee.png)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/non-themed/png/rawtherapee-logo-128.png" DESTINATION "${ICONSDIR}/hicolor/128x128/apps" RENAME rawtherapee.png)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/non-themed/png/rawtherapee-logo-256.png" DESTINATION "${ICONSDIR}/hicolor/256x256/apps" RENAME rawtherapee.png)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-16.png" DESTINATION "${ICONSDIR}/hicolor/16x16/apps" RENAME rawtherapee.png)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-24.png" DESTINATION "${ICONSDIR}/hicolor/24x24/apps" RENAME rawtherapee.png)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-48.png" DESTINATION "${ICONSDIR}/hicolor/48x48/apps" RENAME rawtherapee.png)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-128.png" DESTINATION "${ICONSDIR}/hicolor/128x128/apps" RENAME rawtherapee.png)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-256.png" DESTINATION "${ICONSDIR}/hicolor/256x256/apps" RENAME rawtherapee.png)
 endif()
 
 install(FILES ${LANGUAGEFILES} DESTINATION "${DATADIR}/languages")
@@ -52,13 +47,9 @@ endif()
 install(DIRECTORY ${PROFILESDIR} DESTINATION "${DATADIR}" FILES_MATCHING PATTERN "*.pp3")
 install(DIRECTORY ${THEMEDIR} DESTINATION "${DATADIR}")
 
-foreach(theme ${IMAGES_THEMED})
-    install(DIRECTORY ${theme} DESTINATION "${DATADIR}/images")
-endforeach()
-
-#install(DIRECTORY ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images" FILES_MATCHING PATTERN "*.png")
-#install(DIRECTORY ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images/")
-install(FILES ${IMAGES_NONTHEMED} DESTINATION "${DATADIR}/images")
+install(FILES ${IMG_SVG} DESTINATION "${DATADIR}/images")
+install(FILES ${IMG_PNG} DESTINATION "${DATADIR}/images")
+install(FILES ${IMG_ICO} DESTINATION "${DATADIR}/images")
 
 if(APPLE)
     # CMake escapes first item quote character. Do not remove 'DUMMY_VARIABLE='
