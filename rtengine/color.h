@@ -617,6 +617,7 @@ public:
     */
     static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
     static void RGB2Lab(float *X, float *Y, float *Z, float *L, float *a, float *b, const float wp[3][3], int width);
+    static void Lab2RGBLimit(float *L, float *a, float *b, float *R, float *G, float *B, const float wp[3][3], float limit, float afactor, float bfactor, int width);
     static void RGB2L(float *X, float *Y, float *Z, float *L, const float wp[3][3], int width);
 
     /**
