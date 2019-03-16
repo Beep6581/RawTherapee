@@ -2801,6 +2801,10 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
             }
         }
 
+    if (nbfab == 0) {
+        nbfab = 1;
+    }
+
     meanfab = meanfab / (2.f * nbfab);
     float stddv = 0.f;
     float som = 0.f;
@@ -2815,11 +2819,15 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
             }
         }
 
+    if (nbfab == 0) {
+        nbfab = 1;
+    }
+
     stddv = sqrt(som / nbfab);
     fab = meanfab + multsigma * stddv;
 
-    if (fab < 0.f) {
-        fab = 10.f;
+    if (fab <= 0.f) {
+        fab = 10000.f;
     }
 }
 
@@ -3850,18 +3858,24 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                         cla = buf_a_cat[loy - begy][lox - begx];
                         clb = buf_b_cat[loy - begy][lox - begx];
                     }
+
                     if (previewcol  || previewexp || previewSH) {
                         clc = 200.f;
-                            if (senstype == 1) clc = 60.f;
-                            if (senstype == 0) {
-                                cla = 0.f;
-                                clb = 200.f;
-                            }
-                            if (senstype == 1) {
-                                cla = 0.f;
-                                clb = 50.f;
-                            }
-                        
+
+                        if (senstype == 1) {
+                            clc = 60.f;
+                        }
+
+                        if (senstype == 0) {
+                            cla = 0.f;
+                            clb = 200.f;
+                        }
+
+                        if (senstype == 1) {
+                            cla = 0.f;
+                            clb = 50.f;
+                        }
+
                     }
 
                     float reducdE = 0.f;
@@ -7023,7 +7037,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
                 float meanfab = 0.f;
-                float fab = 0.f;
+                float fab = 10000.f;
 
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab, lp.chromaSH);
 
@@ -7904,7 +7918,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
                 float meanfab = 0.f;
-                float fab = 0.f;
+                float fab = 10000.f;
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab, lp.chromaexp);
 
                 LUTf *gammamask = nullptr;
@@ -8392,7 +8406,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
                 float meanfab = 0.f;
-                float fab = 0.f;
+                float fab = 10000.f;
 
                 mean_fab(begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, fab, meanfab, lp.chromacol);
 
