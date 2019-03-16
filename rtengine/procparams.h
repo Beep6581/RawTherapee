@@ -1073,6 +1073,7 @@ struct LocallabParams {
         int sensih;
         std::vector<double> localTgaincurve;
         bool inversret;
+        double softradiusret;
         // Sharpening
         bool expsharp;
         int sharcontrast;
@@ -1096,6 +1097,7 @@ struct LocallabParams {
         int chromacbdl;
         double threshold;
         int sensicb;
+        double softradiuscb;
         // Denoise
         bool expdenoi;
         int noiselumf;

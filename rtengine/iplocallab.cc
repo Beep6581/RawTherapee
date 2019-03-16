@@ -155,6 +155,8 @@ struct local_params {
     float slomaexp;
     float softradiusexp;
     float softradiuscol;
+    float softradiuscb;
+    float softradiusret;
     float blendmaexp;
     float radmaSH;
     float blendmaSH;
@@ -499,6 +501,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float slomaskexpo = ((float) locallab.spots.at(sp).slomaskexp);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
+    float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
+    float softradiuscbdl = ((float) locallab.spots.at(sp).softradiuscb);
     float blendmaskSH = ((float) locallab.spots.at(sp).blendmaskSH) / 100.f ;
     float radmaskSH = ((float) locallab.spots.at(sp).radmaskSH);
     float chromaskSH = ((float) locallab.spots.at(sp).chromaskSH);
@@ -563,6 +567,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.slomaexp = slomaskexpo;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
+    lp.softradiusret = softradiusreti;
+    lp.softradiuscb = softradiuscbdl;
     lp.struexc = structexclude;
     lp.blendmaexp = blendmaskexpo;
     lp.blendmaSH = blendmaskSH;
@@ -1060,6 +1066,55 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, LabImage* dest)
 
 #endif
 }
+
+void ImProcFunctions::softprocess(LabImage* bufcolorig, float ** buflight, /* float ** bufchro, float ** buf_a, float ** buf_b,*/ float rad, int bfh, int bfw, int sk, bool multiThread)
+{
+    float maxlig = -50000.f;
+    float minlig = 50000.f;
+
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            if (buflight[ir][jr] > maxlig) {
+                maxlig = buflight[ir][jr];
+            }
+
+            if (buflight[ir][jr] < minlig) {
+                minlig = buflight[ir][jr];
+            }
+        }
+
+
+    array2D<float> blesoft(bfw, bfh);
+    array2D<float> guidsoft(bfw, bfh);
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            blesoft[ir][jr] = LIM01((buflight[ir][jr] - minlig) / (100.f - minlig));
+            guidsoft[ir][jr] = ((bufcolorig->L[ir][jr]) / 32768.f);
+
+        }
+
+    guidedFilter(guidsoft, blesoft, blesoft, rad * 10.f / sk, 0.04, multiThread, 4); //lp.softradiuscol
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            buflight[ir][jr] = ((100.f - minlig) * blesoft[ir][jr]) + minlig;
+        }
+
+    guidsoft(0, 0);
+    blesoft(0, 0);
+
+}
+
+
 
 
 void ImProcFunctions::vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
@@ -5112,9 +5167,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufreserv->L[loy - begy][lox - begx] = reserved->L[y][x];
                         bufreserv->a[loy - begy][lox - begx] = reserved->a[y][x];
                         bufreserv->b[loy - begy][lox - begx] = reserved->b[y][x];
-                        bufexclu->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                        bufexclu->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                        bufexclu->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        bufexclu->L[loy - begy][lox - begx] = original->L[y][x];
+                        bufexclu->a[loy - begy][lox - begx] = original->a[y][x];
+                        bufexclu->b[loy - begy][lox - begx] = original->b[y][x];
 
                     }
                 }
@@ -5129,7 +5184,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int loy = cy + y;
 
                     if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                        bufsob->L[loy - begy][lox - begx] = reserved->L[y][x];//fill square buffer with datas
+                        bufsob->L[loy - begy][lox - begx] = reserved->L[y][x];
 
                     }
                 }
@@ -5288,9 +5343,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufgb->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufgb->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufgb->b[loy - begy][lox - begx] = original->b[y][x];
                         }
                     }
 
@@ -5435,9 +5490,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufwv->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufwv->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufwv->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufwv->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufwv->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufwv->b[loy - begy][lox - begx] = original->b[y][x];
                         }
 
                     }
@@ -6031,9 +6086,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufwv.L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufwv.a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufwv.b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufwv.L[loy - begy][lox - begx] = original->L[y][x];
+                            bufwv.a[loy - begy][lox - begx] = original->a[y][x];
+                            bufwv.b[loy - begy][lox - begx] = original->b[y][x];
                         }
 
                     }
@@ -6557,9 +6612,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
 
                         }
                     }
@@ -6574,14 +6629,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                /*
-                                for (int y = 0; y < transformed->H ; y++) //{
-                                    for (int x = 0; x < transformed->W; x++) {
-                                        int lox = cx + x;
-                                        int loy = cy + y;
-                */
-                //          if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                for (int ir = 0; ir < bfh; ir++)
                     for (int jr = 0; jr < bfw; jr++) {
 
                         float rL;
@@ -6657,9 +6705,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufgb->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufgb->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufgb->b[loy - begy][lox - begx] = original->b[y][x];
                         }
                     }
 
@@ -6727,6 +6775,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             JaggedArray<float> bufsh(bfw, bfh);
             LabImage *loctemp = nullptr;
             LabImage *loctempch = nullptr;
+            LabImage *origcbdl = nullptr;
 
             float b_l = -5.f;
             float t_l = 25.f;
@@ -6741,6 +6790,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (call <= 3) { //call from simpleprocess dcrop improcc
                 loctemp = new LabImage(bfw, bfh);
                 loctempch = new LabImage(bfw, bfh);
+                origcbdl = new LabImage(bfw, bfh);
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -6758,6 +6808,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         loctempch->L[ir][jr] = 0.f;
                         loctempch->a[ir][jr] = 0.f;
                         loctempch->b[ir][jr] = 0.f;
+                        origcbdl->L[ir][jr] = 0.f;
+                        origcbdl->a[ir][jr] = 0.f;
+                        origcbdl->b[ir][jr] = 0.f;
                     }
 
 
@@ -6776,7 +6829,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufsh[loy - begy][lox - begx] = original->L[y][x];
                             bufchr[loy - begy][lox - begx] = sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
                             loctemp->L[loy - begy][lox - begx] =  original->L[y][x];
                             loctemp->a[loy - begy][lox - begx] =  original->a[y][x];
@@ -6784,33 +6837,54 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             loctempch->L[loy - begy][lox - begx] =  original->L[y][x];
                             loctempch->a[loy - begy][lox - begx] =  original->a[y][x];
                             loctempch->b[loy - begy][lox - begx] =  original->b[y][x];
+                            origcbdl->L[loy - begy][lox - begx] =  original->L[y][x];
+                            origcbdl->a[loy - begy][lox - begx] =  original->a[y][x];
+                            origcbdl->b[loy - begy][lox - begx] =  original->b[y][x];
                         }
                     }
 
                 ImProcFunctions::cbdl_local_temp(bufsh, bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 
+                /*
+                #ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+                #endif
 
+                                for (int y = 0; y < transformed->H ; y++) //{
+                                    for (int x = 0; x < transformed->W; x++) {
+                                        int lox = cx + x;
+                                        int loy = cy + y;
+
+                                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                            float rL;
+                                            rL = CLIPRET((loctemp->L[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
+
+                                            buflight[loy - begy][lox - begx]  = rL;
+                                        }
+                                        }
+                */
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
+                for (int ir = 0; ir < bfh; ir++)
+                    for (int jr = 0; jr < bfw; jr++) {
 
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            float rL;
-                            rL = CLIPRET((loctemp->L[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
+                        float rL;
+                        rL = CLIPRET((loctemp->L[ir][jr] - origcbdl->L[ir][jr]) / 330.f);
 
-                            buflight[loy - begy][lox - begx]  = rL;
-                        }
+                        buflight[ir][jr]  = rL;
                     }
+
+                if (lp.softradiuscb > 0.f) {
+                    softprocess(origcbdl, buflight, lp.softradiuscb, bfh, bfw, sk, multiThread);
+                }
 
 
                 transit_shapedetect(6, loctemp, nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                 delete loctemp;
+                delete origcbdl;
 
                 //chroma CBDL begin here
                 if (lp.chromacb > 0.f) {
@@ -6937,6 +7011,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 double ts = lp.slomaSH;
                 double gamm2 = lp.gammaSH;
                 GammaValues g_a;
+
                 if (gamm2 < 1.) {
                     std::swap(pwr, gamm);
                 }
@@ -6996,6 +7071,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
                         }
                     }
+
 //printf("fab=%f \n", fab);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -7064,11 +7140,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (lp.radmaSH > 0.f) {
                         guidedFilter(guid, ble, ble, lp.radmaSH * 10.f / sk, 0.001, multiThread, 4);
                     }
+
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) 
+                    for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
                             float L_;
                             bufmaskblurSH->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
@@ -7122,12 +7199,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                                bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                                bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                                bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                                bufexpfin->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                                bufexpfin->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                                bufexpfin->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                                bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
+                                bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
+                                bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
+                                bufexpfin->L[loy - begy][lox - begx] = original->L[y][x];
+                                bufexpfin->a[loy - begy][lox - begx] = original->a[y][x];
+                                bufexpfin->b[loy - begy][lox - begx] = original->b[y][x];
 
                             }
                         }
@@ -7138,7 +7215,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
 
                             float rL;
@@ -7232,9 +7309,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
 
                         }
                     }
@@ -7247,7 +7324,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                for (int ir = 0; ir < bfh; ir++)
                     for (int jr = 0; jr < bfw; jr++) {
 
                         float rL;
@@ -7305,7 +7382,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufloca->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufloca->L[loy - begy][lox - begx] = original->L[y][x];
                         }
                     }
 
@@ -7350,7 +7427,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufsh[loy - begy][lox - begx] = original->L[y][x];
                         }
                     }
 
@@ -7429,9 +7506,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufreti->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufreti->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufreti->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                            bufreti->L[loy - begy][lox - begx] = original->L[y][x];
+                            bufreti->a[loy - begy][lox - begx] = original->a[y][x];
+                            bufreti->b[loy - begy][lox - begx] = original->b[y][x];
                         }
                     }
 
@@ -7551,6 +7628,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
+            if (lp.softradiusret > 0.f) {
+                softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
+            }
 
 //new shape detection
 
@@ -7811,6 +7891,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 double ts = lp.slomaexp;
                 double gamm2 = lp.gammaexp;
                 GammaValues g_a;
+
                 if (gamm2 < 1.) {
                     std::swap(pwr, gamm);
                 }
@@ -8015,7 +8096,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int ir = 0; ir < bfh; ir++) //fill with 0
+                        for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
 
                                 float lighn = bufexporig->L[ir][jr];
@@ -8099,50 +8180,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                     if (lp.softradiusexp > 0.f) {
-                        float maxlig = -50000.f;
-                        float minlig = 50000.f;
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                if (buflight[ir][jr] > maxlig) {
-                                    maxlig = buflight[ir][jr];
-                                }
-
-                                if (buflight[ir][jr] < minlig) {
-                                    minlig = buflight[ir][jr];
-                                }
-                            }
-
-                        //    printf("maxlig=%f minlig=%f\n", maxlig, minlig);
-
-                        array2D<float> blesoft(bfw, bfh);
-                        array2D<float> guidsoft(bfw, bfh);
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                blesoft[ir][jr] = LIM01((buflight[ir][jr] - minlig) / (100.f - minlig));
-                                guidsoft[ir][jr] = ((bufexporig->L[ir][jr]) / 32768.f);
-
-                            }
-
-                        guidedFilter(guidsoft, blesoft, blesoft, lp.softradiusexp * 10.f / sk, 0.04, multiThread, 4); //lp.softradiusexp
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                buflight[ir][jr] = ((100.f - minlig) * blesoft[ir][jr]) + minlig;
-                            }
-
-                        guidsoft(0, 0);
-                        blesoft(0, 0);
-
+                        softprocess(bufexporig, buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
                     }
                 }
 
@@ -8474,7 +8512,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
                             float L_;
                             bufmaskblurcol->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
@@ -8521,7 +8559,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
 
                             bufcolcalc->a[ir][jr] = bufcolorig->a[ir][jr];
@@ -8633,50 +8671,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     delete bufcolcalc;
 
                     if (lp.softradiuscol > 0.f) {
-                        float maxlig = -50000.f;
-                        float minlig = 50000.f;
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                if (buflight[ir][jr] > maxlig) {
-                                    maxlig = buflight[ir][jr];
-                                }
-
-                                if (buflight[ir][jr] < minlig) {
-                                    minlig = buflight[ir][jr];
-                                }
-                            }
-
-
-                        array2D<float> blesoft(bfw, bfh);
-                        array2D<float> guidsoft(bfw, bfh);
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                blesoft[ir][jr] = LIM01((buflight[ir][jr] - minlig) / (100.f - minlig));
-                                guidsoft[ir][jr] = ((bufcolorig->L[ir][jr]) / 32768.f);
-
-                            }
-
-                        guidedFilter(guidsoft, blesoft, blesoft, lp.softradiuscol * 10.f / sk, 0.04, multiThread, 4); //lp.softradiuscol
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                buflight[ir][jr] = ((100.f - minlig) * blesoft[ir][jr]) + minlig;
-                            }
-
-                        guidsoft(0, 0);
-                        blesoft(0, 0);
-
+                        softprocess(bufcolorig, buflight, lp.softradiuscol, bfh, bfw, sk, multiThread);
                     }
+
                 }
 
                 transit_shapedetect(0, bufcolorig, originalmaskcol, buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);

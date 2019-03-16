@@ -145,6 +145,7 @@ Locallab::Locallab():
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 50, 500, 1, 200))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 15))),
+    softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 5.))),
     // Sharpening
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.42, 3.50, 0.01, 0.42))),
@@ -163,6 +164,7 @@ Locallab::Locallab():
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
+    softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 5.))),
     // Denoise
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0))),
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
@@ -788,6 +790,7 @@ Locallab::Locallab():
 
     sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensih->setAdjusterListener(this);
+    softradiusret->setAdjusterListener(this);
 
     LocalcurveEditorgainT->setCurveListener(this);
 
@@ -807,6 +810,7 @@ Locallab::Locallab():
     retiBox->pack_start(*neigh);
     retiBox->pack_start(*vart);
     retiBox->pack_start(*dehaz);
+    retiBox->pack_start(*softradiusret);
     retiBox->pack_start(*sensih);
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*inversret);
@@ -920,6 +924,7 @@ Locallab::Locallab():
 
     sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensicb->setAdjusterListener(this);
+    softradiuscb->setAdjusterListener(this);
 
     ToolParamBlock* const cbdlBox = Gtk::manage(new ToolParamBlock());
     Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 10));
@@ -939,6 +944,7 @@ Locallab::Locallab():
     cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
     cbdlBox->pack_start(*chromacbdl);
     cbdlBox->pack_start(*threshold);
+    cbdlBox->pack_start(*softradiuscb);
     cbdlBox->pack_start(*sensicb);
     expcbdl->add(*cbdlBox);
     expcbdl->setLevel(2);
@@ -1819,6 +1825,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).sensih = sensih->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).localTgaincurve = cTgainshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).inversret = inversret->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).softradiusret = softradiusret->getValue();
                     // Sharpening
                     pp->locallab.spots.at(pp->locallab.selspot).expsharp = expsharp->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).sharcontrast = sharcontrast->getIntValue();
@@ -1846,6 +1853,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromacbdl = chromacbdl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).threshold = threshold->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensicb = sensicb->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).softradiuscb = softradiuscb->getValue();
                     // Denoise
                     pp->locallab.spots.at(pp->locallab.selspot).expdenoi = expdenoi->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).noiselumf = noiselumf->getIntValue();
@@ -1998,6 +2006,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).sensih = pe->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).inversret = pe->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).softradiusret = pe->locallab.spots.at(pp->locallab.selspot).softradiusret || softradiusret->getEditedState();
                         // Sharpening
                         pe->locallab.spots.at(pp->locallab.selspot).expsharp = pe->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).sharcontrast = pe->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -2025,6 +2034,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromacbdl = pe->locallab.spots.at(pp->locallab.selspot).chromacbdl || chromacbdl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).threshold = pe->locallab.spots.at(pp->locallab.selspot).threshold || threshold->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensicb = pe->locallab.spots.at(pp->locallab.selspot).sensicb || sensicb->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).softradiuscb = pe->locallab.spots.at(pp->locallab.selspot).softradiuscb || softradiuscb->getEditedState();
                         // Denoise
                         pe->locallab.spots.at(pp->locallab.selspot).expdenoi = pe->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).noiselumf = pe->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
@@ -2179,6 +2189,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).sensih = pedited->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).inversret = pedited->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).softradiusret = pedited->locallab.spots.at(pp->locallab.selspot).softradiusret || softradiusret->getEditedState();
                         // Sharpening
                         pedited->locallab.spots.at(pp->locallab.selspot).expsharp = pedited->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast = pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -2206,6 +2217,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromacbdl = pedited->locallab.spots.at(pp->locallab.selspot).chromacbdl || chromacbdl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).threshold = pedited->locallab.spots.at(pp->locallab.selspot).threshold || threshold->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensicb = pedited->locallab.spots.at(pp->locallab.selspot).sensicb || sensicb->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).softradiuscb = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscb || softradiuscb->getEditedState();
                         // Denoise
                         pedited->locallab.spots.at(pp->locallab.selspot).expdenoi = pedited->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).noiselumf = pedited->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
@@ -2898,12 +2910,16 @@ void Locallab::inversretChanged()
     // Update Retinex GUI according to inversret button state (to be compliant with updateSpecificGUIState function)
     if (multiImage && inversret->get_inconsistent()) {
         sensih->show();
+        softradiusret->show();
+        
     } else if (inversret->get_active()) {
         sensih->show();
         dehaz->show();
+        softradiuscol->hide();
     } else {
         sensih->show();
         dehaz->show();
+        softradiusret->show();
     }
 
     if (getEnabled() && expreti->getEnabled()) {
@@ -3059,6 +3075,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     vart->setDefault((double)defSpot->vart);
     dehaz->setDefault((double)defSpot->dehaz);
     sensih->setDefault((double)defSpot->sensih);
+    softradiusret->setDefault(defSpot->softradiusret);
     // Sharpening
     sharcontrast->setDefault((double)defSpot->sharcontrast);
     sharradius->setDefault(defSpot->sharradius);
@@ -3082,6 +3099,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromacbdl->setDefault((double)defSpot->chromacbdl);
     threshold->setDefault(defSpot->threshold);
     sensicb->setDefault((double)defSpot->sensicb);
+    softradiuscb->setDefault(defSpot->softradiuscb);
     // Denoise
     noiselumf->setDefault((double)defSpot->noiselumf);
     noiselumc->setDefault((double)defSpot->noiselumc);
@@ -3167,6 +3185,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         vart->setDefaultEditedState(Irrelevant);
         dehaz->setDefaultEditedState(Irrelevant);
         sensih->setDefaultEditedState(Irrelevant);
+        softradiusret->setDefaultEditedState(Irrelevant);
         // Sharpening
         sharcontrast->setDefaultEditedState(Irrelevant);
         sharradius->setDefaultEditedState(Irrelevant);
@@ -3190,6 +3209,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromacbdl->setDefaultEditedState(Irrelevant);
         threshold->setDefaultEditedState(Irrelevant);
         sensicb->setDefaultEditedState(Irrelevant);
+        softradiuscb->setDefaultEditedState(Irrelevant);
         // Denoise
         noiselumf->setDefaultEditedState(Irrelevant);
         noiselumc->setDefaultEditedState(Irrelevant);
@@ -3279,6 +3299,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         vart->setDefaultEditedState(defSpotState->vart ? Edited : UnEdited);
         dehaz->setDefaultEditedState(defSpotState->dehaz ? Edited : UnEdited);
         sensih->setDefaultEditedState(defSpotState->sensih ? Edited : UnEdited);
+        softradiusret->setDefaultEditedState(defSpotState->softradiusret ? Edited : UnEdited);
         // Sharpening
         sharcontrast->setDefaultEditedState(defSpotState->sharcontrast ? Edited : UnEdited);
         sharradius->setDefaultEditedState(defSpotState->sharradius ? Edited : UnEdited);
@@ -3302,6 +3323,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromacbdl->setDefaultEditedState(defSpotState->chromacbdl ? Edited : UnEdited);
         threshold->setDefaultEditedState(defSpotState->threshold ? Edited : UnEdited);
         sensicb->setDefaultEditedState(defSpotState->sensicb ? Edited : UnEdited);
+        softradiuscb->setDefaultEditedState(defSpotState->softradiuscb ? Edited : UnEdited);
         // Denoise
         noiselumf->setDefaultEditedState(defSpotState->noiselumf ? Edited : UnEdited);
         noiselumc->setDefaultEditedState(defSpotState->noiselumc ? Edited : UnEdited);
@@ -3760,6 +3782,13 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabsensih, sensih->getTextValue());
             }
         }
+
+        if (a == softradiusret) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsoftradiusret, softradiusret->getTextValue());
+            }
+        }
+
     }
 
     // Sharpening
@@ -3871,6 +3900,13 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabsensicb, sensicb->getTextValue());
             }
         }
+
+        if (a == softradiuscb) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsoftradiuscb, softradiuscb->getTextValue());
+            }
+        }
+        
     }
 
     // Denoise
@@ -4060,6 +4096,7 @@ void Locallab::setBatchMode(bool batchMode)
     vart->showEditedCB();
     dehaz->showEditedCB();
     sensih->showEditedCB();
+    softradiusret->showEditedCB();
     // Sharpening
     sharradius->showEditedCB();
     sharamount->showEditedCB();
@@ -4081,6 +4118,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromacbdl->showEditedCB();
     threshold->showEditedCB();
     sensicb->showEditedCB();
+    softradiuscb->showEditedCB();
     // Denoise
     noiselumf->showEditedCB();
     noiselumc->showEditedCB();
@@ -4491,6 +4529,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensih->setValue(pp->locallab.spots.at(index).sensih);
         cTgainshape->setCurve(pp->locallab.spots.at(index).localTgaincurve);
         inversret->set_active(pp->locallab.spots.at(index).inversret);
+        softradiusret->setValue(pp->locallab.spots.at(index).softradiusret);
 
         // Sharpening
         expsharp->setEnabled(pp->locallab.spots.at(index).expsharp);
@@ -4521,6 +4560,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromacbdl->setValue(pp->locallab.spots.at(index).chromacbdl);
         threshold->setValue(pp->locallab.spots.at(index).threshold);
         sensicb->setValue(pp->locallab.spots.at(index).sensicb);
+        softradiuscb->setValue(pp->locallab.spots.at(index).softradiuscb);
 
         // Denoise
         expdenoi->setEnabled(pp->locallab.spots.at(index).expdenoi);
@@ -4708,6 +4748,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensih->setEditedState(spotState->sensih ? Edited : UnEdited);
                 cTgainshape->setUnChanged(!spotState->localTgaincurve);
                 inversret->set_inconsistent(multiImage && !spotState->inversret);
+                softradiusret->setEditedState(spotState->softradiusret ? Edited : UnEdited);
 
                 // Sharpening
                 expsharp->set_inconsistent(!spotState->expsharp);
@@ -4738,6 +4779,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromacbdl->setEditedState(spotState->chromacbdl ? Edited : UnEdited);
                 threshold->setEditedState(spotState->threshold ? Edited : UnEdited);
                 sensicb->setEditedState(spotState->sensicb ? Edited : UnEdited);
+                softradiuscb->setEditedState(spotState->softradiuscb ? Edited : UnEdited);
 
                 // Denoise
                 expdenoi->set_inconsistent(!spotState->expdenoi);
@@ -4893,10 +4935,13 @@ void Locallab::updateSpecificGUIState()
     // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
     if (multiImage && inversret->get_inconsistent()) {
         sensih->show();
+        softradiusret->show();
     } else if (inversret->get_active()) {
         sensih->show();
+        softradiusret->hide();
     } else {
         sensih->show();
+        softradiusret->show();
     }
 
     // Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)

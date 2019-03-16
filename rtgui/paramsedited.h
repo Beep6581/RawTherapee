@@ -488,6 +488,7 @@ public:
         bool sensih;
         bool localTgaincurve;
         bool inversret;
+        bool softradiusret;
         // Sharpening
         bool expsharp;
         bool sharcontrast;
@@ -511,6 +512,7 @@ public:
         bool chromacbdl;
         bool threshold;
         bool sensicb;
+        bool softradiuscb;
         // Denoise
         bool expdenoi;
         bool noiselumf;

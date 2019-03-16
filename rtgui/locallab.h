@@ -163,6 +163,7 @@ private:
     Adjuster* const vart;
     Adjuster* const dehaz;
     Adjuster* const sensih;
+    Adjuster* const softradiusret;
     // Sharpening
     Adjuster* const sharcontrast;
     Adjuster* const sharradius;
@@ -182,6 +183,7 @@ private:
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const sensicb;
+    Adjuster* const softradiuscb;
     // Denoise
     Adjuster* const noiselumf;
     Adjuster* const noiselumc;
