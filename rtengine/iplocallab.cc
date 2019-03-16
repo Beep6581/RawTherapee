@@ -3665,6 +3665,9 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
         bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
         bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
+        bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
+        bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
+        bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
 
 
         LabImage *origblur = nullptr;
@@ -3842,9 +3845,23 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     cli = (buflight[loy - begy][lox - begx]);
                     clc = (bufchro[loy - begy][lox - begx]);
 
+
                     if (senstype == 1  || senstype == 0) {
                         cla = buf_a_cat[loy - begy][lox - begx];
                         clb = buf_b_cat[loy - begy][lox - begx];
+                    }
+                    if (previewcol  || previewexp || previewSH) {
+                        clc = 200.f;
+                            if (senstype == 1) clc = 60.f;
+                            if (senstype == 0) {
+                                cla = 0.f;
+                                clb = 200.f;
+                            }
+                            if (senstype == 1) {
+                                cla = 0.f;
+                                clb = 50.f;
+                            }
+                        
                     }
 
                     float reducdE = 0.f;
@@ -3991,6 +4008,9 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
+                                    } else if (previewcol || previewexp || previewSH) {
+                                        transformed->a[y][x] = 0.f;
+                                        transformed->b[y][x] = (difb);
                                     }
                                 }
 
@@ -4080,7 +4100,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
+                                    } else if (previewcol || previewexp || previewSH) {
+                                        transformed->a[y][x] = 0.f;
+                                        transformed->b[y][x] = (difb);
                                     }
+
                                 }
                             }
                         }
@@ -6936,7 +6960,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //shadow highlight
 
-        if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3) && call < 3  && lp.hsena) {
+        if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) && call < 3  && lp.hsena) {
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
             LabImage *bufmaskorigSH = nullptr;
@@ -7172,7 +7196,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     delete bufmaskblurSH;
 
 
-                    if (lp.showmaskSHmet != 3 || lp.enaSHMask) {
+                    if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2 || lp.enaSHMask) {
                         blendmask(lp, begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, bufmaskorigSH, originalmaskSH, lp.blendmaSH);
                         delete bufmaskorigSH;
 
@@ -7186,7 +7210,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
 
-                if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1  || lp.showmaskSHmet == 2 || lp.enaSHMask) {
+                if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1  || lp.showmaskSHmet == 2 || lp.showmaskSHmet == 4 || lp.enaSHMask) {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -7741,7 +7765,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 
 
-        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4 || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
             LabImage *bufexporig = nullptr;
             LabImage *bufexpfin = nullptr;
             LabImage *bufexptemp = nullptr;
@@ -8016,7 +8040,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3) /* && lp.radmaexp > 0.f*/) {
+                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3)) {
                     if (lp.radmaexp > 0.f) {
                         guidedFilter(guid, ble, ble, lp.radmaexp * 10.f / sk, 0.001, multiThread, 4);
                     }
@@ -8050,7 +8074,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     delete bufmaskblurexp;
 
 
-                    if (lp.showmaskexpmet != 3 || lp.enaExpMask) {
+                    if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2 || lp.showmaskexpmet == 4 || lp.enaExpMask) {
                         blendmask(lp, begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, bufmaskorigexp, originalmaskexp, lp.blendmaexp);
 
                         delete bufmaskorigexp;
@@ -8066,7 +8090,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
 
-                if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1  || lp.showmaskexpmet == 2 || lp.enaExpMask) {
+                if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1  || lp.showmaskexpmet == 2 || lp.showmaskexpmet == 5 || lp.enaExpMask) {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -8217,7 +8241,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         float b_base = lp.lowB / scaling;
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
 
-        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
 
 
             LabImage *bufcolorig = nullptr;
@@ -8534,7 +8558,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                     delete bufmaskblurcol;
 
-                    if (lp.showmaskcolmet != 3 || lp.enaColorMask) {
+                    if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.showmaskcolmet == 4 || lp.enaColorMask) {
                         blendmask(lp, begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, bufmaskorigcol, originalmaskcol, lp.blendmacol);
 
                         delete bufmaskorigcol;
@@ -8549,7 +8573,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.enaColorMask) {
+                if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.showmaskcolmet == 5 || lp.enaColorMask) {
 
                     LabImage *bufcolcalc = nullptr;
                     bufcolcalc = new LabImage(bfw, bfh);

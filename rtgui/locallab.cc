@@ -350,6 +350,7 @@ Locallab::Locallab():
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskcolMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
+    showmaskcolMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
 
     showmaskcolMethod->set_active(0);
     showmaskcolMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
@@ -483,6 +484,7 @@ Locallab::Locallab():
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
+    showmaskexpMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
 
     showmaskexpMethod->set_active(0);
     showmaskexpMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
@@ -570,6 +572,8 @@ Locallab::Locallab():
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMASK"));
+    showmaskSHMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
+    
 //    showmaskSHMethod->append(M("TP_LOCALLAB_SHOWSTRUC"));
 
     showmaskSHMethod->set_active(0);
