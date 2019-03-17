@@ -2785,7 +2785,13 @@ static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurvel
 static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, float & fab, float & meanfab, float chrom)
 {
     int nbfab = 0;
-    float multsigma = -0.015f * chrom + 1.f;
+    float multsigma = 1.f;
+
+    if (chrom >= 0.f) {
+        multsigma = 0.035f * chrom + 1.f;
+    } else {
+        multsigma = 0.018f * chrom + 1.f;
+    }
 
     for (int y = 0; y < transformed->H ; y++) //{
         for (int x = 0; x < transformed->W; x++) {
@@ -2819,17 +2825,15 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
             }
         }
 
-    if (nbfab == 0) {
-        nbfab = 1;
-    }
-
     stddv = sqrt(som / nbfab);
     fab = meanfab + multsigma * stddv;
 
     if (fab <= 0.f) {
-        fab = 100.f;
+        fab = 50.f;
     }
 }
+
+
 
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, JaggedArray<float> & blend2, int sk, bool multiThread, float & meansob)
 {
