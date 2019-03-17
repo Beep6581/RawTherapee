@@ -2827,7 +2827,7 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
     fab = meanfab + multsigma * stddv;
 
     if (fab <= 0.f) {
-        fab = 10000.f;
+        fab = 100.f;
     }
 }
 
@@ -3860,22 +3860,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     }
 
                     if (previewcol  || previewexp || previewSH) {
-                        clc = 200.f;
-
-                        if (senstype == 1) {
-                            clc = 60.f;
-                        }
-
-                        if (senstype == 0) {
-                            cla = 0.f;
-                            clb = 200.f;
-                        }
-
-                        if (senstype == 1) {
-                            cla = 0.f;
-                            clb = 50.f;
-                        }
-
+                        clc = settings->previewselection * 100.f;//between 100 and 10000 to obtain "good" result 
                     }
 
                     float reducdE = 0.f;
@@ -3979,12 +3964,19 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                     } else if (senstype == 1) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
-                                        flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
-                                        flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+                                       flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
+                                       flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+                                        if (previewcol || previewexp || previewSH){
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
                                     } else if (senstype == 0) {
-                                        // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
+                                        if (previewcol || previewexp || previewSH){
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
                                     }
 
                                     difa = chra * flia - original->a[y][x];
@@ -4076,9 +4068,17 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+                                        if (previewcol || previewexp || previewSH){
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
                                     } else if (senstype == 0) {
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
+                                        if (previewcol || previewexp || previewSH){
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
                                     }
 
                                     difa = chra * flia - original->a[y][x];
