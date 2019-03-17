@@ -957,6 +957,7 @@ struct LocallabParams {
         double thresh;
         double iter;
         double balan;
+        bool avoid;
         // Color & Light
         bool expcolor;
         bool curvactiv;
@@ -968,7 +969,6 @@ struct LocallabParams {
         double labgridAHigh;
         double labgridBHigh;
         int strengthgrid;
-
         int sensi;
         int structcol;
         int blurcolde;
@@ -1110,8 +1110,6 @@ struct LocallabParams {
         int adjblur;
         int bilateral;
         int sensiden;
-        // Others
-        bool avoid;
 
         LocallabSpot();
 

@@ -2357,6 +2357,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     thresh(2.0),
     iter(2.0),
     balan(1.0),
+    avoid(false),
     // Color & Light
     expcolor(false),
     curvactiv(false),
@@ -2367,7 +2368,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridBLow(0.0),
     labgridAHigh(0.0),
     labgridBHigh(0.0),
-
     strengthgrid(30),
     sensi(15),
     structcol(0),
@@ -2508,9 +2508,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     noisechrodetail(0),
     adjblur(0),
     bilateral(0),
-    sensiden(20),
-    // Others
-    avoid(false)
+    sensiden(20)
 {
 }
 
@@ -2539,6 +2537,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && thresh == other.thresh
         && iter == other.iter
         && balan == other.balan
+        && avoid == other.avoid
         // Color & Light
         && expcolor == other.expcolor
         && curvactiv == other.curvactiv
@@ -2623,7 +2622,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && pastsattog == other.pastsattog
         && sensiv == other.sensiv
         && skintonescurve == other.skintonescurve
-        //Soft Light
+        // Soft Light
         && expsoft == other.expsoft
         && streng == other.streng
         && sensisf == other.sensisf
@@ -2664,14 +2663,13 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sharblur == other.sharblur
         && sensisha == other.sensisha
         && inverssha == other.inverssha
-        //local contrast
+        // Local contrast
         && expcontrast == other.expcontrast
         && lcradius == other.lcradius
         && lcamount == other.lcamount
         && lcdarkness == other.lcdarkness
         && lclightness == other.lclightness
         && sensilc == other.sensilc
-
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
@@ -2699,9 +2697,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && noisechrodetail == other.noisechrodetail
         && adjblur == other.adjblur
         && bilateral == other.bilateral
-        && sensiden == other.sensiden
-        // Others
-        && avoid == other.avoid;
+        && sensiden == other.sensiden;
 }
 
 bool LocallabParams::LocallabSpot::operator !=(const LocallabSpot& other) const
@@ -3677,6 +3673,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).thresh, "Locallab", "Thresh_" + std::to_string(i), spot.thresh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).iter, "Locallab", "Iter_" + std::to_string(i), spot.iter, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).balan, "Locallab", "Balan_" + std::to_string(i), spot.balan, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoid, "Locallab", "Avoid_" + std::to_string(i), spot.avoid, keyFile);
                 // Color & Light
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcolor, "Locallab", "Expcolor_" + std::to_string(i), spot.expcolor, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).curvactiv, "Locallab", "Curvactiv_" + std::to_string(i), spot.curvactiv, keyFile);
@@ -3832,8 +3829,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).adjblur, "Locallab", "Adjblur_" + std::to_string(i), spot.adjblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).bilateral, "Locallab", "Bilateral_" + std::to_string(i), spot.bilateral, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiden, "Locallab", "Sensiden_" + std::to_string(i), spot.sensiden, keyFile);
-                // Others
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoid, "Locallab", "Avoid_" + std::to_string(i), spot.avoid, keyFile);
             }
         }
 
@@ -4943,6 +4938,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Thresh_" + std::to_string(i), pedited, spot.thresh, spotEdited.thresh);
                 assignFromKeyfile(keyFile, "Locallab", "Iter_" + std::to_string(i), pedited, spot.iter, spotEdited.iter);
                 assignFromKeyfile(keyFile, "Locallab", "Balan_" + std::to_string(i), pedited, spot.balan, spotEdited.balan);
+                assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
                 // Color & Light
                 assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, spot.expcolor, spotEdited.expcolor);
                 assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + std::to_string(i), pedited, spot.curvactiv, spotEdited.curvactiv);
@@ -5110,8 +5106,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Adjblur_" + std::to_string(i), pedited, spot.adjblur, spotEdited.adjblur);
                 assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, spot.bilateral, spotEdited.bilateral);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, spot.sensiden, spotEdited.sensiden);
-                // Others
-                assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
 
                 locallab.spots.at(i) = spot;
 

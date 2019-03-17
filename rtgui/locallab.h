@@ -226,9 +226,6 @@ private:
     // Sharpening
     Gtk::CheckButton* const inverssha;
     sigc::connection inversshaConn;
-    // Others
-    Gtk::CheckButton* const avoid;
-    sigc::connection avoidConn;
 
     // ComboBox widgets
     // Color & Light
@@ -308,8 +305,6 @@ private:
     void inversretChanged();
     // Sharpening
     void inversshaChanged();
-    // Others
-    void avoidChanged();
 
     // ComboBox event functions
     // Color & Light

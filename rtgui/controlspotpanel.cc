@@ -61,6 +61,8 @@ ControlSpotPanel::ControlSpotPanel():
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 4.0, 0.1, 2.0))),
     balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.3, 1.7, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
 
+    avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
+
     lastObject_(-1),
     lastCoord_(new Coord()),
     nbSpotChanged_(false),
@@ -242,6 +244,10 @@ ControlSpotPanel::ControlSpotPanel():
     balan_->setAdjusterListener(this);
     artifFrame->add(*artifBox);
     pack_start(*artifFrame);
+
+    avoidConn_  = avoid_->signal_toggled().connect(
+            sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
+    pack_start(*avoid_);
 
     show_all();
 }
@@ -437,6 +443,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     thresh_->setValue(static_cast<double>(row[spots_.thresh]));
     iter_->setValue(static_cast<double>(row[spots_.iter]));
     balan_->setValue(static_cast<double>(row[spots_.balan]));
+    avoid_->set_active(row[spots_.avoid]);
 }
 
 void ControlSpotPanel::controlspotChanged()
@@ -687,7 +694,6 @@ void ControlSpotPanel::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, in
 {
 }
 
-
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
 {
     // printf("adjusterChanged\n");
@@ -852,6 +858,41 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     
 }
 
+void ControlSpotPanel::avoidChanged()
+{
+    // printf("avoidChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_.get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    if (multiImage) {
+        if (avoid_->get_inconsistent()) {
+            avoid_->set_inconsistent(false);
+            avoidConn_.block(true);
+            avoid_->set_active(false);
+            avoidConn_.block(false);
+        }
+    }
+
+    row[spots_.avoid] = avoid_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (avoid_->get_active()) {
+            listener->panelChanged(Evlocallabavoid, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallabavoid, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 void ControlSpotPanel::disableParamlistener(bool cond)
 {
     // printf("disableParamlistener: %d\n", cond);
@@ -880,6 +921,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     thresh_->block(cond);
     iter_->block(cond);
     balan_->block(cond);
+    avoidConn_.block(cond);
 }
 
 void ControlSpotPanel::setParamEditable(bool cond)
@@ -904,6 +946,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     thresh_->set_sensitive(cond);
     iter_->set_sensitive(cond);
     balan_->set_sensitive(cond);
+    avoid_->set_sensitive(cond);
 }
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row row)
@@ -1581,6 +1624,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
             r->thresh = row[spots_.thresh];
             r->iter = row[spots_.iter];
             r->balan = row[spots_.balan];
+            r->avoid = row[spots_.avoid];
 
             return r;
         }
@@ -1701,6 +1745,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.thresh] = newSpot->thresh;
     row[spots_.iter] = newSpot->iter;
     row[spots_.balan] = newSpot->balan;
+    row[spots_.avoid] = newSpot->avoid;
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -1744,6 +1789,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.thresh] = spot->thresh;
             row[spots_.iter] = spot->iter;
             row[spots_.balan] = spot->balan;
+            row[spots_.avoid] = spot->avoid;
 
             updateControlSpotCurve(row);
             updateParamVisibility();
@@ -1833,6 +1879,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->thresh = thresh_->getEditedState();
     se->iter = iter_->getEditedState();
     se->balan = balan_->getEditedState();
+    se->avoid = !avoid_->get_inconsistent();
 
     return se;
 }
@@ -1899,6 +1946,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     thresh_->setEditedState(se->thresh ? Edited : UnEdited);
     iter_->setEditedState(se->iter ? Edited : UnEdited);
     balan_->setEditedState(se->balan ? Edited : UnEdited);
+    avoid_->set_inconsistent(multiImage && !se->avoid);
 
     // Update Control Spot GUI according to widgets edited states
     updateParamVisibility();
@@ -2037,6 +2085,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(thresh);
     add(iter);
     add(balan);
+    add(avoid);
 }
 
 //-----------------------------------------------------------------------------
