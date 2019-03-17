@@ -2112,52 +2112,7 @@ void ImProcFunctions::RGBoutput_tile_row(float *bloxrow_L, float ** Ldetail, flo
 #undef epsilon
 */
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-float ImProcFunctions::MadMax(float * DataList, int & max, int datalen)
-{
-
-    //computes Median Absolute Deviation and Maximum of DataList
-    //DataList values should mostly have abs val < 65535
-
-    int * histo = new int[65536];
-
-    //memset(histo, 0, 65536*sizeof(histo));
-    for (int i = 0; i < 65536; ++i) {
-        histo[i] = 0;
-    }
-
-    //calculate histogram of absolute values of HH wavelet coeffs
-    for (int i = 0; i < datalen; ++i) {
-        histo[MAX(0, MIN(65535, abs((int)DataList[i])))]++;
-    }
-
-    //find median of histogram
-    int median = 0, count = 0;
-
-    while (count < datalen / 2) {
-        count += histo[median];
-        ++median;
-    }
-
-    //find max of histogram
-    max = 65535;
-
-    while (histo[max] == 0) {
-        max--;
-    }
-
-    int count_ = count - histo[median - 1];
-
-    delete[] histo;
-
-    // interpolate
-    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
-
-}
-
-float ImProcFunctions::Mad(float * DataList, const int datalen)
+float ImProcFunctions::Mad(const float * DataList, const int datalen)
 {
     if (datalen <= 1) { // Avoid possible buffer underrun
         return 0;
@@ -2169,7 +2124,7 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[min(255, abs(static_cast<int>(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(255.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -2186,7 +2141,7 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
     return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
 }
 
-float ImProcFunctions::MadRgb(float * DataList, const int datalen)
+float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
 {
     if (datalen <= 1) { // Avoid possible buffer underrun
         return 0;
@@ -2201,10 +2156,8 @@ float ImProcFunctions::MadRgb(float * DataList, const int datalen)
     }
 
     //calculate histogram of absolute values of wavelet coeffs
-    int i;
-
-    for (i = 0; i < datalen; ++i) {
-        histo[min(65535, abs(static_cast<int>(DataList[i])))]++;
+    for (int i = 0; i < datalen; ++i) {
+        histo[static_cast<int>(rtengine::min(65535.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -2224,27 +2177,23 @@ float ImProcFunctions::MadRgb(float * DataList, const int datalen)
 
 
 
-void ImProcFunctions::Noise_residualAB(wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb)
+void ImProcFunctions::Noise_residualAB(const wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb)
 {
-    int maxlvl = WaveletCoeffs_ab.maxlevel();
+
     float resid = 0.f;
-    float madC;
     float maxresid = 0.f;
 
-    for (int lvl = 0; lvl < maxlvl; ++lvl) {
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic) collapse(2) reduction(+:resid) reduction(max:maxresid) num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
+#endif
+    for (int lvl = 0; lvl < WaveletCoeffs_ab.maxlevel(); ++lvl) {
         // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
-
-        int Wlvl_ab = WaveletCoeffs_ab.level_W(lvl);
-        int Hlvl_ab = WaveletCoeffs_ab.level_H(lvl);
-
-        float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
-
         for (int dir = 1; dir < 4; ++dir) {
-            if (denoiseMethodRgb) {
-                madC = SQR(MadRgb(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
-            } else {
-                madC = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
-            }
+            const int Wlvl_ab = WaveletCoeffs_ab.level_W(lvl);
+            const int Hlvl_ab = WaveletCoeffs_ab.level_H(lvl);
+
+            float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
+            const float madC = SQR(denoiseMethodRgb ? MadRgb(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab) : Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
 
             resid += madC;
 
@@ -2624,7 +2573,7 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L
 
         if (!memoryAllocationFailed) {
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic) collapse(2)
+            #pragma omp for schedule(dynamic) collapse(2) nowait
 #endif
 
             for (int lvl = 0; lvl < maxlvl; ++lvl) {
