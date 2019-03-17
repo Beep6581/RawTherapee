@@ -265,7 +265,8 @@ void History::procParamsChanged(
     }
 
     // if there is no last item or its chev!=ev, create a new one
-    if (size == 0 || !row || row[historyColumns.chev] != ev || ev == EvProfileChanged) {
+    if (size == 0 || !row || row[historyColumns.chev] != ev || ev == EvProfileChanged
+            || ev == EvLocallabSpotCreated || ev == EvLocallabSpotDeleted) { // Special cases: If Locallab spot is created , deleted or duplicated several times in a row, a new history row is used
 //       Gtk::TreeModel::Row newrow = * (historyModel->append());
 //       newrow[historyColumns.realText] = eventDescrArray[ev];
         Gtk::TreeModel::Row newrow = * (historyModel->append());
