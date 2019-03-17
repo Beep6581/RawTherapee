@@ -947,6 +947,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).thresh = locallab.spots.at(j).thresh && pSpot.thresh == otherSpot.thresh;
                 locallab.spots.at(j).iter = locallab.spots.at(j).iter && pSpot.iter == otherSpot.iter;
                 locallab.spots.at(j).balan = locallab.spots.at(j).balan && pSpot.balan == otherSpot.balan;
+                locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
                 // Color & Light
                 locallab.spots.at(j).expcolor = locallab.spots.at(j).expcolor && pSpot.expcolor == otherSpot.expcolor;
                 locallab.spots.at(j).curvactiv = locallab.spots.at(j).curvactiv && pSpot.curvactiv == otherSpot.curvactiv;
@@ -1102,8 +1103,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).adjblur = locallab.spots.at(j).adjblur && pSpot.adjblur == otherSpot.adjblur;
                 locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
-                // Others
-                locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
             }
         }
 
@@ -2609,6 +2608,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).balan = mods.locallab.spots.at(i).balan;
         }
 
+        if (locallab.spots.at(i).avoid) {
+            toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
+        }
+
         // Color & Light
         if (locallab.spots.at(i).expcolor) {
             toEdit.locallab.spots.at(i).expcolor = mods.locallab.spots.at(i).expcolor;
@@ -3173,11 +3176,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).sensiden) {
             toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
-        }
-
-        // Others
-        if (locallab.spots.at(i).avoid) {
-            toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
         }
     }
 
@@ -4141,6 +4139,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     thresh(v),
     iter(v),
     balan(v),
+    avoid(v),
     // Color & Light
     expcolor(v),
     curvactiv(v),
@@ -4291,9 +4290,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     noisechrodetail(v),
     adjblur(v),
     bilateral(v),
-    sensiden(v),
-    // Others
-    avoid(v)
+    sensiden(v)
 {
 }
 
@@ -4319,6 +4316,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     thresh = v;
     iter = v;
     balan = v;
+    avoid = v;
     // Color & Light
     expcolor = v;
     curvactiv = v;
@@ -4474,6 +4472,4 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     adjblur = v;
     bilateral = v;
     sensiden = v;
-    // Others
-    avoid = v;
 }

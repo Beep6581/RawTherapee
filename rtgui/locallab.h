@@ -226,9 +226,6 @@ private:
     // Sharpening
     Gtk::CheckButton* const inverssha;
     sigc::connection inversshaConn;
-    // Others
-    Gtk::CheckButton* const avoid;
-    sigc::connection avoidConn;
 
     // ComboBox widgets
     // Color & Light
@@ -261,8 +258,6 @@ private:
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
-//    Gtk::Label* transLabels;
-//    Gtk::Label* transLabels2;
     Gtk::Frame* maskcolFrame;
     Gtk::Frame* maskexpFrame;
     Gtk::Frame* maskSHFrame;
@@ -310,8 +305,6 @@ private:
     void inversretChanged();
     // Sharpening
     void inversshaChanged();
-    // Others
-    void avoidChanged();
 
     // ComboBox event functions
     // Color & Light

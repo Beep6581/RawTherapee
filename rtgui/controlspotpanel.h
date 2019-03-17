@@ -63,6 +63,7 @@ public:
         double thresh;
         double iter;
         double balan;
+        bool avoid;
     };
 
     /**
@@ -91,6 +92,7 @@ public:
         bool thresh;
         bool iter;
         bool balan;
+        bool avoid;
     };
 
     // Constructor and management functions
@@ -237,6 +239,7 @@ private:
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+    void avoidChanged();
 
     void disableParamlistener(bool cond);
 
@@ -279,6 +282,7 @@ private:
         Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
         Gtk::TreeModelColumn<double> balan;
+        Gtk::TreeModelColumn<bool> avoid;
     };
 
     class RenameDialog:
@@ -335,6 +339,9 @@ private:
     Adjuster* const thresh_;
     Adjuster* const iter_;
     Adjuster* const balan_;
+
+    Gtk::CheckButton* const avoid_;
+    sigc::connection avoidConn_;
 
     // Internal variables
     int lastObject_;

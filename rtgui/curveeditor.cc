@@ -247,7 +247,7 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 {
 
     bgHistValid = false;
-    locallabRef = 0.0;    
+    locallabRef = 0.0;
     remoteDrag = false;
     selected = DCT_Linear;
     bottomBarCP = nullptr;
@@ -330,10 +330,9 @@ void CurveEditor::updateLocallabBackground(double ref)
     // Copy Locallab reference value in the curve editor cache
     locallabRef = ref;
 
-     // Then call the curve editor group to eventually update the histogram
+    // Then call the curve editor group to eventually update the histogram
     subGroup->updateLocallabBackground(this);
 }
-
 
 // Open up the curve if it has modifications and it's not already opened
 // Returns: true if curve was non linear and opened

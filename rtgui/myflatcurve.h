@@ -140,6 +140,7 @@ public:
 
     void setPos(double pos, int chanIdx) override;
     void stopNumericalAdjustment() override;
+
     void updateLocallabBackground(double ref);
 };
 

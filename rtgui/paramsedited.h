@@ -374,6 +374,7 @@ public:
         bool thresh;
         bool iter;
         bool balan;
+        bool avoid;
         // Color & Light
         bool expcolor;
         bool curvactiv;
@@ -525,8 +526,6 @@ public:
         bool adjblur;
         bool bilateral;
         bool sensiden;
-        // Others
-        bool avoid;
 
         LocallabSpotEdited(bool v);
 
