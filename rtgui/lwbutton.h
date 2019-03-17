@@ -20,6 +20,7 @@
 #define _LWBUTTON_
 
 #include <gtkmm.h>
+#include "rtsurface.h"
 
 class LWButton;
 
@@ -41,7 +42,7 @@ public:
 private:
     int xpos, ypos, w, h;
     Alignment halign, valign;
-    Cairo::RefPtr<Cairo::ImageSurface> icon;
+    Cairo::RefPtr<RTSurface> icon;
     double bgr, bgg, bgb;
     double fgr, fgg, fgb;
     State state;
@@ -51,15 +52,15 @@ private:
     Glib::ustring toolTip;
 
 public:
-    LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData, Alignment ha = Left, Alignment va = Center, Glib::ustring tooltip = "");
+    LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha = Left, Alignment va = Center, Glib::ustring tooltip = "");
 
     void    getSize             (int& minw, int& minh);
     void    getAlignment        (Alignment& ha, Alignment& va);
     void    setPosition         (int x, int y);
     void    getPosition         (int& x, int& y);
     bool    inside              (int x, int y);
-    void    setIcon             (Cairo::RefPtr<Cairo::ImageSurface> i);
-    Cairo::RefPtr<Cairo::ImageSurface> getIcon ();
+    void    setIcon             (Cairo::RefPtr<RTSurface> i);
+    Cairo::RefPtr<RTSurface> getIcon ();
     void    setColors           (const Gdk::RGBA& bg, const Gdk::RGBA& fg);
     void    setToolTip          (const Glib::ustring& tooltip);
 

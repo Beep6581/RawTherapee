@@ -22,7 +22,6 @@
 #include "options.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
-#include "../rtengine/icons.h"
 #include "../rtengine/procparams.h"
 #include "rtimage.h"
 #include "multilangmgr.h"
@@ -33,11 +32,11 @@
 
 using namespace std;
 
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::inconsistentPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::enabledPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::disabledPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::openedPBuf;
-Glib::RefPtr<Gdk::Pixbuf> MyExpander::closedPBuf;
+Glib::RefPtr<RTImage> MyExpander::inconsistentImage;
+Glib::RefPtr<RTImage> MyExpander::enabledImage;
+Glib::RefPtr<RTImage> MyExpander::disabledImage;
+Glib::RefPtr<RTImage> MyExpander::openedImage;
+Glib::RefPtr<RTImage> MyExpander::closedImage;
 
 IdleRegister::~IdleRegister()
 {
@@ -177,6 +176,25 @@ void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, e
     widget->set_vexpand(vExpand);
     widget->set_halign(hAlign);
     widget->set_valign(vAlign);
+}
+
+Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style)
+{
+    Gtk::Border padding;
+    if (!style) {
+        return padding;
+    }
+
+    int s = (double)RTScalable::getScale();
+    padding = style->get_padding();
+    if (s > 1) {
+        padding.set_left(padding.get_left() * s);
+        padding.set_right(padding.get_right() * s);
+        padding.set_top(padding.get_top() * s);
+        padding.set_bottom(padding.get_bottom() * s);
+    }
+
+    return padding;
 }
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference)
@@ -555,11 +573,22 @@ void ExpanderBox::hideBox()
 
 void MyExpander::init()
 {
-    inconsistentPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-inconsistent-small.png"));
-    enabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-on-small.png"));
-    disabledPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("power-off-small.png"));
-    openedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expander-open-small.png"));
-    closedPBuf = Gdk::Pixbuf::create_from_file(rtengine::findIconAbsolutePath("expander-closed-small.png"));
+    if (!inconsistentImage) {  // if one is null, all are null
+        inconsistentImage = Glib::RefPtr<RTImage>(new RTImage("power-inconsistent-small.png"));
+        enabledImage = Glib::RefPtr<RTImage>(new RTImage("power-on-small.png"));
+        disabledImage = Glib::RefPtr<RTImage>(new RTImage("power-off-small.png"));
+        openedImage = Glib::RefPtr<RTImage>(new RTImage("expander-open-small.png"));
+        closedImage = Glib::RefPtr<RTImage>(new RTImage("expander-closed-small.png"));
+    }
+}
+
+void MyExpander::cleanup()
+{
+    inconsistentImage.reset();
+    enabledImage.reset();
+    disabledImage.reset();
+    openedImage.reset();
+    closedImage.reset();
 }
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
@@ -577,7 +606,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
@@ -586,7 +615,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -616,7 +645,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 
 MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
-    child(nullptr), headerWidget(nullptr), statusImage(nullptr),
+    child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
     set_spacing(0);
@@ -630,7 +659,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
 
     if (useEnabled) {
-        statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
+        statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
@@ -640,7 +669,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
-        statusImage = Gtk::manage(new Gtk::Image(openedPBuf));
+        statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
 
@@ -760,12 +789,12 @@ void MyExpander::set_inconsistent(bool isInconsistent)
 
         if (useEnabled) {
             if (isInconsistent) {
-                statusImage->set(inconsistentPBuf);
+                statusImage->set(inconsistentImage->get_surface());
             } else {
                 if (enabled) {
-                    statusImage->set(enabledPBuf);
+                    statusImage->set(enabledImage->get_surface());
                 } else {
-                    statusImage->set(disabledPBuf);
+                    statusImage->set(disabledImage->get_surface());
                 }
             }
         }
@@ -791,14 +820,14 @@ void MyExpander::setEnabled(bool isEnabled)
                 enabled = false;
 
                 if (!inconsistent) {
-                    statusImage->set(disabledPBuf);
+                    statusImage->set(disabledImage->get_surface());
                     message.emit();
                 }
             } else {
                 enabled = true;
 
                 if (!inconsistent) {
-                    statusImage->set(enabledPBuf);
+                    statusImage->set(enabledImage->get_surface());
                     message.emit();
                 }
             }
@@ -834,9 +863,9 @@ void MyExpander::set_expanded( bool expanded )
 
     if (!useEnabled) {
         if (expanded ) {
-            statusImage->set(openedPBuf);
+            statusImage->set(openedImage->get_surface());
         } else {
-            statusImage->set(closedPBuf);
+            statusImage->set(closedImage->get_surface());
         }
     }
 
@@ -879,9 +908,9 @@ bool MyExpander::on_toggle(GdkEventButton* event)
 
     if (!useEnabled) {
         if (isVisible) {
-            statusImage->set(closedPBuf);
+            statusImage->set(closedImage->get_surface());
         } else {
-            statusImage->set(openedPBuf);
+            statusImage->set(openedImage->get_surface());
         }
     }
 
@@ -906,10 +935,10 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
     if (event->button == 1) {
         if (enabled) {
             enabled = false;
-            statusImage->set(disabledPBuf);
+            statusImage->set(disabledImage->get_surface());
         } else {
             enabled = true;
-            statusImage->set(enabledPBuf);
+            statusImage->set(enabledImage->get_surface());
         }
 
         message.emit();
@@ -983,14 +1012,19 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
     return true;
 }
 
+void MyScrolledWindow::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    natural_width = minimum_width = 100 * RTScalable::getScale();
+}
+
 void MyScrolledWindow::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    natural_height = minimum_height = 50;
+    natural_height = minimum_height = 50 * RTScalable::getScale();
 }
 
 void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    natural_height = minimum_height = 50;
+    natural_height = minimum_height = 50 * RTScalable::getScale();
 }
 
 /*
@@ -1050,11 +1084,11 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
     return true;
 }
 
-void MyScrolledToolbar::get_preferred_height (int &minimumHeight, int &naturalHeight)
+void MyScrolledToolbar::get_preferred_height_vfunc (int &minimumHeight, int &naturalHeight) const
 {
     int currMinHeight = 0;
     int currNatHeight = 0;
-    std::vector<Widget*> childs = get_children();
+    std::vector<const Widget*> childs = get_children();
     minimumHeight = naturalHeight = 0;
 
     for (auto child : childs)
@@ -1093,7 +1127,7 @@ bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
 void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
 {
     if (natural_width == -1 && minimum_width == -1) {
-        naturalWidth = minimumWidth = 70;
+        naturalWidth = minimumWidth = 70 * RTScalable::getScale();
     } else if (natural_width == -1) {
         naturalWidth =  minimumWidth = minimum_width;
     } else if (minimum_width == -1) {
@@ -1108,19 +1142,19 @@ void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
 
 void MyComboBoxText::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10);
-    minimum_width = rtengine::max(minimumWidth, 10);
+    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
+    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
 }
 void MyComboBoxText::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10);
-    minimum_width = rtengine::max(minimumWidth, 10);
+    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
+    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
 }
 
 
 MyComboBox::MyComboBox ()
 {
-    minimumWidth = naturalWidth = 70;
+    minimumWidth = naturalWidth = 70 * RTScalable::getScale();
 }
 
 bool MyComboBox::on_scroll_event (GdkEventScroll* event)
@@ -1139,7 +1173,7 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event)
 void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
 {
     if (natural_width == -1 && minimum_width == -1) {
-        naturalWidth = minimumWidth = 70;
+        naturalWidth = minimumWidth = 70 * RTScalable::getScale();
     } else if (natural_width == -1) {
         naturalWidth =  minimumWidth = minimum_width;
     } else if (minimum_width == -1) {
@@ -1154,13 +1188,13 @@ void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
 
 void MyComboBox::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10);
-    minimum_width = rtengine::max(minimumWidth, 10);
+    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
+    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
 }
 void MyComboBox::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10);
-    minimum_width = rtengine::max(minimumWidth, 10);
+    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
+    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
 }
 
 MySpinButton::MySpinButton ()
@@ -1445,11 +1479,11 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
 
 void MyFileChooserButton::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 35;
+    minimum_width = natural_width = 35 * RTScalable::getScale();
 }
 void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 35;
+    minimum_width = natural_width = 35 * RTScalable::getScale();
 }
 
 
@@ -1457,7 +1491,8 @@ void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int 
 TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx)
 {
 
-    pack_start(*Gtk::manage(new RTImage(fname)), Gtk::PACK_SHRINK, 0);
+    RTImage *img = Gtk::manage(new RTImage(fname));
+    pack_start(*img, Gtk::PACK_SHRINK, 0);
     set_tooltip_markup("<span font_size=\"large\" font_weight=\"bold\">" + labelTx  + "</span>\n" + tooltipTx);
 
     set_name("TextOrIcon");
@@ -1494,18 +1529,18 @@ const Gtk::Label* MyImageMenuItem::getLabel () const
     return label;
 }
 
-MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, 10)) {}
-MyProgressBar::MyProgressBar() : w(200) {}
+MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, 10 * RTScalable::getScale())) {}
+MyProgressBar::MyProgressBar() : w(200 * RTScalable::getScale()) {}
 
 void MyProgressBar::setPreferredWidth(int width)
 {
-    w = rtengine::max(width, 10);
+    w = rtengine::max(width, 10 * RTScalable::getScale());
 }
 
 void MyProgressBar::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = rtengine::max(w / 2, 50);
-    natural_width = rtengine::max(w, 50);
+    minimum_width = rtengine::max(w / 2, 50 * RTScalable::getScale());
+    natural_width = rtengine::max(w, 50 * RTScalable::getScale());
 }
 
 void MyProgressBar::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const

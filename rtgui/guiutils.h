@@ -44,6 +44,7 @@ void writeFailed (Gtk::Window& parent, const std::string& filename);
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
 gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
+Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style);
 
 class IdleRegister final :
     public rtengine::NonCopyable
@@ -181,11 +182,11 @@ public:
     typedef sigc::signal<void> type_signal_enabled_toggled;
 private:
     type_signal_enabled_toggled message;
-    static Glib::RefPtr<Gdk::Pixbuf> inconsistentPBuf; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<Gdk::Pixbuf> enabledPBuf;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<Gdk::Pixbuf> disabledPBuf;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<Gdk::Pixbuf> openedPBuf;       ///       "opened" image, displayed when useEnabled is false
-    static Glib::RefPtr<Gdk::Pixbuf> closedPBuf;       ///       "closed" image, displayed when useEnabled is false
+    static Glib::RefPtr<RTImage> inconsistentImage; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    static Glib::RefPtr<RTImage> enabledImage;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    static Glib::RefPtr<RTImage> disabledImage;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    static Glib::RefPtr<RTImage> openedImage;       ///       "opened" image, displayed when useEnabled is false
+    static Glib::RefPtr<RTImage> closedImage;       ///       "closed" image, displayed when useEnabled is false
     bool enabled;               /// Enabled feature (default to true)
     bool inconsistent;          /// True if the enabled button is inconsistent
     Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
@@ -210,7 +211,7 @@ private:
 protected:
     Gtk::Container* child;      /// Gtk::Contained to display below the expander's title
     Gtk::Widget* headerWidget;  /// Widget to display in the header, next to the arrow image ; can be NULL if the "string" version of the ctor has been used
-    Gtk::Image* statusImage;    /// Image to display the opened/closed status (if useEnabled is false) of the enabled/disabled status (if useEnabled is true)
+    RTImage* statusImage;       /// Image to display the opened/closed status (if useEnabled is false) of the enabled/disabled status (if useEnabled is true)
     Gtk::Label* label;          /// Text to display in the header, next to the arrow image ; can be NULL if the "widget" version of the ctor has been used
     bool useEnabled;            /// Set whether to handle an enabled/disabled feature and display the appropriate images
 
@@ -230,6 +231,7 @@ public:
 
     /// Initialize the class by loading the images
     static void init();
+    static void cleanup();
 
     Glib::SignalProxy1< bool, GdkEventButton* > signal_button_release_event()
     {
@@ -288,6 +290,7 @@ class MyScrolledWindow : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int& minimum_width, int& natural_width) const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
 
@@ -302,7 +305,7 @@ class MyScrolledToolbar : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event) override;
-    void get_preferred_height (int &minimumHeight, int &naturalHeight);
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
 
 public:
     MyScrolledToolbar();

@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2018 Jean-Christophe FRISCH <natureh.510@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,26 +17,46 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _RTIMAGE_
-#define _RTIMAGE_
+#pragma once
 
 #include <gtkmm/image.h>
-
-class Options;
+#include "rtscalable.h"
 
 /**
  * @brief A derived class of Gtk::Image in order to handle theme-related icon sets.
  */
-class RTImage : public Gtk::Image
+class RTImage : public Gtk::Image, public RTScalable
 {
+    static double dpiBack; // used to keep track of master dpi change
+    static int scaleBack;  // used to keep track of master scale change
+    //bool on_configure_event(GdkEventConfigure* configure_event);
+
+protected:
+    Cairo::RefPtr<Cairo::ImageSurface> surface;
+    Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+
 public:
+    RTImage ();
+    RTImage (RTImage &other);
+    RTImage (Glib::RefPtr<Gdk::Pixbuf> &pixbuf);
+    RTImage (Cairo::RefPtr<Cairo::ImageSurface> &surf);
+    RTImage(Cairo::RefPtr<Cairo::ImageSurface> other);
+    RTImage (Glib::RefPtr<RTImage> &other);
     RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
 
+    void setImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
     void changeImage (const Glib::ustring& imageName);
+    Cairo::RefPtr<Cairo::ImageSurface> get_surface();
+    int get_width();
+    int get_height();
+
+
+    static void init();
     static void updateImages ();
+    static void setDPInScale (const double newDPI, const int newScale);
+    static void setScale (const int newScale);
 
-    static Glib::RefPtr<Gdk::Pixbuf> createFromFile (const Glib::ustring& fileName);
-    static Cairo::RefPtr<Cairo::ImageSurface> createFromPng (const Glib::ustring& fileName);
+    static Glib::RefPtr<Gdk::Pixbuf> createPixbufFromFile (const Glib::ustring& fileName);
+    static Cairo::RefPtr<Cairo::ImageSurface> createImgSurfFromFile (const Glib::ustring& fileName);
+
 };
-
-#endif

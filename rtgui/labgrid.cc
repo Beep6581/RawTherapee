@@ -70,8 +70,10 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     isDragged(false),
     low_enabled(enable_low)
 {
-    set_can_focus(true);
+    set_can_focus(false); // prevent moving the grid while you're moving a point
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
+    set_name("LabGrid");
+    get_style_context()->add_class("drawingarea");
 }
 
 void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb) const
@@ -157,11 +159,14 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
     }
 
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    Gtk::Border padding = getPadding(style);  // already scaled
     Cairo::RefPtr<Cairo::Context> cr = getContext();
 
     if (isDirty()) {
         int width = allocation.get_width();
         int height = allocation.get_height();
+
+        int s = RTScalable::getScale();
 
         cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
@@ -170,19 +175,31 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->set_operator (Cairo::OPERATOR_CLEAR);
         cr->paint ();
         cr->set_operator (Cairo::OPERATOR_OVER);
-        style->render_background(cr, 0, 0, width, height);
+        style->render_background(cr,
+                inset * s + padding.get_left() - s,
+                inset * s + padding.get_top() - s,
+                width - 2 * inset * s - padding.get_right() - padding.get_left() + 2 * s,
+                height - 2 * inset * s - padding.get_top() - padding.get_bottom() + 2 * s
+                );
 
         // drawing the cells
-        cr->translate(inset, inset);
+        cr->translate(inset * s + padding.get_left(), inset * s + padding.get_top());
         cr->set_antialias(Cairo::ANTIALIAS_NONE);
-        width -= 2 * inset;
-        height -= 2 * inset;
+        width -= 2 * inset * s + padding.get_right() + padding.get_left();
+        height -= 2 * inset * s + padding.get_top() + padding.get_bottom();
+
         // flip y:
         cr->translate(0, height);
         cr->scale(1., -1.);
         const int cells = 8;
         float step = 12000.f / float(cells/2);
+        double cellW = double(width) / double(cells);
+        double cellH = double(height) / double(cells);
+        double cellYMin = 0.;
+        double cellYMax = std::floor(cellH);
         for (int j = 0; j < cells; j++) {
+            double cellXMin = 0.;
+            double cellXMax = std::floor(cellW);
             for (int i = 0; i < cells; i++) {
                 float R, G, B;
                 float x, y, z;
@@ -193,9 +210,18 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 Color::Lab2XYZ(25000.f, a, b, x, y, z);
                 Color::xyz2srgb(x, y, z, R, G, B);
                 cr->set_source_rgb(R / 65535.f, G / 65535.f, B / 65535.f);
-                cr->rectangle(width * i / float(cells), height * j / float(cells), width / float(cells) - 1, height / float(cells) - 1);
+                cr->rectangle(
+                        cellXMin,
+                        cellYMin,
+                        cellXMax - cellXMin - (i == cells-1 ? 0. : double(s)),
+                        cellYMax - cellYMin - (j == cells-1 ? 0. : double(s))
+                        );
+                cellXMin = cellXMax;
+                cellXMax = std::floor(cellW * double(i+2) + 0.01);
                 cr->fill();
             }
+            cellYMin = cellYMax;
+            cellYMax = std::floor(cellH * double(j+2) + 0.01);
         }
 
         // drawing the connection line
@@ -205,7 +231,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         hia = .5f * (width + width * high_a);
         lob = .5f * (height + height * low_b);
         hib = .5f * (height + height * high_b);
-        cr->set_line_width(2.);
+        cr->set_line_width(2. * double(s));
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
         cr->line_to(hia, hib);
@@ -215,18 +241,18 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         if (low_enabled) {
             cr->set_source_rgb(0.1, 0.1, 0.1);
             if (litPoint == LOW) {
-                cr->arc(loa, lob, 5, 0, 2. * rtengine::RT_PI);
+                cr->arc(loa, lob, 5 * s, 0, 2. * rtengine::RT_PI);
             } else {
-                cr->arc(loa, lob, 3, 0, 2. * rtengine::RT_PI);
+                cr->arc(loa, lob, 3 * s, 0, 2. * rtengine::RT_PI);
             }
             cr->fill();
         }
 
         cr->set_source_rgb(0.9, 0.9, 0.9);
         if (litPoint == HIGH) {
-            cr->arc(hia, hib, 5, 0, 2. * rtengine::RT_PI);
+            cr->arc(hia, hib, 5 * s, 0, 2. * rtengine::RT_PI);
         } else {
-            cr->arc(hia, hib, 3, 0, 2. * rtengine::RT_PI);
+            cr->arc(hia, hib, 3 * s, 0, 2. * rtengine::RT_PI);
         }
         cr->fill();
     }
@@ -279,11 +305,16 @@ bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
         delayconn.disconnect();
     }
 
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    Gtk::Border padding = getPadding(style);  // already scaled
+
     State oldLitPoint = litPoint;
 
-    int width = get_allocated_width() - 2 * inset, height = get_allocated_height() - 2 * inset;
-    const float mouse_x = std::min(std::max(event->x - inset, 0.), double(width));
-    const float mouse_y = std::min(std::max(height - 1 - event->y + inset, 0.), double(height));
+    int s = RTScalable::getScale();
+    int width = get_allocated_width() - 2 * inset * s - padding.get_right() - padding.get_left();
+    int height = get_allocated_height() - 2 * inset * s - padding.get_top() - padding.get_bottom();
+    const float mouse_x = std::min(double(std::max(event->x - inset * s - padding.get_right(), 0.)), double(width));
+    const float mouse_y = std::min(double(std::max(get_allocated_height() - 1 - event->y - inset * s - padding.get_bottom(), 0.)), double(height));
     const float ma = (2.0 * mouse_x - width) / (float)width;
     const float mb = (2.0 * mouse_y - height) / (float)height;
     if (isDragged) {
@@ -332,14 +363,22 @@ Gtk::SizeRequestMode LabGridArea::get_request_mode_vfunc() const
 
 void LabGridArea::get_preferred_width_vfunc(int &minimum_width, int &natural_width) const
 {
-    minimum_width = 50;
-    natural_width = 150;  // same as GRAPH_SIZE from mycurve.h
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    Gtk::Border padding = getPadding(style);  // already scaled
+    int s = RTScalable::getScale();
+    int p = padding.get_left() + padding.get_right();
+
+    minimum_width = 50 * s + p;
+    natural_width = 150 * s + p;  // same as GRAPH_SIZE from mycurve.h
 }
 
 
 void LabGridArea::get_preferred_height_for_width_vfunc(int width, int &minimum_height, int &natural_height) const
 {
-    minimum_height = natural_height = width;
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    Gtk::Border padding = getPadding(style);  // already scaled
+
+    minimum_height = natural_height = width - padding.get_left() - padding.get_right() + padding.get_top() + padding.get_bottom();
 }
 
 

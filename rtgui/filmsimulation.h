@@ -18,6 +18,8 @@ public:
     void setSelectedClut( Glib::ustring filename );
     void setBatchMode(bool yes);
 
+    static void cleanup();
+
 private:
     void updateUnchangedEntry(); // in batchMode we need to add an extra entry "(Unchanged)". We do this whenever the widget is mapped (connecting to signal_map()), unless options.multiDisplayMode (see the comment below about cm2 in this case)
 
