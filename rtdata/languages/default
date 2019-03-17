@@ -2049,6 +2049,7 @@ TP_LOCALLAB_NOISECHROFINE;Chroma fine (Wav)
 TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail (DCT)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=2
+TP_LOCALLAB_PREVIEWSEL;Preview selection deltaE
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_GAM;Gamma

@@ -50,21 +50,21 @@ private:
     
     enum State { NONE, HIGH, LOW };
     State litPoint;
-    float low_a;
-    float high_a;
-    float low_b;
-    float high_b;
+    double low_a;
+    double high_a;
+    double low_b;
+    double high_b;
 
-    float defaultLow_a;
-    float defaultHigh_a;
-    float defaultLow_b;
-    float defaultHigh_b;
+    double defaultLow_a;
+    double defaultHigh_a;
+    double defaultLow_b;
+    double defaultHigh_b;
 
     ToolPanelListener *listener;
     bool edited;
     bool isDragged;
     sigc::connection delayconn;
-    static const int inset = 2;
+    static const int inset = 5;
 
     bool low_enabled;
 

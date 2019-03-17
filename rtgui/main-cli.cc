@@ -33,7 +33,6 @@
 #include <cstdlib>
 #include <locale.h>
 #include "options.h"
-#include "../rtengine/icons.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
@@ -195,8 +194,6 @@ int main (int argc, char **argv)
         options.defProfImg = DEFPROFILE_INTERNAL;
     }
 
-    rtengine::setPaths();
-
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
 
 #ifndef WIN32
@@ -284,6 +281,10 @@ int processLineParams ( int argc, char **argv )
 
         if ( currParam.at (0) == '-' && currParam.size() > 1) {
             switch ( currParam.at (1) ) {
+                case '-':
+                    // GTK --argument, we're skipping it
+                    break;
+
                 case 'O':
                     copyParamsFile = true;
 

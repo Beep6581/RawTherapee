@@ -20,6 +20,7 @@
 #define _BATCHQUEUEBUTTONSET_
 
 #include "lwbuttonset.h"
+#include "rtsurface.h"
 #include <gtkmm.h>
 
 class BatchQueueEntry;
@@ -29,9 +30,9 @@ class BatchQueueButtonSet : public LWButtonSet
     static bool iconsLoaded;
 
 public:
-    static Cairo::RefPtr<Cairo::ImageSurface> cancelIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> headIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> tailIcon;
+    static Cairo::RefPtr<RTSurface> cancelIcon;
+    static Cairo::RefPtr<RTSurface> headIcon;
+    static Cairo::RefPtr<RTSurface> tailIcon;
 
     explicit BatchQueueButtonSet (BatchQueueEntry* myEntry);
 };

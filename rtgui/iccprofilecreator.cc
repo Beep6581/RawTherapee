@@ -22,7 +22,6 @@
 #include "multilangmgr.h"
 #include "cachemanager.h"
 #include "addsetids.h"
-#include "../rtengine/icons.h"
 #include "../rtengine/color.h"
 #include "rtimage.h"
 #ifdef _OPENMP

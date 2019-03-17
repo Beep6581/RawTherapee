@@ -33,6 +33,7 @@ CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring group
     // We set the label to the one provided as parameter, even if it's an empty string
     curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_START));
     setExpandAlignProperties(curveGroupLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    set_row_spacing(RTScalable::getScale());
 }
 
 CurveEditorGroup::~CurveEditorGroup()
@@ -120,6 +121,7 @@ void CurveEditorGroup::newLine()
     if (curveEditors.size() > numberOfPackedCurve) {
         Gtk::Grid* currLine = Gtk::manage (new Gtk::Grid ());
         setExpandAlignProperties(currLine, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+        currLine->set_column_spacing(RTScalable::getScale());
 
         bool isHeader = false;
         int x = 0;
