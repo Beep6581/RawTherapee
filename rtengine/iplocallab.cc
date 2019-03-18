@@ -2908,7 +2908,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 }
 
 
-static void blendmask(const local_params& lp, int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, LabImage* bufmaskorigSH, LabImage* originalmaskSH, float bl)
+static void blendmask(const local_params& lp, int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, LabImage* bufmaskor, LabImage* originalmas, float bl)
 {
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -2931,24 +2931,24 @@ static void blendmask(const local_params& lp, int begx, int begy, int cx, int cy
 
             if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                 if (zone > 0) {
-                    bufexporig->L[loy - begy][lox - begx] += (bl * bufmaskorigSH->L[loy - begy][lox - begx]);
-                    bufexporig->a[loy - begy][lox - begx] *= (1.f + bl * bufmaskorigSH->a[loy - begy][lox - begx]);
-                    bufexporig->b[loy - begy][lox - begx] *= (1.f + bl * bufmaskorigSH->b[loy - begy][lox - begx]);
+                    bufexporig->L[loy - begy][lox - begx] += (bl * bufmaskor->L[loy - begy][lox - begx]);
+                    bufexporig->a[loy - begy][lox - begx] *= (1.f + bl * bufmaskor->a[loy - begy][lox - begx]);
+                    bufexporig->b[loy - begy][lox - begx] *= (1.f + bl * bufmaskor->b[loy - begy][lox - begx]);
 
                     bufexporig->L[loy - begy][lox - begx] = CLIP(bufexporig->L[loy - begy][lox - begx]);
                     bufexporig->a[loy - begy][lox - begx] = CLIPC(bufexporig->a[loy - begy][lox - begx]);
                     bufexporig->b[loy - begy][lox - begx] = CLIPC(bufexporig->b[loy - begy][lox - begx]);
 
-                    originalmaskSH->L[y][x] = CLIP(bufexporig->L[loy - begy][lox - begx] -  bufmaskorigSH->L[loy - begy][lox - begx]);
-                    originalmaskSH->a[y][x] = CLIPC(bufexporig->a[loy - begy][lox - begx] * (1.f - bufmaskorigSH->a[loy - begy][lox - begx]));
-                    originalmaskSH->b[y][x] = CLIPC(bufexporig->b[loy - begy][lox - begx] * (1.f - bufmaskorigSH->b[loy - begy][lox - begx]));
+                    originalmas->L[y][x] = CLIP(bufexporig->L[loy - begy][lox - begx] -  bufmaskor->L[loy - begy][lox - begx]);
+                    originalmas->a[y][x] = CLIPC(bufexporig->a[loy - begy][lox - begx] * (1.f - bufmaskor->a[loy - begy][lox - begx]));
+                    originalmas->b[y][x] = CLIPC(bufexporig->b[loy - begy][lox - begx] * (1.f - bufmaskor->b[loy - begy][lox - begx]));
 
                     switch (zone) {
 
                         case 1: {
-                            original->L[y][x] += (bl * localFactor * bufmaskorigSH->L[loy - begy][lox - begx]);
-                            original->a[y][x] *= (1.f + bl * localFactor * bufmaskorigSH->a[loy - begy][lox - begx]);
-                            original->b[y][x] *= (1.f + bl * localFactor * bufmaskorigSH->b[loy - begy][lox - begx]);
+                            original->L[y][x] += (bl * localFactor * bufmaskor->L[loy - begy][lox - begx]);
+                            original->a[y][x] *= (1.f + bl * localFactor * bufmaskor->a[loy - begy][lox - begx]);
+                            original->b[y][x] *= (1.f + bl * localFactor * bufmaskor->b[loy - begy][lox - begx]);
                             original->L[y][x] = CLIP(original->L[y][x]);
                             original->a[y][x] = CLIPC(original->a[y][x]);
                             original->b[y][x] = CLIPC(original->b[y][x]);
@@ -3710,10 +3710,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         kL = lp.balance;
         balancedeltaE(kL, kab);
 
-        bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask) && senstype == 1;
-        bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask) && senstype == 0;
-        bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask) && senstype == 9;
+        bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
+        bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
+        bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
         bool usemaskall = (usemaskSH || usemaskcol || usemaskexp);
+
         if (usemaskall)
         {
             origblurmask = new LabImage(GW, GH);
@@ -3864,7 +3865,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     }
 
                     if (previewcol  || previewexp || previewSH) {
-                        clc = settings->previewselection * 100.f;//between 100 and 10000 to obtain "good" result 
+                        clc = settings->previewselection * 100.f;//between 100 and 10000 to obtain "good" result
                     }
 
                     float reducdE = 0.f;
@@ -3968,16 +3969,18 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                     } else if (senstype == 1) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
-                                       flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
-                                       flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
-                                        if (previewcol || previewexp || previewSH){
+                                        flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
+                                        flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+
+                                        if (previewcol || previewexp || previewSH) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
                                     } else if (senstype == 0) {
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
-                                        if (previewcol || previewexp || previewSH){
+
+                                        if (previewcol || previewexp || previewSH) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -4072,14 +4075,16 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
-                                        if (previewcol || previewexp || previewSH){
+
+                                        if (previewcol || previewexp || previewSH) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
                                     } else if (senstype == 0) {
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
-                                        if (previewcol || previewexp || previewSH){
+
+                                        if (previewcol || previewexp || previewSH) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -6994,7 +6999,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bufexporig = new LabImage(bfw, bfh); //buffer for data in zone limit
                 bufexpfin = new LabImage(bfw, bfh); //buffer for data in zone limit
 
-                if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3) {
+                if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
                     int GWm = transformed->W;
                     int GHm = transformed->H;
                     bufmaskorigSH = new LabImage(bfw, bfh);
@@ -7013,7 +7018,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufexporig->a[ir][jr] = 0.f;
                         bufexporig->b[ir][jr] = 0.f;
 
-                        if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3) {
+                        if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
                             bufmaskorigSH->L[ir][jr] = 0.f;
                             bufmaskorigSH->a[ir][jr] = 0.f;
                             bufmaskorigSH->b[ir][jr] = 0.f;
@@ -7099,7 +7104,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3) {
+                            if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
                                 bufmaskorigSH->L[loy - begy][lox - begx] = original->L[y][x];
                                 bufmaskorigSH->a[loy - begy][lox - begx] = original->a[y][x];
                                 bufmaskorigSH->b[loy - begy][lox - begx] = original->b[y][x];
@@ -7112,7 +7117,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-//printf("fab=%f \n", fab);
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7132,8 +7137,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float kmaskHb = 0;
 
 
-                        if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3) {
-
+                        if (lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
                             if (locllmasSHCurve  && llmasSHutili) {
                                 float ligh = (bufexporig->L[ir][jr]) / 32768.f;
                                 valLLexp = (float)(locllmasSHCurve[500.f * ligh]);
@@ -7141,15 +7145,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 kmaskLexp = 32768.f * valLLexp;
                             }
 
-                            if (locccmasSHCurve && lcmasSHutili) {
-                                float chromask = 0.0001f + sqrt(SQR((bufexporig->a[ir][jr]) / fab) + SQR((bufexporig->b[ir][jr]) / fab));
-                                float chromaskr = chromask;
-                                valCC = float (locccmasSHCurve[500.f *  chromaskr]);
-                                valCC = LIM01(1.f - valCC);
-                                kmaskCa = valCC;
-                                kmaskCb = valCC;
-                            }
+                            if (lp.showmaskSHmet != 4) {
 
+                                if (locccmasSHCurve && lcmasSHutili) {
+                                    float chromask = 0.0001f + sqrt(SQR((bufexporig->a[ir][jr]) / fab) + SQR((bufexporig->b[ir][jr]) / fab));
+                                    float chromaskr = chromask;
+                                    valCC = float (locccmasSHCurve[500.f *  chromaskr]);
+                                    valCC = LIM01(1.f - valCC);
+                                    kmaskCa = valCC;
+                                    kmaskCb = valCC;
+                                }
+                            }
 
                             if (lochhmasSHCurve && lhmasSHutili) {
                                 float huema = xatan2f(bufexporig->b[ir][jr], bufexporig->a[ir][jr]);
@@ -7162,8 +7168,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 valHH = float (lochhmasSHCurve[500.f *  h]);
                                 valHH = LIM01(1.f - valHH);
-                                kmaskHa = valHH;
-                                kmaskHb = valHH;
+
+                                if (lp.showmaskSHmet != 4) {
+                                    kmaskHa = valHH;
+                                    kmaskHb = valHH;
+                                }
+
                                 kmaskHL = 32768.f * valHH;
                             }
 
@@ -7176,7 +7186,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                if ((lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3)  /*&& lp.radmaSH > 0.f*/) {
+
+                if ((lp.showmaskSHmet == 2  || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4)) {
                     if (lp.radmaSH > 0.f) {
                         guidedFilter(guid, ble, ble, lp.radmaSH * 10.f / sk, 0.001, multiThread, 4);
                     }
@@ -7197,7 +7208,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float radiusb = 1.f / sk;
 
-                if (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3) {
+                if (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
 
 
 #ifdef _OPENMP
@@ -7212,7 +7223,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     delete bufmaskblurSH;
 
 
-                    if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2 || lp.enaSHMask) {
+                    if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2 || lp.showmaskSHmet == 4 || lp.enaSHMask) {
                         blendmask(lp, begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, bufmaskorigSH, originalmaskSH, lp.blendmaSH);
                         delete bufmaskorigSH;
 
@@ -7281,7 +7292,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 delete bufexporig;
                 delete bufexpfin;
 
-                if (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3) {
+                if (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) {
                     delete originalmaskSH;
                 }
 
@@ -7809,7 +7820,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bufexptemp = new LabImage(bfw, bfh);
                 bufcat02fin = new LabImage(bfw, bfh);
 
-                if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3) {
+                if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                     int GWm = transformed->W;
                     int GHm = transformed->H;
                     bufmaskorigexp = new LabImage(bfw, bfh);
@@ -7828,7 +7839,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufexporig->a[ir][jr] = 0.f;
                         bufexporig->b[ir][jr] = 0.f;
 
-                        if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3) {
+                        if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                             bufmaskorigexp->L[ir][jr] = 0.f;
                             bufmaskorigexp->a[ir][jr] = 0.f;
                             bufmaskorigexp->b[ir][jr] = 0.f;
@@ -7980,7 +7991,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3) {
+                            if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                                 bufmaskorigexp->L[loy - begy][lox - begx] = original->L[y][x];
                                 bufmaskorigexp->a[loy - begy][lox - begx] = original->a[y][x];
                                 bufmaskorigexp->b[loy - begy][lox - begx] = original->b[y][x];
@@ -8012,8 +8023,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float kmaskHb = 0;
 
 
-                        if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3) {
-
+                        if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                             if (locllmasexpCurve  && llmasexputili) {
                                 float ligh = (bufexporig->L[ir][jr]) / 32768.f;
                                 valLLexp = (float)(locllmasexpCurve[500.f * ligh]);
@@ -8021,15 +8031,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 kmaskLexp = 32768.f * valLLexp;
                             }
 
-                            if (locccmasexpCurve && lcmasexputili) {
-                                float chromask = 0.0001f + sqrt(SQR((bufexporig->a[ir][jr]) / fab) + SQR((bufexporig->b[ir][jr]) / fab));
-                                float chromaskr = chromask;
-                                valCC = float (locccmasexpCurve[500.f *  chromaskr]);
-                                valCC = LIM01(1.f - valCC);
-                                kmaskCa = valCC;
-                                kmaskCb = valCC;
-                            }
+                            if (lp.showmaskexpmet != 5) {
 
+                                if (locccmasexpCurve && lcmasexputili) {
+                                    float chromask = 0.0001f + sqrt(SQR((bufexporig->a[ir][jr]) / fab) + SQR((bufexporig->b[ir][jr]) / fab));
+                                    float chromaskr = chromask;
+                                    valCC = float (locccmasexpCurve[500.f *  chromaskr]);
+                                    valCC = LIM01(1.f - valCC);
+                                    kmaskCa = valCC;
+                                    kmaskCb = valCC;
+                                }
+                            }
 
                             if (lochhmasexpCurve && lhmasexputili) {
                                 float huema = xatan2f(bufexporig->b[ir][jr], bufexporig->a[ir][jr]);
@@ -8042,8 +8054,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 valHH = float (lochhmasexpCurve[500.f *  h]);
                                 valHH = LIM01(1.f - valHH);
-                                kmaskHa = valHH;
-                                kmaskHb = valHH;
+
+                                if (lp.showmaskexpmet != 5) {
+                                    kmaskHa = valHH;
+                                    kmaskHb = valHH;
+                                }
+
                                 kmaskHL = 32768.f * valHH;
                             }
 
@@ -8056,7 +8072,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3)) {
+                if ((lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5)) {
                     if (lp.radmaexp > 0.f) {
                         guidedFilter(guid, ble, ble, lp.radmaexp * 10.f / sk, 0.001, multiThread, 4);
                     }
@@ -8076,7 +8092,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float radiusb = 1.f / sk;
 
-                if (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3) {
+                if (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
 
 #ifdef _OPENMP
                     #pragma omp parallel
@@ -8090,7 +8106,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     delete bufmaskblurexp;
 
 
-                    if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2 || lp.showmaskexpmet == 4 || lp.enaExpMask) {
+                    if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2 || lp.showmaskexpmet == 4 || lp.showmaskexpmet == 5 || lp.enaExpMask) {
                         blendmask(lp, begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, bufmaskorigexp, originalmaskexp, lp.blendmaexp);
 
                         delete bufmaskorigexp;
@@ -8234,7 +8250,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 delete bufexptemp;
                 delete bufcat02fin;
 
-                if (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3) {
+                if (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                     delete originalmaskexp;
                 }
             }
@@ -8306,7 +8322,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                 bufcolorig = new LabImage(bfw, bfh);
 
-                if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3) {
+                if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
                     bufmaskorigcol = new LabImage(bfw, bfh);
                     bufmaskblurcol = new LabImage(bfw, bfh);
                     int GWm = transformed->W;
@@ -8324,7 +8340,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufcolorig->a[ir][jr] = 0.f;
                         bufcolorig->b[ir][jr] = 0.f;
 
-                        if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3) {
+                        if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
                             bufmaskorigcol->L[ir][jr] = 0.f;
                             bufmaskorigcol->a[ir][jr] = 0.f;
                             bufmaskorigcol->b[ir][jr] = 0.f;
@@ -8428,7 +8444,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int mode = 0;
                 Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
 
-                //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
                 double start;
                 double add;
 
@@ -8469,7 +8484,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3) {
+                            if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
                                 bufmaskorigcol->L[loy - begy][lox - begx] = original->L[y][x];
                                 bufmaskorigcol->a[loy - begy][lox - begx] = original->a[y][x];
                                 bufmaskorigcol->b[loy - begy][lox - begx] = original->b[y][x];
@@ -8500,7 +8515,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float kmaskHa = 0;
                         float kmaskHb = 0;
 
-                        if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3) {
+                        if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
 
                             if (locllmasCurve && llmasutili) {
                                 float ligh = (bufcolorig->L[ir][jr]) / 32768.f;
@@ -8509,13 +8524,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 kmaskL = 32768.f * valLL;
                             }
 
-                            if (locccmasCurve && lcmasutili) {
-                                float chromask = 0.0001f + (sqrt(SQR(bufcolorig->a[ir][jr] / fab) + SQR(bufcolorig->b[ir][jr] / fab)));
-                                float chromaskr = chromask;// / 45000.f;
-                                valCC = float (locccmasCurve[500.f *  chromaskr]);
-                                valCC = LIM01(1.f - valCC);
-                                kmaskCa = valCC;
-                                kmaskCb = valCC;
+                            if (lp.showmaskcolmet != 5) {
+                                if (locccmasCurve && lcmasutili) {
+                                    float chromask = 0.0001f + (sqrt(SQR(bufcolorig->a[ir][jr] / fab) + SQR(bufcolorig->b[ir][jr] / fab)));
+                                    float chromaskr = chromask;// / 45000.f;
+                                    valCC = float (locccmasCurve[500.f *  chromaskr]);
+                                    valCC = LIM01(1.f - valCC);
+                                    kmaskCa = valCC;
+                                    kmaskCb = valCC;
+                                }
                             }
 
                             if (lochhmasCurve && lhmasutili) {
@@ -8529,8 +8546,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 valHH = float (lochhmasCurve[500.f *  h]);
                                 valHH = LIM01(1.f - valHH);
-                                kmaskHa = valHH;
-                                kmaskHb = valHH;
+
+                                if (lp.showmaskcolmet != 5) {
+                                    kmaskHa = valHH;
+                                    kmaskHb = valHH;
+                                }
+
                                 kmaskHL = 32768.f * valHH;
                             }
 
@@ -8543,7 +8564,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3)  /*&& lp.radmacol > 0.f*/) {
+                if ((lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5)) {
                     if (lp.radmacol > 0.f) {
                         guidedFilter(guid, ble, ble, lp.radmacol * 10.f / sk, 0.001, multiThread, 4);
                     }
@@ -8563,7 +8584,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float radiusb = 1.f / sk;
 
-                if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3) {
+                if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
 #ifdef _OPENMP
                     #pragma omp parallel
 #endif
@@ -8574,7 +8595,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                     delete bufmaskblurcol;
 
-                    if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.showmaskcolmet == 4 || lp.enaColorMask) {
+                    if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.enaColorMask) {
                         blendmask(lp, begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, bufmaskorigcol, originalmaskcol, lp.blendmacol);
 
                         delete bufmaskorigcol;
@@ -8723,7 +8744,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     delete bufcolorig;
 
-                    if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3) {
+                    if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
                         delete originalmaskcol;
                     }
 
