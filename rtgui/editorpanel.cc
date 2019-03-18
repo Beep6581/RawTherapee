@@ -1929,7 +1929,6 @@ void EditorPanel::saveAsPressed ()
             BatchQueueEntry* bqe = createBatchQueueEntry ();
             bqe->outFileName = fnameOut;
             bqe->saveFormat = saveAsDialog->getFormat ();
-            bqe->auto_suffix = autoSuffix;
             bqe->forceFormatOpts = saveAsDialog->getForceFormatOpts ();
             parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
             fnameOK = true;

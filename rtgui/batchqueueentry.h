@@ -56,7 +56,6 @@ public:
     SaveFormat saveFormat;
     bool forceFormatOpts;
     bool fast_pipeline;
-    bool auto_suffix;
 
     BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = nullptr);
     ~BatchQueueEntry () override;

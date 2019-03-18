@@ -941,7 +941,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 
     // In overwrite mode we TRY to delete the old file first.
     // if that's not possible (e.g. locked by viewer, R/O), we revert to the standard naming scheme
-    bool inOverwriteMode = !processing->auto_suffix;
+    bool inOverwriteMode = !options.autoSuffix;
 
     for (int tries = 0; tries < 100; tries++) {
         if (tries == 0) {
