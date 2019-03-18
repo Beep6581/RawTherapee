@@ -43,7 +43,8 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
     outFileName(""),
     sequence(0),
     forceFormatOpts(false),
-    fast_pipeline(job->fastPipeline())
+    fast_pipeline(job->fastPipeline()),
+    auto_suffix(false)
 {
 
     thumbnail = thm;

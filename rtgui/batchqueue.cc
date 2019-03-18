@@ -677,7 +677,6 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         } else {
             saveFormat = options.saveFormatBatch;
         }
-
         // The output filename's extension is forced to the current or selected output format,
         // despite what the user have set in the fielneame's field of the "Save as" dialgo box
         fname = autoCompleteFileName (removeExtension(processing->outFileName), saveFormat.format);
@@ -942,7 +941,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 
     // In overwrite mode we TRY to delete the old file first.
     // if that's not possible (e.g. locked by viewer, R/O), we revert to the standard naming scheme
-    bool inOverwriteMode = options.overwriteOutputFile;
+    bool inOverwriteMode = !processing->auto_suffix;
 
     for (int tries = 0; tries < 100; tries++) {
         if (tries == 0) {

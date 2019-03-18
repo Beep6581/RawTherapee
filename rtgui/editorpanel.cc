@@ -1868,9 +1868,10 @@ void EditorPanel::saveAsPressed ()
         // The SaveAsDialog ensure that a filename has been specified
         fnameOut = saveAsDialog->getFileName ();
 
+        auto autoSuffix = saveAsDialog->getAutoSuffix ();
         options.lastSaveAsPath = saveAsDialog->getDirectory ();
         saveAsDialog->get_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
-        options.autoSuffix = saveAsDialog->getAutoSuffix ();
+        options.autoSuffix = autoSuffix;
         options.saveMethodNum = saveAsDialog->getSaveMethodNum ();
         lastSaveAsFileName = Glib::path_get_basename (removeExtension (fnameOut));
         SaveFormat sf = saveAsDialog->getFormat ();
@@ -1887,7 +1888,7 @@ void EditorPanel::saveAsPressed ()
             Glib::ustring dstfname = Glib::path_get_basename (removeExtension (fnameOut));
             Glib::ustring dstext = getExtension (fnameOut);
 
-            if (saveAsDialog->getAutoSuffix()) {
+            if (autoSuffix) {
 
                 Glib::ustring fnameTemp;
 
@@ -1928,6 +1929,7 @@ void EditorPanel::saveAsPressed ()
             BatchQueueEntry* bqe = createBatchQueueEntry ();
             bqe->outFileName = fnameOut;
             bqe->saveFormat = saveAsDialog->getFormat ();
+            bqe->auto_suffix = autoSuffix;
             bqe->forceFormatOpts = saveAsDialog->getForceFormatOpts ();
             parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
             fnameOK = true;
