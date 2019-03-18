@@ -18,6 +18,8 @@
  */
 #include "rgbcurves.h"
 
+#include "../rtengine/procparams.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -198,12 +200,19 @@ void RGBCurves::setBatchMode (bool batchMode)
 }
 
 
-void RGBCurves::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, /*LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
+void RGBCurves::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
 {
-
-    //  Rshape->updateBackgroundHistogram (histRed);
-    //  Gshape->updateBackgroundHistogram (histGreen);
-    //  Bshape->updateBackgroundHistogram (histBlue);
 }
 
 

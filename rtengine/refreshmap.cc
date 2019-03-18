@@ -74,7 +74,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
     0,                // free entry
-    RGBCURVE,         // EvDCPToneCurve,
+    RGBCURVE|M_AUTOEXP, // EvDCPToneCurve,
     ALLNORAW,         // EvDCPIlluminant,
     RETINEX,          // EvSHEnabled,
     RGBCURVE,         // EvSHHighlights,
@@ -151,7 +151,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DARKFRAME,        // EvPreProcessAutoDF
     DARKFRAME,        // EvPreProcessDFFile
     DARKFRAME,        // EvPreProcessExpCorrLinear
-    DARKFRAME,        // EvPreProcessExpCorrPH
+    0,                // --unused--
     FLATFIELD,        // EvFlatFieldFile,
     FLATFIELD,        // EvFlatFieldAutoSelect,
     FLATFIELD,        // EvFlatFieldBlurRadius,
@@ -419,8 +419,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavgreenlow
     DIRPYREQUALIZER,  // EvWavbluelow
     DIRPYREQUALIZER,  // EvWavNeutral
-    RGBCURVE,         // EvDCPApplyLookTable,
-    RGBCURVE,         // EvDCPApplyBaselineExposureOffset,
+    RGBCURVE|M_AUTOEXP, // EvDCPApplyLookTable,
+    RGBCURVE|M_AUTOEXP, // EvDCPApplyBaselineExposureOffset,
     ALLNORAW,         // EvDCPApplyHueSatMap
     DIRPYREQUALIZER,  // EvWavenacont
     DIRPYREQUALIZER,  // EvWavenachrom
@@ -472,31 +472,31 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     OUTPUTPROFILE,    // EvOBPCompens
     ALLNORAW,         // EvWBtempBias
     DARKFRAME,        // EvRawImageNum
-    DEMOSAIC,         // EvPixelShiftMotion
-    DEMOSAIC,         // EvPixelShiftMotionCorrection
-    DEMOSAIC,         // EvPixelShiftStddevFactorGreen
+    0,                // unused
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftEperIso
-    DEMOSAIC,         // EvPixelShiftNreadIso
-    DEMOSAIC,         // EvPixelShiftPrnu
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelshiftShowMotion
     DEMOSAIC,         // EvPixelshiftShowMotionMaskOnly
-    DEMOSAIC,         // EvPixelShiftAutomatic
-    DEMOSAIC,         // EvPixelShiftNonGreenHorizontal
-    DEMOSAIC,         // EvPixelShiftNonGreenVertical
+    0,                // unused
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftNonGreenCross
-    DEMOSAIC,         // EvPixelShiftStddevFactorRed
-    DEMOSAIC,         // EvPixelShiftStddevFactorBlue
-    DEMOSAIC,         // EvPixelShiftNonGreenCross2
-    DEMOSAIC,         // EvPixelShiftNonGreenAmaze
+    0,                // unused
+    0,                // unused
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftGreen
-    DEMOSAIC,         // EvPixelShiftRedBlueWeight
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftBlur
     DEMOSAIC,         // EvPixelShiftSigma
-    DEMOSAIC,         // EvPixelShiftSum
-    DEMOSAIC,         // EvPixelShiftExp0
+    0,                // unused
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftHoleFill
     DEMOSAIC,         // EvPixelShiftMedian
-    DEMOSAIC,         // EvPixelShiftMedian3
+    0,                // unused
     DEMOSAIC,         // EvPixelShiftMotionMethod
     DEMOSAIC,         // EvPixelShiftSmooth
     DEMOSAIC,         // EvPixelShiftLmmse
@@ -519,8 +519,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     HDR,              // EvTMFattalAmount
     ALLNORAW,         // EvWBEnabled
     RGBCURVE,         // EvRGBEnabled
-    LUMINANCECURVE,   // EvLEnabled
-    DEMOSAIC          // EvPixelShiftOneGreen
+    LUMINANCECURVE    // EvLEnabled
 };
 
 

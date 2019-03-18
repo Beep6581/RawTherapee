@@ -16,9 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "defringe.h"
-#include <iomanip>
 #include <cmath>
+#include <iomanip>
+
+#include "defringe.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -149,9 +152,8 @@ void Defringe::curveChanged ()
     }
 }
 
-void Defringe::adjusterChanged (Adjuster* a, double newval)
+void Defringe::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && getEnabled()) {
 
         if (a == radius) {
@@ -160,6 +162,10 @@ void Defringe::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvDefringeThreshold, Glib::ustring::format ((int)a->getValue()));
         }
     }
+}
+
+void Defringe::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void Defringe::enabledChanged ()

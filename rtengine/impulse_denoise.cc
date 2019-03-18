@@ -31,7 +31,7 @@ using namespace std;
 namespace rtengine
 {
 
-SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
+void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 {
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // impulse noise removal
@@ -260,7 +260,7 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 }
 
 
-SSEFUNCTION void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3])
+void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buffers[3])
 {
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // impulse noise removal

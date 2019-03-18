@@ -130,7 +130,7 @@ void ffInfo::updateRawImage()
     // this may not be necessary, as flatfield is further blurred before being applied to the processed image.
     if( !pathNames.empty() ) {
         std::list<Glib::ustring>::iterator iName = pathNames.begin();
-        ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
+        ri = new RawImage(*iName); // First file used also for extra pixels information (width, height, shutter, filters etc.. )
         if( ri->loadRaw(true)) {
             delete ri;
             ri = nullptr;
@@ -138,7 +138,7 @@ void ffInfo::updateRawImage()
             int H = ri->get_height();
             int W = ri->get_width();
             ri->compress_image(0);
-            int rSize = W * ((ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) ? 1 : 3);
+            int rSize = W * ((ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) ? 1 : 3);
             acc_t **acc = new acc_t*[H];
 
             for( int row = 0; row < H; row++) {
@@ -160,7 +160,7 @@ void ffInfo::updateRawImage()
                     temp->compress_image(0);     //\ TODO would be better working on original, because is temporary
                     nFiles++;
 
-                    if( ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS ) {
+                    if( ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1 ) {
                         for( int row = 0; row < H; row++) {
                             for( int col = 0; col < W; col++) {
                                 acc[row][col] += temp->data[row][col];
@@ -318,7 +318,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         }
 
         RawImage ri(filename);
-        int res = ri.loadRaw(false); // Read informations about shot
+        int res = ri.loadRaw(false); // Read information about shot
 
         if (res != 0) {
             return nullptr;

@@ -32,15 +32,15 @@
 #include "edit.h"
 
 class CropWindow;
+
 class CropWindowListener
 {
-
 public:
-    virtual ~CropWindowListener() {}
-    virtual void cropPositionChanged   (CropWindow*) {}
-    virtual void cropWindowSizeChanged (CropWindow*) {}
-    virtual void cropZoomChanged       (CropWindow*) {}
-    virtual void initialImageArrived   (CropWindow*) {}
+    virtual ~CropWindowListener() = default;
+    virtual void cropPositionChanged(CropWindow*) = 0;
+    virtual void cropWindowSizeChanged(CropWindow*) = 0;
+    virtual void cropZoomChanged(CropWindow*) = 0;
+    virtual void initialImageArrived() = 0;
 };
 
 class ImageArea;
@@ -106,7 +106,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     void drawScaledSpotRectangle   (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
-    void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1);
+    void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1, bool needsRedraw = true);
     void updateHoveredPicker       (rtengine::Coord *imgPos = nullptr);
     void cycleRGB                  ();
     void cycleHSV                  ();
@@ -134,7 +134,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
 public:
     CropHandler cropHandler;
     CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow);
-    ~CropWindow ();
+    ~CropWindow () override;
 
     void setDecorated       (bool decorated)
     {
@@ -150,19 +150,19 @@ public:
     }
     void deleteColorPickers ();
 
-    void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy);
-    void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy);
+    void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy) override;
+    void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) override;
     void screenCoordToCropCanvas (int phyx, int phyy, int& prevx, int& prevy);
-    void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy);
-    void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy);
-    void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy);
-    void imageCoordToCropImage (int imgx, int imgy, int& phyx, int& phyy);
-    int scaleValueToImage (int value);
-    float scaleValueToImage (float value);
-    double scaleValueToImage (double value);
-    int scaleValueToCanvas (int value);
-    float scaleValueToCanvas (float value);
-    double scaleValueToCanvas (double value);
+    void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy) override;
+    void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) override;
+    void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) override;
+    void imageCoordToCropImage (int imgx, int imgy, int& phyx, int& phyy) override;
+    int scaleValueToImage (int value) override;
+    float scaleValueToImage (float value) override;
+    double scaleValueToImage (double value) override;
+    int scaleValueToCanvas (int value) override;
+    float scaleValueToCanvas (float value) override;
+    double scaleValueToCanvas (double value) override;
     double getZoomFitVal ();
     void setPosition (int x, int y);
     void getPosition (int& x, int& y);
@@ -176,7 +176,7 @@ public:
     // zoomlistener interface
     void zoomIn      (bool toCursor = false, int cursorX = -1, int cursorY = -1);
     void zoomOut     (bool toCursor = false, int cursorX = -1, int cursorY = -1);
-    void zoom11      ();
+    void zoom11      (bool notify = true);
     void zoomFit     ();
     void zoomFitCrop ();
     double getZoom   ();
@@ -187,7 +187,7 @@ public:
     bool isInside    (int x, int y);
 
 
-    void scroll        (int state, GdkScrollDirection direction, int x, int y);
+    void scroll        (int state, GdkScrollDirection direction, int x, int y, double deltaX=0.0, double deltaY=0.0);
     void buttonPress   (int button, int num, int state, int x, int y);
     void buttonRelease (int button, int num, int state, int x, int y);
     void pointerMoved  (int bstate, int x, int y);
@@ -197,8 +197,8 @@ public:
     void setEditSubscriber (EditSubscriber* newSubscriber);
 
     // interface lwbuttonlistener
-    void buttonPressed (LWButton* button, int actionCode, void* actionData);
-    void redrawNeeded  (LWButton* button);
+    void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
+    void redrawNeeded  (LWButton* button) override;
 
     // crop handling
     void getCropRectangle      (int& x, int& y, int& w, int& h);
@@ -220,10 +220,10 @@ public:
     void delCropWindowListener (CropWindowListener* l);
 
     // crophandlerlistener interface
-    void cropImageUpdated ();
-    void cropWindowChanged ();
-    void initialImageArrived ();
-    void setDisplayPosition (int x, int y);
+    void cropImageUpdated () override;
+    void cropWindowChanged () override;
+    void initialImageArrived () override;
+    void setDisplayPosition (int x, int y) override;
 
     void remoteMove      (int deltaX, int deltaY);
     void remoteMoveReady ();

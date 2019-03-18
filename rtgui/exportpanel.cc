@@ -22,6 +22,8 @@
 #include "options.h"
 #include "rtimage.h"
 
+#include "../rtengine/procparams.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -51,7 +53,6 @@ ExportPanel::ExportPanel () : listener (nullptr)
     //bypass_colorDenoise     = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_COLORDENOISE")));
     bypass_defringe         = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_DEFRINGE")));
     bypass_dirpyrDenoise    = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_DIRPYRDENOISE")));
-    bypass_sh_hq            = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SH_HQ")));
     bypass_dirpyrequalizer  = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_DIRPYREQUALIZER")));
     bypass_wavelet  = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_EQUALIZER")));
     bypass_raw_ccSteps      = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_RAW_CCSTEPS")));
@@ -61,7 +62,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     // ---------------------- Bayer sensor frame -----------------------
 
-    Gtk::Frame *bayerFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_BAYER")));
+    Gtk::Frame *bayerFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_BAYER_LABEL")));
     Gtk::VBox* bayerFrameVBox = Gtk::manage (new Gtk::VBox ());
 
     Gtk::HBox* hb_raw_bayer_method = Gtk::manage (new Gtk::HBox ());
@@ -84,7 +85,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     // ---------------------- Bayer sensor frame -----------------------
 
-    Gtk::Frame *xtransFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_XTRANS")));
+    Gtk::Frame *xtransFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_XTRANS_LABEL")));
     Gtk::VBox* xtransFrameVBox = Gtk::manage (new Gtk::VBox ());
 
     Gtk::HBox* hb_raw_xtrans_method = Gtk::manage (new Gtk::HBox ());
@@ -120,7 +121,6 @@ ExportPanel::ExportPanel () : listener (nullptr)
     //pack_start(*bypass_colorDenoise , Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_defringe, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_dirpyrDenoise, Gtk::PACK_SHRINK, 4);
-    bypass_box->pack_start (*bypass_sh_hq, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_dirpyrequalizer, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_wavelet, Gtk::PACK_SHRINK, 4);
 
@@ -132,9 +132,11 @@ ExportPanel::ExportPanel () : listener (nullptr)
     bayerFrameVBox->pack_start (*bypass_raw_bayer_linenoise, Gtk::PACK_SHRINK, 4);
     bayerFrameVBox->pack_start (*bypass_raw_bayer_greenthresh, Gtk::PACK_SHRINK, 4);
     bayerFrame->add (*bayerFrameVBox);
+    bypass_box->pack_start(*bayerFrame, Gtk::PACK_SHRINK, 4);
 
     xtransFrameVBox->pack_start (*hb_raw_xtrans_method, Gtk::PACK_SHRINK, 4);
     xtransFrame->add (*xtransFrameVBox);
+    bypass_box->pack_start(*xtransFrame, Gtk::PACK_SHRINK, 4);
 
     bypass_box->pack_start (*bypass_raw_ccSteps, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_raw_ca, Gtk::PACK_SHRINK, 4);
@@ -180,14 +182,14 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // Buttons
     btnFastExport =  Gtk::manage ( new Gtk::Button () );
     btnFastExport->set_tooltip_text (M ("EXPORT_PUTTOQUEUEFAST"));
-    btnFastExport->set_image (*Gtk::manage (new RTImage ("processing.png")));
+    btnFastExport->set_image (*Gtk::manage (new RTImage ("gears.png")));
     pack_start (*btnFastExport, Gtk::PACK_SHRINK, 4);
 
 
     // add panel ending
     Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
     Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
-    Gtk::Image* peImg = Gtk::manage (new RTImage ("PanelEnding.png"));
+    Gtk::Image* peImg = Gtk::manage (new RTImage ("ornament1.png"));
     vboxpe->pack_start (*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start (*peImg);
     pack_start (*vboxpe, Gtk::PACK_SHRINK, 0);
@@ -206,7 +208,6 @@ ExportPanel::ExportPanel () : listener (nullptr)
     //bypass_colorDenoiseConn       = bypass_colorDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_defringeConn             = bypass_defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_dirpyrDenoiseConn        = bypass_dirpyrDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
-    bypass_sh_hqConn                = bypass_sh_hq->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_dirpyrequalizerConn      = bypass_dirpyrequalizer->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     bypass_waveletConn      = bypass_wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun (*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
     //bypass_raw_all_enhanceConn    = bypass_raw_bayer_all_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
@@ -258,7 +259,6 @@ void ExportPanel::SaveSettingsAsDefault()
     //options.fastexport_bypass_colorDenoise       = bypass_colorDenoise->get_active      ();
     FE_OPT_STORE_ (options.fastexport_bypass_defringe, bypass_defringe->get_active          ());
     FE_OPT_STORE_ (options.fastexport_bypass_dirpyrDenoise, bypass_dirpyrDenoise->get_active     ());
-    FE_OPT_STORE_ (options.fastexport_bypass_sh_hq, bypass_sh_hq->get_active             ());
     FE_OPT_STORE_ (options.fastexport_bypass_dirpyrequalizer, bypass_dirpyrequalizer->get_active   ());
     FE_OPT_STORE_ (options.fastexport_bypass_wavelet, bypass_wavelet->get_active   ());
     //options.fastexport_bypass_raw_bayer_all_enhance    = bypass_raw_all_enhance->get_active           ();
@@ -275,14 +275,14 @@ void ExportPanel::SaveSettingsAsDefault()
     //saving Bayer demosaic_method
     int currentRow = raw_bayer_method->get_active_row_number();
 
-    if (currentRow >= 0 && currentRow < std::numeric_limits<int>::max()) {
+    if (currentRow >= 0) {
         FE_OPT_STORE_ (options.fastexport_raw_bayer_method, procparams::RAWParams::BayerSensor::getMethodStrings()[currentRow]);
     }
 
     //saving X-Trans demosaic_method
     currentRow = raw_xtrans_method->get_active_row_number();
 
-    if (currentRow >= 0 && currentRow < std::numeric_limits<int>::max()) {
+    if (currentRow >= 0) {
         FE_OPT_STORE_ (options.fastexport_raw_xtrans_method, procparams::RAWParams::XTransSensor::getMethodStrings()[currentRow]);
     }
 
@@ -322,7 +322,6 @@ void ExportPanel::LoadDefaultSettings()
     //bypass_colorDenoise->set_active    (options.fastexport_bypass_colorDenoise       );
     bypass_defringe->set_active          (options.fastexport_bypass_defringe           );
     bypass_dirpyrDenoise->set_active     (options.fastexport_bypass_dirpyrDenoise      );
-    bypass_sh_hq->set_active             (options.fastexport_bypass_sh_hq              );
     bypass_dirpyrequalizer->set_active   (options.fastexport_bypass_dirpyrequalizer    );
     bypass_wavelet->set_active   (options.fastexport_bypass_wavelet    );
     //bypass_raw_bayer_all_enhance->set_active   (options.fastexport_bypass_raw_bayer_all_enhance     );
@@ -337,7 +336,7 @@ void ExportPanel::LoadDefaultSettings()
     bypass_raw_ff->set_active            (options.fastexport_bypass_raw_ff             );
 
     // Bayer demosaic method
-    raw_bayer_method->set_active(std::numeric_limits<int>::max());
+    raw_bayer_method->set_active(0);
 
     for (size_t i = 0; i < RAWParams::BayerSensor::getMethodStrings().size(); ++i)
         if (options.fastexport_raw_bayer_method == procparams::RAWParams::BayerSensor::getMethodStrings()[i]) {
@@ -346,7 +345,7 @@ void ExportPanel::LoadDefaultSettings()
         }
 
     // X-Trans demosaic method
-    raw_xtrans_method->set_active(std::numeric_limits<int>::max());
+    raw_xtrans_method->set_active(0);
 
     for (size_t i = 0; i < procparams::RAWParams::XTransSensor::getMethodStrings().size(); ++i)
         if (options.fastexport_raw_xtrans_method == procparams::RAWParams::XTransSensor::getMethodStrings()[i]) {
@@ -394,7 +393,6 @@ void ExportPanel::bypassALL_Toggled()
     //bypass_colorDenoiseConn.block       (true);
     bypass_defringeConn.block           (true);
     bypass_dirpyrDenoiseConn.block      (true);
-    bypass_sh_hqConn.block              (true);
     bypass_dirpyrequalizerConn.block    (true);
     bypass_waveletConn.block    (true);
     //bypass_raw_bayer_all_enhanceConn.block    (true);
@@ -417,7 +415,6 @@ void ExportPanel::bypassALL_Toggled()
     //bypass_colorDenoise->set_active(bypass_ALL->get_active());
     bypass_defringe->set_active (bypass_ALL->get_active());
     bypass_dirpyrDenoise->set_active (bypass_ALL->get_active());
-    bypass_sh_hq->set_active (bypass_ALL->get_active());
     bypass_dirpyrequalizer->set_active (bypass_ALL->get_active());
     bypass_wavelet->set_active (bypass_ALL->get_active());
     //bypass_raw_bayer_all_enhance->set_active(bypass_ALL->get_active());
@@ -438,7 +435,6 @@ void ExportPanel::bypassALL_Toggled()
     //bypass_colorDenoiseConn.block       (false);
     bypass_defringeConn.block             (false);
     bypass_dirpyrDenoiseConn.block        (false);
-    bypass_sh_hqConn.block                (false);
     bypass_dirpyrequalizerConn.block      (false);
     bypass_waveletConn.block      (false);
     //bypass_raw_bayer_all_enhanceConn.block    (false);
@@ -466,7 +462,6 @@ fastexport_bypass_lumaDenoise
 fastexport_bypass_colorDenoise
 fastexport_bypass_defringe
 fastexport_bypass_dirpyrDenoise
-fastexport_bypass_sh_hq
 fastexport_bypass_dirpyrequalizer
 fastexport_raw_bayer_method
 fastexport_bypass_raw_bayer_all_enhance

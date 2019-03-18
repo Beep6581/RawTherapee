@@ -34,11 +34,13 @@
 #include "rt_math.h"
 #include "improcfun.h"
 #include "rtlensfun.h"
+#include "pdaflinesfilter.h"
+#include "camconst.h"
+#include "procparams.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 #include "opthelper.h"
-#include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
@@ -427,7 +429,6 @@ RawImageSource::RawImageSource ()
     , plistener(nullptr)
     , scale_mul{}
     , c_black{}
-    , c_white{}
     , cblacksom{}
     , ref_pre_mul{}
     , refwb_red(0.0)
@@ -447,22 +448,12 @@ RawImageSource::RawImageSource ()
     , camInitialGain(0.0)
     , defGain(0.0)
     , ri(nullptr)
-    , lc00(0.0)
-    , lc01(0.0)
-    , lc02(0.0)
-    , lc10(0.0)
-    , lc11(0.0)
-    , lc12(0.0)
-    , lc20(0.0)
-    , lc21(0.0)
-    , lc22(0.0)
-    , cache(nullptr)
-    , threshold(0)
     , rawData(0, 0)
     , green(0, 0)
     , red(0, 0)
     , blue(0, 0)
     , rawDirty(true)
+    , histMatchingParams(new procparams::ColorManagementParams)
 {
     camProfile = nullptr;
     embProfile = nullptr;
@@ -483,16 +474,12 @@ RawImageSource::~RawImageSource ()
         delete riFrames[i];
     }
 
-    for(size_t i = 0; i < numFrames - 1; ++i) {
+    for(size_t i = 0; i + 1 < numFrames; ++i) {
         delete rawDataBuffer[i];
     }
 
     flushRGB();
     flushRawData();
-
-    if( cache ) {
-        delete [] cache;
-    }
 
     if (camProfile) {
         cmsCloseProfile (camProfile);
@@ -589,8 +576,8 @@ void RawImageSource::transformRect (const PreviewProps &pp, int tran, int &ssx1,
     } else {
         ssx1 = sx1;
         ssy1 = sy1;
-        width  = (sx2 - sx1) / pp.getSkip() + ((sx2 - sx1) % pp.getSkip() > 0);
-        height = (sy2 - sy1) / pp.getSkip() + ((sy2 - sy1) % pp.getSkip() > 0);
+        width  = (sx2 + 1 - sx1) / pp.getSkip() + ((sx2 + 1 - sx1) % pp.getSkip() > 0);
+        height = (sy2 + 1 - sy1) / pp.getSkip() + ((sy2 + 1 - sy1) % pp.getSkip() > 0);
     }
 }
 
@@ -651,6 +638,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
         bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                       || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+
+        for (int i = 0; i < 4; ++i) {
+            c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
+        }
+
         float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
@@ -723,13 +715,18 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     hlmax[1] = clmax[1] * gm;
     hlmax[2] = clmax[2] * bm;
 
-    const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled;
+    const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
 
     float area = skip * skip;
     rm /= area;
     gm /= area;
     bm /= area;
     bool doHr = (hrp.hrenabled && hrp.method != "Color");
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+    
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
@@ -745,14 +742,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
         for (int ix = 0; ix < imheight; ix++) {
             int i = sy1 + skip * ix;
-
-            if (i >= maxy - skip) {
-                i = maxy - skip - 1;    // avoid trouble
-            }
+            i = std::min(i, maxy - skip); // avoid trouble
 
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
                 for (int j = 0, jx = sx1; j < imwidth; j++, jx += skip) {
-                    jx = std::min(jx, maxx - skip - 1); // avoid trouble
+                    jx = std::min(jx, maxx - skip); // avoid trouble
 
                     float rtot = 0.f, gtot = 0.f, btot = 0.f;
 
@@ -911,18 +905,22 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
 DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
 {
+    if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
+        return nullptr;
+    }
+
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
-    findInputProfile(cmp.input, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
+    findInputProfile(cmp.inputProfile, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
 
     if (dcpProf == nullptr) {
         if (settings->verbose) {
-            printf("Can't load DCP profile '%s'!\n", cmp.input.c_str());
+            printf("Can't load DCP profile '%s'!\n", cmp.inputProfile.c_str());
         }
         return nullptr;
     }
 
-    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
+    dcpProf->setStep2ApplyState(cmp.workingProfile, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
     return dcpProf;
 }
 
@@ -1341,12 +1339,12 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
  *  (Taken from Emil Martinec idea)
  *  (Optimized by Ingo Weyrich 2013 and 2015)
  */
-SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
+int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels )
 {
     float varthresh = (20.0 * (thresh / 100.0) + 1.0 ) / 24.f;
 
     // allocate temporary buffer
-    float (*cfablur);
+    float* cfablur;
     cfablur = (float (*)) malloc (H * W * sizeof * cfablur);
 
     // counter for dead or hot pixels
@@ -1517,7 +1515,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname)
+int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 {
 
     MyTime t1, t2;
@@ -1534,7 +1532,7 @@ int RawImageSource::load (const Glib::ustring &fname)
     if (errCode) {
         return errCode;
     }
-    numFrames = ri->getFrameCount();
+    numFrames = firstFrameOnly ? 1 : ri->getFrameCount();
 
     errCode = 0;
 
@@ -1593,7 +1591,7 @@ int RawImageSource::load (const Glib::ustring &fname)
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++) {
-            imatrices.rgb_cam[i][j] = ri->get_rgb_cam(i, j);
+            imatrices.rgb_cam[i][j] = ri->get_colors() == 1 ? (i == j) : ri->get_rgb_cam(i, j);
         }
 
     // compute inverse of the color transformation matrix
@@ -1623,10 +1621,6 @@ int RawImageSource::load (const Glib::ustring &fname)
 
     camProfile = ICCStore::getInstance()->createFromMatrix (imatrices.xyz_cam, false, "Camera");
     inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
-
-    for (int c = 0; c < 4; c++) {
-        c_white[c] = ri->get_white(c);
-    }
 
     // First we get the "as shot" ("Camera") white balance and store it
     float pre_mul[4];
@@ -1698,7 +1692,7 @@ int RawImageSource::load (const Glib::ustring &fname)
     }
 
 
-    // Load complete Exif informations
+    // Load complete Exif information
     std::unique_ptr<RawMetaDataLocation> rml(new RawMetaDataLocation (ri->get_exifBase(), ri->get_ciffBase(), ri->get_ciffLen()));
     idata = new FramesData (fname, std::move(rml));
     idata->setDCRawFrameCount (numFrames);
@@ -1801,6 +1795,19 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
                 copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
             }
         }
+    } else if (numFrames == 2 && currFrame == 2) { // average the frames
+        if(!rawDataBuffer[0]) {
+            rawDataBuffer[0] = new array2D<float>;
+        }
+        rawDataFrames[1] = rawDataBuffer[0];
+        copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1]);
+        copyOriginalPixels(raw, ri, rid, rif, rawData);
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                rawData[i][j] = (rawData[i][j] + (*rawDataFrames[1])[i][j]) * 0.5f;
+            }
+        }
     } else {
         copyOriginalPixels(raw, ri, rid, rif, rawData);
     }
@@ -1852,7 +1859,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     // Correct vignetting of lens profile
-    if (!hasFlatField && lensProf.useVign) {
+    if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
         if (lensProf.useLensfun()) {
             pmap = LFDatabase::findModifier(lensProf, idata, W, H, coarse, -1);
@@ -1919,8 +1926,45 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
     }
 
-    // check if it is an olympus E camera or green equilibration is enabled. If yes, compute G channel pre-compensation factors
-    if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (((idata->getMake().size() >= 7 && idata->getMake().substr(0, 7) == "OLYMPUS" && idata->getModel()[0] == 'E') || (idata->getMake().size() >= 9 && idata->getMake().substr(0, 9) == "Panasonic")) && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString( RAWParams::BayerSensor::Method::VNG4))) ) {
+    if (ri->getSensorType() == ST_BAYER && raw.bayersensor.pdafLinesFilter) {
+        PDAFLinesFilter f(ri);
+
+        if (!bitmapBads) {
+            bitmapBads = new PixelsMap(W, H);
+        }
+        
+        int n = f.mark(rawData, *bitmapBads);
+        totBP += n;
+
+        if (n > 0) {
+            if (settings->verbose) {
+                printf("Marked %d hot pixels from PDAF lines\n", n);            
+            }
+
+            auto &thresh = f.greenEqThreshold();        
+            if (numFrames == 4) {
+                for (int i = 0; i < 4; ++i) {
+                    green_equilibrate(thresh, *rawDataFrames[i]);
+                }
+            } else {
+                green_equilibrate(thresh, rawData);
+            }
+        }
+    }
+
+    // check if green equilibration is needed. If yes, compute G channel pre-compensation factors
+    const auto globalGreenEq =
+        [&]() -> bool
+        {
+            CameraConstantsStore *ccs = CameraConstantsStore::getInstance();
+            CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
+            return cc && cc->get_globalGreenEquilibration();
+        };
+    
+    if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (globalGreenEq() && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString( RAWParams::BayerSensor::Method::VNG4))) ) {
+        if (settings->verbose) {
+            printf("Performing global green equilibration...\n");
+        }
         // global correction
         if(numFrames == 4) {
             for(int i = 0; i < 4; ++i) {
@@ -1937,12 +1981,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
+        GreenEqulibrateThreshold thresh(0.01 * raw.bayersensor.greenthresh);
+
         if(numFrames == 4) {
             for(int i = 0; i < 4; ++i) {
-                green_equilibrate(0.01 * raw.bayersensor.greenthresh, *rawDataFrames[i]);
+                green_equilibrate(thresh, *rawDataFrames[i]);
             }
         } else {
-            green_equilibrate(0.01 * raw.bayersensor.greenthresh, rawData);
+            green_equilibrate(thresh, rawData);
         }
     }
 
@@ -1969,7 +2015,15 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
-        cfa_linedn(0.00002 * (raw.bayersensor.linenoise));
+        std::unique_ptr<CFALineDenoiseRowBlender> line_denoise_rowblender;
+        if (raw.bayersensor.linenoiseDirection == RAWParams::BayerSensor::LineNoiseDirection::PDAF_LINES) {
+            PDAFLinesFilter f(ri);
+            line_denoise_rowblender = f.lineDenoiseRowBlender();
+        } else {
+            line_denoise_rowblender.reset(new CFALineDenoiseRowBlender());
+        }
+
+        cfa_linedn(0.00002 * (raw.bayersensor.linenoise), int(raw.bayersensor.linenoiseDirection) & int(RAWParams::BayerSensor::LineNoiseDirection::VERTICAL), int(raw.bayersensor.linenoiseDirection) & int(RAWParams::BayerSensor::LineNoiseDirection::HORIZONTAL), *line_denoise_rowblender);
     }
 
     if ( (raw.ca_autocorrect || fabs(raw.cared) > 0.001 || fabs(raw.cablue) > 0.001) && ri->getSensorType() == ST_BAYER ) { // Auto CA correction disabled for X-Trans, for now...
@@ -1978,21 +2032,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
         if(numFrames == 4) {
-            for(int i=0; i<4; ++i) {
-                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i]);
+            double fitParams[64];
+            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], fitParams, false, true, nullptr, false, options.chunkSizeCA, options.measure);
+            for(int i = 1; i < 3; ++i) {
+                CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], fitParams, true, false, buffer, false, options.chunkSizeCA, options.measure);
             }
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], fitParams, true, false, buffer, true, options.chunkSizeCA, options.measure);
         } else {
-            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData);
-        }
-    }
-
-    if ( raw.expos != 1 ) {
-        if(numFrames == 4) {
-            for(int i = 0; i < 4; ++i) {
-                processRawWhitepoint(raw.expos, raw.preser, *rawDataFrames[i]);
-            }
-        } else {
-            processRawWhitepoint(raw.expos, raw.preser, rawData);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, nullptr, false, false, nullptr, true, options.chunkSizeCA, options.measure);
         }
     }
 
@@ -2020,7 +2067,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::demosaic(const RAWParams &raw)
+void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold)
 {
     MyTime t1, t2;
     t1.set();
@@ -2029,13 +2076,22 @@ void RawImageSource::demosaic(const RAWParams &raw)
         if ( raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD) ) {
             hphd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4) ) {
-            vng4_demosaic ();
+            vng4_demosaic (rawData, red, green, blue);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD) ) {
             ahd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE) ) {
-            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
+            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {
+            if (!autoContrast) {
+                double threshold = raw.bayersensor.dualDemosaicContrast;
+                dual_demosaic_RT (true, raw, W, H, rawData, red, green, blue, threshold, false);
+            } else {
+                dual_demosaic_RT (true, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
+            }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT) ) {
-            pixelshift(0, 0, W, H, raw.bayersensor, currFrame, ri->get_maker(), ri->get_model(), raw.expos);
+            pixelshift(0, 0, W, H, raw, currFrame, ri->get_maker(), ri->get_model(), raw.expos);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB) ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)) {
@@ -2049,20 +2105,24 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) ) {
             nodemosaic(true);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD) ) {
-            rcd_demosaic ();
+            rcd_demosaic(options.chunkSizeRCD, options.measure);
         } else {
             nodemosaic(false);
         }
-
-        //if (raw.all_enhance) refinement_lassus();
-
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST) ) {
-            fast_xtrans_interpolate();
+            fast_xtrans_interpolate(rawData, red, green, blue);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::ONE_PASS)) {
-            xtrans_interpolate(1, false);
+            xtrans_interpolate(1, false, options.chunkSizeXT, options.measure);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {
-            xtrans_interpolate(3, true);
+            xtrans_interpolate(3, true, options.chunkSizeXT, options.measure);
+        } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) || raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::TWO_PASS)) {
+            if (!autoContrast) {
+                double threshold = raw.xtranssensor.dualDemosaicContrast;
+                dual_demosaic_RT (false, raw, W, H, rawData, red, green, blue, threshold, false);
+            } else {
+                dual_demosaic_RT (false, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
+            }
         } else if(raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) ) {
             nodemosaic(true);
         } else {
@@ -2121,7 +2181,7 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
         int mode = 0;
         Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
 
-        //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+   //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
         double add;
 
@@ -2283,7 +2343,7 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
 
         }
     } else {
-        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (cmp.working);
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (cmp.workingProfile);
         const float wp[3][3] = {
             {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
             {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
@@ -2560,7 +2620,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
         }
 
     } else {
-        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working);
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile);
 
         double wip[3][3] = {
             {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -2755,11 +2815,6 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 
 void RawImageSource::flushRawData()
 {
-    if(cache) {
-        delete [] cache;
-        cache = nullptr;
-    }
-
     if (rawData) {
         rawData(0, 0);
     }
@@ -2780,7 +2835,7 @@ void RawImageSource::flushRGB()
     }
 }
 
-void RawImageSource::HLRecovery_Global(ToneCurveParams hrp)
+void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 {
     if (hrp.hrenabled && hrp.method == "Color") {
         if(!rgbSourceModified) {
@@ -2815,7 +2870,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         cfaboxblur(riFlatFile, cfablur, BS, BS);
     }
 
-    if(ri->getSensorType() == ST_BAYER) {
+    if(ri->getSensorType() == ST_BAYER || ri->get_colors() == 1) {
         float refcolor[2][2];
 
         //find centre average values by channel
@@ -2823,21 +2878,19 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             for (int n = 0; n < 2; n++) {
                 int row = 2 * (H >> 2) + m;
                 int col = 2 * (W >> 2) + n;
-                int c  = FC(row, col);
-                int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;
+                int c  = ri->get_colors() != 1 ? FC(row, col) : 0;
+                int c4 = ri->get_colors() != 1 ? (( c == 1 && !(row & 1) ) ? 3 : c) : 0;
                 refcolor[m][n] = max(0.0f, cfablur[row * W + col] - black[c4]);
             }
 
         float limitFactor = 1.f;
 
         if(raw.ff_AutoClipControl) {
-//            int clipControlGui = 0;
-
             for (int m = 0; m < 2; m++)
                 for (int n = 0; n < 2; n++) {
                     float maxval = 0.f;
-                    int c  = FC(m, n);
-                    int c4 = ( c == 1 && !(m & 1) ) ? 3 : c;
+                    int c  = ri->get_colors() != 1 ? FC(m, n) : 0;
+                    int c4 = ri->get_colors() != 1 ? (( c == 1 && !(m & 1) ) ? 3 : c) : 0;
 #ifdef _OPENMP
                     #pragma omp parallel
 #endif
@@ -2876,7 +2929,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                     }
                 }
 
-//            clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
+            flatFieldAutoClipValue = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
         } else {
             limitFactor = max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
         }
@@ -2886,13 +2939,21 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                 refcolor[m][n] *= limitFactor;
             }
 
+        unsigned int c[2][2] {};
+        unsigned int c4[2][2] {};
+        if(ri->get_colors() != 1) {
+            for (int i = 0; i < 2; ++i) {
+                for(int j = 0; j < 2; ++j) {
+                    c[i][j] = FC(i, j);
+                }
+            }
+            c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
+            c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
+            c4[1][0] = c[1][0];
+            c4[1][1] = c[1][1];
+        }
 
-        unsigned int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
-        unsigned int c4[2][2];
-        c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
-        c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
-        c4[1][0] = c[1][0];
-        c4[1][1] = c[1][1];
+        constexpr float minValue = 1.f; // if the pixel value in the flat field is less or equal this value, no correction will be applied.
 
 #ifdef __SSE2__
         vfloat refcolorv[2] = {_mm_set_ps(refcolor[0][1], refcolor[0][0], refcolor[0][1], refcolor[0][0]),
@@ -2902,7 +2963,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                             _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
                            };
 
-        vfloat epsv = F2V(1e-5f);
+        vfloat onev = F2V(1.f);
+        vfloat minValuev = F2V(minValue);
 #endif
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
@@ -2915,7 +2977,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             vfloat rowRefcolorv = refcolorv[row & 1];
 
             for (; col < W - 3; col += 4) {
-                vfloat vignettecorrv = rowRefcolorv / vmaxf(epsv, LVFU(cfablur[(row) * W + col]) - rowBlackv);
+                vfloat blurv = LVFU(cfablur[(row) * W + col]) - rowBlackv;
+                vfloat vignettecorrv = rowRefcolorv / blurv;
+                vignettecorrv = vself(vmaskf_le(blurv, minValuev), onev, vignettecorrv);
                 vfloat valv = LVFU(rawData[row][col]);
                 valv -= rowBlackv;
                 STVFU(rawData[row][col], valv * vignettecorrv + rowBlackv);
@@ -2924,7 +2988,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 #endif
 
             for (; col < W; col ++) {
-                float vignettecorr = refcolor[row & 1][col & 1] / max(1e-5f, cfablur[(row) * W + col] - black[c4[row & 1][col & 1]]);
+                float blur = cfablur[(row) * W + col] - black[c4[row & 1][col & 1]];
+                float vignettecorr = blur <= minValue ? 1.f : refcolor[row & 1][col & 1] / blur;
                 rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * vignettecorr + black[c4[row & 1][col & 1]];
             }
         }
@@ -2950,7 +3015,6 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 
         if(raw.ff_AutoClipControl) {
             // determine maximum calculated value to avoid clipping
-//            int clipControlGui = 0;
             float maxval = 0.f;
             // xtrans files have only one black level actually, so we can simplify the code a bit
 #ifdef _OPENMP
@@ -2985,7 +3049,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             // there's only one white level for xtrans
             if(maxval + black[0] > ri->get_white(0)) {
                 limitFactor = ri->get_white(0) / (maxval + black[0]);
-//                clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
+                flatFieldAutoClipValue = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
             }
         } else {
             limitFactor = max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
@@ -2996,6 +3060,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             refcolor[c] *= limitFactor;
         }
 
+        constexpr float minValue = 1.f; // if the pixel value in the flat field is less or equal this value, no correction will be applied.
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -3003,7 +3069,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         for (int row = 0; row < H; row++) {
             for (int col = 0; col < W; col++) {
                 int c  = ri->XTRANSFC(row, col);
-                float vignettecorr = ( refcolor[c] / max(1e-5f, cfablur[(row) * W + col] - black[c]) );
+                float blur = cfablur[(row) * W + col] - black[c];
+                float vignettecorr = blur <= minValue ? 1.f : refcolor[c] / blur;
                 rawData[row][col] = (rawData[row][col] - black[c]) * vignettecorr + black[c];
             }
         }
@@ -3016,13 +3083,20 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         cfaboxblur(riFlatFile, cfablur1, 0, 2 * BS); //now do horizontal blur
         cfaboxblur(riFlatFile, cfablur2, 2 * BS, 0); //now do vertical blur
 
-        if(ri->getSensorType() == ST_BAYER) {
-            unsigned int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
-            unsigned int c4[2][2];
-            c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
-            c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
-            c4[1][0] = c[1][0];
-            c4[1][1] = c[1][1];
+        if(ri->getSensorType() == ST_BAYER || ri->get_colors() == 1) {
+            unsigned int c[2][2] {};
+            unsigned int c4[2][2] {};
+            if(ri->get_colors() != 1) {
+                for (int i = 0; i < 2; ++i) {
+                    for(int j = 0; j < 2; ++j) {
+                        c[i][j] = FC(i, j);
+                    }
+                }
+                c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
+                c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
+                c4[1][0] = c[1][0];
+                c4[1][1] = c[1][1];
+            }
 
 #ifdef __SSE2__
             vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
@@ -3041,8 +3115,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                 vfloat rowBlackv = blackv[row & 1];
 
                 for (; col < W - 3; col += 4) {
-                    vfloat linecorrv = SQRV(vmaxf(epsv, LVFU(cfablur[row * W + col]) - rowBlackv)) /
-                                       (vmaxf(epsv, LVFU(cfablur1[row * W + col]) - rowBlackv) * vmaxf(epsv, LVFU(cfablur2[row * W + col]) - rowBlackv));
+                    vfloat linecorrv = SQRV(vmaxf(LVFU(cfablur[row * W + col]) - rowBlackv, epsv)) /
+                                       (vmaxf(LVFU(cfablur1[row * W + col]) - rowBlackv, epsv) * vmaxf(LVFU(cfablur2[row * W + col]) - rowBlackv, epsv));
                     vfloat valv = LVFU(rawData[row][col]);
                     valv -= rowBlackv;
                     STVFU(rawData[row][col], valv * linecorrv + rowBlackv);
@@ -3140,6 +3214,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
                 }
             }
         }
+        if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
+            processFlatField(raw, riFlatFile, black);
+        }  // flatfield
     } else {
         // No bayer pattern
         // TODO: Is there a flat field correction possible?
@@ -3169,10 +3246,10 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
     }
 }
 
-SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW)
+void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW)
 {
 
-    if(boxW == 0 && boxH == 0) { // nothing to blur
+    if (boxW < 0 || boxH < 0 || (boxW == 0 && boxH == 0)) { // nothing to blur or negative values
         memcpy(cfablur, riFlatFile->data[0], W * H * sizeof(float));
         return;
     }
@@ -3335,7 +3412,9 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 
             }
 
+#ifdef _OPENMP
             #pragma omp single
+#endif
 
             for (int col = W - (W % 8); col < W; col++) {
                 int len = boxH / 2 + 1;
@@ -3443,6 +3522,10 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
     for(int i = 0; i < 4 ; i++) {
         cblacksom[i] = max( c_black[i] + black_lev[i], 0.0f );    // adjust black level
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
     }
 
     initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
@@ -3877,9 +3960,9 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
     r = prophoto_xyz[0][0] * X + prophoto_xyz[0][1] * Y + prophoto_xyz[0][2] * Z;
     g = prophoto_xyz[1][0] * X + prophoto_xyz[1][1] * Y + prophoto_xyz[1][2] * Z;
     b = prophoto_xyz[2][0] * X + prophoto_xyz[2][1] * Y + prophoto_xyz[2][2] * Z;
-    r = CLIP01(r);
-    g = CLIP01(g);
-    b = CLIP01(b);
+    // r = CLIP01(r);
+    // g = CLIP01(g);
+    // b = CLIP01(b);
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
@@ -3891,7 +3974,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
     cmsHPROFILE in;
     DCPProfile *dcpProf;
 
-    if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) {
+    if (!findInputProfile(cmp.inputProfile, embedded, camName, &dcpProf, in)) {
         return;
     }
 
@@ -3908,7 +3991,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                 {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
             }
         };
-        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
+        dcpProf->apply(im, cmp.dcpIlluminant, cmp.workingProfile, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
         return;
     }
 
@@ -3917,7 +4000,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
         // in this case we avoid using the slllllooooooowwww lcms
 
         // Calculate matrix for direct conversion raw>working space
-        TMatrix work = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working);
+        TMatrix work = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile);
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
         for (int i = 0; i < 3; i++)
@@ -3943,7 +4026,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
             }
     } else {
-        const bool working_space_is_prophoto = (cmp.working == "ProPhoto");
+        bool working_space_is_prophoto = (cmp.workingProfile == "ProPhoto");
 
         // use supplied input profile
 
@@ -4012,6 +4095,33 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
         cmsHPROFILE prophoto = ICCStore::getInstance()->workingSpace("ProPhoto"); // We always use Prophoto to apply the ICC profile to minimize problems with clipping in LUT conversion.
         bool transform_via_pcs_lab = false;
         bool separate_pcs_lab_highlights = false;
+
+        // check if the working space is fully contained in prophoto
+        if (!working_space_is_prophoto && camera_icc_type == CAMERA_ICC_TYPE_GENERIC) {
+            TMatrix toxyz = ICCStore::getInstance()->workingSpaceMatrix(cmp.workingProfile);
+            TMatrix torgb = ICCStore::getInstance()->workingSpaceInverseMatrix("ProPhoto");
+            float rgb[3] = {0.f, 0.f, 0.f};
+            for (int i = 0; i < 2 && !working_space_is_prophoto; ++i) {
+                rgb[i] = 1.f;
+                float x, y, z;
+
+                Color::rgbxyz(rgb[0], rgb[1], rgb[2], x, y, z, toxyz);
+                Color::xyz2rgb(x, y, z, rgb[0], rgb[1], rgb[2], torgb);
+
+                for (int j = 0; j < 2; ++j) {
+                    if (rgb[j] < 0.f || rgb[j] > 1.f) {
+                        working_space_is_prophoto = true;
+                        prophoto = ICCStore::getInstance()->workingSpace(cmp.workingProfile);
+                        if (settings->verbose) {
+                            std::cout << "colorSpaceConversion_: converting directly to " << cmp.workingProfile << " instead of passing through ProPhoto" << std::endl;
+                        }
+                        break;
+                    }
+                    rgb[j] = 0.f;
+                }
+            }
+        }
+        
         lcmsMutex->lock ();
 
         switch (camera_icc_type) {
@@ -4056,7 +4166,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
         if (!working_space_is_prophoto) {
             toxyz = ICCStore::getInstance()->workingSpaceMatrix ("ProPhoto");
-            torgb = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working); //sRGB .. Adobe...Wide...
+            torgb = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile); //sRGB .. Adobe...Wide...
         }
 
 #ifdef _OPENMP
@@ -4159,7 +4269,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
 
                 for ( int w = 0; w < im->getWidth(); ++w ) {
 
-                    float r, g, b, hr, hg, hb;
+                    float r, g, b, hr = 0.f, hg = 0.f, hb = 0.f;
 
                     if (transform_via_pcs_lab) {
                         float L = *(p++);
@@ -4297,17 +4407,11 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 //  very effective to reduce (or remove) the magenta, but with levels of grey !
 void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* hlmax)
 {
-    const int ColorCount = 3;
+    constexpr int ColorCount = 3;
 
     // Transform matrixes rgb>lab and back
-    static const float trans[2][ColorCount][ColorCount] = {
-        { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } },
-        { { 1, 1, 1 }, { 1, -1, 1 }, { 1, 1, -1 } }
-    };
-    static const float itrans[2][ColorCount][ColorCount] = {
-        { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } },
-        { { 1, 1, 1 }, { 1, -1, 1 }, { 1, 1, -1 } }
-    };
+    constexpr float trans[ColorCount][ColorCount] = { { 1, 1, 1 }, { 1.7320508, -1.7320508, 0 }, { -1, -1, 2 } };
+    constexpr float itrans[ColorCount][ColorCount] = { { 1, 0.8660254, -0.5 }, { 1, -0.8660254, -0.5 }, { 1, 0, 1 } };
 
 #define FOREACHCOLOR for (int c=0; c < ColorCount; c++)
 
@@ -4364,7 +4468,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
                 for (int j = 0; j < ColorCount; j++)
                 {
-                    lab[i][c] += trans[ColorCount - 3][c][j] * cam[i][j];
+                    lab[i][c] += trans[c][j] * cam[i][j];
                 }
             }
 
@@ -4388,7 +4492,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
             for (int j = 0; j < ColorCount; j++)
             {
-                cam[0][c] += itrans[ColorCount - 3][c][j] * lab[0][j];
+                cam[0][c] += itrans[c][j] * lab[0][j];
             }
         }
         FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
@@ -4490,7 +4594,7 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
             float bo = min(b, maxval);
             float yy = xyz_cam[1][0] * r + xyz_cam[1][1] * g + xyz_cam[1][2] * b;
             float fy = (yy < 65535.0 ? Color::cachef[yy] / 327.68 : std::cbrt(yy / MAXVALD));
-            // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
+            // compute LCH decomposition of the clipped pixel (only color information, thus C and H will be used)
             float x = xyz_cam[0][0] * ro + xyz_cam[0][1] * go + xyz_cam[0][2] * bo;
             float y = xyz_cam[1][0] * ro + xyz_cam[1][1] * go + xyz_cam[1][2] * bo;
             float z = xyz_cam[2][0] * ro + xyz_cam[2][1] * go + xyz_cam[2][2] * bo;
@@ -4627,10 +4731,14 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
-    const float mult[4] = { 65535.0f / ri->get_white(0),
-                            65535.0f / ri->get_white(1),
-                            65535.0f / ri->get_white(2),
-                            65535.0f / ri->get_white(3)
+
+    const float maxWhite = rtengine::max(c_white[0], c_white[1], c_white[2], c_white[3]);
+    const float scale = maxWhite <= 1.f ? 65535.f : 1.f; // special case for float raw images in [0.0;1.0] range
+    const float multScale = maxWhite <= 1.f ? 1.f / 255.f : 255.f;
+    const float mult[4] = { multScale / (c_white[0] - cblacksom[0]),
+                            multScale / (c_white[1] - cblacksom[1]),
+                            multScale / (c_white[2] - cblacksom[2]),
+                            multScale / (c_white[3] - cblacksom[3])
                           };
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
@@ -4694,26 +4802,26 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
                 c2 = ( fourColours && c2 == 1 && !(i & 1) ) ? 3 : c2;
 
                 for (j = start; j < end - 1; j += 2) {
-                    tmphist[c1][(int)ri->data[i][j]]++;
-                    tmphist[c2][(int)ri->data[i][j + 1]]++;
+                    tmphist[c1][(int)(ri->data[i][j] * scale)]++;
+                    tmphist[c2][(int)(ri->data[i][j + 1] * scale)]++;
                 }
 
                 if(j < end) { // last pixel of row if width is odd
-                    tmphist[c1][(int)ri->data[i][j]]++;
+                    tmphist[c1][(int)(ri->data[i][j] * scale)]++;
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    tmphist[0][(int)ri->data[i][j]]++;
+                    tmphist[0][(int)(ri->data[i][j] * scale)]++;
                 }
             } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
                 for (int j = start; j < end - 1; j += 2) {
                     int c = ri->XTRANSFC(i, j);
-                    tmphist[c][(int)ri->data[i][j]]++;
+                    tmphist[c][(int)(ri->data[i][j] * scale)]++;
                 }
             } else {
                 for (int j = start; j < end; j++) {
                     for (int c = 0; c < 3; c++) {
-                        tmphist[c][(int)ri->data[i][3 * j + c]]++;
+                        tmphist[c][(int)(ri->data[i][3 * j + c] * scale)]++;
                     }
                 }
             }
@@ -4736,23 +4844,28 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         } // end of critical region
     } // end of parallel region
 
-    constexpr float gammaLimit = 32767.f * 65536.f; // Color::gamma overflows when the LUT is accessed with too large values
-    for(int i = 0; i < 65536; i++) {
-        int idx;
-        idx = CLIP((int)Color::gamma(std::min(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/)), gammaLimit)));
-        histRedRaw[idx >> 8] += hist[0][i];
+    const auto getidx =
+        [&](int c, int i) -> int
+        {
+            float f = mult[c] * std::max(0.f, i - cblacksom[c]);
+            return f > 0.f ? (f < 1.f ? 1 : std::min(int(f), 255)) : 0;
+        };
+
+    for(int i = 0; i < histoSize; i++) {
+        int idx = getidx(0, i);
+        histRedRaw[idx] += hist[0][i];
 
         if (ri->get_colors() > 1) {
-            idx = CLIP((int)Color::gamma(std::min(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/)), gammaLimit)));
-            histGreenRaw[idx >> 8] += hist[1][i];
+            idx = getidx(1, i);
+            histGreenRaw[idx] += hist[1][i];
 
             if (fourColours) {
-                idx = CLIP((int)Color::gamma(std::min(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/)), gammaLimit)));
-                histGreenRaw[idx >> 8] += hist[3][i];
+                idx = getidx(3, i);
+                histGreenRaw[idx] += hist[3][i];
             }
 
-            idx = CLIP((int)Color::gamma(std::min(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/)), gammaLimit)));
-            histBlueRaw[idx >> 8] += hist[2][i];
+            idx = getidx(2, i);
+            histBlueRaw[idx] += hist[2][i];
         }
     }
 
@@ -5048,7 +5161,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
                 gloc /= gnbrs;
                 bloc /= bnbrs;
 
-                if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+                if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                     reds += rloc;
                     greens += gloc;
                     blues += bloc;
@@ -5121,7 +5234,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             gloc /= std::max(1, gnbrs);
             bloc /= std::max(1, bnbrs);
 
-            if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+            if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                 reds += rloc;
                 greens += gloc;
                 blues += bloc;
@@ -5157,7 +5270,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             gloc /= std::max(gnbrs, 1);
             bloc /= std::max(bnbrs, 1);
 
-            if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+            if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                 reds += rloc;
                 greens += gloc;
                 blues += bloc;
@@ -5193,7 +5306,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             gloc /= std::max(gnbrs, 1);
             bloc /= std::max(bnbrs, 1);
 
-            if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
+            if (rloc < clmax[0] && gloc < clmax[1] && bloc < clmax[2]) {
                 reds += rloc;
                 greens += gloc;
                 blues += bloc;
@@ -5349,6 +5462,10 @@ void RawImageSource::init ()
 
 void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int &B)
 {
+    if(d1x) { // Nikon D1x has special sensor. We just skip it
+        R = G = B = 0;
+        return;
+    }
     int xnew = x + border;
     int ynew = y + border;
     rotate += ri->get_rotateDegree();
@@ -5366,6 +5483,8 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     }
 
+    xnew = LIM(xnew, 0, W - 1);
+    ynew = LIM(ynew, 0, H - 1);
     int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew,xnew) : ri->FC(ynew,xnew);
     int val = round(rawData[ynew][xnew] / scale_mul[c]);
     if(c == 0) {

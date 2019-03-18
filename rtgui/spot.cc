@@ -1,6 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  */
+#include "../rtengine/procparams.h"
 #include "spot.h"
 #include "rtimage.h"
 #include <iomanip>
@@ -402,7 +403,7 @@ void Spot::deleteSelectedEntry()
 // TODO
 CursorShape Spot::getCursor (const int objectID)
 {
-    return CSOpenHand;
+    return CSHandOpen;
 }
 
 bool Spot::mouseOver (const int modifierKey)

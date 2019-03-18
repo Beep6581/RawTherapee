@@ -24,13 +24,13 @@
 #include "guiutils.h"
 
 class Adjuster;
+
 class AdjusterListener
 {
-
 public:
-    virtual ~AdjusterListener() {};
-    virtual void adjusterChanged (Adjuster* a, double newval) {}
-    virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
+    virtual ~AdjusterListener() = default;
+    virtual void adjusterChanged (Adjuster* a, double newval) = 0;
+    virtual void adjusterAutoToggled (Adjuster* a, bool newval) = 0;
 };
 
 typedef double(*double2double_fun)(double val);
@@ -71,16 +71,23 @@ protected:
     double vMax;
     double vStep;
 
+    double logBase;
+    double logPivot;
+    bool logAnchorMiddle;
+
     double shapeValue (double a);
     void   refreshLabelStyle ();
     double2double_fun value2slider, slider2value;
+
+    double getSliderValue();
+    void setSliderValue(double val);
 
 public:
 
     int delay;
 
     Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = nullptr, Gtk::Image *imgIcon2 = nullptr, double2double_fun slider2value = nullptr, double2double_fun value2slider = nullptr);
-    virtual ~Adjuster ();
+    ~Adjuster () override;
 
     // Add an "Automatic" checkbox next to the reset button.
     void addAutoButton(Glib::ustring tooltip = "");
@@ -173,6 +180,8 @@ public:
     void trimValue (double &val);
     void trimValue (float &val);
     void trimValue (int &val);
+
+    void setLogScale(double base, double pivot, bool anchorMiddle=false);
 };
 
 #endif

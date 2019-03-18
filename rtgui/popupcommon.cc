@@ -47,6 +47,7 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     buttonGroup = Gtk::manage( new Gtk::Grid());
     setExpandAlignProperties(buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     buttonGroup->attach(*button, 0, 0, 1, 1);
+    buttonGroup->get_style_context()->add_class("image-combo");
 }
 
 PopUpCommon::~PopUpCommon ()
@@ -79,7 +80,8 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
     // When there is at least 1 choice, we add the arrow button
     if (images.size() == 1) {
         Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
-        RTImage* arrowImage = Gtk::manage( new RTImage("popuparrow.png") );
+        Gtk::Image *arrowImage = Gtk::manage(new Gtk::Image());
+        arrowImage->set_from_icon_name("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON);
         setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
         arrowButton->add(*arrowImage); //menuSymbol);
         buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
@@ -101,17 +103,18 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
 void PopUpCommon::entrySelected (int i)
 {
     // Emit a signal if the selected item has changed
-    if (setSelected (i))
-        messageChanged (selected);
+    if (setSelected (posToIndex(i)))
+        messageChanged (posToIndex(selected));
 
     // Emit a signal in all case (i.e. propagate the signal_activate event)
-    messageItemSelected (selected);
+    messageItemSelected (posToIndex(selected));
 }
 
 void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
     const auto items = menu->get_children ();
-    if (size_t(index) < items.size ()) {
-        items[size_t(index)]->set_sensitive (isSensitive);
+    size_t pos = indexToPos(index);
+    if (pos < items.size ()) {
+        items[pos]->set_sensitive (isSensitive);
     }
 }
 
@@ -121,6 +124,8 @@ void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
  */
 bool PopUpCommon::setSelected (int entryNum)
 {
+    entryNum = indexToPos(entryNum);
+    
     if (entryNum < 0 || entryNum > ((int)images.size() - 1) || (int)entryNum == selected) {
         return false;
     } else {

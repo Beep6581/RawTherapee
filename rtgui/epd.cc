@@ -16,17 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "epd.h"
-#include <iomanip>
 #include <cmath>
+#include <iomanip>
+
+#include "epd.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPanel(this, "epd", M("TP_EPD_LABEL"), true, true)
 {
-
-    setEnabledTooltipMarkup(M("TP_EPD_TOOLTIP"));
 
     strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -1.0, 2.0, 0.01, 0.5));
     gamma = Gtk::manage(new Adjuster (M("TP_EPD_GAMMA"), 0.8, 1.5, 0.01, 1.));
@@ -143,7 +144,7 @@ void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, con
 
 void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
 {
-    if(listener && getEnabled()) {
+    if (listener && getEnabled()) {
         if(a == strength) {
             listener->panelChanged(EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
         } else if(a == gamma) {
@@ -156,6 +157,10 @@ void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvEPDReweightingIterates, Glib::ustring::format((int)a->getValue()));
         }
     }
+}
+
+void EdgePreservingDecompositionUI::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void EdgePreservingDecompositionUI::enabledChanged ()

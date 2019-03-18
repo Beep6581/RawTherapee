@@ -23,21 +23,21 @@ class CropGUIListener
 {
 
 public:
-    virtual ~CropGUIListener() {}
-    virtual void cropMoved          (int &x, int &y, int &w, int &h) = 0;
-    virtual void cropWidth1Resized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropWidth2Resized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropHeight1Resized (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropHeight2Resized (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropTopLeftResized     (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropTopRightResized    (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropBottomLeftResized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropBottomRightResized (int &x, int &y, int &w, int &h, float custom_ratio=0.f) = 0;
-    virtual void cropInit           (int &x, int &y, int &w, int &h) = 0;
-    virtual void cropResized        (int &x, int &y, int& x2, int& y2) = 0;
-    virtual void cropManipReady     () = 0;
-    virtual bool inImageArea        (int x, int y) = 0;
-    virtual double getRatio         () = 0;
+    virtual ~CropGUIListener() = default;
+    virtual void cropMoved(int &x, int &y, int &w, int &h) = 0;
+    virtual void cropWidth1Resized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropWidth2Resized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropHeight1Resized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropHeight2Resized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropTopLeftResized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropTopRightResized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropBottomLeftResized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropBottomRightResized(int &x, int &y, int &w, int &h, float custom_ratio = 0.f) = 0;
+    virtual void cropInit(int &x, int &y, int &w, int &h) = 0;
+    virtual void cropResized(int &x, int &y, int& x2, int& y2) = 0;
+    virtual void cropManipReady() = 0;
+    virtual bool inImageArea(int x, int y) = 0;
+    virtual double getRatio() const = 0;
 };
 
 #endif

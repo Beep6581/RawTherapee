@@ -42,7 +42,8 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     }
 
     //s is preconditionment of r. Without, direct to r.
-    float *s = r, rs = 0.0f;
+    float *s = r;
+    double rs = 0.0; // use double precision for large summations
 
     if(Preconditioner != nullptr) {
         s = new float[n];
@@ -77,7 +78,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
     for(iterate = 0; iterate < MaximumIterates; iterate++) {
         //Get step size alpha, store ax while at it.
-        float ab = 0.0f;
+        double ab = 0.0; // use double precision for large summations
         Ax(ax, d, Pass);
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:ab)
@@ -94,7 +95,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
         ab = rs / ab;
 
         //Update x and r with this step size.
-        float rms = 0.0;
+        double rms = 0.0; // use double precision for large summations
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:rms)
 #endif
@@ -124,28 +125,14 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
         #pragma omp parallel
 #endif
         {
-            float c = 0.0f;
 #ifdef _OPENMP
-            #pragma omp for reduction(+:rs)                            // Summation with error correction
+            #pragma omp for reduction(+:rs)
 #endif
 
             for(int ii = 0; ii < n; ii++) {
-                float temp = r[ii] * s[ii];
-                float t = rs + temp;
-
-                if( fabsf(rs) >= fabsf(temp) ) {
-                    c += ((rs - t) + temp);
-                } else {
-                    c += ((temp - t) + rs);
-                }
-
-                rs = t;
+                rs += r[ii] * s[ii];
             }
 
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            rs += c;
         }
 
         ab = rs / ab;
@@ -291,7 +278,7 @@ bool MultiDiagonalSymmetricMatrix::LazySetEntry(float value, int row, int column
     return true;
 }
 
-SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float* RESTRICT x)
+void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float* RESTRICT x)
 {
 
     int srm = StartRows[m - 1];
@@ -337,7 +324,9 @@ SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Pro
         }
 
 #endif
+#ifdef _OPENMP
         #pragma omp single
+#endif
         {
 #ifdef __SSE2__
 
@@ -693,7 +682,7 @@ EdgePreservingDecomposition::~EdgePreservingDecomposition()
     delete A;
 }
 
-SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur, bool UseBlurForEdgeStop)
+float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur, bool UseBlurForEdgeStop)
 {
 
     if(Blur == nullptr)
@@ -744,7 +733,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float 
                 gxv = (LVFU(rg[x + 1]) -  LVFU(rg[x])) + (LVFU(rg[x + w + 1]) - LVFU(rg[x + w]));
                 gyv = (LVFU(rg[x + w]) -  LVFU(rg[x])) + (LVFU(rg[x + w + 1]) - LVFU(rg[x + 1]));
                 //Apply power to the magnitude of the gradient to get the edge stopping function.
-                _mm_storeu_ps( &a[x + w * y], Scalev * pow_F((zd5v * _mm_sqrt_ps(gxv * gxv + gyv * gyv + sqrepsv)), EdgeStoppingv) );
+                _mm_storeu_ps( &a[x + w * y], Scalev * pow_F((zd5v * vsqrtf(gxv * gxv + gyv * gyv + sqrepsv)), EdgeStoppingv) );
             }
 
             for(; x < w1; x++) {
@@ -789,7 +778,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float 
 
 
 // checked for race condition here
-// a0[] is read and write but adressed by i only
+// a0[] is read and write but addressed by i only
 // a[] is read only
 // a_w_1 is write only
 // a_w is write only
@@ -884,7 +873,7 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
     return Blur;
 }
 
-SSEFUNCTION void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings)
+void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings)
 {
     if(w < 300 && h < 300) { // set number of Reweightings to zero for small images (thumbnails). We could try to find a better solution here.
         Reweightings = 0;
@@ -905,12 +894,12 @@ SSEFUNCTION void EdgePreservingDecomposition::CompressDynamicRange(float *Source
 #endif
 
         for(int ii = 0; ii < n - 3; ii += 4) {
-            _mm_storeu_ps( &Source[ii], xlogf(LVFU(Source[ii]) + epsv));
+            _mm_storeu_ps( &Source[ii], xlogf(vmaxf(LVFU(Source[ii]), ZEROV) + epsv));
         }
     }
 
     for(int ii = n - (n % 4); ii < n; ii++) {
-        Source[ii] = xlogf(Source[ii] + eps);
+        Source[ii] = xlogf(std::max(Source[ii], 0.f) + eps);
     }
 
 #else
@@ -919,7 +908,7 @@ SSEFUNCTION void EdgePreservingDecomposition::CompressDynamicRange(float *Source
 #endif
 
     for(int ii = 0; ii < n; ii++) {
-        Source[ii] = xlogf(Source[ii] + eps);
+        Source[ii] = xlogf(std::max(Source[ii], 0.f) + eps);
     }
 
 #endif

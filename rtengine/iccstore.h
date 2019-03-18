@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include <glib/gstring.h>
+#include <glibmm.h>
 
 #include <lcms2.h>
 
@@ -69,7 +69,7 @@ public:
     void init(const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir, bool loadAll);
 
     cmsHPROFILE      workingSpace(const Glib::ustring& name) const;
-    cmsHPROFILE      workingSpaceGamma(const Glib::ustring& name) const;
+    // cmsHPROFILE      workingSpaceGamma(const Glib::ustring& name) const;
     TMatrix          workingSpaceMatrix(const Glib::ustring& name) const;
     TMatrix          workingSpaceInverseMatrix(const Glib::ustring& name) const;
 
@@ -95,14 +95,10 @@ public:
     std::uint8_t     getOutputIntents(const Glib::ustring& name) const;
     std::uint8_t     getProofIntents(const Glib::ustring& name) const;
 
-    static std::vector<Glib::ustring> getWorkingProfiles();
-    static std::vector<Glib::ustring> getGamma();
+    /*static*/ std::vector<Glib::ustring> getWorkingProfiles();
 
-    static void        getGammaArray(const procparams::ColorManagementParams& icm, GammaValues& ga);
     static cmsHPROFILE makeStdGammaProfile(cmsHPROFILE iprof);
     static cmsHPROFILE createFromMatrix(const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
-    static cmsHPROFILE createGammaProfile(const procparams::ColorManagementParams& icm, GammaValues& ga);
-    static cmsHPROFILE createCustomGammaOutputProfile(const procparams::ColorManagementParams& icm, GammaValues& ga);
 
 private:
     class Implementation;

@@ -35,7 +35,7 @@ public:
     ImageArea*   imageArea;
 
     ImageAreaPanel  ();
-    ~ImageAreaPanel ();
+    ~ImageAreaPanel () override;
 
     void zoomChanged        ();
 

@@ -16,9 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "xtransrawexposure.h"
-#include "guiutils.h"
 #include <sstream>
+
+#include "xtransrawexposure.h"
+
+#include "guiutils.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -53,6 +57,10 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexpo
     pack_start( *PexBlackRed, Gtk::PACK_SHRINK, 0);//black
     pack_start( *PexBlackGreen, Gtk::PACK_SHRINK, 0);//black
     pack_start( *PexBlackBlue, Gtk::PACK_SHRINK, 0);//black
+
+    PexBlackRed->setLogScale(100, 0);
+    PexBlackGreen->setLogScale(100, 0);
+    PexBlackBlue->setLogScale(100, 0);
 }
 
 void XTransRAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -86,7 +94,7 @@ void XTransRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdite
 
 }
 
-void XTransRAWExposure::adjusterChanged (Adjuster* a, double newval)
+void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
         Glib::ustring value = a->getTextValue();
@@ -99,6 +107,10 @@ void XTransRAWExposure::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessExpBlackBlue, value);
         }
     }
+}
+
+void XTransRAWExposure::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void XTransRAWExposure::setBatchMode(bool batchMode)

@@ -906,7 +906,7 @@ typedef struct {
 static INLINE vfloat vabsf(vfloat f) { return (vfloat)vandnotm((vmask)vcast_vf_f(-0.0f), (vmask)f); }
 static INLINE vfloat vnegf(vfloat f) { return (vfloat)vxorm((vmask)f, (vmask)vcast_vf_f(-0.0f)); }
 
-#if defined( __SSE4_1__ ) && defined( __x86_64__ )
+#ifdef __SSE4_1__
 	// only one instruction when using SSE4.1
 	static INLINE vfloat vself(vmask mask, vfloat x, vfloat y) {
 		return _mm_blendv_ps(y,x,(vfloat)mask);
@@ -970,6 +970,8 @@ static INLINE vmask vmaskf_isinf(vfloat d) { return vmaskf_eq(vabsf(d), vcast_vf
 static INLINE vmask vmaskf_ispinf(vfloat d) { return vmaskf_eq(d, vcast_vf_f(INFINITYf)); }
 static INLINE vmask vmaskf_isminf(vfloat d) { return vmaskf_eq(d, vcast_vf_f(-INFINITYf)); }
 static INLINE vmask vmaskf_isnan(vfloat d) { return vmaskf_neq(d, d); }
+// the following is equivalent to vorm(vmaskf_isnan(a), vmaskf_isnan(b)), but faster
+static INLINE vmask vmaskf_isnan(vfloat a, vfloat b) { return (vmask)_mm_cmpunord_ps(a, b); }
 static INLINE vfloat visinf2f(vfloat d, vfloat m) { return (vfloat)vandm(vmaskf_isinf(d), vorm(vsignbitf(d), (vmask)m)); }
 static INLINE vfloat visinff(vfloat d) { return visinf2f(d, vcast_vf_f(1.0f)); }
 
@@ -1201,7 +1203,7 @@ static INLINE vfloat xatan2f(vfloat y, vfloat x) {
   r = vself(vmaskf_isinf(y), vsubf(vcast_vf_f((float)(rtengine::RT_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(rtengine::RT_PI/4)), x))), r);
   r = vself(vmaskf_eq(y, vcast_vf_f(0.0f)), vselfzero(vmaskf_eq(vsignf(x), vcast_vf_f(-1.0f)), vcast_vf_f((float)rtengine::RT_PI)), r);
 
-  return vself(vorm(vmaskf_isnan(x), vmaskf_isnan(y)), vcast_vf_f(NANf), vmulsignf(r, y));
+  return vself(vmaskf_isnan(x, y), vcast_vf_f(NANf), vmulsignf(r, y));
 }
 
 static INLINE vfloat xasinf(vfloat d) {
@@ -1366,8 +1368,9 @@ static INLINE vfloat xcbrtf(vfloat d) {
   return y;
 }
 
-static INLINE vfloat LIMV( vfloat a, vfloat b, vfloat c ) {
-return vmaxf( b, vminf(a,c));
+static INLINE vfloat vclampf(vfloat value, vfloat low, vfloat high) {
+    // clamps value in [low;high], returns low if value is NaN
+    return vmaxf(vminf(high, value), low);
 }
 
 static INLINE vfloat SQRV(vfloat a){
@@ -1377,8 +1380,7 @@ static INLINE vfloat SQRV(vfloat a){
 static inline void vswap( vmask condition, vfloat &a, vfloat &b) {
     // conditional swap the elements of two vfloats
     vfloat temp = vself(condition, a, b); // the values which fit to condition
-    condition = vnotm(condition); // invert the condition
-    a = vself(condition, a, b); // the values which fit to inverted condition
+    a = vself(condition, b, a); // the values which fit to inverted condition
     b = temp;
 }
 
@@ -1424,6 +1426,22 @@ static INLINE void vconvertrgbrgbrgbrgb2rrrrggggbbbb (const float * src, vfloat 
     gv = _mm_setr_ps(src[1],src[4],src[7],src[10]);
     bv = _mm_setr_ps(src[2],src[5],src[8],src[11]);
 }
+
+#if defined( __SSE4_1__ ) && defined( __x86_64__ )
+static INLINE vfloat vceilf(vfloat x) {
+    return _mm_round_ps(x, _MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC);
+}
+
+#else
+
+static INLINE vfloat vceilf(vfloat x) {
+    __m128i zerov = _mm_setzero_si128();
+    zerov = _mm_cmpeq_epi32(zerov, zerov);
+    const vfloat onev = (vfloat)_mm_slli_epi32(_mm_srli_epi32(zerov, 25), 23); //create vector 1.0f
+    const vfloat xi = _mm_cvtepi32_ps(_mm_cvttps_epi32(x));
+    return xi + _mm_and_ps(_mm_cmplt_ps(xi, x), onev);
+}
+#endif
 
 #endif // __SSE2__
 #endif // SLEEFSSEAVX

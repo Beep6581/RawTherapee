@@ -26,6 +26,8 @@
 #include "multilangmgr.h"
 #include "thumbbrowserbase.h"
 
+#include "../rtengine/procparams.h"
+
 bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 
@@ -36,7 +38,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
     origph(prevh),
     opreviewDone(false),
     job(pjob),
-    params(pparams),
+    params(new rtengine::procparams::ProcParams(pparams)),
     progress(0),
     outFileName(""),
     sequence(0),
@@ -55,7 +57,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 #endif
 
     if (!iconsLoaded) {
-        savedAsIcon = RTImage::createFromFile ("gtk-save.png");
+        savedAsIcon = RTImage::createFromFile ("save-small.png");
         iconsLoaded = true;
     }
 
@@ -93,7 +95,7 @@ void BatchQueueEntry::refreshThumbnailImage ()
         // creating the image buffer first
         //if (!opreview) opreview = new guint8[(origpw+1) * origph * 3];
         // this will asynchronously compute the original preview and land at this.updateImage
-        batchQueueEntryUpdater.process (nullptr, origpw, origph, preh, this, &params, thumbnail);
+        batchQueueEntryUpdater.process (nullptr, origpw, origph, preh, this, params.get(), thumbnail);
     } else {
         // this will asynchronously land at this.updateImage
         batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);
@@ -175,9 +177,10 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
         tooltip += Glib::ustring::compose("\n\n%1: %2", M("BATCHQUEUE_DESTFILENAME"), outFileName);
 
         if (forceFormatOpts) {
-            tooltip += Glib::ustring::compose("\n\n%1: %2 (%3 bits)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
+            tooltip += Glib::ustring::compose("\n\n%1: %2 (%3-bits%4)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
                                               saveFormat.format == "png" ? saveFormat.pngBits :
-                                              saveFormat.format == "tif" ? saveFormat.tiffBits : 8);
+                                              saveFormat.format == "tif" ? saveFormat.tiffBits : 8,
+                                              saveFormat.format == "tif" && saveFormat.tiffFloat ? M("SAVEDLG_FILEFORMAT_FLOAT") : "");
 
             if (saveFormat.format == "jpg") {
                 tooltip += Glib::ustring::compose("\n%1: %2\n%3: %4",

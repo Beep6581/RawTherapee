@@ -19,7 +19,10 @@
 #ifndef _EXIFPANEL_
 #define _EXIFPANEL_
 
+#include <memory>
+
 #include <gtkmm.h>
+
 #include "toolpanel.h"
 
 class ExifPanel : public Gtk::VBox, public ToolPanel
@@ -27,8 +30,8 @@ class ExifPanel : public Gtk::VBox, public ToolPanel
 
 private:
     const rtengine::FramesMetaData* idata;
-    rtengine::procparams::ExifPairs changeList;
-    rtengine::procparams::ExifPairs defChangeList;
+    const std::unique_ptr<rtengine::procparams::ExifPairs> changeList;
+    const std::unique_ptr<rtengine::procparams::ExifPairs> defChangeList;
     bool recursiveOp;
 
     class ExifColumns : public Gtk::TreeModelColumnRecord
@@ -97,11 +100,11 @@ private:
 
 public:
     ExifPanel ();
-    virtual ~ExifPanel();
+    ~ExifPanel() override;
 
-    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
     void setImageData (const rtengine::FramesMetaData* id);
 

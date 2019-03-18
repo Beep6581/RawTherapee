@@ -19,6 +19,7 @@
 
 #include "improcfun.h"
 #include "alpha.h"
+#include "procparams.h"
 
 namespace rtengine
 {

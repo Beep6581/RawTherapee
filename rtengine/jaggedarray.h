@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <cstring>
+
 #include "noncopyable.h"
 
 namespace rtengine
@@ -26,60 +28,46 @@ namespace rtengine
 
 // These emulate a jagged array, but use only 2 allocations instead of 1 + H.
 
-template<class T>
-inline T** const allocJaggedArray (const int W, const int H, const bool initZero = false)
-{
-    T** const a = new T*[H];
-    a[0] = new T[H * W];
-
-    for (int i = 1; i < H; ++i) {
-        a[i] = a[i - 1] + W;
-    }
-
-    if (initZero) {
-        std::memset(a[0], 0, sizeof(T) * W * H);
-    }
-
-    return a;
-}
-
-template<class T>
-inline void freeJaggedArray (T** const a)
-{
-    delete [] a[0];
-    delete [] a;
-}
-
-template<class T>
+template<typename T>
 class JaggedArray :
     public NonCopyable
 {
 public:
-    JaggedArray (const int W, const int H, const bool initZero = false)
+    JaggedArray(std::size_t width, std::size_t height, bool init_zero = false) :
+        array(
+            [width, height, init_zero]() -> T**
+            {
+                T** const res = new T*[height];
+                res[0] = new T[height * width];
+
+                for (std::size_t i = 1; i < height; ++i) {
+                    res[i] = res[i - 1] + width;
+                }
+
+                if (init_zero) {
+                    std::memset(res[0], 0, sizeof(T) * width * height);
+                }
+
+                return res;
+            }()
+        )
     {
-        a = allocJaggedArray<T> (W, H, initZero);
-    }
-    ~JaggedArray ()
-    {
-        if (a) {
-            freeJaggedArray<T> (a);
-            a = nullptr;
-        }
     }
 
-    operator T** const () const
+    ~JaggedArray ()
     {
-        return a;
+        delete[] array[0];
+        delete[] array;
+    }
+
+    operator T** ()
+    {
+        return array;
     }
 
 private:
-    T** a;
+    T** const array;
 
 };
-
-// Declared but not defined to prevent
-// explicitly freeing a JaggedArray<T> implicitly cast to T**.
-template<class T>
-void freeJaggedArray (JaggedArray<T>&);
 
 } // rtengine

@@ -32,9 +32,9 @@
 
 // Default bundled profile name to use for Raw images
 #ifdef WIN32
-#define DEFPROFILE_RAW      "${G}\\Default"
+#define DEFPROFILE_RAW      "${G}\\Auto-Matched Curve - ISO Low"
 #else
-#define DEFPROFILE_RAW      "${G}/Default"
+#define DEFPROFILE_RAW      "${G}/Auto-Matched Curve - ISO Low"
 #endif
 // Default bundled profile name to use for Standard images
 #define DEFPROFILE_IMG      "Neutral"
@@ -44,14 +44,46 @@
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
 struct SaveFormat {
+    SaveFormat(
+        const Glib::ustring& _format,
+        int _png_bits,
+        int _jpeg_quality,
+        int _jpeg_sub_samp,
+        int _tiff_bits,
+        bool _tiff_float,
+        bool _tiff_uncompressed,
+        bool _save_params
+    ) :
+        format(_format),
+        pngBits(_png_bits),
+        jpegQuality(_jpeg_quality),
+        jpegSubSamp(_jpeg_sub_samp),
+        tiffBits(_tiff_bits),
+        tiffFloat(_tiff_float),
+        tiffUncompressed(_tiff_uncompressed),
+        saveParams(_save_params)
+    {
+    }
+    SaveFormat(
+        const Glib::ustring& _format,
+        int _png_bits,
+        int _tiff_bits,
+        bool _tiff_float
+    ) :
+        SaveFormat(
+            _format,
+            _png_bits,
+            90,
+            2,
+            _tiff_bits,
+            _tiff_float,
+            true,
+            true
+        )
+    {
+    }
     SaveFormat() :
-        format ("jpg"),
-        pngBits (8),
-        jpegQuality (90),
-        jpegSubSamp (2),
-        tiffBits (8),
-        tiffUncompressed (true),
-        saveParams (true)
+        SaveFormat("jpg", 8, 8, false)
     {
     }
 
@@ -60,6 +92,7 @@ struct SaveFormat {
     int jpegQuality;
     int jpegSubSamp;  // 1=best compression, 3=best quality
     int tiffBits;
+    bool tiffFloat;
     bool tiffUncompressed;
     bool saveParams;
 };
@@ -75,8 +108,8 @@ public:
     class Error: public std::exception
     {
     public:
-        Error (const Glib::ustring &msg): msg_ (msg) {}
-        const char *what() const throw()
+        explicit Error (const Glib::ustring &msg): msg_ (msg) {}
+        const char *what() const throw() override
         {
             return msg_.c_str();
         }
@@ -90,8 +123,13 @@ public:
     };
 
 private:
-    bool defProfRawMissing;
-    bool defProfImgMissing;
+    enum class DefProfError : short {
+        defProfRawMissing        = 1 << 0,
+        bundledDefProfRawMissing = 1 << 1,
+        defProfImgMissing        = 1 << 2,
+        bundledDefProfImgMissing = 1 << 3
+    };
+    short defProfError;
     Glib::ustring userProfilePath;
     Glib::ustring globalProfilePath;
     bool checkProfilePath (Glib::ustring &path);
@@ -249,12 +287,13 @@ public:
     bool sndEnable;
 
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
-    //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
+    bool histogramRed, histogramGreen, histogramBlue;
+    bool histogramLuma, histogramChroma, histogramRAW;
     bool histogramBar;
-    bool histogramFullMode;
+    int histogramHeight;
+    int histogramDrawMode;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
-    bool UseIconNoText;
     int whiteBalanceSpotSize;
     int curvebboxpos; // 0=above, 1=right, 2=below, 3=left
 
@@ -264,22 +303,45 @@ public:
     int cropPPI;
     enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
     CropGuidesMode cropGuides;
-    bool cropAutoFit;    
+    bool cropAutoFit;
 
     // Performance options
     Glib::ustring clutsDir;
     int rgbDenoiseThreadLimit; // maximum number of threads for the denoising tool ; 0 = use the maximum available
     int maxInspectorBuffers;   // maximum number of buffers (i.e. images) for the Inspector feature
+    int inspectorDelay;
     int clutCacheSize;
     bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
     prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
     bool serializeTiffRead;
-
+    bool measure;
+    size_t chunkSizeAMAZE;
+    size_t chunkSizeCA;
+    size_t chunkSizeRCD;
+    size_t chunkSizeRGB;
+    size_t chunkSizeXT;
     bool menuGroupRank;
     bool menuGroupLabel;
     bool menuGroupFileOperations;
     bool menuGroupProfileOperations;
     bool menuGroupExtProg;
+
+    // ICC Profile Creator
+    Glib::ustring ICCPC_primariesPreset;
+    double ICCPC_redPrimaryX;
+    double ICCPC_redPrimaryY;
+    double ICCPC_greenPrimaryX;
+    double ICCPC_greenPrimaryY;
+    double ICCPC_bluePrimaryX;
+    double ICCPC_bluePrimaryY;
+    Glib::ustring ICCPC_gammaPreset;
+    double ICCPC_gamma;
+    double ICCPC_slope;
+    Glib::ustring ICCPC_profileVersion;
+    Glib::ustring ICCPC_illuminant;
+    Glib::ustring ICCPC_description;
+    Glib::ustring ICCPC_copyright;
+    bool ICCPC_appendParamsToDesc;
 
     // fast export options
     bool fastexport_bypass_sharpening;
@@ -289,7 +351,6 @@ public:
     //bool fastexport_bypass_colorDenoise;
     bool fastexport_bypass_defringe;
     bool fastexport_bypass_dirpyrDenoise;
-    bool fastexport_bypass_sh_hq;
     bool fastexport_bypass_dirpyrequalizer;
     bool fastexport_bypass_wavelet;
     Glib::ustring fastexport_raw_bayer_method;
@@ -304,12 +365,12 @@ public:
     bool fastexport_bypass_raw_ca;
     bool fastexport_bypass_raw_df;
     bool fastexport_bypass_raw_ff;
-    Glib::ustring fastexport_icm_input;
-    Glib::ustring fastexport_icm_working;
-    Glib::ustring fastexport_icm_output;
-    rtengine::RenderingIntent fastexport_icm_outputIntent;
+    Glib::ustring fastexport_icm_input_profile;
+    Glib::ustring fastexport_icm_working_profile;
+    Glib::ustring fastexport_icm_output_profile;
+    int fastexport_icm_outputIntent;
     bool          fastexport_icm_outputBPC;
-    Glib::ustring fastexport_icm_gamma;
+    Glib::ustring fastexport_icm_custom_output_profile;
     bool          fastexport_resize_enabled;
     double        fastexport_resize_scale;
     Glib::ustring fastexport_resize_appliesTo;
@@ -319,6 +380,7 @@ public:
     int           fastexport_resize_height;
     bool fastexport_use_fast_pipeline;
 
+    std::vector<Glib::ustring> favorites;
     // Dialog settings
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
@@ -336,6 +398,7 @@ public:
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
     Glib::ustring lastLensProfileDir;
+    Glib::ustring lastICCProfCreatorDir;
     bool gimpPluginShowInfoDialog;
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
@@ -344,9 +407,9 @@ public:
 
     Options ();
 
-    Options*    copyFrom        (Options* other);
-    void        filterOutParsedExtensions ();
-    void        setDefaults     ();
+    Options* copyFrom        (Options* other);
+    void filterOutParsedExtensions ();
+    void setDefaults     ();
     void readFromFile (Glib::ustring fname);
     void saveToFile (Glib::ustring fname);
     static void load (bool lightweight = false);
@@ -354,34 +417,21 @@ public:
 
     // if multiUser=false, send back the global profile path
     Glib::ustring getPreferredProfilePath();
-    Glib::ustring getUserProfilePath()
-    {
-        return userProfilePath;
-    }
-    Glib::ustring getGlobalProfilePath()
-    {
-        return globalProfilePath;
-    }
+    Glib::ustring getUserProfilePath();
+    Glib::ustring getGlobalProfilePath();
     Glib::ustring findProfilePath (Glib::ustring &profName);
-    bool        is_parse_extention (Glib::ustring fname);
-    bool        has_retained_extention (Glib::ustring fname);
-    bool        is_extention_enabled (Glib::ustring ext);
-    bool        is_defProfRawMissing()
-    {
-        return defProfRawMissing;
-    }
-    bool        is_defProfImgMissing()
-    {
-        return defProfImgMissing;
-    }
-    void        setDefProfRawMissing (bool value)
-    {
-        defProfRawMissing = value;
-    }
-    void        setDefProfImgMissing (bool value)
-    {
-        defProfImgMissing = value;
-    }
+    bool is_parse_extention (Glib::ustring fname);
+    bool has_retained_extention (Glib::ustring fname);
+    bool is_extention_enabled (Glib::ustring ext);
+    bool is_defProfRawMissing();
+    bool is_bundledDefProfRawMissing();
+    bool is_defProfImgMissing();
+    bool is_bundledDefProfImgMissing();
+    void setDefProfRawMissing (bool value);
+    void setBundledDefProfRawMissing (bool value);
+    void setDefProfImgMissing (bool value);
+    void setBundledDefProfImgMissing (bool value);
+    static Glib::ustring getICCProfileCopyright();
 };
 
 extern Options options;

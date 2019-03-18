@@ -45,6 +45,42 @@ using namespace std;
 namespace rtengine
 {
 
+bool sanitizeCurve(std::vector<double>& curve)
+{
+    // A curve is valid under one of the following conditions:
+    // 1) Curve has exactly one entry which is D(F)CT_Linear
+    // 2) Number of curve entries is > 3 and odd
+    // 3) curve[0] == DCT_Parametric and curve size is >= 8 and curve[1] .. curve[3] are ordered ascending and are distinct
+    if (curve.empty()) {
+        curve.push_back (DCT_Linear);
+        return true;
+    } else if(curve.size() == 1 && curve[0] != DCT_Linear) {
+        curve[0] = DCT_Linear;
+        return true;
+    } else if((curve.size() % 2 == 0 || curve.size() < 5) && curve[0] != DCT_Parametric) {
+        curve.clear();
+        curve.push_back (DCT_Linear);
+        return true;
+    } else if(curve[0] == DCT_Parametric) {
+        if (curve.size() < 8) {
+            curve.clear();
+            curve.push_back (DCT_Linear);
+            return true;
+        } else {
+            // curve[1] to curve[3] must be ordered ascending and distinct
+            for (int i = 1; i < 3; i++) {
+                if (curve[i] >= curve[i + 1]) {
+                    curve[1] = 0.25f;
+                    curve[2] = 0.5f;
+                    curve[3] = 0.75f;
+                    break;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 Curve::Curve () : N(0), ppn(0), x(nullptr), y(nullptr), mc(0.0), mfc(0.0), msc(0.0), mhc(0.0), hashSize(1000 /* has to be initialized to the maximum value */), ypp(nullptr), x1(0.0), y1(0.0), x2(0.0), y2(0.0), x3(0.0), y3(0.0), firstPointIncluded(false), increment(0.0), nbr_points(0) {}
 
 void Curve::AddPolygons ()
@@ -118,7 +154,7 @@ void Curve::fillHash()
     hash.at(hashSize + 1).higherValue = poly_x.size();
 
     /*
-     * Uncoment the code below to dump the polygon points and the hash table in files
+     * Uncomment the code below to dump the polygon points and the hash table in files
     if (poly_x.size() > 500) {
         printf("Files generated (%d points)\n", poly_x.size());
         FILE* f = fopen ("hash.txt", "wt");
@@ -476,7 +512,7 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
 }
 
-SSEFUNCTION void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
+void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
         double shcompr, double br, double contr,
         const std::vector<double>& curvePoints,
         const std::vector<double>& curvePoints2,
@@ -989,7 +1025,7 @@ void ColorAppearance::Set(const Curve &pCurve)
 }
 
 //
-RetinextransmissionCurve::RetinextransmissionCurve() {};
+RetinextransmissionCurve::RetinextransmissionCurve() {}
 
 void RetinextransmissionCurve::Reset()
 {
@@ -1022,7 +1058,7 @@ void RetinextransmissionCurve::Set(const std::vector<double> &curvePoints)
 }
 
 
-RetinexgaintransmissionCurve::RetinexgaintransmissionCurve() {};
+RetinexgaintransmissionCurve::RetinexgaintransmissionCurve() {}
 
 void RetinexgaintransmissionCurve::Reset()
 {
@@ -1132,7 +1168,7 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili)
 }
 
 
-WavCurve::WavCurve() : sum(0.f) {};
+WavCurve::WavCurve() : sum(0.f) {}
 
 void WavCurve::Reset()
 {
@@ -1175,7 +1211,7 @@ void WavCurve::Set(const std::vector<double> &curvePoints)
 }
 
 
-WavOpacityCurveRG::WavOpacityCurveRG() {};
+WavOpacityCurveRG::WavOpacityCurveRG() {}
 
 void WavOpacityCurveRG::Reset()
 {
@@ -1208,7 +1244,7 @@ void WavOpacityCurveRG::Set(const std::vector<double> &curvePoints)
 
 }
 
-WavOpacityCurveBY::WavOpacityCurveBY() {};
+WavOpacityCurveBY::WavOpacityCurveBY() {}
 
 void WavOpacityCurveBY::Reset()
 {
@@ -1240,7 +1276,7 @@ void WavOpacityCurveBY::Set(const std::vector<double> &curvePoints)
     }
 }
 
-WavOpacityCurveW::WavOpacityCurveW() {};
+WavOpacityCurveW::WavOpacityCurveW() {}
 
 void WavOpacityCurveW::Reset()
 {
@@ -1272,7 +1308,7 @@ void WavOpacityCurveW::Set(const std::vector<double> &curvePoints)
     }
 }
 
-WavOpacityCurveWL::WavOpacityCurveWL() {};
+WavOpacityCurveWL::WavOpacityCurveWL() {}
 
 void WavOpacityCurveWL::Reset()
 {
@@ -1305,7 +1341,7 @@ void WavOpacityCurveWL::Set(const std::vector<double> &curvePoints)
 }
 
 
-NoiseCurve::NoiseCurve() : sum(0.f) {};
+NoiseCurve::NoiseCurve() : sum(0.f) {}
 
 void NoiseCurve::Reset()
 {
@@ -1827,6 +1863,14 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
     const AdobeToneCurve& adobeTC = static_cast<const AdobeToneCurve&>((const ToneCurve&) * this);
 
     for (size_t i = start; i < end; ++i) {
+        const bool oog_r = OOG(rc[i]);
+        const bool oog_g = OOG(gc[i]);
+        const bool oog_b = OOG(bc[i]);
+
+        if (oog_r && oog_g && oog_b) {
+            continue;
+        }
+        
         float r = CLIP(rc[i]);
         float g = CLIP(gc[i]);
         float b = CLIP(bc[i]);
@@ -1848,12 +1892,18 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
 
         if (ar >= 65535.f && ag >= 65535.f && ab >= 65535.f) {
             // clip fast path, will also avoid strange colours of clipped highlights
-            rc[i] = gc[i] = bc[i] = 65535.f;
+            //rc[i] = gc[i] = bc[i] = 65535.f;
+            if (!oog_r) rc[i] = 65535.f;
+            if (!oog_g) gc[i] = 65535.f;
+            if (!oog_b) bc[i] = 65535.f;
             continue;
         }
 
         if (ar <= 0.f && ag <= 0.f && ab <= 0.f) {
-            rc[i] = gc[i] = bc[i] = 0;
+            //rc[i] = gc[i] = bc[i] = 0;
+            if (!oog_r) rc[i] = 0.f;
+            if (!oog_g) gc[i] = 0.f;
+            if (!oog_b) bc[i] = 0.f;
             continue;
         }
 
@@ -1893,9 +1943,9 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 g = newg;
                 b = newb;
             }
-            rc[i] = r;
-            gc[i] = g;
-            bc[i] = b;
+            if (!oog_r) rc[i] = r;
+            if (!oog_g) gc[i] = g;
+            if (!oog_b) bc[i] = b;
 
             continue;
         }
@@ -1905,7 +1955,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         // depending on color, the chroma scaling factor can be fine-tuned below
 
         {
-            // decrease chroma scaling sligthly of extremely saturated colors
+            // decrease chroma scaling slightly of extremely saturated colors
             float saturated_scale_factor = 0.95f;
             constexpr float lolim = 35.f; // lower limit, below this chroma all colors will keep original chroma scaling factor
             constexpr float hilim = 60.f; // high limit, above this chroma the chroma scaling factor is multiplied with the saturated scale factor value above
@@ -1990,7 +2040,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         Ciecam02::jch2xyz_ciecam02float( x, y, z,
                                          J, C, h,
                                          xw, yw,  zw,
-                                         c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw );
+                                         c, nc, pow1, nbb, ncb, fl, cz, d, aw );
 
         if (!isfinite(x) || !isfinite(y) || !isfinite(z)) {
             // can happen for colours on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
@@ -2003,9 +2053,9 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 b = newb;
             }
 
-            rc[i] = r;
-            gc[i] = g;
-            bc[i] = b;
+            if (!oog_r) rc[i] = r;
+            if (!oog_g) gc[i] = g;
+            if (!oog_b) bc[i] = b;
 
             continue;
         }
@@ -2066,14 +2116,14 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
             g = newg;
             b = newb;
         }
-        rc[i] = r;
-        gc[i] = g;
-        bc[i] = b;
+        if (!oog_r) rc[i] = r;
+        if (!oog_g) gc[i] = g;
+        if (!oog_b) bc[i] = b;
     }
 }
 float PerceptualToneCurve::cf_range[2];
 float PerceptualToneCurve::cf[1000];
-float PerceptualToneCurve::f, PerceptualToneCurve::c, PerceptualToneCurve::nc, PerceptualToneCurve::yb, PerceptualToneCurve::la, PerceptualToneCurve::xw, PerceptualToneCurve::yw, PerceptualToneCurve::zw, PerceptualToneCurve::gamut;
+float PerceptualToneCurve::f, PerceptualToneCurve::c, PerceptualToneCurve::nc, PerceptualToneCurve::yb, PerceptualToneCurve::la, PerceptualToneCurve::xw, PerceptualToneCurve::yw, PerceptualToneCurve::zw;
 float PerceptualToneCurve::n, PerceptualToneCurve::d, PerceptualToneCurve::nbb, PerceptualToneCurve::ncb, PerceptualToneCurve::cz, PerceptualToneCurve::aw, PerceptualToneCurve::wh, PerceptualToneCurve::pfl, PerceptualToneCurve::fl, PerceptualToneCurve::pow1;
 
 void PerceptualToneCurve::init()
@@ -2089,7 +2139,7 @@ void PerceptualToneCurve::init()
     c  = 0.69f;
     nc = 1.00f;
 
-    Ciecam02::initcam1float(gamut, yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
+    Ciecam02::initcam1float(yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
                             cz, aw, wh, pfl, fl, c);
     pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
 

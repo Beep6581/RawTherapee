@@ -2,11 +2,11 @@
 # After the first run, all the parameters will be available in this global option file
 # or in a new local option file, depending on the MultiUser value below
 
-# Most ot the options are modifiable through the Preference window
+# Most of the options are modifiable through the Preference window
 
 [General]
 # Setting MultiUser to false will use the application's installation directory as cache directory,
-# which can be usefull if you want to keep the application and all the cache datas in a single place,
+# which can be useful if you want to keep the application and all the cache datas in a single place,
 # an external HD for example
 MultiUser=true
 # Windows users should not use the system theme : some composed widget won't be usable

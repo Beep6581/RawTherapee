@@ -26,9 +26,10 @@
 
 class ExportPanelListener
 {
-
 public:
-    virtual void exportRequested () {}
+    virtual ~ExportPanelListener() = default;
+
+    virtual void exportRequested() = 0;
 };
 
 class ExportPanel : public Gtk::VBox
@@ -48,11 +49,10 @@ protected:
     //Gtk::CheckButton* bypass_colorDenoise;
     Gtk::CheckButton* bypass_defringe;
     Gtk::CheckButton* bypass_dirpyrDenoise;
-    Gtk::CheckButton* bypass_sh_hq;
 
     /*      icm_input   = "(camera)";
             icm_working = "sRGB";
-            icm_output  = "RT_sRGB";
+            icm_output  = options.rtSettings.srgb;
             icm_gamma   = "default";
     */
     Gtk::CheckButton* bypass_dirpyrequalizer; // also could leave untouched but disable only small radius adjustments
@@ -88,7 +88,6 @@ protected:
     //sigc::connection bypass_colorDenoiseConn    ;
     sigc::connection bypass_defringeConn          ;
     sigc::connection bypass_dirpyrDenoiseConn     ;
-    sigc::connection bypass_sh_hqConn             ;
     sigc::connection bypass_dirpyrequalizerConn   ;
     sigc::connection bypass_waveletConn   ;
     //sigc::connection bypass_raw_bayer_all_enhanceConn   ;

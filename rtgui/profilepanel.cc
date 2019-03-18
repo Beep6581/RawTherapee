@@ -17,11 +17,14 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "profilepanel.h"
-#include "options.h"
+
 #include "clipboard.h"
 #include "multilangmgr.h"
+#include "options.h"
 #include "profilestorecombobox.h"
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -63,20 +66,20 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), image
     setExpandAlignProperties(profiles, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     load = Gtk::manage (new Gtk::Button ());
-    load->add (*Gtk::manage (new RTImage ("gtk-open.png")));
+    load->add (*Gtk::manage (new RTImage ("folder-open.png")));
     load->get_style_context()->add_class("Left");
     load->set_margin_left(2);
     setExpandAlignProperties(load, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     save = Gtk::manage (new Gtk::Button ());
-    save->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+    save->add (*Gtk::manage (new RTImage ("save.png")));
     save->get_style_context()->add_class("MiddleH");
     setExpandAlignProperties(save, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     copy = Gtk::manage (new Gtk::Button ());
-    copy->add (*Gtk::manage (new RTImage ("edit-copy.png")));
+    copy->add (*Gtk::manage (new RTImage ("copy.png")));
     copy->get_style_context()->add_class("MiddleH");
     setExpandAlignProperties(copy, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     paste = Gtk::manage (new Gtk::Button ());
-    paste->add (*Gtk::manage (new RTImage ("edit-paste.png")));
+    paste->add (*Gtk::manage (new RTImage ("paste.png")));
     paste->get_style_context()->add_class("Right");
     setExpandAlignProperties(paste, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
@@ -167,6 +170,7 @@ Gtk::TreeIter ProfilePanel::getLastSavedRow()
 Gtk::TreeIter ProfilePanel::addCustomRow()
 {
     if(customPSE) {
+        profiles->deleteRow(customPSE);
         delete customPSE;
         customPSE = nullptr;
     }
@@ -179,6 +183,7 @@ Gtk::TreeIter ProfilePanel::addCustomRow()
 Gtk::TreeIter ProfilePanel::addLastSavedRow()
 {
     if(lastSavedPSE) {
+        profiles->deleteRow(lastSavedPSE);
         delete lastSavedPSE;
         lastSavedPSE = nullptr;
     }
@@ -284,7 +289,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
         dialog.add_shortcut_folder(imagePath);
     } catch (Glib::Error&) {}
 
-    //Add response buttons the the dialog:
+    //Add response buttons to the dialog:
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_OK);
 
@@ -306,8 +311,6 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
 
     do {
         if (dialog.run() == Gtk::RESPONSE_OK) {
-
-            dialog.hide();
 
             std::string fname = dialog.get_filename();
             Glib::ustring ext = getExtension (fname);
@@ -457,7 +460,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
         dialog.add_shortcut_folder(imagePath);
     } catch (Glib::Error&) {}
 
-    //Add response buttons the the dialog:
+    //Add response buttons to the dialog:
     dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
 
@@ -709,9 +712,13 @@ void ProfilePanel::selection_changed ()
     dontupdate = false;
 }
 
-void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited)
+void ProfilePanel::procParamsChanged(
+    const rtengine::procparams::ProcParams* p,
+    const rtengine::ProcEvent& ev,
+    const Glib::ustring& descr,
+    const ParamsEdited* paramsEdited
+)
 {
-
     // to prevent recursion, filter out the events caused by the profilepanel
     if (ev == EvProfileChanged || ev == EvPhotoLoaded) {
         return;
@@ -732,6 +739,10 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
     }
 
     *custom->pparams = *p;
+}
+
+void ProfilePanel::clearParamChanges()
+{
 }
 
 /** @brief Initialize the Profile panel with a default profile, overridden by the last saved profile if provided
@@ -797,7 +808,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
 
         if (tpc) {
             tpc->setDefaults   (lastsaved->pparams);
-            tpc->profileChange (lastsaved, EvPhotoLoaded, profiles->getSelectedEntry()->label);
+            tpc->profileChange (lastsaved, EvPhotoLoaded, profiles->getSelectedEntry()->label, nullptr, true);
         }
     } else {
         if (pse) {

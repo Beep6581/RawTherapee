@@ -19,9 +19,6 @@
 #ifndef _FILECATALOG_
 #define _FILECATALOG_
 
-#ifdef WIN32
-#include "windirmonitor.h"
-#endif
 #include "filebrowser.h"
 #include "exiffiltersettings.h"
 #include <giomm.h>
@@ -48,9 +45,6 @@ class FileCatalog : public Gtk::VBox,
     public FilterPanelListener,
     public FileBrowserListener,
     public ExportPanelListener
-#ifdef WIN32
-    , public WinDirChangeListener
-#endif
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
@@ -73,6 +67,7 @@ private:
 
     Gtk::HBox* buttonBar;
     Gtk::HBox* hbToolBar1;
+    MyScrolledToolbar* hbToolBar1STB;
 
     Gtk::HBox* fltrRankbox;
     Gtk::HBox* fltrLabelbox;
@@ -104,7 +99,7 @@ private:
     Gtk::Image* iCLabeled[5], *igCLabeled[5], *iUnCLabeled, *igUnCLabeled;
     Gtk::Image* iEdited[2], *igEdited[2];
     Gtk::Image* iRecentlySaved[2], *igRecentlySaved[2];
-    Gtk::Image *iTrashEmpty, *iTrashFull;
+    Gtk::Image *iTrashShowEmpty, *iTrashShowFull;
     Gtk::Image *iNotTrash, *iOriginal;
     Gtk::Image *iRefreshWhite, *iRefreshRed;
     Gtk::Image *iLeftPanel_1_Show, *iLeftPanel_1_Hide, *iRightPanel_1_Show, *iRightPanel_1_Hide;
@@ -141,11 +136,7 @@ private:
     std::set<Glib::ustring> editedFiles;
     guint modifierKey; // any modifiers held when rank button was pressed
 
-#ifndef _WIN32
     Glib::RefPtr<Gio::FileMonitor> dirMonitor;
-#else
-    WinDirMonitor* wdMonitor;
-#endif
 
     IdleRegister idle_register;
 
@@ -163,14 +154,14 @@ public:
     ToolBar* toolBar;
 
     FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel);
-    ~FileCatalog();
+    ~FileCatalog() override;
     void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
     void closeDir    ();
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
 
     // previewloaderlistener interface
-    void previewReady (int dir_id, FileBrowserEntry* fdn);
-    void previewsFinished (int dir_id);
+    void previewReady (int dir_id, FileBrowserEntry* fdn) override;
+    void previewsFinished (int dir_id) override;
     void previewsFinishedUI ();
     void _refreshProgressBar ();
 
@@ -194,10 +185,10 @@ public:
     }
 
     // filterpanel interface
-    void exifFilterChanged ();
+    void exifFilterChanged () override;
 
     // exportpanel interface
-    void exportRequested();
+    void exportRequested() override;
 
     Glib::ustring lastSelectedDir ()
     {
@@ -211,13 +202,16 @@ public:
     void refreshThumbImages ();
     void refreshHeight ();
 
-    void openRequested          (std::vector<Thumbnail*> tbe);
-    void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed);
-    void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested);
-    void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode);
-    void renameRequested        (std::vector<FileBrowserEntry*> tbe);
-    void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace);
-    void selectionChanged       (std::vector<Thumbnail*> tbe);
+    void filterApplied() override;
+    void openRequested(const std::vector<Thumbnail*>& tbe) override;
+    void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed) override;
+    void copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested) override;
+    void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode) override;
+    void renameRequested(const std::vector<FileBrowserEntry*>& tbe) override;
+    void selectionChanged(const std::vector<Thumbnail*>& tbe) override;
+    void clearFromCacheRequested(const std::vector<FileBrowserEntry*>& tbe, bool leavenotrace) override;
+    bool isInTabMode() const override;
+
     void emptyTrash ();
     bool trashIsEmpty ();
 
@@ -243,9 +237,9 @@ public:
     void filterChanged ();
     void runFilterDialog ();
 
-    void on_realize();
+    void on_realize() override;
     void reparseDirectory ();
-    void _openImage (std::vector<Thumbnail*> tmb);
+    void _openImage (const std::vector<Thumbnail*>& tmb);
 
     void zoomIn ();
     void zoomOut ();
@@ -276,11 +270,6 @@ public:
 
     bool handleShortcutKey (GdkEventKey* event);
 
-    bool isInTabMode()
-    {
-        return inTabMode;
-    }
-
     bool CheckSidePanelsVisibility();
     void toggleSidePanels();
     void toggleLeftPanel();
@@ -288,13 +277,8 @@ public:
 
     void showToolBar();
     void hideToolBar();
-    void filterApplied();
 
-#ifndef _WIN32
     void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);
-#else
-    void winDirChanged ();
-#endif
 
 };
 

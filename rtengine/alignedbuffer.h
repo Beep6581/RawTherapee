@@ -66,7 +66,7 @@ public:
         return allocatedSize == 0;
     }
 
-    /** @brief Allocate the the "size" amount of elements of "structSize" length each
+    /** @brief Allocate the "size" amount of elements of "structSize" length each
     * @param size number of elements to allocate
     * @param structSize if non null, will let you override the default struct's size (unit: byte)
     * @return True is everything went fine, including freeing memory when size==0, false if the allocation failed

@@ -36,7 +36,11 @@
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
 #include "improccoordinator.h"
+#include "settings.h"
+#include "procparams.h"
 #include <locale.h>
+#include "StopWatch.h"
+#include "median.h"
 
 namespace
 {
@@ -56,22 +60,36 @@ bool checkRawImageThumb (const rtengine::RawImage& raw_image)
 }
 
 
-void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
+void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4], bool multiThread)
 {
     DCraw::dcrawImage_t image = ri->get_image();
+    const int height = ri->get_iheight();
+    const int width = ri->get_iwidth();
+    const int top_margin = ri->get_topmargin();
+    const int left_margin = ri->get_leftmargin();
+    const int raw_width = ri->get_rawwidth();
+    const bool isFloat = ri->isFloat();
+    const float * const float_raw_image = ri->get_FloatRawImage();
 
     if (ri->isBayer()) {
-        const int height = ri->get_iheight();
-        const int width = ri->get_iwidth();
-
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
         for (int row = 0; row < height; ++row) {
             unsigned c0 = ri->FC (row, 0);
             unsigned c1 = ri->FC (row, 1);
             int col = 0;
 
             for (; col < width - 1; col += 2) {
-                float val0 = image[row * width + col][c0];
-                float val1 = image[row * width + col + 1][c1];
+                float val0;
+                float val1;
+                if (isFloat) {
+                    val0 = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
+                    val1 = float_raw_image[(row + top_margin) * raw_width + col + left_margin + 1];
+                } else {
+                    val0 = image[row * width + col][c0];
+                    val1 = image[row * width + col + 1][c1];
+                }
                 val0 -= cblack[c0];
                 val1 -= cblack[c1];
                 val0 *= scale_mul[c0];
@@ -81,18 +99,23 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
             }
 
             if (col < width) { // in case width is odd
-                float val0 = image[row * width + col][c0];
+                float val0;
+                if (isFloat) {
+                    val0 = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
+                } else {
+                    val0 = image[row * width + col][c0];
+                }
                 val0 -= cblack[c0];
                 val0 *= scale_mul[c0];
                 image[row * width + col][c0] = rtengine::CLIP (val0);
             }
         }
     } else if (ri->isXtrans()) {
-        const int height = ri->get_iheight();
-        const int width = ri->get_iwidth();
-        unsigned c[6];
-
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
         for (int row = 0; row < height; ++row) {
+            unsigned c[6];
             for (int i = 0; i < 6; ++i) {
                 c[i] = ri->XTRANSFC (row, i);
             }
@@ -102,7 +125,12 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
             for (; col < width - 5; col += 6) {
                 for (int i = 0; i < 6; ++i) {
                     const unsigned ccol = c[i];
-                    float val = image[row * width + col + i][ccol];
+                    float val;
+                    if (isFloat) {
+                        val = float_raw_image[(row + top_margin) * raw_width + col + i + left_margin];
+                    } else {
+                        val = image[row * width + col + i][ccol];
+                    }
                     val -= cblack[ccol];
                     val *= scale_mul[ccol];
                     image[row * width + col + i][ccol] = rtengine::CLIP (val);
@@ -111,15 +139,37 @@ void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
 
             for (; col < width; ++col) { // remaining columns
                 const unsigned ccol = ri->XTRANSFC (row, col);
-                float val = image[row * width + col][ccol];
+                float val;
+                if (isFloat) {
+                    val = float_raw_image[(row + top_margin) * raw_width + col + left_margin];
+                } else {
+                    val = image[row * width + col][ccol];
+                }
                 val -= cblack[ccol];
                 val *= scale_mul[ccol];
                 image[row * width + col][ccol] = rtengine::CLIP (val);
             }
         }
+    } else if (isFloat) {
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
+        for (int row = 0; row < height; ++row) {
+            for (int col = 0; col < width; ++col) {
+                for (int i = 0; i < ri->get_colors(); ++i) {
+                    float val = float_raw_image[(row + top_margin) * raw_width + col + left_margin + i];
+                    val -= cblack[i];
+                    val *= scale_mul[i];
+                    image[row * width + col][i] = val;
+                }
+            }
+        }
     } else {
         const int size = ri->get_iheight() * ri->get_iwidth();
 
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < 4; ++j) {
                 float val = image[i][j];
@@ -137,6 +187,9 @@ extern Options options;
 
 namespace rtengine
 {
+
+extern const Settings *settings;
+
 using namespace procparams;
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode)
@@ -233,6 +286,11 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             printf ("loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
         }
 
+        ProcParams paramsForAutoExp; // Dummy for constructor
+        ImProcFunctions ipf (&paramsForAutoExp, false);
+        ipf.getAutoExp (tpp->aeHistogram, tpp->aeHistCompression, 0.02, tpp->aeExposureCompensation, tpp->aeLightness, tpp->aeContrast, tpp->aeBlack, tpp->aeHighlightCompression, tpp->aeHighlightCompressionThreshold);
+        tpp->aeValid = true;
+
         if (n > 0) {
             ColorTemp cTemp;
 
@@ -251,13 +309,93 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     return tpp;
 }
 
-Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
+
+namespace {
+
+Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml, eSensorType &sensorType, int &w, int &h)
 {
+    BENCHFUN
+    
+    RawImageSource src;
+    int err = src.load(fname, true);
+    if (err) {
+        return nullptr;
+    }
+
+    src.getFullSize(w, h);
+    sensorType = src.getSensorType();
+    
+    ProcParams neutral;
+    neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
+    neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
+    neutral.icm.inputProfile = "(camera)";
+    neutral.icm.workingProfile = options.rtSettings.srgb;
+
+    src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
+    double thresholdDummy = 0.f;
+    src.demosaic(neutral.raw, false, thresholdDummy);
+
+    PreviewProps pp(0, 0, w, h, 1);
+
+    Imagefloat tmp(w, h);
+    src.getImage(src.getWB(), TR_NONE, &tmp, pp, neutral.toneCurve, neutral.raw);
+    src.convertColorSpace(&tmp, neutral.icm, src.getWB());
+
+    Image8 *img = new Image8(w, h);
+    const float f = 255.f/65535.f;
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            float r = tmp.r(y, x);
+            float g = tmp.g(y, x);
+            float b = tmp.b(y, x);
+            // avoid magenta highlights
+            if (r > MAXVALF && b > MAXVALF) {
+                float v = CLIP((r + g + b) / 3.f) * f;
+                img->r(y, x) = img->g(y, x) = img->b(y, x) = v;
+            } else {
+                img->r(y, x) = Color::gamma_srgbclipped(r) * f;
+                img->g(y, x) = Color::gamma_srgbclipped(g) * f;
+                img->b(y, x) = Color::gamma_srgbclipped(b) * f;
+            }
+        }
+    }
+
+    return img;
+}
+
+} // namespace
+
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode, bool forHistogramMatching)
+{
+    Thumbnail* tpp = new Thumbnail ();
+    tpp->isRaw = 1;
+    memset (tpp->colorMatrix, 0, sizeof (tpp->colorMatrix));
+    tpp->colorMatrix[0][0] = 1.0;
+    tpp->colorMatrix[1][1] = 1.0;
+    tpp->colorMatrix[2][2] = 1.0;
+
+    if (inspectorMode && !forHistogramMatching && settings->thumbnail_inspector_mode == Settings::ThumbnailInspectorMode::RAW) {
+        Image8 *img = load_inspector_mode(fname, rml, sensorType, w, h);
+        if (!img) {
+            delete tpp;
+            return nullptr;
+        }
+
+        tpp->scale = 1.;
+        tpp->thumbImg = img;
+
+        return tpp;
+    }
+    
     RawImage *ri = new RawImage (fname);
     unsigned int imageNum = 0;
     int r = ri->loadRaw (false, imageNum, false);
 
     if ( r ) {
+        delete tpp;
         delete ri;
         sensorType = ST_NONE;
         return nullptr;
@@ -290,25 +428,36 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     // did we succeed?
     if ( err ) {
-        printf ("Could not extract thumb from %s\n", fname.data());
+        if (options.rtSettings.verbose) {
+            std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
+        }
+        delete tpp;
         delete img;
         delete ri;
         return nullptr;
     }
-
-    Thumbnail* tpp = new Thumbnail ();
-
-    tpp->isRaw = 1;
-    memset (tpp->colorMatrix, 0, sizeof (tpp->colorMatrix));
-    tpp->colorMatrix[0][0] = 1.0;
-    tpp->colorMatrix[1][1] = 1.0;
-    tpp->colorMatrix[2][2] = 1.0;
 
     if (inspectorMode) {
         // Special case, meaning that we want a full sized thumbnail image (e.g. for the Inspector feature)
         w = img->getWidth();
         h = img->getHeight();
         tpp->scale = 1.;
+
+        if (!forHistogramMatching && settings->thumbnail_inspector_mode == Settings::ThumbnailInspectorMode::RAW_IF_NOT_JPEG_FULLSIZE && float(std::max(w, h))/float(std::max(ri->get_width(), ri->get_height())) < 0.9f) {
+            delete img;
+            delete ri;
+            
+            img = load_inspector_mode(fname, rml, sensorType, w, h);
+            if (!img) {
+                delete tpp;
+                return nullptr;
+            }
+
+            tpp->scale = 1.;
+            tpp->thumbImg = img;
+            
+            return tpp;
+        }
     } else {
         if (fixwh == 1) {
             w = h * img->getWidth() / img->getHeight();
@@ -385,7 +534,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -417,10 +566,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->greenMultiplier = ri->get_pre_mul (1);
     tpp->blueMultiplier = ri->get_pre_mul (2);
 
-    //ri->scale_colors();
     float pre_mul[4], scale_mul[4], cblack[4];
     ri->get_colorsCoeff (pre_mul, scale_mul, cblack, false);
-    scale_colors (ri, scale_mul, cblack);
+    scale_colors (ri, scale_mul, cblack, forHistogramMatching); // enable multithreading when forHistogramMatching is true
 
     ri->pre_interpolate();
 
@@ -433,6 +581,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->camwbBlue = tpp->blueMultiplier / pre_mul[2]; //ri->get_pre_mul(2);
     //tpp->defGain = 1.0 / min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
     tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+    tpp->defGain *= std::pow(2, ri->getBaselineExposure());
 
     tpp->gammaCorrected = true;
 
@@ -465,8 +614,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         skip--;
     }
 
-    if (skip < 1) {
-        skip = 1;
+    if (skip < 2) {
+        skip = 2;
     }
 
     int hskip = skip, vskip = skip;
@@ -662,153 +811,159 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     } else {
         tpp->scale = (double) height / (rotate_90 ? w : h);
     }
+    if(!forHistogramMatching) { // we don't need this for histogram matching
 
-    // generate histogram for auto exposure, also calculate autoWB
-    tpp->aeHistCompression = 3;
-    tpp->aeHistogram(65536 >> tpp->aeHistCompression);
-    tpp->aeHistogram.clear();
+        // generate histogram for auto exposure, also calculate autoWB
+        tpp->aeHistCompression = 3;
+        tpp->aeHistogram(65536 >> tpp->aeHistCompression);
+        tpp->aeHistogram.clear();
 
-    const unsigned int add = filter ? 1 : 4 / ri->get_colors();
+        const unsigned int add = filter ? 1 : 4 / ri->get_colors();
 
-    double pixSum[3] = {0.0};
-    unsigned int n[3] = {0};
-    const double compression = pow(2.0, tpp->aeHistCompression);
-    const double camWb[3] = {tpp->camwbRed / compression, tpp->camwbGreen / compression, tpp->camwbBlue / compression};
-    const double clipval = 64000.0 / tpp->defGain;
+        double pixSum[3] = {0.0};
+        unsigned int n[3] = {0};
+        const double compression = pow(2.0, tpp->aeHistCompression);
+        const double camWb[3] = {tpp->camwbRed / compression, tpp->camwbGreen / compression, tpp->camwbBlue / compression};
+        const double clipval = 64000.0 / tpp->defGain;
 
-    for (int i = 32; i < height - 32; i++) {
-        int start, end;
+        for (int i = 32; i < height - 32; i++) {
+            int start, end;
 
-        if (ri->get_FujiWidth() != 0) {
-            int fw = ri->get_FujiWidth();
-            start = ABS (fw - i) + 32;
-            end = min (height + width - fw - i, fw + i) - 32;
-        } else {
-            start = 32;
-            end = width - 32;
-        }
-
-        if (ri->get_colors() == 1) {
-            for (int j = start; j < end; j++) {
-                tpp->aeHistogram[image[i * width + j][0] >> tpp->aeHistCompression]++;
+            if (ri->get_FujiWidth() != 0) {
+                int fw = ri->get_FujiWidth();
+                start = ABS (fw - i) + 32;
+                end = min (height + width - fw - i, fw + i) - 32;
+            } else {
+                start = 32;
+                end = width - 32;
             }
-        } else if (ri->getSensorType() == ST_BAYER) {
-            int c0 = ri->FC(i, start);
-            int c1 = ri->FC(i, start + 1);
-            int j = start;
-            int n0 = 0;
-            int n1 = 0;
-            double pixSum0 = 0.0;
-            double pixSum1 = 0.0;
-            for (; j < end - 1; j+=2) {
-                double v0 = image[i * width + j][c0];
-                tpp->aeHistogram[(int)(camWb[c0] * v0)]++;
-                if (v0 <= clipval) {
-                    pixSum0 += v0;
-                    n0++;
+
+            if (ri->get_colors() == 1) {
+                for (int j = start; j < end; j++) {
+                    tpp->aeHistogram[image[i * width + j][0] >> tpp->aeHistCompression]++;
                 }
-                double v1 = image[i * width + j + 1][c1];
-                tpp->aeHistogram[(int)(camWb[c1] * v1)]++;
-                if (v1 <= clipval) {
-                    pixSum1 += v1;
-                    n1++;
+            } else if (ri->getSensorType() == ST_BAYER) {
+                int c0 = ri->FC(i, start);
+                int c1 = ri->FC(i, start + 1);
+                int j = start;
+                int n0 = 0;
+                int n1 = 0;
+                double pixSum0 = 0.0;
+                double pixSum1 = 0.0;
+                for (; j < end - 1; j+=2) {
+                    double v0 = image[i * width + j][c0];
+                    tpp->aeHistogram[(int)(camWb[c0] * v0)]++;
+                    if (v0 <= clipval) {
+                        pixSum0 += v0;
+                        n0++;
+                    }
+                    double v1 = image[i * width + j + 1][c1];
+                    tpp->aeHistogram[(int)(camWb[c1] * v1)]++;
+                    if (v1 <= clipval) {
+                        pixSum1 += v1;
+                        n1++;
+                    }
                 }
-            }
-            if (j < end) {
-                double v0 = image[i * width + j][c0];
-                tpp->aeHistogram[(int)(camWb[c0] * v0)]++;
-                if (v0 <= clipval) {
-                    pixSum0 += v0;
-                    n0++;
+                if (j < end) {
+                    double v0 = image[i * width + j][c0];
+                    tpp->aeHistogram[(int)(camWb[c0] * v0)]++;
+                    if (v0 <= clipval) {
+                        pixSum0 += v0;
+                        n0++;
+                    }
                 }
-            }
-            n[c0] += n0;
-            n[c1] += n1;
-            pixSum[c0] += pixSum0;
-            pixSum[c1] += pixSum1;
-        } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-            int c[6];
-            for(int cc = 0; cc < 6; ++cc) {
-                c[cc] = ri->XTRANSFC(i, start + cc);
-            }
-            int j = start;
-            for (; j < end - 5; j += 6) {
+                n[c0] += n0;
+                n[c1] += n1;
+                pixSum[c0] += pixSum0;
+                pixSum[c1] += pixSum1;
+            } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
+                int c[6];
                 for(int cc = 0; cc < 6; ++cc) {
-                    double d = image[i * width + j + cc][c[cc]];
-                    tpp->aeHistogram[(int)(camWb[c[cc]] * d)]++;
-                    if (d <= clipval) {
-                        pixSum[c[cc]] += d;
-                        n[c[cc]]++;
+                    c[cc] = ri->XTRANSFC(i, start + cc);
+                }
+                int j = start;
+                for (; j < end - 5; j += 6) {
+                    for(int cc = 0; cc < 6; ++cc) {
+                        double d = image[i * width + j + cc][c[cc]];
+                        tpp->aeHistogram[(int)(camWb[c[cc]] * d)]++;
+                        if (d <= clipval) {
+                            pixSum[c[cc]] += d;
+                            n[c[cc]]++;
+                        }
                     }
                 }
-            }
-            for (; j < end; j++) {
-                if (ri->ISXTRANSGREEN (i, j)) {
-                    double d = image[i * width + j][1];
-                    tpp->aeHistogram[(int)(camWb[1] * d)]++;
-                    if (d <= clipval) {
-                        pixSum[1] += d;
-                        n[1]++;
+                for (; j < end; j++) {
+                    if (ri->ISXTRANSGREEN (i, j)) {
+                        double d = image[i * width + j][1];
+                        tpp->aeHistogram[(int)(camWb[1] * d)]++;
+                        if (d <= clipval) {
+                            pixSum[1] += d;
+                            n[1]++;
+                        }
+                    } else if (ri->ISXTRANSRED (i, j)) {
+                        double d = image[i * width + j][0];
+                        tpp->aeHistogram[(int)(camWb[0] * d)]++;
+                        if (d <= clipval) {
+                            pixSum[0] += d;
+                            n[0]++;
+                        }
+                    } else if (ri->ISXTRANSBLUE (i, j)) {
+                        double d = image[i * width + j][2];
+                        tpp->aeHistogram[(int)(camWb[2] * d)]++;
+                        if (d <= clipval) {
+                            pixSum[2] += d;
+                            n[2]++;
+                        }
                     }
-                } else if (ri->ISXTRANSRED (i, j)) {
-                    double d = image[i * width + j][0];
-                    tpp->aeHistogram[(int)(camWb[0] * d)]++;
-                    if (d <= clipval) {
-                        pixSum[0] += d;
+                }
+            } else { /* if(ri->getSensorType()==ST_FOVEON) */
+                for (int j = start; j < end; j++) {
+                    double r = image[i * width + j][0];
+                    if (r <= clipval) {
+                        pixSum[0] += r;
                         n[0]++;
                     }
-                } else if (ri->ISXTRANSBLUE (i, j)) {
-                    double d = image[i * width + j][2];
-                    tpp->aeHistogram[(int)(camWb[2] * d)]++;
-                    if (d <= clipval) {
-                        pixSum[2] += d;
+                    double g = image[i * width + j][1];
+                    if (g <= clipval) {
+                        pixSum[1] += g;
+                        n[1]++;
+                    }
+                    tpp->aeHistogram[((int)g) >> tpp->aeHistCompression] += add;
+                    double b = image[i * width + j][2];
+                    if (b <= clipval) {
+                        pixSum[2] += b;
                         n[2]++;
                     }
+                    tpp->aeHistogram[((int) (b * 0.5f)) >> tpp->aeHistCompression] += add;
                 }
-            }
-        } else { /* if(ri->getSensorType()==ST_FOVEON) */
-            for (int j = start; j < end; j++) {
-                double r = image[i * width + j][0];
-                if (r <= clipval) {
-                    pixSum[0] += r;
-                    n[0]++;
-                }
-                double g = image[i * width + j][1];
-                if (g <= clipval) {
-                    pixSum[1] += g;
-                    n[1]++;
-                }
-                tpp->aeHistogram[((int)g) >> tpp->aeHistCompression] += add;
-                double b = image[i * width + j][2];
-                if (b <= clipval) {
-                    pixSum[2] += b;
-                    n[2]++;
-                }
-                tpp->aeHistogram[((int) (b * 0.5f)) >> tpp->aeHistCompression] += add;
             }
         }
+        ProcParams paramsForAutoExp; // Dummy for constructor
+        ImProcFunctions ipf (&paramsForAutoExp, false);
+        ipf.getAutoExp (tpp->aeHistogram, tpp->aeHistCompression, 0.02, tpp->aeExposureCompensation, tpp->aeLightness, tpp->aeContrast, tpp->aeBlack, tpp->aeHighlightCompression, tpp->aeHighlightCompressionThreshold);
+        tpp->aeValid = true;
+
+        if (ri->get_colors() == 1) {
+            pixSum[0] = pixSum[1] = pixSum[2] = 1.;
+            n[0] = n[1] = n[2] = 1;
+        }
+        pixSum[0] *= tpp->defGain;
+        pixSum[1] *= tpp->defGain;
+        pixSum[2] *= tpp->defGain;
+
+        double reds = pixSum[0] / std::max(n[0], 1u) * tpp->camwbRed;
+        double greens = pixSum[1] / std::max(n[1], 1u) * tpp->camwbGreen;
+        double blues = pixSum[2] / std::max(n[2], 1u) * tpp->camwbBlue;
+
+        tpp->redAWBMul   = ri->get_rgb_cam (0, 0) * reds + ri->get_rgb_cam (0, 1) * greens + ri->get_rgb_cam (0, 2) * blues;
+        tpp->greenAWBMul = ri->get_rgb_cam (1, 0) * reds + ri->get_rgb_cam (1, 1) * greens + ri->get_rgb_cam (1, 2) * blues;
+        tpp->blueAWBMul  = ri->get_rgb_cam (2, 0) * reds + ri->get_rgb_cam (2, 1) * greens + ri->get_rgb_cam (2, 2) * blues;
+        tpp->wbEqual = wbEq;
+        tpp->wbTempBias = 0.0;
+
+        ColorTemp cTemp;
+        cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
     }
-
-    if (ri->get_colors() == 1) {
-        pixSum[0] = pixSum[1] = pixSum[2] = 1.;
-        n[0] = n[1] = n[2] = 1;
-    }
-    pixSum[0] *= tpp->defGain;
-    pixSum[1] *= tpp->defGain;
-    pixSum[2] *= tpp->defGain;
-
-    double reds = pixSum[0] / std::max(n[0], 1u) * tpp->camwbRed;
-    double greens = pixSum[1] / std::max(n[1], 1u) * tpp->camwbGreen;
-    double blues = pixSum[2] / std::max(n[2], 1u) * tpp->camwbBlue;
-
-    tpp->redAWBMul   = ri->get_rgb_cam (0, 0) * reds + ri->get_rgb_cam (0, 1) * greens + ri->get_rgb_cam (0, 2) * blues;
-    tpp->greenAWBMul = ri->get_rgb_cam (1, 0) * reds + ri->get_rgb_cam (1, 1) * greens + ri->get_rgb_cam (1, 2) * blues;
-    tpp->blueAWBMul  = ri->get_rgb_cam (2, 0) * reds + ri->get_rgb_cam (2, 1) * greens + ri->get_rgb_cam (2, 2) * blues;
-    tpp->wbEqual = wbEq;
-    tpp->wbTempBias = 0.0;
-
-    ColorTemp cTemp;
-    cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
 
     if (rotate && ri->get_rotateDegree() > 0) {
         tpp->thumbImg->rotate (ri->get_rotateDegree());
@@ -858,6 +1013,13 @@ Thumbnail::Thumbnail () :
     wbEqual (-1.0),
     wbTempBias (0.0),
     aeHistCompression (3),
+    aeValid(false),
+    aeExposureCompensation(0.0),
+    aeLightness(0),
+    aeContrast(0),
+    aeBlack(0),
+    aeHighlightCompression(0),
+    aeHighlightCompressionThreshold(0),
     embProfileLength (0),
     embProfileData (nullptr),
     embProfile (nullptr),
@@ -920,7 +1082,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor)
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor, bool forHistogramMatching)
 {
     unsigned int imgNum = 0;
     if (isRaw) {
@@ -984,7 +1146,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     gmi = gm * defGain / mul_lum;
     bmi = bm * defGain / mul_lum;
 
-    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
+    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the cached thumb,
     // that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
     if (isRaw) {
         rmi *= params.raw.expos;
@@ -1028,12 +1190,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
         for (int j = 0; j < rwidth; j++) {
             float red = baseImg->r (i, j) * rmi;
-            baseImg->r (i, j) = CLIP (red);
             float green = baseImg->g (i, j) * gmi;
-            baseImg->g (i, j) = CLIP (green);
             float blue = baseImg->b (i, j) * bmi;
-            baseImg->b (i, j) = CLIP (blue);
-
+            
+            // avoid magenta highlights if highlight recovery is enabled
+            if (params.toneCurve.hrenabled && red > MAXVALF && blue > MAXVALF) {
+                baseImg->r(i, j) = baseImg->g(i, j) = baseImg->b(i, j) = CLIP((red + green + blue) / 3.f);
+            } else {
+                baseImg->r(i, j) = CLIP(red);
+                baseImg->g(i, j) = CLIP(green);
+                baseImg->b(i, j) = CLIP(blue);
+            }
         }
     }
 
@@ -1052,17 +1219,16 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     int fh = baseImg->getHeight();
     //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
 
-    ImProcFunctions ipf (&params, false);
+    ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
     ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), options.rtSettings.monitorIntent, false, false);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(options.rtSettings.monitorIntent), false, false);
 
     LUTu hist16 (65536);
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
-    if (params.fattal.enabled) {
-        ipf.ToneMapFattal02(baseImg);
-    }
+    ipf.dehaze(baseImg);
+    ipf.ToneMapFattal02(baseImg);
     
     // perform transform
     if (ipf.needsTransform()) {
@@ -1076,21 +1242,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         baseImg = trImg;
     }
 
-    // update blurmap
-    SHMap* shmap = nullptr;
-
-    if (params.sh.enabled) {
-        shmap = new SHMap (fw, fh, false);
-        double radius = sqrt (double (fw * fw + fh * fh)) / 2.0;
-        double shradius = params.sh.radius;
-
-        if (!params.sh.hq) {
-            shradius *= radius / 1800.0;
-        }
-
-        shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 16);
-    }
-
     // RGB processing
     double  expcomp = params.toneCurve.expcomp;
     int     bright = params.toneCurve.brightness;
@@ -1099,8 +1250,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     int     hlcompr = params.toneCurve.hlcompr;
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
 
-    if (params.toneCurve.autoexp && aeHistogram) {
-        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+    if (params.toneCurve.autoexp) {
+        if (aeValid) {
+            expcomp = aeExposureCompensation;
+            bright = aeLightness;
+            contr = aeContrast;
+            black = aeBlack;
+            hlcompr = aeHighlightCompression;
+            hlcomprthresh = aeHighlightCompressionThreshold;
+        } else if (aeHistogram) {
+            ipf.getAutoExp (aeHistogram, aeHistCompression, 0.02, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+        }
     }
 
     LUTf curve1 (65536);
@@ -1140,7 +1300,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     bool opautili = false;
 
     if (params.colorToning.enabled) {
-        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.workingProfile);
         double wp[3][3] = {
             {wprof[0][0], wprof[0][1], wprof[0][2]},
             {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -1192,15 +1352,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     if (isRaw) {
         cmsHPROFILE dummy;
-        RawImageSource::findInputProfile (params.icm.input, nullptr, camName, &dcpProf, dummy);
+        RawImageSource::findInputProfile (params.icm.inputProfile, nullptr, camName, &dcpProf, dummy);
 
         if (dcpProf) {
-            dcpProf->setStep2ApplyState (params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
+            dcpProf->setStep2ApplyState (params.icm.workingProfile, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
         }
     }
 
     LUTu histToneCurve;
-    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
     // freeing up some memory
     customToneCurve1.Reset();
@@ -1209,10 +1369,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ctOpacityCurve.Reset();
     customToneCurvebw1.Reset();
     customToneCurvebw2.Reset();
-
-    if (shmap) {
-        delete shmap;
-    }
 
     // luminance histogram update
     if (params.labCurve.contrast != 0) {
@@ -1224,6 +1380,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             }
     }
 
+    
     // luminance processing
 //  ipf.EPDToneMap(labView,0,6);
 
@@ -1241,10 +1398,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
     ipf.vibrance (labView);
+    ipf.labColorCorrectionRegions(labView);
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
     }
+
+    ipf.softLight(labView);
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
@@ -1293,7 +1453,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
-
+    
     // color processing
     //ipf.colorCurve (labView, labView);
 
@@ -1303,7 +1463,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         readyImg = new Image8 (fw, fh);
         ipf.lab2monitorRgb (labView, readyImg);
     } else {
-        readyImg = ipf.lab2rgb(labView, 0, 0, fw, fh, params.icm);
+        readyImg = ipf.lab2rgb(labView, 0, 0, fw, fh, params.icm, false);
     }
     delete labView;
     delete baseImg;
@@ -1782,46 +1942,53 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
 
     Glib::ustring fullFName = fname + ".rtti";
 
-    if (!Glib::file_test (fullFName, Glib::FILE_TEST_EXISTS)) {
+    if (!Glib::file_test(fullFName, Glib::FILE_TEST_EXISTS)) {
         return false;
     }
 
-    FILE* f = g_fopen (fullFName.c_str (), "rb");
+    FILE* f = g_fopen(fullFName.c_str (), "rb");
 
     if (!f) {
         return false;
     }
 
     char imgType[31];  // 30 -> arbitrary size, but should be enough for all image type's name
-    fgets (imgType, 30, f);
-    imgType[strlen (imgType) - 1] = '\0'; // imgType has a \n trailing character, so we overwrite it by the \0 char
+    fgets(imgType, 30, f);
+    imgType[strlen(imgType) - 1] = '\0'; // imgType has a \n trailing character, so we overwrite it by the \0 char
 
     guint32 width, height;
-    fread (&width, 1, sizeof (guint32), f);
-    fread (&height, 1, sizeof (guint32), f);
+
+    if (fread(&width, 1, sizeof(guint32), f) < sizeof(guint32)) {
+        width = 0;
+    }
+
+    if (fread(&height, 1, sizeof(guint32), f) < sizeof(guint32)) {
+        height = 0;
+    }
 
     bool success = false;
 
-    if (!strcmp (imgType, sImage8)) {
-        Image8 *image = new Image8 (width, height);
-        image->readData (f);
-        thumbImg = image;
-        success = true;
-    } else if (!strcmp (imgType, sImage16)) {
-        Image16 *image = new Image16 (width, height);
-        image->readData (f);
-        thumbImg = image;
-        success = true;
-    } else if (!strcmp (imgType, sImagefloat)) {
-        Imagefloat *image = new Imagefloat (width, height);
-        image->readData (f);
-        thumbImg = image;
-        success = true;
-    } else {
-        printf ("readImage: Unsupported image type \"%s\"!\n", imgType);
+    if (std::min(width , height) > 0) {
+        if (!strcmp(imgType, sImage8)) {
+            Image8 *image = new Image8(width, height);
+            image->readData(f);
+            thumbImg = image;
+            success = true;
+        } else if (!strcmp(imgType, sImage16)) {
+            Image16 *image = new Image16(width, height);
+            image->readData(f);
+            thumbImg = image;
+            success = true;
+        } else if (!strcmp(imgType, sImagefloat)) {
+            Imagefloat *image = new Imagefloat(width, height);
+            image->readData(f);
+            thumbImg = image;
+            success = true;
+        } else {
+            printf ("readImage: Unsupported image type \"%s\"!\n", imgType);
+        }
     }
-
-    fclose (f);
+    fclose(f);
     return success;
 }
 
@@ -1866,6 +2033,38 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
 
             if (keyFile.has_key ("LiveThumbData", "AEHistCompression")) {
                 aeHistCompression   = keyFile.get_integer ("LiveThumbData", "AEHistCompression");
+            }
+
+            aeValid = true;
+            if (keyFile.has_key ("LiveThumbData", "AEExposureCompensation")) {
+                aeExposureCompensation = keyFile.get_double ("LiveThumbData", "AEExposureCompensation");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AELightness")) {
+                aeLightness   = keyFile.get_integer ("LiveThumbData", "AELightness");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEContrast")) {
+                aeContrast   = keyFile.get_integer ("LiveThumbData", "AEContrast");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEBlack")) {
+                aeBlack   = keyFile.get_integer ("LiveThumbData", "AEBlack");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEHighlightCompression")) {
+                aeHighlightCompression   = keyFile.get_integer ("LiveThumbData", "AEHighlightCompression");
+            } else {
+                aeValid = false;
+            }
+            if (keyFile.has_key ("LiveThumbData", "AEHighlightCompressionThreshold")) {
+                aeHighlightCompressionThreshold   = keyFile.get_integer ("LiveThumbData", "AEHighlightCompressionThreshold");
+            } else {
+                aeValid = false;
             }
 
             if (keyFile.has_key ("LiveThumbData", "RedMultiplier")) {
@@ -1941,7 +2140,12 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyFile.set_double  ("LiveThumbData", "RedAWBMul", redAWBMul);
         keyFile.set_double  ("LiveThumbData", "GreenAWBMul", greenAWBMul);
         keyFile.set_double  ("LiveThumbData", "BlueAWBMul", blueAWBMul);
-        keyFile.set_integer ("LiveThumbData", "AEHistCompression", aeHistCompression);
+        keyFile.set_double  ("LiveThumbData", "AEExposureCompensation", aeExposureCompensation);
+        keyFile.set_integer ("LiveThumbData", "AELightness", aeLightness);
+        keyFile.set_integer ("LiveThumbData", "AEContrast", aeContrast);
+        keyFile.set_integer ("LiveThumbData", "AEBlack", aeBlack);
+        keyFile.set_integer ("LiveThumbData", "AEHighlightCompression", aeHighlightCompression);
+        keyFile.set_integer ("LiveThumbData", "AEHighlightCompressionThreshold", aeHighlightCompressionThreshold);
         keyFile.set_double  ("LiveThumbData", "RedMultiplier", redMultiplier);
         keyFile.set_double  ("LiveThumbData", "GreenMultiplier", greenMultiplier);
         keyFile.set_double  ("LiveThumbData", "BlueMultiplier", blueMultiplier);
@@ -2002,7 +2206,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
 
                 if (!fseek (f, 0, SEEK_SET)) {
                     embProfileData = new unsigned char[embProfileLength];
-                    fread (embProfileData, 1, embProfileLength, f);
+                    embProfileLength = fread (embProfileData, 1, embProfileLength, f);
                     embProfile = cmsOpenProfileFromMem (embProfileData, embProfileLength);
                 }
             }
@@ -2034,14 +2238,19 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
 {
 
-    FILE* f = g_fopen (fname.c_str (), "rb");
+    FILE* f = g_fopen(fname.c_str(), "rb");
 
     if (!f) {
-        aeHistogram (0);
+        aeHistogram.reset();
     } else {
-        aeHistogram (65536 >> aeHistCompression);
-        fread (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
+        aeHistogram(65536 >> aeHistCompression);
+        const size_t histoBytes = (65536 >> aeHistCompression) * sizeof(aeHistogram[0]);
+        const size_t bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
         fclose (f);
+        if (bytesRead != histoBytes) {
+            aeHistogram.reset();
+            return false;
+        }
         return true;
     }
 

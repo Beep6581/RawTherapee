@@ -1,14 +1,46 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 330
+#define PPVERSION 346
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
-   330  2018-20-01
+   346  2019-01-01
+        changed microcontrast uniformity
+   345  2018-10-21
+        dual demosaic auto contrast threshold
+   344  2018-10-04
+        added Lab/RGB color space selection for shadows/highlights
+   343  2018-09-06
+        raw auto ca correction avoid colour shift
+   342  2018-09-05
+        raw auto ca correction iterations
+   341  2018-07-22
+        [ICM] enhanced custom output profile
+   340  2018-07-08
+        store whether curve is from histogram matching
+   339  2018-07-04
+        added allowUpscaling to ResizeParams
+   338  2018-06-15
+        increased precision for the channel mixer
+   337  2018-06-13
+        new scales for the LabGrid color toning parameters
+   336  2018-06-01
+        new demosaic method combobox for pixelshift
+   335  2018-05-30
+        new contrast adjuster in Bayer process tool
+   334  2018-05-13
+        new contrast threshold adjuster in Microcontrast tool
+   333  2018-04-26
+        new Shadows/Highlights tool
+   332  2018-04-18
+        changed pixelShiftEperIso calculation
+   331  2018-02-14
+        changed wavelet.Lmethod to int
+   330  2018-01-20
         Added 'Auto-matched Tone Curve' button, performing histogram matching
-   329  2017-12-09
+   329  2017-09-12
         Added 'Enabled' flag for Channel Mixer, RGB Curves, HSV Equalizer and L*a*b* Adjustments
    328  2017-11-22
         Fix wrong type of ff_clipControl
@@ -25,7 +57,7 @@
    321  2014-08-17
         [Film Simulation] new  tool using HALDCLUT files
    320  2014-07-02  (yes, same version number... this is an error due to a wrong version number set in comment of previous change)
-        New [RAW Bayer] and [RAW X-Trans] sections, with some parameters transfered from [RAW] to [RAW Bayer]
+        New [RAW Bayer] and [RAW X-Trans] sections, with some parameters transferred from [RAW] to [RAW Bayer]
    320  2014-03-29
         [ColorToning] new tool for color toning
    319  2014-02-11

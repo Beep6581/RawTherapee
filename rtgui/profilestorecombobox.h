@@ -90,6 +90,7 @@ public:
     bool setInternalEntry ();
     Gtk::TreeIter getRowFromLabel (Glib::ustring name);
     Gtk::TreeIter addRow (const ProfileStoreEntry *profileStoreEntry);
+    void deleteRow (const ProfileStoreEntry *profileStoreEntry);
 };
 
 #endif

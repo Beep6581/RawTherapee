@@ -1034,3 +1034,89 @@ void CLASS parse_fuji_compressed_header()
     data_offset += 16;
     load_raw = &CLASS fuji_compressed_load_raw;
 }
+
+
+//-----------------------------------------------------------------------------
+// Fuji 14-bit compressed code taken from LibRaw 0.19
+//
+// Copyright 2008-2018 LibRaw LLC (info@libraw.org)
+
+// LibRaw is free software; you can redistribute it and/or modify
+// it under the terms of the one of two licenses as you choose:
+
+// 1. GNU LESSER GENERAL PUBLIC LICENSE version 2.1
+//    (See file LICENSE.LGPL provided in LibRaw distribution archive for details).
+
+// 2. COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+//    (See file LICENSE.CDDL provided in LibRaw distribution archive for details).
+//-----------------------------------------------------------------------------
+namespace {
+
+inline void unpack7bytesto4x16(unsigned char *src, unsigned short *dest)
+{
+  dest[0] = (src[0] << 6) | (src[1] >> 2);
+  dest[1] = ((src[1] & 0x3) << 12) | (src[2] << 4) | (src[3] >> 4);
+  dest[2] = (src[3] & 0xf) << 10 | (src[4] << 2) | (src[5] >> 6);
+  dest[3] = ((src[5] & 0x3f) << 8) | src[6];
+}
+
+inline void unpack28bytesto16x16ns(unsigned char *src, unsigned short *dest)
+{
+  dest[0] = (src[3] << 6) | (src[2] >> 2);
+  dest[1] = ((src[2] & 0x3) << 12) | (src[1] << 4) | (src[0] >> 4);
+  dest[2] = (src[0] & 0xf) << 10 | (src[7] << 2) | (src[6] >> 6);
+  dest[3] = ((src[6] & 0x3f) << 8) | src[5];
+  dest[4] = (src[4] << 6) | (src[11] >> 2);
+  dest[5] = ((src[11] & 0x3) << 12) | (src[10] << 4) | (src[9] >> 4);
+  dest[6] = (src[9] & 0xf) << 10 | (src[8] << 2) | (src[15] >> 6);
+  dest[7] = ((src[15] & 0x3f) << 8) | src[14];
+  dest[8] = (src[13] << 6) | (src[12] >> 2);
+  dest[9] = ((src[12] & 0x3) << 12) | (src[19] << 4) | (src[18] >> 4);
+  dest[10] = (src[18] & 0xf) << 10 | (src[17] << 2) | (src[16] >> 6);
+  dest[11] = ((src[16] & 0x3f) << 8) | src[23];
+  dest[12] = (src[22] << 6) | (src[21] >> 2);
+  dest[13] = ((src[21] & 0x3) << 12) | (src[20] << 4) | (src[27] >> 4);
+  dest[14] = (src[27] & 0xf) << 10 | (src[26] << 2) | (src[25] >> 6);
+  dest[15] = ((src[25] & 0x3f) << 8) | src[24];
+}
+
+#define swab32(x)                                                                                                      \
+  ((unsigned int)((((unsigned int)(x) & (unsigned int)0x000000ffUL) << 24) |                                           \
+                  (((unsigned int)(x) & (unsigned int)0x0000ff00UL) << 8) |                                            \
+                  (((unsigned int)(x) & (unsigned int)0x00ff0000UL) >> 8) |                                            \
+                  (((unsigned int)(x) & (unsigned int)0xff000000UL) >> 24)))
+
+inline void swab32arr(unsigned *arr, unsigned len)
+{
+  for (unsigned i = 0; i < len; i++)
+    arr[i] = swab32(arr[i]);
+}
+#undef swab32
+
+} // namespace
+
+void CLASS fuji_14bit_load_raw()
+{
+  const unsigned linelen = raw_width * 7 / 4;
+  const unsigned pitch = raw_width;
+  unsigned char *buf = (unsigned char *)malloc(linelen);
+  merror(buf, "fuji_14bit_load_raw()");
+
+  for (int row = 0; row < raw_height; row++)
+  {
+    unsigned bytesread = fread(buf, 1, linelen, ifp);
+    unsigned short *dest = &raw_image[pitch * row];
+    if (bytesread % 28)
+    {
+      swab32arr((unsigned *)buf, bytesread / 4);
+      for (int sp = 0, dp = 0; dp < pitch - 3 && sp < linelen - 6 && sp < bytesread - 6; sp += 7, dp += 4)
+        unpack7bytesto4x16(buf + sp, dest + dp);
+    }
+    else
+      for (int sp = 0, dp = 0; dp < pitch - 15 && sp < linelen - 27 && sp < bytesread - 27; sp += 28, dp += 16)
+        unpack28bytesto16x16ns(buf + sp, dest + dp);
+  }
+  free(buf);
+}
+
+//-----------------------------------------------------------------------------

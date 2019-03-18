@@ -21,7 +21,6 @@
 
 #include "imageformat.h"
 #include "rt_math.h"
-#include "procparams.h"
 #include "procevents.h"
 #include <lcms2.h>
 #include <string>
@@ -44,6 +43,22 @@ class EditDataProvider;
 
 namespace rtengine
 {
+
+enum RenderingIntent : int;
+
+namespace procparams
+{
+
+class ProcParams;
+class IPTCPairs;
+
+struct RAWParams;
+struct ColorManagementParams;
+struct CropParams;
+
+enum class ToneCurveMode : int;
+
+}
 
 class IImage8;
 class IImage16;
@@ -120,9 +135,12 @@ public:
     virtual std::string getOrientation (unsigned int frame = 0) const = 0;
 
     /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
-    virtual bool getPixelShift (unsigned int frame = 0) const = 0;
+    virtual bool getPixelShift () const = 0;
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual bool getHDR (unsigned int frame = 0) const = 0;
+
+    /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
+    virtual std::string getImageType (unsigned int frame) const = 0;
     /** @return the sample format based on MetaData */
     virtual IIOSampleFormat getSampleFormat (unsigned int frame = 0) const = 0;
 
@@ -151,21 +169,20 @@ public:
 /** This listener interface is used to indicate the progress of time consuming operations */
 class ProgressListener
 {
-
 public:
-    virtual ~ProgressListener() {}
+    virtual ~ProgressListener() = default;
     /** This member function is called when the percentage of the progress has been changed.
       * @param p is a number between 0 and 1 */
-    virtual void setProgress (double p) {}
+    virtual void setProgress(double p) = 0;
     /** This member function is called when a textual information corresponding to the progress has been changed.
       * @param str is the textual information corresponding to the progress */
-    virtual void setProgressStr (Glib::ustring str) {}
+    virtual void setProgressStr(const Glib::ustring& str) = 0;
     /** This member function is called when the state of the processing has been changed.
       * @param inProcessing =true if the processing has been started, =false if it has been stopped */
-    virtual void setProgressState (bool inProcessing) {}
+    virtual void setProgressState(bool inProcessing) = 0;
     /** This member function is called when an error occurs during the operation.
       * @param descr is the error message */
-    virtual void error (Glib::ustring descr) {}
+    virtual void error(const Glib::ustring& descr) = 0;
 };
 
 class ImageSource;
@@ -216,20 +233,20 @@ public:
 class PreviewImageListener
 {
 public:
-    virtual ~PreviewImageListener() {}
+    virtual ~PreviewImageListener() = default;
     /** With this member function the staged processor notifies the listener that it allocated a new
      * image to store the end result of the processing. It can be used in a shared manner.
      * @param img is a pointer to the image
      * @param scale describes the current scaling applied compared to the 100% size (preview scale)
      * @param cp holds the coordinates of the current crop rectangle */
-    virtual void setImage   (IImage8* img, double scale, procparams::CropParams cp) {}
+    virtual void setImage(IImage8* img, double scale, const procparams::CropParams& cp) = 0;
     /** With this member function the staged processor notifies the listener that the image passed as parameter
       * will be deleted, and no longer used to store the preview image.
       * @param img the pointer to the image to be destroyed. The listener has to free the image!  */
-    virtual void delImage   (IImage8* img) {}
+    virtual void delImage(IImage8* img) = 0;
     /** With this member function the staged processor notifies the listener that the preview image has been updated.
       * @param cp holds the coordinates of the current crop rectangle */
-    virtual void imageReady (procparams::CropParams cp) {}
+    virtual void imageReady(const procparams::CropParams& cp) = 0;
 };
 
 /** When the detailed crop image is ready for display during staged processing (thus the changes have been updated),
@@ -239,52 +256,70 @@ public:
 class DetailedCropListener
 {
 public:
-    virtual ~DetailedCropListener() {}
+    virtual ~DetailedCropListener() = default;
     /** With this member function the staged processor notifies the listener that the detailed crop image has been updated.
       * @param img is a pointer to the detailed crop image */
-    virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp,
-                                  procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
-    virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip)
-    {
-        return false;
-    }
-    //  virtual void    setPosition (int x, int y, bool update=true) {}
-
+    virtual void setDetailedCrop(
+        IImage8* img,
+        IImage8* imgtrue,
+        const procparams::ColorManagementParams& cmp,
+        const procparams::CropParams& cp,
+        int cx,
+        int cy,
+        int cw,
+        int ch,
+        int skip
+    ) = 0;
+    virtual void getWindow(int& cx, int& cy, int& cw, int& ch, int& skip) = 0;
 };
 
 /** This listener is used when the full size of the final image has been changed (e.g. rotated by 90 deg.) */
 class SizeListener
 {
 public:
-    virtual ~SizeListener() {}
+    virtual ~SizeListener() = default;
     /** This member function is called when the size of the final image has been changed
       * @param w is the width of the final image (without cropping)
       * @param h is the height of the final image (without cropping)
       * @param ow is the width of the final image (without resizing and cropping)
       * @param oh is the height of the final image (without resizing and cropping) */
-    virtual void sizeChanged (int w, int h, int ow, int oh) {}
+    virtual void sizeChanged(int w, int h, int ow, int oh) = 0;
 };
 
 /** This listener is used when the histogram of the final image has changed. */
 class HistogramListener
 {
 public:
-    virtual ~HistogramListener() {}
+    virtual ~HistogramListener() = default;
     /** This member function is called when the histogram of the final image has changed.
       * @param histRed is the array of size 256 containing the histogram of the red channel
       * @param histGreen is the array of size 256 containing the histogram of the green channel
       * @param histBlue is the array of size 256 containing the histogram of the blue channel
       * @param histLuma is the array of size 256 containing the histogram of the luminance channel
       * other for curves backgrounds, histRAW is RAW without colors */
-    virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve,LUTu & histLLCurve, */LUTu & histLCAM, LUTu & histCCAM,
-                                   LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw, LUTu & histChroma, LUTu & histLRETI) {}
+    virtual void histogramChanged(
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histToneCurve,
+        const LUTu& histLCurve,
+        const LUTu& histCCurve,
+        const LUTu& histLCAM,
+        const LUTu& histCCAM,
+        const LUTu& histRedRaw,
+        const LUTu& histGreenRaw,
+        const LUTu& histBlueRaw,
+        const LUTu& histChroma,
+        const LUTu& histLRETI
+    ) = 0;
 };
 
 /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
 class AutoExpListener
 {
 public:
-    virtual ~AutoExpListener() {}
+    virtual ~AutoExpListener() = default;
     /** This member function is called when the auto exposure has been recomputed.
       * @param brightness is the new brightness value (in logarithmic scale)
       * @param bright is the new ...
@@ -293,83 +328,92 @@ public:
       * @param hlcompr is the new highlight recovery amount
       * @param hlcomprthresh is the new threshold for hlcompr
       * @param hlrecons set to true if HighLight Reconstruction is enabled */
-    virtual void autoExpChanged (double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh, bool hlrecons) {}
+    virtual void autoExpChanged(double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh, bool hlrecons) = 0;
 
-    virtual void autoMatchedToneCurveChanged(procparams::ToneCurveParams::TcMode curveMode, const std::vector<double> &curve) {}
+    virtual void autoMatchedToneCurveChanged(procparams::ToneCurveMode curveMode, const std::vector<double>& curve) = 0;
 };
 
 class AutoCamListener
 {
 public :
-    virtual ~AutoCamListener() {}
-    virtual void autoCamChanged (double ccam, double ccamout) {}
-    virtual void adapCamChanged (double cadap) {}
-    virtual void ybCamChanged (int yb) {}
-
+    virtual ~AutoCamListener() = default;
+    virtual void autoCamChanged(double ccam, double ccamout) = 0;
+    virtual void adapCamChanged(double cadap) = 0;
+    virtual void ybCamChanged(int yb) = 0;
 };
 
 class AutoChromaListener
 {
 public :
-    virtual ~AutoChromaListener() {}
-    virtual void chromaChanged (double autchroma, double autred, double autblue) {}
-    virtual void noiseChanged (double nresid, double highresid) {}
-    virtual void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) {}
-
+    virtual ~AutoChromaListener() = default;
+    virtual void chromaChanged(double autchroma, double autred, double autblue) = 0;
+    virtual void noiseChanged(double nresid, double highresid) = 0;
+    virtual void noiseTilePrev(int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP) = 0;
 };
 
 class RetinexListener
 {
-public :
-    virtual ~RetinexListener() {}
-    virtual void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) {}
-
+public:
+    virtual ~RetinexListener() = default;
+    virtual void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) = 0;
 };
 
 class AutoColorTonListener
 {
-public :
-    virtual ~AutoColorTonListener() {}
-    virtual void autoColorTonChanged (int bwct, int satthres, int satprot) {}
+public:
+    virtual ~AutoColorTonListener() = default;
+    virtual void autoColorTonChanged(int bwct, int satthres, int satprot) = 0;
 };
 
 class AutoBWListener
 {
-public :
-    virtual ~AutoBWListener() {}
-    virtual void BWChanged (double redbw, double greenbw, double bluebw) {}
-
+public:
+    virtual ~AutoBWListener() = default;
+    virtual void BWChanged(double redbw, double greenbw, double bluebw) = 0;
 };
 
 class AutoWBListener
 {
-public :
+public:
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged (double temp, double green) = 0;
+    virtual void WBChanged(double temp, double green) = 0;
 };
 
 class FrameCountListener
 {
-public :
+public:
     virtual ~FrameCountListener() = default;
-    virtual void FrameCountChanged (int n, int frameNum) = 0;
+    virtual void FrameCountChanged(int n, int frameNum) = 0;
+};
+
+class FlatFieldAutoClipListener
+{
+public:
+    virtual ~FlatFieldAutoClipListener() = default;
+    virtual void flatFieldAutoClipValueChanged(int n) = 0;
 };
 
 class ImageTypeListener
 {
-public :
+public:
     virtual ~ImageTypeListener() = default;
-    virtual void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans) = 0;
+    virtual void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool is_Mono = false) = 0;
+};
+
+class AutoContrastListener
+{
+public :
+    virtual ~AutoContrastListener() = default;
+    virtual void autoContrastChanged (double autoContrast) = 0;
 };
 
 class WaveletListener
 {
-public :
-    virtual ~WaveletListener() {}
-    virtual void wavChanged (double nlevel) {}
+public:
+    virtual ~WaveletListener() = default;
+    virtual void wavChanged(double nlevel) = 0;
 
 };
-
 
 /** This class represents a detailed part of the image (looking through a kind of window).
   * It can be created and destroyed with the appropriate members of StagedImageProcessor.
@@ -399,8 +443,8 @@ class StagedImageProcessor
 {
 
 public:
-    /** Returns the inital image corresponding to the image processor.
-      * @return the inital image corresponding to the image processor */
+    /** Returns the initial image corresponding to the image processor.
+      * @return the initial image corresponding to the image processor */
     virtual InitialImage* getInitialImage () = 0;
     /** Returns the current processing parameters.
       * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller) */
@@ -440,6 +484,9 @@ public:
       * @return the height of the preview image */
     virtual int         getPreviewHeight () = 0;
 
+    virtual bool        getHighQualComputed() = 0;
+    virtual void        setHighQualComputed() = 0;
+
     virtual bool        updateTryLock() = 0;
 
     virtual void        updateUnLock() = 0;
@@ -463,7 +510,10 @@ public:
     virtual void        setHistogramListener    (HistogramListener *l) = 0;
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
+    virtual void        setFlatFieldAutoClipListener   (FlatFieldAutoClipListener* l) = 0;
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
+    virtual void        setBayerAutoContrastListener (AutoContrastListener* l) = 0;
+    virtual void        setXtransAutoContrastListener (AutoContrastListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
@@ -476,6 +526,7 @@ public:
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
     virtual void        setSoftProofing         (bool softProof, bool gamutCheck) = 0;
     virtual void        getSoftProofing         (bool &softProof, bool &gamutCheck) = 0;
+    virtual void        setSharpMask            (bool sharpMask) = 0;
 
     virtual ~StagedImageProcessor () {}
 
@@ -498,7 +549,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
 /** Cleanup the RT engine (static variables) */
 void cleanup ();
 
-/** This class  holds all the necessary informations to accomplish the full processing of the image */
+/** This class  holds all the necessary information to accomplish the full processing of the image */
 class ProcessingJob
 {
 
@@ -523,17 +574,17 @@ public:
     static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, bool fast = false);
 
     /** Cancels and destroys a processing job. The reference count of the corresponding initialImage (if any) is decreased. After the call of this function the ProcessingJob instance
-      * gets invalid, you must not use it any more. Dont call this function while the job is being processed.
+      * gets invalid, you must not use it any more. Don't call this function while the job is being processed.
       * @param job is the job to destroy */
     static void destroy (ProcessingJob* job);
 
     virtual bool fastPipeline() const = 0;
 };
 
-/** This function performs all the image processinf steps corresponding to the given ProcessingJob. It returns when it is ready, so it can be slow.
+/** This function performs all the image processing steps corresponding to the given ProcessingJob. It returns when it is ready, so it can be slow.
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel.
-   * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.)
+   * @param errorCode is the error code if an error occurred (e.g. the input image could not be loaded etc.)
    * @param pl is an optional ProgressListener if you want to keep track of the progress
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */
 IImagefloat* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = nullptr, bool flush = false);
@@ -547,10 +598,9 @@ public:
                    * there is no jobs left.
                    * @param img is the result of the last ProcessingJob
                    * @return the next ProcessingJob to process */
-    virtual ProcessingJob* imageReady (IImagefloat* img) = 0;
-    virtual void error (Glib::ustring message) = 0;
+    virtual ProcessingJob* imageReady(IImagefloat* img) = 0;
 };
-/** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
+/** This function performs all the image processing steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
    * When it finishes, it calls the BatchProcessingListener with the resulting image and asks for the next job. It the listener gives a new job, it goes on
    * with processing. If no new job is given, it finishes.
    * The ProcessingJob passed becomes invalid, you can not use it any more.

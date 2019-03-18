@@ -57,12 +57,12 @@ public:
     bool            getToTailOfQueue   ();
     int             getSaveMethodNum   ();
 
-    void  setInitialFileName (Glib::ustring iname);
+    void  setInitialFileName (const Glib::ustring& iname);
     void  setImagePath (const Glib::ustring& imagePath);
 
     void okPressed ();
     void cancelPressed ();
-    void formatChanged (Glib::ustring f);
+    void formatChanged(const Glib::ustring& format) override;
     bool keyPressed (GdkEventKey* event);
 };
 

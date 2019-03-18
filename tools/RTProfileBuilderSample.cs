@@ -115,7 +115,7 @@ namespace RTProfilerBuilder {
 			}  // end if camera=xxx
 
 
-			// This is for camera independend settings
+			// This is for camera independent settings
 			switch (sectionEntry) {
 				// These are parsed from EXIFTOOL and XMP in DNG (see http://en.wikipedia.org/wiki/Extensible_Metadata_Platform)
 				case "IPTC/City":
@@ -262,7 +262,7 @@ namespace RTProfilerBuilder {
 		/// <param name="correct">Correction factors</param>
 		public DistortionCorrectProf(double[] focLen, double[] correct) {
 			if (focLen == null || correct == null || focLen.Length != correct.Length || focLen.Length < 2)
-				throw new Exception("DistortionCorrectProf inputs must be valid and of the same lenghts, at least 2 points");
+				throw new Exception("DistortionCorrectProf inputs must be valid and of the same lengths, at least 2 points");
 
 			adFocLen = focLen; adCorrect = correct;
 
@@ -270,11 +270,11 @@ namespace RTProfilerBuilder {
 				if (adFocLen[i] >= adFocLen[i + 1]) throw new Exception("The distortion correction focal length points must be ordered!");
 		}
 
-		/// <summary>Calculates regession value of RT distortion amount for the given focal length.</summary>
+		/// <summary>Calculates regression value of RT distortion amount for the given focal length.</summary>
 		/// <param name="focalLength">Input focal length.</param>
 		/// <returns>Distortion in RT format.</returns>
 		public string GetDistortionAmount(double focalLength) {
-			// if it's out of area (which should just happing with e.g. rounding errors), return flat defaults.
+			// if it's out of area (which should just happen with e.g. rounding errors), return flat defaults.
 			if (focalLength <= adFocLen[0]) return adCorrect[0].ToString("G", CultureInfo.InvariantCulture);
 			if (focalLength >= adFocLen[adFocLen.Length - 1]) return adCorrect[adFocLen.Length - 1].ToString("G", CultureInfo.InvariantCulture);
 

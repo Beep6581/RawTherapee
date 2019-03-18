@@ -19,13 +19,16 @@
 #ifndef _RAWIMAGESOURCE_
 #define _RAWIMAGESOURCE_
 
-#include "imagesource.h"
-#include "dcp.h"
-#include "array2D.h"
-#include "curves.h"
-#include "color.h"
-#include "iimage.h"
 #include <iostream>
+#include <memory>
+
+#include "array2D.h"
+#include "color.h"
+#include "curves.h"
+#include "dcp.h"
+#include "iimage.h"
+#include "imagesource.h"
+
 #define HR_SCALE 2
 
 namespace rtengine
@@ -39,7 +42,7 @@ private:
     static DiagonalCurve *phaseOneIccCurveInv;
     static LUTf invGrad;  // for fast_demosaic
     static LUTf initInvGrad ();
-    static void colorSpaceConversion_ (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
+    static void colorSpaceConversion_ (Imagefloat* im, const procparams::ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
     int  defTransform        (int tran);
 
 protected:
@@ -74,12 +77,7 @@ protected:
     RawImage* riFrames[4] = {nullptr};
     unsigned int currFrame = 0;
     unsigned int numFrames = 0;
-
-    // to accelerate CIELAB conversion:
-    double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
-    double* cache;
-    int threshold;
-
+    int flatFieldAutoClipValue = 0;
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
     array2D<float> *rawDataFrames[4] = {nullptr};
     array2D<float> *rawDataBuffer[3] = {nullptr};
@@ -96,10 +94,8 @@ protected:
     float psBlueBrightness[4];
 
     std::vector<double> histMatchingCache;
+    const std::unique_ptr<procparams::ColorManagementParams> histMatchingParams;
 
-    void hphd_vertical       (float** hpmap, int col_from, int col_to);
-    void hphd_horizontal     (float** hpmap, int row_from, int row_to);
-    void hphd_green          (float** hpmap);
     void processFalseColorCorrectionThread (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
     void hlRecovery          (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
     void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
@@ -115,21 +111,22 @@ protected:
 
 public:
     RawImageSource ();
-    ~RawImageSource ();
+    ~RawImageSource () override;
 
-    int         load        (const Glib::ustring &fname);
-    void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true);
-    void        demosaic    (const RAWParams &raw);
-    void        retinex       (const ColorManagementParams& cmp, const RetinexParams &deh, const ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
-    void        retinexPrepareCurves       (const RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI);
-    void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI);
-    void        flushRawData      ();
-    void        flushRGB          ();
-    void        HLRecovery_Global (ToneCurveParams hrp);
+    int load(const Glib::ustring &fname) override { return load(fname, false); }
+    int load(const Glib::ustring &fname, bool firstFrameOnly);
+    void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) override;
+    void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) override;
+    void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) override;
+    void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) override;
+    void        retinexPrepareBuffers      (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) override;
+    void        flushRawData      () override;
+    void        flushRGB          () override;
+    void        HLRecovery_Global (const procparams::ToneCurveParams &hrp) override;
     void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
-
-    bool        isRGBSourceModified() const
+    void        setBorder(unsigned int rawBorder) override {border = rawBorder;}
+    bool        isRGBSourceModified() const override
     {
         return rgbSourceModified;   // tracks whether cached rgb output of demosaic has been modified
     }
@@ -139,57 +136,57 @@ public:
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData); // raw for cblack
 
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw);
-    eSensorType getSensorType () const
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw) override;
+    eSensorType getSensorType () const override
     {
         return ri != nullptr ? ri->getSensorType() : ST_NONE;
     }
-    ColorTemp   getWB       () const
+    bool        isMono () const override
+    {
+        return ri->get_colors() == 1;
+    }
+    ColorTemp   getWB       () const override
     {
         return camera_wb;
     }
-    void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
-    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
-    bool        isWBProviderReady ()
+    void        getAutoWBMultipliers (double &rm, double &gm, double &bm) override;
+    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) override;
+    bool        isWBProviderReady () override
     {
         return rawData;
     }
 
-    double      getDefGain  () const
+    double      getDefGain  () const override
     {
         return defGain;
     }
 
-    void        getFullSize (int& w, int& h, int tr = TR_NONE);
-    void        getSize     (const PreviewProps &pp, int& w, int& h);
-    int         getRotateDegree() const
+    void        getFullSize (int& w, int& h, int tr = TR_NONE) override;
+    void        getSize     (const PreviewProps &pp, int& w, int& h) override;
+    int         getRotateDegree() const override
     {
         return ri->get_rotateDegree();
     }
 
-    FrameData*  getImageData (unsigned int frameNum)
-    {
-        return idata->getFrameData (frameNum);
-    }
-    ImageMatrices* getImageMatrices ()
+    ImageMatrices* getImageMatrices () override
     {
         return &imatrices;
     }
-    bool        isRAW() const
+    bool        isRAW() const override
     {
         return true;
     }
 
-    void        setProgressListener (ProgressListener* pl)
+    void        setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
     }
-    void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
-    void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
-    void getAutoMatchedToneCurve(std::vector<double> &outCurve);
-    DCPProfile *getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as);
+    void        getAutoExpHistogram (LUTu & histogram, int& histcompr) override;
+    void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) override;
+    void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, std::vector<double> &outCurve) override;
+    DCPProfile *getDCP(const procparams::ColorManagementParams &cmp, DCPProfile::ApplyState &as) override;
 
-    void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);
+    void convertColorSpace(Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) override;
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
     static void colorSpaceConversion   (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName)
     {
@@ -200,18 +197,39 @@ public:
     void boxblur2(float** src, float** dst, float** temp, int H, int W, int box );
     void boxblur_resamp(float **src, float **dst, float** temp, int H, int W, int box, int samp );
     void MSR(float** luminance, float **originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, const RetinexParams &deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
-    void HLRecovery_inpaint (float** red, float** green, float** blue);
+    void HLRecovery_inpaint (float** red, float** green, float** blue) override;
     static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
     static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
     static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* hlmax);
     static void init ();
     static void cleanup ();
-    void setCurrentFrame(unsigned int frameNum) {
-        currFrame = std::min(numFrames - 1, frameNum);
-        ri = riFrames[currFrame];
+    void setCurrentFrame(unsigned int frameNum) override {
+        if (numFrames == 2 && frameNum == 2) { // special case for averaging of two frames
+            currFrame = frameNum;
+            ri = riFrames[0];
+        } else  {
+            currFrame = std::min(numFrames - 1, frameNum);
+            ri = riFrames[currFrame];
+        }
     }
-    int getFrameCount() {return numFrames;}
+    int getFrameCount() override {return numFrames;}
+    int getFlatFieldAutoClipValue() override {return flatFieldAutoClipValue;}
 
+    class GreenEqulibrateThreshold {
+    public:
+        explicit GreenEqulibrateThreshold(float thresh): thresh_(thresh) {}
+        virtual ~GreenEqulibrateThreshold() {}
+        virtual float operator()(int row, int column) const { return thresh_; }
+    protected:
+        const float thresh_;
+    };
+
+    class CFALineDenoiseRowBlender {
+    public:
+        virtual ~CFALineDenoiseRowBlender() {}
+        virtual float operator()(int row) const { return 1.f; }
+    };
+    
 protected:
     typedef unsigned short ushort;
     void processFalseColorCorrection (Imagefloat* i, const int steps);
@@ -219,40 +237,53 @@ protected:
     inline  void convert_row_to_RGB (float* r, float* g, float* b, const float* const Y, const float* const I, const float* const Q, const int W);
     inline  void convert_to_RGB (float &r, float &g, float &b, const float Y, const float I, const float Q);
 
-    inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
-    inline  void interpolate_row_g      (float* agh, float* agv, int i);
-    inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
-    inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
+    inline  void interpolate_row_g (float* agh, float* agv, int i);
+    inline  void interpolate_row_rb (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
+    inline  void interpolate_row_rb_mul_pp (const array2D<float> &rawData, float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
 
-    void CA_correct_RT  (const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData);
+    float* CA_correct_RT(
+        bool autoCA,
+        size_t autoIterations,
+        double cared,
+        double cablue,
+        bool avoidColourshift,
+        const array2D<float> &rawData,
+        double* fitParamsTransfer,
+        bool fitParamsIn,
+        bool fitParamsOut,
+        float* buffer,
+        bool freeBuffer,
+        size_t chunkSize = 1,
+        bool measure = false
+    );
     void ddct8x8s(int isgn, float a[8][8]);
-    void processRawWhitepoint (float expos, float preser, array2D<float> &rawData);  // exposure before interpolation
 
     int  interpolateBadPixelsBayer( PixelsMap &bitmapBads, array2D<float> &rawData );
     int  interpolateBadPixelsNColours( PixelsMap &bitmapBads, const int colours );
     int  interpolateBadPixelsXtrans( PixelsMap &bitmapBads );
     int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
 
-    void cfa_linedn (float linenoiselevel);//Emil's line denoise
+    void cfa_linedn (float linenoiselevel, bool horizontal, bool vertical, const CFALineDenoiseRowBlender &rowblender);//Emil's line denoise
 
     void green_equilibrate_global (array2D<float> &rawData);
-    void green_equilibrate (float greenthresh, array2D<float> &rawData);//Emil's green equilibration
+    void green_equilibrate (const GreenEqulibrateThreshold &greenthresh, array2D<float> &rawData);//Emil's green equilibration
 
     void nodemosaic(bool bw);
     void eahd_demosaic();
     void hphd_demosaic();
-    void vng4_demosaic();
+    void vng4_demosaic(const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void ppg_demosaic();
     void jdl_interpolate_omp();
     void igv_interpolate(int winw, int winh);
     void lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations);
-    void amaze_demosaic_RT(int winx, int winy, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
+    void amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, size_t chunkSize = 1, bool measure = false);//Emil's code for AMaZE
+    void dual_demosaic_RT(bool isBayer, const RAWParams &raw, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, double &contrast, bool autoContrast = false);
     void fast_demosaic();//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
     void ahd_demosaic();
-    void rcd_demosaic();
+    void rcd_demosaic(size_t chunkSize = 1, bool measure = false);
     void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
-    void border_interpolate2(int winw, int winh, int lborders);
+    void border_interpolate2(int winw, int winh, int lborders, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
     void fill_raw( float (*cache )[3], int x0, int y0, float** rawData);
     void fill_border( float (*cache )[3], int border, int x0, int y0);
@@ -268,13 +299,13 @@ protected:
     void dcb_refinement(float (*image)[3], uint8_t *map, int x0, int y0);
     void dcb_color_full(float (*image)[3], int x0, int y0, float (*chroma)[2]);
     void cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3]);
-    void xtransborder_interpolate (int border);
-    void xtrans_interpolate (const int passes, const bool useCieLab);
-    void fast_xtrans_interpolate ();
-    void pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
+    void xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void xtrans_interpolate (const int passes, const bool useCieLab, size_t chunkSize = 1, bool measure = false);
+    void fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
-    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B);
+    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
 
 };
 }

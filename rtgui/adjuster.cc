@@ -46,6 +46,10 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     grid = NULL;
     imageIcon1 = imgIcon1;
 
+    logBase = 0;
+    logPivot = 0;
+    logAnchorMiddle = false;
+
     if (imageIcon1) {
         setExpandAlignProperties(imageIcon1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
@@ -79,10 +83,10 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     }
 
     reset = Gtk::manage (new Gtk::Button ());
-    reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    reset->add (*Gtk::manage (new RTImage ("undo-small.png", "redo-small.png")));
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     reset->set_relief (Gtk::RELIEF_NONE);
-    reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
+    reset->set_tooltip_markup (M("ADJUSTER_RESET_TO_DEFAULT"));
     reset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     reset->set_can_focus(false);
 
@@ -166,7 +170,7 @@ void Adjuster::addAutoButton (Glib::ustring tooltip)
 {
     if (!automatic) {
         automatic = new Gtk::CheckButton ();
-        //automatic->add (*Gtk::manage (new RTImage ("processing.png")));
+        //automatic->add (*Gtk::manage (new RTImage ("gears.png")));
         automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
         setExpandAlignProperties(automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
@@ -235,10 +239,12 @@ void Adjuster::autoToggled ()
             // Disable the slider and spin button
             spin->set_sensitive(false);
             slider->set_sensitive(false);
+            reset->set_sensitive(false);
         } else {
             // Enable the slider and spin button
             spin->set_sensitive(true);
             slider->set_sensitive(true);
+            reset->set_sensitive(true);
         }
     }
 
@@ -289,13 +295,13 @@ void Adjuster::resetValue (bool toInitial)
 
     if (toInitial) {
         // resetting to the initial editing value, when the image has been loaded
-        slider->set_value (addMode ? defaultVal : value2slider(defaultVal));
+        setSliderValue(addMode ? defaultVal : value2slider(defaultVal));
     } else {
         // resetting to the slider default value
         if (addMode) {
-            slider->set_value (0.);
+            setSliderValue(0.);
         } else {
-            slider->set_value (value2slider(ctorDefaultVal));
+            setSliderValue(value2slider(ctorDefaultVal));
         }
     }
 }
@@ -313,8 +319,8 @@ void Adjuster::resetPressed (GdkEventButton* event)
 
 double Adjuster::shapeValue (double a)
 {
-
-    return round(a * pow(double(10), digits)) / pow(double(10), digits);
+    double val = round(a * pow(double(10), digits)) / pow(double(10), digits);
+    return val == -0.0 ? 0.0 : val;
 }
 
 void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefault)
@@ -333,7 +339,7 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
     slider->set_digits (digits);
     slider->set_increments (vstep, 2.0 * vstep);
     slider->set_range (addMode ? vmin : value2slider(vmin), addMode ? vmax : value2slider(vmax));
-    slider->set_value (addMode ? shapeValue(vdefault) : value2slider(shapeValue(vdefault)));
+    setSliderValue(addMode ? shapeValue(vdefault) : value2slider(shapeValue(vdefault)));
     //defaultVal = shapeValue (vdefault);
     sliderChange.block (false);
     spinChange.block (false);
@@ -369,7 +375,7 @@ void Adjuster::spinChanged ()
     }
 
     sliderChange.block (true);
-    slider->set_value (addMode ? spin->get_value () : value2slider(spin->get_value ()));
+    setSliderValue(addMode ? spin->get_value () : value2slider(spin->get_value ()));
     sliderChange.block (false);
 
     if (delay == 0) {
@@ -409,7 +415,8 @@ void Adjuster::sliderChanged ()
     }
 
     spinChange.block (true);
-    spin->set_value (addMode ? slider->get_value () : slider2value(slider->get_value ()));
+    double v = shapeValue(getSliderValue());
+    spin->set_value (addMode ? v : slider2value(v));
     spinChange.block (false);
 
     if (delay == 0 || afterReset) {
@@ -447,7 +454,7 @@ void Adjuster::setValue (double a)
     spinChange.block (true);
     sliderChange.block (true);
     spin->set_value (shapeValue (a));
-    slider->set_value (addMode ? shapeValue(a) : value2slider(shapeValue (a)));
+    setSliderValue(addMode ? shapeValue(a) : value2slider(shapeValue (a)));
     sliderChange.block (false);
     spinChange.block (false);
     afterReset = false;
@@ -466,10 +473,12 @@ void Adjuster::setAutoValue (bool a)
                 // Disable the slider and spin button
                 spin->set_sensitive(false);
                 slider->set_sensitive(false);
+                reset->set_sensitive(false);
             } else {
                 // Enable the slider and spin button
                 spin->set_sensitive(true);
                 slider->set_sensitive(true);
+                reset->set_sensitive(true);
             }
         }
     }
@@ -607,4 +616,82 @@ void Adjuster::trimValue (float &val)
 
     val = rtengine::LIM(val, static_cast<float>(vMin), static_cast<float>(vMax));
 
+}
+
+
+inline double Adjuster::getSliderValue()
+{
+    double val = slider->get_value();
+    if (logBase) {
+        if (logAnchorMiddle) {
+            double mid = (vMax - vMin) / 2;
+            double mmid = vMin + mid;
+            if (val >= mmid) {
+                double range = vMax - mmid;
+                double x = (val - mmid) / range;
+                val = logPivot + (pow(logBase, x) - 1.0) / (logBase - 1.0) * (vMax - logPivot);
+            } else {
+                double range = mmid - vMin;
+                double x = (mmid - val) / range;
+                val = logPivot - (pow(logBase, x) - 1.0) / (logBase - 1.0) * (logPivot - vMin);
+            }
+        } else {
+            if (val >= logPivot) {
+                double range = vMax - logPivot;
+                double x = (val - logPivot) / range;
+                val = logPivot + (pow(logBase, x) - 1.0) / (logBase - 1.0) * range;
+            } else {
+                double range = logPivot - vMin;
+                double x = (logPivot - val) / range;
+                val = logPivot - (pow(logBase, x) - 1.0) / (logBase - 1.0) * range;
+            }
+        }
+    }
+    return val;
+}
+
+
+inline void Adjuster::setSliderValue(double val)
+{
+    if (logBase) {
+        if (logAnchorMiddle) {
+            double mid = (vMax - vMin) / 2;
+            if (val >= logPivot) {
+                double range = vMax - logPivot;
+                double x = (val - logPivot) / range;
+                val = (vMin + mid) + log(x * (logBase - 1.0) + 1.0) / log(logBase) * mid;
+            } else {
+                double range = logPivot - vMin;
+                double x = (logPivot - val) / range;
+                val = (vMin + mid) - log(x * (logBase - 1.0) + 1.0) / log(logBase) * mid;
+            }
+        } else {
+            if (val >= logPivot) {
+                double range = vMax - logPivot;
+                double x = (val - logPivot) / range;
+                val = logPivot + log(x * (logBase - 1.0) + 1.0) / log(logBase) * range;
+            } else {
+                double range = logPivot - vMin;
+                double x = (logPivot - val) / range;
+                val = logPivot - log(x * (logBase - 1.0) + 1.0) / log(logBase) * range;
+            }
+        }
+    }
+    slider->set_value(val);
+}
+
+
+void Adjuster::setLogScale(double base, double pivot, bool anchorMiddle)
+{
+    spinChange.block (true);
+    sliderChange.block (true);
+
+    double cur = getSliderValue();
+    logBase = base;
+    logPivot = pivot;
+    logAnchorMiddle = anchorMiddle;
+    setSliderValue(cur);
+    
+    sliderChange.block (false);
+    spinChange.block (false);
 }

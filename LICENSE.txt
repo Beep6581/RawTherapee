@@ -1,6 +1,6 @@
     RawTherapee - A powerful, cross-platform raw image processing program.
     Copyright (C) 2004-2012 Gabor Horvath <hgabor@rawtherapee.com>
-    Copyright (C) 2010-2017 RawTherapee development team.
+    Copyright (C) 2010-2018 RawTherapee development team.
 
     RawTherapee is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

@@ -18,21 +18,25 @@
 #ifndef _BATCHQUEUE_
 #define _BATCHQUEUE_
 
+#include <set>
+
 #include <gtkmm.h>
-#include "threadutils.h"
-#include "batchqueueentry.h"
+
 #include "../rtengine/rtengine.h"
-#include "options.h"
+
+#include "batchqueueentry.h"
 #include "lwbuttonset.h"
+#include "options.h"
+#include "threadutils.h"
 #include "thumbbrowserbase.h"
 
 class BatchQueueListener
 {
 
 public:
-    virtual ~BatchQueueListener () {}
-    virtual void queueSizeChanged     (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage) = 0;
-    virtual bool canStartNext         () = 0;
+    virtual ~BatchQueueListener() = default;
+    virtual void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage) = 0;
+    virtual bool canStartNext() = 0;
 };
 
 class FileCatalog;
@@ -44,7 +48,7 @@ class BatchQueue final :
 {
 public:
     explicit BatchQueue (FileCatalog* aFileCatalog);
-    ~BatchQueue ();
+    ~BatchQueue () override;
 
     void addEntries (const std::vector<BatchQueueEntry*>& entries, bool head = false, bool save = true);
     void cancelItems (const std::vector<ThumbBrowserEntryBase*>& items);
@@ -62,14 +66,17 @@ public:
         return (!fd.empty());
     }
 
-    rtengine::ProcessingJob* imageReady (rtengine::IImagefloat* img);
-    void error (Glib::ustring msg);
-    void setProgress (double p);
-    void rightClicked (ThumbBrowserEntryBase* entry);
-    void doubleClicked (ThumbBrowserEntryBase* entry);
-    bool keyPressed (GdkEventKey* event);
-    void buttonPressed (LWButton* button, int actionCode, void* actionData);
-    void redrawNeeded  (LWButton* button);
+    void setProgress(double p) override;
+    void setProgressStr(const Glib::ustring& str) override;
+    void setProgressState(bool inProcessing) override;
+    void error(const Glib::ustring& descr) override;
+    rtengine::ProcessingJob* imageReady(rtengine::IImagefloat* img) override;
+
+    void rightClicked (ThumbBrowserEntryBase* entry) override;
+    void doubleClicked (ThumbBrowserEntryBase* entry) override;
+    bool keyPressed (GdkEventKey* event) override;
+    void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
+    void redrawNeeded  (LWButton* button) override;
 
     void setBatchQueueListener (BatchQueueListener* l)
     {
@@ -82,15 +89,17 @@ public:
     static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence = 0);
     static int calcMaxThumbnailHeight();
 
-protected:
-    int getMaxThumbnailHeight() const;
-    void saveThumbnailHeight (int height);
-    int  getThumbnailHeight ();
+private:
+    int getMaxThumbnailHeight() const override;
+    void saveThumbnailHeight (int height) override;
+    int  getThumbnailHeight () override;
 
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring &filename );
     bool saveBatchQueue ();
-    void notifyListener (bool queueEmptied);
+    void notifyListener ();
+
+    using ThumbBrowserBase::redrawNeeded;
 
     BatchQueueEntry* processing;  // holds the currently processed image
     FileCatalog* fileCatalog;
@@ -107,6 +116,9 @@ protected:
     Gtk::Menu pmenu;
 
     BatchQueueListener* listener;
+
+    std::set<BatchQueueEntry*> removable_batch_queue_entries;
+    MyMutex mutex_removable_batch_queue_entries;
 
     IdleRegister idle_register;
 };

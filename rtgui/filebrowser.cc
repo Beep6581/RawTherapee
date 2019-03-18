@@ -18,18 +18,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "filebrowser.h"
 #include <map>
+
 #include <glibmm.h>
-#include "options.h"
-#include "multilangmgr.h"
-#include "clipboard.h"
-#include "procparamchangers.h"
+
+#include "filebrowser.h"
+
 #include "batchqueue.h"
-#include "../rtengine/dfmanager.h"
-#include "../rtengine/ffmanager.h"
+#include "clipboard.h"
+#include "multilangmgr.h"
+#include "options.h"
+#include "procparamchangers.h"
 #include "rtimage.h"
 #include "threadutils.h"
+
+#include "../rtengine/dfmanager.h"
+#include "../rtengine/ffmanager.h"
+#include "../rtengine/procparams.h"
 
 extern Options options;
 
@@ -127,6 +132,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
 FileBrowser::FileBrowser () :
     menuLabel(nullptr),
+    miOpenDefaultViewer(nullptr),
     selectDF(nullptr),
     thisIsDF(nullptr),
     autoDF(nullptr),
@@ -149,7 +155,7 @@ FileBrowser::FileBrowser () :
     pmenu = new Gtk::Menu ();
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p + 1);
     p++;
-    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "processing.png")), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears.png")), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(developfast = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p + 1);
     p++;
@@ -198,13 +204,19 @@ FileBrowser::FileBrowser () :
     /***********************
      * color labels
      ***********************/
+
+    // Thumbnail context menu
+    // Similar image arrays in filecatalog.cc
+    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
+
     if (options.menuGroupLabel) {
         pmenu->attach (*Gtk::manage(menuLabel = new Gtk::MenuItem (M("FILEBROWSER_POPUPCOLORLABEL"))), 0, 1, p, p + 1);
         p++;
         Gtk::Menu* submenuLabel = Gtk::manage (new Gtk::Menu ());
 
         for (int i = 0; i <= 5; i++) {
-            submenuLabel->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
+            submenuLabel->attach(*Gtk::manage(colorlabel[i] = new MyImageMenuItem(M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), clabelActiveIcons[i])), 0, 1, p, p + 1);
             p++;
         }
 
@@ -212,7 +224,7 @@ FileBrowser::FileBrowser () :
         menuLabel->set_submenu (*submenuLabel);
     } else {
         for (int i = 0; i <= 5; i++) {
-            pmenu->attach (*Gtk::manage(colorlabel[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, p, p + 1);
+            pmenu->attach(*Gtk::manage(colorlabel[i] = new MyImageMenuItem(M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), clabelInactiveIcons[i])), 0, 1, p, p + 1);
             p++;
         }
     }
@@ -225,8 +237,6 @@ FileBrowser::FileBrowser () :
      * *********************/
 #if defined(WIN32)
     Gtk::manage(miOpenDefaultViewer = new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
-#else
-    miOpenDefaultViewer = nullptr;
 #endif
 
     // Build a list of menu items
@@ -240,7 +250,7 @@ FileBrowser::FileBrowser () :
     }
 
     // Attach them to menu
-    if (!mMenuExtProgs.empty() || miOpenDefaultViewer != nullptr) {
+    if (!mMenuExtProgs.empty() || miOpenDefaultViewer) {
         amiExtProg = new Gtk::MenuItem*[mMenuExtProgs.size()];
         int itemNo = 0;
 
@@ -249,11 +259,12 @@ FileBrowser::FileBrowser () :
             p++;
             Gtk::Menu* submenuExtProg = Gtk::manage (new Gtk::Menu());
 
-            if (miOpenDefaultViewer != nullptr) {
+#ifdef WIN32
+            if (miOpenDefaultViewer) {
                 submenuExtProg->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
             }
-
+#endif
             for (auto it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
                 submenuExtProg->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p + 1);
                 p++;
@@ -262,11 +273,12 @@ FileBrowser::FileBrowser () :
             submenuExtProg->show_all ();
             menuExtProg->set_submenu (*submenuExtProg);
         } else {
-            if (miOpenDefaultViewer != nullptr) {
+#ifdef WIN32
+            if (miOpenDefaultViewer) {
                 pmenu->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
             }
-
+#endif
             for (auto it = mMenuExtProgs.begin(); it != mMenuExtProgs.end(); it++, itemNo++) {
                 pmenu->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p + 1);
                 p++;
@@ -334,7 +346,7 @@ FileBrowser::FileBrowser () :
      * Profile Operations
      * *********************/
     if (options.menuGroupProfileOperations) {
-        pmenu->attach (*Gtk::manage(menuProfileOperations = new MyImageMenuItem (M("FILEBROWSER_POPUPPROFILEOPERATIONS"), "logoicon-wind.png")), 0, 1, p, p + 1);
+        pmenu->attach (*Gtk::manage(menuProfileOperations = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROFILEOPERATIONS"))), 0, 1, p, p + 1);
         p++;
 
         Gtk::Menu* submenuProfileOperations = Gtk::manage (new Gtk::Menu ());
@@ -419,9 +431,11 @@ FileBrowser::FileBrowser () :
         amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
     }
 
-    if (miOpenDefaultViewer != nullptr) {
+#ifdef WIN32
+    if (miOpenDefaultViewer) {
         miOpenDefaultViewer->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), miOpenDefaultViewer));
     }
+#endif
 
     trash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), trash));
     untrash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), untrash));
@@ -444,14 +458,14 @@ FileBrowser::FileBrowser () :
 
     // A separate pop-up menu for Color Labels
     int c = 0;
-    pmenuColorLabels = new Gtk::Menu ();
+    pmenuColorLabels = new Gtk::Menu();
 
     for (int i = 0; i <= 5; i++) {
-        pmenuColorLabels->attach (*Gtk::manage(colorlabel_pop[i] = new MyImageMenuItem (M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), i == 0 ? "cglabel0.png" : Glib::ustring::compose("%1%2%3", "clabel", i, ".png"))), 0, 1, c, c + 1);
+        pmenuColorLabels->attach(*Gtk::manage(colorlabel_pop[i] = new MyImageMenuItem(M(Glib::ustring::compose("%1%2", "FILEBROWSER_POPUPCOLORLABEL", i)), clabelActiveIcons[i])), 0, 1, c, c + 1);
         c++;
     }
 
-    pmenuColorLabels->show_all ();
+    pmenuColorLabels->show_all();
 
     // Has to be located after creation of applyprof and applypartprof
     updateProfileList ();
@@ -556,32 +570,22 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
 
 void FileBrowser::addEntry (FileBrowserEntry* entry)
 {
-    struct addparams {
-        FileBrowser *browser;
-        FileBrowserEntry *entry;
-        unsigned int session_id;
-    };
+    entry->setParent(this);
 
-    addparams* const ap = new addparams;
-    entry->setParent (this);
-    ap->browser = this;
-    ap->entry = entry;
-    ap->session_id = session_id();
+    const unsigned int sid = session_id();
 
-    const auto func = [](gpointer data) -> gboolean {
-        addparams* const ap = static_cast<addparams*>(data);
-        if (ap->session_id != ap->browser->session_id()) {
-            delete ap->entry;
-            delete ap;
-        } else {
-            ap->browser->addEntry_(ap->entry);
-            delete ap;
+    idle_register.add(
+        [this, entry, sid]() -> bool
+        {
+            if (sid != session_id()) {
+                delete entry;
+            } else {
+                addEntry_(entry);
+            }
+
+            return false;
         }
-
-        return FALSE;
-    };
-
-    idle_register.add(func, ap);
+    );
 }
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry)
@@ -970,7 +974,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER);
+            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER, true, true);
         }
 
         if (!mselected.empty() && bppcl) {
@@ -984,8 +988,10 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         tbl->clearFromCacheRequested (mselected, true);
 
         //queue_draw ();
-    } else if (miOpenDefaultViewer != nullptr && m == miOpenDefaultViewer) {
+#ifdef WIN32
+    } else if (miOpenDefaultViewer && m == miOpenDefaultViewer) {
         openDefaultViewer(1);
+#endif
     }
 }
 
@@ -1091,6 +1097,7 @@ void FileBrowser::partPasteProfile ()
     }
 }
 
+#ifdef WIN32
 void FileBrowser::openDefaultViewer (int destination)
 {
     bool success = true;
@@ -1104,10 +1111,11 @@ void FileBrowser::openDefaultViewer (int destination)
     }
 
     if (!success) {
-        Gtk::MessageDialog msgd (M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd(getToplevelWindow(this), M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
     }
 }
+#endif
 
 bool FileBrowser::keyPressed (GdkEventKey* event)
 {
@@ -1186,6 +1194,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
         }
 
         openRequested(mselected);
+#ifdef WIN32
     } else if (event->keyval == GDK_KEY_F5) {
         int dest = 1;
 
@@ -1197,6 +1206,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
 
         openDefaultViewer (dest);
         return true;
+#endif
     } else if (event->keyval == GDK_KEY_Page_Up) {
         scrollPage(GDK_SCROLL_UP);
         return true;
@@ -1722,62 +1732,60 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
     }
 }
 
-void FileBrowser::openNextImage ()
+void FileBrowser::openNextImage()
 {
     MYWRITERLOCK(l, entryRW);
 
     if (!fd.empty() && selected.size() > 0 && !options.tabbedUI) {
-
         for (size_t i = 0; i < fd.size() - 1; i++) {
             if (selected[0]->thumbnail->getFileName() == fd[i]->filename) { // located 1-st image in current selection
                 if (i < fd.size() && tbl) {
                     // find the first not-filtered-out (next) image
                     for (size_t k = i + 1; k < fd.size(); k++) {
                         if (!fd[k]->filtered/*checkFilter (fd[k])*/) {
+
                             // clear current selection
                             for (size_t j = 0; j < selected.size(); j++) {
                                 selected[j]->selected = false;
                             }
 
-                            selected.clear ();
+                            selected.clear();
 
                             // set new selection
                             fd[k]->selected = true;
-                            selected.push_back (fd[k]);
-                            //queue_draw ();
+                            selected.push_back(fd[k]);
+                            //queue_draw();
 
                             MYWRITERLOCK_RELEASE(l);
 
                             // this will require a read access
-                            notifySelectionListener ();
+                            notifySelectionListener();
 
                             MYWRITERLOCK_ACQUIRE(l);
 
-                            // scroll to the selected position
-                            double h1, v1;
-                            getScrollPosition(h1, v1);
+                            // scroll to the selected position, centered horizontally in the container
+                            double x1, y1;
+                            getScrollPosition(x1, y1);
 
-                            double h2 = selected[0]->getStartX();
-                            double v2 = selected[0]->getStartY();
+                            double x2 = selected[0]->getStartX();
+                            double y2 = selected[0]->getStartY();
 
                             Thumbnail* thumb = (static_cast<FileBrowserEntry*>(fd[k]))->thumbnail;
-                            int minWidth = get_width() - fd[k]->getMinimalWidth();
+                            int tw = fd[k]->getMinimalWidth(); // thumb width
+
+                            int ww = get_width(); // window width
 
                             MYWRITERLOCK_RELEASE(l);
 
                             // scroll only when selected[0] is outside of the displayed bounds
-                            if (h2 + minWidth - h1 > get_width()) {
-                                setScrollPosition(h2 - minWidth, v2);
-                            }
-
-                            if (h1 > h2) {
-                                setScrollPosition(h2, v2);
+                            // or less than a thumbnail's width from either edge.
+                            if ((x2 > x1 + ww - 2 * tw) || (x2 - tw < x1)) {
+                                setScrollPosition(x2 - (ww - tw) / 2, y2);
                             }
 
                             // open the selected image
-                            std::vector<Thumbnail*> entries;
-                            entries.push_back (thumb);
-                            tbl->openRequested (entries);
+                            tbl->openRequested({thumb});
+
                             return;
                         }
                     }
@@ -1787,62 +1795,60 @@ void FileBrowser::openNextImage ()
     }
 }
 
-void FileBrowser::openPrevImage ()
+void FileBrowser::openPrevImage()
 {
     MYWRITERLOCK(l, entryRW);
 
     if (!fd.empty() && selected.size() > 0 && !options.tabbedUI) {
-
         for (size_t i = 1; i < fd.size(); i++) {
             if (selected[0]->thumbnail->getFileName() == fd[i]->filename) { // located 1-st image in current selection
                 if (i > 0 && tbl) {
                     // find the first not-filtered-out (previous) image
                     for (ssize_t k = (ssize_t)i - 1; k >= 0; k--) {
                         if (!fd[k]->filtered/*checkFilter (fd[k])*/) {
+
                             // clear current selection
                             for (size_t j = 0; j < selected.size(); j++) {
                                 selected[j]->selected = false;
                             }
 
-                            selected.clear ();
+                            selected.clear();
 
                             // set new selection
                             fd[k]->selected = true;
-                            selected.push_back (fd[k]);
-                            //queue_draw ();
+                            selected.push_back(fd[k]);
+                            //queue_draw();
 
                             MYWRITERLOCK_RELEASE(l);
 
                             // this will require a read access
-                            notifySelectionListener ();
+                            notifySelectionListener();
 
                             MYWRITERLOCK_ACQUIRE(l);
 
-                            // scroll to the selected position
-                            double h1, v1;
-                            getScrollPosition(h1, v1);
+                            // scroll to the selected position, centered horizontally in the container
+                            double x1, y1;
+                            getScrollPosition(x1, y1);
 
-                            double h2 = selected[0]->getStartX();
-                            double v2 = selected[0]->getStartY();
+                            double x2 = selected[0]->getStartX();
+                            double y2 = selected[0]->getStartY();
 
                             Thumbnail* thumb = (static_cast<FileBrowserEntry*>(fd[k]))->thumbnail;
-                            int minWidth = get_width() - fd[k]->getMinimalWidth();
+                            int tw = fd[k]->getMinimalWidth(); // thumb width
+
+                            int ww = get_width(); // window width
 
                             MYWRITERLOCK_RELEASE(l);
 
                             // scroll only when selected[0] is outside of the displayed bounds
-                            if (h2 + minWidth - h1 > get_width()) {
-                                setScrollPosition(h2 - minWidth, v2);
-                            }
-
-                            if (h1 > h2) {
-                                setScrollPosition(h2, v2);
+                            // or less than a thumbnail's width from either edge.
+                            if ((x2 > x1 + ww - 2 * tw) || (x2 - tw < x1)) {
+                                setScrollPosition(x2 - (ww - tw) / 2, y2);
                             }
 
                             // open the selected image
-                            std::vector<Thumbnail*> entries;
-                            entries.push_back (thumb);
-                            tbl->openRequested (entries);
+                            tbl->openRequested({thumb});
+
                             return;
                         }
                     }
@@ -1852,11 +1858,8 @@ void FileBrowser::openPrevImage ()
     }
 }
 
-
-void FileBrowser::selectImage (Glib::ustring fname)
+void FileBrowser::selectImage(const Glib::ustring& fname, bool doScroll)
 {
-
-    // need to clear the filter in filecatalog
     MYWRITERLOCK(l, entryRW);
 
     if (!fd.empty() && !options.tabbedUI) {
@@ -1869,27 +1872,34 @@ void FileBrowser::selectImage (Glib::ustring fname)
                     selected[j]->selected = false;
                 }
 
-                selected.clear ();
+                selected.clear();
 
                 // set new selection
                 fd[i]->selected = true;
-                selected.push_back (fd[i]);
-                queue_draw ();
+                selected.push_back(fd[i]);
+                queue_draw();
 
                 MYWRITERLOCK_RELEASE(l);
 
                 // this will require a read access
-                notifySelectionListener ();
+                notifySelectionListener();
 
                 MYWRITERLOCK_ACQUIRE(l);
 
-                // scroll to the selected position
-                double h = selected[0]->getStartX();
-                double v = selected[0]->getStartY();
+                // scroll to the selected position, centered horizontally in the container
+                double x = selected[0]->getStartX();
+                double y = selected[0]->getStartY();
+
+                int tw = fd[i]->getMinimalWidth(); // thumb width
+
+                int ww = get_width(); // window width
 
                 MYWRITERLOCK_RELEASE(l);
 
-                setScrollPosition(h, v);
+                if (doScroll) {
+                    // Center thumb
+                    setScrollPosition(x - (ww - tw) / 2, y);
+                }
 
                 return;
             }
@@ -1897,11 +1907,11 @@ void FileBrowser::selectImage (Glib::ustring fname)
     }
 }
 
-void FileBrowser::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextPrevious)
+void FileBrowser::openNextPreviousEditorImage (const Glib::ustring& fname, eRTNav nextPrevious)
 {
 
     // let FileBrowser acquire Editor's perspective
-    selectImage (fname);
+    selectImage (fname, false);
 
     // now switch to the requested image
     if (nextPrevious == NAV_NEXT) {
@@ -1911,20 +1921,15 @@ void FileBrowser::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextP
     }
 }
 
-void FileBrowser::_thumbRearrangementNeeded ()
-{
-    refreshThumbImages ();  // arrangeFiles is NOT enough
-}
-
 void FileBrowser::thumbRearrangementNeeded ()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileBrowser*>(data)->_thumbRearrangementNeeded();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            refreshThumbImages();// arrangeFiles is NOT enough
+            return false;
+        }
+    );
 }
 
 void FileBrowser::selectionChanged ()
@@ -1974,7 +1979,11 @@ void FileBrowser::setExportPanel (ExportPanel* expanel)
     exportPanel->setExportPanelListener (this);
 }
 
-void FileBrowser::updateProfileList ()
+void FileBrowser::storeCurrentValue()
+{
+}
+
+void FileBrowser::updateProfileList()
 {
     // submenu applmenu
     int p = 0;
@@ -2066,6 +2075,10 @@ void FileBrowser::updateProfileList ()
 
     ProfileStore::getInstance()->releaseFileList();
     subMenuList.clear();
+}
+
+void FileBrowser::restoreValue()
+{
 }
 
 void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)

@@ -16,18 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "paramsedited.h"
 #include <cstring>
-#include "options.h"
-#include "addsetids.h"
 
-ParamsEdited::ParamsEdited (bool value)
+#include "paramsedited.h"
+
+#include "addsetids.h"
+#include "options.h"
+
+#include "../rtengine/procparams.h"
+
+ParamsEdited::ParamsEdited(bool value)
 {
 
-    set (value);
+    set(value);
 }
 
-void ParamsEdited::set (bool v)
+void ParamsEdited::set(bool v)
 {
 
     general.rank         = v;
@@ -50,6 +54,8 @@ void ParamsEdited::set (bool v)
     toneCurve.hrenabled   = v;
     toneCurve.method    = v;
     toneCurve.histmatching = v;
+    toneCurve.fromHistMatching = v;
+    toneCurve.clampOOG = v;
     retinex.cdcurve    = v;
     retinex.mapcurve    = v;
     retinex.cdHcurve    = v;
@@ -139,9 +145,13 @@ void ParamsEdited::set (bool v)
     colorToning.labgridBLow = v;
     colorToning.labgridAHigh = v;
     colorToning.labgridBHigh = v;
+    colorToning.labregions = v;
+    colorToning.labregionsShowMask = v;
 
     sharpening.enabled            = v;
+    sharpening.contrast           = v;
     sharpening.radius             = v;
+    sharpening.blurradius         = v;
     sharpening.amount             = v;
     sharpening.threshold          = v;
     sharpening.edgesonly          = v;
@@ -155,6 +165,7 @@ void ParamsEdited::set (bool v)
     sharpening.deconviter     = v;
     sharpening.deconvdamping  = v;
     prsharpening.enabled            = v;
+    prsharpening.contrast           = v;
     prsharpening.radius             = v;
     prsharpening.amount             = v;
     prsharpening.threshold          = v;
@@ -174,6 +185,7 @@ void ParamsEdited::set (bool v)
     sharpenEdge.threechannels = v;
     sharpenMicro.enabled      = v;
     sharpenMicro.matrix       = v;
+    sharpenMicro.contrast     = v;
     sharpenMicro.amount       = v;
     sharpenMicro.uniformity   = v;
     vibrance.enabled          = v;
@@ -280,13 +292,14 @@ void ParamsEdited::set (bool v)
     fattal.enabled   = v;
     fattal.threshold = v;
     fattal.amount    = v;
+    fattal.anchor    = v;
     sh.enabled       = v;
-    sh.hq            = v;
     sh.highlights    = v;
     sh.htonalwidth   = v;
     sh.shadows       = v;
     sh.stonalwidth   = v;
     sh.radius        = v;
+    sh.lab           = v;
     crop.enabled = v;
     crop.x       = v;
     crop.y       = v;
@@ -377,21 +390,22 @@ void ParamsEdited::set (bool v)
     spot.enabled = v;
     spot.entries = v;
 
-    icm.input        = v;
+    resize.allowUpscaling = v;
+    icm.inputProfile = v;
     icm.toneCurve = v;
     icm.applyLookTable = v;
     icm.applyBaselineExposureOffset = v;
     icm.applyHueSatMap = v;
     icm.dcpIlluminant = v;
-    icm.working      = v;
-    icm.output       = v;
+    icm.workingProfile = v;
+    icm.outputProfile = v;
     icm.outputIntent = v;
-    icm.outputBPC    = v;
-    icm.gamma       = v;
-    icm.freegamma   = v;
-    icm.gampos      = v;
-    icm.slpos       = v;
+    icm.outputBPC = v;
+    icm.workingTRCGamma = v;
+    icm.workingTRCSlope = v;
+    icm.workingTRC = v;
     raw.bayersensor.method = v;
+    raw.bayersensor.border = v;
     raw.bayersensor.imageNum = v;
     raw.bayersensor.ccSteps = v;
     raw.bayersensor.exBlack0 = v;
@@ -403,45 +417,37 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.dcbEnhance = v;
     //raw.bayersensor.allEnhance = v;
     raw.bayersensor.lmmseIterations = v;
-    raw.bayersensor.pixelShiftMotion = v;
-    raw.bayersensor.pixelShiftMotionCorrection = v;
+    raw.bayersensor.dualDemosaicAutoContrast = v;
+    raw.bayersensor.dualDemosaicContrast = v;
     raw.bayersensor.pixelShiftMotionCorrectionMethod = v;
-    raw.bayersensor.pixelShiftStddevFactorGreen = v;
-    raw.bayersensor.pixelShiftStddevFactorRed = v;
-    raw.bayersensor.pixelShiftStddevFactorBlue = v;
     raw.bayersensor.pixelShiftEperIso = v;
-    raw.bayersensor.pixelShiftNreadIso = v;
-    raw.bayersensor.pixelShiftPrnu = v;
     raw.bayersensor.pixelShiftSigma = v;
-    raw.bayersensor.pixelShiftSum = v;
-    raw.bayersensor.pixelShiftRedBlueWeight = v;
     raw.bayersensor.pixelShiftShowMotion = v;
     raw.bayersensor.pixelShiftShowMotionMaskOnly = v;
-    raw.bayersensor.pixelShiftAutomatic = v;
-    raw.bayersensor.pixelShiftNonGreenHorizontal = v;
-    raw.bayersensor.pixelShiftNonGreenVertical = v;
     raw.bayersensor.pixelShiftHoleFill = v;
     raw.bayersensor.pixelShiftMedian = v;
-    raw.bayersensor.pixelShiftMedian3 = v;
     raw.bayersensor.pixelShiftGreen = v;
     raw.bayersensor.pixelShiftBlur = v;
     raw.bayersensor.pixelShiftSmooth = v;
-    raw.bayersensor.pixelShiftExp0 = v;
-    raw.bayersensor.pixelShiftLmmse = v;
-    raw.bayersensor.pixelShiftOneGreen = v;
     raw.bayersensor.pixelShiftEqualBright = v;
     raw.bayersensor.pixelShiftEqualBrightChannel = v;
     raw.bayersensor.pixelShiftNonGreenCross = v;
-    raw.bayersensor.pixelShiftNonGreenCross2 = v;
-    raw.bayersensor.pixelShiftNonGreenAmaze = v;
+    raw.bayersensor.pixelShiftDemosaicMethod = v;
     raw.bayersensor.greenEq = v;
     raw.bayersensor.linenoise = v;
+    raw.bayersensor.linenoiseDirection = v;
+    raw.bayersensor.pdafLinesFilter = v;
     raw.xtranssensor.method = v;
+    raw.xtranssensor.dualDemosaicAutoContrast = v;
+    raw.xtranssensor.dualDemosaicContrast = v;
+    raw.xtranssensor.border = v;
     raw.xtranssensor.ccSteps = v;
     raw.xtranssensor.exBlackRed = v;
     raw.xtranssensor.exBlackGreen = v;
     raw.xtranssensor.exBlackBlue = v;
     raw.ca_autocorrect = v;
+    raw.ca_avoidcolourshift = v;
+    raw.caautoiterations  = v;
     raw.cablue  = v;
     raw.cared   = v;
     raw.hotPixelFilter = v;
@@ -456,7 +462,6 @@ void ParamsEdited::set (bool v)
     raw.ff_AutoClipControl = v;
     raw.ff_clipControl = v;
     raw.exPos = v;
-    raw.exPreser = v;
     wavelet.enabled = v;
     wavelet.strength = v;
     wavelet.balance = v;
@@ -572,6 +577,12 @@ void ParamsEdited::set (bool v)
     filmSimulation.enabled = v;
     filmSimulation.clutFilename = v;
     filmSimulation.strength = v;
+    softlight.enabled = v;
+    softlight.strength = v;
+    dehaze.enabled = v;
+    dehaze.strength = v;
+    dehaze.showDepthMap = v;
+    dehaze.depth = v;
     metadata.mode = v;
 
     exif = v;
@@ -581,10 +592,10 @@ void ParamsEdited::set (bool v)
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>& src)
+void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>& src)
 {
 
-    set (true);
+    set(true);
 
     if (src.empty()) {
         return;
@@ -611,6 +622,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
         toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
         toneCurve.histmatching = toneCurve.histmatching && p.toneCurve.histmatching == other.toneCurve.histmatching;
+        toneCurve.fromHistMatching = toneCurve.fromHistMatching && p.toneCurve.fromHistMatching == other.toneCurve.fromHistMatching;
+        toneCurve.clampOOG = toneCurve.clampOOG && p.toneCurve.clampOOG == other.toneCurve.clampOOG;
         retinex.cdcurve = retinex.cdcurve && p.retinex.cdcurve == other.retinex.cdcurve;
         retinex.mapcurve = retinex.mapcurve && p.retinex.mapcurve == other.retinex.mapcurve;
         retinex.cdHcurve = retinex.cdHcurve && p.retinex.cdHcurve == other.retinex.cdHcurve;
@@ -660,12 +673,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
 
-        localContrast.enabled = localContrast.enabled && p.localContrast.enabled == other.localContrast.enabled;        
+        localContrast.enabled = localContrast.enabled && p.localContrast.enabled == other.localContrast.enabled;
         localContrast.radius = localContrast.radius && p.localContrast.radius == other.localContrast.radius;
         localContrast.amount = localContrast.amount && p.localContrast.amount == other.localContrast.amount;
         localContrast.darkness = localContrast.darkness && p.localContrast.darkness == other.localContrast.darkness;
         localContrast.lightness = localContrast.lightness && p.localContrast.lightness == other.localContrast.lightness;
-        
+
         rgbCurves.enabled = rgbCurves.enabled && p.rgbCurves.enabled == other.rgbCurves.enabled;
         rgbCurves.lumamode = rgbCurves.lumamode && p.rgbCurves.lumamode == other.rgbCurves.lumamode;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
@@ -701,6 +714,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorToning.labgridBLow = colorToning.labgridBLow && p.colorToning.labgridBLow == other.colorToning.labgridBLow;
         colorToning.labgridAHigh = colorToning.labgridAHigh && p.colorToning.labgridAHigh == other.colorToning.labgridAHigh;
         colorToning.labgridBHigh = colorToning.labgridBHigh && p.colorToning.labgridBHigh == other.colorToning.labgridBHigh;
+        colorToning.labregions = colorToning.labregions && p.colorToning.labregions == other.colorToning.labregions;
+        colorToning.labregionsShowMask = colorToning.labregionsShowMask && p.colorToning.labregionsShowMask == other.colorToning.labregionsShowMask;
         sharpenEdge.enabled = sharpenEdge.enabled && p.sharpenEdge.enabled == other.sharpenEdge.enabled;
         sharpenEdge.passes = sharpenEdge.passes && p.sharpenEdge.passes == other.sharpenEdge.passes;
         sharpenEdge.amount = sharpenEdge.amount && p.sharpenEdge.amount == other.sharpenEdge.amount;
@@ -708,9 +723,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         sharpenMicro.enabled = sharpenMicro.enabled && p.sharpenMicro.enabled == other.sharpenMicro.enabled;
         sharpenMicro.matrix = sharpenMicro.matrix && p.sharpenMicro.matrix == other.sharpenMicro.matrix;
         sharpenMicro.amount = sharpenMicro.amount && p.sharpenMicro.amount == other.sharpenMicro.amount;
+        sharpenMicro.contrast = sharpenMicro.contrast && p.sharpenMicro.contrast == other.sharpenMicro.contrast;
         sharpenMicro.uniformity = sharpenMicro.uniformity && p.sharpenMicro.uniformity == other.sharpenMicro.uniformity;
         sharpening.enabled = sharpening.enabled && p.sharpening.enabled == other.sharpening.enabled;
+        sharpening.contrast = sharpening.contrast && p.sharpening.contrast == other.sharpening.contrast;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
+        sharpening.blurradius = sharpening.blurradius && p.sharpening.blurradius == other.sharpening.blurradius;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
         sharpening.threshold = sharpening.threshold && p.sharpening.threshold == other.sharpening.threshold;
         sharpening.edgesonly = sharpening.edgesonly && p.sharpening.edgesonly == other.sharpening.edgesonly;
@@ -724,6 +742,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         sharpening.deconviter = sharpening.deconviter && p.sharpening.deconviter == other.sharpening.deconviter;
         sharpening.deconvdamping = sharpening.deconvdamping && p.sharpening.deconvdamping == other.sharpening.deconvdamping;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
+        prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
         prsharpening.amount = prsharpening.amount && p.prsharpening.amount == other.prsharpening.amount;
         prsharpening.threshold = prsharpening.threshold && p.prsharpening.threshold == other.prsharpening.threshold;
@@ -845,14 +864,15 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         fattal.enabled = fattal.enabled && p.fattal.enabled == other.fattal.enabled;
         fattal.threshold = fattal.threshold && p.fattal.threshold == other.fattal.threshold;
         fattal.amount = fattal.amount && p.fattal.amount == other.fattal.amount;
-        
+        fattal.anchor = fattal.anchor && p.fattal.anchor == other.fattal.anchor;
+
         sh.enabled = sh.enabled && p.sh.enabled == other.sh.enabled;
-        sh.hq = sh.hq && p.sh.hq == other.sh.hq;
         sh.highlights = sh.highlights && p.sh.highlights == other.sh.highlights;
         sh.htonalwidth = sh.htonalwidth && p.sh.htonalwidth == other.sh.htonalwidth;
         sh.shadows = sh.shadows && p.sh.shadows == other.sh.shadows;
         sh.stonalwidth = sh.stonalwidth && p.sh.stonalwidth == other.sh.stonalwidth;
         sh.radius = sh.radius && p.sh.radius == other.sh.radius;
+        sh.lab = sh.lab && p.sh.lab == other.sh.lab;
         crop.enabled = crop.enabled && p.crop.enabled == other.crop.enabled;
         crop.x = crop.x && p.crop.x == other.crop.x;
         crop.y = crop.y && p.crop.y == other.crop.y;
@@ -939,21 +959,22 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         spot.enabled = spot.enabled && p.spot.enabled == other.spot.enabled;
         spot.entries = spot.entries && p.spot.entries == other.spot.entries;
-        icm.input = icm.input && p.icm.input == other.icm.input;
+        resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
+        icm.inputProfile = icm.inputProfile && p.icm.inputProfile == other.icm.inputProfile;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
         icm.applyBaselineExposureOffset = icm.applyBaselineExposureOffset && p.icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset;
         icm.applyHueSatMap = icm.applyHueSatMap && p.icm.applyHueSatMap == other.icm.applyHueSatMap;
         icm.dcpIlluminant = icm.dcpIlluminant && p.icm.dcpIlluminant == other.icm.dcpIlluminant;
-        icm.working = icm.working && p.icm.working == other.icm.working;
-        icm.output = icm.output && p.icm.output == other.icm.output;
+        icm.workingProfile = icm.workingProfile && p.icm.workingProfile == other.icm.workingProfile;
+        icm.outputProfile = icm.outputProfile && p.icm.outputProfile == other.icm.outputProfile;
         icm.outputIntent = icm.outputIntent && p.icm.outputIntent == other.icm.outputIntent;
         icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
-        icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
-        icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
-        icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
-        icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
+        icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
+        icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
+        icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
+        raw.bayersensor.border = raw.bayersensor.border && p.raw.bayersensor.border == other.raw.bayersensor.border;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
         raw.bayersensor.ccSteps = raw.bayersensor.ccSteps && p.raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps;
         raw.bayersensor.exBlack0 = raw.bayersensor.exBlack0 && p.raw.bayersensor.black0 == other.raw.bayersensor.black0;
@@ -965,45 +986,37 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.dcbEnhance = raw.bayersensor.dcbEnhance && p.raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance;
         //raw.bayersensor.allEnhance = raw.bayersensor.allEnhance && p.raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance;
         raw.bayersensor.lmmseIterations = raw.bayersensor.lmmseIterations && p.raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations;
-        raw.bayersensor.pixelShiftMotion = raw.bayersensor.pixelShiftMotion && p.raw.bayersensor.pixelShiftMotion == other.raw.bayersensor.pixelShiftMotion;
-        raw.bayersensor.pixelShiftMotionCorrection = raw.bayersensor.pixelShiftMotionCorrection && p.raw.bayersensor.pixelShiftMotionCorrection == other.raw.bayersensor.pixelShiftMotionCorrection;
+        raw.bayersensor.dualDemosaicAutoContrast = raw.bayersensor.dualDemosaicAutoContrast && p.raw.bayersensor.dualDemosaicAutoContrast == other.raw.bayersensor.dualDemosaicAutoContrast;
+        raw.bayersensor.dualDemosaicContrast = raw.bayersensor.dualDemosaicContrast && p.raw.bayersensor.dualDemosaicContrast == other.raw.bayersensor.dualDemosaicContrast;
         raw.bayersensor.pixelShiftMotionCorrectionMethod = raw.bayersensor.pixelShiftMotionCorrectionMethod && p.raw.bayersensor.pixelShiftMotionCorrectionMethod == other.raw.bayersensor.pixelShiftMotionCorrectionMethod;
-        raw.bayersensor.pixelShiftStddevFactorGreen = raw.bayersensor.pixelShiftStddevFactorGreen && p.raw.bayersensor.pixelShiftStddevFactorGreen == other.raw.bayersensor.pixelShiftStddevFactorGreen;
-        raw.bayersensor.pixelShiftStddevFactorRed = raw.bayersensor.pixelShiftStddevFactorRed && p.raw.bayersensor.pixelShiftStddevFactorRed == other.raw.bayersensor.pixelShiftStddevFactorRed;
-        raw.bayersensor.pixelShiftStddevFactorBlue = raw.bayersensor.pixelShiftStddevFactorBlue && p.raw.bayersensor.pixelShiftStddevFactorBlue == other.raw.bayersensor.pixelShiftStddevFactorBlue;
         raw.bayersensor.pixelShiftEperIso = raw.bayersensor.pixelShiftEperIso && p.raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso;
-        raw.bayersensor.pixelShiftNreadIso = raw.bayersensor.pixelShiftNreadIso && p.raw.bayersensor.pixelShiftNreadIso == other.raw.bayersensor.pixelShiftNreadIso;
-        raw.bayersensor.pixelShiftPrnu = raw.bayersensor.pixelShiftPrnu && p.raw.bayersensor.pixelShiftPrnu == other.raw.bayersensor.pixelShiftPrnu;
         raw.bayersensor.pixelShiftSigma = raw.bayersensor.pixelShiftSigma && p.raw.bayersensor.pixelShiftSigma == other.raw.bayersensor.pixelShiftSigma;
-        raw.bayersensor.pixelShiftSum = raw.bayersensor.pixelShiftSum && p.raw.bayersensor.pixelShiftSum == other.raw.bayersensor.pixelShiftSum;
-        raw.bayersensor.pixelShiftRedBlueWeight = raw.bayersensor.pixelShiftRedBlueWeight && p.raw.bayersensor.pixelShiftRedBlueWeight == other.raw.bayersensor.pixelShiftRedBlueWeight;
         raw.bayersensor.pixelShiftShowMotion = raw.bayersensor.pixelShiftShowMotion && p.raw.bayersensor.pixelShiftShowMotion == other.raw.bayersensor.pixelShiftShowMotion;
         raw.bayersensor.pixelShiftShowMotionMaskOnly = raw.bayersensor.pixelShiftShowMotionMaskOnly && p.raw.bayersensor.pixelShiftShowMotionMaskOnly == other.raw.bayersensor.pixelShiftShowMotionMaskOnly;
-        raw.bayersensor.pixelShiftAutomatic = raw.bayersensor.pixelShiftAutomatic && p.raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic;
-        raw.bayersensor.pixelShiftNonGreenHorizontal = raw.bayersensor.pixelShiftNonGreenHorizontal && p.raw.bayersensor.pixelShiftNonGreenHorizontal == other.raw.bayersensor.pixelShiftNonGreenHorizontal;
-        raw.bayersensor.pixelShiftNonGreenVertical = raw.bayersensor.pixelShiftNonGreenVertical && p.raw.bayersensor.pixelShiftNonGreenVertical == other.raw.bayersensor.pixelShiftNonGreenVertical;
         raw.bayersensor.pixelShiftHoleFill = raw.bayersensor.pixelShiftHoleFill && p.raw.bayersensor.pixelShiftHoleFill == other.raw.bayersensor.pixelShiftHoleFill;
         raw.bayersensor.pixelShiftMedian = raw.bayersensor.pixelShiftMedian && p.raw.bayersensor.pixelShiftMedian == other.raw.bayersensor.pixelShiftMedian;
-        raw.bayersensor.pixelShiftMedian3 = raw.bayersensor.pixelShiftMedian3 && p.raw.bayersensor.pixelShiftMedian3 == other.raw.bayersensor.pixelShiftMedian3;
         raw.bayersensor.pixelShiftGreen = raw.bayersensor.pixelShiftGreen && p.raw.bayersensor.pixelShiftGreen == other.raw.bayersensor.pixelShiftGreen;
         raw.bayersensor.pixelShiftBlur = raw.bayersensor.pixelShiftBlur && p.raw.bayersensor.pixelShiftBlur == other.raw.bayersensor.pixelShiftBlur;
         raw.bayersensor.pixelShiftSmooth = raw.bayersensor.pixelShiftSmooth && p.raw.bayersensor.pixelShiftSmoothFactor == other.raw.bayersensor.pixelShiftSmoothFactor;
-        raw.bayersensor.pixelShiftExp0 = raw.bayersensor.pixelShiftExp0 && p.raw.bayersensor.pixelShiftExp0 == other.raw.bayersensor.pixelShiftExp0;
-        raw.bayersensor.pixelShiftLmmse = raw.bayersensor.pixelShiftLmmse && p.raw.bayersensor.pixelShiftLmmse == other.raw.bayersensor.pixelShiftLmmse;
-        raw.bayersensor.pixelShiftOneGreen = raw.bayersensor.pixelShiftOneGreen && p.raw.bayersensor.pixelShiftOneGreen == other.raw.bayersensor.pixelShiftOneGreen;
         raw.bayersensor.pixelShiftEqualBright = raw.bayersensor.pixelShiftEqualBright && p.raw.bayersensor.pixelShiftEqualBright == other.raw.bayersensor.pixelShiftEqualBright;
         raw.bayersensor.pixelShiftEqualBrightChannel = raw.bayersensor.pixelShiftEqualBrightChannel && p.raw.bayersensor.pixelShiftEqualBrightChannel == other.raw.bayersensor.pixelShiftEqualBrightChannel;
         raw.bayersensor.pixelShiftNonGreenCross = raw.bayersensor.pixelShiftNonGreenCross && p.raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross;
-        raw.bayersensor.pixelShiftNonGreenCross2 = raw.bayersensor.pixelShiftNonGreenCross2 && p.raw.bayersensor.pixelShiftNonGreenCross2 == other.raw.bayersensor.pixelShiftNonGreenCross2;
-        raw.bayersensor.pixelShiftNonGreenAmaze = raw.bayersensor.pixelShiftNonGreenAmaze && p.raw.bayersensor.pixelShiftNonGreenAmaze == other.raw.bayersensor.pixelShiftNonGreenAmaze;
+        raw.bayersensor.pixelShiftDemosaicMethod = raw.bayersensor.pixelShiftDemosaicMethod && p.raw.bayersensor.pixelShiftDemosaicMethod == other.raw.bayersensor.pixelShiftDemosaicMethod;
         raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
         raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
+        raw.bayersensor.linenoiseDirection = raw.bayersensor.linenoiseDirection && p.raw.bayersensor.linenoiseDirection == other.raw.bayersensor.linenoiseDirection;
+        raw.bayersensor.pdafLinesFilter = raw.bayersensor.pdafLinesFilter && p.raw.bayersensor.pdafLinesFilter == other.raw.bayersensor.pdafLinesFilter;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
+        raw.xtranssensor.dualDemosaicAutoContrast = raw.xtranssensor.dualDemosaicAutoContrast && p.raw.xtranssensor.dualDemosaicAutoContrast == other.raw.xtranssensor.dualDemosaicAutoContrast;
+        raw.xtranssensor.dualDemosaicContrast = raw.xtranssensor.dualDemosaicContrast && p.raw.xtranssensor.dualDemosaicContrast == other.raw.xtranssensor.dualDemosaicContrast;
+        raw.xtranssensor.border = raw.xtranssensor.border && p.raw.xtranssensor.border == other.raw.xtranssensor.border;
         raw.xtranssensor.ccSteps = raw.xtranssensor.ccSteps && p.raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps;
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
         raw.xtranssensor.exBlackBlue = raw.xtranssensor.exBlackBlue && p.raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue;
         raw.ca_autocorrect = raw.ca_autocorrect && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
+        raw.ca_avoidcolourshift = raw.ca_avoidcolourshift && p.raw.ca_avoidcolourshift == other.raw.ca_avoidcolourshift;
+        raw.caautoiterations = raw.caautoiterations && p.raw.caautoiterations == other.raw.caautoiterations;
         raw.cared = raw.cared && p.raw.cared == other.raw.cared;
         raw.cablue = raw.cablue && p.raw.cablue == other.raw.cablue;
         raw.hotPixelFilter = raw.hotPixelFilter && p.raw.hotPixelFilter == other.raw.hotPixelFilter;
@@ -1018,7 +1031,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.ff_AutoClipControl = raw.ff_AutoClipControl && p.raw.ff_AutoClipControl == other.raw.ff_AutoClipControl;
         raw.ff_clipControl = raw.ff_clipControl && p.raw.ff_clipControl == other.raw.ff_clipControl;
         raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
-        raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
         wavelet.enabled = wavelet.enabled && p.wavelet.enabled == other.wavelet.enabled;
         wavelet.strength = wavelet.strength && p.wavelet.strength == other.wavelet.strength;
         wavelet.balance = wavelet.balance && p.wavelet.balance == other.wavelet.balance;
@@ -1122,13 +1134,19 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrequalizer.skinprotect = dirpyrequalizer.skinprotect && p.dirpyrequalizer.skinprotect == other.dirpyrequalizer.skinprotect;
         //    dirpyrequalizer.algo = dirpyrequalizer.algo && p.dirpyrequalizer.algo == other.dirpyrequalizer.algo;
         dirpyrequalizer.hueskin = dirpyrequalizer.hueskin && p.dirpyrequalizer.hueskin == other.dirpyrequalizer.hueskin;
-        hsvequalizer.enabled = hsvequalizer.enabled && p.hsvequalizer.enabled == other.hsvequalizer.enabled;        
+        hsvequalizer.enabled = hsvequalizer.enabled && p.hsvequalizer.enabled == other.hsvequalizer.enabled;
         hsvequalizer.hcurve = hsvequalizer.hcurve && p.hsvequalizer.hcurve == other.hsvequalizer.hcurve;
         hsvequalizer.scurve = hsvequalizer.scurve && p.hsvequalizer.scurve == other.hsvequalizer.scurve;
         hsvequalizer.vcurve = hsvequalizer.vcurve && p.hsvequalizer.vcurve == other.hsvequalizer.vcurve;
         filmSimulation.enabled = filmSimulation.enabled && p.filmSimulation.enabled == other.filmSimulation.enabled;
         filmSimulation.clutFilename = filmSimulation.clutFilename && p.filmSimulation.clutFilename == other.filmSimulation.clutFilename;
         filmSimulation.strength = filmSimulation.strength && p.filmSimulation.strength == other.filmSimulation.strength;
+        softlight.enabled = softlight.enabled && p.softlight.enabled == other.softlight.enabled;
+        softlight.strength = softlight.strength && p.softlight.strength == other.softlight.strength;
+        dehaze.enabled = dehaze.enabled && p.dehaze.enabled == other.dehaze.enabled;
+        dehaze.strength = dehaze.strength && p.dehaze.strength == other.dehaze.strength;
+        dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
+        dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
 
 //      How the hell can we handle that???
@@ -1137,7 +1155,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
     }
 }
 
-void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet)
+void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet)
 {
 
     bool dontforceSet = !forceSet;
@@ -1208,6 +1226,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (toneCurve.histmatching) {
         toEdit.toneCurve.histmatching   = mods.toneCurve.histmatching;
+    }
+
+    if (toneCurve.fromHistMatching) {
+        toEdit.toneCurve.fromHistMatching   = mods.toneCurve.fromHistMatching;
+    }
+
+    if (toneCurve.clampOOG) {
+        toEdit.toneCurve.clampOOG = mods.toneCurve.clampOOG;
     }
 
     if (retinex.enabled) {
@@ -1343,7 +1369,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (labCurve.enabled) {
         toEdit.labCurve.enabled = mods.labCurve.enabled;
     }
-    
+
     if (labCurve.lcurve) {
         toEdit.labCurve.lcurve        = mods.labCurve.lcurve;
     }
@@ -1407,18 +1433,19 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (localContrast.enabled) {
         toEdit.localContrast.enabled = mods.localContrast.enabled;
     }
-    if (localContrast.radius) {
-        toEdit.localContrast.radius = mods.localContrast.radius;
-    }
-    if (localContrast.amount) {
-        toEdit.localContrast.amount = mods.localContrast.amount;
-    }
-    if (localContrast.darkness) {
-        toEdit.localContrast.darkness = mods.localContrast.darkness;
-    }
-    if (localContrast.lightness) {
-        toEdit.localContrast.lightness = mods.localContrast.lightness;
-    }
+
+#define ADDSETVAL_(v, i)                                                                        \
+    do {                                                                                        \
+        if ( v ) {                                                                              \
+            toEdit. v = dontforceSet && options.baBehav[ i ] ? toEdit. v + mods. v : mods. v ;  \
+        }                                                                                       \
+    } while (false)
+
+    ADDSETVAL_(localContrast.radius, ADDSET_LOCALCONTRAST_RADIUS);
+    ADDSETVAL_(localContrast.amount, ADDSET_LOCALCONTRAST_AMOUNT);
+    ADDSETVAL_(localContrast.darkness, ADDSET_LOCALCONTRAST_DARKNESS);
+    ADDSETVAL_(localContrast.lightness, ADDSET_LOCALCONTRAST_LIGHTNESS);
+#undef ADDSETVAL_
 
     if (rgbCurves.enabled) {
         toEdit.rgbCurves.enabled = mods.rgbCurves.enabled;
@@ -1555,16 +1582,27 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (colorToning.labgridALow) {
         toEdit.colorToning.labgridALow = mods.colorToning.labgridALow;
     }
+
     if (colorToning.labgridBLow) {
         toEdit.colorToning.labgridBLow = mods.colorToning.labgridBLow;
     }
+
     if (colorToning.labgridAHigh) {
         toEdit.colorToning.labgridAHigh = mods.colorToning.labgridAHigh;
     }
+
     if (colorToning.labgridBHigh) {
         toEdit.colorToning.labgridBHigh = mods.colorToning.labgridBHigh;
     }
 
+    if (colorToning.labregions) {
+        toEdit.colorToning.labregions = mods.colorToning.labregions;
+    }
+
+    if (colorToning.labregionsShowMask) {
+        toEdit.colorToning.labregionsShowMask = mods.colorToning.labregionsShowMask;
+    }
+    
     if (sharpenEdge.enabled) {
         toEdit.sharpenEdge.enabled    = mods.sharpenEdge.enabled;
     }
@@ -1593,6 +1631,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.sharpenMicro.amount    = dontforceSet && options.baBehav[ADDSET_SHARPENMICRO_AMOUNT] ? toEdit.sharpenMicro.amount + mods.sharpenMicro.amount : mods.sharpenMicro.amount;
     }
 
+    if (sharpenMicro.contrast) {
+        toEdit.sharpenMicro.contrast    = dontforceSet && options.baBehav[ADDSET_SHARPENMICRO_CONTRAST] ? toEdit.sharpenMicro.contrast + mods.sharpenMicro.contrast : mods.sharpenMicro.contrast;
+    }
+
     if (sharpenMicro.uniformity) {
         toEdit.sharpenMicro.uniformity    = dontforceSet && options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY] ? toEdit.sharpenMicro.uniformity + mods.sharpenMicro.uniformity : mods.sharpenMicro.uniformity;
     }
@@ -1601,8 +1643,16 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.sharpening.enabled     = mods.sharpening.enabled;
     }
 
+    if (sharpening.contrast) {
+        toEdit.sharpening.contrast  = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.sharpening.contrast + mods.sharpening.contrast : mods.sharpening.contrast;
+    }
+
     if (sharpening.radius) {
         toEdit.sharpening.radius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.radius + mods.sharpening.radius : mods.sharpening.radius;
+    }
+
+    if (sharpening.blurradius) {
+        toEdit.sharpening.blurradius  = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.blurradius + mods.sharpening.blurradius : mods.sharpening.blurradius;
     }
 
     if (sharpening.amount) {
@@ -1618,7 +1668,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
     if (sharpening.edges_radius) {
-        toEdit.sharpening.edges_radius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.edges_radius + mods.sharpening.edges_radius: mods.sharpening.edges_radius;
+        toEdit.sharpening.edges_radius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.edges_radius + mods.sharpening.edges_radius : mods.sharpening.edges_radius;
     }
 
     if (sharpening.edges_tolerance) {
@@ -1655,6 +1705,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (prsharpening.enabled) {
         toEdit.prsharpening.enabled   = mods.prsharpening.enabled;
+    }
+
+    if (prsharpening.contrast) {
+        toEdit.prsharpening.contrast  = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.prsharpening.contrast + mods.prsharpening.contrast : mods.prsharpening.contrast;
     }
 
     if (prsharpening.radius) {
@@ -1748,7 +1802,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (wb.enabled) {
         toEdit.wb.enabled = mods.wb.enabled;
     }
-    
+
     if (wb.method) {
         toEdit.wb.method  = mods.wb.method;
     }
@@ -2067,19 +2121,21 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (fattal.enabled) {
         toEdit.fattal.enabled = mods.fattal.enabled;
     }
+
     if (fattal.threshold) {
         toEdit.fattal.threshold = mods.fattal.threshold;
     }
+
     if (fattal.amount) {
         toEdit.fattal.amount = mods.fattal.amount;
-    }    
+    }
+
+    if (fattal.anchor) {
+        toEdit.fattal.anchor = mods.fattal.anchor;
+    }
 
     if (sh.enabled) {
         toEdit.sh.enabled         = mods.sh.enabled;
-    }
-
-    if (sh.hq) {
-        toEdit.sh.hq          = mods.sh.hq;
     }
 
     if (sh.highlights) {
@@ -2100,6 +2156,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (sh.radius) {
         toEdit.sh.radius      = mods.sh.radius;
+    }
+
+    if (sh.lab) {
+        toEdit.sh.lab      = mods.sh.lab;
     }
 
     if (crop.enabled) {
@@ -2273,7 +2333,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (chmixer.enabled) {
         toEdit.chmixer.enabled = mods.chmixer.enabled;
     }
-    
+
     for (int i = 0; i < 3; i++) {
         if (chmixer.red[i]) {
             toEdit.chmixer.red[i]     = dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.red[i] + mods.chmixer.red[i] : mods.chmixer.red[i];
@@ -2416,8 +2476,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.spot.entries   = mods.spot.entries;
     }
 
-    if (icm.input) {
-        toEdit.icm.input      = mods.icm.input;
+    if (resize.allowUpscaling) {
+        toEdit.resize.allowUpscaling = mods.resize.allowUpscaling;
+    }
+
+    if (icm.inputProfile) {
+        toEdit.icm.inputProfile = mods.icm.inputProfile;
     }
 
     if (icm.toneCurve) {
@@ -2440,12 +2504,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.icm.dcpIlluminant = mods.icm.dcpIlluminant;
     }
 
-    if (icm.working) {
-        toEdit.icm.working        = mods.icm.working;
+    if (icm.workingProfile) {
+        toEdit.icm.workingProfile = mods.icm.workingProfile;
     }
 
-    if (icm.output) {
-        toEdit.icm.output       = mods.icm.output;
+    if (icm.outputProfile) {
+        toEdit.icm.outputProfile = mods.icm.outputProfile;
     }
 
     if (icm.outputIntent) {
@@ -2456,24 +2520,24 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.icm.outputBPC = mods.icm.outputBPC;
     }
 
-    if (icm.gampos) {
-        toEdit.icm.gampos     = dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.gampos + mods.icm.gampos : mods.icm.gampos;
+    if (icm.workingTRCGamma) {
+        toEdit.icm.workingTRCGamma = mods.icm.workingTRCGamma;
     }
 
-    if (icm.slpos) {
-        toEdit.icm.slpos      = dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;
+    if (icm.workingTRCSlope) {
+        toEdit.icm.workingTRCSlope = mods.icm.workingTRCSlope;
     }
 
-    if (icm.gamma) {
-        toEdit.icm.gamma        = mods.icm.gamma;
-    }
-
-    if (icm.freegamma) {
-        toEdit.icm.freegamma    = mods.icm.freegamma;
+    if (icm.workingTRC) {
+        toEdit.icm.workingTRC = mods.icm.workingTRC;
     }
 
     if (raw.bayersensor.method) {
         toEdit.raw.bayersensor.method           = mods.raw.bayersensor.method;
+    }
+
+    if (raw.bayersensor.border) {
+        toEdit.raw.bayersensor.border         = mods.raw.bayersensor.border;
     }
 
     if (raw.bayersensor.imageNum) {
@@ -2516,52 +2580,24 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.lmmse_iterations = mods.raw.bayersensor.lmmse_iterations;
     }
 
-    if (raw.bayersensor.pixelShiftMotion) {
-        toEdit.raw.bayersensor.pixelShiftMotion = mods.raw.bayersensor.pixelShiftMotion;
+    if (raw.bayersensor.dualDemosaicAutoContrast) {
+        toEdit.raw.bayersensor.dualDemosaicAutoContrast = mods.raw.bayersensor.dualDemosaicAutoContrast;
     }
 
-    if (raw.bayersensor.pixelShiftMotionCorrection) {
-        toEdit.raw.bayersensor.pixelShiftMotionCorrection = mods.raw.bayersensor.pixelShiftMotionCorrection;
+    if (raw.bayersensor.dualDemosaicContrast) {
+        toEdit.raw.bayersensor.dualDemosaicContrast = mods.raw.bayersensor.dualDemosaicContrast;
     }
 
     if (raw.bayersensor.pixelShiftMotionCorrectionMethod) {
         toEdit.raw.bayersensor.pixelShiftMotionCorrectionMethod = mods.raw.bayersensor.pixelShiftMotionCorrectionMethod;
     }
 
-    if (raw.bayersensor.pixelShiftStddevFactorGreen) {
-        toEdit.raw.bayersensor.pixelShiftStddevFactorGreen = mods.raw.bayersensor.pixelShiftStddevFactorGreen;
-    }
-
-    if (raw.bayersensor.pixelShiftStddevFactorRed) {
-        toEdit.raw.bayersensor.pixelShiftStddevFactorRed = mods.raw.bayersensor.pixelShiftStddevFactorRed;
-    }
-
-    if (raw.bayersensor.pixelShiftStddevFactorBlue) {
-        toEdit.raw.bayersensor.pixelShiftStddevFactorBlue = mods.raw.bayersensor.pixelShiftStddevFactorBlue;
-    }
-
     if (raw.bayersensor.pixelShiftEperIso) {
         toEdit.raw.bayersensor.pixelShiftEperIso = mods.raw.bayersensor.pixelShiftEperIso;
     }
 
-    if (raw.bayersensor.pixelShiftNreadIso) {
-        toEdit.raw.bayersensor.pixelShiftNreadIso = mods.raw.bayersensor.pixelShiftNreadIso;
-    }
-
-    if (raw.bayersensor.pixelShiftPrnu) {
-        toEdit.raw.bayersensor.pixelShiftPrnu = mods.raw.bayersensor.pixelShiftPrnu;
-    }
-
     if (raw.bayersensor.pixelShiftSigma) {
         toEdit.raw.bayersensor.pixelShiftSigma = mods.raw.bayersensor.pixelShiftSigma;
-    }
-
-    if (raw.bayersensor.pixelShiftSum) {
-        toEdit.raw.bayersensor.pixelShiftSum = mods.raw.bayersensor.pixelShiftSum;
-    }
-
-    if (raw.bayersensor.pixelShiftRedBlueWeight) {
-        toEdit.raw.bayersensor.pixelShiftRedBlueWeight = mods.raw.bayersensor.pixelShiftRedBlueWeight;
     }
 
     if (raw.bayersensor.pixelShiftShowMotion) {
@@ -2572,28 +2608,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelShiftShowMotionMaskOnly = mods.raw.bayersensor.pixelShiftShowMotionMaskOnly;
     }
 
-    if (raw.bayersensor.pixelShiftAutomatic) {
-        toEdit.raw.bayersensor.pixelShiftAutomatic = mods.raw.bayersensor.pixelShiftAutomatic;
-    }
-
-    if (raw.bayersensor.pixelShiftNonGreenHorizontal) {
-        toEdit.raw.bayersensor.pixelShiftNonGreenHorizontal = mods.raw.bayersensor.pixelShiftNonGreenHorizontal;
-    }
-
-    if (raw.bayersensor.pixelShiftNonGreenVertical) {
-        toEdit.raw.bayersensor.pixelShiftNonGreenVertical = mods.raw.bayersensor.pixelShiftNonGreenVertical;
-    }
-
     if (raw.bayersensor.pixelShiftHoleFill) {
         toEdit.raw.bayersensor.pixelShiftHoleFill = mods.raw.bayersensor.pixelShiftHoleFill;
     }
 
     if (raw.bayersensor.pixelShiftMedian) {
         toEdit.raw.bayersensor.pixelShiftMedian = mods.raw.bayersensor.pixelShiftMedian;
-    }
-
-    if (raw.bayersensor.pixelShiftMedian3) {
-        toEdit.raw.bayersensor.pixelShiftMedian3 = mods.raw.bayersensor.pixelShiftMedian3;
     }
 
     if (raw.bayersensor.pixelShiftGreen) {
@@ -2608,18 +2628,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelShiftSmoothFactor = mods.raw.bayersensor.pixelShiftSmoothFactor;
     }
 
-    if (raw.bayersensor.pixelShiftExp0) {
-        toEdit.raw.bayersensor.pixelShiftExp0 = mods.raw.bayersensor.pixelShiftExp0;
-    }
-
-    if (raw.bayersensor.pixelShiftLmmse) {
-        toEdit.raw.bayersensor.pixelShiftLmmse = mods.raw.bayersensor.pixelShiftLmmse;
-    }
-
-    if (raw.bayersensor.pixelShiftOneGreen) {
-        toEdit.raw.bayersensor.pixelShiftOneGreen = mods.raw.bayersensor.pixelShiftOneGreen;
-    }
-
     if (raw.bayersensor.pixelShiftEqualBright) {
         toEdit.raw.bayersensor.pixelShiftEqualBright = mods.raw.bayersensor.pixelShiftEqualBright;
     }
@@ -2632,12 +2640,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelShiftNonGreenCross = mods.raw.bayersensor.pixelShiftNonGreenCross;
     }
 
-    if (raw.bayersensor.pixelShiftNonGreenCross2) {
-        toEdit.raw.bayersensor.pixelShiftNonGreenCross2 = mods.raw.bayersensor.pixelShiftNonGreenCross2;
-    }
-
-    if (raw.bayersensor.pixelShiftNonGreenAmaze) {
-        toEdit.raw.bayersensor.pixelShiftNonGreenAmaze = mods.raw.bayersensor.pixelShiftNonGreenAmaze;
+    if (raw.bayersensor.pixelShiftDemosaicMethod) {
+        toEdit.raw.bayersensor.pixelShiftDemosaicMethod = mods.raw.bayersensor.pixelShiftDemosaicMethod;
     }
 
     if (raw.bayersensor.greenEq) {
@@ -2648,12 +2652,32 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.linenoise        = dontforceSet && options.baBehav[ADDSET_PREPROCESS_LINEDENOISE] ? toEdit.raw.bayersensor.linenoise + mods.raw.bayersensor.linenoise : mods.raw.bayersensor.linenoise;
     }
 
+    if (raw.bayersensor.linenoiseDirection) {
+        toEdit.raw.bayersensor.linenoiseDirection = mods.raw.bayersensor.linenoiseDirection;
+    }
+
+    if (raw.bayersensor.pdafLinesFilter) {
+        toEdit.raw.bayersensor.pdafLinesFilter = mods.raw.bayersensor.pdafLinesFilter;
+    }
+
     if (raw.xtranssensor.method) {
         toEdit.raw.xtranssensor.method          = mods.raw.xtranssensor.method;
     }
 
+    if (raw.xtranssensor.dualDemosaicAutoContrast) {
+        toEdit.raw.xtranssensor.dualDemosaicAutoContrast          = mods.raw.xtranssensor.dualDemosaicAutoContrast;
+    }
+
+    if (raw.xtranssensor.dualDemosaicContrast) {
+        toEdit.raw.xtranssensor.dualDemosaicContrast          = mods.raw.xtranssensor.dualDemosaicContrast;
+    }
+
     if (raw.xtranssensor.ccSteps) {
         toEdit.raw.xtranssensor.ccSteps         = mods.raw.xtranssensor.ccSteps;
+    }
+
+    if (raw.xtranssensor.border) {
+        toEdit.raw.xtranssensor.border         = mods.raw.xtranssensor.border;
     }
 
     if (raw.xtranssensor.exBlackRed) {
@@ -2672,6 +2696,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
     }
 
+    if (raw.ca_avoidcolourshift) {
+        toEdit.raw.ca_avoidcolourshift  = mods.raw.ca_avoidcolourshift;
+    }
+
+    if (raw.caautoiterations) {
+        toEdit.raw.caautoiterations           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.caautoiterations + mods.raw.caautoiterations : mods.raw.caautoiterations;
+    }
+
     if (raw.cared) {
         toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
     }
@@ -2682,10 +2714,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (raw.exPos) {
         toEdit.raw.expos           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_LINEAR] ? toEdit.raw.expos + mods.raw.expos : mods.raw.expos;
-    }
-
-    if (raw.exPreser) {
-        toEdit.raw.preser          = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_PRESER] ? toEdit.raw.preser + mods.raw.preser : mods.raw.preser;
     }
 
     if (raw.hotPixelFilter) {
@@ -3108,7 +3136,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (hsvequalizer.enabled) {
         toEdit.hsvequalizer.enabled = mods.hsvequalizer.enabled;
     }
-    
+
     if (hsvequalizer.hcurve) {
         toEdit.hsvequalizer.hcurve        = mods.hsvequalizer.hcurve;
     }
@@ -3133,6 +3161,30 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.filmSimulation.strength        = dontforceSet && options.baBehav[ADDSET_FILMSIMULATION_STRENGTH] ? toEdit.filmSimulation.strength + mods.filmSimulation.strength : mods.filmSimulation.strength;
     }
 
+    if (softlight.enabled) {
+        toEdit.softlight.enabled     = mods.softlight.enabled;
+    }
+
+    if (softlight.strength) {
+        toEdit.softlight.strength        = dontforceSet && options.baBehav[ADDSET_SOFTLIGHT_STRENGTH] ? toEdit.softlight.strength + mods.softlight.strength : mods.softlight.strength;
+    }
+
+    if (dehaze.enabled) {
+        toEdit.dehaze.enabled     = mods.dehaze.enabled;
+    }
+
+    if (dehaze.strength) {
+        toEdit.dehaze.strength        = dontforceSet && options.baBehav[ADDSET_DEHAZE_STRENGTH] ? toEdit.dehaze.strength + mods.dehaze.strength : mods.dehaze.strength;
+    }
+    
+    if (dehaze.depth) {
+        toEdit.dehaze.depth     = mods.dehaze.depth;
+    }
+
+    if (dehaze.showDepthMap) {
+        toEdit.dehaze.showDepthMap     = mods.dehaze.showDepthMap;
+    }
+
     if (metadata.mode) {
         toEdit.metadata.mode     = mods.metadata.mode;
     }
@@ -3152,22 +3204,21 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
-    return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
-            && pixelShiftMotion && pixelShiftMotionCorrection && pixelShiftMotionCorrectionMethod && pixelShiftStddevFactorGreen && pixelShiftStddevFactorRed && pixelShiftStddevFactorBlue && pixelShiftEperIso
-            && pixelShiftNreadIso && pixelShiftPrnu && pixelShiftSigma && pixelShiftSum && pixelShiftRedBlueWeight && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
-            && pixelShiftAutomatic && pixelShiftNonGreenHorizontal && pixelShiftNonGreenVertical && pixelShiftHoleFill && pixelShiftMedian && pixelShiftMedian3 && pixelShiftNonGreenCross && pixelShiftNonGreenCross2 && pixelShiftNonGreenAmaze && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftExp0 && pixelShiftLmmse && pixelShiftOneGreen && pixelShiftEqualBright && pixelShiftEqualBrightChannel
-            && linenoise && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
+    return  method && border && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicAutoContrast && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
+            && pixelShiftMotionCorrectionMethod && pixelShiftEperIso && pixelShiftSigma && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
+            && pixelShiftHoleFill && pixelShiftMedian && pixelShiftNonGreenCross && pixelShiftDemosaicMethod && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftEqualBright && pixelShiftEqualBrightChannel
+            && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
 }
 
 bool RAWParamsEdited::XTransSensor::isUnchanged() const
 {
-    return method && exBlackRed && exBlackGreen && exBlackBlue;
+    return method && border && exBlackRed && exBlackGreen && exBlackBlue && dualDemosaicAutoContrast && dualDemosaicContrast;
 }
 
 bool RAWParamsEdited::isUnchanged() const
 {
-    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
-            && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
+    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && ca_avoidcolourshift && caautoiterations && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
+            && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && ff_AutoClipControl && ff_clipControl;
 }
 
 bool LensProfParamsEdited::isUnchanged() const

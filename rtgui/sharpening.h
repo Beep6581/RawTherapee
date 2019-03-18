@@ -28,6 +28,8 @@ class Sharpening : public ToolParamBlock, public ThresholdAdjusterListener, publ
 {
 
 protected:
+    Adjuster* contrast;
+    Adjuster* blur;
     MyComboBoxText* method;
     Adjuster* dradius;
     Adjuster* damount;
@@ -53,25 +55,33 @@ protected:
     bool lastHaloControl;
     sigc::connection hcConn;
 
+    rtengine::ProcEvent EvSharpenContrast;
+    rtengine::ProcEvent EvSharpenBlur;
 public:
 
     Sharpening ();
-    virtual ~Sharpening ();
+    ~Sharpening () override;
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode   (bool batchMode) override;
 
-    void adjusterChanged (Adjuster* a, double newval);
-    void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
-    void enabledChanged  ();
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
+    void enabledChanged  () override;
     void edgesonly_toggled ();
     void halocontrol_toggled ();
     void method_changed ();
 
-    void setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override;
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override;
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+
+    void setAdjusterBehavior (bool contrastadd, bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
+    void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };
 
 #endif

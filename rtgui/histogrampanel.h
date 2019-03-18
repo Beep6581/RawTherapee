@@ -43,7 +43,15 @@ struct HistogramRGBAreaIdleHelper {
     int pending;
 };
 
-class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer
+class HistogramScaling
+{
+public:
+    double factor;
+    HistogramScaling() : factor(10.0) {}
+    double log (double vsize, double val);
+};
+
+class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling
 {
 private:
     typedef const double (*TMatrix)[3];
@@ -56,17 +64,16 @@ protected:
     int g;
     int b;
 
-    bool frozen;
     bool valid;
 
     bool needRed;
     bool needGreen;
     bool needBlue;
     bool needLuma;
+    bool needChroma;
     bool rawMode;
     bool showMode;
     bool barDisplayed;
-    bool needChroma;
 
     Gtk::Grid* parent;
 
@@ -74,11 +81,9 @@ protected:
 
 public:
     HistogramRGBArea();
-    ~HistogramRGBArea();
+    ~HistogramRGBArea() override;
 
-    void updateBackBuffer (int r, int g, int b, Glib::ustring profile = "", Glib::ustring profileW = "");
-    void updateFreeze (bool f);
-    bool getFreeze ();
+    void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
     bool getShow ();
     void setParent (Gtk::Grid* p)
     {
@@ -86,69 +91,88 @@ public:
     };
 
     void update (int val, int rh, int gh, int bh);
-    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show, bool c);
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, bool show);
 
-    void on_realize();
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool on_button_press_event (GdkEventButton* event);
+    void on_realize() override;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_button_press_event (GdkEventButton* event) override;
+    void factorChanged (double newFactor);
+
 private:
-    void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int h, int &minimum_width, int &natural_width) const;
-    // Some ...
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int h, int &minimum_width, int &natural_width) const override;
+
 };
 
-
-class FullModeListener
+class DrawModeListener
 {
 public:
-    virtual ~FullModeListener() {}
-    virtual void toggle_button_full () {}
+    virtual ~DrawModeListener() = default;
+    virtual void toggleButtonMode() = 0;
 };
 
-class HistogramArea : public Gtk::DrawingArea, public BackBuffer
+class HistogramArea : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling
 {
+public:
+    typedef sigc::signal<void, double> type_signal_factor_changed;
+
 private:
     IdleRegister idle_register;
+    type_signal_factor_changed sigFactorChanged;
 
 protected:
-    LUTu lhist, rhist, ghist, bhist, chist;
-    LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
+    LUTu rhist, ghist, bhist, lhist, chist;
+    LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
 
     bool valid;
-    bool fullMode;
-    FullModeListener *myFullModeListener;
+    int drawMode;
+    DrawModeListener *myDrawModeListener;
     int oldwidth, oldheight;
 
-    bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
+    bool needRed, needGreen, needBlue, needLuma, needChroma;
+    bool rawMode;
+    bool isPressed;
+    double movingPosition;
 
     HistogramAreaIdleHelper* haih;
 
 public:
-    explicit HistogramArea(FullModeListener *fml = nullptr);
-    ~HistogramArea();
+    explicit HistogramArea(DrawModeListener *fml = nullptr);
+    ~HistogramArea() override;
 
     void updateBackBuffer ();
-    void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma);
-    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full , bool c);
-    void on_realize();
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
-    bool on_button_press_event (GdkEventButton* event);
+    void update(
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histChroma,
+        const LUTu& histRedRaw,
+        const LUTu& histGreenRaw,
+        const LUTu& histBlueRaw
+    );
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode);
+    void on_realize() override;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    bool on_button_press_event (GdkEventButton* event) override;
+    bool on_button_release_event (GdkEventButton* event) override;
+    bool on_motion_notify_event (GdkEventMotion* event) override;
+    type_signal_factor_changed signal_factor_changed();
 
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, LUTu & data, double scale, int hsize, int & ui, int & oi);
-    Gtk::SizeRequestMode get_request_mode_vfunc () const;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 };
 
-class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public FullModeListener
+class HistogramPanel : public Gtk::Grid, public PointerMotionListener, public DrawModeListener
 {
 
 protected:
@@ -162,16 +186,15 @@ protected:
     Gtk::ToggleButton* showBlue;
     Gtk::ToggleButton* showValue;
     Gtk::ToggleButton* showRAW;
-    Gtk::ToggleButton* showFull;
     Gtk::ToggleButton* showBAR;
     Gtk::ToggleButton* showChro;
+    Gtk::Button* showMode;
 
     Gtk::Image *redImage;
     Gtk::Image *greenImage;
     Gtk::Image *blueImage;
     Gtk::Image *valueImage;
     Gtk::Image *rawImage;
-    Gtk::Image *fullImage;
     Gtk::Image *barImage;
     Gtk::Image *chroImage;
 
@@ -180,10 +203,12 @@ protected:
     Gtk::Image *blueImage_g;
     Gtk::Image *valueImage_g;
     Gtk::Image *rawImage_g;
-    Gtk::Image *fullImage_g;
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
 
+    Gtk::Image *mode0Image;
+    Gtk::Image *mode1Image;
+    Gtk::Image *mode2Image;
 
     sigc::connection rconn;
     void setHistInvalid ();
@@ -191,16 +216,23 @@ protected:
 public:
 
     HistogramPanel ();
-    ~HistogramPanel ();
+    ~HistogramPanel () override;
 
-    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma)
+    void histogramChanged(
+        const LUTu& histRed,
+        const LUTu& histGreen,
+        const LUTu& histBlue,
+        const LUTu& histLuma,
+        const LUTu& histChroma,
+        const LUTu& histRedRaw,
+        const LUTu& histGreenRaw,
+        const LUTu& histBlueRaw)
     {
-        histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
+        histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b);
-    // added pointermotionlistener interface
-    void toggleFreeze();
+    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;
+
     // TODO should be protected
     void setHistRGBInvalid ();
 
@@ -210,14 +242,14 @@ public:
     void blue_toggled ();
     void value_toggled ();
     void raw_toggled ();
-    void full_toggled ();
     void chro_toggled ();
     void bar_toggled ();
+    void mode_released ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 
-    // fullModeListener interface
-    void toggle_button_full ();
+    // drawModeListener interface
+    void toggleButtonMode () override;
 };
 
 #endif

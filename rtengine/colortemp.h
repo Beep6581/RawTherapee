@@ -96,8 +96,6 @@ public:
     static void temp2mulxyz (double tem, const std::string &method, double &Xxyz, double &Zxyz);
 
     static void cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, double &CAM02BB01, double &CAM02BB02, double &CAM02BB10, double &CAM02BB11, double &CAM02BB12, double &CAM02BB20, double &CAM02BB21, double &CAM02BB22, double adap );
-    //static    void CAT02 (Imagefloat* baseImg, const ProcParams* params);
-    //static void ciecam_02 (LabImage* lab, const ProcParams* params);
 
     bool operator== (const ColorTemp& other) const
     {

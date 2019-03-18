@@ -21,6 +21,8 @@
 #include "imagearea.h"
 #include "cursormanager.h"
 
+#include "../rtengine/procparams.h"
+
 PreviewWindow::PreviewWindow () : previewHandler(nullptr), mainCropWin(nullptr), imageArea(nullptr), imgX(0), imgY(0), imgW(0), imgH(0),
     zoom(0.0), press_x(0), press_y(0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
 
@@ -34,7 +36,7 @@ void PreviewWindow::on_realize ()
 {
 
     Gtk::DrawingArea::on_realize ();
-    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
 void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h)
@@ -194,22 +196,23 @@ void PreviewWindow::setImageArea (ImageArea* ia)
     }
 }
 
-void PreviewWindow::cropPositionChanged (CropWindow* w)
+void PreviewWindow::cropPositionChanged(CropWindow* w)
 {
-
     queue_draw ();
 }
 
-void PreviewWindow::cropWindowSizeChanged (CropWindow* w)
+void PreviewWindow::cropWindowSizeChanged(CropWindow* w)
 {
-
     queue_draw ();
 }
 
-void PreviewWindow::cropZoomChanged (CropWindow* w)
+void PreviewWindow::cropZoomChanged(CropWindow* w)
 {
-
     queue_draw ();
+}
+
+void PreviewWindow::initialImageArrived()
+{
 }
 
 bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
@@ -230,8 +233,9 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
             mainCropWin->remoteMove ((event->x - press_x) / zoom, (event->y - press_y) / zoom);
             press_x = event->x;
             press_y = event->y;
+            newType = CSHandClosed;
         } else if (inside) {
-            newType = CSClosedHand;
+            newType = CSHandOpen;
         } else {
             newType = CSArrow;
         }
@@ -262,8 +266,8 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event)
             press_x = event->x;
             press_y = event->y;
 
-            if (cursor_type != CSClosedHand) {
-                cursor_type = CSClosedHand;
+            if (cursor_type != CSHandClosed) {
+                cursor_type = CSHandClosed;
                 CursorManager::setWidgetCursor(get_window(), cursor_type);
             }
         }

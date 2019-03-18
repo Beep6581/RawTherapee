@@ -34,6 +34,13 @@
  * To delete a point, move your mouse over any of its geometry press the middle or right mouse button
  * (the point will be deleted on button release).
  */
+
+namespace rtengine {
+namespace procparams {
+    class SpotEntry;
+}
+}
+
 class Spot : public ToolParamBlock, public FoldableToolPanel, public EditSubscriber
 {
 

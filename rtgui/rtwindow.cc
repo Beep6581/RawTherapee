@@ -21,6 +21,7 @@
 #include "rtwindow.h"
 #include "options.h"
 #include "preferences.h"
+#include "iccprofilecreator.h"
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
@@ -93,14 +94,20 @@ RTWindow::RTWindow ()
     WhiteBalance::init();
     ProfilePanel::init (this);
 
-    Glib::ustring fName = "rt-logo-small.png";
-    Glib::ustring fullPath = rtengine::findIconAbsolutePath (fName);
-
+#ifndef WIN32
+    const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
+        RTImage::createFromFile("rawtherapee-logo-16.png"),
+        RTImage::createFromFile("rawtherapee-logo-24.png"),
+        RTImage::createFromFile("rawtherapee-logo-48.png"),
+        RTImage::createFromFile("rawtherapee-logo-128.png"),
+        RTImage::createFromFile("rawtherapee-logo-256.png")
+    };
     try {
-        set_default_icon_from_file (fullPath);
+        set_default_icon_list(appIcons);
     } catch (Glib::Exception& ex) {
         printf ("%s\n", ex.what().c_str());
     }
+#endif
 
 #if defined(__APPLE__)
     {
@@ -185,10 +192,10 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             mainNB->set_tab_pos (Gtk::POS_LEFT);
             fpl->set_angle (90);
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_TOP, 1, 1);
+            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_TOP, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_RIGHT, 1, 1);
+            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_RIGHT, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_RIGHT, 1, 1);
         }
 
@@ -220,20 +227,29 @@ RTWindow::RTWindow ()
         //mainBox->pack_start (*mainNB);
 
         // filling bottom box
-        iFullscreen = new RTImage ("fullscreen.png");
-        iFullscreen_exit = new RTImage ("fullscreen-exit.png");
+        iFullscreen = new RTImage ("fullscreen-enter.png");
+        iFullscreen_exit = new RTImage ("fullscreen-leave.png");
+
+        Gtk::Button* iccProfileCreator = Gtk::manage (new Gtk::Button ());
+        setExpandAlignProperties (iccProfileCreator, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        iccProfileCreator->set_relief(Gtk::RELIEF_NONE);
+        iccProfileCreator->set_image (*Gtk::manage (new RTImage ("gamut-plus.png")));
+        iccProfileCreator->set_tooltip_markup (M ("MAIN_BUTTON_ICCPROFCREATOR"));
+        iccProfileCreator->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showICCProfileCreator) );
 
         //Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));   // unused... but fail to be linked anyway !?
         //Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (preferences, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-        preferences->set_image (*Gtk::manage (new RTImage ("gtk-preferences.png")));
+        preferences->set_relief(Gtk::RELIEF_NONE);
+        preferences->set_image (*Gtk::manage (new RTImage ("preferences.png")));
         preferences->set_tooltip_markup (M ("MAIN_BUTTON_PREFERENCES"));
         preferences->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showPreferences) );
 
         //btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
         btn_fullscreen = Gtk::manage ( new Gtk::Button());
         setExpandAlignProperties (btn_fullscreen, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        btn_fullscreen->set_relief(Gtk::RELIEF_NONE);
         btn_fullscreen->set_tooltip_markup (M ("MAIN_BUTTON_FULLSCREEN"));
         btn_fullscreen->set_image (*iFullscreen);
         btn_fullscreen->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::toggle_fullscreen) );
@@ -251,6 +267,7 @@ RTWindow::RTWindow ()
             prProgBar.set_inverted (true);
             actionGrid->set_orientation (Gtk::ORIENTATION_VERTICAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_BOTTOM, 1, 1);
+            actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_BOTTOM, 1, 1);
             mainNB->set_action_widget (actionGrid, Gtk::PACK_END);
@@ -258,6 +275,7 @@ RTWindow::RTWindow ()
             prProgBar.set_orientation (Gtk::ORIENTATION_HORIZONTAL);
             actionGrid->set_orientation (Gtk::ORIENTATION_HORIZONTAL);
             actionGrid->attach_next_to (prProgBar, Gtk::POS_RIGHT, 1, 1);
+            actionGrid->attach_next_to (*iccProfileCreator, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*preferences, Gtk::POS_RIGHT, 1, 1);
             actionGrid->attach_next_to (*btn_fullscreen, Gtk::POS_RIGHT, 1, 1);
             mainNB->set_action_widget (actionGrid, Gtk::PACK_END);
@@ -321,6 +339,7 @@ void RTWindow::on_realize ()
         vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
     }
 
+    bool waitForSplash = false;
     if (vMajor.size() == 2 && vMajor[0] != vMajor[1]) {
         // Update the version parameter with the right value
         options.version = versionString;
@@ -330,12 +349,43 @@ void RTWindow::on_realize ()
         splash->signal_delete_event().connect ( sigc::mem_fun (*this, &RTWindow::splashClosed) );
 
         if (splash->hasReleaseNotes()) {
+            waitForSplash = true;
             splash->showReleaseNotes();
             splash->show ();
         } else {
             delete splash;
             splash = nullptr;
         }
+    }
+
+    if (!waitForSplash) {
+        showErrors();
+    }
+}
+
+void RTWindow::showErrors()
+{
+    // alerting users if the default raw and image profiles are missing
+    if (options.is_defProfRawMissing()) {
+        options.defProfRaw = DEFPROFILE_RAW;
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
+    if (options.is_bundledDefProfRawMissing()) {
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+        options.defProfRaw = DEFPROFILE_INTERNAL;
+    }
+
+    if (options.is_defProfImgMissing()) {
+        options.defProfImg = DEFPROFILE_IMG;
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
+    if (options.is_bundledDefProfImgMissing()) {
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+        options.defProfImg = DEFPROFILE_INTERNAL;
     }
 }
 
@@ -403,7 +453,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         // construct closeable tab for the image
         Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
         titleGrid->set_tooltip_markup (name);
-        RTImage *closebimg = Gtk::manage (new RTImage ("gtk-close.png"));
+        RTImage *closebimg = Gtk::manage (new RTImage ("cancel-small.png"));
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
         closeb->set_name ("CloseButton");
         closeb->add (*closebimg);
@@ -411,7 +461,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         closeb->set_focus_on_click (false);
         closeb->signal_clicked().connect ( sigc::bind (sigc::mem_fun (*this, &RTWindow::remEditorPanel), ep));
 
-        titleGrid->attach_next_to (*Gtk::manage (new RTImage ("rtwindow.png")), Gtk::POS_RIGHT, 1, 1);
+        titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to (*closeb, Gtk::POS_RIGHT, 1, 1);
         titleGrid->show_all ();
@@ -580,9 +630,8 @@ void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head)
     fpanel->queue_draw ();
 }
 
-void RTWindow::addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries)
+void RTWindow::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries)
 {
-
     bpanel->addBatchQueueJobs (entries, false);
     fpanel->queue_draw ();
 }
@@ -710,6 +759,23 @@ void RTWindow::writeToolExpandedStatus (std::vector<int> &tpOpen)
 }
 
 
+void RTWindow::showICCProfileCreator ()
+{
+    ICCProfileCreator *iccpc = new ICCProfileCreator (this);
+    iccpc->run ();
+    delete iccpc;
+
+    fpanel->optionsChanged ();
+
+    if (epanel) {
+        epanel->defaultMonitorProfileChanged (options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
+
+    for (const auto &p : epanels) {
+        p.second->defaultMonitorProfileChanged (options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
+}
+
 void RTWindow::showPreferences ()
 {
     Preferences *pref = new Preferences (this);
@@ -727,25 +793,30 @@ void RTWindow::showPreferences ()
     }
 }
 
-void RTWindow::setProgress (double p)
+void RTWindow::setProgress(double p)
 {
-    prProgBar.set_fraction (p);
+    prProgBar.set_fraction(p);
 }
 
-void RTWindow::setProgressStr (Glib::ustring str)
+void RTWindow::setProgressStr(const Glib::ustring& str)
 {
     if (!options.mainNBVertical) {
-        prProgBar.set_text ( str );
+        prProgBar.set_text(str);
     }
 }
 
-void RTWindow::setProgressState (bool inProcessing)
+void RTWindow::setProgressState(bool inProcessing)
 {
     if (inProcessing) {
         prProgBar.show();
     } else {
         prProgBar.hide();
     }
+}
+
+void RTWindow::error(const Glib::ustring& descr)
+{
+    prProgBar.set_text(descr);
 }
 
 void RTWindow::toggle_fullscreen ()
@@ -769,11 +840,6 @@ void RTWindow::toggle_fullscreen ()
             btn_fullscreen->set_image (*iFullscreen_exit);
         }
     }
-}
-
-void RTWindow::error (Glib::ustring descr)
-{
-    prProgBar.set_text ( descr );
 }
 
 void RTWindow::SetEditorCurrent()
@@ -837,19 +903,6 @@ void RTWindow::updateTPVScrollbar (bool hide)
     }
 }
 
-void RTWindow::updateTabsUsesIcons (bool useIcons)
-{
-    fpanel->updateTabsUsesIcons (useIcons);
-
-    if (epanel) {
-        epanel->updateTabsUsesIcons (useIcons);
-    }
-
-    for (auto panel : epanels) {
-        panel.second->updateTabsUsesIcons (useIcons);
-    }
-}
-
 void RTWindow::updateFBQueryTB (bool singleRow)
 {
     fpanel->fileCatalog->updateFBQueryTB (singleRow);
@@ -875,6 +928,7 @@ bool RTWindow::splashClosed (GdkEventAny* event)
 {
     delete splash;
     splash = nullptr;
+    showErrors();
     return true;
 }
 
@@ -945,7 +999,7 @@ void RTWindow::createSetmEditor()
         el->set_angle (90);
     }
 
-    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("rt-logo-small.png")), pos, 1, 1);
+    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("rawtherapee-logo-24.png")), pos, 1, 1);
     editorLabelGrid->attach_next_to (*el, pos, 1, 1);
 
     editorLabelGrid->set_tooltip_markup (M ("MAIN_FRAME_EDITOR_TOOLTIP"));

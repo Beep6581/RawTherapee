@@ -32,6 +32,7 @@ set(RTENGINESOURCEFILES
     EdgePreservingDecomposition.cc
     FTblockDN.cc
     PF_correct_RT.cc
+    ahd_demosaic_RT.cc
     alpha.cc
     amaze_demosaic_RT.cc
     cJSON.c
@@ -53,14 +54,16 @@ set(RTENGINESOURCEFILES
     dfmanager.cc
     diagonalcurves.cc
     dirpyr_equalizer.cc
+    dual_demosaic_RT.cc
     dynamicprofile.cc
-    expo_before_b.cc
+    eahd_demosaic.cc
     fast_demo.cc
     ffmanager.cc
     flatcurves.cc
     gauss.cc
     green_equil_RT.cc
     hilite_recon.cc
+    hphd_demosaic_RT.cc
     iccjpeg.cc
     iccstore.cc
     icons.cc
@@ -106,6 +109,7 @@ set(RTENGINESOURCEFILES
     profilestore.cc
     rawimage.cc
     rawimagesource.cc
+    rcd_demosaic.cc
     refreshmap.cc
     rt_algo.cc
     rtthumbnail.cc
@@ -119,6 +123,16 @@ set(RTENGINESOURCEFILES
     tmo_fattal02.cc
     iplocalcontrast.cc
     histmatching.cc
+    pdaflinesfilter.cc
+    gamutwarning.cc
+    ipshadowshighlights.cc
+    xtrans_demosaic.cc
+    vng4_demosaic_RT.cc
+    ipsoftlight.cc
+    guidedfilter.cc
+    ipdehaze.cc
+    iplabregions.cc
+    lj92.c
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)
@@ -152,7 +166,7 @@ add_dependencies(rtengine UpdateInfo)
 
 # It may be nice to store library version too
 if(BUILD_SHARED_LIBS)
-    install (TARGETS rtengine DESTINATION ${LIBDIR})
+    install(TARGETS rtengine DESTINATION ${LIBDIR})
 endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")

@@ -21,6 +21,7 @@
 #define __CONFIG_H__
 
 #cmakedefine BUILD_BUNDLE
+#cmakedefine HAVE_UNALIGNED_MALLOC
 #define DATA_SEARCH_PATH "${DATADIR}"
 #define DOC_SEARCH_PATH "${DOCDIR}"
 #define CREDITS_SEARCH_PATH "${CREDITSDIR}"

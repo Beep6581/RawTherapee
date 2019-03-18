@@ -19,11 +19,17 @@
 #ifndef __CROPHANDLER__
 #define __CROPHANDLER__
 
+#include <atomic>
+#include <vector>
+#include <memory>
+
+#include <gtkmm.h>
+
 #include "../rtengine/rtengine.h"
-#include "threadutils.h"
+
 #include "edit.h"
 #include "lockablecolorpicker.h"
-#include <gtkmm.h>
+#include "threadutils.h"
 
 class CropDisplayHandler
 {
@@ -46,7 +52,7 @@ class CropHandler final :
 {
 public:
     CropHandler ();
-    ~CropHandler ();
+    ~CropHandler () override;
 
     void    setDisplayHandler (CropDisplayHandler* l)
     {
@@ -81,29 +87,33 @@ public:
     }
 
     // DetailedCropListener interface
-    void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking, rtengine::procparams::ColorManagementParams cmp,
-                             rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
-    bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
+    void setDetailedCrop(
+        rtengine::IImage8* im,
+        rtengine::IImage8* imworking,
+        const rtengine::procparams::ColorManagementParams& cmp,
+        const rtengine::procparams::CropParams& cp,
+        int cx,
+        int cy,
+        int cw,
+        int ch,
+        int skip
+    ) override;
+    void getWindow(int& cwx, int& cwy, int& cww, int& cwh, int& cskip) override;
+
     // SizeListener interface
-    void    sizeChanged  (int w, int h, int ow, int oh);
+    void    sizeChanged  (int w, int h, int ow, int oh) override;
 
     void    update  ();
 
 
-    rtengine::procparams::CropParams cropParams;
-    rtengine::procparams::ColorManagementParams colorParams;
-    Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
-    Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
+    const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
+    const std::unique_ptr<rtengine::procparams::ColorManagementParams> colorParams;
+    Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;     // image displayed on monitor, using the monitor profile (i.e. lab to monitor profile)
+    Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue; // internal image in output color space for analysis (i.e. lab to either Working profile or Output profile, depending on options.rtSettings.HistogramWorking)
 
     MyMutex cimg;
 
 private:
-    struct IdleHelper {
-        CropHandler* cropHandler;
-        bool destroyed;
-        int pending;
-    };
-
     void    compDim ();
 
     int zoom;               // scale factor (e.g. 5 if 1:5 scale) ; if 1:1 scale and bigger, factor is multiplied by 1000  (i.e. 1000 for 1:1 scale, 2000 for 2:1, etc...)
@@ -112,17 +122,18 @@ private:
     int cx, cy, cw, ch;     // position and size of the requested crop ; position expressed in image coordinates, so cx and cy might be negative and cw and ch higher than the image's 1:1 size
     int cropX, cropY, cropW, cropH; // cropPixbuf's displayed area (position and size), i.e. coordinates in 1:1 scale, i.e. cx, cy, cw & ch trimmed to the image's bounds
     bool enabled;
-    unsigned char* cropimg;
-    unsigned char* cropimgtrue;
+    std::vector<unsigned char> cropimg;
+    std::vector<unsigned char> cropimgtrue;
     int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
-    bool initial;
     bool isLowUpdatePriority;
 
     rtengine::StagedImageProcessor* ipc;
     rtengine::DetailedCrop* crop;
 
     CropDisplayHandler* displayHandler;
-    IdleHelper* idle_helper;
+
+    std::atomic<bool> redraw_needed;
+    std::atomic<bool> initial;
 
     IdleRegister idle_register;
 };

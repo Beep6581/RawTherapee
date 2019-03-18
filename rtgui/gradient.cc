@@ -2,7 +2,10 @@
  *  This file is part of RawTherapee.
  */
 #include "gradient.h"
+
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
 using namespace rtengine;
@@ -13,7 +16,8 @@ Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL
 
     editHBox = Gtk::manage (new Gtk::HBox());
     edit = Gtk::manage (new Gtk::ToggleButton());
-    edit->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+    edit->get_style_context()->add_class("independent");
+    edit->add (*Gtk::manage (new RTImage ("crosshair-adjust.png")));
     edit->set_tooltip_text(M("EDIT_OBJECT_TOOLTIP"));
     editConn = edit->signal_toggled().connect( sigc::mem_fun(*this, &Gradient::editToggled) );
     editHBox->pack_start(*edit, Gtk::PACK_SHRINK, 0);
@@ -246,10 +250,9 @@ void Gradient::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
     }
 }
 
-void Gradient::adjusterChanged (Adjuster* a, double newval)
+void Gradient::adjusterChanged(Adjuster* a, double newval)
 {
-
-    updateGeometry (int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
+    updateGeometry(int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
 
     if (listener && getEnabled()) {
 
@@ -263,6 +266,10 @@ void Gradient::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvGradientCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
         }
     }
+}
+
+void Gradient::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void Gradient::enabledChanged ()
@@ -345,7 +352,7 @@ CursorShape Gradient::getCursor(const int objectID)
         return CSMove2D;
 
     default:
-        return CSOpenHand;
+        return CSHandOpen;
     }
 }
 

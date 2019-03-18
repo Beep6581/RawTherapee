@@ -21,6 +21,7 @@
 #include <cstring>
 #include <functional>
 #include "../rtengine/rt_math.h"
+#include "../rtengine/procparams.h"
 
 #include <fstream>
 #include <iomanip>
@@ -53,16 +54,16 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "toleftend.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "goto-start-small.png")), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "torightend.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "goto-end-small.png")), 0, 1, p, p + 1);
     p++;
 
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "gtk-close.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "cancel-small.png")), 0, 1, p, p + 1);
 
     pmenu.show_all ();
 
@@ -86,6 +87,17 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
 
 BatchQueue::~BatchQueue ()
 {
+    std::set<BatchQueueEntry*> removable_bqes;
+
+    mutex_removable_batch_queue_entries.lock();
+    removable_batch_queue_entries.swap(removable_bqes);
+    mutex_removable_batch_queue_entries.unlock();
+
+    for (const auto entry : removable_bqes) {
+        ::g_remove(entry->savedParamsFile.c_str());
+        delete entry;
+    }
+
     idle_register.destroy();
 
     MYWRITERLOCK(l, entryRW);
@@ -186,7 +198,7 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
             // recovery save
             const auto tempFile = getTempFilenameForParams (entry->filename);
 
-            if (!entry->params.save (tempFile))
+            if (!entry->params->save (tempFile))
                 entry->savedParamsFile = tempFile;
 
             entry->selected = false;
@@ -208,7 +220,7 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
         saveBatchQueue ();
 
     redraw ();
-    notifyListener (false);
+    notifyListener ();
 }
 
 bool BatchQueue::saveBatchQueue ()
@@ -228,7 +240,7 @@ bool BatchQueue::saveBatchQueue ()
 
         // The column's header is mandatory (the first line will be skipped when loaded)
         file << "input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
-             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|fast export|<end of line>"
+             << "png bit depth|png compression|tiff bit depth|tiff is float|uncompressed tiff|save output params|force format options|fast export|<end of line>"
              << std::endl;
 
         // method is already running with entryLock, so no need to lock again
@@ -246,7 +258,7 @@ bool BatchQueue::saveBatchQueue ()
 #endif
                  << saveFormat.jpegQuality << '|' << saveFormat.jpegSubSamp << '|'
                  << saveFormat.pngBits << '|'
-                 << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
+                 << saveFormat.tiffBits << '|'  << (saveFormat.tiffFloat ? 1 : 0) << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
                  << entry->fast_pipeline << '|'
                  << std::endl;
@@ -311,6 +323,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto jpegSubSamp = nextIntOr (options.saveFormat.jpegSubSamp);
             const auto pngBits = nextIntOr (options.saveFormat.pngBits);
             const auto tiffBits = nextIntOr (options.saveFormat.tiffBits);
+            const auto tiffFloat = nextIntOr (options.saveFormat.tiffFloat);
             const auto tiffUncompressed = nextIntOr (options.saveFormat.tiffUncompressed);
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
@@ -352,6 +365,7 @@ bool BatchQueue::loadBatchQueue ()
                 saveFormat.jpegSubSamp = jpegSubSamp;
                 saveFormat.pngBits = pngBits;
                 saveFormat.tiffBits = tiffBits;
+                saveFormat.tiffFloat = tiffFloat == 1;
                 saveFormat.tiffUncompressed = tiffUncompressed != 0;
                 saveFormat.saveParams = saveParams != 0;
                 entry->forceFormatOpts = forceFormatOpts != 0;
@@ -364,7 +378,7 @@ bool BatchQueue::loadBatchQueue ()
     }
 
     redraw ();
-    notifyListener (false);
+    notifyListener ();
 
     return !fd.empty ();
 }
@@ -393,6 +407,8 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
 
 void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
+    std::set<BatchQueueEntry*> removable_bqes;
+
     {
         MYWRITERLOCK(l, entryRW);
 
@@ -415,16 +431,7 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            const auto func = [](gpointer data) -> gboolean {
-                const BatchQueueEntry* const bqe = static_cast<BatchQueueEntry*>(data);
-
-                ::g_remove(bqe->savedParamsFile.c_str());
-                delete bqe;
-
-                return FALSE;
-            };
-
-            idle_register.add(func, entry);
+            removable_bqes.insert(entry);
         }
 
         for (const auto entry : fd)
@@ -434,10 +441,34 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
         selected.clear ();
     }
 
+    if (!removable_bqes.empty()) {
+        mutex_removable_batch_queue_entries.lock();
+        removable_batch_queue_entries.insert(removable_bqes.begin(), removable_bqes.end());
+        mutex_removable_batch_queue_entries.unlock();
+
+        idle_register.add(
+            [this]() -> bool
+            {
+                std::set<BatchQueueEntry*> removable_bqes;
+
+                mutex_removable_batch_queue_entries.lock();
+                removable_batch_queue_entries.swap(removable_bqes);
+                mutex_removable_batch_queue_entries.unlock();
+
+                for (const auto entry : removable_bqes) {
+                    ::g_remove(entry->savedParamsFile.c_str());
+                    delete entry;
+                }
+
+                return false;
+            }
+        );
+    }
+
     saveBatchQueue ();
 
     redraw ();
-    notifyListener (false);
+    notifyListener ();
 }
 
 void BatchQueue::headItems (const std::vector<ThumbBrowserEntryBase*>& items)
@@ -574,13 +605,64 @@ void BatchQueue::startProcessing ()
             // start batch processing
             rtengine::startBatchProcessing (next->job, this);
             queue_draw ();
+
+            notifyListener();
         }
     }
 }
 
-rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
+void BatchQueue::setProgress(double p)
 {
+    if (processing) {
+        processing->progress = p;
+    }
 
+    // No need to acquire the GUI, setProgressUI will do it
+    idle_register.add(
+        [this]() -> bool
+        {
+            redraw();
+            return false;
+        }
+    );
+}
+
+void BatchQueue::setProgressStr(const Glib::ustring& str)
+{
+}
+
+void BatchQueue::setProgressState(bool inProcessing)
+{
+}
+
+void BatchQueue::error(const Glib::ustring& descr)
+{
+    if (processing && processing->processing) {
+        // restore failed thumb
+        BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (processing);
+        bqbs->setButtonListener (this);
+        processing->addButtonSet (bqbs);
+        processing->processing = false;
+        processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, *processing->params);
+        processing = nullptr;
+        redraw ();
+    }
+
+    if (listener) {
+        BatchQueueListener* const bql = listener;
+
+        idle_register.add(
+            [bql, descr]() -> bool
+            {
+                bql->queueSizeChanged(0, false, true, descr);
+                return false;
+            }
+        );
+    }
+}
+
+rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
+{
     // save image img
     Glib::ustring fname;
     SaveFormat saveFormat;
@@ -608,7 +690,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
         int err = 0;
 
         if (saveFormat.format == "tif") {
-            err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffUncompressed);
+            err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffFloat, saveFormat.tiffUncompressed);
         } else if (saveFormat.format == "png") {
             err = img->saveAsPNG (fname, saveFormat.pngBits);
         } else if (saveFormat.format == "jpg") {
@@ -625,7 +707,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
             // We keep the extension to avoid overwriting the profile when we have
             // the same output filename with different extension
             //processing->params.save (removeExtension(fname) + paramFileExtension);
-            processing->params.save (fname + ".out" + paramFileExtension);
+            processing->params->save (fname + ".out" + paramFileExtension);
         }
 
         if (processing->thumbnail) {
@@ -638,7 +720,6 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
     Glib::ustring processedParams = processing->savedParamsFile;
 
     // delete from the queue
-    bool queueEmptied = false;
     bool remove_button_set = false;
 
     {
@@ -650,9 +731,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
         fd.erase (fd.begin());
 
         // return next job
-        if (fd.empty()) {
-            queueEmptied = true;
-        } else if (listener && listener->canStartNext ()) {
+        if (!fd.empty() && listener && listener->canStartNext ()) {
             BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as selected and set sequence
             next->processing = true;
@@ -710,7 +789,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImagefloat* img)
     }
 
     redraw ();
-    notifyListener (queueEmptied);
+    notifyListener ();
 
     return processing ? processing->job : nullptr;
 }
@@ -890,27 +969,9 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     return "";
 }
 
-void BatchQueue::setProgress (double p)
-{
-
-    if (processing) {
-        processing->progress = p;
-    }
-
-    // No need to acquire the GUI, setProgressUI will do it
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<BatchQueue*>(data)->redraw();
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
-
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData)
 {
-
-    std::vector<ThumbBrowserEntryBase*> bqe;
-    bqe.push_back (static_cast<BatchQueueEntry*>(actionData));
+    const std::vector<ThumbBrowserEntryBase*> bqe = {static_cast<BatchQueueEntry*>(actionData)};
 
     if (actionCode == 10) { // cancel
         cancelItems (bqe);
@@ -921,35 +982,25 @@ void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionDa
     }
 }
 
-struct NLParams {
-    BatchQueueListener* listener;
-    int qsize;
-    bool queueEmptied;
-    bool queueError;
-    Glib::ustring queueErrorMessage;
-};
-
-int bqnotifylistenerUI (void* data)
+void BatchQueue::notifyListener ()
 {
-    NLParams* params = static_cast<NLParams*>(data);
-    params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
-    delete params;
-    return 0;
-}
-
-void BatchQueue::notifyListener (bool queueEmptied)
-{
-
+    const bool queueRunning = processing;
     if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
+        BatchQueueListener* const bql = listener;
+
+        int qsize = 0;
         {
             MYREADERLOCK(l, entryRW);
-            params->qsize = fd.size();
+            qsize = fd.size();
         }
-        params->queueEmptied = queueEmptied;
-        params->queueError = false;
-        idle_register.add(bqnotifylistenerUI, params);
+
+        idle_register.add(
+            [bql, qsize, queueRunning]() -> bool
+            {
+                bql->queueSizeChanged(qsize, queueRunning, false, {});
+                return false;
+            }
+        );
     }
 }
 
@@ -957,28 +1008,4 @@ void BatchQueue::redrawNeeded (LWButton* button)
 {
     GThreadLock lock;
     queue_draw ();
-}
-
-void BatchQueue::error (Glib::ustring msg)
-{
-
-    if (processing && processing->processing) {
-        // restore failed thumb
-        BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (processing);
-        bqbs->setButtonListener (this);
-        processing->addButtonSet (bqbs);
-        processing->processing = false;
-        processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, processing->params);
-        processing = nullptr;
-        redraw ();
-    }
-
-    if (listener) {
-        NLParams* params = new NLParams;
-        params->listener = listener;
-        params->queueEmptied = false;
-        params->queueError = true;
-        params->queueErrorMessage = msg;
-        idle_register.add(bqnotifylistenerUI, params);
-    }
 }

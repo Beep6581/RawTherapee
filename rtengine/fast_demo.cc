@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
 //
-//      Fast demosaicing algorythm
+//      Fast demosaicing algorithm
 //
 //      copyright (c) 2008-2010  Emil Martinec <ejmartin@uchicago.edu>
 //
@@ -52,7 +52,7 @@ LUTf RawImageSource::initInvGrad()
 #endif
 //LUTf RawImageSource::invGrad = RawImageSource::initInvGrad();
 
-SSEFUNCTION void RawImageSource::fast_demosaic()
+void RawImageSource::fast_demosaic()
 {
 
     double progress = 0.0;
@@ -77,10 +77,10 @@ SSEFUNCTION void RawImageSource::fast_demosaic()
 #endif
     {
 
-        char (*buffer);
-        float (*greentile);
-        float (*redtile);
-        float (*bluetile);
+        char *buffer;
+        float *greentile;
+        float *redtile;
+        float *bluetile;
 #define CLF 1
         // assign working space
         buffer = (char *) calloc(3 * sizeof(float) * TS * TS + 3 * CLF * 64 + 63, 1);
@@ -364,7 +364,7 @@ SSEFUNCTION void RawImageSource::fast_demosaic()
                         for (int j = left + 1, cc = 1; j < right - 1; j += 4, cc += 4) {
                             //interpolate B/R colors at R/B sites
                             _mm_storeu_ps(&bluetile[rr * TS + cc], LVFU(greentile[rr * TS + cc]) - zd25v * ((LVFU(greentile[(rr - 1)*TS + (cc - 1)]) + LVFU(greentile[(rr - 1)*TS + (cc + 1)]) + LVFU(greentile[(rr + 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc - 1])) -
-                                          _mm_min_ps(clip_ptv, LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]))));
+                                          vminf(LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]), clip_ptv)));
                         }
 
 #else
@@ -381,7 +381,7 @@ SSEFUNCTION void RawImageSource::fast_demosaic()
                         for (int j = left + 1, cc = 1; j < right - 1; j += 4, cc += 4) {
                             //interpolate B/R colors at R/B sites
                             _mm_storeu_ps(&redtile[rr * TS + cc], LVFU(greentile[rr * TS + cc]) - zd25v * ((LVFU(greentile[(rr - 1)*TS + cc - 1]) + LVFU(greentile[(rr - 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc - 1])) -
-                                          _mm_min_ps(clip_ptv, LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]))));
+                                          vminf(LVFU(rawData[i - 1][j - 1]) + LVFU(rawData[i - 1][j + 1]) + LVFU(rawData[i + 1][j + 1]) + LVFU(rawData[i + 1][j - 1]), clip_ptv)));
                         }
 
 #else

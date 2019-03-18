@@ -19,7 +19,9 @@
 #ifndef _THUMBNAIL_
 #define _THUMBNAIL_
 
+#include <memory>
 #include <string>
+
 #include <glibmm.h>
 #include "cachemanager.h"
 #include "options.h"
@@ -30,6 +32,8 @@
 #include "threadutils.h"
 
 class CacheManager;
+struct ParamsEdited;
+
 class Thumbnail
 {
 
@@ -47,9 +51,8 @@ class Thumbnail
     float           imgRatio;           // hack to avoid rounding error
 //        double          scale;            // portion of the sizes of the processed thumbnail image and the full scale image
 
-    rtengine::procparams::ProcParams      pparams;
+    const std::unique_ptr<rtengine::procparams::ProcParams>      pparams;
     bool            pparamsValid;
-    bool            needsReProcessing;
     bool            imageLoading;
 
     // these are the data of the result image of the last getthumbnailimage  call (for caching purposes)
@@ -81,44 +84,45 @@ public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
     ~Thumbnail ();
 
-    bool              hasProcParams ();
+    bool              hasProcParams () const;
     const rtengine::procparams::ProcParams& getProcParams ();
     const rtengine::procparams::ProcParams& getProcParamsU ();  // Unprotected version
 
     // Use this to create params on demand for update ; if flaggingMode=true, the procparams is created for a file being flagged (inTrash, rank, colorLabel)
     rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool force, bool flaggingMode = false);
 
-    void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe = nullptr, int whoChangedIt = -1, bool updateCacheNow = true);
+    void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe = nullptr, int whoChangedIt = -1, bool updateCacheNow = true, bool resetToDefault = false);
     void              clearProcParams (int whoClearedIt = -1);
     void              loadProcParams ();
 
     void              notifylisterners_procParamsChanged(int whoChangedIt);
 
-    bool              isQuick()
+    bool              isQuick() const
     {
         return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL;
     }
-    bool              isPParamsValid()
+    bool              isPParamsValid() const
     {
         return pparamsValid;
     }
-    bool              isRecentlySaved ();
+    bool              isRecentlySaved () const;
     void              imageDeveloped ();
     void              imageEnqueued ();
     void              imageRemovedFromQueue ();
-    bool              isEnqueued ();
-    bool              isPixelShift ();
-    bool              isHDR ();
+    bool              isEnqueued () const;
+    bool              isPixelShift () const;
+    bool              isHDR () const;
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
     rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
     rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
     void            getThumbnailSize        (int &w, int &h, const rtengine::procparams::ProcParams *pparams = nullptr);
     void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
+    void            getOriginalSize         (int& w, int& h);
 
-    const Glib::ustring&  getExifString ();
-    const Glib::ustring&  getDateTimeString ();
-    void                  getCamWB  (double& temp, double& green)
+    const Glib::ustring&  getExifString () const;
+    const Glib::ustring&  getDateTimeString () const;
+    void                  getCamWB  (double& temp, double& green) const
     {
         if (tpp) {
             tpp->getCamWB  (temp, green);
@@ -143,7 +147,7 @@ public:
     }
 
     ThFileType      getType ();
-    Glib::ustring   getFileName ()
+    Glib::ustring   getFileName () const
     {
         return fname;
     }
@@ -155,46 +159,19 @@ public:
     {
         return &cfs;
     }
-    std::string     getMD5   ()
+    std::string     getMD5   () const
     {
         return cfs.md5;
     }
 
-    int             getRank  ()
-    {
-        return pparams.rank;
-    }
-    void            setRank  (int rank)
-    {
-        if (pparams.rank != rank) {
-            pparams.rank = rank;
-            pparamsValid = true;
-        }
-    }
+    int             getRank  () const;
+    void            setRank  (int rank);
 
-    int             getColorLabel  ()
-    {
-        return pparams.colorlabel;
-    }
-    void            setColorLabel  (int colorlabel)
-    {
-        if (pparams.colorlabel != colorlabel) {
-            pparams.colorlabel = colorlabel;
-            pparamsValid = true;
-        }
-    }
+    int             getColorLabel  () const;
+    void            setColorLabel  (int colorlabel);
 
-    int             getStage ()
-    {
-        return pparams.inTrash;
-    }
-    void            setStage (bool stage)
-    {
-        if (pparams.inTrash != stage) {
-            pparams.inTrash = stage;
-            pparamsValid = true;
-        }
-    }
+    int             getStage () const;
+    void            setStage (bool stage);
 
     void            addThumbnailListener (ThumbnailListener* tnl);
     void            removeThumbnailListener (ThumbnailListener* tnl);

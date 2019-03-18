@@ -16,9 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "distortion.h"
 #include <iomanip>
+
+#include "distortion.h"
+
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -28,18 +32,22 @@ Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTIO
 
     rlistener = nullptr;
     autoDistor = Gtk::manage (new Gtk::Button (M("GENERAL_AUTO")));
-    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto.png")));
+    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto-small.png")));
+    autoDistor->get_style_context()->add_class("independent");
     autoDistor->set_alignment(0.5f, 0.5f);
     autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TIP"));
     idConn = autoDistor->signal_pressed().connect( sigc::mem_fun(*this, &Distortion::idPressed) );
     autoDistor->show();
     pack_start (*autoDistor);
 
-    Gtk::Image* idistL =   Gtk::manage (new RTImage ("distortion-pincushion.png"));
-    Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel.png"));
+    Gtk::Image* idistL =   Gtk::manage (new RTImage ("distortion-pincushion-small.png"));
+    Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel-small.png"));
 
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0, idistL, idistR));
     distor->setAdjusterListener (this);
+
+    distor->setLogScale(2, 0);
+    
     distor->show();
     pack_start (*distor);
 }
@@ -80,12 +88,15 @@ void Distortion::setDefaults (const ProcParams* defParams, const ParamsEdited* p
     }
 }
 
-void Distortion::adjusterChanged (Adjuster* a, double newval)
+void Distortion::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener) {
         listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
     }
+}
+
+void Distortion::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void Distortion::setBatchMode (bool batchMode)

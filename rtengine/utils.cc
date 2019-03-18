@@ -265,3 +265,21 @@ void swab(const void* from, void* to, ssize_t n)
 }
 
 }
+
+#if __SIZEOF_WCHAR_T__ == 4
+Glib::ustring utf32_to_utf8(wchar_t* UTF32Buffer, size_t sizeOfUTF32Buffer)
+{
+    char *buffer2 = new char[sizeOfUTF32Buffer];
+    char *pBuffer2 = buffer2;
+    gchar a[6];
+    for (size_t i=0; i < sizeOfUTF32Buffer/4; ++i) {
+        gint bytesWritten = g_unichar_to_utf8((gunichar)UTF32Buffer[i], a);
+        for (gint j=0; j < bytesWritten; ++j) {
+            *(pBuffer2++) = a[j];
+        }
+    }
+    Glib::ustring modelDesc(buffer2);
+    delete [] buffer2;
+    return modelDesc;
+}
+#endif

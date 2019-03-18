@@ -19,6 +19,7 @@
 #ifndef __GUI_UTILS_
 #define __GUI_UTILS_
 
+#include <functional>
 #include <map>
 
 #include <gtkmm.h>
@@ -50,14 +51,13 @@ class IdleRegister final :
 public:
     ~IdleRegister();
 
-    void add(GSourceFunc function, gpointer data, gint priority = G_PRIORITY_DEFAULT_IDLE);
+    void add(std::function<bool ()> function, gint priority = G_PRIORITY_DEFAULT_IDLE);
     void destroy();
 
 private:
     struct DataWrapper {
         IdleRegister* const self;
-        GSourceFunc function;
-        gpointer data;
+        std::function<bool ()> function;
     };
 
     std::map<const DataWrapper*, guint> ids;
@@ -149,7 +149,7 @@ private:
 
 public:
     explicit ExpanderBox( Gtk::Container *p);
-    ~ExpanderBox( )
+    ~ExpanderBox( ) override
     {
         delete pC;
     }
@@ -193,6 +193,8 @@ private:
     bool flushEvent;            /// Flag to control the weird event mechanism of Gtk (please prove me wrong!)
     ExpanderBox* expBox;        /// Frame that includes the child and control its visibility
     Gtk::EventBox *imageEvBox;  /// Enable/Disable or Open/Close arrow event box
+
+    using Gtk::Container::add;
 
     /// Triggered on opened/closed event
     bool on_toggle(GdkEventButton* event);
@@ -285,12 +287,25 @@ public:
 class MyScrolledWindow : public Gtk::ScrolledWindow
 {
 
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
 
 public:
     MyScrolledWindow();
+};
+
+/**
+ * @brief subclass of Gtk::ScrolledWindow in order to handle the large toolbars (wider than available space)
+ */
+class MyScrolledToolbar : public Gtk::ScrolledWindow
+{
+
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_height (int &minimumHeight, int &naturalHeight);
+
+public:
+    MyScrolledToolbar();
 };
 
 /**
@@ -300,9 +315,9 @@ class MyComboBox : public Gtk::ComboBox
 {
     int naturalWidth, minimumWidth;
 
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 public:
     MyComboBox ();
@@ -318,9 +333,9 @@ class MyComboBoxText : public Gtk::ComboBoxText
     int naturalWidth, minimumWidth;
     sigc::connection myConnection;
 
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 public:
     explicit MyComboBoxText (bool has_entry = false);
@@ -337,8 +352,8 @@ class MySpinButton : public Gtk::SpinButton
 {
 
 protected:
-    bool on_scroll_event (GdkEventScroll* event);
-    bool on_key_press_event (GdkEventKey* event);
+    bool on_scroll_event (GdkEventScroll* event) override;
+    bool on_key_press_event (GdkEventKey* event) override;
 
 public:
     MySpinButton ();
@@ -351,8 +366,8 @@ public:
 class MyHScale : public Gtk::HScale
 {
 
-    bool on_scroll_event (GdkEventScroll* event);
-    bool on_key_press_event (GdkEventKey* event);
+    bool on_scroll_event (GdkEventScroll* event) override;
+    bool on_key_press_event (GdkEventKey* event) override;
 };
 
 /**
@@ -375,9 +390,9 @@ private:
     sigc::signal<void> selection_changed_;
 
 protected:
-    bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
     void set_none();
 
@@ -386,7 +401,7 @@ public:
 
     sigc::signal<void> &signal_selection_changed();
     sigc::signal<void> &signal_file_set();
-    
+
     std::string get_filename() const;
     bool set_filename(const std::string &filename);
 
@@ -394,7 +409,7 @@ public:
     void remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters();
-    
+
     bool set_current_folder(const std::string &filename);
     std::string get_current_folder() const;
 
@@ -437,11 +452,6 @@ typedef enum RTOrientation {
     RTO_Top2Bottom
 } eRTOrientation;
 
-enum TOITypes {
-    TOI_TEXT,
-    TOI_ICON
-};
-
 typedef enum RTNav {
     NAV_NONE,
     NAV_NEXT,
@@ -454,18 +464,8 @@ typedef enum RTNav {
 class TextOrIcon : public Gtk::HBox
 {
 
-protected:
-    Gtk::Image* imgIcon;
-    Gtk::Label* label;
-    Glib::ustring filename;
-    Glib::ustring labelText;
-    Glib::ustring tooltipText;
-
 public:
-    TextOrIcon (Glib::ustring filename, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type);
-    ~TextOrIcon ();
-
-    void switchTo(TOITypes type);
+    TextOrIcon (const Glib::ustring &filename, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx);
 };
 
 class MyImageMenuItem : public Gtk::MenuItem
@@ -486,8 +486,8 @@ class MyProgressBar : public Gtk::ProgressBar
 private:
     int w;
 
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
 
 public:
     explicit MyProgressBar(int width);

@@ -20,7 +20,6 @@
 #define _THUMBPROCESSINGPARAMETERS_
 
 #include "rawmetadatalocation.h"
-#include "procparams.h"
 #include <glibmm.h>
 #include <lcms2.h>
 #include "image8.h"
@@ -50,6 +49,13 @@ class Thumbnail
     double autoWBTemp, autoWBGreen, wbEqual, wbTempBias;    // autoWBTemp and autoWBGreen are updated each time autoWB is requested and if wbEqual has been modified
     LUTu aeHistogram;
     int  aeHistCompression;
+    bool aeValid;
+    double aeExposureCompensation;
+    int aeLightness;
+    int aeContrast;
+    int aeBlack;
+    int aeHighlightCompression;
+    int aeHighlightCompressionThreshold;
     int embProfileLength;
     unsigned char* embProfileData;
     cmsHPROFILE embProfile;
@@ -71,13 +77,13 @@ public:
 
     void init ();
 
-    IImage8* processImage   (const procparams::ProcParams& pparams, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& scale, bool forMonitor=true);
+    IImage8* processImage   (const procparams::ProcParams& pparams, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& scale, bool forMonitor=true, bool forHistogramMatching = false);
     IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp);
     int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
     void     getDimensions  (int& w, int& h, double& scaleFac);
 
-    static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false);
-    static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate);
+    static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false, bool forHistogramMatching = false);
+    static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching = false);
     static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode = false);
     static RawMetaDataLocation loadMetaDataFromRaw (const Glib::ustring& fname);
 
@@ -100,6 +106,7 @@ public:
     bool readAEHistogram  (const Glib::ustring& fname);
     bool writeAEHistogram (const Glib::ustring& fname);
 
+    bool isAeValid() { return aeValid; };
     unsigned char* getImage8Data();  // accessor to the 8bit image if it is one, which should be the case for the "Inspector" mode.
 
     // Hombre: ... let's hope that proper template can make this cleaner
@@ -148,7 +155,7 @@ public:
         }
 
         return imgPtr;
-    };
+    }
 };
 }
 

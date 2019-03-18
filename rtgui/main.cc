@@ -100,7 +100,7 @@ static void myGdkLockEnter()
 }
 static void myGdkLockLeave()
 {
-    // Automatic gdk_flush for non main tread
+    // Automatic gdk_flush for non main thread
 #if AUTO_GDK_FLUSH
     //if (Glib::Thread::self() != mainThread) {
     //    gdk_flush();
@@ -121,6 +121,7 @@ static void myGdkLockLeave()
  *  -3 if at least one required procparam file was not found */
 int processLineParams ( int argc, char **argv )
 {
+    int ret = 1;
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
         if ( currParam.empty() ) {
@@ -130,7 +131,7 @@ int processLineParams ( int argc, char **argv )
         currParam = currParam.substr (1, currParam.length() - 2);
 #endif
 
-        if ( currParam.at (0) == '-' ) {
+        if ( currParam.at (0) == '-' && currParam.size() > 1 ) {
             switch ( currParam.at (1) ) {
 #ifdef WIN32
 
@@ -139,8 +140,9 @@ int processLineParams ( int argc, char **argv )
 #endif
 
                 case 'v':
-                    std::cout << "Using lensfun " << LF_VERSION_MAJOR << "." << LF_VERSION_MINOR << "." << LF_VERSION_MICRO << "." << LF_VERSION_BUGFIX << std::endl;
-                    return 0;
+                    printf("RawTherapee, version %s\n", RTVERSION);
+                    ret = 0;
+                    break;
 
 #ifndef __APPLE__ // TODO agriggio - there seems to be already some "single instance app" support for OSX in rtwindow. Disabling it here until I understand how to merge the two
 
@@ -165,34 +167,29 @@ int processLineParams ( int argc, char **argv )
                 case 'h':
                 case '?':
                 default: {
-                    Glib::ustring pparamsExt = paramFileExtension.substr (1);
-                    std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
+                    printf("  An advanced, cross-platform program for developing raw photos.\n\n");
+                    printf("  Website: http://www.rawtherapee.com/\n");
+                    printf("  Documentation: http://rawpedia.rawtherapee.com/\n");
+                    printf("  Forum: https://discuss.pixls.us/c/software/rawtherapee\n");
+                    printf("  Code and bug reports: https://github.com/Beep6581/RawTherapee\n\n");
+                    printf("Symbols:\n");
+                    printf("  <Chevrons> indicate parameters you can change.\n\n");
+                    printf("Usage:\n");
+                    printf("  %s <folder>           Start File Browser inside folder.\n",Glib::path_get_basename (argv[0]).c_str());
+                    printf("  %s <file>             Start Image Editor with file.\n\n",Glib::path_get_basename (argv[0]).c_str());
                     std::cout << std::endl;
-                    std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
-                    std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
-                    std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
-                    std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
-                    std::cout << std::endl;
-                    std::cout << "Symbols:" << std::endl;
-                    std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
-                    //std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
-                    //std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
-                    //std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
-                    std::cout << std::endl;
-                    std::cout << "Usage:" << std::endl;
-                    std::cout << "  " << Glib::path_get_basename (argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
-                    std::cout << "  " << Glib::path_get_basename (argv[0]) << " <file>             Start Image Editor with file." << std::endl;
-                    std::cout << std::endl;
-                    std::cout << "Options:" << std::endl;
+                    printf("Options:\n");
 #ifdef WIN32
-                    std::cout << "  -w Do not open the Windows console" << std::endl;
+                    printf("  -w Do not open the Windows console\n");
 #endif
-                    std::cout << "  -v Print RawTherapee version number and exit" << std::endl;
+                    printf("  -v Print RawTherapee version number and exit\n");
 #ifndef __APPLE__
-                    std::cout << "  -R Raise an already running RawTherapee instance (if available)" << std::endl;
+                    printf("  -R Raise an already running RawTherapee instance (if available)\n");
 #endif
-                    std::cout << "  -h -? Display this help message" << std::endl;
-                    return -1;
+                    printf("  -h -? Display this help message\n");
+
+                    ret = -1;
+                    break;
                 }
             }
         } else {
@@ -212,19 +209,12 @@ int processLineParams ( int argc, char **argv )
         }
     }
 
-    return 1;
+    return ret;
 }
 
 
 bool init_rt()
 {
-    try {
-        Options::load();
-    } catch (Options::Error &e) {
-        std::cout << "ERROR: " << e.get_msg() << std::endl;
-        return false;
-    }
-
     extProgStore->init();
     SoundManager::init();
 
@@ -354,17 +344,6 @@ RTWindow *create_rt_window()
     //gdk_threads_enter ();
     RTWindow *rtWindow = new RTWindow();
 
-    // alerting users if the default raw and image profiles are missing
-    if (options.is_defProfRawMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
-    if (options.is_defProfImgMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
     return rtWindow;
 }
 
@@ -379,7 +358,7 @@ public:
     {
     }
 
-    ~RTApplication()
+    ~RTApplication() override
     {
         if (rtWindow) {
             delete rtWindow;
@@ -487,11 +466,14 @@ int main (int argc, char **argv)
     argv2 = "";
 
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
-    gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
-    gdk_threads_init();
-    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
     Gio::init ();
 
+#ifdef WIN32
+    if (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0003) {
+        // started from msys2 console => do not buffer stdout
+        setbuf(stdout, NULL);
+    }
+#endif
 
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
@@ -530,14 +512,13 @@ int main (int argc, char **argv)
     }
 
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
-    
+
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
 #endif
-
 
 #ifdef WIN32
     bool consoleOpened = false;
@@ -546,20 +527,16 @@ int main (int argc, char **argv)
     SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 
     if (argc > 1) {
-        int ret = processLineParams ( argc, argv);
-
-        if (options.rtSettings.verbose || (!remote && !Glib::file_test (argv1, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR))) {
-            bool stdoutRedirectedtoFile = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0001);
-            bool stderrRedirectedtoFile = (GetFileType (GetStdHandle (STD_ERROR_HANDLE)) == 0x0001);
-
-            // no console, if stdout and stderr both are redirected to file
-            if ( ! (stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
+        if (!remote && !Glib::file_test (argv1, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
+            bool stdoutRedirecttoConsole = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0000);
+            // open console, if stdout is invalid
+            if (stdoutRedirecttoConsole) {
                 // check if parameter -w was passed.
                 // We have to do that in this step, because it controls whether to open a console to show the output of following steps
                 bool Console = true;
 
                 for (int i = 1; i < argc; i++)
-                    if (!strcmp (argv[i], "-w")) {
+                    if (!strcmp (argv[i], "-w") || !strcmp (argv[i], "-R") || !strcmp (argv[i], "-gimp")) {
                         Console = false;
                         break;
                     }
@@ -583,26 +560,21 @@ int main (int argc, char **argv)
                     cursorInfo.bVisible = false;
                     SetConsoleCursorInfo ( GetStdHandle ( STD_OUTPUT_HANDLE ), &cursorInfo );
 
-                    if (!stdoutRedirectedtoFile) {
+                    if (stdoutRedirecttoConsole) { // if stdout is Redirect to console, we also redirect stderr to console
                         freopen ( "CON", "w", stdout ) ;
-                    }
-
-                    if (!stderrRedirectedtoFile) {
                         freopen ( "CON", "w", stderr ) ;
                     }
 
                     freopen ( "CON", "r", stdin ) ;
 
                     consoleOpened = true;
-
-                    // printing RT's version in every case, particularly useful for the 'verbose' mode, but also for the batch processing
-                    std::cout << "RawTherapee, version " << RTVERSION << std::endl;
-                    std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
                 }
             }
         }
+        int ret = processLineParams ( argc, argv);
 
         if ( ret <= 0 ) {
+            fflush(stdout);
             if (consoleOpened) {
                 printf ("Press any key to exit RawTherapee\n");
                 FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
@@ -615,23 +587,23 @@ int main (int argc, char **argv)
 
 #else
 
-    if (argc > 1 || options.rtSettings.verbose) {
-        // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-        std::cout << "RawTherapee, version " << RTVERSION << std::endl;
-#ifdef WIN32
-        std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
-#endif
+    if (argc > 1) {
+        int ret = processLineParams ( argc, argv);
 
-        if (argc > 1) {
-            int ret = processLineParams ( argc, argv);
-
-            if ( ret <= 0 ) {
-                return ret;
-            }
+        if ( ret <= 0 ) {
+            return ret;
         }
     }
 
 #endif
+
+    Glib::ustring fatalError;
+
+    try {
+        Options::load();
+    } catch (Options::Error &e) {
+        fatalError = e.get_msg();
+    }
 
     if (gimpPlugin) {
         if (!Glib::file_test (argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
@@ -649,7 +621,11 @@ int main (int argc, char **argv)
 
     int ret = 0;
 
-    if (remote) {
+    gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
+    gdk_threads_init();
+    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
+
+    if (fatalError.empty() && remote) {
         char *app_argv[2] = { const_cast<char *> (argv0.c_str()) };
         int app_argc = 1;
 
@@ -661,7 +637,7 @@ int main (int argc, char **argv)
         RTApplication app;
         ret = app.run (app_argc, app_argv);
     } else {
-        if (init_rt()) {
+        if (fatalError.empty() && init_rt()) {
             Gtk::Main m (&argc, &argv);
             gdk_threads_enter();
             const std::unique_ptr<RTWindow> rtWindow (create_rt_window());
@@ -671,15 +647,8 @@ int main (int argc, char **argv)
             m.run (*rtWindow);
             gdk_threads_leave();
 
-            if (gimpPlugin &&
-                    rtWindow->epanel && rtWindow->epanel->isRealized()) {
-                SaveFormat sf;
-                sf.format = "tif";
-                sf.tiffBits = 16;
-                sf.tiffUncompressed = true;
-                sf.saveParams = true;
-
-                if (!rtWindow->epanel->saveImmediately (argv2, sf)) {
+            if (gimpPlugin && rtWindow->epanel && rtWindow->epanel->isRealized()) {
+                if (!rtWindow->epanel->saveImmediately(argv2, SaveFormat())) {
                     ret = -2;
                 }
             }
@@ -687,7 +656,7 @@ int main (int argc, char **argv)
             cleanup_rt();
         } else {
             Gtk::Main m (&argc, &argv);
-            Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            Gtk::MessageDialog msgd (Glib::ustring::compose("FATAL ERROR!\n\n%1", fatalError), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
             ret = -2;
         }
@@ -697,6 +666,7 @@ int main (int argc, char **argv)
 
     if (consoleOpened) {
         printf ("Press any key to exit RawTherapee\n");
+        fflush(stdout);
         FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
         getch();
     }

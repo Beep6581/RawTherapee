@@ -28,7 +28,7 @@
 namespace rtexif
 {
 
-class ColorSpaceInterpreter : public ChoiceInterpreter
+class ColorSpaceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -41,7 +41,7 @@ public:
 };
 ColorSpaceInterpreter colorSpaceInterpreter;
 
-class PreviewColorSpaceInterpreter : public ChoiceInterpreter
+class PreviewColorSpaceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -56,7 +56,7 @@ public:
 };
 PreviewColorSpaceInterpreter previewColorSpaceInterpreter;
 
-class LinearSRGBInterpreter : public ChoiceInterpreter
+class LinearSRGBInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -68,7 +68,7 @@ public:
 };
 LinearSRGBInterpreter linearSRGBInterpreter;
 
-class DefaultBlackRenderInterpreter : public ChoiceInterpreter
+class DefaultBlackRenderInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -80,7 +80,7 @@ public:
 };
 DefaultBlackRenderInterpreter defaultBlackRenderInterpreter;
 
-class ExposureProgramInterpreter : public ChoiceInterpreter
+class ExposureProgramInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -99,7 +99,7 @@ public:
 };
 ExposureProgramInterpreter exposureProgramInterpreter;
 
-class MeteringModeInterpreter : public ChoiceInterpreter
+class MeteringModeInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -117,7 +117,7 @@ public:
 };
 MeteringModeInterpreter meteringModeInterpreter;
 
-class ExposureModeInterpreter : public ChoiceInterpreter
+class ExposureModeInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -130,7 +130,7 @@ public:
 };
 ExposureModeInterpreter exposureModeInterpreter;
 
-class WhiteBalanceInterpreter : public ChoiceInterpreter
+class WhiteBalanceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -142,7 +142,7 @@ public:
 };
 WhiteBalanceInterpreter whiteBalanceInterpreter;
 
-class SceneCaptureInterpreter : public ChoiceInterpreter
+class SceneCaptureInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -156,7 +156,7 @@ public:
 };
 SceneCaptureInterpreter sceneCaptureInterpreter;
 
-class GainControlInterpreter : public ChoiceInterpreter
+class GainControlInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -171,7 +171,7 @@ public:
 };
 GainControlInterpreter gainControlInterpreter;
 
-class ContrastInterpreter : public ChoiceInterpreter
+class ContrastInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -184,7 +184,7 @@ public:
 };
 ContrastInterpreter contrastInterpreter;
 
-class SharpnessInterpreter : public ChoiceInterpreter
+class SharpnessInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -197,7 +197,7 @@ public:
 };
 SharpnessInterpreter sharpnessInterpreter;
 
-class SaturationInterpreter : public ChoiceInterpreter
+class SaturationInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -210,7 +210,7 @@ public:
 };
 SaturationInterpreter saturationInterpreter;
 
-class FlashInterpreter : public ChoiceInterpreter
+class FlashInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -242,7 +242,7 @@ public:
 };
 FlashInterpreter flashInterpreter;
 
-class LightSourceInterpreter : public ChoiceInterpreter
+class LightSourceInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -273,7 +273,7 @@ public:
 };
 LightSourceInterpreter lightSourceInterpreter;
 
-class CompressionInterpreter : public ChoiceInterpreter
+class CompressionInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -285,7 +285,7 @@ public:
 };
 CompressionInterpreter compressionInterpreter;
 
-class PhotometricInterpreter : public ChoiceInterpreter
+class PhotometricInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -297,7 +297,7 @@ public:
 };
 PhotometricInterpreter photometricInterpreter;
 
-class ProfileEmbedPolicyInterpreter : public ChoiceInterpreter
+class ProfileEmbedPolicyInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -311,7 +311,7 @@ public:
 };
 ProfileEmbedPolicyInterpreter profileEmbedPolicyInterpreter;
 
-class PlanarConfigInterpreter : public ChoiceInterpreter
+class PlanarConfigInterpreter : public ChoiceInterpreter<>
 {
 
 public:
@@ -327,7 +327,7 @@ class FNumberInterpreter : public Interpreter
 {
 public:
     FNumberInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -346,7 +346,7 @@ class ApertureInterpreter : public Interpreter
 {
 public:
     ApertureInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = pow (2.0, t->toDouble() / 2.0);
@@ -365,7 +365,7 @@ class ExposureBiasInterpreter : public Interpreter
 {
 public:
     ExposureBiasInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -384,7 +384,7 @@ class ShutterSpeedInterpreter : public Interpreter
 {
 public:
     ShutterSpeedInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double d = pow (2.0, -t->toDouble());
@@ -404,7 +404,7 @@ class ExposureTimeInterpreter : public Interpreter
 {
 public:
     ExposureTimeInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double d = t->toDouble();
@@ -424,7 +424,7 @@ class FocalLengthInterpreter : public Interpreter
 {
 public:
     FocalLengthInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = t->toDouble();
@@ -443,7 +443,7 @@ class UserCommentInterpreter : public Interpreter
 {
 public:
     UserCommentInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int count = t->getCount();
 
@@ -452,8 +452,8 @@ public:
         }
 
         count = std::min (count, 65535); // limit to 65535 chars to avoid crashes in case of corrupted metadata
-        char *buffer = new char[count - 6]; // include 2 ending null chars for UCS-2 string (possibly)
-        char *value = (char*)t->getValue();
+        unsigned char *buffer = new unsigned char[count - 6]; // include 2 ending null chars for UCS-2 string (possibly)
+        unsigned char *value = t->getValue();
 
         if (!memcmp(value, "ASCII\0\0\0", 8)) {
             memcpy(buffer, value + 8, count - 8);
@@ -461,14 +461,14 @@ public:
         } else if (!memcmp(value, "UNICODE\0", 8)) {
             memcpy(buffer, value + 8, count - 8);
             buffer[count - 7] = buffer[count - 8] = '\0';
-            Glib::ustring tmp1(buffer);
+            Glib::ustring tmp1((char*)buffer);
 
 
             bool hasBOM = false;
             enum ByteOrder bo = UNKNOWN;
             if (count % 2 || (count >= 11 && (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF))) {
                 // odd string length can only be UTF-8, don't change anything
-                std::string retVal (buffer + 3);
+                std::string retVal ((char*)buffer + 3);
                 delete [] buffer;
                 return retVal;
             } else if (count >= 10) {
@@ -484,7 +484,7 @@ public:
                 // auto-detecting byte order; we still don't know if it's UCS-2 or UTF-8
                 int a = 0, b = 0, c = 0, d = 0;
                 for (int j = 8; j < count; j++) {
-                    char cc = value[j];
+                    unsigned char cc = value[j];
                     if (!(j%2)) {
                         // counting zeros for first byte
                         if (!cc) {
@@ -505,7 +505,7 @@ public:
                 }
                 if (c == (count - 8) && d) {
                     // this is an UTF-8 string
-                    std::string retVal (buffer);
+                    std::string retVal ((char*)buffer);
                     delete [] buffer;
                     return retVal;
                 }
@@ -532,21 +532,22 @@ public:
             glong written;
             char* utf8Str = g_utf16_to_utf8((unsigned short int*)buffer, -1, nullptr, &written, nullptr);
             delete [] buffer;
-            buffer = new char[written + 1];
+            buffer = new unsigned char[written + 1];
             memcpy(buffer, utf8Str, written);
             buffer[written] = 0;
+            g_free(utf8Str);
         } else if (!memcmp(value, "\0\0\0\0\0\0\0\0", 8)) {
             // local charset string, whatever it is
             memcpy(buffer, value + 8, count - 8);
             buffer[count - 7] = buffer[count - 8] = '\0';
 
             gsize written = 0;
-            char *utf8Str = g_locale_to_utf8(buffer, count - 8, nullptr, &written, nullptr);
+            char *utf8Str = g_locale_to_utf8((char*)buffer, count - 8, nullptr, &written, nullptr);
             if (utf8Str && written) {
                 delete [] buffer;
                 size_t length = strlen(utf8Str);
-                buffer = new char[length + 1];
-                strcpy(buffer, utf8Str);
+                buffer = new unsigned char[length + 1];
+                strcpy((char*)buffer, utf8Str);
             } else {
                 buffer[0] = 0;
             }
@@ -558,11 +559,11 @@ public:
             buffer[0] = 0;
         }
 
-        std::string retVal (buffer);
+        std::string retVal ((char*)buffer);
         delete [] buffer;
         return retVal;
     }
-    virtual void fromString (Tag* t, const std::string& value)
+    void fromString (Tag* t, const std::string& value) override
     {
         Glib::ustring tmpStr(value);
         t->userCommentFromString (tmpStr);
@@ -574,7 +575,7 @@ class CFAInterpreter : public Interpreter
 {
 public:
     CFAInterpreter() {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char colors[] = "RGB";
         char buffer[1024];
@@ -590,7 +591,7 @@ public:
 };
 CFAInterpreter cfaInterpreter;
 
-class OrientationInterpreter : public ChoiceInterpreter
+class OrientationInterpreter : public ChoiceInterpreter<>
 {
 public:
     OrientationInterpreter ()
@@ -609,7 +610,7 @@ public:
 };
 OrientationInterpreter orientationInterpreter;
 
-class UnitsInterpreter : public ChoiceInterpreter
+class UnitsInterpreter : public ChoiceInterpreter<>
 {
 public:
     UnitsInterpreter()
@@ -631,7 +632,7 @@ UTF8BinInterpreter utf8BinInterpreter;
 class RawImageSegmentationInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int segmentNumber = t->toInt(0, SHORT);
         int segmentWidth = t->toInt(2, SHORT);

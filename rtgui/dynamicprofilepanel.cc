@@ -41,6 +41,17 @@ DynamicProfilePanel::EditDialog::EditDialog (const Glib::ustring &title, Gtk::Wi
 
     add_optional (M ("EXIFFILTER_CAMERA"), has_camera_, camera_);
     add_optional (M ("EXIFFILTER_LENS"), has_lens_, lens_);
+    
+    imagetype_ = Gtk::manage (new MyComboBoxText());
+    imagetype_->append(Glib::ustring("(") + M("DYNPROFILEEDITOR_IMGTYPE_ANY") + ")");
+    imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_STD"));
+    imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_HDR"));
+    imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_PS"));
+    imagetype_->set_active(0);
+    hb = Gtk::manage (new Gtk::HBox());
+    hb->pack_start (*Gtk::manage (new Gtk::Label (M ("EXIFFILTER_IMAGETYPE"))), false, false, 4);
+    hb->pack_start (*imagetype_, true, true, 2);
+    get_content_area()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
 
     add_range (M ("EXIFFILTER_ISO"), iso_min_, iso_max_);
     add_range (M ("EXIFFILTER_APERTURE"), fnumber_min_, fnumber_max_);
@@ -81,6 +92,18 @@ void DynamicProfilePanel::EditDialog::set_rule (
     has_lens_->set_active (rule.lens.enabled);
     lens_->set_text (rule.lens.value);
 
+    if (!rule.imagetype.enabled) {
+        imagetype_->set_active(0);
+    } else if (rule.imagetype.value == "STD") {
+        imagetype_->set_active(1);
+    } else if (rule.imagetype.value == "HDR") {
+        imagetype_->set_active(2);
+    } else if (rule.imagetype.value == "PS") {
+        imagetype_->set_active(3);
+    } else {
+        imagetype_->set_active(0);
+    }
+
     profilepath_->updateProfileList();
 
     if (!profilepath_->setActiveRowFromFullPath (rule.profilepath)) {
@@ -111,6 +134,21 @@ DynamicProfileRule DynamicProfilePanel::EditDialog::get_rule()
 
     ret.lens.enabled = has_lens_->get_active();
     ret.lens.value = lens_->get_text();
+
+    ret.imagetype.enabled = imagetype_->get_active_row_number() > 0;
+    switch (imagetype_->get_active_row_number()) {
+    case 1:
+        ret.imagetype.value = "STD";
+        break;
+    case 2:
+        ret.imagetype.value = "HDR";
+        break;
+    case 3:
+        ret.imagetype.value = "PS";
+        break;
+    default:
+        ret.imagetype.value = "";
+    }
 
     ret.profilepath = profilepath_->getFullPathFromActiveRow();
 
@@ -255,6 +293,16 @@ DynamicProfilePanel::DynamicProfilePanel():
     }
 
     cell = Gtk::manage (new Gtk::CellRendererText());
+    cols_count = treeview_.append_column (M ("EXIFFILTER_IMAGETYPE"), *cell);
+    col = treeview_.get_column (cols_count - 1);
+
+    if (col) {
+        col->set_cell_data_func (
+            *cell, sigc::mem_fun (
+                *this, &DynamicProfilePanel::render_imagetype));
+    }
+
+    cell = Gtk::manage (new Gtk::CellRendererText());
     cols_count = treeview_.append_column (M ("EXIFFILTER_ISO"), *cell);
     col = treeview_.get_column (cols_count - 1);
 
@@ -323,6 +371,7 @@ void DynamicProfilePanel::update_rule (Gtk::TreeModel::Row row,
     row[columns_.expcomp] = rule.expcomp;
     row[columns_.camera] = rule.camera;
     row[columns_.lens] = rule.lens;
+    row[columns_.imagetype] = rule.imagetype;
     row[columns_.profilepath] = rule.profilepath;
 }
 
@@ -346,6 +395,7 @@ DynamicProfileRule DynamicProfilePanel::to_rule (Gtk::TreeModel::Row row,
     ret.camera = row[columns_.camera];
     ret.lens = row[columns_.lens];
     ret.profilepath = row[columns_.profilepath];
+    ret.imagetype = row[columns_.imagetype];
     return ret;
 }
 
@@ -454,6 +504,19 @@ void DynamicProfilePanel::render_lens (
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
     RENDER_OPTIONAL_ (lens);
+}
+
+void DynamicProfilePanel::render_imagetype (
+    Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
+{
+    auto row = *iter;
+    Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
+    DynamicProfileRule::Optional o = row[columns_.imagetype];
+    if (o.enabled) {
+        ct->property_text() = M(std::string("DYNPROFILEEDITOR_IMGTYPE_") + o.value);
+    } else { \
+        ct->property_text() = "";
+    }
 }
 
 #undef RENDER_OPTIONAL_

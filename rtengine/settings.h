@@ -19,8 +19,6 @@
 #ifndef _RTSETTINGS_
 #define _RTSETTINGS_
 
-#include "procparams.h"
-
 namespace rtengine
 {
 
@@ -30,19 +28,19 @@ class Settings
 public:
     Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
     int             viewingdevice;          // white of output device (D50...D65..)
-    int             viewingdevicegrey;          // level of grey output device
+    int             viewingdevicegrey;      // level of grey output device
     int             viewinggreySc;          // level of grey Scene
-    int             leveldnv;           // level of crop denoise
-    int             leveldnti;          // size of tiles denoise
+    int             leveldnv;               // level of crop denoise
+    int             leveldnti;              // size of tiles denoise
     int             leveldnaut;             // level of auto denoise
     int             leveldnliss;            // level of auto multi zone
-    int             leveldnautsimpl;            // STD or EXPERT
+    int             leveldnautsimpl;        // STD or EXPERT
 
     Glib::ustring   printerProfile;         ///< ICC profile name used for soft-proofing a printer output
-    RenderingIntent printerIntent;          ///< Colorimetric intent used with the above profile
+    int             printerIntent;          ///< Colorimetric intent used with the above profile
     bool            printerBPC;             ///< Black Point Compensation for the Labimage->Printer->Monitor transform
     Glib::ustring   monitorProfile;         ///< ICC profile name used for the monitor
-    RenderingIntent monitorIntent;          ///< Colorimetric intent used with the above profile
+    int             monitorIntent;          ///< Colorimetric intent used with the above profile
     bool            monitorBPC;             ///< Black Point Compensation for the Labimage->Monitor transform (directly, i.e. not soft-proofing and no WCS in between)
     bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
     bool            autocielab;
@@ -50,22 +48,22 @@ public:
     bool            verbose;
     Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
     Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
-    Glib::ustring   adobe;                  // default name of AdobeRGB1998
-    Glib::ustring   prophoto;               // default name of Prophoto
-    Glib::ustring   prophoto10;             // default name of Prophoto
 
-    Glib::ustring   widegamut;              //default name of WidegamutRGB
-    Glib::ustring   beta;                   // default name of BetaRGB
-    Glib::ustring   best;                   // default name of BestRGB
-    Glib::ustring   bruce;                  // default name of Bruce
-    Glib::ustring   srgb;                   // default name of SRGB space profile
-    Glib::ustring   srgb10;                 // default name of SRGB space profile
-    Glib::ustring   rec2020;                   // default name of rec2020
+    Glib::ustring   adobe;                  // filename of AdobeRGB1998 profile (default to the bundled one)
+    Glib::ustring   prophoto;               // filename of Prophoto     profile (default to the bundled one)
+    Glib::ustring   widegamut;              // filename of WidegamutRGB profile (default to the bundled one)
+    Glib::ustring   beta;                   // filename of BetaRGB      profile (default to the bundled one)
+    Glib::ustring   best;                   // filename of BestRGB      profile (default to the bundled one)
+    Glib::ustring   bruce;                  // filename of BruceRGB     profile (default to the bundled one)
+    Glib::ustring   srgb;                   // filename of sRGB         profile (default to the bundled one)
+    Glib::ustring   rec2020;                // filename of Rec2020      profile (default to the bundled one)
+    Glib::ustring   ACESp0;                 // filename of ACES P0      profile (default to the bundled one)
+    Glib::ustring   ACESp1;                 // filename of ACES P1      profile (default to the bundled one)
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
-    bool            ciecamfloat;
-    bool            HistogramWorking;
+    bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
+                                            // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
     int             protectred;
     double          protectredh;
@@ -80,17 +78,23 @@ public:
     //  double          colortoningab; //
     //  double          decaction;
     //  bool            bw_complementary;
-    double          artifact_cbdl;
     double          level0_cbdl;
     double          level123_cbdl;
     Glib::ustring   lensfunDbDirectory; ///< The directory containing the lensfun database. If empty, the system defaults will be used (as described in http://lensfun.sourceforge.net/manual/dbsearch.html)
-    
+
+    enum class ThumbnailInspectorMode {
+        JPEG,
+        RAW,
+        RAW_IF_NOT_JPEG_FULLSIZE
+    };
+    ThumbnailInspectorMode thumbnail_inspector_mode;
+
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */
-    static Settings* create  ();
+    static Settings* create();
     /** Destroys an instance of Settings.
       * @param s a pointer to the Settings instance to destroy. */
-    static void      destroy (Settings* s);
+    static void      destroy(Settings* s);
 };
 }
 

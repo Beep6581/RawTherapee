@@ -19,17 +19,20 @@
 #ifndef _IPTCPANEL_
 #define _IPTCPANEL_
 
+#include <memory>
+
 #include <gtkmm.h>
-#include "toolpanel.h"
+
 #include "guiutils.h"
+#include "toolpanel.h"
 
 class IPTCPanel : public Gtk::VBox, public ToolPanel
 {
 
 private:
-    rtengine::procparams::IPTCPairs changeList;
-    rtengine::procparams::IPTCPairs defChangeList;
-    rtengine::procparams::IPTCPairs embeddedData;
+    const std::unique_ptr<rtengine::procparams::IPTCPairs> changeList;
+    const std::unique_ptr<rtengine::procparams::IPTCPairs> defChangeList;
+    const std::unique_ptr<rtengine::procparams::IPTCPairs> embeddedData;
 
     Gtk::TextView*  captionView;
     Glib::RefPtr<Gtk::TextBuffer> captionText;
@@ -71,9 +74,9 @@ private:
 public:
     IPTCPanel ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
     void setImageData   (const rtengine::FramesMetaData* id);
 

@@ -33,7 +33,7 @@ class OLOnOffInterpreter : public Interpreter
 {
 public:
     OLOnOffInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         if (t->toInt() == 0) {
             return "Off";
@@ -48,7 +48,7 @@ class OLYesNoInterpreter : public Interpreter
 {
 public:
     OLYesNoInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         if (t->toInt() == 0) {
             return "No";
@@ -63,7 +63,7 @@ class OLApertureInterpreter : public Interpreter
 {
 public:
     OLApertureInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         str.precision (2);
@@ -125,7 +125,9 @@ public:
         lenses["00 26 10"] = "Olympus M.Zuiko Digital ED 12-100mm f/4.0 IS Pro";
         lenses["00 27 10"] = "Olympus M.Zuiko Digital ED 30mm f/3.5 Macro";
         lenses["00 28 10"] = "Olympus M.Zuiko Digital ED 25mm f/1.2 Pro";
+        lenses["00 29 10"] = "Olympus M.Zuiko Digital ED 17mm f/1.2 Pro";
         lenses["00 30 00"] = "Olympus Zuiko Digital ED 50-200mm f/2.8-3.5 SWD";
+        lenses["00 30 10"] = "Olympus M.Zuiko Digital ED 45mm f/1.2 Pro";
         lenses["00 31 00"] = "Olympus Zuiko Digital ED 12-60mm f/2.8-4.0 SWD";
         lenses["00 32 00"] = "Olympus Zuiko Digital ED 14-35mm f/2.0 SWD";
         lenses["00 33 00"] = "Olympus Zuiko Digital 25mm f/2.8";
@@ -144,6 +146,7 @@ public:
         lenses["01 06 00"] = "Sigma APO 50-500mm f/4.0-6.3 EX DG HSM";
         lenses["01 06 10"] = "Sigma 30mm f/1.4 DC DN | C";
         lenses["01 07 00"] = "Sigma Macro 105mm f/2.8 EX DG";
+        lenses["01 07 10"] = "Sigma 16mm f/1.4 DC DN | C (017)";
         lenses["01 08 00"] = "Sigma APO Macro 150mm f/2.8 EX DG HSM";
         lenses["01 09 00"] = "Sigma 18-50mm f/2.8 EX DC Macro";
         lenses["01 10 00"] = "Sigma 24mm f/1.8 EX DG Aspherical Macro";
@@ -191,7 +194,7 @@ public:
         lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         lenses["05 01 10"] = "Tamron 14-150mm f/3.5-5.8 Di III";
     }
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream lid;
         lid.setf (std::ios_base::hex, std::ios_base::basefield);
@@ -200,7 +203,7 @@ public:
         lid << std::setw (2) << std::setfill ('0') << t->toInt (2) << ' '; //model
         lid << std::setw (2) << std::setfill ('0') << t->toInt (3); // submodel
 
-        std::map<std::string, std::string>::iterator r = lenses.find (lid.str());
+        std::map<std::string, std::string>::const_iterator r = lenses.find (lid.str());
 
         if (r != lenses.end()) {
             return r->second;
@@ -211,7 +214,7 @@ public:
 };
 OLLensTypeInterpreter olLensTypeInterpreter;
 
-class OLFlashTypeInterpreter : public ChoiceInterpreter
+class OLFlashTypeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFlashTypeInterpreter ()
@@ -223,7 +226,7 @@ public:
 };
 OLFlashTypeInterpreter olFlashTypeInterpreter;
 
-class OLExposureModeInterpreter : public ChoiceInterpreter
+class OLExposureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLExposureModeInterpreter ()
@@ -237,7 +240,7 @@ public:
 };
 OLExposureModeInterpreter olExposureModeInterpreter;
 
-class OLMeteringModeInterpreter : public ChoiceInterpreter
+class OLMeteringModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLMeteringModeInterpreter ()
@@ -252,7 +255,7 @@ public:
 };
 OLMeteringModeInterpreter olMeteringModeInterpreter;
 
-class OLFocusModeInterpreter : public ChoiceInterpreter
+class OLFocusModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFocusModeInterpreter ()
@@ -267,7 +270,7 @@ public:
 };
 OLFocusModeInterpreter olFocusModeInterpreter;
 
-class OLWhitebalance2Interpreter : public ChoiceInterpreter
+class OLWhitebalance2Interpreter : public ChoiceInterpreter<>
 {
 public:
     OLWhitebalance2Interpreter ()
@@ -299,7 +302,7 @@ public:
 };
 OLWhitebalance2Interpreter olWhitebalance2Interpreter;
 
-class OLSceneModeInterpreter : public ChoiceInterpreter
+class OLSceneModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLSceneModeInterpreter ()
@@ -365,7 +368,7 @@ public:
 };
 OLSceneModeInterpreter olSceneModeInterpreter;
 
-class OLPictureModeBWFilterInterpreter : public ChoiceInterpreter
+class OLPictureModeBWFilterInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeBWFilterInterpreter ()
@@ -380,7 +383,7 @@ public:
 };
 OLPictureModeBWFilterInterpreter olPictureModeBWFilterInterpreter;
 
-class OLPictureModeToneInterpreter : public ChoiceInterpreter
+class OLPictureModeToneInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeToneInterpreter ()
@@ -395,7 +398,7 @@ public:
 };
 OLPictureModeToneInterpreter olPictureModeToneInterpreter;
 
-class OLImageQuality2Interpreter : public ChoiceInterpreter
+class OLImageQuality2Interpreter : public ChoiceInterpreter<>
 {
 public:
     OLImageQuality2Interpreter ()
@@ -409,7 +412,7 @@ public:
 };
 OLImageQuality2Interpreter olImageQuality2Interpreter;
 
-class OLDevEngineInterpreter : public ChoiceInterpreter
+class OLDevEngineInterpreter : public ChoiceInterpreter<>
 {
 public:
     // RawDevEngine
@@ -423,7 +426,7 @@ public:
 };
 OLDevEngineInterpreter olDevEngineInterpreter;
 
-class OLPictureModeInterpreter : public ChoiceInterpreter
+class OLPictureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeInterpreter ()
@@ -446,7 +449,7 @@ public:
 };
 OLPictureModeInterpreter olPictureModeInterpreter;
 
-class OLColorSpaceInterpreter : public ChoiceInterpreter
+class OLColorSpaceInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLColorSpaceInterpreter ()
@@ -462,7 +465,7 @@ class OLNoiseFilterInterpreter : public Interpreter
 {
 public:
     OLNoiseFilterInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt (0);
         int b = t->toInt (2);
@@ -487,7 +490,7 @@ class OLFlashModeInterpreter : public Interpreter
 {
 public:
     OLFlashModeInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         int a = t->toInt ();
@@ -506,7 +509,7 @@ class OLNoiseReductionInterpreter : public Interpreter
 {
 public:
     OLNoiseReductionInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         int a = t->toInt ();
@@ -519,7 +522,7 @@ public:
 };
 OLNoiseReductionInterpreter olNoiseReductionInterpreter;
 
-class OLFlashModelInterpreter : public ChoiceInterpreter
+class OLFlashModelInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFlashModelInterpreter ()

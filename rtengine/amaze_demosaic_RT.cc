@@ -33,14 +33,21 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
+#include "procparams.h"
 #include "StopWatch.h"
 
 namespace rtengine
 {
 
-SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, size_t chunkSize, bool measure)
 {
-    BENCHFUN
+
+    std::unique_ptr<StopWatch> stop;
+
+    if (measure) {
+        std::cout << "Demosaicing " << W << "x" << H << " image using AMaZE with " << chunkSize << " Tiles per Thread" << std::endl;
+        stop.reset(new StopWatch("amaze demosaic"));
+    }
 
     volatile double progress = 0.0;
 
@@ -105,7 +112,7 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
                                    };
     //gaussian on 5x5 alt quincunx, sigma=1.5
     constexpr float gausseven[2] = {0.13719494435797422f, 0.05640252782101291f};
-    //guassian on quincunx grid
+    //gaussian on quincunx grid
     constexpr float gquinc[4] = {0.169917f, 0.108947f, 0.069855f, 0.0287182f};
 
     typedef struct {
@@ -176,7 +183,7 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
         // Main algorithm: Tile loop
         // use collapse(2) to collapse the 2 loops to one large loop, so there is better scaling
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2) nowait
+        #pragma omp for schedule(dynamic, chunkSize) collapse(2) nowait
 #endif
 
         for (int top = winy - 16; top < winy + height; top += ts - 32) {
@@ -1583,6 +1590,9 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 
         // clean up
         free(buffer);
+    }
+    if(border < 4) {
+        border_interpolate2(W, H, 3, rawData, red, green, blue);
     }
 
     if(plistener) {

@@ -33,6 +33,8 @@
 #include "flatcurveeditorsubgroup.h"
 #include "rtimage.h"
 
+#include "../rtengine/curves.h"
+
 FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {
 
@@ -45,35 +47,49 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
     // ControlPoints curve
     CPointsCurveGrid = new Gtk::Grid ();
-    CPointsCurveGrid->set_row_spacing(2);
-    CPointsCurveGrid->set_column_spacing(2);
     CPointsCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    CPointsCurveGrid->get_style_context()->add_class("curve-mainbox");
 
     CPointsCurve = Gtk::manage (new MyFlatCurve ());
     CPointsCurve->setType (FCT_MinMaxCPoints);
+    
+    Gtk::Grid* CPointsCurveBox = Gtk::manage (new Gtk::Grid ());
+    CPointsCurveBox->get_style_context()->add_class("curve-curvebox");
+    CPointsCurveBox->add(*CPointsCurve);
 
     Gtk::Grid* CPointsbbox = Gtk::manage (new Gtk::Grid ()); // curvebboxpos 0=above, 1=right, 2=below, 3=left
+    CPointsbbox->get_style_context()->add_class("curve-buttonbox");
 
-    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+    if (options.curvebboxpos == 0) {
         CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
         setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    } else {
+        CPointsCurveGrid->get_style_context()->add_class("top");
+    } else if (options.curvebboxpos == 2) {
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        CPointsCurveGrid->get_style_context()->add_class("bottom");
+    } else if (options.curvebboxpos == 1) {
         CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
         setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        CPointsCurveGrid->get_style_context()->add_class("right");
+    } else if (options.curvebboxpos == 3){
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+        CPointsCurveGrid->get_style_context()->add_class("left");
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editCPoints, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editCPoints, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editPointCPoints = Gtk::manage (new Gtk::ToggleButton ());
-    initButton(*editPointCPoints,  Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
+    initButton(*editPointCPoints,  Glib::ustring("edit-point.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     copyCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*copyCPoints, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
+    initButton(*copyCPoints, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);
     pasteCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*pasteCPoints,  Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
+    initButton(*pasteCPoints,  Glib::ustring("paste.png"), Gtk::ALIGN_END, false);
     loadCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*loadCPoints,  Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
+    initButton(*loadCPoints,  Glib::ustring("folder-open.png"), Gtk::ALIGN_END, false);
     saveCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*saveCPoints,  Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
+    initButton(*saveCPoints,  Glib::ustring("save.png"), Gtk::ALIGN_END, false);
 
     CPointsbbox->attach_next_to(*editPointCPoints, sideStart, 1, 1);
     CPointsbbox->attach_next_to(*editCPoints,      sideStart, 1, 1);
@@ -90,23 +106,24 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
         axis.at(2).setValues(M("CURVEEDITOR_AXIS_LEFT_TAN"), 5, 0.01, 0.1, 0., 1.);
         axis.at(3).setValues(M("CURVEEDITOR_AXIS_RIGHT_TAN"), 5, 0.01, 0.1, 0., 1.);
         CPointsCoordAdjuster = Gtk::manage (new CoordinateAdjuster(CPointsCurve, this, axis));
+        CPointsCoordAdjuster->get_style_context()->add_class("curve-spinbuttonbox");
     }
 
     // Button box position: 0=above, 1=right, 2=below, 3=left
-    CPointsCurveGrid->add(*CPointsCurve);
+    CPointsCurveGrid->add(*CPointsCurveBox);
     CPointsCurve->set_hexpand(true);
 
     if (options.curvebboxpos == 0) {
-        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurve, Gtk::POS_TOP, 1, 1);
-        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurve, Gtk::POS_BOTTOM, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurveBox, Gtk::POS_TOP, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurveBox, Gtk::POS_BOTTOM, 1, 1);
     } else if (options.curvebboxpos == 1) {
-        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurve, Gtk::POS_RIGHT, 1, 1);
-        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurve, Gtk::POS_BOTTOM, 2, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurveBox, Gtk::POS_RIGHT, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurveBox, Gtk::POS_BOTTOM, 2, 1);
     } else if (options.curvebboxpos == 2) {
-        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurve, Gtk::POS_BOTTOM, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurveBox, Gtk::POS_BOTTOM, 1, 1);
         CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCoordAdjuster, Gtk::POS_BOTTOM, 1, 1);
     } else if (options.curvebboxpos == 3) {
-        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurve, Gtk::POS_LEFT, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurveBox, Gtk::POS_LEFT, 1, 1);
         CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsbbox, Gtk::POS_BOTTOM, 2, 1);
     }
 
@@ -417,6 +434,8 @@ void FlatCurveEditorSubGroup::loadPressed ()
                     p.push_back (x);
                 }
             }
+
+            rtengine::sanitizeCurve(p);
 
             if (p[0] == (double)(FCT_MinMaxCPoints)) {
                 CPointsCurve->setPoints (p);

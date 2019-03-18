@@ -11,7 +11,6 @@ using namespace rtengine::procparams;
 Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL"), false, true), lastmedianmap (false)
 {
     CurveListener::setMulti (true);
-    std::vector<double> defaultCurve;
     std::vector<GradientMilestone> milestones;
     nextmin = 0.;
     nextmax = 0.;
@@ -468,7 +467,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
     neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TIP"));
@@ -673,26 +672,20 @@ void Retinex::minmaxChanged (double cdma, double cdmin, double mini, double maxi
     nextminT = Tmin;
     nextmaxT = Tmax;
 
-    const auto func = [] (gpointer data) -> gboolean {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        static_cast<Retinex*> (data)->minmaxComputed_();
-
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            // FIXME: The above can't be true?!
+            disableListener();
+            enableListener();
+            updateLabel();
+            updateTrans();
+            return false;
+        }
+    );
 }
 
-bool Retinex::minmaxComputed_ ()
-{
-
-    disableListener ();
-    enableListener ();
-    updateLabel ();
-    updateTrans ();
-    return false;
-
-}
 void Retinex::updateLabel ()
 {
     if (!batchMode) {
@@ -1311,9 +1304,8 @@ void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, boo
 }
 
 
-void Retinex::adjusterChanged (Adjuster* a, double newval)
+void Retinex::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (a == iter && !batchMode) {
         if (iter->getIntValue() > 1) {
             scal->set_sensitive (true);
@@ -1368,11 +1360,11 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
         listener->panelChanged (EvLradius,  radius->getTextValue());
 
     }
-
-
 }
 
-
+void Retinex::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
 
 void Retinex::autoOpenCurve  ()
 {
@@ -1439,11 +1431,22 @@ void Retinex::trimValues (rtengine::procparams::ProcParams* pp)
 
 
 }
-void Retinex::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
-{
 
-    cdshape->updateBackgroundHistogram (histLRETI);
-    cdshapeH->updateBackgroundHistogram (histLRETI);
+void Retinex::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
+{
+    cdshape->updateBackgroundHistogram(histLRETI);
+    cdshapeH->updateBackgroundHistogram(histLRETI);
 }
 
 void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)

@@ -23,7 +23,6 @@
 #include <vector>
 #include "rtengine.h"
 #include "colortemp.h"
-#include "procparams.h"
 #include "coord2d.h"
 #include "dcp.h"
 #include "LUT.h"
@@ -35,7 +34,17 @@
 namespace rtengine
 {
 
-using namespace procparams;
+namespace procparams
+{
+
+struct CoarseTransformParams;
+struct ColorManagementParams;
+struct LensProfParams;
+struct RAWParams;
+struct RetinexParams;
+struct ToneCurveParams;
+
+}
 
 class ImageMatrices
 {
@@ -65,28 +74,30 @@ public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
         embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
 
-    virtual ~ImageSource            () {}
+    ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
-    virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) {};
-    virtual void        demosaic    (const RAWParams &raw) {};
-    virtual void        retinex       (const ColorManagementParams& cmp, const RetinexParams &deh, const ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
-    virtual void        retinexPrepareCurves       (const RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
-    virtual void        retinexPrepareBuffers      (const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
+    virtual void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) {};
+    virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) {};
+    virtual void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
+    virtual void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
+    virtual void        retinexPrepareBuffers      (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
     virtual void        flushRawData       () {};
     virtual void        flushRGB           () {};
-    virtual void        HLRecovery_Global  (ToneCurveParams hrp) {};
+    virtual void        HLRecovery_Global  (const procparams::ToneCurveParams &hrp) {};
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
-    virtual void        MSR (LabImage* lab, LUTf & mapcurve, bool &mapcontlutili, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
     virtual bool        isRGBSourceModified () const = 0; // tracks whether cached rgb output of demosaic has been modified
 
+    virtual void        setBorder (unsigned int border) {}
     virtual void        setCurrentFrame (unsigned int frameNum) = 0;
     virtual int         getFrameCount () = 0;
+    virtual int         getFlatFieldAutoClipValue () = 0;
 
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
-    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hlp, const RAWParams &raw) = 0;
+    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hlp, const RAWParams &raw) = 0;
     virtual eSensorType getSensorType () const = 0;
+    virtual bool        isMono () const = 0;
     // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
     virtual bool        isWBProviderReady () = 0;
 
@@ -107,21 +118,20 @@ public:
         return 0;
     }
 
-    virtual FrameData*     getImageData (unsigned int frameNum) = 0;
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
-    virtual DCPProfile*    getDCP (const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfile::ApplyState &as)
     {
         return nullptr;
     };
 
     virtual void        setProgressListener (ProgressListener* pl) {}
 
-    void        increaseRef ()
+    void        increaseRef () override
     {
         references++;
     }
-    void        decreaseRef ()
+    void        decreaseRef () override
     {
         references--;
 
@@ -139,7 +149,7 @@ public:
     }
 
     // for RAW files, compute a tone curve using histogram matching on the embedded thumbnail
-    virtual void getAutoMatchedToneCurve(std::vector<double> &outCurve)
+    virtual void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, std::vector<double> &outCurve)
     {
         outCurve = { 0.0 };
     }
@@ -149,19 +159,19 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    virtual Glib::ustring getFileName ()
+    Glib::ustring getFileName () override
     {
         return fileName;
     }
-    virtual cmsHPROFILE getEmbeddedProfile ()
+    cmsHPROFILE getEmbeddedProfile () override
     {
         return embProfile;
     }
-    virtual const FramesMetaData* getMetaData ()
+    const FramesMetaData* getMetaData () override
     {
         return idata;
     }
-    virtual ImageSource* getImageSource ()
+    ImageSource* getImageSource () override
     {
         return this;
     }

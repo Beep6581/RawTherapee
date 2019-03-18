@@ -114,7 +114,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* monBPC;
     Gtk::CheckButton* cbAutoMonProfile;
     //Gtk::CheckButton* cbAutocielab;
-    Gtk::CheckButton* cbciecamfloat;
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
@@ -141,18 +140,15 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
 
-    Gtk::ComboBoxText* theme;
-    Gtk::FontButton* fontButton;
-    Gtk::FontButton* colorPickerFontButton;
-    Gtk::ColorButton* butCropCol;
-    Gtk::ColorButton* butNavGuideCol;
+    Gtk::ComboBoxText* themeCBT;
+    Gtk::FontButton* mainFontFB;
+    Gtk::FontButton* colorPickerFontFB;
+    Gtk::ColorButton* cropMaskColorCB;
+    Gtk::ColorButton* navGuideColorCB;
 
-    Gtk::SpinButton*   maxThumbSize;
-    Gtk::SpinButton*   maxCacheEntries;
     Gtk::SpinButton*   maxRecentFolders;
-    Gtk::Button*       clearThumbnails;
-    Gtk::Button*       clearProfiles;
-    Gtk::Button*       clearAll;
+    Gtk::SpinButton*   maxThumbHeightSB;
+    Gtk::SpinButton*   maxCacheEntriesSB;
     Gtk::Entry*     extension;
     Gtk::TreeView*  extensions;
     Gtk::Button*    addExt;
@@ -163,9 +159,16 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* filmStripOverlayedFileNames;
     Gtk::CheckButton* sameThumbSize;
 
-    Gtk::SpinButton*  rgbDenoiseTreadLimitSB;
+    Gtk::SpinButton*  threadsSpinBtn;
     Gtk::SpinButton*  clutCacheSizeSB;
+    Gtk::CheckButton* measureCB;
+    Gtk::SpinButton*  chunkSizeAMSB;
+    Gtk::SpinButton*  chunkSizeCASB;
+    Gtk::SpinButton*  chunkSizeRCDSB;
+    Gtk::SpinButton*  chunkSizeRGBSB;
+    Gtk::SpinButton*  chunkSizeXTSB;
     Gtk::SpinButton*  maxInspectorBuffersSB;
+    Gtk::ComboBoxText *thumbnailInspectorMode;
 
     Gtk::CheckButton* ckbmenuGroupRank;
     Gtk::CheckButton* ckbmenuGroupLabel;
@@ -197,15 +200,14 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbHideTPVScrollbar;
-    Gtk::CheckButton* ckbUseIconNoText;
 
     Gtk::CheckButton* ckbAutoSaveTpOpen;
     Gtk::Button* btnSaveTpOpenNow;
 
     DynamicProfilePanel *dynProfilePanel;
 
-    Gtk::ComboBoxText *cropGuides;
-    Gtk::CheckButton *cropAutoFit;
+    Gtk::ComboBoxText *cropGuidesCombo;
+    Gtk::CheckButton *cropAutoFitCB;
 
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
@@ -242,18 +244,27 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
-    Gtk::Widget* getProcParamsPanel ();
-    Gtk::Widget* getColorManagementPanel ();
-    Gtk::Widget* getFileBrowserPanel ();
-    Gtk::Widget* getGeneralPanel ();
-    Gtk::Widget* getBatchProcPanel ();
-    Gtk::Widget* getPerformancePanel ();
-    Gtk::Widget* getSoundPanel ();
-    Gtk::Widget* getDynProfilePanel ();
+    Gtk::ScrolledWindow *swGeneral;
+    Gtk::ScrolledWindow *swImageProcessing;
+    Gtk::ScrolledWindow *swDynamicProfile;
+    Gtk::ScrolledWindow *swFileBrowser;
+    Gtk::ScrolledWindow *swColorMan;
+    Gtk::ScrolledWindow *swBatchProc;
+    Gtk::ScrolledWindow *swPerformance;
+    Gtk::ScrolledWindow *swSounds;
+
+    Gtk::Widget *getGeneralPanel();
+    Gtk::Widget *getImageProcessingPanel();
+    Gtk::Widget *getDynamicProfilePanel();
+    Gtk::Widget *getFileBrowserPanel();
+    Gtk::Widget *getColorManPanel();
+    Gtk::Widget *getBatchProcPanel();
+    Gtk::Widget *getPerformancePanel();
+    Gtk::Widget *getSoundsPanel();
 
 public:
     explicit Preferences (RTWindow *rtwindow);
-    ~Preferences ();
+    ~Preferences () override;
 
     void savePressed ();
     void loadPressed ();
@@ -283,9 +294,9 @@ public:
     void behAddAllPressed ();
     void behSetAllPressed ();
 
-    virtual void storeCurrentValue();
-    virtual void updateProfileList();
-    virtual void restoreValue();
+    void storeCurrentValue() override;
+    void updateProfileList() override;
+    void restoreValue() override;
 
 //    void selectICCProfileDir ();
 //    void selectMonitorProfile ();

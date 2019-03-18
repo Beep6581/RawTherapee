@@ -37,7 +37,7 @@ Image8::~Image8 ()
 {
 }
 
-void Image8::getScanline (int row, unsigned char* buffer, int bps)
+void Image8::getScanline (int row, unsigned char* buffer, int bps, bool isFloat) const
 {
 
     if (data == nullptr) {
@@ -55,19 +55,22 @@ void Image8::getScanline (int row, unsigned char* buffer, int bps)
     }
 }
 
-void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
+void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
         return;
     }
 
-    // For optimization purpose, we're assuming that this class never have to provide min/max bound
-    assert(!minValue);
-
     switch (sampleFormat) {
     case (IIOSF_UNSIGNED_CHAR):
-        memcpy (data + row * width * 3u, buffer, width * 3);
+        if(numSamples == 1) {
+            for(size_t i = 0; i < static_cast<size_t>(width); ++i) {
+                data[row * width * 3 + 3 * i] = data[row * width * 3 + 3 * i + 1] = data[row * width * 3 + 3 * i + 2] = buffer[i];
+            }
+        } else {
+            memcpy (data + (uint64_t)row * (uint64_t)width * (uint64_t)3u, buffer, width * 3);
+        }
         break;
 
     case (IIOSF_UNSIGNED_SHORT): {
@@ -86,7 +89,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minVal
     }
 }
 
-Image8* Image8::copy ()
+Image8* Image8::copy () const
 {
 
     Image8* cp = new Image8 (width, height);
@@ -94,7 +97,7 @@ Image8* Image8::copy ()
     return cp;
 }
 
-void Image8::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, bool first, procparams::ToneCurveParams hrp)
+void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const
 {
     // compute channel multipliers
     float rm = 1.f, gm = 1.f, bm = 1.f;

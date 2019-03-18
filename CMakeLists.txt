@@ -1,13 +1,11 @@
-if(WIN32)
-    cmake_minimum_required(VERSION 2.8.4)
-elseif(APPLE)
+if(APPLE)
     cmake_minimum_required(VERSION 3.3)
-    CMAKE_POLICY(SET CMP0025 NEW)
+    cmake_policy(SET CMP0025 NEW)
 else()
-    cmake_minimum_required(VERSION 2.6)
+    cmake_minimum_required(VERSION 2.8.8)
 endif()
 
-# Must stay before the PROJECT() command:
+# Must stay before the project() command:
 if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
     set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
     # Users building with Eclipse should set CMAKE_ECLIPSE_VERSION through the
@@ -15,18 +13,18 @@ if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
     #set(CMAKE_ECLIPSE_VERSION "4.6.0" CACHE STRING "Eclipse version" FORCE)
 endif()
 
-PROJECT(RawTherapee)
+project(RawTherapee)
 
 # The default target is Debug:
 if(CMAKE_BUILD_TYPE STREQUAL "")
-    set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
 endif()
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
 # Set required C and C++ standards and check GCC version:
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
     message(FATAL_ERROR "Building RawTherapee requires using GCC version 4.9 or higher!")
@@ -34,14 +32,14 @@ endif()
 
 # We might want to build using the old C++ ABI, even when using a new GCC version:
 if(USE_OLD_CXX_ABI)
-    add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
+    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 endif()
 
 if(UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-    add_definitions (-D_DEBUG)
+    add_definitions(-D_DEBUG)
 else()
-    add_definitions (-DNDEBUG)
-    add_definitions (-D_DNDEBUG)
+    add_definitions(-DNDEBUG)
+    add_definitions(-D_DNDEBUG)
 endif()
 
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
@@ -92,6 +90,20 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 # Stop compilation on typos such as std:swap (missing colon will be detected as unused label):
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=unused-label")
 
+# Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
+include(FindX87Math)
+if(HAVE_X87_MATH)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffloat-store")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffloat-store")
+endif()
+if(HAVE_X86_SSE_MATH)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -mfpmath=sse")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2 -mfpmath=sse")
+endif()
+
+# On i386 Linux we can fix unaligned SSE malloc (see GitHub issue #4432)
+include(FindUnalignedMalloc)
+
 if(WIN32)
     # Add additional paths. Look in the MinGW path first, then in the Gtkmm path.
     # If you wish to build some dependent libraries, you have to install them in MinGW to use them:
@@ -129,7 +141,7 @@ if(WIN32 OR APPLE)
     if(BUILD_BUNDLE)
         message(STATUS "You have set BUILD_BUNDLE=ON but this is not necessary - the option is forced to ON for Windows and macOS.")
     endif()
-    set (BUILD_BUNDLE ON FORCE)
+    set(BUILD_BUNDLE ON FORCE)
 endif()
 
 if(NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
@@ -240,11 +252,17 @@ if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
     set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
 endif()
 
+if(APPLE)
+    if("${CODESIGNID}")
+        set(CODESIGNID "${CODESIGNID}" CACHE STRING "Codesigning Identity")
+    endif()
+endif()
+
 # Enforce absolute paths for non-bundle builds:
 if(NOT BUILD_BUNDLE)
     foreach(path BINDIR DATADIR LIBDIR DOCDIR CREDITSDIR LICENCEDIR)
         if(NOT (IS_ABSOLUTE "${${path}}"))
-            message (FATAL_ERROR "The ${path} path has to be absolute when using -DBUILD_BUNDLE=OFF")
+            message(FATAL_ERROR "The ${path} path has to be absolute when using -DBUILD_BUNDLE=OFF")
         endif()
     endforeach()
 endif()
@@ -304,9 +322,9 @@ pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
 pkg_check_modules(IPTCDATA REQUIRED libiptcdata)
+pkg_check_modules(TIFF REQUIRED libtiff-4>=4.0.4)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
-find_package(TIFF REQUIRED)
 find_package(ZLIB REQUIRED)
 if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
@@ -323,27 +341,43 @@ if(WITH_MYFILE_MMAP)
 endif()
 
 if(WITH_LTO)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+    # Using LTO with older versions of binutils requires setting extra flags
+    set(BINUTILS_VERSION_MININUM "2.29")
+    execute_process(COMMAND ar --version OUTPUT_VARIABLE BINUTILS_VERSION_DETECTED)
+    string(REGEX REPLACE ".* ([0-9.]+)\n.*" "\\1" BINUTILS_VERSION_DETECTED "${BINUTILS_VERSION_DETECTED}")
+    if("${BINUTILS_VERSION_DETECTED}" VERSION_LESS "${BINUTILS_VERSION_MININUM}")
+        if(APPLE)
+            set(CMAKE_AR "/opt/local/bin/ar")
+            set(CMAKE_RANLIB "/opt/local/bin/ranlib")
+        else()
+            set(CMAKE_AR "/usr/bin/gcc-ar")
+            set(CMAKE_RANLIB "/usr/bin/gcc-ranlib")
+        endif()
+        message(STATUS "Binutils version detected as less than " ${BINUTILS_VERSION_MININUM} " - setting CMake parameters to enable LTO linking:\n    CMAKE_AR=\"" ${CMAKE_AR} "\"\n    CMAKE_RANLIB=\"" ${CMAKE_RANLIB} "\"")
+    endif()
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 endif()
 
 if(WITH_SAN)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${WITH_SAN}")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${WITH_SAN}")
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${WITH_SAN}")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${WITH_SAN}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${WITH_SAN}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${WITH_SAN}")
 endif()
 
 if(WITH_PROF)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wuninitialized -Wno-deprecated-declarations -Wno-unused-result")
 if(OPTION_OMP)
     find_package(OpenMP)
     if(OPENMP_FOUND)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Werror=unknown-pragmas -Wall -Wno-unused-result -Wno-deprecated-declarations")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -Werror=unknown-pragmas")
     endif()
 endif()
 
@@ -482,7 +516,7 @@ if(WIN32)
 endif()
 
 if(UNIX)
-    install(FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
+    install(FILES com.rawtherapee.RawTherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif()
 
 # check whether the used version of lensfun has lfDatabase::LoadDirectory

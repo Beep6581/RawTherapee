@@ -24,9 +24,6 @@
 #include "toolpanel.h"
 #include "guiutils.h"
 
-using namespace rtengine;
-using namespace rtengine::procparams;
-
 ProfileStoreLabel::ProfileStoreLabel (const ProfileStoreEntry *entry) : Gtk::Label (entry->label), entry (entry)
 {
     set_alignment (0, 0.5);
@@ -337,7 +334,7 @@ Gtk::TreeIter ProfileStoreComboBox::getRowFromLabel (Glib::ustring name)
             const ProfileStoreEntry *pse = currRow[methodColumns.profileStoreEntry];
 
             if (pse->label == name) {
-                return currRow;
+                return std::move(currRow);
             }
         }
     }
@@ -356,3 +353,11 @@ Gtk::TreeIter ProfileStoreComboBox::addRow (const ProfileStoreEntry *profileStor
     return newEntry;
 }
 
+/** @brief Delete a row from the first level of the tree */
+void ProfileStoreComboBox::deleteRow (const ProfileStoreEntry *profileStoreEntry)
+{
+    Gtk::TreeIter entry = findRowFromEntry(profileStoreEntry);
+    if (entry) {
+        refTreeModel->erase(entry);
+    }
+}

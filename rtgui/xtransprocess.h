@@ -21,32 +21,48 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
 
-class XTransProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class XTransProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::AutoContrastListener
 {
 
 protected:
 
     MyComboBoxText* method;
+    Gtk::HBox* borderbox;
+    Adjuster* border;
     Adjuster* ccSteps;
+    Gtk::VBox *dualDemosaicOptions;
+    Adjuster* dualDemosaicContrast;
+    bool lastAutoContrast;
 
     int oldSelection;
     sigc::connection methodconn;
+    IdleRegister idle_register;
+
+    rtengine::ProcEvent EvDemosaicBorder;
+    rtengine::ProcEvent EvDemosaicAutoContrast;
+    rtengine::ProcEvent EvDemosaicContrast;
 
 public:
 
     XTransProcess ();
+    ~XTransProcess () override;
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setAdjusterBehavior(bool falsecoloradd, bool dualDemosaicContrastAdd);
+    void setBatchMode(bool batchMode) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
 
-    void methodChanged ();
-    void adjusterChanged     (Adjuster* a, double newval);
+    void methodChanged();
+    void autoContrastChanged (double autoContrast) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
+    void adjusterAutoToggled(Adjuster* a, bool newval) override;
 };
 
 #endif

@@ -24,7 +24,7 @@
 namespace rtexif
 {
 
-class FAOnOffInterpreter : public ChoiceInterpreter
+class FAOnOffInterpreter : public ChoiceInterpreter<>
 {
 public:
     FAOnOffInterpreter ()
@@ -35,7 +35,7 @@ public:
 };
 FAOnOffInterpreter faOnOffInterpreter;
 
-class FASharpnessInterpreter : public ChoiceInterpreter
+class FASharpnessInterpreter : public ChoiceInterpreter<>
 {
 public:
     FASharpnessInterpreter ()
@@ -53,7 +53,7 @@ public:
 };
 FASharpnessInterpreter faSharpnessInterpreter;
 
-class FAWhiteBalanceInterpreter : public ChoiceInterpreter
+class FAWhiteBalanceInterpreter : public ChoiceInterpreter<>
 {
 public:
     FAWhiteBalanceInterpreter ()
@@ -79,7 +79,7 @@ public:
 };
 FAWhiteBalanceInterpreter faWhiteBalanceInterpreter;
 
-class FASaturationInterpreter : public ChoiceInterpreter
+class FASaturationInterpreter : public ChoiceInterpreter<>
 {
 public:
     FASaturationInterpreter ()
@@ -104,7 +104,7 @@ public:
 };
 FASaturationInterpreter faSaturationInterpreter;
 
-class FAContrastInterpreter : public ChoiceInterpreter
+class FAContrastInterpreter : public ChoiceInterpreter<>
 {
 public:
     FAContrastInterpreter ()
@@ -119,7 +119,7 @@ public:
 };
 FAContrastInterpreter faContrastInterpreter;
 
-class FAContrast2Interpreter : public ChoiceInterpreter
+class FAContrast2Interpreter : public ChoiceInterpreter<>
 {
 public:
     FAContrast2Interpreter ()
@@ -131,7 +131,7 @@ public:
 };
 FAContrast2Interpreter faContrast2Interpreter;
 
-class FANoiseReductionInterpreter : public ChoiceInterpreter
+class FANoiseReductionInterpreter : public ChoiceInterpreter<>
 {
 public:
     FANoiseReductionInterpreter ()
@@ -143,7 +143,7 @@ public:
 };
 FANoiseReductionInterpreter faNoiseReductionInterpreter;
 
-class FAFlashInterpreter : public ChoiceInterpreter
+class FAFlashInterpreter : public ChoiceInterpreter<>
 {
 public:
     // FujiFlashMode
@@ -158,7 +158,7 @@ public:
 };
 FAFlashInterpreter faFlashInterpreter;
 
-class FAFocusModeInterpreter : public ChoiceInterpreter
+class FAFocusModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     FAFocusModeInterpreter ()
@@ -169,7 +169,7 @@ public:
 };
 FAFocusModeInterpreter faFocusModeInterpreter;
 
-class FAColorModeInterpreter : public ChoiceInterpreter
+class FAColorModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     FAColorModeInterpreter ()
@@ -181,7 +181,7 @@ public:
 };
 FAColorModeInterpreter faColorModeInterpreter;
 
-class FADynamicRangeInterpreter : public ChoiceInterpreter
+class FADynamicRangeInterpreter : public ChoiceInterpreter<>
 {
 public:
     FADynamicRangeInterpreter ()
@@ -192,7 +192,7 @@ public:
 };
 FADynamicRangeInterpreter faDynamicRangeInterpreter;
 
-class FAFilmModeInterpreter : public ChoiceInterpreter
+class FAFilmModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     FAFilmModeInterpreter ()
@@ -212,7 +212,7 @@ public:
 };
 FAFilmModeInterpreter faFilmModeInterpreter;
 
-class FADRSettingInterpreter : public ChoiceInterpreter
+class FADRSettingInterpreter : public ChoiceInterpreter<>
 {
 public:
     // DynamicRangeSetting
@@ -228,7 +228,7 @@ public:
 };
 FADRSettingInterpreter faDRSettingInterpreter;
 
-class FAPictureModeInterpreter : public ChoiceInterpreter
+class FAPictureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     FAPictureModeInterpreter ()

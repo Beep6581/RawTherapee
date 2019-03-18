@@ -26,9 +26,10 @@
 #include <omp.h>
 #endif
 
-#include "improcfun.h"
-#include "gauss.h"
 #include "array2D.h"
+#include "gauss.h"
+#include "improcfun.h"
+#include "procparams.h"
 
 namespace rtengine {
 
@@ -62,7 +63,7 @@ void ImProcFunctions::localContrast(LabImage *lab)
                 bufval *= (bufval > 0.f) ? light : dark;
             }
 
-            lab->L[y][x] += bufval;
+            lab->L[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
         }
     }
 }

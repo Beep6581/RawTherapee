@@ -20,6 +20,7 @@
 #define _PROCESSINGJOB_
 
 #include "rtengine.h"
+#include "procparams.h"
 
 namespace rtengine
 {
@@ -43,14 +44,14 @@ public:
         iImage->increaseRef();
     }
 
-    ~ProcessingJobImpl ()
+    ~ProcessingJobImpl () override
     {
         if (initialImage) {
             initialImage->decreaseRef();
         }
     }
 
-    bool fastPipeline() const { return fast; }
+    bool fastPipeline() const override { return fast; }
 };
 
 }

@@ -17,11 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "stdimagesource.h"
-#include "mytime.h"
+
+#include "color.h"
+#include "curves.h"
 #include "iccstore.h"
 #include "imageio.h"
-#include "curves.h"
-#include "color.h"
+#include "mytime.h"
+#include "procparams.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -128,7 +130,9 @@ int StdImageSource::load (const Glib::ustring &fname)
 
     case (IIOSF_LOGLUV24):
     case (IIOSF_LOGLUV32):
-    case (IIOSF_FLOAT): {
+    case (IIOSF_FLOAT16):
+    case (IIOSF_FLOAT24):
+    case (IIOSF_FLOAT32): {
         img = new Imagefloat;
         break;
     }
@@ -192,7 +196,7 @@ void StdImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
     // the code will use OpenMP as of now.
 
-    img->getStdImage(ctemp, tran, image, pp, true, hrp);
+    img->getStdImage(ctemp, tran, image, pp);
 
     // Hombre: we could have rotated the image here too, with just few line of code, but:
     // 1. it would require other modifications in the engine, so "do not touch that little plonker!"
@@ -218,26 +222,26 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
     bool skipTransform = false;
     cmsHPROFILE in = nullptr;
-    cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.working);
+    cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.workingProfile);
 
-    if (cmp.input == "(embedded)" || cmp.input == "" || cmp.input == "(camera)" || cmp.input == "(cameraICC)") {
+    if (cmp.inputProfile == "(embedded)" || cmp.inputProfile == "" || cmp.inputProfile == "(camera)" || cmp.inputProfile == "(cameraICC)") {
         if (embedded) {
             in = embedded;
         } else {
-            if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
+            if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT16 | IIOSF_FLOAT24 | IIOSF_FLOAT32)) {
                 skipTransform = true;
             } else {
                 in = ICCStore::getInstance()->getsRGBProfile ();
             }
         }
     } else {
-        if (cmp.input != "(none)") {
-            in = ICCStore::getInstance()->getProfile (cmp.input);
+        if (cmp.inputProfile != "(none)") {
+            in = ICCStore::getInstance()->getProfile (cmp.inputProfile);
 
             if (in == nullptr && embedded) {
                 in = embedded;
             } else if (in == nullptr) {
-                if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
+                if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT16 | IIOSF_FLOAT24 | IIOSF_FLOAT32)) {
                     skipTransform = true;
                 } else {
                     in = ICCStore::getInstance()->getsRGBProfile ();
@@ -268,7 +272,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
             cmsDeleteTransform(hTransform);
         } else {
-            printf("Could not convert from %s to %s\n", in == embedded ? "embedded profile" : cmp.input.data(), cmp.working.data());
+            printf("Could not convert from %s to %s\n", in == embedded ? "embedded profile" : cmp.inputProfile.data(), cmp.workingProfile.data());
         }
     }
 }
@@ -335,6 +339,11 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
 
     return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal);
 }
+
+void StdImageSource::flushRGB() {
+    img->allocate(0, 0);
+};
+
 
 }
 

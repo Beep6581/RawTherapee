@@ -19,12 +19,13 @@ namespace rtengine
 
 extern const Settings* settings;
 
-CameraConst::CameraConst()
+CameraConst::CameraConst() : pdafOffset(0)
 {
     memset(dcraw_matrix, 0, sizeof(dcraw_matrix));
     memset(raw_crop, 0, sizeof(raw_crop));
     memset(raw_mask, 0, sizeof(raw_mask));
     white_max = 0;
+    globalGreenEquilibration = -1;
 }
 
 
@@ -310,6 +311,46 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
         }
     }
 
+    ji = cJSON_GetObjectItem(js, "pdaf_pattern");
+
+    if (ji) {
+        if (ji->type != cJSON_Array) {
+            fprintf(stderr, "\"pdaf_pattern\" must be an array\n");
+            goto parse_error;
+        }
+
+        for (ji = ji->child; ji != nullptr; ji = ji->next) {
+            if (ji->type != cJSON_Number) {
+                fprintf(stderr, "\"pdaf_pattern\" array must contain numbers\n");
+                goto parse_error;
+            }
+
+            cc->pdafPattern.push_back(ji->valueint);
+        }
+    }
+
+    ji = cJSON_GetObjectItem(js, "pdaf_offset");
+
+    if (ji) {
+        if (ji->type != cJSON_Number) {
+            fprintf(stderr, "\"pdaf_offset\" must contain a number\n");
+            goto parse_error;
+        }
+
+        cc->pdafOffset = ji->valueint;
+    }
+
+    ji = cJSON_GetObjectItem(js, "global_green_equilibration");
+
+    if (ji) {
+        if (ji->type != cJSON_False && ji->type != cJSON_True) {
+            fprintf(stderr, "\"global_green_equilibration\" must be a boolean\n");
+            goto parse_error;
+        }
+
+        cc->globalGreenEquilibration = (ji->type == cJSON_True);
+    }
+    
     return cc;
 
 parse_error:
@@ -343,6 +384,36 @@ CameraConst::get_dcrawMatrix()
     }
 
     return dcraw_matrix;
+}
+
+bool
+CameraConst::has_pdafPattern()
+{
+    return pdafPattern.size() > 0;
+}
+
+std::vector<int>
+CameraConst::get_pdafPattern()
+{
+    return pdafPattern;
+}
+
+void
+CameraConst::update_pdafPattern(const std::vector<int> &other)
+{
+    if (other.empty()) {
+        return;
+    }
+    pdafPattern = other;
+}
+
+void
+CameraConst::update_pdafOffset(int other)
+{
+    if (other == 0) {
+        return;
+    }
+    pdafOffset = other;
 }
 
 bool
@@ -548,6 +619,24 @@ CameraConst::get_WhiteLevel(const int idx, const int iso_speed, const float fnum
 }
 
 bool
+CameraConst::has_globalGreenEquilibration()
+{
+    return globalGreenEquilibration >= 0;
+}
+
+bool
+CameraConst::get_globalGreenEquilibration()
+{
+    return globalGreenEquilibration > 0;
+}
+
+void
+CameraConst::update_globalGreenEquilibration(bool other)
+{
+    globalGreenEquilibration = (other ? 1 : 0);
+}
+
+bool
 CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 {
     // read the file into a single long string
@@ -678,6 +767,11 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
                 // deleting all the existing levels, replaced by the new ones
                 existingcc->update_Levels(cc);
                 existingcc->update_Crop(cc);
+                existingcc->update_pdafPattern(cc->get_pdafPattern());
+                existingcc->update_pdafOffset(cc->get_pdafOffset());
+                if (cc->has_globalGreenEquilibration()) {
+                    existingcc->update_globalGreenEquilibration(cc->get_globalGreenEquilibration());
+                }
 
                 if (settings->verbose) {
                     printf("Merging camera constants for \"%s\"\n", make_model.c_str());

@@ -108,10 +108,7 @@ void setPaths ()
 
     imagePaths.clear ();
 
-    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark"));
-    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark", "actions"));
-    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark", "devices"));
-    imagePaths.push_back (Glib::build_filename(argv0, "images", "Dark", "places"));
+    imagePaths.push_back (Glib::build_filename(argv0, "images", "dark"));
 
     // The images folder is the second fallback solution.
     imagePaths.push_back (Glib::build_filename(argv0, "images"));

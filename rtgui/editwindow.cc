@@ -53,15 +53,7 @@ EditWindow* EditWindow::getInstance(RTWindow* p, bool restore)
 EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false), isClosed(true)
 {
 
-    Glib::ustring fName = "rt-logo-tiny.png";
-    Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName);
-
-    try {
-        set_default_icon_from_file (fullPath);
-    } catch(Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
-    }
-
+    set_default_icon(p->get_icon());
     set_title_decorated("");
     set_modal(false);
     set_resizable(true);
@@ -69,16 +61,16 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false), isClosed
 
     property_destroy_with_parent().set_value(false);
 
-    mainNB = Gtk::manage (new Gtk::Notebook ());
-    mainNB->set_scrollable (true);
-    mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &EditWindow::on_mainNB_switch_page) );
+    mainNB = Gtk::manage(new Gtk::Notebook ());
+    mainNB->set_scrollable(true);
+    mainNB->signal_switch_page().connect_notify(sigc::mem_fun(*this, &EditWindow::on_mainNB_switch_page));
 
-    signal_key_press_event().connect( sigc::mem_fun(*this, &EditWindow::keyPressed) );
+    signal_key_press_event().connect(sigc::mem_fun(*this, &EditWindow::keyPressed));
 
-    Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
-    mainBox->pack_start (*mainNB);
+    Gtk::VBox* mainBox = Gtk::manage(new Gtk::VBox());
+    mainBox->pack_start(*mainNB);
 
-    add (*mainBox);
+    add(*mainBox);
 
 }
 
@@ -172,11 +164,11 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 
     // construct closeable tab for the image
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    hb->pack_start (*Gtk::manage (new RTImage ("rtwindow.png")));
+    hb->pack_start (*Gtk::manage (new RTImage ("aperture.png")));
     hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
     hb->set_tooltip_markup (name);
     Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-    closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
+    closeb->set_image (*Gtk::manage(new RTImage ("cancel-small.png")));
     closeb->set_relief (Gtk::RELIEF_NONE);
     closeb->set_focus_on_click (false);
 

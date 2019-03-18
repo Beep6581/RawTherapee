@@ -23,9 +23,10 @@
 #include "multilangmgr.h"
 #include "cropwindow.h"
 #include "../rtengine/refreshmap.h"
+#include "../rtengine/procparams.h"
 #include "options.h"
 
-ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true), fullImageWidth(0), fullImageHeight(0)
+ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullImageHeight(0)
 {
 
     infotext = "";
@@ -43,6 +44,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true), fullImage
     zoomPanel = Gtk::manage (new ZoomPanel (this));
     indClippedPanel = Gtk::manage (new IndicateClippedPanel (this));
     previewModePanel =  Gtk::manage (new PreviewModePanel (this));
+    previewModePanel->get_style_context()->add_class("narrowbuttonbox");
 
     add_events(Gdk::LEAVE_NOTIFY_MASK);
 
@@ -76,7 +78,7 @@ void ImageArea::on_realize()
     // This workaround should be removed when bug is fixed in GTK2 or when migrating to GTK3
     add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
 #else
-    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
 #endif
 
     Cairo::FontOptions cfo;
@@ -241,13 +243,14 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         mainCropWindow->expose (cr);
     }
 
+    for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); ++i) {
+        (*i)->expose (cr);
+    }
+
     if (options.showInfo && infotext != "") {
         iBackBuffer.copySurface(cr);
     }
 
-    for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); ++i) {
-        (*i)->expose (cr);
-    }
 
     return true;
 }
@@ -300,9 +303,12 @@ bool ImageArea::on_button_press_event (GdkEventButton* event)
 bool ImageArea::on_scroll_event (GdkEventScroll* event)
 {
 
+//    printf("ImageArea::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
+//            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
+
     CropWindow* cw = getCropWindow (event->x, event->y);
     if (cw) {
-        cw->scroll (event->state, event->direction, event->x, event->y);
+        cw->scroll (event->state, event->direction, event->x, event->y, event->delta_x, event->delta_y);
     }
 
     return true;
@@ -426,7 +432,7 @@ void ImageArea::addCropWindow ()
     }
 
     CropWindow* cw = new CropWindow (this, true, true);
-    cw->zoom11();
+    cw->zoom11(false);
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
     cw->setPointerMotionHListener (pmhlistener);
@@ -505,8 +511,9 @@ void ImageArea::addCropWindow ()
 
     mainCropWindow->setObservedCropWin (cropWins.front());
 
-    if(cropWins.size() == 1) { // after first detail window we already have high quality
+    if(!ipc->getHighQualComputed()) {
         ipc->startProcessing(M_HIGHQUAL);
+        ipc->setHighQualComputed();
     }
 }
 
@@ -556,6 +563,14 @@ void ImageArea::spotWBSelected (int x, int y)
 
     if (listener) {
         listener->spotWBselected (x, y);
+    }
+}
+
+void ImageArea::sharpMaskSelected (bool sharpMask)
+{
+
+    if (listener) {
+        listener->sharpMaskSelected (sharpMask);
     }
 }
 
@@ -633,33 +648,23 @@ void ImageArea::setZoom (double zoom)
     zoomPanel->refreshZoomLabel ();
 }
 
-void ImageArea::initialImageArrived (CropWindow* cw)
+void ImageArea::initialImageArrived ()
 {
 
     if (mainCropWindow) {
-        if(firstOpen || options.prevdemo != PD_Sidecar || (!options.rememberZoomAndPan) ) {
+        int w, h;
+        mainCropWindow->cropHandler.getFullImageSize(w, h);
+        if(options.prevdemo != PD_Sidecar || !options.rememberZoomAndPan || w != fullImageWidth || h != fullImageHeight) {
             if (options.cropAutoFit || options.bgcolor != 0) {
                 mainCropWindow->zoomFitCrop();
             } else {
                 mainCropWindow->zoomFit();
             }
-            firstOpen = false;
-            mainCropWindow->cropHandler.getFullImageSize(fullImageWidth, fullImageHeight);
-        } else {
-            int w, h;
-            mainCropWindow->cropHandler.getFullImageSize(w, h);
-
-            if(w != fullImageWidth || h != fullImageHeight) {
-                if (options.cropAutoFit) {
-                    mainCropWindow->zoomFitCrop();
-                } else {
-                    mainCropWindow->zoomFit();
-                }
-            }
-
-            fullImageWidth = w;
-            fullImageHeight = h;
+        } else if ((options.cropAutoFit || options.bgcolor != 0) && mainCropWindow->cropHandler.cropParams->enabled) {
+            mainCropWindow->zoomFitCrop();
         }
+        fullImageWidth = w;
+        fullImageHeight = h;
     }
 }
 

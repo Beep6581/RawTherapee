@@ -17,7 +17,10 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "perspective.h"
+
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -25,10 +28,10 @@ using namespace rtengine::procparams;
 PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL"))
 {
 
-    Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-h1.png"));
-    Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-h2.png"));
-    Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-v1.png"));
-    Gtk::Image* ipersVR =   Gtk::manage (new RTImage ("perspective-v2.png"));
+    Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
+    Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
+    Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-vertical-bottom-small.png"));
+    Gtk::Image* ipersVR =   Gtk::manage (new RTImage ("perspective-vertical-top-small.png"));
 
     horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 0.1, 0, ipersHL, ipersHR));
     horiz->setAdjusterListener (this);
@@ -38,6 +41,9 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 
     pack_start (*horiz);
     pack_start (*vert);
+
+    horiz->setLogScale(2, 0);
+    vert->setLogScale(2, 0);
 
     show_all();
 }
@@ -85,12 +91,15 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
     }
 }
 
-void PerspCorrection::adjusterChanged (Adjuster* a, double newval)
+void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener) {
         listener->panelChanged (EvPerspCorr, Glib::ustring::compose ("%1=%3\n%2=%4", M("TP_PERSPECTIVE_HORIZONTAL"), M("TP_PERSPECTIVE_VERTICAL"), horiz->getValue(), vert->getValue()));
     }
+}
+
+void PerspCorrection::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void PerspCorrection::setAdjusterBehavior (bool badd)

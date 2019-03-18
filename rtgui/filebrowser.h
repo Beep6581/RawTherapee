@@ -34,23 +34,20 @@
 class ProfileStoreLabel;
 class FileBrowser;
 class FileBrowserEntry;
+
 class FileBrowserListener
 {
-
 public:
-    virtual     ~FileBrowserListener    () {}
-    virtual void filterApplied () {}
-    virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
-    virtual void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode) {}
-    virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
-    virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
-    virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
-    virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
-    virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
-    virtual bool isInTabMode            ()
-    {
-        return false;
-    }
+    virtual ~FileBrowserListener() = default;
+    virtual void filterApplied() = 0;
+    virtual void openRequested(const std::vector<Thumbnail*>& tbe) = 0;
+    virtual void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode) = 0;
+    virtual void renameRequested(const std::vector<FileBrowserEntry*>& tbe) = 0;
+    virtual void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed) = 0;
+    virtual void copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested) = 0;
+    virtual void selectionChanged(const std::vector<Thumbnail*>& tbe) = 0;
+    virtual void clearFromCacheRequested(const std::vector<FileBrowserEntry*>& tbe, bool leavenotrace) = 0;
+    virtual bool isInTabMode() const = 0;
 };
 
 /*
@@ -63,6 +60,8 @@ class FileBrowser  : public ThumbBrowserBase,
 {
 private:
     typedef sigc::signal<void> type_trash_changed;
+
+    using ThumbBrowserBase::redrawNeeded;
 
     IdleRegister idle_register;
     unsigned int session_id_;
@@ -85,7 +84,7 @@ protected:
     Gtk::MenuItem* menuRank;
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
-    MyImageMenuItem* menuProfileOperations;
+    Gtk::MenuItem* menuProfileOperations;
     Gtk::MenuItem* menuExtProg;
     Gtk::MenuItem** amiExtProg;
     Gtk::MenuItem* miOpenDefaultViewer;
@@ -139,7 +138,7 @@ protected:
 
 public:
     FileBrowser ();
-    ~FileBrowser ();
+    ~FileBrowser () override;
 
     void addEntry (FileBrowserEntry* entry); // can be called from any thread
     void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread
@@ -167,41 +166,45 @@ public:
         return numFiltered;
     }
 
-    void buttonPressed (LWButton* button, int actionCode, void* actionData);
-    void redrawNeeded  (LWButton* button);
-    bool checkFilter (ThumbBrowserEntryBase* entry);
-    void rightClicked (ThumbBrowserEntryBase* entry);
-    void doubleClicked (ThumbBrowserEntryBase* entry);
-    bool keyPressed (GdkEventKey* event);
+    void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
+    void redrawNeeded  (LWButton* button) override;
+    bool checkFilter (ThumbBrowserEntryBase* entry) override;
+    void rightClicked (ThumbBrowserEntryBase* entry) override;
+    void doubleClicked (ThumbBrowserEntryBase* entry) override;
+    bool keyPressed (GdkEventKey* event) override;
 
-    void saveThumbnailHeight (int height);
-    int  getThumbnailHeight ();
+    void saveThumbnailHeight (int height) override;
+    int  getThumbnailHeight () override;
 
-    bool isInTabMode()
+    bool isInTabMode() override
     {
         return tbl ? tbl->isInTabMode() : false;
     }
 
-    void openNextImage ();
-    void openPrevImage ();
+    void openNextImage();
+    void openPrevImage();
+    void selectImage(const Glib::ustring& fname, bool doScroll = true);
+
     void copyProfile ();
     void pasteProfile ();
     void partPasteProfile ();
-    void selectImage (Glib::ustring fname);
-    void openNextPreviousEditorImage (Glib::ustring fname, eRTNav eNextPrevious);
+    void openNextPreviousEditorImage(const Glib::ustring& fname, eRTNav eNextPrevious);
 
+#ifdef WIN32
     void openDefaultViewer (int destination);
+#endif
 
-    void thumbRearrangementNeeded ();
-    void _thumbRearrangementNeeded ();
+    void thumbRearrangementNeeded () override;
 
-    void selectionChanged ();
+    void selectionChanged () override;
 
     void setExportPanel (ExportPanel* expanel);
     // exportpanel interface
-    void exportRequested();
+    void exportRequested() override;
 
-    void updateProfileList ();
+    void storeCurrentValue() override;
+    void updateProfileList() override;
+    void restoreValue() override;
 
     type_trash_changed trash_changed();
 };

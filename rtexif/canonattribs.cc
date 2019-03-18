@@ -32,7 +32,7 @@ namespace rtexif
 class CAOnOffInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int n = t->toInt();
 
@@ -51,7 +51,7 @@ class CAIntSerNumInterpreter : public Interpreter
 {
 public:
     CAIntSerNumInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         return "";
     }
@@ -63,7 +63,7 @@ class CAApertureInterpreter : public Interpreter
 {
 public:
     CAApertureInterpreter () {}
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double v = pow (2.0, t->toDouble() / 64.0);
@@ -78,7 +78,7 @@ public:
 };
 CAApertureInterpreter caApertureInterpreter;
 
-class CAMacroModeInterpreter : public ChoiceInterpreter
+class CAMacroModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAMacroModeInterpreter()
@@ -92,7 +92,7 @@ CAMacroModeInterpreter caMacroModeInterpreter;
 class CASelfTimerInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int sec = t->toInt (0, SHORT);
 
@@ -107,7 +107,7 @@ public:
 };
 CASelfTimerInterpreter caSelfTimerInterpreter;
 
-class CAQualityInterpreter : public ChoiceInterpreter
+class CAQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAQualityInterpreter()
@@ -121,7 +121,7 @@ public:
 };
 CAQualityInterpreter caQualityInterpreter;
 
-class CAFlashModeInterpreter : public ChoiceInterpreter
+class CAFlashModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFlashModeInterpreter()
@@ -138,7 +138,7 @@ public:
 };
 CAFlashModeInterpreter caFlashModeInterpreter;
 
-class CAContinuousDriveInterpreter : public ChoiceInterpreter
+class CAContinuousDriveInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAContinuousDriveInterpreter()
@@ -156,7 +156,7 @@ public:
 };
 CAContinuousDriveInterpreter caContinuousDriveInterpreter;
 
-class CAFocusModeInterpreter : public ChoiceInterpreter
+class CAFocusModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocusModeInterpreter()
@@ -176,7 +176,7 @@ public:
 };
 CAFocusModeInterpreter caFocusModeInterpreter;
 
-class CARecordModeInterpreter : public ChoiceInterpreter
+class CARecordModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CARecordModeInterpreter()
@@ -194,7 +194,7 @@ public:
 };
 CARecordModeInterpreter caRecordModeInterpreter;
 
-class CAImageSizeInterpreter : public ChoiceInterpreter
+class CAImageSizeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAImageSizeInterpreter ()
@@ -220,7 +220,7 @@ public:
 };
 CAImageSizeInterpreter caImageSizeInterpreter;
 
-class CAEasyModeInterpreter : public ChoiceInterpreter
+class CAEasyModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAEasyModeInterpreter ()
@@ -300,7 +300,7 @@ public:
 };
 CAEasyModeInterpreter caEasyModeInterpreter;
 
-class CADigitalZoomInterpreter : public ChoiceInterpreter
+class CADigitalZoomInterpreter : public ChoiceInterpreter<>
 {
 public:
     CADigitalZoomInterpreter()
@@ -313,7 +313,7 @@ public:
 };
 CADigitalZoomInterpreter caDigitalZoomInterpreter;
 
-class CAMeteringModeInterpreter : public ChoiceInterpreter
+class CAMeteringModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAMeteringModeInterpreter()
@@ -328,7 +328,7 @@ public:
 };
 CAMeteringModeInterpreter caMeteringModeInterpreter;
 
-class CAFocusRangeInterpreter : public ChoiceInterpreter
+class CAFocusRangeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocusRangeInterpreter()
@@ -348,7 +348,7 @@ public:
 };
 CAFocusRangeInterpreter caFocusRangeInterpreter;
 
-class CAAFPointInterpreter : public ChoiceInterpreter
+class CAAFPointInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAFPointInterpreter()
@@ -365,7 +365,7 @@ public:
 };
 CAAFPointInterpreter caAFPointInterpreter;
 
-class CAExposureModeInterpreter : public ChoiceInterpreter
+class CAExposureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAExposureModeInterpreter()
@@ -385,7 +385,7 @@ CAExposureModeInterpreter caExposureModeInterpreter;
 class CAFlashBitsInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream s;
         unsigned bits = t->toInt (0, SHORT);
@@ -431,7 +431,7 @@ public:
 };
 CAFlashBitsInterpreter caFlashBitsInterpreter;
 
-class CAFocusContinuousInterpreter : public ChoiceInterpreter
+class CAFocusContinuousInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocusContinuousInterpreter()
@@ -443,7 +443,7 @@ public:
 };
 CAFocusContinuousInterpreter caFocusContinuousInterpreter;
 
-class CAAESettingsInterpreter : public ChoiceInterpreter
+class CAAESettingsInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAESettingsInterpreter()
@@ -457,7 +457,7 @@ public:
 };
 CAAESettingsInterpreter caAESettingsInterpreter;
 
-class CAStabilizationInterpreter : public ChoiceInterpreter
+class CAStabilizationInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAStabilizationInterpreter()
@@ -476,7 +476,7 @@ public:
 };
 CAStabilizationInterpreter caStabilizationInterpreter;
 
-class CASpotMeteringInterpreter : public ChoiceInterpreter
+class CASpotMeteringInterpreter : public ChoiceInterpreter<>
 {
 public:
     CASpotMeteringInterpreter()
@@ -487,7 +487,7 @@ public:
 };
 CASpotMeteringInterpreter caSpotMeteringInterpreter;
 
-class CAPhotoEffectInterpreter : public ChoiceInterpreter
+class CAPhotoEffectInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAPhotoEffectInterpreter()
@@ -504,7 +504,7 @@ public:
 };
 CAPhotoEffectInterpreter caPhotoEffectInterpreter;
 
-class CAManualFlashInterpreter : public ChoiceInterpreter
+class CAManualFlashInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAManualFlashInterpreter()
@@ -518,7 +518,7 @@ public:
 };
 CAManualFlashInterpreter caManualFlashInterpreter;
 
-class CARAWQualityInterpreter : public ChoiceInterpreter
+class CARAWQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     CARAWQualityInterpreter()
@@ -533,7 +533,7 @@ CARAWQualityInterpreter caRAWQualityInterpreter;
 class CAFocalInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         Tag *unitTag = t->getParent()->getRoot()->findTag ("FocalUnits");
         double v = unitTag ? unitTag->toDouble() : 1.;
@@ -567,6 +567,7 @@ public:
             {6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"},
             {6, "Tokina AF 193-2 19-35mm f/3.5-4.5"},
             {6, "Sigma 28-80mm f/3.5-5.6 II Macro"},
+            {6, "Sigma 28-300mm f/3.5-6.3 DG Macro"},
             {7, "Canon EF 100-300mm f/5.6L"},
             {8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens"},
             {8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"},
@@ -656,13 +657,16 @@ public:
             {82, "Canon TS-E 135mm f/4L Macro"},
             {94, "Canon TS-E 17mm f/4L"},
             {95, "Canon TS-E 24mm f/3.5L II"},
+            {103, "Samyang AF 14mm f/2.8 EF or Rokinon Lens"},
+            {103, "Rokinon SP 14mm f/2.4"},
+            {103, "Rokinon AF 14mm f/2.8 EF"},
             {124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"},
             {125, "Canon TS-E 24mm f/3.5L"},
             {126, "Canon TS-E 45mm f/2.8"},
             {127, "Canon TS-E 90mm f/2.8"},
-            {129, "Canon EF 300mm f/2.8L"},
-            {130, "Canon EF 50mm f/1.0L"},
-            {131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens"},
+            {129, "Canon EF 300mm f/2.8L USM"},
+            {130, "Canon EF 50mm f/1.0L USM"},
+            {131, "Canon EF 28-80mm f/2.8-4L USM or Sigma Lens"},
             {131, "Sigma 8mm f/3.5 EX DG Circular Fisheye"},
             {131, "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM"},
             {131, "Sigma 17-70mm f/2.8-4.5 DC Macro"},
@@ -670,11 +674,11 @@ public:
             {131, "Sigma APO 120-300mm f/2.8 EX DG HSM"},
             {131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"},
             {131, "Sigma 70-200mm f/2.8 APO EX HSM"},
-            {132, "Canon EF 1200mm f/5.6L"},
-            {134, "Canon EF 600mm f/4L IS"},
-            {135, "Canon EF 200mm f/1.8L"},
-            {136, "Canon EF 300mm f/2.8L"},
-            {137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens"},
+            {132, "Canon EF 1200mm f/5.6L USM"},
+            {134, "Canon EF 600mm f/4L IS USM"},
+            {135, "Canon EF 200mm f/1.8L USM"},
+            {136, "Canon EF 300mm f/2.8L USM"},
+            {137, "Canon EF 85mm f/1.2L USM or Sigma or Tamron Lens"},
             {137, "Sigma 18-50mm f/2.8-4.5 DC OS HSM"},
             {137, "Sigma 50-200mm f/4-5.6 DC OS HSM"},
             {137, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"},
@@ -692,11 +696,11 @@ public:
             {137, "Sigma 18-35mm f/1.8 DC HSM"},
             {137, "Sigma 12-24mm f/4.5-5.6 DG HSM II"},
             {138, "Canon EF 28-80mm f/2.8-4L"},
-            {139, "Canon EF 400mm f/2.8L"},
-            {140, "Canon EF 500mm f/4.5L"},
-            {141, "Canon EF 500mm f/4.5L"},
-            {142, "Canon EF 300mm f/2.8L IS"},
-            {143, "Canon EF 500mm f/4L IS or Sigma Lens"},
+            {139, "Canon EF 400mm f/2.8L USM"},
+            {140, "Canon EF 500mm f/4.5L USM"},
+            {141, "Canon EF 500mm f/4.5L USM"},
+            {142, "Canon EF 300mm f/2.8L IS USM"},
+            {143, "Canon EF 500mm f/4L IS USM or Sigma Lens"},
             {143, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"},
             {144, "Canon EF 35-135mm f/4-5.6 USM"},
             {145, "Canon EF 100-300mm f/4.5-5.6 USM"},
@@ -704,18 +708,18 @@ public:
             {147, "Canon EF 35-135mm f/4-5.6 USM"},
             {148, "Canon EF 28-80mm f/3.5-5.6 USM"},
             {149, "Canon EF 100mm f/2 USM"},
-            {150, "Canon EF 14mm f/2.8L or Sigma Lens"},
+            {150, "Canon EF 14mm f/2.8L USM or Sigma Lens"},
             {150, "Sigma 20mm EX f/1.8"},
             {150, "Sigma 30mm f/1.4 DC HSM"},
             {150, "Sigma 24mm f/1.8 DG Macro EX"},
             {150, "Sigma 28mm f/1.8 DG Macro EX"},
-            {151, "Canon EF 200mm f/2.8L"},
-            {152, "Canon EF 300mm f/4L IS or Sigma Lens"},
+            {151, "Canon EF 200mm f/2.8L USM"},
+            {152, "Canon EF 300mm f/4L IS USM or Sigma Lens"},
             {152, "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM"},
             {152, "Sigma 14mm f/2.8 EX Aspherical HSM"},
             {152, "Sigma 10-20mm f/4-5.6"},
             {152, "Sigma 100-300mm f/4"},
-            {153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens"},
+            {153, "Canon EF 35-350mm f/3.5-5.6L USM or Sigma or Tamron Lens"},
             {153, "Sigma 50-500mm f/4-6.3 APO HSM EX"},
             {153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"},
             {153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro Model A14"},
@@ -724,7 +728,7 @@ public:
             {154, "Zeiss Milvus 21mm f/2.8"},
             {155, "Canon EF 85mm f/1.8 USM"},
             {156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"},
-            {156, "Tamron SP 70-300mm f/4.0-5.6 Di VC USD"},
+            {156, "Tamron SP 70-300mm f/4-5.6 Di VC USD"},
             {156, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"},
             {160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"},
             {160, "Tamron AF 19-35mm f/3.5-4.5"},
@@ -732,7 +736,7 @@ public:
             {160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"},
             {160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"},
             {160, "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"},
-            {161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens"},
+            {161, "Canon EF 28-70mm f/2.8L USM or Other Lens"},
             {161, "Sigma 24-70mm f/2.8 EX"},
             {161, "Sigma 28-70mm f/2.8 EX"},
             {161, "Sigma 24-60mm f/2.8 EX DG"},
@@ -740,15 +744,16 @@ public:
             {161, "Tamron 90mm f/2.8"},
             {161, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"},
             {161, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"},
-            {162, "Canon EF 200mm f/2.8L"},
+            {161, "Tokina AT-X 24-70mm f/2.8 PRO FX (IF)"},
+            {162, "Canon EF 200mm f/2.8L USM"},
             {163, "Canon EF 300mm f/4L"},
             {164, "Canon EF 400mm f/5.6L"},
-            {165, "Canon EF 70-200mm f/2.8 L"},
-            {166, "Canon EF 70-200mm f/2.8 L + 1.4x"},
-            {167, "Canon EF 70-200mm f/2.8 L + 2x"},
+            {165, "Canon EF 70-200mm f/2.8L USM"},
+            {166, "Canon EF 70-200mm f/2.8L USM + 1.4x"},
+            {167, "Canon EF 70-200mm f/2.8L USM + 2x"},
             {168, "Canon EF 28mm f/1.8 USM or Sigma Lens"},
             {168, "Sigma 50-100mm f/1.8 DC HSM | A"},
-            {169, "Canon EF 17-35mm f/2.8L or Sigma Lens"},
+            {169, "Canon EF 17-35mm f/2.8L USM or Sigma Lens"},
             {169, "Sigma 18-200mm f/3.5-6.3 DC OS"},
             {169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"},
             {169, "Sigma 18-50mm f/2.8 Macro"},
@@ -756,48 +761,54 @@ public:
             {169, "Sigma 85mm f/1.4 EX DG HSM"},
             {169, "Sigma 30mm f/1.4 EX DC HSM"},
             {169, "Sigma 35mm f/1.4 DG HSM"},
-            {170, "Canon EF 200mm f/2.8L II"},
-            {171, "Canon EF 300mm f/4L"},
-            {172, "Canon EF 400mm f/5.6L or Sigma Lens"},
+            {169, "Sigma 35mm f/1.5 FF High-Speed Prime | 017"},
+            {170, "Canon EF 200mm f/2.8L II USM"},
+            {171, "Canon EF 300mm f/4L USM"},
+            {172, "Canon EF 400mm f/5.6L USM or Sigma Lens"},
             {172, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"},
-            {173, "Canon EF 180mm Macro f/3.5L or Sigma Lens"},
+            {173, "Canon EF 180mm Macro f/3.5L USM or Sigma Lens"},
             {173, "Sigma 180mm EX HSM Macro f/3.5"},
             {173, "Sigma APO Macro 150mm f/2.8 EX DG HSM"},
-            {174, "Canon EF 135mm f/2L or Other Lens"},
+            {174, "Canon EF 135mm f/2L USM or Other Lens"},
             {174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"},
             {174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"},
             {174, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"},
             {174, "Zeiss Milvus 100mm f/2 Makro"},
-            {175, "Canon EF 400mm f/2.8L"},
+            {175, "Canon EF 400mm f/2.8L USM"},
             {176, "Canon EF 24-85mm f/3.5-4.5 USM"},
-            {177, "Canon EF 300mm f/4L IS"},
+            {177, "Canon EF 300mm f/4L IS USM"},
             {178, "Canon EF 28-135mm f/3.5-5.6 IS"},
-            {179, "Canon EF 24mm f/1.4L"},
-            {180, "Canon EF 35mm f/1.4L or Other Lens"},
+            {179, "Canon EF 24mm f/1.4L USM"},
+            {180, "Canon EF 35mm f/1.4L USM or Other Lens"},
             {180, "Sigma 50mm f/1.4 DG HSM | A"},
             {180, "Sigma 24mm f/1.4 DG HSM | A"},
             {180, "Zeiss Milvus 50mm f/1.4"},
             {180, "Zeiss Milvus 85mm f/1.4"},
             {180, "Zeiss Otus 28mm f/1.4 ZE"},
-            {181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens"},
+            {180, "Sigma 24mm f/1.5 FF High-Speed Prime | 017"},
+            {180, "Sigma 50mm f/1.5 FF High-Speed Prime | 017"},
+            {180, "Sigma 85mm f/1.5 FF High-Speed Prime | 017"},
+            {181, "Canon EF 100-400mm f/4.5-5.6L IS USM + 1.4x or Sigma Lens"},
             {181, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"},
-            {182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens"},
+            {182, "Canon EF 100-400mm f/4.5-5.6L IS USM + 2x or Sigma Lens"},
             {182, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"},
-            {183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens"},
+            {183, "Canon EF 100-400mm f/4.5-5.6L IS USM or Sigma Lens"},
             {183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"},
             {183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"},
             {183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
             {183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"},
             {183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"},
             {183, "Sigma 100-400mm f/5-6.3 DG OS HSM"},
-            {184, "Canon EF 400mm f/2.8L + 2x"},
-            {185, "Canon EF 600mm f/4L IS"},
-            {186, "Canon EF 70-200mm f/4L"},
-            {187, "Canon EF 70-200mm f/4L + 1.4x"},
-            {188, "Canon EF 70-200mm f/4L + 2x"},
-            {189, "Canon EF 70-200mm f/4L + 2.8x"},
+            {183, "Sigma 180mm f/3.5 APO Macro EX DG IF HSM"},
+            {184, "Canon EF 400mm f/2.8L USM + 2x"},
+            {185, "Canon EF 600mm f/4L IS USM"},
+            {186, "Canon EF 70-200mm f/4L USM"},
+            {187, "Canon EF 70-200mm f/4L USM + 1.4x"},
+            {188, "Canon EF 70-200mm f/4L USM + 2x"},
+            {189, "Canon EF 70-200mm f/4L USM + 2.8x"},
             {190, "Canon EF 100mm f/2.8 Macro USM"},
-            {191, "Canon EF 400mm f/4 DO IS"},
+            {191, "Canon EF 400mm f/4 DO IS or Sigma Lens"},
+            {191, "Sigma 500mm f/4 DG OS HSM"},
             {193, "Canon EF 35-80mm f/4-5.6 USM"},
             {194, "Canon EF 80-200mm f/4.5-5.6 USM"},
             {195, "Canon EF 35-105mm f/4.5-5.6 USM"},
@@ -807,6 +818,7 @@ public:
             {198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"},
             {198, "Zeiss Otus 55mm f/1.4 ZE"},
             {198, "Zeiss Otus 85mm f/1.4 ZE"},
+            {198, "Zeiss Milvus 25mm f/1.4"},
             {199, "Canon EF 28-80mm f/3.5-5.6 USM"},
             {200, "Canon EF 75-300mm f/4-5.6 USM"},
             {201, "Canon EF 28-80mm f/3.5-5.6 USM"},
@@ -824,57 +836,72 @@ public:
             {214, "Canon EF-S 18-55mm f/3.5-5.6 USM"},
             {215, "Canon EF 55-200mm f/4.5-5.6 II USM"},
             {217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"},
-            {224, "Canon EF 70-200mm f/2.8L IS"},
-            {225, "Canon EF 70-200mm f/2.8L IS + 1.4x"},
-            {226, "Canon EF 70-200mm f/2.8L IS + 2x"},
-            {227, "Canon EF 70-200mm f/2.8L IS + 2.8x"},
+            {224, "Canon EF 70-200mm f/2.8L IS USM"},
+            {225, "Canon EF 70-200mm f/2.8L IS USM + 1.4x"},
+            {226, "Canon EF 70-200mm f/2.8L IS USM + 2x"},
+            {227, "Canon EF 70-200mm f/2.8L IS USM + 2.8x"},
             {228, "Canon EF 28-105mm f/3.5-4.5 USM"},
-            {229, "Canon EF 16-35mm f/2.8L"},
-            {230, "Canon EF 24-70mm f/2.8L"},
-            {231, "Canon EF 17-40mm f/4L"},
+            {229, "Canon EF 16-35mm f/2.8L USM"},
+            {230, "Canon EF 24-70mm f/2.8L USM"},
+            {231, "Canon EF 17-40mm f/4L USM"},
             {232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM"},
-            {233, "Canon EF 28-300mm f/3.5-5.6L IS"},
+            {233, "Canon EF 28-300mm f/3.5-5.6L IS USM"},
             {234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens"},
             {234, "Tokina AT-X 12-28 PRO DX 12-28mm f/4"},
             {235, "Canon EF-S 10-22mm f/3.5-4.5 USM"},
             {236, "Canon EF-S 60mm f/2.8 Macro USM"},
-            {237, "Canon EF 24-105mm f/4L IS"},
+            {237, "Canon EF 24-105mm f/4L IS USM"},
             {238, "Canon EF 70-300mm f/4-5.6 IS USM"},
-            {239, "Canon EF 85mm f/1.2L II"},
-            {240, "Canon EF-S 17-55mm f/2.8 IS USM"},
-            {241, "Canon EF 50mm f/1.2L"},
-            {242, "Canon EF 70-200mm f/4L IS"},
-            {243, "Canon EF 70-200mm f/4L IS + 1.4x"},
-            {244, "Canon EF 70-200mm f/4L IS + 2x"},
-            {245, "Canon EF 70-200mm f/4L IS + 2.8x"},
-            {246, "Canon EF 16-35mm f/2.8L II"},
+            {239, "Canon EF 85mm f/1.2L II USM or Rokinon Lens"},
+            {239, "Rokinon SP 85mm f/1.2"},
+            {240, "Canon EF-S 17-55mm f/2.8 IS USM or Sigma Lens"},
+            {240, "Sigma 17-50mm f/2.8 EX DC OS HSM"},
+            {241, "Canon EF 50mm f/1.2L USM"},
+            {242, "Canon EF 70-200mm f/4L IS USM"},
+            {243, "Canon EF 70-200mm f/4L IS USM + 1.4x"},
+            {244, "Canon EF 70-200mm f/4L IS USM + 2x"},
+            {245, "Canon EF 70-200mm f/4L IS USM + 2.8x"},
+            {246, "Canon EF 16-35mm f/2.8L II USM"},
             {247, "Canon EF 14mm f/2.8L II USM"},
-            {248, "Canon EF 200mm f/2L IS or Sigma Lens"},
+            {248, "Canon EF 200mm f/2L IS USM or Sigma Lens"},
             {248, "Sigma 24-35mm f/2 DG HSM | A"},
-            {249, "Canon EF 800mm f/5.6L IS"},
-            {250, "Canon EF 24mm f/1.4L II or Sigma Lens"},
+            {248, "Sigma 135mm f/2 FF High-Speed Prime | 017"},
+            {248, "Sigma 24-35mm f/2.2 FF Zoom | 017"},
+            {249, "Canon EF 800mm f/5.6L IS USM"},
+            {250, "Canon EF 24mm f/1.4L II USM or Sigma Lens"},
             {250, "Sigma 20mm f/1.4 DG HSM | A"},
+            {250, "Sigma 20mm f/1.5 FF High-Speed Prime | 017"},
             {251, "Canon EF 70-200mm f/2.8L IS II USM"},
             {252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x"},
             {253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"},
             {254, "Canon EF 100mm f/2.8L Macro IS USM"},
             {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"},
             {255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
+            {368, "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens"},
+            {368, "Sigma 20mm f/1.4 DG HSM | A"},
+            {368, "Sigma 50mm f/1.4 DG HSM | A"},
+            {368, "Sigma 40mm f/1.4 DG HSM | A"},
+            {368, "Sigma 60-600mm f/4.5-6.3 DG OS HSM | S"},
             {488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"},
             {489, "Canon EF 70-300mm f/4-5.6L IS USM"},
             {490, "Canon EF 8-15mm f/4L Fisheye USM"},
             {491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"},
             {491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"},
             {491, "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)"},
+            {491, "Tamron 100-400mm f/4.5-6.3 Di VC USD (A035)"},
+            {491, "Tamron 70-210mm f/4 Di VC USD (A034)"},
+            {491, "Tamron 70-210mm f/4 Di VC USD (A034) + 1.4x"},
+            {491, "Tamron SP 24-70mm f/2.8 Di VC USD G2 (A032)"},
             {492, "Canon EF 400mm f/2.8L IS II USM"},
             {493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"},
             {493, "Canon EF 24-105mm f/4L IS USM"},
-            {494, "Canon EF 600mm f/4.0L IS II USM"},
+            {494, "Canon EF 600mm f/4L IS II USM"},
             {495, "Canon EF 24-70mm f/2.8L II USM or Sigma Lens"},
             {495, "Sigma 24-70mm F2.8 DG OS HSM | A"},
             {496, "Canon EF 200-400mm f/4L IS USM"},
             {499, "Canon EF 200-400mm f/4L IS USM + 1.4x"},
-            {502, "Canon EF 28mm f/2.8 IS USM"},
+            {502, "Canon EF 28mm f/2.8 IS USM or Tamron Lens"},
+            {502, "Tamron 35mm f/1.8 Di VC USD (F012)"},
             {503, "Canon EF 24mm f/2.8 IS USM"},
             {504, "Canon EF 24-70mm f/4L IS USM"},
             {505, "Canon EF 35mm f/2 IS USM"},
@@ -883,11 +910,19 @@ public:
             {508, "Canon EF 11-24mm f/4L USM or Tamron Lens"},
             {508, "Tamron 10-24mm f/3.5-4.5 Di II VC HLD"},
             {747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"},
-            {747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"},
-            {748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"},
+            {747, "Tamron SP 150-600mm f/5-6.3 Di VC USD G2"},
+            {748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens"},
+            {748, "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 1.4x"},
+            {748, "Tamron 70-210mm f/4 Di VC USD (A034) + 2x"},
+            {749, "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 2x"},
             {750, "Canon EF 35mm f/1.4L II USM"},
             {751, "Canon EF 16-35mm f/2.8L III USM"},
             {752, "Canon EF 24-105mm f/4L IS II USM"},
+            {753, "Canon EF 85mm f/1.4L IS USM"},
+            {754, "Canon EF 70-200mm f/4L IS II USM"},
+            {757, "Canon EF 400mm f/2.8L IS III USM"},
+            {758, "Canon EF 600mm f/4L IS III USM"},
+            {1136, "Sigma 24-70mm f/2.8 DG OS HSM | Art 017"},
             {4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"},
             {4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"},
             {4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
@@ -905,9 +940,14 @@ public:
             {4156, "Canon EF 50mm f/1.8 STM"},
             {4157, "Canon EF-M 18-150mm 1:3.5-6.3 IS STM"},
             {4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"},
+            {4159, "Canon EF-M 32mm f/1.4 STM"},
             {4160, "Canon EF-S 35mm f/2.8 Macro IS STM"},
             {36910, "Canon EF 70-300mm f/4-5.6 IS II USM"},
             {36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"},
+            {61182, "Canon RF 35mm F1.8 Macro IS STM or other Canon RF Lens"},
+            {61182, "Canon RF 50mm F1.2 L USM"},
+            {61182, "Canon RF 24-105mm F4 L IS USM"},
+            {61182, "Canon RF 28-70mm F2 L USM"},
             {61491, "Canon CN-E 14mm T3.1 L F"},
             {61492, "Canon CN-E 24mm T1.5 L F"},
             {61494, "Canon CN-E 85mm T1.3 L F"},
@@ -917,7 +957,7 @@ public:
         };
     }
 
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int lensID = t->toInt();
 
@@ -1054,7 +1094,7 @@ public:
 };
 CALensInterpreter caLensInterpreter;
 
-class CAFocalTypeInterpreter : public ChoiceInterpreter
+class CAFocalTypeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFocalTypeInterpreter()
@@ -1069,7 +1109,7 @@ CAFocalTypeInterpreter caFocalTypeInterpreter;
 class CAFocalPlaneInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int val = t->toInt();
 
@@ -1087,7 +1127,7 @@ CAFocalPlaneInterpreter caFocalPlaneInterpreter;
 class CAExposureTimeInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         double d = pow (2, - t->toInt() / 32.0);
@@ -1099,7 +1139,7 @@ CAExposureTimeInterpreter caExposureTimeInterpreter;
 
 class CAEVInterpreter : public Interpreter
 {
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%.1f", t->toDouble() / 32.0  );
@@ -1111,14 +1151,14 @@ CAEVInterpreter caEVInterpreter;
 class CABaseISOInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         int a = t->toInt();
         sprintf (buffer, "%d", a);
         return buffer;
     }
-    virtual double toDouble (const Tag* t, int ofs)
+    double toDouble (const Tag* t, int ofs) override
     {
         int a = Interpreter::toInt (t, ofs);
 
@@ -1129,7 +1169,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (const Tag* t, int ofs, TagType astype)
+    int toInt (const Tag* t, int ofs, TagType astype) override
     {
         int a = Interpreter::toInt (t, ofs, astype);
 
@@ -1143,7 +1183,7 @@ public:
 };
 CABaseISOInterpreter caBaseISOInterpreter;
 
-class CAToneCurveInterpreter : public ChoiceInterpreter
+class CAToneCurveInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAToneCurveInterpreter()
@@ -1155,7 +1195,7 @@ public:
 };
 CAToneCurveInterpreter caToneCurveInterpreter;
 
-class CASharpnessFrequencyInterpreter : public ChoiceInterpreter
+class CASharpnessFrequencyInterpreter : public ChoiceInterpreter<>
 {
 public:
     CASharpnessFrequencyInterpreter()
@@ -1170,7 +1210,7 @@ public:
 };
 CASharpnessFrequencyInterpreter caSharpnessFrequencyInterpreter;
 
-class CAWhiteBalanceInterpreter : public ChoiceInterpreter
+class CAWhiteBalanceInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAWhiteBalanceInterpreter()
@@ -1201,7 +1241,7 @@ public:
 };
 CAWhiteBalanceInterpreter caWhiteBalanceInterpreter;
 
-class CAPictureStyleInterpreter : public ChoiceInterpreter
+class CAPictureStyleInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAPictureStyleInterpreter()
@@ -1232,7 +1272,7 @@ public:
 };
 CAPictureStyleInterpreter caPictureStyleInterpreter;
 
-class CASlowShutterInterpreter : public ChoiceInterpreter
+class CASlowShutterInterpreter : public ChoiceInterpreter<>
 {
 public:
     CASlowShutterInterpreter()
@@ -1248,7 +1288,7 @@ CASlowShutterInterpreter caSlowShutterInterpreter;
 class CAFlashGuideNumberInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         int n = t->toInt();
 
@@ -1263,7 +1303,7 @@ public:
 };
 CAFlashGuideNumberInterpreter caFlashGuideNumberInterpreter;
 
-class CAAFPointsInFocusInterpreter : public ChoiceInterpreter
+class CAAFPointsInFocusInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAFPointsInFocusInterpreter()
@@ -1280,7 +1320,7 @@ public:
 };
 CAAFPointsInFocusInterpreter caAFPointsInFocusInterpreter;
 
-class CAAutoExposureBracketingInterpreter : public ChoiceInterpreter
+class CAAutoExposureBracketingInterpreter : public ChoiceInterpreter<int>
 {
 public:
     CAAutoExposureBracketingInterpreter()
@@ -1294,7 +1334,7 @@ public:
 };
 CAAutoExposureBracketingInterpreter caAutoExposureBracketingInterpreter;
 
-class CAControModeInterpreter : public ChoiceInterpreter
+class CAControModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAControModeInterpreter()
@@ -1309,7 +1349,7 @@ CAControModeInterpreter caControModeInterpreter;
 class CAFocusDistanceInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%.2f", t->toDouble() / 100 );
@@ -1321,7 +1361,7 @@ CAFocusDistanceInterpreter caFocusDistanceInterpreter;
 class CAMeasuredEVInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%.1f", t->toDouble() / 8 - 6 );
@@ -1330,7 +1370,7 @@ public:
 };
 CAMeasuredEVInterpreter caMeasuredEVInterpreter;
 
-class CACameraTypeInterpreter : public ChoiceInterpreter
+class CACameraTypeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CACameraTypeInterpreter()
@@ -1343,7 +1383,7 @@ public:
 };
 CACameraTypeInterpreter caCameraTypeInterpreter;
 
-class CAAutoRotateInterpreter : public ChoiceInterpreter
+class CAAutoRotateInterpreter : public ChoiceInterpreter<int>
 {
 public:
     CAAutoRotateInterpreter()
@@ -1357,7 +1397,7 @@ public:
 };
 CAAutoRotateInterpreter caAutoRotateInterpreter;
 
-class CABracketModeInterpreter : public ChoiceInterpreter
+class CABracketModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CABracketModeInterpreter()
@@ -1371,7 +1411,7 @@ public:
 };
 CABracketModeInterpreter caBracketModeInterpreter;
 
-class CARAWJpegQualityInterpreter : public ChoiceInterpreter
+class CARAWJpegQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     CARAWJpegQualityInterpreter()
@@ -1387,7 +1427,7 @@ public:
 };
 CARAWJpegQualityInterpreter caRAWJpegQualityInterpreter;
 
-class CAJpegSizeInterpreter : public ChoiceInterpreter
+class CAJpegSizeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAJpegSizeInterpreter()
@@ -1413,7 +1453,7 @@ public:
 };
 CAJpegSizeInterpreter caJpegSizeInterpreter;
 
-class CAWBBracketModeInterpreter : public ChoiceInterpreter
+class CAWBBracketModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAWBBracketModeInterpreter()
@@ -1425,7 +1465,7 @@ public:
 };
 CAWBBracketModeInterpreter caWBBracketModeInterpreter;
 
-class CAFilterEffectInterpreter : public ChoiceInterpreter
+class CAFilterEffectInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAFilterEffectInterpreter()
@@ -1439,7 +1479,7 @@ public:
 };
 CAFilterEffectInterpreter caFilterEffectInterpreter;
 
-class CAToningEffectInterpreter : public ChoiceInterpreter
+class CAToningEffectInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAToningEffectInterpreter()
@@ -1456,7 +1496,7 @@ CAToningEffectInterpreter caToningEffectInterpreter;
 class CAFileNumberInterpreter : public Interpreter
 {
 public:
-    virtual std::string toString (Tag* t)
+    std::string toString (const Tag* t) const override
     {
         unsigned long val = t->toInt (0, LONG);
         char buffer[32];
@@ -1467,11 +1507,14 @@ public:
 CAFileNumberInterpreter caFileNumberInterpreter;
 
 // CanonModelID
-class CAModelIDInterpreter : public ChoiceInterpreter
+class CAModelIDInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAModelIDInterpreter ()
     {
+        choices[1042] = "EOS M50 / Kiss M";
+        choices[2049] = "PowerShot SX740 HS";
+        choices[2053] = "PowerShot SX70 HS";
         choices[16842752] = "PowerShot A30";
         choices[17039360] = "PowerShot S300 / Digital IXUS 300 / IXY Digital 300";
         choices[17170432] = "PowerShot A20";
@@ -1702,6 +1745,7 @@ public:
         choices[68485120] = "PowerShot ELPH 185 / IXUS 185 / IXY 200";
         choices[68550656] = "PowerShot SX430 IS";
         choices[68616192] = "PowerShot SX730 HS";
+        choices[68681728] = "PowerShot G1 X Mark III";
         choices[100925440] = "PowerShot S100 / Digital IXUS / IXY Digital";
         choices[1074255475] = "DC19/DC21/DC22";
         choices[1074255476] = "XH A1";
@@ -1734,6 +1778,7 @@ public:
         choices[1074257056] = "EOS C300";
         choices[1074257321] = "HF G25";
         choices[1074257844] = "XC10";
+        choices[1074258371] = "EOS C200";
         choices[2147483649] = "EOS-1D";
         choices[2147484007] = "EOS-1DS";
         choices[2147484008] = "EOS 10D";
@@ -1775,7 +1820,7 @@ public:
         choices[2147484452] = "EOS-1D C";
         choices[2147484453] = "EOS 70D";
         choices[2147484454] = "EOS Rebel T5i / 700D / Kiss X7i";
-        choices[2147484455] = "EOS Rebel T5 / 1200D / Kiss X70";
+        choices[2147484455] = "EOS Rebel T5 / 1200D / Kiss X70 / Hi";
         choices[2147484456] = "EOS-1D X MARK II";
         choices[2147484465] = "EOS M";
         choices[2147484486] = "EOS Rebel SL1 / 100D / Kiss X7";
@@ -1791,11 +1836,14 @@ public:
         choices[2147484678] = "EOS 6D Mark II";
         choices[2147484680] = "EOS 77D / 9000D";
         choices[2147484695] = "EOS Rebel SL2 / 200D / Kiss X9";
+        choices[2147484706] = "EOS Rebel T100 / 4000D / 3000D";
+        choices[2147484708] = "EOR R";
+        choices[2147484722] = "EOS Rebel T7 / 2000D / 1500D / Kiss X90";
     }
 };
 CAModelIDInterpreter caModelIDInterpreter;
 
-class CAPanoramaDirectionInterpreter : public ChoiceInterpreter
+class CAPanoramaDirectionInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAPanoramaDirectionInterpreter()
@@ -1809,7 +1857,7 @@ public:
 };
 CAPanoramaDirectionInterpreter caPanoramaDirectionInterpreter;
 
-class CAAspectRatioInterpreter : public ChoiceInterpreter
+class CAAspectRatioInterpreter : public ChoiceInterpreter<>
 {
 public:
     CAAspectRatioInterpreter()

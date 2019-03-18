@@ -40,6 +40,7 @@
 #include "median.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"
+#include "procparams.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -140,7 +141,7 @@ struct cont_params {
 int wavNestedLevels = 1;
 
 
-SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, int skip)
+void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, int skip)
 
 
 {
@@ -148,7 +149,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     // init variables to display Munsell corrections
     MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
 #endif
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.workingProfile);
     const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
@@ -645,7 +646,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         numthreads = MIN(numthreads, maxnumberofthreadsforwavelet);
     }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     wavNestedLevels = omp_get_max_threads() / numthreads;
     bool oldNested = omp_get_nested();
 
@@ -720,7 +721,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                     Lold = lab->L;
                 }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                 #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
@@ -736,7 +737,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         av = LVFU(lab->a[i][j]);
                         bv = LVFU(lab->b[i][j]);
                         huev = xatan2f(bv, av);
-                        chrov = _mm_sqrt_ps(SQRV(av) + SQRV(bv)) / c327d68v;
+                        chrov = vsqrtf(SQRV(av) + SQRV(bv)) / c327d68v;
                         _mm_storeu_ps(&varhue[i1][j1], huev);
                         _mm_storeu_ps(&varchro[i1][j1], chrov);
 
@@ -784,7 +785,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         }
                     }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                     #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
@@ -868,7 +869,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                     if(!Ldecomp->memoryAllocationFailed) {
 
                         float madL[8][3];
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic) collapse(2) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
@@ -1076,7 +1077,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                     bool highlight = params->toneCurve.hrenabled;
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
@@ -1104,7 +1105,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                                 bv = LVFU(labco->b[i1][col]);
                                 STVF(atan2Buffer[col], xatan2f(bv, av));
 
-                                cv = _mm_sqrt_ps(SQRV(av) + SQRV(bv));
+                                cv = vsqrtf(SQRV(av) + SQRV(bv));
                                 yv = av / cv;
                                 xv = bv / cv;
                                 xyMask = vmaskf_eq(zerov, cv);
@@ -1246,7 +1247,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         delete [] varchro;
 
     }
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     omp_set_nested(oldNested);
 #endif
 
@@ -1271,17 +1272,17 @@ void ImProcFunctions::Aver( float *  RESTRICT DataList, int datalen, float &aver
 
     //find absolute mean
     int countP = 0, countN = 0;
-    float averaP = 0.f, averaN = 0.f;
+    double averaP = 0.0, averaN = 0.0; // use double precision for large summations
 
     float thres = 5.f;//different fom zero to take into account only data large enough
     max = 0.f;
     min = 0.f;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
         float lmax = 0.f, lmin = 0.f;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp for reduction(+:averaP,averaN,countP,countN) nowait
 #endif
 
@@ -1305,7 +1306,7 @@ void ImProcFunctions::Aver( float *  RESTRICT DataList, int datalen, float &aver
             }
         }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp critical
 #endif
         {
@@ -1332,10 +1333,10 @@ void ImProcFunctions::Aver( float *  RESTRICT DataList, int datalen, float &aver
 void ImProcFunctions::Sigma( float *  RESTRICT DataList, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg)
 {
     int countP = 0, countN = 0;
-    float variP = 0.f, variN = 0.f;
+    double variP = 0.0, variN = 0.0; // use double precision for large summations
     float thres = 5.f;//different fom zero to take into account only data large enough
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
@@ -1425,137 +1426,60 @@ void ImProcFunctions::Eval2 (float ** WavCoeffs_L, int level,
     MaxN[level] = maxLN;
 }
 
-float *ImProcFunctions::ContrastDR(float *Source, int W_L, int H_L, float *Contrast)
+void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost)
 {
-    int n = W_L * H_L;
+    const int n = W_L * H_L;
 
-    if(Contrast == nullptr) {
-        Contrast = new float[n];
-    }
-
-    memcpy(Contrast, Source, n * sizeof(float));
-#ifdef _RT_NESTED_OPENMP
-    #pragma omp parallel for
-#endif
-
-    for (int i = 0; i < W_L * H_L; i++) { //contrast
-        Contrast[i] = Source[i] ;
-    }
-
-    return Contrast;
-}
-
-SSEFUNCTION float *ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compression, float DetailBoost, float *Compressed)
-{
-
-    const float eps = 0.000001f;
-    int n = W_L * H_L;
-
-#ifdef __SSE2__
-#ifdef _RT_NESTED_OPENMP
-    #pragma omp parallel
-#endif
-    {
-        __m128 epsv = _mm_set1_ps( eps );
-#ifdef _RT_NESTED_OPENMP
-        #pragma omp for
-#endif
-
-        for(int ii = 0; ii < n - 3; ii += 4) {
-            _mm_storeu_ps( &Source[ii], xlogf(LVFU(Source[ii]) + epsv));
-        }
-    }
-
-    for(int ii = n - (n % 4); ii < n; ii++) {
-        Source[ii] = xlogf(Source[ii] + eps);
-    }
-
-#else
-#ifdef _RT_NESTED_OPENMP
-    #pragma omp parallel for
-#endif
-
-    for(int ii = 0; ii < n; ii++) {
-        Source[ii] = xlogf(Source[ii] + eps);
-    }
-
-#endif
-
-    float *ucr = ContrastDR(Source, W_L, H_L);
-
-    if(Compressed == nullptr) {
-        Compressed = ucr;
-    }
-
-    float temp;
+    float exponent;
 
     if(DetailBoost > 0.f && DetailBoost < 0.05f ) {
         float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
-        temp = 1.2f * xlogf( -betemp);
-        temp /= 20.f;
+        exponent = 1.2f * xlogf( -betemp);
+        exponent /= 20.f;
     } else if(DetailBoost >= 0.05f && DetailBoost < 0.25f ) {
         float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
-        temp = 1.2f * xlogf( -betemp);
-        temp /= (-75.f * DetailBoost + 23.75f);
+        exponent = 1.2f * xlogf( -betemp);
+        exponent /= (-75.f * DetailBoost + 23.75f);
     } else if(DetailBoost >= 0.25f) {
         float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
-        temp = 1.2f * xlogf( -betemp);
-        temp /= (-2.f * DetailBoost + 5.5f);
+        exponent = 1.2f * xlogf( -betemp);
+        exponent /= (-2.f * DetailBoost + 5.5f);
+    } else {
+        exponent = (Compression - 1.0f) / 20.f;
     }
 
-    else {
-        temp = (Compression - 1.0f) / 20.f;
-    }
+    exponent += 1.f;
 
+    // now calculate Source = pow(Source, exponent)
 #ifdef __SSE2__
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        __m128 cev, uev, sourcev;
-        __m128 epsv = _mm_set1_ps( eps );
-        __m128 DetailBoostv = _mm_set1_ps( DetailBoost );
-        __m128 tempv = _mm_set1_ps( temp );
-#ifdef _RT_NESTED_OPENMP
+        vfloat exponentv = F2V(exponent);
+#ifdef _OPENMP
         #pragma omp for
 #endif
 
         for(int i = 0; i < n - 3; i += 4) {
-            cev = xexpf(LVFU(Source[i]) + LVFU(ucr[i]) * (tempv)) - epsv;
-            uev = xexpf(LVFU(ucr[i])) - epsv;
-            sourcev = xexpf(LVFU(Source[i])) - epsv;
-            _mm_storeu_ps( &Source[i], sourcev);
-            _mm_storeu_ps( &Compressed[i], cev + DetailBoostv * (sourcev - uev) );
+            STVFU(Source[i], xexpf(xlogf(LVFU(Source[i])) * exponentv));
         }
     }
 
     for(int i = n - (n % 4); i < n; i++) {
-        float ce = xexpf(Source[i] + ucr[i] * (temp)) - eps;
-        float ue = xexpf(ucr[i]) - eps;
-        Source[i] = xexpf(Source[i]) - eps;
-        Compressed[i] = ce + DetailBoost * (Source[i] - ue);
+        Source[i] = xexpf(xlogf(Source[i]) * exponent);
     }
 
 #else
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for
 #endif
 
     for(int i = 0; i < n; i++) {
-        float ce = xexpf(Source[i] + ucr[i] * (temp)) - eps;
-        float ue = xexpf(ucr[i]) - eps;
-        Source[i] = xexpf(Source[i]) - eps;
-        Compressed[i] = ce + DetailBoost * (Source[i] - ue);
+        Source[i] = xexpf(xlogf(Source[i]) * exponent);
     }
 
 #endif
-
-    if(Compressed != ucr) {
-        delete[] ucr;
-    }
-
-    return Compressed;
-
 
 }
 
@@ -1572,7 +1496,7 @@ void ImProcFunctions::ContrastResid(float * WavCoeffs_L0, struct cont_params &cp
         min0 = 0.0f;
     }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for
 #endif
 
@@ -1589,10 +1513,10 @@ void ImProcFunctions::ContrastResid(float * WavCoeffs_L0, struct cont_params &cp
     }
 
 
-    CompressDR(WavCoeffs_L0, W_L, H_L, Compression, DetailBoost, WavCoeffs_L0);
+    CompressDR(WavCoeffs_L0, W_L, H_L, Compression, DetailBoost);
 
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for            // removed schedule(dynamic,10)
 #endif
 
@@ -1624,7 +1548,7 @@ void ImProcFunctions::EPDToneMapResid(float * WavCoeffs_L0,  unsigned int Iterat
     }
 
     //  max0=32768.f;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for
 #endif
 
@@ -1649,7 +1573,7 @@ void ImProcFunctions::EPDToneMapResid(float * WavCoeffs_L0,  unsigned int Iterat
     epd2.CompressDynamicRange(WavCoeffs_L0, (float)sca / skip, edgest, Compression, DetailBoost, Iterates, rew);
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for            // removed schedule(dynamic,10)
 #endif
 
@@ -1687,12 +1611,12 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     float contrast = cp.contrast;
     float multL = (float)contrast * (maxl - 1.f) / 100.f + 1.f;
     float multH = (float) contrast * (maxh - 1.f) / 100.f + 1.f;
-    double avedbl = 0.f; // use double precision for big summations
+    double avedbl = 0.0; // use double precision for large summations
     float max0 = 0.f;
     float min0 = FLT_MAX;
 
     if(contrast != 0.f || (cp.tonemap  && cp.resena)) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp parallel for reduction(+:avedbl) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
@@ -1700,14 +1624,14 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             avedbl += WavCoeffs_L0[i];
         }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
         {
             float lminL = FLT_MAX;
             float lmaxL = 0.f;
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for
 #endif
 
@@ -1722,7 +1646,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
             }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp critical
 #endif
             {
@@ -1782,13 +1706,13 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             koeLi[j][i] = 0.f;
         }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
-        if(contrast != 0.f  && cp.resena) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+        if(contrast != 0.f  && cp.resena && max0 > 0.0) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
             {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                 #pragma omp for
 #endif
 
@@ -1817,18 +1741,18 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         if(cp.tonemap && cp.contmet == 1  && cp.resena) {
             float maxp = max0 * 256.f;
             float minp = min0 * 256.f;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp single
 #endif
             ContrastResid(WavCoeffs_L0, cp, W_L, H_L, maxp, minp);
         }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp barrier
 #endif
 
         if((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for nowait
 #endif
 
@@ -1875,7 +1799,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         // I was inspired by the principle of Canny and Lipschitz (continuity and derivability)
         // I adapted the principle but have profoundly changed the algorithm
         // One can 1) change all parameters and found good parameters;
-        //one can also chnage in calckoe
+        //one can also change in calckoe
         float edd = 3.f;
         float eddlow = 15.f;
         float eddlipinfl = 0.005f * cp.edgsens + 0.4f;
@@ -1890,7 +1814,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 tmC[i] = &tmCBuffer[i * W_L];
             }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -1910,7 +1834,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             float aamp = 1.f + cp.eddetthrHi / 100.f;
 
             for (int lvl = 0; lvl < 4; lvl++) {
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
                 #pragma omp for schedule(dynamic,16)
 #endif
 
@@ -1920,7 +1844,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         float interm = 0.f;
 
                         if(cp.lip3 && cp.lipp) {
-                            // comparaison between pixel and neighbours
+                            // comparison between pixel and neighbours
                             const auto neigh = cp.neigh == 1;
                             const auto kneigh = neigh ? 28.f : 38.f;
                             const auto somm = neigh ? 40.f : 50.f;
@@ -1987,7 +1911,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                             kampli = AmpLip / aamp;
                         }
 
-                        // comparaison betwwen pixel and neighbours to do ==> I think 3 dir above is better
+                        // comparison betwwen pixel and neighbours to do ==> I think 3 dir above is better
                         /*      if(cp.lip3){
                                 koeLi[lvl*3][i*W_L + j] = (koeLi[lvl*3][i*W_L + j] + koeLi[lvl*3][(i-1)*W_L + j] + koeLi[lvl*3][(i+1)*W_L + j]
                                         + koeLi[lvl*3][i*W_L + j+1] + koeLi[lvl*3][i*W_L + j-1] + koeLi[lvl*3][(i-1)*W_L + j-1]
@@ -2013,7 +1937,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             // end
         }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -2048,7 +1972,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition &WaveletCoeffs_a, 
 
         float * WavCoeffs_a0 = WaveletCoeffs_a.coeff0;
         float * WavCoeffs_b0 = WaveletCoeffs_b.coeff0;
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
         {
@@ -2056,7 +1980,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition &WaveletCoeffs_a, 
             float huebuffer[W_L] ALIGNED64;
             float chrbuffer[W_L] ALIGNED64;
 #endif // __SSE2__
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
 
@@ -2069,7 +1993,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition &WaveletCoeffs_a, 
                     __m128 av = LVFU(WavCoeffs_a0[i * W_L + k]);
                     __m128 bv = LVFU(WavCoeffs_b0[i * W_L + k]);
                     __m128 huev = xatan2f(bv, av);
-                    __m128 chrv = _mm_sqrt_ps(SQRV(av) + SQRV(bv));
+                    __m128 chrv = vsqrtf(SQRV(av) + SQRV(bv));
                     STVF(huebuffer[k], huev);
                     STVF(chrbuffer[k], chrv);
                 }
@@ -2116,13 +2040,13 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
     float * WavCoeffs_ab0 = WaveletCoeffs_ab.coeff0;
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
         if(cp.chrores != 0.f  && cp.resena) { // cp.chrores == 0.f means all will be multiplied by 1.f, so we can skip the processing of residual
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for nowait
 #endif
 
@@ -2175,7 +2099,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
         if(cp.cbena  && cp.resena) {//if user select Toning and color balance
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
             #pragma omp for nowait
 #endif
 
@@ -2230,7 +2154,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
             }
         }
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
@@ -2425,7 +2349,7 @@ void ImProcFunctions::finalContAllL (float ** WavCoeffs_L, float * WavCoeffs_L0,
         float bsig = 0.5f - asig * mean[level];
         float amean = 0.5f / mean[level];
 
-#ifdef _RT_NESTED_OPENMP
+#ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, W_L * 16) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
@@ -2453,7 +2377,7 @@ void ImProcFunctions::finalContAllL (float ** WavCoeffs_L, float * WavCoeffs_L0,
         }
     }
 
-    int choicelevel = atoi(params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
 
     int choiceClevel = 0;
@@ -2745,7 +2669,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
 
         float edgePrecalc = 1.f + refin; //estimate edge "pseudo variance"
 
-        if(cp.EDmet == 2) { //curve
+        if(cp.EDmet == 2 && MaxP[level] > 0.f) { //curve
             //  if(exa) {//curve
             float insigma = 0.666f; //SD
             float logmax = log(MaxP[level]); //log Max
@@ -2850,8 +2774,8 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             }
         } else if(cp.EDmet == 1) { //threshold adjuster
             float MaxPCompare = MaxP[level] * SQR(cp.edg_max / 100.f); //100 instead of b_r...case if b_r < 100
-            float MaxNCompare = MaxN[level] * SQR(cp.edg_max / 100.f); //always rduce a little edge for near max values
-            float edgeSdCompare = (mean[level] + 1.5f * sigma[level]) * SQR(cp.edg_sd / t_r); // 1.5 standard deviation #80%  range between mean 50% and 80%
+            float MaxNCompare = MaxN[level] * SQR(cp.edg_max / 100.f); //always reduce a little edge for near max values
+            float edgeSdCompare = (mean[level] + 1.5f * sigma[level]) * SQR(cp.edg_sd / t_r); // 1.5 standard deviation #80% range between mean 50% and 80%
             float edgeMeanCompare = mean[level] * SQR(cp.edg_mean / t_l);
             float edgeLowCompare = (5.f + SQR(cp.edg_low));
             float edgeMeanFactor = cbrt(cp.edg_mean / t_l);
@@ -2895,7 +2819,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                         edge = edgePrecalc;
                     }
 
-                    //algorithm that take into account local contrast
+                    //algorithm that takes into account local contrast
                     // I use a thresholdadjuster with
                     // Bottom left ==> minimal low value for local contrast (not 0, but 5...we can change)
                     // 0 10*10 35*35 100*100 substantially correspond to the true distribution of low value, mean, standard-deviation and max (ed 5, 50, 400, 4000
@@ -2943,7 +2867,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                         if(edge < 1.f) {
                             edge = 1.f;
                         }
-                    }//mofify effect if sd change
+                    }//modify effect if sd change
 
                     if (fabs(WavCoeffs_L[dir][k]) < edgeMeanCompare) {
                         edge *= edgeMeanFactor;
@@ -3266,7 +3190,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
     }
 
     // to see each level of wavelet ...level from 0 to 8
-    int choicelevel = atoi(params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
 }
 
@@ -3524,7 +3448,7 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     // to see each level of wavelet ...level from 0 to 8
-    int choicelevel = atoi(params->wavelet.Lmethod.data()) - 1;
+    int choicelevel = params->wavelet.Lmethod - 1;
     choicelevel = choicelevel == -1 ? 4 : choicelevel;
     int choiceClevel = 0;
 

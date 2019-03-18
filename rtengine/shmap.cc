@@ -30,7 +30,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-SHMap::SHMap (int w, int h, bool multiThread) : max_f(0.f), min_f(0.f), avg(0.f), W(w), H(h), multiThread(multiThread)
+SHMap::SHMap (int w, int h) : max_f(0.f), min_f(0.f), avg(0.f), W(w), H(h)
 {
 
     map = new float*[H];
@@ -124,7 +124,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
         rangefn[lutSize - 1] = 1e-15f;
 
         // We need one temporary buffer
-        const JaggedArray<float> buffer (W, H);
+        JaggedArray<float> buffer (W, H);
 
         // the final result has to be in map
         // for an even number of levels that means: map => buffer, buffer => map
@@ -255,7 +255,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         //printf("lut=%d rf5=%f rfm=%f\n thre=%f",lutSize, rangefn[5],rangefn[lutSize-10],thresh );
 
         // We need one temporary buffer
-        const JaggedArray<float> buffer (W, H);
+        JaggedArray<float> buffer (W, H);
 
         // the final result has to be in map
         // for an even number of levels that means: map => buffer, buffer => map
@@ -358,7 +358,7 @@ void SHMap::forceStat (float max_, float min_, float avg_)
     avg = avg_;
 }
 
-SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
+void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
 {
     //scale is spacing of directional averaging weights
 
@@ -375,7 +375,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
         #pragma omp parallel
 #endif
         {
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
             vfloat dirwtv, valv, normv, dftemp1v, dftemp2v;
 #endif // __SSE2__
             int j;
@@ -402,7 +402,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
                     data_coarse[i][j] = val / norm; // low pass filter
                 }
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
                 int inbrMin = max(i - scalewin, i % scale);
 
                 for(; j < (width - scalewin) - 3; j += 4) {
@@ -482,7 +482,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
         #pragma omp parallel
 #endif
         {
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
             vfloat dirwtv, valv, normv, dftemp1v, dftemp2v;
             float domkerv[5][5][4] ALIGNED16 = {{{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}};
 
@@ -510,7 +510,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
                     data_coarse[i][j] = val / norm; // low pass filter
                 }
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#ifdef __SSE2__
 
                 for(; j < width - scalewin - 3; j += 4) {
                     valv = _mm_setzero_ps();

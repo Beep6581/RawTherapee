@@ -81,6 +81,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 
     tpc->addPParamsChangeListener (history);
     history->setProfileChangeListener (tpc);
+    history->set_size_request(-1, 50);
 
     Gtk::ScrolledWindow* sFilterPanel = Gtk::manage ( new Gtk::ScrolledWindow() );
     filterPanel = Gtk::manage ( new FilterPanel () );
@@ -120,7 +121,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 
     tpcPaned = Gtk::manage ( new Gtk::VPaned () );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
-    tpcPaned->pack2 (*history, true, true);
+    tpcPaned->pack2 (*history, true, false);
 
     rightNotebook->append_page (*sFilterPanel, *filtLab);
     rightNotebook->append_page (*inspectorPanel, *inspectLab);
@@ -138,12 +139,13 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 
     fileCatalog->setFileSelectionListener (this);
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FilePanel*>(data)->init();
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    idle_register.add(
+        [this]() -> bool
+        {
+            init();
+            return false;
+        }
+    );
 
     show_all ();
 }
@@ -227,7 +229,6 @@ void FilePanel::on_NB_switch_page(Gtk::Widget* page, guint page_num)
 
 bool FilePanel::fileSelected (Thumbnail* thm)
 {
-
     if (!parent) {
         return false;
     }
@@ -257,6 +258,16 @@ bool FilePanel::fileSelected (Thumbnail* thm)
                    sigc::bind(sigc::mem_fun(*this, &FilePanel::imageLoaded), thm, ld) );
     return true;
 }
+
+bool FilePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries)
+{
+    if (parent) {
+        parent->addBatchQueueJobs (entries);
+    }
+
+    return true;
+}
+
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc )
 {
 
@@ -291,7 +302,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 #ifdef WIN32
                     else {
                         Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
-                        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+                        Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                         msgd.run ();
                         goto MAXGDIHANDLESREACHED;
                     }
@@ -312,7 +323,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             }
         } else {
             Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
-            Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
 #ifdef WIN32
@@ -364,16 +375,6 @@ void FilePanel::open (const Glib::ustring& d)
     }
 }
 
-bool FilePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries )
-{
-
-    if (parent) {
-        parent->addBatchQueueJobs (entries);
-    }
-
-    return true;
-}
-
 void FilePanel::optionsChanged ()
 {
 
@@ -383,16 +384,6 @@ void FilePanel::optionsChanged ()
 
 bool FilePanel::handleShortcutKey (GdkEventKey* event)
 {
-
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-
-    if (!ctrl) {
-        switch(event->keyval) {
-        }
-    } else {
-        switch (event->keyval) {
-        }
-    }
 
     if(tpc->getToolBar() && tpc->getToolBar()->handleShortcutKey(event)) {
         return true;
@@ -411,7 +402,7 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event)
 
 void FilePanel::loadingThumbs(Glib::ustring str, double rate)
 {
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+    GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
     if( !str.empty()) {
         parent->setProgressStr(str);
@@ -423,9 +414,4 @@ void FilePanel::loadingThumbs(Glib::ustring str, double rate)
 void FilePanel::updateTPVScrollbar (bool hide)
 {
     tpc->updateTPVScrollbar (hide);
-}
-
-void FilePanel::updateTabsUsesIcons (bool useIcons)
-{
-    tpc->updateTabsUsesIcons (useIcons);
 }

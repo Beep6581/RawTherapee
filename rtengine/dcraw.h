@@ -47,7 +47,9 @@ public:
     ,order(0x4949)
     ,ifname(nullptr)
     ,meta_data(nullptr)
-    ,shot_select(0),multi_out(0)
+    ,shot_select(0)
+    ,multi_out(0)
+    ,row_padding(0)
 	,float_raw_image(nullptr)
     ,image(nullptr)
     ,bright(1.)
@@ -55,11 +57,12 @@ public:
     ,verbose(0)
     ,use_auto_wb(0),use_camera_wb(0),use_camera_matrix(1)
     ,output_color(1),output_bps(8),output_tiff(0),med_passes(0),no_auto_bright(0)
-    ,RT_whitelevel_from_constant(0)
-    ,RT_blacklevel_from_constant(0)
-    ,RT_matrix_from_constant(0)
-    ,RT_from_adobe_dng_converter(false)
+    ,RT_whitelevel_from_constant(ThreeValBool::X)
+    ,RT_blacklevel_from_constant(ThreeValBool::X)
+    ,RT_matrix_from_constant(ThreeValBool::X)
+    ,RT_baseline_exposure(0)
 	,getbithuff(this,ifp,zero_after_ff)
+	,nikbithuff(ifp)
     {
         memset(&hbd, 0, sizeof(hbd));
         aber[0]=aber[1]=aber[2]=aber[3]=1;
@@ -87,7 +90,7 @@ protected:
     unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
     unsigned black, cblack[4102], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
-    unsigned tile_width, tile_length, gpsdata[32], load_flags;
+    unsigned tile_width, tile_length, gpsdata[32], load_flags, row_padding;
     bool xtransCompressed = false;
     struct fuji_compressed_params
     {
@@ -149,10 +152,19 @@ protected:
     int output_color, output_bps, output_tiff, med_passes;
     int no_auto_bright;
     unsigned greybox[4] ;
-    int RT_whitelevel_from_constant;
-    int RT_blacklevel_from_constant;
-    int RT_matrix_from_constant;
-    bool RT_from_adobe_dng_converter;
+    enum class ThreeValBool { X = -1, F, T };
+    ThreeValBool RT_whitelevel_from_constant;
+    ThreeValBool RT_blacklevel_from_constant;
+    ThreeValBool RT_matrix_from_constant;
+    std::string RT_software;
+    double RT_baseline_exposure;
+
+    struct PanasonicRW2Info {
+        ushort bpp;
+        ushort encoding;
+        PanasonicRW2Info(): bpp(0), encoding(0) {}
+    };
+    PanasonicRW2Info RT_pana_info;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -214,6 +226,7 @@ protected:
 int fcol (int row, int col);
 void merror (void *ptr, const char *where);
 void derror();
+inline void derror(bool condition) {if(UNLIKELY(condition)) ++data_error;}
 ushort sget2 (uchar *s);
 ushort get2();
 unsigned sget4 (uchar *s);
@@ -252,6 +265,26 @@ private:
 };
 getbithuff_t getbithuff;
 
+class nikbithuff_t
+{
+public:
+   explicit nikbithuff_t(IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
+   void operator()() {bitbuf = vbits = 0;};
+   unsigned operator()(int nbits, ushort *huff);
+   unsigned errorCount() { return errors; }
+private:
+   inline bool derror(bool condition){
+       if (UNLIKELY(condition)) {
+           ++errors;
+       }
+	   return condition;
+   }
+   unsigned bitbuf, errors;
+   int vbits;
+   IMFILE *&ifp;
+};
+nikbithuff_t nikbithuff;
+
 ushort * make_decoder_ref (const uchar **source);
 ushort * make_decoder (const uchar *source);
 void crw_init_tables (unsigned table, ushort *huff[2]);
@@ -268,6 +301,7 @@ void ljpeg_idct (struct jhead *jh);
 void canon_sraw_load_raw();
 void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
+void lossless_dnglj92_load_raw();
 void packed_dng_load_raw();
 void deflate_dng_load_raw();
 void init_fuji_compr(struct fuji_compressed_params* info);
@@ -290,6 +324,7 @@ void fuji_decode_strip(const struct fuji_compressed_params* info_common, int cur
 void fuji_compressed_load_raw();
 void fuji_decode_loop(const struct fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
 void parse_fuji_compressed_header();
+void fuji_14bit_load_raw();    
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();
@@ -315,7 +350,7 @@ void parse_qt (int end);
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
+   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
    unsigned operator()(int nbits);
    unsigned operator()();
@@ -348,7 +383,6 @@ private:
         }
    }
 
-   DCraw *parent;
    short &order;
    IMFILE* const ifp;
    UINT64 bitbuf;
@@ -368,13 +402,15 @@ void nokia_load_raw();
 
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *i, unsigned &u): ifp(i), load_flags(u), vbits(0) {}
-   unsigned operator()(int nbits);
+   pana_bits_t(IMFILE *i, unsigned &u, unsigned enc):
+    ifp(i), load_flags(u), vbits(0), encoding(enc) {}
+   unsigned operator()(int nbits, unsigned *bytes=nullptr);
 private:
    IMFILE *ifp;
    unsigned &load_flags;
    uchar buf[0x4000];
    int vbits;
+   unsigned encoding;
 };
 
 void canon_rmf_load_raw();
@@ -400,6 +436,7 @@ void kodak_thumb_load_raw();
 // sony_decrypt(unsigned *data, int len, int start, int key);
 class sony_decrypt_t{
 public:
+   explicit sony_decrypt_t() : p(0) {}
    void operator()(unsigned *data, int len, int start, int key);
 private:
    unsigned pad[128], p;
@@ -488,6 +525,8 @@ void shiftXtransMatrix( const int offsy, const int offsx) {
         }
     }
 }
+
+void nikon_14bit_load_raw(); // ported from LibRaw
 
 };
 

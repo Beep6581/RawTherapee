@@ -967,12 +967,12 @@ void ColorTemp::cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, dou
     double D = adap;
 
     //white destination Wd : RT use always D50
-    cam_dest[0] = CAT02[0][0] * whiteD50p[0] + CAT02[0][1] * whiteD50p[1] + CAT02[0][2] * whiteD50p[2]; //Cone reponse RoD
+    cam_dest[0] = CAT02[0][0] * whiteD50p[0] + CAT02[0][1] * whiteD50p[1] + CAT02[0][2] * whiteD50p[2]; //Cone response RoD
     cam_dest[1] = CAT02[1][0] * whiteD50p[0] + CAT02[1][1] * whiteD50p[1] + CAT02[1][2] * whiteD50p[2]; //GaD
     cam_dest[2] = CAT02[2][0] * whiteD50p[0] + CAT02[2][1] * whiteD50p[1] + CAT02[2][2] * whiteD50p[2]; //BeD
 
     //origin white Ws : A, D65, custom, etc.
-    cam_orig[0] = CAT02[0][0] * Xw + CAT02[0][1] * Yw + CAT02[0][2] * Zw; //Cone reponse RoS
+    cam_orig[0] = CAT02[0][0] * Xw + CAT02[0][1] * Yw + CAT02[0][2] * Zw; //Cone response RoS
     cam_orig[1] = CAT02[1][0] * Xw + CAT02[1][1] * Yw + CAT02[1][2] * Zw;
     cam_orig[2] = CAT02[2][0] * Xw + CAT02[2][1] * Yw + CAT02[2][2] * Zw;
 
@@ -1102,7 +1102,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         // only for lamp different of tungstene
         // first calcul with illuminant (choice)
         // and calcul with : blackbody at equivalent temp of lamp
-        // CRI_color-1 = dispaly Lab values of color CRI_color -1
+        // CRI_color-1 = display Lab values of color CRI_color -1
         const double whiteD50[3] = {0.9646019585, 1.0, 0.8244507152}; //calculate with this tool : spect 5nm
         double CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22; //for CIECAT02
         double Xchk[50], Ychk[50], Zchk[50]; //50 : I think it's a good limit for number of color : for CRI and Palette
@@ -1270,7 +1270,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             }
 
             if (settings->verbose) {
-                double correl_temp;
+                double correl_temp = 0.0;
                 XYZtoCorColorTemp(Xwb, Ywb, Zwb, correl_temp);
                 printf("Correlated temperature (lamp)=%i\n", (int) correl_temp); //use only for lamp...otherwise It give an information!!
             }
@@ -1373,7 +1373,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
                 bbb[i] = 200.*(fy[i] - fz[i]);
             }
 
-            //display value to verify calculs
+            //display value to verify calculus
             if(settings->CRI_color != 0) {
                 printf("Color Number %i\n", numero_color);
                 printf("L_refer=%2.2f a=%2.2f b=%2.2f\n", Lbb[numero_color], abb[numero_color], bbb[numero_color]);

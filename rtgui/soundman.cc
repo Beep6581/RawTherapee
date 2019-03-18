@@ -40,7 +40,7 @@ void SoundManager::init()
 // Unfortunately MinGW does not support this yet. If audioclient.h is available, add an Init
 // called once on program start.
     //
-    // This mitigation plays an empty file on start, so RT is immidiately avaible in the Windows mixer at least
+    // This mitigation plays an empty file on start, so RT is immediately available in the Windows mixer at least
     playSoundAsync(Glib::ustring("sounds\\Empty.wav"));
 #endif
 }

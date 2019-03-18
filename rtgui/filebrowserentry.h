@@ -19,23 +19,28 @@
 #ifndef _FILEBROWSERENTRY_
 #define _FILEBROWSERENTRY_
 
+#include <atomic>
+#include <memory>
+
 #include <gtkmm.h>
-#include "thumbbrowserentrybase.h"
-#include "thumbnail.h"
-#include "filethumbnailbuttonset.h"
-#include "thumbnaillistener.h"
-#include "thumbimageupdater.h"
-#include "imageareatoollistener.h"
-#include "editenums.h"
+
 #include "../rtengine/rtengine.h"
+
 #include "crophandler.h"
+#include "editenums.h"
+#include "filethumbnailbuttonset.h"
+#include "imageareatoollistener.h"
+#include "thumbbrowserentrybase.h"
+#include "thumbimageupdater.h"
+#include "thumbnail.h"
+#include "thumbnaillistener.h"
 
 
 class FileBrowserEntry;
 struct FileBrowserEntryIdleHelper {
     FileBrowserEntry* fbentry;
     bool destroyed;
-    int pending;
+    std::atomic<int> pending;
 };
 
 class FileThumbnailButtonSet;
@@ -51,7 +56,7 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
     int press_x, press_y, action_x, action_y;
     double rot_deg;
     bool landscape;
-    rtengine::procparams::CropParams cropParams;
+    const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
     CropGUIListener* cropgl;
     FileBrowserEntryIdleHelper* feih;
 
@@ -63,7 +68,7 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
     bool onArea (CursorArea a, int x, int y);
     void updateCursor (int x, int y);
     void drawStraightenGuide (Cairo::RefPtr<Cairo::Context> c);
-    void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c);
+    void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) override;
 
 public:
 
@@ -74,8 +79,8 @@ public:
     static Glib::RefPtr<Gdk::Pixbuf> ps;
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
-    ~FileBrowserEntry ();
-    void draw (Cairo::RefPtr<Cairo::Context> cc);
+    ~FileBrowserEntry () override;
+    void draw (Cairo::RefPtr<Cairo::Context> cc) override;
 
     void setImageAreaToolListener (ImageAreaToolListener* l)
     {
@@ -84,23 +89,23 @@ public:
 
     FileThumbnailButtonSet* getThumbButtonSet ();
 
-    void refreshThumbnailImage ();
-    void refreshQuickThumbnailImage ();
-    void calcThumbnailSize ();
+    void refreshThumbnailImage () override;
+    void refreshQuickThumbnailImage () override;
+    void calcThumbnailSize () override;
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea ();
-    virtual void getIconSize (int& w, int& h);
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea () override;
+    void getIconSize (int& w, int& h) override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt);
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
     // thumbimageupdatelistener interface
-    void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams);
-    void _updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams); // inside gtk thread
+    void updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams) override;
+    void _updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams); // inside gtk thread
 
-    virtual bool    motionNotify  (int x, int y);
-    virtual bool    pressNotify   (int button, int type, int bstate, int x, int y);
-    virtual bool    releaseNotify (int button, int type, int bstate, int x, int y);
+    bool    motionNotify  (int x, int y) override;
+    bool    pressNotify   (int button, int type, int bstate, int x, int y) override;
+    bool    releaseNotify (int button, int type, int bstate, int x, int y) override;
 };
 
 #endif

@@ -19,23 +19,15 @@
 #include "previewhandler.h"
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-namespace
-{
-
-struct iaimgpar {
-    IImage8* image;
-    PreviewHandlerIdleHelper* pih;
-    double scale;
-    CropParams cp;
-};
-
-}
-
-PreviewHandler::PreviewHandler () : image(nullptr), previewScale(1.)
+PreviewHandler::PreviewHandler () :
+    image(nullptr),
+    cropParams(new procparams::CropParams),
+    previewScale(1.)
 {
 
     pih = new PreviewHandlerIdleHelper;
@@ -57,133 +49,107 @@ PreviewHandler::~PreviewHandler ()
 
 //----------------previewimagelistener functions--------------------
 
-void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::procparams::CropParams cp)
+void PreviewHandler::setImage(rtengine::IImage8* i, double scale, const rtengine::procparams::CropParams& cp)
 {
     pih->pending++;
 
-    iaimgpar* iap = new iaimgpar;
-    iap->image      = i;
-    iap->pih        = pih;
-    iap->scale      = scale;
-    iap->cp         = cp;
+    idle_register.add(
+        [this, i, scale, cp]() -> bool
+        {
+            if (pih->destroyed) {
+                if (pih->pending == 1) {
+                    delete pih;
+                } else {
+                    --pih->pending;
+                }
 
-    const auto func = [](gpointer data) -> gboolean {
-        iaimgpar* const iap = static_cast<iaimgpar*>(data);
-        PreviewHandlerIdleHelper* const pih = iap->pih;
-
-        if (pih->destroyed) {
-            if (pih->pending == 1) {
-                delete pih;
-            } else {
-                pih->pending--;
+                return false;
             }
 
-            delete iap;
+            if (pih->phandler->image) {
+                IImage8* const oldImg = pih->phandler->image;
 
-            return FALSE;
+                oldImg->getMutex().lock();
+                pih->phandler->image = i;
+                oldImg->getMutex().unlock();
+            } else {
+                pih->phandler->image = i;
+            }
+
+            *pih->phandler->cropParams = cp;
+            pih->phandler->previewScale = scale;
+            --pih->pending;
+
+            return false;
         }
-
-        if (pih->phandler->image) {
-            IImage8* const oldImg = pih->phandler->image;
-            oldImg->getMutex().lock ();
-            pih->phandler->image = iap->image;
-            oldImg->getMutex().unlock ();
-        } else {
-            pih->phandler->image = iap->image;
-        }
-
-        pih->phandler->cropParams = iap->cp;
-        pih->phandler->previewScale = iap->scale;
-        pih->pending--;
-        delete iap;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, iap);
+    );
 }
 
 
-void PreviewHandler::delImage (IImage8* i)
+void PreviewHandler::delImage(IImage8* i)
 {
     pih->pending++;
 
-    iaimgpar* iap = new iaimgpar;
-    iap->image    = i;
-    iap->pih = pih;
+    idle_register.add(
+        [this, i]() -> bool
+        {
+            if (pih->destroyed) {
+                if (pih->pending == 1) {
+                    delete pih;
+                } else {
+                    --pih->pending;
+                }
 
-    const auto func = [](gpointer data) -> gboolean {
-        iaimgpar* iap = static_cast<iaimgpar*>(data);
-        PreviewHandlerIdleHelper* pih = iap->pih;
-
-        if (pih->destroyed) {
-            if (pih->pending == 1) {
-                delete pih;
-            } else {
-                pih->pending--;
+                return false;
             }
 
-            delete iap;
+            if (pih->phandler->image) {
+                IImage8* oldImg = pih->phandler->image;
+                oldImg->getMutex().lock();
+                pih->phandler->image = nullptr;
+                oldImg->getMutex().unlock();
+            }
 
-            return FALSE;
+            i->free();
+            pih->phandler->previewImgMutex.lock();
+            pih->phandler->previewImg.clear();
+            pih->phandler->previewImgMutex.unlock();
+
+            --pih->pending;
+
+            return false;
         }
-
-        if (pih->phandler->image) {
-            IImage8* oldImg = pih->phandler->image;
-            oldImg->getMutex().lock ();
-            pih->phandler->image = nullptr;
-            oldImg->getMutex().unlock ();
-        }
-
-        iap->image->free ();
-        pih->phandler->previewImgMutex.lock ();
-        pih->phandler->previewImg.clear ();
-        pih->phandler->previewImgMutex.unlock ();
-
-        pih->pending--;
-        delete iap;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, iap);
+    );
 }
 
-void PreviewHandler::imageReady (CropParams cp)
+void PreviewHandler::imageReady(const rtengine::procparams::CropParams& cp)
 {
     pih->pending++;
-    iaimgpar* iap = new iaimgpar;
-    iap->pih      = pih;
-    iap->cp       = cp;
 
-    const auto func = [](gpointer data) -> gboolean {
-        iaimgpar* const iap = static_cast<iaimgpar*>(data);
-        PreviewHandlerIdleHelper* pih = iap->pih;
+    idle_register.add(
+        [this, cp]() -> bool
+        {
+            if (pih->destroyed) {
+                if (pih->pending == 1) {
+                    delete pih;
+                } else {
+                    --pih->pending;
+                }
 
-        if (pih->destroyed) {
-            if (pih->pending == 1) {
-                delete pih;
-            } else {
-                pih->pending--;
+                return false;
             }
 
-            delete iap;
+            pih->phandler->previewImgMutex.lock();
+            pih->phandler->previewImg = Gdk::Pixbuf::create_from_data(pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3 * pih->phandler->image->getWidth());
+            pih->phandler->previewImgMutex.unlock ();
 
-            return FALSE;
+            *pih->phandler->cropParams = cp;
+            pih->phandler->previewImageChanged ();
+            --pih->pending;
+
+            return false;
         }
-
-        pih->phandler->previewImgMutex.lock ();
-        pih->phandler->previewImg = Gdk::Pixbuf::create_from_data (pih->phandler->image->getData(), Gdk::COLORSPACE_RGB, false, 8, pih->phandler->image->getWidth(), pih->phandler->image->getHeight(), 3 * pih->phandler->image->getWidth());
-        pih->phandler->previewImgMutex.unlock ();
-        pih->phandler->cropParams = iap->cp;
-        pih->phandler->previewImageChanged ();
-        pih->pending--;
-        delete iap;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, iap);
+    );
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom)
@@ -241,4 +207,9 @@ void PreviewHandler::previewImageChanged ()
     for (std::list<PreviewListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
         (*i)->previewImageChanged ();
     }
+}
+
+rtengine::procparams::CropParams PreviewHandler::getCropParams()
+{
+    return *cropParams;
 }

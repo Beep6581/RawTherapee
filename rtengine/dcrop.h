@@ -45,14 +45,11 @@ protected:
     LabImage*    laboCrop;   // "one chunk" allocation
     LabImage*    labnCrop;   // "one chunk" allocation
     Image8*      cropImg;    // "one chunk" allocation ; displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
-    float *      cbuf_real;  // "one chunk" allocation
-    SHMap*       cshmap;     // per line allocation
 
     // --- automatically allocated and deleted when necessary, and only renewed on size changes
     Imagefloat*  transCrop;    // "one chunk" allocation, allocated if necessary
     CieImage*    cieCrop;      // allocating 6 images, each in "one chunk" allocation
     // -----------------------------------------------------------------
-    float**      cbuffer;
 
     bool updating;         /// Flag telling if an updater thread is currently processing
     bool newUpdatePending; /// Flag telling the updater thread that a new update is pending
@@ -75,12 +72,12 @@ protected:
 
 public:
     Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
-    virtual ~Crop    ();
+    ~Crop    () override;
 
     void setEditSubscriber(EditSubscriber* newSubscriber);
     bool hasListener();
     void update      (int todo);
-    void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip)
+    void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip) override
     {
         setCropSizes (cropX, cropY, cropW, cropH, skip, false);
     }
@@ -88,12 +85,12 @@ public:
     /** @brief Synchronously look out if a full update is necessary
      * First try, only make fullUpdate if this returns false
      */
-    bool tryUpdate   ();
+    bool tryUpdate   () override;
     /** @brief Asynchronously reprocess the detailed crop */
-    void fullUpdate  ();  // called via thread
+    void fullUpdate  () override;  // called via thread
 
-    void setListener    (DetailedCropListener* il);
-    void destroy        ();
+    void setListener    (DetailedCropListener* il) override;
+    void destroy        () override;
     int get_skip();
     int getLeftBorder();
     int getUpperBorder();

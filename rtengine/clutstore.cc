@@ -5,6 +5,7 @@
 #include "iccstore.h"
 #include "imagefloat.h"
 #include "opthelper.h"
+#include "procparams.h"
 #include "rt_math.h"
 #include "stdimagesource.h"
 
@@ -50,7 +51,7 @@ bool loadFile(
         const PreviewProps pp(0, 0, fw, fh, 1);
 
         rtengine::procparams::ColorManagementParams icm;
-        icm.working = working_color_space;
+        icm.workingProfile = working_color_space;
 
         img_src.getImage(curr_wb, TR_NONE, img_float.get(), pp, rtengine::procparams::ToneCurveParams(), rtengine::procparams::RAWParams());
 
@@ -226,7 +227,7 @@ void rtengine::HaldCLUT::getRGB(
 #else
         const vfloat v_in = _mm_set_ps(0.0f, *b, *g, *r);
         const vfloat v_tmp = v_in * F2V(flevel_minus_one);
-        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(_mm_min_ps(F2V(flevel_minus_two), v_tmp)));
+        const vfloat v_rgb = v_tmp - _mm_cvtepi32_ps(_mm_cvttps_epi32(vminf(v_tmp, F2V(flevel_minus_two))));
 
         size_t index = color * 4;
 
@@ -286,7 +287,7 @@ void rtengine::HaldCLUT::splitClutFilename(
     profile_name = "sRGB";
 
     if (!name.empty()) {
-        for (const auto& working_profile : rtengine::ICCStore::getWorkingProfiles()) {
+        for (const auto& working_profile : rtengine::ICCStore::getInstance()->getWorkingProfiles()) {
             if (
                 !working_profile.empty() // This isn't strictly needed, but an empty wp name should be skipped anyway
                 && std::search(name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend()) == name.rbegin()

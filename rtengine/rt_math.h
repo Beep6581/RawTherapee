@@ -4,6 +4,7 @@
 #include <limits>
 #include <cmath>
 #include <cstdint>
+#include <array>
 
 namespace rtengine
 {
@@ -35,6 +36,12 @@ template<typename T>
 constexpr T SQR(T x)
 {
     return x * x;
+}
+
+template<typename T>
+constexpr T pow4(T x)
+{
+    return SQR(SQR(x));
 }
 
 template<typename T>
@@ -74,9 +81,9 @@ constexpr const T& max(const T& a, const T& b, const ARGS&... args)
 }
 
 template<typename T>
-constexpr const T& LIM(const T& a, const T& b, const T& c)
+constexpr const T& LIM(const T& val, const T& low, const T& high)
 {
-    return max(b, min(a, c));
+    return max(low, min(val, high));
 }
 
 template<typename T>
@@ -137,4 +144,97 @@ constexpr std::uint8_t uint16ToUint8Rounded(std::uint16_t i)
     return ((i + 128) - ((i + 128) >> 8)) >> 8;
 }
 
+template <typename T>
+constexpr bool OOG(const T &val, const T &high=T(MAXVAL))
+{
+    return (val < T(0)) || (val > high);
 }
+
+template <typename T>
+void setUnlessOOG(T &out, const T &val)
+{
+    if (!OOG(out)) {
+        out = val;
+    }
+}
+
+
+template <typename T>
+bool invertMatrix(const std::array<std::array<T, 3>, 3> &in, std::array<std::array<T, 3>, 3> &out)
+{
+    const T res00 = in[1][1] * in[2][2] - in[2][1] * in[1][2];
+    const T res10 = in[2][0] * in[1][2] - in[1][0] * in[2][2];
+    const T res20 = in[1][0] * in[2][1] - in[2][0] * in[1][1];
+
+    const T det = in[0][0] * res00 + in[0][1] * res10 + in[0][2] * res20;
+
+    if (std::abs(det) < 1.0e-10) {
+        return false;
+    }
+
+    out[0][0] = res00 / det;
+    out[0][1] = (in[2][1] * in[0][2] - in[0][1] * in[2][2]) / det;
+    out[0][2] = (in[0][1] * in[1][2] - in[1][1] * in[0][2]) / det;
+    out[1][0] = res10 / det;
+    out[1][1] = (in[0][0] * in[2][2] - in[2][0] * in[0][2]) / det;
+    out[1][2] = (in[1][0] * in[0][2] - in[0][0] * in[1][2]) / det;
+    out[2][0] = res20 / det;
+    out[2][1] = (in[2][0] * in[0][1] - in[0][0] * in[2][1]) / det;
+    out[2][2] = (in[0][0] * in[1][1] - in[1][0] * in[0][1]) / det;
+
+    return true;
+}
+
+
+template <typename T>
+std::array<std::array<T, 3>, 3> dotProduct(const std::array<std::array<T, 3>, 3> &a, const std::array<std::array<T, 3>, 3> &b)
+{
+    std::array<std::array<T, 3>, 3> res;
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            res[i][j] = 0;
+
+            for (int k = 0; k < 3; ++k) {
+                res[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+
+    return res;
+}
+
+
+template <typename T>
+std::array<T, 3> dotProduct(const std::array<std::array<T, 3>, 3> &a, const std::array<T, 3> &b)
+{
+    std::array<T, 3> res;
+
+    for (int i = 0; i < 3; ++i) {
+        res[i] = 0;
+        for (int k = 0; k < 3; ++k) {
+            res[i] += a[i][k] * b[k];
+        }
+    }
+
+    return res;
+}
+
+
+template <typename T>
+T lin2log(T x, T base)
+{
+    constexpr T one(1);
+    return std::log(x * (base - one) + one) / std::log(base); 
+}
+
+
+template <typename T>
+T log2lin(T x, T base)
+{
+    constexpr T one(1);
+    return (std::pow(base, x) - one) / (base - one);
+}
+
+}
+

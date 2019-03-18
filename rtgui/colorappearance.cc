@@ -16,10 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "colorappearance.h"
 #include <cmath>
+
+#include "colorappearance.h"
+
 #include "guiutils.h"
+
 #include "../rtengine/color.h"
+#include "../rtengine/procparams.h"
 
 #define MINTEMP0 2000   //1200
 #define MAXTEMP0 12000  //12000
@@ -230,8 +234,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     }
 
     degree->throwOnButtonRelease();
-    degree->addAutoButton (M ("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
-    degree->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    degree->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p1VBox->pack_start (*degree);
 
     // surrsource = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_SURSOURCE")));
@@ -268,10 +271,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     wbmHBox->pack_start (*wbmodel);
     p1VBox->pack_start (*wbmHBox);
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small.png"));
 
 
     tempsc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
@@ -284,27 +287,25 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p1VBox->pack_start (*greensc);
 
 
-//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adapscen->delay < options.adjusterMaxDelay) {
         adapscen->delay = options.adjusterMaxDelay;
     }
 
     adapscen->throwOnButtonRelease();
-    adapscen->addAutoButton (M ("TP_COLORAPP_ADAP_AUTO_TOOLTIP"));
-    adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPTSCENE_TOOLTIP"));
+    adapscen->addAutoButton();
     p1VBox->pack_start (*adapscen);
 
-    ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YBSCENE"), 1, 90, 1, 18));
+    ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 1, 90, 1, 18));
 
     if (ybscen->delay < options.adjusterMaxDelay) {
         ybscen->delay = options.adjusterMaxDelay;
     }
 
     ybscen->throwOnButtonRelease();
-    ybscen->addAutoButton (M ("TP_COLORAPP_ADAP_AUTO_TOOLTIP"));
-    ybscen->set_tooltip_markup (M ("TP_COLORAPP_YBSCENE_TOOLTIP"));
+    ybscen->addAutoButton();
     p1VBox->pack_start (*ybscen);
 
     p1Frame->add (*p1VBox);
@@ -575,23 +576,23 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox = Gtk::manage ( new Gtk::VBox());
     p3VBox->set_spacing (2);
 
-    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  16384., 0.1,   16.));
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
+//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.1,  16384., 0.1,   16.));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adaplum->delay < options.adjusterMaxDelay) {
         adaplum->delay = options.adjusterMaxDelay;
     }
 
     adaplum->throwOnButtonRelease();
-    adaplum->set_tooltip_markup (M ("TP_COLORAPP_ADAPTVIEWING_TOOLTIP"));
+    adaplum->set_tooltip_markup (M ("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
-//   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-//   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+//   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
+//   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
 
     degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
 
@@ -600,18 +601,17 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     }
 
     degreeout->throwOnButtonRelease();
-    degreeout->addAutoButton (M ("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
-    degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    degreeout->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p3VBox->pack_start (*degreeout);
     /*
-        Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-        Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-        Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-        Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+        Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+        Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+        Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+        Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
     */
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
-    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 90, 1, 18));
+    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 5, 90, 1, 18));
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP_TOOLTIP"));
 
     tempout->show();
@@ -669,7 +669,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     //reset button
     neutral = Gtk::manage (new Gtk::Button (M ("TP_COLORAPP_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
     neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));
@@ -1451,75 +1451,42 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 
 void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 {
-    nextCcam = ccam;
-    nextCcamout = ccamout;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->autoCamComputed_();
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::autoCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-    degree->setValue (nextCcam);
-    degreeout->setValue (nextCcamout);
-    enableListener ();
-
-    return false;
+    idle_register.add(
+        [this, ccam, ccamout]() -> bool
+        {
+            disableListener();
+            degree->setValue(ccam);
+            degreeout->setValue(ccamout);
+            enableListener();
+            return false;
+        }
+    );
 }
 
 void ColorAppearance::adapCamChanged (double cadap)
 {
-    nextCadap = cadap;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->adapCamComputed_();
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::adapCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-    adapscen->setValue (nextCadap);
-//  ybscen->setValue (nextYbscn);
-    enableListener ();
-
-    return false;
+    idle_register.add(
+        [this, cadap]() -> bool
+        {
+            disableListener();
+            adapscen->setValue(cadap);
+            enableListener();
+            return false;
+        }
+    );
 }
 
 void ColorAppearance::ybCamChanged (int ybsc)
 {
-    nextYbscn = ybsc;
-
-    const auto func = [] (gpointer data) -> gboolean {
-        static_cast<ColorAppearance*> (data)->ybCamComputed_();
-        return FALSE;
-    };
-
-    idle_register.add (func, this);
-}
-
-bool ColorAppearance::ybCamComputed_ ()
-{
-
-    disableListener ();
-//  degree->setEnabled (true);
-//    adapscen->setValue (nextCadap);
-    ybscen->setValue (nextYbscn);
-    enableListener ();
-
-    return false;
+    idle_register.add(
+        [this, ybsc]() -> bool
+        {
+            disableListener();
+            ybscen->setValue(ybsc);
+            enableListener();
+            return false;
+        }
+    );
 }
 
 void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
@@ -1544,9 +1511,8 @@ void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller:
     caller->ccBlue = double (B);
 }
 
-void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
+void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && (multiImage || getEnabled()) ) {
         if (a == degree) {
             listener->panelChanged (EvCATDegree, a->getTextValue());
@@ -1594,9 +1560,8 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
-void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
+void ColorAppearance::adjusterAutoToggled(Adjuster* a, bool newval)
 {
-
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -1844,11 +1809,21 @@ void ColorAppearance::setBatchMode (bool batchMode)
     curveEditorG3->setBatchMode (batchMode);
 }
 
-void ColorAppearance::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI)
+void ColorAppearance::updateCurveBackgroundHistogram(
+    const LUTu& histToneCurve,
+    const LUTu& histLCurve,
+    const LUTu& histCCurve,
+    const LUTu& histLCAM,
+    const LUTu& histCCAM,
+    const LUTu& histRed,
+    const LUTu& histGreen,
+    const LUTu& histBlue,
+    const LUTu& histLuma,
+    const LUTu& histLRETI
+)
 {
-
-    shape->updateBackgroundHistogram (histLCAM);
-    shape3->updateBackgroundHistogram (histCCAM);
+    shape->updateBackgroundHistogram(histLCAM);
+    shape3->updateBackgroundHistogram(histCCAM);
 }
 
 

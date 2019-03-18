@@ -20,11 +20,13 @@
 #pragma once
 
 #include <array>
+#include <glibmm.h>
 
 #include "rt_math.h"
 #include "LUT.h"
 #include "labimage.h"
 #include "iccmatrices.h"
+#include "lcms2.h"
 #include "sleef.c"
 
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
@@ -97,6 +99,10 @@ private:
 #ifdef __SSE2__
     static vfloat hue2rgb(vfloat p, vfloat q, vfloat t);
 #endif
+
+    static float computeXYZ2Lab(float f);
+    static float computeXYZ2LabY(float f);
+    
 public:
 
     typedef enum Channel {
@@ -120,15 +126,36 @@ public:
         ID_DOWN      /// Interpolate color by decreasing the hue value, crossing the lower limit
     } eInterpolationDirection;
 
-    const static double sRGBGamma;        // standard average gamma
-    const static double sRGBGammaCurve;   // 2.4 in the curve
-    const static double eps, eps_max, kappa, epskap;
-    const static float D50x, D50z;
-    const static double u0, v0;
+    // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
+    // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
+    // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
+    constexpr static double sRGBGamma = 2.2;
+    constexpr static double sRGBGammaCurve = 2.4;
+
+    constexpr static double eps = 216.0 / 24389.0; //0.008856
+    constexpr static double eps_max = MAXVALF * eps; //580.40756;
+    constexpr static double kappa = 24389.0 / 27.0; //903.29630;
+    constexpr static double kappaInv = 27.0 / 24389.0;
+    constexpr static double epsilonExpInv3 = 6.0 / 29.0;
+
+    constexpr static float epsf = eps;
+    constexpr static float kappaf = kappa;
+    constexpr static float kappaInvf = kappaInv;
+    constexpr static float epsilonExpInv3f = epsilonExpInv3;
+
+    constexpr static float D50x = 0.9642f; //0.96422;
+    constexpr static float D50z = 0.8249f; //0.82521;
+    constexpr static double u0 = 4.0 * D50x / (D50x + 15 + 3 * D50z);
+    constexpr static double v0 = 9.0 / (D50x + 15 + 3 * D50z);
+    constexpr static double epskap = 8.0;
+
+    constexpr static float c1By116 = 1.0 / 116.0;
+    constexpr static float c16By116 = 16.0 / 116.0;
 
     static cmsToneCurve* linearGammaTRC;
 
     static LUTf cachef;
+    static LUTf cachefy;
     static LUTf gamma2curve;
 
     // look-up tables for the standard srgb gamma and its inverse (filled by init())
@@ -178,22 +205,26 @@ public:
         return r * 0.2126729 + g * 0.7151521 + b * 0.0721750;
     }
 
+    static float rgbLuminance(float r, float g, float b, const double workingspace[3][3])
+    {
+        return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
+    }
 
     /**
     * @brief Convert red/green/blue to L*a*b
     * @brief Convert red/green/blue to hue/saturation/luminance
     * @param profile output profile name
     * @param profileW working profile name
-    * @param r red channel [0 ; 65535]
-    * @param g green channel [0 ; 65535]
-    * @param b blue channel [0 ; 65535]
+    * @param r red channel [0 ; 1]
+    * @param g green channel [0 ; 1]
+    * @param b blue channel [0 ; 1]
     * @param L Lab L channel [0 ; 1] (return value)
-    * @param a Lab  a channel [0 ; 1] (return value)
+    * @param a Lab a channel [0 ; 1] (return value)
     * @param b Lab b channel [0; 1] (return value)
     * @param workingSpace true: compute the Lab value using the Working color space ; false: use the Output color space
     */
-    static void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
-
+    // do not use this function in a loop. It really eats processing time caused by Glib::ustring comparisons
+    static void rgb2lab01 (const Glib::ustring &profile, const Glib::ustring &profileW, float r, float g, float b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
 
     /**
     * @brief Convert red/green/blue to hue/saturation/luminance
@@ -326,6 +357,17 @@ public:
     * @param v value channel [0 ; 1] (return value)
     */
     static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
+
+    /**
+    * @brief Convert red green blue to hue saturation value
+    * @param r red channel [0 ; 1]
+    * @param g green channel [0 ; 1]
+    * @param b blue channel [0 ; 1]
+    * @param h hue channel [0 ; 1] (return value)
+    * @param s saturation channel [0 ; 1] (return value)
+    * @param v value channel [0 ; 1] (return value)
+    */
+    static void rgb2hsv01 (float r, float g, float b, float &h, float &s, float &v);
 
     static inline float rgb2s(float r, float g, float b) // fast version if only saturation is needed
     {
@@ -575,6 +617,7 @@ public:
     */
     static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
     static void RGB2Lab(float *X, float *Y, float *Z, float *L, float *a, float *b, const float wp[3][3], int width);
+    static void RGB2L(float *X, float *Y, float *Z, float *L, const float wp[3][3], int width);
 
     /**
     * @brief Convert Lab in Yuv
@@ -608,7 +651,9 @@ public:
     * @param h 'h' channel return value, in [-PI ; +PI] (return value)
     */
     static void Lab2Lch(float a, float b, float &c, float &h);
-
+#ifdef __SSE2__
+    static void Lab2Lch(float *a, float *b, float *c, float *h, int w);
+#endif
 
     /**
     * @brief Convert 'c' and 'h' channels of the Lch color space to the 'a' and 'b' channels of the L*a*b color space (channel 'L' is identical [0 ; 32768])
@@ -675,27 +720,21 @@ public:
     */
     static inline double f2xyz(double f)
     {
-        const double epsilonExpInv3 = 6.0 / 29.0;
-        const double kappaInv = 27.0 / 24389.0; // inverse of kappa
-
         return (f > epsilonExpInv3) ? f * f * f : (116. * f - 16.) * kappaInv;
 
     }
     static inline float f2xyz(float f)
     {
-        const float epsilonExpInv3 = 0.20689655f; // 6.0f/29.0f;
-        const float kappaInv = 0.0011070565f; // 27.0f/24389.0f;  // inverse of kappa
-
-        return (f > epsilonExpInv3) ? f * f * f : (116.f * f - 16.f) * kappaInv;
+        return (f > epsilonExpInv3f) ? f * f * f : (116.f * f - 16.f) * kappaInvf;
     }
 #ifdef __SSE2__
     static inline vfloat f2xyz(vfloat f)
     {
-        const vfloat epsilonExpInv3 = F2V(0.20689655f); // 6.0f/29.0f;
-        const vfloat kappaInv = F2V(0.0011070565f); // 27.0f/24389.0f;  // inverse of kappa
+        const vfloat epsilonExpInv3v = F2V(epsilonExpInv3f);
+        const vfloat kappaInvv = F2V(kappaInvf);
         vfloat res1 = f * f * f;
-        vfloat res2 = (F2V(116.f) * f - F2V(16.f)) * kappaInv;
-        return vself(vmaskf_gt(f, epsilonExpInv3), res1, res2);
+        vfloat res2 = (F2V(116.f) * f - F2V(16.f)) * kappaInvv;
+        return vself(vmaskf_gt(f, epsilonExpInv3v), res1, res2);
     }
 #endif
 
@@ -1043,25 +1082,35 @@ public:
 
     /**
     * @brief sRGB gamma
-    * See also calcGamma above with the following values: pwr=2.4  ts=12.92  mode=0.003041  imax=0.055011
+    * See also calcGamma above with the following values: pwr=2.399  ts=12.92310  mode=0.003041  imax=0.055
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the gamma modified's value [0 ; 1]
     */
     static inline double gamma2     (double x)      //  g3                  1+g4
     {
-        return x <= 0.003041 ? x * 12.92 : 1.055011 * exp(log(x) / sRGBGammaCurve) - 0.055011;
+      //  return x <= 0.003041 ? x * 12.92310 : 1.055 * exp(log(x) / 2.39990) - 0.055;//calculate with calcgamma
+        //return x <= 0.0031308 ? x * 12.92310 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;//standard discontinuous
+		//very small differences between the 2
+        return x <= 0.003040 ? x * 12.92310 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;//continuous
+      //  return x <= 0.003041 ? x * 12.92310 : 1.055011 * exp(log(x) / sRGBGammaCurve) - 0.055011;//continuous
+		
     }
 
 
     /**
     * @brief Inverse sRGB gamma
-    * See also calcGamma above with the following values: pwr=2.4  ts=12.92  mode=0.003041  imax=0.055011
+    * See also calcGamma above with the following values: pwr=2.3999  ts=12.92310  mode=0.003041  imax=0.055
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the inverse gamma modified's value [0 ; 1]
     */
     static inline double igamma2    (double x)      //g2
     {
-        return x <= 0.039293 ? x / 12.92 : exp(log((x + 0.055011) / 1.055011) * sRGBGammaCurve);
+       // return x <= 0.039289 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * 2.39990);//calculate with calcgamma
+       // return x <= 0.04045 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);//standard discontinuous
+		//very small differences between the 4
+        return x <= 0.039286 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);//continuous
+      //  return x <= 0.039293 ? x / 12.92310 : exp(log((x + 0.055011) / 1.055011) * sRGBGammaCurve);//continuous
+		
     }
 
 
@@ -1346,7 +1395,7 @@ public:
     * @param CC chroma before [0 ; 180]
     * @param corectionHuechroma hue correction depending on chromaticity (saturation), in radians [0 ; 0.45] (return value)
     * @param correctlum hue correction depending on luminance (brightness, contrast,...), in radians [0 ; 0.45] (return value)
-    * @param munsDbgInfo (Debug target only) object to collect informations
+    * @param munsDbgInfo (Debug target only) object to collect information
     */
 
 #ifdef _DEBUG
@@ -1354,6 +1403,7 @@ public:
 #else
     static void AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHueChroma, float &correctlum);
 #endif
+    static void AllMunsellLch (float Lprov1, float HH, float Chprov1, float CC, float &correctionHueChroma);
 
 
     /**
@@ -1386,6 +1436,7 @@ public:
     static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
     static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
 #endif
+    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &saturation, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
 
 
     /**
@@ -1746,7 +1797,7 @@ public:
         //hr=translate Hue Lab value  (-Pi +Pi) in approximative hr (hsv values) (0 1) [red 1/6 yellow 1/6 green 1/6 cyan 1/6 blue 1/6 magenta 1/6 ]
         // with multi linear correspondances (I expect there is no error !!)
         double hr = 0.0;
-        //allways put h between 0 and 1
+        //always put h between 0 and 1
 
         if      (HH >= 0.f       && HH < 0.6f    ) {
             hr = 0.11666 * double(HH) + 0.93;    //hr 0.93  1.00    full red

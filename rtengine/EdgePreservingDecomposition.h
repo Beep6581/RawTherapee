@@ -11,7 +11,7 @@ Anyway. Basically, this is an implementation of what's presented in the
 following papers:
 - Edge-Preserving Decompositions for Multi-Scale Tone and Detail Manipulation
 - An Iterative Solution Method for Linear Systems of Which the Coefficient 
-  Matrix is a Symetric M-Matrix
+  Matrix is a Symmetric M-Matrix
 - Color correction for tone mapping
 - Wikipedia, the free encyclopedia
 
@@ -89,7 +89,7 @@ public:
     and StartRows must strictly increase with its index. The main diagonal for example has start row 0, its subdiagonal has 1, etc.
     Then, Diagonal[j] is the matrix entry on the diagonal at column j. For efficiency, you're expected to learn this and fill in
     public Diagonals manually. Symmetric matrices are represented by this class, and all symmetry is handled internally, you
-    only every worry or think about the lower trianglular (including main diagonal) part of the matrix.
+    only every worry or think about the lower triangular (including main diagonal) part of the matrix.
     */
     float **Diagonals;
     char *buffer;

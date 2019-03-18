@@ -136,7 +136,7 @@ void dfInfo::updateRawImage()
 
     if( !pathNames.empty() ) {
         std::list<Glib::ustring>::iterator iName = pathNames.begin();
-        ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
+        ri = new RawImage(*iName); // First file used also for extra pixels information (width,height, shutter, filters etc.. )
 
         if( ri->loadRaw(true)) {
             delete ri;
@@ -219,10 +219,14 @@ void dfInfo::updateBadPixelList( RawImage *df )
     if( df->getSensorType() == ST_BAYER || df->getSensorType() == ST_FUJI_XTRANS ) {
         std::vector<badPix> badPixelsTemp;
 
+#ifdef _OPENMP
         #pragma omp parallel
+#endif
         {
             std::vector<badPix> badPixelsThread;
+#ifdef _OPENMP
             #pragma omp for nowait
+#endif
 
             for( int row = 2; row < df->get_height() - 2; row++)
                 for( int col = 2; col < df->get_width() - 2; col++) {
@@ -235,7 +239,9 @@ void dfInfo::updateBadPixelList( RawImage *df )
                     }
                 }
 
+#ifdef _OPENMP
             #pragma omp critical
+#endif
             badPixelsTemp.insert(badPixelsTemp.end(), badPixelsThread.begin(), badPixelsThread.end());
         }
         badPixels.insert(badPixels.end(), badPixelsTemp.begin(), badPixelsTemp.end());
@@ -363,7 +369,7 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         }
 
         RawImage ri(filename);
-        int res = ri.loadRaw(false); // Read informations about shot
+        int res = ri.loadRaw(false); // Read information about shot
 
         if (res != 0) {
             return nullptr;

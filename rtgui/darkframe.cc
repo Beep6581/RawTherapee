@@ -16,11 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "darkframe.h"
-#include "options.h"
-#include "guiutils.h"
 #include <sstream>
+
+#include "darkframe.h"
+
+#include "guiutils.h"
+#include "options.h"
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -33,7 +37,7 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_L
     bindCurrentFolder (*darkFrameFile, options.lastDarkframeDir);
     dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
     btnReset = Gtk::manage(new Gtk::Button());
-    btnReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
+    btnReset->set_image (*Gtk::manage(new RTImage ("cancel-small.png")));
     hbdf->pack_start(*dfLabel, Gtk::PACK_SHRINK, 0);
     hbdf->pack_start(*darkFrameFile);
     hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 0);

@@ -20,6 +20,7 @@
 #define _PREVIEWHANDLER_
 
 #include <list>
+#include <memory>
 
 #include <gtkmm.h>
 
@@ -30,13 +31,13 @@
 
 class PreviewListener
 {
-
 public:
-    virtual ~PreviewListener () {}
-    virtual void previewImageChanged () {}
+    virtual ~PreviewListener() = default;
+    virtual void previewImageChanged() = 0;
 };
 
 class PreviewHandler;
+
 struct PreviewHandlerIdleHelper {
     PreviewHandler* phandler;
     bool destroyed;
@@ -54,7 +55,7 @@ private:
 
 protected:
     rtengine::IImage8* image;
-    rtengine::procparams::CropParams cropParams;
+    const std::unique_ptr<rtengine::procparams::CropParams> cropParams;
     double previewScale;
     PreviewHandlerIdleHelper* pih;
     std::list<PreviewListener*> listeners;
@@ -64,7 +65,7 @@ protected:
 public:
 
     PreviewHandler ();
-    virtual ~PreviewHandler ();
+    ~PreviewHandler () override;
 
     void addPreviewImageListener (PreviewListener* l)
     {
@@ -72,9 +73,9 @@ public:
     }
 
     // previewimagelistener
-    void setImage   (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cp);
-    void delImage   (rtengine::IImage8* img);
-    void imageReady (rtengine::procparams::CropParams cp);
+    void setImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cp) override;
+    void delImage(rtengine::IImage8* img) override;
+    void imageReady(const rtengine::procparams::CropParams& cp) override;
 
     // this function is called when a new preview image arrives from rtengine
     void previewImageChanged ();
@@ -82,10 +83,7 @@ public:
     // with this function it is possible to ask for a rough approximation of a (possibly zoomed) crop of the image
     Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int x, int y, int w, int h, double zoom);
     Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int desiredW, int desiredH, double& zoom);
-    rtengine::procparams::CropParams    getCropParams ()
-    {
-        return cropParams;
-    }
+    rtengine::procparams::CropParams    getCropParams ();
 };
 
 #endif

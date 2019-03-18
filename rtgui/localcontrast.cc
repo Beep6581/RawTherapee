@@ -17,10 +17,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "localcontrast.h"
-#include "eventmapper.h"
-#include <iomanip>
 #include <cmath>
+#include <iomanip>
+
+#include "localcontrast.h"
+
+#include "eventmapper.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -115,7 +119,6 @@ void LocalContrast::setDefaults(const ProcParams *defParams, const ParamsEdited 
     }
 }
 
-
 void LocalContrast::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener && getEnabled()) {
@@ -131,6 +134,9 @@ void LocalContrast::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void LocalContrast::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
 
 void LocalContrast::enabledChanged ()
 {

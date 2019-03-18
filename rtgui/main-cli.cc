@@ -158,9 +158,41 @@ int main (int argc, char **argv)
 
     try {
         Options::load (quickstart);
-    } catch (Options::Error &) {
-        printf ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!\n");
+    } catch (Options::Error &e) {
+        std::cerr << std::endl
+                  << "FATAL ERROR:" << std::endl
+                  << e.get_msg() << std::endl;
         return -2;
+    }
+
+    if (options.is_defProfRawMissing()) {
+        options.defProfRaw = DEFPROFILE_RAW;
+        std::cerr << std::endl
+                  << "The default profile for raw photos could not be found or is not set." << std::endl
+                  << "Please check your profiles' directory, it may be missing or damaged." << std::endl
+                  << "\"" << DEFPROFILE_RAW << "\" will be used instead." << std::endl << std::endl;
+    }
+    if (options.is_bundledDefProfRawMissing()) {
+        std::cerr << std::endl
+                  << "The bundled profile \"" << options.defProfRaw << "\" could not be found!" << std::endl
+                  << "Your installation could be damaged." << std::endl
+                  << "Default internal values will be used instead." << std::endl << std::endl;
+        options.defProfRaw = DEFPROFILE_INTERNAL;
+    }
+
+    if (options.is_defProfImgMissing()) {
+        options.defProfImg = DEFPROFILE_IMG;
+        std::cerr << std::endl
+                  << "The default profile for non-raw photos could not be found or is not set." << std::endl
+                  << "Please check your profiles' directory, it may be missing or damaged." << std::endl
+                  << "\"" << DEFPROFILE_IMG << "\" will be used instead." << std::endl << std::endl;
+    }
+    if (options.is_bundledDefProfImgMissing()) {
+        std::cerr << std::endl
+                  << "The bundled profile " << options.defProfImg << " could not be found!" << std::endl
+                  << "Your installation could be damaged." << std::endl
+                  << "Default internal values will be used instead." << std::endl << std::endl;
+        options.defProfImg = DEFPROFILE_INTERNAL;
     }
 
     rtengine::setPaths();
@@ -171,75 +203,8 @@ int main (int argc, char **argv)
 
     // Move the old path to the new one if the new does not exist
     if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
-        g_rename (Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
-    }
-
-#endif
-
-#ifdef WIN32
-    bool consoleOpened = false;
-
-    // suppression of annoying error boxes
-    SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
-
-    if (argc > 1 || options.rtSettings.verbose) {
-        Glib::ustring fname (fname_to_utf8 (argv[1]));
-#if ECLIPSE_ARGS
-        fname = fname.substr (1, fname.length() - 2);
-#endif
-
-        if (options.rtSettings.verbose || ( !Glib::file_test (fname, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname, Glib::FILE_TEST_IS_DIR))) {
-            bool stdoutRedirectedtoFile = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0001);
-            bool stderrRedirectedtoFile = (GetFileType (GetStdHandle (STD_ERROR_HANDLE)) == 0x0001);
-
-            // no console, if stdout and stderr both are redirected to file
-            if ( ! (stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
-                // check if parameter -w was passed.
-                // We have to do that in this step, because it controls whether to open a console to show the output of following steps
-                bool Console = true;
-
-                for (int i = 1; i < argc; i++)
-                    if (!strcmp (argv[i], "-w")) {
-                        Console = false;
-                        break;
-                    }
-
-                if (Console && AllocConsole()) {
-                    AttachConsole ( GetCurrentProcessId() ) ;
-                    // Don't allow CTRL-C in console to terminate RT
-                    SetConsoleCtrlHandler ( NULL, true );
-                    // Set title of console
-                    char consoletitle[128];
-                    sprintf (consoletitle, "RawTherapee %s Console", RTVERSION);
-                    SetConsoleTitle (consoletitle);
-                    // increase size of screen buffer
-                    COORD c;
-                    c.X = 200;
-                    c.Y = 1000;
-                    SetConsoleScreenBufferSize ( GetStdHandle ( STD_OUTPUT_HANDLE ), c );
-                    // Disable console-Cursor
-                    CONSOLE_CURSOR_INFO cursorInfo;
-                    cursorInfo.dwSize = 100;
-                    cursorInfo.bVisible = false;
-                    SetConsoleCursorInfo ( GetStdHandle ( STD_OUTPUT_HANDLE ), &cursorInfo );
-
-                    if (!stdoutRedirectedtoFile) {
-                        freopen ( "CON", "w", stdout ) ;
-                    }
-
-                    if (!stderrRedirectedtoFile) {
-                        freopen ( "CON", "w", stderr ) ;
-                    }
-
-                    freopen ( "CON", "r", stdin ) ;
-
-                    consoleOpened = true;
-
-                    // printing RT's version in every case, particularly useful for the 'verbose' mode, but also for the batch processing
-                    std::cout << "RawTherapee, version " << RTVERSION << ", command line" << std::endl;
-                    std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
-                }
-            }
+        if (g_rename (Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ()) == -1) {
+            std::cout << "g_rename " <<  Glib::build_filename (options.rtdir, "cache").c_str () << " => " << options.cacheBaseDir.c_str () << " failed." << std::endl;
         }
     }
 
@@ -248,23 +213,13 @@ int main (int argc, char **argv)
     int ret = 0;
 
     // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-    std::cout << "RawTherapee, version " << RTVERSION << ", command line" << std::endl;
+    std::cout << "RawTherapee, version " << RTVERSION << ", command line." << std::endl;
 
     if (argc > 1) {
         ret = processLineParams (argc, argv);
     } else {
         std::cout << "Terminating without anything to do." << std::endl;
     }
-
-#ifdef WIN32
-
-    if (consoleOpened) {
-        printf ("Press any key to exit RawTherapee\n");
-        FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
-        getch();
-    }
-
-#endif
 
     return ret;
 }
@@ -314,6 +269,7 @@ int processLineParams ( int argc, char **argv )
     int compression = 92;
     int subsampling = 3;
     int bits = -1;
+    bool isFloat = false;
     std::string outputType = "";
     unsigned errors = 0;
 
@@ -326,7 +282,7 @@ int processLineParams ( int argc, char **argv )
         currParam = currParam.substr (1, currParam.length() - 2);
 #endif
 
-        if ( currParam.at (0) == '-' ) {
+        if ( currParam.at (0) == '-' && currParam.size() > 1) {
             switch ( currParam.at (1) ) {
                 case 'O':
                     copyParamsFile = true;
@@ -361,7 +317,7 @@ int processLineParams ( int argc, char **argv )
 #endif
 
                         if (fname.at (0) == '-') {
-                            std::cerr << "Error: filename missing next to the -p switch" << std::endl;
+                            std::cerr << "Error: filename missing next to the -p switch." << std::endl;
                             deleteProcParams (processingParams);
                             return -3;
                         }
@@ -371,7 +327,7 @@ int processLineParams ( int argc, char **argv )
                         if (! (currentParams->load ( fname ))) {
                             processingParams.push_back (currentParams);
                         } else {
-                            std::cerr << "Error: \"" << fname << "\" not found" << std::endl;
+                            std::cerr << "Error: \"" << fname << "\" not found." << std::endl;
                             deleteProcParams (processingParams);
                             return -3;
                         }
@@ -438,8 +394,20 @@ int processLineParams ( int argc, char **argv )
                 case 'b':
                     bits = atoi (currParam.substr (2).c_str());
 
-                    if (bits != 8 && bits != 16) {
-                        std::cerr << "Error: specify -b8 for 8-bit or -b16 for 16-bit output." << std::endl;
+                    if (currParam.length() >= 3 && currParam.at(2) == '8') { // -b8
+                        bits = 8;
+                    } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '1' && currParam.at(3) == '6') { // -b16, -b16f
+                        bits = 16;
+                        if (currParam.length() == 5 && currParam.at(4) == 'f') {
+                            isFloat = true;
+                        }
+                    } else if (currParam.length() >= 4 && currParam.length() <= 5 && currParam.at(2) == '3' && currParam.at(3) == '2') { // -b32 == -b32f
+                        bits = 32;
+                        isFloat = true;
+                    }
+
+                    if (bits != 8 && bits != 16 && bits != 32) {
+                        std::cerr << "Error: specify output bit depth per channel as -b8 for 8-bit integer, -b16 for 16-bit integer, -b16f for 16-bit float or -b32 for 32-bit float." << std::endl;
                         deleteProcParams (processingParams);
                         return -3;
                     }
@@ -469,7 +437,7 @@ int processLineParams ( int argc, char **argv )
 #endif
 
                         if (!Glib::file_test (argument, Glib::FILE_TEST_EXISTS)) {
-                            std::cout << "\"" << argument << "\"  doesn't exist !" << std::endl;
+                            std::cout << "\"" << argument << "\"  doesn't exist!" << std::endl;
                             continue;
                         }
 
@@ -479,9 +447,9 @@ int processLineParams ( int argc, char **argv )
 
                             if (notAll || notRetained) {
                                 if (notAll) {
-                                    std::cout << "\"" << argument << "\"  is not one of the file format to process: skipped" << std::endl;
+                                    std::cout << "\"" << argument << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
                                 } else if (notRetained) {
-                                    std::cout << "\"" << argument << "\"  is not one of the retained file format to process: skipped" << std::endl;
+                                    std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
                                 }
                             } else {
                                 inputFiles.emplace_back (argument);
@@ -512,11 +480,11 @@ int processLineParams ( int argc, char **argv )
 
                                     if (isDir || notAll || notRetained) {
                                         if (isDir) {
-                                            std::cout << "\"" << fileName << "\"  is a directory: skipped" << std::endl;
+                                            std::cout << "\"" << fileName << "\"  is a folder. Folder skipped" << std::endl;
                                         } else if (notAll) {
-                                            std::cout << "\"" << fileName << "\"  is not one of the file format to process: skipped" << std::endl;
+                                            std::cout << "\"" << fileName << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
                                         } else if (notRetained) {
-                                            std::cout << "\"" << fileName << "\"  is not one of the retained file format to process: skipped" << std::endl;
+                                            std::cout << "\"" << fileName << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
                                         }
 
                                         continue;
@@ -526,7 +494,7 @@ int processLineParams ( int argc, char **argv )
                                     if (sideProcParams && skipIfNoSidecar) {
                                         // look for the sidecar proc params
                                         if (!Glib::file_test (fileName + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
-                                            std::cout << "\"" << fileName << "\"  has no side-car file: image skipped" << std::endl;
+                                            std::cout << "\"" << fileName << "\"  has no side-car file. Image skipped." << std::endl;
                                             continue;
                                         }
                                     }
@@ -543,11 +511,6 @@ int processLineParams ( int argc, char **argv )
                     }
 
                     break;
-#ifdef WIN32
-
-                case 'w': // This case is handled outside this function
-                    break;
-#endif
 
                 case 'h':
                 case '?':
@@ -570,16 +533,12 @@ int processLineParams ( int argc, char **argv )
                     std::cout << "  " << Glib::path_get_basename (argv[0]) << " -c <dir>|<files>   Convert files in batch with default parameters." << std::endl;
                     std::cout << "  " << Glib::path_get_basename (argv[0]) << " <other options> -c <dir>|<files>   Convert files in batch with your own settings." << std::endl;
                     std::cout << std::endl;
-#ifdef WIN32
-                    std::cout << "  -w Do not open the Windows console" << std::endl;
-                    std::cout << std::endl;
-#endif
                     std::cout << "Options:" << std::endl;
-                    std::cout << "  " << Glib::path_get_basename (argv[0]) << "[-o <output>|-O <output>] [-q] [-a] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] [-f] -c <input>" << std::endl;
+                    std::cout << "  " << Glib::path_get_basename (argv[0]) << "[-o <output>|-O <output>] [-q] [-a] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] -js<1-3> | -t[z] -b<8|16|16f|32> | -n -b<8|16> ] [-Y] [-f] -c <input>" << std::endl;
                     std::cout << std::endl;
-                    std::cout << "  -c <files>       Specify one or more input files or directory." << std::endl;
-                    std::cout << "                   When specifying directories, Rawtherapee will look for images files that comply with the" << std::endl;
-                    std::cout << "                   selected extensions (see also '-a')." << std::endl;
+                    std::cout << "  -c <files>       Specify one or more input files or folders." << std::endl;
+                    std::cout << "                   When specifying folders, Rawtherapee will look for image file types which comply" << std::endl;
+                    std::cout << "                   with the selected extensions (see also '-a')." << std::endl;
                     std::cout << "                   -c must be the last option." << std::endl;
                     std::cout << "  -o <file>|<dir>  Set output file or folder." << std::endl;
                     std::cout << "                   Saves output file alongside input file if -o is not specified." << std::endl;
@@ -606,12 +565,15 @@ int processLineParams ( int argc, char **argv )
                     std::cout << "                       Chroma halved horizontally." << std::endl;
                     std::cout << "                   3 = Best quality:       1x1, 1x1, 1x1 (4:4:4)" << std::endl;
                     std::cout << "                       No chroma subsampling." << std::endl;
-                    std::cout << "  -b<8|16>         Specify bit depth per channel (default value: 16 for TIFF, 8 for PNG)." << std::endl;
-                    std::cout << "                   Only applies to TIFF and PNG output, JPEG is always 8." << std::endl;
+                    std::cout << "  -b<8|16|16f|32>  Specify bit depth per channel." << std::endl;
+                    std::cout << "                   8   = 8-bit integer.  Applies to JPEG, PNG and TIFF. Default for JPEG and PNG." << std::endl;
+                    std::cout << "                   16  = 16-bit integer. Applies to TIFF and PNG. Default for TIFF." << std::endl;
+                    std::cout << "                   16f = 16-bit float.   Applies to TIFF." << std::endl;
+                    std::cout << "                   32  = 32-bit float.   Applies to TIFF." << std::endl;
                     std::cout << "  -t[z]            Specify output to be TIFF." << std::endl;
                     std::cout << "                   Uncompressed by default, or deflate compression with 'z'." << std::endl;
                     std::cout << "  -n               Specify output to be compressed PNG." << std::endl;
-                    std::cout << "                   Compression is hard-coded to PNG_FILTER_PAETH, Z_RLE" << std::endl;
+                    std::cout << "                   Compression is hard-coded to PNG_FILTER_PAETH, Z_RLE." << std::endl;
                     std::cout << "  -Y               Overwrite output if present." << std::endl;
                     std::cout << "  -f               Use the custom fast-export processing pipeline." << std::endl;
                     std::cout << std::endl;
@@ -660,6 +622,18 @@ int processLineParams ( int argc, char **argv )
         }
     }
 
+    if (bits == -1) {
+        if (outputType == "jpg") {
+            bits = 8;
+        } else if (outputType == "png") {
+            bits = 8;
+        } else if (outputType == "tif") {
+            bits = 16;
+        } else {
+            bits = 8;
+        }
+    }
+
     if ( !argv1.empty() ) {
         return 1;
     }
@@ -673,7 +647,7 @@ int processLineParams ( int argc, char **argv )
         Glib::ustring profPath = options.findProfilePath (options.defProfRaw);
 
         if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfRaw) + paramFileExtension)))) {
-            std::cerr << "Error: default raw processing profile not found" << std::endl;
+            std::cerr << "Error: default raw processing profile not found." << std::endl;
             rawParams->deleteInstance();
             delete rawParams;
             deleteProcParams (processingParams);
@@ -684,7 +658,7 @@ int processLineParams ( int argc, char **argv )
         profPath = options.findProfilePath (options.defProfImg);
 
         if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load (profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename (profPath, Glib::path_get_basename (options.defProfImg) + paramFileExtension)))) {
-            std::cerr << "Error: default non-raw processing profile not found" << std::endl;
+            std::cerr << "Error: default non-raw processing profile not found." << std::endl;
             imgParams->deleteInstance();
             delete imgParams;
             rawParams->deleteInstance();
@@ -700,6 +674,7 @@ int processLineParams ( int argc, char **argv )
         rtengine::procparams::ProcParams currentParams;
 
         Glib::ustring inputFile = inputFiles[iFile];
+        std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
         std::cout << "Processing: " << inputFile << std::endl;
 
         rtengine::InitialImage* ii = nullptr;
@@ -765,7 +740,7 @@ int processLineParams ( int argc, char **argv )
                     rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
                 }
 
-                std::cout << "  Merging default raw processing profile" << std::endl;
+                std::cout << "  Merging default raw processing profile." << std::endl;
                 rawParams->applyTo (&currentParams);
             } else {
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
@@ -774,7 +749,7 @@ int processLineParams ( int argc, char **argv )
                     imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
                 }
 
-                std::cout << "  Merging default non-raw processing profile" << std::endl;
+                std::cout << "  Merging default non-raw processing profile." << std::endl;
                 imgParams->applyTo (&currentParams);
             }
         }
@@ -793,7 +768,7 @@ int processLineParams ( int argc, char **argv )
                     std::cerr << "Warning: sidecar file requested but not found for: " << sideProcessingParams << std::endl;
                 } else {
                     sideCarFound = true;
-                    std::cout << "  Merging sidecar procparams" << std::endl;
+                    std::cout << "  Merging sidecar procparams." << std::endl;
                 }
             }
 
@@ -835,7 +810,7 @@ int processLineParams ( int argc, char **argv )
         if ( outputType == "jpg" ) {
             errorCode = resultImage->saveAsJPEG ( outputFile, compression, subsampling );
         } else if ( outputType == "tif" ) {
-            errorCode = resultImage->saveAsTIFF ( outputFile, bits, compression == 0  );
+            errorCode = resultImage->saveAsTIFF ( outputFile, bits, isFloat, compression == 0  );
         } else if ( outputType == "png" ) {
             errorCode = resultImage->saveAsPNG ( outputFile, bits );
         } else {

@@ -35,7 +35,7 @@ extern const Settings* settings;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SSEFUNCTION void RawImageSource::boxblur2(float** src, float** dst, float** temp, int H, int W, int box )
+void RawImageSource::boxblur2(float** src, float** dst, float** temp, int H, int W, int box )
 {
     //box blur image channel; box size = 2*box+1
     //horizontal blur
@@ -336,7 +336,9 @@ void RawImageSource::boxblur_resamp(float **src, float **dst, float ** temp, int
         }
 
         // process remaining columns
+#ifdef _OPENMP
         #pragma omp single
+#endif
         {
 
             //vertical blur

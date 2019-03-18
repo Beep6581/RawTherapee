@@ -16,27 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PARAMEDITED_H_
-#define _PARAMEDITED_H_
+#pragma once
 
-#include <glibmm.h>
 #include <vector>
-#include "../rtengine/procparams.h"
+
 #include "../rtengine/rtengine.h"
 
-class GeneralParamsEdited
-{
-
-public:
+struct GeneralParamsEdited {
     bool rank;
     bool colorlabel;
     bool intrash;
 };
 
-class ToneCurveParamsEdited
-{
-
-public:
+struct ToneCurveParamsEdited {
     bool curve;
     bool curve2;
     bool curveMode;
@@ -54,11 +46,11 @@ public:
     bool hrenabled;
     bool method;
     bool histmatching;
+    bool fromHistMatching;
+    bool clampOOG;
 };
 
-class RetinexParamsEdited
-{
-public:
+struct RetinexParamsEdited {
     bool enabled;
     bool str;
     bool scal;
@@ -88,19 +80,17 @@ public:
     bool lhcurve;
     bool retinex;
     bool medianmap;
-    bool isUnchanged() const;
     bool highlights;
     bool htonalwidth;
     bool shadows;
     bool stonalwidth;
     bool radius;
 
+    bool isUnchanged() const;
 };
 
 
-class LCurveParamsEdited
-{
-public:
+struct LCurveParamsEdited {
     bool enabled;
     bool brightness;
     bool contrast;
@@ -120,8 +110,7 @@ public:
 };
 
 
-class LocalContrastParamsEdited {
-public:
+struct LocalContrastParamsEdited {
     bool enabled;
     bool radius;
     bool amount;
@@ -129,11 +118,7 @@ public:
     bool lightness;
 };
 
-
-class RGBCurvesParamsEdited
-{
-
-public:
+struct RGBCurvesParamsEdited {
     bool enabled;
     bool lumamode;
     bool rcurve;
@@ -141,10 +126,7 @@ public:
     bool bcurve;
 };
 
-class ColorToningEdited
-{
-
-public:
+struct ColorToningEdited {
     bool enabled;
     bool opacityCurve;
     bool colorCurve;
@@ -175,33 +157,29 @@ public:
     bool labgridBLow;
     bool labgridAHigh;
     bool labgridBHigh;
+    bool labregions;
+    bool labregionsShowMask;
 };
 
-class SharpenEdgeParamsEdited
-{
-
-public :
+struct SharpenEdgeParamsEdited {
     bool enabled;
     bool passes;
     bool amount;
     bool threechannels;
 };
 
-class SharpenMicroParamsEdited
-{
-public :
+struct SharpenMicroParamsEdited {
     bool enabled;
     bool matrix;
     bool amount;
+    bool contrast;
     bool uniformity;
-
 };
 
-class SharpeningParamsEdited
-{
-
-public:
+struct SharpeningParamsEdited {
     bool enabled;
+    bool contrast;
+    bool blurradius;
     bool radius;
     bool amount;
     bool threshold;
@@ -218,10 +196,7 @@ public:
     bool deconvdamping;
 };
 
-class VibranceParamsEdited
-{
-
-public:
+struct VibranceParamsEdited {
     bool enabled;
     bool pastels;
     bool saturated;
@@ -232,19 +207,7 @@ public:
     bool skintonescurve;
 };
 
-/*class ColorBoostParamsEdited {
-
-    public:
-        bool amount;
-        bool avoidclip;
-        bool enable_saturationlimiter;
-        bool rstprotection;
-};*/
-
-class WBParamsEdited
-{
-
-public:
+struct WBParamsEdited {
     bool enabled;
     bool method;
     bool temperature;
@@ -253,50 +216,19 @@ public:
     bool tempBias;
 };
 
-/*class ColorShiftParamsEdited {
-
-    public:
-        bool a;
-        bool b;
-};*/
-
-/*class LumaDenoiseParamsEdited {
-
-    public:
-        bool enabled;
-        bool radius;
-        bool edgetolerance;
-};*/
-
-/*class ColorDenoiseParamsEdited {
-
-    public:
-        bool enabled;
-        bool amount;
-};*/
-
-class DefringeParamsEdited
-{
-
-public:
+struct DefringeParamsEdited {
     bool enabled;
     bool radius;
     bool threshold;
     bool huecurve;
 };
 
-class ImpulseDenoiseParamsEdited
-{
-
-public:
+struct ImpulseDenoiseParamsEdited {
     bool enabled;
     bool thresh;
 };
 
-class ColorAppearanceParamsEdited
-{
-
-public:
+struct ColorAppearanceParamsEdited {
     bool curve;
     bool curve2;
     bool curve3;
@@ -329,22 +261,16 @@ public:
     bool rstprotection;
     bool surrsource;
     bool gamut;
-//  bool badpix;
     bool datacie;
     bool tonecie;
-//  bool sharpcie;
     bool tempout;
     bool greenout;
     bool ybout;
     bool tempsc;
     bool greensc;
-
 };
 
-class DirPyrDenoiseParamsEdited
-{
-
-public:
+struct DirPyrDenoiseParamsEdited {
     bool enabled;
     bool enhance;
     bool median;
@@ -357,7 +283,6 @@ public:
     bool lcurve;
     bool cccurve;
 
-//    bool perform;
     bool dmethod;
     bool Lmethod;
     bool Cmethod;
@@ -367,12 +292,9 @@ public:
     bool methodmed;
     bool rgbmethod;
     bool passes;
-
 };
 
-class EPDParamsEdited
-{
-public:
+struct EPDParamsEdited {
     bool enabled;
     bool strength;
     bool gamma;
@@ -381,32 +303,24 @@ public:
     bool reweightingIterates;
 };
 
-
-class FattalToneMappingParamsEdited {
-public:
+struct FattalToneMappingParamsEdited {
     bool enabled;
     bool threshold;
     bool amount;
+    bool anchor;
 };
 
-
-class SHParamsEdited
-{
-
-public:
+struct SHParamsEdited {
     bool enabled;
-    bool hq;
     bool highlights;
     bool htonalwidth;
     bool shadows;
     bool stonalwidth;
     bool radius;
+    bool lab;
 };
 
-class CropParamsEdited
-{
-
-public:
+struct CropParamsEdited {
     bool enabled;
     bool x;
     bool y;
@@ -418,58 +332,47 @@ public:
     bool guide;
 };
 
-class CoarseTransformParamsEdited
-{
-
-public:
+struct CoarseTransformParamsEdited {
     bool rotate;
     bool hflip;
     bool vflip;
 };
 
-class CommonTransformParamsEdited
-{
-
-public:
+struct CommonTransformParamsEdited {
     bool autofill;
 };
 
-class RotateParamsEdited
-{
-
-public:
+struct RotateParamsEdited {
     bool degree;
 };
 
-class DistortionParamsEdited
-{
-
-public:
+struct DistortionParamsEdited {
     bool amount;
 };
 
-class LensProfParamsEdited
-{
-public:
-    bool lcpFile, useDist, useVign, useCA;
-    bool useLensfun, lfAutoMatch, lfCameraMake, lfCameraModel, lfLens;
+struct LensProfParamsEdited {
+    bool lcpFile;
+    bool useDist;
+    bool useVign;
+    bool useCA;
+
+    bool useLensfun;
+    bool lfAutoMatch;
+    bool lfCameraMake;
+    bool lfCameraModel;
+    bool lfLens;
+
     bool lcMode;
 
     bool isUnchanged() const;
 };
 
-class PerspectiveParamsEdited
-{
-
-public:
+struct PerspectiveParamsEdited {
     bool horizontal;
     bool vertical;
 };
 
-class GradientParamsEdited
-{
-
-public:
+struct GradientParamsEdited {
     bool enabled;
     bool degree;
     bool feather;
@@ -478,20 +381,14 @@ public:
     bool centerY;
 };
 
-class PCVignetteParamsEdited
-{
-
-public:
+struct PCVignetteParamsEdited {
     bool enabled;
     bool strength;
     bool feather;
     bool roundness;
 };
 
-class VignettingParamsEdited
-{
-
-public:
+struct VignettingParamsEdited {
     bool amount;
     bool radius;
     bool strength;
@@ -499,20 +396,15 @@ public:
     bool centerY;
 };
 
-class ChannelMixerParamsEdited
-{
-
-public:
+struct ChannelMixerParamsEdited {
     bool enabled;
     bool red[3];
     bool green[3];
     bool blue[3];
 
 };
-class BlackWhiteParamsEdited
-{
 
-public:
+struct BlackWhiteParamsEdited {
     bool enabledcc;
     bool enabled;
     bool method;
@@ -536,28 +428,14 @@ public:
     bool afterCurveMode;
     bool autoc;
     bool algo;
-
 };
 
-class CACorrParamsEdited
-{
-
-public:
+struct CACorrParamsEdited {
     bool red;
     bool blue;
 };
-/*
-class HRecParamsEdited {
 
-    public:
-        bool enabled;
-        bool method;
-};
-*/
-class ResizeParamsEdited
-{
-
-public:
+struct ResizeParamsEdited {
     bool scale;
     bool appliesTo;
     bool method;
@@ -565,6 +443,7 @@ public:
     bool width;
     bool height;
     bool enabled;
+    bool allowUpscaling;
 };
 
 class SpotParamsEdited
@@ -574,29 +453,25 @@ public:
     bool entries;
 };
 
-class ColorManagementParamsEdited
-{
-
-public:
-    bool input;
+struct ColorManagementParamsEdited {
+    bool inputProfile;
     bool toneCurve;
     bool applyLookTable;
     bool applyBaselineExposureOffset;
     bool applyHueSatMap;
     bool dcpIlluminant;
-    bool working;
-    bool output;
+
+    bool workingProfile;
+    bool workingTRC;
+    bool workingTRCGamma;
+    bool workingTRCSlope;
+
+    bool outputProfile;
     bool outputIntent;
     bool outputBPC;
-    bool gamma;
-    bool gampos;
-    bool slpos;
-    bool freegamma;
 };
-class WaveletParamsEdited
-{
 
-public:
+struct WaveletParamsEdited {
     bool enabled;
     bool strength;
     bool balance;
@@ -680,13 +555,9 @@ public:
     bool expfinal;
     bool exptoning;
     bool expnoise;
-
 };
 
-class DirPyrEqualizerParamsEdited
-{
-
-public:
+struct DirPyrEqualizerParamsEdited {
     bool enabled;
     bool gamutlab;
     bool mult[6];
@@ -694,36 +565,37 @@ public:
     bool threshold;
     bool skinprotect;
     bool hueskin;
-    //     bool algo;
 };
 
-class HSVEqualizerParamsEdited
-{
-
-public:
+struct HSVEqualizerParamsEdited {
     bool enabled;
     bool hcurve;
     bool scurve;
     bool vcurve;
 };
 
-class FilmSimulationParamsEdited
-{
-public:
+struct FilmSimulationParamsEdited {
     bool enabled;
     bool clutFilename;
     bool strength;
 };
 
-class RAWParamsEdited
-{
+struct SoftLightParamsEdited {
+    bool enabled;
+    bool strength;
+};
 
-public:
-    class BayerSensor
-    {
+struct DehazeParamsEdited {
+    bool enabled;
+    bool strength;
+    bool showDepthMap;
+    bool depth;
+};
 
-    public:
+struct RAWParamsEdited {
+    struct BayerSensor {
         bool method;
+        bool border;
         bool imageNum;
         bool ccSteps;
         bool exBlack0;
@@ -734,50 +606,36 @@ public:
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
-        bool pixelShiftMotion;
-        bool pixelShiftMotionCorrection;
+        bool dualDemosaicAutoContrast;
+        bool dualDemosaicContrast;
         bool pixelShiftMotionCorrectionMethod;
-        bool pixelShiftStddevFactorGreen;
-        bool pixelShiftStddevFactorRed;
-        bool pixelShiftStddevFactorBlue;
         bool pixelShiftEperIso;
-        bool pixelShiftNreadIso;
-        bool pixelShiftPrnu;
         bool pixelShiftSigma;
-        bool pixelShiftSum;
-        bool pixelShiftRedBlueWeight;
         bool pixelShiftShowMotion;
         bool pixelShiftShowMotionMaskOnly;
-        bool pixelShiftAutomatic;
-        bool pixelShiftNonGreenHorizontal;
-        bool pixelShiftNonGreenVertical;
         bool pixelShiftHoleFill;
         bool pixelShiftMedian;
-        bool pixelShiftMedian3;
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         bool pixelShiftSmooth;
-        bool pixelShiftExp0;
-        bool pixelShiftLmmse;
-        bool pixelShiftOneGreen;
         bool pixelShiftEqualBright;
         bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
-        bool pixelShiftNonGreenCross2;
-        bool pixelShiftNonGreenAmaze;
+        bool pixelShiftDemosaicMethod;
 
-        //bool allEnhance;
         bool greenEq;
         bool linenoise;
+        bool linenoiseDirection;
+        bool pdafLinesFilter;
 
         bool isUnchanged() const;
     };
 
-    class XTransSensor
-    {
-
-    public:
+    struct XTransSensor {
         bool method;
+        bool dualDemosaicAutoContrast;
+        bool dualDemosaicContrast;
+        bool border;
         bool ccSteps;
         bool exBlackRed;
         bool exBlackGreen;
@@ -790,6 +648,8 @@ public:
     XTransSensor xtranssensor;
 
     bool ca_autocorrect;
+    bool ca_avoidcolourshift;
+    bool caautoiterations;
     bool cared;
     bool cablue;
     bool hotPixelFilter;
@@ -804,75 +664,66 @@ public:
     bool ff_AutoClipControl;
     bool ff_clipControl;
     bool exPos;
-    bool exPreser;
 
     bool isUnchanged() const;
 };
 
 
-class MetaDataParamsEdited {
-public:
+struct MetaDataParamsEdited {
     bool mode;
 };
 
-
-class ParamsEdited
-{
-
-public:
-    GeneralParamsEdited           general;
-    ToneCurveParamsEdited         toneCurve;
-    LCurveParamsEdited            labCurve;
-    LocalContrastParamsEdited     localContrast;
-    RGBCurvesParamsEdited         rgbCurves;
-    ColorToningEdited             colorToning;
-    RetinexParamsEdited             retinex;
-    SharpeningParamsEdited        sharpening;
-    SharpeningParamsEdited        prsharpening;
-    SharpenEdgeParamsEdited       sharpenEdge;
-    SharpenMicroParamsEdited      sharpenMicro;
-    VibranceParamsEdited          vibrance;
-    ColorAppearanceParamsEdited   colorappearance;
-    //ColorBoostParamsEdited        colorBoost;
-    WBParamsEdited                wb;
-    //ColorShiftParamsEdited        colorShift;
-    //LumaDenoiseParamsEdited       lumaDenoise;
-    //ColorDenoiseParamsEdited      colorDenoise;
-    DefringeParamsEdited          defringe;
-    DirPyrDenoiseParamsEdited     dirpyrDenoise;
-    EPDParamsEdited               epd;
+struct ParamsEdited {
+    GeneralParamsEdited general;
+    ToneCurveParamsEdited toneCurve;
+    LCurveParamsEdited labCurve;
+    LocalContrastParamsEdited localContrast;
+    RGBCurvesParamsEdited rgbCurves;
+    ColorToningEdited colorToning;
+    RetinexParamsEdited retinex;
+    SharpeningParamsEdited sharpening;
+    SharpeningParamsEdited prsharpening;
+    SharpenEdgeParamsEdited sharpenEdge;
+    SharpenMicroParamsEdited sharpenMicro;
+    VibranceParamsEdited vibrance;
+    ColorAppearanceParamsEdited colorappearance;
+    WBParamsEdited wb;
+    DefringeParamsEdited defringe;
+    DirPyrDenoiseParamsEdited dirpyrDenoise;
+    EPDParamsEdited epd;
     FattalToneMappingParamsEdited fattal;
-    ImpulseDenoiseParamsEdited    impulseDenoise;
-    SHParamsEdited                sh;
-    CropParamsEdited              crop;
-    CoarseTransformParamsEdited   coarse;
-    CommonTransformParamsEdited   commonTrans;
-    RotateParamsEdited            rotate;
-    DistortionParamsEdited        distortion;
-    LensProfParamsEdited          lensProf;
-    PerspectiveParamsEdited       perspective;
-    GradientParamsEdited          gradient;
-    PCVignetteParamsEdited        pcvignette;
-    CACorrParamsEdited            cacorrection;
-    VignettingParamsEdited        vignetting;
-    ChannelMixerParamsEdited      chmixer;
-    BlackWhiteParamsEdited        blackwhite;
-    ResizeParamsEdited            resize;
-    SpotParamsEdited              spot;
-    ColorManagementParamsEdited   icm;
-    RAWParamsEdited               raw;
-    DirPyrEqualizerParamsEdited   dirpyrequalizer;
-    WaveletParamsEdited             wavelet;
-    HSVEqualizerParamsEdited      hsvequalizer;
-    FilmSimulationParamsEdited    filmSimulation;
-    MetaDataParamsEdited          metadata;
-    bool                          exif;
-    bool                          iptc;
+    ImpulseDenoiseParamsEdited impulseDenoise;
+    SHParamsEdited sh;
+    CropParamsEdited crop;
+    CoarseTransformParamsEdited coarse;
+    CommonTransformParamsEdited commonTrans;
+    RotateParamsEdited rotate;
+    DistortionParamsEdited distortion;
+    LensProfParamsEdited lensProf;
+    PerspectiveParamsEdited perspective;
+    GradientParamsEdited gradient;
+    PCVignetteParamsEdited pcvignette;
+    CACorrParamsEdited cacorrection;
+    VignettingParamsEdited vignetting;
+    ChannelMixerParamsEdited chmixer;
+    BlackWhiteParamsEdited blackwhite;
+    ResizeParamsEdited resize;
+    SpotParamsEdited spot;
+    ColorManagementParamsEdited icm;
+    RAWParamsEdited raw;
+    DirPyrEqualizerParamsEdited dirpyrequalizer;
+    WaveletParamsEdited wavelet;
+    HSVEqualizerParamsEdited hsvequalizer;
+    FilmSimulationParamsEdited filmSimulation;
+    SoftLightParamsEdited softlight;
+    DehazeParamsEdited dehaze;
+    MetaDataParamsEdited metadata;
+    bool exif;
+    bool iptc;
 
-    explicit ParamsEdited (bool value = false);
+    explicit ParamsEdited(bool value = false);
 
-    void set   (bool v);
-    void initFrom (const std::vector<rtengine::procparams::ProcParams>& src);
-    void combine (rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet);
+    void set(bool v);
+    void initFrom(const std::vector<rtengine::procparams::ProcParams>& src);
+    void combine(rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet);
 };
-#endif

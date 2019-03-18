@@ -196,6 +196,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
     */
     gamutlabConn.block (true);
     gamutlab->set_active (pp->dirpyrequalizer.gamutlab);
+    gamutlab->set_sensitive (pp->dirpyrequalizer.skinprotect != 0);
     gamutlabConn.block (false);
     lastgamutlab = pp->dirpyrequalizer.gamutlab;
 
@@ -296,13 +297,28 @@ void DirPyrEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdit
     }
 }
 
-void DirPyrEqualizer::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
+void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
+void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
+{
+}
+
+void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
+{
+}
+
+void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
 {
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvDirPyrEqualizerHueskin, hueskin->getHistoryString());
     }
 }
 
+void DirPyrEqualizer::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+}
 
 void DirPyrEqualizer::setBatchMode (bool batchMode)
 {
@@ -329,9 +345,8 @@ void DirPyrEqualizer::cbdlMethodChanged()
 
 
 
-void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval)
+void DirPyrEqualizer::adjusterChanged(Adjuster* a, double newval)
 {
-
     if (listener && getEnabled()) {
         if (a == threshold) {
             listener->panelChanged (EvDirPyrEqualizerThreshold,
@@ -339,6 +354,7 @@ void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval)
                                             Glib::ustring::format(std::fixed, std::setprecision(2), threshold->getValue()))
                                    );
         } else if (a == skinprotect) {
+            gamutlab->set_sensitive (skinprotect->getValue() != 0);
             listener->panelChanged (EvDirPyrEqualizerSkin,
                                     Glib::ustring::compose("%1",
                                             Glib::ustring::format(std::fixed, std::setprecision(2), skinprotect->getValue()))
@@ -355,6 +371,10 @@ void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval)
                                    );
         }
     }
+}
+
+void DirPyrEqualizer::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void DirPyrEqualizer::enabledChanged ()

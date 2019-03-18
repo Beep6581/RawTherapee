@@ -32,6 +32,8 @@
 
 #include "rtexif.h"
 
+#include "../rtengine/procparams.h"
+
 #include "../rtgui/cacheimagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
@@ -362,23 +364,25 @@ Glib::ustring TagDirectory::getDumpKey (int tagID, const Glib::ustring &tagName)
 
     return key;
 }
-void TagDirectory::addTag (Tag* tag)
+void TagDirectory::addTag (Tag* &tag)
 {
 
     // look up if it already exists:
     if (getTag (tag->getID())) {
         delete tag;
+        tag = nullptr;
     } else {
         tags.push_back (tag);
     }
 }
 
-void TagDirectory::addTagFront (Tag* tag)
+void TagDirectory::addTagFront (Tag* &tag)
 {
 
     // look up if it already exists:
     if (getTag (tag->getID())) {
         delete tag;
+        tag = nullptr;
     } else {
         tags.insert (tags.begin(), tag);
     }
@@ -463,20 +467,32 @@ Tag* TagDirectory::findTag (const char* name, bool lookUpward) const
         return t;
     }
 
+    Tag* foundTag = nullptr;
+    int tagDistance = 10000;
+
     for (auto tag : tags) {
         if (tag->isDirectory()) {
             TagDirectory *dir;
             int i = 0;
+            // Find the shortest path to that tag
             while ((dir = tag->getDirectory(i)) != nullptr) {
                 TagDirectory *dir = tag->getDirectory();
                 Tag* t = dir->findTag (name);
 
                 if (t) {
-                    return t;
+                    int currTagDistance = t->getDistanceFrom(this);
+                    if (currTagDistance < tagDistance) {
+                        tagDistance = currTagDistance;
+                        foundTag = t;
+                    }
                 }
                 ++i;
             }
         }
+    }
+
+    if (foundTag) {
+        return foundTag;
     }
 
     if (lookUpward && parent) {
@@ -708,7 +724,7 @@ int TagDirectory::write (int start, unsigned char* buffer)
     return maxPos;
 }
 
-void TagDirectory::applyChange (std::string name, Glib::ustring value)
+void TagDirectory::applyChange (const std::string &name, const Glib::ustring &value)
 {
 
     std::string::size_type dp = name.find_first_of ('.');
@@ -830,14 +846,15 @@ TagDirectoryTable::TagDirectoryTable (TagDirectory* p, FILE* f, int memsize, int
     : TagDirectory (p, ta, border), zeroOffset (offs), valuesSize (memsize), defaultType ( type )
 {
     values = new unsigned char[valuesSize];
-    fread (values, 1, valuesSize, f);
+    if (fread (values, 1, valuesSize, f) == static_cast<size_t>(valuesSize)) {
 
-    // Security ; will avoid to read above the buffer limit if the RT's tagDirectoryTable is longer that what's in the file
-    int count = valuesSize / getTypeSize (type);
+        // Security ; will avoid to read above the buffer limit if the RT's tagDirectoryTable is longer that what's in the file
+        int count = valuesSize / getTypeSize (type);
 
-    for (const TagAttrib* tattr = ta; tattr->ignore != -1 && tattr->ID < count; ++tattr) {
-        Tag* newTag = new Tag (this, tattr, (values + zeroOffset + tattr->ID * getTypeSize (type)), tattr->type == AUTO ? type : tattr->type);
-        tags.push_back (newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+        for (const TagAttrib* tattr = ta; tattr->ignore != -1 && tattr->ID < count; ++tattr) {
+            Tag* newTag = new Tag (this, tattr, (values + zeroOffset + tattr->ID * getTypeSize (type)), tattr->type == AUTO ? type : tattr->type);
+            tags.push_back (newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+        }
     }
 }
 TagDirectory* TagDirectoryTable::clone (TagDirectory* parent)
@@ -964,16 +981,19 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 
     if (tag == 0x002e) { // location of the embedded preview image in raw files of Panasonic cameras
         ExifManager eManager(f, nullptr, true);
-        eManager.parseJPEG(ftell(f)); // try to parse the exif data from the preview image
+        const auto fpos = ftell(f);
+        if (fpos >= 0) {
+            eManager.parseJPEG(fpos); // try to parse the exif data from the preview image
 
-        if (eManager.roots.size()) {
-            const TagDirectory* const previewdir = eManager.roots.at(0);
-            if (previewdir->getTag ("Exif")) {
-                if (previewdir->getTag ("Make")) {
-                    if (previewdir->getTag ("Make")->valueToString() == "Panasonic") { // "make" is not yet available here, so get it from the preview tags to assure we're doing the right thing
-                        Tag* t = new Tag (parent->getRoot(), lookupAttrib (ifdAttribs, "Exif")); // replace raw exif with preview exif assuming there are the same
-                        t->initSubDir (previewdir->getTag ("Exif")->getDirectory());
-                        parent->getRoot()->addTag (t);
+            if (eManager.roots.size()) {
+                const TagDirectory* const previewdir = eManager.roots.at(0);
+                if (previewdir->getTag ("Exif")) {
+                    if (previewdir->getTag ("Make")) {
+                        if (previewdir->getTag ("Make")->valueToString() == "Panasonic") { // "make" is not yet available here, so get it from the preview tags to assure we're doing the right thing
+                            Tag* t = new Tag (parent->getRoot(), lookupAttrib (ifdAttribs, "Exif")); // replace raw exif with preview exif assuming there are the same
+                            t->initSubDir (previewdir->getTag ("Exif")->getDirectory());
+                            parent->getRoot()->addTag (t);
+                        }
                     }
                 }
             }
@@ -1189,8 +1209,8 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     } else {
         // read value
         value = new unsigned char [valuesize + 1];
-        fread (value, 1, valuesize, f);
-        value[valuesize] = '\0';
+        auto readSize = fread (value, 1, valuesize, f);
+        value[readSize] = '\0';
     }
 
     // seek back to the saved position
@@ -1200,32 +1220,33 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 defsubdirs:
     // read value
     value = new unsigned char [valuesize];
-    fread (value, 1, valuesize, f);
-
-    // count the number of valid subdirs
-    int sdcount = count;
-
-    if (sdcount > 0) {
-        if (parent->getAttribTable() == olympusAttribs) {
-            sdcount = 1;
-        }
-
-        // allocate space
-        directory = new TagDirectory*[sdcount + 1];
-
-        // load directories
-        for (size_t j = 0, i = 0; j < count; j++, i++) {
-            int newpos = base + toInt (j * 4, LONG);
-            fseek (f, newpos, SEEK_SET);
-            directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
-        }
-
-        // set the terminating NULL
-        directory[sdcount] = nullptr;
-    } else {
+    if (fread (value, 1, valuesize, f) != static_cast<size_t>(valuesize)) {
         type = INVALID;
-    }
+    } else {
+        // count the number of valid subdirs
+        int sdcount = count;
 
+        if (sdcount > 0) {
+            if (parent->getAttribTable() == olympusAttribs) {
+                sdcount = 1;
+            }
+
+            // allocate space
+            directory = new TagDirectory*[sdcount + 1];
+
+            // load directories
+            for (size_t j = 0, i = 0; j < count; j++, i++) {
+                int newpos = base + toInt (j * 4, LONG);
+                fseek (f, newpos, SEEK_SET);
+                directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
+            }
+
+            // set the terminating NULL
+            directory[sdcount] = nullptr;
+        } else {
+            type = INVALID;
+        }
+    }
     // seek back to the saved position
     fseek (f, save, SEEK_SET);
     return;
@@ -1418,6 +1439,20 @@ Tag::~Tag ()
 
         delete [] directory;
     }
+}
+
+int Tag::getDistanceFrom(const TagDirectory *root)
+{
+    int i = 0;
+    TagDirectory *currTagDir = parent;
+    while (currTagDir != nullptr && currTagDir != root) {
+        ++i;
+        if (parent->getParent() == currTagDir) {
+            break;
+        }
+        currTagDir = parent->getParent();
+    }
+    return  i;
 }
 
 void Tag::setInt (int v, int ofs, TagType astype)
@@ -1734,7 +1769,7 @@ std::string Tag::nameToString (int i)
     return buffer;
 }
 
-std::string Tag::valueToString ()
+std::string Tag::valueToString () const
 {
 
     if (attrib && attrib->interpreter) {
@@ -1928,9 +1963,9 @@ void Tag::initInt (int data, TagType t, int cnt)
     setInt (data, 0, t);
 }
 
-void Tag::swapByteOrder2(char *buffer, int count)
+void Tag::swapByteOrder2(unsigned char *buffer, int count)
 {
-    char* ptr = buffer;
+    unsigned char* ptr = buffer;
     for (int i = 0; i < count; i+=2) {
         unsigned char c = ptr[0];
         ptr[0] = ptr[1];
@@ -1948,8 +1983,8 @@ void Tag::initUserComment (const Glib::ustring &text)
         memcpy(value, "ASCII\0\0\0", 8);
         memcpy(value + 8, text.c_str(), valuesize - 8);
     } else {
-        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, nullptr, nullptr, nullptr);
-        size_t wcStrSize = wcslen(commentStr);
+        glong wcStrSize = 0;
+        gunichar2 *commentStr = g_utf8_to_utf16 (text.c_str(), -1, nullptr, &wcStrSize, nullptr);
         valuesize = count = wcStrSize * 2 + 8 + (useBOM ? 2 : 0);
         value = new unsigned char[valuesize];
         memcpy(value, "UNICODE\0", 8);
@@ -1966,7 +2001,7 @@ void Tag::initUserComment (const Glib::ustring &text)
 
         // Swapping byte order to match the Exif's byte order
         if (getOrder() != HOSTORDER) {
-            swapByteOrder2((char*)commentStr, wcStrSize * 2);
+            swapByteOrder2((unsigned char*)commentStr, wcStrSize * 2);
         }
 
         memcpy(value + 8 + (useBOM ? 2 : 0), (char*)commentStr, wcStrSize * 2);
@@ -2075,12 +2110,15 @@ void ExifManager::parseCIFF ()
     TagDirectory* root = new TagDirectory (nullptr, ifdAttribs, INTEL);
     Tag* exif = new Tag (root, lookupAttrib (ifdAttribs, "Exif"));
     exif->initSubDir ();
-    Tag* mn = new Tag (exif->getDirectory(), lookupAttrib (exifAttribs, "MakerNote"));
-    mn->initMakerNote (IFD, canonAttribs);
     root->addTag (exif);
-    exif->getDirectory()->addTag (mn);
+    if (exif) {
+        Tag* mn = new Tag (exif->getDirectory(), lookupAttrib (exifAttribs, "MakerNote"));
+        mn->initMakerNote (IFD, canonAttribs);
+        exif->getDirectory()->addTag (mn);
+    }
     parseCIFF (rml->ciffLength, root);
     root->sort ();
+    parse(true);
 }
 
 Tag* ExifManager::saveCIFFMNTag (TagDirectory* root, int len, const char* name)
@@ -2114,10 +2152,14 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
     char buffer[1024];
     Tag* t;
 
-    fseek (f, rml->ciffBase + length - 4, SEEK_SET);
+    if (fseek(f, rml->ciffBase + length - 4, SEEK_SET)) {
+        return;
+    }
 
     int dirStart = get4 (f, INTEL) + rml->ciffBase;
-    fseek (f, dirStart, SEEK_SET);
+    if (fseek(f, dirStart, SEEK_SET)) {
+        return;
+    }
 
     int numOfTags = get2 (f, INTEL);
 
@@ -2168,11 +2210,13 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
             t = new Tag (root, lookupAttrib (ifdAttribs, "Make"));
             t->initString (buffer);
             root->addTag (t);
-            fseek (f, strlen (buffer) - 63, SEEK_CUR);
-            fread (buffer, 64, 1, f);
-            t = new Tag (root, lookupAttrib (ifdAttribs, "Model"));
-            t->initString (buffer);
-            root->addTag (t);
+            if (!fseek (f, strlen (buffer) - 63, SEEK_CUR)) {
+                if (fread (buffer, 64, 1, f) == 1) {
+                    t = new Tag (root, lookupAttrib (ifdAttribs, "Model"));
+                    t->initString (buffer);
+                    root->addTag (t);
+                }
+            }
         }
 
         if (type == 0x1818) {
@@ -2448,7 +2492,7 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
         char *val = (char *)&value[pos];
 
         if (strncmp (&hdr[8], "CameraObj_ISO_speed", 19) == 0) {
-            iso_speed = 25 * (1 << (atoi (val) - 1));
+            iso_speed = 25 * (1 << std::max((atoi (val) - 1), 0));
             found_count++;
         } else if (strncmp (&hdr[8], "ImgProf_rotation_angle", 22) == 0) {
             rotation_angle = atoi (val);
@@ -2477,7 +2521,7 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
         root->addTagFront (exif);
     }
 
-    if (!exif->getDirectory()->getTag ("ISOSpeedRatings")) {
+    if (exif && !exif->getDirectory()->getTag ("ISOSpeedRatings")) {
         Tag *t = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
         t->initInt (iso_speed, LONG);
         exif->getDirectory()->addTagFront (t);
@@ -2803,7 +2847,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
                 exif->initSubDir (exifdir);
                 root->addTagFront (exif);
 
-                if (!exif->getDirectory()->getTag ("ISOSpeedRatings") && exif->getDirectory()->getTag ("ExposureIndex")) {
+                if (exif && !exif->getDirectory()->getTag ("ISOSpeedRatings") && exif->getDirectory()->getTag ("ExposureIndex")) {
                     Tag* niso = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
                     niso->initInt (exif->getDirectory()->getTag ("ExposureIndex")->toInt(), SHORT);
                     exif->getDirectory()->addTagFront (niso);
@@ -3017,7 +3061,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
             if (!sftTagList.empty()) {
                 for (auto sft : sftTagList) {
                     int sftVal = sft->toInt();
-                    if (sftVal == (isRaw ? 0 : 2)) {
+                    if (sftVal == 0 || (!isRaw && sftVal == 2)) {
                         frames.push_back(sft->getParent());
                         frameRootDetected = true;
 
@@ -3077,7 +3121,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
         root->printAll ();
 #endif
 
-    } while (ifdOffset && !onlyFirst);
+    } while (ifdOffset > 0 && !onlyFirst);
 
     // Security check : if there's at least one root, there must be at least one image.
     // If the following occurs, then image detection above has failed or it's an unsupported file type.
@@ -3398,7 +3442,7 @@ short int int2_to_signed (short unsigned int i)
  * <focal>-<focal>mm f/<aperture>-<aperture>
  * NB: no space between separator '-'; no space between focal length and 'mm'
  */
-bool extractLensInfo (std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal)
+bool extractLensInfo (const std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal)
 {
     minFocal = 0.0;
     maxFocal = 0.0;

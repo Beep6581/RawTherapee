@@ -19,96 +19,64 @@
 #ifndef _CLIPBOARD_
 #define _CLIPBOARD_
 
+#include <memory>
 #include <vector>
-#include "../rtengine/rtengine.h"
-#include "../rtengine/procparams.h"
-#include "paramsedited.h"
-#include "myflatcurve.h"
+
 #include "mydiagonalcurve.h"
+#include "myflatcurve.h"
+#include "paramsedited.h"
+
+#include "../rtengine/rtengine.h"
+
+namespace rtengine
+{
+
+namespace procparams
+{
+
+class PartialProfile;
+
+}
+
+}
 
 class Clipboard
 {
+public:
+    Clipboard ();
+    ~Clipboard ();
 
+    bool hasIPTC() const;
+    const rtengine::procparams::IPTCPairs& getIPTC() const;
+    void setIPTC(const rtengine::procparams::IPTCPairs& iptcc);
+
+    const rtengine::procparams::PartialProfile& getPartialProfile() const;
+    void setPartialProfile(const rtengine::procparams::PartialProfile& pprofile);
+
+    const rtengine::procparams::ProcParams& getProcParams() const;
+    void setProcParams(const rtengine::procparams::ProcParams& pparams);
+
+    const ParamsEdited& getParamsEdited() const;
+
+    bool hasProcParams() const;
+    bool hasPEdited() const;
+
+    DiagonalCurveType hasDiagonalCurveData() const;
+    const std::vector<double>& getDiagonalCurveData() const;
+    void setDiagonalCurveData(const std::vector<double>& p, DiagonalCurveType type);
+
+    void setFlatCurveData(const std::vector<double>& p, FlatCurveType type);
+    const std::vector<double>& getFlatCurveData() const;
+    FlatCurveType hasFlatCurveData() const;
+
+private:
     bool _hasIPTC;
-    rtengine::procparams::IPTCPairs iptc;
-    rtengine::procparams::PartialProfile partProfile;
+    const std::unique_ptr<rtengine::procparams::IPTCPairs> iptc;
+    const std::unique_ptr<rtengine::procparams::PartialProfile> partProfile;
     DiagonalCurveType hasDiagonalCurveDataType;
     FlatCurveType hasFlatCurveDataType;
     std::vector<double> diagonalCurve;
     std::vector<double> flatCurve;
-
-
-public:
-    void                                               setIPTC (const rtengine::procparams::IPTCPairs& iptcc)
-    {
-        iptc = iptcc;
-        _hasIPTC = true;
-    }
-    const rtengine::procparams::IPTCPairs&             getIPTC ()
-    {
-        return iptc;
-    }
-    bool                                               hasIPTC ()
-    {
-        return _hasIPTC;
-    }
-
-    void                                               setPartialProfile   (const rtengine::procparams::PartialProfile& pprofile);
-    const rtengine::procparams::PartialProfile&        getPartialProfile   ()
-    {
-        return partProfile;
-    };
-    void                                               setProcParams       (const rtengine::procparams::ProcParams& pparams);
-    const rtengine::procparams::ProcParams&            getProcParams       ()
-    {
-        return *partProfile.pparams;
-    }
-    const ParamsEdited&                                getParamsEdited     ()
-    {
-        return *partProfile.pedited;
-    }
-    bool                                               hasProcParams       ()
-    {
-        return partProfile.pparams;
-    }
-    bool                                               hasPEdited          ()
-    {
-        return partProfile.pedited;
-    }
-
-    void                                               setDiagonalCurveData (std::vector<double>& p, DiagonalCurveType type )
-    {
-        diagonalCurve = p;
-        hasDiagonalCurveDataType = type;
-        return;
-    }
-    const std::vector<double> &                        getDiagonalCurveData ()
-    {
-        return diagonalCurve;
-    }
-    DiagonalCurveType                                  hasDiagonalCurveData ()
-    {
-        return hasDiagonalCurveDataType;
-    }
-
-    void                                               setFlatCurveData (std::vector<double>& p, FlatCurveType type )
-    {
-        flatCurve = p;
-        hasFlatCurveDataType = type;
-        return;
-    }
-    const std::vector<double> &                        getFlatCurveData ()
-    {
-        return flatCurve;
-    }
-    FlatCurveType                                      hasFlatCurveData ()
-    {
-        return hasFlatCurveDataType;
-    }
-
-    Clipboard ();
-    ~Clipboard ();
-
 };
 
 extern Clipboard clipboard;

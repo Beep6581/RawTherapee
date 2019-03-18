@@ -36,66 +36,75 @@ class Image16 : public IImage16, public ImageIO
 
 public:
 
-    Image16 ();
-    Image16 (int width, int height);
-    ~Image16 ();
+    Image16();
+    Image16(int width, int height);
+    ~Image16() override;
 
-    Image16*             copy ();
+    Image16* copy() const;
     Image16*             copySubRegion (int x, int y, int width, int height);
 
-    Image8*              to8();
-    Imagefloat*          tofloat();
+    Image8* to8() const;
 
-    virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, bool first, procparams::ToneCurveParams hrp);
+    void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const override;
 
-    virtual const char*  getType     () const
+    const char* getType() const override
     {
         return sImage16;
     }
-    virtual int          getBPS      ()
+    int getBPS() const override
     {
         return 8 * sizeof(unsigned short);
     }
-    virtual void         getScanline (int row, unsigned char* buffer, int bps);
-    virtual void         setScanline (int row, unsigned char* buffer, int bps, float *minValue = nullptr, float *maxValue = nullptr);
+
+    void getScanline(int row, unsigned char* buffer, int bps, bool isFloat = false) const override;
+    void setScanline(int row, unsigned char* buffer, int bps, unsigned int numSamples) override;
 
     // functions inherited from IImage16:
-    virtual MyMutex&     getMutex ()
+    MyMutex& getMutex() override
     {
-        return mutex ();
+        return mutex();
     }
-    virtual cmsHPROFILE  getProfile ()
+
+    cmsHPROFILE getProfile() const override
     {
-        return getEmbeddedProfile ();
+        return getEmbeddedProfile();
     }
-    virtual int          getBitsPerPixel ()
+
+    int getBitsPerPixel() const override
     {
         return 8 * sizeof(unsigned short);
     }
-    virtual int          saveToFile (Glib::ustring fname)
+
+    int saveToFile(const Glib::ustring &fname) const override
     {
-        return save (fname);
+        return save(fname);
     }
-    virtual int          saveAsPNG  (Glib::ustring fname, int bps = -1)
+
+    int saveAsPNG(const Glib::ustring &fname, int bps = -1) const override
     {
-        return savePNG (fname, bps);
+        return savePNG(fname, bps);
     }
-    virtual int          saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3)
+
+    int saveAsJPEG(const Glib::ustring &fname, int quality = 100, int subSamp = 3) const override
     {
-        return saveJPEG (fname, quality, subSamp);
+        return saveJPEG(fname, quality, subSamp);
     }
-    virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false)
+
+    int saveAsTIFF(const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const override
     {
-        return saveTIFF (fname, bps, uncompressed);
+        return saveTIFF(fname, bps, isFloat, uncompressed);
     }
-    virtual void         setSaveProgressListener (ProgressListener* pl)
+
+    void setSaveProgressListener(ProgressListener* pl) override
     {
-        setProgressListener (pl);
+        setProgressListener(pl);
     }
-    virtual void         free ()
+
+    void free() override
     {
         delete this;
     }
+    void ExecCMSTransform(cmsHTRANSFORM hTransform);
 
     /* void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy); */
 };

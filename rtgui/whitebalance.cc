@@ -43,19 +43,19 @@ Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, Whit
 
 void WhiteBalance::init ()
 {
-    wbPixbufs[toUnderlying(WBEntry::Type::CAMERA)]      = RTImage::createFromFile ("wb-camera.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::AUTO)]        = RTImage::createFromFile ("wb-auto.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::DAYLIGHT)]    = RTImage::createFromFile ("wb-sun.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::CLOUDY)]      = RTImage::createFromFile ("wb-cloudy.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::SHADE)]       = RTImage::createFromFile ("wb-shade.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::WATER)]       = RTImage::createFromFile ("wb-water.png");
-//    wbPixbufs[WBEntry::Type::WATER2]       = RTImage::createFromFile ("wb-water.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::TUNGSTEN)]    = RTImage::createFromFile ("wb-tungsten.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::FLUORESCENT)] = RTImage::createFromFile ("wb-fluorescent.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::LAMP)]        = RTImage::createFromFile ("wb-lamp.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::FLASH)]       = RTImage::createFromFile ("wb-flash.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::LED)]         = RTImage::createFromFile ("wb-led.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM)]      = RTImage::createFromFile ("wb-custom.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CAMERA)]      = RTImage::createFromFile ("wb-camera-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::AUTO)]        = RTImage::createFromFile ("wb-auto-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::DAYLIGHT)]    = RTImage::createFromFile ("wb-sun-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CLOUDY)]      = RTImage::createFromFile ("wb-cloudy-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::SHADE)]       = RTImage::createFromFile ("wb-shade-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::WATER)]       = RTImage::createFromFile ("wb-water-small.png");
+  //wbPixbufs[WBEntry::Type::WATER2]                    = RTImage::createFromFile ("wb-water-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::TUNGSTEN)]    = RTImage::createFromFile ("wb-tungsten-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLUORESCENT)] = RTImage::createFromFile ("wb-fluorescent-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LAMP)]        = RTImage::createFromFile ("wb-lamp-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLASH)]       = RTImage::createFromFile ("wb-flash-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LED)]         = RTImage::createFromFile ("wb-led-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM)]      = RTImage::createFromFile ("wb-custom-small.png");
 }
 
 void WhiteBalance::cleanup ()
@@ -150,16 +150,18 @@ static double wbTemp2Slider(double temp)
 WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL"), false, true), wbp(nullptr), wblistener(nullptr)
 {
 
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
-    hbox->set_spacing(4);
-    hbox->show ();
-    Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_METHOD")));
-    lab->show ();
+    Gtk::Grid* methodgrid = Gtk::manage(new Gtk::Grid());
+    methodgrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(methodgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_METHOD") + ":"));
+    setExpandAlignProperties(lab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     // Create the Tree model
     refTreeModel = Gtk::TreeStore::create(methodColumns);
     // Create the Combobox
     method = Gtk::manage (new MyComboBox ());
+    setExpandAlignProperties(method, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     // Assign the model to the Combobox
     method->set_model(refTreeModel);
 
@@ -244,30 +246,30 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
 
     method->set_active (0); // Camera
-    method->show ();
-    hbox->pack_start (*lab, Gtk::PACK_SHRINK, 0);
-    hbox->pack_start (*method);
-    pack_start (*hbox, Gtk::PACK_SHRINK, 0);
+    methodgrid->attach (*lab, 0, 0, 1, 1);
+    methodgrid->attach (*method, 1, 0, 1, 1);
+    pack_start (*methodgrid, Gtk::PACK_SHRINK, 0 );
     opt = 0;
 
-    Gtk::HBox* spotbox = Gtk::manage (new Gtk::HBox ());
-    spotbox->set_spacing(4);
-    spotbox->show ();
+    Gtk::Grid* spotgrid = Gtk::manage(new Gtk::Grid());
+    spotgrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    spotbutton = Gtk::manage (new Gtk::Button ());
+    spotbutton = Gtk::manage (new Gtk::Button (M("TP_WBALANCE_PICKER")));
+    setExpandAlignProperties(spotbutton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    spotbutton->get_style_context()->add_class("independent");
     spotbutton->set_tooltip_text(M("TP_WBALANCE_SPOTWB"));
-    Gtk::Image* spotimg = Gtk::manage (new RTImage ("gtk-color-picker-small.png"));
-    spotimg->show ();
-    spotbutton->set_image (*spotimg);
-    spotbutton->show ();
-
-    spotbox->pack_start (*spotbutton);
+    spotbutton->set_image (*Gtk::manage (new RTImage ("color-picker-small.png")));
 
     Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_SIZE")));
-    slab->show ();
+    setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    Gtk::Grid* wbsizehelper = Gtk::manage(new Gtk::Grid());
+    wbsizehelper->set_name("WB-Size-Helper");
+    setExpandAlignProperties(wbsizehelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     spotsize = Gtk::manage (new MyComboBoxText ());
-    spotsize->show ();
+    setExpandAlignProperties(spotsize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotsize->append ("2");
 
     if (options.whiteBalanceSpotSize == 2) {
@@ -298,19 +300,25 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
         spotsize->set_active(4);
     }
 
-    spotbox->pack_end (*spotsize, Gtk::PACK_EXPAND_WIDGET, 0);
-    spotbox->pack_end (*slab, Gtk::PACK_SHRINK, 0);
+    wbsizehelper->attach (*spotsize, 0, 0, 1, 1);
 
-    pack_start (*spotbox, Gtk::PACK_SHRINK, 0);
+    spotgrid->attach (*spotbutton, 0, 0, 1, 1);
+    spotgrid->attach (*slab, 1, 0, 1, 1);
+    spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
+    pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-    Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
-    Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
-    Gtk::Image* itempbiasL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempbiasR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+    Gtk::HSeparator *separator = Gtk::manage (new  Gtk::HSeparator());
+    separator->get_style_context()->add_class("grid-row-separator");
+    pack_start (*separator, Gtk::PACK_SHRINK, 0);
+
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small.png"));
+    Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
+    Gtk::Image* itempbiasL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
+    Gtk::Image* itempbiasR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
 
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
@@ -349,6 +357,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 }
 
+WhiteBalance::~WhiteBalance()
+{
+    idle_register.destroy();
+}
 
 void WhiteBalance::enabledChanged()
 {
@@ -364,7 +376,7 @@ void WhiteBalance::enabledChanged()
 }
 
 
-void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
+void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 {
     int tVal = (int)temp->getValue();
     double gVal = green->getValue();
@@ -395,7 +407,7 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
         methconn.block(true);
         opt = setActiveMethod(wbCustom.second.GUILabel);
         tempBias->set_sensitive(false);
-        
+
         cache_customWB (tVal, gVal);
         if (a != equal) {
             cache_customEqual(eVal);
@@ -425,6 +437,10 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvWBtempBias, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
         }
     }
+}
+
+void WhiteBalance::adjusterAutoToggled(Adjuster* a, bool newval)
+{
 }
 
 void WhiteBalance::optChanged ()
@@ -632,7 +648,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             // the equalizer's value is restored for the AutoWB
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
             tempBias->setValue (tempBias->getAddMode() ? 0.0 : pp->wb.tempBias);
-            
+
             // set default values first if in ADD mode, otherwise keep the current ones
             if (temp->getAddMode() ) {
                 temp->setValue (0.0);
@@ -684,6 +700,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         set_inconsistent(multiImage && !pedited->wb.enabled);
     }
 
+
     methconn.block (false);
     enableListener ();
 }
@@ -718,7 +735,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
 
 void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
-    
+
     equal->setDefault (defParams->wb.equal);
     tempBias->setDefault (defParams->wb.tempBias);
 
@@ -789,6 +806,7 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
     if (listener) {
         listener->panelChanged (EvWBTemp, Glib::ustring::compose("%1, %2", (int)temp->getValue(), Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), green->getValue())));
     }
+
 }
 
 void WhiteBalance::setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd)
@@ -895,12 +913,18 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
 
 void WhiteBalance::WBChanged(double temperature, double greenVal)
 {
-    GThreadLock lock;
-    disableListener();
-    setEnabled(true);
-    temp->setValue(temperature);
-    green->setValue(greenVal);
-    temp->setDefault(temperature);
-    green->setDefault(greenVal);
-    enableListener();
+    idle_register.add(
+        [this, temperature, greenVal]() -> bool
+        {
+            disableListener();
+            setEnabled(true);
+            temp->setValue(temperature);
+            green->setValue(greenVal);
+            temp->setDefault(temperature);
+            green->setDefault(greenVal);
+            enableListener();
+
+            return false;
+        }
+    );
 }

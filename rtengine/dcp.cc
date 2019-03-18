@@ -18,14 +18,25 @@
 */
 
 #include <iostream>
+#include <cstdio>
 #include <cstring>
+#include <functional>
 
 #include "dcp.h"
+
+#include "cJSON.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
-#include "rawimagesource.h"
 #include "improcfun.h"
+#include "rawimagesource.h"
 #include "rt_math.h"
+
+namespace rtengine
+{
+
+extern const Settings* settings;
+
+}
 
 using namespace rtengine;
 using namespace rtexif;
@@ -37,30 +48,36 @@ namespace
 
 DCPProfile::Matrix invert3x3(const DCPProfile::Matrix& a)
 {
-    const double res00 = a[1][1] * a[2][2] - a[2][1] * a[1][2];
-    const double res10 = a[2][0] * a[1][2] - a[1][0] * a[2][2];
-    const double res20 = a[1][0] * a[2][1] - a[2][0] * a[1][1];
-
-    const double det = a[0][0] * res00 + a[0][1] * res10 + a[0][2] * res20;
-
-    if (std::fabs(det) < 1.0e-10) {
+    DCPProfile::Matrix res = a;
+    if (!invertMatrix(a, res)) {
         std::cerr << "DCP matrix cannot be inverted! Expect weird output." << std::endl;
-        return a;
     }
-
-    DCPProfile::Matrix res;
-
-    res[0][0] = res00 / det;
-    res[0][1] = (a[2][1] * a[0][2] - a[0][1] * a[2][2]) / det;
-    res[0][2] = (a[0][1] * a[1][2] - a[1][1] * a[0][2]) / det;
-    res[1][0] = res10 / det;
-    res[1][1] = (a[0][0] * a[2][2] - a[2][0] * a[0][2]) / det;
-    res[1][2] = (a[1][0] * a[0][2] - a[0][0] * a[1][2]) / det;
-    res[2][0] = res20 / det;
-    res[2][1] = (a[2][0] * a[0][1] - a[0][0] * a[2][1]) / det;
-    res[2][2] = (a[0][0] * a[1][1] - a[1][0] * a[0][1]) / det;
-
     return res;
+
+    // const double res00 = a[1][1] * a[2][2] - a[2][1] * a[1][2];
+    // const double res10 = a[2][0] * a[1][2] - a[1][0] * a[2][2];
+    // const double res20 = a[1][0] * a[2][1] - a[2][0] * a[1][1];
+
+    // const double det = a[0][0] * res00 + a[0][1] * res10 + a[0][2] * res20;
+
+    // if (std::fabs(det) < 1.0e-10) {
+    //     std::cerr << "DCP matrix cannot be inverted! Expect weird output." << std::endl;
+    //     return a;
+    // }
+
+    // DCPProfile::Matrix res;
+
+    // res[0][0] = res00 / det;
+    // res[0][1] = (a[2][1] * a[0][2] - a[0][1] * a[2][2]) / det;
+    // res[0][2] = (a[0][1] * a[1][2] - a[1][1] * a[0][2]) / det;
+    // res[1][0] = res10 / det;
+    // res[1][1] = (a[0][0] * a[2][2] - a[2][0] * a[0][2]) / det;
+    // res[1][2] = (a[1][0] * a[0][2] - a[0][0] * a[1][2]) / det;
+    // res[2][0] = res20 / det;
+    // res[2][1] = (a[2][0] * a[0][1] - a[0][0] * a[2][1]) / det;
+    // res[2][2] = (a[0][0] * a[1][1] - a[1][0] * a[0][1]) / det;
+
+    // return res;
 }
 
 DCPProfile::Matrix multiply3x3(const DCPProfile::Matrix& a, const DCPProfile::Matrix& b)
@@ -371,6 +388,57 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
         last_dt = dt;
         last_du = du;
         last_dv = dv;
+    }
+
+    return res;
+}
+
+std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
+{
+    const std::unique_ptr<std::FILE, std::function<void (std::FILE*)>> file(
+        g_fopen(Glib::build_filename(profile_dir, "camera_model_aliases.json").c_str(), "rb"),
+        [](std::FILE* file)
+        {
+            std::fclose(file);
+        }
+    );
+
+    if (!file) {
+        return {};
+    }
+
+    std::fseek(file.get(), 0, SEEK_END);
+    const long length = std::ftell(file.get());
+    if (length <= 0) {
+        return {};
+    }
+
+    std::unique_ptr<char[]> buffer(new char[length + 1]);
+    std::fseek(file.get(), 0, SEEK_SET);
+    const std::size_t read = std::fread(buffer.get(), 1, length, file.get());
+    buffer[read] = 0;
+
+    cJSON_Minify(buffer.get());
+    const std::unique_ptr<cJSON, decltype(&cJSON_Delete)> root(cJSON_Parse(buffer.get()), cJSON_Delete);
+    if (!root || !root->child) {
+        if (settings->verbose) {
+            std::cout << "Could not parse 'camera_model_aliases.json' file." << std::endl;
+        }
+        return {};
+    }
+
+    std::map<std::string, std::string> res;
+
+    for (const cJSON* camera = root->child; camera; camera = camera->next) {
+        if (cJSON_IsArray(camera)) {
+            const std::size_t array_size = cJSON_GetArraySize(camera);
+            for (std::size_t index = 0; index < array_size; ++index) {
+                const cJSON* const alias = cJSON_GetArrayItem(camera, index);
+                if (cJSON_IsString(alias)) {
+                    res[alias->valuestring] = camera->string;
+                }
+            }
+        }
     }
 
     return res;
@@ -947,9 +1015,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     valid = true;
 }
 
-DCPProfile::~DCPProfile()
-{
-}
+DCPProfile::~DCPProfile() = default;
 
 DCPProfile::operator bool() const
 {
@@ -1184,13 +1250,22 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                 }
 
                 // with looktable and tonecurve we need to clip
-                newr = FCLIP(newr);
-                newg = FCLIP(newg);
-                newb = FCLIP(newb);
+                if (as_in.data->apply_look_table || as_in.data->use_tone_curve) {
+                    newr = max(newr, 0.f);
+                    newg = max(newg, 0.f);
+                    newb = max(newb, 0.f);
+                }
+                // newr = FCLIP(newr);
+                // newg = FCLIP(newg);
+                // newb = FCLIP(newb);
 
                 if (as_in.data->apply_look_table) {
+                    float cnewr = FCLIP(newr);
+                    float cnewg = FCLIP(newg);
+                    float cnewb = FCLIP(newb);
+
                     float h, s, v;
-                    Color::rgb2hsvdcp(newr, newg, newb, h, s, v);
+                    Color::rgb2hsvtc(cnewr, cnewg, cnewb, h, s, v);
 
                     hsdApply(look_info, look_table, h, s, v);
                     s = CLIP01(s);
@@ -1203,7 +1278,9 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
                         h -= 6.0f;
                     }
 
-                    Color::hsv2rgbdcp( h, s, v, newr, newg, newb);
+                    Color::hsv2rgbdcp( h, s, v, cnewr, cnewg, cnewb);
+
+                    setUnlessOOG(newr, newg, newb, cnewr, cnewg, cnewb);
                 }
 
                 if (as_in.data->use_tone_curve) {
@@ -1571,7 +1648,7 @@ std::vector<DCPProfile::HsbModify> DCPProfile::makeHueSatMap(const ColorTemp& wh
     return res;
 }
 
-void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
+inline void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
 {
     // Apply the HueSatMap. Ported from Adobes reference implementation.
     float hue_shift;
@@ -1704,14 +1781,12 @@ DCPStore* DCPStore::getInstance()
     return &instance;
 }
 
-
 DCPStore::~DCPStore()
 {
     for (auto &p : profile_cache) {
         delete p.second;
     }
 }
-
 
 void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 {
@@ -1720,52 +1795,61 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
     file_std_profiles.clear();
 
     if (!loadAll) {
-        profileDir.assign (rt_profile_dir);
+        profileDir = { rt_profile_dir, Glib::build_filename(options.rtdir, "dcpprofiles") };
         return;
     }
 
-    if (!rt_profile_dir.empty()) {
-        std::deque<Glib::ustring> dirs = {
-            rt_profile_dir
-        };
+    std::deque<Glib::ustring> dirs = {
+        rt_profile_dir,
+        Glib::build_filename(options.rtdir, "dcpprofiles")        
+    };
 
-        while (!dirs.empty()) {
-            // Process directory
-            Glib::ustring dirname = dirs.back();
-            dirs.pop_back();
+    while (!dirs.empty()) {
+        // Process directory
+        const Glib::ustring dirname = dirs.back();
+        dirs.pop_back();
 
-            std::unique_ptr<Glib::Dir> dir;
+        std::unique_ptr<Glib::Dir> dir;
 
-            try {
-                if (!Glib::file_test(dirname, Glib::FILE_TEST_IS_DIR)) {
-                    return;
-                }
-
-                dir.reset(new Glib::Dir(dirname));
-            } catch (Glib::Exception& exception) {
-                return;
+        try {
+            if (!Glib::file_test(dirname, Glib::FILE_TEST_IS_DIR)) {
+                continue;
             }
 
-            for (const Glib::ustring& sname : *dir) {
-                const Glib::ustring fname = Glib::build_filename(dirname, sname);
+            dir.reset(new Glib::Dir(dirname));
+        } catch (Glib::Exception& exception) {
+            return;
+        }
 
-                if (!Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
-                    // File
-                    const auto lastdot = sname.rfind('.');
+        for (const Glib::ustring& sname : *dir) {
+            const Glib::ustring fname = Glib::build_filename(dirname, sname);
 
-                    if (
-                        lastdot != Glib::ustring::npos
-                        && lastdot <= sname.size() - 4
-                        && !sname.casefold().compare(lastdot, 4, ".dcp")
+            if (!Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
+                // File
+                const auto lastdot = sname.rfind('.');
+
+                if (
+                    lastdot != Glib::ustring::npos
+                    && lastdot <= sname.size() - 4
+                    && !sname.casefold().compare(lastdot, 4, ".dcp")
                     ) {
-                        const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
-                        file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
-                    }
-                } else {
-                    // Directory
-                    dirs.push_front(fname);
+                    const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
+                    file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
                 }
+            } else {
+                // Directory
+                dirs.push_front(fname);
             }
+            }
+        }
+
+        for (const auto& alias : getAliases(rt_profile_dir)) {
+            const Glib::ustring alias_name = Glib::ustring(alias.first).uppercase();
+            const Glib::ustring real_name = Glib::ustring(alias.second).uppercase();
+            const std::map<Glib::ustring, Glib::ustring>::const_iterator real = file_std_profiles.find(real_name);
+
+            if (real != file_std_profiles.end()) {
+                file_std_profiles[alias_name] = real->second;
         }
     }
 }
@@ -1822,11 +1906,13 @@ DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_nam
     }
 
     // profile not found, looking if we're in loadAll=false mode
-    if (!profileDir.empty()) {
-        const Glib::ustring fname = Glib::build_filename(profileDir, requested_cam_short_name + Glib::ustring(".dcp"));
+    for (const auto &dir : profileDir) {
+        if (!dir.empty()) {
+            const Glib::ustring fname = Glib::build_filename(dir, requested_cam_short_name + Glib::ustring(".dcp"));
 
-        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
-            return getProfile(fname);
+            if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
+                return getProfile(fname);
+            }
         }
     }
 

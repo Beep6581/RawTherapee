@@ -51,16 +51,16 @@
 
 // Bitfield of functions to do to the preview image when an event occurs
 // Use those or create new ones for your new events
-#define FIRST            (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_MONITOR)  // without HIGHQUAL
-#define ALL              (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
-#define DARKFRAME        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define DEMOSAIC                   (M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define ALLNORAW                         (M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define HDR                                     (M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define TRANSFORM                                                  (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define AUTOEXP                                                                    (M_HDR|M_AUTOEXP|M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define SPOT                                                                                       (M_SPOT|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define FIRST            (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_MONITOR)  // without HIGHQUAL
+#define ALL              (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
+#define DARKFRAME        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define DEMOSAIC                   (M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define ALLNORAW                         (M_INIT|M_LINDENOISE|M_HDR|M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define HDR                                     (M_LINDENOISE|M_HDR|M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define SPOT                                                       (M_SPOT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define TRANSFORM                                                         (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define AUTOEXP                                                                           (M_HDR|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define RGBCURVE                                                                                          (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define LUMINANCECURVE                                                                                               (M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define SHARPENING                                                                                                               (M_LUMINANCE|M_COLOR)
@@ -68,7 +68,7 @@
 #define DEFRINGE                                                                                                                 (M_LUMINANCE|M_COLOR)
 #define DIRPYRDENOISE                                                                                                            (M_LUMINANCE|M_COLOR)
 #define DIRPYREQUALIZER                                                                                                          (M_LUMINANCE|M_COLOR)
-#define GAMMA             M_MONITOR
+#define GAMMA             M_VOID //M_MONITOR
 #define CROP              M_CROP
 #define RESIZE            M_VOID
 #define EXIF              M_VOID

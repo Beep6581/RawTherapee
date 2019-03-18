@@ -613,7 +613,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
     switch (event->type) {
 
-    case Gdk::BUTTON_PRESS:
+    case GDK_BUTTON_PRESS:
         if (edited_point == -1) { //curve.type!=FCT_Parametric) {
             if (event->button.button == 1) {
                 buttonPressed = true;
@@ -630,7 +630,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                 switch (area) {
 
                 case (FCT_Area_Insertion):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when adding a new node in a blank area, both click and drag.
 
                     /* insert a new control point */
                     if (num > 0) {
@@ -681,7 +681,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     break;
 
                 case (FCT_Area_Point):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when node clicked and dragged.
                     editedHandle = FCT_EditedHandle_CPoint;
                     ugpX = curve.x.at(lit_point);
                     ugpY = curve.y.at(lit_point);
@@ -689,7 +689,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
                 case (FCT_Area_H):
                 case (FCT_Area_V):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when vertical line clicked, not dragged.
                     editedHandle = FCT_EditedHandle_CPointUD;
                     ugpX = curve.x.at(lit_point);
                     ugpY = curve.y.at(lit_point);
@@ -816,7 +816,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
         break;
 
-    case Gdk::BUTTON_RELEASE:
+    case GDK_BUTTON_RELEASE:
         if (edited_point == -1) { //curve.type!=FCT_Parametric) {
             if (buttonPressed && event->button.button == 1) {
                 buttonPressed = false;
@@ -876,7 +876,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     break;
 
                 case (FCT_Area_Point):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when node released.
                     break;
 
                 case (FCT_Area_H):
@@ -884,7 +884,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     break;
 
                 case (FCT_Area_V):
-                    new_type = CSMove;
+                    new_type = CSMove2D; // Shown when line released.
                     break;
 
                 case (FCT_Area_LeftTan):
@@ -908,7 +908,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
         break;
 
-    case Gdk::MOTION_NOTIFY:
+    case GDK_MOTION_NOTIFY:
         if (curve.type == FCT_Linear || curve.type == FCT_MinMaxCPoints) {
 
             int previous_lit_point = lit_point;
@@ -1008,7 +1008,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     //new_type = CSMove;
                     //break;
                     case (FCT_Area_V):
-                        new_type = CSMove;
+                        new_type = CSPlus; // Shown when hovering over vertical line.
                         break;
 
                     case (FCT_Area_H):
@@ -1178,7 +1178,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
         retval = true;
         break;
 
-    case Gdk::LEAVE_NOTIFY:
+    case GDK_LEAVE_NOTIFY:
 
         // Pointer can LEAVE even when dragging the point, so we don't modify the cursor in this case
         // The cursor will have to LEAVE another time after the drag...
