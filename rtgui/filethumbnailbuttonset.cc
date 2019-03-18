@@ -21,40 +21,38 @@
 #include "rtimage.h"
 #include "multilangmgr.h"
 
-extern Glib::ustring argv0;
-
 bool FileThumbnailButtonSet::iconsLoaded = false;
 
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::rankIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::gRankIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::unRankIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::trashIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::unTrashIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::processIcon;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_0;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_1;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_2;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_3;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_4;
-Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_5;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::rankIcon;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::gRankIcon;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::unRankIcon;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::trashIcon;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::unTrashIcon;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::processIcon;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::colorLabelIcon_0;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::colorLabelIcon_1;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::colorLabelIcon_2;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::colorLabelIcon_3;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::colorLabelIcon_4;
+Cairo::RefPtr<RTSurface> FileThumbnailButtonSet::colorLabelIcon_5;
 
 FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        unRankIcon  = RTImage::createFromPng ("star-hollow-narrow.png");
-        rankIcon    = RTImage::createFromPng ("star-gold-narrow.png");
-        gRankIcon   = RTImage::createFromPng ("star-narrow.png");
-        trashIcon   = RTImage::createFromPng ("trash-small.png");
-        unTrashIcon = RTImage::createFromPng ("trash-remove-small.png");
-        processIcon = RTImage::createFromPng ("gears-small.png");
+        unRankIcon  = Cairo::RefPtr<RTSurface>(new RTSurface("star-hollow-narrow.png"));
+        rankIcon    = Cairo::RefPtr<RTSurface>(new RTSurface("star-gold-narrow.png"));
+        gRankIcon   = Cairo::RefPtr<RTSurface>(new RTSurface("star-narrow.png"));
+        trashIcon   = Cairo::RefPtr<RTSurface>(new RTSurface("trash-small.png"));
+        unTrashIcon = Cairo::RefPtr<RTSurface>(new RTSurface("trash-remove-small.png"));
+        processIcon = Cairo::RefPtr<RTSurface>(new RTSurface("gears-small.png"));
 
-        colorLabelIcon_0 = RTImage::createFromPng ("circle-empty-gray-small.png");
-        colorLabelIcon_1 = RTImage::createFromPng ("circle-red-small.png");
-        colorLabelIcon_2 = RTImage::createFromPng ("circle-yellow-small.png");
-        colorLabelIcon_3 = RTImage::createFromPng ("circle-green-small.png");
-        colorLabelIcon_4 = RTImage::createFromPng ("circle-blue-small.png");
-        colorLabelIcon_5 = RTImage::createFromPng ("circle-purple-small.png");
+        colorLabelIcon_0 = Cairo::RefPtr<RTSurface>(new RTSurface("circle-empty-gray-small.png"));
+        colorLabelIcon_1 = Cairo::RefPtr<RTSurface>(new RTSurface("circle-red-small.png"));
+        colorLabelIcon_2 = Cairo::RefPtr<RTSurface>(new RTSurface("circle-yellow-small.png"));
+        colorLabelIcon_3 = Cairo::RefPtr<RTSurface>(new RTSurface("circle-green-small.png"));
+        colorLabelIcon_4 = Cairo::RefPtr<RTSurface>(new RTSurface("circle-blue-small.png"));
+        colorLabelIcon_5 = Cairo::RefPtr<RTSurface>(new RTSurface("circle-purple-small.png"));;
         iconsLoaded = true;
     }
 

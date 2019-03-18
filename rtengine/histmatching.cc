@@ -289,7 +289,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
             histMatchingCache = outCurve;
             *histMatchingParams = cp;
             return;
-        } else if (w * 10 < fw) {
+        } else if (w * 32 < fw) {
             if (settings->verbose) {
                 std::cout << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
             }

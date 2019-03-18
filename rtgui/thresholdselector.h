@@ -100,8 +100,8 @@ protected:
     double positions[4];
     eUpdatePolicy updatePolicy;
 
-    const static int hb = 3;  // horizontal border
-    const static int vb = 0;  // vertical border
+    constexpr static double sliderWidth = 11.; // constant must be an odd value
+    constexpr static double verticalSliderPaddingFactor = 1.5 / 7.;
 
     void initValues ();
     void findLitCursor(int posX, int posY);

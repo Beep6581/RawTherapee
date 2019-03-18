@@ -121,13 +121,13 @@ DirBrowser::~DirBrowser()
 void DirBrowser::fillDirTree ()
 {
 
-    openfolder = RTImage::createFromFile ("folder-open-small.png");
-    closedfolder = RTImage::createFromFile ("folder-closed-small.png");
-    icdrom = RTImage::createFromFile ("device-optical.png");
-    ifloppy = RTImage::createFromFile ("device-floppy.png");
-    ihdd = RTImage::createFromFile ("device-hdd.png");
-    iremovable = RTImage::createFromFile ("device-usb.png");
-    inetwork = RTImage::createFromFile ("device-network.png");
+    openfolder = RTImage::createPixbufFromFile ("folder-open-small.png");
+    closedfolder = RTImage::createPixbufFromFile ("folder-closed-small.png");
+    icdrom = RTImage::createPixbufFromFile ("device-optical.png");
+    ifloppy = RTImage::createPixbufFromFile ("device-floppy.png");
+    ihdd = RTImage::createPixbufFromFile ("device-hdd.png");
+    iremovable = RTImage::createPixbufFromFile ("device-usb.png");
+    inetwork = RTImage::createPixbufFromFile ("device-network.png");
 
     //Create the Tree model:
     dirTreeModel = Gtk::TreeStore::create(dtColumns);
