@@ -264,6 +264,20 @@ void ControlSpotPanel::render_id(
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
     int value = row[spots_.id];
     ct->property_text() = std::to_string(value);
+    // Render background color
+    Gdk::RGBA color;
+    if (row[spots_.mouseover]) { // Orange
+        color.set_red(1.);
+        color.set_green(100. / 255.);
+        color.set_blue(0.);
+        color.set_alpha(1.);
+    } else { // Transparent black
+        color.set_red(0.);
+        color.set_green(0.);
+        color.set_blue(0.);
+        color.set_alpha(0.);
+    }
+    ct->property_background_rgba() = color;
 }
 
 void ControlSpotPanel::render_name(
@@ -273,6 +287,20 @@ void ControlSpotPanel::render_name(
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
     auto value = row[spots_.name];
     ct->property_text() = value;
+    Gdk::RGBA color;
+    // Render background color
+    if (row[spots_.mouseover]) { // Orange
+        color.set_red(1.);
+        color.set_green(100. / 255.);
+        color.set_blue(0.);
+        color.set_alpha(1.);
+    } else { // Transparent black
+        color.set_red(0.);
+        color.set_green(0.);
+        color.set_blue(0.);
+        color.set_alpha(0.);
+    }
+    ct->property_background_rgba() = color;
 }
 
 void ControlSpotPanel::render_isvisible(
@@ -287,6 +315,21 @@ void ControlSpotPanel::render_isvisible(
     } else {
         ct->property_text() = M("TP_LOCALLAB_ROW_NVIS");
     }
+
+    // Render background color
+    Gdk::RGBA color;
+    if (row[spots_.mouseover]) { // Orange
+        color.set_red(1.);
+        color.set_green(100. / 255.);
+        color.set_blue(0.);
+        color.set_alpha(1.);
+    } else { // Transparent black
+        color.set_red(0.);
+        color.set_green(0.);
+        color.set_blue(0.);
+        color.set_alpha(0.);
+    }
+    ct->property_background_rgba() = color;
 }
 
 void ControlSpotPanel::on_button_add()
@@ -1329,20 +1372,47 @@ bool ControlSpotPanel::mouseOver(int modifierKey)
         return false;
     }
 
+    // Get selected row
+    const auto selIter = s->get_selected();
+    Gtk::TreeModel::Row selRow = *selIter;
+
     int object_ = editProvider_->object;
 
     if (object_ != lastObject_) {
         if (object_ == -1) {
+            // Reset mouseOver preview for visibleGeometry
             for (int it_ = 0; it_ < (int) EditSubscriber::visibleGeometry.size(); it_++) {
                 EditSubscriber::visibleGeometry.at(it_)->state = Geometry::NORMAL;
             }
 
+            // Reset mouseOver preview for TreeView
+            Gtk::TreeModel::Children children = treemodel_->children();
+            Gtk::TreeModel::Children::iterator iter;
+
+            for (iter = children.begin(); iter != children.end(); iter++) {
+                Gtk::TreeModel::Row row = *iter;
+                row[spots_.mouseover] = false;
+            }
+
+            // Actualize lastObject_
             lastObject_ = object_;
             return false;
         }
 
         int curveId_ = object_ / 10 + 1;
         int rem = object_ % 10;
+
+        // Manage mouseOver preview for TreeView
+        Gtk::TreeModel::Children children = treemodel_->children();
+        Gtk::TreeModel::Children::iterator iter;
+        for (iter = children.begin(); iter != children.end(); iter++) {
+            Gtk::TreeModel::Row row = *iter;
+            if (row[spots_.curveid] == curveId_ && *row != *selRow) {
+                row[spots_.mouseover] = true;
+            } else {
+                row[spots_.mouseover] = false;
+            }
+        }
 
         for (int it_ = 0; it_ < (int) EditSubscriber::visibleGeometry.size(); it_++) {
             if ((it_ < ((curveId_ - 1) * 10)) || (it_ > ((curveId_ - 1) * 10) + 9)) { // it_ does not belong to cursor pointed curve
@@ -1723,6 +1793,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
 
     disableParamlistener(true);
     Gtk::TreeModel::Row row = * (treemodel_->append());
+    row[spots_.mouseover] = false;
     row[spots_.id] = newSpot->id;
     row[spots_.name] = newSpot->name;
     row[spots_.isvisible] = newSpot->isvisible;
@@ -2063,6 +2134,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
 
 ControlSpotPanel::ControlSpots::ControlSpots()
 {
+    add(mouseover);
     add(id);
     add(name);
     add(isvisible);

@@ -260,6 +260,7 @@ private:
     public:
         ControlSpots();
 
+        Gtk::TreeModelColumn<bool> mouseover; // Used to manage spot enlightening when mouse over
         Gtk::TreeModelColumn<int> id; // Control spot id
         Gtk::TreeModelColumn<Glib::ustring> name;
         Gtk::TreeModelColumn<bool> isvisible;
