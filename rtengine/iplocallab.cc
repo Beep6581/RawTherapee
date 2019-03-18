@@ -3710,11 +3710,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         kL = lp.balance;
         balancedeltaE(kL, kab);
 
-        bool usemask = (lp.showmaskexpmet == 2 || lp.enaExpMask) && senstype == 1;
+        bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask) && senstype == 1;
         bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask) && senstype == 0;
         bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask) && senstype == 9;
-
-        if (usemask  || usemaskcol || usemaskSH)
+        bool usemaskall = (usemaskSH || usemaskcol || usemaskexp);
+        if (usemaskall)
         {
             origblurmask = new LabImage(GW, GH);
 
@@ -3838,7 +3838,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                         rsob =  1.1f * lp.struco * rs;
                     }
 
-                    if (usemask  || usemaskcol || usemaskSH) {
+                    if (usemaskall) {
                         dE = rsob + sqrt(kab * SQR(refa - origblurmask->a[y][x] / 327.68f) + kab * SQR(refb - origblurmask->b[y][x] / 327.68f) + kL * SQR(lumaref - origblurmask->L[y][x] / 327.68f));
                     } else {
                         dE = rsob + sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
@@ -4134,9 +4134,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
             bool execmedian99 = false;
 
             if (execmedian99)
-                //I tested here median to see if action on artifacts...when color differences due to WB or black... or mixed color or ??
-                //small action with 9x9 3 times
-                //warm cool is hugely better
             {
                 float** tmL;
                 int wid = transformed->W;
@@ -4165,8 +4162,9 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         }
         delete origblur;
 
-        if ((lp.showmaskcolmet == 2 || lp.enaColorMask) && senstype == 1)
+        if (usemaskall)
         {
+
             delete origblurmask;
         }
 
