@@ -25,10 +25,10 @@
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
-#include "edit.h"
 
 class ToolPanel;
 class FoldableToolPanel;
+class EditDataProvider;
 
 class ToolPanelListener
 {

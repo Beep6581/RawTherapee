@@ -27,9 +27,10 @@
 
 #include "../rtengine/rtengine.h"
 
-#include "edit.h"
 #include "lockablecolorpicker.h"
 #include "threadutils.h"
+
+class EditSubscriber;
 
 class CropDisplayHandler
 {

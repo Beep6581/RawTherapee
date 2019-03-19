@@ -746,6 +746,29 @@ void Crop::update(int todo)
             parent->ipf.ToneMapFattal02(f);
         }
 
+        // Apply Spot removal
+        if (params.spot.enabled) {
+            if (todo & M_SPOT) {
+                if(!spotCrop) {
+                    spotCrop = new Imagefloat (cropw, croph);
+                }
+                baseCrop->copyData (spotCrop);
+
+                PreviewProps pp (cropx, cropy, cropw, croph, skip);
+                parent->ipf.removeSpots (spotCrop, params.spot.entries, pp);
+            }
+        } else {
+            if (spotCrop) {
+                delete spotCrop;
+            }
+
+            spotCrop = NULL;
+        }
+
+        if (spotCrop) {
+            baseCrop = spotCrop;
+        }
+
         // crop back to the size expected by the rest of the pipeline
         if (need_cropping) {
             Imagefloat *c = origCrop;
@@ -796,28 +819,6 @@ void Crop::update(int todo)
         }
 
         transCrop = nullptr;
-    }
-
-    if (params.spot.enabled) {
-        if (todo & M_SPOT) {
-            if(!spotCrop) {
-                spotCrop = new Imagefloat (cropw, croph);
-            }
-            baseCrop->copyData (spotCrop);
-
-            PreviewProps pp (cropx, cropy, cropw, croph, skip);
-            parent->ipf.removeSpots (spotCrop, params.spot.entries, pp);
-        }
-    } else {
-        if (spotCrop) {
-            delete spotCrop;
-        }
-
-        spotCrop = NULL;
-    }
-
-    if (spotCrop) {
-        baseCrop = spotCrop;
     }
 
     if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {

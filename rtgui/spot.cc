@@ -15,16 +15,16 @@ using namespace rtengine::procparams;
 #define STATIC_MO_OBJ_NBR 6
 
 Spot::Spot() : FoldableToolPanel (this, "spot", M ("TP_SPOT_LABEL"), true, true), EditSubscriber (ET_OBJECTS), lastObject (-1), activeSpot (-1),
-    sourceIcon ("spot-normal.png", "spot-active.png", "spot-active.png", "spot-prelight.png", "", Geometry::DP_CENTERCENTER), editedCheckBox (NULL)
+    sourceIcon ("spot-normal.png", "spot-active.png", "spot-active.png", "spot-prelight.png", "", Geometry::DP_CENTERCENTER), editedCheckBox (nullptr)
 {
     countLabel = Gtk::manage (new Gtk::Label (Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0)));
 
     edit = Gtk::manage (new Gtk::ToggleButton());
-    edit->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+    edit->add (*Gtk::manage (new RTImage ("edit-point.png")));
     editConn = edit->signal_toggled().connect ( sigc::mem_fun (*this, &Spot::editToggled) );
 
     reset = Gtk::manage (new Gtk::Button ());
-    reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    reset->add (*Gtk::manage (new RTImage ("undo-small.png")));
     reset->set_relief (Gtk::RELIEF_NONE);
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
@@ -150,7 +150,7 @@ void Spot::setBatchMode (bool batchMode)
 
         if (!editedCheckBox) {
             removeIfThere (labelBox, countLabel, false);
-            countLabel = NULL;
+            countLabel = nullptr;
             editedCheckBox = Gtk::manage (new Gtk::CheckButton (Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0)));
             labelBox->pack_start (*editedCheckBox, Gtk::PACK_SHRINK, 2);
             labelBox->reorder_child (*editedCheckBox, 0);
@@ -198,7 +198,7 @@ void Spot::editToggled ()
 Geometry* Spot::getVisibleGeometryFromMO (int MOID)
 {
     if (MOID == -1) {
-        return NULL;
+        return nullptr;
     }
 
     if (MOID == 0) {
@@ -244,7 +244,7 @@ void Spot::createGeometry ()
     Cairo::RefPtr<Cairo::ImageSurface> activeImg   = sourceIcon.getActiveImg();
 
     for (; j < EditSubscriber::visibleGeometry.size() - STATIC_VISIBLE_OBJ_NBR; ++i, ++j) {
-        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<Cairo::ImageSurface> (NULL), Cairo::RefPtr<Cairo::ImageSurface> (NULL), Geometry::DP_CENTERCENTER);
+        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<Cairo::ImageSurface> (nullptr), Cairo::RefPtr<Cairo::ImageSurface> (nullptr), Geometry::DP_CENTERCENTER);
         EditSubscriber::visibleGeometry.at (j)->setActive (true);
         EditSubscriber::visibleGeometry.at (j)->datum = Geometry::IMAGE;
         EditSubscriber::visibleGeometry.at (j)->state = Geometry::NORMAL;
@@ -349,7 +349,7 @@ OPIcon *Spot::getActiveSpotIcon()
         return static_cast<OPIcon*> (EditSubscriber::visibleGeometry.at (activeSpot));
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void Spot::addNewEntry()
