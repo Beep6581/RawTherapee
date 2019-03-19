@@ -57,7 +57,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 #endif
 
     if (!iconsLoaded) {
-        savedAsIcon = RTImage::createFromFile ("save-small.png");
+        savedAsIcon = RTImage::createPixbufFromFile ("save-small.png");
         iconsLoaded = true;
     }
 

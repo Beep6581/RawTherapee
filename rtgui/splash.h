@@ -25,7 +25,7 @@ class SplashImage : public Gtk::DrawingArea
 {
 
 private:
-    Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+    Cairo::RefPtr<Cairo::ImageSurface> surface;
     Glib::RefPtr<Pango::Layout> version;
 
 public:

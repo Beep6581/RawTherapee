@@ -51,6 +51,7 @@ class ThumbBrowserBase  :  public Gtk::Grid
         void setParent (ThumbBrowserBase* p);
         void on_realize() override;
         void on_style_updated() override;
+        bool on_configure_event(GdkEventConfigure *configure_event) override;
         bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
 
         Gtk::SizeRequestMode get_request_mode_vfunc () const override;

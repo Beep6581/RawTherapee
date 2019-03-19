@@ -25,7 +25,12 @@
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
-#include "../rtengine/icons.h"
+
+float fontScale = 1.f;
+Glib::RefPtr<Gtk::CssProvider> cssForced;
+Glib::RefPtr<Gtk::CssProvider> cssRT;
+
+extern unsigned char initialGdkScale;
 
 #if defined(__APPLE__)
 static gboolean
@@ -91,16 +96,157 @@ RTWindow::RTWindow ()
 {
 
     cacheMgr->init ();
-    WhiteBalance::init();
     ProfilePanel::init (this);
+
+    // ------- loading theme files
+
+    Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+
+    if (screen) {
+        Gtk::Settings::get_for_screen (screen)->property_gtk_theme_name() = "Adwaita";
+        Gtk::Settings::get_for_screen (screen)->property_gtk_application_prefer_dark_theme() = true;
+
+#if defined(__APPLE__)
+        // This will force screen resolution regarding font, but I don't think it's compliant with Gtk guidelines...
+        // Do not confuse with screen scaling, where everything is scaled up !
+        screen->set_resolution (96.);
+#endif
+
+        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
+        Glib::ustring filename;
+        Glib::MatchInfo mInfo;
+        bool match = regex->match(options.theme + ".css", mInfo);
+        if (match) {
+            // save old theme (name + version)
+            Glib::ustring initialTheme(options.theme);
+
+            // update version
+            auto pos = options.theme.find("-GTK3-");
+            Glib::ustring themeRootName(options.theme.substr(0, pos));
+            if (GTK_MINOR_VERSION < 20) {
+                options.theme = themeRootName + "-GTK3-_19";
+            } else {
+                options.theme = themeRootName + "-GTK3-20_";
+            }
+            // check if this version exist
+            if (!Glib::file_test(Glib::build_filename(argv0, "themes", options.theme + ".css"), Glib::FILE_TEST_EXISTS)) {
+                // set back old theme version if the actual one doesn't exist yet
+                options.theme = initialTheme;
+            }
+        }
+        filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+
+        if (!match || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+            options.theme = "RawTherapee-GTK";
+
+            // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
+            if (GTK_MINOR_VERSION < 20) {
+                options.theme = options.theme + "3-_19";
+            } else {
+                options.theme = options.theme + "3-20_";
+            }
+
+            filename = Glib::build_filename (argv0, "themes", options.theme + ".css");
+        }
+
+        cssRT = Gtk::CssProvider::create();
+
+        try {
+            cssRT->load_from_path (filename);
+            Gtk::StyleContext::add_provider_for_screen (screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        } catch (Glib::Error &err) {
+            printf ("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+        } catch (...) {
+            printf ("Error: Can't load css file \"%s\"\n", filename.c_str());
+        }
+
+        // Set the font face and size
+        Glib::ustring css;
+        if (options.fontFamily != "default") {
+            //GTK318
+            #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2px}", options.fontFamily, options.fontSize * (int)initialGdkScale);
+            #else
+            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt}", options.fontFamily, options.fontSize * (int)initialGdkScale);
+            #endif
+            //GTK318
+            fontScale = options.fontSize / 9.f;
+            if (options.rtSettings.verbose) {
+                printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
+            }
+        } else {
+            Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
+            Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
+            int pt;
+            if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
+                int fontSize = pfd.get_size();
+                bool isPix = pfd.get_size_is_absolute();
+                int resolution = (int)style->get_screen()->get_resolution();
+                if (isPix) {
+                    // HOMBRE: guessing here...
+                    // if resolution is lower than 192ppi, we're supposing that it's already expressed in a scale==1 scenario
+                    if (resolution >= int(RTScalable::baseHiDPI)) {
+                        // converting the resolution to a scale==1 scenario
+                        resolution /= 2;
+                    }
+                    // 1pt =  1/72in @ 96 ppi
+                    // HOMBRE: If the font unit is px, is it alredy scaled up to match the resolution ?
+                    //             px         >inch >pt      >"scaled pt"
+                    pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (RTScalable::baseHiDPI / resolution) + 0.49);
+                } else {
+                    pt = fontSize / Pango::SCALE;
+                }
+                fontScale = (float)pt / 9.f;
+                if ((int)initialGdkScale > 1 || pt != 9) {
+                    css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
+                    if (options.rtSettings.verbose) {
+                        printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
+                    }
+                }
+            } else {
+                fontScale = 1.f;
+            }
+        }
+        if (!css.empty()) {
+            if (options.rtSettings.verbose) {
+                printf("CSS:\n%s\n\n", css.c_str());
+            }
+            try {
+                cssForced = Gtk::CssProvider::create();
+                cssForced->load_from_data (css);
+
+                Gtk::StyleContext::add_provider_for_screen (screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+            } catch (Glib::Error &err) {
+                printf ("Error: \"%s\"\n", err.what().c_str());
+            } catch (...) {
+                printf ("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
+            }
+        }
+    }
+
+#ifndef NDEBUG
+    else if (!screen) {
+        printf ("ERROR: Can't get default screen!\n");
+    }
+
+#endif
+
+    // ------- end loading theme files
+
+    RTScalable::init(this);
+    RTSurface::init();
+    RTImage::init();
+    WhiteBalance::init();
+    MyExpander::init();
 
 #ifndef WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
-        RTImage::createFromFile("rawtherapee-logo-16.png"),
-        RTImage::createFromFile("rawtherapee-logo-24.png"),
-        RTImage::createFromFile("rawtherapee-logo-48.png"),
-        RTImage::createFromFile("rawtherapee-logo-128.png"),
-        RTImage::createFromFile("rawtherapee-logo-256.png")
+        RTImage::createPixbufFromFile("rawtherapee-logo-16.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-24.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-48.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-128.png"),
+        RTImage::createPixbufFromFile("rawtherapee-logo-256.png")
     };
     try {
         set_default_icon_list(appIcons);
@@ -192,10 +338,12 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             mainNB->set_tab_pos (Gtk::POS_LEFT);
             fpl->set_angle (90);
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_TOP, 1, 1);
+            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed.png"));
+            fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_TOP, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            fpanelLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("folder-closed.png")), Gtk::POS_RIGHT, 1, 1);
+            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed.png"));
+            fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_RIGHT, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_RIGHT, 1, 1);
         }
 
@@ -314,6 +462,8 @@ RTWindow::~RTWindow()
     if (fpanel) {
         delete fpanel;
     }
+
+    RTScalable::cleanup();
 }
 
 void RTWindow::on_realize ()
@@ -396,6 +546,9 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
         get_position (options.windowX, options.windowY);
     }
 
+    RTImage::setDPInScale(RTScalable::getDPI(), RTScalable::getScale());   // will update the RTImage   on scale/resolution change
+    RTSurface::setDPInScale(RTScalable::getDPI(), RTScalable::getScale()); // will update the RTSurface on scale/resolution change
+
     return Gtk::Widget::on_configure_event (event);
 }
 
@@ -461,7 +614,9 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         closeb->set_focus_on_click (false);
         closeb->signal_clicked().connect ( sigc::bind (sigc::mem_fun (*this, &RTWindow::remEditorPanel), ep));
 
-        titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), Gtk::POS_RIGHT, 1, 1);
+        if (!EditWindow::isMultiDisplayEnabled()) {
+            titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), Gtk::POS_RIGHT, 1, 1);
+        }
         titleGrid->attach_next_to (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to (*closeb, Gtk::POS_RIGHT, 1, 1);
         titleGrid->show_all ();
@@ -708,6 +863,16 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     cacheMgr->closeCache ();  // also makes cleanup if too large
     WhiteBalance::cleanup();
     ProfilePanel::cleanup();
+    ClutComboBox::cleanup();
+    MyExpander::cleanup();
+    mainWindowCursorManager.cleanup();
+    editWindowCursorManager.cleanup();
+    BatchQueueEntry::savedAsIcon.reset();
+    FileBrowserEntry::editedIcon.reset();
+    FileBrowserEntry::recentlySavedIcon.reset();
+    FileBrowserEntry::enqueuedIcon.reset();
+    FileBrowserEntry::hdr.reset();
+    FileBrowserEntry::ps.reset();
 
     if (!options.windowMaximized) {
         get_size (options.windowWidth, options.windowHeight);
@@ -999,7 +1164,7 @@ void RTWindow::createSetmEditor()
         el->set_angle (90);
     }
 
-    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("rawtherapee-logo-24.png")), pos, 1, 1);
+    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), pos, 1, 1);
     editorLabelGrid->attach_next_to (*el, pos, 1, 1);
 
     editorLabelGrid->set_tooltip_markup (M ("MAIN_FRAME_EDITOR_TOOLTIP"));

@@ -698,6 +698,11 @@ void ThumbBrowserBase::enableInspector()
     }
 }
 
+bool ThumbBrowserBase::Internal::on_configure_event(GdkEventConfigure *configure_event)
+{
+    return true;
+}
+
 void ThumbBrowserBase::Internal::on_style_updated()
 {
     style = get_style_context ();
@@ -900,14 +905,14 @@ Gtk::SizeRequestMode ThumbBrowserBase::Internal::get_request_mode_vfunc () const
 
 void ThumbBrowserBase::Internal::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height = 20;
-    natural_height = 80;
+    minimum_height = 20 * RTScalable::getScale();
+    natural_height = 80 * RTScalable::getScale();
 }
 
 void ThumbBrowserBase::Internal::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 200;
-    natural_width = 1000;
+    minimum_width = 200 * RTScalable::getScale();
+    natural_width = 1000 * RTScalable::getScale();
 }
 
 void ThumbBrowserBase::Internal::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const

@@ -22,6 +22,7 @@
 #include "lwbuttonset.h"
 #include <gtkmm.h>
 #include "filebrowserentry.h"
+#include "rtsurface.h"
 
 class FileBrowserEntry;
 class FileThumbnailButtonSet : public LWButtonSet
@@ -30,19 +31,19 @@ class FileThumbnailButtonSet : public LWButtonSet
     static bool iconsLoaded;
 
 public:
-    static Cairo::RefPtr<Cairo::ImageSurface> rankIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> gRankIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> unRankIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> trashIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> unTrashIcon;
-    static Cairo::RefPtr<Cairo::ImageSurface> processIcon;
+    static Cairo::RefPtr<RTSurface> rankIcon;
+    static Cairo::RefPtr<RTSurface> gRankIcon;
+    static Cairo::RefPtr<RTSurface> unRankIcon;
+    static Cairo::RefPtr<RTSurface> trashIcon;
+    static Cairo::RefPtr<RTSurface> unTrashIcon;
+    static Cairo::RefPtr<RTSurface> processIcon;
 
-    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_0;
-    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_1;
-    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_2;
-    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_3;
-    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_4;
-    static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_5;
+    static Cairo::RefPtr<RTSurface> colorLabelIcon_0;
+    static Cairo::RefPtr<RTSurface> colorLabelIcon_1;
+    static Cairo::RefPtr<RTSurface> colorLabelIcon_2;
+    static Cairo::RefPtr<RTSurface> colorLabelIcon_3;
+    static Cairo::RefPtr<RTSurface> colorLabelIcon_4;
+    static Cairo::RefPtr<RTSurface> colorLabelIcon_5;
 
     explicit FileThumbnailButtonSet (FileBrowserEntry* myEntry);
     void    setRank (int stars);

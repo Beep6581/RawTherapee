@@ -491,7 +491,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     //leftsubbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
 
     navigator = Gtk::manage (new Navigator ());
-    navigator->previewWindow->set_size_request (-1, 150);
+    navigator->previewWindow->set_size_request (-1, 150 * RTScalable::getScale());
     leftsubbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
 
     history = Gtk::manage (new History ());
