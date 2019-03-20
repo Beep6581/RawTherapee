@@ -205,7 +205,7 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
     }
 
     if (icon) {
-        context->set_source (icon->surface, xpos + dilat, ypos + dilat);
+        context->set_source (icon->get(), xpos + dilat, ypos + dilat);
         context->paint ();
     }
 }

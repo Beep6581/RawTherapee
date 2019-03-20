@@ -896,7 +896,7 @@ void OPIcon::drawImage(Cairo::RefPtr<RTSurface> &img,
     rtengine::Coord tl, br; // Coordinate of the rectangle in the CropBuffer coordinate system
     drivenPointToRectangle(pos, tl, br, imgW, imgH);
 
-    cr->set_source(img->surface, tl.x, tl.y);
+    cr->set_source(img->get(), tl.x, tl.y);
     cr->set_line_width(0.);
     cr->rectangle(tl.x, tl.y, imgW, imgH);
     cr->fill();
