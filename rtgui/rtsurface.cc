@@ -133,7 +133,12 @@ bool RTSurface::hasSurface() const
     return surface ? true : false;
 }
 
-const Cairo::RefPtr<Cairo::ImageSurface>& RTSurface::get() const
+Cairo::RefPtr<const Cairo::ImageSurface> RTSurface::get() const
+{
+    return surface;
+}
+
+const Cairo::RefPtr<Cairo::ImageSurface>& RTSurface::get()
 {
     return surface;
 }

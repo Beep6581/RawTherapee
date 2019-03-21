@@ -45,7 +45,8 @@ public:
     int getHeight() const;
     bool hasSurface() const;
 
-    const Cairo::RefPtr<Cairo::ImageSurface>& get() const;
+    Cairo::RefPtr<const Cairo::ImageSurface> get() const;
+    const Cairo::RefPtr<Cairo::ImageSurface>& get();
 
     static void init();
     static void updateImages ();
