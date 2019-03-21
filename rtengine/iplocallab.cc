@@ -2782,57 +2782,54 @@ static void calclight(float lum, float  koef, float & lumnew, LUTf & lightCurvel
 }
 
 
-static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, LabImage* transformed, LabImage* original, float & fab, float & meanfab, float chrom)
+static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabImage* bufexporig, const LabImage* original, float &fab, float &meanfab, float chrom)
 {
-    int nbfab = 0;
-    float multsigma = 1.f;
+    const int nbfab = (yEn - begy) * (xEn - begx);
 
-    if (chrom >= 0.f) {
-        multsigma = 0.035f * chrom + 1.f;
-    } else {
-        multsigma = 0.018f * chrom + 1.f;
-    }
+    meanfab = 0.f;
+    fab = 50.f;
 
-    for (int y = 0; y < transformed->H ; y++) //{
-        for (int x = 0; x < transformed->W; x++) {
-            int lox = cx + x;
-            int loy = cy + y;
+    if (nbfab > 0) {
+        double sumab = 0.0;
 
-            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:sumab)
+#endif
+        for (int y = begy - cy; y < yEn - cy ; y++) {
+            const int loy = cy + y;
+            for (int x = begx - cx; x < xEn - cx; x++) {
+                const int lox = cx + x;
                 bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
                 bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
-                meanfab += fabs(bufexporig->a[loy - begy][lox - begx]);
-                meanfab += fabs(bufexporig->b[loy - begy][lox - begx]);
-                nbfab++;
+                sumab += fabs(bufexporig->a[loy - begy][lox - begx]);
+                sumab += fabs(bufexporig->b[loy - begy][lox - begx]);
             }
         }
 
-    if (nbfab == 0) {
-        nbfab = 1;
-    }
+        meanfab = sumab / (2.f * nbfab);
 
-    meanfab = meanfab / (2.f * nbfab);
-    float stddv = 0.f;
-    float som = 0.f;
+        double som = 0.0;
 
-    for (int y = 0; y < transformed->H ; y++) //{
-        for (int x = 0; x < transformed->W; x++) {
-            int lox = cx + x;
-            int loy = cy + y;
-
-            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:som)
+#endif
+        for (int y = begy - cy; y < yEn - cy ; y++) {
+            const int loy = cy + y;
+            for (int x = begx - cx; x < xEn - cx; x++) {
+                const int lox = cx + x;
                 som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
             }
         }
+        const float multsigma = (chrom >= 0.f ? 0.035f : 0.018f) * chrom + 1.f;
 
-    stddv = sqrt(som / nbfab);
-    fab = meanfab + multsigma * stddv;
+        const float stddv = sqrt(som / nbfab);
+        fab = meanfab + multsigma * stddv;
 
-    if (fab <= 0.f) {
-        fab = 50.f;
+        if (fab <= 0.f) {
+            fab = 50.f;
+        }
     }
 }
-
 
 
 void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, JaggedArray<float> & blend2, int sk, bool multiThread, float & meansob)
@@ -7043,10 +7040,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
-                float meanfab = 0.f;
-                float fab = 10000.f;
+                float meanfab, fab;
 
-                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab, lp.chromaSH);
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, original, fab, meanfab, lp.chromaSH);
 
                 LUTf *gammamaskSH = nullptr;
                 LUTf lutTonemaskSH;
@@ -7930,9 +7926,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
-                float meanfab = 0.f;
-                float fab = 10000.f;
-                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, transformed, original, fab, meanfab, lp.chromaexp);
+                float meanfab, fab;
+
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufexporig, original, fab, meanfab, lp.chromaexp);
 
                 LUTf *gammamask = nullptr;
                 LUTf lutTonemask;
@@ -8423,10 +8419,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 array2D<float> ble(bfw, bfh);
                 array2D<float> guid(bfw, bfh);
-                float meanfab = 0.f;
-                float fab = 10000.f;
+                float meanfab, fab;
 
-                mean_fab(begx, begy, cx, cy, xEn, yEn, bufcolorig, transformed, original, fab, meanfab, lp.chromacol);
+                mean_fab(begx, begy, cx, cy, xEn, yEn, bufcolorig, original, fab, meanfab, lp.chromacol);
 
                 LUTf *gammamaskexp = nullptr;
                 LUTf lutTonemaskexp;
