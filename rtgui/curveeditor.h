@@ -22,7 +22,7 @@
 #include "popuptogglebutton.h"
 #include "../rtengine/LUT.h"
 #include "coloredbar.h"
-#include "edit.h"
+#include "editcallbacks.h"
 #include "mydiagonalcurve.h"
 #include "myflatcurve.h"
 

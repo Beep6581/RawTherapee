@@ -6,8 +6,8 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "editcallbacks.h"
 #include "toolpanel.h"
-#include "edit.h"
 #include "guiutils.h"
 
 class Gradient : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber

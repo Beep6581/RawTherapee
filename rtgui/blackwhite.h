@@ -28,6 +28,8 @@
 #include "mycurve.h"
 #include "colorprovider.h"
 
+class EditDataProvider;
+
 class BlackWhite final :
     public ToolParamBlock,
     public AdjusterListener,

@@ -26,6 +26,7 @@
 
 #include "guiutils.h"
 #include "rtimage.h"
+#include "options.h"
 
 #include "../rtengine/lcp.h"
 #include "../rtengine/procparams.h"
