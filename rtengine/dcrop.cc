@@ -24,6 +24,8 @@
 #include "refreshmap.h"
 #include "rt_math.h"
 
+#include "../rtgui/edit.h"
+
 namespace
 {
 

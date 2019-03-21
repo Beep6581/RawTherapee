@@ -19,6 +19,8 @@
 
 #include "pipettebuffer.h"
 
+#include "../rtgui/edit.h"
+
 namespace rtengine
 {
 

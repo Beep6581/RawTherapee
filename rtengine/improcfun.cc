@@ -17,33 +17,38 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <cmath>
+
 #include <glib.h>
 #include <glibmm.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#include "alignedbuffer.h"
-#include "rtengine.h"
 #include "improcfun.h"
+
+#include "alignedbuffer.h"
+#include "calc_distort.h"
+#include "ciecam02.h"
+#include "clutstore.h"
+#include "color.h"
 #include "curves.h"
-#include "mytime.h"
+#include "EdgePreservingDecomposition.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "imagesource.h"
-#include "rtthumbnail.h"
-#include "utils.h"
-#include "iccmatrices.h"
-#include "color.h"
-#include "calc_distort.h"
-#include "rt_math.h"
-#include "EdgePreservingDecomposition.h"
 #include "improccoordinator.h"
-#include "clutstore.h"
-#include "ciecam02.h"
-#include "StopWatch.h"
+#include "mytime.h"
 #include "procparams.h"
-#include "../rtgui/ppversion.h"
+#include "rt_math.h"
+#include "rtengine.h"
+#include "rtthumbnail.h"
+#include "StopWatch.h"
+#include "utils.h"
+
+#include "../rtgui/edit.h"
 #include "../rtgui/guiutils.h"
+#include "../rtgui/ppversion.h"
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)

@@ -16,16 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PIPETTEBUFFER_H_
-#define _PIPETTEBUFFER_H_
+#pragma once
 
-#include "../rtgui/edit.h"
 #include "array2D.h"
-#include "iimage.h"
 #include "coord.h"
+#include "iimage.h"
+
+class EditDataProvider;
+class EditSubscriber;
+
+enum EditUniqueID : int;
 
 namespace rtengine
 {
+
+class Imagefloat;
 
 /// @brief Structure that contains information about and pointers to the Edit buffer
 class PipetteBuffer
@@ -92,5 +97,3 @@ public:
 };
 
 }
-
-#endif
