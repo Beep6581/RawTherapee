@@ -345,7 +345,7 @@ bool BatchQueue::loadBatchQueue ()
             auto prevw = prevh;
             thumb->getThumbnailSize (prevw, prevh, &pparams);
 
-            auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb);
+            auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb, options.overwriteOutputFile);
             thumb->decreaseRef ();  // Removing the refCount acquired by cacheMgr->getEntry
             entry->setParent (this);
 
@@ -942,7 +942,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 
     // In overwrite mode we TRY to delete the old file first.
     // if that's not possible (e.g. locked by viewer, R/O), we revert to the standard naming scheme
-    bool inOverwriteMode = options.overwriteOutputFile;
+    bool inOverwriteMode = processing->overwriteFile;
 
     for (int tries = 0; tries < 100; tries++) {
         if (tries == 0) {
