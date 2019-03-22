@@ -26,6 +26,8 @@
 #include "curveeditorgroup.h"
 #include "colorprovider.h"
 
+class EditDataProvider;
+
 class LCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
 {
 

@@ -21,7 +21,6 @@
 
 #include "blackwhite.h"
 
-#include "edit.h"
 #include "guiutils.h"
 #include "rtimage.h"
 

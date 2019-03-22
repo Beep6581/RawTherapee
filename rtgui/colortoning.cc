@@ -567,7 +567,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     labRegionData = pp->colorToning.labregions;
     if (labRegionData.empty()) {
-        labRegionData.emplace_back(rtengine::ColorToningParams::LabCorrectionRegion());
+        labRegionData.emplace_back(rtengine::procparams::ColorToningParams::LabCorrectionRegion());
     }
     if (pp->colorToning.labregionsShowMask >= 0) {
         labRegionSelected = pp->colorToning.labregionsShowMask;
@@ -1441,7 +1441,7 @@ void ColorToning::labRegionGet(int idx)
 void ColorToning::labRegionAddPressed()
 {
     labRegionSelected = labRegionData.size();
-    labRegionData.push_back(rtengine::ColorToningParams::LabCorrectionRegion());
+    labRegionData.push_back(rtengine::procparams::ColorToningParams::LabCorrectionRegion());
     labRegionPopulateList();
     labRegionShow(labRegionSelected);
 
@@ -1525,7 +1525,7 @@ void ColorToning::labRegionPopulateList()
 {
     ConnectionBlocker b(labRegionSelectionConn);
     labRegionList->clear_items();
-    rtengine::ColorToningParams::LabCorrectionRegion dflt;
+    rtengine::procparams::ColorToningParams::LabCorrectionRegion dflt;
 
     for (size_t i = 0; i < labRegionData.size(); ++i) {
         auto &r = labRegionData[i];
@@ -1533,11 +1533,11 @@ void ColorToning::labRegionPopulateList()
         labRegionList->set_text(j, 1, Glib::ustring::compose("a=%1 b=%2 S=%3\ns=%4 o=%5 p=%6", round_ab(r.a), round_ab(r.b), r.saturation, r.slope, r.offset, r.power));
         const char *ch = "";
         switch (r.channel) {
-        case rtengine::ColorToningParams::LabCorrectionRegion::CHAN_R:
+        case rtengine::procparams::ColorToningParams::LabCorrectionRegion::CHAN_R:
             ch = "\n[Red]"; break;
-        case rtengine::ColorToningParams::LabCorrectionRegion::CHAN_G:
+        case rtengine::procparams::ColorToningParams::LabCorrectionRegion::CHAN_G:
             ch = "\n[Green]"; break;
-        case rtengine::ColorToningParams::LabCorrectionRegion::CHAN_B:
+        case rtengine::procparams::ColorToningParams::LabCorrectionRegion::CHAN_B:
             ch = "\n[Blue]"; break;
         default:
             ch = "";
@@ -1560,7 +1560,7 @@ void ColorToning::labRegionShow(int idx, bool list_only)
     if (disable) {
         disableListener();
     }
-    rtengine::ColorToningParams::LabCorrectionRegion dflt;
+    rtengine::procparams::ColorToningParams::LabCorrectionRegion dflt;
     auto &r = labRegionData[idx];
     if (!list_only) {
         labRegionAB->setParams(0, 0, r.a, r.b, false);
@@ -1577,11 +1577,11 @@ void ColorToning::labRegionShow(int idx, bool list_only)
     labRegionList->set_text(idx, 1, Glib::ustring::compose("a=%1 b=%2 S=%3\ns=%4 o=%5 p=%6", round_ab(r.a), round_ab(r.b), r.saturation, r.slope, r.offset, r.power));
     const char *ch = "";
     switch (r.channel) {
-    case rtengine::ColorToningParams::LabCorrectionRegion::CHAN_R:
+    case rtengine::procparams::ColorToningParams::LabCorrectionRegion::CHAN_R:
         ch = "\n[Red]"; break;
-    case rtengine::ColorToningParams::LabCorrectionRegion::CHAN_G:
+    case rtengine::procparams::ColorToningParams::LabCorrectionRegion::CHAN_G:
         ch = "\n[Green]"; break;
-    case rtengine::ColorToningParams::LabCorrectionRegion::CHAN_B:
+    case rtengine::procparams::ColorToningParams::LabCorrectionRegion::CHAN_B:
         ch = "\n[Blue]"; break;
     default:
         ch = "";

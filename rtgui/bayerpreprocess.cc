@@ -21,6 +21,7 @@
 #include "bayerpreprocess.h"
 #include "eventmapper.h"
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 

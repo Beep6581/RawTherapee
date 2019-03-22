@@ -20,10 +20,9 @@
 
 #include "labcurve.h"
 
-#include "edit.h"
-
 #include "../rtengine/improcfun.h"
 #include "../rtengine/procparams.h"
+#include "editcallbacks.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

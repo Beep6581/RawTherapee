@@ -20,6 +20,7 @@
 
 #include "guiutils.h"
 #include "rtimage.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 

@@ -18,6 +18,8 @@
  */
 
 #include "pipettebuffer.h"
+#include "../rtgui/editcallbacks.h"
+#include "imagefloat.h"
 
 namespace rtengine
 {
