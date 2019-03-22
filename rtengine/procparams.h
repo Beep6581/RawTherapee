@@ -1180,6 +1180,10 @@ struct WaveletParams {
     int bluemed;
     int greenhigh;
     int bluehigh;
+    double mergeL;
+    double mergeC;
+    double softrad;
+    double softradend;
 
     bool lipst;
     bool avoid;
@@ -1196,6 +1200,7 @@ struct WaveletParams {
     bool expfinal;
     bool exptoning;
     bool expnoise;
+    bool expclari;
 
     int Lmethod;
     Glib::ustring CLmethod;
@@ -1204,6 +1209,7 @@ struct WaveletParams {
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;
+    Glib::ustring ushamethod;
     Glib::ustring CHSLmethod;
     Glib::ustring EDmethod;
     Glib::ustring NPmethod;

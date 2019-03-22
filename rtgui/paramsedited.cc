@@ -473,7 +473,12 @@ void ParamsEdited::set(bool v)
     wavelet.bluemed = v;
     wavelet.bluelow = v;
     wavelet.lipst = v;
+    wavelet.mergeL = v;
+    wavelet.mergeC = v;
+    wavelet.softrad = v;
+    wavelet.softradend = v;
     wavelet.Medgreinf = v;
+    wavelet.ushamethod = v;
     wavelet.avoid = v;
     wavelet.tmr = v;
     wavelet.Lmethod = v;
@@ -538,6 +543,7 @@ void ParamsEdited::set(bool v)
 //  wavelet.enaedge = v;
 //  wavelet.enares = v;
     wavelet.expfinal = v;
+    wavelet.expclari = v;
     wavelet.expcontrast = v;
     wavelet.expchroma = v;
     wavelet.expedge = v;
@@ -1040,7 +1046,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.greenlow = wavelet.greenlow && p.wavelet.greenlow == other.wavelet.greenlow;
         wavelet.bluelow = wavelet.bluelow && p.wavelet.bluelow == other.wavelet.bluelow;
         wavelet.lipst = wavelet.lipst && p.wavelet.lipst == other.wavelet.lipst;
-        wavelet.Medgreinf = wavelet.Medgreinf && p.wavelet.Medgreinf == other.wavelet.Medgreinf;
+        wavelet.bluehigh = wavelet.bluehigh && p.wavelet.bluehigh == other.wavelet.bluehigh;
+        wavelet.mergeL = wavelet.mergeL && p.wavelet.mergeL == other.wavelet.mergeL;
+        wavelet.mergeC = wavelet.mergeC && p.wavelet.mergeC == other.wavelet.mergeC;
+        wavelet.softrad = wavelet.softrad && p.wavelet.softrad == other.wavelet.softrad;
+        wavelet.softradend = wavelet.softradend && p.wavelet.softradend == other.wavelet.softradend;
+        wavelet.ushamethod = wavelet.ushamethod && p.wavelet.ushamethod == other.wavelet.ushamethod;
         wavelet.avoid = wavelet.avoid && p.wavelet.avoid == other.wavelet.avoid;
         wavelet.tmr = wavelet.tmr && p.wavelet.tmr == other.wavelet.tmr;
         wavelet.Lmethod = wavelet.Lmethod && p.wavelet.Lmethod == other.wavelet.Lmethod;
@@ -1107,6 +1118,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.expfinal = wavelet.expfinal && p.wavelet.expfinal == other.wavelet.expfinal;
         wavelet.exptoning = wavelet.exptoning && p.wavelet.exptoning == other.wavelet.exptoning;
         wavelet.expnoise = wavelet.expnoise && p.wavelet.expnoise == other.wavelet.expnoise;
+        wavelet.expclari = wavelet.expclari && p.wavelet.expclari == other.wavelet.expclari;
 
         for (int i = 0; i < 9; i++) {
             wavelet.c[i] = wavelet.c[i] && p.wavelet.c[i] == other.wavelet.c[i];
@@ -2802,12 +2814,32 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.bluelow   = mods.wavelet.bluelow;
     }
 
+    if (wavelet.mergeL) {
+        toEdit.wavelet.mergeL   = mods.wavelet.mergeL;
+    }
+
+    if (wavelet.mergeC) {
+        toEdit.wavelet.mergeC   = mods.wavelet.mergeC;
+    }
+
+    if (wavelet.softrad) {
+        toEdit.wavelet.softrad   = mods.wavelet.softrad;
+    }
+
+    if (wavelet.softradend) {
+        toEdit.wavelet.softradend   = mods.wavelet.softradend;
+    }
+
     if (wavelet.lipst) {
         toEdit.wavelet.lipst   = mods.wavelet.lipst;
     }
 
     if (wavelet.Medgreinf) {
         toEdit.wavelet.Medgreinf   = mods.wavelet.Medgreinf;
+    }
+
+    if (wavelet.ushamethod) {
+        toEdit.wavelet.ushamethod   = mods.wavelet.ushamethod;
     }
 
     if (wavelet.avoid) {
@@ -2977,6 +3009,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.expfinal) {
         toEdit.wavelet.expfinal   = mods.wavelet.expfinal;
+    }
+
+    if (wavelet.expclari) {
+        toEdit.wavelet.expclari   = mods.wavelet.expclari;
     }
 
     if (wavelet.exptoning) {

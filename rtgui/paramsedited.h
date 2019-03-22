@@ -475,6 +475,7 @@ struct WaveletParamsEdited {
     bool cbenab;
     bool lipst;
     bool Medgreinf;
+    bool ushamethod;
     bool avoid;
     bool tmr;
     bool c[9];
@@ -541,6 +542,10 @@ struct WaveletParamsEdited {
     bool bluemed;
     bool greenhigh;
     bool bluehigh;
+    bool mergeL;
+    bool mergeC;
+    bool softrad;
+    bool softradend;
     bool expcontrast;
     bool expchroma;
     bool expedge;
@@ -548,6 +553,7 @@ struct WaveletParamsEdited {
     bool expfinal;
     bool exptoning;
     bool expnoise;
+    bool expclari;
 };
 
 struct DirPyrEqualizerParamsEdited {

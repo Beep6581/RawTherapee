@@ -63,6 +63,13 @@ public:
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
 
 private:
+    rtengine::ProcEvent EvWavenaclari;
+    rtengine::ProcEvent EvWavushamet;
+    rtengine::ProcEvent EvWavmergeL;
+    rtengine::ProcEvent EvWavmergeC;
+    rtengine::ProcEvent EvWavsoftrad;
+    rtengine::ProcEvent EvWavsoftradend;
+
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
 
     void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
@@ -95,6 +102,7 @@ private:
     void tmrToggled ();
     void updatewavLabel ();
     void wavChanged (double nlevel) override;
+    void ushamethodChanged();
 
     void HSmethodUpdateUI();
     void CHmethodUpdateUI();
@@ -196,6 +204,11 @@ private:
     Adjuster* const edgedetectthr2;
     Adjuster* const edgesensi;
     Adjuster* const edgeampli;
+    Adjuster* const mergeL;
+    Adjuster* const mergeC;
+    Adjuster* const softrad;
+    Adjuster* const softradend;
+
     MyComboBoxText* const Lmethod;
     sigc::connection  Lmethodconn;
     MyComboBoxText* const CHmethod;
@@ -224,6 +237,9 @@ private:
     sigc::connection  Dirmethodconn;
     MyComboBoxText* const Medgreinf;
     sigc::connection  MedgreinfConn;
+    MyComboBoxText* const ushamethod;
+    sigc::connection  ushamethodconn;
+
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
     Gtk::Frame* const chanMixerShadowsFrame;
@@ -231,6 +247,7 @@ private:
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;
     Gtk::Label* const labmNP;
+    Gtk::Label* const usharpLabel;
     MyExpander* const expchroma;
     MyExpander* const expcontrast;
     MyExpander* const expedge;
@@ -240,10 +257,12 @@ private:
     MyExpander* const expresid;
     MyExpander* const expsettings;
     MyExpander* const exptoning;
+    MyExpander* const expclari;
 
     Gtk::HBox* const neutrHBox;
+    Gtk::HBox* const usharpHBox;
 
-    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn;
+    sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;
     sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn;
     sigc::connection neutralPressedConn;
