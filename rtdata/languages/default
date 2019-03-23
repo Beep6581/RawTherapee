@@ -2135,7 +2135,7 @@ TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold betwe
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 TP_WAVELET_CHSL;Sliders
 TP_WAVELET_CHTYPE;Chrominance method
-TP_WAVELET_CLARI;Clarity - Usharp Mask
+TP_WAVELET_CLARI;Sharp-mask and Clarity
 TP_WAVELET_COLORT;Opacity Red-Green
 TP_WAVELET_COMPCONT;Contrast
 TP_WAVELET_COMPGAMMA;Compression gamma

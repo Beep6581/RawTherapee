@@ -289,7 +289,10 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
             histMatchingCache = outCurve;
             *histMatchingParams = cp;
             return;
-        } else if (w * 10 < fw) {
+        } else if (w * 33 < fw || w * h < 19200) {
+             // Some cameras have extremely small thumbs, for example Canon PowerShot A3100 IS has 128x96 thumbs.
+             // For them we skip histogram matching.
+             // With 160x120 thumbs from RICOH GR DIGITAL 2 it works fine, so we use 19200 as limit.
             if (settings->verbose) {
                 std::cout << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
             }

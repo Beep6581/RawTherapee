@@ -29,6 +29,8 @@
 #include "guiutils.h"
 #include "options.h"
 
+class EditDataProvider;
+
 class Wavelet :
     public ToolParamBlock,
     public ThresholdAdjusterListener,

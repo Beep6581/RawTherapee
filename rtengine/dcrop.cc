@@ -23,6 +23,7 @@
 #include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
+#include "../rtgui/editcallbacks.h"
 #include "guidedfilter.h"
 
 namespace

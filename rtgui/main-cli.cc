@@ -28,15 +28,17 @@
 #include <giomm.h>
 #include <iostream>
 #include <tiffio.h>
-#include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
+#include "../rtengine/procparams.h"
+#include "../rtengine/profilestore.h"
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
+#include "pathutils.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -44,6 +46,8 @@
 #include <glib/gstdio.h>
 #include <glibmm/threads.h>
 #else
+#include <windows.h>
+#include <shlobj.h>
 #include <glibmm/thread.h>
 #include "conio.h"
 #endif

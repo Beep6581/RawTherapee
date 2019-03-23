@@ -18,6 +18,7 @@
  */
 #include "myflatcurve.h"
 #include "../rtengine/curves.h"
+#include "editcallbacks.h"
 #include <cstring>
 #include <gdkmm/types.h>
 
