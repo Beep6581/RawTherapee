@@ -679,7 +679,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         }
 
         // The output filename's extension is forced to the current or selected output format,
-        // despite what the user have set in the fielneame's field of the "Save as" dialgo box
+        // despite what the user have set in the filename's field of the "Save as" dialog box
         fname = autoCompleteFileName (removeExtension(processing->outFileName), saveFormat.format);
         //fname = autoCompleteFileName (removeExtension(processing->outFileName), getExtension(processing->outFileName));
     }

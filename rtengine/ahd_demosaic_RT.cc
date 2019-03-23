@@ -173,7 +173,7 @@ void RawImageSource::ahd_demosaic()
                 }
             }
 
-            //  Combine the most homogenous pixels for the final result:
+            //  Combine the most homogeneous pixels for the final result:
             for (int row = top + 3; row < top + TS - 3 && row < height - 5; row++) {
                 int tr = row - top;
 
