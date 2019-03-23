@@ -1211,9 +1211,9 @@ private:
                             guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
                         }
 
-                    float blur = 10.f / 1 * (0.1f + 0.8f * WaveParams.softrad);
+                    float blur = 10.f / 1 * (0.01f + 0.8f * WaveParams.softrad);
                     // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
-                    rtengine::guidedFilter(guid, ble, ble, blur, 0.001, false);
+                    rtengine::guidedFilter(guid, ble, ble, blur, 0.0005, false);
 
 
 

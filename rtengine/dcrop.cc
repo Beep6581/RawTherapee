@@ -1067,8 +1067,8 @@ void Crop::update(int todo)
                             guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
                         }
 
-                    float blur = 10.f / skip * (0.1f + 0.8f * WaveParams.softrad);
-                    rtengine::guidedFilter(guid, ble, ble, blur, 0.001, false);
+                    float blur = 10.f / skip * (0.01f + 0.8f * WaveParams.softrad);
+                    rtengine::guidedFilter(guid, ble, ble, blur, 0.0005, false);
 
 
 
