@@ -986,6 +986,9 @@ void Crop::update(int todo)
                 cclocalcurve2.clear();
                 sklocalcurve2.clear();
                 exlocalcurve2.clear();
+                hltonecurveloc2.clear();
+                shtonecurveloc2.clear();
+                tonecurveloc2.clear();
                 locRETgainCurve.Reset();
                 loclhCurve.Reset();
                 lochhCurve.Reset();

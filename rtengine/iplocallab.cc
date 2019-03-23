@@ -1767,99 +1767,63 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
     const float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
     const float hlrange = maxran - shoulder;
 
-
-#define TSE 112
-
-#ifdef _OPENMP
-    #pragma omp parallel if (multiThread)
-#endif
-    {
-        char *buffer;
-
-        buffer = (char *) malloc(3 * sizeof(float) * TSE * TSE + 20 * 64 + 63);
-        char *data;
-        data = (char*)((uintptr_t (buffer) + uintptr_t (63)) / 64 * 64);
-
-        float *Ltemp = (float (*))data;
-        float *atemp = (float (*))((char*)Ltemp + sizeof(float) * TSE * TSE + 4 * 64);
-        float *btemp = (float (*))((char*)atemp + sizeof(float) * TSE * TSE + 8 * 64);
-        int istart;
-        int jstart;
-        int tW;
-        int tH;
+    LabImage *Ltemp = nullptr;
+    Ltemp = new LabImage(bfw, bfh);
 
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2)
+    #pragma omp parallel for
 #endif
 
-        for (int ii = 0; ii < bfh; ii += TSE)
-            for (int jj = 0; jj < bfw; jj += TSE) {
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            Ltemp->L[ir][jr] = bufexporig->L[ir][jr];
+        }
 
-                istart = ii;
-                jstart = jj;
-                tH = min(ii + TSE, bfh);
-                tW = min(jj + TSE, bfw);
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            float L = Ltemp->L[ir][jr];
+            //highlight
+            float tonefactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
+            Ltemp->L[ir][jr] = L * tonefactor;
+        }
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        Ltemp[ti * TSE + tj] = bufexporig->L[i][j];
-                        atemp[ti * TSE + tj] = bufexporig->a[i][j];
-                        btemp[ti * TSE + tj] = bufexporig->b[i][j];
-                    }
-                }
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            float L = Ltemp->L[ir][jr];
+            //shadow tone curve
+            float Y = L;
+            float tonefactor = shtonecurve[2 * Y];
+            Ltemp->L[ir][jr] = 0.5f * Ltemp->L[ir][jr] * tonefactor;
+        }
 
-                //    float niv = maxran;
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            //tonecurve
+            Ltemp->L[ir][jr] = 0.5f * tonecurve[2.f * Ltemp->L[ir][jr]];
+        }
 
-                        float L = Ltemp[ti * TSE + tj];
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
-                        float tonefactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L)); // niv));
-                        Ltemp[ti * TSE + tj] = L * tonefactor;
-                    }
-                }
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            lab->L[ir][jr] = Ltemp->L[ir][jr];
+        }
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        float L = Ltemp[ti * TSE + tj];
-                        //shadow tone curve
-                        float Y = L;
-                        float tonefactor = shtonecurve[2 * Y];
-                        Ltemp[ti * TSE + tj] = Ltemp[ti * TSE + tj] * tonefactor;
-                    }
-                }
-
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        Ltemp[ti * TSE + tj] = tonecurve[Ltemp[ti * TSE + tj] ];
-                    }
-                }
-
-
-                bool vasy = true;
-
-                if (vasy) {
-                    // ready, fill lab
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            lab->L[i][j] = Ltemp[ti * TSE + tj];
-                            lab->a[i][j] = atemp[ti * TSE + tj];
-                            lab->b[i][j] = btemp[ti * TSE + tj];
-                        }
-                    }
-                }
-            }
-
-        free(buffer);
-
-
-    }
-
+    delete Ltemp;
 
 }
 
