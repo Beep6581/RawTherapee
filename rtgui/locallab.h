@@ -23,7 +23,7 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
-#include "edit.h"
+#include "editcallbacks.h"
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
 #include "toolpanel.h"
@@ -268,7 +268,7 @@ private:
      * Used to store the default ProcParams when setDefaults function is called
      * When an other spot is selected, this default ProcParams is used to update adjusters default values
      */
-    const rtengine::ProcParams* defparams;
+    const rtengine::procparams::ProcParams* defparams;
     /**
      * Used to store the default ParamsEdited when setDefaults function is called
      * When an other spot is selected, this default ParamsEdited is used to update adjusters default edited state

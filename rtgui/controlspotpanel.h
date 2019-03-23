@@ -23,7 +23,7 @@
 
 #include "../rtengine/coord.h"
 #include "adjuster.h"
-#include "edit.h"
+#include "editcallbacks.h"
 #include "guiutils.h"
 #include "threadutils.h"
 #include "toolpanel.h"

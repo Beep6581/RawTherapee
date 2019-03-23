@@ -26,10 +26,12 @@
 #include <gtkmm.h>
 
 #include "../rtengine/rtengine.h"
+#include "editbuffer.h"
 
-#include "edit.h"
 #include "lockablecolorpicker.h"
 #include "threadutils.h"
+
+class EditSubscriber;
 
 class CropDisplayHandler
 {

@@ -27,6 +27,9 @@
 #include "options.h"
 #include "rtimage.h"
 #include "threadutils.h"
+#include "editcallbacks.h"
+#include "editbuffer.h"
+#include "editwidgets.h"
 
 #include "../rtengine/dcrop.h"
 #include "../rtengine/mytime.h"
