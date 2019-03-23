@@ -6915,8 +6915,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     {
                         ImProcFunctions::cbdl_local_temp(bufchr, bufchr, loctempch->L, bfw, bfh, multc, lp.chromacb, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 
-                        float rch;
-
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -6927,8 +6925,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 int loy = cy + y;
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    rch = CLIPRET((loctempch->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]))) / 200.f);
-                                    bufchrom[loy - begy][lox - begx]  = rch;
+                                    bufchrom[loy - begy][lox - begx] = CLIPRET((loctempch->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]))) / 200.f);;
                                 }
                             }
                     }
