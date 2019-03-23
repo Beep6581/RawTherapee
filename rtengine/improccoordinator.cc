@@ -857,6 +857,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 Glib::ustring provis;
                 LabImage *provradius = nullptr;
 
+                if(WaveParams.showmask) {
+                 //   WaveParams.showmask = false;
+                 //   WaveParams.expclari = true;
+                }
+
                 if (WaveParams.softrad > 0.f) {
                     provradius = new LabImage(pW, pH);
                     provradius->CopyFrom(nprevl);

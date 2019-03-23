@@ -480,6 +480,7 @@ void ParamsEdited::set(bool v)
     wavelet.Medgreinf = v;
     wavelet.ushamethod = v;
     wavelet.avoid = v;
+    wavelet.showmask = v;
     wavelet.tmr = v;
     wavelet.Lmethod = v;
     wavelet.CLmethod = v;
@@ -1053,6 +1054,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.softradend = wavelet.softradend && p.wavelet.softradend == other.wavelet.softradend;
         wavelet.ushamethod = wavelet.ushamethod && p.wavelet.ushamethod == other.wavelet.ushamethod;
         wavelet.avoid = wavelet.avoid && p.wavelet.avoid == other.wavelet.avoid;
+        wavelet.showmask = wavelet.showmask && p.wavelet.showmask == other.wavelet.showmask;
         wavelet.tmr = wavelet.tmr && p.wavelet.tmr == other.wavelet.tmr;
         wavelet.Lmethod = wavelet.Lmethod && p.wavelet.Lmethod == other.wavelet.Lmethod;
         wavelet.CLmethod = wavelet.CLmethod && p.wavelet.CLmethod == other.wavelet.CLmethod;
@@ -2844,6 +2846,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.avoid) {
         toEdit.wavelet.avoid   = mods.wavelet.avoid;
+    }
+
+    if (wavelet.showmask) {
+        toEdit.wavelet.showmask   = mods.wavelet.showmask;
     }
 
     if (wavelet.tmr) {

@@ -75,6 +75,7 @@ Wavelet::Wavelet() :
     lipst(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_LIPST")))),
     avoid(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_AVOID")))),
     tmr(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_BALCHRO")))),
+    showmask(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_SHOWMASK")))),
     neutralchButton(Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")))),
     rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
     resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
@@ -161,6 +162,7 @@ Wavelet::Wavelet() :
     EvWavmergeC = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVMERGEC");
     EvWavsoftrad = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSOFTRAD");
     EvWavsoftradend = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSOFTRADEND");
+    EvWavshowmask = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSHOWMASK");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -477,6 +479,8 @@ Wavelet::Wavelet() :
     mergeL->setAdjusterListener(this);
     mergeC->setAdjusterListener(this);
     softrad->setAdjusterListener(this);
+    showmask->set_active(false);
+    showmaskConn = showmask->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::showmaskToggled));
 
     ToolParamBlock* const clariBox = Gtk::manage(new ToolParamBlock());
     ushamethod->append(M("TP_WAVELET_USH"));
@@ -491,6 +495,7 @@ Wavelet::Wavelet() :
     clariBox->pack_start(*mergeL);
     clariBox->pack_start(*mergeC);
     clariBox->pack_start(*softrad);
+    clariBox->pack_start(*showmask);
 
 // Edge Sharpness
     ToolParamBlock* const edgBox = Gtk::manage(new ToolParamBlock());
@@ -1159,6 +1164,9 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     avoidConn.block(true);
     avoid->set_active(pp->wavelet.avoid);
     avoidConn.block(false);
+    showmaskConn.block(true);
+    showmask->set_active(pp->wavelet.showmask);
+    showmaskConn.block(false);
     tmrConn.block(true);
     tmr->set_active(pp->wavelet.tmr);
     tmrConn.block(false);
@@ -1188,6 +1196,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     lastcbenab = pp->wavelet.cbenab;
     lastlipst = pp->wavelet.lipst;
     lastavoid = pp->wavelet.avoid;
+    lastshowmask = pp->wavelet.showmask;
     lasttmr = pp->wavelet.tmr;
     rescon->setValue(pp->wavelet.rescon);
     resconH->setValue(pp->wavelet.resconH);
@@ -1333,6 +1342,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         Chshape->setUnChanged(!pedited->wavelet.Chcurve);
         clshape->setUnChanged(!pedited->wavelet.wavclCurve);
         avoid->set_inconsistent(!pedited->wavelet.avoid);
+        showmask->set_inconsistent(!pedited->wavelet.showmask);
         tmr->set_inconsistent(!pedited->wavelet.tmr);
         edgthresh->setEditedState(pedited->wavelet.edgthresh ? Edited : UnEdited);
         rescon->setEditedState(pedited->wavelet.rescon ? Edited : UnEdited);
@@ -1512,6 +1522,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
 
     pp->wavelet.enabled        = getEnabled();
     pp->wavelet.avoid          = avoid->get_active();
+    pp->wavelet.showmask       = showmask->get_active();
     pp->wavelet.tmr            = tmr->get_active();
     pp->wavelet.rescon         = rescon->getValue();
     pp->wavelet.resconH        = resconH->getValue();
@@ -1597,6 +1608,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->wavelet.enabled         = !get_inconsistent();
         pedited->wavelet.avoid           = !avoid->get_inconsistent();
+        pedited->wavelet.showmask        = !showmask->get_inconsistent();
         pedited->wavelet.tmr             = !tmr->get_inconsistent();
         pedited->wavelet.median          = !median->get_inconsistent();
         pedited->wavelet.medianlev       = !medianlev->get_inconsistent();
@@ -2342,14 +2354,14 @@ void Wavelet::ushamethodChanged()
         Dirmethod->set_active(3);
         Lmethod->set_sensitive(true);
         Dirmethod->set_sensitive(true);
-    } else if (ushamethod->get_active_row_number() == 0 || expclari->getEnabled() == false) {
+    }  else if (ushamethod->get_active_row_number() == 0 || expclari->getEnabled() == false) {
         Backmethod->set_active(1);
         CLmethod->set_active(3);
         Lmethod->set_active(3);
         Dirmethod->set_active(3);
         Lmethod->set_sensitive(false);
         Dirmethod->set_sensitive(false);
-    } else if (expclari->getEnabled() == false) {
+    }  else if (expclari->getEnabled() == false) {
         Backmethod->set_active(1);
         CLmethod->set_active(3);
         Lmethod->set_active(3);
@@ -2975,6 +2987,72 @@ void Wavelet::avoidToggled()
     }
 }
 
+void Wavelet::showmaskToggled()
+{
+    if (ushamethod->get_active_row_number() == 2 && showmask->get_active()) {
+        Backmethod->set_active(2);
+        CLmethod->set_active(2);
+        Lmethod->set_active(6);
+        Lmethod->set_sensitive(true);
+        Dirmethod->set_sensitive(true);
+        Dirmethod->set_active(3);
+        expclari->setEnabled(false);
+
+    } else if (ushamethod->get_active_row_number() == 1 && showmask->get_active()) {
+        Backmethod->set_active(0);
+        CLmethod->set_active(1);
+        Lmethod->set_active(2);
+        Dirmethod->set_active(3);
+        Lmethod->set_sensitive(true);
+        Dirmethod->set_sensitive(true);
+        expclari->setEnabled(false);
+
+    }
+
+    if (ushamethod->get_active_row_number() == 2 && !showmask->get_active()) {
+        Backmethod->set_active(2);
+        CLmethod->set_active(2);
+        Lmethod->set_active(6);
+        Lmethod->set_sensitive(true);
+        Dirmethod->set_sensitive(true);
+        Dirmethod->set_active(3);
+        expclari->setEnabled(true);
+
+    } else if (ushamethod->get_active_row_number() == 1 && !showmask->get_active()) {
+        Backmethod->set_active(0);
+        CLmethod->set_active(1);
+        Lmethod->set_active(2);
+        Dirmethod->set_active(3);
+        Lmethod->set_sensitive(true);
+        Dirmethod->set_sensitive(true);
+        expclari->setEnabled(true);
+
+    }
+
+    if (multiImage) {
+        if (showmask->get_inconsistent()) {
+            showmask->set_inconsistent(false);
+            showmaskConn.block(true);
+            showmask->set_active(false);
+            showmaskConn.block(false);
+        } else if (lastshowmask) {
+            showmask->set_inconsistent(true);
+        }
+
+        lastshowmask = showmask->get_active();
+    }
+
+    if (listener && (multiImage || getEnabled())) {
+        if (showmask->get_inconsistent()) {
+            listener->panelChanged(EvWavshowmask, M("GENERAL_UNCHANGED"));
+        } else if (showmask->get_active()) {
+            listener->panelChanged(EvWavshowmask, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvWavshowmask, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 void Wavelet::tmrToggled()
 {
 
@@ -3150,13 +3228,19 @@ void Wavelet::enableToggled(MyExpander *expander)
             event = EvWavenafin;
         } else if (expander == expclari) {
             if (expclari->getEnabled() == false) {
-                Backmethod->set_active(1);
-                CLmethod->set_active(3);
-                Lmethod->set_active(3);
-                Dirmethod->set_active(3);
-                Lmethod->set_sensitive(false);
-                Dirmethod->set_sensitive(false);
-            } else {
+                if (! showmask->get_active()) {
+                    Backmethod->set_active(1);
+                    CLmethod->set_active(3);
+                    Lmethod->set_active(3);
+                    Dirmethod->set_active(3);
+                    Lmethod->set_sensitive(false);
+                    Dirmethod->set_sensitive(false);
+                }
+            } else  {
+                if (showmask->get_active()) {
+                    showmask->set_active(false);
+                }
+
                 if (ushamethod->get_active_row_number() == 2) {
                     Backmethod->set_active(2);
                     CLmethod->set_active(2);
@@ -3173,7 +3257,6 @@ void Wavelet::enableToggled(MyExpander *expander)
                     Dirmethod->set_sensitive(true);
                 }
             }
-
             event = EvWavenaclari;
         } else
             // unknown expander, returning !

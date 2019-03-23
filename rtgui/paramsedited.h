@@ -477,6 +477,7 @@ struct WaveletParamsEdited {
     bool Medgreinf;
     bool ushamethod;
     bool avoid;
+    bool showmask;
     bool tmr;
     bool c[9];
     bool ch[9];

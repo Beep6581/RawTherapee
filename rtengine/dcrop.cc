@@ -993,6 +993,12 @@ void Crop::update(int todo)
             Glib::ustring provis;
             LabImage *provradius = nullptr;
 
+            if(WaveParams.showmask) {
+           //     WaveParams.showmask = false;
+           //     WaveParams.expclari = true;
+            }
+
+
             if (WaveParams.softrad > 0.f) {
                 provradius = new LabImage(labnCrop->W, labnCrop->H);
                 provradius->CopyFrom(labnCrop);

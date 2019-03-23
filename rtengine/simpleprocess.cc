@@ -1129,7 +1129,12 @@ private:
             WavOpacityCurveW waOpacityCurveW;
             WavOpacityCurveWL waOpacityCurveWL;
             LabImage *provradius = nullptr;
-
+/*
+            if(WaveParams.showmask) {
+                WaveParams.showmask = false;
+                WaveParams.expclari = true;
+            }
+*/
             if (WaveParams.softrad > 0.f) {
                 provradius = new LabImage(fw, fh);
                 provradius->CopyFrom(labView);
