@@ -28,6 +28,8 @@
 #include "guiutils.h"
 #include "options.h"
 
+class EditDataProvider;
+
 class DirPyrDenoise final :
     public ToolParamBlock,
     public AdjusterListener,

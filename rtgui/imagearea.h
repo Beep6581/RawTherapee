@@ -27,10 +27,10 @@
 #include "previewhandler.h"
 #include "imageareatoollistener.h"
 #include "cropwindow.h"
+#include "editcallbacks.h"
 #include "zoompanel.h"
 #include "indclippedpanel.h"
 #include "previewmodepanel.h"
-#include "edit.h"
 
 class ImageAreaPanel;
 class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider, public LockablePickerToolListener

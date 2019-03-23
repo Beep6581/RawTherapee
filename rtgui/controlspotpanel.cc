@@ -22,6 +22,7 @@
 #include "controlspotpanel.h"
 #include "multilangmgr.h"
 #include <iomanip>
+#include "editwidgets.h"
 
 using namespace rtengine;
 
@@ -2026,7 +2027,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     disableParamlistener(false);
 }
 
-void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited, int id)
+void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited, int id)
 {
     // Find vector index of given spot id (index = -1 if not found)
     int index = -1;
@@ -2040,7 +2041,7 @@ void ControlSpotPanel::setDefaults(const ProcParams * defParams, const ParamsEdi
     }
 
     // Set default values for adjusters
-    const LocallabParams::LocallabSpot* defSpot = new LocallabParams::LocallabSpot();
+    const rtengine::procparams::LocallabParams::LocallabSpot* defSpot = new rtengine::procparams::LocallabParams::LocallabSpot();
 
     if (index != -1 && index < (int)defParams->locallab.spots.size()) {
         defSpot = &defParams->locallab.spots.at(index);

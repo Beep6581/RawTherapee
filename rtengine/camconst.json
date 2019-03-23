@@ -2425,6 +2425,11 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 }
     },
 
+    { // Quality C
+        "make_model": [ "Sony DSC-R1" ],
+        "raw_crop": [ 0, 0, 3924, 2608 ]
+    },
+
     { // Quality A
         "make_model": [ "Sony DSC-RX100M2", "Sony DSC-RX100M3", "Sony DSC-RX100M4", "Sony DSC-RX100M5" ],
         "dcraw_matrix": [ 6596,-2079,-562,-4782,13016,1933,-970,1581,5181 ], // DNG_v9.8 D65

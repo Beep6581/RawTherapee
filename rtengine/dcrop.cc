@@ -31,6 +31,7 @@
 //#include <chrono>
 // "ceil" rounding
 //#define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
+#include "../rtgui/editcallbacks.h"
 
 namespace
 {

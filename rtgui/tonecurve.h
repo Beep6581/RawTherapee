@@ -27,6 +27,8 @@
 #include "mycurve.h"
 #include "guiutils.h"
 
+class EditDataProvider;
+
 class ToneCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener
 {
 private:

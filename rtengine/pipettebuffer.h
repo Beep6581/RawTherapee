@@ -19,13 +19,15 @@
 #ifndef _PIPETTEBUFFER_H_
 #define _PIPETTEBUFFER_H_
 
-#include "../rtgui/edit.h"
+#include "../rtgui/editbuffer.h"
 #include "array2D.h"
 #include "iimage.h"
 #include "coord.h"
 
 namespace rtengine
 {
+
+class Imagefloat;
 
 /// @brief Structure that contains information about and pointers to the Edit buffer
 class PipetteBuffer

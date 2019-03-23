@@ -23,7 +23,6 @@
 
 #include "../rtengine/coord.h"
 #include "guiutils.h"
-#include "edit.h"
 
 class CropWindow;
 

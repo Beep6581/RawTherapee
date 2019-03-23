@@ -26,7 +26,7 @@
 #include "../rtengine/rt_math.h"
 #include "options.h"
 #include <cmath>
-#include "edit.h"
+#include "editcallbacks.h"
 #include "guiutils.h"
 #include <string>
 #include <unistd.h>

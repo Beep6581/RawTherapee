@@ -3,6 +3,7 @@
  */
 #include "gradient.h"
 
+#include "editwidgets.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
