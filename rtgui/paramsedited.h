@@ -374,6 +374,7 @@ public:
         bool thresh;
         bool iter;
         bool balan;
+        bool transitweak;
         bool avoid;
         // Color & Light
         bool expcolor;

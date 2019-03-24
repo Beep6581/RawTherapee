@@ -63,6 +63,7 @@ public:
         double thresh;
         double iter;
         double balan;
+        double transitweak;
         bool avoid;
     };
 
@@ -92,6 +93,7 @@ public:
         bool thresh;
         bool iter;
         bool balan;
+        bool transitweak;
         bool avoid;
     };
 
@@ -283,6 +285,7 @@ private:
         Gtk::TreeModelColumn<double> thresh;
         Gtk::TreeModelColumn<double> iter;
         Gtk::TreeModelColumn<double> balan;
+        Gtk::TreeModelColumn<double> transitweak;
         Gtk::TreeModelColumn<bool> avoid;
     };
 
@@ -340,6 +343,7 @@ private:
     Adjuster* const thresh_;
     Adjuster* const iter_;
     Adjuster* const balan_;
+    Adjuster* const transitweak_;
 
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;

@@ -2357,6 +2357,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     thresh(2.0),
     iter(2.0),
     balan(1.0),
+    transitweak(1.0),
     avoid(false),
     // Color & Light
     expcolor(false),
@@ -2537,6 +2538,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && thresh == other.thresh
         && iter == other.iter
         && balan == other.balan
+        && transitweak == other.transitweak
         && avoid == other.avoid
         // Color & Light
         && expcolor == other.expcolor
@@ -3673,6 +3675,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).thresh, "Locallab", "Thresh_" + std::to_string(i), spot.thresh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).iter, "Locallab", "Iter_" + std::to_string(i), spot.iter, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).balan, "Locallab", "Balan_" + std::to_string(i), spot.balan, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transitweak, "Locallab", "Transitweak_" + std::to_string(i), spot.transitweak, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoid, "Locallab", "Avoid_" + std::to_string(i), spot.avoid, keyFile);
                 // Color & Light
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcolor, "Locallab", "Expcolor_" + std::to_string(i), spot.expcolor, keyFile);
@@ -4938,6 +4941,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Thresh_" + std::to_string(i), pedited, spot.thresh, spotEdited.thresh);
                 assignFromKeyfile(keyFile, "Locallab", "Iter_" + std::to_string(i), pedited, spot.iter, spotEdited.iter);
                 assignFromKeyfile(keyFile, "Locallab", "Balan_" + std::to_string(i), pedited, spot.balan, spotEdited.balan);
+                assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + std::to_string(i), pedited, spot.transitweak, spotEdited.transitweak);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
                 // Color & Light
                 assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, spot.expcolor, spotEdited.expcolor);
