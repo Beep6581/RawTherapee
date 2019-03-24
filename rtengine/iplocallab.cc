@@ -2736,9 +2736,9 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:sumab)
 #endif
-        for (int y = begy - cy; y < yEn - cy ; y++) {
+        for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
             const int loy = cy + y;
-            for (int x = begx - cx; x < xEn - cx; x++) {
+            for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
                 const int lox = cx + x;
                 bufexporig->a[loy - begy][lox - begx] = original->a[y][x];
                 bufexporig->b[loy - begy][lox - begx] = original->b[y][x];
@@ -2754,9 +2754,9 @@ static void mean_fab(int begx, int begy, int cx, int cy, int xEn, int yEn, LabIm
 #ifdef _OPENMP
         #pragma omp parallel for reduction(+:som)
 #endif
-        for (int y = begy - cy; y < yEn - cy ; y++) {
+        for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
             const int loy = cy + y;
-            for (int x = begx - cx; x < xEn - cx; x++) {
+            for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
                 const int lox = cx + x;
                 som += SQR(fabs(bufexporig->a[loy - begy][lox - begx]) - meanfab) + SQR(fabs(bufexporig->b[loy - begy][lox - begx]) - meanfab);
             }
@@ -4948,9 +4948,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
 #endif
-            for (int y = begy - cy; y < yEn - cy ; y++) {
+            for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
                 const int loy = cy + y;
-                for (int x = begx - cx; x < xEn - cx; x++) {
+                for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
                     const int lox = cx + x;
 
                     bufsob[loy - begy][lox - begx] = bufreserv.L[loy - begy][lox - begx] = reserved->L[y][x];
@@ -7500,9 +7500,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = begy - cy; y < yEn - cy ; y++) {
+                for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
                     const int loy = cy + y;
-                    for (int x = begx - cx; x < xEn - cx; x++) {
+                    for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
                         const int lox = cx + x;
                         bufexporig->L[loy - begy][lox - begx] = original->L[y][x];
                     }
@@ -7610,9 +7610,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-                for (int y = begy - cy; y < yEn - cy ; y++) {
+                for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
                     const int loy = cy + y;
-                    for (int x = begx - cx; x < xEn - cx; x++) {
+                    for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
                         const int lox = cx + x;
                         if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                             bufmaskorigexp->L[loy - begy][lox - begx] = original->L[y][x];
@@ -7746,9 +7746,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = begy - cy; y < yEn - cy ; y++) {
+                    for (int y = std::max(begy - cy, 0); y < std::min(yEn - cy, original->H); y++) {
                         const int loy = cy + y;
-                        for (int x = begx - cx; x < xEn - cx; x++) {
+                        for (int x = std::max(begx - cx, 0); x < std::min(xEn - cx, original->W); x++) {
                             const int lox = cx + x;
                             bufexptemp->L[loy - begy][lox - begx] = original->L[y][x];
                             bufexptemp->a[loy - begy][lox - begx] = original->a[y][x];
