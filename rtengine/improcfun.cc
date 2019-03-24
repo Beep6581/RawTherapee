@@ -3259,7 +3259,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 }
 
                 //softLight(rtemp, gtemp, btemp, istart, jstart, tW, tH, TS);
-                
+
                 if (!blackwhite) {
                     if (editImgFloat || editWhatever) {
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3738,7 +3738,7 @@ void ImProcFunctions::retreavergb(float &r, float &g, float &b)
 
 /**
 * @brief Interpolate by decreasing with a parabol k = aa*v*v + bb*v +c  v[0..1]
-* @param reducac val ue of the reduction in the middle of the range
+* @param reducac value of the reduction in the middle of the range
 * @param vinf value [0..1] for beginning decrease
 * @param aa second degree parameter
 * @param bb first degree parameter
@@ -3760,7 +3760,7 @@ void ImProcFunctions::secondeg_end(float reducac, float vinf, float &aa, float &
 
 /**
 * @brief Interpolate by increasing with a parabol k = aa*v*v + bb*v  v[0..1]
-* @param reducac val ue of the reduction in the middle of the range
+* @param reducac value of the reduction in the middle of the range
 * @param vend value [0..1] for beginning increase
 * @param aa second degree parameter
 * @param bb first degree parameter
@@ -4277,7 +4277,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
     }
     //-------------------------------------------------------------------------
 
-    
+
     if (!params->labCurve.enabled) {
         if (editPipette && (editID == EUID_Lab_LCurve || editID == EUID_Lab_aCurve || editID == EUID_Lab_bCurve || editID == EUID_Lab_LHCurve || editID == EUID_Lab_CHCurve || editID == EUID_Lab_HHCurve || editID == EUID_Lab_CLCurve || editID == EUID_Lab_CCurve || editID == EUID_Lab_LCCurve)) {
             // fill pipette buffer with zeros to avoid crashes
