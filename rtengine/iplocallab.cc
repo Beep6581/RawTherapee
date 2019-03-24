@@ -7880,11 +7880,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             LabImage *bufmaskblurcol = nullptr;
             LabImage *originalmaskcol = nullptr;
 
-            float chprosl = 1.f;
-            float chprocu = 1.f;
-            //   float cligh = 1.f;
-            //   float clighL = 1.f;
-
             int bfh = 0.f, bfw = 0.f;
             bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             bfw = int (lp.lx + lp.lxL) + del;
@@ -8210,9 +8205,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.showmaskcolmet == 5 || lp.enaColorMask) {
 
-                    LabImage *bufcolcalc = nullptr;
-                    bufcolcalc = new LabImage(bfw, bfh);
+                    LabImage *bufcolcalc = new LabImage(bfw, bfh);
 
+                    float chprosl = 1.f;
+                    if (lp.chro != 0.f) {
+                        const float ch = (1.f + 0.01f * lp.chro) ; //* (chromat * adjustr)  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more;
+                        if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
+                            chprosl = 99.f * ch - 99.f;
+                        } else {
+                            constexpr float ampli = 70.f;
+                            chprosl = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                        }
+                    }
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -8220,30 +8224,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     for (int ir = 0; ir < bfh; ir++)
                         for (int jr = 0; jr < bfw; jr++) {
-
                             bufcolcalc->a[ir][jr] = bufcolorig->a[ir][jr];
                             bufcolcalc->b[ir][jr] = bufcolorig->b[ir][jr];
                             bufcolcalc->L[ir][jr] = bufcolorig->L[ir][jr];
 
+                            float chprocu = 1.f;
                             if (cclocalcurve  && lp.qualcurvemet != 0  && localcutili) { // C=f(C) curve
-                                float chromat = sqrt(SQR(bufcolcalc->a[ir][jr]) +  SQR(bufcolcalc->b[ir][jr]));
-
-                                float ch;
-                                float ampli = 25.f;
-                                ch = (cclocalcurve[chromat * adjustr])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+                                const float chromat = sqrt(SQR(bufcolcalc->a[ir][jr]) +  SQR(bufcolcalc->b[ir][jr]));
+                                const float ch = cclocalcurve[chromat * adjustr]  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
+                                constexpr float ampli = 25.f;
                                 chprocu = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
-                            }
-
-                            if (lp.chro != 0.f) {
-                                float ch;
-                                float ampli = 70.f;
-                                ch = (1.f + 0.01f * lp.chro) ; //* (chromat * adjustr)  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
-
-                                if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                    chprosl = 99.f * ch - 99.f;
-                                } else {
-                                    chprosl = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
-                                }
                             }
 
                             bufchro[ir][jr] = chprosl + chprocu;
