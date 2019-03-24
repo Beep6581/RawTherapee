@@ -762,7 +762,7 @@ HISTORY_MSG_506;L*a*b Spot locYT
 HISTORY_MSG_507;L*a*b Spot center
 HISTORY_MSG_508;L*a*b Spot circrad
 HISTORY_MSG_509;L*a*b Spot quality method
-HISTORY_MSG_510;L*a*b Spot transit
+HISTORY_MSG_510;L*a*b Spot transition
 HISTORY_MSG_511;L*a*b Spot thresh
 HISTORY_MSG_512;L*a*b Spot deltaE-weakening
 HISTORY_MSG_513;L*a*b Spot scope
@@ -909,6 +909,7 @@ HISTORY_MSG_655;Local - SH mask slope
 HISTORY_MSG_656;Local - Color soft radius
 HISTORY_MSG_657;Local - Retinex soft radius
 HISTORY_MSG_658;Local - CBDL soft radius
+HISTORY_MSG_659;L*a*b Spot transition-weakening
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2121,6 +2122,9 @@ TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_TRANSIT;Transition
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
+TP_LOCALLAB_TRANSITVALUE;Transition value
+TP_LOCALLAB_TRANSITWEAK;Transition weakening
+TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic  
 TP_LOCALLAB_VIBRANCE;Vibrance
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.

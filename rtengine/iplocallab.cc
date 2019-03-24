@@ -68,6 +68,12 @@
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 #define CLIPRET(x) LIM(x,-99.5f, 99.5f)
 #define CLIP1(x) LIM(x, 0.f, 1.f)
+//define to prevent crash with old pp3 with integer range 100 instead of double range 1.
+#define CLIP24(x) LIM(x, -2., 4.)
+#define CLIP04(x) LIM(x, 0.f, 4.f)
+#define CLIP42_35(x) LIM(x, 0.42, 3.5)
+#define CLIP2_30(x) LIM(x, 0.2, 3.)
+
 #pragma GCC diagnostic warning "-Wextra"
 
 
@@ -178,6 +184,7 @@ struct local_params {
     double rad;
     double stren;
     int trans;
+    float transweak;
     int dehaze;
     bool inv;
     bool invex;
@@ -479,10 +486,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
     float blurSH = (float) locallab.spots.at(sp).blurSHde;
     int local_transit = locallab.spots.at(sp).transit;
-    double radius = locallab.spots.at(sp).radius;
+    float local_transitweak = (float)locallab.spots.at(sp).transitweak;
+    float radius = (float) locallab.spots.at(sp).radius;
     double sharradius = ((double) locallab.spots.at(sp).sharradius);
-    double lcamount = ((double) locallab.spots.at(sp).lcamount);
+    sharradius = CLIP42_35(sharradius);
+    float lcamount = ((float) locallab.spots.at(sp).lcamount);
+    lcamount = CLIP1(lcamount); //to prevent crash with old pp3 integer
     double sharblurr = ((double) locallab.spots.at(sp).sharblur);
+    sharblurr = CLIP2_30(sharblurr);//to prevent crash with old pp3 integer
     int local_sensisha = locallab.spots.at(sp).sensisha;
     int local_sharamount = locallab.spots.at(sp).sharamount;
     int local_shardamping = locallab.spots.at(sp).shardamping;
@@ -567,6 +578,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     }
 
     lp.trans = local_transit;
+    lp.transweak = local_transitweak;
     lp.rad = radius;
     lp.stren = strength;
     lp.sensbn = local_sensibn;
@@ -611,7 +623,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senstm = local_sensitm;
 
     for (int y = 0; y < 5; y++) {
-        lp.mulloc[y] = multi[y];
+        lp.mulloc[y] = CLIP04(multi[y]);//to prevent crash with old pp3 integer
     }
 
     lp.threshol = thresho;
@@ -637,6 +649,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.hlcomp = locallab.spots.at(sp).hlcompr;
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
     lp.expcomp = locallab.spots.at(sp).expcomp;
+    lp.expcomp = CLIP24(lp.expcomp); //to prevent crash with Old pp3 with integer
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
 //    lp.strucc = local_struc;
@@ -662,6 +675,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
         } else {
             zone = 1;
             localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach);
+            localFactor = pow(localFactor, lp.transweak);
         }
 
     } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
@@ -670,6 +684,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
         } else {
             zone = 1;
             localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
+            localFactor = pow(localFactor, lp.transweak);
         }
 
 
@@ -679,6 +694,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
         } else {
             zone = 1;
             localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach);
+            localFactor = pow(localFactor, lp.transweak);
         }
 
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
@@ -687,6 +703,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
         } else {
             zone = 1;
             localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach);
+            localFactor = pow(localFactor, lp.transweak);
         }
 
     }
@@ -711,6 +728,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (zone) {
                 localFactor = calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach);
+                localFactor = pow(localFactor, lp.transweak);
             }
         }
     } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
@@ -722,6 +740,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (zone) {
                 localFactor = calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
+                localFactor = pow(localFactor, lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
@@ -733,6 +752,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (zone) {
                 localFactor = calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach);
+                localFactor = pow(localFactor, lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
@@ -744,6 +764,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 
             if (zone) {
                 localFactor = calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach);
+                localFactor = pow(localFactor, lp.transweak);
             }
         }
     }
@@ -1723,99 +1744,63 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
     const float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
     const float hlrange = maxran - shoulder;
 
-
-#define TSE 112
-
-#ifdef _OPENMP
-    #pragma omp parallel if (multiThread)
-#endif
-    {
-        char *buffer;
-
-        buffer = (char *) malloc(3 * sizeof(float) * TSE * TSE + 20 * 64 + 63);
-        char *data;
-        data = (char*)((uintptr_t (buffer) + uintptr_t (63)) / 64 * 64);
-
-        float *Ltemp = (float (*))data;
-        float *atemp = (float (*))((char*)Ltemp + sizeof(float) * TSE * TSE + 4 * 64);
-        float *btemp = (float (*))((char*)atemp + sizeof(float) * TSE * TSE + 8 * 64);
-        int istart;
-        int jstart;
-        int tW;
-        int tH;
+    LabImage *Ltemp = nullptr;
+    Ltemp = new LabImage(bfw, bfh);
 
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2)
+    #pragma omp parallel for
 #endif
 
-        for (int ii = 0; ii < bfh; ii += TSE)
-            for (int jj = 0; jj < bfw; jj += TSE) {
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            Ltemp->L[ir][jr] = bufexporig->L[ir][jr];
+        }
 
-                istart = ii;
-                jstart = jj;
-                tH = min(ii + TSE, bfh);
-                tW = min(jj + TSE, bfw);
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            float L = Ltemp->L[ir][jr];
+            //highlight
+            float tonefactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
+            Ltemp->L[ir][jr] = L * tonefactor;
+        }
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        Ltemp[ti * TSE + tj] = bufexporig->L[i][j];
-                        atemp[ti * TSE + tj] = bufexporig->a[i][j];
-                        btemp[ti * TSE + tj] = bufexporig->b[i][j];
-                    }
-                }
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            float L = Ltemp->L[ir][jr];
+            //shadow tone curve
+            float Y = L;
+            float tonefactor = shtonecurve[2 * Y];
+            Ltemp->L[ir][jr] = 0.5f * Ltemp->L[ir][jr] * tonefactor;
+        }
 
-                //    float niv = maxran;
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            //tonecurve
+            Ltemp->L[ir][jr] = 0.5f * tonecurve[2.f * Ltemp->L[ir][jr]];
+        }
 
-                        float L = Ltemp[ti * TSE + tj];
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
 
-                        float tonefactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L)); // niv));
-                        Ltemp[ti * TSE + tj] = L * tonefactor;
-                    }
-                }
+    for (int ir = 0; ir < bfh; ir++)
+        for (int jr = 0; jr < bfw; jr++) {
+            lab->L[ir][jr] = Ltemp->L[ir][jr];
+        }
 
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        float L = Ltemp[ti * TSE + tj];
-                        //shadow tone curve
-                        float Y = L;
-                        float tonefactor = shtonecurve[2 * Y];
-                        Ltemp[ti * TSE + tj] = Ltemp[ti * TSE + tj] * tonefactor;
-                    }
-                }
-
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-
-                        Ltemp[ti * TSE + tj] = tonecurve[Ltemp[ti * TSE + tj] ];
-                    }
-                }
-
-
-                bool vasy = true;
-
-                if (vasy) {
-                    // ready, fill lab
-                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            lab->L[i][j] = Ltemp[ti * TSE + tj];
-                            lab->a[i][j] = atemp[ti * TSE + tj];
-                            lab->b[i][j] = btemp[ti * TSE + tj];
-                        }
-                    }
-                }
-            }
-
-        free(buffer);
-
-
-    }
-
+    delete Ltemp;
 
 }
 
@@ -6637,8 +6622,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     {
                         ImProcFunctions::cbdl_local_temp(bufchr, bufchr, loctempch->L, bfw, bfh, multc, lp.chromacb, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 
-                        float rch;
-
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -6649,8 +6632,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 int loy = cy + y;
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    rch = CLIPRET((loctempch->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]))) / 200.f);
-                                    bufchrom[loy - begy][lox - begx]  = rch;
+                                    bufchrom[loy - begy][lox - begx] = CLIPRET((loctempch->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]))) / 200.f);;
                                 }
                             }
                     }

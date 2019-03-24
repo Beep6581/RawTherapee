@@ -955,6 +955,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 cclocalcurve.clear();
                 sklocalcurve.clear();
                 exlocalcurve.clear();
+                hltonecurveloc.clear();
+                shtonecurveloc.clear();
+                tonecurveloc.clear();
                 locRETgainCurve.Reset();
                 loclhCurve.Reset();
                 lochhCurve.Reset();

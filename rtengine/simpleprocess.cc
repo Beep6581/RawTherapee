@@ -1180,6 +1180,9 @@ private:
                 cclocalcurve.clear();
                 sklocalcurve.clear();
                 exlocalcurve.clear();
+                hltonecurveloc.clear();
+                shtonecurveloc.clear();
+                tonecurveloc.clear();
 
                 if (params.locallab.spots.at(sp).inverssha) {
 
