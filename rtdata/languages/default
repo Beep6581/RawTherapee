@@ -786,7 +786,7 @@ HISTORY_MSG_WAVMERGEL;Merge L
 HISTORY_MSG_WAVMERGEC;Merge C
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
-HISTORY_MSG_WAVSHOWMASK;Show mask
+HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2271,7 +2271,7 @@ TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USH;None
 TP_WAVELET_USH_TOOLTIP;If you select Sharp-mask, wavelet settings will be automatically positioned :\nBackground=black, Process=below, level=3...you can change level\nIf you select Clarity, wavelet settings will be automatically positioned :\nBackground=residual, Process=above, level=7..you can change level and wavelet levels.
 TP_WAVELET_SHA;Sharp mask
-TP_WAVELET_SHOWMASK;Show mask
+TP_WAVELET_SHOWMASK;Show wavelet 'mask'
 TP_WAVELET_CLA;Clarity
 TP_WAVELET_USHARP;Sharp method
 TP_WAVELET_USHARP_TOOLTIP;Origin : the source file is the file before Wavelet.\nWavelet : the source file is the file including wavelet threatment

@@ -939,10 +939,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 ble[ir][jr] = (nprevl->L[ir][jr]  - provradius->L[ir][jr]) / 32768.f;
                                 guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
                             }
+                        double epsilmax = 0.001;
+                        double epsilmin = 0.0001;
+                        double aepsil = (epsilmax - epsilmin) / 90.f;
+                        double bepsil = epsilmax - 100.f * aepsil;
+                        double epsil = aepsil * WaveParams.softrad + bepsil;
 
-                        float blur = 10.f / scale * (0.01f + 0.8f * WaveParams.softrad);
+                        float blur = 10.f / scale * (0.001f + 0.8f * WaveParams.softrad);
                         // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
-                        rtengine::guidedFilter(guid, ble, ble, blur, 0.0005, false);
+                        rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
 
 
 
