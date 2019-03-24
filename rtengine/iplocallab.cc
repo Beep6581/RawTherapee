@@ -68,6 +68,12 @@
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 #define CLIPRET(x) LIM(x,-99.5f, 99.5f)
 #define CLIP1(x) LIM(x, 0.f, 1.f)
+//define to prevent crash with old pp3 with integer range 100 instead of double range 1.
+#define CLIP24(x) LIM(x, -2., 4.)
+#define CLIP04(x) LIM(x, 0.f, 4.f)
+#define CLIP42_35(x) LIM(x, 0.42, 3.5)
+#define CLIP2_30(x) LIM(x, 0.2, 3.)
+
 #pragma GCC diagnostic warning "-Wextra"
 
 
@@ -513,10 +519,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
     float blurSH = (float) locallab.spots.at(sp).blurSHde;
     int local_transit = locallab.spots.at(sp).transit;
-    double radius = locallab.spots.at(sp).radius;
+    float radius = (float) locallab.spots.at(sp).radius;
     double sharradius = ((double) locallab.spots.at(sp).sharradius);
-    double lcamount = ((double) locallab.spots.at(sp).lcamount);
+    sharradius = CLIP42_35(sharradius);
+    float lcamount = ((float) locallab.spots.at(sp).lcamount);
+    lcamount = CLIP1(lcamount); //to prevent crash with old pp3 integer
     double sharblurr = ((double) locallab.spots.at(sp).sharblur);
+    sharblurr = CLIP2_30(sharblurr);//to prevent crash with old pp3 integer
     int local_sensisha = locallab.spots.at(sp).sensisha;
     int local_sharamount = locallab.spots.at(sp).sharamount;
     int local_shardamping = locallab.spots.at(sp).shardamping;
@@ -645,7 +654,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senstm = local_sensitm;
 
     for (int y = 0; y < 5; y++) {
-        lp.mulloc[y] = multi[y];
+        lp.mulloc[y] = CLIP04(multi[y]);//to prevent crash with old pp3 integer
     }
 
     lp.threshol = thresho;
@@ -671,6 +680,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.hlcomp = locallab.spots.at(sp).hlcompr;
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
     lp.expcomp = locallab.spots.at(sp).expcomp;
+    lp.expcomp = CLIP24(lp.expcomp); //to prevent crash with Old pp3 with integer
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
 //    lp.strucc = local_struc;
