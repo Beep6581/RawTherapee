@@ -5376,7 +5376,7 @@ void CLASS pre_interpolate()
 //		  homo[d][row][col]++;
 //	}
 //
-///* Average the most homogenous pixels for the final result:	*/
+///* Average the most homogeneous pixels for the final result:	*/
 //      if (height-top < TS+4) mrow = height-top+2;
 //      if (width-left < TS+4) mcol = width-left+2;
 //      for (row = MIN(top,8); row < mrow-8; row++)

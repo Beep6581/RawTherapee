@@ -190,7 +190,7 @@ RTWindow::RTWindow ()
                         resolution /= 2;
                     }
                     // 1pt =  1/72in @ 96 ppi
-                    // HOMBRE: If the font unit is px, is it alredy scaled up to match the resolution ?
+                    // HOMBRE: If the font unit is px, is it already scaled up to match the resolution ?
                     //             px         >inch >pt      >"scaled pt"
                     pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (RTScalable::baseHiDPI / resolution) + 0.49);
                 } else {
