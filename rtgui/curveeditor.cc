@@ -449,7 +449,7 @@ void CurveEditor::switchOffEditMode ()
     EditSubscriber::switchOffEditMode();  // disconnect
 }
 
-bool CurveEditor::mouseOver(const int modifierKey)
+const bool CurveEditor::mouseOver(const int modifierKey)
 {
     EditDataProvider* provider = getEditProvider();
     subGroup->pipetteMouseOver(provider, modifierKey);
@@ -461,12 +461,12 @@ bool CurveEditor::button1Pressed(const int modifierKey)
 {
     EditDataProvider* provider = getEditProvider();
 
-    if (provider->object) {
+    if (provider->getObject()) {
         remoteDrag = subGroup->pipetteButton1Pressed(provider, modifierKey);
     }
 
     if (remoteDrag) {
-        action = ES_ACTION_DRAGGING;
+        action = EditSubscriber::Action::DRAGGING;
     }
 
     subGroup->refresh(this);
@@ -490,7 +490,7 @@ bool CurveEditor::drag1(const int modifierKey)
     return false;
 }
 
-CursorShape CurveEditor::getCursor(const int objectID)
+const CursorShape CurveEditor::getCursor(const int objectID) const
 {
     if (remoteDrag) {
         return CSResizeHeight;

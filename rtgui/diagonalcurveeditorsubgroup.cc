@@ -450,18 +450,18 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
         editedAdjuster = nullptr;
         int n = 0;
 
-        if (provider->pipetteVal[0] != -1.f) {
-            pipetteVal += provider->pipetteVal[0];
+        if (provider->getPipetteVal1() != -1.f) {
+            pipetteVal += provider->getPipetteVal1();
             ++n;
         }
 
-        if (provider->pipetteVal[1] != -1.f) {
-            pipetteVal += provider->pipetteVal[1];
+        if (provider->getPipetteVal2() != -1.f) {
+            pipetteVal += provider->getPipetteVal2();
             ++n;
         }
 
-        if (provider->pipetteVal[2] != -1.f) {
-            pipetteVal += provider->pipetteVal[2];
+        if (provider->getPipetteVal3() != -1.f) {
+            pipetteVal += provider->getPipetteVal3();
             ++n;
         }
 

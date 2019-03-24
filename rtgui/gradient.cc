@@ -331,7 +331,7 @@ void Gradient::editToggled ()
     }
 }
 
-CursorShape Gradient::getCursor(const int objectID)
+const CursorShape Gradient::getCursor(const int objectID) const
 {
     switch (objectID) {
     case (0):
@@ -357,11 +357,11 @@ CursorShape Gradient::getCursor(const int objectID)
     }
 }
 
-bool Gradient::mouseOver(const int modifierKey)
+const bool Gradient::mouseOver(const int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
-    if (editProvider && editProvider->object != lastObject) {
+    if (editProvider && editProvider->getObject() != lastObject) {
         if (lastObject > -1) {
             if (lastObject == 2 || lastObject == 3) {
                 EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
@@ -371,16 +371,16 @@ bool Gradient::mouseOver(const int modifierKey)
             }
         }
 
-        if (editProvider->object > -1) {
-            if (editProvider->object == 2 || editProvider->object == 3) {
+        if (editProvider->getObject() > -1) {
+            if (editProvider->getObject() == 2 || editProvider->getObject() == 3) {
                 EditSubscriber::visibleGeometry.at(2)->state = Geometry::PRELIGHT;
                 EditSubscriber::visibleGeometry.at(3)->state = Geometry::PRELIGHT;
             } else {
-                EditSubscriber::visibleGeometry.at(editProvider->object)->state = Geometry::PRELIGHT;
+                EditSubscriber::visibleGeometry.at(editProvider->getObject())->state = Geometry::PRELIGHT;
             }
         }
 
-        lastObject = editProvider->object;
+        lastObject = editProvider->getObject();
         return true;
     }
 
@@ -441,7 +441,7 @@ bool Gradient::button1Pressed(const int modifierKey)
             draggedFeatherOffset -= (feather->getValue() / 200. * diagonal);
         }
 
-        EditSubscriber::action = ES_ACTION_DRAGGING;
+        EditSubscriber::action = EditSubscriber::Action::DRAGGING;
         return false;
     } else { // should theoretically always be true
         // this will let this class ignore further drag events
@@ -462,7 +462,7 @@ bool Gradient::button1Pressed(const int modifierKey)
 bool Gradient::button1Released()
 {
     draggedPointOldAngle = -1000.;
-    EditSubscriber::action = ES_ACTION_NONE;
+    EditSubscriber::action = EditSubscriber::Action::NONE;
     return true;
 }
 

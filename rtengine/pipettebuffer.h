@@ -90,7 +90,7 @@ public:
     bool bufferCreated();
 
     // get the pipette values
-    void getPipetteData(float* v, int x, int y, int squareSize);
+    void getPipetteData(int x, int y, const int squareSize);
 };
 
 }
