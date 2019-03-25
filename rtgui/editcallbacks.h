@@ -59,31 +59,31 @@ public:
     void               setEditProvider(EditDataProvider *provider);
     EditDataProvider*  getEditProvider ();
     void               setEditID(EditUniqueID ID, BufferType buffType);
-    const bool         isCurrentSubscriber() const;
+    bool               isCurrentSubscriber() const;
     virtual void       subscribe();
     virtual void       unsubscribe();
     virtual void       switchOffEditMode();           /// Occurs when the user want to stop the editing mode
-    const EditUniqueID getEditID() const;
-    const EditType     getEditingType() const;
-    const BufferType   getPipetteBufferType() const;
-    const bool         isDragging() const;            /// Returns true if something is being dragged and drag events has to be sent (object mode only)
-    const bool         isPicking() const;             /// Returns true if something is being picked
+    EditUniqueID       getEditID() const;
+    EditType           getEditingType() const;
+    BufferType         getPipetteBufferType() const;
+    bool               isDragging() const;            /// Returns true if something is being dragged and drag events has to be sent (object mode only)
+    bool               isPicking() const;             /// Returns true if something is being picked
 
     /** @brief Get the cursor to be displayed when above handles
     @param objectID object currently "hovered" */
-    virtual const CursorShape getCursor (int objectID) const;
+    virtual CursorShape getCursor (int objectID) const;
 
     /** @brief Triggered when the mouse is moving over an object
     This method is also triggered when the cursor is moving over the image in ET_PIPETTE mode
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual const bool mouseOver (const int modifierKey);
+    virtual bool mouseOver (int modifierKey);
 
     /** @brief Triggered when mouse button 1 is pressed, together with the CTRL modifier key if the subscriber is of type ET_PIPETTE
     Once the key is pressed, RT will enter in drag1 mode on subsequent mouse movements
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button1Pressed (const int modifierKey);
+    virtual bool button1Pressed (int modifierKey);
 
     /** @brief Triggered when mouse button 1 is released
     @return true if the preview has to be redrawn, false otherwise */
@@ -93,7 +93,7 @@ public:
     Once the key is pressed, RT will enter in drag2 mode on subsequent mouse movements
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button2Pressed (const int modifierKey);
+    virtual bool button2Pressed (int modifierKey);
 
     /** @brief Triggered when mouse button 2 is released (middle button)
     @return true if the preview has to be redrawn, false otherwise */
@@ -103,7 +103,7 @@ public:
     Once the key is pressed, RT will enter in drag3 mode on subsequent mouse movements
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool button3Pressed (const int modifierKey);
+    virtual bool button3Pressed (int modifierKey);
 
     /** @brief Triggered when mouse button 3 is released (right button)
     @return true if the preview has to be redrawn, false otherwise */
@@ -112,36 +112,36 @@ public:
     /** @brief Triggered when the user is moving while holding down mouse button 1
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool drag1 (const int modifierKey);
+    virtual bool drag1 (int modifierKey);
 
     /** @brief Triggered when the user is moving while holding down mouse button 2
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool drag2 (const int modifierKey);
+    virtual bool drag2 (int modifierKey);
 
     /** @brief Triggered when the user is moving while holding down mouse button 3
     @param modifierKey Gtk's event modifier key (GDK_CONTROL_MASK | GDK_SHIFT_MASK | ...)
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool drag3 (const int modifierKey);
+    virtual bool drag3 (int modifierKey);
 
     /** @brief Triggered when the user is releasing mouse button 1 while in action==ES_ACTION_PICKING mode
     No modifier key is provided, since having a different modifier key than on button press will set picked to false.
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool pick1 (const bool picked);
+    virtual bool pick1 (bool picked);
 
     /** @brief Triggered when the user is releasing mouse button 2 while in action==ES_ACTION_PICKING mode
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool pick2 (const bool picked);
+    virtual bool pick2 (bool picked);
 
     /** @brief Triggered when the user is releasing mouse button 3 while in action==ES_ACTION_PICKING mode
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    virtual bool pick3 (const bool picked);
+    virtual bool pick3 (bool picked);
 
     /** @brief Get the geometry to be shown to the user */
     const std::vector<Geometry*>& getVisibleGeometry ();
@@ -180,16 +180,16 @@ public:
     virtual void subscribe(EditSubscriber *subscriber);
     virtual void unsubscribe();         /// Occurs when the subscriber has been switched off first
     virtual void switchOffEditMode ();  /// Occurs when the user want to stop the editing mode
-    int getObject();
+    int getObject() const;
     void setObject(int newObject);
-    float getPipetteVal1();
-    float getPipetteVal2();
-    float getPipetteVal3();
+    float getPipetteVal1() const;
+    float getPipetteVal2() const;
+    float getPipetteVal3() const;
     void setPipetteVal1(float newVal);
     void setPipetteVal2(float newVal);
     void setPipetteVal3(float newVal);
-    virtual const CursorShape getCursor(int objectID) const;
-    const int getPipetteRectSize () const;
+    virtual CursorShape getCursor(int objectID) const;
+    int getPipetteRectSize () const;
     EditSubscriber* getCurrSubscriber() const;
     virtual void getImageSize (int &w, int&h) = 0;
 };
