@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  */
-#include "../rtengine/procparams.h"
+#include "editcallbacks.h"
 #include "spot.h"
 #include "rtimage.h"
 #include <iomanip>
@@ -239,12 +239,12 @@ void Spot::createGeometry ()
     EditSubscriber::mouseOverGeometry.at (i++) = &sourceFeatherCircle; // STATIC_MO_OBJ_NBR + 5
 
     // recreate all spots geometry
-    Cairo::RefPtr<Cairo::ImageSurface> normalImg   = sourceIcon.getNormalImg();
-    Cairo::RefPtr<Cairo::ImageSurface> prelightImg = sourceIcon.getPrelightImg();
-    Cairo::RefPtr<Cairo::ImageSurface> activeImg   = sourceIcon.getActiveImg();
+    Cairo::RefPtr<RTSurface> normalImg   = sourceIcon.getNormalImg();
+    Cairo::RefPtr<RTSurface> prelightImg = sourceIcon.getPrelightImg();
+    Cairo::RefPtr<RTSurface> activeImg   = sourceIcon.getActiveImg();
 
     for (; j < EditSubscriber::visibleGeometry.size() - STATIC_VISIBLE_OBJ_NBR; ++i, ++j) {
-        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<Cairo::ImageSurface> (nullptr), Cairo::RefPtr<Cairo::ImageSurface> (nullptr), Geometry::DP_CENTERCENTER);
+        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<RTSurface> (nullptr), Cairo::RefPtr<RTSurface> (nullptr), Geometry::DP_CENTERCENTER);
         EditSubscriber::visibleGeometry.at (j)->setActive (true);
         EditSubscriber::visibleGeometry.at (j)->datum = Geometry::IMAGE;
         EditSubscriber::visibleGeometry.at (j)->state = Geometry::NORMAL;
@@ -380,7 +380,7 @@ void Spot::deleteSelectedEntry()
 {
     // delete the activeSpot
     if (activeSpot > -1) {
-        std::vector<rtengine::SpotEntry>::iterator i = spots.begin();
+        std::vector<rtengine::procparams::SpotEntry>::iterator i = spots.begin();
 
         for (int j = 0; j < activeSpot; ++j) {
             ++i;
@@ -410,7 +410,7 @@ bool Spot::mouseOver (const int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
-    if (editProvider && editProvider->object != lastObject) {
+    if (editProvider && editProvider->getObject() != lastObject) {
         if (lastObject > -1) {
             if (EditSubscriber::mouseOverGeometry.at (lastObject) == &targetMODisc) {
                 getVisibleGeometryFromMO (lastObject)->state = Geometry::ACTIVE;
@@ -421,13 +421,13 @@ bool Spot::mouseOver (const int modifierKey)
             sourceIcon.state = Geometry::ACTIVE;
         }
 
-        if (editProvider->object > -1) {
-            getVisibleGeometryFromMO (editProvider->object)->state = Geometry::PRELIGHT;
+        if (editProvider->getObject() > -1) {
+            getVisibleGeometryFromMO (editProvider->getObject())->state = Geometry::PRELIGHT;
 
-            if (editProvider->object >= STATIC_MO_OBJ_NBR) {
+            if (editProvider->getObject() >= STATIC_MO_OBJ_NBR) {
                 // a Spot is being edited
                 int oldActiveSpot = activeSpot;
-                activeSpot = editProvider->object - STATIC_MO_OBJ_NBR;
+                activeSpot = editProvider->getObject() - STATIC_MO_OBJ_NBR;
 
                 if (activeSpot != oldActiveSpot) {
                     if (oldActiveSpot > -1) {
@@ -442,7 +442,7 @@ bool Spot::mouseOver (const int modifierKey)
             }
         }
 
-        lastObject = editProvider->object;
+        lastObject = editProvider->getObject();
 
         if (lastObject > -1 && EditSubscriber::mouseOverGeometry.at (lastObject) == getActiveSpotIcon()) {
             lastObject = 0;  // targetMODisc
@@ -463,11 +463,11 @@ bool Spot::button1Pressed (const int modifierKey)
     if (editProvider) {
         if (lastObject == -1 && (modifierKey & GDK_CONTROL_MASK)) {
             addNewEntry();
-            EditSubscriber::action = ES_ACTION_DRAGGING;
+            EditSubscriber::action = EditSubscriber::Action::DRAGGING;
             return true;
         } else if (lastObject > -1) {
             getVisibleGeometryFromMO (lastObject)->state = Geometry::DRAGGED;
-            EditSubscriber::action = ES_ACTION_DRAGGING;
+            EditSubscriber::action = EditSubscriber::Action::DRAGGING;
             return true;
         }
     }
@@ -481,12 +481,12 @@ bool Spot::button1Released()
     Geometry *loGeom = getVisibleGeometryFromMO (lastObject);
 
     if (!loGeom) {
-        EditSubscriber::action = ES_ACTION_NONE;
+        EditSubscriber::action = EditSubscriber::Action::NONE;
         return false;
     }
 
     loGeom->state = Geometry::PRELIGHT;
-    EditSubscriber::action = ES_ACTION_NONE;
+    EditSubscriber::action = EditSubscriber::Action::NONE;
     updateGeometry();
     return true;
 }
@@ -501,7 +501,7 @@ bool Spot::button2Pressed (const int modifierKey)
     }
 
     if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
-        EditSubscriber::action = ES_ACTION_PICKING;
+        EditSubscriber::action = EditSubscriber::Action::PICKING;
     }
 
     return false;
@@ -519,10 +519,10 @@ bool Spot::button3Pressed (const int modifierKey)
     if ((modifierKey & GDK_CONTROL_MASK) && (EditSubscriber::mouseOverGeometry.at (lastObject) == &targetMODisc || lastObject >= STATIC_MO_OBJ_NBR)) {
         lastObject = 1;  // sourceMODisc
         sourceIcon.state = Geometry::DRAGGED;
-        EditSubscriber::action = ES_ACTION_DRAGGING;
+        EditSubscriber::action = EditSubscriber::Action::DRAGGING;
         return true;
     } else if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
-        EditSubscriber::action = ES_ACTION_PICKING;
+        EditSubscriber::action = EditSubscriber::Action::PICKING;
     }
 
     return false;
@@ -533,14 +533,14 @@ bool Spot::button3Released()
     Geometry *loGeom = getVisibleGeometryFromMO (lastObject);
 
     if (!loGeom) {
-        EditSubscriber::action = ES_ACTION_NONE;
+        EditSubscriber::action = EditSubscriber::Action::NONE;
         return false;
     }
 
     lastObject = -1;
     sourceIcon.state = Geometry::ACTIVE;
     updateGeometry();
-    EditSubscriber::action = ES_ACTION_NONE;
+    EditSubscriber::action = EditSubscriber::Action::NONE;
     return true;
 
     return false;
@@ -664,14 +664,14 @@ bool Spot::pick3 (const bool picked)
     EditDataProvider* editProvider = getEditProvider();
 
     if (!picked) {
-        if (editProvider->object != lastObject) {
+        if (editProvider->getObject() != lastObject) {
             return false;
         }
     }
 
     // Object is picked, we delete it
     deleteSelectedEntry();
-    EditSubscriber::action = ES_ACTION_NONE;
+    EditSubscriber::action = EditSubscriber::Action::NONE;
     updateGeometry();
     return true;
 }

@@ -27,6 +27,9 @@
 #include "options.h"
 #include "rtimage.h"
 #include "threadutils.h"
+#include "editcallbacks.h"
+#include "editbuffer.h"
+#include "editwidgets.h"
 
 #include "../rtengine/dcrop.h"
 #include "../rtengine/mytime.h"
@@ -255,7 +258,9 @@ void CropWindow::leaveNotify (GdkEventCrossing* event)
     EditSubscriber* subscriber = iarea->getCurrSubscriber();
 
     if (state == SNormal && subscriber && subscriber->getEditingType() == ET_PIPETTE) {
-        iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+        iarea->setPipetteVal1(-1.f);
+        iarea->setPipetteVal2(-1.f);
+        iarea->setPipetteVal3(-1.f);
 
         if (subscriber->mouseOver(0)) {
             iarea->redraw();
@@ -464,7 +469,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                     state = SEditDrag1;
                                 } else if (editSubscriber->isPicking()) {
                                     state = SEditPick1;
-                                    pickedObject = iarea->object;
+                                    pickedObject = iarea->getObject();
                                     pickModifierKey = bstate;
                                 }
                                 press_x = x;
@@ -498,7 +503,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             state = SEditDrag1;
                         } else if (editSubscriber->isPicking()) {
                             state = SEditPick1;
-                            pickedObject = iarea->object;
+                            pickedObject = iarea->getObject();
                             pickModifierKey = bstate;
                         }
 
@@ -532,7 +537,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     state = SEditDrag2;
                 } else if (editSubscriber->isPicking()) {
                     state = SEditPick2;
-                    pickedObject = iarea->object;
+                    pickedObject = iarea->getObject();
                     pickModifierKey = bstate;
                 }
 
@@ -552,7 +557,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     state = SEditDrag3;
                 } else if (editSubscriber->isPicking()) {
                     state = SEditPick3;
-                    pickedObject = iarea->object;
+                    pickedObject = iarea->getObject();
                     pickModifierKey = bstate;
                 }
 
@@ -675,23 +680,25 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
             if (state == SEditDrag1 && editSubscriber->getEditingType() == ET_PIPETTE) {
                 screenCoordToCropBuffer (x, y, cropPos.x, cropPos.y);
 
-                iarea->object = onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0;
+                iarea->setObject(onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0);
 
-                //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
-                if (iarea->object) {
-                    crop->getPipetteData(iarea->pipetteVal, cropPos.x, cropPos.y, iarea->getPipetteRectSize());
+                //iarea->setObject(cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0);
+                if (iarea->getObject()) {
+                    crop->getPipetteData(cropPos.x, cropPos.y, iarea->getPipetteRectSize());
                     //printf("PipetteData:  %.3f  %.3f  %.3f\n", iarea->pipetteVal[0], iarea->pipetteVal[1], iarea->pipetteVal[2]);
                 } else {
-                    iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+                    iarea->setPipetteVal1(-1.f);
+                    iarea->setPipetteVal2(-1.f);
+                    iarea->setPipetteVal3(-1.f);
                 }
             } else if (editSubscriber->getEditingType() == ET_OBJECTS) {
                 screenCoordToCropCanvas (x, y, cropPos.x, cropPos.y);
-                iarea->object = ObjectMOBuffer::getObjectID(cropPos);
+                iarea->setObject(ObjectMOBuffer::getObjectID(cropPos));
             }
 
             needRedraw |= editSubscriber->mouseOver(bstate);
         } else {
-            iarea->object = 0;
+            iarea->setObject(0);
         }
 
         iarea->deltaImage.set(0, 0);
@@ -711,9 +718,9 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
             Coord cropPos;
             screenCoordToCropCanvas (x, y, cropPos.x, cropPos.y);
 
-            iarea->object = ObjectMOBuffer::getObjectID(cropPos);
+            iarea->setObject(ObjectMOBuffer::getObjectID(cropPos));
 
-            bool elemPicked = iarea->object == pickedObject && bstate == pickModifierKey;
+            bool elemPicked = iarea->getObject() == pickedObject && bstate == pickModifierKey;
 
             if        (state == SEditPick1) {
                 needRedraw = editSubscriber->pick1 (elemPicked);
@@ -723,12 +730,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
                 needRedraw = editSubscriber->pick3 (elemPicked);
             }
 
-            iarea->object = pickedObject = -1;
+            pickedObject = -1;
+            iarea->setObject(-1);
             pickModifierKey = 0;
 
             needRedraw |= editSubscriber->mouseOver (bstate);
         } else {
-            iarea->object = 0;
+            iarea->setObject(0);
         }
     } else if (state == SDeletePicker) {
         needRedraw = true;
@@ -757,9 +765,11 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
     }
 
     if (state != SDeletePicker && state != SEditDrag3 && state != SEditPick3 && button == 3 && !(bstate & (GDK_SHIFT_MASK|GDK_CONTROL_MASK))) {
-        iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+        iarea->setPipetteVal1(-1.f);
+        iarea->setPipetteVal2(-1.f);
+        iarea->setPipetteVal3(-1.f);
 
-        needRedraw = iarea->object == 1;
+        needRedraw = iarea->getObject() == 1;
 
         if (editSubscriber && editSubscriber->getEditingType() == ET_PIPETTE) {
             editSubscriber->mouseOver(0);
@@ -947,18 +957,20 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             if (editSubscriber->getEditingType() == ET_PIPETTE) {
                 screenCoordToCropBuffer (x, y, cropPos.x, cropPos.y);
 
-                iarea->object = onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0;
+                iarea->setObject(onArea (CropImage, x, y) && !onArea (CropObserved, x, y) ? 1 : 0);
 
-                //iarea->object = cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0;
-                if (iarea->object) {
-                    crop->getPipetteData(iarea->pipetteVal, cropPos.x, cropPos.y, iarea->getPipetteRectSize());
+                //iarea->setObject(cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) ? 1 : 0);
+                if (iarea->getObject()) {
+                    crop->getPipetteData(cropPos.x, cropPos.y, iarea->getPipetteRectSize());
                     //printf("PipetteData:  %.3f  %.3f  %.3f\n", iarea->pipetteVal[0], iarea->pipetteVal[1], iarea->pipetteVal[2]);
                 } else {
-                    iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
+                    iarea->setPipetteVal1(-1.f);
+                    iarea->setPipetteVal2(-1.f);
+                    iarea->setPipetteVal3(-1.f);
                 }
             } else if (editSubscriber->getEditingType() == ET_OBJECTS) {
                 screenCoordToCropCanvas (x, y, cropPos.x, cropPos.y);
-                iarea->object = ObjectMOBuffer::getObjectID(cropPos);
+                iarea->setObject(ObjectMOBuffer::getObjectID(cropPos));
             }
 
             if (editSubscriber->mouseOver(bstate)) {
@@ -1907,7 +1919,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
     if (state == SNormal && isFlawnOver) {
         EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
-        if (iarea->getToolMode () == TMHand && editSubscriber && editSubscriber->getEditingType() == ET_PIPETTE && iarea->object) {
+        if (iarea->getToolMode () == TMHand && editSubscriber && editSubscriber->getEditingType() == ET_PIPETTE && iarea->getObject()) {
             drawUnscaledSpotRectangle (cr, iarea->getPipetteRectSize ());
         } else if (iarea->getToolMode () == TMSpotWB) {
             drawScaledSpotRectangle (cr, iarea->getSpotWBRectSize ());

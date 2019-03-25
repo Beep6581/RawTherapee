@@ -39,6 +39,8 @@
 #include "labgrid.h"
 #include "options.h"
 
+#include "options.h"
+
 using rtengine::Color;
 
 

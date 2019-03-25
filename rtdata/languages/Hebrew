@@ -188,7 +188,6 @@ MAIN_FRAME_BATCHQUEUE;Batch Queue
 MAIN_FRAME_FILEBROWSER;File Browser 
 MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
-MAIN_FRAME_PLACES_DEL;Del
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;הקובץ כבר קיים
 MAIN_MSG_CANNOTLOAD;לא יכול להעלות את הקובץ
@@ -497,7 +496,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
 !FILEBROWSER_AUTODARKFRAME;Auto dark-frame
 !FILEBROWSER_AUTOFLATFIELD;Auto flat-field
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path.
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
@@ -1108,6 +1107,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !MAIN_FRAME_EDITOR;Editor
 !MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nShortcut: <b>Ctrl-F4</b>
 !MAIN_FRAME_FILEBROWSER_TOOLTIP;File browser.\nShortcut: <b>Ctrl-F2</b>
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue-processed first.
 !MAIN_MSG_NAVIGATOR;Navigator
@@ -1240,6 +1240,12 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_CHUNKSIZES;Tiles per thread
+!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
+!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
+!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
+!PREFERENCES_CHUNKSIZE_RGB;RGB processing
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
@@ -1326,6 +1332,8 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PREFERENCES_PANFACTORLABEL;Pan rate amplification
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_MEASURE;Measure
+!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
@@ -1376,9 +1384,15 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !QINFO_FRAMECOUNT;%2 frames
@@ -1610,7 +1624,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
-!TP_CROP_PPI;PPI=
+!TP_CROP_PPI;PPI
 !TP_CROP_RESETCROP;Reset
 !TP_CROP_SELECTCROP;Select
 !TP_DARKFRAME_AUTOSELECT;Auto-selection
@@ -1620,7 +1634,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
-!TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+!TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
@@ -1829,15 +1843,15 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_LENSGEOM_AUTOCROP;Auto-Crop
 !TP_LENSGEOM_FILL;Auto-fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_LABEL;Profiled Lens Correction
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
 !TP_LENSPROFILE_USE_CA;Chromatic aberration
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
-!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
@@ -1965,6 +1979,8 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped Area

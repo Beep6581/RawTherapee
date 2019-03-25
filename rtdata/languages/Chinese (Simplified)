@@ -93,7 +93,6 @@ FILEBROWSER_APPLYPROFILE;应用配置
 FILEBROWSER_APPLYPROFILE_PARTIAL;应用 - 局部
 FILEBROWSER_AUTODARKFRAME;自动暗场
 FILEBROWSER_AUTOFLATFIELD;自动平场
-FILEBROWSER_BROWSEPATHBUTTONHINT;点击浏览选择的路径
 FILEBROWSER_CACHE;缓存
 FILEBROWSER_CLEARPROFILE;清空配置
 FILEBROWSER_COPYPROFILE;复制配置
@@ -360,7 +359,6 @@ MAIN_FRAME_FILEBROWSER;文件浏览
 MAIN_FRAME_FILEBROWSER_TOOLTIP;文件浏览\n快捷键: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;位置 
 MAIN_FRAME_PLACES_ADD;添加
-MAIN_FRAME_PLACES_DEL;删除
 MAIN_FRAME_RECENT;最近使用的文件夹 
 MAIN_MSG_ALREADYEXISTS;该文件已存在
 MAIN_MSG_CANNOTLOAD;无法加载图片
@@ -759,7 +757,6 @@ TP_CROP_GTTRIANGLE2;黄金三角 2
 TP_CROP_GUIDETYPE;辅助方式:
 TP_CROP_H;高
 TP_CROP_LABEL;剪裁
-TP_CROP_PPI;PPI=
 TP_CROP_W;宽
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -999,6 +996,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
 !EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
@@ -1503,6 +1501,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue-processed first.
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoes not exist. Please set a correct path in Preferences.
 !MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
@@ -1548,6 +1547,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_CHUNKSIZES;Tiles per thread
+!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
+!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
+!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
+!PREFERENCES_CHUNKSIZE_RGB;RGB processing
 !PREFERENCES_CROP;Crop Editing
 !PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
 !PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
@@ -1558,6 +1563,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
+!PREFERENCES_PERFORMANCE_MEASURE;Measure
+!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
@@ -1574,7 +1581,13 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !QINFO_FRAMECOUNT;%2 frames
@@ -1751,12 +1764,13 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
+!TP_CROP_PPI;PPI
 !TP_CROP_RESETCROP;Reset
 !TP_CROP_SELECTCROP;Select
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
-!TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+!TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
@@ -1898,14 +1912,14 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 !TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 !TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
 !TP_LENSPROFILE_USE_CA;Chromatic aberration
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
-!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
@@ -2021,6 +2035,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RETINEX_CONTEDIT_HSL;HSL histogram

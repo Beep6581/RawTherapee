@@ -18,6 +18,7 @@
  */
 #include "myflatcurve.h"
 #include "../rtengine/curves.h"
+#include "editcallbacks.h"
 #include <cstring>
 #include <gdkmm/types.h>
 
@@ -1208,9 +1209,9 @@ void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider,
         return;
     }
 
-    pipetteR = provider->pipetteVal[0];
-    pipetteG = provider->pipetteVal[1];
-    pipetteB = provider->pipetteVal[2];
+    pipetteR = provider->getPipetteVal1();
+    pipetteG = provider->getPipetteVal2();
+    pipetteB = provider->getPipetteVal3();
     pipetteVal = 0.f;
 
     if (listener) {

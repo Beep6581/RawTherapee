@@ -6,7 +6,8 @@
 
 #include <gtkmm.h>
 #include "toolpanel.h"
-#include "edit.h"
+#include "editwidgets.h"
+#include "../rtengine/procparams.h"
 
 /**
  * @brief Let the user create/edit/delete points for Spot Removal tool
@@ -35,19 +36,13 @@
  * (the point will be deleted on button release).
  */
 
-namespace rtengine {
-namespace procparams {
-    class SpotEntry;
-}
-}
-
 class Spot : public ToolParamBlock, public FoldableToolPanel, public EditSubscriber
 {
 
 private:
     int lastObject;                // current object that is hovered
     int activeSpot;                // currently active spot, being edited
-    std::vector<rtengine::SpotEntry> spots; // list of edited spots
+    std::vector<rtengine::procparams::SpotEntry> spots; // list of edited spots
     OPIcon sourceIcon;             // to show the source location
     Circle sourceCircle;           // to show and change the Source radius
     Circle sourceMODisc;           // to change the Source position

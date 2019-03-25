@@ -19,7 +19,8 @@
 
 #include "wavelet.h"
 #include <cmath>
-#include "edit.h"
+
+#include "editcallbacks.h"
 #include "guiutils.h"
 #include "rtimage.h"
 

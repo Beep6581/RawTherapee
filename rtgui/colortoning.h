@@ -13,6 +13,7 @@
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 #include "labgrid.h"
+#include "../rtengine/procparams.h"
 
 class ColorToning final :
     public ToolParamBlock,
@@ -160,7 +161,7 @@ private:
     FlatCurveEditor *labRegionLightnessMask;
     Adjuster *labRegionMaskBlur;
     Gtk::CheckButton *labRegionShowMask;
-    std::vector<rtengine::ColorToningParams::LabCorrectionRegion> labRegionData;
+    std::vector<rtengine::procparams::ColorToningParams::LabCorrectionRegion> labRegionData;
     int labRegionSelected;
     sigc::connection labRegionSelectionConn;
 

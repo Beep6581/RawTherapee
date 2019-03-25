@@ -26,6 +26,7 @@
 #include <gtkmm.h>
 
 #include "../rtengine/rtengine.h"
+#include "editbuffer.h"
 
 #include "lockablecolorpicker.h"
 #include "threadutils.h"

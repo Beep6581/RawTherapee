@@ -205,7 +205,7 @@ Crop::Crop():
     ppisubgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(ppisubgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    Gtk::Label* ppilab = Gtk::manage (new Gtk::Label (M("TP_CROP_PPI")));
+    Gtk::Label* ppilab = Gtk::manage (new Gtk::Label (M("TP_CROP_PPI") + ":"));
     setExpandAlignProperties(ppilab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     ppi = Gtk::manage (new MySpinButton ());

@@ -115,7 +115,6 @@ FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Appliquer le profil (partiel)
 FILEBROWSER_AUTODARKFRAME;Soustraction automatique de Trame Noire
 FILEBROWSER_AUTOFLATFIELD;Champ Uniforme auto
-FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
 FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir\n<b>Ctrl-O</b> pour placer le focus sur le champ de saisie.\n<b>Entrée</b> / <b>Ctrl-Entrée</b> pour y naviguer;\n<b>Esc</b> pour effacer les modifications.\n<b>Shift-Esc</b> pour enlever le focus.\n\n\nRaccourcis pour les chemins:\n  <b>~</b> - le dossier utilisateur\n  <b>!</b> - le dossier Images de l'utilisateur
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Vider tout y compris les profils mis en cache
@@ -888,7 +887,6 @@ MAIN_FRAME_FILEBROWSER;Navigateur de fichiers
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de fichiers\nRaccourci: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Emplacements 
 MAIN_FRAME_PLACES_ADD;Ajouter
-MAIN_FRAME_PLACES_DEL;Supprimer
 MAIN_FRAME_RECENT;Fichiers récents 
 MAIN_MSG_ALREADYEXISTS;Le fichier existe déjà.
 MAIN_MSG_CANNOTLOAD;Impossible de charger l'image
@@ -1543,7 +1541,6 @@ TP_CROP_GTTRIANGLE2;Triangles d'Or 2
 TP_CROP_GUIDETYPE;Type de guide:
 TP_CROP_H;H
 TP_CROP_LABEL;Recadrage
-TP_CROP_PPI;PPI=
 TP_CROP_RESETCROP;Réinitialiser
 TP_CROP_SELECTCROP;Sélectionner
 TP_CROP_W;L
@@ -1796,15 +1793,10 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Peut être utilisé avec le curseur Chromaticité et 
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
-TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatiquement
 TP_LENSPROFILE_CORRECTION_LCPFILE;Fichier LCP
-TP_LENSPROFILE_CORRECTION_MANUAL;Manuellement
 TP_LENSPROFILE_LABEL;Profil de correction d'objectif
 TP_LENSPROFILE_LENS_WARNING;Attention: le facteur de recadrage utilisé pour la caractérisation d'un objectif est plus grand que le facteur de recadrage de l'appareil photo, les résultats pourraient être faux.
-TP_LENSPROFILE_MODE_HEADER;Sélectionner le profil d'objectif:
 TP_LENSPROFILE_USE_CA;Aberration chromatique
-TP_LENSPROFILE_USE_GEOMETRIC;Géometrique
-TP_LENSPROFILE_USE_HEADER;Sélectionner les distortions à corriger:
 TP_LENSPROFILE_USE_VIGNETTING;Vignetage
 TP_LOCALCONTRAST_AMOUNT;Quantité
 TP_LOCALCONTRAST_DARKNESS;Niveau des ombres
@@ -2346,3 +2338,23 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
+!MAIN_FRAME_PLACES_DEL;Remove
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
+!TP_CROP_PPI;PPI
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans

@@ -1009,7 +1009,7 @@ fontchooser scrolledwindow,
 #MyExpander frame,
 dialog frame {
     margin: 0;
-    padding: 0.19em 0.5em;
+    padding: 0.19em 0.583333333333333333em;
 }
 #RightNotebook > stack > scrolledwindow frame > border,
 #BatchQueueButtonsMainContainer > frame > border,

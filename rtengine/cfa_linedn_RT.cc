@@ -55,7 +55,7 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     if (plistener) {
-        plistener->setProgressStr ("Line Denoise...");
+        plistener->setProgressStr ("PROGRESSBAR_LINEDENOISE");
         plistener->setProgress (0.0);
     }
 

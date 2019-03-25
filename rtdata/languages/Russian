@@ -111,7 +111,6 @@ FILEBROWSER_APPLYPROFILE;Применить
 FILEBROWSER_APPLYPROFILE_PARTIAL;Применить - частично
 FILEBROWSER_AUTODARKFRAME;Автоматический темновой кадр
 FILEBROWSER_AUTOFLATFIELD;Автоматическое плоское поле
-FILEBROWSER_BROWSEPATHBUTTONHINT;Нажмите кнопку мыши чтобы перейти к выбранному каталогу
 FILEBROWSER_BROWSEPATHHINT;Введите путь для перехода.\n<b>Ctrl-O</b> для перехода на диалог ввода текста.\n<b>Enter</b> / <b>Ctrl-Enter</b> (в обозревателе файлов) для перехода;\n\nЯрлыки путей:\n  <b>~</b> - домашний каталог пользователя\n  <b>!</b> - каталог пользователя с изображениями
 FILEBROWSER_CACHE;Кэш
 FILEBROWSER_CLEARPROFILE;Удалить профиль
@@ -588,7 +587,6 @@ MAIN_FRAME_FILEBROWSER;Файловый браузер
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Проводник.\nГорячая клавиша <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Закладки
 MAIN_FRAME_PLACES_ADD;Добавить
-MAIN_FRAME_PLACES_DEL;Удалить
 MAIN_FRAME_RECENT;Недавние каталоги
 MAIN_MSG_ALREADYEXISTS;Файл уже существует.
 MAIN_MSG_CANNOTLOAD;Невозможно загрузить изображение
@@ -1063,7 +1061,6 @@ TP_CROP_GTTRIANGLE2;Золотые треугольники 2
 TP_CROP_GUIDETYPE;Направляющие:
 TP_CROP_H;Высота
 TP_CROP_LABEL;Кадрирование
-TP_CROP_PPI;PPI=
 TP_CROP_RESETCROP;Сбросить
 TP_CROP_SELECTCROP;Выбрать
 TP_CROP_W;Ширина
@@ -1264,15 +1261,10 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Защита красных тонов и оттен�
 TP_LENSGEOM_AUTOCROP;Автокадрирование
 TP_LENSGEOM_FILL;Автозаполнение
 TP_LENSGEOM_LABEL;Геометрия
-TP_LENSPROFILE_CORRECTION_AUTOMATCH;Автоматически
 TP_LENSPROFILE_CORRECTION_LCPFILE;Файл LCP
-TP_LENSPROFILE_CORRECTION_MANUAL;Вручную
 TP_LENSPROFILE_LABEL;Профиль коррекции объектива
 TP_LENSPROFILE_LENS_WARNING;Внимание: кроп-фактор, используемый для профилирования объектива больше чем кроп-фактор камеры. Результат может быть ошибочным.
-TP_LENSPROFILE_MODE_HEADER;Выбор профиля объектива:
 TP_LENSPROFILE_USE_CA;Хроматические абберации
-TP_LENSPROFILE_USE_GEOMETRIC;Геометрия
-TP_LENSPROFILE_USE_HEADER;Выбор искажений для коррекции:
 TP_LENSPROFILE_USE_VIGNETTING;Виньетирование
 TP_LOCALCONTRAST_AMOUNT;Величина
 TP_LOCALCONTRAST_DARKNESS;Тёмные тона
@@ -1516,6 +1508,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
 !EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
@@ -1811,6 +1804,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
@@ -1834,6 +1828,12 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_CHUNKSIZES;Tiles per thread
+!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
+!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
+!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
+!PREFERENCES_CHUNKSIZE_RGB;RGB processing
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CMMBPC;Black point compensation
@@ -1857,6 +1857,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_MEASURE;Measure
+!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 !PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
@@ -1868,6 +1870,12 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PROFILEPANEL_PDYNAMIC;Dynamic
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
@@ -1980,6 +1988,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_COLORTONING_TWOSTD;Standard chroma
+!TP_CROP_PPI;PPI
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
@@ -2031,6 +2040,11 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
 !TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
@@ -2083,6 +2097,8 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
 !TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RETINEX_CONTEDIT_HSL;HSL histogram
 !TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
 !TP_RETINEX_CONTEDIT_LH;Hue

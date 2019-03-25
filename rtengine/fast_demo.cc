@@ -62,7 +62,7 @@ void RawImageSource::fast_demosaic()
     //int winw=W, winh=H;
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_FAST")));
         plistener->setProgress (progress);
     }
 
