@@ -120,7 +120,6 @@ FILEBROWSER_APPLYPROFILE;Pas profiel toe
 FILEBROWSER_APPLYPROFILE_PARTIAL;Pas profiel toe (gedeeltelijk)
 FILEBROWSER_AUTODARKFRAME;Automatisch donkerframe
 FILEBROWSER_AUTOFLATFIELD;Selecteer automatisch vlakveldopname
-FILEBROWSER_BROWSEPATHBUTTONHINT;Klik om te navigeren naar het gekozen pad
 FILEBROWSER_BROWSEPATHHINT;Typ het pad naar de doelmap.\n<b>Ctrl-O</b> markeer het pad in het tekstveld.\n<b>Enter</b> / <b>Ctrl-Enter</b> open de map.\n<b>Esc</b> maak het tekstveld leeg.\n<b>Shift-Esc</b> verwijder markering.\n\n\nSneltoetsen:\n  <b>~</b> - gebruikers home directory\n  <b>!</b> - gebruikers afbeeldingen map
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Verwijder profiel
@@ -764,7 +763,6 @@ MAIN_FRAME_FILEBROWSER;Bestandsnavigator
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Bestandsnavigator.\nSneltoets: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Locaties
 MAIN_FRAME_PLACES_ADD;Nieuw
-MAIN_FRAME_PLACES_DEL;Wis
 MAIN_FRAME_RECENT;Recente mappen
 MAIN_MSG_ALREADYEXISTS;Bestand bestaat reeds.
 MAIN_MSG_CANNOTLOAD;Fout bij laden
@@ -1316,7 +1314,6 @@ TP_CROP_GTTRIANGLE2;Gouden Driehoek 2
 TP_CROP_GUIDETYPE;Hulplijnen:
 TP_CROP_H;Hoogte
 TP_CROP_LABEL;Bijsnijden
-TP_CROP_PPI;PPI=
 TP_CROP_W;Breedte
 TP_CROP_X;X
 TP_CROP_Y;Y
@@ -2053,6 +2050,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !DYNPROFILEEDITOR_IMGTYPE_STD;Standard
 !EXIFFILTER_IMAGETYPE;Image type
 !EXIFPANEL_SHOWALL;Show all
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !GENERAL_CURRENT;Current
@@ -2180,6 +2178,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !ICCPROFCREATOR_SLOPE;Slope
 !ICCPROFCREATOR_TRC_PRESET;Tone response curve:
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
@@ -2240,6 +2239,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
@@ -2284,6 +2289,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_COLORTONING_LABREGION_SATURATION;Saturation
 !TP_COLORTONING_LABREGION_SHOWMASK;Show mask
 !TP_COLORTONING_LABREGION_SLOPE;Slope
+!TP_CROP_PPI;PPI
 !TP_CROP_RESETCROP;Reset
 !TP_CROP_SELECTCROP;Select
 !TP_DEHAZE_DEPTH;Depth
@@ -2301,14 +2307,14 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
 !TP_LENSPROFILE_USE_CA;Chromatic aberration
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
-!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
@@ -2346,6 +2352,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
 !TP_RAW_RCD;RCD
 !TP_RAW_RCDVNG4;RCD+VNG4
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_CONTEDIT_MAP;Equalizer
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)

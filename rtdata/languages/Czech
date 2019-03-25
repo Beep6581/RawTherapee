@@ -158,7 +158,6 @@ FILEBROWSER_APPLYPROFILE;Použít
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplikovat - částečně
 FILEBROWSER_AUTODARKFRAME;Automatický tmavý snímek
 FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
-FILEBROWSER_BROWSEPATHBUTTONHINT;Klikněte pro výběr cesty.
 FILEBROWSER_BROWSEPATHHINT;Vložte cestu pro procházení.\n\nKlávesové zkratky:\n<b>Ctrl-o</b> pro přepnutí do adresního řádku.\n<b>Enter</b>/ <b>Ctrl-Enter</b> pro procházení ;\n<b>Esc</b> pro zrušení změn.\n<b>Shift-Esc</b> pro zrušení přepnutí.\n\nZkratky pro cesty:\n<b>~</b>\t- domácí složka uživatele.\n<b>!</b>\t- složka s obrázky uživatele.
 FILEBROWSER_CACHE;Mezipaměť
 FILEBROWSER_CACHECLEARFROMFULL;Smazat vše včetně profilů zpracování v mezipaměti
@@ -927,7 +926,6 @@ MAIN_FRAME_FILEBROWSER;Prohlížeč souborů
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Prohlížeč souborů.\nZkratka: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Místa
 MAIN_FRAME_PLACES_ADD;Přidat
-MAIN_FRAME_PLACES_DEL;Odstranit
 MAIN_FRAME_RECENT;Poslední složky
 MAIN_MSG_ALREADYEXISTS;Soubor již existuje.
 MAIN_MSG_CANNOTLOAD;Nepodařilo se načíst obrázek
@@ -1568,7 +1566,6 @@ TP_CROP_GTTRIANGLE2;Zlaté trojúhelníky 2
 TP_CROP_GUIDETYPE;Druh vodítek:
 TP_CROP_H;Výška
 TP_CROP_LABEL;Ořez
-TP_CROP_PPI;PPI=
 TP_CROP_RESETCROP;Obnovit
 TP_CROP_SELECTCROP;Vybrat
 TP_CROP_W;Šířka
@@ -1815,15 +1812,10 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Pracuje s posuvníkem barevnosti a CC křivkou.
 TP_LENSGEOM_AUTOCROP;Automatický ořez
 TP_LENSGEOM_FILL;Automatické vyplnění
 TP_LENSGEOM_LABEL;Objektiv / Geometrie
-TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automaticky
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP soubor
-TP_LENSPROFILE_CORRECTION_MANUAL;Ručně
 TP_LENSPROFILE_LABEL;Korekční profily objektivů
 TP_LENSPROFILE_LENS_WARNING;Varování: crop factor použitý pro profilování objektivu je větší než crop factor fotoaparátu. Výsledek může být nesprávný.
-TP_LENSPROFILE_MODE_HEADER;Výběr profilu objektivu:
 TP_LENSPROFILE_USE_CA;Chromatická aberace
-TP_LENSPROFILE_USE_GEOMETRIC;Geometrická
-TP_LENSPROFILE_USE_HEADER;Vyberte zkreslení na opravu:
 TP_LENSPROFILE_USE_VIGNETTING;Vinětace
 TP_LOCALCONTRAST_AMOUNT;Míra
 TP_LOCALCONTRAST_DARKNESS;Úroveň tmavé
@@ -2345,7 +2337,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 !PREFERENCES_CHUNKSIZES;Tiles per thread
@@ -2356,5 +2350,19 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !PREFERENCES_CHUNKSIZE_RGB;RGB processing
 !PREFERENCES_PERFORMANCE_MEASURE;Measure
 !PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
+!TP_CROP_PPI;PPI
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_SHARPENING_BLUR;Blur radius

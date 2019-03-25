@@ -148,7 +148,6 @@ FILEBROWSER_APPLYPROFILE;プロファイルの適用
 FILEBROWSER_APPLYPROFILE_PARTIAL;プロファイルの適用 (一部)
 FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
-FILEBROWSER_BROWSEPATHBUTTONHINT;クリックで選択したパスをブラウズ
 FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-O</b> パスのテキストボックスにフォーカス\n<b>Enter</b> / <b>Ctrl-Enter</b>その場所をブラウズします\n<b>Esc</b> 変更をクリア\n<b>Shift-Esc</b>フォーカスを削除\nパスのショートカット:\n  <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
 FILEBROWSER_CACHE;cache
 FILEBROWSER_CACHECLEARFROMFULL;プロファイルを含めcache内をクリアにする
@@ -920,7 +919,6 @@ MAIN_FRAME_FILEBROWSER;ファイルブラウザ
 MAIN_FRAME_FILEBROWSER_TOOLTIP; ファイル・ブラウザ\nショートカット: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;場所
 MAIN_FRAME_PLACES_ADD;追加
-MAIN_FRAME_PLACES_DEL;削除
 MAIN_FRAME_RECENT;最近開いたフォルダ
 MAIN_MSG_ALREADYEXISTS;ファイルはすでに存在します
 MAIN_MSG_CANNOTLOAD;画像読み込みできません
@@ -1563,7 +1561,6 @@ TP_CROP_GTTRIANGLE2;三角構図2
 TP_CROP_GUIDETYPE;ガイドタイプ:
 TP_CROP_H;高さ
 TP_CROP_LABEL;切り抜き
-TP_CROP_PPI;PPI=
 TP_CROP_RESETCROP;リセット
 TP_CROP_SELECTCROP;セレクト
 TP_CROP_W;W 幅
@@ -1810,15 +1807,10 @@ TP_LABCURVE_RSTPRO_TOOLTIP;色度スライダーとCCカーブを使用するこ
 TP_LENSGEOM_AUTOCROP;自動的に切り抜き選択
 TP_LENSGEOM_FILL;オートフィル
 TP_LENSGEOM_LABEL;レンズ / ジオメトリ
-TP_LENSPROFILE_CORRECTION_AUTOMATCH;自動で
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCPファイル
-TP_LENSPROFILE_CORRECTION_MANUAL;手動で
 TP_LENSPROFILE_LABEL;レンズ補正 プロファイル
 TP_LENSPROFILE_LENS_WARNING;注意：レンズプロファイルに使われるクロップファクターはカメラのクロップファクターより大きいので、誤った結果になる可能性があります。
-TP_LENSPROFILE_MODE_HEADER;レンズプロファイルを選択
 TP_LENSPROFILE_USE_CA;色収差
-TP_LENSPROFILE_USE_GEOMETRIC;歪曲収差
-TP_LENSPROFILE_USE_HEADER;補正する収差を選択:
 TP_LENSPROFILE_USE_VIGNETTING;周辺光量
 TP_LOCALCONTRAST_AMOUNT;量
 TP_LOCALCONTRAST_DARKNESS;暗い部分のレベル
@@ -2342,6 +2334,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
+!MAIN_FRAME_PLACES_DEL;Remove
 !PREFERENCES_CHUNKSIZES;Tiles per thread
 !PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
 !PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
@@ -2350,4 +2344,18 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !PREFERENCES_CHUNKSIZE_RGB;RGB processing
 !PREFERENCES_PERFORMANCE_MEASURE;Measure
 !PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
+!TP_CROP_PPI;PPI
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans

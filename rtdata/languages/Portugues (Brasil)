@@ -116,7 +116,6 @@ FILEBROWSER_APPLYPROFILE;Aplicar
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplicar - parcial
 FILEBROWSER_AUTODARKFRAME;Quadro escuro automático
 FILEBROWSER_AUTOFLATFIELD;Flat-field automático
-FILEBROWSER_BROWSEPATHBUTTONHINT;Clique para navegar até o caminho escolhido.
 FILEBROWSER_BROWSEPATHHINT;Digite um caminho para navegar até.\n\nAtalhos do teclado:\n<b>Ctrl-o</b> para focar na caixa de texto do caminho.\n<b>Enter</b> / <b>Ctrl-Enter</b> para navegar lá.\n<b>Esc</b> para limpar as alterações.\n<b>Shift-Esc</b> para remover o foco.\n\nAtalhos do caminho:\n<b>~</b>	- diretório home do usuário.\n<b>!</b>	- diretório de fotos do usuário
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Limpar tudo incluindo os perfis na cache
@@ -887,7 +886,6 @@ MAIN_FRAME_FILEBROWSER;Navegador de Arquivos
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Navegador de arquivos.\nAtalho: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Locais
 MAIN_FRAME_PLACES_ADD;Adicionar
-MAIN_FRAME_PLACES_DEL;Remover
 MAIN_FRAME_RECENT;Pastas Recentes
 MAIN_MSG_ALREADYEXISTS;O arquivo já existe.
 MAIN_MSG_CANNOTLOAD;Não é possível carregar a imagem
@@ -1537,7 +1535,6 @@ TP_CROP_GTTRIANGLE2;Triângulos Dourados 2
 TP_CROP_GUIDETYPE;Tipo de guia:
 TP_CROP_H;Altura
 TP_CROP_LABEL;Cortar
-TP_CROP_PPI;PPI:
 TP_CROP_RESETCROP;Repor
 TP_CROP_SELECTCROP;Selecionar
 TP_CROP_W;Largura
@@ -1788,14 +1785,9 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Funciona no controle deslizante de cromaticidade e na
 TP_LENSGEOM_AUTOCROP;Corte automático
 TP_LENSGEOM_FILL;Preenchimento automático
 TP_LENSGEOM_LABEL;Lente / Geometria
-TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automaticamente
 TP_LENSPROFILE_CORRECTION_LCPFILE;Ficheiro LCP
-TP_LENSPROFILE_CORRECTION_MANUAL;Manualmente
 TP_LENSPROFILE_LABEL;Correção de lente perfilada
-TP_LENSPROFILE_MODE_HEADER;Selecione o perfil da lente:
 TP_LENSPROFILE_USE_CA;Aberração cromática
-TP_LENSPROFILE_USE_GEOMETRIC;Geometria
-TP_LENSPROFILE_USE_HEADER;Selecione distorções a corrigir:
 TP_LENSPROFILE_USE_VIGNETTING;Vinhetagem
 TP_LOCALCONTRAST_AMOUNT;Montante
 TP_LOCALCONTRAST_DARKNESS;Nível de escuridão
@@ -2316,12 +2308,28 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
 !HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
+!MAIN_FRAME_PLACES_DEL;Remove
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
 !TP_COLORTONING_LABREGION_OFFSET;Offset
 !TP_COLORTONING_LABREGION_POWER;Power
+!TP_CROP_PPI;PPI
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
