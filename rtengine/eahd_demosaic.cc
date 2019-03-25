@@ -216,7 +216,7 @@ void RawImageSource::eahd_demosaic ()
 {
     BENCHFUN
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_EAHD")));
         plistener->setProgress (0.0);
     }
 

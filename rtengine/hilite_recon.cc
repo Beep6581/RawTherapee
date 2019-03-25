@@ -391,7 +391,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     double progress = 0.0;
 
     if (plistener) {
-        plistener->setProgressStr ("HL reconstruction...");
+        plistener->setProgressStr ("PROGRESSBAR_HLREC");
         plistener->setProgress (progress);
     }
 

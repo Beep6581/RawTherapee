@@ -52,7 +52,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
     volatile double progress = 0.0;
 
     if (plistener) {
-        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD)));
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_RCD")));
         plistener->setProgress(0);
     }
     
