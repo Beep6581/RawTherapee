@@ -1,7 +1,7 @@
 # Common source files for both CLI and non-CLI execautables
 set(CLISOURCEFILES
     alignedmalloc.cc
-    edit.cc
+    editcallbacks.cc
     main-cli.cc
     multilangmgr.cc
     options.cc
@@ -49,8 +49,10 @@ set(NONCLISOURCEFILES
     dirpyrequalizer.cc
     distortion.cc
     dynamicprofilepanel.cc
-    edit.cc
+    editbuffer.cc
+    editcallbacks.cc
     editorpanel.cc
+    editwidgets.cc
     editwindow.cc
     epd.cc
     exiffiltersettings.cc

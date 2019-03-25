@@ -22,9 +22,11 @@
 
 #include "mydiagonalcurve.h"
 
-#include "edit.h"
+#include "editcallbacks.h"
 
 #include "../rtengine/curves.h"
+#include <cstring>
+#include <gdkmm/types.h>
 
 MyDiagonalCurve::MyDiagonalCurve () :
     MyCurve(),
@@ -993,9 +995,9 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
         return;
     }
 
-    pipetteR = provider->pipetteVal[0];
-    pipetteG = provider->pipetteVal[1];
-    pipetteB = provider->pipetteVal[2];
+    pipetteR = provider->getPipetteVal1();
+    pipetteG = provider->getPipetteVal2();
+    pipetteB = provider->getPipetteVal3();
     pipetteVal = 0.f;
 
     if (listener) {

@@ -22,7 +22,7 @@
 #include "popuptogglebutton.h"
 #include "../rtengine/LUT.h"
 #include "coloredbar.h"
-#include "edit.h"
+#include "editcallbacks.h"
 #include "mydiagonalcurve.h"
 #include "myflatcurve.h"
 
@@ -128,11 +128,11 @@ public:
     sigc::signal<void> signal_curvepoint_release();
 
     void switchOffEditMode () override;
-    bool mouseOver(const int modifierKey) override;
-    bool button1Pressed(const int modifierKey) override;
+    bool mouseOver(int modifierKey) override;
+    bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
-    bool drag1(const int modifierKey) override;
-    CursorShape getCursor(const int objectID) override;
+    bool drag1(int modifierKey) override;
+    CursorShape getCursor(int objectID) const override;
 
 
 };

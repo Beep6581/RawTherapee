@@ -23,8 +23,7 @@
 #include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
-
-#include "../rtgui/edit.h"
+#include "../rtgui/editcallbacks.h"
 
 namespace
 {
@@ -90,7 +89,7 @@ void Crop::setListener(DetailedCropListener* il)
 
 EditUniqueID Crop::getCurrEditID()
 {
-    EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
+    const EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
     return subscriber ? subscriber->getEditID() : EUID_None;
 }
 
@@ -103,7 +102,7 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber)
     MyMutex::MyLock lock(cropMutex);
 
     // At this point, editCrop.dataProvider->currSubscriber is the old subscriber
-    EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
+    const EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
 
     if (newSubscriber == nullptr || (oldSubscriber != nullptr && oldSubscriber->getPipetteBufferType() != newSubscriber->getPipetteBufferType())) {
         if (PipetteBuffer::imgFloatBuffer != nullptr) {
@@ -832,7 +831,7 @@ void Crop::update(int todo)
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
-        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, 
+        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
@@ -991,7 +990,7 @@ void Crop::update(int todo)
             parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
         }
 
-        parent->ipf.softLight(labnCrop);        
+        parent->ipf.softLight(labnCrop);
 
         //     }
 

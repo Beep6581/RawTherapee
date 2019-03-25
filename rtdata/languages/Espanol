@@ -176,7 +176,6 @@ FILEBROWSER_APPLYPROFILE;Aplicar perfil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplicar perfil (parcial)
 FILEBROWSER_AUTODARKFRAME;Toma Negra automática
 FILEBROWSER_AUTOFLATFIELD;Campo plano automático
-FILEBROWSER_BROWSEPATHBUTTONHINT;Pulsar para examinar la carpeta seleccionada
 FILEBROWSER_BROWSEPATHHINT;Ingrese la ruta a examinar \n<b>Ctrl-O</b> poner el foco en campo con la ruta\n<b>Enter</b> / <b>Ctrl-Enter</b> para examinar allí;\n<b>Esc</b>Para quitar los cambios.\n<b>Shift-Esc</b> Para quitar el foco.\n\n\nAbreviaturas de ruta:\n  <b>~</b> - Carpeta hogar del usuario\n  <b>!</b> - Carpeta de imágenes del usuario
 FILEBROWSER_CACHE;Caché
 FILEBROWSER_CACHECLEARFROMFULL;Limpiar del caché - Total
@@ -952,7 +951,6 @@ MAIN_FRAME_FILEBROWSER;Explorador de archivos
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Explorador de archivos.\nTecla de Atajo: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Ubicaciones
 MAIN_FRAME_PLACES_ADD;Añadir
-MAIN_FRAME_PLACES_DEL;Borrar
 MAIN_FRAME_RECENT;Carpetas recientes
 MAIN_MSG_ALREADYEXISTS;Este archivo ya existe.
 MAIN_MSG_CANNOTLOAD;No se puede abrir imagen
@@ -1650,7 +1648,6 @@ TP_CROP_GTTRIANGLE2;Triángulos de oro(áureo)2
 TP_CROP_GUIDETYPE;Clase de guía:
 TP_CROP_H;Al
 TP_CROP_LABEL;Recortar
-TP_CROP_PPI;Ptos/Pulgada=
 TP_CROP_RESETCROP;Reiniciar
 TP_CROP_SELECTCROP;Seleccionar recorte
 TP_CROP_W;Ancho
@@ -1902,18 +1899,13 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Puede usarse con el deslizador Cromaticidad y con la 
 TP_LENSGEOM_AUTOCROP;Auto recorte
 TP_LENSGEOM_FILL;Auto relleno
 TP_LENSGEOM_LABEL;Lente / Geometría
-TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automáticamente
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP archivo
-TP_LENSPROFILE_CORRECTION_MANUAL;Manual
 TP_LENSPROFILE_LABEL;Perfil de corrección de lente
 TP_LENSPROFILE_LENS_WARNING;Advertencia: el factor de recorte utilizado para el perfilado de la lente es mayor que el factor de recorte de la cámara, los resultados pueden ser incorrectos.
-TP_LENSPROFILE_MODE_HEADER;Seleccione el perfil de la lente:
 TP_LENSPROFILE_USECA;Corrección de AC
 TP_LENSPROFILE_USEDIST;Corrección de distorsión
 TP_LENSPROFILE_USEVIGN;Corrección de viñeteo
 TP_LENSPROFILE_USE_CA;Aberración cromática
-TP_LENSPROFILE_USE_GEOMETRIC;Geométrico
-TP_LENSPROFILE_USE_HEADER;Seleccione distorsiones para corregir:
 TP_LENSPROFILE_USE_VIGNETTING;Viñeteado
 TP_LOCALCONTRAST_AMOUNT;Cantidad
 TP_LOCALCONTRAST_DARKNESS;Nivel de sombras
@@ -2456,8 +2448,32 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !CURVEEDITOR_CATMULLROM;Flexible
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
+!PREFERENCES_CHUNKSIZES;Tiles per thread
+!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
+!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
+!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
+!PREFERENCES_CHUNKSIZE_RGB;RGB processing
+!PREFERENCES_PERFORMANCE_MEASURE;Measure
+!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
+!TP_CROP_PPI;PPI
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_SHARPENING_BLUR;Blur radius

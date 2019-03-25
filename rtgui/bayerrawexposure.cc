@@ -19,6 +19,7 @@
 #include "bayerrawexposure.h"
 
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
