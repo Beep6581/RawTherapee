@@ -1836,7 +1836,7 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry ()
     isrc->getImageSource()->getFullSize (fullW, fullH, pparams.coarse.rotate == 90 || pparams.coarse.rotate == 270 ? TR_R90 : TR_NONE);
     int prevh = BatchQueue::calcMaxThumbnailHeight();
     int prevw = int ((size_t)fullW * (size_t)prevh / (size_t)fullH);
-    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prevw, prevh, openThm);
+    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prevw, prevh, openThm, options.overwriteOutputFile);
 }
 
 
@@ -1929,6 +1929,7 @@ void EditorPanel::saveAsPressed ()
             BatchQueueEntry* bqe = createBatchQueueEntry ();
             bqe->outFileName = fnameOut;
             bqe->saveFormat = saveAsDialog->getFormat ();
+            bqe->overwriteFile = !saveAsDialog->getAutoSuffix();
             bqe->forceFormatOpts = saveAsDialog->getForceFormatOpts ();
             parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
             fnameOK = true;

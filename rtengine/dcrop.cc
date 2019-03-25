@@ -97,7 +97,7 @@ void Crop::setListener(DetailedCropListener* il)
 
 EditUniqueID Crop::getCurrEditID()
 {
-    EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
+    const EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
     return subscriber ? subscriber->getEditID() : EUID_None;
 }
 
@@ -110,7 +110,7 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber)
     MyMutex::MyLock lock(cropMutex);
 
     // At this point, editCrop.dataProvider->currSubscriber is the old subscriber
-    EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
+    const EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
 
     if (newSubscriber == nullptr || (oldSubscriber != nullptr && oldSubscriber->getPipetteBufferType() != newSubscriber->getPipetteBufferType())) {
         if (PipetteBuffer::imgFloatBuffer != nullptr) {

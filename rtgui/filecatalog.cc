@@ -1216,7 +1216,7 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
             // processThumbImage is the processing intensive part, but adding to queue must be ordered
             //#pragma omp ordered
             //{
-            BatchQueueEntry* bqh = new BatchQueueEntry (pjob, params, fbe->filename, pw, ph, th);
+            BatchQueueEntry* bqh = new BatchQueueEntry (pjob, params, fbe->filename, pw, ph, th, options.overwriteOutputFile);
             entries.push_back(bqh);
             //}
         }

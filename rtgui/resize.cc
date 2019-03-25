@@ -41,9 +41,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
 
-    Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
-    label->set_alignment(0., 0.);
-    combos->attach (*label, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO"), Gtk::ALIGN_START));
+    combos->attach (*label, 0, 1, 0, 1, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
     combos->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     // See Resize::methodChanged() when adding a new method.
@@ -52,9 +51,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     method->append (M("TP_RESIZE_NEAREST"));
     method->set_active (0);
 
-    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD")));
-    label->set_alignment(0., 0.);
-    combos->attach (*label, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD"), Gtk::ALIGN_START));
+    combos->attach (*label, 0, 1, 1, 2, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
     combos->attach (*method, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     spec = Gtk::manage (new MyComboBoxText ());
@@ -64,9 +62,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     spec->append (M("TP_RESIZE_FITBOX"));
     spec->set_active (0);
 
-    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY")));
-    label->set_alignment(0., 0.);
-    combos->attach (*label, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY"), Gtk::ALIGN_START));
+    combos->attach (*label, 0, 1, 2, 3, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
     combos->attach (*spec, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     pack_start (*combos, Gtk::PACK_SHRINK, 4);
