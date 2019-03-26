@@ -731,23 +731,23 @@ OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustri
                Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
 {
     if (!normalImage.empty()) {
-        normalImg->setImage(normalImage);
+        normalImg = Cairo::RefPtr<RTSurface>(new RTSurface(normalImage));
     }
 
     if (!prelightImage.empty()) {
-        prelightImg->setImage(prelightImage);
+        prelightImg = Cairo::RefPtr<RTSurface>(new RTSurface(prelightImage));
     }
 
     if (!activeImage.empty()) {
-        activeImg->setImage(activeImage);
+        activeImg = Cairo::RefPtr<RTSurface>(new RTSurface(activeImage));
     }
 
     if (!draggedImage.empty()) {
-        draggedImg->setImage(draggedImage);
+        draggedImg = Cairo::RefPtr<RTSurface>(new RTSurface(draggedImage));
     }
 
     if (!insensitiveImage.empty()) {
-        insensitiveImg->setImage(insensitiveImage);
+        insensitiveImg = Cairo::RefPtr<RTSurface>(new RTSurface(insensitiveImage));
     }
 }
 
