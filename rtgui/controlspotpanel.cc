@@ -1388,7 +1388,7 @@ CursorShape ControlSpotPanel::getCursor(int objectID)
     }
 }
 
-const bool ControlSpotPanel::mouseOver(int modifierKey)
+bool ControlSpotPanel::mouseOver(int modifierKey)
 {
     EditDataProvider* editProvider_ = getEditProvider();
     const auto s = treeview_.get_selection();
