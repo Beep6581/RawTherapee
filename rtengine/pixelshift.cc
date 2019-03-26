@@ -553,7 +553,7 @@ BENCHFUN
     static const float ePerIsoILCE7RM3 = 0.8f;
 
     if(plistener) {
-        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)));
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_PIXELSHIFT")));
         plistener->setProgress(0.0);
     }
 

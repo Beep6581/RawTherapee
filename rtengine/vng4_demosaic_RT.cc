@@ -94,7 +94,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
     const bool plistenerActive = plistener;
 
     if (plistenerActive) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_VNG4")));
         plistener->setProgress (progress);
     }
 

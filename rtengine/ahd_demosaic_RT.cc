@@ -56,7 +56,7 @@ void RawImageSource::ahd_demosaic()
 
     double progress = 0.0;
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AHD")));
         plistener->setProgress (0.0);
     }
 

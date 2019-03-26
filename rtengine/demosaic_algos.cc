@@ -74,7 +74,7 @@ void RawImageSource::ppg_demosaic()
     if (plistener) {
         // looks like ppg isn't supported anymore
         //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::ppg)));
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("GENERAL_NA")));
         plistener->setProgress (0.0);
     }
 
@@ -383,7 +383,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
     if (plistener) {
         // this function seems to be unused
         //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::jdl)));
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("GENERAL_NA")));
         plistener->setProgress (0.0);
     }
 
@@ -578,7 +578,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &r
     }
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_LMMSE")));
         plistener->setProgress (0.0);
     }
 
@@ -1154,7 +1154,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     chr[3] = vdif;
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_IGV")));
         plistener->setProgress (0.0);
     }
 
@@ -1543,7 +1543,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
     hdif  = (float (*))    calloc(width * height / 2, sizeof * hdif);
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_IGV")));
         plistener->setProgress (0.0);
     }
 
@@ -2674,7 +2674,7 @@ BENCHFUN
     double currentProgress = 0.0;
 
     if(plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_DCB")));
         plistener->setProgress (currentProgress);
     }
 

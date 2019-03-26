@@ -1113,7 +1113,7 @@ public:
         }
     }
 
-    void getPipetteData (T &valueR, T &valueG, T &valueB, int posX, int posY, int squareSize, int tran) const
+    void getPipetteData (T &valueR, T &valueG, T &valueB, int posX, int posY, const int squareSize, int tran) const
     {
         int x;
         int y;

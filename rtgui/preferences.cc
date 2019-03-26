@@ -176,11 +176,7 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     sigc::connection setc = cr_set->signal_toggled().connect (sigc::mem_fun (*this, &Preferences::behSetRadioToggled));
 
     behTreeView->get_column (1)->add_attribute (*cr_add, "visible", behavColumns.visible);
-    behTreeView->get_column (1)->set_sizing (Gtk::TREE_VIEW_COLUMN_FIXED);
-    behTreeView->get_column (1)->set_fixed_width (50);
     behTreeView->get_column (2)->add_attribute (*cr_set, "visible", behavColumns.visible);
-    behTreeView->get_column (2)->set_sizing (Gtk::TREE_VIEW_COLUMN_FIXED);
-    behTreeView->get_column (2)->set_fixed_width (50);
 
     // fill model
     Gtk::TreeModel::iterator mi, ci;
@@ -556,10 +552,10 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     saveParamsPreference->append (M ("PREFERENCES_PROFILESAVEINPUT"));
     saveParamsPreference->append (M ("PREFERENCES_PROFILESAVECACHE"));
     saveParamsPreference->append (M ("PREFERENCES_PROFILESAVEBOTH"));
-    Gtk::Label *splab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILESAVELOCATION") + ":"));
+    Gtk::Label *splab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILESAVELOCATION") + ":", Gtk::ALIGN_START));
     vbdp->attach (*splab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     vbdp->attach (*saveParamsPreference, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILELOADPR") + ":"));
+    Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILELOADPR") + ":", Gtk::ALIGN_START));
     loadParamsPreference = Gtk::manage (new Gtk::ComboBoxText ());
     loadParamsPreference->append (M ("PREFERENCES_PROFILEPRCACHE"));
     loadParamsPreference->append (M ("PREFERENCES_PROFILEPRFILE"));
@@ -618,13 +614,13 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     // Crop
     Gtk::Frame *cropFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CROP")));
     Gtk::Grid *cropGrid = Gtk::manage(new Gtk::Grid());
-    Gtk::Label *cropGuidesLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": "));
+    Gtk::Label *cropGuidesLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ", Gtk::ALIGN_START));
     cropGuidesCombo = Gtk::manage(new Gtk::ComboBoxText());
     cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_NONE"));
     cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_FRAME"));
     cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_FULL"));
     cropAutoFitCB = Gtk::manage(new Gtk::CheckButton());
-    Gtk::Label *cropAutoFitLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT")));
+    Gtk::Label *cropAutoFitLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT"), Gtk::ALIGN_START));
     cropAutoFitLbl->set_line_wrap(true);
     cropAutoFitCB->add(*cropAutoFitLbl);
     cropGrid->attach(*cropGuidesLbl, 0, 0, 1, 1);
@@ -648,7 +644,7 @@ Gtk::Widget* Preferences::getPerformancePanel ()
 
     Gtk::Frame* fprevdemo = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_PREVDEMO")));
     Gtk::HBox* hbprevdemo = Gtk::manage (new Gtk::HBox (false, 4));
-    Gtk::Label* lprevdemo = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PREVDEMO_LABEL")));
+    Gtk::Label* lprevdemo = Gtk::manage (new Gtk::Label (M("PREFERENCES_PREVDEMO_LABEL"), Gtk::ALIGN_START));
     cprevdemo = Gtk::manage (new Gtk::ComboBoxText ());
     cprevdemo->append (M ("PREFERENCES_PREVDEMO_FAST"));
     cprevdemo->append (M ("PREFERENCES_PREVDEMO_SIDECAR"));
@@ -1275,7 +1271,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     vbro->pack_start (*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
     Gtk::HBox* hbrecent = Gtk::manage ( new Gtk::HBox () );
-    Gtk::Label* labrecent = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_MAXRECENTFOLDERS") + ":") );
+    Gtk::Label* labrecent = Gtk::manage (new Gtk::Label (M("PREFERENCES_MAXRECENTFOLDERS") + ":", Gtk::ALIGN_START));
     maxRecentFolders = Gtk::manage ( new Gtk::SpinButton () );
     hbrecent->pack_start (*labrecent, Gtk::PACK_SHRINK, 4);
     hbrecent->pack_start (*maxRecentFolders, Gtk::PACK_SHRINK, 4);
@@ -1288,11 +1284,11 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
 
 
     Gtk::Frame* frmnu = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_MENUOPTIONS")) );
-    
+
     Gtk::Grid* menuGrid = Gtk::manage(new Gtk::Grid());
     menuGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(menuGrid, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     ckbmenuGroupRank = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPRANK")) );
     setExpandAlignProperties(ckbmenuGroupRank, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     ckbmenuGroupLabel = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPLABEL")) );
@@ -1300,12 +1296,15 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     setExpandAlignProperties(ckbmenuGroupFileOperations, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     ckbmenuGroupProfileOperations = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPPROFILEOPERATIONS")) );
     ckbmenuGroupExtProg = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPEXTPROGS")) );
-    
+
+    Gtk::Label* groupRestartNeeded = Gtk::manage(new Gtk::Label (Glib::ustring ("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")", Gtk::ALIGN_START));
+
     menuGrid->attach (*ckbmenuGroupRank, 0, 0, 1, 1);
     menuGrid->attach (*ckbmenuGroupLabel, 1, 0, 1, 1);
     menuGrid->attach (*ckbmenuGroupFileOperations, 0, 1, 1, 1);
     menuGrid->attach (*ckbmenuGroupProfileOperations, 1, 1, 1, 1);
-    menuGrid->attach (*ckbmenuGroupExtProg, 0, 2, 2, 1);
+    menuGrid->attach (*ckbmenuGroupExtProg, 0, 2, 1, 1);
+    menuGrid->attach (*groupRestartNeeded, 1, 2, 1, 1);
 
     frmnu->add (*menuGrid);
 
@@ -1313,7 +1312,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     Gtk::Frame* fre = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PARSEDEXT")) );
     Gtk::VBox* vbre = Gtk::manage ( new Gtk::VBox () );
     Gtk::HBox* hb0 = Gtk::manage ( new Gtk::HBox () );
-    Gtk::Label* elab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_PARSEDEXTADD") + ":") );
+    Gtk::Label* elab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PARSEDEXTADD") + ":", Gtk::ALIGN_START));
     hb0->pack_start (*elab, Gtk::PACK_SHRINK, 4);
     extension = Gtk::manage ( new Gtk::Entry () );
     extension->set_width_chars (5);
@@ -1455,14 +1454,14 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     vbSounds->pack_start (*ckbSndEnable, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hblSndHelp = Gtk::manage (new Gtk::HBox ());
-    Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_HELP")));
+    Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP"), Gtk::ALIGN_START));
     hblSndHelp->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
     vbSounds->pack_start (*hblSndHelp, Gtk::PACK_SHRINK, 4);
 
     // BatchQueueDone
     Gtk::HBox* pBatchQueueDone = Gtk::manage ( new Gtk::HBox() );
 
-    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring (":")));
+    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
     pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 4);
 
     txtSndBatchQueueDone = Gtk::manage (new Gtk::Entry());
@@ -1473,13 +1472,13 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     // LngEditProcDone
     Gtk::HBox* pSndLngEditProcDone = Gtk::manage ( new Gtk::HBox() );
 
-    Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring (":")));
+    Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 4);
 
     txtSndLngEditProcDone = Gtk::manage (new Gtk::Entry());
     pSndLngEditProcDone->pack_start (*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_THRESHOLDSECS") + Glib::ustring (":")));
+    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_THRESHOLDSECS") + Glib::ustring (":"), Gtk::ALIGN_START));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
 
     spbSndLngEditProcDoneSecs = Gtk::manage ( new Gtk::SpinButton () );

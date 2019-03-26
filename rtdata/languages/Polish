@@ -93,7 +93,6 @@ FILEBROWSER_APPLYPROFILE;Zastosuj profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Zastosuj częściowy profil
 FILEBROWSER_AUTODARKFRAME;Automatyczne użycie czarnej klatki
 FILEBROWSER_AUTOFLATFIELD;Automatyczne użycie klatki typu puste pole
-FILEBROWSER_BROWSEPATHBUTTONHINT;Należy kliknąć, aby przeglądać wybraną ścieżkę
 FILEBROWSER_BROWSEPATHHINT;Umożliwia przeglądanie wprowadzonej ścieżki\n<b>Ctrl-o</b> zaznaczenie\n<b>Enter</b>, <b>Ctrl-Enter</b> (w menedżerze plików) przeglądanie\nSkróty:\n  <b>~</b>      - katalog domowy użytkownika\n  <b>!</b>        - katalog z obrazami użytkownia
 FILEBROWSER_CACHE;Pamięć podręczna
 FILEBROWSER_CLEARPROFILE;Wyczyść profil
@@ -539,7 +538,6 @@ MAIN_FRAME_FILEBROWSER;Przeglądarka plików
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Przeglądarka plików.\nSkrót: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Miejsca 
 MAIN_FRAME_PLACES_ADD;Dodaj
-MAIN_FRAME_PLACES_DEL;Usuń
 MAIN_FRAME_RECENT;Ostatnio używane foldery
 MAIN_MSG_ALREADYEXISTS;Plik już istnieje.
 MAIN_MSG_CANNOTLOAD;Nie można wczytać obrazu
@@ -1027,7 +1025,6 @@ TP_CROP_GTRULETHIRDS;Trójpodział
 TP_CROP_GUIDETYPE;Typ pomocy:
 TP_CROP_H;Wysokość
 TP_CROP_LABEL;Kadrowanie
-TP_CROP_PPI;PPI=
 TP_CROP_W;Szerokość
 TP_CROP_X;X
 TP_CROP_Y;Y
@@ -1433,6 +1430,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
 !EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
@@ -1758,6 +1756,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
@@ -1796,6 +1795,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_CHUNKSIZES;Tiles per thread
+!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
+!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
+!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
+!PREFERENCES_CHUNKSIZE_RGB;RGB processing
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CMMBPC;Black point compensation
@@ -1834,6 +1839,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_MEASURE;Measure
+!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
@@ -1861,6 +1868,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PROFILEPANEL_PDYNAMIC;Dynamic
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
@@ -1914,11 +1927,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
+!TP_CROP_PPI;PPI
 !TP_CROP_RESETCROP;Reset
 !TP_CROP_SELECTCROP;Select
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
-!TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+!TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
@@ -1978,14 +1992,14 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
 !TP_LENSPROFILE_USE_CA;Chromatic aberration
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
-!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
@@ -2067,6 +2081,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_RAW_RCD;RCD
 !TP_RAW_RCDVNG4;RCD+VNG4
 !TP_RAW_VNG4;VNG4
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_CONTEDIT_HSL;HSL histogram
 !TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram

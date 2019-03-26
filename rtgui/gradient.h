@@ -52,11 +52,11 @@ public:
     void setEditProvider (EditDataProvider* provider) override;
 
     // EditSubscriber interface
-    CursorShape getCursor(const int objectID) override;
-    bool mouseOver(const int modifierKey) override;
-    bool button1Pressed(const int modifierKey) override;
+    CursorShape getCursor(int objectID) const override;
+    bool mouseOver(int modifierKey) override;
+    bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
-    bool drag1(const int modifierKey) override;
+    bool drag1(int modifierKey) override;
     void switchOffEditMode () override;
 };
 
