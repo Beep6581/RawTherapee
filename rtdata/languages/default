@@ -2094,7 +2094,7 @@ TP_LOCALLAB_SHAPETYPE;Shape RT-spot area
 TP_LOCALLAB_SHAPE_TOOLTIP;Rectangle is only in normal mode.
 TP_LOCALLAB_ELI;Elipse
 TP_LOCALLAB_RECT;Rectangle
-TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows
+TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows.\n\nCan be used as graduated filter (increase Scope)
 TP_LOCALLAB_SHARP;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
 TP_LOCALLAB_SHARAMOUNT;Amount
@@ -2115,7 +2115,7 @@ TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWSTRUC;Show structure
 TP_LOCALLAB_USEMASK;Use mask
-TP_LOCALLAB_SHADHIGH;Shadows Highlights
+TP_LOCALLAB_SHADHIGH;Shadows Highlights - Gradient
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
 TP_LOCALLAB_SOFT;Soft Light
 TP_LOCALLAB_STRENG;Strength
