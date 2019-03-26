@@ -38,7 +38,7 @@ void EditSubscriber::setEditID(EditUniqueID ID, BufferType buffType)
     bufferType = buffType;
 }
 
-const bool EditSubscriber::isCurrentSubscriber() const
+bool EditSubscriber::isCurrentSubscriber() const
 {
     //if (provider && provider->getCurrSubscriber())
     //  return provider->getCurrSubscriber()->getEditID() == ID;
@@ -69,27 +69,27 @@ void EditSubscriber::switchOffEditMode()
     unsubscribe();
 }
 
-const  EditUniqueID EditSubscriber::getEditID() const
+EditUniqueID EditSubscriber::getEditID() const
 {
     return ID;
 }
 
-const EditType EditSubscriber::getEditingType() const
+EditType EditSubscriber::getEditingType() const
 {
     return editingType;
 }
 
-const  BufferType EditSubscriber::getPipetteBufferType() const
+BufferType EditSubscriber::getPipetteBufferType() const
 {
     return bufferType;
 }
 
-const bool EditSubscriber::isDragging() const
+bool EditSubscriber::isDragging() const
 {
     return action == EditSubscriber::Action::DRAGGING;
 }
 
-const bool EditSubscriber::isPicking() const
+bool EditSubscriber::isPicking() const
 {
     return action == EditSubscriber::Action::PICKING;
 }
@@ -133,7 +133,7 @@ void EditDataProvider::switchOffEditMode()
     }
 }
 
-int EditDataProvider::getObject()
+int EditDataProvider::getObject() const
 {
     return object;
 }
@@ -143,17 +143,17 @@ void EditDataProvider::setObject(int newObject)
     object = newObject;
 }
 
-float EditDataProvider::getPipetteVal1()
+float EditDataProvider::getPipetteVal1() const
 {
     return pipetteVal1;
 }
 
-float EditDataProvider::getPipetteVal2()
+float EditDataProvider::getPipetteVal2() const
 {
     return pipetteVal2;
 }
 
-float EditDataProvider::getPipetteVal3()
+float EditDataProvider::getPipetteVal3() const
 {
     return pipetteVal3;
 }
@@ -173,7 +173,7 @@ void EditDataProvider::setPipetteVal3(float newVal)
     pipetteVal3 = newVal;
 }
 
-const CursorShape EditDataProvider::getCursor(int objectID) const
+CursorShape EditDataProvider::getCursor(int objectID) const
 {
     if (currSubscriber) {
         currSubscriber->getCursor(objectID);
@@ -187,74 +187,92 @@ EditSubscriber* EditDataProvider::getCurrSubscriber() const
     return currSubscriber;
 }
 
-EditDataProvider* EditSubscriber::getEditProvider () {
+EditDataProvider* EditSubscriber::getEditProvider()
+{
     return provider;
 }
 
-const CursorShape EditSubscriber::getCursor (int objectID) const {
+CursorShape EditSubscriber::getCursor(int objectID) const
+{
     return CSHandOpen;
 }
 
-const bool EditSubscriber::mouseOver (const int modifierKey) {
+bool EditSubscriber::mouseOver(int modifierKey)
+{
     return false;
 }
 
-bool EditSubscriber::button1Pressed (const int modifierKey) {
+bool EditSubscriber::button1Pressed(int modifierKey)
+{
     return false;
 }
 
-bool EditSubscriber::button1Released () {
+bool EditSubscriber::button1Released()
+{
     return false;
 }
 
-bool EditSubscriber::button2Pressed (const int modifierKey) {
+bool EditSubscriber::button2Pressed(int modifierKey)
+{
     return false;
 }
 
-bool EditSubscriber::button2Released () {
+bool EditSubscriber::button2Released()
+{
     return false;
 }
 
-bool EditSubscriber::button3Pressed (const int modifierKey) {
+bool EditSubscriber::button3Pressed(int modifierKey)
+{
     return false;
 }
 
-bool EditSubscriber::button3Released () {
+bool EditSubscriber::button3Released()
+{
     return false;
 }
 
-bool EditSubscriber::drag1 (const int modifierKey) {
+bool EditSubscriber::drag1(int modifierKey)
+{
     return false;
 }
 
-bool EditSubscriber::drag2 (const int modifierKey) {
+bool EditSubscriber::drag2(int modifierKey)
+{
     return false;
 }
 
-bool EditSubscriber::drag3 (const int modifierKey) {
+bool EditSubscriber::drag3(int modifierKey)
+{
     return false;
 }
 
-bool EditSubscriber::pick1 (const bool picked) {
+bool EditSubscriber::pick1(bool picked)
+{
     return false;
 }
 
-bool EditSubscriber::pick2 (const bool picked) {
+bool EditSubscriber::pick2(bool picked)
+{
     return false;
 }
 
-bool EditSubscriber::pick3 (const bool picked) {
+bool EditSubscriber::pick3(bool picked)
+{
     return false;
 }
 
-const std::vector<Geometry*>& EditSubscriber::getVisibleGeometry () {
+const std::vector<Geometry*>& EditSubscriber::getVisibleGeometry()
+{
     return visibleGeometry;
 }
 
-const std::vector<Geometry*>& EditSubscriber::getMouseOverGeometry () {
+const std::vector<Geometry*>& EditSubscriber::getMouseOverGeometry()
+{
     return mouseOverGeometry;
 }
 
-const int EditDataProvider::getPipetteRectSize () const {
+int EditDataProvider::getPipetteRectSize() const
+{
     return 8; // TODO: make a GUI
 }
