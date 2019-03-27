@@ -306,7 +306,7 @@ public:
     void InverseReti_Local(const struct local_params& lp, const float hueref, const float chromaref,  const float lumaref, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy, int chro, int sk);
     void BlurNoise_Local(int call, LabImage* tmp1, LabImage* tmp2, float ** buflight, float ** bufchro, const float hueref, const float chromaref, const float lumaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
     static void strcurv_data(std::string retistr, int *s_datc, int &siz);
-    void blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, JaggedArray<float> & blend2, int sk, bool multiThread, float & meansob);
+    void blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread);
 
     void vibrancelocal(int sp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve);
     void transit_shapedetect(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
