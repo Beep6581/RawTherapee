@@ -1148,7 +1148,26 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"FE 53 5C 80 24 24 84 06", "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)"},
     {"FE 54 5C 80 24 24 DF 0E", "Tamron SP 70-200mm f/2.8 Di VC USD (A009)"},
     {"FE 54 64 64 24 24 DF 0E", "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1 (F004)"},
-    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"}
+    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"},
+
+    // There are cases where one lens uses multiple IDs which change based on the focal length or aperture.
+    // These IDs cannot be listed using ExifTool, and so must be entered manually below.
+    // #4135
+
+    {"92 2B 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (210mm)
+    {"92 2C 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (185mm)
+    {"92 2D 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (155mm)
+    {"92 2E 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (130mm)
+    {"92 2F 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (105mm)
+    {"92 30 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (90mm)
+    {"92 32 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (75mm)
+    {"92 33 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (62mm)
+    {"92 35 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (52mm)
+    {"92 37 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (44mm)
+    {"92 39 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (38mm)
+    {"92 3A 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (32mm)
+    {"92 3E 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (22mm)
+    {"92 40 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"} // (18mm)
 };
 
 const TagAttrib nikonISOInfoAttribs[] = {
