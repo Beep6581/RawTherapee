@@ -289,13 +289,24 @@ endif()
 
 # Check for libraries:
 find_package(PkgConfig)
+
 if(WIN32)
-pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.22.24)
-pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.22)
+    pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.22.24)
+    pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.22)
 else()
-pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.16)
-pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.16)
+    pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.16)
+    pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.16)
 endif()
+
+if(GTK_VERSION VERSION_GREATER "3.24.1" AND GTK_VERSION VERSION_LESS "3.24.7")
+    if(GTK_VERSION VERSION_EQUAL "3.24.5")
+        set(CERTAINTY "known to")
+    else()
+        set(CERTAINTY "likely to")
+    endif()
+    message(WARNING "\nWarning! You are using GTK+ version " ${GTK_VERSION} " which is " ${CERTAINTY} " have an issue where combobox menu scroll-arrows are missing when a Gtk::ComboBox list does not fit vertically on the screen. As a result, users of your build will not be able to select items in the following comboboxes: Processing Profiles, Film Simulation, and the camera and lens profiles in Profiled Lens Correction.\nIt is recommended that you either downgrade GTK+ to <= 3.24.1 or upgrade to >= 3.24.7.")
+endif()
+
 pkg_check_modules (GLIB2   REQUIRED glib-2.0>=2.44)
 pkg_check_modules (GLIBMM  REQUIRED glibmm-2.4>=2.44)
 pkg_check_modules (CAIROMM REQUIRED cairomm-1.0)
@@ -330,7 +341,6 @@ find_package(ZLIB REQUIRED)
 if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
 endif()
-
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND(NOT APPLE))
@@ -409,7 +419,6 @@ int main()
         endif()
     endif()
 endif()
-
 
 # Find out whether we are building out of source:
 get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
