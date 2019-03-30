@@ -322,6 +322,25 @@ public:
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
 };
 
+class Ellipse : public Geometry
+{
+public:
+    rtengine::Coord center;
+    int radYT; // Ellipse half-radius for top y-axis
+    int radY; // Ellipse half-radius for bottom y-axis
+    int radXL; // Ellipse half-radius for left x-axis
+    int radX; // Ellipse half-radius for right x-axis
+    bool filled;
+    bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
+
+    Ellipse ();
+    Ellipse (rtengine::Coord& center, int radYT, int radY, int radXL, int radX, bool filled = false, bool radiusInImageSpace = false);
+
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+};
+
 class Arcellipse : public Geometry
 {
 public:
@@ -545,6 +564,10 @@ inline Line::Line () :
         begin (10, 10), end (100, 100) {
 }
 
+inline Ellipse::Ellipse () :
+        center (100, 100), radYT (5), radY (5), radXL (10), radX (10), filled (false), radiusInImageSpace (false) {
+}
+
 inline Arcellipse::Arcellipse () :
         center (100, 100), radius (10), radius2 (10), translax (0), translay (0), filled (false), radiusInImageSpace (
                 false) {
@@ -568,6 +591,12 @@ inline Line::Line (rtengine::Coord& begin, rtengine::Coord& end) :
 
 inline Line::Line (int beginX, int beginY, int endX, int endY) :
         begin (beginX, beginY), end (endX, endY) {
+}
+
+inline Ellipse::Ellipse (rtengine::Coord& center, int radYT, int radY, int radXL, int radX,
+        bool filled, bool radiusInImageSpace) :
+        center (center), radYT (radYT), radY (radY), radXL (radXL), radX (radX), filled (filled),
+                radiusInImageSpace (radiusInImageSpace) {
 }
 
 inline Arcellipse::Arcellipse (rtengine::Coord& center, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled,
