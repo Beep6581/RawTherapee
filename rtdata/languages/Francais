@@ -244,7 +244,6 @@ GIMP_PLUGIN_INFO;Bienvenue dans le plugin RawTherapee de GIMP!\nUne fois l'édit
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
 HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_CHRO;Montrer/Cacher l'histogramme de Chromaticité
-HISTOGRAM_TOOLTIP_FULL;Basculer la vue de l'histogramme : complet (activé) / zoomé (désactivé)
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
 HISTOGRAM_TOOLTIP_MODE;Bascule entre une échelle linéaire, linéaire-log et log-log de l'histogramme.
@@ -782,7 +781,6 @@ HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
 HISTORY_SNAPSHOTS;Captures
-ICCPROFCREATOR_ADD_PARAM_IN_DESC;Ajoute le paramètre Gamma et Pente (Slope) à la fin de la description
 ICCPROFCREATOR_COPYRIGHT;Copyright:
 ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Réinitialise au copyright par défaut, attribué à "RawTherapee, CC0"
 ICCPROFCREATOR_CUSTOM;Personnalisé
@@ -924,8 +922,6 @@ MAIN_TAB_RAW;RAW
 MAIN_TAB_RAW_TOOLTIP;Raccourci:<b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TAB_TRANSFORM_TOOLTIP;Raccourci:<b>Alt-t</b>
-MAIN_TAB_WAVELET;Ondelettes
-MAIN_TAB_WAVELET_TOOLTIP;Raccourci: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Couleur de fond de l'aperçu: <b>Selon le thème</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Couleur de fond de l'aperçu: <b>Noir</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Couleur de fond de l'aperçu: <b>Blanc</b>\nRaccourci: <b>9</b>
@@ -1039,7 +1035,6 @@ PARTIALPASTE_SOFTLIGHT;Lumière douce
 PARTIALPASTE_TM_FATTAL;Compression de plage dynamique
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Correction du vignettage
-PARTIALPASTE_WAVELETGROUP;Niveaux d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
 PREFERENCES_ADD;Ajoute
 PREFERENCES_APPEARANCE;Apparence
@@ -1298,7 +1293,6 @@ SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_FILEFORMAT_FLOAT; virgule flottante
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
 SAVEDLG_JPEGQUAL;Qualité JPEG
-SAVEDLG_PNGCOMPR;Compression PNG
 SAVEDLG_PUTTOQUEUE;Placer dans la file de traitement
 SAVEDLG_PUTTOQUEUEHEAD;Placer au début de la file de traitement
 SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
@@ -1585,7 +1579,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminance
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Espace colorimétrique
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;Lab
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Réduction du bruit
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RVB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1606,7 +1599,6 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES;Itérations
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Appliquer trois itérations avec une taille de fenêtre de 3×3 aboutit souvent à de meilleurs résultats qu'une seule itération avec une taille de fenêtre de 7×7.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Type de médiane
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Applique un filtre médian de la taille de "fenêtre" désirée. Plus cette taille est grande, plus cela prendra de temps.\n\n3×3 doux: traite 5 pixels dans une fenêtre de 3×3 pixels.\n3×3: traite 9 pixels dans une fenêtre de 3×3 pixels.\n5×5 doux: traite 13 pixels dans une fenêtre de 5×5 pixels.\n5×5: traite 25 pixels dans une fenêtre de 5×5 pixels.\n7×7: traite 49 pixels dans une fenêtre de 7×7 pixels.\n9×9: traite 81 pixels dans une fenêtre 9×9 pixels.\n\nIl est parfois possible d'atteindre une meilleurs qualité en appliquant plusieurs itérations d'une petite fenêtre qu'une seule itération d'une grande.
-TP_DIRPYRDENOISE_PASSE;Itérations
 TP_DIRPYRDENOISE_SLI;Curseur
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 doux
@@ -1681,10 +1673,6 @@ TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Control de l'écrêtage
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;"Contrôle de l'écrêtage" évite les hautes lumière brûlées dûs à l'application du champ uniforme. S'il y a déjà des hautes lumières brûlées avant l'application du champ uniforme, "Contrôle de l'écrêtage" peut conduire à une dérive couleur.
 TP_FLATFIELD_LABEL;Champ Uniforme
-TP_GAMMA_CURV;Gamma:
-TP_GAMMA_CUSTOM;Manuel
-TP_GAMMA_OUTPUT_TRC_PRESET;Courbe de réponse tonale (TRC):
-TP_GAMMA_SLOP;Pente (linéaire):
 TP_GENERAL_11SCALE_TOOLTIP;Les effets de cet outil ne sont visible ou fiable qu'avec un aperçu à l'échelle 1:1.
 TP_GRADIENT_CENTER;Centre
 TP_GRADIENT_CENTER_X;Centre X
@@ -1891,7 +1879,6 @@ TP_RAW_LMMSE_TOOLTIP;Ajoute gamma (niveau 1) + médian (niveau 2-4) + affinage (
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Aucun (montre ce que voit le capteur)
 TP_RAW_PIXELSHIFT;Pixel Shift
-TP_RAW_PIXELSHIFTADAPTIVE;Détection adaptative
 TP_RAW_PIXELSHIFTBLUR;Flouter le masque de mouvement
 TP_RAW_PIXELSHIFTDMETHOD;Méthode de dématriçage pour les mouvements
 TP_RAW_PIXELSHIFTEPERISO;Sensibilité
@@ -1900,34 +1887,20 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT;Égaliser la luminosité des sous-images
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Égaliser par canal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Activé: Égalise les canaux RVB individuellement.\nDésactivé: Utilise le même facteur d'égalisation pour tous les canaux.
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Égalise la luminosité des sous-images à la luminosité de la sous-image sélectionnée.\nS'il y a des zones surexposées dans les sous-images, sélectionne la sous-image la plus lumineuse pour éviter des dérives coiuleurs magenta dans les zone surexposées ou permettre la détection de mouvement.
-TP_RAW_PIXELSHIFTEXP0;Expérimental
 TP_RAW_PIXELSHIFTGREEN;Vérifier le canal vert pour le mouvement
 TP_RAW_PIXELSHIFTHOLEFILL;Rempli les trous dans le masque de mouvement
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Rempli les trous dans le masque de mouvement
 TP_RAW_PIXELSHIFTLMMSE;Utilise LMMSE pour les zone de mouvement
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Utilise LMMSE au lieu d'AMaZE pour les zone de mouvement.\nutil pour les images de haut ISO.
-TP_RAW_PIXELSHIFTMASKTHRESHOLD;Nouveau seuil 3x3
 TP_RAW_PIXELSHIFTMEDIAN;Utilise la médiane pour les zones de mouvement
-TP_RAW_PIXELSHIFTMEDIAN3;Exclure la sous-image sélectionnée de la médiane
-TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Exclu la sous-image sélectionné de la médiane.\nUtil si mes objets en mouvement se chevauchent dans les sous-images 2 et 3
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Utilise la médianes de toutes les sous-images au lieu de la sous-images sélectionnée pour les zones de mouvement.\nRetir les objets qui sont à des endroits différents dans toutes les sous-images.\nDonne un effet de mouvement aux objets se déplaçant lentement (se chevauchant).
 TP_RAW_PIXELSHIFTMM_AUTO;Automatique
 TP_RAW_PIXELSHIFTMM_CUSTOM;Manuel
 TP_RAW_PIXELSHIFTMM_OFF;Arrêt
 TP_RAW_PIXELSHIFTMOTION;Niveau de détection de mouvement (dépréconisé)
-TP_RAW_PIXELSHIFTMOTIONCORRECTION;Taille de la correction de mouvement vert
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Correction de Mouvement
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 signifie pas de détection de mouvement.\n1 - 99 signifie que le mouvement sera détecté par-rapport à cette valeur. Augmentez cette valeur pour augmenter le taux de détection.\n100 signifie que la sous-image sélectionnée et dématricée en AMaZE sera utilisée tel quel.
-TP_RAW_PIXELSHIFTNONGREENAMAZE;Vérifier rouge/bleu AMaZE
 TP_RAW_PIXELSHIFTNONGREENCROSS;Vérifier les canaux rouge/bleu pour le mouvement
-TP_RAW_PIXELSHIFTNONGREENCROSS2;Vérifier vert AMaZE
-TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Vérifier rouge/bleu horizontal
-TP_RAW_PIXELSHIFTNONGREENVERTICAL;Vérifier rouge/bleu vertical
-TP_RAW_PIXELSHIFTNREADISO;Lire
-TP_RAW_PIXELSHIFTONEGREEN;Utiliser un seul canal vert
-TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Utilise un seul canal vert au lieu de faire la moyennes des deux canaux verts pour détecter les régions sans mouvement.
-TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Poid Rouge&Bleu
 TP_RAW_PIXELSHIFTSHOWMOTION;Voir le masque de mouvement
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Voir uniquement le masque
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Affiche le masque sans l'image.
@@ -1936,9 +1909,6 @@ TP_RAW_PIXELSHIFTSIGMA;Rayon de floutage
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Le rayon par défaut de 1.0 fonctionne généralement bien pour l'ISO de base.\nAugmentez cette valeur pour les images de haut ISO, 5.0 est un bon point de départ.\nContrôlez le masque de mouvement à chaque nouvelle valeur.
 TP_RAW_PIXELSHIFTSMOOTH;Adoucir les transitions
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Adouci les transitions entre les zones avec mouvement et les zones sans.\nRéglez à 0 pour désactiver l'adoucissement des transitions.\nRéglez à 1 pour obtenir soit le résultat du dématriçage AMaZE/LMMSE de la sous-image sélectionnée (selon que "Utilise LMMSE" est sélectionné), ou la médiane des 4 sous-images si "Utilise la médiane ..." est sélectionné.
-TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;Facteur DevStd Bleu
-TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;Facteur DevStd Vert
-TP_RAW_PIXELSHIFTSTDDEVFACTORRED;Facteur DevStd Rouge
 TP_RAW_RCD;RCD
 TP_RAW_RCDVNG4;RCD+VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Capteur à matrice de Bayer

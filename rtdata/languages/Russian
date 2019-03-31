@@ -234,7 +234,6 @@ GENERAL_WARNING;Внимание
 HISTOGRAM_TOOLTIP_B;Показать/скрыть синий канал гистограммы
 HISTOGRAM_TOOLTIP_BAR;Показать/скрыть панель отображения RGB\nНажмите правую кнопку мыши на предпросмотре изображения, чтобы заблокировать/разблокировать его
 HISTOGRAM_TOOLTIP_CHRO;Показать/скрыть хроматическую гистограмму
-HISTOGRAM_TOOLTIP_FULL;Переключить полную (выкл) или отмасштабированную (вкл) гистограмму
 HISTOGRAM_TOOLTIP_G;Показать/скрыть зелёный канал гистограммы
 HISTOGRAM_TOOLTIP_L;Показать/скрыть CIELAB гистограмму
 HISTOGRAM_TOOLTIP_R;Показать/скрыть красный канал гистограммы
@@ -921,7 +920,6 @@ SAVEDLG_AUTOSUFFIX;Автоматически добавлять суффикс 
 SAVEDLG_FILEFORMAT;Формат файла
 SAVEDLG_FORCEFORMATOPTS;Принудительно установить настройки сохранения
 SAVEDLG_JPEGQUAL;Качество JPEG
-SAVEDLG_PNGCOMPR;Сжатие PNG
 SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
 SAVEDLG_PUTTOQUEUEHEAD;Поместить в начало очереди на обработку
 SAVEDLG_PUTTOQUEUETAIL;Поместить в конец очереди на обработку
@@ -1094,7 +1092,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Яркость
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Яркость
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Цветовое пространство
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Подавление шума
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Для raw-изображений можно использовать как режим RGB так и L*a*b*.\n\nДля не-raw будет использован L*a*b* режим вне зависимости от выбора.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Гамма
@@ -1166,10 +1163,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Горизонтальная
 TP_FLATFIELD_BT_VERTHORIZ;Вертикальная + Горизонтальная
 TP_FLATFIELD_BT_VERTICAL;Вертикальная
 TP_FLATFIELD_LABEL;Плоское поле
-TP_GAMMA_CURV;гамма
-TP_GAMMA_FREE;Свободная гамма
-TP_GAMMA_OUTPUT;Выходная гамма
-TP_GAMMA_SLOP;наклонная (линейная)
 TP_GENERAL_11SCALE_TOOLTIP;Эффект от применения этого инструмента или одного из его компонентов будет виден лишь при просмотре в масштабе 1:1.
 TP_GRADIENT_CENTER;Центр
 TP_GRADIENT_CENTER_X;X-координата

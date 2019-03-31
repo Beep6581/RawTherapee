@@ -202,7 +202,6 @@ GENERAL_WARNING;Uwaga
 HISTOGRAM_TOOLTIP_B;Pokaż/Ukryj histogram błękitów.
 HISTOGRAM_TOOLTIP_BAR;Pokazuje/Ukrywa wskaźnik RGB.\nKliknięcie prawym przyciskiem myszy na podglądzie zdjęcia blokuje/odblokowuje.
 HISTOGRAM_TOOLTIP_CHRO;Pokaż/Ukryj histogram chromatyczności.
-HISTOGRAM_TOOLTIP_FULL;Przełącz histogram pełny (wyłączone)/skalowany (włączone).
 HISTOGRAM_TOOLTIP_G;Pokaż/Ukryj histogram zieleni.
 HISTOGRAM_TOOLTIP_L;Pokaż/Ukryj histogram luminancji CIELab.
 HISTOGRAM_TOOLTIP_R;Pokaż/Ukryj histogram czerwieni.
@@ -823,7 +822,6 @@ SAVEDLG_AUTOSUFFIX;Automatycznie dodaj przyrostek, jeżeli plik już istnieje
 SAVEDLG_FILEFORMAT;Format pliku
 SAVEDLG_FORCEFORMATOPTS;Wymuś opcje zapisu
 SAVEDLG_JPEGQUAL;Jakość JPEG
-SAVEDLG_PNGCOMPR;Kompresja PNG
 SAVEDLG_PUTTOQUEUE;Umieść w kolejce przetwarzania
 SAVEDLG_PUTTOQUEUEHEAD;Umieść na początku kolejki przetwarzania
 SAVEDLG_PUTTOQUEUETAIL;Umieść na końcu kolejki przetwarzania
@@ -1042,7 +1040,6 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;Krzywa luminancji
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Szczegółowość luminancji
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminacja
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Metoda
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Redukcja szumu
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Dla obrazów raw można używać metody RGB oraz L*a*b*.\n\nDla obrazów nie-raw metoda L*a*b* zostanie użyta niezależnie od wyboru.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1118,10 +1115,6 @@ TP_FLATFIELD_BT_VERTICAL;Pionowy
 TP_FLATFIELD_CLIPCONTROL;Zabezpieczenie przed obcinaniem
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Funkcja ta chroni przed obcinaniem podświetleń które może zaistnieć przy stosowaniu obrazów type "puste pole". Należy zachować ostrożność, ponieważ jeśli obcięte rejony istnieją przed zastosowaniem pustego pola, funkcja ta może spowodować zabarwienie tych rejonów które powinny być białe.
 TP_FLATFIELD_LABEL;Puste pole
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Dowolna gamma
-TP_GAMMA_OUTPUT;Wyjściowa gamma
-TP_GAMMA_SLOP;Nachylenie (liniowy)
 TP_GENERAL_11SCALE_TOOLTIP;Efekty tego narzędzia są widoczne bądź poprawne przy przybliżeniu 100% lub więcej.
 TP_GRADIENT_CENTER;Środek
 TP_GRADIENT_CENTER_X;Środek X

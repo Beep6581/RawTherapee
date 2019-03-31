@@ -212,7 +212,6 @@ GENERAL_WARNING;Varning
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer\nKlicka på höger musknapp på förhandsvisningen för att frysa
 HISTOGRAM_TOOLTIP_CHRO;Visa/Dölj kromananshistogrammet
-HISTOGRAM_TOOLTIP_FULL;Växla mellan fullt eller skalat histogram
 HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
 HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
 HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
@@ -705,8 +704,6 @@ MAIN_TAB_RAW;Råbild
 MAIN_TAB_RAW_TOOLTIP;Kortkommando: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Omvandla
 MAIN_TAB_TRANSFORM_TOOLTIP;Kortkommando: <b>Alt-t</b>
-MAIN_TAB_WAVELET;Wavelet
-MAIN_TAB_WAVELET_TOOLTIP;Kortkommando: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg: <b>Temabaserad</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg: <b>Svart</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg: <b>Vit</b>\nKortkommando: <b>9</b>
@@ -801,7 +798,6 @@ PARTIALPASTE_SHARPENING;Skärpa (Oskarp mask/RL)
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 PARTIALPASTE_VIBRANCE;Lyster
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
-PARTIALPASTE_WAVELETGROUP;Wavelet-nivåer
 PARTIALPASTE_WHITEBALANCE;Vitbalans
 PREFERENCES_ADD;Lägg till
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Översiktsvyns guidefärg
@@ -995,7 +991,6 @@ SAVEDLG_AUTOSUFFIX;Lägg automatiskt till en ändelse om filnamnet redan exister
 SAVEDLG_FILEFORMAT;Filformat
 SAVEDLG_FORCEFORMATOPTS;Kräv att inställningar sparas
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
-SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
 SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
 SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
@@ -1234,7 +1229,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminans
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminans
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Metod
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;Lab
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Brusreducering
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;För råfiler kan antingen RGB- eller Labmetoder användas.\n\nFör icke-råfiler kommer Labmetoden att användas, oavsett vad som är valt.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1314,10 +1308,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Horisontell
 TP_FLATFIELD_BT_VERTHORIZ;Vertikal + horisontell
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_LABEL;Plattfält
-TP_GAMMA_CURV;gamma
-TP_GAMMA_FREE;Obunden gamma
-TP_GAMMA_OUTPUT;Utmatningsgamma
-TP_GAMMA_SLOP;Lutning (linjär)
 TP_GENERAL_11SCALE_TOOLTIP;Effekten från det här verktyget eller några av dess underkomponenter syns endast då de visas  i 1:1-skala eller högre
 TP_GRADIENT_CENTER;Centrum
 TP_GRADIENT_CENTER_X;Centrum, X

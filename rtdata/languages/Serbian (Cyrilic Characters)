@@ -178,7 +178,6 @@ GENERAL_WARNING;Упозорење
 HISTOGRAM_TOOLTIP_B;Приказује плави хистограм
 HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
 HISTOGRAM_TOOLTIP_CHRO;Прикажи/сакриј хистограм хроминансе.
-HISTOGRAM_TOOLTIP_FULL;Укључује приказ потпуног или хистограма у размери.
 HISTOGRAM_TOOLTIP_G;Приказује зелени хистограм
 HISTOGRAM_TOOLTIP_L;Приказује ЦиеЛаб хитограм
 HISTOGRAM_TOOLTIP_R;Приказује црвени хистограм
@@ -735,14 +734,12 @@ PROGRESSBAR_SAVEPNG;Чувам PNG датотеку...
 PROGRESSBAR_SAVETIFF;Чувам TIFF датотеку...
 PROGRESSBAR_SNAPSHOT_ADDED;Додат је снимак
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профил измењен у разгледачу
-P_GAMMA_CURV;гама
 QINFO_ISO;ИСО
 QINFO_NOEXIF;Нису доступни Exif подаци.
 SAVEDLG_AUTOSUFFIX;Сам додај суфикс уколико датотека већ постоји
 SAVEDLG_FILEFORMAT;Формат датотеке
 SAVEDLG_FORCEFORMATOPTS;Приморај могућности за чување
 SAVEDLG_JPEGQUAL;JPEG квалитет
-SAVEDLG_PNGCOMPR;PNG паковање
 SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_PUTTOQUEUEHEAD;Премешта слику на почетак заказаних
 SAVEDLG_PUTTOQUEUETAIL;Премешта слику на крај заказаних
@@ -920,7 +917,6 @@ TP_DIRPYRDENOISE_ENH_TOOLTIP;Повећава квалитет уклањања 
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Детаљи луминансе
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Луминанса
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Начин
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Дирекционо пирамидно уклањање шума
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;РГБ
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;За рав слике можете користити РГБ или Лаб режиме.\n\nЗа остале слике се користи Лаб, без обзира на избор.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Гама
@@ -970,10 +966,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Хоризонтално
 TP_FLATFIELD_BT_VERTHORIZ;Хориз. и вертик.
 TP_FLATFIELD_BT_VERTICAL;Вертикално
 TP_FLATFIELD_LABEL;Равно поље
-TP_GAMMA_CURV;Гама
-TP_GAMMA_FREE;Гама слобода
-TP_GAMMA_OUTPUT;Излазна гама
-TP_GAMMA_SLOP;нагиб (линеарни)
 TP_GENERAL_11SCALE_TOOLTIP;Ефект овог алата или његових опција се види само у размери 1:1.
 TP_GRADIENT_CENTER;Центар
 TP_GRADIENT_CENTER_X;Центар X

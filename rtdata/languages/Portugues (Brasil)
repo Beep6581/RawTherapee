@@ -245,7 +245,6 @@ GIMP_PLUGIN_INFO;Bem-vindo ao plugin RawTherapee do GIMP!\nDepois de terminar de
 HISTOGRAM_TOOLTIP_B;Mostrar/Ocultar histograma azul.
 HISTOGRAM_TOOLTIP_BAR;Mostrar/ocultar barra do indicador RGB.\nClique com o botão direito do mouse na visualização da imagem para congelar/descongelar.
 HISTOGRAM_TOOLTIP_CHRO;Mostrar/Ocultar histograma de cromaticidade.
-HISTOGRAM_TOOLTIP_FULL;Alternar histograma completo (desligado) ou dimensionado (ligado).
 HISTOGRAM_TOOLTIP_G;Mostrar/Ocultar histograma verde.
 HISTOGRAM_TOOLTIP_L;Mostrar/Ocultar histograma de luminância CIELab.
 HISTOGRAM_TOOLTIP_MODE;Alternar entre o modo de escala linear, log-linear e log-log para o histograma.
@@ -781,7 +780,6 @@ HISTORY_NEWSNAPSHOT;Adicionar
 HISTORY_NEWSNAPSHOT_TOOLTIP;Atalho: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Instantâneo
 HISTORY_SNAPSHOTS;Instantâneos
-ICCPROFCREATOR_ADD_PARAM_IN_DESC;Anexar os valores Gama e Declive para a descrição
 ICCPROFCREATOR_COPYRIGHT;Direito Autoral:
 ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Restaurar para o direito autoral padrão, concedido a "RawTherapee, CC0"
 ICCPROFCREATOR_CUSTOM;Personalizado
@@ -1325,7 +1323,6 @@ TP_BWMIX_ALGO_LI;Linear
 TP_BWMIX_ALGO_SP;Efeitos especiais
 TP_BWMIX_ALGO_TOOLTIP;Linear: irá produzir uma reação normal <b>linear</b>.\nEfeitos especiais: produzirá efeitos especiais misturando canais <b>não linearmente</b>.
 TP_BWMIX_AUTOCH;Automático
-TP_BWMIX_AUTOCH_TIP;Calcular valores otimizando o Misturador de Canais.
 TP_BWMIX_CC_ENABLED;Ajustar cor complementar
 TP_BWMIX_CC_TOOLTIP;Ative para permitir o ajuste automático de cores complementares no modo ROYGCBPM.
 TP_BWMIX_CHANNEL;Equalizador de Luminância
@@ -1354,7 +1351,6 @@ TP_BWMIX_MET_DESAT;Dessaturação
 TP_BWMIX_MET_LUMEQUAL;Equalizador de Luminância
 TP_BWMIX_MIXC;Misturador de Canais
 TP_BWMIX_NEUTRAL;Restabelecer misturador
-TP_BWMIX_NEUTRAL_TIP;Restaurar todos os valores (Filtro de Cores, Misturador de Canais) para o padrão.
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;Fatores finais do RGB que cuidam de todas as opções do misturador.\n"Total" exibe a soma dos valores RGB:\n- sempre 100% no modo relativo\n- mais alto (mais claro) ou mais baixo (mais escuro) que 100% no modo absoluto.
 TP_BWMIX_RGB_TOOLTIP;Misture os canais RGB. Use predefinições para orientação.\nPreste atenção aos valores negativos que podem causar artefatos ou comportamento errático.
@@ -1673,10 +1669,6 @@ TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Controle de recorte
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;O controle de recorte evita realces recortados provocados pela aplicação do campo plano. Se já houver realces recortados antes da aplicação do campo plano, o controle de recorte pode levar à conversão de cores.
 TP_FLATFIELD_LABEL;Campo Plano
-TP_GAMMA_CURV;Gama
-TP_GAMMA_FREE;Gama livre
-TP_GAMMA_OUTPUT;Gama de saída
-TP_GAMMA_SLOP;Declive (linear)
 TP_GENERAL_11SCALE_TOOLTIP;Os efeitos dessa ferramenta só são visíveis ou são precisos numa escala prévia de 1:1.
 TP_GRADIENT_CENTER;Centro
 TP_GRADIENT_CENTER_X;Centro X

@@ -301,7 +301,6 @@ QINFO_ISO;ISO
 QINFO_NOEXIF;EXIF-tietoja ei saatavilla.
 SAVEDLG_FILEFORMAT;Tiedostomuoto
 SAVEDLG_JPEGQUAL;JPEG laatu (suurempi luku, parempi laatu)
-SAVEDLG_PNGCOMPR;PNG pakkaus (suurempi luku, enemmän pakkausta)
 SAVEDLG_PUTTOQUEUE;Laita käsittelyjonoon
 SAVEDLG_PUTTOQUEUEHEAD;Laita käsittelyjonon ensimmäiseksi
 SAVEDLG_PUTTOQUEUETAIL;Laita käsittelyjonon viimeiseksi

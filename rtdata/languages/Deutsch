@@ -324,7 +324,6 @@ GIMP_PLUGIN_INFO;Willkommen zum RawTherapee GIMP-Plugin!\nNach den Änderungen b
 HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden.
 HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein/ausblenden.
-HISTOGRAM_TOOLTIP_FULL;Skaliertes Histogramm ein/ausschalten.
 HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmischer-linearer und\nlogarithmischer-logarithmischer Skalierung um.
@@ -1004,8 +1003,6 @@ MAIN_TAB_RAW;RAW
 MAIN_TAB_RAW_TOOLTIP;Taste: <b>Alt</b> + <b>r</b>
 MAIN_TAB_TRANSFORM;Transformieren
 MAIN_TAB_TRANSFORM_TOOLTIP;Taste: <b>Alt</b> + <b>t</b>
-MAIN_TAB_WAVELET;Wavelet
-MAIN_TAB_WAVELET_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Hintergrundfarbe der Vorschau basierend auf dem <b>Oberflächendesign</b>.\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Hintergrundfarbe der Vorschau: <b>Schwarz\n</b>Taste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Hintergrundfarbe der Vorschau: <b>Weiß</b>\nTaste: <b>9</b>
@@ -1119,7 +1116,6 @@ PARTIALPASTE_SOFTLIGHT;Weiches Licht
 PARTIALPASTE_TM_FATTAL;Dynamikkompression
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
-PARTIALPASTE_WAVELETGROUP;Wavelet
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPEARANCE;Oberflächendesign (erfordert Neustart)
@@ -1370,7 +1366,6 @@ SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FILEFORMAT_FLOAT; Fließkomma
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
 SAVEDLG_JPEGQUAL;JPEG-Qualität
-SAVEDLG_PNGCOMPR;PNG-Kompression
 SAVEDLG_PUTTOQUEUE;Zur Warteschlange hinzufügen
 SAVEDLG_PUTTOQUEUEHEAD;An den Anfang der Warteschlange hinzufügen
 SAVEDLG_PUTTOQUEUETAIL;An das Ende der Warteschlange hinzufügen
@@ -1657,7 +1652,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminanz
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminanz
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Farbraum
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Rauschreduzierung
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Für RAW-Bilder kann entweder die RGB-\noder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der\nAuswahl immer die L*a*b*-Methode verwendet.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1752,10 +1746,6 @@ TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_CLIPCONTROL;Kontrolle zu heller Bereiche
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Verhindert das Abschneiden der Lichter. Wenn\nvor dem Anwenden des Weißbildes schon\nabgeschnittene Lichter vorhanden sind, kann\nes zu einem Farbstich kommen.
 TP_FLATFIELD_LABEL;Weißbild
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Freies Gamma
-TP_GAMMA_OUTPUT;Ausgabe-Gamma
-TP_GAMMA_SLOP;Gradient (linear)
 TP_GENERAL_11SCALE_TOOLTIP;Der Effekt dieses Werkzeugs ist nur in der 100%-Ansicht akkurat oder sichtbar.
 TP_GRADIENT_CENTER;Rotationsachse
 TP_GRADIENT_CENTER_X;Rotationsachse X
@@ -1967,7 +1957,6 @@ TP_RAW_LMMSE_TOOLTIP;Fügt Gamma (Stufe 1), Median (Stufe 2-4)\nund Optimierung 
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel-Shift
-TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
 TP_RAW_PIXELSHIFTDMETHOD;Bewegungsmethode
 TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
@@ -1976,34 +1965,20 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den aktuellen Frame an.\n\nSind überbelichtete Bereiche vorhanden wählen Sie den hellsten Frame aus um\nMagenta-Farbstiche zu vermeiden oder aktivieren Sie die Bewegungskorrektur.
-TP_RAW_PIXELSHIFTEXP0;Experimentell
 TP_RAW_PIXELSHIFTGREEN;Bewegung im Grün-Kanal erkennen
 TP_RAW_PIXELSHIFTHOLEFILL;Lücken in der Bewegungsmaske erkennen
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Lücken in der Bewegungsmaske erkennen.
 TP_RAW_PIXELSHIFTLMMSE;LMMSE für Bewegungsbereiche verwenden
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;LMMSE anstatt AMaZE für bewegte Bildbereiche verwenden.\nSinnvoll bei High-ISO-Aufnahmen.
-TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
 TP_RAW_PIXELSHIFTMEDIAN;Median
-TP_RAW_PIXELSHIFTMEDIAN3;Aktuellen Frame vom Median ausschließen.
-TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Schließt den aktuellen Frame vom Median aus.\nNützlich, wenn sich bewegte Objekte im Frame 2\nund 3 überlappen.
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Verwenden Sie den Median aller Frames anstelle des\nausgewählten Frames für Regionen mit Bewegung.\nEntfernt Objekte, die an verschiedenen Stellen in allen\nFrames vorkommen. Erzeugt einen Bewegungseffekt\nauf langsame (überlappende) Objekte.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
 TP_RAW_PIXELSHIFTMM_CUSTOM;Benutzerdefiniert
 TP_RAW_PIXELSHIFTMM_OFF;Aus
 TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
-TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Bewegungskorrektur
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 = Keine Bewegungserkennung\n1 - 99 = Bewegung wird entsprechend dem Wert erkannt.\nHöhere Werte erhöhen die Trefferquote\n100 = Der mit AMaZE interpolierte Frame wird verwendet.
-TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
 TP_RAW_PIXELSHIFTNONGREENCROSS;Bewegung im Rot/Blau-Kanal erkennen
-TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
-TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
-TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
-TP_RAW_PIXELSHIFTNREADISO;nRead
-TP_RAW_PIXELSHIFTONEGREEN;Benutze ein Grün
-TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Benutze ein Grün anstelle des\nDurchschnitts beider Grüns für\nBereiche ohne Bewegung.
-TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
@@ -2012,9 +1987,6 @@ TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Weicher Übergang zwischen Bereichen mit und ohne Bewegung.\n0 = Aus\n1 = AMaZE/LMMSE oder Median
-TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
-TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
-TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 TP_RAW_RCD;RCD
 TP_RAW_RCDVNG4;RCD + VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix

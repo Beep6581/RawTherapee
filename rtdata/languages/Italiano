@@ -198,7 +198,6 @@ GENERAL_WARNING;Attenzione
 HISTOGRAM_TOOLTIP_B;Mostra/Nascondi l'istogramma del Blu.
 HISTOGRAM_TOOLTIP_BAR;Mostra/Nascondi la barra RBG.\nPremi il tasto destro del mouse sull'anteprima dell'immagine per bloccarla/sbloccarla.
 HISTOGRAM_TOOLTIP_CHRO;Mostra/Nascondi l'istogramma di cromaticità.
-HISTOGRAM_TOOLTIP_FULL;Commuta tra istogramma pieno (premuto) o scalato (rilasciato).
 HISTOGRAM_TOOLTIP_G;Mostra/Nascondi l'istogramma del Verde.
 HISTOGRAM_TOOLTIP_L;Mostra/Nascondi l'istogramma di Luminanza CIELAB.
 HISTOGRAM_TOOLTIP_R;Mostra/Nascondi l'istogramma del Rosso.
@@ -773,7 +772,6 @@ SAVEDLG_AUTOSUFFIX;Aggiungi automaticamente un suffisso se il file esiste già
 SAVEDLG_FILEFORMAT;Formato file
 SAVEDLG_FORCEFORMATOPTS;Opzioni di salvataggio forzato
 SAVEDLG_JPEGQUAL;Qualità JPEG
-SAVEDLG_PNGCOMPR;Compressione PNG
 SAVEDLG_PUTTOQUEUE;Inserisci nella coda di sviluppo
 SAVEDLG_PUTTOQUEUEHEAD;Metti in cima alla coda di sviluppo
 SAVEDLG_PUTTOQUEUETAIL;Metti in fondo alla coda di sviluppo
@@ -956,7 +954,6 @@ TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Dettaglio di Luminanza
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminanza
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Metodo
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;Lab
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Riduzione Rumore
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Per immagini raw può essere usato il metodo RGB o Lab.\n\nPer immagini non raw verrà utilizzato il metodo Lab, indipendentemente dalla selezione.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1012,10 +1009,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Orizzontale
 TP_FLATFIELD_BT_VERTHORIZ;Vert. + Oriz.
 TP_FLATFIELD_BT_VERTICAL;Verticale
 TP_FLATFIELD_LABEL;Flat Field
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Gamma libero
-TP_GAMMA_OUTPUT;Gamma di uscita
-TP_GAMMA_SLOP;Pendenza (lineare)
 TP_GENERAL_11SCALE_TOOLTIP;L'effetto di questo strumento è visibile solo (o è accurato solo) con l'anteprima in scala 1:1.
 TP_GRADIENT_CENTER;Centro
 TP_GRADIENT_CENTER_X;Centro X

@@ -277,7 +277,6 @@ GIMP_PLUGIN_INFO;RawTherapee　GIMPプラグインにようこそ！\n画像編�
 HISTOGRAM_TOOLTIP_B;ブルー・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_BAR;RGBインジケーター・バーの表示/非表示\nプレビュー画像上でマウスの右ボタンクリックで 固定/開放
 HISTOGRAM_TOOLTIP_CHRO;色度・ヒストグラム 表示/非表示
-HISTOGRAM_TOOLTIP_FULL;完全/縮尺調整の表示切り替え
 HISTOGRAM_TOOLTIP_G;グリーン・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_L;CIEL*a*b* 輝度・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_MODE;ヒストグラムの尺度を線形、対数-線形、対数-対数でトグルします
@@ -1849,7 +1848,6 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;PDAFの場合は水平方向だ�
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;垂直方向
 TP_PREPROCESS_NO_FOUND;未検出
 TP_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Sonyのミラーレスカメラの一部では、PDAFイメージセンサが原因で、ゴーストが出るバックライトの画像でストライプノイズが発生することがあり、これを軽減します。
 TP_PRSHARPENING_LABEL;リサイズ後のシャープニング
 TP_PRSHARPENING_TOOLTIP;リサイズ後の画像をシャープニングします。但し、リサイズの方式がランチョスの場合に限ります。プレビュー画面でこの機能の効果を見ることは出来ません。使用法に関してはRawPediaを参照して下さい。
 TP_RAWCACORR_AUTO;自動補正

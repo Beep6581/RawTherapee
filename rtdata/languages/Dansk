@@ -301,7 +301,6 @@ QINFO_ISO;ISO
 QINFO_NOEXIF;Exif-data ikke tilgængelig.
 SAVEDLG_FILEFORMAT;Filformat
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
-SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PUTTOQUEUE;Sæt i bearbejdningskø
 SAVEDLG_PUTTOQUEUEHEAD;Sæt i begyndelsen af bearbejdningskøen
 SAVEDLG_PUTTOQUEUETAIL;Sæt i enden af bearbejdningskøen

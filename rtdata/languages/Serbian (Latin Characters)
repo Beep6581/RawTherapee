@@ -178,7 +178,6 @@ GENERAL_WARNING;Upozorenje
 HISTOGRAM_TOOLTIP_B;Prikazuje plavi histogram
 HISTOGRAM_TOOLTIP_BAR;Prikazuje/sakriva RGB indikator. Kliknite desni taster miša na umanjeni prikaz da zamrznete
 HISTOGRAM_TOOLTIP_CHRO;Prikaži/sakrij histogram hrominanse.
-HISTOGRAM_TOOLTIP_FULL;Uključuje prikaz potpunog ili histograma u razmeri.
 HISTOGRAM_TOOLTIP_G;Prikazuje zeleni histogram
 HISTOGRAM_TOOLTIP_L;Prikazuje CieLab hitogram
 HISTOGRAM_TOOLTIP_R;Prikazuje crveni histogram
@@ -735,14 +734,12 @@ PROGRESSBAR_SAVEPNG;Čuvam PNG datoteku...
 PROGRESSBAR_SAVETIFF;Čuvam TIFF datoteku...
 PROGRESSBAR_SNAPSHOT_ADDED;Dodat je snimak
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil izmenjen u razgledaču
-P_GAMMA_CURV;gama
 QINFO_ISO;ISO
 QINFO_NOEXIF;Nisu dostupni Exif podaci.
 SAVEDLG_AUTOSUFFIX;Sam dodaj sufiks ukoliko datoteka već postoji
 SAVEDLG_FILEFORMAT;Format datoteke
 SAVEDLG_FORCEFORMATOPTS;Primoraj mogućnosti za čuvanje
 SAVEDLG_JPEGQUAL;JPEG kvalitet
-SAVEDLG_PNGCOMPR;PNG pakovanje
 SAVEDLG_PUTTOQUEUE;Zakazuje sliku za obradu
 SAVEDLG_PUTTOQUEUEHEAD;Premešta sliku na početak zakazanih
 SAVEDLG_PUTTOQUEUETAIL;Premešta sliku na kraj zakazanih
@@ -920,7 +917,6 @@ TP_DIRPYRDENOISE_ENH_TOOLTIP;Povećava kvalitet uklanjanja šuma na uštrb oko 2
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detalji luminanse
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminansa
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Način
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Direkciono piramidno uklanjanje šuma
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Za rav slike možete koristiti RGB ili Lab režime.\n\nZa ostale slike se koristi Lab, bez obzira na izbor.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gama
@@ -970,10 +966,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Horizontalno
 TP_FLATFIELD_BT_VERTHORIZ;Horiz. i vertik.
 TP_FLATFIELD_BT_VERTICAL;Vertikalno
 TP_FLATFIELD_LABEL;Ravno polje
-TP_GAMMA_CURV;Gama
-TP_GAMMA_FREE;Gama sloboda
-TP_GAMMA_OUTPUT;Izlazna gama
-TP_GAMMA_SLOP;nagib (linearni)
 TP_GENERAL_11SCALE_TOOLTIP;Efekt ovog alata ili njegovih opcija se vidi samo u razmeri 1:1.
 TP_GRADIENT_CENTER;Centar
 TP_GRADIENT_CENTER_X;Centar X

@@ -305,7 +305,6 @@ GIMP_PLUGIN_INFO;¡Bienvenido al complemento GIMP de RawTherapee! \nUna vez que 
 HISTOGRAM_TOOLTIP_B;Mostrar/Ocultar Histograma Azul
 HISTOGRAM_TOOLTIP_BAR;Mostrar/Ocultar barra indicadora RGB\nHacer clic con el botón derecho del ratón en la previsualización para congelar/descongelar
 HISTOGRAM_TOOLTIP_CHRO;Mostrar/Ocultar Histograma de cromaticidad
-HISTOGRAM_TOOLTIP_FULL;Cambiar entre Histograma completo o escalado
 HISTOGRAM_TOOLTIP_G;Mostrar/Ocultar Histograma Verde
 HISTOGRAM_TOOLTIP_L;Mostrar/Ocultar Histograma de Luminancia CIELAB
 HISTOGRAM_TOOLTIP_MODE;Alterne entre la escala lineal, log-linear y log-log del histograma.
@@ -1108,14 +1107,8 @@ PREFERENCES_APPEARANCE_MAINFONT;Fuente principal
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Color de la guía del navegador
 PREFERENCES_APPEARANCE_THEME;Tema
 PREFERENCES_APPLNEXTSTARTUP;requiere reinicio
-PREFERENCES_AUTLISLOW;Bajo
-PREFERENCES_AUTLISMAX;Max - Promedio de todos los mosaicos
-PREFERENCES_AUTLISSTD;Alto
-PREFERENCES_AUTLISVLOW;Ninguno
-PREFERENCES_AUTLOW;Bajo
 PREFERENCES_AUTOMONPROFILE;Usar perfil de color del monitor principal en el sistema operativo 
 PREFERENCES_AUTOSAVE_TP_OPEN;Guardar automáticamente las herramientas contraídas/expandidas \nEstado antes de salir
-PREFERENCES_AUTSTD;Estandar
 PREFERENCES_BATCH_PROCESSING;Procesamiento por lotes
 PREFERENCES_BEHADDALL;Todo para 'Agregar'
 PREFERENCES_BEHADDALLHINT;Establezca todos los parámetros del modo <b>Agregar</b>.\nLos ajustes de parámetros en el panel de la herramienta de lotes serán <b>deltas</b> de los valores guardados
@@ -1124,9 +1117,6 @@ PREFERENCES_BEHSETALL;Todo para 'Establecer'
 PREFERENCES_BEHSETALLHINT;Todos los parámetros para el modo <b>Establecer</b>.\nLos ajustes de parámetros en el panel de la herramienta de lotes serán serán <b>absolutos</b>, se mostrarán los valores vigentes
 PREFERENCES_BLACKBODY;Tungsteno
 PREFERENCES_CACHECLEAR;Borrar
-PREFERENCES_CACHECLEARALL;Borrar todo
-PREFERENCES_CACHECLEARPROFILES;Borrar perfiles
-PREFERENCES_CACHECLEARTHUMBS;Borrar miniaturas
 PREFERENCES_CACHECLEAR_ALL;Borrar todos los archivos en caché:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Borre todos los archivos en caché excepto los perfiles de procesamiento en caché:
 PREFERENCES_CACHECLEAR_ONLYPROFILES;Borrar solo los perfiles de procesamiento en caché:
@@ -1134,10 +1124,6 @@ PREFERENCES_CACHECLEAR_SAFETY;Sólo se borran los archivos en el caché. Los per
 PREFERENCES_CACHEMAXENTRIES;Cantidad máxima de entradas en la memoria intermedia
 PREFERENCES_CACHEOPTS;Opciones de memoria intermedia
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima de las miniaturas
-PREFERENCES_CIEART;Optimización CIECAM02
-PREFERENCES_CIEART_FRAME;Configuración específica de CIECAM02
-PREFERENCES_CIEART_LABEL;Usar precisión flotante simple en lugar de doble.
-PREFERENCES_CIEART_TOOLTIP;Si se habilita, los cálculos CIECAM02 se realizan con precisión flotante simple en lugar de doble. Esto provee un pequeño aumento en la velocidad de cálculo a expensas de una casi imperceptible pérdida de calidad
 PREFERENCES_CLIPPINGIND;Indicación de recortes
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Número máximo de CLUTs en caché
@@ -1160,7 +1146,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Clave de formato
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nombre
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID Etiqueta
 PREFERENCES_CUSTPROFBUILDPATH;Ruta al programa ejecutable
-PREFERENCES_CUTOVERLAYBRUSH;Recortar máscara de color/transparencia
 PREFERENCES_D50;5000°K
 PREFERENCES_D50_OLD;5000°K
 PREFERENCES_D55;5500°K
@@ -1171,8 +1156,6 @@ PREFERENCES_DARKFRAMESHOTS;disparos
 PREFERENCES_DARKFRAMETEMPLATES;plantillas
 PREFERENCES_DATEFORMAT;Formato de fecha
 PREFERENCES_DATEFORMATHINT;<i>Puede usar las siguientes variables :</i>\n<b>%y</b><i> : año</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor ejemplo, la fecha en formato Húngaro es: </i>\n<b>%y/%m/%d</b>
-PREFERENCES_DAUB_LABEL;Use las wavelets D6 de Daubechies en lugar de D4
-PREFERENCES_DAUB_TOOLTIP;Las herramientas de reducción de ruido y niveles de wavelet utilizan una wavelet madre de Debauchies. Si elige D6 en lugar de D4, aumenta el número de coeficientes de Daubechies ortogonales y probablemente aumenta la calidad de los niveles de pequeña escala. \nNo hay diferencia entre los dos, en el uso de memoria o de tiempo de procesamiento.
 PREFERENCES_DIRDARKFRAMES;Carpeta con las Tomas Negras
 PREFERENCES_DIRECTORIES;Directorios
 PREFERENCES_DIRHOME;Carpeta de usuario
@@ -1182,7 +1165,6 @@ PREFERENCES_DIRSELECTDLG;Seleccionar carpeta de imágenes en el arranque...
 PREFERENCES_DIRSOFTWARE;Carpeta de instalación
 PREFERENCES_EDITORCMDLINE;Línea de comando personalizada
 PREFERENCES_EDITORLAYOUT;Disposición del editor
-PREFERENCES_EXPAUT;Experto
 PREFERENCES_EXTERNALEDITOR;Editor externo
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos/Miniaturas
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de herramientas del explorador en una sola fila (deseleccionar para pantallas de baja resolución)
@@ -1228,12 +1210,8 @@ PREFERENCES_INTENT_SATURATION;Saturación
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostrar miniatura JPEG incrustada si foto Raw no se ha editado
 PREFERENCES_LANG;Idioma
 PREFERENCES_LANGAUTODETECT;Usar idioma del sistema
-PREFERENCES_LEVAUTDN;Nivel de supresión de ruido
-PREFERENCES_LEVDN;Tamaño de celda
-PREFERENCES_LISS;Suavizado automático multizona
 PREFERENCES_MAX;Maxi (baldoza)
 PREFERENCES_MAXRECENTFOLDERS;Número máximo de carpetas recientes
-PREFERENCES_MED;Medio(Tile/2)
 PREFERENCES_MENUGROUPEXTPROGS;Grupo "Abrir con"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Grupo "Operaciones de archivo"
 PREFERENCES_MENUGROUPLABEL;Grupo "Etiquetado con color"
@@ -1247,9 +1225,7 @@ PREFERENCES_MONPROFILE;Perfil de color predeterminado
 PREFERENCES_MONPROFILE_WARNOSX;Debido a las limitaciones de MacOS, solo se admite sRGB.
 PREFERENCES_MULTITAB;Modo Editor de varias pestañas
 PREFERENCES_MULTITABDUALMON;Modo Editor de varias pestañas, si está disponible en segundo monitor
-PREFERENCES_NAVGUIDEBRUSH;Color de la guía del navegador
 PREFERENCES_NAVIGATIONFRAME;Navegación
-PREFERENCES_NOISE;Reducción de ruido
 PREFERENCES_OUTDIR;Carpeta de salida
 PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
 PREFERENCES_OUTDIRFOLDERHINT;Guardar las imágenes creadas en una carpeta elegida
@@ -1287,13 +1263,8 @@ PREFERENCES_PRTPROFILE;Perfil de color
 PREFERENCES_PSPATH;Carpeta de instalación de Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Recuerde el % de zoom y el desplazamiento del paneo
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Recuerde que el% de zoom y el desplazamiento de la panorámica de la imagen actual al abrir una nueva imagen. \nEsta opción solo funciona en el "Modo de pestaña Editor único" y cuando el "Método de demostración utilizado para la vista previa a <100% de zoom" está configurado en " Como en PP3 "
-PREFERENCES_RGBDTL_LABEL;Número máximo de hilos para reducción de ruido
-PREFERENCES_RGBDTL_TOOLTIP;La Reducción de Ruido requiere como base 128MB de RAM para una imagen de 10MPix o 512MB para una imagen de 40MPix; más 128MB RAM por hilo de proceso.\nMientras más hilos corren en paralelo, más rápido es el procesamiento. Coloque “0” para que automáticamente se use tantos hilos como sea posible según la capacidad de su equipo.
 PREFERENCES_SAVE_TP_OPEN_NOW;Guardar herramientas colapsadas/expandidas ahora
-PREFERENCES_SELECTFONT;Seleccionar fuente
-PREFERENCES_SELECTFONT_COLPICKER;Seleccione la fuente del Selector de color
 PREFERENCES_SELECTLANG;Seleccionar idioma
-PREFERENCES_SELECTTHEME;Seleccionar tema
 PREFERENCES_SERIALIZE_TIFF_READ;Configuración de lectura Tiff
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serializar la lectura de archivos tiff
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Cuando trabaje con carpetas llenas de archivos tiff sin comprimir, habilitar esta opción puede aumentar el rendimiento en la generación de la miniatura.
@@ -1303,17 +1274,13 @@ PREFERENCES_SHOWDATETIME;Mostrar fecha y hora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostrar compensación de exposición
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Mostrar barra de herramientas estilo tira de película
 PREFERENCES_SHTHRESHOLD;Umbral de sombras cortadas
-PREFERENCES_SIMPLAUT;Modo de herramienta
 PREFERENCES_SINGLETAB;Modo Editor de pestaña única
 PREFERENCES_SINGLETABVERTAB;Modo Editor de pestaña única, pestañas verticales
-PREFERENCES_SMA;A una escala pequeña(250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Trabajos en cola finalizados
 PREFERENCES_SND_HELP;Introducir el path o dejar en blanco (sin sonido). En Windows, usar "SystemDefault", "SystemAsterisk" etc. para los sonidos del sistema\nEn Linux use "complete", "window-attention" etc. para los sonidos del sistema.
 PREFERENCES_SND_LNGEDITPROCDONE;Procesado del editor terminado
 PREFERENCES_SND_THRESHOLDSECS;Despues de segundos
-PREFERENCES_SND_TRESHOLDSECS;después de seg.
 PREFERENCES_STARTUPIMDIR;Carpeta de imágenes en el arranque
-PREFERENCES_STDAUT;Estándar
 PREFERENCES_TAB_BROWSER;Explorador de archivos
 PREFERENCES_TAB_COLORMGR;Gestión del color
 PREFERENCES_TAB_DYNAMICPROFILE;Reglas de perfil dinámico
@@ -1321,24 +1288,15 @@ PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Procesamiento de imágenes
 PREFERENCES_TAB_PERFORMANCE;Rendimiento
 PREFERENCES_TAB_SOUND;Sonidos
-PREFERENCES_THEME;Tema
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Vista previa de JPEG incrustado
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Imagen para mostrar
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Representación (Render) Raw neutral
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;JPEG incrustado si es de tamaño completo, de lo contrario es neutral sin formato 
-PREFERENCES_TIMAX;Alto
-PREFERENCES_TINB;Número de mosaicos
-PREFERENCES_TISTD;Estándar
 PREFERENCES_TP_LABEL;Panel de herramientas:
-PREFERENCES_TP_USEICONORTEXT;Usar iconos de pestaña en lugar de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de desplazamiento vertical del panel de herramientas
 PREFERENCES_TUNNELMETADATA;Copie Exif / IPTC / XMP sin cambios en el archivo de salida
 PREFERENCES_USEBUNDLEDPROFILES;Usar perfiles empaquetados
 PREFERENCES_VIEW;Balance de blancos en el dispositivo de salida (monitor, TV, proyector...)
-PREFERENCES_WAVLEV;Aumentar el nivel de wavelet en calidad 'alta'
-PREFERENCES_WLONE;Un nivel
-PREFERENCES_WLTWO;Dos niveles
-PREFERENCES_WLZER;No
 PREFERENCES_WORKFLOW;Disposición
 PROFILEPANEL_COPYPPASTE;Parámetros a copiar
 PROFILEPANEL_GLOBALPROFILES;Perfiles empaquetados
@@ -1391,7 +1349,6 @@ SAVEDLG_FILEFORMAT;Formato de archivo
 SAVEDLG_FILEFORMAT_FLOAT; punto flotante
 SAVEDLG_FORCEFORMATOPTS;Opciones de guardar forzado
 SAVEDLG_JPEGQUAL;Calidad JPEG
-SAVEDLG_PNGCOMPR;Compresión PNG
 SAVEDLG_PUTTOQUEUE;Poner en la cola de procesamiento
 SAVEDLG_PUTTOQUEUEHEAD;Poner al principio de la cola de procesamiento
 SAVEDLG_PUTTOQUEUETAIL;Poner al final de la cola de procesamiento
@@ -1424,7 +1381,6 @@ TP_BWMIX_ALGO_LI;Lineal
 TP_BWMIX_ALGO_SP;Efectos especiales
 TP_BWMIX_ALGO_TOOLTIP;Lineal: producirá una respuesta <b>lineal</b> normal.\nEfectos especiales: producirá efectos especiales por mezclar <b>no linealmente</b> los canales.
 TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Calcular valores óptimos para el Mezclador de Canales
 TP_BWMIX_CC_ENABLED;Ajustar color complementario
 TP_BWMIX_CC_TOOLTIP;Permite el ajuste automático de colores complementarios en modo RNAmVCAzPM
 TP_BWMIX_CHANNEL;Ecualizador de luminancia
@@ -1453,7 +1409,6 @@ TP_BWMIX_MET_DESAT;Des-saturación
 TP_BWMIX_MET_LUMEQUAL;Ecualizador de Luminancia
 TP_BWMIX_MIXC;Mezclador
 TP_BWMIX_NEUTRAL;Restablece el mezclador
-TP_BWMIX_NEUTRAL_TIP;Restablece todos los parámetros (filtro, mezclador de canales) a sus valores predeterminados.
 TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   A: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;Factores finales RGB tomando en cuenta todas las opciones del mezclador\n<b>Total</b> muestra la suma de los valores RGB actualmente aplicados:\n- <b>En modo relativo</b> Siempre 100% \n- <b>En modo absoluto</b> mayor (más claro) o menor (más oscuro) que 100%
 TP_BWMIX_RGB_TOOLTIP;Mezcla de canales RGB. Use como guía valores pre-establecidos.\nTenga en cuenta que valores negativos pueden introducir elementos extraños (artifacts) o resultados erráticos.
@@ -1496,11 +1451,6 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotar a la izquierda.\nTecla de Atajo: ']'
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotar a la derecha
 TP_COARSETRAF_TOOLTIP_VFLIP;Voltear verticalmente
 TP_COLORAPP_ABSOLUTELUMINANCE;Luminancia absoluta
-TP_COLORAPP_ADAPTSCENE;Adaptación a la luminosidad de la escena
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminancia absoluta del entorno de la escena (cd/m²).\n1) Calculado en base a datos Exif: \nTiempo de Exposición - Velocidad ISO - Número F de apertura - Corrección de exposición\n2) Calculado a partir del Punto Blanco raw y Compensación de Exposición RT.
-TP_COLORAPP_ADAPTVIEWING;Luminosidad de visualización (cd/m²)
-TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminancia absoluta del entorno de visualización\n(usualmente 16cd/m²)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Si la casilla está seleccionada (como se recomienda) RT calcula el valor óptimo a partir de los datos Exif.\nPara establecer el valor manualmente, primero desmarque la casilla
 TP_COLORAPP_ALGO;Algoritmo
 TP_COLORAPP_ALGO_ALL;Todo
 TP_COLORAPP_ALGO_JC;Claridad + Crominancia (JC)
@@ -1531,8 +1481,6 @@ TP_COLORAPP_CURVEEDITOR3;Curva de color
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ajusta Crominancia, Saturación o Colorido.\n\nMuestra el <b>histograma de Cromaticidad (Lab) antes</b> de los ajustes CIECAM02.\nSi la casilla "Muestra en las curvas histogramas de salida CIECAM02" está seleccionada, muestra el <b>histograma de C, s o M después</b> de CIECAM02.\n\nC, s y M no se muestran en el histograma del panel principal.\n\nVea el histograma de salida final en el panel principal
 TP_COLORAPP_DATACIE;Curvas con histogramas de salida CIECAM02
 TP_COLORAPP_DATACIE_TOOLTIP;Si está seleccionada, los histogramas en las curvas CIECAM02 muestran aproximadamente <b>valores/rangos de J o Q, y C, s o M después</b> de los ajustes CIECAM02.\nEsta selección no influye en el histograma del panel principal.\n\nCuando no está seleccionada, los histogramas en las curvas CIECAM02 muestran <b>valores Lab antes</b> de los ajustes CIECAM02
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Si la casilla está seleccionada (como se recomienda), RT calcula el valor óptimo, que es usado por CAT02, y también por todo CIECAM02.\nPara establecer manualmente el valor, primero desmarque la casilla (se recomienda usar valores mayores a 65)
-TP_COLORAPP_DEGREE_TOOLTIP;Cantidad de transformación de adaptación cromática CIE 2002
 TP_COLORAPP_FREE;Libre tempera+verde + CAT02 + [output]
 TP_COLORAPP_GAMUT;Control de Gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Permite control de gamut en modo Lab
@@ -1551,8 +1499,6 @@ TP_COLORAPP_NEUTRAL;Restablecer
 TP_COLORAPP_NEUTRAL_TIP;Restablecer todos los controles deslizantes y las curvas a sus valores predeterminados
 TP_COLORAPP_RSTPRO; Protección de tonos rojos y color piel
 TP_COLORAPP_RSTPRO_TOOLTIP;Intensidad de protección de tonos rojos y color piel (en curvas y en controles deslizantes)
-TP_COLORAPP_SHARPCIE;Enfoque, Contraste por niveles de detalle, Micro-contraste &amp; Eliminación de AC con Q/C
-TP_COLORAPP_SHARPCIE_TOOLTIP;Si se selecciona, Enfoque, Contraste por niveles de detalle, Micro-contraste &amp; Eliminación de AC usarán CIECAM02
 TP_COLORAPP_SURROUND;Entorno
 TP_COLORAPP_SURROUND_AVER;Promedio
 TP_COLORAPP_SURROUND_DARK;Oscuro
@@ -1575,9 +1521,6 @@ TP_COLORAPP_TONECIE_TOOLTIP;Si esta opción no está seleccionada, el mapeo tona
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminancia absoluta del entorno de visualización \ n (normalmente 16 cd / m²).
 TP_COLORAPP_WBCAM;BalBlanco [RT+CAT02] + [salida]
 TP_COLORAPP_WBRT;BalBlanco [RT] + [salida]
-TP_COLORAPP_YB;Yb% (luminancia media)
-TP_COLORAPP_YBSCENE;Yb% (luminancia media)
-TP_COLORAPP_YBSCENE_TOOLTIP;Si está habilitado el modo automático, Yb se calcula a partir del valor medio de la luminancia de la imagen real
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automático
 TP_COLORTONING_BALANCE;Balance
@@ -1692,7 +1635,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminancia
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminancia
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Método
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Reducción de ruido
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Para imágenes raw puede usar tanto el método RGB como el Lab.\n\nPara imágenes no raw el método Lab será usado de todas maneras, ignorando el método seleccionado.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1787,10 +1729,6 @@ TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Control de Recorte
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;El Control de Recorte evita la perdida de detalle en las luces altas causadas por la aplicación del Campo Plano. Si ya hubiera perdida de detalle en las altas luces antes de aplicar el Campo Plano, el Control de Recorte puede conducir a una dominante de color.
 TP_FLATFIELD_LABEL;Campo plano
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Gamma libre
-TP_GAMMA_OUTPUT;Gamma de salida
-TP_GAMMA_SLOP;Pendiente (lineal)
 TP_GENERAL_11SCALE_TOOLTIP;El efecto de esta herramienta o el de alguno de sus componentes solo es apreciable en escala de vista previa 1:1
 TP_GRADIENT_CENTER;Centro
 TP_GRADIENT_CENTER_X;Centro X
@@ -1902,9 +1840,6 @@ TP_LENSGEOM_LABEL;Lente / Geometría
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP archivo
 TP_LENSPROFILE_LABEL;Perfil de corrección de lente
 TP_LENSPROFILE_LENS_WARNING;Advertencia: el factor de recorte utilizado para el perfilado de la lente es mayor que el factor de recorte de la cámara, los resultados pueden ser incorrectos.
-TP_LENSPROFILE_USECA;Corrección de AC
-TP_LENSPROFILE_USEDIST;Corrección de distorsión
-TP_LENSPROFILE_USEVIGN;Corrección de viñeteo
 TP_LENSPROFILE_USE_CA;Aberración cromática
 TP_LENSPROFILE_USE_VIGNETTING;Viñeteado
 TP_LOCALCONTRAST_AMOUNT;Cantidad
@@ -1999,7 +1934,6 @@ TP_RAW_LMMSE_TOOLTIP;Agregar gamma (paso 1)\n Agregar mediana (pasos 2,3,4)\nAgr
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Ninguno (muestra el patrón del sensor)
 TP_RAW_PIXELSHIFT;Cambio de píxel
-TP_RAW_PIXELSHIFTADAPTIVE;Detección adaptativa
 TP_RAW_PIXELSHIFTBLUR;Máscara de movimiento de desenfoque
 TP_RAW_PIXELSHIFTDMETHOD;Demosaicado, método para el movimiento
 TP_RAW_PIXELSHIFTEPERISO;ISO adaptación
@@ -2008,34 +1942,20 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT;Ecualiza el brillo de los cuadros.
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Igualar por canal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Activado: ecualice los canales RGB individualmente. \nDeshabilitado: use el mismo factor de ecualización para todos los canales.
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Ecualice el brillo de los cuadros con el brillo del cuadro seleccionado. \nSi hay áreas sobreexpuestas en los cuadros, seleccione el cuadro más brillante para evitar la aparición de colores magenta en áreas sobreexpuestas o habilite la corrección de movimiento.
-TP_RAW_PIXELSHIFTEXP0;Experimental
 TP_RAW_PIXELSHIFTGREEN;Compruebe el canal verde para el movimiento
 TP_RAW_PIXELSHIFTHOLEFILL;Rellene los fallos en la máscara de movimiento
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Rellene los fallos en la máscara de movimiento
 TP_RAW_PIXELSHIFTLMMSE;Utilice LMMSE para regiones móviles
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE en lugar de AMaZE para las áreas de movimiento. \nÚtil para imágenes de alta ISO.
-TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 nuevo umbral
 TP_RAW_PIXELSHIFTMEDIAN;Usa la mediana pa3x3 nuevo umbral parara las regiones móviles.
-TP_RAW_PIXELSHIFTMEDIAN3;Excluir el cuadro seleccionado de la mediana
-TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excluye el cuadro seleccionado de la mediana. \nUtilícelo si los objetos en movimiento se superponen en el cuadro 2 y 3
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use la mediana de todos los cuadros en lugar del cuadro seleccionado para las regiones con movimiento. \nElimina los objetos que se encuentran en diferentes lugares en todos los cuadros. \nBrinda efecto de movimiento en objetos de movimiento lento (superpuestos).
 TP_RAW_PIXELSHIFTMM_AUTO;Automático
 TP_RAW_PIXELSHIFTMM_CUSTOM;Personalizado
 TP_RAW_PIXELSHIFTMM_OFF;Apagado
 TP_RAW_PIXELSHIFTMOTION;Nivel de detección de movimiento (en desuso)
-TP_RAW_PIXELSHIFTMOTIONCORRECTION;Magnitudo de la corrección del movimiento verde
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Corrección del movimiento
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 significa que no hay detección de movimiento. \n1 - 99 significa que el movimiento se detectará de acuerdo con este valor. Aumente el valor para aumentar la tasa de detección. \n100 significa que se utilizará el marco de demostración AMaZE.ción de movimiento. \n1 - 99 significa que el movimiento se detectará de acuerdo con este valor. Aumente el valor para aumentar la tasa de detección. \n100 significa que se utilizará el marco de demostración AMaZE.no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
-TP_RAW_PIXELSHIFTNONGREENAMAZE;Compruebe AMaZE rojo / azul
 TP_RAW_PIXELSHIFTNONGREENCROSS;Compruebe los canales rojos/azules para el movimiento
-TP_RAW_PIXELSHIFTNONGREENCROSS2;Compruebe verde AMaZE
-TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Compruebe rojo/azul  horizontal
-TP_RAW_PIXELSHIFTNONGREENVERTICAL;Compruebe rojo/azul vertical
-TP_RAW_PIXELSHIFTNREADISO;nLeer
-TP_RAW_PIXELSHIFTONEGREEN;Utilice un verde en lugar de media
-TP_RAW_PIXELSHIFTONEGREEN_TOOLTIP;Use un verde en lugar de promediar dos verdes para regiones sin movimiento.
-TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Fuerza Rojo&Azul 
 TP_RAW_PIXELSHIFTSHOWMOTION;Mostrar máscara de movimiento
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Mostrar solo máscara de movimiento
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Muestra la máscara de movimiento sin la imagen.
@@ -2044,9 +1964,6 @@ TP_RAW_PIXELSHIFTSIGMA;Radio de desenfoque
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;El radio predeterminado de 1.0 por lo general se ajusta bien a la base ISO. \nAumente el valor para tomas con ISO alto, 5.0 es un buen punto de partida. \nMire la máscara de movimiento mientras cambia el valor.
 TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Transiciones suaves entre áreas con movimiento y áreas sin movimiento. \nConfigure en 0 para deshabilitar el suavizado en la transición. \nConfigure en 1 para obtener el resultado AMaZE / LMMSE del marco seleccionado (dependiendo de si se selecciona "Usar LMMSE") o la mediana de los cuatro cuadros si se selecciona "Usar mediana".
-TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;Factor de StdDev Azul
-TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;Factor de StdDev Verde
-TP_RAW_PIXELSHIFTSTDDEVFACTORRED;Factor de StdDev Rojo
 TP_RAW_RCD;RCD
 TP_RAW_RCDVNG4;RCD+VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Sensor con matriz Bayer

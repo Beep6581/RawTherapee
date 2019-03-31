@@ -310,7 +310,6 @@ QINFO_ISO;ISO
 QINFO_NOEXIF;Exif資料不可用.
 SAVEDLG_FILEFORMAT;檔格式
 SAVEDLG_JPEGQUAL;JPEG品質
-SAVEDLG_PNGCOMPR;PNG壓縮
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue

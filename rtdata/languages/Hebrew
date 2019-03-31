@@ -301,7 +301,6 @@ QINFO_ISO;ISO
 QINFO_NOEXIF;המידע לא זמין
 SAVEDLG_FILEFORMAT;תצורת קובץ
 SAVEDLG_JPEGQUAL;JPEG איכות
-SAVEDLG_PNGCOMPR;PNG דחיסת
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue

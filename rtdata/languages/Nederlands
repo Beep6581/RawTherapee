@@ -242,7 +242,6 @@ GENERAL_WARNING;Waarschuwing
 HISTOGRAM_TOOLTIP_B;Toon/verberg blauw histogram
 HISTOGRAM_TOOLTIP_BAR;Toon/verberg RGB-indicatie\nRechtermuisklik op foto om te starten/stoppen
 HISTOGRAM_TOOLTIP_CHRO;Toon/Verberg Chromaticiteit histogram
-HISTOGRAM_TOOLTIP_FULL;Wissel tussen volledig of aangepast histogram
 HISTOGRAM_TOOLTIP_G;Toon/verberg groen histogram
 HISTOGRAM_TOOLTIP_L;Toon/verberg CIELAB-luminantiehistogram
 HISTOGRAM_TOOLTIP_R;Toon/verberg rood histogram
@@ -795,8 +794,6 @@ MAIN_TAB_RAW;RAW
 MAIN_TAB_RAW_TOOLTIP;Sneltoets: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Transformeer
 MAIN_TAB_TRANSFORM_TOOLTIP;Sneltoets: <b>Alt-t</b>
-MAIN_TAB_WAVELET;Wavelet
-MAIN_TAB_WAVELET_TOOLTIP;Sneltoets: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Achtergrond kleur van het voorbeeld: <b>Thema-based</b>\nSneltoets: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Achtergrond kleur van het voorbeeld: <b>Zwart</b>\nSneltoets: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Achtergrond kleur van het voorbeeld: <b>Wit</b>\nSneltoets: <b>0</b>
@@ -896,7 +893,6 @@ PARTIALPASTE_SHARPENING;Verscherping
 PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_VIBRANCE;Levendigheid
 PARTIALPASTE_VIGNETTING;Vignetteringscorrectie
-PARTIALPASTE_WAVELETGROUP;Wavelet verwerking
 PARTIALPASTE_WHITEBALANCE;Witbalans
 PREFERENCES_ADD;Toevoegen
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator randkleur
@@ -1098,12 +1094,10 @@ PROGRESSBAR_SNAPSHOT_ADDED;Snapshot toegevoegd
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profiel veranderd in bestandsnavigator
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif-gegevens niet beschikbaar.
-REFERENCES_AUTLISSTD;Hoog
 SAVEDLG_AUTOSUFFIX;Voeg automatisch ophogend nummer (-1, -2..) toe als bestand al bestaat
 SAVEDLG_FILEFORMAT;Bestandstype
 SAVEDLG_FORCEFORMATOPTS;Forceer opties voor opslaan
 SAVEDLG_JPEGQUAL;JPEG-kwaliteit
-SAVEDLG_PNGCOMPR;PNG-compressie
 SAVEDLG_PUTTOQUEUE;Plaats in verwerkingsrij
 SAVEDLG_PUTTOQUEUEHEAD;Plaats vooraan in verwerkingsrij
 SAVEDLG_PUTTOQUEUETAIL;Plaats achteraan in verwerkingsrij
@@ -1350,7 +1344,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminantie
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminantie
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Methode
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Ruisonderdrukking
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Voor raw afbeeldingen kan RGB of Lab methode worden gebruikt.\n\nVoor niet-raw afbeeldingen zal altijd de Lab methode worden gebruikt, ongeacht de geselecteerde methode.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1371,7 +1364,6 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES;Mediaan herhalingen
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Het gebruik van drie mediaan filter herhalingen met een 3×3 venster grootte geeft meestal een beter resultaat dan het gebruik van één mediaan filter herhaling met eeen 7×7 venster grootte.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Type
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Gebruik een mediaan filter van gewenste venster grootte. Hoe groter het venster hoe langer het duurt.\n\n3×3 zacht: behandeld 5 pixels in een 3×3 pixel venster.\n3×3: behandeld 9 pixels in een 3×3 pixel venster.\n5×5 zacht: behandeld 13 pixels in een 5×5 pixel venster.\n5×5: behandeld 25 pixels in een 5×5 pixel venster.\n7×7: behandeld 49 pixels in een 7×7 pixel venster.\n9×9: behandeld 81 pixels in a 9×9 pixel venster.\n\nSoms is het mogelijk om een betere kwaliteit te krijgen door het uitvoeren van meerdere herhalingen met een kleiner venster dan één uitvoering met een groter venster.
-TP_DIRPYRDENOISE_PASSE;Herhalingen
 TP_DIRPYRDENOISE_SLI;Schuifbalk
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 zacht
@@ -1444,10 +1436,6 @@ TP_FLATFIELD_BT_VERTICAL;Verticaal
 TP_FLATFIELD_CLIPCONTROL;Clip controle
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip controle vermijd geclipte hoge lichten veroorzaakt door het toepassen van vlakveld. Als er al geclipte hoge lichten waren voor het toepassen van vlakveld dan kan clip controle kleurzweem veroorzaken.
 TP_FLATFIELD_LABEL;Vlakveld
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Vrij gamma
-TP_GAMMA_OUTPUT;Uitvoer gamma
-TP_GAMMA_SLOP;Helling (lineair)
 TP_GENERAL_11SCALE_TOOLTIP;De werking is alleen zichtbaar op schaal 1:1 van het voorbeeld
 TP_GRADIENT_CENTER;Centrum
 TP_GRADIENT_CENTER_X;Centrum X
@@ -1616,36 +1604,23 @@ TP_RAW_LMMSE_TOOLTIP;Toevoegen gamma (stap 1), mediaan (stappen 2-4), en verfijn
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Geen (Toont sensor patroon)
 TP_RAW_PIXELSHIFT;Pixel Verschuiven
-TP_RAW_PIXELSHIFTADAPTIVE;Adaptieve detectie
 TP_RAW_PIXELSHIFTBLUR;Vervaag bewegingsmasker
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Balanseer de helderheid van de frames
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Balanseer de helderheid van de frames t.o.v. de helderheid van het geslecteerde frame.\nAls er overbelichte gebieden zijn in de frames, selecteer dan het helderste frame om een magenta kleurzweem te vermijden of selecteer bewegingsorrectie.
-TP_RAW_PIXELSHIFTEXP0;Experimenteel
 TP_RAW_PIXELSHIFTGREEN;Controleer groene kanaal voor beweging
 TP_RAW_PIXELSHIFTHOLEFILL;Vul holtes in verschuivingsmasker
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Vul holtes in het verschuivingsmasker op
 TP_RAW_PIXELSHIFTLMMSE;Gebruik lmmse voor verschoven gebieden
 TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Gebruik lmmse ipv amaze voor verschoven gebieden.\nNuttig voor hoge ISO afbeeeldingen.
-TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 nieuwe drempel
 TP_RAW_PIXELSHIFTMEDIAN;Mediaan
-TP_RAW_PIXELSHIFTMEDIAN3;Sluit geselecteerde frame uit voor mediaan
-TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Sluit geselecteerde frame uit voor mediaan.\nNuttig als bewegende objecten een overlap hebben in frame 2 en 3
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Gebruik mediaan voor alle frames inplaats van  alleen het geselecteerd frame voor gebieden met beweging.\nVerwijder objecten die voorkomen op verschillende plekken in alle frames.\nGeeft bewegingseffect voor langzaam bewegende (overlappende) objecten.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
 TP_RAW_PIXELSHIFTMM_CUSTOM;Eigen
 TP_RAW_PIXELSHIFTMM_OFF;Uit
 TP_RAW_PIXELSHIFTMOTION;Beweging detectie niveau (vervallen)
-TP_RAW_PIXELSHIFTMOTIONCORRECTION;Groen bewegingscorrectie grootte
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Beweging Correctie
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0: geen bewegingsdetectie\n1 - 99: beweging wordt bepaald op basis van deze waarde. Vergroot de waarde om de bewegingsdetectie te verhogen\n100: Amaze demozaïek wordt gebruikt
-TP_RAW_PIXELSHIFTNONGREENAMAZE;Controleer rood/blauw amaze
 TP_RAW_PIXELSHIFTNONGREENCROSS;Controleer rood/blauw kanaal voor beweging
-TP_RAW_PIXELSHIFTNONGREENCROSS2;Controleer groen amaze
-TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Controleer rood/blauw horizontaal
-TP_RAW_PIXELSHIFTNONGREENVERTICAL;Controleer rood/blauw vertikaal
-TP_RAW_PIXELSHIFTNREADISO;nLezen
-TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Rood&Blauw gewicht
 TP_RAW_PIXELSHIFTSHOWMOTION;Toon beweging
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Toon alleen masker
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Toont het bewegingsmasker zonder de afbeelding
@@ -1653,9 +1628,6 @@ TP_RAW_PIXELSHIFTSIGMA;Vervagen straal
 TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;De standaard straal van 1.0 is goed voor normale ISO. Verhoog de waarde voor hogere ISO.\n5.0 is een goed startpunt voor hoge ISO afbeeldingen.\nControleer het bewegingsmasker bij het veranderen van de waarde.
 TP_RAW_PIXELSHIFTSMOOTH;Zachte overgang
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Zachte overgang tussen gebieden met en zonder beweging.\nKies 0 om Zachte overgang uit te zetten\nKies 1 voor Amaze/lmmse of Mediaan
-TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blauw
-TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Groen
-TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Rood
 TP_RAW_SENSOR_BAYER_LABEL;Sensor met Bayer matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass geeft het beste resultaat (aanbevolen voor lage ISO afbeeldingen)\n1-pass geeft hetzelfde resultaat als 3-pass voor hoge ISO afbeeldingen en is sneller.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor met X-Trans matrix

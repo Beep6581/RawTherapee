@@ -589,7 +589,6 @@ QINFO_NOEXIF;EXIF adat nem áll rendelkezésre.
 SAVEDLG_AUTOSUFFIX;Utótag hozzáadása automatikusan, ha az állomány már létezik
 SAVEDLG_FILEFORMAT;Állományformátum
 SAVEDLG_JPEGQUAL;JPEG Minőség
-SAVEDLG_PNGCOMPR;PNG Tömörítés
 SAVEDLG_PUTTOQUEUE;Feldolgozási sorba helyezés
 SAVEDLG_PUTTOQUEUEHEAD;Feldolgozási sorba helyezés az első helyre
 SAVEDLG_PUTTOQUEUETAIL;Feldolgozási sorba helyezés az utolsó helyre
@@ -631,7 +630,6 @@ TP_DEFRINGE_RADIUS;Sugár
 TP_DEFRINGE_THRESHOLD;Küszöb
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Színzaj
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminancia
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Zajcsökkentés
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
 TP_DIRPYREQUALIZER_LABEL;Kontraszt részletek  szerint
 TP_DIRPYREQUALIZER_LUMACOARSEST;Durva részletek
@@ -669,10 +667,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Vízszintes
 TP_FLATFIELD_BT_VERTHORIZ;Függ. + vízsz.
 TP_FLATFIELD_BT_VERTICAL;Függőleges
 TP_FLATFIELD_LABEL;Flat Field
-TP_GAMMA_CURV;gamma
-TP_GAMMA_FREE;Szabad gamma
-TP_GAMMA_OUTPUT;Kimeneti gamma
-TP_GAMMA_SLOP;meredekség (lineáris)
 TP_HLREC_BLEND;Egybemosás
 TP_HLREC_CIELAB;CIELab visszaállítás
 TP_HLREC_COLOR;Színterjesztés

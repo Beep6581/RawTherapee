@@ -301,7 +301,6 @@ QINFO_ISO;ISO
 QINFO_NOEXIF;Στοιχεία Exif μη διαθέσιμα.
 SAVEDLG_FILEFORMAT;Είδος αρχείου
 SAVEDLG_JPEGQUAL;Ποιότητα JPEG
-SAVEDLG_PNGCOMPR;Συμπίεση PNG
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue

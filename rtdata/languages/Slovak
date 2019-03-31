@@ -354,7 +354,6 @@ QINFO_NOEXIF;Exif údaje sú nedostupné.
 SAVEDLG_AUTOSUFFIX;Automaticky pridať príponu, ak už súbor existuje
 SAVEDLG_FILEFORMAT;Formát súboru
 SAVEDLG_JPEGQUAL;JPEG Kvalita
-SAVEDLG_PNGCOMPR;PNG Kompresia
 SAVEDLG_PUTTOQUEUE;Vložiť do radu na spracovanie
 SAVEDLG_PUTTOQUEUEHEAD;Presunúť na čelo radu na spracovanie
 SAVEDLG_PUTTOQUEUETAIL;Presunúť na koniec radu na spracovanie
@@ -388,7 +387,6 @@ TP_CROP_X;x
 TP_CROP_Y;y
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Farebnosť
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Svietivosť
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Redukcia šumu pomocou smerovej pyramídy
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
 TP_DIRPYREQUALIZER_LABEL;Vyrovnávač smerovej pyramídy
 TP_DIRPYREQUALIZER_LUMACOARSEST;Najhrubšie

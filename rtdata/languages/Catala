@@ -168,7 +168,6 @@ GENERAL_UNCHANGED;(No canviat)
 GENERAL_WARNING;Avís
 HISTOGRAM_TOOLTIP_B;Mostra/amaga l'histograma BLAU
 HISTOGRAM_TOOLTIP_BAR;Mostra/amaga la barra indicadora RGB\nClic botó dret a la previsualització per a congelar/descongelar
-HISTOGRAM_TOOLTIP_FULL;Canvia entre histograma complet o escalat
 HISTOGRAM_TOOLTIP_G;Mostra/amaga l'histograma VERD
 HISTOGRAM_TOOLTIP_L;Mostra/amaga l'histograma de luminància CIELAB
 HISTOGRAM_TOOLTIP_R;Mostra/amaga l'histograma VERMELL
@@ -607,7 +606,6 @@ QINFO_NOEXIF;No hi ha dades Exif.
 SAVEDLG_AUTOSUFFIX;Afegeix automàticament un sufix si el fitxer ja hi és
 SAVEDLG_FILEFORMAT;Format del fitxer
 SAVEDLG_JPEGQUAL;Qualitat JPEG
-SAVEDLG_PNGCOMPR;Compressió PNG
 SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
 SAVEDLG_PUTTOQUEUEHEAD;Posa al principi de la cua de procés
 SAVEDLG_PUTTOQUEUETAIL;Posa a la fi de la cua de procés
@@ -664,7 +662,6 @@ TP_DEFRINGE_THRESHOLD;Llindar
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Crominància
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detall de luminància
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminància
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Reducció de soroll (només imatges raw)
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gama
 TP_DIRPYREQUALIZER_LABEL;Contrast per grau de detall
 TP_DIRPYREQUALIZER_LUMACOARSEST;Més bast
@@ -710,10 +707,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Horitzontal
 TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horitz.
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_LABEL;Camp pla
-TP_GAMMA_CURV;gama
-TP_GAMMA_FREE;Lliure gama
-TP_GAMMA_OUTPUT;Sortida gama
-TP_GAMMA_SLOP;Inclinació (linear)
 TP_HLREC_BLEND;Barreja
 TP_HLREC_CIELAB;Superposició CIELab
 TP_HLREC_COLOR;Propagació de color
