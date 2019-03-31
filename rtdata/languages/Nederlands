@@ -102,7 +102,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;LMMSE Verbetering niet toeppassen [raw]
 EXPORT_BYPASS_SHARPENEDGE;Randen verscherpen niet toepassen
 EXPORT_BYPASS_SHARPENING;Verscherpen niet toepassen
 EXPORT_BYPASS_SHARPENMICRO;Microcontrast niet toepassen
-EXPORT_BYPASS_SH_HQ;Schaduwen/hoge lichten (Hoge kwaliteit) niet toepassen
 EXPORT_FASTEXPORTOPTIONS;<b>Opties Snelle Export</b>
 EXPORT_INSTRUCTIONS;Snel Exporteren biedt de mogelijkheid om gereedschappen uit te schakelen die veel tijd en rekenkracht vergen tijdens het converteren. Deze methode wordt aanbevolen om snel foto's in lagere resoluties aan te maken of wanneer de grootte moet worden aangepast voor één of meerdere afbeeldingen zonder de reeds opgeslagen ontwikkelinstellingen te wijzigen.
 EXPORT_MAXHEIGHT;Max. hoogte:
@@ -115,7 +114,6 @@ EXPORT_USE_FAST_PIPELINE_TIP;Gebruikt een speciale verwerkingslijn waarbij kwali
 EXPORT_USE_NORMAL_PIPELINE;Standaard (wijzigt formaat aan het eind)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;verwerkingsrij
-FILEBROWSER_ADDDELTEMPLATE;Voeg sjablonen toe of verwijder...
 FILEBROWSER_APPLYPROFILE;Pas profiel toe
 FILEBROWSER_APPLYPROFILE_PARTIAL;Pas profiel toe (gedeeltelijk)
 FILEBROWSER_AUTODARKFRAME;Automatisch donkerframe
@@ -904,7 +902,6 @@ PREFERENCES_BEHADDALLHINT;Zet alle parameters in de <b>Toevoegen</b> mode.\nWijz
 PREFERENCES_BEHAVIOR;Gedrag
 PREFERENCES_BEHSETALL;Alles op 'Activeer'
 PREFERENCES_BEHSETALLHINT;Zet alle parameters in de <b>Activeer</b> mode.\nWijzigingen van parameters in de batch tool zijn <b>absoluut</b>. De actuele waarden worden gebruikt.
-PREFERENCES_BLACKBODY;Tungsten(wolfraam)
 PREFERENCES_CACHEMAXENTRIES;Maximaal aantal elementen in cache
 PREFERENCES_CACHEOPTS;Cache-opties
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
@@ -924,10 +921,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys formaat
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Naam
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Pad naar programma of script
-PREFERENCES_D50;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Gevonden
 PREFERENCES_DARKFRAMESHOTS;foto's
 PREFERENCES_DARKFRAMETEMPLATES;sjablonen
@@ -947,31 +940,15 @@ PREFERENCES_FLATFIELDFOUND;Gevonden
 PREFERENCES_FLATFIELDSDIR;Vlakveldmap
 PREFERENCES_FLATFIELDSHOTS;foto's
 PREFERENCES_FLATFIELDTEMPLATES;sjablonen
-PREFERENCES_FLUOF2;Fluorescent F2
-PREFERENCES_FLUOF7;Fluorescent F7
-PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_FORIMAGE;Voor niet-RAW-bestanden
 PREFERENCES_FORRAW;Voor RAW-bestanden
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Zelfde hoogte miniaturen in Bewerkingsvenster en Bestandsnavigator
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Verschillende hoogtes voor miniaturen vereist meer verwerkingstijd wanneer je wisselt tussen Bewerkingsvenster en Bestandsnavigator
 PREFERENCES_GIMPPATH;Installatiemap GIMP
-PREFERENCES_GREY;Uitvoerapparaat's Yb luminantie (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREYSC;Omgeving Yb luminantie (%)
-PREFERENCES_GREYSC18;Yb=18 CIE L#50
-PREFERENCES_GREYSCA;Automatisch
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in linkerpaneel
-PREFERENCES_HISTOGRAMWORKING;Gebruik het werkprofiel voor het Hoofdhistogram en de Navigator
 PREFERENCES_HISTOGRAM_TOOLTIP;Het werkprofiel wordt gebruikt voor het Hoofdhistogram en de Navigator. In alle andere gevallen wordt het gamma-gecorrigeerde uitvoerprofiel gebruikt.
 PREFERENCES_HLTHRESHOLD;Grenswaarde overbelichting
 PREFERENCES_ICCDIR;Map met ICC-profielen
-PREFERENCES_IMG_RELOAD_NEEDED;Deze wijzigingen vereisen dat de afbeelding wordt herladen (of dat een nieuwe afbeelding wordt geopend).
 PREFERENCES_IMPROCPARAMS;Standaardprofiel
 PREFERENCES_INSPECT_LABEL;Inspecteren
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum aantal afbeeldingen in cache
@@ -989,7 +966,6 @@ PREFERENCES_MENUGROUPLABEL;Groepeer labelen
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Groepeer profielbewerkingen
 PREFERENCES_MENUGROUPRANK;Groepeer markering
 PREFERENCES_MENUOPTIONS;Menu-opties
-PREFERENCES_METADATA;Metadata
 PREFERENCES_MONINTENT;Standaard monitor weergave
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Standaard kleurprofiel
@@ -1055,9 +1031,7 @@ PREFERENCES_TAB_IMPROC;Beeldverwerking
 PREFERENCES_TAB_SOUND;Geluiden
 PREFERENCES_TP_LABEL;Gereedschapspaneel:
 PREFERENCES_TP_VSCROLLBAR;Verberg de schuifbalk van het gereedschapspaneel
-PREFERENCES_TUNNELMETADATA;Kopieer Exif/IPTC/XMP-data onveranderd naar uitvoerbestand
 PREFERENCES_USEBUNDLEDPROFILES;Gebruik gebundelde profielen
-PREFERENCES_VIEW;Witbalans instelling van het uitvoerapparaat (monitor, TV, projector...)
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Te kopiëren parameters
 PROFILEPANEL_GLOBALPROFILES;Gebundelde profielen
@@ -1244,8 +1218,6 @@ TP_COLORAPP_SURROUND_DARK;Donker
 TP_COLORAPP_SURROUND_DIM;Gedimd
 TP_COLORAPP_SURROUND_EXDARK;Duister
 TP_COLORAPP_SURROUND_TOOLTIP;Verander tonen en kleuren rekening houdend met de weergaveomstandigheden van het uitvoerapparaat\n\n<b>Gemiddeld:</b>\nGemiddeld verlichte omgeving (standaard)\nDe afbeelding zal niet veranderen \n\n<b>Gedimd:</b>\nGedimde omgeving (TV)\nDe afbeelding zal enigszins donkerder worden\n\n<b>Donker:</b>\nDonkere omgeving (projector)\nDe afbeelding zal veel donkerder worden\n\n<b>Duister:</b>\nDuistere omgeving\nDe afbeelding zal zeer donker worden
-TP_COLORAPP_SURSOURCE;Donkere omgeving
-TP_COLORAPP_SURSOURCE_TOOLTIP;Kan worden gebruikt als de foto is gemaakt in een donkere omgeving
 TP_COLORAPP_TCMODE_BRIGHTNESS;Helderheid
 TP_COLORAPP_TCMODE_CHROMA;Chroma
 TP_COLORAPP_TCMODE_COLORF;Kleurrijkheid
@@ -1318,7 +1290,6 @@ TP_DEFRINGE_RADIUS;Straal
 TP_DEFRINGE_THRESHOLD;Drempel
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zone
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisch algemeen
-TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Probeert chroma ruis te bepalen\nWees voorzichtig, deze berekening is een gemiddelde en kan subjectief zijn!
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominantie Blauw & Geel
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominantie curve
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominantie
@@ -1335,8 +1306,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Voorbeeld ruis: Gemiddeld=%1  Hoo
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Voorbeeld ruis: Gemiddeld= -   Hoog= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tegel grootte=%1, Centrum: Tx=%2  Ty=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominantie Rood & Groen
-TP_DIRPYRDENOISE_ENH;Verbeteren
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Verbetert de ruisonderdrukking, maar vergroot de verwerkingstijd met ongeveer 20%
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Type gereedschap
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminantie curve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminantie Detail
@@ -1364,7 +1333,6 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES;Mediaan herhalingen
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Het gebruik van drie mediaan filter herhalingen met een 3×3 venster grootte geeft meestal een beter resultaat dan het gebruik van één mediaan filter herhaling met eeen 7×7 venster grootte.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Type
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Gebruik een mediaan filter van gewenste venster grootte. Hoe groter het venster hoe langer het duurt.\n\n3×3 zacht: behandeld 5 pixels in een 3×3 pixel venster.\n3×3: behandeld 9 pixels in een 3×3 pixel venster.\n5×5 zacht: behandeld 13 pixels in een 5×5 pixel venster.\n5×5: behandeld 25 pixels in een 5×5 pixel venster.\n7×7: behandeld 49 pixels in een 7×7 pixel venster.\n9×9: behandeld 81 pixels in a 9×9 pixel venster.\n\nSoms is het mogelijk om een betere kwaliteit te krijgen door het uitvoeren van meerdere herhalingen met een kleiner venster dan één uitvoering met een groter venster.
-TP_DIRPYRDENOISE_SLI;Schuifbalk
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 zacht
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1467,8 +1435,6 @@ TP_ICM_APPLYHUESATMAP;DCP basis tabel
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Gebruik de ingebedde DCP basis tabel (HueSatMap). De instelling is allen actief als de DCP een basis tabel heeft.
 TP_ICM_APPLYLOOKTABLE;DCP 'look' tabel
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Gebruik de ingebedde DCP 'look' tabel. De instelling is allen actief als de DCP een looktable heeft.
-TP_ICM_BLENDCMSMATRIX;Meng hoge lichten met matrix
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activeer om uitgebeten hoge lichten te herstellen wanneer op LUT gebaseerde ICC-profielen worden gebruikt.
 TP_ICM_BPC;Zwartpunt Compensatie
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoleren
@@ -1566,7 +1532,6 @@ TP_PRSHARPENING_TOOLTIP;Verscherp na verkleinen. Werkt alleen als verkleinen act
 TP_RAWCACORR_AUTO;Automatische CA-correctie
 TP_RAWCACORR_CABLUE;Blauw
 TP_RAWCACORR_CARED;Rood
-TP_RAWCACORR_CASTR;Sterkte
 TP_RAWEXPOS_BLACKS;Zwartniveaus
 TP_RAWEXPOS_BLACK_0;Groen 1 (leidend)
 TP_RAWEXPOS_BLACK_1;Rood
@@ -1610,8 +1575,6 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Balanseer de helderheid van de frames t.o.v
 TP_RAW_PIXELSHIFTGREEN;Controleer groene kanaal voor beweging
 TP_RAW_PIXELSHIFTHOLEFILL;Vul holtes in verschuivingsmasker
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Vul holtes in het verschuivingsmasker op
-TP_RAW_PIXELSHIFTLMMSE;Gebruik lmmse voor verschoven gebieden
-TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Gebruik lmmse ipv amaze voor verschoven gebieden.\nNuttig voor hoge ISO afbeeeldingen.
 TP_RAW_PIXELSHIFTMEDIAN;Mediaan
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Gebruik mediaan voor alle frames inplaats van  alleen het geselecteerd frame voor gebieden met beweging.\nVerwijder objecten die voorkomen op verschillende plekken in alle frames.\nGeeft bewegingseffect voor langzaam bewegende (overlappende) objecten.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
@@ -1619,7 +1582,6 @@ TP_RAW_PIXELSHIFTMM_CUSTOM;Eigen
 TP_RAW_PIXELSHIFTMM_OFF;Uit
 TP_RAW_PIXELSHIFTMOTION;Beweging detectie niveau (vervallen)
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Beweging Correctie
-TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0: geen bewegingsdetectie\n1 - 99: beweging wordt bepaald op basis van deze waarde. Vergroot de waarde om de bewegingsdetectie te verhogen\n100: Amaze demozaïek wordt gebruikt
 TP_RAW_PIXELSHIFTNONGREENCROSS;Controleer rood/blauw kanaal voor beweging
 TP_RAW_PIXELSHIFTSHOWMOTION;Toon beweging
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Toon alleen masker
@@ -1658,7 +1620,6 @@ TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;Deze curve kan zowel alleen worden gebruikt o
 TP_RETINEX_EQUAL;Mixer
 TP_RETINEX_FREEGAMMA;Vrij gamma
 TP_RETINEX_GAIN;Verbeteren
-TP_RETINEX_GAIN_TOOLTIP;Wijzigt de aangepaste afbeelding.\n\nDit wijkt af van de andere instellingen. Wordt gebruikt voor zwarte of witte pixels, en om het histogram te balanceren.
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Vrij
 TP_RETINEX_GAMMA_HIGH;Hoog
@@ -1735,10 +1696,8 @@ TP_SAVEDIALOG_OK_TIP;Sneltoets: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Hoge lichten
 TP_SHADOWSHLIGHTS_HLTONALW;Toonomvang
 TP_SHADOWSHLIGHTS_LABEL;Schaduwen/hoge lichten
-TP_SHADOWSHLIGHTS_LOCALCONTR;Lokaal contrast
 TP_SHADOWSHLIGHTS_RADIUS;Straal
 TP_SHADOWSHLIGHTS_SHADOWS;Schaduwen
-TP_SHADOWSHLIGHTS_SHARPMASK;Verscherpingsmasker
 TP_SHADOWSHLIGHTS_SHTONALW;Toonomvang
 TP_SHARPENEDGE_AMOUNT;Hoeveelheid
 TP_SHARPENEDGE_LABEL;Randen
@@ -2193,11 +2152,9 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
 !PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_LANG;Language
 !PREFERENCES_PERFORMANCE_MEASURE;Measure
 !PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console

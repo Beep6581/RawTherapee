@@ -177,7 +177,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;LMMSE-Verbesserungsstufen überspringen
 EXPORT_BYPASS_SHARPENEDGE;Kantenschärfung überspringen
 EXPORT_BYPASS_SHARPENING;Schärfung überspringen
 EXPORT_BYPASS_SHARPENMICRO;Mikrokontrast überspringen
-EXPORT_BYPASS_SH_HQ;Schatten/Lichter überspringen\n(Schärfemaske)
 EXPORT_FASTEXPORTOPTIONS;<b>Schnell-Export - Einstellungen</b>
 EXPORT_INSTRUCTIONS;Die Einstellungen zum schnellen Export\nerlauben es, zeit- und ressourcenintensive\nEntwicklungsschritte zu überspringen und dafür\ndie Warteschlangenverarbeitung mit\nschnellen Export-Einstellungen auszuführen.\nDieses Vorgehen wird zur schnelleren\nGenerierung von gering aufgelösten Bildern\nempfohlen, falls es auf die Geschwindigkeit\nankommt oder für ein oder mehrere Bilder\nandere Ausgabegrößen gewünscht werden,\nohne Änderungen an deren gespeicherten\nParameter vornehmen zu müssen.
 EXPORT_MAXHEIGHT;Maximale Höhe:
@@ -190,7 +189,6 @@ EXPORT_USE_FAST_PIPELINE_TIP;Wendet alle Bearbeitungsschritte, im Gegensatz\nzu 
 EXPORT_USE_NORMAL_PIPELINE;Standard
 EXTPROGTARGET_1;RAW
 EXTPROGTARGET_2;Stapelverarbeitung beendet
-FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzufügen/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_APPLYPROFILE_PARTIAL;Profil selektiv anwenden
 FILEBROWSER_AUTODARKFRAME;Automatisches Dunkelbild
@@ -1134,7 +1132,6 @@ PREFERENCES_BEHADDALLHINT;Setzt alle Parameter auf <b>Hinzufügen</b>.\nAnpassun
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BEHSETALL;Alle setzen
 PREFERENCES_BEHSETALLHINT;Setzt alle Parameter auf <b>Setzen</b>.\nAnpassungen der Parameter in der Hintergrundstapelverarbeitung werden als <b>Absolut</b> zu den gespeicherten Werten interpretiert.
-PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_CACHECLEAR;Löschen
 PREFERENCES_CACHECLEAR_ALL;Alle Dateien im Zwischenspeicher löschen:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Alle Dateien im Zwischenspeicher löschen mit Ausnahme der Bearbeitungsprofile:
@@ -1171,11 +1168,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;Tag-ID
 PREFERENCES_CUSTPROFBUILDPATH;Anwendungspfad
-PREFERENCES_D50;5000K
-PREFERENCES_D50_OLD;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
@@ -1198,32 +1190,15 @@ PREFERENCES_FLATFIELDFOUND;Gefunden
 PREFERENCES_FLATFIELDSDIR;Weißbild-Verzeichnis
 PREFERENCES_FLATFIELDSHOTS;Aufnahmen
 PREFERENCES_FLATFIELDTEMPLATES;Vorlagen
-PREFERENCES_FLUOF2;Fluoreszenz F2
-PREFERENCES_FLUOF7;Fluoreszenz F7
-PREFERENCES_FLUOF11;Fluoreszenz F11
 PREFERENCES_FORIMAGE;Für Bilddateien
 PREFERENCES_FORRAW;Für RAW-Dateien
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Gleiche Miniaturbildgröße in der Dateiverwaltung und dem Filmstreifen verwenden
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Unterschiedliche Miniaturbildgrößen benötigen mehr Verarbeitungszeit beim Wechsel zwischen der Dateiverwaltung und dem Editor
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
-PREFERENCES_GREY;Yb-Luminanz (%) des Ausgabegerätes
-PREFERENCES_GREY05;Yb = 05 CIE L#30
-PREFERENCES_GREY10;Yb = 10 CIE L#40
-PREFERENCES_GREY15;Yb = 15 CIE L#45
-PREFERENCES_GREY18;Yb = 18 CIE L#50
-PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb = 23 CIE L#55
-PREFERENCES_GREY30;Yb = 30 CIE L#60
-PREFERENCES_GREY40;Yb = 40 CIE L#70
-PREFERENCES_GREYSC;Szenen-Yb-Luminanz (%)
-PREFERENCES_GREYSC18;Yb = 18 CIE L#49
-PREFERENCES_GREYSCA;Automatisch
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm linksseitig
-PREFERENCES_HISTOGRAMWORKING;Das Arbeitsprofil zur Darstellung des Haupthistogramms verwenden
 PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert, wird das Arbeitsprofil für die Darstellung\ndes Haupthistogramms verwendet, andernfalls das des\ngammakorrigierten Ausgangsprofils.
 PREFERENCES_HLTHRESHOLD;Lichter - Schwelle
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
-PREFERENCES_IMG_RELOAD_NEEDED;Änderungen werden nur auf neu geöffnete Bilder angewendet
 PREFERENCES_IMPROCPARAMS;Standard-Bearbeitungsprofile
 PREFERENCES_INSPECT_LABEL;Bildzwischenspeicher
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximale Anzahl Bilder im Zwischenspeicher
@@ -1242,7 +1217,6 @@ PREFERENCES_MENUGROUPLABEL;Untermenü Farbmarkierung
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Untermenü Profiloperationen
 PREFERENCES_MENUGROUPRANK;Untermenü Bewertung
 PREFERENCES_MENUOPTIONS;Menüoptionen
-PREFERENCES_METADATA;Metadaten
 PREFERENCES_MONINTENT;Standard-Rendering-Intent
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Standardfarbprofil
@@ -1320,9 +1294,7 @@ PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
 PREFERENCES_TP_LABEL;Werkzeugbereich:
 PREFERENCES_TP_VSCROLLBAR;Keine vertikale Scrollbar
-PREFERENCES_TUNNELMETADATA;Exif/XMP unverändert in die Ausgabedatei übernehmen.
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
-PREFERENCES_VIEW;Weißabgleich-Einstellung des Ausgabegerätes (Monitor, TV, Projektor, usw.)
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Zu kopierende Parameter
 PROFILEPANEL_GLOBALPROFILES;Standardprofile
@@ -1537,8 +1509,6 @@ TP_COLORAPP_SURROUND_DARK;Dunkel
 TP_COLORAPP_SURROUND_DIM;Gedimmt
 TP_COLORAPP_SURROUND_EXDARK;Extrem Dunkel (Cutsheet)
 TP_COLORAPP_SURROUND_TOOLTIP;Verändert Töne und Farben unter Berücksichtigung der\nBetrachtungsbedingungen des Ausgabegerätes.\n\n<b>Durchschnitt:</b>\nDurchschnittliche Lichtumgebung (Standard).\nDas Bild wird nicht angepasst.\n\n<b>Gedimmt:</b>\nGedimmte Umgebung (TV). Das Bild wird leicht dunkel.\n\n<b>Dunkel:</b>\nDunkle Umgebung (Projektor). Das Bild wird dunkler.\n\n<b>Extrem dunkel:</b>\nExtrem dunkle Umgebung. Das Bild wird sehr dunkel.
-TP_COLORAPP_SURSOURCE;Dunkle Umgebung
-TP_COLORAPP_SURSOURCE_TOOLTIP;Kann verwendet werden, wenn das Quellbild\neinen schwarzen Rahmen besitzt.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Helligkeit (Q)
 TP_COLORAPP_TCMODE_CHROMA;Buntheit (H)
 TP_COLORAPP_TCMODE_COLORF;Farbigkeit (M)
@@ -1640,7 +1610,6 @@ TP_DEHAZE_SHOW_DEPTH_MAP;Maske anzeigen
 TP_DEHAZE_STRENGTH;Intensität
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto-Multizonen
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisch Global
-TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Bewertung des Farbrauschens.\nDie Bewertung ist ungenau und sehr subjektiv!
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Delta-Chrominanz Blau / Gelb
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominanzkurve
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht / Reduziert die Intensität der\nChrominanz-Rauschreduzierung in\nAbhängigkeit der Farbsättigung.
@@ -1658,8 +1627,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Rauschen: Mittelwert = %1  Hoch =
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Rauschen: Mittelwert = ---   Hoch = ---
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Kachelgröße = %1 Zentrum: Tx = %2  Ty = %2
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Delta-Chrominanz Rot / Grün
-TP_DIRPYRDENOISE_ENH;Erweiterter Modus
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Erhöht die Qualität der Rauschreduzierung auf Kosten einer um 20% erhöhten Verarbeitungszeit.
 TP_DIRPYRDENOISE_LABEL;Rauschreduzierung
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminanzkontrolle
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminanzkurve
@@ -1688,7 +1655,6 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES;Iterationen
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Manchmal führt ein kleines 3×3-Fenster mit\nmehreren Iterationen zu besseren Ergebnissen\nals ein 7×7-Fenster mit nur einer Iteration.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Mediantyp
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Einen Medianfilter mit der gewünschten Fenstergröße auswählen.\nJe größer das Fenster, umso länger dauert die Verarbeitungszeit.\n\n3×3 weich: Nutzt 5 Pixel in einem 3×3-Pixelfenster.\n3×3: Nutzt 9 Pixel in einem 3×3-Pixelfenster.\n5×5 weich: Nutzt 13 Pixel in einem 5×5-Pixelfenster.\n5×5: Nutzt 25 Pixel in einem 5×5-Pixelfenster.\n7×7: Nutzt 49 Pixel in einem 7×7-Pixelfenster.\n9×9: Nutzt 81 Pixel in einem 9×9-Pixelfenster.\n\nManchmal ist das Ergebnis mit einem kleineren Fenster und mehreren Iterationen besser, als mit einem größeren und nur einer Iteration.
-TP_DIRPYRDENOISE_SLI;Regler
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 weich
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1793,8 +1759,6 @@ TP_ICM_APPLYHUESATMAP;Basistabelle
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Die eingebettete DCP-Basistabelle verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom\nEingangsfarbprofil unterstützt wird.
 TP_ICM_APPLYLOOKTABLE;“Look“-Tabelle
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Die eingebettete DCP-“Look“-Tabelle verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom\nEingangsfarbprofil unterstützt wird.
-TP_ICM_BLENDCMSMATRIX;ICC Lichter mit Matrix überlagern
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Stellt bei Verwendung von LUT-basierten ICC-Profilen die Lichter wieder her.
 TP_ICM_BPC;Schwarzpunkt-Kompensation
 TP_ICM_DCPILLUMINANT;Illumination
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoliert
@@ -1925,7 +1889,6 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;Diese Einstellung ist verfügbar, wenn "Autokorrektu
 TP_RAWCACORR_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
-TP_RAWCACORR_CASTR;Intensität
 TP_RAWEXPOS_BLACKS;Schattenkompression
 TP_RAWEXPOS_BLACK_0;Grün 1 (Master)
 TP_RAWEXPOS_BLACK_1;Rot
@@ -1984,8 +1947,6 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den ak
 TP_RAW_PIXELSHIFTGREEN;Bewegung im Grün-Kanal erkennen
 TP_RAW_PIXELSHIFTHOLEFILL;Lücken in der Bewegungsmaske erkennen
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Lücken in der Bewegungsmaske erkennen.
-TP_RAW_PIXELSHIFTLMMSE;LMMSE für Bewegungsbereiche verwenden
-TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;LMMSE anstatt AMaZE für bewegte Bildbereiche verwenden.\nSinnvoll bei High-ISO-Aufnahmen.
 TP_RAW_PIXELSHIFTMEDIAN;Median
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Verwenden Sie den Median aller Frames anstelle des\nausgewählten Frames für Regionen mit Bewegung.\nEntfernt Objekte, die an verschiedenen Stellen in allen\nFrames vorkommen. Erzeugt einen Bewegungseffekt\nauf langsame (überlappende) Objekte.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
@@ -1993,7 +1954,6 @@ TP_RAW_PIXELSHIFTMM_CUSTOM;Benutzerdefiniert
 TP_RAW_PIXELSHIFTMM_OFF;Aus
 TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Bewegungskorrektur
-TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 = Keine Bewegungserkennung\n1 - 99 = Bewegung wird entsprechend dem Wert erkannt.\nHöhere Werte erhöhen die Trefferquote\n100 = Der mit AMaZE interpolierte Frame wird verwendet.
 TP_RAW_PIXELSHIFTNONGREENCROSS;Bewegung im Rot/Blau-Kanal erkennen
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
@@ -2042,7 +2002,6 @@ TP_RETINEX_GAIN;Kontrast
 TP_RETINEX_GAINOFFS;Verstärkung und Ausgleich (Helligkeit)
 TP_RETINEX_GAINTRANSMISSION;Transmissionsverstärkung
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Ändert die Helligkeit durch Verstärkung oder\nAbschwächung der Transmissionskarte.
-TP_RETINEX_GAIN_TOOLTIP;Wirkt sich auf das verarbeitete Bild aus. Wird für schwarze oder weiße Pixel verwendet und hilft das Histogramm auszugleichen.
 TP_RETINEX_GAMMA;Gammakorrektur
 TP_RETINEX_GAMMA_FREE;Benutzerdefiniert
 TP_RETINEX_GAMMA_HIGH;Hoch
@@ -2120,10 +2079,8 @@ TP_SAVEDIALOG_OK_TIP;Taste: <b>Strg</b> + <b>Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Lichter
 TP_SHADOWSHLIGHTS_HLTONALW;Tonwertbreite Lichter
 TP_SHADOWSHLIGHTS_LABEL;Schatten / Lichter
-TP_SHADOWSHLIGHTS_LOCALCONTR;Lokaler Kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Radius
 TP_SHADOWSHLIGHTS_SHADOWS;Schatten
-TP_SHADOWSHLIGHTS_SHARPMASK;Schärfemaske
 TP_SHADOWSHLIGHTS_SHTONALW;Tonwertbreite Schatten
 TP_SHARPENEDGE_AMOUNT;Intensität
 TP_SHARPENEDGE_LABEL;Kantenschärfung
