@@ -43,7 +43,6 @@ if [[ $# = 0 ]]; then
     -not -iname ".*" \
     -not -iname "$tmp" \
     -not -iname "English (UK)" \
-    -not -iname "Polish (Latin Characters)" \
     | sort)
 else
     langFiles=("$@")
@@ -119,9 +118,6 @@ case "${langFiles[@]}" in
         -e 'h;s/^[^;]*;//; s/center/centre/g; x;s/;.*//;G;s/\n/;/' \
         -e 'h;s/^[^;]*;//; s/Center/Centre/g; x;s/;.*//;G;s/\n/;/' >> English\ \(UK\)
         grep -Evi ".+;.*(color|behavior|center).*" "English (US)" | grep -Ev "^#" >> "English (UK)"
-        ;;&
-    *"./Polish"*) printf "%s\n" "Creating Polish (Latin Characters) file"
-        sed 'y/ĄĆĘŁŃÓŚŹŻąćęłńóśźż/ACELNOSZZacelnoszz/' < Polish > "Polish (Latin Characters)"
         ;;&
 esac
 
