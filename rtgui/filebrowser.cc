@@ -1779,7 +1779,7 @@ void FileBrowser::openNextImage()
 
                             // scroll only when selected[0] is outside of the displayed bounds
                             // or less than a thumbnail's width from either edge.
-                            if ((x2 > x1 + ww - 2 * tw) || (x2 - tw < x1)) {
+                            if ((x2 > x1 + ww - 1.5 * tw) || (x2 - tw / 2 < x1)) {
                                 setScrollPosition(x2 - (ww - tw) / 2, y2);
                             }
 
@@ -1842,7 +1842,7 @@ void FileBrowser::openPrevImage()
 
                             // scroll only when selected[0] is outside of the displayed bounds
                             // or less than a thumbnail's width from either edge.
-                            if ((x2 > x1 + ww - 2 * tw) || (x2 - tw < x1)) {
+                            if ((x2 > x1 + ww - 1.5 * tw) || (x2 - tw / 2 < x1)) {
                                 setScrollPosition(x2 - (ww - tw) / 2, y2);
                             }
 
