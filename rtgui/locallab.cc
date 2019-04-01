@@ -756,7 +756,7 @@ Locallab::Locallab():
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
 
-//   panel->pack_start(*exptonemap, false, false);
+   panel->pack_start(*exptonemap, false, false);
 
     // Retinex
     Gtk::HBox* const retiTitleHBox = Gtk::manage(new Gtk::HBox());

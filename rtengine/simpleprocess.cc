@@ -1097,7 +1097,6 @@ private:
             LocHHmaskSHCurve lochhmasSHCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
-            LUTf sklocalcurve(65536, 0);
             LUTf hltonecurveloc(65536, 0);
             LUTf shtonecurveloc(65536, 0);
             LUTf tonecurveloc(65536, 0);
@@ -1121,7 +1120,6 @@ private:
                 bool HHutili = false;
                 bool locallutili = false;
                 bool localcutili = false;
-                bool localskutili = false;
                 bool localexutili = false;
                 bool llmasutili = false;
                 bool lcmasexputili = false;
@@ -1146,7 +1144,6 @@ private:
                 lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
-                CurveFactory::curveskLocal(localskutili, params.locallab.spots.at(sp).skintonescurve, sklocalcurve, 1);
                 CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1172,13 +1169,12 @@ private:
                 // No Locallab mask is shown in exported picture
                 ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
-                              LHutili, HHutili, cclocalcurve, localcutili, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0);
+                              LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0);
 
 
                 // Clear local curves
                 lllocalcurve.clear();
                 cclocalcurve.clear();
-                sklocalcurve.clear();
                 exlocalcurve.clear();
                 hltonecurveloc.clear();
                 shtonecurveloc.clear();
@@ -1214,7 +1210,7 @@ private:
         }
 
 
-        ipf.vibrance(labView);
+        ipf.vibrance(labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
         ipf.labColorCorrectionRegions(labView);
 
         if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
