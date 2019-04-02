@@ -232,6 +232,7 @@ public:
     float innerLineWidth;  // ...outerLineWidth = innerLineWidth+2
     Datum datum;
     State state;  // set by the Subscriber
+    float opacity; // Percentage of opacity
 
     Geometry ();
     virtual ~Geometry() {}
@@ -493,7 +494,7 @@ inline Geometry::Geometry () :
         innerLineColor (char (255), char (255), char (255)), outerLineColor (
                 char (0), char (0), char (0)), flags (
                 F_VISIBLE | F_HOVERABLE | F_AUTO_COLOR), innerLineWidth (1.5f), datum (
-                IMAGE), state (NORMAL) {
+                IMAGE), state (NORMAL), opacity(100.) {
 }
 
 inline RGBAColor::RGBAColor () :

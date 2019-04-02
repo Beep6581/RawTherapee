@@ -74,7 +74,7 @@ void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord center_ = center;
@@ -105,7 +105,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb(color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba(color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width( innerLineWidth );
@@ -197,7 +197,7 @@ void Line::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.0);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord begin_ = begin;
@@ -232,7 +232,7 @@ void Line::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width(innerLineWidth);
@@ -311,7 +311,7 @@ void Polyline::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord currPos;
@@ -355,7 +355,7 @@ void Polyline::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width( innerLineWidth );
@@ -504,7 +504,7 @@ void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord tl, br;
@@ -548,7 +548,7 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width( innerLineWidth );
@@ -655,7 +655,7 @@ void Ellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         cr->set_line_width ( getOuterLineWidth() );
 
         rtengine::Coord center_ = center;
@@ -728,7 +728,7 @@ void Ellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width ( innerLineWidth );

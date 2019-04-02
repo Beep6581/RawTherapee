@@ -1274,6 +1274,25 @@ void ControlSpotPanel::deleteControlSpotCurve(Gtk::TreeModel::Row row)
     }
 }
 
+void ControlSpotPanel::updateCurveOpacity(Gtk::TreeModel::Row selectedRow)
+{
+    const int curveid_ = selectedRow[spots_.curveid];
+
+    // printf("updateCurveOpacity: %d\n", curveid_);
+
+    if (curveid_ == 0) { // Row has no associated curve
+        return;
+    }
+
+    for (int it_ = 0; it_ < (int) EditSubscriber::visibleGeometry.size(); it_++) {
+        if ((it_ < ((curveid_ - 1) * 7)) || (it_ > ((curveid_ - 1) * 7) + 6)) { // it_ does not belong to selected curve
+            EditSubscriber::visibleGeometry.at(it_)->opacity = 25.;
+        } else {
+            EditSubscriber::visibleGeometry.at(it_)->opacity = 75.;
+        }
+    }
+}
+
 CursorShape ControlSpotPanel::getCursor(int objectID) const
 {
     // printf("Object ID: %d\n", objectID);
@@ -1698,6 +1717,7 @@ void ControlSpotPanel::setSelectedSpot(int id)
             treeview_.set_cursor(treemodel_->get_path(row));
             load_ControlSpot_param();
             updateParamVisibility();
+            updateCurveOpacity(row);
         }
     }
 
