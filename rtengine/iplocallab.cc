@@ -6167,7 +6167,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     int spotSi = rtengine::max(1 + 2 * max(1, lp.cir / sk), 5);
 
-                    if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp > 0.f) {
+                    if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp >= 0.f) {
                         blend2(bfw, bfh);
                         ImProcFunctions::blendstruc(bfw, bfh, bufexporig.get(), 3.f / (sk * 1.4f), lp.struexp, blend2, sk, multiThread);
 
@@ -6495,7 +6495,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     const int spotSi = std::max(1 + 2 * max(1,  lp.cir / sk), 5);
-                    const bool blend = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco > 0.f;
+                    const bool blend = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco >= 0.f;
 
                     if (blend) {
                         blend2(bfw, bfh);
