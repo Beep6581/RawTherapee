@@ -1080,7 +1080,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
             const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
             L *= hlfactor;
             //shadow tone curve
-            const float shfactor = 0.5f * shtonecurve[2 * L];
+            const float shfactor = shtonecurve[2 * L];
             //tonecurve
             L *= shfactor;
             lab->L[ir][jr] = 0.5f * tonecurve[2.f * L];
@@ -6386,7 +6386,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufmaskblurexp->a[ir][jr] = kmaskC + kmaskH;
                                 bufmaskblurexp->b[ir][jr] = kmaskC + kmaskH;
                                 (*ble)[ir][jr] = LIM01(bufmaskblurexp->L[ir][jr] / 32768.f);
-                                (*guid)[ir][ir] = LIM01(bufexporig->L[ir][jr] / 32768.f);
+                                (*guid)[ir][jr] = LIM01(bufexporig->L[ir][jr] / 32768.f);
 
                             }
 
