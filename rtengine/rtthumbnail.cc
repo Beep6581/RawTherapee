@@ -1398,7 +1398,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
 	ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
-    ipf.vibrance (labView);
+    ipf.vibrance (labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
     ipf.labColorCorrectionRegions(labView);
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {

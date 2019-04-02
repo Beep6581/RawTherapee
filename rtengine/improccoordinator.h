@@ -226,7 +226,6 @@ protected:
     int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
     LUTf cclocalcurve;
-    LUTf sklocalcurve;
     LUTf exlocalcurve;
     LUTf hltonecurveloc;
     LUTf shtonecurveloc;
@@ -246,10 +245,9 @@ protected:
     LocCCmaskSHCurve locccmasSHCurve;
     LocLLmaskSHCurve locllmasSHCurve;
     LocHHmaskSHCurve lochhmasSHCurve;
-//    ProcParams nextParams2;
+
     bool locallutili;
     bool localcutili;
-    bool localskutili;
     bool localexutili;
     bool llmasutili;
     bool lhmasutili;

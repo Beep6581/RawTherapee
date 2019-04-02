@@ -251,7 +251,7 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
 
 }
 
-void ImProcFunctions::cbdl_local_temp(float ** src, float ** dst, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
+void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
 {
     int lastlevel = maxlevelloc;
 
@@ -352,26 +352,22 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** dst, float ** locte
         level ++;
     }
 
-    float **tmpHue = nullptr;
-    float **tmpChr = nullptr;
     // with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
     float ** buffer = dirpyrlo[lastlevel - 1];
 
     for (int level = lastlevel - 1; level > 0; level--) {
-        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], loctemp, buffer, srcwidth, srcheight, level, multi, dirpyrThreshold, tmpHue, tmpChr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
+        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
     }
 
     scale = scalesloc[0];
 
-    idirpyr_eq_channel_loc(dirpyrlo[0], dst, loctemp, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, tmpHue, tmpChr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
+    idirpyr_eq_channel_loc(dirpyrlo[0], src, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     #pragma omp parallel for
 
     for (int i = 0; i < srcheight; i++)
         for (int j = 0; j < srcwidth; j++) {
-            dst[i][j] = src[i][j];
             loctemp[i][j] = CLIP(buffer[i][j]);  // TODO: Really a clip necessary?
-            //  dst[i][j] = CLIP (buffer[i][j]); // TODO: Really a clip necessary?
         }
 
 }
@@ -735,7 +731,7 @@ void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, i
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** loctemp, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice)
+void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice)
 {
     //  const float skinprotneg = -skinprot;
 //   const float factorHard = (1.f - skinprotneg / 100.f);
