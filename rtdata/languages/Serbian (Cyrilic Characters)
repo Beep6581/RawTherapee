@@ -68,7 +68,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Занемари [raw] ЛММСЕ корак�
 EXPORT_BYPASS_SHARPENEDGE;Занемари оштрење ивице
 EXPORT_BYPASS_SHARPENING;Занемари оштрење
 EXPORT_BYPASS_SHARPENMICRO;Занемари микроконтраст
-EXPORT_BYPASS_SH_HQ;Занемари оштру маску за Сенке/Светло
 EXPORT_FASTEXPORTOPTIONS;<b>Опције за брз извоз</b>
 EXPORT_INSTRUCTIONS;Брз извоз омогућава да заобиђете неке од захтевних и споријих процеса приликом развијања слика и да закажете фотографије за брзо развијање. Овј метод је добар за брзо развијање слика у мањој резолуцији, када вам је битно да фотографије добијете што пре или када желите примените задовољавајуће параметре за развијање већег броја фотографија одједном без измене њихових профила.
 EXPORT_MAXHEIGHT;Највећа висина:
@@ -77,7 +76,6 @@ EXPORT_PUTTOQUEUEFAST;  Закажи за брз извоз
 EXPORT_RAW_DMETHOD;Начин расклапања мозаика
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;заказано-развијено
-FILEBROWSER_ADDDELTEMPLATE;Додај/уклони шаблоне...
 FILEBROWSER_APPLYPROFILE;Примени профил
 FILEBROWSER_APPLYPROFILE_PARTIAL;Примени профил (половично)
 FILEBROWSER_AUTODARKFRAME;Сам одреди тамни кадар
@@ -178,7 +176,6 @@ GENERAL_WARNING;Упозорење
 HISTOGRAM_TOOLTIP_B;Приказује плави хистограм
 HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
 HISTOGRAM_TOOLTIP_CHRO;Прикажи/сакриј хистограм хроминансе.
-HISTOGRAM_TOOLTIP_FULL;Укључује приказ потпуног или хистограма у размери.
 HISTOGRAM_TOOLTIP_G;Приказује зелени хистограм
 HISTOGRAM_TOOLTIP_L;Приказује ЦиеЛаб хитограм
 HISTOGRAM_TOOLTIP_R;Приказује црвени хистограм
@@ -592,7 +589,6 @@ PREFERENCES_BEHADDALLHINT;Поставља све параметре у режи
 PREFERENCES_BEHAVIOR;Понашање
 PREFERENCES_BEHSETALL;Све у „Постави“
 PREFERENCES_BEHSETALLHINT;Поставља све параметре у режим <b>Постави</b>.\nЊихово подешавање помоћу алата из панела за заказано ће бити <b>апсолутне</b> вредности као што су и изабране.
-PREFERENCES_BLACKBODY;Обична сијалица
 PREFERENCES_CACHEMAXENTRIES;Највећи број мест у остави
 PREFERENCES_CACHEOPTS;Подешавање оставе
 PREFERENCES_CACHETHUMBHEIGHT;Највећа висина приказа
@@ -603,10 +599,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Кључни  формати
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Назив
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;БрОзнаке
 PREFERENCES_CUSTPROFBUILDPATH;Извршна путања
-PREFERENCES_D50;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Нађен
 PREFERENCES_DARKFRAMESHOTS;снимака
 PREFERENCES_DARKFRAMETEMPLATES;шаблони
@@ -626,20 +618,9 @@ PREFERENCES_FLATFIELDFOUND;Нађено
 PREFERENCES_FLATFIELDSDIR;Директоријум за равна поља
 PREFERENCES_FLATFIELDSHOTS;снимака
 PREFERENCES_FLATFIELDTEMPLATES;шаблони
-PREFERENCES_FLUOF2;Флоресцентна F2
-PREFERENCES_FLUOF7;Флоресцентна F7
-PREFERENCES_FLUOF11;Флоресцентна F11
 PREFERENCES_FORIMAGE;За датотеке са сликама
 PREFERENCES_FORRAW;За RAW датотеке
 PREFERENCES_GIMPPATH;Директоријум са инсталираним Гимпом
-PREFERENCES_GREY;Yb луминанса излазног уређаја (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Хистограм у левој површи
 PREFERENCES_HLTHRESHOLD;Праг за одсечене светле делове
 PREFERENCES_ICCDIR;ИЦЦ директоријум
@@ -656,7 +637,6 @@ PREFERENCES_MENUGROUPLABEL;Групиши обележавање
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Групиши радње са профилима
 PREFERENCES_MENUGROUPRANK;Групиши оцењивање
 PREFERENCES_MENUOPTIONS;Опције менија
-PREFERENCES_METADATA;Метаподаци
 PREFERENCES_MULTITAB;Режим у више листова
 PREFERENCES_MULTITABDUALMON;Режим у више листова, на другом монитору
 PREFERENCES_OUTDIR;Излазни директоријум
@@ -699,9 +679,7 @@ PREFERENCES_TAB_IMPROC;Обрада сликe
 PREFERENCES_TAB_SOUND;Звуци
 PREFERENCES_TP_LABEL;Површ алата:
 PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
-PREFERENCES_TUNNELMETADATA;Копирај неизмењене IPTC/XMP (када је слика означена другим програмом)
 PREFERENCES_USEBUNDLEDPROFILES;Користи профиле који долазе уз програм
-PREFERENCES_VIEW;Баланс беле излазног уређаја (монитор, ТВ, пројакетор и др.)
 PREFERENCES_WORKFLOW;Ток обраде
 PROFILEPANEL_COPYPPASTE;Параметри за копирање
 PROFILEPANEL_GLOBALPROFILES;Профили из програма
@@ -735,14 +713,12 @@ PROGRESSBAR_SAVEPNG;Чувам PNG датотеку...
 PROGRESSBAR_SAVETIFF;Чувам TIFF датотеку...
 PROGRESSBAR_SNAPSHOT_ADDED;Додат је снимак
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профил измењен у разгледачу
-P_GAMMA_CURV;гама
 QINFO_ISO;ИСО
 QINFO_NOEXIF;Нису доступни Exif подаци.
 SAVEDLG_AUTOSUFFIX;Сам додај суфикс уколико датотека већ постоји
 SAVEDLG_FILEFORMAT;Формат датотеке
 SAVEDLG_FORCEFORMATOPTS;Приморај могућности за чување
 SAVEDLG_JPEGQUAL;JPEG квалитет
-SAVEDLG_PNGCOMPR;PNG паковање
 SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_PUTTOQUEUEHEAD;Премешта слику на почетак заказаних
 SAVEDLG_PUTTOQUEUETAIL;Премешта слику на крај заказаних
@@ -879,8 +855,6 @@ TP_COLORAPP_SURROUND_DARK;Тамно
 TP_COLORAPP_SURROUND_DIM;Затамњено
 TP_COLORAPP_SURROUND_EXDARK;Јако тамно
 TP_COLORAPP_SURROUND_TOOLTIP;Мења тонове и боје како би се прилагодило условима уређаја за приказ.\n\n<b>Просечно</b>: Просечно осветљено окружење (уобичајено). Слика неће бити измењена.\n\n<b>Затамњено</b>: Затамњено окружење (ТВ). Слика ће постати за нијансу тамнија.\n\n<b>Тамно</b>: Тамно окружење (пројектор). Слика ће постати још више тамна.\n\n<b>Јако тамно</b>: Екстрамно тамно окружење (cutsheet). Слика ће постати изузетно тамна.
-TP_COLORAPP_SURSOURCE;Тамно окружење
-TP_COLORAPP_SURSOURCE_TOOLTIP;Може да се користи уколико слика има тамне ивице.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Освтљеност
 TP_COLORAPP_TCMODE_CHROMA;Хрома
 TP_COLORAPP_TCMODE_COLORF;Живост боја
@@ -915,12 +889,9 @@ TP_DEFRINGE_THRESHOLD;Праг
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Хроминанса: Плава-Жута
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Боја
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Хроминанса - црвена-зелена
-TP_DIRPYRDENOISE_ENH;Побољшани режим
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Повећава квалитет уклањања шума на уштрб око 20% времена за обраду.
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Детаљи луминансе
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Луминанса
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Начин
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Дирекционо пирамидно уклањање шума
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;РГБ
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;За рав слике можете користити РГБ или Лаб режиме.\n\nЗа остале слике се користи Лаб, без обзира на избор.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Гама
@@ -970,10 +941,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Хоризонтално
 TP_FLATFIELD_BT_VERTHORIZ;Хориз. и вертик.
 TP_FLATFIELD_BT_VERTICAL;Вертикално
 TP_FLATFIELD_LABEL;Равно поље
-TP_GAMMA_CURV;Гама
-TP_GAMMA_FREE;Гама слобода
-TP_GAMMA_OUTPUT;Излазна гама
-TP_GAMMA_SLOP;нагиб (линеарни)
 TP_GENERAL_11SCALE_TOOLTIP;Ефект овог алата или његових опција се види само у размери 1:1.
 TP_GRADIENT_CENTER;Центар
 TP_GRADIENT_CENTER_X;Центар X
@@ -999,8 +966,6 @@ TP_HSVEQUALIZER_HUE;Нијанса
 TP_HSVEQUALIZER_LABEL;Уједначење ХСВ канала
 TP_HSVEQUALIZER_SAT;Засићеност
 TP_HSVEQUALIZER_VAL;Вредност
-TP_ICM_BLENDCMSMATRIX;Утопи светле делове у матрицу
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Омогућите како би повратили преосветљене делове уколико користите LUT ICC профиле.
 TP_ICM_DCPILLUMINANT;Илуминантно
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Интерполирано
 TP_ICM_INPUTCAMERA;Подразумевано из апарата
@@ -1126,10 +1091,8 @@ TP_SAVEDIALOG_OK_TIP;Пречица: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Светло
 TP_SHADOWSHLIGHTS_HLTONALW;Ширина тонова
 TP_SHADOWSHLIGHTS_LABEL;Сенке/Светло
-TP_SHADOWSHLIGHTS_LOCALCONTR;Локални контраст
 TP_SHADOWSHLIGHTS_RADIUS;Полупречник
 TP_SHADOWSHLIGHTS_SHADOWS;Сенке
-TP_SHADOWSHLIGHTS_SHARPMASK;Оштра маска
 TP_SHADOWSHLIGHTS_SHTONALW;Ширина тонова
 TP_SHARPENEDGE_AMOUNT;Количина
 TP_SHARPENEDGE_LABEL;Ивице
@@ -1726,19 +1689,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
-!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREYSC18;Yb=18 CIE L#50
-!PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
 !PREFERENCES_INSPECT_LABEL;Inspect
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
@@ -1888,7 +1844,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
-!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
@@ -1924,7 +1879,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
 !TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TYPE_3X3;3×3
 !TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
 !TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -2006,7 +1960,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
-!TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -2052,15 +2005,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2095,7 +2045,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High

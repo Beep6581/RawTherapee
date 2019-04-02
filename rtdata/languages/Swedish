@@ -77,7 +77,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Förbigå förbättringssteg för LMMSE (För
 EXPORT_BYPASS_SHARPENEDGE;Förbigå kantskärpning
 EXPORT_BYPASS_SHARPENING;Förbigå skärpning
 EXPORT_BYPASS_SHARPENMICRO;Förbigå mikrokontrast
-EXPORT_BYPASS_SH_HQ;Förbigå skuggor/högdagrar (hög kvalitet)
 EXPORT_FASTEXPORTOPTIONS;<b>Inställningar för snabbexport</b>
 EXPORT_INSTRUCTIONS;Snabbexport erbjuder snabbare konvertering genom att åsidosätta tidskrävande verktyg och framkallningsinställningar. Batchkön körs då med dessa, mindre krävande, inställningar istället så länge det här alternativet är valt. Den här metoden rekommenderas för de konverteringar där användningsområdet tillåter en lägre kvalitet på de färdiga bilderna. Genom att använda det här alternativet görs inga modifieringar i bildens normala framkallningsinställningar.
 EXPORT_MAXHEIGHT;Maximal höjd:
@@ -86,7 +85,6 @@ EXPORT_PUTTOQUEUEFAST; Lägg till i kö för snabbexport
 EXPORT_RAW_DMETHOD;Demosaic-metod
 EXTPROGTARGET_1;Rå
 EXTPROGTARGET_2;köhanterad
-FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
 FILEBROWSER_APPLYPROFILE;Använd profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Applicera profil (partiell)
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
@@ -212,7 +210,6 @@ GENERAL_WARNING;Varning
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer\nKlicka på höger musknapp på förhandsvisningen för att frysa
 HISTOGRAM_TOOLTIP_CHRO;Visa/Dölj kromananshistogrammet
-HISTOGRAM_TOOLTIP_FULL;Växla mellan fullt eller skalat histogram
 HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
 HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
 HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
@@ -705,8 +702,6 @@ MAIN_TAB_RAW;Råbild
 MAIN_TAB_RAW_TOOLTIP;Kortkommando: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Omvandla
 MAIN_TAB_TRANSFORM_TOOLTIP;Kortkommando: <b>Alt-t</b>
-MAIN_TAB_WAVELET;Wavelet
-MAIN_TAB_WAVELET_TOOLTIP;Kortkommando: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg: <b>Temabaserad</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg: <b>Svart</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg: <b>Vit</b>\nKortkommando: <b>9</b>
@@ -801,7 +796,6 @@ PARTIALPASTE_SHARPENING;Skärpa (Oskarp mask/RL)
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 PARTIALPASTE_VIBRANCE;Lyster
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
-PARTIALPASTE_WAVELETGROUP;Wavelet-nivåer
 PARTIALPASTE_WHITEBALANCE;Vitbalans
 PREFERENCES_ADD;Lägg till
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Översiktsvyns guidefärg
@@ -813,7 +807,6 @@ PREFERENCES_BEHADDALLHINT;Sätt alla parametrar till <b>Lägg till</b>-läge.\nF
 PREFERENCES_BEHAVIOR;Uppträdande
 PREFERENCES_BEHSETALL;Sätt allt till 'Ange'
 PREFERENCES_BEHSETALLHINT;Sätt alla parametrar till <b>Ange</b>-läge.\nFörändringar i parametrar i batch-verktyget kommer att vara <b>absoluta</b> och de faktiska värdena kommer att visas.
-PREFERENCES_BLACKBODY;Glödlampa
 PREFERENCES_CACHEMAXENTRIES;Maximalt antal cachefiler
 PREFERENCES_CACHEOPTS;Cacheinställningar
 PREFERENCES_CACHETHUMBHEIGHT;Maximal höjd på miniatyrbilderna
@@ -832,10 +825,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format för nycklar
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Namn
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Exekverbar sökväg
-PREFERENCES_D50;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Hittade
 PREFERENCES_DARKFRAMESHOTS;bilder
 PREFERENCES_DARKFRAMETEMPLATES;mallar
@@ -855,31 +844,15 @@ PREFERENCES_FLATFIELDFOUND;Hittade
 PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
 PREFERENCES_FLATFIELDSHOTS;bilder
 PREFERENCES_FLATFIELDTEMPLATES;mallar
-PREFERENCES_FLUOF2;Lysrör F2
-PREFERENCES_FLUOF7;Lysrör F7
-PREFERENCES_FLUOF11;Lysrör F11
 PREFERENCES_FORIMAGE;För bildfiler
 PREFERENCES_FORRAW;För råbilder
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Samma miniatyrbildshöjd mellan redigerings- och filvyn
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Att ha olika miniatyrbildshöjder kräver ytterligare beräkningskraft varje gång du växlar mellan redigerings- och filvyn.
 PREFERENCES_GIMPPATH;Installationskatalog för GIMP
-PREFERENCES_GREY;Utenhetens Yb luminans (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREYSC;Vyns Yb luminans (%)
-PREFERENCES_GREYSC18;Yb=18 CIE L#50
-PREFERENCES_GREYSCA;Automatisk
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogrammet till vänster
-PREFERENCES_HISTOGRAMWORKING;Använd arbetsprofil för huvudhistogram och översiktsvyn.
 PREFERENCES_HISTOGRAM_TOOLTIP;Om påslagen, så används arbetsprofilen för att skapa huvudhistogrammet och översiktsvyn, annars används den gamma-korrigerade profilen istället.
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
 PREFERENCES_ICCDIR;Katalog för färgprofiler
-PREFERENCES_IMG_RELOAD_NEEDED;De här förändringarna kräver att bilden laddas om (eller att en ny bild öppnas) för att effektueras.
 PREFERENCES_IMPROCPARAMS;Standardprofiler
 PREFERENCES_INSPECT_LABEL;Inspektion
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximalt antal cachade bilder
@@ -896,7 +869,6 @@ PREFERENCES_MENUGROUPLABEL;Visa "Etikett"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Visa "Profilaktiviteter"
 PREFERENCES_MENUGROUPRANK;Visa "Betygsättning"
 PREFERENCES_MENUOPTIONS;Menyval för högerklick
-PREFERENCES_METADATA;Metadata
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt, i flerfliksläge
 PREFERENCES_NAVIGATIONFRAME;Navigering
@@ -953,9 +925,7 @@ PREFERENCES_TAB_IMPROC;Bildbehandling
 PREFERENCES_TAB_SOUND;Ljud
 PREFERENCES_TP_LABEL;Verktygspanel:
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
-PREFERENCES_TUNNELMETADATA;Kopiera Exif/IPTC/XMP till utfilen oförändrat
 PREFERENCES_USEBUNDLEDPROFILES;Visa förinstallerade profiler
-PREFERENCES_VIEW;Utenhetens vitbalansvärde (datorskärm, TV, bildkanon, etc.)
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_COPYPPASTE;Parametrar att kopiera
 PROFILEPANEL_GLOBALPROFILES;Förinstallerade profiler
@@ -995,7 +965,6 @@ SAVEDLG_AUTOSUFFIX;Lägg automatiskt till en ändelse om filnamnet redan exister
 SAVEDLG_FILEFORMAT;Filformat
 SAVEDLG_FORCEFORMATOPTS;Kräv att inställningar sparas
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
-SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
 SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
 SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
@@ -1141,8 +1110,6 @@ TP_COLORAPP_SURROUND_DARK;Mörk
 TP_COLORAPP_SURROUND_DIM;Dunkelt
 TP_COLORAPP_SURROUND_EXDARK;Extremt mörkt
 TP_COLORAPP_SURROUND_TOOLTIP;Ändra toner och färger för att ta i beaktande betraktningsförhållandena för utmatningsenheten\n\n<b>Medel:</b>\nMedelljusa omgivningar (standard)\nBilden kommer ej att ändras\n\n<b>Dunkelt:</b>\nDunkla omgivningar (TV)\nBilden kommer att bli aningen mörkare\n\n<b>Mörk:</b>\nMörka omgivningar (projektor)\nBilden kommer att bli mörkare\n\n<b>Extremt mörkt:</b>\nExtremt mörka omgivningar (cutsheet)\nBilden kommer bli mycket mörk
-TP_COLORAPP_SURSOURCE;Mörk omgivning
-TP_COLORAPP_SURSOURCE_TOOLTIP;Kan användas om källbilden har en mörk kant.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Intensitet
 TP_COLORAPP_TCMODE_CHROMA;Kroma
 TP_COLORAPP_TCMODE_COLORF;Färgmättnad
@@ -1210,7 +1177,6 @@ TP_DEFRINGE_LABEL;Fyll ut överstrålning
 TP_DEFRINGE_RADIUS;Radie
 TP_DEFRINGE_THRESHOLD;Tröskelvärde
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisk global
-TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Försök att utvärdera chroma-bruset\nVar försiktig, den här beräkningen görs på genomsnittet och är tämligen subjektiv!
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Krominans - Blå-Gul
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Krominans-kurva
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Krominans
@@ -1225,8 +1191,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Förhandsgranska brus: Medel=%1  
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Förhandsgranska brus: Medel= -   Hög= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tile-storlek=%1, Center: Tx=%2  Ty=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Krominans - Röd-Grön
-TP_DIRPYRDENOISE_ENH;Förbättrat läge
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Ökar kvaliteten på brusreduceringen till priset av 20 % längre beräkningstid
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminanskontroll
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminans-kurva
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminansdetalj
@@ -1234,7 +1198,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminans
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminans
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Metod
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;Lab
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Brusreducering
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;För råfiler kan antingen RGB- eller Labmetoder användas.\n\nFör icke-råfiler kommer Labmetoden att användas, oavsett vad som är valt.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1247,7 +1210,6 @@ TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Endast luminans
 TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
 TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Viktad L* (litet) + a*b* (normal)
-TP_DIRPYRDENOISE_SLI;Reglage
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 mjuk
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1314,10 +1276,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Horisontell
 TP_FLATFIELD_BT_VERTHORIZ;Vertikal + horisontell
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_LABEL;Plattfält
-TP_GAMMA_CURV;gamma
-TP_GAMMA_FREE;Obunden gamma
-TP_GAMMA_OUTPUT;Utmatningsgamma
-TP_GAMMA_SLOP;Lutning (linjär)
 TP_GENERAL_11SCALE_TOOLTIP;Effekten från det här verktyget eller några av dess underkomponenter syns endast då de visas  i 1:1-skala eller högre
 TP_GRADIENT_CENTER;Centrum
 TP_GRADIENT_CENTER_X;Centrum, X
@@ -1346,8 +1304,6 @@ TP_HSVEQUALIZER_VAL;Värde
 TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Bas-exponering
 TP_ICM_APPLYHUESATMAP;Bas-tabell
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Tillämpa den inbäddade DCP:ns uppslagstabell. Inställningen är bara aktiv om den valda DCP har en sådan.
-TP_ICM_BLENDCMSMATRIX;Mixa högdagrar med matris
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Möjliggör återskapande av utbrända högdagrar när LUT-baserade ICC-profiler används.
 TP_ICM_BPC;Svartpunktskompensation
 TP_ICM_DCPILLUMINANT;Ljuskälla
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolerad ljuskälla
@@ -1443,7 +1399,6 @@ TP_PRSHARPENING_TOOLTIP;Skärper bilden efter att den storleksförändrats. Fung
 TP_RAWCACORR_AUTO;Reducera automatiskt kromatiska abberationer
 TP_RAWCACORR_CABLUE;Blå
 TP_RAWCACORR_CARED;Röd
-TP_RAWCACORR_CASTR;Styrka
 TP_RAWEXPOS_BLACKS;Svartpunktsnivåer
 TP_RAWEXPOS_BLACK_0;Grön 1 (ledare)
 TP_RAWEXPOS_BLACK_1;Röd
@@ -1555,10 +1510,8 @@ TP_SAVEDIALOG_OK_TIP;Kortkommando: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
 TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
 TP_SHADOWSHLIGHTS_LABEL;Skugg- och högdageråterställning
-TP_SHADOWSHLIGHTS_LOCALCONTR;Lokal kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Radie
 TP_SHADOWSHLIGHTS_SHADOWS;Skuggor
-TP_SHADOWSHLIGHTS_SHARPMASK;Skarp mask
 TP_SHADOWSHLIGHTS_SHTONALW;Tonvidd (Skuggor)
 TP_SHARPENEDGE_AMOUNT;Mängd
 TP_SHARPENEDGE_LABEL;Kanter
@@ -2057,11 +2010,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
 !PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LANG;Language
 !PREFERENCES_MONINTENT;Default rendering intent
@@ -2241,15 +2192,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2269,7 +2217,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
 !TP_RETINEX_LABEL_MASK;Mask

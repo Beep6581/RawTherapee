@@ -124,8 +124,8 @@ set(NONCLISOURCEFILES
     rgbcurves.cc
     rotate.cc
     rtimage.cc
-	rtsurface.cc
-	rtscalable.cc
+    rtsurface.cc
+    rtscalable.cc
     rtwindow.cc
     saveasdlg.cc
     saveformatpanel.cc

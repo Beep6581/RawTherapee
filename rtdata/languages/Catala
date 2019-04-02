@@ -67,7 +67,6 @@ EXPORT_BYPASS_RAW_LINENOISE;Salta [raw] línia de filtre de soroll
 EXPORT_BYPASS_SHARPENEDGE;Salta afinar vores
 EXPORT_BYPASS_SHARPENING;Salta reenfocar
 EXPORT_BYPASS_SHARPENMICRO;Salta microcontrast
-EXPORT_BYPASS_SH_HQ;Salta ombres/clars intensos (alta qualitat)
 EXPORT_FASTEXPORTOPTIONS;<b>Opcions d'exportació ràpida</b>
 EXPORT_INSTRUCTIONS;Les opcions d'exportació ràpida permeten estalviar temps i recursos obviant els ajustos establerts de desenvolupament i processar la cua amb més celeritat. Es recomana aquest mètode per a una ràpida generació d'imatges de baixa resolució quan cal prioritzar la rapidesa o en canvis de tamany d'una o diverses imatges sense modificar els seus paràmetres de desenvolupament desats.
 EXPORT_MAXHEIGHT;Alçada màxima:
@@ -76,7 +75,6 @@ EXPORT_PUTTOQUEUEFAST;  Posa a la cua per a export. ràpida
 EXPORT_RAW_DMETHOD;Mètode de demosaicar
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;cua processada
-FILEBROWSER_ADDDELTEMPLATE;Afeg/Treu plantilles...
 FILEBROWSER_APPLYPROFILE;Aplica
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplica - parcial
 FILEBROWSER_AUTODARKFRAME;Auto marc fosc
@@ -168,7 +166,6 @@ GENERAL_UNCHANGED;(No canviat)
 GENERAL_WARNING;Avís
 HISTOGRAM_TOOLTIP_B;Mostra/amaga l'histograma BLAU
 HISTOGRAM_TOOLTIP_BAR;Mostra/amaga la barra indicadora RGB\nClic botó dret a la previsualització per a congelar/descongelar
-HISTOGRAM_TOOLTIP_FULL;Canvia entre histograma complet o escalat
 HISTOGRAM_TOOLTIP_G;Mostra/amaga l'histograma VERD
 HISTOGRAM_TOOLTIP_L;Mostra/amaga l'histograma de luminància CIELAB
 HISTOGRAM_TOOLTIP_R;Mostra/amaga l'histograma VERMELL
@@ -532,7 +529,6 @@ PREFERENCES_MENUGROUPLABEL;Grup "Etiqueta de color"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grup "Operacions de procés de perfils"
 PREFERENCES_MENUGROUPRANK;Grup "Rang"
 PREFERENCES_MENUOPTIONS;Opcions del menú
-PREFERENCES_METADATA;Metadata
 PREFERENCES_MULTITAB;Mode multitreball
 PREFERENCES_MULTITABDUALMON;Mode multitreball en segon monitor, si se'n té un
 PREFERENCES_OUTDIR;Directori de sortida
@@ -607,7 +603,6 @@ QINFO_NOEXIF;No hi ha dades Exif.
 SAVEDLG_AUTOSUFFIX;Afegeix automàticament un sufix si el fitxer ja hi és
 SAVEDLG_FILEFORMAT;Format del fitxer
 SAVEDLG_JPEGQUAL;Qualitat JPEG
-SAVEDLG_PNGCOMPR;Compressió PNG
 SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
 SAVEDLG_PUTTOQUEUEHEAD;Posa al principi de la cua de procés
 SAVEDLG_PUTTOQUEUETAIL;Posa a la fi de la cua de procés
@@ -664,7 +659,6 @@ TP_DEFRINGE_THRESHOLD;Llindar
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Crominància
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detall de luminància
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminància
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Reducció de soroll (només imatges raw)
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gama
 TP_DIRPYREQUALIZER_LABEL;Contrast per grau de detall
 TP_DIRPYREQUALIZER_LUMACOARSEST;Més bast
@@ -710,10 +704,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Horitzontal
 TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horitz.
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_LABEL;Camp pla
-TP_GAMMA_CURV;gama
-TP_GAMMA_FREE;Lliure gama
-TP_GAMMA_OUTPUT;Sortida gama
-TP_GAMMA_SLOP;Inclinació (linear)
 TP_HLREC_BLEND;Barreja
 TP_HLREC_CIELAB;Superposició CIELab
 TP_HLREC_COLOR;Propagació de color
@@ -725,8 +715,6 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalitzador
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
-TP_ICM_BLENDCMSMATRIX;Barreja clars intensos del perfil de color amb la matriu
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Habilita la recuperació de clars intensos quan s'usen els perfils ICC basats en LUT
 TP_ICM_INPUTCAMERA;Propi de la càmera
 TP_ICM_INPUTCAMERAICC;Perfil de color del model de càmera detectada.
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Usa d'entrada el perfil de color DCP o ICC específic de càmera de RawTherapee. Aquests perfils són més precisos que els de simple matriu. Disponible per a algunes càmeres. Aquests perfils són als directoris /iccprofiles/input i /dcpprofiles i es carreguen automàticament segons un nom de fitxer que coincideix exactament amb el nom de model de la càmera.
@@ -824,7 +812,6 @@ TP_ROTATE_SELECTLINE;Selecc. línia recta
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Clars intensos
 TP_SHADOWSHLIGHTS_HLTONALW;Amplada de to per Clars I.
 TP_SHADOWSHLIGHTS_LABEL;Foscos/Clars intensos
-TP_SHADOWSHLIGHTS_LOCALCONTR;Contrast local
 TP_SHADOWSHLIGHTS_RADIUS;Radi
 TP_SHADOWSHLIGHTS_SHADOWS;Foscos
 TP_SHADOWSHLIGHTS_SHTONALW;Amplada de to per Foscos
@@ -1494,7 +1481,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
 !PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
-!PREFERENCES_BLACKBODY;Tungsten
 !PREFERENCES_CACHECLEAR;Clear
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
@@ -1524,34 +1510,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
-!PREFERENCES_D50;Settings in main menu
-!PREFERENCES_D50_OLD;5000K
-!PREFERENCES_D55;5500K
-!PREFERENCES_D60;6000K
-!PREFERENCES_D65;6500K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!PREFERENCES_FLUOF2;Fluorescent F2
-!PREFERENCES_FLUOF7;Fluorescent F7
-!PREFERENCES_FLUOF11;Fluorescent F11
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
-!PREFERENCES_GREY;Output device's Yb luminance (%)
-!PREFERENCES_GREY05;Yb=05 CIE L#30
-!PREFERENCES_GREY10;Yb=10 CIE L#40
-!PREFERENCES_GREY15;Yb=15 CIE L#45
-!PREFERENCES_GREY18;Settings in main menu
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_GREY23;Yb=23 CIE L#55
-!PREFERENCES_GREY30;Yb=30 CIE L#60
-!PREFERENCES_GREY40;Yb=40 CIE L#70
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREYSC18;Yb=18 CIE L#50
-!PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
 !PREFERENCES_INSPECT_LABEL;Inspect
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
@@ -1592,9 +1556,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
-!PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_MYPROFILES;My profiles
@@ -1742,8 +1704,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_SURROUND_DIM;Dim
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
 !TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
-!TP_COLORAPP_SURSOURCE;Dark surround
-!TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if image has a dark border.
 !TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 !TP_COLORAPP_TCMODE_CHROMA;Chroma
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness
@@ -1827,7 +1787,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
-!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 !TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominance - Blue-Yellow
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
@@ -1844,8 +1803,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tile size=%1, Center: Tx=%2  Ty=%3
 !TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominance - Red-Green
-!TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
 !TP_DIRPYRDENOISE_LABEL;Noise Reduction
 !TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminance control
 !TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve
@@ -1871,7 +1828,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
 !TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TYPE_3X3;3×3
 !TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
 !TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1987,7 +1943,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
-!TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -2038,15 +1993,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2081,7 +2033,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High
@@ -2148,7 +2099,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RGBCURVES_LUMAMODE;Luminosity mode
 !TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity mode</b> allows to vary the contribution of R, G and B channels to the luminosity of the image, without altering image color.
 !TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
-!TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
 !TP_SHARPENING_BLUR;Blur radius
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENMICRO_CONTRAST;Contrast threshold

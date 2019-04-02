@@ -140,7 +140,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Vynechat [raw] kroky vylepšení LMMSE
 EXPORT_BYPASS_SHARPENEDGE;Vynechat doostření hran
 EXPORT_BYPASS_SHARPENING;Vynechat doostření
 EXPORT_BYPASS_SHARPENMICRO;Vynechat mikrokontrast
-EXPORT_BYPASS_SH_HQ;Vynechat masku ostrosti stínů a světel
 EXPORT_FASTEXPORTOPTIONS;<b>Volby rychlého exportu</b>
 EXPORT_INSTRUCTIONS;Volba rychlého exportu umožňuje potlačit vybrané nastavení procesu vyvolání a zkrátit tak čas a zdroje potřebné pro zpracování fronty tím, že se pro vyvolání použije nastavení rychlého exportu. Tato metoda je doporučována pro rychlejší vyvolání obrázků v nižším rozlišení v případě, že je důležitá rychlost, nebo pokud je požadováno vyvolání jednoho nebo více obrázků v nižším rozlišení bez změny uložených parametrů vyvolání.
 EXPORT_MAXHEIGHT;Maximální výška:
@@ -153,7 +152,6 @@ EXPORT_USE_FAST_PIPELINE_TIP;Použije vyhrazenou frontu zpracování v režimu r
 EXPORT_USE_NORMAL_PIPELINE;Standardní (přeskočí některé kroky, zmenší až na konci)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;Zpracování fronty
-FILEBROWSER_ADDDELTEMPLATE;Přidat/Smazat šablony...
 FILEBROWSER_APPLYPROFILE;Použít
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplikovat - částečně
 FILEBROWSER_AUTODARKFRAME;Automatický tmavý snímek
@@ -1091,7 +1089,6 @@ PREFERENCES_BEHADDALLHINT;Nastaví všechny parametry do módu <b>Přidat</b>.\n
 PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BEHSETALL;Vše do 'Nastavit'
 PREFERENCES_BEHSETALLHINT;Nastaví všechny parametry do módu <b>Nastavit</b>.\nZměna parametrů v panelu dávkového zpracování se aplikuje jako <b>absolutní</b>, budou zobrazeny aktuální hodnoty.
-PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_CACHECLEAR;Smazat
 PREFERENCES_CACHECLEAR_ALL;Smazat z mezipaměti všechny soubory :
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Smazat z mezipaměti všechny soubory mimo profilů zpracování:
@@ -1122,11 +1119,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Formát klíče
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Jméno
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Cesta k programu
-PREFERENCES_D50;Nastavení v hlavní nabídce
-PREFERENCES_D50_OLD;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Nalezeno
 PREFERENCES_DARKFRAMESHOTS;snímků
 PREFERENCES_DARKFRAMETEMPLATES;šablony
@@ -1149,32 +1141,15 @@ PREFERENCES_FLATFIELDFOUND;Nalezeno
 PREFERENCES_FLATFIELDSDIR;Složka Flat Field souborů
 PREFERENCES_FLATFIELDSHOTS;snímků
 PREFERENCES_FLATFIELDTEMPLATES;šablony
-PREFERENCES_FLUOF2;Fluorescenční F2
-PREFERENCES_FLUOF7;Fluorescenční F7
-PREFERENCES_FLUOF11;Fluorescenční F11
 PREFERENCES_FORIMAGE;Pro ostatní fotografie
 PREFERENCES_FORRAW;Pro raw fotografie
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Stejná velikost náhledu ve filmovém pásu a v Prohlížeči souborů
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Rozdílné velikosti náhledů znamenají delší dobu zpracování při přepínání mezi obrázkem v záložce Editoru a Prohlížečem souborů.
 PREFERENCES_GIMPPATH;GIMP instalační složka
-PREFERENCES_GREY;Yb svítivost výstupního zařízení (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Nastavení v hlavní nabídce
-PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREYSC;Yb svítivost scény (%)
-PREFERENCES_GREYSC18;Yb=18 CIE L#50
-PREFERENCES_GREYSCA;Automaticky
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram v levém panelu
-PREFERENCES_HISTOGRAMWORKING;Navigátor a hlavní histogram používají pracovní profil
 PREFERENCES_HISTOGRAM_TOOLTIP;Pokud je povoleno, používá se pracovní profil pro vykreslení hlavního histogramu a v navigačním panelu. V opačném případě je použit výstupní profil s aplikovanou gama korekcí.
 PREFERENCES_HLTHRESHOLD;Práh oříznutých světel
 PREFERENCES_ICCDIR;Složka obsahující barevné profily
-PREFERENCES_IMG_RELOAD_NEEDED;Tyto změny se projeví až po novém načtení již otevřeného obrázku (nebo po otevření nového obrázku)
 PREFERENCES_IMPROCPARAMS;Výchozí profil zpracování
 PREFERENCES_INSPECT_LABEL;Prohlížení
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximální počet obrázků v mezipaměti
@@ -1193,7 +1168,6 @@ PREFERENCES_MENUGROUPLABEL;Skupina "Barevné štítky"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Skupina "Operace s profily zpracování"
 PREFERENCES_MENUGROUPRANK;Skupina "Hodnocení"
 PREFERENCES_MENUOPTIONS;Volby místní nabídky
-PREFERENCES_METADATA;Metadata
 PREFERENCES_MONINTENT;Výchozí reprodukční záměr
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Výchozí barevný profil
@@ -1269,9 +1243,7 @@ PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrální vykreslení RAW
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Vložený JPEG náhled pokud je v plné velikosti, jinak neutrální raw
 PREFERENCES_TP_LABEL;Panel nástrojů:
 PREFERENCES_TP_VSCROLLBAR;Skrýt svislou posuvnou lištu
-PREFERENCES_TUNNELMETADATA;Zkopírovat nezměněná Exif/IPTC/XMP metadata do výstupního souboru
 PREFERENCES_USEBUNDLEDPROFILES;Použít přiložené profily
-PREFERENCES_VIEW;Nastavení vyvážení bílé výstupních zařízení (monitor, TV, projektor, rámeček a jiné)
 PREFERENCES_WORKFLOW;Rozvržení
 PROFILEPANEL_COPYPPASTE;Parametry pro kopírování
 PROFILEPANEL_GLOBALPROFILES;Přiložené profily
@@ -1480,8 +1452,6 @@ TP_COLORAPP_SURROUND_DARK;Tmavé
 TP_COLORAPP_SURROUND_DIM;Tlumené
 TP_COLORAPP_SURROUND_EXDARK;Velmi tmavé
 TP_COLORAPP_SURROUND_TOOLTIP;Změní tóny a barvy dle podmínek prohlížení na výstupním zařízení\n\n<b>Průměrné</b>: Průměrné osvětlení prostředí (standardní). Obrázek nebude změněn.\n\n<b>Tlumené</b>: Tlumené prostředí (TV). Obrázek bude mírně ztmaven.\n\n<b>Tmavé</b>: Tmavé prostředí (projektor). Obrázek bude více tmavý.\n\n<b>Velmi tmavé</b>: Velmi tmavé prostředí (cutsheet). Obrázek bude velmi tmavý.
-TP_COLORAPP_SURSOURCE;Tmavé okolí
-TP_COLORAPP_SURSOURCE_TOOLTIP;Může být použito, pokud má vstupní obrázek tmavý okraj.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Jas
 TP_COLORAPP_TCMODE_CHROMA;Barevnost
 TP_COLORAPP_TCMODE_COLORF;Pestrobarevnost
@@ -1582,7 +1552,6 @@ TP_DEHAZE_SHOW_DEPTH_MAP;Ukázat hloubkovou mapu
 TP_DEHAZE_STRENGTH;Síla
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Více zónová automatika
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatická celková
-TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Zkusí odhadnout barevný šum\nPozor, tento výpočet je zprůměrován a zcela subjektivní!
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Barevnost - Modrá a žlutá
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Křivka barevnosti
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Zvýší (násobí) hodnoty všech barevných posuvníků.\nKřivka vám umožní nastavit sílu redukce barevného šumu jako funkci barvy. Například pro zvýšení účinku v oblastech s nízkým nasycení a snížení v oblastech s vysokým nasycením.
@@ -1600,8 +1569,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Náhled šumu: Průměr=%1  Výš
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Náhled šumu: Průměr= -   Výšky= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Velikost dlaždice=%1, Střed: Tx=%2  Ty=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Barevnost - Červená a zelená
-TP_DIRPYRDENOISE_ENH;Vylepšený režim
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Zvýší kvalitu odstranění šumu, ale zároveň prodlouží dobu zpracování o 20%.
 TP_DIRPYRDENOISE_LABEL;Redukce šumu
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Ovládání jasu
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Křivka jasů
@@ -1630,7 +1597,6 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES;Počet průchodů mediánu
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Aplikování tří průchodů  filtru medián s oknem 3×3 často vede k lepšímu výsledku než jednou aplikovaný filtr medián s oknem 7×7.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Typ mediánu
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Aplikuje filtr medián požadované velikosti okna. Čím větší velikost okna, tím déle bude zpracování trvat.\n\n3×3 jemný: upraví 5 pixelů v okně 3x3 pixely.\n3×3: upraví 9 pixelů v okně 3x3 pixely.\n5×5 jemný; upraví 13 pixelů v okně 5x5 pixelů.\n5×5: upraví 25 pixelů v okně 5x5 pixelů.\n7×7: upraví 49 pixelů v okně 7x7 pixelů.\n9×9: upraví 81 pixelů v okně 9x9 pixelů.\n\nV některých případech může být větší kvality dosaženo pomocí několika průběhů s menšími okny než jedním průběhem s velkým oknem.
-TP_DIRPYRDENOISE_SLI;Posuvník
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 jemný
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1735,8 +1701,6 @@ TP_ICM_APPLYHUESATMAP;Základní tabulka
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Použije vloženou DCP základní tabulku (HueSatMap). Toto nastavení je dostupné pouze pokud ji vybrané DCP obsahuje.
 TP_ICM_APPLYLOOKTABLE;Tabulka vzhledu
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Použije vloženou DCP tabulku vzhledu. Nastavení je dostupné pouze pokud ji vybrané DCP obsahuje.
-TP_ICM_BLENDCMSMATRIX;Smísení ICC světel s matici
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Povolit obnovení vypálených jasů při použití ICC profilů založených na LUT.
 TP_ICM_BPC;Kompenzace černého bodu
 TP_ICM_DCPILLUMINANT;Osvětlení
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolované
@@ -1862,7 +1826,6 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;Toto nastavení je dostupné po zatržení volby "Au
 TP_RAWCACORR_AVOIDCOLORSHIFT;Zabránit posunu barev
 TP_RAWCACORR_CABLUE;Modrá
 TP_RAWCACORR_CARED;Červená
-TP_RAWCACORR_CASTR;Síla
 TP_RAWEXPOS_BLACKS;Úrovně černé
 TP_RAWEXPOS_BLACK_0;Zelená 1 (řídící)
 TP_RAWEXPOS_BLACK_1;Červená
@@ -1920,15 +1883,12 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Vyrovná jas ostatních snímků podle jasu
 TP_RAW_PIXELSHIFTGREEN;Kontrolovat zelený kanál na pohyb
 TP_RAW_PIXELSHIFTHOLEFILL;Vyplnit díry v masce pohybu
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Vyplnit díry v masce pohybu
-TP_RAW_PIXELSHIFTLMMSE;Použít LMMSE pro části s pohybem
-TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Pro oblasti s pohybem použít LMMSE namísto AMaZE.\nUžitečné pro fotografie s vysokým ISO.
 TP_RAW_PIXELSHIFTMEDIAN;Použít medián pro části s pohybem
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Pro oblasti s pohybem použijte medián všech snímků namísto vybraného.\nOdstraní objekty, které jsou na všech snímcích na různých místech.\nVytvoří efekt pohybu pro pomalu se pohybující (překrývající se) objekty.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatická
 TP_RAW_PIXELSHIFTMM_CUSTOM;Vlastní
 TP_RAW_PIXELSHIFTMM_OFF;Vypnuto
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Korekce pohybu
-TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 znamená bez detekce pohybu.\n1 - 99 znamená, že pohybu bude detekován dle této hodnoty. Pro zvýšení míry detekce použijte vyšší hodnotu.\n100 znamená, že bude použito AMaZE demozajkování snímku.
 TP_RAW_PIXELSHIFTNONGREENCROSS;Kontrolovat pohyb v červeném a modrém kanálu
 TP_RAW_PIXELSHIFTSHOWMOTION;Ukázat masku pohybu
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Ukázat pouze masku pohybu
@@ -1975,7 +1935,6 @@ TP_RETINEX_GAIN;Zisk
 TP_RETINEX_GAINOFFS;Zisk a posun (jasu)
 TP_RETINEX_GAINTRANSMISSION;Přenos zisku
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Zesílí nebo zeslabí mapu přenosu pro dosažení požadovaného jasu.\nOsa X je přenos.\nOsa Y je zisk.
-TP_RETINEX_GAIN_TOOLTIP;Působí na obnovený obrázek.\n\nToto je velmi odlišné od ostatních nastavení. Použito pro černé nebo bílé pixely a pro vyvážení histogramu.
 TP_RETINEX_GAMMA;Gama
 TP_RETINEX_GAMMA_FREE;Volná
 TP_RETINEX_GAMMA_HIGH;Vysoká
@@ -2053,10 +2012,8 @@ TP_SAVEDIALOG_OK_TIP;Zkratka: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Světla
 TP_SHADOWSHLIGHTS_HLTONALW;Tónový rozsah světel
 TP_SHADOWSHLIGHTS_LABEL;Stíny/Světla
-TP_SHADOWSHLIGHTS_LOCALCONTR;Místní kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Poloměr
 TP_SHADOWSHLIGHTS_SHADOWS;Stíny
-TP_SHADOWSHLIGHTS_SHARPMASK;Maska ostrosti
 TP_SHADOWSHLIGHTS_SHTONALW;Tónový rozsah stínů
 TP_SHARPENEDGE_AMOUNT;Kvantita
 TP_SHARPENEDGE_LABEL;Hrany

@@ -97,7 +97,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Пропустить [raw] шаги LMMSE у�
 EXPORT_BYPASS_SHARPENEDGE;Пропустить контурное повышение резкости
 EXPORT_BYPASS_SHARPENING;Пропустить повышение резкости
 EXPORT_BYPASS_SHARPENMICRO;Пропустить микроконтраст  
-EXPORT_BYPASS_SH_HQ;Пропустить настройки теней/пересветов
 EXPORT_FASTEXPORTOPTIONS;<b>Настройки быстрого экспорта</b>
 EXPORT_INSTRUCTIONS;Настройки быстрого экспорта помогают экономить время и ресурсы, затрачиваемые на установку настроек обработки и запускать очередь обработки, используя вместо этого настройки быстрого экспорта. Этот метод рекомендуется для быстрого создания изображений с низким разрешением, когда скорость обработки в приоритете или когда нужно отмасштабировать одно или несколько изображений без внесения изменений в их сохранённые параметры обработки.
 EXPORT_MAXHEIGHT;Максимальная высота: 
@@ -106,7 +105,6 @@ EXPORT_PUTTOQUEUEFAST; Поставить в очередь для быстро�
 EXPORT_RAW_DMETHOD;Метод демозаика
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;в очереди обработки
-FILEBROWSER_ADDDELTEMPLATE;Добавить/удалить шаблоны...
 FILEBROWSER_APPLYPROFILE;Применить
 FILEBROWSER_APPLYPROFILE_PARTIAL;Применить - частично
 FILEBROWSER_AUTODARKFRAME;Автоматический темновой кадр
@@ -234,7 +232,6 @@ GENERAL_WARNING;Внимание
 HISTOGRAM_TOOLTIP_B;Показать/скрыть синий канал гистограммы
 HISTOGRAM_TOOLTIP_BAR;Показать/скрыть панель отображения RGB\nНажмите правую кнопку мыши на предпросмотре изображения, чтобы заблокировать/разблокировать его
 HISTOGRAM_TOOLTIP_CHRO;Показать/скрыть хроматическую гистограмму
-HISTOGRAM_TOOLTIP_FULL;Переключить полную (выкл) или отмасштабированную (вкл) гистограмму
 HISTOGRAM_TOOLTIP_G;Показать/скрыть зелёный канал гистограммы
 HISTOGRAM_TOOLTIP_L;Показать/скрыть CIELAB гистограмму
 HISTOGRAM_TOOLTIP_R;Показать/скрыть красный канал гистограммы
@@ -735,7 +732,6 @@ PREFERENCES_BEHADDALLHINT;Выставить все параметры в реж
 PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BEHSETALL;Всё в "Установить"
 PREFERENCES_BEHSETALLHINT;Выставить все параметры в режим <b>Установить</b>.\nНастройки параметров в панели пакетной обработки будут <b>абсолютными</b>, будут показаны используемые значения
-PREFERENCES_BLACKBODY;Лампа накаливания
 PREFERENCES_CACHECLEAR;Очистить
 PREFERENCES_CACHEMAXENTRIES;Максимальное число элементов в кэше
 PREFERENCES_CACHEOPTS;Параметры кэширования
@@ -758,11 +754,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Формат ключей
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Имя
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Путь к исполняемому файлу
-PREFERENCES_D50;5000K
-PREFERENCES_D50_OLD;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Найдено
 PREFERENCES_DARKFRAMESHOTS;снимков
 PREFERENCES_DARKFRAMETEMPLATES;шаблонов
@@ -783,20 +774,9 @@ PREFERENCES_FLATFIELDFOUND;Найдено
 PREFERENCES_FLATFIELDSDIR;Каталог файлов плоских полей
 PREFERENCES_FLATFIELDSHOTS;снимков
 PREFERENCES_FLATFIELDTEMPLATES;шаблонов
-PREFERENCES_FLUOF2;Лампа дневного света F2
-PREFERENCES_FLUOF7;Лампа дневного света F7
-PREFERENCES_FLUOF11;Лампа дневного света F11
 PREFERENCES_FORIMAGE;Для изображений
 PREFERENCES_FORRAW;Для Raw файлов
 PREFERENCES_GIMPPATH;Каталог установки GIMP
-PREFERENCES_GREY;Яркость (Yb) устройства вывода (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Гистограмма на левой панели
 PREFERENCES_HLTHRESHOLD;Порог срабатывания пересветов
 PREFERENCES_ICCDIR;Каталог ICC профилей
@@ -816,7 +796,6 @@ PREFERENCES_MENUGROUPLABEL;Группа "Цветовая пометка"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Группа "Действия с профилем обработки"
 PREFERENCES_MENUGROUPRANK;Группа "Рейтинг"
 PREFERENCES_MENUOPTIONS;Настройки контекстного меню
-PREFERENCES_METADATA;Метаданные
 PREFERENCES_MONITOR;Монитор
 PREFERENCES_MULTITAB;Много вкладок
 PREFERENCES_MULTITABDUALMON;Много вкладок, на втором мониторе (если возможно)
@@ -876,9 +855,7 @@ PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Нейтрально обработанны�
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Встроенный полноразмерный jpeg, иначе нейтральный raw
 PREFERENCES_TP_LABEL;Панель инструментов:
 PREFERENCES_TP_VSCROLLBAR;Спрятать вертикальную полосу прокрутки
-PREFERENCES_TUNNELMETADATA;Копировать данные Exif/IPTC/XMP неизменённо
 PREFERENCES_USEBUNDLEDPROFILES;Использовать предустановленный профиль
-PREFERENCES_VIEW;ББ устройства вывода (монитор, проектор и т.д.)
 PREFERENCES_WORKFLOW;Стиль работы
 PROFILEPANEL_COPYPPASTE;Параметры для копирования
 PROFILEPANEL_GLOBALPROFILES;Предустановленные профили
@@ -921,7 +898,6 @@ SAVEDLG_AUTOSUFFIX;Автоматически добавлять суффикс 
 SAVEDLG_FILEFORMAT;Формат файла
 SAVEDLG_FORCEFORMATOPTS;Принудительно установить настройки сохранения
 SAVEDLG_JPEGQUAL;Качество JPEG
-SAVEDLG_PNGCOMPR;Сжатие PNG
 SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
 SAVEDLG_PUTTOQUEUEHEAD;Поместить в начало очереди на обработку
 SAVEDLG_PUTTOQUEUETAIL;Поместить в конец очереди на обработку
@@ -1084,8 +1060,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Цветность
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Метод
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Превью
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Цветность: красный-зелёный
-TP_DIRPYRDENOISE_ENH;Улучшенный режим
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Улучшает качество шумоподавления путём увеличения времени обработки на 20%.
 TP_DIRPYRDENOISE_LABEL;Подавление шумов
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Контроль яркости
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Кривая яркости
@@ -1094,7 +1068,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Яркость
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Яркость
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Цветовое пространство
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Подавление шума
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Для raw-изображений можно использовать как режим RGB так и L*a*b*.\n\nДля не-raw будет использован L*a*b* режим вне зависимости от выбора.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Гамма
@@ -1105,7 +1078,6 @@ TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Осторожный
 TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Осторожный" сохраняет низкочастотные структуры цветности, в то время как "агрессивный" уничтожает их.
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
 TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
-TP_DIRPYRDENOISE_SLI;Ползунок
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 мягкий
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1166,10 +1138,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Горизонтальная
 TP_FLATFIELD_BT_VERTHORIZ;Вертикальная + Горизонтальная
 TP_FLATFIELD_BT_VERTICAL;Вертикальная
 TP_FLATFIELD_LABEL;Плоское поле
-TP_GAMMA_CURV;гамма
-TP_GAMMA_FREE;Свободная гамма
-TP_GAMMA_OUTPUT;Выходная гамма
-TP_GAMMA_SLOP;наклонная (линейная)
 TP_GENERAL_11SCALE_TOOLTIP;Эффект от применения этого инструмента или одного из его компонентов будет виден лишь при просмотре в масштабе 1:1.
 TP_GRADIENT_CENTER;Центр
 TP_GRADIENT_CENTER_X;X-координата
@@ -1195,8 +1163,6 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;Эквалайзер HSV
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
-TP_ICM_BLENDCMSMATRIX;Смешивать засветы с матрицей
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Включить восстановление пересветов во время использования профилей ICC на основе LUT
 TP_ICM_BPC;Компенсация точки чёрного
 TP_ICM_DCPILLUMINANT;Источник света
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Интерполированный
@@ -1302,7 +1268,6 @@ TP_RAWCACORR_AUTOIT;Подходов
 TP_RAWCACORR_AVOIDCOLORSHIFT;Избегать сдвига цветов
 TP_RAWCACORR_CABLUE;Синий
 TP_RAWCACORR_CARED;Красный
-TP_RAWCACORR_CASTR;Сила
 TP_RAWEXPOS_BLACKS;Уровни черного
 TP_RAWEXPOS_BLACK_0;Зелёный 1 (ведущий)
 TP_RAWEXPOS_BLACK_1;Красный
@@ -1375,10 +1340,8 @@ TP_SAVEDIALOG_OK_TIP;Горячая клавиша <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Света
 TP_SHADOWSHLIGHTS_HLTONALW;Уровень
 TP_SHADOWSHLIGHTS_LABEL;Тени/света
-TP_SHADOWSHLIGHTS_LOCALCONTR;Локальный контраст
 TP_SHADOWSHLIGHTS_RADIUS;Радиус
 TP_SHADOWSHLIGHTS_SHADOWS;Тени
-TP_SHADOWSHLIGHTS_SHARPMASK;Маска резкости
 TP_SHADOWSHLIGHTS_SHTONALW;Уровень 
 TP_SHARPENEDGE_AMOUNT;Величина
 TP_SHARPENEDGE_LABEL;Края
@@ -1842,13 +1805,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREYSC18;Yb=18 CIE L#50
-!PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MONINTENT;Default rendering intent
@@ -1916,8 +1873,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORAPP_SURROUND_DIM;Dim
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
 !TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
-!TP_COLORAPP_SURSOURCE;Dark surround
-!TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if image has a dark border.
 !TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 !TP_COLORAPP_TCMODE_CHROMA;Chroma
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness
@@ -1990,7 +1945,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORTONING_TWOSTD;Standard chroma
 !TP_CROP_PPI;PPI
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
-!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
 !TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
@@ -2078,15 +2032,12 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2111,7 +2062,6 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High

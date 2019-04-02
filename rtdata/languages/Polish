@@ -79,7 +79,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Pomiń poprawę LMMSE [raw]
 EXPORT_BYPASS_SHARPENEDGE;Pomiń wyostrzanie krawędzi
 EXPORT_BYPASS_SHARPENING;Pomiń wyostrzanie
 EXPORT_BYPASS_SHARPENMICRO;Pomiń mikrokontrast
-EXPORT_BYPASS_SH_HQ;Pomiń wysokiej jakości korekte cieni/podświetleń
 EXPORT_FASTEXPORTOPTIONS;<b>Opcje szybkiego eksportu</b>
 EXPORT_INSTRUCTIONS;Opcje szybkiego eksportu umożliwiają pominięcie pewnych narzędzi które mogą być dość wymagające na procesor oraz mogą znacznie przedłużyc czas przetwarzania podczas eksportowania zdjęć. Ta metoda jest zalecana w razie potrzeby szybkiego uzyskania zdjęć o niższej rozdzielczości oraz jakości kiedy zależy nam na czasie a nie chcemy modyfikować plików PP3.
 EXPORT_MAXHEIGHT;Maksymalna wysokość:
@@ -88,7 +87,6 @@ EXPORT_PUTTOQUEUEFAST;  Dodaj do kolejki szybkiego eksportu
 EXPORT_RAW_DMETHOD;Algorytm demozaikowania
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;wywołane w kolejce
-FILEBROWSER_ADDDELTEMPLATE;Dodaj/Usuń szablon...
 FILEBROWSER_APPLYPROFILE;Zastosuj profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Zastosuj częściowy profil
 FILEBROWSER_AUTODARKFRAME;Automatyczne użycie czarnej klatki
@@ -202,7 +200,6 @@ GENERAL_WARNING;Uwaga
 HISTOGRAM_TOOLTIP_B;Pokaż/Ukryj histogram błękitów.
 HISTOGRAM_TOOLTIP_BAR;Pokazuje/Ukrywa wskaźnik RGB.\nKliknięcie prawym przyciskiem myszy na podglądzie zdjęcia blokuje/odblokowuje.
 HISTOGRAM_TOOLTIP_CHRO;Pokaż/Ukryj histogram chromatyczności.
-HISTOGRAM_TOOLTIP_FULL;Przełącz histogram pełny (wyłączone)/skalowany (włączone).
 HISTOGRAM_TOOLTIP_G;Pokaż/Ukryj histogram zieleni.
 HISTOGRAM_TOOLTIP_L;Pokaż/Ukryj histogram luminancji CIELab.
 HISTOGRAM_TOOLTIP_R;Pokaż/Ukryj histogram czerwieni.
@@ -672,7 +669,6 @@ PREFERENCES_BEHADDALLHINT;Ustaw wszystkie narzędzia w tryb <b>Dodaj</b>.\nZmian
 PREFERENCES_BEHAVIOR;Zachowanie
 PREFERENCES_BEHSETALL;'Ustaw' wszystkie
 PREFERENCES_BEHSETALLHINT;Ustaw wszystkie narzędzia w tryb <b>Ustaw</b>.\nZmiany parametrów w panelu edycji zbiorczej zostaną traktowane jako <b>absolutne</b>, nie biorąc pod uwagę poprzednich wartości.
-PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_CACHEMAXENTRIES;Maksymalna liczba wpisów w pamięci podręcznej
 PREFERENCES_CACHEOPTS;Opcje pamięci podręcznej
 PREFERENCES_CACHETHUMBHEIGHT;Maksymalna wysokość miniatury
@@ -684,10 +680,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Rodzaj kluczy
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nazwa
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Ścieżka pliku wykonywalnego
-PREFERENCES_D50;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Znaleziono
 PREFERENCES_DARKFRAMESHOTS;zdjęć(ia)
 PREFERENCES_DARKFRAMETEMPLATES;szablonów(ny)
@@ -707,22 +699,10 @@ PREFERENCES_FLATFIELDFOUND;Znaleziono
 PREFERENCES_FLATFIELDSDIR;Katalog z pustymi polami
 PREFERENCES_FLATFIELDSHOTS;kadry
 PREFERENCES_FLATFIELDTEMPLATES;szablony
-PREFERENCES_FLUOF2;Fluorescent F2
-PREFERENCES_FLUOF7;Fluorescent F7
-PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_FORIMAGE;Dla zdjęć innych niż raw
 PREFERENCES_FORRAW;Dla zdjęć raw
 PREFERENCES_GIMPPATH;Katalog, w którym zainstalowany jest GIMP
-PREFERENCES_GREY;Luminancja Yb urządzenia wyjściowego (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram w lewym panelu
-PREFERENCES_HISTOGRAMWORKING;Zastosuj profil roboczy do obliczenia głównego histogramu i Nawigatora
 PREFERENCES_HISTOGRAM_TOOLTIP;Jeśli opcja jest włączona profil roboczy jest użyty do obliczenia głównego histogramu oraz panelu Nawigatora, inaczej profil wyjściowy z korektą gamma zostanie użyty.
 PREFERENCES_HLTHRESHOLD;Próg dla prześwietleń
 PREFERENCES_ICCDIR;Katalog z profilami koloru ICC
@@ -739,7 +719,6 @@ PREFERENCES_MENUGROUPLABEL;Grupuj operacje etykiet
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grupuj operacje profili przetwarzania
 PREFERENCES_MENUGROUPRANK;Grupuj operacje oceny
 PREFERENCES_MENUOPTIONS;Opcje menu
-PREFERENCES_METADATA;Metadane
 PREFERENCES_MULTITAB;Tryb wielu zakładek
 PREFERENCES_MULTITABDUALMON;Tryb wielu zakładek (na drugim monitorze jeśli dostępny)
 PREFERENCES_OUTDIR;Katalog wyjściowy
@@ -783,7 +762,6 @@ PREFERENCES_TAB_SOUND;Dźwięki
 PREFERENCES_TP_LABEL;Panel narzędzi:
 PREFERENCES_TP_VSCROLLBAR;Ukry pionowy pasek przesuwania
 PREFERENCES_USEBUNDLEDPROFILES;Użyj załączone profile przetwarzania
-PREFERENCES_VIEW;Balans bieli urządzenia wyjściowego (monitora, TV, projektora, widowni, etc.)
 PREFERENCES_WORKFLOW;Tok pracy
 PROFILEPANEL_COPYPPASTE;Parametry do skopiowania
 PROFILEPANEL_GLOBALPROFILES;Załączone profile przetwarzania
@@ -823,7 +801,6 @@ SAVEDLG_AUTOSUFFIX;Automatycznie dodaj przyrostek, jeżeli plik już istnieje
 SAVEDLG_FILEFORMAT;Format pliku
 SAVEDLG_FORCEFORMATOPTS;Wymuś opcje zapisu
 SAVEDLG_JPEGQUAL;Jakość JPEG
-SAVEDLG_PNGCOMPR;Kompresja PNG
 SAVEDLG_PUTTOQUEUE;Umieść w kolejce przetwarzania
 SAVEDLG_PUTTOQUEUEHEAD;Umieść na początku kolejki przetwarzania
 SAVEDLG_PUTTOQUEUETAIL;Umieść na końcu kolejki przetwarzania
@@ -964,8 +941,6 @@ TP_COLORAPP_SURROUND_DARK;Ciemne
 TP_COLORAPP_SURROUND_DIM;Przyćmione
 TP_COLORAPP_SURROUND_EXDARK;Bardzo Ciemne (Cut-sheet)
 TP_COLORAPP_SURROUND_TOOLTIP;Zmienia barwy i kolory aby wziąć pod uwagę własności widowni urządzenia wyjściowego.\n\n<b>Średnie</b>:\nŚrednie światło otoczenia (standardowe). Obraz się nie zmieni.\n\n<b>Przyćmione</b>:\nPrzyćmione otoczenie (TV). Obraz stanie się troszkę ciemniejszy.\n\n<b>Ciemne</b>:\nCiemne otoczenie (projektor). Obraz stanie się jeszczę ciemniejszy.\n\n<b>Bardzo Ciemne</b>:\nBardzo ciemne otoczenie (cut-sheet). Obraz stanie się bardzo ciemny.
-TP_COLORAPP_SURSOURCE;Ciemne otoczenie
-TP_COLORAPP_SURSOURCE_TOOLTIP;Można użyć kiedy np. obraz wejściowy ma ciemne krawędzie.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Jasność
 TP_COLORAPP_TCMODE_CHROMA;Chroma
 TP_COLORAPP_TCMODE_COLORF;Barwistość
@@ -1036,13 +1011,10 @@ TP_DEFRINGE_THRESHOLD;Próg
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominancja - Błękit-żółć
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominancja - Główna
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominancja - Czerwień-zieleń
-TP_DIRPYRDENOISE_ENH;Tryb ulepszony
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Ulepsza jakość usuwania szumów kosztem około 20% wzrostu czasu przetwarzania.
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Krzywa luminancji
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Szczegółowość luminancji
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminacja
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Metoda
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Redukcja szumu
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Dla obrazów raw można używać metody RGB oraz L*a*b*.\n\nDla obrazów nie-raw metoda L*a*b* zostanie użyta niezależnie od wyboru.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1118,10 +1090,6 @@ TP_FLATFIELD_BT_VERTICAL;Pionowy
 TP_FLATFIELD_CLIPCONTROL;Zabezpieczenie przed obcinaniem
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Funkcja ta chroni przed obcinaniem podświetleń które może zaistnieć przy stosowaniu obrazów type "puste pole". Należy zachować ostrożność, ponieważ jeśli obcięte rejony istnieją przed zastosowaniem pustego pola, funkcja ta może spowodować zabarwienie tych rejonów które powinny być białe.
 TP_FLATFIELD_LABEL;Puste pole
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Dowolna gamma
-TP_GAMMA_OUTPUT;Wyjściowa gamma
-TP_GAMMA_SLOP;Nachylenie (liniowy)
 TP_GENERAL_11SCALE_TOOLTIP;Efekty tego narzędzia są widoczne bądź poprawne przy przybliżeniu 100% lub więcej.
 TP_GRADIENT_CENTER;Środek
 TP_GRADIENT_CENTER_X;Środek X
@@ -1147,8 +1115,6 @@ TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;Ekwalizator HSV
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
-TP_ICM_BLENDCMSMATRIX;Tłumienie prześwietleń danymi z matrycy
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Włącz odzyskiwanie prześwietlonych regionow jesli profil ICC wykorzystuje LUT (tablicowanie).
 TP_ICM_DCPILLUMINANT;Iluminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolowany
 TP_ICM_DCPILLUMINANT_TOOLTIP;Wybierz który osadzony iluminant DCP należy użyć. Domyślną opcją jest "interpolowany", czyli wartość jest mieszaniną pomiędzy dwoma osadzonymi wartościami iluminantu zależnie od balansu bieli. Ten wybór jest możliwy jedynie kiedy DCP zawiera dwa iluminanty z możliwościa interpolacji.
@@ -1290,10 +1256,8 @@ TP_SAVEDIALOG_OK_TIP;Skrót: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Podświetlenia
 TP_SHADOWSHLIGHTS_HLTONALW;Szerokość tonalna
 TP_SHADOWSHLIGHTS_LABEL;Cienie/Podświetlenia
-TP_SHADOWSHLIGHTS_LOCALCONTR;Kontrast lokalny
 TP_SHADOWSHLIGHTS_RADIUS;Promień
 TP_SHADOWSHLIGHTS_SHADOWS;Cienie
-TP_SHADOWSHLIGHTS_SHARPMASK;Ostra maska
 TP_SHADOWSHLIGHTS_SHTONALW;Szerokość tonalna
 TP_SHARPENEDGE_AMOUNT;Siła
 TP_SHARPENEDGE_LABEL;Krawędzie
@@ -1815,17 +1779,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
-!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREYSC18;Yb=18 CIE L#50
-!PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
 !PREFERENCES_INSPECT_LABEL;Inspect
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
@@ -1866,7 +1824,6 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !PROGRESSBAR_DECODING;Decoding...
 !PROGRESSBAR_GREENEQUIL;Green equilibration...
@@ -1936,7 +1893,6 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
-!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
@@ -1959,7 +1915,6 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Weighted L* (little) + a*b* (normal)
 !TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TYPE_3X3;3×3
 !TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
 !TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -2022,7 +1977,6 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
-!TP_RAWCACORR_CASTR;Strength
 !TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
 !TP_RAW_2PASS;1-pass+fast
 !TP_RAW_3PASSBEST;3-pass (Markesteijn)
@@ -2060,15 +2014,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2100,7 +2051,6 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High

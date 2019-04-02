@@ -15,49 +15,55 @@
 #
 # Locale files are generated automatically:
 # - English (UK)
-# - Polish (Latin Characters)
 
 tmp=temp_file
 if [[ -w $tmp ]]; then
-  rm -v "$tmp"
+    rm -v "$tmp"
 fi
 
 abort () {
-  printf "%s\n" "" "Aborting"
-  rm -v "$tmp"
-  exit 1
+    printf "%s\n" "" "Aborting"
+    rm -v "$tmp"
+    exit 1
 }
 
 trap 'abort' HUP INT QUIT ABRT TERM
 
-
 cd "rtdata/languages" || { printf "%s\n" "You must run this script from the root of the project."; exit 1; }
 # Build array of all interface translation files, or use user-specified ones only
 unset langFiles
+
 if [[ $# = 0 ]]; then
-  while read -r; do
-    langFiles+=("$REPLY")
-  done < <(find . -not -iname "default" -not -iname "LICENSE" -not -iname "README" -not -iname "*.sh"  -not -iname ".*" -not -iname "$tmp" -not -iname "English (UK)" -not -iname "Polish (Latin Characters)" | sort)
+    while read -r; do
+        langFiles+=("$REPLY")
+    done < <(find . -not -iname "default" \
+    -not -iname "LICENSE" \
+    -not -iname "README" \
+    -not -iname "*.sh" \
+    -not -iname ".*" \
+    -not -iname "$tmp" \
+    -not -iname "English (UK)" \
+    | sort)
 else
-  langFiles=("$@")
-  for langFile in "${langFiles[@]}"; do
-    if [[ ! -w $langFile ]]; then
-      printf "%s\n" "File \"$langFile\" not found or not writable." ""
-      exit 1
-    fi
-  done
+    langFiles=("$@")
+    for langFile in "${langFiles[@]}"; do
+        if [[ ! -w $langFile ]]; then
+            printf "%s\n" "File \"$langFile\" not found or not writable." ""
+            exit 1
+        fi
+    done
 fi
 
 getComments () {
-  grep -E "^#.+" "$1" | sort -Vu
+    grep -E "^#.+" "$1" | sort -Vu
 }
 
 getChanged () {
-  grep -Ev '^(!|#|$)' "$1" | sort -Vu -t ';' --key=1,1
+    grep -Ev '^(!|#|$)' "$1" | sort -Vu -t ';' --key=1,1
 }
 
 getUnchanged () {
-  grep -E "^\!.+" "$1" | sort -Vu -t ';' --key=1,1
+    grep -E "^\!.+" "$1" | sort -Vu -t ';' --key=1,1
 }
 
 # First thing, fix default, so move comments to front, then strip the rest of any "!" and duplicates.
@@ -70,31 +76,31 @@ i=1
 printf "%s\n" "Digging through ${#langFiles[@]} file(s). This may take a while."
 ttot1="$(date +%s)"
 for file in "${langFiles[@]}"; do
-  t1="$(date +%s)"
-  printf "%02d - ${file#.*/}" "$i"
-  dos2unix "$file" 2>/dev/null
-  unset newLines
+    t1="$(date +%s)"
+    printf "%02d - ${file#.*/}" "$i"
+    dos2unix "$file" 2>/dev/null
+    unset newLines
 
   # KEY;String
   # Match "default" keys with those in current translation file. If no match, add !KEY;String
   while read -r 'defLine'; do
-    defKey="${defLine%%;*}"
-    if ! grep -q "^${defKey}\;" "$file"; then
-      newLines+=("!${defLine}")
-    fi
+      defKey="${defLine%%;*}"
+      if ! grep -q "^${defKey}\;" "$file"; then
+          newLines+=("!${defLine}")
+      fi
   done < <(getChanged default)
 
   # Form final translation file
   # Start with comments
   if [[ -n "$(getComments "$file")" ]]; then
-    printf "%s\n" "$(getComments "$file")" "" >> "$tmp"
+      printf "%s\n" "$(getComments "$file")" "" >> "$tmp"
   fi
   # Add already-translated lines
   getChanged "$file" >> "$tmp"
   printf '%s\n' "" >> "$tmp"
   # End with new, untranslated lines
   if [[ -n "${newLines[@]}" ]]; then
-    printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!" "! Untranslated keys follow; remove the ! prefix after an entry is translated." "!!!!!!!!!!!!!!!!!!!!!!!!!" "" "${newLines[@]}" >> "$tmp"
+      printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!" "! Untranslated keys follow; remove the ! prefix after an entry is translated." "!!!!!!!!!!!!!!!!!!!!!!!!!" "" "${newLines[@]}" >> "$tmp"
   fi
   mv "$tmp" "$file"
   t2="$(date +%s)"
@@ -104,21 +110,20 @@ for file in "${langFiles[@]}"; do
 done
 
 case "${langFiles[@]}" in
-  *"./English (US)"*) printf "%s\n" "Creating English (UK) file"
-                      getComments "English (US)" > "English (UK)"
-                      grep -Ei ".+;.*(color|behavior|center).*" default | \
-                      sed -e '/^#/d' -e 'h;s/^[^;]*;//; s/olor/olour/g; x;s/;.*//;G;s/\n/;/' \
-                        -e 'h;s/^[^;]*;//; s/ehavior/ehaviour/g; x;s/;.*//;G;s/\n/;/' \
-                        -e 'h;s/^[^;]*;//; s/center/centre/g; x;s/;.*//;G;s/\n/;/' \
-                        -e 'h;s/^[^;]*;//; s/Center/Centre/g; x;s/;.*//;G;s/\n/;/' >> English\ \(UK\)
-                      grep -Evi ".+;.*(color|behavior|center).*" "English (US)" | grep -Ev "^#" >> "English (UK)"
-                      ;;&
-  *"./Polish"*)       printf "%s\n" "Creating Polish (Latin Characters) file"
-                      sed 'y/ĄĆĘŁŃÓŚŹŻąćęłńóśźż/ACELNOSZZacelnoszz/' < Polish > "Polish (Latin Characters)"
-                      ;;&
+    *"./English (US)"*) printf "%s\n" "Creating English (UK) file"
+        getComments "English (US)" > "English (UK)"
+        grep -Ei ".+;.*(color|behavior|center).*" default | \
+        sed -e '/^#/d' -e 'h;s/^[^;]*;//; s/olor/olour/g; x;s/;.*//;G;s/\n/;/' \
+        -e 'h;s/^[^;]*;//; s/ehavior/ehaviour/g; x;s/;.*//;G;s/\n/;/' \
+        -e 'h;s/^[^;]*;//; s/center/centre/g; x;s/;.*//;G;s/\n/;/' \
+        -e 'h;s/^[^;]*;//; s/Center/Centre/g; x;s/;.*//;G;s/\n/;/' >> English\ \(UK\)
+        grep -Evi ".+;.*(color|behavior|center).*" "English (US)" | grep -Ev "^#" >> "English (UK)"
+        ;;&
 esac
+
 ttot2="$(date +%s)"
 ttot=$((ttot2-ttot1))
 tsec=$((ttot%60))
 tmin=$((ttot/60))
+
 printf "%s\n" "Finished updating ${#langFiles[@]} files." "Total time: ${tmin}m ${tsec}s"
