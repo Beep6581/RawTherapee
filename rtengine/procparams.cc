@@ -2389,7 +2389,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     CCmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     LLmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     HHmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
-    softradiuscol(5.0),
+    softradiuscol(0.0),
     // Exposure
     expexpose(false),
     expcomp(0.0),
@@ -2413,7 +2413,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromaskexp(0.0),
     gammaskexp(1.0),
     slomaskexp(0.0),
-    softradiusexp(5.0),
+    softradiusexp(0.0),
     // Shadow highlight
     expshadhigh(false),
     highlights(0),
@@ -2473,7 +2473,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensih(15),
     localTgaincurve{(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35},
     inversret(false),
-    softradiusret(5.0),
+    softradiusret(0.0),
     // Sharpening
     expsharp(false),
     sharcontrast(20),
@@ -2497,7 +2497,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromacbdl(0),
     threshold(0.2),
     sensicb(15),
-    softradiuscb(5.0),
+    softradiuscb(0.0),
     // Denoise
     expdenoi(false),
     noiselumf(0),
