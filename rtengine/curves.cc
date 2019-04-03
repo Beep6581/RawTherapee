@@ -1284,6 +1284,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
     for (int i = 0; i <= (maxran - 1.f); i += 4) {
         vfloat valv = LVFU(dcurve[i]);
         valv = igamma(valv, gamma_v, startv, slopev, mulv, addv);
+    //    valv = Color::igammatab_bt709[valv]; 
         STVFU(outCurve[i], c65535v * valv);
     }
 

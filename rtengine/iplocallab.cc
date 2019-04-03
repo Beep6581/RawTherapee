@@ -1083,7 +1083,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
             const float shfactor = shtonecurve[2 * L];
             //tonecurve
             L *= shfactor;
-            lab->L[ir][jr] = 0.5f * tonecurve[2.f * L];
+            lab->L[ir][jr] = 0.5f * tonecurve[2 * L]; 
         }
     }
 }
@@ -5391,10 +5391,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
                 const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
                 const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                const int bfh = yend - ystart;
-                const int bfw = xend - xstart;
-
+                int bfh = yend - ystart;
+                int bfw = xend - xstart;
+                
                 if (bfw > 0 && bfh > 0) {
+                  //  printf("bfw=%i bfh=%i\n", bfw, bfh);
                     array2D<float> bufsh(bfw, bfh);
                     array2D<float> &buflight = bufsh;
                     JaggedArray<float> bufchrom(bfw, bfh, true);
@@ -5407,67 +5408,66 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     constexpr float b_r = 170.f;
                     constexpr double skinprot = 0.;
                     constexpr int choice = 0;
+                    
+                    if(bfw > 32 && bfh > 32) {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = ystart; y < yend; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            bufsh[y - ystart][x - xstart] = origcbdl->L[y - ystart][x - xstart] = original->L[y][x];
-                            loctemp->a[y - ystart][x - xstart] = origcbdl->a[y - ystart][x - xstart] = original->a[y][x];
-                            loctemp->b[y - ystart][x - xstart] = origcbdl->b[y - ystart][x - xstart] = original->b[y][x];
+                        for (int y = ystart; y < yend; y++) {
+                            for (int x = xstart; x < xend; x++) {
+                                bufsh[y - ystart][x - xstart] = origcbdl->L[y - ystart][x - xstart] = original->L[y][x];
+                                loctemp->a[y - ystart][x - xstart] = origcbdl->a[y - ystart][x - xstart] = original->a[y][x];
+                                loctemp->b[y - ystart][x - xstart] = origcbdl->b[y - ystart][x - xstart] = original->b[y][x];
+                            }
                         }
-                    }
-
-                    ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, skinprot, false, b_l, t_l, t_r, b_r, choice, sk);
-
+                        ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, skinprot, false, b_l, t_l, t_r, b_r, choice, sk);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            buflight[ir][jr] = CLIPRET((loctemp->L[ir][jr] - origcbdl->L[ir][jr]) / 330.f);
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                buflight[ir][jr] = CLIPRET((loctemp->L[ir][jr] - origcbdl->L[ir][jr]) / 330.f);
+                            }
                         }
-                    }
 
-                    if (lp.softradiuscb > 0.f) {
-                        softprocess(origcbdl.get(), buflight, lp.softradiuscb, bfh, bfw, sk, multiThread);
-                    }
+                        if (lp.softradiuscb > 0.f) {
+                            softprocess(origcbdl.get(), buflight, lp.softradiuscb, bfh, bfw, sk, multiThread);
+                        }
 
 
-                    transit_shapedetect(6, loctemp.get(), nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-
+                        transit_shapedetect(6, loctemp.get(), nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                     //chroma CBDL begin here
-                    if (lp.chromacb > 0.f) {
+                        if (lp.chromacb > 0.f) {
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
-                        for (int ir = 0; ir < bfh; ir++) {
-                            for (int jr = 0; jr < bfw; jr++) {
-                                bufsh[ir][jr] = sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr]));
+                            for (int ir = 0; ir < bfh; ir++) {
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    bufsh[ir][jr] = sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr]));
+                                }
                             }
-                        }
 
-                        float multc[5];
-                        for (int lv = 0; lv < 5; lv++) {
-                            multc[lv] = rtengine::max((lp.chromacb * ((float) lp.mulloc[lv] - 1.f) / 100.f) + 1.f, 0.f);
-                        }
+                            float multc[5];
+                            for (int lv = 0; lv < 5; lv++) {
+                                multc[lv] = rtengine::max((lp.chromacb * ((float) lp.mulloc[lv] - 1.f) / 100.f) + 1.f, 0.f);
+                            }
 
-                        ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
-
+                            ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int ir = 0; ir < bfh; ir++) {
-                            for (int jr = 0; jr < bfw; jr++) {
-                                bufchrom[ir][jr] = CLIPRET((loctemp->L[ir][jr] - sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr]))) / 200.f);
+                            for (int ir = 0; ir < bfh; ir++) {
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    bufchrom[ir][jr] = CLIPRET((loctemp->L[ir][jr] - sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr]))) / 200.f);
+                                }
                             }
-                        }
 
-                        transit_shapedetect(7, loctemp.get(), nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                            transit_shapedetect(7, loctemp.get(), nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        }
                     }
                 }
             }
