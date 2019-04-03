@@ -109,7 +109,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         }
     }
     if (idx == int(mapping.size())) {
-        for (idx = 1; idx < int(mapping.size()); ++idx) {
+        for (idx = 1; idx < int(mapping.size())-1; ++idx) {
             if (mapping[idx] >= idx) {
                 break;
             }
