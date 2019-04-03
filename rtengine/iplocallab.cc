@@ -1244,11 +1244,6 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -1268,23 +1263,6 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
 
                 continue;
             }
-
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
 
             for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
                 int zone = 0;
@@ -1306,14 +1284,6 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
                     transformed->b[y][x] = original->b[y][x];
                     continue;
                 }
-
-#ifdef __SSE2__
-                //const float rhue = atan2Buffer[x];
-                //    const float rchro = sqrtBuffer[x];
-#else
-                //const float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-                //    const float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
 
                 float rL = original->L[y][x] / 327.6f;
                 float dEL = sqrt(0.9f * SQR(refa - origblur->a[y][x] / 327.6f) + 0.9f * SQR(refb - origblur->b[y][x] / 327.8f) + 1.2f * SQR(lumaref - rL));
@@ -1480,11 +1450,6 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -1522,25 +1487,6 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
 
                 continue;
             }
-
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
-
-
 
             for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
                 int zone = 0;
@@ -1580,12 +1526,6 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
 
                     continue;
                 }
-
-#ifdef __SSE2__
-//                const float rhue = atan2Buffer[x];
-#else
-//                const float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-#endif
 
                 float rL = origblur->L[y][x] / 327.68f;
                 float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
@@ -1752,34 +1692,12 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
 
         for (int y = 0; y < transformed->H; y++) {
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
-
             int loy = cy + y;
 
             for (int x = 0; x < transformed->W; x++) {
@@ -2178,45 +2096,16 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
 
         for (int y = 0; y < transformed->H; y++) {
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
-
             int loy = cy + y;
 
             for (int x = 0; x < transformed->W; x++) {
                 int lox = cx + x;
-#ifdef __SSE2__
-//                float rhue = atan2Buffer[x];
-//                float rchro = sqrtBuffer[x];
-#else
-//                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-//                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
                 int zone;
                 float localFactor = 1.f;
 
@@ -2324,11 +2213,6 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -2346,23 +2230,6 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
 
                 continue;
             }
-
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
 
             for (int x = 0; x < transformed->W; x++) {
                 int lox = cx + x;
@@ -2382,11 +2249,6 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                     continue;
                 }
 
-#ifdef __SSE2__
-//               float rchro = sqrtBuffer[x];
-#else
-//               float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
                 float rL = origblur->L[y][x] / 327.68f;
                 float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
 
@@ -3256,11 +3118,6 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
-        float atan2Buffer[transformed->W] ALIGNED16;
-        float sqrtBuffer[transformed->W] ALIGNED16;
-        vfloat c327d68v = F2V(327.68f);
-#endif
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -3268,25 +3125,6 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
         for (int y = 0; y < transformed->H; y++) {
             const int loy = cy + y;
-
-#ifdef __SSE2__
-            int i = 0;
-
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU(origblur->a[y][i]);
-                vfloat bv = LVFU(origblur->b[y][i]);
-                STVF(atan2Buffer[i], xatan2f(bv, av));
-                STVF(sqrtBuffer[i], _mm_sqrt_ps(SQRV(bv) + SQRV(av)) / c327d68v);
-            }
-
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                sqrtBuffer[i] = sqrt(SQR(origblur->b[y][i]) + SQR(origblur->a[y][i])) / 327.68f;
-            }
-
-#endif
-
-
             for (int x = 0; x < transformed->W; x++) {
                 const int lox = cx + x;
                 int zone = 0;
@@ -3298,18 +3136,6 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                 } else if (lp.shapmet == 1) {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);//rect not good
                 }
-
-
-
-#ifdef __SSE2__
-//               float rhue = atan2Buffer[x];
-//               float rchro = sqrtBuffer[x];
-#else
-
-//                float rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-
-//                float rchro = sqrt(SQR(origblur->b[y][x]) + SQR(origblur->a[y][x])) / 327.68f;
-#endif
 
                 float rL = origblur->L[y][x] / 327.68f;
 
