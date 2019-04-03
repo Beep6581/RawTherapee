@@ -49,10 +49,6 @@ ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_RELEASENOTES;Poznámky k vydání
 ABOUT_TAB_SPLASH;Úvodní obrazovka
 ADJUSTER_RESET_TO_DEFAULT;<b>Kliknutí</b> - návrat k výchozí hodnotě.\n<b>Ctrl</b>+<b>kliknutí</b> - návrat k počáteční hodnotě.
-BATCHQUEUE_AUTOSTART;Automatický start
-BATCHQUEUE_AUTOSTARTHINT;Automatické spuštění zpracování po vložení nové úlohy.
-BATCHQUEUE_DESTFILENAME;Cesta a název souboru
-BATCHQUEUE_STARTSTOPHINT;Spustit nebo zastavit zpracování obrázků ve frontě.\n\nZkratka: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;Dávkové zpracování
 CURVEEDITOR_AXIS_IN;Vstup:
 CURVEEDITOR_AXIS_LEFT_TAN;LS:
@@ -916,14 +912,14 @@ MAIN_BUTTON_SENDTOEDITOR;Upravit obrázek v externím editoru
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editovat současný obrázek v externím editoru.\nZkratka: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Zobrazit/skrýt všechny postranní panely.\nZkratka: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Ukončit režim celé obrazovky
-MAIN_FRAME_BATCHQUEUE;Fronta
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;Fronta zpracování.\nZkratka: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nZkratka: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Prohlížeč souborů
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Prohlížeč souborů.\nZkratka: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Místa
 MAIN_FRAME_PLACES_ADD;Přidat
+MAIN_FRAME_QUEUE;Fronta
+MAIN_FRAME_QUEUE_TOOLTIP;Fronta zpracování.\nZkratka: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Poslední složky
 MAIN_MSG_ALREADYEXISTS;Soubor již existuje.
 MAIN_MSG_CANNOTLOAD;Nepodařilo se načíst obrázek
@@ -1136,7 +1132,6 @@ PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXTERNALEDITOR;Externí editor
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů / náhledů
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Kompaktní nástroje v Prohlížeči souborů
-PREFERENCES_FILEFORMAT;Formát souboru
 PREFERENCES_FLATFIELDFOUND;Nalezeno
 PREFERENCES_FLATFIELDSDIR;Složka Flat Field souborů
 PREFERENCES_FLATFIELDSHOTS;snímků
@@ -1175,11 +1170,6 @@ PREFERENCES_MONPROFILE_WARNOSX;Na MacOS je podporováno pouze sRGB.
 PREFERENCES_MULTITAB;Mód více karet editoru
 PREFERENCES_MULTITABDUALMON;Mód více karet editoru ve vlastním okně
 PREFERENCES_NAVIGATIONFRAME;Navigátor
-PREFERENCES_OUTDIR;Výstupní složka
-PREFERENCES_OUTDIRFOLDER;Ulož do souboru
-PREFERENCES_OUTDIRFOLDERHINT;Uložit obrázky do vybrané složky.
-PREFERENCES_OUTDIRTEMPLATE;Použít šablonu
-PREFERENCES_OUTDIRTEMPLATEHINT;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii, některé vlastnosti fotografie nebo pořadí v dávce.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bude nahrazeno hodnocením fotografie. Pokud není fotografie ohodnocena, bude %r nahrazeno '0'. Pokud je fotografie v koši, bude %r nahrazeno 'x'.\n\n<b>%s1</b>, <b>%s2</b>, atd. bude nahrazeno pořadím v dávce doplněném na 1 až 9 číslic. Každé spuštění zpracování fronty jej vždy nastaví na jedna a po každé zpracované fotografii se o jedna zvýší .\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>zpracovano</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/zpracovano/%f</b>\n\nPro uložení výstupního obrázku do adresáře\n"<i>/home/tom/fotky/zpracovano/2010-10-31</i>", napište:\n<b>%p2/zpracovano/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Překrýt jména souborů na náhledech v prohlížeči souborů
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Překrýt jména souborů na náhledech v editoru
 PREFERENCES_OVERWRITEOUTPUTFILE;Přepsat existující soubory
@@ -1225,9 +1215,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Lišta s filmovým pásem
 PREFERENCES_SHTHRESHOLD;Práh oříznutých stínů
 PREFERENCES_SINGLETAB;Mód jedné karty editoru
 PREFERENCES_SINGLETABVERTAB;Mód jedné karty editoru, svislé karty
-PREFERENCES_SND_BATCHQUEUEDONE;Zpracování fronty dokončeno
 PREFERENCES_SND_HELP;Vložte cestu k souboru pro nastavení zvuku nebo ponechte prázdné (bez zvuku).\nVe Windows zadejte "SystemDefault", "SystemAsterisk" a podobně.\nNa Linuxu použijte "complete", "window-attention" a další.
 PREFERENCES_SND_LNGEDITPROCDONE;Zpracování v editoru dokončeno
+PREFERENCES_SND_QUEUEDONE;Zpracování fronty dokončeno
 PREFERENCES_SND_THRESHOLDSECS;Po sekundách
 PREFERENCES_STARTUPIMDIR;Složka obrázků při spuštění
 PREFERENCES_TAB_BROWSER;Prohlížeč souborů
@@ -1283,6 +1273,14 @@ QINFO_HDR;HDR / %2 snímků
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif údaje nejsou k dispozici.
 QINFO_PIXELSHIFT;Pixel Shift / %2 snímků
+QUEUE_AUTOSTART;Automatický start
+QUEUE_AUTOSTART_TOOLTIP;Automatické spuštění zpracování po vložení nové úlohy.
+QUEUE_DESTFILENAME;Cesta a název souboru
+QUEUE_FORMAT_TITLE;Formát souboru
+QUEUE_LOCATION_FOLDER;Ulož do souboru
+QUEUE_LOCATION_TEMPLATE;Použít šablonu
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii, některé vlastnosti fotografie nebo pořadí v dávce.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bude nahrazeno hodnocením fotografie. Pokud není fotografie ohodnocena, bude %r nahrazeno '0'. Pokud je fotografie v koši, bude %r nahrazeno 'x'.\n\n<b>%s1</b>, <b>%s2</b>, atd. bude nahrazeno pořadím v dávce doplněném na 1 až 9 číslic. Každé spuštění zpracování fronty jej vždy nastaví na jedna a po každé zpracované fotografii se o jedna zvýší .\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>zpracovano</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/zpracovano/%f</b>\n\nPro uložení výstupního obrázku do adresáře\n"<i>/home/tom/fotky/zpracovano/2010-10-31</i>", napište:\n<b>%p2/zpracovano/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;Spustit nebo zastavit zpracování obrázků ve frontě.\n\nZkratka: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Neznámý datový formát
 SAMPLEFORMAT_1;8-bitový neznaménkový
 SAMPLEFORMAT_2;16-bitový neznaménkový
@@ -2313,6 +2311,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
 !PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
+!QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

@@ -1461,7 +1461,7 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     // BatchQueueDone
     Gtk::HBox* pBatchQueueDone = Gtk::manage ( new Gtk::HBox() );
 
-    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
+    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_QUEUEDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
     pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 4);
 
     txtSndBatchQueueDone = Gtk::manage (new Gtk::Entry());

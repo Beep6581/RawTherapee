@@ -39,10 +39,6 @@ ABOUT_TAB_LICENSE;ライセンス
 ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
 ADJUSTER_RESET_TO_DEFAULT;<b>クリック</b> - デフォルト値にリセット\n<b>Ctrl</b>+<b>クリック</b> - 初期値にリセット
-BATCHQUEUE_AUTOSTART;オートスタート
-BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
-BATCHQUEUE_DESTFILENAME;パスとファイル名
-BATCHQUEUE_STARTSTOPHINT;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -909,8 +905,6 @@ MAIN_BUTTON_SENDTOEDITOR;外部エディタで画像を編集
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集\nショートカット: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル\nショートカット: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;フルスクリーン解除
-MAIN_FRAME_BATCHQUEUE;キュー
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;編集
 MAIN_FRAME_EDITOR_TOOLTIP; 編集\nショートカット: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;ファイルブラウザ
@@ -918,6 +912,8 @@ MAIN_FRAME_FILEBROWSER_TOOLTIP; ファイル・ブラウザ\nショートカッ�
 MAIN_FRAME_PLACES;場所
 MAIN_FRAME_PLACES_ADD;追加
 MAIN_FRAME_PLACES_DEL;除去
+MAIN_FRAME_QUEUE;キュー
+MAIN_FRAME_QUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;最近開いたフォルダ
 MAIN_MSG_ALREADYEXISTS;ファイルはすでに存在します
 MAIN_MSG_CANNOTLOAD;画像読み込みできません
@@ -1138,7 +1134,6 @@ PREFERENCES_EDITORLAYOUT;編集 レイアウト
 PREFERENCES_EXTERNALEDITOR;外部エディタ
 PREFERENCES_FBROWSEROPTS;ファイルブラウザ/サムネイルのオプション
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;ファイルブラウザのツールバーを圧縮
-PREFERENCES_FILEFORMAT;ファイル形式
 PREFERENCES_FLATFIELDFOUND;検出
 PREFERENCES_FLATFIELDSDIR;フラットフィールド・ディレクトリ
 PREFERENCES_FLATFIELDSHOTS;ショット
@@ -1177,11 +1172,6 @@ PREFERENCES_MONPROFILE_WARNOSX;MacのOSの制約により、サポート出来�
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_NAVIGATIONFRAME;ナビゲーション
-PREFERENCES_OUTDIR;出力ディレクトリ
-PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
-PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
-PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;ファイル名をサムネイル上に透過表示する
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;ファイル名を編集パネルのサムネイル上に透過表示する
 PREFERENCES_OVERWRITEOUTPUTFILE;既存ファイルを上書き
@@ -1229,9 +1219,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;画像スライドにツールバーを表示�
 PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SINGLETAB;シングルタブモードモード
 PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
-PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
 PREFERENCES_SND_HELP;ファイルパスを入力 または空欄(無音).\nWindowsはシステムサウンドの "SystemDefault", "SystemAsterisk"など..\nLinuxはシステムサウンドの "complete", "window-attention"などを使用します
 PREFERENCES_SND_LNGEDITPROCDONE;編集処理 終了
+PREFERENCES_SND_QUEUEDONE;キュー処理 終了
 PREFERENCES_SND_THRESHOLDSECS;秒後
 PREFERENCES_STARTUPIMDIR;起動時の画像・ディレクトリ
 PREFERENCES_TAB_BROWSER;ファイルブラウザ
@@ -1293,6 +1283,14 @@ QINFO_HDR;HDR / %2 フレーム
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exifデータがありません
 QINFO_PIXELSHIFT;ピクセルシフト / %2 フレーム
+QUEUE_AUTOSTART;オートスタート
+QUEUE_AUTOSTART_TOOLTIP;新しいrawファイルが送られて来たら自動的に現像処理を開始します
+QUEUE_DESTFILENAME;パスとファイル名
+QUEUE_FORMAT_TITLE;ファイル形式
+QUEUE_LOCATION_FOLDER;フォルダに保存
+QUEUE_LOCATION_TEMPLATE;テンプレートを使う
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;データ形式不明
 SAMPLEFORMAT_1;符号なし8ビット
 SAMPLEFORMAT_2;符号なし16ビット
@@ -2310,3 +2308,8 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!QUEUE_LOCATION_TITLE;Output Location

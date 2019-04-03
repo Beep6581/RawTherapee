@@ -86,10 +86,6 @@ ABOUT_TAB_LICENSE;Lizenz
 ABOUT_TAB_RELEASENOTES;Versionshinweise
 ABOUT_TAB_SPLASH;Startbild
 ADJUSTER_RESET_TO_DEFAULT;<b>Klick</b> - Auf Standardwert zurücksetzen.\n<b>Strg</b> + <b>Klick</b> - Auf Initialwert zurücksetzen.
-BATCHQUEUE_AUTOSTART;Automatisch starten
-BATCHQUEUE_AUTOSTARTHINT;Bei neuem Job die Verarbeitung automatisch starten
-BATCHQUEUE_DESTFILENAME;Pfad und Dateiname
-BATCHQUEUE_STARTSTOPHINT;Startet / Stoppt die Verarbeitung\nder Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
 BATCH_PROCESSING;Stapelverarbeitung
 CURVEEDITOR_AXIS_IN;x:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -956,8 +952,6 @@ MAIN_BUTTON_SENDTOEDITOR;Bild im externen Editor öffnen.
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen.\nTaste: <b>Strg</b> + <b>e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden.\nTaste: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden.\nTaste: <b>F11</b>
-MAIN_FRAME_BATCHQUEUE;Warteschlange
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;Warteschlange\nTaste: <b>Strg</b> + <b>F3</b>
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP;Editor\nTaste: <b>Strg</b> + <b>F4</b>
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung
@@ -965,6 +959,8 @@ MAIN_FRAME_FILEBROWSER_TOOLTIP;Dateiverwaltung\nTaste: <b>Strg</b> + <b>F2</b>
 MAIN_FRAME_PLACES;Favoriten
 MAIN_FRAME_PLACES_ADD;Hinzufügen
 MAIN_FRAME_PLACES_DEL;Entfernen
+MAIN_FRAME_QUEUE;Warteschlange
+MAIN_FRAME_QUEUE_TOOLTIP;Warteschlange\nTaste: <b>Strg</b> + <b>F3</b>
 MAIN_FRAME_RECENT;Verzeichnishistorie
 MAIN_MSG_ALREADYEXISTS;Diese Datei existiert bereits.
 MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden.
@@ -1185,7 +1181,6 @@ PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar
-PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FLATFIELDFOUND;Gefunden
 PREFERENCES_FLATFIELDSDIR;Weißbild-Verzeichnis
 PREFERENCES_FLATFIELDSHOTS;Aufnahmen
@@ -1224,11 +1219,6 @@ PREFERENCES_MONPROFILE_WARNOSX;Aufgrund einer macOS-Limitierung wird nur sRGB un
 PREFERENCES_MULTITAB;Multi-Reitermodus
 PREFERENCES_MULTITABDUALMON;Multi-Reitermodus (auf zweitem Monitor, wenn verfügbar)
 PREFERENCES_NAVIGATIONFRAME;Navigation
-PREFERENCES_OUTDIR;Ausgabeverzeichnis
-PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern
-PREFERENCES_OUTDIRFOLDERHINT;Alle Dateien im ausgewählten Verzeichnis speichern.
-PREFERENCES_OUTDIRTEMPLATE;Dynamisches Verzeichnis verwenden
-PREFERENCES_OUTDIRTEMPLATEHINT;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
 PREFERENCES_OVERLAY_FILENAMES;Bildinformationen überlagern die Miniaturbilder in der Dateiverwaltung
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Bildinformationen der Miniaturbilder im Filmstreifen anzeigen
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
@@ -1276,9 +1266,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toolbar oberhalb des Filmstreifens anzeigen
 PREFERENCES_SHTHRESHOLD;Schatten - Schwelle
 PREFERENCES_SINGLETAB;Ein-Reitermodus
 PREFERENCES_SINGLETABVERTAB;Ein-Reitermodus (vertikale Reiter)
-PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_HELP;Geben Sie einen Pfad zu einer Sounddatei oder einen Systemklang ein.\n\nBeispiel Systemklänge:\nWindows: SystemDefault, SystemAsterisk ...\nLinux: complete, window-attention ...\n
 PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
+PREFERENCES_SND_QUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_THRESHOLDSECS;Verzögerung in Sekunden
 PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
@@ -1340,6 +1330,14 @@ QINFO_HDR;HDR / %2 Frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
 QINFO_PIXELSHIFT;Pixel-Shift / %2 Frame(s)
+QUEUE_AUTOSTART;Automatisch starten
+QUEUE_AUTOSTART_TOOLTIP;Bei neuem Job die Verarbeitung automatisch starten
+QUEUE_DESTFILENAME;Pfad und Dateiname
+QUEUE_FORMAT_TITLE;Dateiformat
+QUEUE_LOCATION_FOLDER;In dieses Verzeichnis speichern
+QUEUE_LOCATION_TEMPLATE;Dynamisches Verzeichnis verwenden
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
+QUEUE_STARTSTOP_TOOLTIP;Startet / Stoppt die Verarbeitung\nder Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
 SAMPLEFORMAT_0;Unbekanntes Datenformat
 SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
 SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
@@ -2358,3 +2356,8 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!QUEUE_LOCATION_TITLE;Output Location

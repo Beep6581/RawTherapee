@@ -68,10 +68,6 @@ ABOUT_TAB_LICENSE;Licencia
 ABOUT_TAB_RELEASENOTES;Notas de la versión
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
-BATCHQUEUE_AUTOSTART;Inicio automático
-BATCHQUEUE_AUTOSTARTHINT;Iniciar automáticamente el procesamiento en cuanto llega un nuevo trabajo
-BATCHQUEUE_DESTFILENAME;Ruta y nombre del archivo
-BATCHQUEUE_STARTSTOPHINT;Iniciar o detener el procesamiento de las imágenes en la cola.\nTecla de Atajo: <b> Ctrl </b> + <b> s </b>
 BATCH_PROCESSING;Proceso por lotes
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -940,14 +936,14 @@ MAIN_BUTTON_SENDTOEDITOR;Abrir con editor
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editar imagen actual en editor externo.\nTecla de Atajo: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostrar/ocultar todos los paneles laterales.\nTecla de Atajo: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Salir de Pantalla completa
-MAIN_FRAME_BATCHQUEUE;Cola de lotes
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Cola de lotes.\nTecla de Atajo: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nTecla de Atajo: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Explorador de archivos
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Explorador de archivos.\nTecla de Atajo: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Ubicaciones
 MAIN_FRAME_PLACES_ADD;Añadir
+MAIN_FRAME_QUEUE;Cola de lotes
+MAIN_FRAME_QUEUE_TOOLTIP; Cola de lotes.\nTecla de Atajo: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Carpetas recientes
 MAIN_MSG_ALREADYEXISTS;Este archivo ya existe.
 MAIN_MSG_CANNOTLOAD;No se puede abrir imagen
@@ -1160,7 +1156,6 @@ PREFERENCES_EDITORLAYOUT;Disposición del editor
 PREFERENCES_EXTERNALEDITOR;Editor externo
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos/Miniaturas
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de herramientas del explorador en una sola fila (deseleccionar para pantallas de baja resolución)
-PREFERENCES_FILEFORMAT;Formato de archivo
 PREFERENCES_FLATFIELDFOUND;Encontrado
 PREFERENCES_FLATFIELDSDIR;Carpeta de archivos de campo plano
 PREFERENCES_FLATFIELDSHOTS;disparos
@@ -1200,11 +1195,6 @@ PREFERENCES_MONPROFILE_WARNOSX;Debido a las limitaciones de MacOS, solo se admit
 PREFERENCES_MULTITAB;Modo Editor de varias pestañas
 PREFERENCES_MULTITABDUALMON;Modo Editor de varias pestañas, si está disponible en segundo monitor
 PREFERENCES_NAVIGATIONFRAME;Navegación
-PREFERENCES_OUTDIR;Carpeta de salida
-PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
-PREFERENCES_OUTDIRFOLDERHINT;Guardar las imágenes creadas en una carpeta elegida
-PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen raw.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Superponer nombres de archivo en miniaturas
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Superponer los nombres de archivo en las miniaturas en el panel del editor
 PREFERENCES_OVERWRITEOUTPUTFILE;Sobreescribir archivos de salida existentes
@@ -1250,9 +1240,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Mostrar barra de herramientas estilo tira de pe
 PREFERENCES_SHTHRESHOLD;Umbral de sombras cortadas
 PREFERENCES_SINGLETAB;Modo Editor de pestaña única
 PREFERENCES_SINGLETABVERTAB;Modo Editor de pestaña única, pestañas verticales
-PREFERENCES_SND_BATCHQUEUEDONE;Trabajos en cola finalizados
 PREFERENCES_SND_HELP;Introducir el path o dejar en blanco (sin sonido). En Windows, usar "SystemDefault", "SystemAsterisk" etc. para los sonidos del sistema\nEn Linux use "complete", "window-attention" etc. para los sonidos del sistema.
 PREFERENCES_SND_LNGEDITPROCDONE;Procesado del editor terminado
+PREFERENCES_SND_QUEUEDONE;Trabajos en cola finalizados
 PREFERENCES_SND_THRESHOLDSECS;Despues de segundos
 PREFERENCES_STARTUPIMDIR;Carpeta de imágenes en el arranque
 PREFERENCES_TAB_BROWSER;Explorador de archivos
@@ -1308,6 +1298,14 @@ QINFO_HDR;HDR / %2 cuadro(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;No hay datos EXIF.
 QINFO_PIXELSHIFT;Pixel variación /% 2 cuadro(s)
+QUEUE_AUTOSTART;Inicio automático
+QUEUE_AUTOSTART_TOOLTIP;Iniciar automáticamente el procesamiento en cuanto llega un nuevo trabajo
+QUEUE_DESTFILENAME;Ruta y nombre del archivo
+QUEUE_FORMAT_TITLE;Formato de archivo
+QUEUE_LOCATION_FOLDER;Guardar en carpeta
+QUEUE_LOCATION_TEMPLATE;Usar plantilla
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen raw.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;Iniciar o detener el procesamiento de las imágenes en la cola.\nTecla de Atajo: <b> Ctrl </b> + <b> s </b>
 SAMPLEFORMAT_0;Formato de datos desconocido
 SAMPLEFORMAT_1;Sin firma 8 bits
 SAMPLEFORMAT_2;Sin firma 16 bits
@@ -2341,6 +2339,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
 !PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
+!QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

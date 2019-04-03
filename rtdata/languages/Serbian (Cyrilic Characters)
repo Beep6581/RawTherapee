@@ -5,9 +5,6 @@ ABOUT_TAB_CREDITS;Заслуге
 ABOUT_TAB_LICENSE;Лиценца
 ABOUT_TAB_RELEASENOTES;Белешке о издању
 ABOUT_TAB_SPLASH;Увод
-BATCHQUEUE_AUTOSTART;Сам започни
-BATCHQUEUE_AUTOSTARTHINT;Покреће обраду фотографија када их закажете
-BATCHQUEUE_DESTFILENAME;Путања и име датотеке
 BATCH_PROCESSING;обрада
 CURVEEDITOR_CURVE;Кривуља
 CURVEEDITOR_CURVES;Кривуље
@@ -464,14 +461,14 @@ MAIN_BUTTON_SENDTOEDITOR;Уреди
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Уређује тренутну слику у спољном програму <b>Ctrl+Е</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Приказује/сакрива све бочне површине <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Напусти цео екран
-MAIN_FRAME_BATCHQUEUE;Заказане датотеке
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Заказано  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Уређивач
 MAIN_FRAME_EDITOR_TOOLTIP; Уређивач  <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Разгледач датотека
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Разгледач датотека  <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Места
 MAIN_FRAME_PLACES_ADD;Додај
+MAIN_FRAME_QUEUE;Заказане датотеке
+MAIN_FRAME_QUEUE_TOOLTIP; Заказано  <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Recent Фасцикле
 MAIN_MSG_ALREADYEXISTS;Датотека већ постоји.
 MAIN_MSG_CANNOTLOAD;Не могу да учитам слику
@@ -613,7 +610,6 @@ PREFERENCES_DIRSOFTWARE;Директоријум са инсталацијом
 PREFERENCES_EDITORLAYOUT;Размештај програма
 PREFERENCES_EXTERNALEDITOR;Спољни уређивач
 PREFERENCES_FBROWSEROPTS;Опције разгледача датотеке
-PREFERENCES_FILEFORMAT;Формат датотеке
 PREFERENCES_FLATFIELDFOUND;Нађено
 PREFERENCES_FLATFIELDSDIR;Директоријум за равна поља
 PREFERENCES_FLATFIELDSHOTS;снимака
@@ -639,11 +635,6 @@ PREFERENCES_MENUGROUPRANK;Групиши оцењивање
 PREFERENCES_MENUOPTIONS;Опције менија
 PREFERENCES_MULTITAB;Режим у више листова
 PREFERENCES_MULTITABDUALMON;Режим у више листова, на другом монитору
-PREFERENCES_OUTDIR;Излазни директоријум
-PREFERENCES_OUTDIRFOLDER;Сачувај у фасциклу
-PREFERENCES_OUTDIRFOLDERHINT;Ставља сачуване слике у 
-PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Постави преко умањеног приказа
 PREFERENCES_OVERWRITEOUTPUTFILE;Препиши постојеће излазне датотеке
 PREFERENCES_PANFACTORLABEL;Фактор
@@ -667,9 +658,9 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Додај компензацију екс�
 PREFERENCES_SHTHRESHOLD;Праг за одсечене тамне делове
 PREFERENCES_SINGLETAB;Режим у једном листу
 PREFERENCES_SINGLETABVERTAB;Режим у једном листу, вертикални листови
-PREFERENCES_SND_BATCHQUEUEDONE;Обрађене су заказане датотеке
 PREFERENCES_SND_HELP;Унесите путању до датотеке или оставите празно уколико не желите звук. На Windows-у можете да користите „SystemDefault“, „SystemAsterisk“ за системске звуке.
 PREFERENCES_SND_LNGEDITPROCDONE;Уредник је завршио обраду
+PREFERENCES_SND_QUEUEDONE;Обрађене су заказане датотеке
 PREFERENCES_SND_THRESHOLDSECS;бр. секунди
 PREFERENCES_STARTUPIMDIR;Директоријум по покретању
 PREFERENCES_TAB_BROWSER;Преглед датотека
@@ -715,6 +706,13 @@ PROGRESSBAR_SNAPSHOT_ADDED;Додат је снимак
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профил измењен у разгледачу
 QINFO_ISO;ИСО
 QINFO_NOEXIF;Нису доступни Exif подаци.
+QUEUE_AUTOSTART;Сам започни
+QUEUE_AUTOSTART_TOOLTIP;Покреће обраду фотографија када их закажете
+QUEUE_DESTFILENAME;Путања и име датотеке
+QUEUE_FORMAT_TITLE;Формат датотеке
+QUEUE_LOCATION_FOLDER;Сачувај у фасциклу
+QUEUE_LOCATION_TEMPLATE;Употреби шаблон
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;Сам додај суфикс уколико датотека већ постоји
 SAVEDLG_FILEFORMAT;Формат датотеке
 SAVEDLG_FORCEFORMATOPTS;Приморај могућности за чување
@@ -1199,7 +1197,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1745,6 +1742,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned

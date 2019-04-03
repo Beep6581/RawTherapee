@@ -7,10 +7,6 @@ ABOUT_TAB_LICENSE;Licença
 ABOUT_TAB_RELEASENOTES;Notas de lançamento
 ABOUT_TAB_SPLASH;Ecrã inicial
 ADJUSTER_RESET_TO_DEFAULT;<b>Clique</b> - repor o valor padrão.\n<b>Ctrl</b>+<b>clique</b> - repor o valor padrão.
-BATCHQUEUE_AUTOSTART;Iniciar automático
-BATCHQUEUE_AUTOSTARTHINT;Começar a processar automaticamente ao receber uma nova tarefa.
-BATCHQUEUE_DESTFILENAME;Caminho e nome do ficheiro
-BATCHQUEUE_STARTSTOPHINT;Iniciar ou parar o processamento das imagens na fila.\n\nAtalho: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;Processamento em lote
 CURVEEDITOR_AXIS_IN;Entrada:
 CURVEEDITOR_AXIS_LEFT_TAN;TE:
@@ -875,14 +871,14 @@ MAIN_BUTTON_SENDTOEDITOR;Editar imagem no editor externo
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editar a imagem atual no editor externo.\nAtalho: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Ocultar todos os painéis laterais.\nAtalho: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Sair do ecrã total
-MAIN_FRAME_BATCHQUEUE;Fila
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;Fila de processamento.\nAtalho: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nAtalho: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Navegador de ficheiros
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Navegador de ficheiros.\nAtalho: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Locais
 MAIN_FRAME_PLACES_ADD;Adicionar
+MAIN_FRAME_QUEUE;Fila
+MAIN_FRAME_QUEUE_TOOLTIP;Fila de processamento.\nAtalho: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Pastas recentes
 MAIN_MSG_ALREADYEXISTS;O ficheiro já existe.
 MAIN_MSG_CANNOTLOAD;Não é possível carregar a imagem
@@ -1103,7 +1099,6 @@ PREFERENCES_EDITORLAYOUT;Interface do editor
 PREFERENCES_EXTERNALEDITOR;Editor externo
 PREFERENCES_FBROWSEROPTS;Navegador de ficheiros / opções de miniaturas
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de ferramentas compacta no navegador de ficheiros
-PREFERENCES_FILEFORMAT;Formato de ficheiro
 PREFERENCES_FLATFIELDFOUND;Encontrado
 PREFERENCES_FLATFIELDSDIR;Pasta de campos planos
 PREFERENCES_FLATFIELDSHOTS;disparos
@@ -1142,11 +1137,6 @@ PREFERENCES_MONPROFILE_WARNOSX;Devido às limitações do MacOS, apenas é supor
 PREFERENCES_MULTITAB;Modo de editor em várias abas
 PREFERENCES_MULTITABDUALMON;Modo de editor em várias janelas
 PREFERENCES_NAVIGATIONFRAME;Navegação
-PREFERENCES_OUTDIR;Pasta das saídas
-PREFERENCES_OUTDIRFOLDER;Guardar na pasta
-PREFERENCES_OUTDIRFOLDERHINT;Guardar imagens na pasta selecionada.
-PREFERENCES_OUTDIRTEMPLATE;Usar modelo
-PREFERENCES_OUTDIRTEMPLATEHINT;Pode-se usar as seguintes sequências de formatação:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nEstas cadeias de formatação referem-se às diferentes partes do caminho do nome da fotografia, alguns atributos da fotografia ou um índice de sequência arbitrário no processamento em lote.\n\nPor exemplo, se a fotografia que está a ser processada tiver o seguinte caminho:\n<b><i>/inicio/rodrigo/fotos/2010-10-31/dsc0042.nef</i></b>\no significado das cadeias de formatação são:\n<b>%d4</b> = <i>inicio</i>\n<b>%d3</b> = <i>rodrigo</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/inicio/rodrigo/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/inicio/rodrigo/fotos/</i>\n<b>%p3</b> = <i>/inicio/rodrigo/</i>\n<b>%p4</b> = <i>/inicio/</i>\n\n<b>%r</b> será substituído pela classificação da fotografia. Se a fotografia não tiver classificação, %r será substituído por '0'. Se a fotografia estiver no caixote do lixo, %r será substituído por 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. será substituído por um índice de sequência que é preenchido entre 1 e 9 dígitos. O índice da sequência iniciará em 1 sempre que o processamento da fila for iniciado e será incrementado em 1 para cada imagem processada.\n\nSe quiser guardar a imagem de saída no local onde se encontra a original, escreva:\n<b>%p1/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada "<i>convertido</i>" localizada na pasta da imagem aberta, escreva:\n<b>%p1/convertido/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada\n"<i>/inicio/rodrigo/fotos/convertido/2010-10-31</i>", escreva:\n<b>%p2/convertido/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Mostrar nomes de ficheiros em cima das miniaturas no navegador de ficheiros
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Mostrar nomes de ficheiros em cima das miniaturas no painel do editor
 PREFERENCES_OVERWRITEOUTPUTFILE;Substituir ficheiros de saída existentes
@@ -1194,9 +1184,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Mostrar barra de ferramentas da película de fo
 PREFERENCES_SHTHRESHOLD;Limite para sombras cortadas
 PREFERENCES_SINGLETAB;Modo de editor numa só aba
 PREFERENCES_SINGLETABVERTAB;Modo de editor numa só aba. Abas verticais
-PREFERENCES_SND_BATCHQUEUEDONE;Processamento da fila concluído
 PREFERENCES_SND_HELP;Introduza um endereço de ficheiro completo para definir um som ou deixe em branco para não ter som.\nPara sons do sistema no Windows, use "SystemDefault", "SystemAsterisk" etc. e no Linux use "complete", "window-attention" etc.
 PREFERENCES_SND_LNGEDITPROCDONE;Processamento do editor concluído
+PREFERENCES_SND_QUEUEDONE;Processamento da fila concluído
 PREFERENCES_SND_THRESHOLDSECS;Após (segundos)
 PREFERENCES_STARTUPIMDIR;Pasta de imagens ao iniciar
 PREFERENCES_TAB_BROWSER;Navegador de ficheiros
@@ -1252,6 +1242,14 @@ QINFO_HDR;HDR / %2 fotograma(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Dados Exif não disponíveis.
 QINFO_PIXELSHIFT;Mudança de píxel / %2 fotograma(s)
+QUEUE_AUTOSTART;Iniciar automático
+QUEUE_AUTOSTART_TOOLTIP;Começar a processar automaticamente ao receber uma nova tarefa.
+QUEUE_DESTFILENAME;Caminho e nome do ficheiro
+QUEUE_FORMAT_TITLE;Formato de ficheiro
+QUEUE_LOCATION_FOLDER;Guardar na pasta
+QUEUE_LOCATION_TEMPLATE;Usar modelo
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Pode-se usar as seguintes sequências de formatação:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nEstas cadeias de formatação referem-se às diferentes partes do caminho do nome da fotografia, alguns atributos da fotografia ou um índice de sequência arbitrário no processamento em lote.\n\nPor exemplo, se a fotografia que está a ser processada tiver o seguinte caminho:\n<b><i>/inicio/rodrigo/fotos/2010-10-31/dsc0042.nef</i></b>\no significado das cadeias de formatação são:\n<b>%d4</b> = <i>inicio</i>\n<b>%d3</b> = <i>rodrigo</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/inicio/rodrigo/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/inicio/rodrigo/fotos/</i>\n<b>%p3</b> = <i>/inicio/rodrigo/</i>\n<b>%p4</b> = <i>/inicio/</i>\n\n<b>%r</b> será substituído pela classificação da fotografia. Se a fotografia não tiver classificação, %r será substituído por '0'. Se a fotografia estiver no caixote do lixo, %r será substituído por 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. será substituído por um índice de sequência que é preenchido entre 1 e 9 dígitos. O índice da sequência iniciará em 1 sempre que o processamento da fila for iniciado e será incrementado em 1 para cada imagem processada.\n\nSe quiser guardar a imagem de saída no local onde se encontra a original, escreva:\n<b>%p1/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada "<i>convertido</i>" localizada na pasta da imagem aberta, escreva:\n<b>%p1/convertido/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada\n"<i>/inicio/rodrigo/fotos/convertido/2010-10-31</i>", escreva:\n<b>%p2/convertido/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;Iniciar ou parar o processamento das imagens na fila.\n\nAtalho: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Formato de dados desconhecido
 SAMPLEFORMAT_1;8 bits sem assinatura
 SAMPLEFORMAT_2;16-bits sem assinatura
@@ -2273,6 +2271,7 @@ ZOOMPANEL_ZOOMOUT;Afastar\nAtalho: <b>-</b>
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
 !PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
+!QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
