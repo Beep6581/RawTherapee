@@ -1144,7 +1144,7 @@ private:
 
             CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
-            if (WaveParams.ushamethod != "none" && WaveParams.expclari && WaveParams.CLmethod != "all") {
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 unshar = new LabImage(fw, fh);
                 provis = params.wavelet.CLmethod;
                 params.wavelet.CLmethod = "all";
@@ -1155,7 +1155,7 @@ private:
 
             ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
 
-            if (WaveParams.ushamethod != "none" && WaveParams.expclari && WaveParams.CLmethod != "all") {
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 float mL = (float)(WaveParams.mergeL / 100.f);
                 float mC = (float)(WaveParams.mergeC / 100.f);
                 float mL0;

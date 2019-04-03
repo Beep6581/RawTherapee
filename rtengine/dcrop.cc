@@ -1006,7 +1006,7 @@ void Crop::update(int todo)
 
 
 
-            if (WaveParams.ushamethod != "none" && WaveParams.expclari && WaveParams.CLmethod != "all") {
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
 
                 unshar = new LabImage(labnCrop->W, labnCrop->H);
                 provis = params.wavelet.CLmethod;
@@ -1020,7 +1020,7 @@ void Crop::update(int todo)
 
             parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
 
-            if (WaveParams.ushamethod != "none"  && WaveParams.expclari && WaveParams.CLmethod != "all") {
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
 
                 float mL = (float)(WaveParams.mergeL / 100.f);
                 float mC = (float)(WaveParams.mergeC / 100.f);

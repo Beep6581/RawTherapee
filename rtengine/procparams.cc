@@ -2178,7 +2178,7 @@ WaveletParams::WaveletParams() :
     daubcoeffmethod("4_"),
     CHmethod("without"),
     Medgreinf("less"),
-    ushamethod("none"),
+    ushamethod("clari"),
     CHSLmethod("SL"),
     EDmethod("CU"),
     NPmethod("none"),

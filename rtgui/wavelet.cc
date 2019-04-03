@@ -117,8 +117,8 @@ Wavelet::Wavelet() :
     edgeampli(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0, 100, 1, 10))),
     mergeL(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEL"), -50, 100, 1, 40))),
     mergeC(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEC"), -50, 100, 1, 20))),
-    softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.01, 0.))),
-    softradend(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.01, 0.))),
+    softrad(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.1, 0.))),
+    softradend(Gtk::manage(new Adjuster(M("TP_WAVELET_SOFTRAD"), 0.0, 100., 0.1, 0.))),
     Lmethod(Gtk::manage(new MyComboBoxText())),
     CHmethod(Gtk::manage(new MyComboBoxText())),
     CHSLmethod(Gtk::manage(new MyComboBoxText())),
@@ -483,7 +483,7 @@ Wavelet::Wavelet() :
     showmaskConn = showmask->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::showmaskToggled));
 
     ToolParamBlock* const clariBox = Gtk::manage(new ToolParamBlock());
-    ushamethod->append(M("TP_WAVELET_USH"));
+  //  ushamethod->append(M("TP_WAVELET_USH"));
     ushamethod->append(M("TP_WAVELET_SHA"));
     ushamethod->append(M("TP_WAVELET_CLA"));
     ushamethodconn = ushamethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::ushamethodChanged));
@@ -495,7 +495,7 @@ Wavelet::Wavelet() :
     clariBox->pack_start(*mergeL);
     clariBox->pack_start(*mergeC);
     clariBox->pack_start(*softrad);
-    clariBox->pack_start(*showmask);
+//    clariBox->pack_start(*showmask);
 
 // Edge Sharpness
     ToolParamBlock* const edgBox = Gtk::manage(new ToolParamBlock());
@@ -1038,12 +1038,13 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     //ushamethod
-    if (pp->wavelet.ushamethod == "none") {
+//    if (pp->wavelet.ushamethod == "none") {
+//        ushamethod->set_active(0);
+ //   } else 
+    if (pp->wavelet.ushamethod == "sharp") {
         ushamethod->set_active(0);
-    } else if (pp->wavelet.ushamethod == "sharp") {
-        ushamethod->set_active(1);
     } else if (pp->wavelet.ushamethod == "clari") {
-        ushamethod->set_active(2);
+        ushamethod->set_active(1);
     }
 
     //CHSLmethod->set_active (1);
@@ -1721,11 +1722,12 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.Medgreinf = "less";
     }
 
+ //   if (ushamethod->get_active_row_number() == 0) {
+ //       pp->wavelet.ushamethod = "none";
+ //   } else 
     if (ushamethod->get_active_row_number() == 0) {
-        pp->wavelet.ushamethod = "none";
-    } else if (ushamethod->get_active_row_number() == 1) {
         pp->wavelet.ushamethod = "sharp";
-    } else if (ushamethod->get_active_row_number() == 2) {
+    } else if (ushamethod->get_active_row_number() == 1) {
         pp->wavelet.ushamethod = "clari";
     }
 
@@ -2340,27 +2342,28 @@ void Wavelet::TilesmethodUpdateUI() {
 
 void Wavelet::ushamethodChanged()
 {
-    if (ushamethod->get_active_row_number() == 2  && expclari->getEnabled() == true) {
+    if (ushamethod->get_active_row_number() == 1  && expclari->getEnabled() == true) {
         Backmethod->set_active(2);
         CLmethod->set_active(2);
         Lmethod->set_active(6);
         Lmethod->set_sensitive(true);
         Dirmethod->set_sensitive(true);
         Dirmethod->set_active(3);
-    } else if (ushamethod->get_active_row_number() == 1 && expclari->getEnabled() == true) {
+    } else if (ushamethod->get_active_row_number() == 0 && expclari->getEnabled() == true) {
         Backmethod->set_active(0);
         CLmethod->set_active(1);
         Lmethod->set_active(2);
         Dirmethod->set_active(3);
         Lmethod->set_sensitive(true);
         Dirmethod->set_sensitive(true);
-    }  else if (ushamethod->get_active_row_number() == 0 || expclari->getEnabled() == false) {
+  /*  }  else if (ushamethod->get_active_row_number() == 0 || expclari->getEnabled() == false) {
         Backmethod->set_active(1);
         CLmethod->set_active(3);
         Lmethod->set_active(3);
         Dirmethod->set_active(3);
         Lmethod->set_sensitive(false);
         Dirmethod->set_sensitive(false);
+        */
     }  else if (expclari->getEnabled() == false) {
         Backmethod->set_active(1);
         CLmethod->set_active(3);
@@ -2989,7 +2992,7 @@ void Wavelet::avoidToggled()
 
 void Wavelet::showmaskToggled()
 {
-    if (ushamethod->get_active_row_number() == 2 && showmask->get_active()) {
+    if (ushamethod->get_active_row_number() == 1 && showmask->get_active()) {
         Backmethod->set_active(2);
         CLmethod->set_active(2);
         Lmethod->set_active(6);
@@ -2998,7 +3001,7 @@ void Wavelet::showmaskToggled()
         Dirmethod->set_active(3);
         expclari->setEnabled(false);
 
-    } else if (ushamethod->get_active_row_number() == 1 && showmask->get_active()) {
+    } else if (ushamethod->get_active_row_number() == 0 && showmask->get_active()) {
         Backmethod->set_active(0);
         CLmethod->set_active(1);
         Lmethod->set_active(2);
@@ -3009,7 +3012,7 @@ void Wavelet::showmaskToggled()
 
     }
 
-    if (ushamethod->get_active_row_number() == 2 && !showmask->get_active()) {
+    if (ushamethod->get_active_row_number() == 1 && !showmask->get_active()) {
         Backmethod->set_active(2);
         CLmethod->set_active(2);
         Lmethod->set_active(6);
@@ -3018,7 +3021,7 @@ void Wavelet::showmaskToggled()
         Dirmethod->set_active(3);
         expclari->setEnabled(true);
 
-    } else if (ushamethod->get_active_row_number() == 1 && !showmask->get_active()) {
+    } else if (ushamethod->get_active_row_number() == 0 && !showmask->get_active()) {
         Backmethod->set_active(0);
         CLmethod->set_active(1);
         Lmethod->set_active(2);
@@ -3241,14 +3244,14 @@ void Wavelet::enableToggled(MyExpander *expander)
                     showmask->set_active(false);
                 }
 
-                if (ushamethod->get_active_row_number() == 2) {
+                if (ushamethod->get_active_row_number() == 1) {
                     Backmethod->set_active(2);
                     CLmethod->set_active(2);
                     Lmethod->set_active(6);
                     Lmethod->set_sensitive(true);
                     Dirmethod->set_sensitive(true);
                     Dirmethod->set_active(3);
-                } else if (ushamethod->get_active_row_number() == 1) {
+                } else if (ushamethod->get_active_row_number() == 0) {
                     Backmethod->set_active(0);
                     CLmethod->set_active(1);
                     Lmethod->set_active(2);

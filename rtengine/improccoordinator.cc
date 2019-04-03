@@ -870,7 +870,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
 
-                if (WaveParams.ushamethod != "none" && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                     unshar = new LabImage(pW, pH);
                     provis = params->wavelet.CLmethod;
                     params->wavelet.CLmethod = "all";
@@ -884,7 +884,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
-                if (WaveParams.ushamethod != "none"  && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
                     float mL = (float)(WaveParams.mergeL / 100.f);
                     float mC = (float)(WaveParams.mergeC / 100.f);
                     float mL0;
