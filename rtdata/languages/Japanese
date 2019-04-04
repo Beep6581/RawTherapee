@@ -39,10 +39,6 @@ ABOUT_TAB_LICENSE;ライセンス
 ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
 ADJUSTER_RESET_TO_DEFAULT;<b>クリック</b> - デフォルト値にリセット\n<b>Ctrl</b>+<b>クリック</b> - 初期値にリセット
-BATCHQUEUE_AUTOSTART;オートスタート
-BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
-BATCHQUEUE_DESTFILENAME;パスとファイル名
-BATCHQUEUE_STARTSTOPHINT;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -146,6 +142,7 @@ FILEBROWSER_APPLYPROFILE;プロファイルの適用
 FILEBROWSER_APPLYPROFILE_PARTIAL;プロファイルの適用 (一部)
 FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
+FILEBROWSER_BROWSEPATHBUTTONHINT;クリックして特定パスを開き、フォルダーをリロードし、”探す”というキーワードを適用
 FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-O</b> パスのテキストボックスにフォーカス\n<b>Enter</b> / <b>Ctrl-Enter</b>その場所をブラウズします\n<b>Esc</b> 変更をクリア\n<b>Shift-Esc</b>フォーカスを削除\nパスのショートカット:\n  <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
 FILEBROWSER_CACHE;cache
 FILEBROWSER_CACHECLEARFROMFULL;プロファイルを含めcache内をクリアにする
@@ -908,14 +905,15 @@ MAIN_BUTTON_SENDTOEDITOR;外部エディタで画像を編集
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集\nショートカット: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル\nショートカット: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;フルスクリーン解除
-MAIN_FRAME_BATCHQUEUE;キュー
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;編集
 MAIN_FRAME_EDITOR_TOOLTIP; 編集\nショートカット: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;ファイルブラウザ
 MAIN_FRAME_FILEBROWSER_TOOLTIP; ファイル・ブラウザ\nショートカット: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;場所
 MAIN_FRAME_PLACES_ADD;追加
+MAIN_FRAME_PLACES_DEL;除去
+MAIN_FRAME_QUEUE;キュー
+MAIN_FRAME_QUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;最近開いたフォルダ
 MAIN_MSG_ALREADYEXISTS;ファイルはすでに存在します
 MAIN_MSG_CANNOTLOAD;画像読み込みできません
@@ -1091,6 +1089,12 @@ PREFERENCES_CACHECLEAR_SAFETY;casheに入れたファイルだけをクリア。
 PREFERENCES_CACHEMAXENTRIES;cacheに入れるファイルの最大数
 PREFERENCES_CACHEOPTS;cache オプション
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
+PREFERENCES_CHUNKSIZES;スレッドごとのタイル
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE デモザイク
+PREFERENCES_CHUNKSIZE_RAW_CA;Raw 色収差補正
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD デモザイク
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans デモザイク
+PREFERENCES_CHUNKSIZE_RGB;RGB 処理
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;cacheに入れるHaldCLUTの最大数
@@ -1130,7 +1134,6 @@ PREFERENCES_EDITORLAYOUT;編集 レイアウト
 PREFERENCES_EXTERNALEDITOR;外部エディタ
 PREFERENCES_FBROWSEROPTS;ファイルブラウザ/サムネイルのオプション
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;ファイルブラウザのツールバーを圧縮
-PREFERENCES_FILEFORMAT;ファイル形式
 PREFERENCES_FLATFIELDFOUND;検出
 PREFERENCES_FLATFIELDSDIR;フラットフィールド・ディレクトリ
 PREFERENCES_FLATFIELDSHOTS;ショット
@@ -1169,11 +1172,6 @@ PREFERENCES_MONPROFILE_WARNOSX;MacのOSの制約により、サポート出来�
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_NAVIGATIONFRAME;ナビゲーション
-PREFERENCES_OUTDIR;出力ディレクトリ
-PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
-PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
-PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;ファイル名をサムネイル上に透過表示する
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;ファイル名を編集パネルのサムネイル上に透過表示する
 PREFERENCES_OVERWRITEOUTPUTFILE;既存ファイルを上書き
@@ -1184,6 +1182,8 @@ PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリスト�
 PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
 PREFERENCES_PARSEDEXTDOWNHINT;選択した拡張子をリストの下に移動
 PREFERENCES_PARSEDEXTUPHINT;選択した拡張子をリストの上に移動
+PREFERENCES_PERFORMANCE_MEASURE;測定する
+PREFERENCES_PERFORMANCE_MEASURE_HINT;コンソールに処理時間を記録
 PREFERENCES_PERFORMANCE_THREADS;スレッド
 PREFERENCES_PERFORMANCE_THREADS_LABEL;ノイズ低減とウェーブレットレベルに関するスレッドの最大数(0 = 自動)
 PREFERENCES_PREVDEMO;プレビューのデモザイク方式
@@ -1219,9 +1219,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;画像スライドにツールバーを表示�
 PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SINGLETAB;シングルタブモードモード
 PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
-PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
 PREFERENCES_SND_HELP;ファイルパスを入力 または空欄(無音).\nWindowsはシステムサウンドの "SystemDefault", "SystemAsterisk"など..\nLinuxはシステムサウンドの "complete", "window-attention"などを使用します
 PREFERENCES_SND_LNGEDITPROCDONE;編集処理 終了
+PREFERENCES_SND_QUEUEDONE;キュー処理 終了
 PREFERENCES_SND_THRESHOLDSECS;秒後
 PREFERENCES_STARTUPIMDIR;起動時の画像・ディレクトリ
 PREFERENCES_TAB_BROWSER;ファイルブラウザ
@@ -1258,6 +1258,11 @@ PROFILEPANEL_TOOLTIPCOPY;クリップボードに現在のプロファイルを�
 PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込みます\nCtrl-クリックで読み込むパラメータを選択します
 PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付けます\nCtrl-クリックで貼り付けるパラメータを選択します
 PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存\nCtrl-クリックで保存するパラメータを選択します
+PROGRESSBAR_DECODING;デコーディング。。。
+PROGRESSBAR_GREENEQUIL;グリーンの平衡化。。。
+PROGRESSBAR_HLREC;ハイライトの復元。。。
+PROGRESSBAR_HOTDEADPIXELFILTER;ホット/デッドピクセルフィルタ。。。
+PROGRESSBAR_LINEDENOISE;ラインノイズフィルタ。。。
 PROGRESSBAR_LOADING;画像読み込み中...
 PROGRESSBAR_LOADINGTHUMBS;サムネイルの読み込み...
 PROGRESSBAR_LOADJPEG;JPEGファイル読み込み中...
@@ -1266,6 +1271,7 @@ PROGRESSBAR_LOADTIFF;TIFFファイル読み込み中...
 PROGRESSBAR_NOIMAGES;画像が見つかりません
 PROGRESSBAR_PROCESSING;画像処理中...
 PROGRESSBAR_PROCESSING_PROFILESAVED;処理プロファイルを保存しました
+PROGRESSBAR_RAWCACORR;Raw 色収差補正
 PROGRESSBAR_READY;準備完了
 PROGRESSBAR_SAVEJPEG;JPEGファイル保存中...
 PROGRESSBAR_SAVEPNG;PNGファイル保存中...
@@ -1277,6 +1283,14 @@ QINFO_HDR;HDR / %2 フレーム
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exifデータがありません
 QINFO_PIXELSHIFT;ピクセルシフト / %2 フレーム
+QUEUE_AUTOSTART;オートスタート
+QUEUE_AUTOSTART_TOOLTIP;新しいrawファイルが送られて来たら自動的に現像処理を開始します
+QUEUE_DESTFILENAME;パスとファイル名
+QUEUE_FORMAT_TITLE;ファイル形式
+QUEUE_LOCATION_FOLDER;フォルダに保存
+QUEUE_LOCATION_TEMPLATE;テンプレートを使う
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;データ形式不明
 SAMPLEFORMAT_1;符号なし8ビット
 SAMPLEFORMAT_2;符号なし16ビット
@@ -1530,6 +1544,7 @@ TP_CROP_GTTRIANGLE2;三角構図2
 TP_CROP_GUIDETYPE;ガイドタイプ:
 TP_CROP_H;高さ
 TP_CROP_LABEL;切り抜き
+TP_CROP_PPI;PPI
 TP_CROP_RESETCROP;リセット
 TP_CROP_SELECTCROP;セレクト
 TP_CROP_W;W 幅
@@ -1770,10 +1785,15 @@ TP_LABCURVE_RSTPRO_TOOLTIP;色度スライダーとCCカーブを使用するこ
 TP_LENSGEOM_AUTOCROP;自動的に切り抜き選択
 TP_LENSGEOM_FILL;オートフィル
 TP_LENSGEOM_LABEL;レンズ / ジオメトリ
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;自動で選択
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCPファイル
+TP_LENSPROFILE_CORRECTION_MANUAL;手動で選択
 TP_LENSPROFILE_LABEL;レンズ補正 プロファイル
 TP_LENSPROFILE_LENS_WARNING;注意：レンズプロファイルに使われるクロップファクターはカメラのクロップファクターより大きいので、誤った結果になる可能性があります。
+TP_LENSPROFILE_MODE_HEADER;レンズプロファイル
 TP_LENSPROFILE_USE_CA;色収差
+TP_LENSPROFILE_USE_GEOMETRIC;歪曲補正
+TP_LENSPROFILE_USE_HEADER;補正
 TP_LENSPROFILE_USE_VIGNETTING;周辺光量
 TP_LOCALCONTRAST_AMOUNT;量
 TP_LOCALCONTRAST_DARKNESS;暗い部分のレベル
@@ -1858,6 +1878,7 @@ TP_RAW_HD_TOOLTIP;設定値を低くすると、ホット/デッドピクセル�
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;サブイメージ
+TP_RAW_IMAGENUM_SN;SNモード
 TP_RAW_IMAGENUM_TOOLTIP;rawファイルの中には複数のサブイメージで構成されているものがあります（Pentaxのピクセルシフト、Pentaxの3-in-1 HDR、Canonのデュアルピクセル）。\n\nここでピクセルシフト以外のデモザイク方式を選んだ場合は、どのサブイメージだけをデモザイクに使うか選択します。\n\nピクセルシフトのrawファイルでデモザイク方式にピクセルシフトを選ぶと、全てのサブイメージがデモザイクに使われます、そしてどのサブイメージを振れのあるイメージとして使うか選択します
 TP_RAW_LABEL;デモザイク
 TP_RAW_LMMSE;LMMSE
@@ -1898,6 +1919,8 @@ TP_RAW_SENSOR_BAYER_LABEL;ベイヤー配列を使ったセンサー
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passが最適です（低ISO画像には奨められます)\n高ISO画像の場合、1-passと3-passの違いは殆どありません、処理速度は前者の方が速いです。
 TP_RAW_SENSOR_XTRANS_LABEL;X-Transマトリクスを使ったセンサー
 TP_RAW_VNG4;VNG4
+TP_RAW_XTRANS;X-Trans
+TP_RAW_XTRANSFAST;高速 X-Trans
 TP_RESIZE_ALLOW_UPSCALING;アップスケーリングを可能にする
 TP_RESIZE_APPLIESTO;適用領域:
 TP_RESIZE_CROPPEDAREA;切り抜き画像
@@ -2289,28 +2312,4 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!MAIN_FRAME_PLACES_DEL;Remove
-!PREFERENCES_CHUNKSIZES;Tiles per thread
-!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
-!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
-!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
-!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
-!PREFERENCES_CHUNKSIZE_RGB;RGB processing
-!PREFERENCES_PERFORMANCE_MEASURE;Measure
-!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
-!PROGRESSBAR_DECODING;Decoding...
-!PROGRESSBAR_GREENEQUIL;Green equilibration...
-!PROGRESSBAR_HLREC;Highlight reconstruction...
-!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
-!PROGRESSBAR_LINEDENOISE;Line noise filter...
-!PROGRESSBAR_RAWCACORR;Raw CA correction...
-!TP_CROP_PPI;PPI
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
-!TP_LENSPROFILE_MODE_HEADER;Lens Profile
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
-!TP_LENSPROFILE_USE_HEADER;Correct
-!TP_RAW_IMAGENUM_SN;SN mode
-!TP_RAW_XTRANS;X-Trans
-!TP_RAW_XTRANSFAST;Fast X-Trans
+!QUEUE_LOCATION_TITLE;Output Location

@@ -14,10 +14,6 @@ ABOUT_TAB_LICENSE;Лицензия
 ABOUT_TAB_RELEASENOTES;Примечания к выпуску
 ABOUT_TAB_SPLASH;Заставка
 ADJUSTER_RESET_TO_DEFAULT;<b>Click</b>: Сбросить на значение по умолчанию.\n<b>Ctrl</b>+<b>click</b>: Сбросить на начальное значение.
-BATCHQUEUE_AUTOSTART;Автостарт
-BATCHQUEUE_AUTOSTARTHINT;Автоматически запускать обработку при добавлении файла в очередь
-BATCHQUEUE_DESTFILENAME;Имя файла и путь к нему
-BATCHQUEUE_STARTSTOPHINT;Начать или остановить обработку изображений в очереди.\n\Горячая клавиша: <b>Ctrl-S</b>
 BATCH_PROCESSING;Пакетная обработка
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_OUT;O:
@@ -576,14 +572,14 @@ MAIN_BUTTON_SENDTOEDITOR;Редактировать изображение во 
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение во внешнем редакторе.\nГорячая клавиша <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Показать/скрыть все боковые панели.\nГорячая клавиша <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Оконный режим
-MAIN_FRAME_BATCHQUEUE;Очередь обработки
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;Очередь пакетной обработки.\nГорячая клавиша <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Редактор
 MAIN_FRAME_EDITOR_TOOLTIP;Редактор.\nГорячая клавиша <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Файловый браузер
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Проводник.\nГорячая клавиша <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Закладки
 MAIN_FRAME_PLACES_ADD;Добавить
+MAIN_FRAME_QUEUE;Очередь обработки
+MAIN_FRAME_QUEUE_TOOLTIP;Очередь пакетной обработки.\nГорячая клавиша <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Недавние каталоги
 MAIN_MSG_ALREADYEXISTS;Файл уже существует.
 MAIN_MSG_CANNOTLOAD;Невозможно загрузить изображение
@@ -769,7 +765,6 @@ PREFERENCES_DIRSOFTWARE;Каталог установки
 PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
 PREFERENCES_FBROWSEROPTS;Настройки
-PREFERENCES_FILEFORMAT;Формат файлов
 PREFERENCES_FLATFIELDFOUND;Найдено
 PREFERENCES_FLATFIELDSDIR;Каталог файлов плоских полей
 PREFERENCES_FLATFIELDSHOTS;снимков
@@ -800,11 +795,6 @@ PREFERENCES_MONITOR;Монитор
 PREFERENCES_MULTITAB;Много вкладок
 PREFERENCES_MULTITABDUALMON;Много вкладок, на втором мониторе (если возможно)
 PREFERENCES_NAVIGATIONFRAME;Навигация
-PREFERENCES_OUTDIR;Каталог для сохранения изображений
-PREFERENCES_OUTDIRFOLDER;Сохранять в каталог
-PREFERENCES_OUTDIRFOLDERHINT;Сохранение изображений в выбранный каталог
-PREFERENCES_OUTDIRTEMPLATE;Использовать шаблон
-PREFERENCES_OUTDIRTEMPLATEHINT;Вы можете использовать следующие элементы форматирования:\n<b>%f, %d1, %d2, …, %p1, %p2, …, %r, %s1, %s2</b>, …\n\nЭлементы соответствуют различным элементам в пути к RAW-файлу, некоторым атрибутам файла или индексу в очереди пакетной обработки.\n\nНапример, если был открыт файл <b>/home/tom/image/2006-02-09/dsc0012.nef</b>, элементы форматирования будут выглядеть так:\n<b>%d4</b>	= <i>home</i>\n<b>%d3</b>	= <i>tom</i>\n<b>%d2</b>	= <i>photos</i>\n<b>%d1</b>	= <i>2006-02-09</i>\n<b>%f</b>		= <i>dsc0042</i>\n<b>%p1</b>	= <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b>	= <i>/home/tom/photos/</i>\n<b>%p3</b>	= <i>/home/tom/</i>\n<b>%p4</b>	= <i>/home/</i>\n\n<b>%r</b> заменится на рейтинг фотографии, либо '0' при пустом, либо на 'x' если фотография находится в корзине.\n\n<b>%s1</b>, <b>%s2</b> и т.д. заменятся на индекс фотографии в очереди обработки, дополненный нулями до 1-9 символов. Индекс сбрасывается при старте и увеличивается на единицу при обработке фотографии.\nЕсли вы хотите сохранять изображения в каталоге с оригиналом, введите:\n<b>%p1/%f\n</b>\nЕсли вы хотите сохранять изображения в каталоге "converted" в каталоге оригинального файла, введите строку:\n<b>%p1/converted/%f</b>\nДля сохранения изображений в каталоге "<i>/home/tom/photos/converted/2006-02-09</i>", напишите:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Показывать информацию поверх миниатюр
 PREFERENCES_OVERWRITEOUTPUTFILE;Перезаписывать существующие файлы
 PREFERENCES_PANFACTORLABEL;Коэффициент
@@ -837,9 +827,9 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Показывать компенсацию
 PREFERENCES_SHTHRESHOLD;Порог обрезки теней
 PREFERENCES_SINGLETAB;Одна вкладка редактирования
 PREFERENCES_SINGLETABVERTAB;Одна вкладка редактирования, вертикальная панель вкладок
-PREFERENCES_SND_BATCHQUEUEDONE;Пакетная обработка завершена
 PREFERENCES_SND_HELP;Введите имя файла, либо оставьте поле пустым (без звука). \nДля использования системных звуков в Windows можно использовать "SystemDefault", "SystemAsterisk", в Linux "complete", "window-attention" и т.д.
 PREFERENCES_SND_LNGEDITPROCDONE;Обработка в редакторе завершена
+PREFERENCES_SND_QUEUEDONE;Пакетная обработка завершена
 PREFERENCES_SND_THRESHOLDSECS;после, секунд
 PREFERENCES_STARTUPIMDIR;Каталог изображений при запуске
 PREFERENCES_TAB_BROWSER;Файловый браузер
@@ -894,6 +884,14 @@ QINFO_HDR;HDR / %2 кадр(ов)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Данные Exif недоступны
 QINFO_PIXELSHIFT;Сдвиг пикселей / %2 frame(s)
+QUEUE_AUTOSTART;Автостарт
+QUEUE_AUTOSTART_TOOLTIP;Автоматически запускать обработку при добавлении файла в очередь
+QUEUE_DESTFILENAME;Имя файла и путь к нему
+QUEUE_FORMAT_TITLE;Формат файлов
+QUEUE_LOCATION_FOLDER;Сохранять в каталог
+QUEUE_LOCATION_TEMPLATE;Использовать шаблон
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Вы можете использовать следующие элементы форматирования:\n<b>%f, %d1, %d2, …, %p1, %p2, …, %r, %s1, %s2</b>, …\n\nЭлементы соответствуют различным элементам в пути к RAW-файлу, некоторым атрибутам файла или индексу в очереди пакетной обработки.\n\nНапример, если был открыт файл <b>/home/tom/image/2006-02-09/dsc0012.nef</b>, элементы форматирования будут выглядеть так:\n<b>%d4</b>	= <i>home</i>\n<b>%d3</b>	= <i>tom</i>\n<b>%d2</b>	= <i>photos</i>\n<b>%d1</b>	= <i>2006-02-09</i>\n<b>%f</b>		= <i>dsc0042</i>\n<b>%p1</b>	= <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b>	= <i>/home/tom/photos/</i>\n<b>%p3</b>	= <i>/home/tom/</i>\n<b>%p4</b>	= <i>/home/</i>\n\n<b>%r</b> заменится на рейтинг фотографии, либо '0' при пустом, либо на 'x' если фотография находится в корзине.\n\n<b>%s1</b>, <b>%s2</b> и т.д. заменятся на индекс фотографии в очереди обработки, дополненный нулями до 1-9 символов. Индекс сбрасывается при старте и увеличивается на единицу при обработке фотографии.\nЕсли вы хотите сохранять изображения в каталоге с оригиналом, введите:\n<b>%p1/%f\n</b>\nЕсли вы хотите сохранять изображения в каталоге "converted" в каталоге оригинального файла, введите строку:\n<b>%p1/converted/%f</b>\nДля сохранения изображений в каталоге "<i>/home/tom/photos/converted/2006-02-09</i>", напишите:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;Начать или остановить обработку изображений в очереди.\n\Горячая клавиша: <b>Ctrl-S</b>
 SAVEDLG_AUTOSUFFIX;Автоматически добавлять суффикс если файл существует
 SAVEDLG_FILEFORMAT;Формат файла
 SAVEDLG_FORCEFORMATOPTS;Принудительно установить настройки сохранения
@@ -1833,6 +1831,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
 !PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
+!QUEUE_LOCATION_TITLE;Output Location
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned

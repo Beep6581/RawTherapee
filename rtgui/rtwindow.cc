@@ -356,7 +356,7 @@ RTWindow::RTWindow ()
         bpanel = Gtk::manage ( new BatchQueuePanel (fpanel->fileCatalog) );
 
         // decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
-        Gtk::Label* lbq = Gtk::manage ( new Gtk::Label (M ("MAIN_FRAME_BATCHQUEUE")) );
+        Gtk::Label* lbq = Gtk::manage ( new Gtk::Label (M ("MAIN_FRAME_QUEUE")) );
 
         if (options.mainNBVertical) {
             lbq->set_angle (90);

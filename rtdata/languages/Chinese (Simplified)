@@ -10,8 +10,6 @@ ABOUT_TAB_CREDITS;感谢
 ABOUT_TAB_LICENSE;授权协议
 ABOUT_TAB_RELEASENOTES;发布说明
 ABOUT_TAB_SPLASH;启动页
-BATCHQUEUE_AUTOSTART;自动开始
-BATCHQUEUE_DESTFILENAME;路径和文件名
 BATCH_PROCESSING;批量处理
 CURVEEDITOR_CURVE;曲线
 CURVEEDITOR_CURVES;曲线
@@ -350,14 +348,14 @@ MAIN_BUTTON_SENDTOEDITOR;发送到编辑器
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;使用外部工具编辑当前图像 \n快捷键：<b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;显示/隐藏全部侧边栏\n快捷键: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;退出全屏
-MAIN_FRAME_BATCHQUEUE;批处理队列 
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;处理序列\n快捷键: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;编辑器
 MAIN_FRAME_EDITOR_TOOLTIP;编辑器.\n快捷键: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;文件浏览 
 MAIN_FRAME_FILEBROWSER_TOOLTIP;文件浏览\n快捷键: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;位置 
 MAIN_FRAME_PLACES_ADD;添加
+MAIN_FRAME_QUEUE;批处理队列 
+MAIN_FRAME_QUEUE_TOOLTIP;处理序列\n快捷键: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;最近使用的文件夹 
 MAIN_MSG_ALREADYEXISTS;该文件已存在
 MAIN_MSG_CANNOTLOAD;无法加载图片
@@ -517,7 +515,6 @@ PREFERENCES_DIRSOFTWARE;软件安装路径
 PREFERENCES_EDITORLAYOUT;编辑器布局
 PREFERENCES_EXTERNALEDITOR;外部编辑器
 PREFERENCES_FBROWSEROPTS;文件浏览选项
-PREFERENCES_FILEFORMAT;文件格式
 PREFERENCES_FLATFIELDFOUND;找到
 PREFERENCES_FLATFIELDSDIR;平场图像路径
 PREFERENCES_FLATFIELDSHOTS;张
@@ -556,11 +553,6 @@ PREFERENCES_MONPROFILE_WARNOSX;受MacOS限制, 仅支持sRGB
 PREFERENCES_MULTITAB;多编辑器标签模式
 PREFERENCES_MULTITABDUALMON;多编辑器标签独立模式
 PREFERENCES_NAVIGATIONFRAME;导航器
-PREFERENCES_OUTDIR;输出路径
-PREFERENCES_OUTDIRFOLDER;保存至文件夹
-PREFERENCES_OUTDIRFOLDERHINT;将已寸图片放至所选文件夹
-PREFERENCES_OUTDIRTEMPLATE;使用模板
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹 \n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开, 控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
@@ -603,9 +595,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;显示图像胶片栏
 PREFERENCES_SHTHRESHOLD;阴影过暗阈值
 PREFERENCES_SINGLETAB;单编辑器栏模式
 PREFERENCES_SINGLETABVERTAB;单编辑器栏模式, 标签栏垂直
-PREFERENCES_SND_BATCHQUEUEDONE;队列处理完成
 PREFERENCES_SND_HELP;输入完整路径来指定声音文件, 或者留空表示无声 \nWindows系统声音可以使用 "SystemDefault",  "SystemAsterisk" 等  Linux则可以使用 "complete", "window-attention" 等 
 PREFERENCES_SND_LNGEDITPROCDONE;编辑器处理完成
+PREFERENCES_SND_QUEUEDONE;队列处理完成
 PREFERENCES_SND_THRESHOLDSECS;几秒之后
 PREFERENCES_STARTUPIMDIR;启动时路径
 PREFERENCES_TAB_BROWSER;文件浏览器
@@ -642,6 +634,12 @@ PROGRESSBAR_SAVEPNG;PNG文件保存中...
 PROGRESSBAR_SAVETIFF;TIFF文件保存中...
 QINFO_ISO;ISO 
 QINFO_NOEXIF;Exif数据不可用.
+QUEUE_AUTOSTART;自动开始
+QUEUE_DESTFILENAME;路径和文件名
+QUEUE_FORMAT_TITLE;文件格式
+QUEUE_LOCATION_FOLDER;保存至文件夹
+QUEUE_LOCATION_TEMPLATE;使用模板
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹 \n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开, 控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;自动加后缀到已经存在的文件
 SAVEDLG_FILEFORMAT;文件格式
 SAVEDLG_FORCEFORMATOPTS;强制保存选项
@@ -932,8 +930,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_AUTOSTARTHINT;Start processing automatically when a new job arrives.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1554,6 +1550,9 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_AUTOSTART_TOOLTIP;Start processing automatically when a new job arrives.
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned

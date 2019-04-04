@@ -6,10 +6,6 @@ ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_RELEASENOTES;Notes de version
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;<b>Clic</b> - réinitialise à la valeur par défaut.\n<b>Ctrl</b>+<b>clic</b> - réinitialise à la valeur initiale.
-BATCHQUEUE_AUTOSTART;Démarrage auto
-BATCHQUEUE_AUTOSTARTHINT;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
-BATCHQUEUE_DESTFILENAME;Chemin et nom de fichier
-BATCHQUEUE_STARTSTOPHINT;Démarre ou arrête le traitement des images dans la file.\n\nRaccourci: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;Traitement par lot
 CURVEEDITOR_AXIS_IN;E:
 CURVEEDITOR_AXIS_LEFT_TAN;TG:
@@ -875,14 +871,14 @@ MAIN_BUTTON_SENDTOEDITOR;Éditer l'image dans un éditeur extenre
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe\nRaccourci: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Afficher/Cacher les 2 panneaux latéraux\nRaccourci: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
-MAIN_FRAME_BATCHQUEUE;File d'attente 
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; File de traitement\nRaccourci: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Éditeur
 MAIN_FRAME_EDITOR_TOOLTIP; Éditeur\nRaccourci: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Navigateur de fichiers 
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de fichiers\nRaccourci: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Emplacements 
 MAIN_FRAME_PLACES_ADD;Ajouter
+MAIN_FRAME_QUEUE;File d'attente 
+MAIN_FRAME_QUEUE_TOOLTIP; File de traitement\nRaccourci: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Fichiers récents 
 MAIN_MSG_ALREADYEXISTS;Le fichier existe déjà.
 MAIN_MSG_CANNOTLOAD;Impossible de charger l'image
@@ -1103,7 +1099,6 @@ PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre d'outil compact dans le Navigateur de Fichiers
-PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FLATFIELDFOUND;Trouvé
 PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
 PREFERENCES_FLATFIELDSHOTS;image(s)
@@ -1142,11 +1137,6 @@ PREFERENCES_MONPROFILE_WARNOSX;Due à des limitations de macOS, seul sRGB est su
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVIGATIONFRAME;Navigation
-PREFERENCES_OUTDIR;Dossier de sortie
-PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
-PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
-PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
-PREFERENCES_OUTDIRTEMPLATEHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffres. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes dans le navigateur de fichier
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Superposer les noms de fichier sur les vignettes dans le panneau d'édition
 PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
@@ -1194,9 +1184,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Montrer la barre d'outil de la pellicule d'imag
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
-PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
 PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
 PREFERENCES_SND_LNGEDITPROCDONE;Traitement de la zone de prévisualisation terminé
+PREFERENCES_SND_QUEUEDONE;File de traitement terminée
 PREFERENCES_SND_THRESHOLDSECS;après (s)
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
@@ -1252,6 +1242,14 @@ QINFO_HDR;HDR / %2 image(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Données EXIF non disponibles.
 QINFO_PIXELSHIFT;PixelShift / %2 images
+QUEUE_AUTOSTART;Démarrage auto
+QUEUE_AUTOSTART_TOOLTIP;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
+QUEUE_DESTFILENAME;Chemin et nom de fichier
+QUEUE_FORMAT_TITLE;Format du fichier
+QUEUE_LOCATION_FOLDER;Dossier de sauvegarde
+QUEUE_LOCATION_TEMPLATE;Utiliser le modèle
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffres. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;Démarre ou arrête le traitement des images dans la file.\n\nRaccourci: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Format de donnée inconnu
 SAMPLEFORMAT_1;8 bits non signé
 SAMPLEFORMAT_2;16 bits non signé
@@ -2274,6 +2272,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
 !PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
+!QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

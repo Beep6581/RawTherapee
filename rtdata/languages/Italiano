@@ -9,9 +9,6 @@ ABOUT_TAB_CREDITS;Riconoscimenti
 ABOUT_TAB_LICENSE;Licenza
 ABOUT_TAB_RELEASENOTES;Note di rilascio
 ABOUT_TAB_SPLASH;Emblema
-BATCHQUEUE_AUTOSTART;Autoavvia
-BATCHQUEUE_AUTOSTARTHINT;Inizia a sviluppare automaticamente quando un nuovo lavoro viene accodato
-BATCHQUEUE_DESTFILENAME;Percorso e nome file
 BATCH_PROCESSING;Sviluppo in serie
 CURVEEDITOR_CURVE;Curva
 CURVEEDITOR_CURVES;Curve
@@ -483,14 +480,14 @@ MAIN_BUTTON_SAVE_TOOLTIP;Salva l'immagine corrente.\nSscorciatoia: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Modifica l'immagine corrente con un programma di fotoritocco.\nScorciatoia: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostra/Nascondi tutti i pannelli laterali.\nScorciatoia: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Esci da schermo intero
-MAIN_FRAME_BATCHQUEUE;Coda di sviluppo
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;Coda di sviluppo.\nScorciatoia: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Modifica
 MAIN_FRAME_EDITOR_TOOLTIP;Modifica.\nScorciatoia: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Navigatore
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Navigatore.\nScorciatoia: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Risorse
 MAIN_FRAME_PLACES_ADD;Aggiungi
+MAIN_FRAME_QUEUE;Coda di sviluppo
+MAIN_FRAME_QUEUE_TOOLTIP;Coda di sviluppo.\nScorciatoia: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Cartelle recenti
 MAIN_MSG_ALREADYEXISTS;File già esistente
 MAIN_MSG_CANNOTLOAD;Impossibile caricare l'immagine
@@ -644,7 +641,6 @@ PREFERENCES_DIRSOFTWARE;Cartella d'installazione
 PREFERENCES_EDITORLAYOUT;Disposizione
 PREFERENCES_EXTERNALEDITOR;Programma di ritocco esterni
 PREFERENCES_FBROWSEROPTS;Opzioni del Navigatore e delle miniature
-PREFERENCES_FILEFORMAT;Formato file
 PREFERENCES_FLATFIELDFOUND;Trovati
 PREFERENCES_FLATFIELDSDIR;Cartella dei fotogrammi di campo (Flat Field)
 PREFERENCES_FLATFIELDSHOTS;fotogrammi
@@ -671,11 +667,6 @@ PREFERENCES_MENUGROUPRANK;Raggruppa "Classificazioni"
 PREFERENCES_MENUOPTIONS;Opzioni del menù a discesa
 PREFERENCES_MULTITAB;Modalità a Schede Multiple
 PREFERENCES_MULTITABDUALMON;Modalità a Schede Multiple (se disponibile sul secondo schermo)
-PREFERENCES_OUTDIR;Cartella di destinazione
-PREFERENCES_OUTDIRFOLDER;Salva nella cartella
-PREFERENCES_OUTDIRFOLDERHINT;Salva le immagini nella cartella scelta
-PREFERENCES_OUTDIRTEMPLATE;Usa lo schema
-PREFERENCES_OUTDIRTEMPLATEHINT;Puoi usare le seguenti stringhe di formattazione:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nQueste stringhe di formattazione si riferiscono ai vari livelli del percorso in cui si trova la foto.\n\nPer esempio, se la foto sviluppata si trovasse nel seguente percorso:\n<b><i>/home/mario/foto/31-10-2010/dsc0042.nef</i></b>\nil significato delle stringhe di formattazione sarebbe:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>mario</i>\n<b>%d2</b> = <i>foto</i>\n<b>%d1</b> = <i>31-10-2010</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/mario/foto/31-10-2010/</i>\n<b>%p2</b> = <i>/home/mario/foto/</i>\n<b>%p3</b> = <i>/home/mario/</i>\n<b>%p4</b> = <i>/home/</i>\n\nPer salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n<b>%p1/%f</b>\n\nPer salvare l'immagine finale in una cartella chiamata "<i>sviluppate</i>" situata nella cartella degli originali, scrivi:\n<b>%p1/sviluppate/%f</b>\n\nPer salvare l'immagine finale in una cartella chiamata "<i>/home/mario/foto/sviluppate/31-10-2010</i>", scrivi:\n<b>%p2/sviluppate/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Mostra i nomi dei file sovrapposti alle miniature
 PREFERENCES_OVERWRITEOUTPUTFILE;Sovrascrivi file esistenti
 PREFERENCES_PANFACTORLABEL;Fattore
@@ -699,9 +690,9 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Accoda compensazione dell'esposizione
 PREFERENCES_SHTHRESHOLD;Soglia per le ombre tosate
 PREFERENCES_SINGLETAB;Modalità a Scheda Singola
 PREFERENCES_SINGLETABVERTAB;Modalità a Scheda Singola, schede verticali
-PREFERENCES_SND_BATCHQUEUEDONE;Al termine dell'elaborazione della coda
 PREFERENCES_SND_HELP;Inserire un percorso oppure nulla (per non avere suoni).\nSu Windows usa "SystemDefault", "SystemAsterisk" ecc. per i suoni di sistema.\nSu Linux usa "complete", "window-attention" ecc. per i suoni di sistema.
 PREFERENCES_SND_LNGEDITPROCDONE;Al termine delle operazioni di modifica
+PREFERENCES_SND_QUEUEDONE;Al termine dell'elaborazione della coda
 PREFERENCES_SND_THRESHOLDSECS;dopo un tempo in secondi
 PREFERENCES_STARTUPIMDIR;Cartella delle immagini all'avvio
 PREFERENCES_TAB_BROWSER;Navigatore
@@ -747,6 +738,13 @@ PROGRESSBAR_SNAPSHOT_ADDED;Istantanea aggiunta
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profilo di sviluppo modificato nel navigatore
 QINFO_ISO;ISO
 QINFO_NOEXIF;Dati Exif non disponibili.
+QUEUE_AUTOSTART;Autoavvia
+QUEUE_AUTOSTART_TOOLTIP;Inizia a sviluppare automaticamente quando un nuovo lavoro viene accodato
+QUEUE_DESTFILENAME;Percorso e nome file
+QUEUE_FORMAT_TITLE;Formato file
+QUEUE_LOCATION_FOLDER;Salva nella cartella
+QUEUE_LOCATION_TEMPLATE;Usa lo schema
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Puoi usare le seguenti stringhe di formattazione:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nQueste stringhe di formattazione si riferiscono ai vari livelli del percorso in cui si trova la foto.\n\nPer esempio, se la foto sviluppata si trovasse nel seguente percorso:\n<b><i>/home/mario/foto/31-10-2010/dsc0042.nef</i></b>\nil significato delle stringhe di formattazione sarebbe:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>mario</i>\n<b>%d2</b> = <i>foto</i>\n<b>%d1</b> = <i>31-10-2010</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/mario/foto/31-10-2010/</i>\n<b>%p2</b> = <i>/home/mario/foto/</i>\n<b>%p3</b> = <i>/home/mario/</i>\n<b>%p4</b> = <i>/home/</i>\n\nPer salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n<b>%p1/%f</b>\n\nPer salvare l'immagine finale in una cartella chiamata "<i>sviluppate</i>" situata nella cartella degli originali, scrivi:\n<b>%p1/sviluppate/%f</b>\n\nPer salvare l'immagine finale in una cartella chiamata "<i>/home/mario/foto/sviluppate/31-10-2010</i>", scrivi:\n<b>%p2/sviluppate/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;Aggiungi automaticamente un suffisso se il file esiste già
 SAVEDLG_FILEFORMAT;Formato file
 SAVEDLG_FORCEFORMATOPTS;Opzioni di salvataggio forzato
@@ -1243,7 +1241,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1758,6 +1755,8 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned

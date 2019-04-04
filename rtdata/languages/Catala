@@ -5,8 +5,6 @@ ABOUT_TAB_CREDITS;Crèdits
 ABOUT_TAB_LICENSE;Llicència
 ABOUT_TAB_RELEASENOTES;Notes de la versió
 ABOUT_TAB_SPLASH;Splash
-BATCHQUEUE_AUTOSTART;Auto engega
-BATCHQUEUE_AUTOSTARTHINT;Inicia processat automàticament en rebre un nou treball
 BATCH_PROCESSING;Processament per lots
 CURVEEDITOR_CURVE;Corba
 CURVEEDITOR_CURVES;Corbes
@@ -371,14 +369,14 @@ MAIN_BUTTON_SAVE_TOOLTIP;Desa la imatge actual.\nDrecera: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edita la imatge actual a un editor extern.\nDrecera: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostra/amaga panells laterals.\nDrecera: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Fi pantalla sencera
-MAIN_FRAME_BATCHQUEUE;Cua de procés
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Cua de procés.\nDrecera: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nDrecera: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Gestor de fitxers 
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Gestor de fitxers.\nDrecera: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Llocs 
 MAIN_FRAME_PLACES_ADD;Afeg
+MAIN_FRAME_QUEUE;Cua de procés
+MAIN_FRAME_QUEUE_TOOLTIP; Cua de procés.\nDrecera: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Carpetes recents 
 MAIN_MSG_ALREADYEXISTS;Fitxer ja existent.
 MAIN_MSG_CANNOTLOAD;No es pot carregar la imatge
@@ -505,7 +503,6 @@ PREFERENCES_DIRSOFTWARE;Instal·lació al directori
 PREFERENCES_EDITORLAYOUT;Sortida d'editor
 PREFERENCES_EXTERNALEDITOR;Editor extern
 PREFERENCES_FBROWSEROPTS;Opcions de navegador i minifotos
-PREFERENCES_FILEFORMAT;Format de fitxer
 PREFERENCES_FLATFIELDFOUND;Trobat
 PREFERENCES_FLATFIELDSDIR;Carpeta de camps plans
 PREFERENCES_FLATFIELDSHOTS;trets
@@ -531,11 +528,6 @@ PREFERENCES_MENUGROUPRANK;Grup "Rang"
 PREFERENCES_MENUOPTIONS;Opcions del menú
 PREFERENCES_MULTITAB;Mode multitreball
 PREFERENCES_MULTITABDUALMON;Mode multitreball en segon monitor, si se'n té un
-PREFERENCES_OUTDIR;Directori de sortida
-PREFERENCES_OUTDIRFOLDER;Desa al directori
-PREFERENCES_OUTDIRFOLDERHINT;Posa les imatges desades al directori seleccionat
-PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
-PREFERENCES_OUTDIRTEMPLATEHINT;Podeu fer servir les següents cadenes de format:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nAquest format es basa en les diferents parts del path d'una fotografia o bé alguns dels seus atributs.\n\nPer exemple, si la foto en curs està localitzada a:\n<b><i>/home/tom/fotos/2010-10-31/dsc0042.nef</i></b>\nel significat de les cadenes de format és:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/fotos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> es canviarà pel rang de la foto.  Si la foto no té rang, %r es convertirà en un '0'.  Si la foto és a la paperera bin, %r es convertirà en 'x'.\n\nSi desitgeu desar la imatge actual on hi ha l'original, escriviu:\n<b>%p1/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>refetes</i>" sota el directori de la imatge oberta, escriviu:\n<b>%p1/refetes/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>/home/tom/photos/refetes/2010-10-31</i>", escriviu:\n<b>%p2/refetes/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Sobreposar noms de fitxer a les minifotos
 PREFERENCES_OVERWRITEOUTPUTFILE;Sobrescriu fitxers en desar-los
 PREFERENCES_PANFACTORLABEL;Factor
@@ -559,9 +551,9 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostra compensació d'exposició
 PREFERENCES_SHTHRESHOLD;Llindar pèrdues en foscos
 PREFERENCES_SINGLETAB;Mode simple treball
 PREFERENCES_SINGLETABVERTAB;Mode simple treball, vistes verticals
-PREFERENCES_SND_BATCHQUEUEDONE;Procs. de la cua fets
 PREFERENCES_SND_HELP;Poseu el path o bé no res (res=silenci). A Windows useu "SystemDefault", "SystemAsterisk" etc. pels sons del sistema.
 PREFERENCES_SND_LNGEDITPROCDONE;Process. d'editor fet
+PREFERENCES_SND_QUEUEDONE;Procs. de la cua fets
 PREFERENCES_SND_THRESHOLDSECS;després d'uns segons
 PREFERENCES_STARTUPIMDIR;Directori inicial de les imatges
 PREFERENCES_TAB_BROWSER;Gestor de fitxers
@@ -600,6 +592,12 @@ PROGRESSBAR_SAVETIFF;Desant fitxer TIFF...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Processant perfil canviat al navegador
 QINFO_ISO;ISO
 QINFO_NOEXIF;No hi ha dades Exif.
+QUEUE_AUTOSTART;Auto engega
+QUEUE_AUTOSTART_TOOLTIP;Inicia processat automàticament en rebre un nou treball
+QUEUE_FORMAT_TITLE;Format de fitxer
+QUEUE_LOCATION_FOLDER;Desa al directori
+QUEUE_LOCATION_TEMPLATE;Usar plantilla
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Podeu fer servir les següents cadenes de format:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nAquest format es basa en les diferents parts del path d'una fotografia o bé alguns dels seus atributs.\n\nPer exemple, si la foto en curs està localitzada a:\n<b><i>/home/tom/fotos/2010-10-31/dsc0042.nef</i></b>\nel significat de les cadenes de format és:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/fotos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> es canviarà pel rang de la foto.  Si la foto no té rang, %r es convertirà en un '0'.  Si la foto és a la paperera bin, %r es convertirà en 'x'.\n\nSi desitgeu desar la imatge actual on hi ha l'original, escriviu:\n<b>%p1/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>refetes</i>" sota el directori de la imatge oberta, escriviu:\n<b>%p1/refetes/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>/home/tom/photos/refetes/2010-10-31</i>", escriviu:\n<b>%p2/refetes/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;Afegeix automàticament un sufix si el fitxer ja hi és
 SAVEDLG_FILEFORMAT;Format del fitxer
 SAVEDLG_JPEGQUAL;Qualitat JPEG
@@ -915,8 +913,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_DESTFILENAME;Path and file name
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1573,6 +1569,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_DESTFILENAME;Path and file name
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned

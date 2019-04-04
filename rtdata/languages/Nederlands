@@ -20,9 +20,6 @@ ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;Licentie
 ABOUT_TAB_RELEASENOTES;Uitgave-opmerkingen
 ABOUT_TAB_SPLASH;Splash
-BATCHQUEUE_AUTOSTART;Autostart
-BATCHQUEUE_AUTOSTARTHINT;Start verwerking automatisch wanneer nieuwe foto arriveert
-BATCHQUEUE_DESTFILENAME;Pad en bestandsnaam
 BATCH_PROCESSING;Batch-verwerking
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -752,14 +749,14 @@ MAIN_BUTTON_SENDTOEDITOR;Bewerk afbeelding in externe editor
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Stuur huidige foto naar extern fotobewerkingsprogramma.\nSneltoets: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Toon/verberg alle zijpanelen.\nSneltoets: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Verlaat volledig scherm
-MAIN_FRAME_BATCHQUEUE;Verwerkingsrij
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Verwerkingsrij.\nSneltoets: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Fotobewerker
 MAIN_FRAME_EDITOR_TOOLTIP; Bewerking.\nSneltoets: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Bestandsnavigator
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Bestandsnavigator.\nSneltoets: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Locaties
 MAIN_FRAME_PLACES_ADD;Nieuw
+MAIN_FRAME_QUEUE;Verwerkingsrij
+MAIN_FRAME_QUEUE_TOOLTIP; Verwerkingsrij.\nSneltoets: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Recente mappen
 MAIN_MSG_ALREADYEXISTS;Bestand bestaat reeds.
 MAIN_MSG_CANNOTLOAD;Fout bij laden
@@ -935,7 +932,6 @@ PREFERENCES_DIRSOFTWARE;Installatiemap
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
-PREFERENCES_FILEFORMAT;Bestandstype
 PREFERENCES_FLATFIELDFOUND;Gevonden
 PREFERENCES_FLATFIELDSDIR;Vlakveldmap
 PREFERENCES_FLATFIELDSHOTS;foto's
@@ -973,11 +969,6 @@ PREFERENCES_MONPROFILE_WARNOSX;Als gevolg van MacOS beperkingen wordt alleen sRG
 PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
 PREFERENCES_NAVIGATIONFRAME;Navigatie
-PREFERENCES_OUTDIR;Uitvoermap
-PREFERENCES_OUTDIRFOLDER;Sla op in map
-PREFERENCES_OUTDIRFOLDERHINT;Sla foto's op in andere map
-PREFERENCES_OUTDIRTEMPLATE;Gebruik sjabloon
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>U kunt de volgende formaten gebruiken:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nDeze formaten hebben betrekking op de mappen, submappen en atributen van het RAW-bestand.\n\nAls bijvoorbeeld</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> is geopend, hebben deze formaten de volgende betekenis:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=foto, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n<b>%r</b> wordt vervangen door de rank van de foto.  Als de foto geen rank heeft, wordt %r vervangen door '0'.  Als de foto in de prullenbak zit zal %r worden vervangen door 'x'.\n\nWanneer de geconverteerde RAW-foto in dezelfde map moet komen als het origineel, schrijf dan:\n</i><b>%p1/%f\n</b><i>\nIndien u de geconverteerde RAW-foto in een map genaamd 'geconverteerd' wilt plaatsen die een submap is van de oorspronkelijke locatie, schrijft u:\n</i><b>%p1/geconverteerd/%f\n</b><i>\nWilt u het geconverteerde RAW-bestand bewaren in map '/home/tom/geconverteerd' met behoud van dezelfde submap met datums, schrijf dan:\n</i><b>%p2/geconverteerd/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Toon bestandsnamen over miniaturen
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Toon bestandsnaam over miniaturen in het Bewerkingsvenster
 PREFERENCES_OVERWRITEOUTPUTFILE;Overschrijf bestaande output-bestanden
@@ -1018,9 +1009,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toon filmstrip werkbalk
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
 PREFERENCES_SINGLETAB;Enkel-tab: foto's openen in zelfde tabvenster
 PREFERENCES_SINGLETABVERTAB;Enkel-tab ('filmstrip') modus met verticale tabs
-PREFERENCES_SND_BATCHQUEUEDONE;Verwerkingsrij klaar
 PREFERENCES_SND_HELP;Typ bestandsnaam (of niets: geen geluid).\nWindows: gebruik 'SystemDefault', 'SystemAsterisk', etc. voor systeemgeluiden.\nLinux: gebruik "complete", "window-attention" etc. voor systeemgeluiden
 PREFERENCES_SND_LNGEDITPROCDONE;Bewerking klaar
+PREFERENCES_SND_QUEUEDONE;Verwerkingsrij klaar
 PREFERENCES_SND_THRESHOLDSECS;na seconden
 PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
@@ -1068,6 +1059,13 @@ PROGRESSBAR_SNAPSHOT_ADDED;Snapshot toegevoegd
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profiel veranderd in bestandsnavigator
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif-gegevens niet beschikbaar.
+QUEUE_AUTOSTART;Autostart
+QUEUE_AUTOSTART_TOOLTIP;Start verwerking automatisch wanneer nieuwe foto arriveert
+QUEUE_DESTFILENAME;Pad en bestandsnaam
+QUEUE_FORMAT_TITLE;Bestandstype
+QUEUE_LOCATION_FOLDER;Sla op in map
+QUEUE_LOCATION_TEMPLATE;Gebruik sjabloon
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;<i>U kunt de volgende formaten gebruiken:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nDeze formaten hebben betrekking op de mappen, submappen en atributen van het RAW-bestand.\n\nAls bijvoorbeeld</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> is geopend, hebben deze formaten de volgende betekenis:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=foto, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n<b>%r</b> wordt vervangen door de rank van de foto.  Als de foto geen rank heeft, wordt %r vervangen door '0'.  Als de foto in de prullenbak zit zal %r worden vervangen door 'x'.\n\nWanneer de geconverteerde RAW-foto in dezelfde map moet komen als het origineel, schrijf dan:\n</i><b>%p1/%f\n</b><i>\nIndien u de geconverteerde RAW-foto in een map genaamd 'geconverteerd' wilt plaatsen die een submap is van de oorspronkelijke locatie, schrijft u:\n</i><b>%p1/geconverteerd/%f\n</b><i>\nWilt u het geconverteerde RAW-bestand bewaren in map '/home/tom/geconverteerd' met behoud van dezelfde submap met datums, schrijf dan:\n</i><b>%p2/geconverteerd/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;Voeg automatisch ophogend nummer (-1, -2..) toe als bestand al bestaat
 SAVEDLG_FILEFORMAT;Bestandstype
 SAVEDLG_FORCEFORMATOPTS;Forceer opties voor opslaan
@@ -1972,7 +1970,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_CATMULLROM;Flexible
 !DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_IMGTYPE_ANY;Any
@@ -2177,6 +2174,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
