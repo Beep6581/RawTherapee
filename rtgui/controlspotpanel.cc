@@ -1130,11 +1130,11 @@ void ControlSpotPanel::updateControlSpotCurve(Gtk::TreeModel::Row row)
     const int shape_ = row[spots_.shape];
     const bool isvisible_ = row[spots_.isvisible];
 
-    const int decayX = locX_ * (imW / 2000);
-    const int decayXL = locXL_ * (imW / 2000);
-    const int decayY = locY_ * (imH / 2000);
-    const int decayYT = locYT_ * (imH / 2000);
-    const rtengine::Coord origin(imW / 2 + centerX_ * imW / 2000, imH / 2 + centerY_ * imH / 2000);
+    const int decayX = (double)locX_ * (double)imW / 2000.;
+    const int decayXL = (double)locXL_ * (double)imW / 2000.;
+    const int decayY = (double)locY_ * (double)imH / 2000.;
+    const int decayYT = (double)locYT_ * (double)imH / 2000.;
+    const rtengine::Coord origin((double)imW / 2. + (double)centerX_ * (double)imW / 2000., (double)imH / 2. + (double)centerY_ * (double)imH / 2000.);
 
     const auto updateSelectionCircle = [&](Geometry * geometry, const int offsetX, const int offsetY) {
         const auto cir = static_cast<Circle*>(geometry);
