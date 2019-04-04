@@ -2475,6 +2475,516 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
     }
 }
 
+void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref,  const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+{
+
+    BENCHFUN {
+        const float ach = (float)lp.trans / 100.f;
+        float varsens =  lp.sensex;
+
+        if (senstype == 0) //Color and Light
+        {
+            varsens =  lp.sens;
+        }
+
+        if (senstype == 1) //exposure
+        {
+            varsens =  lp.sensex;
+        }
+
+        if (senstype == 2) //vibrance
+        {
+            varsens =  lp.sensv;
+        }
+
+        if (senstype == 3) //soft light
+        {
+            varsens =  lp.senssf;
+        }
+
+        if (senstype == 4 || senstype == 5) //retinex
+        {
+            varsens =  lp.sensh;
+        }
+
+        if (senstype == 6 || senstype == 7) //cbdl
+        {
+            varsens =  lp.senscb;
+        }
+
+        if (senstype == 8) //TM
+        {
+            varsens =  lp.senstm;
+        }
+
+        if (senstype == 9) //Shadow highlight
+        {
+            varsens =  lp.senshs;
+        }
+
+        //printf("deltaE Weak=%f \n", lp.iterat);
+        //sobel
+        sobelref /= 100.;
+        meansobel /= 100.f;
+
+        if (sobelref > 60.)
+        {
+            sobelref = 60.;
+        }
+
+        float k = 1.f;
+
+        if (sobelref <  meansobel && sobelref < lp.stru)//does not always work wth noisy images
+        {
+            k = -1.f;
+        }
+
+        sobelref = log1p(sobelref);
+
+        int GW = transformed->W;
+        int GH = transformed->H;
+
+        float refa = chromaref * cos(hueref);
+        float refb = chromaref * sin(hueref);
+
+        bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
+        bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
+        bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
+        bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
+        bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
+        bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
+
+
+        LabImage *origblur = new LabImage(GW, GH);
+        LabImage *origblurmask = nullptr;
+
+        float radius = 3.f / sk;
+
+        if (senstype == 1)
+        {
+            radius = (2.f + 0.2f * lp.blurexp) / sk;
+        }
+
+        if (senstype == 0)
+        {
+            radius = (2.f + 0.2f * lp.blurcol) / sk;
+        }
+
+        if (senstype == 9)
+        {
+            radius = (2.f + 0.2f * lp.blurSH) / sk;
+        }
+
+        //balance deltaE
+        float kL = lp.balance;
+        float kab = 1.f;
+        balancedeltaE(kL, kab);
+
+        const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
+        const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
+        const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
+        const bool usemaskall = (usemaskSH || usemaskcol || usemaskexp);
+
+        if (usemaskall)
+        {
+            origblurmask = new LabImage(GW, GH);
+
+#ifdef _OPENMP
+            #pragma omp parallel
+#endif
+            {
+                gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
+                gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
+                gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
+            }
+        }
+
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+        }
+
+
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+#ifdef __SSE2__
+            float atan2Buffer[transformed->W] ALIGNED16;
+#endif
+
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < transformed->H; y++)
+            {
+
+                const int loy = cy + y;
+                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                    continue;
+                }
+
+#ifdef __SSE2__
+                if (HHutili || senstype == 7) {
+                    int i = 0;
+
+                    for (; i < transformed->W - 3; i += 4) {
+                        vfloat av = LVFU(origblur->a[y][i]);
+                        vfloat bv = LVFU(origblur->b[y][i]);
+                        STVF(atan2Buffer[i], xatan2f(bv, av));
+                    }
+
+                    for (; i < transformed->W; i++) {
+                        atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
+                    }
+                }
+#endif
+
+                for (int x = 0; x < transformed->W; x++) {
+                    const int lox = cx + x;
+                    const int begx = int (lp.xc - lp.lxL);
+                    const int begy = int (lp.yc - lp.lyT);
+
+                    int zone = 0;
+                    float localFactor = 1.f;
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else if (lp.shapmet == 1) {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
+
+
+                    if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                        continue;
+                    }
+
+                    float rhue = 0;
+                    if (HHutili || senstype == 7) {
+#ifdef __SSE2__
+                        rhue = atan2Buffer[x];
+#else
+                        rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
+#endif
+                    }
+
+                    float rL = origblur->L[y][x] / 327.68f;
+                    float rs = 0.f;
+
+                    if (senstype <= 1) {
+                        float csob = std::min(blend2[loy - begy][lox - begx] / 100.f, 60.f);
+                        csob = xlogf(1.f + csob + 0.001f);
+
+                        if (k == 1) {
+                            rs = sobelref / csob;
+                        } else {
+                            rs = csob / sobelref;
+                        }
+                    }
+
+                    float rsob = 0.f;
+
+                    if (lp.struexp > 0.f && rs > 0.f && senstype == 1) {
+                        rsob =  1.1f * lp.struexp * rs;
+                    } else if (lp.struco > 0.f && rs > 0.f && senstype == 0) {
+                        rsob =  1.1f * lp.struco * rs;
+                    }
+
+                    float dE = 0.f;
+                    if (usemaskall) {
+                        dE = rsob + sqrt(kab * SQR(refa - origblurmask->a[y][x] / 327.68f) + kab * SQR(refb - origblurmask->b[y][x] / 327.68f) + kL * SQR(lumaref - origblurmask->L[y][x] / 327.68f));
+                    } else {
+                        dE = rsob + sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
+                    }
+
+                    float cli = 0.f;
+                    float clc = 0.f;
+                    float cla = 0.f;
+                    float clb = 0.f;
+                    float hhro = 0.f;
+
+                    if (HHutili) {
+                        hhro = bufhh[loy - begy][lox - begx];
+                    }
+
+                    cli = buflight[loy - begy][lox - begx];
+                    clc = bufchro[loy - begy][lox - begx];
+
+
+                    if (senstype <= 1) {
+                        cla = buf_a_cat[loy - begy][lox - begx];
+                        clb = buf_b_cat[loy - begy][lox - begx];
+                    }
+
+                    if (previewcol  || previewexp || previewSH) {
+                        clc = settings->previewselection * 100.f;//between 100 and 10000 to obtain "good" result
+                    }
+
+                    const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
+                    const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
+
+
+                    float reducdE;
+                    if (varsens > 99) {
+                        reducdE = 1.f;
+                    } else if (dE > maxdE) {
+                        reducdE = 0.f;
+                    } else if (dE > mindE && dE <= maxdE) {
+                        float ar = 1.f / (mindE - maxdE);
+                        float br = - ar * maxdE;
+                        reducdE = ar * dE + br;
+                        reducdE = pow(reducdE, lp.iterat);
+                    } else /*if (dE <= mindE)*/ {
+                        reducdE = 1.f;
+                    }
+
+                    float realstrdE = reducdE * cli;
+                    float realstradE = reducdE * cla;
+                    float realstrbdE = reducdE * clb;
+                    float realstrchdE = reducdE * clc;
+                    float realhhdE = reducdE * hhro;
+
+
+                    float2 sincosval;
+                    sincosval.y = 1.f;
+                    sincosval.x = 0.0f;
+                    float tempa = 0.f;
+                    float tempb = 0.f;
+
+                    if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
+
+
+
+                        switch (zone) {
+                            case 1: { // inside transition zone
+                                float factorx = localFactor;
+                                float diflc = 0.f;
+                                float newhr = 0.f;
+
+                                if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
+                                    float lightc = bufexporig->L[loy - begy][lox - begx];
+                                    float fli = ((100.f + realstrdE) / 100.f);
+                                    float diflc = lightc * fli - original->L[y][x];
+                                    diflc *= factorx;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9) {
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * factorx * realstrdE);
+                                    diflc = 328.f * factorx * realstrdE;
+                                }
+
+                                if (HHutili && hhro != 0.f) {
+                                    float addh = 0.01f * realhhdE * factorx;
+                                    newhr = rhue + addh;
+
+                                    if (newhr > rtengine::RT_PI) {
+                                        newhr -= 2 * rtengine::RT_PI;
+                                    } else if (newhr < -rtengine::RT_PI) {
+                                        newhr  += 2 * rtengine::RT_PI;
+                                    }
+                                }
+
+                                if (senstype == 7) {
+                                    float difab = bufexporig->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
+                                    float difa = difab * cos(rhue);
+                                    float difb = difab * sin(rhue);
+                                    difa *= factorx * (100.f + realstrchdE) / 100.f;
+                                    difb *= factorx * (100.f + realstrchdE) / 100.f;
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                } else {
+
+                                    float flia = 1.f;
+                                    float flib = 1.f;
+                                    float chra = bufexporig->a[loy - begy][lox - begx];
+                                    float chrb = bufexporig->b[loy - begy][lox - begx];
+
+                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
+                                        flia = flib = ((100.f + realstrchdE) / 100.f);
+                                    } else if (senstype == 1) {
+                                        // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
+                                        flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
+                                        flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+
+                                        if (previewcol || previewexp || previewSH) {
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
+                                    } else if (senstype == 0) {
+                                        flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
+
+                                        if (previewcol || previewexp || previewSH) {
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
+                                    }
+
+                                    float difa = chra * flia - original->a[y][x];
+                                    float difb = chrb * flib - original->b[y][x];
+                                    difa *= factorx;
+                                    difb *= factorx;
+
+                                    transformed->a[y][x] = tempa = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = tempb = CLIPC(original->b[y][x] + difb);
+
+                                    if (senstype == 0 && HHutili && hhro != 0.f) {
+                                        float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x]) + difb);
+                                        float epsia = 0.f;
+                                        float epsib = 0.f;
+
+                                        if (original->a[y][x] == 0.f) {
+                                            epsia = 0.001f;
+                                        }
+
+                                        if (original->b[y][x] == 0.f) {
+                                            epsib = 0.001f;
+                                        }
+
+                                        float faca = (original->a[y][x] + difa) / (original->a[y][x] + epsia);
+                                        float facb = (original->b[y][x] + difb) / (original->b[y][x] + epsib);
+
+                                        sincosval = xsincosf(newhr);
+                                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
+                                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * facb);
+                                        difa = transformed->a[y][x] - tempa;
+                                        difb = transformed->b[y][x] - tempb;
+                                    }
+
+                                    if (expshow  || colshow || SHshow) {
+                                        transformed->L[y][x] = CLIP(12000.f + diflc);
+                                        transformed->a[y][x] = CLIPC(difa);
+                                        transformed->b[y][x] = CLIPC(difb);
+                                    } else if (previewcol || previewexp || previewSH) {
+                                        transformed->a[y][x] = 0.f;
+                                        transformed->b[y][x] = (difb);
+                                    }
+                                }
+
+                                break;
+
+                            }
+
+                            case 2: { // inside selection => full effect, no transition
+                                float diflc = 0.f;
+                                float newhr = 0.f;
+
+                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
+                                    float lightc = bufexporig->L[loy - begy][lox - begx];
+                                    float fli = ((100.f + realstrdE) / 100.f);
+                                    float diflc = lightc * fli - original->L[y][x];
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9) {
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + 328.f * realstrdE);//kch fach
+                                    diflc = 328.f * realstrdE;
+                                }
+
+                                if (HHutili && hhro != 0.f) {
+                                    float addh = 0.01f * realhhdE;
+                                    newhr = rhue + addh;
+
+                                    if (newhr > rtengine::RT_PI) {
+                                        newhr -= 2 * rtengine::RT_PI;
+                                    } else if (newhr < -rtengine::RT_PI) {
+                                        newhr  += 2 * rtengine::RT_PI;
+                                    }
+                                }
+
+                                if (senstype == 7) {//cbdl chroma
+                                    float difab = bufexporig->L[loy - begy][lox - begx] - sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x]));
+                                    float difa = difab * cos(rhue);
+                                    float difb = difab * sin(rhue);
+                                    difa *= (100.f + realstrchdE) / 100.f;
+                                    difb *= (100.f + realstrchdE) / 100.f;
+                                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                                } else {
+                                    float flia = 1.f;
+                                    float flib = 1.f;
+                                    float chra = bufexporig->a[loy - begy][lox - begx];
+                                    float chrb = bufexporig->b[loy - begy][lox - begx];
+
+                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
+                                        flia = flib = (100.f + realstrchdE) / 100.f;
+                                    } else if (senstype == 1) {
+                                        flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
+                                        flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
+
+                                        if (previewcol || previewexp || previewSH) {
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
+                                    } else if (senstype == 0) {
+                                        flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
+                                        flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
+
+                                        if (previewcol || previewexp || previewSH) {
+                                            flia = (100.f + realstradE + realstrchdE) / 100.f;
+                                            flib = (100.f + realstrbdE + realstrchdE) / 100.f;
+                                        }
+                                    }
+
+                                    float difa = chra * flia - original->a[y][x];
+                                    float difb = chrb * flib - original->b[y][x];
+
+                                    transformed->a[y][x] = tempa = CLIPC(original->a[y][x] + difa);
+                                    transformed->b[y][x] = tempb = CLIPC(original->b[y][x] + difb);
+
+                                    if (senstype == 0 && HHutili  && hhro != 0.f) {
+                                        float chromhr = sqrt(SQR(original->a[y][x] + difa) + SQR(original->b[y][x]) + difb);
+                                        float epsia = 0.f;
+                                        float epsib = 0.f;
+
+                                        if (original->a[y][x] == 0.f) {
+                                            epsia = 0.001f;
+                                        }
+
+                                        if (original->b[y][x] == 0.f) {
+                                            epsib = 0.001f;
+                                        }
+
+                                        float faca = (original->a[y][x] + difa) / (original->a[y][x] + epsia);
+                                        float facb = (original->b[y][x] + difb) / (original->b[y][x] + epsib);
+
+                                        sincosval = xsincosf(newhr);
+                                        transformed->a[y][x] = CLIPC(chromhr * sincosval.y * faca) ;
+                                        transformed->b[y][x] = CLIPC(chromhr * sincosval.x * facb);
+                                        difa = transformed->a[y][x] - tempa;
+                                        difb = transformed->b[y][x] - tempb;
+                                    }
+
+                                    if (expshow  || colshow || SHshow) {
+                                        transformed->L[y][x] = CLIP(12000.f + diflc);
+                                        transformed->a[y][x] = CLIPC(difa);
+                                        transformed->b[y][x] = CLIPC(difb);
+                                    } else if (previewcol || previewexp || previewSH) {
+                                        transformed->a[y][x] = 0.f;
+                                        transformed->b[y][x] = (difb);
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        delete origblur;
+
+        if (usemaskall) {
+            delete origblurmask;
+        }
+    }
+}
+
 
 void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
@@ -5802,6 +6312,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     tmpl = new LabImage(transformed->W, transformed->H);
                     delete bufreti;
+                    bufreti = nullptr;
 
                 } else {
 
@@ -5839,7 +6350,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-            if (lp.softradiusret > 0.f) {
+            if (lp.softradiusret > 0.f && !lp.invret) {
                 softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
             }
 
@@ -5847,7 +6358,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             if (!lp.invret) {
-                transit_shapedetect(4, bufreti, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect_retinex(4, bufreti, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             } else {
                 InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
@@ -5931,7 +6442,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                 if (!lp.invret) {
-                    transit_shapedetect(5, tmpl, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect_retinex(5, tmpl, nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                 } else {
                     InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
@@ -5943,11 +6454,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             delete [] origBuffer;
             delete [] origBuffer1;
 
-            if (!lp.invret && call <= 3) {
-
+            if (bufreti) {
                 delete  bufreti;
-
-
             }
         }
 
