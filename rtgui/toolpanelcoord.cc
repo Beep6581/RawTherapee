@@ -281,8 +281,10 @@ void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num
     // segfault) and locallab panel is active
     if (photoLoadedOnce) {
         if (page == locallabPanelSW) {
+            toolBar->blockEditDeactivation(); // Avoid edit tool deactivation when Locallab page is active (except if pressing other tools button)
             locallab->subscribe();
         } else {
+            toolBar->blockEditDeactivation(false);
             locallab->unsubscribe();
         }
     }

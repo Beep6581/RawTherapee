@@ -232,6 +232,7 @@ public:
     float innerLineWidth;  // ...outerLineWidth = innerLineWidth+2
     Datum datum;
     State state;  // set by the Subscriber
+    float opacity; // Percentage of opacity
 
     Geometry ();
     virtual ~Geometry() {}
@@ -322,31 +323,23 @@ public:
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
 };
 
-class Arcellipse : public Geometry
+class Ellipse : public Geometry
 {
 public:
     rtengine::Coord center;
-    // rtengine::Coord scalx;
-    // rtengine::Coord scaly;
-    // TODO translax, translay, scalx and scaly are not used
-    double radius;
-    double radius2;
-    double translax;
-    double translay;
-    double scalx;
-    double scaly;
-    double begang;
-    double endang;
+    int radYT; // Ellipse half-radius for top y-axis
+    int radY; // Ellipse half-radius for bottom y-axis
+    int radXL; // Ellipse half-radius for left x-axis
+    int radX; // Ellipse half-radius for right x-axis
     bool filled;
     bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
 
-    Arcellipse ();
-    Arcellipse (rtengine::Coord& center, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled = false, bool radiusInImageSpace = false);
-    Arcellipse (int centerX, int centerY, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled = false, bool radiusInImageSpace = false);
+    Ellipse ();
+    Ellipse (rtengine::Coord& center, int radYT, int radY, int radXL, int radX, bool filled = false, bool radiusInImageSpace = false);
 
-    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
-    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
-    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
 };
 
 class OPIcon : public Geometry    // OP stands for "On Preview"
@@ -501,7 +494,7 @@ inline Geometry::Geometry () :
         innerLineColor (char (255), char (255), char (255)), outerLineColor (
                 char (0), char (0), char (0)), flags (
                 F_VISIBLE | F_HOVERABLE | F_AUTO_COLOR), innerLineWidth (1.5f), datum (
-                IMAGE), state (NORMAL) {
+                IMAGE), state (NORMAL), opacity(100.) {
 }
 
 inline RGBAColor::RGBAColor () :
@@ -545,9 +538,8 @@ inline Line::Line () :
         begin (10, 10), end (100, 100) {
 }
 
-inline Arcellipse::Arcellipse () :
-        center (100, 100), radius (10), radius2 (10), translax (0), translay (0), filled (false), radiusInImageSpace (
-                false) {
+inline Ellipse::Ellipse () :
+        center (100, 100), radYT (5), radY (5), radXL (10), radX (10), filled (false), radiusInImageSpace (false) {
 }
 
 inline Circle::Circle (rtengine::Coord& center, int radius, bool filled,
@@ -570,17 +562,10 @@ inline Line::Line (int beginX, int beginY, int endX, int endY) :
         begin (beginX, beginY), end (endX, endY) {
 }
 
-inline Arcellipse::Arcellipse (rtengine::Coord& center, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled,
-        bool radiusInImageSpace) :
-        center (center), radius (radius),  radius2 (radius2), translax (translax), translay (translay), scalx (scalx), scaly (scaly), begang (begang), endang (endang), filled (filled), radiusInImageSpace (
-                radiusInImageSpace) {
-}
-
-inline Arcellipse::Arcellipse (int centerX, int centerY, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled,
-        bool radiusInImageSpace) :
-        center (centerX, centerY), radius (radius),  radius2 (radius2), translax (translax), translay (translay), scalx (scalx), scaly (scaly), begang (begang), endang (endang), filled (filled), radiusInImageSpace (
-            radiusInImageSpace) {
+inline Ellipse::Ellipse (rtengine::Coord& center, int radYT, int radY, int radXL, int radX,
+        bool filled, bool radiusInImageSpace) :
+        center (center), radYT (radYT), radY (radY), radXL (radXL), radX (radX), filled (filled),
+                radiusInImageSpace (radiusInImageSpace) {
 }
 
 #endif
-
