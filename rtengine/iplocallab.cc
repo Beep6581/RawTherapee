@@ -2677,7 +2677,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
 }
 
 
-void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexporig, LabImage * originalmask, float **buflight, float **bufchro, float **buf_a_cat, float ** buf_b_cat, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     BENCHFUN {
@@ -2699,8 +2699,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
             varsens =  lp.sensv;
         } else if (senstype == 3) { //soft light
             varsens =  lp.senssf;
-        } else if (senstype == 4 || senstype == 5) { //retinex
-            varsens =  lp.sensh;
         } else if (senstype == 6 || senstype == 7) { //cbdl
             varsens =  lp.senscb;
         } else if (senstype == 8) { //TM
@@ -2754,12 +2752,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
         const bool usemaskall = (usemaskSH || usemaskcol || usemaskexp);
 
-        if (usemaskall)
-        {
+        if (usemaskall) {
             origblurmask.reset(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-            #pragma omp parallel
+            #pragma omp parallel if (multiThread)
 #endif
             {
                 gaussianBlur(originalmask->L, origblurmask->L, bfw, bfh, radius);
@@ -2769,7 +2766,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel
+        #pragma omp parallel if (multiThread)
 #endif
         {
 #ifdef _OPENMP
@@ -2807,8 +2804,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
             #pragma omp for schedule(dynamic,16)
 #endif
 
-            for (int y = ystart; y < yend; y++)
-            {
+            for (int y = ystart; y < yend; y++) {
                 const int loy = cy + y;
 
 #ifdef __SSE2__
@@ -2856,7 +2852,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                     const float rL = origblur->L[y - ystart][x - xstart] / 327.68f;
                     float rsob = 0.f;
 
-                    if (senstype <= 1 && blend2 && (lp.struexp > 0.f || lp.struco > 0.f)) {
+                    if (blend2 && ((senstype == 1 && lp.struexp > 0.f) || (senstype == 0 && lp.struco > 0.f))) {
                         const float csob = xlogf(1.f + std::min(blend2[y - ystart][x - xstart] / 100.f, 60.f) + 0.001f);
 
                         float rs;
@@ -2865,9 +2861,9 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                         } else {
                             rs = csob / sobelref;
                         }
-                        if (lp.struexp > 0.f && rs > 0.f && senstype == 1) {
+                        if (rs > 0.f && senstype == 1) {
                             rsob =  1.1f * lp.struexp * rs;
-                        } else if (lp.struco > 0.f && rs > 0.f && senstype == 0) {
+                        } else if (rs > 0.f && senstype == 0) {
                             rsob =  1.1f * lp.struco * rs;
                         }
                     }
@@ -2910,7 +2906,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
+                                if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
@@ -2948,7 +2944,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
+                                    if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                     } else if (senstype == 1) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
@@ -3023,7 +3019,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 4  || senstype == 6  || senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
+                                if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
                                     float lightc = bufexporig->L[y - ystart][x - xstart];
                                     float fli = ((100.f + realstrdE) / 100.f);
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
@@ -3061,7 +3057,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, LabImage * bufexporig, L
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 4  || senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
+                                    if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
@@ -6186,9 +6182,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    int spotSi = rtengine::max(1 + 2 * max(1, lp.cir / sk), 5);
+                    const int spotSi = rtengine::max(1 + 2 * max(1, lp.cir / sk), 5);
 
-                    if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp >= 0.f) {
+                    if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp > 0.f) {
                         blend2(bfw, bfh);
                         ImProcFunctions::blendstruc(bfw, bfh, bufexporig.get(), 3.f / (sk * 1.4f), lp.struexp, blend2, sk, multiThread);
 
@@ -6224,7 +6220,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     std::unique_ptr<array2D<float>> ble;
                     std::unique_ptr<array2D<float>> guid;
-                    if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
+                    if (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                         ble.reset(new array2D<float>(bfw, bfh));
                         guid.reset(new array2D<float>(bfw, bfh));
                     }
@@ -6516,7 +6512,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     const int spotSi = std::max(1 + 2 * max(1,  lp.cir / sk), 5);
-                    const bool blend = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco >= 0.f;
+                    const bool blend = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco > 0.f;
 
                     if (blend) {
                         blend2(bfw, bfh);
