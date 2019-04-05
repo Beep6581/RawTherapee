@@ -112,14 +112,10 @@ float calcLocalFactorrect(const float lox, const float loy, const float lcx, con
 
 namespace rtengine
 
-
 {
 extern MyMutex *fftwMutex;
 
-
 using namespace procparams;
-
-
 
 extern const Settings* settings;
 
@@ -244,8 +240,8 @@ struct local_params {
 
 static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius, bool multiThread = false)
 {
-    //base of the process to detect shape in complement of deltaE
-    //use for calculate Spot reference
+    // base of the process to detect shape in complement of deltaE
+    // use for calculate Spot reference
     // and for structure of the shape
     // actually , as the program don't use these function, I just create a simple "Canny" near of Sobel. This can be completed after with teta, etc.
     array2D<float> tmL(bfw, bfh);
@@ -5803,12 +5799,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             Sharp_Local(call, loctemp, 1,  hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
             delete bufloca;
-
-
         }
 
 
-        if (!lp.invshar && lp.shrad > 0.42 && call < 3  && lp.sharpena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
+        if (!lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
             int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
             int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
             JaggedArray<float> loctemp(bfw, bfh);
@@ -5825,7 +5819,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < transformed->H ; y++) //{
+                for (int y = 0; y < transformed->H ; y++) {
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
@@ -5834,22 +5828,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufsh[loy - begy][lox - begx] = original->L[y][x];
                         }
                     }
-
-                //   }
+                }
 
                 //sharpen only square area instaed of all image
                 ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur);
             } else { //call from dcrop.cc
-
                 ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur);
-
             }
-
 
             //sharpen ellipse and transition
             Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-        } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena) {
+        } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) {
             int GW = original->W;
             int GH = original->H;
             JaggedArray<float> loctemp(GW, GH);
