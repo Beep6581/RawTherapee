@@ -355,11 +355,11 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     // with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
     float ** buffer = dirpyrlo[lastlevel - 1];
 
-    std::unique_ptr<LabImage> resid5(new LabImage(srcwidth, srcheight));
+     array2D<float> resid5(srcwidth, srcheight);
         #pragma omp parallel for
         for (int i = 0; i < srcheight; i++) {
             for (int j = 0; j < srcwidth; j++) {
-                resid5->L[i][j] = buffer[i][j]; 
+                resid5[i][j] = buffer[i][j]; 
             }
         }
 
@@ -372,19 +372,18 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     idirpyr_eq_channel_loc(dirpyrlo[0], src, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    std::unique_ptr<LabImage> loct(new LabImage(srcwidth, srcheight));
-
+    array2D<float> loct(srcwidth, srcheight);
     #pragma omp parallel for
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
-                loct->L[i][j] = CLIP(buffer[i][j]);  // TODO: Really a clip necessary?
+                loct[i][j] = CLIP(buffer[i][j]);  // TODO: Really a clip necessary?
             }
     float clar = 0.01f * mergeL;
 
     #pragma omp parallel for
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
-                loctemp[i][j] = (1.f + clar) * loct->L[i][j] - clar * resid5->L[i][j];
+                loctemp[i][j] = (1.f + clar) * loct[i][j] - clar * resid5[i][j];
             }
 }
 
