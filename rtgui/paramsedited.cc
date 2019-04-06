@@ -1091,6 +1091,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromacbdl = locallab.spots.at(j).chromacbdl && pSpot.chromacbdl == otherSpot.chromacbdl;
                 locallab.spots.at(j).threshold = locallab.spots.at(j).threshold && pSpot.threshold == otherSpot.threshold;
                 locallab.spots.at(j).sensicb = locallab.spots.at(j).sensicb && pSpot.sensicb == otherSpot.sensicb;
+                locallab.spots.at(j).clarityml = locallab.spots.at(j).clarityml && pSpot.clarityml == otherSpot.clarityml;
                 locallab.spots.at(j).softradiuscb = locallab.spots.at(j).softradiuscb && pSpot.softradiuscb == otherSpot.softradiuscb;
                 // Denoise
                 locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
@@ -3135,6 +3136,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensicb = mods.locallab.spots.at(i).sensicb;
         }
 
+        if (locallab.spots.at(i).clarityml) {
+            toEdit.locallab.spots.at(i).clarityml = mods.locallab.spots.at(i).clarityml;
+        }
+
         if (locallab.spots.at(i).softradiuscb) {
             toEdit.locallab.spots.at(i).softradiuscb = mods.locallab.spots.at(i).softradiuscb;
         }
@@ -4285,6 +4290,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromacbdl(v),
     threshold(v),
     sensicb(v),
+    clarityml(v),
     softradiuscb(v),
     // Denoise
     expdenoi(v),
@@ -4467,6 +4473,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromacbdl = v;
     threshold = v;
     sensicb = v;
+    clarityml = v;
     softradiuscb = v;
     // Denoise
     expdenoi = v;

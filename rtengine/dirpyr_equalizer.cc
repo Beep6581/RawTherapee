@@ -251,7 +251,7 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
 
 }
 
-void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
+void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
 {
     int lastlevel = maxlevelloc;
 
@@ -355,6 +355,14 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     // with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
     float ** buffer = dirpyrlo[lastlevel - 1];
 
+    std::unique_ptr<LabImage> resid5(new LabImage(srcwidth, srcheight));
+        #pragma omp parallel for
+        for (int i = 0; i < srcheight; i++) {
+            for (int j = 0; j < srcwidth; j++) {
+                resid5->L[i][j] = buffer[i][j]; 
+            }
+        }
+
     for (int level = lastlevel - 1; level > 0; level--) {
         idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
     }
@@ -363,13 +371,21 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
 
     idirpyr_eq_channel_loc(dirpyrlo[0], src, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    std::unique_ptr<LabImage> loct(new LabImage(srcwidth, srcheight));
+
     #pragma omp parallel for
+        for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                loct->L[i][j] = CLIP(buffer[i][j]);  // TODO: Really a clip necessary?
+            }
+    float clar = 0.01f * mergeL;
 
-    for (int i = 0; i < srcheight; i++)
-        for (int j = 0; j < srcwidth; j++) {
-            loctemp[i][j] = CLIP(buffer[i][j]);  // TODO: Really a clip necessary?
-        }
-
+    #pragma omp parallel for
+        for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                loctemp[i][j] = (1.f + clar) * loct->L[i][j] - clar * resid5->L[i][j];
+            }
 }
 
 

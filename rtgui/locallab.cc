@@ -162,6 +162,7 @@ Locallab::Locallab():
     // Contrast by detail levels
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
+    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0, 100, 1, 0))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
     softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
     // Denoise
@@ -924,6 +925,7 @@ Locallab::Locallab():
     sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensicb->setAdjusterListener(this);
     softradiuscb->setAdjusterListener(this);
+    clarityml->setAdjusterListener(this);
 
     ToolParamBlock* const cbdlBox = Gtk::manage(new ToolParamBlock());
     Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 10));
@@ -943,6 +945,7 @@ Locallab::Locallab():
     cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
     cbdlBox->pack_start(*chromacbdl);
     cbdlBox->pack_start(*threshold);
+    cbdlBox->pack_start(*clarityml);
     cbdlBox->pack_start(*softradiuscb);
     cbdlBox->pack_start(*sensicb);
     expcbdl->add(*cbdlBox);
@@ -1855,6 +1858,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromacbdl = chromacbdl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).threshold = threshold->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensicb = sensicb->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).clarityml = clarityml->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscb = softradiuscb->getValue();
                     // Denoise
                     pp->locallab.spots.at(pp->locallab.selspot).expdenoi = expdenoi->getEnabled();
@@ -2035,6 +2039,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromacbdl = pe->locallab.spots.at(pp->locallab.selspot).chromacbdl || chromacbdl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).threshold = pe->locallab.spots.at(pp->locallab.selspot).threshold || threshold->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensicb = pe->locallab.spots.at(pp->locallab.selspot).sensicb || sensicb->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).clarityml = pe->locallab.spots.at(pp->locallab.selspot).clarityml || clarityml->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscb = pe->locallab.spots.at(pp->locallab.selspot).softradiuscb || softradiuscb->getEditedState();
                         // Denoise
                         pe->locallab.spots.at(pp->locallab.selspot).expdenoi = pe->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
@@ -2217,6 +2222,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromacbdl = pedited->locallab.spots.at(pp->locallab.selspot).chromacbdl || chromacbdl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).threshold = pedited->locallab.spots.at(pp->locallab.selspot).threshold || threshold->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensicb = pedited->locallab.spots.at(pp->locallab.selspot).sensicb || sensicb->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).clarityml = pedited->locallab.spots.at(pp->locallab.selspot).clarityml || clarityml->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscb = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscb || softradiuscb->getEditedState();
                         // Denoise
                         pedited->locallab.spots.at(pp->locallab.selspot).expdenoi = pedited->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
@@ -3094,6 +3100,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromacbdl->setDefault((double)defSpot->chromacbdl);
     threshold->setDefault(defSpot->threshold);
     sensicb->setDefault((double)defSpot->sensicb);
+    clarityml->setDefault((double)defSpot->clarityml);
     softradiuscb->setDefault(defSpot->softradiuscb);
     // Denoise
     noiselumf->setDefault((double)defSpot->noiselumf);
@@ -3203,6 +3210,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromacbdl->setDefaultEditedState(Irrelevant);
         threshold->setDefaultEditedState(Irrelevant);
         sensicb->setDefaultEditedState(Irrelevant);
+        clarityml->setDefaultEditedState(Irrelevant);
         softradiuscb->setDefaultEditedState(Irrelevant);
         // Denoise
         noiselumf->setDefaultEditedState(Irrelevant);
@@ -3316,6 +3324,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromacbdl->setDefaultEditedState(defSpotState->chromacbdl ? Edited : UnEdited);
         threshold->setDefaultEditedState(defSpotState->threshold ? Edited : UnEdited);
         sensicb->setDefaultEditedState(defSpotState->sensicb ? Edited : UnEdited);
+        clarityml->setDefaultEditedState(defSpotState->clarityml ? Edited : UnEdited);
         softradiuscb->setDefaultEditedState(defSpotState->softradiuscb ? Edited : UnEdited);
         // Denoise
         noiselumf->setDefaultEditedState(defSpotState->noiselumf ? Edited : UnEdited);
@@ -3894,6 +3903,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == clarityml) {
+            if (listener) {
+                listener->panelChanged(EvLocallabclarityml, clarityml->getTextValue());
+            }
+        }
+
         if (a == softradiuscb) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiuscb, softradiuscb->getTextValue());
@@ -4086,6 +4101,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromacbdl->showEditedCB();
     threshold->showEditedCB();
     sensicb->showEditedCB();
+    clarityml->showEditedCB();
     softradiuscb->showEditedCB();
     // Denoise
     noiselumf->showEditedCB();
@@ -4526,6 +4542,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromacbdl->setValue(pp->locallab.spots.at(index).chromacbdl);
         threshold->setValue(pp->locallab.spots.at(index).threshold);
         sensicb->setValue(pp->locallab.spots.at(index).sensicb);
+        clarityml->setValue(pp->locallab.spots.at(index).clarityml);
         softradiuscb->setValue(pp->locallab.spots.at(index).softradiuscb);
 
         // Denoise
@@ -4743,6 +4760,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromacbdl->setEditedState(spotState->chromacbdl ? Edited : UnEdited);
                 threshold->setEditedState(spotState->threshold ? Edited : UnEdited);
                 sensicb->setEditedState(spotState->sensicb ? Edited : UnEdited);
+                clarityml->setEditedState(spotState->clarityml ? Edited : UnEdited);
                 softradiuscb->setEditedState(spotState->softradiuscb ? Edited : UnEdited);
 
                 // Denoise

@@ -182,6 +182,7 @@ private:
     Adjuster* multiplier[5];
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
+    Adjuster* const clarityml;
     Adjuster* const sensicb;
     Adjuster* const softradiuscb;
     // Denoise

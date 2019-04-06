@@ -383,7 +383,7 @@ public:
     float MadRgb(float * DataList, const int datalen);
 
     // pyramid wavelet
-    void cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);
+    void cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale);
     void idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[5], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice);
     void dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
     void dirpyr_equalizercam(CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet

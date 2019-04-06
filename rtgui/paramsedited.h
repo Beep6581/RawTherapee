@@ -514,6 +514,7 @@ public:
         bool chromacbdl;
         bool threshold;
         bool sensicb;
+        bool clarityml;
         bool softradiuscb;
         // Denoise
         bool expdenoi;
