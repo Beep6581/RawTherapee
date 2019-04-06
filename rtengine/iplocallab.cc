@@ -5486,46 +5486,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, skinprot, false, b_l, t_l, t_r, b_r, choice, sk);
 
-                    float minL = 100000.f;
-                    float maxL = -100000.f;
+                    float minL = loctemp->L[0][0] - origcbdl->L[0][0];
+                    float maxL = minL;
 #ifdef _OPENMP
-                    #pragma omp parallel
+                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
 #endif
-                    {
-                        float lminL = 100000.f;
-                        float lmaxL = -100000.f;
-#ifdef _OPENMP
-                        #pragma omp for
-#endif
-
-                        for (int ir = 0; ir < bfh; ir++) {
-                            for (int jr = 0; jr < bfw; jr++) {
-                                buflight[ir][jr] = loctemp->L[ir][jr] - origcbdl->L[ir][jr];
-
-                                if (buflight[ir][jr] < lminL) {
-                                    lminL = buflight[ir][jr];
-                                }
-
-                                if (buflight[ir][jr] > lmaxL) {
-                                    lmaxL = buflight[ir][jr];
-                                }
-                            }
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            buflight[ir][jr] = loctemp->L[ir][jr] - origcbdl->L[ir][jr];
+                            minL = rtengine::min(minL, buflight[ir][jr]);
+                            maxL = rtengine::max(maxL, buflight[ir][jr]);
                         }
-
-#ifdef _OPENMP
-                        #pragma omp critical
-#endif
-                        {
-                            if (lminL < minL) {
-                                minL = lminL;
-                            }
-
-                            if (lmaxL > maxL) {
-                                maxL = lmaxL;
-                            }
-                        }
-
                     }
+
                     float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
 
 #ifdef _OPENMP
@@ -5566,46 +5539,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 
 
-                        float minC = 200000.f;
-                        float maxC = -200000.f;
+                        float minC = loctemp->L[0][0] - sqrt(SQR(loctemp->a[0][0]) + SQR(loctemp->b[0][0]));
+                        float maxC = minC;
 #ifdef _OPENMP
-                        #pragma omp parallel
-#endif
-                        {
-                            float lminC = 200000.f;
-                            float lmaxC = -200000.f;
-#ifdef _OPENMP
-                            #pragma omp for
+                        #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
 #endif
 
-                            for (int ir = 0; ir < bfh; ir++) {
-                                for (int jr = 0; jr < bfw; jr++) {
-                                    bufchrom[ir][jr] = (loctemp->L[ir][jr] - sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr])));
-
-                                    if (bufchrom[ir][jr] < lminC) {
-                                        lminC = bufchrom[ir][jr];
-                                    }
-
-                                    if (bufchrom[ir][jr] > lmaxC) {
-                                        lmaxC = bufchrom[ir][jr];
-                                    }
-                                }
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                bufchrom[ir][jr] = (loctemp->L[ir][jr] - sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr])));
+                                minC = rtengine::min(minC, bufchrom[ir][jr]);
+                                maxC = rtengine::max(maxC, bufchrom[ir][jr]);
                             }
-
-#ifdef _OPENMP
-                            #pragma omp critical
-#endif
-                            {
-                                if (lminC < minC) {
-                                    minC = lminC;
-                                }
-
-                                if (lmaxC > maxC) {
-                                    maxC = lmaxC;
-                                }
-                            }
-
                         }
+
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
                         // printf("minC=%f maxC=%f coefC=%f\n", minC, maxC, coefC);
 
@@ -6117,33 +6064,29 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < Hd; ir += 1)
+                    for (int ir = 0; ir < Hd; ir += 1) {
                         for (int jr = 0; jr < Wd; jr += 1) {
                             orig[ir][jr] = original->L[ir][jr];
                             orig1[ir][jr] = bufreti->L[ir][jr];
                         }
+                    }
 
-                    tmpl = new LabImage(transformed->W, transformed->H);
                     delete bufreti;
                     bufreti = nullptr;
-
                 } else {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < Hd; ir += 1)
+                    for (int ir = 0; ir < Hd; ir += 1) {
                         for (int jr = 0; jr < Wd; jr += 1) {
                             orig[ir][jr] = original->L[ir][jr];
                             orig1[ir][jr] = transformed->L[ir][jr];
                         }
-
-
-                    tmpl = new LabImage(transformed->W, transformed->H);
-
-
+                    }
                 }
+                tmpl = new LabImage(transformed->W, transformed->H);
             }
 
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
@@ -6158,70 +6101,35 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
             if (!lp.invret) {
-                float minL = 100000.f;
-                float maxL = -100000.f;
+                float minL = tmpl->L[0][0] - bufreti->L[0][0];
+                float maxL = minL;
 #ifdef _OPENMP
-                #pragma omp parallel
-#endif
-                {
-                    float lminL = 100000.f;
-                    float lmaxL = -100000.f;
-#ifdef _OPENMP
-                    #pragma omp for
+                #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < Hd; ir++) {
-                        for (int jr = 0; jr < Wd; jr++) {
-                            buflight[ir][jr] = (tmpl->L[ir][jr] - bufreti->L[ir][jr]);
-
-                            //        buflight[ir][jr] = loctemp->L[ir][jr] - origcbdl->L[ir][jr];
-                            if (buflight[ir][jr] < lminL) {
-                                lminL = buflight[ir][jr];
-                            }
-
-                            if (buflight[ir][jr] > lmaxL) {
-                                lmaxL = buflight[ir][jr];
-                            }
-                        }
+                for (int ir = 0; ir < Hd; ir++) {
+                    for (int jr = 0; jr < Wd; jr++) {
+                        buflight[ir][jr] = tmpl->L[ir][jr] - bufreti->L[ir][jr];
+                        minL = rtengine::min(minL, buflight[ir][jr]);
+                        maxL = rtengine::max(maxL, buflight[ir][jr]);
                     }
-
-#ifdef _OPENMP
-                    #pragma omp critical
-#endif
-                    {
-                        if (lminL < minL) {
-                            minL = lminL;
-                        }
-
-                        if (lmaxL > maxL) {
-                            maxL = lmaxL;
-                        }
-                    }
-
                 }
-                float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
-                //     }
-                //    }
 
-                printf("minL=%f maxL=%f coef=%f\n",  minL, maxL, coef);
+                float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+
+                //printf("minL=%f maxL=%f coef=%f\n",  minL, maxL, coef);
 
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
                         buflight[ir][jr] /= coef;
                     }
                 }
-            }
 
-            if (lp.softradiusret > 0.f && !lp.invret) {
-                softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
-            }
+                if (lp.softradiusret > 0.f) {
+                    softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
+                }
 
-//new shape detection
-
-
-            if (!lp.invret) {
                 transit_shapedetect_retinex(4, bufreti, buflight, bufchro, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, lp, original, transformed, cx, cy, sk);
-
             } else {
                 InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
             }
@@ -6274,46 +6182,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                     if (!lp.invret) {
-                        float minC = 200000.f;
-                        float maxC = -200000.f;
+                        float minC = sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0])) - Chprov;
+                        float maxC = minC;
 #ifdef _OPENMP
-                        #pragma omp parallel
-#endif
-                        {
-                            float lminC = 100000.f;
-                            float lmaxC = -100000.f;
-#ifdef _OPENMP
-                            #pragma omp for
+                        #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
 #endif
 
-                            for (int ir = 0; ir < Hd; ir++) {
-                                for (int jr = 0; jr < Wd; jr++) {
-                                    bufchro[ir][jr] = (sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - Chprov);
-
-                                    if (bufchro[ir][jr] < lminC) {
-                                        lminC = bufchro[ir][jr];
-                                    }
-
-                                    if (bufchro[ir][jr] > lmaxC) {
-                                        lmaxC = bufchro[ir][jr];
-                                    }
-                                }
+                        for (int ir = 0; ir < Hd; ir++) {
+                            for (int jr = 0; jr < Wd; jr++) {
+                                bufchro[ir][jr] = sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - Chprov;
+                                minC = rtengine::min(minC, bufchro[ir][jr]);
+                                maxC = rtengine::max(maxC, bufchro[ir][jr]);
                             }
-
-#ifdef _OPENMP
-                            #pragma omp critical
-#endif
-                            {
-                                if (lminC < minC) {
-                                    minC = lminC;
-                                }
-
-                                if (lmaxC > maxC) {
-                                    maxC = lmaxC;
-                                }
-                            }
-
                         }
+
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
                         // printf("minC=%f maxC=%f coefC=%f\n",  minC, maxC, coefC);
 
@@ -6321,13 +6203,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             for (int jr = 0; jr < Wd; jr++) {
                                 bufchro[ir][jr] /= coefC;
                             }
-
                         }
-
                     }
-
-
-
                 }  else {
 
 #ifdef _OPENMP
