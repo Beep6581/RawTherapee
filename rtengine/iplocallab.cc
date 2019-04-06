@@ -71,7 +71,6 @@ namespace
 {
 
 void calcGammaLut(double gamma, double ts, LUTf &gammaLut) {
-    BENCHFUNMICRO
     double pwr = 1.0 / gamma;
     double gamm = gamma;
     const double gamm2 = gamma;
