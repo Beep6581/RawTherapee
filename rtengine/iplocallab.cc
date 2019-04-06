@@ -5439,13 +5439,52 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, skinprot, false, b_l, t_l, t_r, b_r, choice, sk);
+
+                    float minL = 100000.f;
+                    float maxL = -100000.f;
+#ifdef _OPENMP
+                    #pragma omp parallel
+#endif
+                    {
+                        float lminL = 100000.f;
+                        float lmaxL = -100000.f;
+#ifdef _OPENMP
+                        #pragma omp for
+#endif
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                buflight[ir][jr] = loctemp->L[ir][jr] - origcbdl->L[ir][jr];
+                                if(buflight[ir][jr] < lminL) {
+                                    lminL = buflight[ir][jr];
+                                }
+                                if(buflight[ir][jr] > lmaxL) {
+                                    lmaxL = buflight[ir][jr];
+                                }
+                            }
+                        }
+#ifdef _OPENMP
+                        #pragma omp critical
+#endif
+                        {
+                            if (lminL < minL) {
+                                minL = lminL;
+                            }
+
+                            if (lmaxL > maxL) {
+                                maxL = lmaxL;
+                            }
+                        }
+
+                    }
+                    float coef = 0.01f* (max(fabs(minL), fabs(maxL)));
+
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
-                            buflight[ir][jr] = CLIPRET((loctemp->L[ir][jr] - origcbdl->L[ir][jr]) / 330.f);
+                            buflight[ir][jr] /= coef;
                         }
                     }
 
@@ -5472,13 +5511,57 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
+
+
+                    float minC = 200000.f;
+                    float maxC = -200000.f;
+#ifdef _OPENMP
+                    #pragma omp parallel
+#endif
+                    {
+                        float lminC = 200000.f;
+                        float lmaxC = -200000.f;
+#ifdef _OPENMP
+                        #pragma omp for
+#endif
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                bufchrom[ir][jr] = (loctemp->L[ir][jr] - sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr])));
+                                if(bufchrom[ir][jr] < lminC) {
+                                    lminC = bufchrom[ir][jr];
+                                }
+                                if(bufchrom[ir][jr] > lmaxC) {
+                                    lmaxC = bufchrom[ir][jr];
+                                }
+                            }
+                        }
+#ifdef _OPENMP
+                        #pragma omp critical
+#endif
+                        {
+                            if (lminC < minC) {
+                                minC = lminC;
+                            }
+
+                            if (lmaxC > maxC) {
+                                maxC = lmaxC;
+                            }
+                        }
+
+                    }
+                    float coefC = 0.01f* (max(fabs(minC), fabs(maxC)));
+                   // printf("minC=%f maxC=%f coefC=%f\n", minC, maxC, coefC);
+
+
+
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                         for (int ir = 0; ir < bfh; ir++) {
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufchrom[ir][jr] = CLIPRET((loctemp->L[ir][jr] - sqrt(SQR(loctemp->a[ir][jr]) + SQR(loctemp->b[ir][jr]))) / 200.f);
+                                bufchrom[ir][jr] /= coefC;
                             }
                         }
 
