@@ -4251,6 +4251,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             if (lp.blurmet != 1) { //blur and noise (center)
+                    float minL = tmp1->L[0][0] - bufgb->L[0][0];
+                    float maxL = minL;
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
+#endif
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            buflight[ir][jr] = tmp1->L[ir][jr] - bufgb->L[ir][jr];
+                            minL = rtengine::min(minL, buflight[ir][jr]);
+                            maxL = rtengine::max(maxL, buflight[ir][jr]);
+                        }
+                    }
+
+                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -4258,10 +4272,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 for (int ir = 0; ir < bfh; ir++)
                     for (int jr = 0; jr < bfw; jr++) {
-                        float rL;
-                        rL = CLIPRET((tmp1->L[ir][jr] - bufgb->L[ir][jr]) / 328.f);
-                        buflight[ir][jr] = rL;
-
+                        buflight[ir][jr] /= coef;
                     }
 
 #ifdef _OPENMP
@@ -4273,6 +4284,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         orig[ir][jr] = sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
                     }
 
+                        float minC = sqrt((SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0]))) - orig[0][0];
+                        float maxC = minC;
+#ifdef _OPENMP
+                        #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                bufchro[ir][jr] = sqrt((SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr]))) - orig[ir][jr];
+                                minC = rtengine::min(minC, bufchro[ir][jr]);
+                                maxC = rtengine::max(maxC, bufchro[ir][jr]);
+                            }
+                        }
+
+                        float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -4280,10 +4306,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 for (int ir = 0; ir < bfh; ir++)
                     for (int jr = 0; jr < bfw; jr++) {
-                        float rch;
-                        rch = CLIPRET((sqrt((SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr]))) - orig[ir][jr]) / 328.f);
-                        bufchro[ir][jr] = rch;
-                    }
+                        bufchro[ir][jr] /= coefC;                   }
 
                 BlurNoise_Local(call, tmp1, tmp2, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
@@ -5421,7 +5444,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //Tone mapping
 
-//&& lp.tonemapena disable
         if (lp.strengt != 0.f  && lp.tonemapena) {
             if (call <= 3) { //simpleprocess dcrop improcc
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -5450,6 +5472,26 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), 5, sk);
+                    float minL = tmp1->L[0][0] - bufgb->L[0][0];
+                    float maxL = minL;
+                    float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
+                    float maxC = minC;
+
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
+#endif
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            buflight[ir][jr] = tmp1->L[ir][jr] - bufgb->L[ir][jr];
+                            minL = rtengine::min(minL, buflight[ir][jr]);
+                            maxL = rtengine::max(maxL, buflight[ir][jr]);
+                            bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
+                            minC = rtengine::min(minC, bufchro[ir][jr]);
+                            maxC = rtengine::max(maxC, bufchro[ir][jr]);
+                        }
+                    }
+                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+                    float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -5457,16 +5499,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
-                            buflight[y][x] = CLIPRET((tmp1->L[y][x] - bufgb->L[y][x]) / 400.f);
-                            bufchro[y][x] = CLIPRET((sqrt(SQR(tmp1->a[y][x]) + SQR(tmp1->b[y][x])) - sqrt(SQR(bufgb->a[y][x]) + SQR(bufgb->b[y][x]))) / 250.f);
+                            buflight[y][x] /= coef;
+                            bufchro[y][x] /= coefC;
                         }
                     }
-
                     bufgb.reset();
                     transit_shapedetect(8, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 }
             }
         }
+//end TM
 
 //begin cbdl
         if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f  || lp.clarityml != 0.f) && lp.cbdlena) {
@@ -5582,7 +5624,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-                        // printf("minC=%f maxC=%f coefC=%f\n", minC, maxC, coefC);
 
 
 
