@@ -183,6 +183,7 @@ private:
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const clarityml;
+    Adjuster* const contresid;
     Adjuster* const sensicb;
     Adjuster* const softradiuscb;
     // Denoise
@@ -263,6 +264,7 @@ private:
     Gtk::Frame* maskexpFrame;
     Gtk::Frame* maskSHFrame;
     Gtk::Frame* gridFrame;
+    Gtk::Frame* residFrame;
     LabGrid *labgrid;
     // Others
     /**

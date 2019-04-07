@@ -515,6 +515,7 @@ public:
         bool threshold;
         bool sensicb;
         bool clarityml;
+        bool contresid;
         bool softradiuscb;
         // Denoise
         bool expdenoi;

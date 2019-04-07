@@ -905,6 +905,7 @@ HISTORY_MSG_657;Local - Retinex soft radius
 HISTORY_MSG_658;Local - CBDL soft radius
 HISTORY_MSG_659;L*a*b Spot transition-weakening
 HISTORY_MSG_660;Local - cbdl clarity
+HISTORY_MSG_661;Local - cbdl contrast residual
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2043,6 +2044,8 @@ TP_LOCALLAB_MASK;Mask:
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADMASKCOL;Radius
+TP_LOCALLAB_RESID;Residual Image
+TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_RETI;Retinex
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_STREN;Strength

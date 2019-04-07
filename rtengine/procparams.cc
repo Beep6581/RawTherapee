@@ -2498,6 +2498,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     threshold(0.2),
     sensicb(15),
     clarityml(0),
+    contresid(0),
     softradiuscb(0.0),
     // Denoise
     expdenoi(false),
@@ -2689,6 +2690,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && threshold == other.threshold
         && sensicb == other.sensicb
         && clarityml == other.clarityml
+        && contresid == other.contresid
         && softradiuscb == other.softradiuscb
         // Denoise
         && expdenoi == other.expdenoi
@@ -3822,6 +3824,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).threshold, "Locallab", "Threshold_" + std::to_string(i), spot.threshold, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensicb, "Locallab", "Sensicb_" + std::to_string(i), spot.sensicb, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).clarityml, "Locallab", "Clarityml_" + std::to_string(i), spot.clarityml, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).contresid, "Locallab", "Contresid_" + std::to_string(i), spot.contresid, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiuscb, "Locallab", "Softradiuscb_" + std::to_string(i), spot.softradiuscb, keyFile);
                 // Denoise
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expdenoi, "Locallab", "Expdenoi_" + std::to_string(i), spot.expdenoi, keyFile);
@@ -5101,6 +5104,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Threshold_" + std::to_string(i), pedited, spot.threshold, spotEdited.threshold);
                 assignFromKeyfile(keyFile, "Locallab", "Sensicb_" + std::to_string(i), pedited, spot.sensicb, spotEdited.sensicb);
                 assignFromKeyfile(keyFile, "Locallab", "Clarityml_" + std::to_string(i), pedited, spot.clarityml, spotEdited.clarityml);
+                assignFromKeyfile(keyFile, "Locallab", "Contresid_" + std::to_string(i), pedited, spot.contresid, spotEdited.contresid);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + std::to_string(i), pedited, spot.softradiuscb, spotEdited.softradiuscb);
                 // Denoise
                 assignFromKeyfile(keyFile, "Locallab", "Expdenoi_" + std::to_string(i), pedited, spot.expdenoi, spotEdited.expdenoi);
