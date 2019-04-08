@@ -578,8 +578,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sensh = local_sensih;
     lp.dehaze = local_dehaze;
     lp.senscb = local_sensicb;
-    lp.clarityml = 0.f; //local_clarityml;
-    lp.contresid = 0.f; //local_contresid;
+    lp.clarityml = local_clarityml;
+    lp.contresid = local_contresid;
     lp.cont = local_contrast;
     lp.ligh = local_lightness;
     lp.lowA = labgridALowloc;
@@ -5521,8 +5521,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
                 const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
                 const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                int bfh = yend - ystart;
-                int bfw = xend - xstart;
+                int bfh = yend - ystart + del;
+                int bfw = xend - xstart + del;
+                 //   int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+                 //   int bfw = int (lp.lx + lp.lxL) + del;
 
                 if (bfw > 32 && bfh > 32) {
                     array2D<float> bufsh(bfw, bfh);
@@ -5549,7 +5551,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             loctemp->b[y - ystart][x - xstart] = origcbdl->b[y - ystart][x - xstart] = original->b[y][x];
                         }
                     }
-/*
+
                     if(lp.clarityml != 0.f && lp.mulloc[4] == 1.0) {//enabled last level to retrieve level 5 and residual image in case user not select level 5
                         lp.mulloc[4]= 1.001f;
                     }
@@ -5557,7 +5559,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if(lp.contresid != 0.f && lp.mulloc[4] == 1.0) {//enabled last level to retrieve level 5 and residual image in case user not select level 5
                         lp.mulloc[4]= 1.001f;
                     }
-*/
+
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, skinprot, false, b_l, t_l, t_r, b_r, choice, sk);
 
                     float minL = loctemp->L[0][0] - origcbdl->L[0][0];
@@ -5606,7 +5608,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         float multc[5];
                         float clarich = 0.5f * lp.clarityml;
-/*
+
                         if(clarich > 0.f && lp.mulloc[0] == 1.f) { //to enabled in case of user select only clarity
                             lp.mulloc[0] = 1.01f;
                         }
@@ -5614,7 +5616,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         if(lp.contresid != 0.f && lp.mulloc[0] == 1.f) { //to enabled in case of user select only clarity
                             lp.mulloc[0] = 1.01f;
                         }
-*/
+
                         for (int lv = 0; lv < 5; lv++) {
                             multc[lv] = rtengine::max((lp.chromacb * ((float) lp.mulloc[lv] - 1.f) / 100.f) + 1.f, 0.f);
                         }

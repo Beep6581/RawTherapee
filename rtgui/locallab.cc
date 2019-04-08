@@ -950,7 +950,7 @@ Locallab::Locallab():
     ToolParamBlock* const residBox = Gtk::manage(new ToolParamBlock());    
     residBox->pack_start(*clarityml);
     residBox->pack_start(*contresid);
-//    residFrame->add(*residBox);
+    residFrame->add(*residBox);
     cbdlBox->pack_start(*residFrame);
     cbdlBox->pack_start(*softradiuscb);
     cbdlBox->pack_start(*sensicb);

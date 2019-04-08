@@ -354,18 +354,24 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     }
 
     // with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
-    float ** buffer = dirpyrlo[lastlevel - 1];
-/*
-   //  array2D<float> resid5(srcwidth, srcheight);
-     array2D<float> residbuff(srcwidth, srcheight);
-     
-        #pragma omp parallel for
-        for (int i = 0; i < srcheight; i++) {
+//    float ** buffer = dirpyrlo[lastlevel - 1];
+        array2D<float> residbuff(srcwidth, srcheight);
+        array2D<float> resid5(srcwidth, srcheight);
+        
+    #pragma omp parallel for
+        for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
-              //  resid5[i][j] = dirpyrlo[lastlevel - 1][i][j]; //CLIPLL(buffer[i][j]);                
-                residbuff[i][j] = buffer[i][j]; 
+                residbuff[i][j] = 0.f;
             }
-        }
+
+    #pragma omp parallel for
+        for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                residbuff[i][j] = dirpyrlo[lastlevel - 1][i][j];
+                resid5[i][j] = dirpyrlo[lastlevel - 1][i][j];               
+            }
+   
+    
     double avg = 0.f;
     if(contres != 0.f) {
         int ng = 0;
@@ -399,30 +405,29 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
             }
     }
     
-    */
+    
     for (int level = lastlevel - 1; level > 0; level--) {
-        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], buffer /*residbuff*/, srcwidth, srcheight, level, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
+        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], residbuff, srcwidth, srcheight, level, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
     }
 
     scale = scalesloc[0];
 
-    idirpyr_eq_channel_loc(dirpyrlo[0], src, buffer/*residbuff*/, srcwidth, srcheight, 0, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
+    idirpyr_eq_channel_loc(dirpyrlo[0], src, residbuff, srcwidth, srcheight, 0, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-//    array2D<float> loct(srcwidth, srcheight);
-//    #pragma omp parallel for
-//        for (int i = 0; i < srcheight; i++)
-//            for (int j = 0; j < srcwidth; j++) {
-//                loct[i][j] = CLIPLL(residbuff[i][j]);  // TODO: Really a clip necessary?
-//            }
+    array2D<float> loct(srcwidth, srcheight);
+    #pragma omp parallel for
+        for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                loct[i][j] = CLIPLL(residbuff[i][j]);  // TODO: Really a clip necessary?
+            }
 
- //   float clar = 0.01f * mergeL;
+    float clar = 0.01f * mergeL;
 
     #pragma omp parallel for
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
-               //  loctemp[i][j] = CLIPLL((1.f + clar) * loct[i][j] - clar * resid5[i][j]);//there is a bug ==> leads to crash in some cases but where ?? 
-                 loctemp[i][j] = CLIPLL(buffer[i][j]);
+                 loctemp[i][j] = CLIPLL((1.f + clar) * loct[i][j] - clar * resid5[i][j]);
            }
 }
 
@@ -797,7 +802,6 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     } else {
         offs = -1.f;
     }
-
     float multbis[5];
 
     multbis[level] = mult[level]; //multbis to reduce artifacts for high values mult
@@ -809,11 +813,33 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     //  if(level == 5 && mult[level] > 1.f) {
     //      multbis[level] = 1.f + 0.45f * (mult[level] - 1.f);
     //  }
-
+/*
+    LUTf irangefn(0x20000);
+    { 
+        const float noisehi = 1.33f * noise * 0.1f * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * 0.1f * dirpyrThreshold / expf(level * log(3.0));
+     //   const float noisehi = 1.33f * noise * 0.1 / expf(level * log(3.0)), noiselo = 0.66f * noise * 0.1 / expf(level * log(3.0));
+        //printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
+        printf("moihi=%f noilo=%f\n", noisehi, noiselo);
+        for (int i = 0; i < 0x20000; i++) {
+            if (abs(i - 0x10000) > noisehi || multbis[level] < 1.0) {
+                irangefn[i] = multbis[level] + offs;
+            } else {
+                if (abs(i - 0x10000) < noiselo) {
+                    irangefn[i] = 1.f + offs ;
+                } else {
+                    irangefn[i] =  1.f + offs + (multbis[level] - 1.f) * (noisehi) / (noisehi - noiselo + 0.01f) ;
+                }
+            }
+                          //     printf("i=%f ", irangefn[i]);
+ 
+        }
+    }
+*/    
     LUTf irangefn(0x20000);
     {
-        const float noisehi = 1.33f * noise * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * dirpyrThreshold / expf(level * log(3.0));
+        const float noisehi = 1.33f * noise * 0.1f * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * 0.1f * dirpyrThreshold / expf(level * log(3.0));
         //printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
+        printf("noihi=%f noilo=%f\n", noisehi, noiselo);
 
         for (int i = 0; i < 0x20000; i++) {
             if (abs(i - 0x10000) > noisehi || multbis[level] < 1.0) {
@@ -827,18 +853,26 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
             }
         }
     }
+    
 
-    if (skinprot == 0.f)
+ //   if (skinprot == 0.f)
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 float hipass = (data_fine[i][j] - data_coarse[i][j]);
-                buffer[i][j] += irangefn[hipass + 0x10000] * hipass;
+                 //   buffer[i][j] += irangefn[hipass + 0x10000] * hipass;
+              //   if((hipass) <= 0.f) printf("N");
+              //   if((hipass  + 0x10000 ) >=  0x15000f) printf("T");
+                    buffer[i][j] += CLIPLL(irangefn[hipass + 0x10000] * hipass);
+                  //  buffer[i][j] += hipass;
+                    buffer[i][j] = CLIPLL(buffer[i][j]);
+                                   //  printf("bu=%f ", buffer[i][j]);
+
             }
         }
-
+irangefn.clear();
     /*
     else if(skinprot > 0.f)
     #ifdef _OPENMP
