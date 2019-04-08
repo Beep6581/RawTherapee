@@ -5521,8 +5521,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
                 const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
                 const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                int bfh = yend - ystart + del;
-                int bfw = xend - xstart + del;
+                int bfh = yend - ystart;
+                int bfw = xend - xstart;
                  //   int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                  //   int bfw = int (lp.lx + lp.lxL) + del;
 
