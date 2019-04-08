@@ -649,6 +649,7 @@ void Options::setDefaults()
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
     cropGuides = CROP_GUIDE_FULL;
     cropAutoFit = false;
+    showtooltip = true;
 
     rtSettings.thumbnail_inspector_mode = rtengine::Settings::ThumbnailInspectorMode::JPEG;
 }
@@ -1624,6 +1625,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
                 }
 
+                if (keyFile.has_key("Color Management", "Showtooltip")) {//show tooltip in locallab
+                    showtooltip = keyFile.get_boolean("Color Management", "Showtooltip");
+                }
+
             }
 
             if (keyFile.has_group("ICC Profile Creator")) {
@@ -2208,6 +2213,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
         keyFile.set_integer("Color Management", "Previewselection", rtSettings.previewselection);
         keyFile.set_double("Color Management", "Cbdlsensi", rtSettings.cbdlsensi);
+        keyFile.set_boolean("Color Management", "Showtooltip", showtooltip);
 
         keyFile.set_string("ICC Profile Creator", "PimariesPreset", ICCPC_primariesPreset);
         keyFile.set_double("ICC Profile Creator", "RedPrimaryX", ICCPC_redPrimaryX);
