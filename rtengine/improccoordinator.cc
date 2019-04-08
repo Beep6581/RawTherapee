@@ -553,7 +553,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 fattal_11_dcrop_cache = nullptr;
             }
 
-            ipf.dehaze(orig_prev);
+            ipf.dehaze(orig_prev, params->dehaze);
             ipf.ToneMapFattal02(orig_prev);
 
             if (oprevi != orig_prev) {

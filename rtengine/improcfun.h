@@ -44,12 +44,13 @@ namespace procparams
 
 class ProcParams;
 
+struct DehazeParams;
 struct DirPyrDenoiseParams;
+struct LocallabParams;
 struct SharpeningParams;
 struct VibranceParams;
 struct VignettingParams;
 struct WaveletParams;
-struct LocallabParams;
 
 }
 
@@ -400,8 +401,7 @@ public:
     void Badpixelscam(CieImage * ncie, double radius, int thresh, int mode, float chrom, bool hotbad);
     void BadpixelsLab(LabImage * lab, double radius, int thresh, float chrom);
 
-    void dehaze(Imagefloat *rgb);
-    void dehazeloc(Imagefloat *rgb, float deha, float depth);
+    void dehaze(Imagefloat *rgb, const DehazeParams &dehazeParams);
     void ToneMapFattal02(Imagefloat *rgb);
     void localContrast(LabImage *lab);
     void localContrastloc(LabImage *lab, int scale,  int rad, float amo, float darkn, float lightn, float **loctemp);

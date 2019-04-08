@@ -209,9 +209,9 @@ void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, arr
 } // namespace
 
 
-void ImProcFunctions::dehaze(Imagefloat *img)
+void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
 {
-    if (!params->dehaze.enabled) {
+    if (!dehazeParams.enabled) {
         return;
     }
 
@@ -219,7 +219,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
     
     const int W = img->getWidth();
     const int H = img->getHeight();
-    const float strength = LIM01(float(params->dehaze.strength) / 100.f * 0.9f);
+    const float strength = LIM01(float(dehazeParams.strength) / 100.f * 0.9f);
 
     if (options.rtSettings.verbose) {
         std::cout << "dehaze: strength = " << strength << std::endl;
@@ -288,7 +288,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
         std::cout << "dehaze: max distance is " << max_t << std::endl;
     }
 
-    float depth = -float(params->dehaze.depth) / 100.f;
+    float depth = -float(dehazeParams.depth) / 100.f;
     const float t0 = max(1e-3f, std::exp(depth * max_t));
     const float teps = 1e-3f;
 #ifdef _OPENMP
@@ -308,7 +308,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
                 }
             }
             float mt = max(t[y][x], t0, tl + teps, tu + teps);
-            if (params->dehaze.showDepthMap) {
+            if (dehazeParams.showDepthMap) {
                 img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt);
             } else {
                 float r = (rgb[0] - ambient[0]) / mt + ambient[0];
@@ -324,124 +324,5 @@ void ImProcFunctions::dehaze(Imagefloat *img)
 
     img->normalizeFloatTo65535();
 }
-
-
-void ImProcFunctions::dehazeloc(Imagefloat *img, float deha, float depth)
-{
-
-    img->normalizeFloatTo1();
-    
-    const int W = img->getWidth();
-    const int H = img->getHeight();
-    float strength = deha;//LIM01(float(params->locallab.dehaze) / 100.f * 0.9f);
-
-    if (options.rtSettings.verbose) {
-        std::cout << "dehaze: strength = " << strength << std::endl;
-    }
-
-    array2D<float> dark(W, H);
-
-    int patchsize = max(int(5 / scale), 2);
-    int npatches = 0;
-    float ambient[3];
-    array2D<float> &t_tilde = dark;
-    float max_t = 0.f;
-
-    {
-        array2D<float> R(W, H);
-        array2D<float> G(W, H);
-        array2D<float> B(W, H);
-        extract_channels(img, R, G, B, patchsize, 1e-1, multiThread);
-    
-        patchsize = max(max(W, H) / 600, 2);
-        npatches = get_dark_channel(R, G, B, dark, patchsize, nullptr, false, multiThread);
-        DEBUG_DUMP(dark);
-
-        max_t = estimate_ambient_light(R, G, B, dark, patchsize, npatches, ambient);
-
-        if (options.rtSettings.verbose) {
-            std::cout << "dehaze: ambient light is "
-                      << ambient[0] << ", " << ambient[1] << ", " << ambient[2]
-                      << std::endl;
-        }
-
-        get_dark_channel(R, G, B, dark, patchsize, ambient, true, multiThread);
-    }
-
-    if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
-        if (options.rtSettings.verbose) {
-            std::cout << "dehaze: no haze detected" << std::endl;
-        }
-        img->normalizeFloatTo65535();
-        return; // probably no haze at all
-    }
-
-    DEBUG_DUMP(t_tilde);
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
-#endif
-    for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
-            dark[y][x] = 1.f - strength * dark[y][x];
-        }
-    }
-
-    const int radius = patchsize * 4;
-    const float epsilon = 1e-5;
-    array2D<float> &t = t_tilde;
-
-    {
-        array2D<float> guideB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
-        guidedFilter(guideB, t_tilde, t, radius, epsilon, multiThread);
-    }
-        
-    DEBUG_DUMP(t);
-
-    if (options.rtSettings.verbose) {
-        std::cout << "dehaze: max distance is " << max_t << std::endl;
-    }
-
-    float dept = depth;
-    if (options.rtSettings.verbose) {
-        std::cout << "dehaze: depth = " << dept << std::endl;
-    }
-    
-    const float t0 = max(1e-3f, std::exp(dept * max_t));
-    const float teps = 1e-3f;
-#ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
-#endif
-    for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
-            // ensure that the transmission is such that to avoid clipping...
-            float rgb[3] = { img->r(y, x), img->g(y, x), img->b(y, x) };
-            // ... t >= tl to avoid negative values
-            float tl = 1.f - min(rgb[0]/ambient[0], rgb[1]/ambient[1], rgb[2]/ambient[2]);
-            // ... t >= tu to avoid values > 1
-            float tu = t0 - teps;
-            for (int c = 0; c < 3; ++c) {
-                if (ambient[c] < 1) {
-                    tu = max(tu, (rgb[c] - ambient[c])/(1.f - ambient[c]));
-                }
-            }
-            float mt = max(t[y][x], t0, tl + teps, tu + teps);
-            if (params->dehaze.showDepthMap) {
-                img->r(y, x) = img->g(y, x) = img->b(y, x) = 1.f - mt;
-            } else {
-                float r = (rgb[0] - ambient[0]) / mt + ambient[0];
-                float g = (rgb[1] - ambient[1]) / mt + ambient[1];
-                float b = (rgb[2] - ambient[2]) / mt + ambient[2];
-
-                img->r(y, x) = r;
-                img->g(y, x) = g;
-                img->b(y, x) = b;
-            }
-        }
-    }
-
-    img->normalizeFloatTo65535();
-}
-
 
 } // namespace rtengine

@@ -753,7 +753,7 @@ void Crop::update(int todo)
         }
 
         if (need_fattal) {
-            parent->ipf.dehaze(f);
+            parent->ipf.dehaze(f, params.dehaze);
             parent->ipf.ToneMapFattal02(f);
         }
 
