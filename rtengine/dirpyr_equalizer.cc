@@ -813,10 +813,10 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     //  if(level == 5 && mult[level] > 1.f) {
     //      multbis[level] = 1.f + 0.45f * (mult[level] - 1.f);
     //  }
-
+    double sensicrash = settings->cbdlsensi;
     LUTf irangefn(0x20000);
     {
-        const float noisehi = 1.33f * noise * 0.1f * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * 0.1f * dirpyrThreshold / expf(level * log(3.0));
+        const float noisehi = 1.33f * noise * sensicrash * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * sensicrash * dirpyrThreshold / expf(level * log(3.0));
         //printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
        // printf("noihi=%f noilo=%f\n", noisehi, noiselo);
 

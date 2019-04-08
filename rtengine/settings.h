@@ -85,6 +85,7 @@ public:
     double          reduclow;
     bool            detectshape;
     int             previewselection;
+    double          cbdlsensi;
 
 
     Glib::ustring   lensfunDbDirectory; ///< The directory containing the lensfun database. If empty, the system defaults will be used (as described in http://lensfun.sourceforge.net/manual/dbsearch.html)

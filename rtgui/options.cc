@@ -593,6 +593,7 @@ void Options::setDefaults()
     rtSettings.reduclow = 0.85;//transition for luminance out scope
     rtSettings.detectshape = true;//experimental new detection shape
     rtSettings.previewselection = 5;//betwen 1 to 40
+    rtSettings.cbdlsensi = 0.4;//betwen 0.001 to 1
 
 // end locallab
 
@@ -1619,6 +1620,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.previewselection = keyFile.get_integer("Color Management", "Previewselection");
                 }
 
+                if (keyFile.has_key("Color Management", "Cbdlsensi")) {//sensibility to crash for cbdl
+                    rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
+                }
+
             }
 
             if (keyFile.has_group("ICC Profile Creator")) {
@@ -2202,6 +2207,7 @@ void Options::saveToFile(Glib::ustring fname)
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
         keyFile.set_integer("Color Management", "Previewselection", rtSettings.previewselection);
+        keyFile.set_double("Color Management", "Cbdlsensi", rtSettings.cbdlsensi);
 
         keyFile.set_string("ICC Profile Creator", "PimariesPreset", ICCPC_primariesPreset);
         keyFile.set_double("ICC Profile Creator", "RedPrimaryX", ICCPC_redPrimaryX);
