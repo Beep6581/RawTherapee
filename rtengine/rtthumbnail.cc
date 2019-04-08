@@ -1405,7 +1405,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.EPDToneMap (labView, 5, 6);
     }
 
-    ipf.softLight(labView);
+    ipf.softLight(labView, params.softlight);
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (

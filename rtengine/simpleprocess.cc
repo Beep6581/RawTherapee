@@ -1265,7 +1265,7 @@ private:
 
         wavCLVCurve.Reset();
 
-        ipf.softLight(labView);
+        ipf.softLight(labView, params.softlight);
 
         //Colorappearance and tone-mapping associated
 

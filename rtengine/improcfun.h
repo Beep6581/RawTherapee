@@ -48,6 +48,7 @@ struct DehazeParams;
 struct DirPyrDenoiseParams;
 struct LocallabParams;
 struct SharpeningParams;
+struct SoftLightParams;
 struct VibranceParams;
 struct VignettingParams;
 struct WaveletParams;
@@ -409,8 +410,7 @@ public:
    // void shadowsHighlights(LabImage *lab);
     void shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal);
     
-    void softLight(LabImage *lab);
-    void softLightloc(LabImage *lab, LabImage *dst, float blend);
+    void softLight(LabImage *lab, const SoftLightParams &softLightParams);
     void labColorCorrectionRegions(LabImage *lab);
 
     Image8*     lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true);

@@ -361,7 +361,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float est = ((float)locallab.spots.at(sp).estop) / 100.f;
     float scal_tm = ((float)locallab.spots.at(sp).scaltm) / 10.f;
     float rewe = ((float)locallab.spots.at(sp).rewei);
-    float strlight = ((float)locallab.spots.at(sp).streng) / 100.f;
+    float strlight = ((float)locallab.spots.at(sp).streng);
     float strucc = locallab.spots.at(sp).struc;
 
     float thre = locallab.spots.at(sp).thresh;
@@ -5870,8 +5870,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
                     }
                 }
-
-                ImProcFunctions::softLightloc(bufexporig.get(), bufexpfin.get(), lp.strng);
+                bufexpfin->CopyFrom(bufexporig.get());
+                SoftLightParams softLightParams;
+                softLightParams.enabled = true;
+                softLightParams.strength = lp.strng;
+                ImProcFunctions::softLight(bufexpfin.get(), softLightParams);
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
