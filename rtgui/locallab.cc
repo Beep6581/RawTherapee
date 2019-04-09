@@ -712,7 +712,7 @@ Locallab::Locallab():
 
     blurMethod->append(M("TP_LOCALLAB_BLNORM"));
     blurMethod->append(M("TP_LOCALLAB_BLINV"));
-    blurMethod->append(M("TP_LOCALLAB_BLSYM"));
+//    blurMethod->append(M("TP_LOCALLAB_BLSYM"));
     blurMethod->set_active(0);
     if(showtooltip) blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
     blurMethodConn = blurMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blurMethodChanged));
@@ -2481,7 +2481,7 @@ void Locallab::blurMethodChanged()
     } else if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
         sensibn->show();
     } else {
-        sensibn->hide();
+        sensibn->show();
     }
 
     if (blurMethod->get_active_row_number() == 2) {
@@ -4928,7 +4928,7 @@ void Locallab::updateSpecificGUIState()
     } else if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
         sensibn->show();
     } else {
-        sensibn->hide();
+        sensibn->show();
     }
 
     if (blurMethod->get_active_row_number() == 2) {
