@@ -422,9 +422,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.blurmet = 0;
     } else if (locallab.spots.at(sp).blurMethod == "inv") {
         lp.blurmet = 1;
-    } else if (locallab.spots.at(sp).blurMethod == "sym") {
-        lp.blurmet = 2;
-    }
+    } 
 
     if (locallab.spots.at(sp).spotMethod == "norm") {
         lp.excmet = 0;

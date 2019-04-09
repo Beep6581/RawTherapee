@@ -712,7 +712,6 @@ Locallab::Locallab():
 
     blurMethod->append(M("TP_LOCALLAB_BLNORM"));
     blurMethod->append(M("TP_LOCALLAB_BLINV"));
-//    blurMethod->append(M("TP_LOCALLAB_BLSYM"));
     blurMethod->set_active(0);
     if(showtooltip) blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
     blurMethodConn = blurMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blurMethodChanged));
@@ -1804,9 +1803,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).blurMethod = "norm";
                     } else if (blurMethod->get_active_row_number() == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).blurMethod = "inv";
-                    } else if (blurMethod->get_active_row_number() == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).blurMethod = "sym";
-                    }
+                    } 
 
                     pp->locallab.spots.at(pp->locallab.selspot).activlum = activlum->get_active();
                     // Tone Mapping
@@ -2475,20 +2472,6 @@ void Locallab::blurMethodChanged()
 {
     // printf("blurMethodChanged\n");
 
-    // Update Blur & Noise GUI according to blurMethod combobox (to be compliant with updateSpecificGUIState function)
-    if (multiImage && blurMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
-        sensibn->show();
-    } else if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
-        sensibn->show();
-    } else {
-        sensibn->show();
-    }
-
-    if (blurMethod->get_active_row_number() == 2) {
-        strength->hide();
-    } else {
-        strength->show();
-    }
 
     if (getEnabled() && expblur->getEnabled()) {
         if (listener) {
@@ -4500,8 +4483,6 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             blurMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).blurMethod == "inv") {
             blurMethod->set_active(1);
-        } else {
-            blurMethod->set_active(2);
         }
 
         activlum->set_active(pp->locallab.spots.at(index).activlum);
@@ -4922,20 +4903,6 @@ void Locallab::updateSpecificGUIState()
         saturated->set_sensitive(true);
     }
 
-    // Update Blur & Noise GUI according to blurMethod combobox (to be compliant with blurMethodChanged function)
-    if (multiImage && blurMethod->get_active_text() == M("GENERAL_UNCHANGED")) {
-        sensibn->show();
-    } else if (blurMethod->get_active_row_number() == 0 || blurMethod->get_active_row_number() == 2) {
-        sensibn->show();
-    } else {
-        sensibn->show();
-    }
-
-    if (blurMethod->get_active_row_number() == 2) {
-        strength->hide();
-    } else {
-        strength->show();
-    }
 
     // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
     if (multiImage && inversret->get_inconsistent()) {
