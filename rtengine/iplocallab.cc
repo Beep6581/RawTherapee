@@ -1512,7 +1512,7 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                 }
 
                 const float realstrdE = reducdE * buflight[loy - begy][lox - begx];
-                const float realstrchdE = localFactor * (1.f + (reducdE * bufchro[loy - begy][lox - begx]) / 100.f);
+                const float realstrchdE = (1.f + (reducdE * bufchro[loy - begy][lox - begx]) / 100.f);
 
 
                 switch (zone) {
@@ -1541,8 +1541,8 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                         }
 
                         if (!lp.actsp) {
-                            difa *= realstrchdE;
-                            difb *= realstrchdE;
+                            difa *= localFactor * realstrchdE;
+                            difb *= localFactor * realstrchdE;
 
                             if (lp.blurmet == 0) {
                                 transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
