@@ -470,6 +470,7 @@ void Options::setDefaults()
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
+    showtooltip = true;
 
     ICCPC_primariesPreset = "sRGB",
     ICCPC_redPrimaryX = 0.6400;
@@ -649,7 +650,6 @@ void Options::setDefaults()
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
     cropGuides = CROP_GUIDE_FULL;
     cropAutoFit = false;
-    showtooltip = true;
 
     rtSettings.thumbnail_inspector_mode = rtengine::Settings::ThumbnailInspectorMode::JPEG;
 }
@@ -1409,6 +1409,10 @@ void Options::readFromFile(Glib::ustring fname)
                     showFilmStripToolBar = keyFile.get_boolean("GUI", "ShowFilmStripToolBar");
                 }
 
+                if (keyFile.has_key("GUI", "Showtooltip")) {//show tooltip in locallab
+                    showtooltip = keyFile.get_boolean("GUI", "Showtooltip");
+                }
+
                 if (keyFile.has_key("GUI", "FileBrowserToolbarSingleRow")) {
                     FileBrowserToolbarSingleRow = keyFile.get_boolean("GUI", "FileBrowserToolbarSingleRow");
                 }
@@ -1625,9 +1629,6 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
                 }
 
-                if (keyFile.has_key("Color Management", "Showtooltip")) {//show tooltip in locallab
-                    showtooltip = keyFile.get_boolean("Color Management", "Showtooltip");
-                }
 
             }
 
@@ -2164,6 +2165,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "HideTPVScrollbar", hideTPVScrollbar);
         keyFile.set_boolean("GUI", "HistogramWorking", rtSettings.HistogramWorking);
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
+        keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
@@ -2213,7 +2215,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
         keyFile.set_integer("Color Management", "Previewselection", rtSettings.previewselection);
         keyFile.set_double("Color Management", "Cbdlsensi", rtSettings.cbdlsensi);
-        keyFile.set_boolean("Color Management", "Showtooltip", showtooltip);
 
         keyFile.set_string("ICC Profile Creator", "PimariesPreset", ICCPC_primariesPreset);
         keyFile.set_double("ICC Profile Creator", "RedPrimaryX", ICCPC_redPrimaryX);
