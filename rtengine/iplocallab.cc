@@ -5738,10 +5738,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
             int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
             JaggedArray<float> loctemp(bfw, bfh);
-            LabImage *bufloca = nullptr;
+            std::unique_ptr<LabImage> bufloca;
 
+            LabImage *localContrastSource;
             if (call == 2) { //call from simpleprocess
-                bufloca = new LabImage(bfw, bfh);
+                bufloca.reset(new LabImage(bfw, bfh));
 
                 //  JaggedArray<float> hbuffer(bfw, bfh);
                 int begy = lp.yc - lp.lyT;
@@ -5753,39 +5754,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufloca->L[loy - begy][lox - begx] = original->L[y][x];
+                for (int y = 0; y < transformed->H ; y++) {
+                    const int loy = cy + y;
+                    if (loy >= begy && loy < yEn) {
+                        for (int x = 0; x < transformed->W; x++) {
+                            const int lox = cx + x;
+                            if (lox >= begx && lox < xEn) {
+                                bufloca->L[loy - begy][lox - begx] = original->L[y][x];
+                            }
                         }
                     }
+                }
 
-                LocalContrastParams localContrastParams;
-                localContrastParams.enabled = true;
-                localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
-                localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
-                localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
-                localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-                ImProcFunctions::localContrast(bufloca, loctemp, localContrastParams, sk);
-
+                localContrastSource = bufloca.get();
             } else { //call from dcrop.cc
-                LocalContrastParams localContrastParams;
-                localContrastParams.enabled = true;
-                localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
-                localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
-                localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
-                localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-                ImProcFunctions::localContrast(original, loctemp, localContrastParams, sk);
+                localContrastSource = original;
             }
-
+            LocalContrastParams localContrastParams;
+            localContrastParams.enabled = true;
+            localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
+            localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
+            localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
+            localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
+            ImProcFunctions::localContrast(localContrastSource, loctemp, localContrastParams, sk);
 
             //sharpen ellipse and transition
             Sharp_Local(call, loctemp, 1,  hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-
-            delete bufloca;
         }
 
 
