@@ -2064,47 +2064,43 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 }
 
 
-void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, const float hueref,  const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const float hueref, const float chromaref, const float lumaref, const local_params &lp, LabImage *original, LabImage *transformed, int cx, int cy, int sk)
 {
     BENCHFUN
-    const float ach = (float)lp.trans / 100.f;
-    float varsens = lp.senssha;
-
-    if (senstype == 0) {
-        varsens = lp.senssha;
-
-    } else if (senstype == 1) {
-        varsens = lp.senslc;
-    }
+    const float ach = lp.trans / 100.f;
+    const float varsens = senstype == 1 ? lp.senslc : lp.senssha;
 
     //balance deltaE
     float kL = lp.balance;
     float kab = 1.f;
     balancedeltaE(kL, kab);
+    kab /= SQR(327.68f);
+    kL /= SQR(327.68f);
 
-    int GW = transformed->W;
-    int GH = transformed->H;
+    const int GW = transformed->W;
+    const int GH = transformed->H;
 
-    LabImage *origblur = new LabImage(GW, GH);
-    float refa = chromaref * cos(hueref);
-    float refb = chromaref * sin(hueref);
+    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const float refa = chromaref * cos(hueref) * 327.68f;
+    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refL = lumaref * 327.68f;
+    const float radius = 3.f / sk;
 
-
-    float radius = 3.f / sk;
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel if (multiThread)
 #endif
     {
         gaussianBlur(original->L, origblur->L, GW, GH, radius);
         gaussianBlur(original->a, origblur->a, GW, GH, radius);
         gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
     }
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int begy = int (lp.yc - lp.lyT);
+        const int begx = int (lp.xc - lp.lxL);
         const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
@@ -2116,24 +2112,17 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
 #endif
 
         for (int y = 0; y < transformed->H; y++) {
-
             const int loy = cy + y;
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
             if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                for (int x = 0; x < transformed->W; x++) {
-                    transformed->L[y][x] = original->L[y][x];
-                }
-
                 continue;
             }
 
             for (int x = 0; x < transformed->W; x++) {
-                int lox = cx + x;
+                const int lox = cx + x;
                 int zone = 0;
                 float localFactor = 1.f;
-                int begx = int (lp.xc - lp.lxL);
-                int begy = int (lp.yc - lp.lyT);
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -2142,54 +2131,27 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp,  int senstype, cons
                 }
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
-                    transformed->L[y][x] = original->L[y][x];
                     continue;
                 }
 
-                float rL = origblur->L[y][x] / 327.68f;
-                float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
+                const float dE = sqrt(kab * (SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x])) + kL * SQR(refL - origblur->L[y][x]));
 
                 float reducdE = 0.f;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
+                reducdE *= localFactor;
 
-                switch (zone) {
+                float difL;
 
-                    case 1: { // inside transition zone
-                        float factorx = localFactor;
-                        float difL;
-
-                        if (call == 2) {
-                            difL = loctemp[loy - begy][lox - begx] - original->L[y][x];
-                        } else {
-                            difL = loctemp[y][x] - original->L[y][x];
-
-                        }
-
-                        difL *= factorx;
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-
-                        break;
-                    }
-
-                    case 2: { // inside selection => full effect, no transition
-                        float difL;
-
-                        if (call == 2) {
-                            difL = loctemp[loy - begy][lox - begx] - original->L[y][x];
-                        } else  {
-                            difL = loctemp[y][x] - original->L[y][x];
-                        }
-
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-                    }
+                if (call == 2) {
+                    difL = loctemp[loy - begy][lox - begx] - original->L[y][x];
+                } else {
+                    difL = loctemp[y][x] - original->L[y][x];
                 }
+                transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
             }
         }
     }
-    delete origblur;
 }
-
-
 
 void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromaref, float lumaref, float sobelref, float meansobel, const struct local_params & lp, const LabImage * original, LabImage * transformed, const LabImage * rsv, const LabImage * reserv, int cx, int cy, int sk)
 {
@@ -5626,10 +5588,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
             int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
             JaggedArray<float> loctemp(bfw, bfh);
-            LabImage *bufloca = nullptr;
+            std::unique_ptr<LabImage> bufloca;
 
+            LabImage *localContrastSource;
             if (call == 2) { //call from simpleprocess
-                bufloca = new LabImage(bfw, bfh);
+                bufloca.reset(new LabImage(bfw, bfh));
 
                 //  JaggedArray<float> hbuffer(bfw, bfh);
                 int begy = lp.yc - lp.lyT;
@@ -5641,29 +5604,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufloca->L[loy - begy][lox - begx] = original->L[y][x];
+                for (int y = 0; y < transformed->H ; y++) {
+                    const int loy = cy + y;
+                    if (loy >= begy && loy < yEn) {
+                        for (int x = 0; x < transformed->W; x++) {
+                            const int lox = cx + x;
+                            if (lox >= begx && lox < xEn) {
+                                bufloca->L[loy - begy][lox - begx] = original->L[y][x];
+                            }
                         }
                     }
+                }
 
-                ImProcFunctions::localContrastloc(bufloca, sk, params->locallab.spots.at(sp).lcradius, params->locallab.spots.at(sp).lcamount, params->locallab.spots.at(sp).lcdarkness, params->locallab.spots.at(sp).lightness, loctemp);
-
+                localContrastSource = bufloca.get();
             } else { //call from dcrop.cc
-
-                ImProcFunctions::localContrastloc(original, sk, params->locallab.spots.at(sp).lcradius, params->locallab.spots.at(sp).lcamount, params->locallab.spots.at(sp).lcdarkness, params->locallab.spots.at(sp).lightness, loctemp);
-
+                localContrastSource = original;
             }
-
+            LocalContrastParams localContrastParams;
+            localContrastParams.enabled = true;
+            localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
+            localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
+            localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
+            localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
+            ImProcFunctions::localContrast(localContrastSource, loctemp, localContrastParams, sk);
 
             //sharpen ellipse and transition
             Sharp_Local(call, loctemp, 1,  hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-
-            delete bufloca;
         }
 
 

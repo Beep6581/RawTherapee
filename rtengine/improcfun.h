@@ -46,6 +46,7 @@ class ProcParams;
 
 struct DehazeParams;
 struct DirPyrDenoiseParams;
+struct LocalContrastParams;
 struct LocallabParams;
 struct SharpeningParams;
 struct SoftLightParams;
@@ -404,8 +405,7 @@ public:
 
     void dehaze(Imagefloat *rgb, const DehazeParams &dehazeParams);
     void ToneMapFattal02(Imagefloat *rgb);
-    void localContrast(LabImage *lab);
-    void localContrastloc(LabImage *lab, int scale,  int rad, float amo, float darkn, float lightn, float **loctemp);
+    void localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, double scale);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
    // void shadowsHighlights(LabImage *lab);
     void shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal);

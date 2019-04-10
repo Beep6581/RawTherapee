@@ -34,19 +34,19 @@
 namespace rtengine
 {
 
-void ImProcFunctions::localContrast(LabImage *lab)
+void ImProcFunctions::localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, double scale)
 {
-    if (!params->localContrast.enabled) {
+    if (!localContrastParams.enabled) {
         return;
     }
 
     const int width = lab->W;
     const int height = lab->H;
-    const float a = params->localContrast.amount;
-    const float dark = params->localContrast.darkness;
-    const float light = params->localContrast.lightness;
+    const float a = localContrastParams.amount;
+    const float dark = localContrastParams.darkness;
+    const float light = localContrastParams.lightness;
     array2D<float> buf(width, height);
-    const float sigma = params->localContrast.radius / scale;
+    const float sigma = localContrastParams.radius / scale;
 
 #ifdef _OPENMP
     #pragma omp parallel if(multiThread)
@@ -65,41 +65,7 @@ void ImProcFunctions::localContrast(LabImage *lab)
                 bufval *= (bufval > 0.f) ? light : dark;
             }
 
-            lab->L[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
-        }
-    }
-}
-
-void ImProcFunctions::localContrastloc(LabImage *lab, int scale, int rad, float amo, float darkn, float lightn, float **loctemp)
-{
-
-    const int width = lab->W;
-    const int height = lab->H;
-    const float a = amo;
-    const float dark = darkn;
-    const float light = lightn;
-    array2D<float> buf(width, height);
-    const float sigma = (float)(rad) / scale;
-
-#ifdef _OPENMP
-    #pragma omp parallel if(multiThread)
-#endif
-    gaussianBlur(lab->L, buf, width, height, sigma);
-
-#ifdef _OPENMP
-    #pragma omp parallel for if(multiThread)
-#endif
-
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            float bufval = (lab->L[y][x] - buf[y][x]) * a;
-
-            if (dark != 1 || light != 1) {
-                bufval *= (bufval > 0.f) ? light : dark;
-            }
-
-            loctemp[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
-
+            destination[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
         }
     }
 }

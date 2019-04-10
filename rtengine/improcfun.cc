@@ -3693,7 +3693,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
     if (params->localContrast.enabled) {
         // Alberto's local contrast
-        localContrast(lab);
+        localContrast(lab, lab->L, params->localContrast, scale);
     }
 }
 
