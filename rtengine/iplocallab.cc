@@ -1200,6 +1200,33 @@ static void balancedeltaE(float kL, float &kab)
     kab = abal * kL + bbal;
 }
 
+static void calcreducdE(float dE, float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float &reducdE)
+{
+    if (dE > maxdE) {
+        reducdE = 0.f;
+    } else if (dE > mindE && dE <= maxdE) {
+        const float ar = 1.f / (mindE - maxdE);
+        const float br = - ar * maxdE;
+        reducdE = pow(ar * dE + br, iterat);
+    } else {
+        reducdE = 1.f;
+    }
+
+    if (scope > limscope) {//80 arbitrary value, if we change we must change limscope 
+        if (dE > maxdElim) {
+            reducdE = 0.f;
+        } else if (dE > mindElim && dE <= maxdElim) {
+            const float arlim = 1.f / (mindElim - maxdElim);
+            const float brlim = - arlim * maxdElim;
+            const float reducdElim = pow(arlim * dE + brlim, iterat);
+            const float aalim = (1.f - reducdElim) / 20.f;
+            const float bblim = 1.f - 100.f * aalim;
+            reducdE = aalim * scope  +  bblim;
+        } else {
+          reducdE = 1.f;
+        }
+    }
+}
 void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
 {
     //warning, but I hope used it next
@@ -1443,10 +1470,14 @@ void ImProcFunctions::BlurNoise_Local(LabImage * tmp1, const float hueref, const
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int limscope = 80;
         const int begy = int (lp.yc - lp.lyT);
         const int begx = int (lp.xc - lp.lxL);
         const float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+    //    printf("mdE=%f Mde=%f mde80=%f Mde80=%f sensbn=%i\n", mindE, maxdE, mindE80, maxdE80, lp.sensbn);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -1479,18 +1510,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage * tmp1, const float hueref, const
                 const float dE = sqrt(kab * (SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x])) + kL * SQR(refL - origblur->L[y][x]));
 
                 float reducdE;
-                if (lp.sensbn > 99) {
-                    reducdE = 1.f;
-                } else if (dE > maxdE) {
-                    reducdE = 0.f;
-                } else if (dE > mindE && dE <= maxdE) {
-                    const float ar = 1.f / (mindE - maxdE);
-                    const float br = - ar * maxdE;
-                    reducdE = pow(ar * dE + br, lp.iterat);
-                } else {
-                    reducdE = 1.f;
-                }
-
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn , reducdE);
 
                 switch (zone) {
 
@@ -1714,6 +1734,11 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int limscope = 80;
+        const float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -1735,33 +1760,9 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
             }
 
                 float rL = origblur->L[y][x] / 327.68f;
-                float reducdE = 0.f;
                 float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
-                float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
-
-                float ar = 1.f / (mindE - maxdE);
-
-                float br = - ar * maxdE;
-
-                if (dE > maxdE) {
-                    reducdE = 0.f;
-                }
-
-                if (dE > mindE && dE <= maxdE) {
-                    reducdE = ar * dE + br;
-                }
-
-                if (dE <= mindE) {
-                    reducdE = 1.f;
-                }
-
-                reducdE = pow(reducdE, lp.iterat);
-
-                if (lp.sensbn >  99) {
-                    reducdE = 1.f;
-                }
-
+                float reducdE;
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn , reducdE);
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => full effect, no transition
                     float difL = tmp1->L[y][x] - original->L[y][x];
@@ -2759,7 +2760,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
-        {
+    {
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
@@ -2780,10 +2781,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         }
 
         const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
+        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
-        const float ar = 1.f / (mindE - maxdE);
-        const float br = - ar * maxdE;
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
@@ -2882,16 +2884,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                     }
 
                     float reducdE;
-
-                    if (varsens > 99) {
-                        reducdE = 1.f;
-                    } else if (dE > maxdE) {
-                        reducdE = 0.f;
-                    } else if (dE > mindE && dE <= maxdE) {
-                        reducdE = pow(ar * dE + br, lp.iterat);
-                    } else { /*if (dE <= mindE)*/
-                        reducdE = 1.f;
-                    }
+                    calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
 
                     const float realstrdE = reducdE * cli;
                     const float realstradE = reducdE * cla;
