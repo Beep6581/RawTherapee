@@ -251,6 +251,7 @@ public:
     bool Query_key_pressed(GdkEventKey *event);
     void updateFBQueryTB (bool singleRow);
     void updateFBToolBarVisibility (bool showFilmStripToolBar);
+    void updateShowtooltipVisibility (bool showtooltip);
 
     void tbLeftPanel_1_toggled ();
     void tbLeftPanel_1_visible (bool visible);

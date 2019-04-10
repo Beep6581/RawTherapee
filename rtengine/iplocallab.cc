@@ -422,9 +422,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.blurmet = 0;
     } else if (locallab.spots.at(sp).blurMethod == "inv") {
         lp.blurmet = 1;
-    } else if (locallab.spots.at(sp).blurMethod == "sym") {
-        lp.blurmet = 2;
-    }
+    } 
 
     if (locallab.spots.at(sp).spotMethod == "norm") {
         lp.excmet = 0;
@@ -1202,6 +1200,33 @@ static void balancedeltaE(float kL, float &kab)
     kab = abal * kL + bbal;
 }
 
+static void calcreducdE(float dE, float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float &reducdE)
+{
+    if (dE > maxdE) {
+        reducdE = 0.f;
+    } else if (dE > mindE && dE <= maxdE) {
+        const float ar = 1.f / (mindE - maxdE);
+        const float br = - ar * maxdE;
+        reducdE = pow(ar * dE + br, iterat);
+    } else {
+        reducdE = 1.f;
+    }
+
+    if (scope > limscope) {//80 arbitrary value, if we change we must change limscope 
+        if (dE > maxdElim) {
+            reducdE = 0.f;
+        } else if (dE > mindElim && dE <= maxdElim) {
+            const float arlim = 1.f / (mindElim - maxdElim);
+            const float brlim = - arlim * maxdElim;
+            const float reducdElim = pow(arlim * dE + brlim, iterat);
+            const float aalim = (1.f - reducdElim) / 20.f;
+            const float bblim = 1.f - 100.f * aalim;
+            reducdE = aalim * scope  +  bblim;
+        } else {
+          reducdE = 1.f;
+        }
+    }
+}
 void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, int levred, float hueref, float lumaref, float chromaref,  LabImage* original, LabImage* transformed, LabImage &tmp1, int cx, int cy, int sk)
 {
     //warning, but I hope used it next
@@ -1410,7 +1435,7 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
 
 }
 
-void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2, float ** buflight, float ** bufchro, const float hueref, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::BlurNoise_Local(LabImage * tmp1, const float hueref, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local BLUR
     BENCHFUN
@@ -1445,10 +1470,13 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int limscope = 80;
         const int begy = int (lp.yc - lp.lyT);
         const int begx = int (lp.xc - lp.lxL);
         const float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -1460,16 +1488,6 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
             if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                if (lp.blurmet == 2) {
-                    for (int x = 0; x < transformed->W; x++) {
-                        transformed->L[y][x] = tmp2->L[y][x];
-                        if (!lp.actsp) {
-                            transformed->a[y][x] = tmp2->a[y][x];
-                            transformed->b[y][x] = tmp2->b[y][x];
-                        }
-                    }
-                }
-
                 continue;
             }
 
@@ -1485,72 +1503,31 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
 
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
-                    if (lp.blurmet == 2) {
-                        transformed->L[y][x] = tmp2->L[y][x];
-                        if (!lp.actsp) {
-                            transformed->a[y][x] = tmp2->a[y][x];
-                            transformed->b[y][x] = tmp2->b[y][x];
-                        }
-                    }
-
                     continue;
                 }
 
                 const float dE = sqrt(kab * (SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x])) + kL * SQR(refL - origblur->L[y][x]));
 
                 float reducdE;
-                if (lp.sensbn > 99) {
-                    reducdE = 1.f;
-                } else if (dE > maxdE) {
-                    reducdE = 0.f;
-                } else if (dE > mindE && dE <= maxdE) {
-                    const float ar = 1.f / (mindE - maxdE);
-                    const float br = - ar * maxdE;
-                    reducdE = pow(ar * dE + br, lp.iterat);
-                } else /*if (dE <= mindE) */ {
-                    reducdE = 1.f;
-                }
-
-                const float realstrdE = reducdE * buflight[loy - begy][lox - begx];
-                const float realstrchdE = localFactor * (1.f + (reducdE * bufchro[loy - begy][lox - begx]) / 100.f);
-
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn , reducdE);
 
                 switch (zone) {
 
                     case 1: { // inside transition zone
                         float difL, difa, difb;
-
-                        if (call <= 3) {
                             difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
                             difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
                             difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                        } else {
-                            difL = tmp1->L[y][x] - original->L[y][x];
-                            difa = tmp1->a[y][x] - original->a[y][x];
-                            difb = tmp1->b[y][x] - original->b[y][x];
+                            difL *= localFactor * reducdE;
 
-
-                        }
-
-                        difL *= localFactor * (100.f + realstrdE) / 100.f;
-
-                        if (lp.blurmet == 0) {
                             transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                        } else if (lp.blurmet == 2) {
-                            transformed->L[y][x] = CLIP(tmp2->L[y][x] - difL);
-                        }
 
                         if (!lp.actsp) {
-                            difa *= realstrchdE;
-                            difb *= realstrchdE;
+                            difa *= localFactor * reducdE;
+                            difb *= localFactor * reducdE;
 
-                            if (lp.blurmet == 0) {
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                            } else if (lp.blurmet == 2) {
-                                transformed->a[y][x] = CLIPC(tmp2->a[y][x] - difa);
-                                transformed->b[y][x] = CLIPC(tmp2->b[y][x] - difb);
-                            }
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                         }
 
                         break;
@@ -1563,25 +1540,16 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
                         difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
                         difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
 
-                        difL *= (100.f + realstrdE) / 100.f;
+                        difL *= reducdE;//(100.f + realstrdE) / 100.f;
 
-                        if (lp.blurmet == 0) {
-                            transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                        } else if (lp.blurmet == 2) {
-                            transformed->L[y][x] = CLIP(tmp2->L[y][x] - difL);
-                        }
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL);
 
                         if (!lp.actsp) {
-                            difa *= realstrchdE;
-                            difb *= realstrchdE;
+                            difa *= reducdE;
+                            difb *= reducdE;
 
-                            if (lp.blurmet == 0) {
-                                transformed->a[y][x] = CLIPC(original->a[y][x] + difa);                                ;
-                                transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
-                            } else if (lp.blurmet == 2) {
-                                transformed->a[y][x] = CLIPC(tmp2->a[y][x] - difa);
-                                transformed->b[y][x] = CLIPC(tmp2->b[y][x] - difb);
-                            }
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);                                ;
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                         }
                     }
                 }
@@ -1589,6 +1557,8 @@ void ImProcFunctions::BlurNoise_Local(int call, LabImage * tmp1, LabImage * tmp2
         }
     }
 }
+
+
 
 void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const float hueref, const float chromaref,  const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro, int sk)
 {
@@ -1621,6 +1591,11 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int limscope = 80;
+        const float mindE = 2.f + MINSCOPE * lp.sensh * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -1644,30 +1619,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                 float rL = origblur->L[y][x] / 327.68f;
                 float reducdE = 0.f;
                 float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                float mindE = 2.f + MINSCOPE * lp.sensh * lp.thr;
-                float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
-
-                float ar = 1.f / (mindE - maxdE);
-
-                float br = - ar * maxdE;
-
-                if (dE > maxdE) {
-                    reducdE = 0.f;
-                }
-
-                if (dE > mindE && dE <= maxdE) {
-                    reducdE = ar * dE + br;
-                }
-
-                if (dE <= mindE) {
-                    reducdE = 1.f;
-                }
-
-                reducdE = pow(reducdE, lp.iterat);
-
-                if (lp.sensh >  99) {
-                    reducdE = 1.f;
-                }
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh , reducdE);
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -1732,13 +1684,46 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
 
 
-void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
+void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
     // BENCHFUN
 //inverse local blur and noise
     float ach = (float)lp.trans / 100.f;
+    int GW = transformed->W;
+    int GH = transformed->H;
+    float refa = chromaref * cos(hueref);
+    float refb = chromaref * sin(hueref);
 
-    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+    //balance deltaE
+    float kL = lp.balance;
+    float kab = 1.f;
+    balancedeltaE(kL, kab);
+
+    LabImage *origblur = new LabImage(GW, GH);
+
+    float radius = 3.f / sk;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        gaussianBlur(original->L, origblur->L, GW, GH, radius);
+        gaussianBlur(original->a, origblur->a, GW, GH, radius);
+        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+
+    }
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+        const int limscope = 80;
+        const float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
 
     for (int y = 0; y < transformed->H; y++) {
         int loy = cy + y;
@@ -1755,10 +1740,14 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, Lab
                 calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
             }
 
-
+                float rL = origblur->L[y][x] / 327.68f;
+                float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
+                float reducdE;
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn , reducdE);
             switch (zone) {
                 case 0: { // outside selection and outside transition zone => full effect, no transition
-                    transformed->L[y][x] = CLIP(tmp1->L[y][x]);
+                    float difL = tmp1->L[y][x] - original->L[y][x];
+                    transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
                     if (!lp.actsp) {
                         transformed->a[y][x] = CLIPC(tmp1->a[y][x]);
@@ -1778,7 +1767,7 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, Lab
                     difa *= factorx;
                     difb *= factorx;
 
-                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                    transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
                     if (!lp.actsp) {
 
@@ -1801,6 +1790,7 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp, Lab
             }
         }
     }
+}
 }
 
 static void calclight(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
@@ -2016,6 +2006,11 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int limscope = 80;
+        const float mindE = 2.f + MINSCOPE * lp.senssha * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * lp.senssha * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -2038,30 +2033,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
                 float rL = origblur->L[y][x] / 327.68f;
                 float reducdE = 0.f;
                 float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                float mindE = 2.f + MINSCOPE * lp.senssha * lp.thr;
-                float maxdE = 5.f + MAXSCOPE * lp.senssha * (1 + 0.1f * lp.thr);
-
-                float ar = 1.f / (mindE - maxdE);
-
-                float br = - ar * maxdE;
-
-                if (dE > maxdE) {
-                    reducdE = 0.f;
-                }
-
-                if (dE > mindE && dE <= maxdE) {
-                    reducdE = ar * dE + br;
-                }
-
-                if (dE <= mindE) {
-                    reducdE = 1.f;
-                }
-
-                reducdE = pow(reducdE, lp.iterat);
-
-                if (lp.senssha >  99) {
-                    reducdE = 1.f;
-                }
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.senssha , reducdE);
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -2129,8 +2101,11 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
     {
         const int begy = int (lp.yc - lp.lyT);
         const int begx = int (lp.xc - lp.lxL);
+        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -2161,20 +2136,8 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 
                 const float dE = sqrt(kab * (SQR(refa - origblur->a[y][x]) + SQR(refb - origblur->b[y][x])) + kL * SQR(refL - origblur->L[y][x]));
 
-                float reducdE;
-
-                if (varsens > 99) {
-                    reducdE = 1.f;
-                } else if (dE > maxdE) {
-                    reducdE = 0.f;
-                } else if (dE > mindE && dE <= maxdE) {
-                    const float ar = 1.f / (mindE - maxdE);
-                    const float br = - ar * maxdE;
-                    reducdE = ar * dE + br;
-                    reducdE = pow(reducdE, lp.iterat);
-                } else {
-                    reducdE = 1.f;
-                }
+                float reducdE = 0.f;
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
                 reducdE *= localFactor;
 
                 float difL;
@@ -2197,12 +2160,11 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
         const float ach = (float)lp.trans / 100.f;
         const float varsens =  lp.sensexclu;
 
+        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
-
-        const float ar = 1.f / (mindE - maxdE);
-
-        const float br = -ar * maxdE;
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
         const int GW = transformed->W;
         const int GH = transformed->H;
@@ -2301,16 +2263,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
                     const float dE = sqrt(kab * SQR(refa - origblur->a[y][x]) + kab * SQR(refb - origblur->b[y][x]) + kL * SQR(lumaref - rL));
 
                     float reducdE;
-
-                    if (varsens > 99) {
-                        reducdE = 1.f;
-                    } else if (dE > maxdE) {
-                        reducdE = 0.f;
-                    } else if (dE > mindE && dE <= maxdE) {
-                        reducdE = pow(ar * dE + br, lp.iterat);
-                    } else { /*if (dE <= mindE)*/
-                        reducdE = 1.f;
-                    }
+                    calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
 
                     const float affde = reducdE;
 
@@ -2399,6 +2352,13 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         #pragma omp parallel if (multiThread)
 #endif
         {
+        const int limscope = 80;
+        const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+            
+            
 #ifdef __SSE2__
             float atan2Buffer[transformed->W] ALIGNED16;
 #endif
@@ -2480,24 +2440,9 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                     cli = buflight[loy - begy][lox - begx];
                     clc = bufchro[loy - begy][lox - begx];
 
-                    const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
-                    const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
-
-
                     float reducdE;
 
-                    if (varsens > 99) {
-                        reducdE = 1.f;
-                    } else if (dE > maxdE) {
-                        reducdE = 0.f;
-                    } else if (dE > mindE && dE <= maxdE) {
-                        float ar = 1.f / (mindE - maxdE);
-                        float br = - ar * maxdE;
-                        reducdE = ar * dE + br;
-                        reducdE = pow(reducdE, lp.iterat);
-                    } else { /*if (dE <= mindE)*/
-                        reducdE = 1.f;
-                    }
+                    calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
 
                     float realstrdE = reducdE * cli;
                     float realstrchdE = reducdE * clc;
@@ -2704,7 +2649,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
-        {
+    {
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
@@ -2725,10 +2670,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         }
 
         const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
+        const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
-        const float ar = 1.f / (mindE - maxdE);
-        const float br = - ar * maxdE;
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
@@ -2827,16 +2773,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                     }
 
                     float reducdE;
-
-                    if (varsens > 99) {
-                        reducdE = 1.f;
-                    } else if (dE > maxdE) {
-                        reducdE = 0.f;
-                    } else if (dE > mindE && dE <= maxdE) {
-                        reducdE = pow(ar * dE + br, lp.iterat);
-                    } else { /*if (dE <= mindE)*/
-                        reducdE = 1.f;
-                    }
+                    calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
 
                     const float realstrdE = reducdE * cli;
                     const float realstradE = reducdE * cla;
@@ -3266,6 +3203,11 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int limscope = 80;
+        const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -3295,31 +3237,7 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                 float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
 
                 float reducdE = 0.f;
-                float mindE = 2.f + MINSCOPE * varsens * lp.thr;
-                float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
-
-                float ar = 1.f / (mindE - maxdE);
-
-                float br = - ar * maxdE;
-
-                if (dE > maxdE) {
-                    reducdE = 0.f;
-                }
-
-                if (dE > mindE && dE <= maxdE) {
-                    reducdE = ar * dE + br;
-                }
-
-                if (dE <= mindE) {
-                    reducdE = 1.f;
-                }
-
-                reducdE = pow(reducdE, lp.iterat);
-
-                if (varsens > 99) {
-                    reducdE = 1.f;
-                }
-
+                calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens, reducdE);
                 float th_r = 0.01f;
 
                 if (rL > th_r) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
@@ -4034,15 +3952,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             std::unique_ptr<LabImage> tmp1;
-            std::unique_ptr<LabImage> tmp2;
             std::unique_ptr<LabImage> bufgb;
             //       LabImage *deltasobelL = nullptr;
             int GW = transformed->W;
             int GH = transformed->H;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            JaggedArray<float> buflight(bfw, bfh);
-            JaggedArray<float> bufchro(bfw, bfh);
 
             if (call <= 3 && lp.blurmet != 1) {
                 bufgb.reset(new LabImage(bfw, bfh, true));
@@ -4070,19 +3985,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
                 tmp1.reset(new LabImage(bfw, bfh));
-
-                if (lp.blurmet == 2) {
-                    tmp2.reset(new LabImage(transformed->W, transformed->H));
-#ifdef _OPENMP
-                    #pragma omp parallel
-#endif
-                    {
-                        gaussianBlur(original->L, tmp2->L, GW, GH, radius);
-                        gaussianBlur(original->a, tmp2->a, GW, GH, radius);
-                        gaussianBlur(original->b, tmp2->b, GW, GH, radius);
-                    }
-                }
-
 
 
 #ifdef _OPENMP
@@ -4118,62 +4020,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
             }
 
-            if (lp.blurmet != 1) { //blur and noise (center)
-                float minL = tmp1->L[0][0] - bufgb->L[0][0];
-                float maxL = minL;
-#ifdef _OPENMP
-                #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
-#endif
-                for (int ir = 0; ir < bfh; ir++) {
-                    for (int jr = 0; jr < bfw; jr++) {
-                        buflight[ir][jr] = tmp1->L[ir][jr] - bufgb->L[ir][jr];
-                        minL = rtengine::min(minL, buflight[ir][jr]);
-                        maxL = rtengine::max(maxL, buflight[ir][jr]);
-                    }
-                }
-
-                const float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < bfh; ir++) {
-                    for (int jr = 0; jr < bfw; jr++) {
-                        buflight[ir][jr] /= coef;
-                    }
-                }
-
-                float minC = sqrt((SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0]))) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
-                float maxC = minC;
-#ifdef _OPENMP
-                #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
-#endif
-
-                for (int ir = 0; ir < bfh; ir++) {
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufchro[ir][jr] = sqrt((SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr]))) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
-                        minC = rtengine::min(minC, bufchro[ir][jr]);
-                        maxC = rtengine::max(maxC, bufchro[ir][jr]);
-                    }
-                }
-
-                const float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < bfh; ir++) {
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufchro[ir][jr] /= coefC;
-                    }
-                }
-
-                BlurNoise_Local(call, tmp1.get(), tmp2.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+            if (lp.blurmet == 0) { //blur and noise (center)
+                BlurNoise_Local(tmp1.get(), hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
             } else {
-
-                InverseBlurNoise_Local(lp, original, transformed, tmp1.get(), cx, cy);
+               InverseBlurNoise_Local(lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
             }
         }
 

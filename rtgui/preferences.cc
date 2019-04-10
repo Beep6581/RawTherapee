@@ -958,6 +958,10 @@ Gtk::Widget* Preferences::getGeneralPanel()
     };
     btnSaveTpOpenNow->signal_clicked().connect(save_tp_open_now);
 
+    ckbshowtooltiplocallab = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWTOOLTIP")));
+    setExpandAlignProperties(ckbshowtooltiplocallab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    workflowGrid->attach(*ckbshowtooltiplocallab,0, 3);
+
     fworklflow->add(*workflowGrid);
 
     vbGeneral->attach_next_to (*fworklflow, Gtk::POS_TOP, 2, 1);
@@ -1052,6 +1056,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     navGuideColorCB->set_use_alpha(true);
 
     Gtk::VSeparator *vSep = Gtk::manage(new Gtk::VSeparator());
+    
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
@@ -1786,6 +1791,7 @@ void Preferences::storePreferences()
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active();
+    moptions.showtooltip = ckbshowtooltiplocallab->get_active();
 
     moptions.autoSaveTpOpen = ckbAutoSaveTpOpen->get_active();
 
@@ -1995,7 +2001,7 @@ void Preferences::fillPreferences()
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
     ckbShowFilmStripToolBar->set_active(moptions.showFilmStripToolBar);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
-
+    ckbshowtooltiplocallab->set_active(moptions.showtooltip);
     ckbAutoSaveTpOpen->set_active(moptions.autoSaveTpOpen);
 
     threadsSpinBtn->set_value (moptions.rgbDenoiseThreadLimit);
@@ -2390,6 +2396,13 @@ void Preferences::workflowUpdate()
         // Update the visibility of FB toolbar
         parent->updateFBToolBarVisibility(moptions.showFilmStripToolBar);
     }
+
+    if (moptions.showtooltip != options.showtooltip) {
+        // Update the visibility of tooltip
+        parent->updateShowtooltipVisibility(moptions.showtooltip);
+    }
+
+    moptions.showtooltip = ckbshowtooltiplocallab->get_active();
 
     if (moptions.histogramPosition != options.histogramPosition) {
         // Update the position of the Histogram
