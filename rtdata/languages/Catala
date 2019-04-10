@@ -207,7 +207,6 @@ HISTORY_MSG_32;Deconvolució: Ablaniment
 HISTORY_MSG_33;Deconvolució: Iteracions
 HISTORY_MSG_34;Correcció distorsió LCP
 HISTORY_MSG_35;Correcció vorafosc LCP
-HISTORY_MSG_36;Correcció A.C. LCP
 HISTORY_MSG_37;Nivells automàtics
 HISTORY_MSG_38;Mètode de balanç de blancs
 HISTORY_MSG_39;Temperatura de color
@@ -288,11 +287,8 @@ HISTORY_MSG_113;Protecció de tons vermell i pell
 HISTORY_MSG_114;Iteracions DCB
 HISTORY_MSG_115;Iteracions fals color
 HISTORY_MSG_116;DCB ampliat
-HISTORY_MSG_117;Correcció CA vermell
-HISTORY_MSG_118;Correcció CA blau
 HISTORY_MSG_119;Línia dessoroll
 HISTORY_MSG_120;Llindar equil. verd
-HISTORY_MSG_121;Raw auto CA
 HISTORY_MSG_122;Auto marc fosc
 HISTORY_MSG_123;Fitxer de camp fosc
 HISTORY_MSG_124;Correc. expo. linear
@@ -425,7 +421,7 @@ MAIN_TOOLTIP_TOGGLE;Alterna vista abans/després.\nDrecera: <b>Majús-B</b>
 NAVIGATOR_XY_FULL;Amplada = %1, Altura = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Ajustos bàsics
-PARTIALPASTE_CACORRECTION;Correcció A. C.(Aberració Cromàtica)
+PARTIALPASTE_CACORRECTION;Correcció d'aberració cromàtica
 PARTIALPASTE_CHANNELMIXER;Barrejador de canals
 PARTIALPASTE_COARSETRANS;Rotació 90 graus/ inversió
 PARTIALPASTE_COLORGROUP;Ajustos de color
@@ -625,13 +621,12 @@ TOOLBAR_TOOLTIP_HAND;Eina mà.\nDrecera: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Dreçar</b> / <b>rotació fina</b>.\nDrecera: <b>s</b>\n\nIndica la vertical o horitzontal dibuixant una línia de guia sobre la previsualització de la imatge. L'angle de rotació es mostrarà junt a la guia. El centre de rotació és el centre geomètric de la imatge.
 TOOLBAR_TOOLTIP_WB;Afina balanç de blancs.\nDrecera: <b>w</b>
 TP_CACORRECTION_BLUE;Blau
-TP_CACORRECTION_LABEL;Correcció A. C. (Aberració Cromàtica)
+TP_CACORRECTION_LABEL;Correcció d'aberració cromàtica
 TP_CACORRECTION_RED;Vermell
 TP_CHMIXER_BLUE;Canal blau
 TP_CHMIXER_GREEN;Canal verd
 TP_CHMIXER_LABEL;Barrejador de canals
 TP_CHMIXER_RED;Canal vermell
-TP_CHROMATABERR_LABEL;Aberració cromàtica
 TP_COARSETRAF_TOOLTIP_HFLIP;Inversió horitzontal
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotació esquerra.\nDrecera: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotació dreta.\nDrecera: <b>]</b>
@@ -777,7 +772,7 @@ TP_PREPROCESS_NO_FOUND;No trobat
 TP_RAWCACORR_AUTO;Auto correcció
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Vermell
-TP_RAWEXPOS_BLACKS;Nivells negres
+TP_RAWCACORR_LABEL;Correcció d'aberració cromàtica
 TP_RAWEXPOS_LINEAR;Punt blanc: factor de correcció linear
 TP_RAWEXPOS_TWOGREEN;Dos verds junts
 TP_RAW_DCBENHANCE;Aplica pas de millora  DCB
@@ -988,6 +983,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
+!HISTORY_MSG_36;Lens Correction - CA
+!HISTORY_MSG_117;Raw CA correction - Red
+!HISTORY_MSG_118;Raw CA correction - Blue
+!HISTORY_MSG_121;Raw CA Correction - Auto
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_173;NR - Detail recovery
 !HISTORY_MSG_174;CIECAM02

@@ -234,9 +234,9 @@ HISTORY_MSG_30;RLD - Raggio
 HISTORY_MSG_31;RLD - Quantità
 HISTORY_MSG_32;RLD - Smorzamento
 HISTORY_MSG_33;RLD - Iterazioni
-HISTORY_MSG_34;LCP - Correzione Distorsione
-HISTORY_MSG_35;LCP - Correzione Vignettatura
-HISTORY_MSG_36;LCP - Correzione AC
+HISTORY_MSG_34;Correzione Distorsione
+HISTORY_MSG_35;Correzione Vignettatura
+HISTORY_MSG_36;Correzione AC
 HISTORY_MSG_37;Livelli Automatici
 HISTORY_MSG_38;WB - Metodo
 HISTORY_MSG_39;WB - Temperatura
@@ -835,7 +835,6 @@ TP_CHMIXER_BLUE;Canale Blu
 TP_CHMIXER_GREEN;Canale Verde
 TP_CHMIXER_LABEL;Miscelatore Canali
 TP_CHMIXER_RED;Canale Rosso
-TP_CHROMATABERR_LABEL;Aberrazione Cromatica
 TP_COARSETRAF_TOOLTIP_HFLIP;Rifletti orizzontalmente.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Ruota a sinistra.\nScorciatoie:\n<b>[</b> - Modalità a Scheda Multipla,\n<b>Alt-[</b> - Modalità a Scheda Singola.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Ruota a destra.\nScorciatoie:\n<b>]</b> - Modalità a Scheda Multipla,\n<b>Alt-]</b> - Modalità a Scheda Singola.
@@ -1092,7 +1091,7 @@ TP_PREPROCESS_NO_FOUND;Nessuno presente
 TP_RAWCACORR_AUTO;Autocorrezione
 TP_RAWCACORR_CABLUE;Blu
 TP_RAWCACORR_CARED;Rosso
-TP_RAWEXPOS_BLACKS;Livelli del nero
+TP_RAWCACORR_LABEL;Correzione AC
 TP_RAWEXPOS_LINEAR;Punto del Bianco - Correzione
 TP_RAWEXPOS_TWOGREEN;Valori del verde uniti
 TP_RAW_DCBENHANCE;Miglioramento DCB

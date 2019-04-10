@@ -1447,7 +1447,6 @@ TP_CHMIXER_BLUE;Blau-Kanal
 TP_CHMIXER_GREEN;Grün-Kanal
 TP_CHMIXER_LABEL;RGB-Kanalmixer
 TP_CHMIXER_RED;Rot-Kanal
-TP_CHROMATABERR_LABEL;Chromatische Aberration
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen.\nTaste: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen.\nTaste: <b>]</b>
@@ -1887,7 +1886,7 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;Diese Einstellung ist verfügbar, wenn "Autokorrektu
 TP_RAWCACORR_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
-TP_RAWEXPOS_BLACKS;Schattenkompression
+TP_RAWCACORR_LABEL;Chromatische Aberration
 TP_RAWEXPOS_BLACK_0;Grün 1 (Master)
 TP_RAWEXPOS_BLACK_1;Rot
 TP_RAWEXPOS_BLACK_2;Blau

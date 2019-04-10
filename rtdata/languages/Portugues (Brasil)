@@ -1357,7 +1357,6 @@ TP_CHMIXER_BLUE;Canal azul
 TP_CHMIXER_GREEN;Canal verde
 TP_CHMIXER_LABEL;Misturador de canais
 TP_CHMIXER_RED;Canal vermelho
-TP_CHROMATABERR_LABEL;Aberração Cromática
 TP_COARSETRAF_TOOLTIP_HFLIP;Girar horizontalmente.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotacione à esquerda.\n\nAtalhos:\n<b>[</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-[</b> - Modo de Guia do Editor Único.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotacione à direita.\n\nAtalhos:\n<b>]</b> - Modo de Guias do Editor Múltiplo,\n<b>Alt-]</b> - Modo de Guia do Editor Único.
@@ -1787,7 +1786,7 @@ TP_RAWCACORR_AUTOIT;Interações
 TP_RAWCACORR_AVOIDCOLORSHIFT;Evitar mudança de cor
 TP_RAWCACORR_CABLUE;Azul
 TP_RAWCACORR_CARED;Vermelho
-TP_RAWEXPOS_BLACKS;Níveis de Preto
+TP_RAWCACORR_LABEL;Correção de Aberração Cromática
 TP_RAWEXPOS_BLACK_0;Verde 1 (guia)
 TP_RAWEXPOS_BLACK_1;Vermelho
 TP_RAWEXPOS_BLACK_2;Azul

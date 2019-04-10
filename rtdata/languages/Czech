@@ -1390,7 +1390,6 @@ TP_CHMIXER_BLUE;Modrý kanál
 TP_CHMIXER_GREEN;Zelený kanál
 TP_CHMIXER_LABEL;Míchání kanálů
 TP_CHMIXER_RED;Červený kanál
-TP_CHROMATABERR_LABEL;Chromatická aberace
 TP_COARSETRAF_TOOLTIP_HFLIP;Překlopit horizontálně.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva.\n\nZkratky:\n<b>[</b> - režim více karet editoru,\n<b>Alt-[</b>- režim jedné karty editoru.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočit doprava.\n\nZkratky:\n<b>]</b> - režim více karet editoru,\n<b>Alt-]</b>- režim jedné karty editoru.
@@ -1824,7 +1823,7 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;Toto nastavení je dostupné po zatržení volby "Au
 TP_RAWCACORR_AVOIDCOLORSHIFT;Zabránit posunu barev
 TP_RAWCACORR_CABLUE;Modrá
 TP_RAWCACORR_CARED;Červená
-TP_RAWEXPOS_BLACKS;Úrovně černé
+TP_RAWCACORR_LABEL;Korekce chromatické aberace
 TP_RAWEXPOS_BLACK_0;Zelená 1 (řídící)
 TP_RAWEXPOS_BLACK_1;Červená
 TP_RAWEXPOS_BLACK_2;Modrá

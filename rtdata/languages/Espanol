@@ -341,9 +341,9 @@ HISTORY_MSG_30;Deconvolución - Radio
 HISTORY_MSG_31;Deconvolución - Cantidad
 HISTORY_MSG_32;Deconvolución - Amortiguación
 HISTORY_MSG_33;Deconvolución - Iteraciones
-HISTORY_MSG_34;LCP - Corrección de distorsión
-HISTORY_MSG_35;LCP - Corrección de Viñeta
-HISTORY_MSG_36;LCP - Corrección Aberr.Crom.
+HISTORY_MSG_34;Corrección de distorsión
+HISTORY_MSG_35;Corrección de Viñeta
+HISTORY_MSG_36;Corrección Aberr.Crom.
 HISTORY_MSG_37;Niveles automáticos
 HISTORY_MSG_38;Método de Balance de Blancos
 HISTORY_MSG_39;Temperatura de color
@@ -1415,7 +1415,6 @@ TP_CHMIXER_BLUE;Canal Azul
 TP_CHMIXER_GREEN;Canal Verde
 TP_CHMIXER_LABEL;Mezclador de canales
 TP_CHMIXER_RED;Canal Rojo
-TP_CHROMATABERR_LABEL;Aberración cromática (AC)
 TP_COARSETRAF_TOOLTIP_HFLIP;Voltear horizontalmente.\nTecla de Atajo: '['
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotar a la izquierda.\nTecla de Atajo: ']'
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotar a la derecha
@@ -1849,7 +1848,7 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;Esta configuración está disponible si se marca "Co
 TP_RAWCACORR_AVOIDCOLORSHIFT;Evitar el cambio de color
 TP_RAWCACORR_CABLUE;Azul
 TP_RAWCACORR_CARED;Rojo
-TP_RAWEXPOS_BLACKS;Niveles de negro
+TP_RAWCACORR_LABEL;Corrección de aberraciones cromáticas
 TP_RAWEXPOS_BLACK_0;Verde 1 (principal)
 TP_RAWEXPOS_BLACK_1;Rojo
 TP_RAWEXPOS_BLACK_2;Azul

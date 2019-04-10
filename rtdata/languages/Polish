@@ -238,9 +238,9 @@ HISTORY_MSG_30;RLD - Promień
 HISTORY_MSG_31;RLD - Siła
 HISTORY_MSG_32;RLD - Tłumienie
 HISTORY_MSG_33;RLD - Powtórzenia
-HISTORY_MSG_34;LCP - Korekcja dystorsji
-HISTORY_MSG_35;LCP - Korekcja winietowania
-HISTORY_MSG_36;LCP - Korekcja aberacji
+HISTORY_MSG_34;Korekcja dystorsji
+HISTORY_MSG_35;Korekcja winietowania
+HISTORY_MSG_36;Korekcja aberacji
 HISTORY_MSG_37;Automatyczna ekspozycja
 HISTORY_MSG_38;Metoda balansu bieli
 HISTORY_MSG_39;BB - Temperatura
@@ -885,7 +885,6 @@ TP_CHMIXER_BLUE;Niebieski
 TP_CHMIXER_GREEN;Zielony
 TP_CHMIXER_LABEL;Mieszacz kanałów
 TP_CHMIXER_RED;Czerwony
-TP_CHROMATABERR_LABEL;Aberracja chromatyczna
 TP_COARSETRAF_TOOLTIP_HFLIP;Odbij w poziomie
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Obróć w lewo.\n\nSkróty:\n<b>[</b> - Tryb wielu zakładek,\n<b>Alt-[</b> - Tryb jednej zakładki.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Obróć w prawo.\n\nSkróty:\n<b>]</b> - Tryb wielu zakładek,\n<b>Alt-]</b> - Tryb jednej zakładki.
@@ -1202,7 +1201,7 @@ TP_PREPROCESS_NO_FOUND;Nic nie znaleziono
 TP_RAWCACORR_AUTO;Autokorekcja
 TP_RAWCACORR_CABLUE;Niebieski
 TP_RAWCACORR_CARED;Czerwony
-TP_RAWEXPOS_BLACKS;Poziomy czerni
+TP_RAWCACORR_LABEL;Korekcja aberracji chromatycznej
 TP_RAWEXPOS_BLACK_0;Zielony 1 (główny)
 TP_RAWEXPOS_BLACK_1;Czerwony
 TP_RAWEXPOS_BLACK_2;Niebieski
