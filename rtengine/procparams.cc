@@ -2477,9 +2477,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Sharpening
     expsharp(false),
     sharcontrast(20),
-    sharradius(0.42),
-    sharamount(75),
-    shardamping(75),
+    sharradius(0.75),
+    sharamount(100),
+    shardamping(0),
     shariter(30),
     sharblur(0.2),
     sensisha(19),
