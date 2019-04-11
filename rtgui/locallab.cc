@@ -168,6 +168,8 @@ Locallab::Locallab():
     softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
     // Denoise
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0))),
+    noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 1, 0))),
+    noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 1, 0))),
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
     noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 0))),
     noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
@@ -972,6 +974,8 @@ Locallab::Locallab():
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expdenoi));
 
     noiselumf->setAdjusterListener(this);
+    noiselumf0->setAdjusterListener(this);
+    noiselumf2->setAdjusterListener(this);
 
     if(showtooltip) noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
     noiselumc->setAdjusterListener(this);
@@ -996,7 +1000,9 @@ Locallab::Locallab():
     ToolParamBlock* const denoisBox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
+    wavBox->pack_start(*noiselumf0);
     wavBox->pack_start(*noiselumf);
+    wavBox->pack_start(*noiselumf2);
     wavBox->pack_start(*noiselumc);
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
@@ -1867,6 +1873,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     // Denoise
                     pp->locallab.spots.at(pp->locallab.selspot).expdenoi = expdenoi->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).noiselumf = noiselumf->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf0 = noiselumf0->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf2 = noiselumf2->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).noiselumc = noiselumc->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).noiselumdetail = noiselumdetail->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).noiselequal = noiselequal->getIntValue();
@@ -2049,6 +2057,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         // Denoise
                         pe->locallab.spots.at(pp->locallab.selspot).expdenoi = pe->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).noiselumf = pe->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noiselumf0 = pe->locallab.spots.at(pp->locallab.selspot).noiselumf0 || noiselumf0->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).noiselumf2 = pe->locallab.spots.at(pp->locallab.selspot).noiselumf2 || noiselumf2->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).noiselumc = pe->locallab.spots.at(pp->locallab.selspot).noiselumc || noiselumc->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).noiselumdetail = pe->locallab.spots.at(pp->locallab.selspot).noiselumdetail || noiselumdetail->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).noiselequal = pe->locallab.spots.at(pp->locallab.selspot).noiselequal || noiselequal->getEditedState();
@@ -2233,6 +2243,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         // Denoise
                         pedited->locallab.spots.at(pp->locallab.selspot).expdenoi = pedited->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).noiselumf = pedited->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noiselumf0 = pedited->locallab.spots.at(pp->locallab.selspot).noiselumf0 || noiselumf0->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).noiselumf2 = pedited->locallab.spots.at(pp->locallab.selspot).noiselumf2 || noiselumf2->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).noiselumc = pedited->locallab.spots.at(pp->locallab.selspot).noiselumc || noiselumc->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).noiselumdetail = pedited->locallab.spots.at(pp->locallab.selspot).noiselumdetail || noiselumdetail->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).noiselequal = pedited->locallab.spots.at(pp->locallab.selspot).noiselequal || noiselequal->getEditedState();
@@ -3097,6 +3109,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     softradiuscb->setDefault(defSpot->softradiuscb);
     // Denoise
     noiselumf->setDefault((double)defSpot->noiselumf);
+    noiselumf0->setDefault((double)defSpot->noiselumf0);
+    noiselumf2->setDefault((double)defSpot->noiselumf2);
     noiselumc->setDefault((double)defSpot->noiselumc);
     noiselumdetail->setDefault((double)defSpot->noiselumdetail);
     noiselequal->setDefault((double)defSpot->noiselequal);
@@ -3208,6 +3222,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         softradiuscb->setDefaultEditedState(Irrelevant);
         // Denoise
         noiselumf->setDefaultEditedState(Irrelevant);
+        noiselumf0->setDefaultEditedState(Irrelevant);
+        noiselumf2->setDefaultEditedState(Irrelevant);
         noiselumc->setDefaultEditedState(Irrelevant);
         noiselumdetail->setDefaultEditedState(Irrelevant);
         noiselequal->setDefaultEditedState(Irrelevant);
@@ -3323,6 +3339,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         softradiuscb->setDefaultEditedState(defSpotState->softradiuscb ? Edited : UnEdited);
         // Denoise
         noiselumf->setDefaultEditedState(defSpotState->noiselumf ? Edited : UnEdited);
+        noiselumf0->setDefaultEditedState(defSpotState->noiselumf0 ? Edited : UnEdited);
+        noiselumf2->setDefaultEditedState(defSpotState->noiselumf2 ? Edited : UnEdited);
         noiselumc->setDefaultEditedState(defSpotState->noiselumc ? Edited : UnEdited);
         noiselumdetail->setDefaultEditedState(defSpotState->noiselumdetail ? Edited : UnEdited);
         noiselequal->setDefaultEditedState(defSpotState->noiselequal ? Edited : UnEdited);
@@ -3930,6 +3948,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == noiselumf0) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumf0, noiselumf0->getTextValue());
+            }
+        }
+
+        if (a == noiselumf2) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoiselumf2, noiselumf2->getTextValue());
+            }
+        }
+
         if (a == noiselumc) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselumc, noiselumc->getTextValue());
@@ -4114,7 +4144,8 @@ void Locallab::setBatchMode(bool batchMode)
     noiselumc->showEditedCB();
     noiselumdetail->showEditedCB();
     noiselequal->showEditedCB();
-    noiselumf->showEditedCB();
+    noiselumf0->showEditedCB();
+    noiselumf2->showEditedCB();
     noisechroc->showEditedCB();
     noisechrodetail->showEditedCB();
     adjblur->showEditedCB();
@@ -4553,6 +4584,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         // Denoise
         expdenoi->setEnabled(pp->locallab.spots.at(index).expdenoi);
         noiselumf->setValue(pp->locallab.spots.at(index).noiselumf);
+        noiselumf0->setValue(pp->locallab.spots.at(index).noiselumf0);
+        noiselumf2->setValue(pp->locallab.spots.at(index).noiselumf2);
         noiselumc->setValue(pp->locallab.spots.at(index).noiselumc);
         noiselumdetail->setValue(pp->locallab.spots.at(index).noiselumdetail);
         noiselequal->setValue(pp->locallab.spots.at(index).noiselequal);
@@ -4772,6 +4805,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 // Denoise
                 expdenoi->set_inconsistent(!spotState->expdenoi);
                 noiselumf->setEditedState(spotState->noiselumf ? Edited : UnEdited);
+                noiselumf0->setEditedState(spotState->noiselumf0 ? Edited : UnEdited);
+                noiselumf2->setEditedState(spotState->noiselumf2 ? Edited : UnEdited);
                 noiselumc->setEditedState(spotState->noiselumc ? Edited : UnEdited);
                 noiselumdetail->setEditedState(spotState->noiselumdetail ? Edited : UnEdited);
                 noiselequal->setEditedState(spotState->noiselequal ? Edited : UnEdited);

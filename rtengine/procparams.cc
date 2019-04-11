@@ -2503,6 +2503,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Denoise
     expdenoi(false),
     noiselumf(0),
+    noiselumf0(0),
+    noiselumf2(0),
     noiselumc(0),
     noiselumdetail(0),
     noiselequal(7),
@@ -2695,6 +2697,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         // Denoise
         && expdenoi == other.expdenoi
         && noiselumf == other.noiselumf
+        && noiselumf0 == other.noiselumf0
+        && noiselumf2 == other.noiselumf2
         && noiselumc == other.noiselumc
         && noiselumdetail == other.noiselumdetail
         && noiselequal == other.noiselequal
@@ -3829,6 +3833,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 // Denoise
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expdenoi, "Locallab", "Expdenoi_" + std::to_string(i), spot.expdenoi, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumf, "Locallab", "noiselumf_" + std::to_string(i), spot.noiselumf, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumf0, "Locallab", "noiselumf0_" + std::to_string(i), spot.noiselumf0, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumf2, "Locallab", "noiselumf2_" + std::to_string(i), spot.noiselumf2, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumc, "Locallab", "noiselumc_" + std::to_string(i), spot.noiselumc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumdetail, "Locallab", "noiselumdetail_" + std::to_string(i), spot.noiselumdetail, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselequal, "Locallab", "noiselequal_" + std::to_string(i), spot.noiselequal, keyFile);
@@ -5109,6 +5115,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 // Denoise
                 assignFromKeyfile(keyFile, "Locallab", "Expdenoi_" + std::to_string(i), pedited, spot.expdenoi, spotEdited.expdenoi);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + std::to_string(i), pedited, spot.noiselumf, spotEdited.noiselumf);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumf0_" + std::to_string(i), pedited, spot.noiselumf0, spotEdited.noiselumf0);
+                assignFromKeyfile(keyFile, "Locallab", "noiselumf2_" + std::to_string(i), pedited, spot.noiselumf2, spotEdited.noiselumf2);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumc_" + std::to_string(i), pedited, spot.noiselumc, spotEdited.noiselumc);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumdetail_" + std::to_string(i), pedited, spot.noiselumdetail, spotEdited.noiselumdetail);
                 assignFromKeyfile(keyFile, "Locallab", "noiselequal_" + std::to_string(i), pedited, spot.noiselequal, spotEdited.noiselequal);

@@ -520,6 +520,8 @@ public:
         // Denoise
         bool expdenoi;
         bool noiselumf;
+        bool noiselumf0;
+        bool noiselumf2;
         bool noiselumc;
         bool noiselumdetail;
         bool noiselequal;

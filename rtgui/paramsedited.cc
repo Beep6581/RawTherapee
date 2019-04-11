@@ -1097,6 +1097,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Denoise
                 locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
+                locallab.spots.at(j).noiselumf0 = locallab.spots.at(j).noiselumf0 && pSpot.noiselumf0 == otherSpot.noiselumf0;
+                locallab.spots.at(j).noiselumf2 = locallab.spots.at(j).noiselumf2 && pSpot.noiselumf2 == otherSpot.noiselumf2;
                 locallab.spots.at(j).noiselumc = locallab.spots.at(j).noiselumc && pSpot.noiselumc == otherSpot.noiselumc;
                 locallab.spots.at(j).noiselumdetail = locallab.spots.at(j).noiselumdetail && pSpot.noiselumdetail == otherSpot.noiselumdetail;
                 locallab.spots.at(j).noiselequal = locallab.spots.at(j).noiselequal && pSpot.noiselequal == otherSpot.noiselequal;
@@ -3158,6 +3160,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).noiselumf = mods.locallab.spots.at(i).noiselumf;
         }
 
+        if (locallab.spots.at(i).noiselumf0) {
+            toEdit.locallab.spots.at(i).noiselumf0 = mods.locallab.spots.at(i).noiselumf0;
+        }
+
+        if (locallab.spots.at(i).noiselumf2) {
+            toEdit.locallab.spots.at(i).noiselumf2 = mods.locallab.spots.at(i).noiselumf2;
+        }
+
         if (locallab.spots.at(i).noiselumc) {
             toEdit.locallab.spots.at(i).noiselumc = mods.locallab.spots.at(i).noiselumc;
         }
@@ -4301,6 +4311,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     // Denoise
     expdenoi(v),
     noiselumf(v),
+    noiselumf0(v),
+    noiselumf2(v),
     noiselumc(v),
     noiselumdetail(v),
     noiselequal(v),
@@ -4485,6 +4497,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Denoise
     expdenoi = v;
     noiselumf = v;
+    noiselumf0 = v;
+    noiselumf2 = v;
     noiselumc = v;
     noiselumdetail = v;
     noiselequal = v;

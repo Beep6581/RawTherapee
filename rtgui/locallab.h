@@ -188,6 +188,8 @@ private:
     Adjuster* const softradiuscb;
     // Denoise
     Adjuster* const noiselumf;
+    Adjuster* const noiselumf0;
+    Adjuster* const noiselumf2;
     Adjuster* const noiselumc;
     Adjuster* const noiselumdetail;
     Adjuster* const noiselequal;

@@ -827,7 +827,7 @@ HISTORY_MSG_577;Local - cbdl chroma
 HISTORY_MSG_578;Local - cbdl threshold
 HISTORY_MSG_579;Local - cbdl scope
 HISTORY_MSG_580;Local - Denoise
-HISTORY_MSG_581;Local - deNoise lum f
+HISTORY_MSG_581;Local - deNoise lum f 1
 HISTORY_MSG_582;Local - deNoise lum c
 HISTORY_MSG_583;Local - deNoise lum detail
 HISTORY_MSG_584;Local - deNoise Equalizer white-black
@@ -906,6 +906,8 @@ HISTORY_MSG_658;Local - CBDL soft radius
 HISTORY_MSG_659;L*a*b Spot transition-weakening
 HISTORY_MSG_660;Local - cbdl clarity
 HISTORY_MSG_661;Local - cbdl contrast residual
+HISTORY_MSG_662;Local - deNoise lum f 0
+HISTORY_MSG_663;Local - deNoise lum f 2
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2014,7 +2016,9 @@ TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the m
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
-TP_LOCALLAB_NOISELUMFINE;Luminance fine (Wav)
+TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
+TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
+TP_LOCALLAB_NOISELUMFINETWO;Luminance fine 2 (Wav)
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
 TP_LOCALLAB_NOISELUMDETAIL;Luminance detail (DCT)
 TP_LOCALLAB_NOISELEQUAL;Equalizer white-black

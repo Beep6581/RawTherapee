@@ -1104,6 +1104,8 @@ struct LocallabParams {
         // Denoise
         bool expdenoi;
         int noiselumf;
+        int noiselumf0;
+        int noiselumf2;
         int noiselumc;
         int noiselumdetail;
         int noiselequal;
