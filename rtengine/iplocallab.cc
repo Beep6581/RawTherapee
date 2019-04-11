@@ -1312,8 +1312,6 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
                 float dEa = sqrt(1.2f * SQR(refa - origblur->a[y][x] / 327.6f) + 1.f * SQR(refb - origblur->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - rL));
                 float dEb = sqrt(1.f * SQR(refa - origblur->a[y][x] / 327.6f) + 1.2f * SQR(refb - origblur->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - rL));
 
-//                float mindE = 2.f + MINSCOPE * lp.sensden * lp.thr;
-//                float maxdE = 5.f + MAXSCOPE *  lp.sensden * (1 + 0.1f * lp.thr);
                 float reducdEL = 1.f;
                 float reducdEa = 1.f;
                 float reducdEb = 1.f;
@@ -1326,66 +1324,7 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
                     reducdEb = SQR(reducdEb);
 
                 }
-                /*
-                float ar = 1.f / (mindE - maxdE);
 
-                float br = - ar * maxdE;
-
-                if (levred == 7 && lp.sensden < 99) { // after 99 plein effect
-
-                    if (dEL > maxdE) {
-                        reducdEL = 0.f;
-                    }
-
-                    if (dEL > mindE && dEL <= maxdE) {
-                        reducdEL = ar * dEL + br;
-                    }
-
-                    if (dEL <= mindE) {
-                        reducdEL = 1.f;
-                    }
-
-                    reducdEL = SQR(reducdEL);
-
-
-
-                    if (dEa > maxdE) {
-                        reducdEa = 0.f;
-                    }
-
-                    if (dEa > mindE && dEa <= maxdE) {
-                        reducdEa = ar * dEa + br;
-                    }
-
-                    if (dEa <= mindE) {
-                        reducdEa = 1.f;
-                    }
-
-                    reducdEa = SQR(reducdEa);
-
-
-
-                    if (dEb > maxdE) {
-                        reducdEb = 0.f;
-                    }
-
-                    if (dEb > mindE && dEb <= maxdE) {
-                        reducdEb = ar * dEb + br;
-                    }
-
-                    if (dEb <= mindE) {
-                        reducdEb = 1.f;
-                    }
-
-                    reducdEb = SQR(reducdEb);
-                }
-
-                if (lp.sensden > 99) { //full effect
-                    reducdEb = 1.f;
-                    reducdEa = 1.f;
-                    reducdEL = 1.f;
-                }
-*/
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
