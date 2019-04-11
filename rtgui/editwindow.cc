@@ -51,7 +51,7 @@ EditWindow* EditWindow::getInstance(RTWindow* p, bool restore)
     return &instance_.editWnd;
 }
 
-EditWindow::EditWindow (RTWindow* p) : resolution(96.), parent(p) , isFullscreen(false), isClosed(true)
+EditWindow::EditWindow (RTWindow* p) : resolution(RTScalable::baseDPI), parent(p) , isFullscreen(false), isClosed(true)
 {
 
     updateResolution();
@@ -128,7 +128,7 @@ bool EditWindow::updateResolution()
     double res = get_screen()->get_resolution();
     if (scale == 2) {
         // from Windows' behavior : if scale==2, resolution = 192. (Gtk shows 96 dpi !?), there's no higher value
-        res = 192.;
+        res = RTScalable::baseHiDPI;
     }
     bool retVal = res != resolution;
     resolution = res;
@@ -141,11 +141,11 @@ void EditWindow::setAppIcon()
     bool downsize = false;
     // findIconAbsolutePath won't be able to select the image based on resolution with the
     // storage of the images, we're doing the selection here
-    if (resolution == 96.) {
+    if (resolution == RTScalable::baseDPI) {
         fName = "rawtherapee-logo-24.png";
     } else {
         fName = "rawtherapee-logo-48.png";
-        if (resolution < 192.) {
+        if (resolution < RTScalable::baseHiDPI) {
             downsize = true;
         }
     }
@@ -155,7 +155,7 @@ void EditWindow::setAppIcon()
         return;
     }
     if (downsize) {
-        int size = int((48. * resolution) / 192.);
+        int size = int((48. * resolution) / RTScalable::baseHiDPI);
         pixbuf->scale_simple(size, size, Gdk::InterpType::INTERP_BILINEAR);
     }
 

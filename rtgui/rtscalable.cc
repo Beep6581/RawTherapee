@@ -225,7 +225,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadImage(const Glib::ustring &fn
 
     RsvgDimensionData dim;
     rsvg_handle_get_dimensions(handle, &dim);
-    double r = dpi / 96.;
+    double r = dpi / baseDPI;
     Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, (int)(dim.width * r + 0.499), (int)(dim.height * r + 0.499));
     Cairo::RefPtr<Cairo::Context> c = Cairo::Context::create(surf);
     c->set_source_rgba (0., 0., 0., 0.);

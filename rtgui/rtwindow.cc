@@ -109,7 +109,7 @@ RTWindow::RTWindow ()
 #if defined(__APPLE__)
         // This will force screen resolution regarding font, but I don't think it's compliant with Gtk guidelines...
         // Do not confuse with screen scaling, where everything is scaled up !
-        screen->set_resolution (96.);
+        screen->set_resolution (RTScalable::baseDPI);
 #endif
 
         Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
@@ -184,15 +184,15 @@ RTWindow::RTWindow ()
                 int resolution = (int)style->get_screen()->get_resolution();
                 if (isPix) {
                     // HOMBRE: guessing here...
-                    // if resolution is lower than 192ppi, we're supposing that it's already expressed in a scale==1 scenario
+                    // if resolution is lower than baseHiDPI, we're supposing that it's already expressed in a scale==1 scenario
                     if (resolution >= int(RTScalable::baseHiDPI)) {
                         // converting the resolution to a scale==1 scenario
                         resolution /= 2;
                     }
                     // 1pt =  1/72in @ 96 ppi
                     // HOMBRE: If the font unit is px, is it already scaled up to match the resolution ?
-                    //             px         >inch >pt      >"scaled pt"
-                    pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (RTScalable::baseHiDPI / resolution) + 0.49);
+                    //                 px         >inch                 >pt    >"scaled pt"
+                    pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (RTScalable::baseDPI / resolution) + 0.49);
                 } else {
                     pt = fontSize / Pango::SCALE;
                 }
