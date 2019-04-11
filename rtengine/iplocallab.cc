@@ -1261,6 +1261,11 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const int limscope = 80;
+        const float mindE = 2.f + MINSCOPE * lp.sensden * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * lp.sensden * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -1307,12 +1312,21 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
                 float dEa = sqrt(1.2f * SQR(refa - origblur->a[y][x] / 327.6f) + 1.f * SQR(refb - origblur->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - rL));
                 float dEb = sqrt(1.f * SQR(refa - origblur->a[y][x] / 327.6f) + 1.2f * SQR(refb - origblur->b[y][x] / 327.8f) + 0.8f * SQR(lumaref - rL));
 
-                float mindE = 2.f + MINSCOPE * lp.sensden * lp.thr;
-                float maxdE = 5.f + MAXSCOPE *  lp.sensden * (1 + 0.1f * lp.thr);
+//                float mindE = 2.f + MINSCOPE * lp.sensden * lp.thr;
+//                float maxdE = 5.f + MAXSCOPE *  lp.sensden * (1 + 0.1f * lp.thr);
                 float reducdEL = 1.f;
                 float reducdEa = 1.f;
                 float reducdEb = 1.f;
+                if (levred == 7){
+                    calcreducdE(dEL, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden , reducdEL);
+                    calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden , reducdEa);
+                    calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden , reducdEb);
+                    reducdEL = SQR(reducdEL);
+                    reducdEa = SQR(reducdEa);
+                    reducdEb = SQR(reducdEb);
 
+                }
+                /*
                 float ar = 1.f / (mindE - maxdE);
 
                 float br = - ar * maxdE;
@@ -1371,7 +1385,7 @@ void ImProcFunctions::DeNoise_Local(int call,  const struct local_params& lp, in
                     reducdEa = 1.f;
                     reducdEL = 1.f;
                 }
-
+*/
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
@@ -1473,7 +1487,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage * tmp1, const float hueref, const
         const int limscope = 80;
         const int begy = int (lp.yc - lp.lyT);
         const int begx = int (lp.xc - lp.lxL);
-        const float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
+        const float mindE = 4.f + MINSCOPE * lp.sensbn * lp.thr;//best usage ?? with blurnoise
         const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
