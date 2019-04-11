@@ -799,7 +799,6 @@ TP_CHMIXER_BLUE;Плава
 TP_CHMIXER_GREEN;Зелена
 TP_CHMIXER_LABEL;Мешање канала
 TP_CHMIXER_RED;Црвена
-TP_CHROMATABERR_LABEL;Хроматске аберације
 TP_COARSETRAF_TOOLTIP_HFLIP;Изврће слику хоризонтално
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Окреће слику улево
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Окреће слику удесно
@@ -1048,7 +1047,7 @@ TP_PREPROCESS_NO_FOUND;Није пронађено
 TP_RAWCACORR_AUTO;Исправи хроматске аберације
 TP_RAWCACORR_CABLUE;Плава
 TP_RAWCACORR_CARED;Црвена
-TP_RAWEXPOS_BLACKS;Ниво црне
+TP_RAWCACORR_LABEL;Хроматске аберације
 TP_RAWEXPOS_LINEAR;Линеарни фактор корекције
 TP_RAWEXPOS_TWOGREEN;Обе зелене
 TP_RAW_DCBENHANCE;Примени ДЦБ побољшање

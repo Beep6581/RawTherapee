@@ -1349,7 +1349,7 @@ TP_BWMIX_TCMODE_STANDARD;N&B Standard
 TP_BWMIX_TCMODE_WEIGHTEDSTD;N&B Standard Pondéré
 TP_BWMIX_VAL;L
 TP_CACORRECTION_BLUE;Bleu
-TP_CACORRECTION_LABEL;Aberration chromatique
+TP_CACORRECTION_LABEL;Aberration Chromatique
 TP_CACORRECTION_RED;Rouge
 TP_CBDL_AFT;Après Noir-et-Blanc
 TP_CBDL_BEF;Avant Noir-et-Blanc
@@ -1359,7 +1359,6 @@ TP_CHMIXER_BLUE;Bleu
 TP_CHMIXER_GREEN;Vert
 TP_CHMIXER_LABEL;Mixage des canaux
 TP_CHMIXER_RED;Rouge
-TP_CHROMATABERR_LABEL;Aberration Chromatique
 TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourci: <b>[</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite\nRaccourci: <b>]</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-]</b>
@@ -1793,7 +1792,7 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;Ce réglage est disponible si "Correction-auto" est 
 TP_RAWCACORR_AVOIDCOLORSHIFT;Éviter les dérives couleurs
 TP_RAWCACORR_CABLUE;Bleu
 TP_RAWCACORR_CARED;Rouge
-TP_RAWEXPOS_BLACKS;Niveaux de noir
+TP_RAWCACORR_LABEL;Aberration Chromatique
 TP_RAWEXPOS_BLACK_0;Vert 1 (maître)
 TP_RAWEXPOS_BLACK_1;Rouge
 TP_RAWEXPOS_BLACK_2;Bleu

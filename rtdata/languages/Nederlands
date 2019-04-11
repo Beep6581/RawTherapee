@@ -278,9 +278,9 @@ HISTORY_MSG_30;RL-verscherping - Straal
 HISTORY_MSG_31;RL-verscherping - Hoeveelheid
 HISTORY_MSG_32;RL-verscherping - Demping
 HISTORY_MSG_33;RL-verscherping - Herhaling
-HISTORY_MSG_34;LCP Lensvervorming correctie
-HISTORY_MSG_35;LCP Vignettering correctie
-HISTORY_MSG_36;LCP CA correctie
+HISTORY_MSG_34;Lensvervorming correctie
+HISTORY_MSG_35;Vignettering correctie
+HISTORY_MSG_36;CA correctie
 HISTORY_MSG_37;Automatische Niveaus
 HISTORY_MSG_38;Witbalans Methode
 HISTORY_MSG_39;Kleurtemperatuur
@@ -1162,7 +1162,6 @@ TP_CHMIXER_BLUE;Blauw
 TP_CHMIXER_GREEN;Groen
 TP_CHMIXER_LABEL;Kleurkanaal mixer
 TP_CHMIXER_RED;Rood
-TP_CHROMATABERR_LABEL;Chromatische aberratie
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontaal spiegelen
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nSneltoets:\n<b>[</b> - Multi-tab Mode,\n<b>Alt-[</b> - Enkel-tab Mode.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nSneltoets:\n<b>]</b> - Multi-tab Mode,\n<b>Alt-]</b> - Enkel-tab Mode.
@@ -1530,7 +1529,7 @@ TP_PRSHARPENING_TOOLTIP;Verscherp na verkleinen. Werkt alleen als verkleinen act
 TP_RAWCACORR_AUTO;Automatische CA-correctie
 TP_RAWCACORR_CABLUE;Blauw
 TP_RAWCACORR_CARED;Rood
-TP_RAWEXPOS_BLACKS;Zwartniveaus
+TP_RAWCACORR_LABEL;Corrigeer chromatische aberratie
 TP_RAWEXPOS_BLACK_0;Groen 1 (leidend)
 TP_RAWEXPOS_BLACK_1;Rood
 TP_RAWEXPOS_BLACK_2;Blauw

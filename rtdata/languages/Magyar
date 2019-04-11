@@ -601,7 +601,6 @@ TP_CHMIXER_BLUE;Kék
 TP_CHMIXER_GREEN;Zöld
 TP_CHMIXER_LABEL;Színkeverő
 TP_CHMIXER_RED;Piros
-TP_CHROMATABERR_LABEL;Színihiba (kromatikus aberráció)
 TP_COARSETRAF_TOOLTIP_HFLIP;Vizszintes tükrözés
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Forgatás balra
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Forgatás jobbra
@@ -706,10 +705,10 @@ TP_PREPROCESS_GREENEQUIL;Zöldegyensúly
 TP_PREPROCESS_LABEL;Előfeldolgozás
 TP_PREPROCESS_LINEDENOISE;Sorzaj-szűrő
 TP_PREPROCESS_NO_FOUND;Nincs elérhető
-TP_RAWCACORR_AUTO;Színihiba (kromatikus aberráció) automatikus helyesbítése
+TP_RAWCACORR_AUTO;Automatikus helyesbítése
 TP_RAWCACORR_CABLUE;Kék
 TP_RAWCACORR_CARED;Vörös
-TP_RAWEXPOS_BLACKS;Feketeszintek
+TP_RAWCACORR_LABEL;Kromatikus aberráció
 TP_RAWEXPOS_LINEAR;Fehérszint: lineáris korrelációs faktor
 TP_RAWEXPOS_TWOGREEN;Zöldek együtt
 TP_RAW_DCBENHANCE;DCB helyesbítő lépés alkalmazása

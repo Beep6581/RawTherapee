@@ -269,9 +269,9 @@ HISTORY_MSG_30;Деконволюция: Радиус
 HISTORY_MSG_31;Деконволюция: Значение
 HISTORY_MSG_32;Деконволюция: Ослабление
 HISTORY_MSG_33;Деконволюция: Повторы
-HISTORY_MSG_34;ПКО: коррекция искажения
-HISTORY_MSG_35;ПКО: коррекция виньетирования
-HISTORY_MSG_36;ПКО: коррекция ХА
+HISTORY_MSG_34;коррекция искажения
+HISTORY_MSG_35;коррекция виньетирования
+HISTORY_MSG_36;коррекция ХА
 HISTORY_MSG_37;Автоматические уровни
 HISTORY_MSG_38;Метод определения баланса белого
 HISTORY_MSG_39;Баланс белого: температура
@@ -984,7 +984,6 @@ TP_CHMIXER_BLUE;Синий
 TP_CHMIXER_GREEN;Зелёный
 TP_CHMIXER_LABEL;Цветовые каналы
 TP_CHMIXER_RED;Красный
-TP_CHROMATABERR_LABEL;Хроматические аберрации
 TP_COARSETRAF_TOOLTIP_HFLIP;Горизонтальное зеркальное отражение
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Повернуть влево\n\nГорячие клавиши:\n<b>[</b> - режим множественных редакторов,\n<b>Alt-[</b> - режим одного редактора
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Повернуть вправо\n\nГорячие клавиши:\n<b>]</b> - режим множественных редакторов,\n<b>Alt-]</b> - режим одного редактора
@@ -1266,7 +1265,7 @@ TP_RAWCACORR_AUTOIT;Подходов
 TP_RAWCACORR_AVOIDCOLORSHIFT;Избегать сдвига цветов
 TP_RAWCACORR_CABLUE;Синий
 TP_RAWCACORR_CARED;Красный
-TP_RAWEXPOS_BLACKS;Уровни черного
+TP_RAWCACORR_LABEL;Хроматические аберрации
 TP_RAWEXPOS_BLACK_0;Зелёный 1 (ведущий)
 TP_RAWEXPOS_BLACK_1;Красный
 TP_RAWEXPOS_BLACK_2;Синий

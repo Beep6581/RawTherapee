@@ -248,9 +248,9 @@ HISTORY_MSG_30;RLD - Radie
 HISTORY_MSG_31;RLD - Mängd
 HISTORY_MSG_32;RLD - Dämpning
 HISTORY_MSG_33;RLD - Upprepningar
-HISTORY_MSG_34;LCP distorsionskorrigering
-HISTORY_MSG_35;LCP vinjetteringskorrigering
-HISTORY_MSG_36;LCP Kromatiska aberattioner
+HISTORY_MSG_34;Distorsionskorrigering
+HISTORY_MSG_35;Vinjetteringskorrigering
+HISTORY_MSG_36;Kromatiska aberattioner
 HISTORY_MSG_37;Autonivåer
 HISTORY_MSG_38;Vitbalansmetod
 HISTORY_MSG_39;VB - Färgtemperatur
@@ -1054,7 +1054,6 @@ TP_CHMIXER_BLUE;Blå kanal
 TP_CHMIXER_GREEN;Grön kanal
 TP_CHMIXER_LABEL;Kanalmixer
 TP_CHMIXER_RED;Röd kanal
-TP_CHROMATABERR_LABEL;Kromatiska abberationer
 TP_COARSETRAF_TOOLTIP_HFLIP;Vänd horisontellt
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotera åt vänster.\nKortkommando: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotera åt höger.\nKortkommando: <b>]</b>
@@ -1397,7 +1396,7 @@ TP_PRSHARPENING_TOOLTIP;Skärper bilden efter att den storleksförändrats. Fung
 TP_RAWCACORR_AUTO;Reducera automatiskt kromatiska abberationer
 TP_RAWCACORR_CABLUE;Blå
 TP_RAWCACORR_CARED;Röd
-TP_RAWEXPOS_BLACKS;Svartpunktsnivåer
+TP_RAWCACORR_LABEL;Reducera kromatiska abberationer
 TP_RAWEXPOS_BLACK_0;Grön 1 (ledare)
 TP_RAWEXPOS_BLACK_1;Röd
 TP_RAWEXPOS_BLACK_2;Blå
