@@ -23,7 +23,7 @@ New features since 5.5:
 - HiDPI support, for a smooth and sharp user interface regardless of screen size. Scaling in RawTherapee depends on font size, DPI and display scaling. No scaling occurs when the font size is set to 9pt, DPI is set to 96 (or 72 for macOS) and scaling is set to 1 (100%).
 - Ability to move tools to a new Favorites tab, http://rawpedia.rawtherapee.com/Favorites_Tab
 - "Unclipped" processing profile, to make it easy to save an image while preserving data across the whole tonal range, http://rawpedia.rawtherapee.com/Unclipped
-- User-adjustable tiles-per-thread settings in Preferences > Performance, for users who want to perform performance benchmarks to find optimal values for their system. The default value of 2 tiles-per-thread performs best overall.
+- User-adjustable tiles-per-thread settings in Preferences > Performance, for users who want to find optimal values for their system. The default value of 2 tiles-per-thread performs best overall.
 - Hundreds of speed optimizations, bug fixes, and overall improvements.
 
 
