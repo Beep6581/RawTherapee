@@ -908,6 +908,7 @@ HISTORY_MSG_660;Local - cbdl clarity
 HISTORY_MSG_661;Local - cbdl contrast residual
 HISTORY_MSG_662;Local - deNoise lum f 0
 HISTORY_MSG_663;Local - deNoise lum f 2
+HISTORY_MSG_664;Local - cbdl Blur
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1965,6 +1966,7 @@ TP_LOCALLAB_BLUFR;Blur & Noise
 TP_LOCALLAB_BLURDE;Blur Shape detection
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLINV;Inverse
+TP_LOCALLAB_BLURCBDL;Blur
 TP_LOCALLAB_BLSYM;Symmetric
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y

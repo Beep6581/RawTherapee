@@ -24,6 +24,7 @@
 #include "array2D.h"
 #include "rt_math.h"
 #include "opthelper.h"
+#include "boxblur.h"
 
 #define RANGEFN(i) ((1000.0f / (i + 1000.0f)))
 #define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * RANGEFN(fabsf((data_fine[i1][j1]-data_fine[i][j]))) )
@@ -252,11 +253,11 @@ void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidt
 
 }
 
-void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const float contres, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
+void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const float contres, const float blurcb, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev, bool multiThread)
 {
     int lastlevel = maxlevelloc;
 
-    if (settings->verbose) {
+    if (settings->verbose) { 
         printf("Dirpyr scaleprev=%i\n", scaleprev);
     }
 
@@ -407,12 +408,12 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     
     
     for (int level = lastlevel - 1; level > 0; level--) {
-        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], residbuff, srcwidth, srcheight, level, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
+        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], residbuff, srcwidth, srcheight, level, multi, blurcb, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, multiThread);
     }
 
     scale = scalesloc[0];
 
-    idirpyr_eq_channel_loc(dirpyrlo[0], src, residbuff, srcwidth, srcheight, 0, multi, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice);
+    idirpyr_eq_channel_loc(dirpyrlo[0], src, residbuff, srcwidth, srcheight, 0, multi, blurcb, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, multiThread);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     array2D<float> loct(srcwidth, srcheight);
@@ -790,7 +791,7 @@ void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, i
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice)
+void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[5], const float blurcb, const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, bool multiThread)
 {
     //  const float skinprotneg = -skinprot;
 //   const float factorHard = (1.f - skinprotneg / 100.f);
@@ -834,7 +835,9 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     }
     
 
- //   if (skinprot == 0.f)
+     
+    AlignedBuffer<float> blurbufcbdl(width * height);
+    float rad = 0.05f * blurcb * fabs((level + 1) * (multbis[level] - 1.f));
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -845,45 +848,14 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
                     buffer[i][j] = CLIPLL(buffer[i][j]);
             }
         }
+        if(blurcb > 0.f) {
+#ifdef _OPENMP
+            #pragma omp parallel if (multiThread)
+#endif            
+            boxblur<float, float>(buffer, buffer, blurbufcbdl.data, rad, rad, width, height);
+        }
         irangefn.clear();
-    /*
-    else if(skinprot > 0.f)
-    #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
-    #endif
-    for(int i = 0; i < height; i++) {
-        for(int j = 0; j < width; j++) {
-            float scale = 1.f;
-            float hipass = (data_fine[i][j] - data_coarse[i][j]);
-            // These values are precalculated now
-            float modhue = hue[i][j];
-            float modchro = chrom[i][j];
-            Color::SkinSatCbdl ((data_fine[i][j]) / 327.68f, modhue, modchro, skinprot, scale, true, b_l, t_l, t_r);
-            buffer[i][j] += (1.f + (irangefn[hipass + 0x10000]) * scale) * hipass ;
-        }
-    }
-    else
-    #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
-    #endif
-    for(int i = 0; i < height; i++) {
-        for(int j = 0; j < width; j++) {
-            float scale = 1.f;
-            float hipass = (data_fine[i][j] - data_coarse[i][j]);
-            // These values are precalculated now
-            float modhue = hue[i][j];
-            float modchro = chrom[i][j];
-            Color::SkinSatCbdl ((data_fine[i][j]) / 327.68f, modhue, modchro, skinprotneg, scale, false, b_l, t_l, t_r);
-            float correct = irangefn[hipass + 0x10000];
-
-            if (scale == 1.f) {//image hard
-                buffer[i][j] += (1.f + (correct) * (factorHard)) * hipass ;
-            } else { //image soft with scale < 1 ==> skin
-                buffer[i][j] += (1.f + (correct)) * hipass ;
-            }
-        }
-    }
-    */
+        blurbufcbdl.resize(0); 
 }
 
 void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[maxlevel], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, float b_l, float t_l, float t_r)

@@ -184,6 +184,7 @@ private:
     Adjuster* const threshold;
     Adjuster* const clarityml;
     Adjuster* const contresid;
+    Adjuster* const blurcbdl;
     Adjuster* const sensicb;
     Adjuster* const softradiuscb;
     // Denoise

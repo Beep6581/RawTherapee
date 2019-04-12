@@ -1093,6 +1093,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensicb = locallab.spots.at(j).sensicb && pSpot.sensicb == otherSpot.sensicb;
                 locallab.spots.at(j).clarityml = locallab.spots.at(j).clarityml && pSpot.clarityml == otherSpot.clarityml;
                 locallab.spots.at(j).contresid = locallab.spots.at(j).contresid && pSpot.contresid == otherSpot.contresid;
+                locallab.spots.at(j).blurcbdl = locallab.spots.at(j).blurcbdl && pSpot.blurcbdl == otherSpot.blurcbdl;
                 locallab.spots.at(j).softradiuscb = locallab.spots.at(j).softradiuscb && pSpot.softradiuscb == otherSpot.softradiuscb;
                 // Denoise
                 locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
@@ -3147,6 +3148,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).contresid = mods.locallab.spots.at(i).contresid;
         }
 
+        if (locallab.spots.at(i).blurcbdl) {
+            toEdit.locallab.spots.at(i).blurcbdl = mods.locallab.spots.at(i).blurcbdl;
+        }
+
         if (locallab.spots.at(i).softradiuscb) {
             toEdit.locallab.spots.at(i).softradiuscb = mods.locallab.spots.at(i).softradiuscb;
         }
@@ -4307,6 +4312,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensicb(v),
     clarityml(v),
     contresid(v),
+    blurcbdl(v),
     softradiuscb(v),
     // Denoise
     expdenoi(v),
@@ -4493,6 +4499,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensicb = v;
     clarityml = v;
     contresid = v;
+    blurcbdl = v;
     softradiuscb = v;
     // Denoise
     expdenoi = v;

@@ -1100,6 +1100,7 @@ struct LocallabParams {
         int sensicb;
         int clarityml;
         int contresid;
+        int blurcbdl;
         double softradiuscb;
         // Denoise
         bool expdenoi;

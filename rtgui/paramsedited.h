@@ -516,6 +516,7 @@ public:
         bool sensicb;
         bool clarityml;
         bool contresid;
+        bool blurcbdl;
         bool softradiuscb;
         // Denoise
         bool expdenoi;
