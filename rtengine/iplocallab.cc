@@ -3850,7 +3850,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //Blur and noise
 
         if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
-            StopWatch Stop1("blur");
             std::unique_ptr<LabImage> tmp1;
 
             if (call <= 3 && lp.blurmet == 0) {
