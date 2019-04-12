@@ -294,11 +294,16 @@ private:
         public Gtk::Dialog
     {
     public:
+        enum DialogButton {
+            OkButton = 1,
+            CancelButton = 2
+        };
+
         RenameDialog(const Glib::ustring &actualname, Gtk::Window &parent);
         Glib::ustring get_new_name();
 
     private:
-        Gtk::Entry newname_;
+        Gtk::Entry* const newname_;
     };
 
     ControlSpots spots_;

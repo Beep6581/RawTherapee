@@ -424,12 +424,14 @@ void ControlSpotPanel::on_button_rename()
     int status = d.run();
 
     // Update actual name and raise event
-    if (status == 1) {
-        nameChanged_ = true;
-        const auto newname = d.get_new_name();
-        row[spots_.name] = newname;
-        treeview_.columns_autosize();
-        listener->panelChanged(EvLocallabSpotName, newname);
+    if (status == RenameDialog::OkButton) {
+        const Glib::ustring newname = d.get_new_name();
+        if (newname != actualname) { // Event is only raised if name is updated
+            nameChanged_ = true;
+            row[spots_.name] = newname;
+            treeview_.columns_autosize();
+            listener->panelChanged(EvLocallabSpotName, newname);
+        }
     }
 }
 
@@ -2134,23 +2136,29 @@ ControlSpotPanel::ControlSpots::ControlSpots()
 //-----------------------------------------------------------------------------
 
 ControlSpotPanel::RenameDialog::RenameDialog(const Glib::ustring &actualname, Gtk::Window &parent):
-    Gtk::Dialog(M("TP_LOCALLAB_REN_DIALOG_NAME"), parent)
+    Gtk::Dialog(M("TP_LOCALLAB_REN_DIALOG_NAME"), parent),
+
+    newname_(Gtk::manage(new Gtk::Entry()))
 {
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    // Entry widget
+    Gtk::HBox* const hb = Gtk::manage(new Gtk::HBox());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_REN_DIALOG_LAB"))), false, false, 4);
-
-    newname_.set_text(actualname);
-    hb->pack_start(newname_);
-
+    newname_->set_text(actualname);
+    hb->pack_start(*newname_);
     get_content_area()->pack_start(*hb, Gtk::PACK_SHRINK, 4);
 
-    add_button(M("GENERAL_OK"), 1);
-    add_button(M("GENERAL_CANCEL"), 2);
+    // OK/CANCEL buttons
+    add_button(M("GENERAL_OK"), OkButton);
+    add_button(M("GENERAL_CANCEL"), CancelButton);
+
+    // Set OK button as default one when pressing enter
+    newname_->set_activates_default();
+    set_default_response(OkButton);
 
     show_all_children();
 }
 
 Glib::ustring ControlSpotPanel::RenameDialog::get_new_name()
 {
-    return newname_.get_text();
+    return newname_->get_text();
 }
