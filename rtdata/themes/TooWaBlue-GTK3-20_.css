@@ -1992,7 +1992,7 @@ entry:focus > selection  {
 
 /* Curves **************************************************************************************/
 .curve-mainbox {
-    margin: 0.125em;
+    margin: 0.19em;
     border: 0.083333333333333333em solid @border-color;
 }
 .curve-mainbox .curve-curvebox {
