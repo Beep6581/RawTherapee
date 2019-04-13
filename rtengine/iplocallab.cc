@@ -2205,39 +2205,26 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
     }
 }
 
-void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufexporig, float **buflight, float **bufchro, float ** bufhh, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufexporig, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     BENCHFUN {
         const float ach = (float)lp.trans / 100.f;
-        float varsens = lp.sensh;
-
-        //sobel
-        sobelref /= 100.;
-        meansobel /= 100.f;
-
-        if (sobelref > 60.)
-        {
-            sobelref = 60.;
-        }
-
-        sobelref = log1p(sobelref);
+        const float varsens = lp.sensh;
 
         int GW = transformed->W;
         int GH = transformed->H;
 
-        float refa = chromaref * cos(hueref);
-        float refb = chromaref * sin(hueref);
-
-
-        LabImage *origblur = new LabImage(GW, GH);
-
-        float radius = 3.f / sk;
+        const float refa = chromaref * cos(hueref);
+        const float refb = chromaref * sin(hueref);
 
         //balance deltaE
         float kL = lp.balance;
         float kab = 1.f;
         balancedeltaE(kL, kab);
+
+        std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+        const float radius = 3.f / sk;
 
 #ifdef _OPENMP
         #pragma omp parallel
@@ -2259,11 +2246,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-            
-            
-#ifdef __SSE2__
-            float atan2Buffer[transformed->W] ALIGNED16;
-#endif
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -2277,24 +2259,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                 if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
                     continue;
                 }
-
-#ifdef __SSE2__
-
-                if (HHutili) {
-                    int i = 0;
-
-                    for (; i < transformed->W - 3; i += 4) {
-                        vfloat av = LVFU(origblur->a[y][i]);
-                        vfloat bv = LVFU(origblur->b[y][i]);
-                        STVF(atan2Buffer[i], xatan2f(bv, av));
-                    }
-
-                    for (; i < transformed->W; i++) {
-                        atan2Buffer[i] = xatan2f(origblur->b[y][i], origblur->a[y][i]);
-                    }
-                }
-
-#endif
 
                 for (int x = 0; x < transformed->W; x++) {
                     const int lox = cx + x;
@@ -2315,136 +2279,47 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                         continue;
                     }
 
-                    float rhue = 0;
-
-                    if (HHutili) {
-#ifdef __SSE2__
-                        rhue = atan2Buffer[x];
-#else
-                        rhue = xatan2f(origblur->b[y][x], origblur->a[y][x]);
-#endif
-                    }
-
                     float rL = origblur->L[y][x] / 327.68f;
-                    float rsob = 0.f;
 
+                    const float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
 
-                    float dE = rsob + sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-
-                    float cli = 0.f;
-                    float clc = 0.f;
-                    float hhro = 0.f;
-
-                    if (HHutili) {
-                        hhro = bufhh[loy - begy][lox - begx];
-                    }
-
-                    cli = buflight[loy - begy][lox - begx];
-                    clc = bufchro[loy - begy][lox - begx];
+                    float cli = buflight[loy - begy][lox - begx];
+                    float clc = bufchro[loy - begy][lox - begx];
 
                     float reducdE;
 
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
 
-                    float realstrdE = reducdE * cli;
-                    float realstrchdE = reducdE * clc;
-                    float realhhdE = reducdE * hhro;
-
-
-                    float tempa = 0.f;
-                    float tempb = 0.f;
+                    reducdE /= 100.f;
+                    cli *= reducdE;
+                    clc *= reducdE;
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
-
-
-
-                        switch (zone) {
-                            case 1: { // inside transition zone
-                                float factorx = localFactor;
-                                float newhr = 0.f;
-
-                                if (senstype == 4) {//all except color and light (TODO) and exposure
-                                    float lightc = bufexporig->L[loy - begy][lox - begx];
-                                    float fli = ((100.f + realstrdE) / 100.f);
-                                    float diflc = lightc * fli - original->L[y][x];
-                                    diflc *= factorx;
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                }
-
-                                if (HHutili && hhro != 0.f) {
-                                    float addh = 0.01f * realhhdE * factorx;
-                                    newhr = rhue + addh;
-
-                                    if (newhr > rtengine::RT_PI) {
-                                        newhr -= 2 * rtengine::RT_PI;
-                                    } else if (newhr < -rtengine::RT_PI) {
-                                        newhr  += 2 * rtengine::RT_PI;
-                                    }
-                                }
-
-                                float flia = 1.f;
-                                float flib = 1.f;
-                                float chra = bufexporig->a[loy - begy][lox - begx];
-                                float chrb = bufexporig->b[loy - begy][lox - begx];
-
-                                if (senstype == 4) {
-                                    flia = flib = ((100.f + realstrchdE) / 100.f);
-                                }
-
-                                float difa = chra * flia - original->a[y][x];
-                                float difb = chrb * flib - original->b[y][x];
-                                difa *= factorx;
-                                difb *= factorx;
-
-                                transformed->a[y][x] = tempa = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = tempb = CLIPC(original->b[y][x] + difb);
-
-                                break;
-
-                            }
-
-                            case 2: { // inside selection => full effect, no transition
-                                float newhr = 0.f;
-
-                                if (senstype == 4) { //retinex & cbdl
-                                    float lightc = bufexporig->L[loy - begy][lox - begx];
-                                    float fli = ((100.f + realstrdE) / 100.f);
-                                    float diflc = lightc * fli - original->L[y][x];
-                                    transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                                }
-
-                                if (HHutili && hhro != 0.f) {
-                                    float addh = 0.01f * realhhdE;
-                                    newhr = rhue + addh;
-
-                                    if (newhr > rtengine::RT_PI) {
-                                        newhr -= 2 * rtengine::RT_PI;
-                                    } else if (newhr < -rtengine::RT_PI) {
-                                        newhr  += 2 * rtengine::RT_PI;
-                                    }
-                                }
-
-                                float flia = 1.f;
-                                float flib = 1.f;
-                                float chra = bufexporig->a[loy - begy][lox - begx];
-                                float chrb = bufexporig->b[loy - begy][lox - begx];
-
-                                if (senstype == 4) {
-                                    flia = flib = (100.f + realstrchdE) / 100.f;
-                                }
-
-                                float difa = chra * flia - original->a[y][x];
-                                float difb = chrb * flib - original->b[y][x];
-
-                                transformed->a[y][x] = tempa = CLIPC(original->a[y][x] + difa);
-                                transformed->b[y][x] = tempb = CLIPC(original->b[y][x] + difb);
-                            }
+                        if (senstype == 4) {//all except color and light (TODO) and exposure
+                            float lightc = bufexporig->L[loy - begy][lox - begx];
+                            float fli = 1.f + cli;
+                            float diflc = lightc * fli - original->L[y][x];
+                            diflc *= localFactor;
+                            transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                         }
+
+                        float fliab = 1.f;
+                        const float chra = bufexporig->a[loy - begy][lox - begx];
+                        const float chrb = bufexporig->b[loy - begy][lox - begx];
+
+                        if (senstype == 4) {
+                            fliab = 1.f + clc;
+                        }
+
+                        const float difa = (chra * fliab - original->a[y][x]) * localFactor;
+                        const float difb = (chrb * fliab - original->b[y][x]) * localFactor;
+
+                        transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                        transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                     }
                 }
             }
         }
-        delete origblur;
     }
 }
 
@@ -5730,7 +5605,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
                 }
 
-                transit_shapedetect_retinex(4, bufreti, buflight, bufchro, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect_retinex(4, bufreti, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
             } else {
                 InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
             }
@@ -5767,14 +5642,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 if (!lp.invret && call <= 3) {
 
-                    float Chprov;
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
-                            Chprov = orig1[ir][jr];
+                            const float Chprov = orig1[ir][jr];
                             float2 sincosval;
                             sincosval.y = Chprov == 0.0f ? 1.f : bufreti->a[ir][jr] / Chprov;
                             sincosval.x = Chprov == 0.0f ? 0.f : bufreti->b[ir][jr] / Chprov;
@@ -5782,31 +5656,28 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
                         }
 
-                    if (!lp.invret) {
-                        float minC = sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0])) - Chprov;
-                        float maxC = minC;
+                    float minC = sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0]));
+                    float maxC = minC;
 #ifdef _OPENMP
-                        #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
+                    #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
 #endif
 
-                        for (int ir = 0; ir < Hd; ir++) {
-                            for (int jr = 0; jr < Wd; jr++) {
-                                bufchro[ir][jr] = sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - Chprov;
-                                minC = rtengine::min(minC, bufchro[ir][jr]);
-                                maxC = rtengine::max(maxC, bufchro[ir][jr]);
-                            }
-                        }
-
-                        float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-                        // printf("minC=%f maxC=%f coefC=%f\n",  minC, maxC, coefC);
-
-                        for (int ir = 0; ir < Hd; ir++) {
-                            for (int jr = 0; jr < Wd; jr++) {
-                                bufchro[ir][jr] /= coefC;
-                            }
+                    for (int ir = 0; ir < Hd; ir++) {
+                        for (int jr = 0; jr < Wd; jr++) {
+                            bufchro[ir][jr] = sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr]));
+                            minC = rtengine::min(minC, bufchro[ir][jr]);
+                            maxC = rtengine::max(maxC, bufchro[ir][jr]);
                         }
                     }
-                }  else {
+
+                    const float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+
+                    for (int ir = 0; ir < Hd; ir++) {
+                        for (int jr = 0; jr < Wd; jr++) {
+                            bufchro[ir][jr] /= coefC;
+                        }
+                    }
+                } else {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -5826,7 +5697,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                 if (!lp.invret) {
-                    transit_shapedetect_retinex(5, tmpl, buflight, bufchro,  nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect_retinex(5, tmpl, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 } else {
                     InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
