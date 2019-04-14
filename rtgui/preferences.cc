@@ -1056,7 +1056,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
     appearanceGrid->attach(*themeRestartLbl,    2, 0, 2, 1);
-    appearanceGrid->attach(*vSep,               2, 1, 1, 3);
+    appearanceGrid->attach(*vSep,               2, 1, 1, 2);
     appearanceGrid->attach(*mainFontLbl,        0, 1, 1, 1);
     appearanceGrid->attach(*mainFontFB,         1, 1, 1, 1);
     appearanceGrid->attach(*cropMaskColorLbl,   3, 1, 1, 1);

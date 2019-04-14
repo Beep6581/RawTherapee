@@ -1253,7 +1253,7 @@ void Options::readFromFile(Glib::ustring fname)
                     CPFontSize = keyFile.get_integer("GUI", "CPFontSize");
                 }
 
-                if (keyFile.has_key("GUI", "ScaledIcons")) {
+                if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
                 	pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
                 }
 
