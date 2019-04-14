@@ -1048,6 +1048,9 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     navGuideColorCB = Gtk::manage(new Gtk::ColorButton());
     navGuideColorCB->set_use_alpha(true);
 
+    pseudoHiDPI = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_APPEARANCE_PSEUDOHIDPI") + Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")"));
+    setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+
     Gtk::VSeparator *vSep = Gtk::manage(new Gtk::VSeparator());
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
@@ -1062,6 +1065,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     appearanceGrid->attach(*colorPickerFontFB,  1, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorLbl,   3, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorCB,    4, 2, 1, 1);
+    appearanceGrid->attach(*pseudoHiDPI,        0, 3, 5, 1);
 
     appearanceFrame->add(*appearanceGrid);
     vbGeneral->attach_next_to(*appearanceFrame, *flang, Gtk::POS_BOTTOM, 2, 1);
@@ -1642,6 +1646,8 @@ void Preferences::storePreferences ()
         moptions.CPFontSize = cpfd.get_size() / Pango::SCALE;
     }
 
+    moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
+
 #ifdef WIN32
     moptions.gimpDir = gimpDir->get_filename ();
     moptions.psDir = psDir->get_filename ();
@@ -1905,6 +1911,8 @@ void Preferences::fillPreferences ()
     } else {
         colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.CPFontFamily, options.CPFontSize));
     }
+
+    pseudoHiDPI->set_active(options.pseudoHiDPISupport);
 
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);

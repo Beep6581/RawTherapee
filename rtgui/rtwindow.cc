@@ -106,12 +106,6 @@ RTWindow::RTWindow ()
         Gtk::Settings::get_for_screen (screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen (screen)->property_gtk_application_prefer_dark_theme() = true;
 
-#if defined(__APPLE__)
-        // This will force screen resolution regarding font, but I don't think it's compliant with Gtk guidelines...
-        // Do not confuse with screen scaling, where everything is scaled up !
-        screen->set_resolution (RTScalable::baseDPI);
-#endif
-
         Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
         Glib::ustring filename;
         Glib::MatchInfo mInfo;
@@ -170,7 +164,9 @@ RTWindow::RTWindow ()
             css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt}", options.fontFamily, options.fontSize * (int)initialGdkScale);
             #endif
             //GTK318
-            fontScale = options.fontSize / (float)RTScalable::baseFontSize;
+            if (options.pseudoHiDPISupport) {
+            	fontScale = options.fontSize / (float)RTScalable::baseFontSize;
+            }
             if (options.rtSettings.verbose) {
                 printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
             }
@@ -196,15 +192,15 @@ RTWindow::RTWindow ()
                 } else {
                     pt = fontSize / Pango::SCALE;
                 }
-                fontScale = (float)pt / (float)RTScalable::baseFontSize;
+                if (options.pseudoHiDPISupport) {
+                	fontScale = (float)pt / (float)RTScalable::baseFontSize;
+                }
                 if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
                     if (options.rtSettings.verbose) {
                         printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
                     }
                 }
-            } else {
-                fontScale = 1.f;
             }
         }
         if (!css.empty()) {

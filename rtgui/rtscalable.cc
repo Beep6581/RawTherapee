@@ -36,6 +36,12 @@ Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;
 
 void RTScalable::setDPInScale (const double newDPI, const int newScale)
 {
+    if (!options.pseudoHiDPISupport) {
+    	scale = 1;
+    	dpi = baseDPI;
+    	return;
+    }
+
     if (scale != newScale || (scale == 1 && dpi != newDPI)) {
         // reload all images
         scale = newScale;
