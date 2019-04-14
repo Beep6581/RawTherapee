@@ -419,8 +419,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).gridMethod == "two") {
         lp.gridmet = 1;
     }
-printf("llcbmask=%i\n", llcbMask);
-printf("llSHmask=%i\n", llSHMask);
 
     lp.showmaskcolmet = llColorMask;
     lp.showmaskexpmet = llExpMask;
@@ -2589,11 +2587,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
+                                if (senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 6) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -2705,11 +2703,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                 float diflc = 0.f;
                                 float newhr = 0.f;
 
-                                if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
-                                    float lightc = bufexporig->L[y - ystart][x - xstart];
-                                    float fli = ((100.f + realstrdE) / 100.f);
+                                if (senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
+                                    const float lightc = bufexporig->L[y - ystart][x - xstart];
+                                    const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 6) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -4978,7 +4976,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     std::unique_ptr<LabImage> bufmaskorigcb;
                     std::unique_ptr<LabImage> bufmaskblurcb;
                     std::unique_ptr<LabImage> originalmaskcb;
-printf("showmet=%i \n", lp.showmaskcbmet);
                     if (lp.showmaskcbmet == 2  || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
                         bufmaskorigcb.reset(new LabImage(bfw, bfh));
                         bufmaskblurcb.reset(new LabImage(bfw, bfh));
@@ -5074,7 +5071,6 @@ printf("showmet=%i \n", lp.showmaskcbmet);
                     float radiusb = 1.f / sk;
 
                     if (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
-printf("OK show\n");
 
 #ifdef _OPENMP
                         #pragma omp parallel

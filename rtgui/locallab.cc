@@ -1025,7 +1025,7 @@ Locallab::Locallab():
     cbdlBox->pack_start(*residFrame);
     cbdlBox->pack_start(*softradiuscb);
     cbdlBox->pack_start(*sensicb);
-   // cbdlBox->pack_start(*maskcbFrame);
+    cbdlBox->pack_start(*maskcbFrame);
     expcbdl->add(*cbdlBox);
     expcbdl->setLevel(2);
 
@@ -2657,7 +2657,9 @@ void Locallab::showmaskcolMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
-    showmaskexpMethod->set_active(0);
+        showmaskexpMethod->set_active(0);
+        showmaskSHMethod->set_active(0);
+        showmaskcbMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -2671,7 +2673,9 @@ void Locallab::showmaskexpMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
-    showmaskcolMethod->set_active(0);
+        showmaskcolMethod->set_active(0);
+        showmaskcbMethod->set_active(0);
+        showmaskSHMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -2685,7 +2689,9 @@ void Locallab::showmaskSHMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
-    showmaskcolMethod->set_active(0);
+        showmaskcolMethod->set_active(0);
+        showmaskexpMethod->set_active(0);
+        showmaskcbMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -2699,7 +2705,9 @@ void Locallab::showmaskcbMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
-        //showmaskcbMethod->set_active(0);
+       showmaskcolMethod->set_active(0);
+       showmaskSHMethod->set_active(0);
+       showmaskexpMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -2726,8 +2734,8 @@ Locallab::llMaskVisibility* Locallab::getMaskVisibility()
     maskStruct->expMask = showmaskexpMethod->get_active_row_number();
     maskStruct->SHMask = showmaskSHMethod->get_active_row_number();
     maskStruct->cbMask = showmaskcbMethod->get_active_row_number();
-    printf("SHmask=%i \n", maskStruct->SHMask);
-    printf("cbmask=%i \n", maskStruct->cbMask);
+ //   printf("SHmask=%i \n", maskStruct->SHMask);
+ //   printf("cbmask=%i \n", maskStruct->cbMask);
     
     return maskStruct;
 }
