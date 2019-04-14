@@ -909,6 +909,15 @@ HISTORY_MSG_661;Local - cbdl contrast residual
 HISTORY_MSG_662;Local - deNoise lum f 0
 HISTORY_MSG_663;Local - deNoise lum f 2
 HISTORY_MSG_664;Local - cbdl Blur
+HISTORY_MSG_665;Local - cbdl mask Blend
+HISTORY_MSG_666;Local - cbdl mask radius
+HISTORY_MSG_667;Local - cbdl mask chroma
+HISTORY_MSG_668;Local - cbdl mask gamma
+HISTORY_MSG_669;Local - cbdl mask slope
+HISTORY_MSG_670;Local - cbdl mask C
+HISTORY_MSG_671;Local - cbdl mask L
+HISTORY_MSG_672;Local - cbdl mask CL
+HISTORY_MSG_673;Local - Use cbdl mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
