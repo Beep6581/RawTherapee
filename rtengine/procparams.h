@@ -1102,6 +1102,10 @@ struct LocallabParams {
         int contresid;
         int blurcbdl;
         double softradiuscb;
+        bool enacbMask;
+        std::vector<double> CCmaskcbcurve;
+        std::vector<double> LLmaskcbcurve;
+        std::vector<double> HHmaskcbcurve;
         int blendmaskcb;
         double radmaskcb;
         double chromaskcb;

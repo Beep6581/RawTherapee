@@ -647,6 +647,94 @@ public:
     }
 };
 
+class LocHHmaskcbCurve
+{
+private:
+    LUTf lutLocHHmaskcbCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocHHmaskcbCurve() {};
+    LocHHmaskcbCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool & lhmascbutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocHHmaskcbCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocHHmaskcbCurve;
+    }
+};
+
+
+class LocCCmaskcbCurve
+{
+private:
+    LUTf lutLocCCmaskcbCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocCCmaskcbCurve() {};
+    LocCCmaskcbCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints,  bool & lcmascbutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocCCmaskcbCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocCCmaskcbCurve;
+    }
+};
+
+class LocLLmaskcbCurve
+{
+private:
+    LUTf lutLocLLmaskcbCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocLLmaskcbCurve() {};
+    LocLLmaskcbCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints, bool & llmascbutili);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocLLmaskcbCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocLLmaskcbCurve;
+    }
+};
+
+
+
+
 class LocHHmaskexpCurve
 {
 private:

@@ -1100,6 +1100,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gammaskcb = locallab.spots.at(j).gammaskcb && pSpot.gammaskcb == otherSpot.gammaskcb;
                 locallab.spots.at(j).slomaskcb = locallab.spots.at(j).slomaskcb && pSpot.slomaskcb == otherSpot.slomaskcb;
                 locallab.spots.at(j).softradiuscb = locallab.spots.at(j).softradiuscb && pSpot.softradiuscb == otherSpot.softradiuscb;
+                locallab.spots.at(j).enacbMask = locallab.spots.at(j).enacbMask && pSpot.enacbMask == otherSpot.enacbMask;
+                locallab.spots.at(j).CCmaskcbcurve = locallab.spots.at(j).CCmaskcbcurve && pSpot.CCmaskcbcurve == otherSpot.CCmaskcbcurve;
+                locallab.spots.at(j).LLmaskcbcurve = locallab.spots.at(j).LLmaskcbcurve && pSpot.LLmaskcbcurve == otherSpot.LLmaskcbcurve;
+                locallab.spots.at(j).HHmaskcbcurve = locallab.spots.at(j).HHmaskcbcurve && pSpot.HHmaskcbcurve == otherSpot.HHmaskcbcurve;
                 // Denoise
                 locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
@@ -3177,6 +3181,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskcb = mods.locallab.spots.at(i).slomaskcb;
         }
 
+        if (locallab.spots.at(i).enacbMask) {
+            toEdit.locallab.spots.at(i).enacbMask = mods.locallab.spots.at(i).enacbMask;
+        }
+
+        if (locallab.spots.at(i).CCmaskcbcurve) {
+            toEdit.locallab.spots.at(i).CCmaskcbcurve = mods.locallab.spots.at(i).CCmaskcbcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskcbcurve) {
+            toEdit.locallab.spots.at(i).LLmaskcbcurve = mods.locallab.spots.at(i).LLmaskcbcurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskcbcurve) {
+            toEdit.locallab.spots.at(i).HHmaskcbcurve = mods.locallab.spots.at(i).HHmaskcbcurve;
+        }
+
         if (locallab.spots.at(i).softradiuscb) {
             toEdit.locallab.spots.at(i).softradiuscb = mods.locallab.spots.at(i).softradiuscb;
         }
@@ -4344,6 +4364,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gammaskcb(v),
     slomaskcb(v),
     softradiuscb(v),
+    enacbMask(v),
+    CCmaskcbcurve(v),
+    LLmaskcbcurve(v),
+    HHmaskcbcurve(v),
     // Denoise
     expdenoi(v),
     noiselumf(v),
@@ -4536,6 +4560,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gammaskcb = v;
     slomaskcb = v;
     softradiuscb = v;
+    enacbMask = v;
+    CCmaskcbcurve = v;
+    LLmaskcbcurve = v;
+    HHmaskcbcurve = v;
     // Denoise
     expdenoi = v;
     noiselumf = v;

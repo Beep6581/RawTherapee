@@ -523,6 +523,10 @@ public:
         bool gammaskcb;
         bool slomaskcb;
         bool softradiuscb;
+        bool enacbMask;
+        bool CCmaskcbcurve;
+        bool LLmaskcbcurve;
+        bool HHmaskcbcurve;
 
         // Denoise
         bool expdenoi;

@@ -2501,6 +2501,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contresid(0),
     blurcbdl(0),
     softradiuscb(0.0),
+    enacbMask(false),
+    CCmaskcbcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
+    LLmaskcbcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    HHmaskcbcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     blendmaskcb(0),
     radmaskcb(10.0),
     chromaskcb(0.0),
@@ -2701,6 +2705,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contresid == other.contresid
         && blurcbdl == other.blurcbdl
         && softradiuscb == other.softradiuscb
+        && enacbMask == other.enacbMask
+        && CCmaskcbcurve == other.CCmaskcbcurve
+        && LLmaskcbcurve == other.LLmaskcbcurve
+        && HHmaskcbcurve == other.HHmaskcbcurve
         && blendmaskcb == other.blendmaskcb
         && radmaskcb == other.radmaskcb
         && chromaskcb == other.chromaskcb
@@ -3843,6 +3851,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).contresid, "Locallab", "Contresid_" + std::to_string(i), spot.contresid, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurcbdl, "Locallab", "Blurcbdl_" + std::to_string(i), spot.blurcbdl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiuscb, "Locallab", "Softradiuscb_" + std::to_string(i), spot.softradiuscb, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enacbMask, "Locallab", "EnacbMask_" + std::to_string(i), spot.enacbMask, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskcbcurve, "Locallab", "CCmaskcbCurve_" + std::to_string(i), spot.CCmaskcbcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcbcurve, "Locallab", "LLmaskcbCurve_" + std::to_string(i), spot.LLmaskcbcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskcbcurve, "Locallab", "HHmaskcbCurve_" + std::to_string(i), spot.HHmaskcbcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskcb, "Locallab", "Blendmaskcb_" + std::to_string(i), spot.blendmaskcb, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskcb, "Locallab", "Radmaskcb_" + std::to_string(i), spot.radmaskcb, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskcb, "Locallab", "Chromaskcb_" + std::to_string(i), spot.chromaskcb, keyFile);
@@ -5132,6 +5144,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Blurcbdl_" + std::to_string(i), pedited, spot.blurcbdl, spotEdited.blurcbdl);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + std::to_string(i), pedited, spot.softradiuscb, spotEdited.softradiuscb);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskcb_" + std::to_string(i), pedited, spot.blendmaskcb, spotEdited.blendmaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "EnacbMask_" + std::to_string(i), pedited, spot.enacbMask, spotEdited.enacbMask);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskcbCurve_" + std::to_string(i), pedited, spot.CCmaskcbcurve, spotEdited.CCmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcbCurve_" + std::to_string(i), pedited, spot.LLmaskcbcurve, spotEdited.LLmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskcbCurve_" + std::to_string(i), pedited, spot.HHmaskcbcurve, spotEdited.HHmaskcbcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskcb_" + std::to_string(i), pedited, spot.radmaskcb, spotEdited.radmaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcb_" + std::to_string(i), pedited, spot.chromaskcb, spotEdited.chromaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskcb_" + std::to_string(i), pedited, spot.gammaskcb, spotEdited.gammaskcb);

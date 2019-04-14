@@ -92,7 +92,12 @@ private:
     // Retinex
     CurveEditorGroup* const LocalcurveEditorgainT;
     FlatCurveEditor* cTgainshape;
-
+    //Cbdl
+    CurveEditorGroup* const maskcbCurveEditorG;
+    FlatCurveEditor* CCmaskcbshape;
+    FlatCurveEditor* LLmaskcbshape;
+    FlatCurveEditor* HHmaskcbshape;
+    
     // Adjuster widgets
     // Color & Light
     Adjuster* const lightness;
@@ -237,7 +242,10 @@ private:
     // Sharpening
     Gtk::CheckButton* const inverssha;
     sigc::connection inversshaConn;
-
+    //CBDL
+    Gtk::CheckButton* const enacbMask;
+    sigc::connection enacbMaskConn;
+    
     // ComboBox widgets
     // Color & Light
     MyComboBoxText* const qualitycurveMethod;
@@ -258,7 +266,9 @@ private:
     // Retinex
     MyComboBoxText* const retinexMethod;
     sigc::connection retinexMethodConn;
-
+    //CBDL
+    MyComboBoxText* const showmaskcbMethod;
+    sigc::connection showmaskcbMethodConn;
     // ThresholdAdjuster widgets
     // Vibrance
     ThresholdAdjuster* const psThreshold;
@@ -272,6 +282,7 @@ private:
     Gtk::Frame* maskcolFrame;
     Gtk::Frame* maskexpFrame;
     Gtk::Frame* maskSHFrame;
+    Gtk::Frame* maskcbFrame;
     Gtk::Frame* gridFrame;
     Gtk::Frame* residFrame;
     LabGrid *labgrid;
@@ -317,7 +328,8 @@ private:
     void inversretChanged();
     // Sharpening
     void inversshaChanged();
-
+    //CBDL
+    void enacbMaskChanged();
     // ComboBox event functions
     // Color & Light
     void qualitycurveMethodChanged();
@@ -331,7 +343,8 @@ private:
     void blurMethodChanged();
     // Retinex
     void retinexMethodChanged();
-
+    //CBDL
+    void showmaskcbMethodChanged();
     // Other widgets event functions
     void lumacontrastMinusPressed();
     void lumaneutralPressed();
@@ -366,6 +379,7 @@ public:
         int colorMask;
         int expMask;
         int SHMask;
+        int cbMask;
     };
 
     void resetMaskVisibility();
