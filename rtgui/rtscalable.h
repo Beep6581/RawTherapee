@@ -42,9 +42,11 @@ public:
 #ifdef __APPLE__
     static constexpr double baseDPI = 72.;
     static constexpr double baseHiDPI = 144.;
+    static constexpr int    baseFontSize = 12;
 #else
     static constexpr double baseDPI = 96.;
     static constexpr double baseHiDPI = 192.;
+    static constexpr int    baseFontSize = 9;
 #endif
 
     static void init(Gtk::Window *window);

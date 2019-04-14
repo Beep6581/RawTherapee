@@ -170,7 +170,7 @@ RTWindow::RTWindow ()
             css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt}", options.fontFamily, options.fontSize * (int)initialGdkScale);
             #endif
             //GTK318
-            fontScale = options.fontSize / 9.f;
+            fontScale = options.fontSize / (float)RTScalable::baseFontSize;
             if (options.rtSettings.verbose) {
                 printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
             }
@@ -192,12 +192,12 @@ RTWindow::RTWindow ()
                     // 1pt =  1/72in @ 96 ppi
                     // HOMBRE: If the font unit is px, is it already scaled up to match the resolution ?
                     //                 px         >inch                 >pt    >"scaled pt"
-                    pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (RTScalable::baseDPI / resolution) + 0.49);
+                    pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (96. / (double)resolution) + 0.49);
                 } else {
                     pt = fontSize / Pango::SCALE;
                 }
-                fontScale = (float)pt / 9.f;
-                if ((int)initialGdkScale > 1 || pt != 9) {
+                fontScale = (float)pt / (float)RTScalable::baseFontSize;
+                if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
                     if (options.rtSettings.verbose) {
                         printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
