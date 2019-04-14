@@ -180,6 +180,9 @@ ImProcCoordinator::ImProcCoordinator() :
     lcmasSHutili(false),
     lhmasSHutili(false),
     llmasSHutili(false),    
+    lcmascbutili(false),
+    lhmascbutili(false),
+    llmascbutili(false),    
     LHutili(false), 
     HHutili(false),
     huerefs(500, -100000.f),
@@ -875,6 +878,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 lcmasSHutili = false;
                 lhmasSHutili = false;
                 llmasSHutili = false;
+                lcmascbutili = false;
+                lhmascbutili = false;
+                llmascbutili = false;
                 lhmasutili = false;
                 lcmasutili = false;
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
@@ -889,6 +895,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locllmasSHCurve.Set(params->locallab.spots.at(sp).LLmaskSHcurve, llmasSHutili);
                 locccmasSHCurve.Set(params->locallab.spots.at(sp).CCmaskSHcurve, lcmasSHutili);
                 lochhmasSHCurve.Set(params->locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
+                locllmascbCurve.Set(params->locallab.spots.at(sp).LLmaskcbcurve, llmascbutili);
+                locccmascbCurve.Set(params->locallab.spots.at(sp).CCmaskcbcurve, lcmascbutili);
+                lochhmascbCurve.Set(params->locallab.spots.at(sp).HHmaskSHcurve, lhmascbutili);
                 CurveFactory::curveLocal(locallutili, params->locallab.spots.at(sp).llcurve, lllocalcurve, sca);
                 CurveFactory::curveCCLocal(localcutili, params->locallab.spots.at(sp).cccurve, cclocalcurve, sca);
                 CurveFactory::curveexLocal(localexutili, params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
@@ -934,10 +943,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (sp == params->locallab.selspot) {
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                                     locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                                    locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                                                     LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, locallColorMask, locallExpMask, locallSHMask);
                 } else {
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                                     locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                                    locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                                                     LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, 0, 0, 0);
                 }
                 //recalculate references after
@@ -962,6 +973,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locllmasexpCurve.Reset();
                 locccmasexpCurve.Reset();
                 lochhmasexpCurve.Reset();
+                locllmasSHCurve.Reset();
+                locccmasSHCurve.Reset();
+                lochhmasSHCurve.Reset();
+                locllmascbCurve.Reset();
+                locccmascbCurve.Reset();
+                lochhmascbCurve.Reset();
 
             }
         }

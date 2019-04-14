@@ -904,6 +904,9 @@ void Crop::update(int todo)
         bool lhmasSHutili = parent->lhmasSHutili;
         bool lcmasSHutili = parent->lcmasSHutili;
         bool llmasSHutili = parent->llmasSHutili;
+        bool lhmascbutili = parent->lhmascbutili;
+        bool lcmascbutili = parent->lcmascbutili;
+        bool llmascbutili = parent->llmascbutili;
         
         float avg = parent->avg;
         LUTu dummy;
@@ -920,6 +923,9 @@ void Crop::update(int todo)
         LocCCmaskSHCurve locccmasSHCurve;
         LocLLmaskSHCurve locllmasSHCurve;
         LocHHmaskSHCurve lochhmasSHCurve;
+        LocCCmaskcbCurve locccmascbCurve;
+        LocLLmaskcbCurve locllmascbCurve;
+        LocHHmaskcbCurve lochhmascbCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -942,6 +948,9 @@ void Crop::update(int todo)
                 locccmasSHCurve.Set(params.locallab.spots.at(sp).CCmaskSHcurve, lcmasSHutili);
                 locllmasSHCurve.Set(params.locallab.spots.at(sp).LLmaskSHcurve, llmasSHutili);
                 lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve, lhmasSHutili);
+                locccmascbCurve.Set(params.locallab.spots.at(sp).CCmaskcbcurve, lcmascbutili);
+                locllmascbCurve.Set(params.locallab.spots.at(sp).LLmaskcbcurve, llmascbutili);
+                lochhmascbCurve.Set(params.locallab.spots.at(sp).HHmaskcbcurve, lhmascbutili);
                 locallutili = false;
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve2, sca);
                 localcutili = false;
@@ -973,11 +982,13 @@ void Crop::update(int todo)
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,locallutili,
                                       loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                      locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                                       LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, parent->locallColorMask, parent->locallExpMask, parent->locallSHMask);
                 } else {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,locallutili,
                                       loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                                      locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                                       LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0);
                 }
                 lllocalcurve2.clear();
@@ -995,6 +1006,12 @@ void Crop::update(int todo)
                 locllmasexpCurve.Reset();
                 locccmasexpCurve.Reset();
                 lochhmasexpCurve.Reset();
+                locllmasSHCurve.Reset();
+                locccmasSHCurve.Reset();
+                lochhmasSHCurve.Reset();
+                locllmascbCurve.Reset();
+                locccmascbCurve.Reset();
+                lochhmascbCurve.Reset();
 
                 if (skip <= 2) {
                     usleep(settings->cropsleep);    //wait to avoid crash when crop 100% and move window
