@@ -1900,12 +1900,12 @@ spinbutton {
 }
 /* Needed for Reset & and Auto button height*/
 #MyExpander button + label + spinbutton {
-    margin-top: 0.333333333333333333em;
-    margin-bottom: 0.333333333333333333em;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
 }
 #MyExpander checkbutton + label + spinbutton {
-    margin-top: 0.416666666666666666em;
-    margin-bottom: 0.416666666666666666em;
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
 }
 /**/
 
