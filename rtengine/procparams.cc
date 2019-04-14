@@ -2501,6 +2501,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contresid(0),
     blurcbdl(0),
     softradiuscb(0.0),
+    blendmaskcb(0),
+    radmaskcb(10.0),
+    chromaskcb(0.0),
+    gammaskcb(1.0),
+    slomaskcb(0.0),
     // Denoise
     expdenoi(false),
     noiselumf(0),
@@ -2696,6 +2701,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contresid == other.contresid
         && blurcbdl == other.blurcbdl
         && softradiuscb == other.softradiuscb
+        && blendmaskcb == other.blendmaskcb
+        && radmaskcb == other.radmaskcb
+        && chromaskcb == other.chromaskcb
+        && gammaskcb == other.gammaskcb
+        && slomaskcb == other.slomaskcb
         // Denoise
         && expdenoi == other.expdenoi
         && noiselumf == other.noiselumf
@@ -3833,6 +3843,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).contresid, "Locallab", "Contresid_" + std::to_string(i), spot.contresid, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurcbdl, "Locallab", "Blurcbdl_" + std::to_string(i), spot.blurcbdl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiuscb, "Locallab", "Softradiuscb_" + std::to_string(i), spot.softradiuscb, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskcb, "Locallab", "Blendmaskcb_" + std::to_string(i), spot.blendmaskcb, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskcb, "Locallab", "Radmaskcb_" + std::to_string(i), spot.radmaskcb, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskcb, "Locallab", "Chromaskcb_" + std::to_string(i), spot.chromaskcb, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskcb, "Locallab", "Gammaskcb_" + std::to_string(i), spot.gammaskcb, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskcb, "Locallab", "Slomaskcb_" + std::to_string(i), spot.slomaskcb, keyFile);
                 // Denoise
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expdenoi, "Locallab", "Expdenoi_" + std::to_string(i), spot.expdenoi, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).noiselumf, "Locallab", "noiselumf_" + std::to_string(i), spot.noiselumf, keyFile);
@@ -5116,6 +5131,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Contresid_" + std::to_string(i), pedited, spot.contresid, spotEdited.contresid);
                 assignFromKeyfile(keyFile, "Locallab", "Blurcbdl_" + std::to_string(i), pedited, spot.blurcbdl, spotEdited.blurcbdl);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + std::to_string(i), pedited, spot.softradiuscb, spotEdited.softradiuscb);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcb_" + std::to_string(i), pedited, spot.blendmaskcb, spotEdited.blendmaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskcb_" + std::to_string(i), pedited, spot.radmaskcb, spotEdited.radmaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskcb_" + std::to_string(i), pedited, spot.chromaskcb, spotEdited.chromaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskcb_" + std::to_string(i), pedited, spot.gammaskcb, spotEdited.gammaskcb);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskcb_" + std::to_string(i), pedited, spot.slomaskcb, spotEdited.slomaskcb);
                 // Denoise
                 assignFromKeyfile(keyFile, "Locallab", "Expdenoi_" + std::to_string(i), pedited, spot.expdenoi, spotEdited.expdenoi);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + std::to_string(i), pedited, spot.noiselumf, spotEdited.noiselumf);

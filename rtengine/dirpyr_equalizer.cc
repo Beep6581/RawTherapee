@@ -28,7 +28,8 @@
 
 #define RANGEFN(i) ((1000.0f / (i + 1000.0f)))
 #define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * RANGEFN(fabsf((data_fine[i1][j1]-data_fine[i][j]))) )
-#define CLIPLL(x) LIM(x,0.f,32768.f) // limit L to about L=120 probably engh ?
+#define CLIPLL(x) LIM(x,0.f,32768.f)
+#define CLIPLLN(x) LIM(-32768.f,0.f,32768.f)
 
 namespace rtengine
 {
@@ -424,6 +425,9 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
             }
 
     float clar = 0.01f * mergeL;
+    if(clar == 0.f) {
+        clar = 0.001f;
+    }
 
     #pragma omp parallel for
         for (int i = 0; i < srcheight; i++)
@@ -814,7 +818,7 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     //  if(level == 5 && mult[level] > 1.f) {
     //      multbis[level] = 1.f + 0.45f * (mult[level] - 1.f);
     //  }
-    double sensicrash = settings->cbdlsensi;
+    double sensicrash = 1.;//settings->cbdlsensi;
     LUTf irangefn(0x20000);
     {
         const float noisehi = 1.33f * noise * sensicrash * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * sensicrash * dirpyrThreshold / expf(level * log(3.0));
@@ -843,9 +847,10 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
 #endif
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
+                
                 float hipass = (data_fine[i][j] - data_coarse[i][j]);
-                    buffer[i][j] += CLIPLL(irangefn[hipass + 0x10000] * hipass);
-                    buffer[i][j] = CLIPLL(buffer[i][j]);
+                buffer[i][j] += irangefn[hipass + 0x10000] * hipass;
+             
             }
         }
         if(blurcb > 0.f) {

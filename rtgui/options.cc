@@ -594,7 +594,7 @@ void Options::setDefaults()
     rtSettings.reduclow = 0.85;//transition for luminance out scope
     rtSettings.detectshape = true;//experimental new detection shape
     rtSettings.previewselection = 5;//betwen 1 to 40
-    rtSettings.cbdlsensi = 0.4;//betwen 0.001 to 1
+    rtSettings.cbdlsensi = 1.0;//betwen 0.001 to 1
 
 // end locallab
 

@@ -517,7 +517,13 @@ public:
         bool clarityml;
         bool contresid;
         bool blurcbdl;
+        bool blendmaskcb;
+        bool radmaskcb;
+        bool chromaskcb;
+        bool gammaskcb;
+        bool slomaskcb;
         bool softradiuscb;
+
         // Denoise
         bool expdenoi;
         bool noiselumf;

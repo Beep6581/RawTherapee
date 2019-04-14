@@ -187,6 +187,12 @@ private:
     Adjuster* const blurcbdl;
     Adjuster* const sensicb;
     Adjuster* const softradiuscb;
+    Adjuster* const blendmaskcb;
+    Adjuster* const radmaskcb;
+    Adjuster* const chromaskcb;
+    Adjuster* const gammaskcb;
+    Adjuster* const slomaskcb;
+
     // Denoise
     Adjuster* const noiselumf;
     Adjuster* const noiselumf0;

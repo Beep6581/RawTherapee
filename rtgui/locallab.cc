@@ -167,6 +167,11 @@ Locallab::Locallab():
     blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0, 100, 1, 0))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
     softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
+    blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
+    chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+    gammaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+    slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     // Denoise
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 1, 0))),
@@ -930,6 +935,11 @@ Locallab::Locallab():
     clarityml->setAdjusterListener(this);
     contresid->setAdjusterListener(this);
     blurcbdl->setAdjusterListener(this);
+    blendmaskcb->setAdjusterListener(this);
+    radmaskcb->setAdjusterListener(this);
+    chromaskcb->setAdjusterListener(this);
+    gammaskcb->setAdjusterListener(this);
+    slomaskcb->setAdjusterListener(this);
 
     ToolParamBlock* const cbdlBox = Gtk::manage(new ToolParamBlock());
     Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 10));
@@ -958,6 +968,11 @@ Locallab::Locallab():
     cbdlBox->pack_start(*residFrame);
     cbdlBox->pack_start(*softradiuscb);
     cbdlBox->pack_start(*sensicb);
+    //cbdlBox->pack_start(*blendmaskcb);
+    //cbdlBox->pack_start(*radmaskcb);
+    //cbdlBox->pack_start(*chromaskcb);
+    //cbdlBox->pack_start(*gammaskcb);
+    //cbdlBox->pack_start(*slomaskcb);
     expcbdl->add(*cbdlBox);
     expcbdl->setLevel(2);
 
@@ -1874,6 +1889,13 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).contresid = contresid->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurcbdl = blurcbdl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscb = softradiuscb->getValue();
+
+                    pp->locallab.spots.at(pp->locallab.selspot).blendmaskcb = blendmaskcb->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).radmaskcb = radmaskcb->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).chromaskcb = chromaskcb->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).gammaskcb = gammaskcb->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).slomaskcb = slomaskcb->getValue();
+                    
                     // Denoise
                     pp->locallab.spots.at(pp->locallab.selspot).expdenoi = expdenoi->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).noiselumf = noiselumf->getIntValue();
@@ -2059,6 +2081,13 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).contresid = pe->locallab.spots.at(pp->locallab.selspot).contresid || contresid->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blurcbdl = pe->locallab.spots.at(pp->locallab.selspot).blurcbdl || blurcbdl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscb = pe->locallab.spots.at(pp->locallab.selspot).softradiuscb || softradiuscb->getEditedState();
+
+                        pe->locallab.spots.at(pp->locallab.selspot).blendmaskcb = pe->locallab.spots.at(pp->locallab.selspot).blendmaskcb || blendmaskcb->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).radmaskcb = pe->locallab.spots.at(pp->locallab.selspot).radmaskcb || radmaskcb->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).chromaskcb = pe->locallab.spots.at(pp->locallab.selspot).chromaskcb || chromaskcb->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).gammaskcb = pe->locallab.spots.at(pp->locallab.selspot).gammaskcb || gammaskcb->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).slomaskcb = pe->locallab.spots.at(pp->locallab.selspot).slomaskcb || slomaskcb->getEditedState();
+
                         // Denoise
                         pe->locallab.spots.at(pp->locallab.selspot).expdenoi = pe->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).noiselumf = pe->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
@@ -2246,6 +2275,13 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).contresid = pedited->locallab.spots.at(pp->locallab.selspot).contresid || contresid->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blurcbdl = pedited->locallab.spots.at(pp->locallab.selspot).blurcbdl || blurcbdl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscb = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscb || softradiuscb->getEditedState();
+
+                        pedited->locallab.spots.at(pp->locallab.selspot).blendmaskcb = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskcb || blendmaskcb->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).radmaskcb = pedited->locallab.spots.at(pp->locallab.selspot).radmaskcb || radmaskcb->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).chromaskcb = pedited->locallab.spots.at(pp->locallab.selspot).chromaskcb || chromaskcb->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).gammaskcb = pedited->locallab.spots.at(pp->locallab.selspot).gammaskcb || gammaskcb->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).slomaskcb = pedited->locallab.spots.at(pp->locallab.selspot).slomaskcb || slomaskcb->getEditedState();
+
                         // Denoise
                         pedited->locallab.spots.at(pp->locallab.selspot).expdenoi = pedited->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).noiselumf = pedited->locallab.spots.at(pp->locallab.selspot).noiselumf || noiselumf->getEditedState();
@@ -3114,6 +3150,12 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     contresid->setDefault((double)defSpot->contresid);
     blurcbdl->setDefault((double)defSpot->blurcbdl);
     softradiuscb->setDefault(defSpot->softradiuscb);
+    blendmaskcb->setDefault((double)defSpot->blendmaskcb);
+    radmaskcb->setDefault(defSpot->radmaskcb);
+    chromaskcb->setDefault(defSpot->chromaskcb);
+    gammaskcb->setDefault(defSpot->gammaskcb);
+    slomaskcb->setDefault(defSpot->slomaskcb);
+    
     // Denoise
     noiselumf->setDefault((double)defSpot->noiselumf);
     noiselumf0->setDefault((double)defSpot->noiselumf0);
@@ -3228,6 +3270,12 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         contresid->setDefaultEditedState(Irrelevant);
         blurcbdl->setDefaultEditedState(Irrelevant);
         softradiuscb->setDefaultEditedState(Irrelevant);
+        blendmaskcb->setDefaultEditedState(Irrelevant);
+        radmaskcb->setDefaultEditedState(Irrelevant);
+        chromaskcb->setDefaultEditedState(Irrelevant);
+        gammaskcb->setDefaultEditedState(Irrelevant);
+        slomaskcb->setDefaultEditedState(Irrelevant);
+
         // Denoise
         noiselumf->setDefaultEditedState(Irrelevant);
         noiselumf0->setDefaultEditedState(Irrelevant);
@@ -3346,6 +3394,13 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         contresid->setDefaultEditedState(defSpotState->contresid ? Edited : UnEdited);
         blurcbdl->setDefaultEditedState(defSpotState->blurcbdl ? Edited : UnEdited);
         softradiuscb->setDefaultEditedState(defSpotState->softradiuscb ? Edited : UnEdited);
+
+        blendmaskcb->setDefaultEditedState(defSpotState->blendmaskcb ? Edited : UnEdited);
+        radmaskcb->setDefaultEditedState(defSpotState->radmaskcb ? Edited : UnEdited);
+        chromaskcb->setDefaultEditedState(defSpotState->chromaskcb ? Edited : UnEdited);
+        gammaskcb->setDefaultEditedState(defSpotState->gammaskcb ? Edited : UnEdited);
+        slomaskcb->setDefaultEditedState(defSpotState->slomaskcb ? Edited : UnEdited);
+        
         // Denoise
         noiselumf->setDefaultEditedState(defSpotState->noiselumf ? Edited : UnEdited);
         noiselumf0->setDefaultEditedState(defSpotState->noiselumf0 ? Edited : UnEdited);
@@ -3952,7 +4007,37 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabsoftradiuscb, softradiuscb->getTextValue());
             }
         }
-        
+
+        if (a == blendmaskcb) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmaskcb, blendmaskcb->getTextValue());
+            }
+        }
+
+        if (a == radmaskcb) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradmaskcb, radmaskcb->getTextValue());
+            }
+        }
+
+        if (a == chromaskcb) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromaskcb, chromaskcb->getTextValue());
+            }
+        }
+
+        if (a == gammaskcb) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgammaskcb, gammaskcb->getTextValue());
+            }
+        }
+
+        if (a == slomaskcb) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslomaskcb, slomaskcb->getTextValue());
+            }
+        }
+
     }
 
     // Denoise
@@ -4155,6 +4240,12 @@ void Locallab::setBatchMode(bool batchMode)
     contresid->showEditedCB();
     blurcbdl->showEditedCB();
     softradiuscb->showEditedCB();
+    blendmaskcb->showEditedCB();
+    radmaskcb->showEditedCB();
+    chromaskcb->showEditedCB();
+    gammaskcb->showEditedCB();
+    slomaskcb->showEditedCB();
+
     // Denoise
     noiselumf->showEditedCB();
     noiselumc->showEditedCB();
@@ -4597,6 +4688,11 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         contresid->setValue(pp->locallab.spots.at(index).contresid);
         blurcbdl->setValue(pp->locallab.spots.at(index).blurcbdl);
         softradiuscb->setValue(pp->locallab.spots.at(index).softradiuscb);
+        blendmaskcb->setValue(pp->locallab.spots.at(index).blendmaskcb);
+        radmaskcb->setValue(pp->locallab.spots.at(index).radmaskcb);
+        chromaskcb->setValue(pp->locallab.spots.at(index).chromaskcb);
+        gammaskcb->setValue(pp->locallab.spots.at(index).gammaskcb);
+        slomaskcb->setValue(pp->locallab.spots.at(index).slomaskcb);
 
         // Denoise
         expdenoi->setEnabled(pp->locallab.spots.at(index).expdenoi);
@@ -4819,6 +4915,11 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 contresid->setEditedState(spotState->contresid ? Edited : UnEdited);
                 blurcbdl->setEditedState(spotState->blurcbdl ? Edited : UnEdited);
                 softradiuscb->setEditedState(spotState->softradiuscb ? Edited : UnEdited);
+                blendmaskcb->setEditedState(spotState->blendmaskcb ? Edited : UnEdited);
+                radmaskcb->setEditedState(spotState->radmaskcb ? Edited : UnEdited);
+                chromaskcb->setEditedState(spotState->chromaskcb ? Edited : UnEdited);
+                gammaskcb->setEditedState(spotState->gammaskcb ? Edited : UnEdited);
+                slomaskcb->setEditedState(spotState->slomaskcb ? Edited : UnEdited);
 
                 // Denoise
                 expdenoi->set_inconsistent(!spotState->expdenoi);
