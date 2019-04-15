@@ -375,14 +375,6 @@ int main (int argc, char **argv)
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     Gio::init ();
 
-    // Reading/updating GDK_SCALE early if it exists
-    const gchar *gscale = g_getenv("GDK_SCALE");
-    if (gscale && gscale[0] == '2') {
-        initialGdkScale = 2;
-    }
-    // HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
-    g_setenv("GDK_SCALE", "1", true);
-
 #ifdef WIN32
     if (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0003) {
         // started from msys2 console => do not buffer stdout
@@ -535,6 +527,16 @@ int main (int argc, char **argv)
     }
 
     int ret = 0;
+
+    if (options.pseudoHiDPISupport) {
+		// Reading/updating GDK_SCALE early if it exists
+		const gchar *gscale = g_getenv("GDK_SCALE");
+		if (gscale && gscale[0] == '2') {
+			initialGdkScale = 2;
+		}
+		// HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
+		g_setenv("GDK_SCALE", "1", true);
+    }
 
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
     gdk_threads_init();
