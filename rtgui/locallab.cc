@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>frame
  *
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
@@ -58,6 +58,10 @@ Locallab::Locallab():
     expcontrast(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST"))),
     expcbdl(new MyExpander(true, new Gtk::HBox())),
     expdenoi(new MyExpander(true, new Gtk::HBox())),
+    expmaskcol(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
+    expmaskexp(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
+    expmasksh(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
+    expmaskcb(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
 
     // CurveEditorGroup widgets
     // Color & Light
@@ -237,10 +241,6 @@ Locallab::Locallab():
     lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
     lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
     lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
-    maskcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")))),
-    maskexpFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")))),
-    maskSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")))),
-    maskcbFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHOW")))),
     gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
     residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
 
@@ -266,6 +266,9 @@ Locallab::Locallab():
     expcolor->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcolor));
     enablecolorConn = expcolor->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcolor));
     // expcolor->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
+    setExpandAlignProperties (expmaskcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expmaskcol->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcol));
+    expmaskcol->setLevel (2);
 
     curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
     lightness->setAdjusterListener(this);
@@ -424,7 +427,6 @@ Locallab::Locallab():
     colorBox->pack_start(*llCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*HCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     colorBox->pack_start(*invers);
-    maskcolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
@@ -434,8 +436,8 @@ Locallab::Locallab():
     maskcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
-    maskcolFrame->add(*maskcolBox);
-    colorBox->pack_start(*maskcolFrame);
+    expmaskcol->add(*maskcolBox);
+    colorBox->pack_start(*expmaskcol);
 
     expcolor->add(*colorBox);
     expcolor->setLevel(2);
@@ -446,6 +448,10 @@ Locallab::Locallab():
     expexpose->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expexpose));
     enableexposeConn = expexpose->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expexpose));
     if(showtooltip) expexpose->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
+
+    setExpandAlignProperties (expmaskexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expmaskexp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskexp));
+    expmaskexp->setLevel (2);
 
     expcomp->setAdjusterListener(this);
 
@@ -539,7 +545,6 @@ Locallab::Locallab():
     exposeBox->pack_start(*softradiusexp);
     exposeBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exposeBox->pack_start(*inversex);
-    maskexpFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*enaExpMask, Gtk::PACK_SHRINK, 0);
@@ -549,8 +554,8 @@ Locallab::Locallab():
     maskexpBox->pack_start(*chromaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*gammaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*slomaskexp, Gtk::PACK_SHRINK, 0);
-    maskexpFrame->add(*maskexpBox);
-    exposeBox->pack_start(*maskexpFrame);
+    expmaskexp->add(*maskexpBox);
+    exposeBox->pack_start(*expmaskexp);
 
     expexpose->add(*exposeBox);
     expexpose->setLevel(2);
@@ -563,6 +568,10 @@ Locallab::Locallab():
     expshadhigh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expshadhigh));
     enableshadhighConn = expshadhigh->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expshadhigh));
     if(showtooltip) expshadhigh->set_tooltip_text(M("TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP"));
+
+    setExpandAlignProperties (expmasksh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expmasksh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmasksh));
+    expmasksh->setLevel (2);
 
     highlights->setAdjusterListener(this);
     h_tonalwidth->setAdjusterListener(this);
@@ -625,7 +634,6 @@ Locallab::Locallab():
     shadhighBox->pack_start(*blurSHde);
     shadhighBox->pack_start(*inverssh);
 
-    maskSHFrame->set_label_align(0.025, 0.5);
 
     ToolParamBlock* const maskSHBox = Gtk::manage(new ToolParamBlock());
     maskSHBox->pack_start(*showmaskSHMethod, Gtk::PACK_SHRINK, 4);
@@ -636,8 +644,8 @@ Locallab::Locallab():
     maskSHBox->pack_start(*chromaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*gammaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*slomaskSH, Gtk::PACK_SHRINK, 0);
-    maskSHFrame->add(*maskSHBox);
-    shadhighBox->pack_start(*maskSHFrame);
+    expmasksh->add(*maskSHBox);
+    shadhighBox->pack_start(*expmasksh);
 
     expshadhigh->add(*shadhighBox);
     expshadhigh->setLevel(2);
@@ -917,6 +925,10 @@ Locallab::Locallab():
     enablecbdlConn = expcbdl->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcbdl));
     if(showtooltip) expcbdl->set_tooltip_text(M("TP_LOCALLAB_EXPCBDL_TOOLTIP"));
 
+    setExpandAlignProperties (expmaskcb, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expmaskcb->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcb));
+    expmaskcb->setLevel (2);
+
     for (int i = 0; i < 5; i++) {
         Glib::ustring ss;
         ss = Glib::ustring::format(i);
@@ -1000,7 +1012,6 @@ Locallab::Locallab():
         cbdlBox->pack_start(*multiplier[i]);
     }
 
-    maskcbFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcbBox = Gtk::manage(new ToolParamBlock());
     maskcbBox->pack_start(*showmaskcbMethod, Gtk::PACK_SHRINK, 4);
     maskcbBox->pack_start(*enacbMask, Gtk::PACK_SHRINK, 0);
@@ -1010,7 +1021,7 @@ Locallab::Locallab():
     maskcbBox->pack_start(*chromaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*gammaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*slomaskcb, Gtk::PACK_SHRINK, 0);
-    maskcbFrame->add(*maskcbBox);
+    expmaskcb->add(*maskcbBox);
 
     Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
     cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
@@ -1025,7 +1036,7 @@ Locallab::Locallab():
     cbdlBox->pack_start(*residFrame);
     cbdlBox->pack_start(*softradiuscb);
     cbdlBox->pack_start(*sensicb);
-    cbdlBox->pack_start(*maskcbFrame);
+    cbdlBox->pack_start(*expmaskcb);
     expcbdl->add(*cbdlBox);
     expcbdl->setLevel(2);
 
@@ -1123,6 +1134,10 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expcontrast->set_expanded(expcontrast == expander);
         expcbdl->set_expanded(expcbdl == expander);
         expdenoi->set_expanded(expdenoi == expander);
+        expmaskcol->set_expanded(expmaskcol == expander);
+        expmaskexp->set_expanded(expmaskexp == expander);
+        expmasksh->set_expanded(expmasksh == expander);
+        expmaskcb->set_expanded(expmaskcb == expander);
 
     }
 }
@@ -1209,6 +1224,10 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expcontrast->get_expanded());
     tpOpen.push_back(expcbdl->get_expanded());
     tpOpen.push_back(expdenoi->get_expanded());
+    tpOpen.push_back(expmaskcol->get_expanded());
+    tpOpen.push_back(expmaskexp->get_expanded());
+    tpOpen.push_back(expmasksh->get_expanded());
+    tpOpen.push_back(expmaskcb->get_expanded());
 
 }
 
@@ -1266,7 +1285,7 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 14) {
+    if (tpOpen.size() >= 18) {
         expsettings->setExpanded(tpOpen.at(0));
         expcolor->set_expanded(tpOpen.at(1));
         expexpose->set_expanded(tpOpen.at(2));
@@ -1280,6 +1299,10 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
         expcontrast->set_expanded(tpOpen.at(10));
         expcbdl->set_expanded(tpOpen.at(11));
         expdenoi->set_expanded(tpOpen.at(12));
+        expmaskcol->set_expanded(tpOpen.at(13));
+        expmaskexp->set_expanded(tpOpen.at(14));
+        expmasksh->set_expanded(tpOpen.at(15));
+        expmaskcb->set_expanded(tpOpen.at(16));
     }
 }
 
@@ -2857,7 +2880,7 @@ void Locallab::inversChanged()
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
-        maskcolFrame->show();
+        expmaskcol->show();
         structcol->show();
         strengthgrid->hide();
         blurcolde->show();
@@ -2871,7 +2894,7 @@ void Locallab::inversChanged()
         curvactiv->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
-        maskcolFrame->hide();
+        expmaskcol->hide();
         structcol->hide();
         blurcolde->show();
         gridFrame->hide();
@@ -2885,7 +2908,7 @@ void Locallab::inversChanged()
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
-        maskcolFrame->show();
+        expmaskcol->show();
         structcol->show();
         blurcolde->show();
         gridFrame->show();
@@ -2925,7 +2948,7 @@ void Locallab::inversexChanged()
     if (multiImage && inversex->get_inconsistent()) {
         sensiex->show();
         curveEditorG->show();
-        maskexpFrame->show();
+        expmaskexp->show();
         structexp->show();
         blurexpde->show();
         softradiusexp->show();
@@ -2933,7 +2956,7 @@ void Locallab::inversexChanged()
     } else if (inversex->get_active()) {
         sensiex->show();
         curveEditorG->show();
-        maskexpFrame->hide();
+        expmaskexp->hide();
         structexp->hide();
         blurexpde->show();
         softradiusexp->hide();
@@ -2941,7 +2964,7 @@ void Locallab::inversexChanged()
     } else {
         sensiex->show();
         curveEditorG->show();
-        maskexpFrame->show();
+        expmaskexp->show();
         structexp->show();
         blurexpde->show();
         softradiusexp->show();
@@ -2980,17 +3003,17 @@ void Locallab::inversshChanged()
         
         sensihs->show();
         blurSHde->show();
-        maskSHFrame->show();
+        expmasksh->show();
 
         showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inverssh->get_active()) {
         sensihs->show();
-        maskSHFrame->hide();
+        expmasksh->hide();
         blurSHde->show();
 
     } else {
         sensihs->show();
-        maskSHFrame->show();
+        expmasksh->show();
         blurSHde->show();
 
         if (batchMode) {
@@ -5109,7 +5132,7 @@ void Locallab::updateSpecificGUIState()
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
-        maskcolFrame->show();
+        expmaskcol->show();
         structcol->show();
         blurcolde->show();
         softradiuscol->show();
@@ -5122,7 +5145,7 @@ void Locallab::updateSpecificGUIState()
         curvactiv->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
-        maskcolFrame->hide();
+        expmaskcol->hide();
         softradiuscol->hide();
         structcol->hide();
         blurcolde->show();
@@ -5134,7 +5157,7 @@ void Locallab::updateSpecificGUIState()
         curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
-        maskcolFrame->show();
+        expmaskcol->show();
         structcol->show();
         blurcolde->show();
         gridFrame->show();
@@ -5149,7 +5172,7 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && inversex->get_inconsistent()) {
         sensiex->show();
         curveEditorG->show();
-        maskexpFrame->show();
+    //    maskexpFrame->show();
         structexp->show();
         blurexpde->show();
         softradiusexp->show();
@@ -5157,14 +5180,14 @@ void Locallab::updateSpecificGUIState()
     } else if (inversex->get_active()) {
         sensiex->show();
         curveEditorG->show();
-        maskexpFrame->hide();
+    //    maskexpFrame->hide();
         structexp->hide();
         blurexpde->show();
         softradiusexp->hide();
     } else {
         sensiex->show();
         curveEditorG->show();
-        maskexpFrame->show();
+    //    maskexpFrame->show();
         structexp->show();
         blurexpde->show();
         softradiusexp->show();
@@ -5177,16 +5200,16 @@ void Locallab::updateSpecificGUIState()
     // Update SH GUI according to black adjuster state (to be compliant with adjusterChanged function)
     if (multiImage && inversex->get_inconsistent()) {
         sensihs->show();
-        maskSHFrame->show();
+     //   maskSHFrame->show();
         blurSHde->show();
         showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inverssh->get_active()) {
         sensihs->show();
-        maskSHFrame->hide();
+    //    maskSHFrame->hide();
         blurSHde->show();
     } else {
         sensihs->show();
-        maskSHFrame->show();
+    //    maskSHFrame->show();
         blurSHde->show();
 
         if (batchMode) {

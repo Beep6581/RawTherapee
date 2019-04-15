@@ -60,6 +60,10 @@ private:
     MyExpander* const expcontrast;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
+    MyExpander* const expmaskcol;
+    MyExpander* const expmaskexp;
+    MyExpander* const expmasksh;
+    MyExpander* const expmaskcb;
     sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
@@ -279,10 +283,6 @@ private:
     Gtk::Button* const lumaneutralButton;
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
-    Gtk::Frame* maskcolFrame;
-    Gtk::Frame* maskexpFrame;
-    Gtk::Frame* maskSHFrame;
-    Gtk::Frame* maskcbFrame;
     Gtk::Frame* gridFrame;
     Gtk::Frame* residFrame;
     LabGrid *labgrid;
