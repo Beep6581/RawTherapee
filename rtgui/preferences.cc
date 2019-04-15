@@ -960,7 +960,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
     ckbshowtooltiplocallab = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWTOOLTIP")));
     setExpandAlignProperties(ckbshowtooltiplocallab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
-    workflowGrid->attach(*ckbshowtooltiplocallab,0, 3);
+    workflowGrid->attach_next_to(*ckbshowtooltiplocallab, *ckbFileBrowserToolbarSingleRow, Gtk::POS_RIGHT, 1, 1);
 
     fworklflow->add(*workflowGrid);
 
