@@ -301,7 +301,8 @@ private:
      * Used to store the default ParamsEdited when setDefaults function is called
      * This ParamsEdited is updated when control spots are modified and is used to update adjusters edited state
      */
-    ParamsEdited* pe;
+//    ParamsEdited* pe;
+    std::unique_ptr<ParamsEdited> pe;
 
     // Expander management functions
     void foldAllButMe(GdkEventButton* event, MyExpander *expander);

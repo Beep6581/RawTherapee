@@ -20,6 +20,7 @@
 
 #ifndef _CONTROLSPOTPANEL_H_
 #define _CONTROLSPOTPANEL_H_
+#include <memory>
 
 #include "../rtengine/coord.h"
 #include "adjuster.h"
@@ -126,7 +127,8 @@ public:
      *
      * @return A vector contening the list of spot id
      */
-    std::vector<int>* getSpotIdList();
+//    std::vector<int>* getSpotIdList();
+    std::vector<int> getSpotIdList();
     /**
      * Getter of selected spot id
      *
@@ -182,7 +184,8 @@ public:
      *
      * @param se A SpotEdited structure containing the widgets edited states to update
      */
-    void setEditedStates(SpotEdited* se);
+//    void setEditedStates(SpotEdited* se);
+    void setEditedStates(const SpotEdited& se);
     /**
      * Implementation of setDefaults function of toolpanel.h
      *
@@ -294,12 +297,15 @@ private:
         public Gtk::Dialog
     {
     public:
+   enum DialogButton {   
+   OkButton = 1,
+   CancelButton = 2
+   };
         RenameDialog(const Glib::ustring &actualname, Gtk::Window &parent);
         Glib::ustring get_new_name();
 
     private:
-        Gtk::Entry newname_;
-    };
+    Gtk::Entry* const newname_;    };
 
     ControlSpots spots_;
 

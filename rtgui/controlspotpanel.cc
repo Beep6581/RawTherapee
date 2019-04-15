@@ -222,7 +222,6 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
     if(showtooltip) ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
-//    qualityMethod_->append(M("TP_LOCALLAB_STD"));
     qualityMethod_->append(M("TP_LOCALLAB_ENH"));
     qualityMethod_->append(M("TP_LOCALLAB_ENHDEN"));
     qualityMethod_->set_active(1);
@@ -428,12 +427,14 @@ void ControlSpotPanel::on_button_rename()
     int status = d.run();
 
     // Update actual name and raise event
-    if (status == 1) {
-        nameChanged_ = true;
-        const auto newname = d.get_new_name();
-        row[spots_.name] = newname;
-        treeview_.columns_autosize();
-        listener->panelChanged(EvLocallabSpotName, newname);
+    if (status == RenameDialog::OkButton) {
+        const Glib::ustring newname = d.get_new_name();
+        if (newname != actualname) { // Event is only raised if
+            nameChanged_ = true;
+            row[spots_.name] = newname;
+            treeview_.columns_autosize();
+            listener->panelChanged(EvLocallabSpotName, newname);
+         } 
     }
 }
 
@@ -1666,18 +1667,20 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
     return nullptr;
 }
 
-std::vector<int>* ControlSpotPanel::getSpotIdList()
+//std::vector<int>* ControlSpotPanel::getSpotIdList()
+std::vector<int> ControlSpotPanel::getSpotIdList()
 {
     MyMutex::MyLock lock(mTreeview);
 
-    std::vector<int>* r = new std::vector<int>();
+    std::vector<int> r;
 
     Gtk::TreeModel::Children children = treemodel_->children();
     Gtk::TreeModel::Children::iterator iter;
 
     for (iter = children.begin(); iter != children.end(); iter++) {
         Gtk::TreeModel::Row row = *iter;
-        r->push_back(row[spots_.id]);
+     //   r->push_back(row[spots_.id]);
+        r.push_back(row[spots_.id]);
     }
 
     return r;
@@ -1921,8 +1924,8 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
 
     return se;
 }
-
-void ControlSpotPanel::setEditedStates(SpotEdited* se)
+void ControlSpotPanel::setEditedStates(const SpotEdited& se)
+//void ControlSpotPanel::setEditedStates(SpotEdited* se)
 {
     // printf("setEditedStates\n");
 
@@ -1936,7 +1939,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     disableParamlistener(true);
 
     // Set widgets edited states
-    if (!se->nbspot || !se->selspot) {
+    if (!se.nbspot || !se.selspot) {
         treeview_.set_sensitive(false);
         button_add_.set_sensitive(false);
         button_delete_.set_sensitive(false);
@@ -1948,44 +1951,42 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
         button_add_.set_sensitive(true);
         button_delete_.set_sensitive(true);
         button_duplicate_.set_sensitive(true);
-        button_rename_.set_sensitive(se->name);
-        button_visibility_.set_sensitive(se->isvisible);
+        button_rename_.set_sensitive(se.name);
+        button_visibility_.set_sensitive(se.isvisible);
     }
 
-    if (!se->shape) {
+    if (!se.shape) {
         shape_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
-    if (!se->spotMethod) {
+    if (!se.spotMethod) {
         spotMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
-    sensiexclu_->setEditedState(se->sensiexclu ? Edited : UnEdited);
-    structexclu_->setEditedState(se->structexclu ? Edited : UnEdited);
-    struc_->setEditedState(se->struc ? Edited : UnEdited);
+    sensiexclu_->setEditedState(se.sensiexclu ? Edited : UnEdited);
+    structexclu_->setEditedState(se.structexclu ? Edited : UnEdited);
+    struc_->setEditedState(se.struc ? Edited : UnEdited);
 
-    if (!se->shapeMethod) {
+    if (!se.shapeMethod) {
         shapeMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
+    locX_->setEditedState(se.locX ? Edited : UnEdited);
+    locXL_->setEditedState(se.locXL ? Edited : UnEdited);
+    locY_->setEditedState(se.locY ? Edited : UnEdited);
+    locYT_->setEditedState(se.locYT ? Edited : UnEdited);
+    centerX_->setEditedState(se.centerX ? Edited : UnEdited);
+    centerY_->setEditedState(se.centerY ? Edited : UnEdited);
+    circrad_->setEditedState(se.circrad ? Edited : UnEdited);
 
-    locX_->setEditedState(se->locX ? Edited : UnEdited);
-    locXL_->setEditedState(se->locXL ? Edited : UnEdited);
-    locY_->setEditedState(se->locY ? Edited : UnEdited);
-    locYT_->setEditedState(se->locYT ? Edited : UnEdited);
-    centerX_->setEditedState(se->centerX ? Edited : UnEdited);
-    centerY_->setEditedState(se->centerY ? Edited : UnEdited);
-    circrad_->setEditedState(se->circrad ? Edited : UnEdited);
-
-    if (!se->qualityMethod) {
+    if (!se.qualityMethod) {
         qualityMethod_->set_active_text(M("GENERAL_UNCHANGED"));
     }
-
-    transit_->setEditedState(se->transit ? Edited : UnEdited);
-    thresh_->setEditedState(se->thresh ? Edited : UnEdited);
-    iter_->setEditedState(se->iter ? Edited : UnEdited);
-    balan_->setEditedState(se->balan ? Edited : UnEdited);
-    transitweak_->setEditedState(se->transitweak ? Edited : UnEdited);
-    avoid_->set_inconsistent(multiImage && !se->avoid);
+    transit_->setEditedState(se.transit ? Edited : UnEdited);
+    thresh_->setEditedState(se.thresh ? Edited : UnEdited);
+    iter_->setEditedState(se.iter ? Edited : UnEdited);
+    balan_->setEditedState(se.balan ? Edited : UnEdited);
+    transitweak_->setEditedState(se.transitweak ? Edited : UnEdited);
+    avoid_->set_inconsistent(multiImage && !se.avoid);
 
     // Update Control Spot GUI according to widgets edited states
     updateParamVisibility();
@@ -2008,27 +2009,28 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
     }
 
     // Set default values for adjusters
-    const rtengine::procparams::LocallabParams::LocallabSpot* defSpot = new rtengine::procparams::LocallabParams::LocallabSpot();
+//    const rtengine::procparams::LocallabParams::LocallabSpot* defSpot = new rtengine::procparams::LocallabParams::LocallabSpot();
+    rtengine::procparams::LocallabParams::LocallabSpot defSpot;
 
     if (index != -1 && index < (int)defParams->locallab.spots.size()) {
-        defSpot = &defParams->locallab.spots.at(index);
+        defSpot = defParams->locallab.spots.at(index);
     }
 
-    sensiexclu_->setDefault((double)defSpot->sensiexclu);
-    structexclu_->setDefault((double)defSpot->structexclu);
-    struc_->setDefault(defSpot->struc);
-    locX_->setDefault((double)defSpot->locX);
-    locXL_->setDefault((double)defSpot->locXL);
-    locY_->setDefault((double)defSpot->locY);
-    locYT_->setDefault((double)defSpot->locYT);
-    centerX_->setDefault((double)defSpot->centerX);
-    centerY_->setDefault((double)defSpot->centerY);
-    circrad_->setDefault((double)defSpot->circrad);
-    transit_->setDefault((double)defSpot->transit);
-    thresh_->setDefault(defSpot->thresh);
-    iter_->setDefault(defSpot->iter);
-    balan_->setDefault(defSpot->balan);
-    transitweak_->setDefault(defSpot->transitweak);
+    sensiexclu_->setDefault((double)defSpot.sensiexclu);
+    structexclu_->setDefault((double)defSpot.structexclu);
+    struc_->setDefault(defSpot.struc);
+    locX_->setDefault((double)defSpot.locX);
+    locXL_->setDefault((double)defSpot.locXL);
+    locY_->setDefault((double)defSpot.locY);
+    locYT_->setDefault((double)defSpot.locYT);
+    centerX_->setDefault((double)defSpot.centerX);
+    centerY_->setDefault((double)defSpot.centerY);
+    circrad_->setDefault((double)defSpot.circrad);
+    transit_->setDefault((double)defSpot.transit);
+    thresh_->setDefault(defSpot.thresh);
+    iter_->setDefault(defSpot.iter);
+    balan_->setDefault(defSpot.balan);
+    transitweak_->setDefault(defSpot.transitweak);
 
     // Set default edited states for adjusters
     if (!pedited) {
@@ -2048,27 +2050,27 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         balan_->setDefaultEditedState(Irrelevant);
         transitweak_->setDefaultEditedState(Irrelevant);
     } else {
-        const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
+        LocallabParamsEdited::LocallabSpotEdited defSpotState(true);
 
         if (index != 1 && index < (int)pedited->locallab.spots.size()) {
-            defSpotState = &pedited->locallab.spots.at(index);
+            defSpotState = pedited->locallab.spots.at(index);
         }
+        sensiexclu_->setDefaultEditedState(defSpotState.sensiexclu ? Edited : UnEdited);
+        structexclu_->setDefaultEditedState(defSpotState.structexclu ? Edited : UnEdited);
+        struc_->setDefaultEditedState(defSpotState.struc ? Edited : UnEdited);
+        locX_->setDefaultEditedState(defSpotState.locX ? Edited : UnEdited);
+        locXL_->setDefaultEditedState(defSpotState.locXL ? Edited : UnEdited);
+        locY_->setDefaultEditedState(defSpotState.locY ? Edited : UnEdited);
+        locYT_->setDefaultEditedState(defSpotState.locYT ? Edited : UnEdited);
+        centerX_->setDefaultEditedState(defSpotState.centerX ? Edited : UnEdited);
+        centerY_->setDefaultEditedState(defSpotState.centerY ? Edited : UnEdited);
+        circrad_->setDefaultEditedState(defSpotState.circrad ? Edited : UnEdited);
+        transit_->setDefaultEditedState(defSpotState.transit ? Edited : UnEdited);
+        thresh_->setDefaultEditedState(defSpotState.thresh ? Edited : UnEdited);
+        iter_->setDefaultEditedState(defSpotState.iter ? Edited : UnEdited);
+        balan_->setDefaultEditedState(defSpotState.balan ? Edited : UnEdited);
+        transitweak_->setDefaultEditedState(defSpotState.transitweak ? Edited : UnEdited);
 
-        sensiexclu_->setDefaultEditedState(defSpotState->sensiexclu ? Edited : UnEdited);
-        structexclu_->setDefaultEditedState(defSpotState->structexclu ? Edited : UnEdited);
-        struc_->setDefaultEditedState(defSpotState->struc ? Edited : UnEdited);
-        locX_->setDefaultEditedState(defSpotState->locX ? Edited : UnEdited);
-        locXL_->setDefaultEditedState(defSpotState->locXL ? Edited : UnEdited);
-        locY_->setDefaultEditedState(defSpotState->locY ? Edited : UnEdited);
-        locYT_->setDefaultEditedState(defSpotState->locYT ? Edited : UnEdited);
-        centerX_->setDefaultEditedState(defSpotState->centerX ? Edited : UnEdited);
-        centerY_->setDefaultEditedState(defSpotState->centerY ? Edited : UnEdited);
-        circrad_->setDefaultEditedState(defSpotState->circrad ? Edited : UnEdited);
-        transit_->setDefaultEditedState(defSpotState->transit ? Edited : UnEdited);
-        thresh_->setDefaultEditedState(defSpotState->thresh ? Edited : UnEdited);
-        iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
-        balan_->setDefaultEditedState(defSpotState->balan ? Edited : UnEdited);
-        transitweak_->setDefaultEditedState(defSpotState->transitweak ? Edited : UnEdited);
     }
 }
 
@@ -2138,23 +2140,25 @@ ControlSpotPanel::ControlSpots::ControlSpots()
 //-----------------------------------------------------------------------------
 
 ControlSpotPanel::RenameDialog::RenameDialog(const Glib::ustring &actualname, Gtk::Window &parent):
-    Gtk::Dialog(M("TP_LOCALLAB_REN_DIALOG_NAME"), parent)
+ //   Gtk::Dialog(M("TP_LOCALLAB_REN_DIALOG_NAME"), parent)
+ Gtk::Dialog(M("TP_LOCALLAB_REN_DIALOG_NAME"), parent), 
+  newname_(Gtk::manage(new Gtk::Entry()))
 {
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    Gtk::HBox* const hb = Gtk::manage(new Gtk::HBox()); 
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_REN_DIALOG_LAB"))), false, false, 4);
 
-    newname_.set_text(actualname);
-    hb->pack_start(newname_);
-
+    newname_->set_text(actualname);
+    hb->pack_start(*newname_);
     get_content_area()->pack_start(*hb, Gtk::PACK_SHRINK, 4);
 
-    add_button(M("GENERAL_OK"), 1);
-    add_button(M("GENERAL_CANCEL"), 2);
-
+    add_button(M("GENERAL_OK"), OkButton);
+    add_button(M("GENERAL_CANCEL"), CancelButton);
+    newname_->set_activates_default();
+    set_default_response(OkButton);
     show_all_children();
 }
 
 Glib::ustring ControlSpotPanel::RenameDialog::get_new_name()
 {
-    return newname_.get_text();
+      return newname_->get_text();
 }
