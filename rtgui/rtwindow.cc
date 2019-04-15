@@ -463,7 +463,7 @@ RTWindow::~RTWindow()
         delete fpanel;
     }
 
-    RTScalable::cleanup();
+    RTImage::cleanup();
 }
 
 void RTWindow::on_realize ()
