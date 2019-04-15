@@ -3763,31 +3763,30 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int bfh = yend - ystart;
                 const int bfw = xend - xstart;
 
-                tmp1.reset(new LabImage(bfw, bfh));
+                if (bfw > 0 && bfh > 0) {
+                    tmp1.reset(new LabImage(bfw, bfh));
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = ystart; y < yend ; y++) {
-                    for (int x = xstart; x < xend; x++) {
-                        tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                        tmp1->a[y - ystart][x - xstart] = original->a[y][x];
-                        tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                    for (int y = ystart; y < yend ; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            tmp1->L[y - ystart][x - xstart] = original->L[y][x];
+                            tmp1->a[y - ystart][x - xstart] = original->a[y][x];
+                            tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                        }
+                    }
+
+#ifdef _OPENMP
+                    #pragma omp parallel
+#endif
+
+                    {
+                        gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
                     }
                 }
-
-
-#ifdef _OPENMP
-                #pragma omp parallel
-#endif
-
-                {
-                    gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-                    gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                    gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
-                }
-
-
             } else {
                 const int GW = transformed->W;
                 const int GH = transformed->H;
@@ -3800,18 +3799,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     gaussianBlur(original->L, tmp1->L, GW, GH, radius);
                     gaussianBlur(original->a, tmp1->a, GW, GH, radius);
                     gaussianBlur(original->b, tmp1->b, GW, GH, radius);
-
                 }
             }
 
-            if (lp.stren > 0.1f) {
+            if (tmp1.get() && lp.stren > 0.1f) {
                 float mean = 0.f;//0 best result
                 float variance = lp.stren ; //(double) SQR(lp.stren)/sk;
                 addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
             }
 
             if (lp.blurmet == 0) { //blur and noise (center)
-                BlurNoise_Local(tmp1.get(), hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                if (tmp1.get()) {
+                    BlurNoise_Local(tmp1.get(), hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                }
             } else {
                InverseBlurNoise_Local(lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
             }
