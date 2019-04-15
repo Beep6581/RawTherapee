@@ -1225,11 +1225,12 @@ dialog frame > label:not(.dummy) {
     border-top-width: 0.083333333333333333em;
 }
 #Navigator {
-    padding-top: 0.75em;
+    padding-top: 0.25em;
     padding-bottom: 0.25em;
 }
 #Navigator label {
     padding: 0;
+    margin: 0.083333333333333333em 0;
 }
 
 /*** PartialPaste ******************************************************************************/
