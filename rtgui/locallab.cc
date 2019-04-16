@@ -168,7 +168,7 @@ Locallab::Locallab():
     // Contrast by detail levels
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
-    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.0, 100., 0.1, 0.0))),
+    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
     blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
@@ -963,8 +963,8 @@ Locallab::Locallab():
     enacbMaskConn = enacbMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enacbMaskChanged));
 
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
-    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
-    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+//    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+//    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     

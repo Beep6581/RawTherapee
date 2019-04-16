@@ -2398,11 +2398,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
         const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
         const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
-        const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2)  &&  senstype == 6);
+       // const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2)  &&  senstype == 6);
         const bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
         const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
         const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
-        const bool previewcb = ((lp.showmaskcbmet == 4)  &&  senstype == 6);
+        const bool previewcb = ((lp.showmaskcbmet == 2)  &&  senstype == 6);
 
         std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
         std::unique_ptr<LabImage> origblurmask;
@@ -2429,7 +2429,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
         const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
         const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
-        const bool usemaskcb = (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 4) && senstype == 6;
+        const bool usemaskcb = (lp.enacbMask || lp.showmaskcbmet == 2) && senstype == 6;
         const bool usemaskall = (usemaskSH || usemaskcol || usemaskexp || usemaskcb);
 
         if (usemaskall)
@@ -2592,7 +2592,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
-                                    diflc = 328.f * realstrdE * factorx;
+                                    diflc = (lightc * fli - original->L[y][x]) * factorx; //328.f * realstrdE * factorx;
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -2687,8 +2687,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         }
                                     }
 
-                                    if (expshow || colshow || SHshow || cbshow) {
-                                        transformed->L[y][x] = CLIP(12000.f + diflc);
+                                    if (expshow || colshow || SHshow) {
+                                        transformed->L[y][x] = CLIP(diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
                                     } else if (previewcol || previewexp || previewSH || previewcb) {
@@ -2709,7 +2709,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
-                                    diflc = 328.f * realstrdE;
+                                    diflc = lightc * fli - original->L[y][x];//328.f * realstrdE;
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9 ) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -2801,8 +2801,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         }
                                     }
 
-                                    if (expshow || colshow || SHshow || cbshow) {
-                                        transformed->L[y][x] = CLIP(12000.f + diflc);
+                                    if (expshow || colshow || SHshow) {
+                                        transformed->L[y][x] = CLIP( diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
                                     } else if (previewcol || previewexp || previewSH || previewcb) {
@@ -4959,7 +4959,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //end TM
 
 //begin cbdl
-        if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f  || lp.clarityml != 0.f || lp.contresid != 0.f || lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) && lp.cbdlena) {
+        if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f  || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) && lp.cbdlena) {
             if (call <= 3) { //call from simpleprocess dcrop improcc
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -4979,7 +4979,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     std::unique_ptr<LabImage> bufmaskorigcb;
                     std::unique_ptr<LabImage> bufmaskblurcb;
                     std::unique_ptr<LabImage> originalmaskcb;
-                    if (lp.showmaskcbmet == 2  || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
+                    if ( lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) {
                         bufmaskorigcb.reset(new LabImage(bfw, bfh));
                         bufmaskblurcb.reset(new LabImage(bfw, bfh));
                         originalmaskcb.reset(new LabImage(bfw, bfh));
@@ -5001,7 +5001,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    if (lp.showmaskcbmet == 2  || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
+                    if (lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) {
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -5016,7 +5016,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     kmaskLexp = 32768.f * LIM01(1.f - locllmascbCurve[500.f * ligh]);
                                 }
 
-                                if (lp.showmaskcbmet != 4) {
+                                if (lp.showmaskcbmet != 2) {
                                     if (locccmascbCurve && lcmascbutili) {
                                         float chromask = 0.0001f + sqrt(SQR((loctemp->a[ir][jr]) / fab) + SQR((loctemp->b[ir][jr]) / fab));
                                         kmaskCH = LIM01(1.f - locccmascbCurve[500.f *  chromask]);
@@ -5034,7 +5034,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     float valHH = LIM01(1.f - lochhmascbCurve[500.f *  h]);
 
-                                    if (lp.showmaskcbmet != 4) {
+                                    if (lp.showmaskcbmet != 2) {
                                         kmaskCH += valHH;
                                     }
 
@@ -5073,7 +5073,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     float radiusb = 1.f / sk;
 
-                    if (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
+                    if (lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) {
 
 #ifdef _OPENMP
                         #pragma omp parallel
@@ -5084,10 +5084,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             gaussianBlur(bufmaskblurcb->b, bufmaskorigcb->b, bfw, bfh, 1.f + (0.5f * lp.radmacb) / sk);
                         }
 
-                        if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 4 || lp.enacbMask) {
+                        if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 2 || lp.enacbMask) {
                             blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), original, bufmaskorigcb.get(), originalmaskcb.get(), lp.blendmacb);
 
-                        } else if (lp.showmaskcbmet == 3) {
+                        } else if (lp.showmaskcbmet == 1) {
                             showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get());
                             return;
                         }
@@ -5099,7 +5099,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     constexpr float b_r = 170.f;
                     constexpr double skinprot = 0.;
                     constexpr int choice = 0;
-                    if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 1  || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 4 || lp.enacbMask) {
+                    if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 2 || lp.enacbMask) {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
