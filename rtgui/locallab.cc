@@ -170,7 +170,7 @@ Locallab::Locallab():
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
     clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0, 100, 1, 0))),
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
-    blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0, 100, 1, 0))),
+    blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
     softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
     blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
@@ -1968,7 +1968,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).sensicb = sensicb->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).clarityml = clarityml->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).contresid = contresid->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).blurcbdl = blurcbdl->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).blurcbdl = blurcbdl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscb = softradiuscb->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).enacbMask = enacbMask->get_active();
 
@@ -3317,7 +3317,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     sensicb->setDefault((double)defSpot->sensicb);
     clarityml->setDefault((double)defSpot->clarityml);
     contresid->setDefault((double)defSpot->contresid);
-    blurcbdl->setDefault((double)defSpot->blurcbdl);
+    blurcbdl->setDefault(defSpot->blurcbdl);
     softradiuscb->setDefault(defSpot->softradiuscb);
     blendmaskcb->setDefault((double)defSpot->blendmaskcb);
     radmaskcb->setDefault(defSpot->radmaskcb);

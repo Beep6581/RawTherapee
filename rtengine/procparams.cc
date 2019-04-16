@@ -2499,7 +2499,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensicb(15),
     clarityml(0),
     contresid(0),
-    blurcbdl(0),
+    blurcbdl(0.),
     softradiuscb(0.0),
     enacbMask(false),
     CCmaskcbcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },

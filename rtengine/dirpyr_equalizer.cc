@@ -425,8 +425,10 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
             }
 
     float clar = 0.01f * mergeL;
+
+
     if(clar == 0.f) {
-        clar = 0.001f;
+        clar = 0.0005f;
     }
 
     #pragma omp parallel for
