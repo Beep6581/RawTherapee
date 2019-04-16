@@ -145,6 +145,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::FontButton* colorPickerFontFB;
     Gtk::ColorButton* cropMaskColorCB;
     Gtk::ColorButton* navGuideColorCB;
+    Gtk::CheckButton* pseudoHiDPI;
+
 
     Gtk::SpinButton*   maxRecentFolders;
     Gtk::SpinButton*   maxThumbHeightSB;
