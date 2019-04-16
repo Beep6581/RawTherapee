@@ -2688,7 +2688,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     }
 
                                     if (expshow || colshow || SHshow) {
-                                        transformed->L[y][x] = CLIP(diflc);
+                                        transformed->L[y][x] = CLIP(12000.f + diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
                                     } else if (previewcol || previewexp || previewSH || previewcb) {
@@ -2802,7 +2802,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     }
 
                                     if (expshow || colshow || SHshow) {
-                                        transformed->L[y][x] = CLIP( diflc);
+                                        transformed->L[y][x] = CLIP(12000.f + diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
                                     } else if (previewcol || previewexp || previewSH || previewcb) {
