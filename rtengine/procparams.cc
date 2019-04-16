@@ -2497,7 +2497,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromacbdl(0),
     threshold(0.2),
     sensicb(15),
-    clarityml(0),
+    clarityml(0.),
     contresid(0),
     blurcbdl(0.),
     softradiuscb(0.0),

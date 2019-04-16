@@ -168,7 +168,7 @@ Locallab::Locallab():
     // Contrast by detail levels
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
-    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0, 100, 1, 0))),
+    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.0, 100., 0.1, 0.0))),
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
     blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
@@ -1966,7 +1966,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromacbdl = chromacbdl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).threshold = threshold->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensicb = sensicb->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).clarityml = clarityml->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).clarityml = clarityml->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).contresid = contresid->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).blurcbdl = blurcbdl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscb = softradiuscb->getValue();
@@ -3315,7 +3315,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromacbdl->setDefault((double)defSpot->chromacbdl);
     threshold->setDefault(defSpot->threshold);
     sensicb->setDefault((double)defSpot->sensicb);
-    clarityml->setDefault((double)defSpot->clarityml);
+    clarityml->setDefault(defSpot->clarityml);
     contresid->setDefault((double)defSpot->contresid);
     blurcbdl->setDefault(defSpot->blurcbdl);
     softradiuscb->setDefault(defSpot->softradiuscb);

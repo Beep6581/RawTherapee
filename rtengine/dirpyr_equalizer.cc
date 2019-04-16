@@ -426,16 +426,25 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
 
     float clar = 0.01f * mergeL;
 
-
+/*
     if(clar == 0.f) {
-        clar = 0.0005f;
+        clar = 0.0f;
     }
-
+//    printf("clar=%f \n", clar);
+*/
+    if(clar > 0.f) {
     #pragma omp parallel for
         for (int i = 0; i < srcheight; i++)
             for (int j = 0; j < srcwidth; j++) {
                  loctemp[i][j] = CLIPLL((1.f + clar) * loct[i][j] - clar * resid5[i][j]);
            }
+    } else {
+    #pragma omp parallel for
+         for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                loctemp[i][j] = CLIPLL(loct[i][j]);
+            }
+    }
 }
 
 

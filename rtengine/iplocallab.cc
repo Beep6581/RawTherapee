@@ -602,6 +602,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.dehaze = local_dehaze;
     lp.senscb = local_sensicb;
     lp.clarityml = local_clarityml;
+    //printf("lpclari=%f \n", lp.clarityml); 
     lp.contresid = local_contresid;
     lp.blurcbdl = local_blurcbdl;
     lp.cont = local_contrast;
