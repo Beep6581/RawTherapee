@@ -5139,7 +5139,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
-
+/*
                     float minL = loctemp->L[0][0] - origcbdl->L[0][0];
                     float maxL = minL;
 #ifdef _OPENMP
@@ -5164,12 +5164,34 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             buflight[ir][jr] /= coef;
                         }
                     }
-
+*/
                     if (lp.softradiuscb > 0.f) {
-                        softprocess(origcbdl.get(), buflight, lp.softradiuscb, bfh, bfw, sk, multiThread);
-                    }
-                }
+                        array2D<float> ble(bfw, bfh);
+                        array2D<float> guid(bfw, bfh);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                ble[ir][jr] = (loctemp->L[ir][jr]  - origcbdl->L[ir][jr]) / 32768.f;
+                                guid[ir][jr] = origcbdl->L[ir][jr] / 32768.f;
+                            }
 
+                        rtengine::guidedFilter(guid, ble, ble, (lp.softradiuscb * 10.f / sk), 0.04, multiThread);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                loctemp->L[ir][jr] =  origcbdl->L[ir][jr] + 32768.f * ble[ir][jr];
+                            }
+                    }
+                 
+                    //    softprocess(origcbdl.get(), buflight, lp.softradiuscb, bfh, bfw, sk, multiThread);
+                  //  }
+                    
+                    
+                }
                     transit_shapedetect(6, loctemp.get(), originalmaskcb.get(), buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     //chroma CBDL begin here
