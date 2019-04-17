@@ -617,6 +617,7 @@ public:
     */
     static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
     static void RGB2Lab(float *X, float *Y, float *Z, float *L, float *a, float *b, const float wp[3][3], int width);
+    static void Lab2RGBLimit(float *L, float *a, float *b, float *R, float *G, float *B, const float wp[3][3], float limit, float afactor, float bfactor, int width);
     static void RGB2L(float *X, float *Y, float *Z, float *L, const float wp[3][3], int width);
 
     /**
@@ -841,7 +842,7 @@ public:
     * @param go green channel of output color [0 ; 65535] (return value)
     * @param bo blue channel of output color [0 ; 65535] (return value)
     */
-    static void interpolateRGBColor (const float balance, const float r1, const float g1, const float b1, const float r2, const float g2, const float b2, int channels, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
+    static void interpolateRGBColor (float balance, float r1, float g1, float b1, float r2, float g2, float b2, int channels, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
 
     /**
     * @brief Interpolate 2 colors from their respective red/green/blue channels, with a balance factor
@@ -871,7 +872,7 @@ public:
     * @param go green channel of output color [0 ; 65535] (return value)
     * @param bo blue channel of output color [0 ; 65535] (return value)
     */
-    static void interpolateRGBColor (float realL, float iplow, float iphigh, int algm,  const float balance, int twoc, int metchrom, float chromat, float luma, const float r1, const float g1, const float b1, const float xl, const float yl, const float zl, const float x2, const float y2, const float z2, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
+    static void interpolateRGBColor (float realL, float iplow, float iphigh, int algm, float balance, int twoc, int metchrom, float chromat, float luma, float r1, float g1, float b1, float xl, float yl, float zl, float x2, float y2, float z2, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo);
 
 
     /**
@@ -1428,15 +1429,15 @@ public:
     * @param moreRGB (Debug target only) to calculate iterations for values >65535
     */
 #ifdef _DEBUG
-    static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
-    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
-    static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef, bool &neg, bool &more_rgb);
+    static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
+    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
+    static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
 #else
-    static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
-    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
-    static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
+    static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
+    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
+    static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
 #endif
-    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &saturation, const float wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef);
+    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &saturation, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
 
 
     /**
@@ -1460,7 +1461,7 @@ public:
     * @param wip matrix for working profile
     * @param multiThread whether to parallelize the loop or not
     */
-    static void LabGamutMunsell (float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3]);
+    static void LabGamutMunsell (float *labL, float *laba, float *labb, int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3]);
 
 
     /*
@@ -1496,8 +1497,8 @@ public:
     // -------------------------------- end Munsell
 
 
-    static void scalered ( const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext);
-    static void transitred (const float HH, const float Chprov1, const float dred, const float factorskin, const float protect_red, const float factorskinext, const float deltaHH, const float factorsat, float &factor);
+    static void scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale, float &scaleext);
+    static void transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor);
     static void skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s);
     static void skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s);
 //  static void scaleredcdbl ( float skinprot, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext);
