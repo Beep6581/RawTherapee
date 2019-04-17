@@ -1036,6 +1036,7 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Police des ancres de vérification couleu
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Couleur du masque de recadrage
 PREFERENCES_APPEARANCE_MAINFONT;Police principale
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Couleur du cadre dans le Navigateur
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Mode pseudo-HiDPI
 PREFERENCES_APPEARANCE_THEME;Thème
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
