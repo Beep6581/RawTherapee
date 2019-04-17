@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.6-rc1 RELEASE NOTES
+RAWTHERAPEE 5.6-rc2 RELEASE NOTES
 
-This is RawTherapee 5.6 Release Candidate 1, released on 2019-04-10. This is not the final release yet.
+This is RawTherapee 5.6 Release Candidate 2, released on 2019-04-17. This is not the final release yet.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
@@ -20,7 +20,7 @@ In order to use RawTherapee efficiently you should know that:
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
 New features since 5.5:
-- HiDPI support, for a smooth and sharp user interface regardless of screen size. Scaling in RawTherapee depends on font size, DPI and display scaling. No scaling occurs when the font size is set to 9pt, DPI is set to 96 (or 72 for macOS) and scaling is set to 1 (100%).
+- Pseudo-HiDPI support, for a smooth and sharp user interface regardless of screen size. Pseudo-HiDPI mode is disabled by default, enable it in Preferences > General > Appearance. Scaling in RawTherapee depends on font size, DPI and display scaling. While scaling has been tested to work well in Windows, Linux and macOS, there are some macOS display modes which are incompatible with it, specifically those modes suffixed by "(HiDPI)" in macOS Display settings. Some versions of macOS (10.14.*) seem to not list any modes, in which case the user must just give it a try.
 - Ability to move tools to a new Favorites tab, http://rawpedia.rawtherapee.com/Favorites_Tab
 - "Unclipped" processing profile, to make it easy to save an image while preserving data across the whole tonal range, http://rawpedia.rawtherapee.com/Unclipped
 - User-adjustable tiles-per-thread settings in Preferences > Performance, for users who want to find optimal values for their system. The default value of 2 tiles-per-thread performs best overall.

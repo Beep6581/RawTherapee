@@ -35,6 +35,7 @@
     <url type="translate">https://discuss.pixls.us/t/localization-how-to-translate-rawtherapee-and-rawpedia/2594</url>
     <launchable type="desktop-id">rawtherapee.desktop</launchable>
     <releases>
+        <release version="5.6-rc2" date="2019-04-17" type="development"></release>
         <release version="5.6-rc1" date="2019-04-10" type="development"></release>
         <release version="5.5" date="2018-12-17" type="stable"></release>
     </releases>
