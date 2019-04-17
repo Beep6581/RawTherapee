@@ -5139,32 +5139,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
-/*
-                    float minL = loctemp->L[0][0] - origcbdl->L[0][0];
-                    float maxL = minL;
-#ifdef _OPENMP
-                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
-#endif
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            buflight[ir][jr] = loctemp->L[ir][jr] - origcbdl->L[ir][jr];
-                            minL = rtengine::min(minL, buflight[ir][jr]);
-                            maxL = rtengine::max(maxL, buflight[ir][jr]);
-                        }
-                    }
 
-                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            buflight[ir][jr] /= coef;
-                        }
-                    }
-*/
                     if (lp.softradiuscb > 0.f) {
                         array2D<float> ble(bfw, bfh);
                         array2D<float> guid(bfw, bfh);
@@ -5177,7 +5152,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 guid[ir][jr] = origcbdl->L[ir][jr] / 32768.f;
                             }
 
-                        rtengine::guidedFilter(guid, ble, ble, (lp.softradiuscb * 10.f / sk), 0.04, multiThread);
+                        rtengine::guidedFilter(guid, ble, ble, (lp.softradiuscb * 2.f / sk), 0.001, multiThread);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -5186,11 +5161,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 loctemp->L[ir][jr] =  origcbdl->L[ir][jr] + 32768.f * ble[ir][jr];
                             }
                     }
-                 
-                    //    softprocess(origcbdl.get(), buflight, lp.softradiuscb, bfh, bfw, sk, multiThread);
-                  //  }
-                    
-                    
+
                 }
                     transit_shapedetect(6, loctemp.get(), originalmaskcb.get(), buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
