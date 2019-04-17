@@ -2589,14 +2589,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                 float newhr = 0.f;
                                 float difL = 0.f;
 
-                                if (senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
+                                if (senstype == 2  || senstype == 8) {
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
                                 } else if (senstype == 6) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -2713,14 +2713,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                 float diflc = 0.f;
                                 float newhr = 0.f;
                                 float difL = 0.f;
-                                if (senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
+                                if (senstype == 2  || senstype == 8) { //retinex & cbdl
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
                                 } else if (senstype == 6) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 ) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
