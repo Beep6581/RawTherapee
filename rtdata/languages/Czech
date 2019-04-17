@@ -42,6 +42,7 @@
 #41 2018-03-03 updated by mkyral
 #42 2018-04-28 updated by mkyral
 #43 2018-12-13 updated by mkyral
+#44 2019-04-17 updated by mkyral
 
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
@@ -152,6 +153,7 @@ FILEBROWSER_APPLYPROFILE;Použít
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplikovat - částečně
 FILEBROWSER_AUTODARKFRAME;Automatický tmavý snímek
 FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klikněte pro otevření zadané cesty, obnovte složku a aplikujte klíčové slovo "find".
 FILEBROWSER_BROWSEPATHHINT;Vložte cestu pro procházení.\n\nKlávesové zkratky:\n<b>Ctrl-o</b> pro přepnutí do adresního řádku.\n<b>Enter</b>/ <b>Ctrl-Enter</b> pro procházení ;\n<b>Esc</b> pro zrušení změn.\n<b>Shift-Esc</b> pro zrušení přepnutí.\n\nZkratky pro cesty:\n<b>~</b>\t- domácí složka uživatele.\n<b>!</b>\t- složka s obrázky uživatele.
 FILEBROWSER_CACHE;Mezipaměť
 FILEBROWSER_CACHECLEARFROMFULL;Smazat vše včetně profilů zpracování v mezipaměti
@@ -808,6 +810,7 @@ HISTORY_MSG_RAWCACORR_AUTOIT;Raw korekce CA - Iterace
 HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw korekce CA - Zabránit posunu barev
 HISTORY_MSG_RAW_BORDER;Okraj Raw
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;Změna rozměrů - Povolit zvětšení
+HISTORY_MSG_SHARPENING_BLUR;Doostření - Poloměr rozmazání
 HISTORY_MSG_SHARPENING_CONTRAST;Doostření - Práh kontrastu
 HISTORY_MSG_SH_COLORSPACE;S/S - Barevný prostor
 HISTORY_MSG_SOFTLIGHT_ENABLED;Měkké světlo
@@ -918,6 +921,7 @@ MAIN_FRAME_FILEBROWSER;Prohlížeč souborů
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Prohlížeč souborů.\nZkratka: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Místa
 MAIN_FRAME_PLACES_ADD;Přidat
+MAIN_FRAME_PLACES_DEL;Smazat
 MAIN_FRAME_QUEUE;Fronta
 MAIN_FRAME_QUEUE_TOOLTIP;Fronta zpracování.\nZkratka: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Poslední složky
@@ -946,6 +950,8 @@ MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPORT; Rychlý export 
 MAIN_TAB_EXPOSURE;Expozice
 MAIN_TAB_EXPOSURE_TOOLTIP;Zkratka: <b>Alt-e</b>
+MAIN_TAB_FAVORITES;Oblíbené
+MAIN_TAB_FAVORITES_TOOLTIP;Zkratka: <b>Alt-u</b>
 MAIN_TAB_FILTER; Filtr 
 MAIN_TAB_INSPECT; Prohlížení 
 MAIN_TAB_IPTC;IPTC
@@ -1093,6 +1099,12 @@ PREFERENCES_CACHECLEAR_SAFETY;Jsou smazány pouze soubory ve vyrovnávací pamě
 PREFERENCES_CACHEMAXENTRIES;Maximální počet záznamů v mezipaměti
 PREFERENCES_CACHEOPTS;Vlastnosti mezipaměti
 PREFERENCES_CACHETHUMBHEIGHT;Maximální výška náhledu
+PREFERENCES_CHUNKSIZES;Dlaždic na vlákno
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demozajkování
+PREFERENCES_CHUNKSIZE_RAW_CA;Raw korekce CA
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demozajkování
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demozajkování
+PREFERENCES_CHUNKSIZE_RGB;RGB zpracování
 PREFERENCES_CLIPPINGIND;Indikace oříznutí
 PREFERENCES_CLUTSCACHE;Mezipaměť HaldCLUT
 PREFERENCES_CLUTSCACHE_LABEL;Maximální počet  přednačtených CLUTů
@@ -1180,6 +1192,8 @@ PREFERENCES_PARSEDEXTADDHINT;Vymazat označenou příponu ze seznamu.
 PREFERENCES_PARSEDEXTDELHINT;Vymazat označenou příponu ze seznamu.
 PREFERENCES_PARSEDEXTDOWNHINT;Vybranou příponu posunout na seznamu níže.
 PREFERENCES_PARSEDEXTUPHINT;Vybranou příponu posunout na seznamu výše.
+PREFERENCES_PERFORMANCE_MEASURE;Měřit
+PREFERENCES_PERFORMANCE_MEASURE_HINT;Vypisovat časy zpracování v konzoli
 PREFERENCES_PERFORMANCE_THREADS;Vlákna
 PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximální počet vláken pro Redukci šumu a Úrovně vlnky (0 = Automaticky)
 PREFERENCES_PREVDEMO;Metoda demozajkování náhledu
@@ -1254,6 +1268,11 @@ PROFILEPANEL_TOOLTIPCOPY;Kopírovat současný profil do schránky.\n<b>Ctrl-kli
 PROFILEPANEL_TOOLTIPLOAD;Nahrát profil ze souboru.\n<b>Ctrl-klik</b> umožní vybrat parametry pro nahrání.
 PROFILEPANEL_TOOLTIPPASTE;Vložit profil ze schránky.\n<b>Ctrl-klik</b> umožní vybrat parametry pro vložení.
 PROFILEPANEL_TOOLTIPSAVE;Uložit současný profil.\n<b>Ctrl-klik</b> umožní vybrat parametry pro uložení.
+PROGRESSBAR_DECODING;Dekodování...
+PROGRESSBAR_GREENEQUIL;Vyrovnání zelené...
+PROGRESSBAR_HLREC;Rekonstrukce světel...
+PROGRESSBAR_HOTDEADPIXELFILTER;Filtr vypálených/mrtvých pixelů...
+PROGRESSBAR_LINEDENOISE;Filtr linkového rušení...
 PROGRESSBAR_LOADING;Načítání obrázku...
 PROGRESSBAR_LOADINGTHUMBS;Načítání náhledů...
 PROGRESSBAR_LOADJPEG;Načítání JPEG...
@@ -1262,6 +1281,7 @@ PROGRESSBAR_LOADTIFF;Načítání TIFF...
 PROGRESSBAR_NOIMAGES;Složka neobsahuje obrázky
 PROGRESSBAR_PROCESSING;Zpracovávaní obrázku...
 PROGRESSBAR_PROCESSING_PROFILESAVED;Profil zpracování uložen
+PROGRESSBAR_RAWCACORR;RAW korekce chromatické aberace...
 PROGRESSBAR_READY;Připraven
 PROGRESSBAR_SAVEJPEG;Ukládání JPEG souboru...
 PROGRESSBAR_SAVEPNG;Ukládání PNG souboru...
@@ -1279,7 +1299,8 @@ QUEUE_DESTFILENAME;Cesta a název souboru
 QUEUE_FORMAT_TITLE;Formát souboru
 QUEUE_LOCATION_FOLDER;Ulož do souboru
 QUEUE_LOCATION_TEMPLATE;Použít šablonu
-QUEUE_LOCATION_TEMPLATE_TOOLTIP;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii, některé vlastnosti fotografie nebo pořadí v dávce.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bude nahrazeno hodnocením fotografie. Pokud není fotografie ohodnocena, bude %r nahrazeno '0'. Pokud je fotografie v koši, bude %r nahrazeno 'x'.\n\n<b>%s1</b>, <b>%s2</b>, atd. bude nahrazeno pořadím v dávce doplněném na 1 až 9 číslic. Každé spuštění zpracování fronty jej vždy nastaví na jedna a po každé zpracované fotografii se o jedna zvýší .\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>zpracovano</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/zpracovano/%f</b>\n\nPro uložení výstupního obrázku do adresáře\n"<i>/home/tom/fotky/zpracovano/2010-10-31</i>", napište:\n<b>%p2/zpracovano/%d1/%f</b>
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Specifikujte kam se mají uložit výstupy. Lze použít umístění zdrojových souborů, pořadí, stav koše nebo pozice ve frontě.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bude nahrazeno hodnocením fotografie.Pokud není fotografie ohodnocena, bude %r nahrazeno '0'.Pokud je fotografie v koši, bude %r nahrazeno 'x'.\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>converted</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/converted/%f</b>\n\nPro uložení výstupního obrázku do adresáře"<i>/home/tom/photos/converted/2010-10-31</i>", napište:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_LOCATION_TITLE;Výstupní umístění
 QUEUE_STARTSTOP_TOOLTIP;Spustit nebo zastavit zpracování obrázků ve frontě.\n\nZkratka: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Neznámý datový formát
 SAMPLEFORMAT_1;8-bitový neznaménkový
@@ -1316,7 +1337,7 @@ THRESHOLDSELECTOR_HINT;Držte klávesu <b>Shift</b> pro přesun individuálních
 THRESHOLDSELECTOR_T;Nahoře
 THRESHOLDSELECTOR_TL;Nahoře vlevo
 THRESHOLDSELECTOR_TR;Nahoře vpravo
-TOOLBAR_TOOLTIP_COLORPICKER;Uzamykatelný Průzkumník barev\n\nPokud je nástroj aktivní:\n- Přidání sondy: <b>levý-klik</b>.\n- Posunutí sondy: <b>levý-klik a posunutí</b>.\n- Smazání sondy: <b>pravý-klik</b>.\n- Smazání všech sond: <b>shift</b>+<b>pravý-klik</b>.\n- Návrat k nástroji posunu: <b>pravý-klik</b>.
+TOOLBAR_TOOLTIP_COLORPICKER;Uzamykatelný Průzkumník barev\n\nPokud je nástroj aktivní:\n- Přidání sondy: <b>levý-klik</b>.\n- Posunutí sondy: <b>levý-klik a posunutí</b>.\n- Smazání sondy: <b>pravý-klik</b>.\n- Smazání všech sond: <b>Ctrl</b>+<b>Shift</b>+<b>pravý-klik</b>.\n- Návrat k nástroji posunu: <b>pravý-klik</b> mimo průzkumníky.
 TOOLBAR_TOOLTIP_CROP;<b>Oříznutí</b> výběru.\nZkratka: <b>c</b>\nVýřez posunete pomocí <b>Shift + tažení myši</b>
 TOOLBAR_TOOLTIP_HAND;Posun.\nZkratka: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Vyznačení <b>roviny</b> / <b>rotace</b>.\nZkratka: <b>s</b>\n\nZobrazení míry rotace pomocí vodící linky na náhledu snímky. Úhel rotace je zobrazen vedle vodící linky. Střed rotace je geometrický střed snímku.
@@ -1533,6 +1554,7 @@ TP_CROP_GTTRIANGLE2;Zlaté trojúhelníky 2
 TP_CROP_GUIDETYPE;Druh vodítek:
 TP_CROP_H;Výška
 TP_CROP_LABEL;Ořez
+TP_CROP_PPI;PPI
 TP_CROP_RESETCROP;Obnovit
 TP_CROP_SELECTCROP;Vybrat
 TP_CROP_W;Šířka
@@ -1773,10 +1795,15 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Pracuje s posuvníkem barevnosti a CC křivkou.
 TP_LENSGEOM_AUTOCROP;Automatický ořez
 TP_LENSGEOM_FILL;Automatické vyplnění
 TP_LENSGEOM_LABEL;Objektiv / Geometrie
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automaticky vybráno
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP soubor
+TP_LENSPROFILE_CORRECTION_MANUAL;Ručně vybráno
 TP_LENSPROFILE_LABEL;Korekční profily objektivů
 TP_LENSPROFILE_LENS_WARNING;Varování: crop factor použitý pro profilování objektivu je větší než crop factor fotoaparátu. Výsledek může být nesprávný.
+TP_LENSPROFILE_MODE_HEADER;Profil objektivu
 TP_LENSPROFILE_USE_CA;Chromatická aberace
+TP_LENSPROFILE_USE_GEOMETRIC;Geometrické zkreslení
+TP_LENSPROFILE_USE_HEADER;Opravit
 TP_LENSPROFILE_USE_VIGNETTING;Vinětace
 TP_LOCALCONTRAST_AMOUNT;Míra
 TP_LOCALCONTRAST_DARKNESS;Úroveň tmavé
@@ -1861,7 +1888,8 @@ TP_RAW_HD_TOOLTIP;Nižší hodnoty učiní detekci vypálených/mrtvých bodů a
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Dílčí snímek
-TP_RAW_IMAGENUM_TOOLTIP;Některé raw snímky obsahují několik podsnímků (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nV případě, že je pro demozajkování použita jiná metoda než Pixel Shift, tato volba určí, který podsnímek se použije.\n\nPokud je použita Pixel Shift metoda demozajkování na Pixel Shift raw soubory, budou použity všechny podsnímky a tato volba určí, který snímek bude použit pro pohyblivé části.
+TP_RAW_IMAGENUM_SN;Režim SN
+TP_RAW_IMAGENUM_TOOLTIP;Některé raw snímky obsahují několik podsnímků (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nV případě, že je pro demozajkování použita jiná metoda než Pixel Shift, tato volba určí, který podsnímek se použije.\n\nPokud je použita Pixel Shift metoda demozajkování na Pixel Shift raw soubory, budou použity všechny podsnímky a tato volba určí, který snímek bude použit pro pohyblivé části.
 TP_RAW_LABEL;Demozajkování
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;Kroky rozšíření LMMSE
@@ -1901,6 +1929,8 @@ TP_RAW_SENSOR_BAYER_LABEL;Snímač s Bayerovou maskou
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Tří průchodová dává lepší výsledky (doporučeno pro fotky s nízkým ISO).\nJednoprůchodová je téměř k nerozeznání od tří průchodové pro vysoké ISO a je rychlejší.\n+rychlá vytváří méně artefaktů v plochých oblastech
 TP_RAW_SENSOR_XTRANS_LABEL;Senzory s X-Trans maticí
 TP_RAW_VNG4;VNG4
+TP_RAW_XTRANS;X-Trans
+TP_RAW_XTRANSFAST;Fast X-Trans
 TP_RESIZE_ALLOW_UPSCALING;Povolit zvětšení
 TP_RESIZE_APPLIESTO;Aplikovat na:
 TP_RESIZE_CROPPEDAREA;Oblast ořezu
@@ -2017,6 +2047,7 @@ TP_SHARPENEDGE_LABEL;Hrany
 TP_SHARPENEDGE_PASSES;Počet průchodů
 TP_SHARPENEDGE_THREE;Pouze jas
 TP_SHARPENING_AMOUNT;Míra
+TP_SHARPENING_BLUR;Poloměr rozostření
 TP_SHARPENING_CONTRAST;Práh kontrastu
 TP_SHARPENING_EDRADIUS;Poloměr
 TP_SHARPENING_EDTOLERANCE;Tolerance k hranám
@@ -2287,38 +2318,4 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit celý obrázek obrazovce\nZkratka: <b>Alt<
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
-!MAIN_FRAME_PLACES_DEL;Remove
-!MAIN_TAB_FAVORITES;Favorites
-!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 !PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
-!PREFERENCES_CHUNKSIZES;Tiles per thread
-!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
-!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
-!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
-!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
-!PREFERENCES_CHUNKSIZE_RGB;RGB processing
-!PREFERENCES_PERFORMANCE_MEASURE;Measure
-!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
-!PROGRESSBAR_DECODING;Decoding...
-!PROGRESSBAR_GREENEQUIL;Green equilibration...
-!PROGRESSBAR_HLREC;Highlight reconstruction...
-!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
-!PROGRESSBAR_LINEDENOISE;Line noise filter...
-!PROGRESSBAR_RAWCACORR;Raw CA correction...
-!QUEUE_LOCATION_TITLE;Output Location
-!TP_CROP_PPI;PPI
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
-!TP_LENSPROFILE_MODE_HEADER;Lens Profile
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
-!TP_LENSPROFILE_USE_HEADER;Correct
-!TP_RAW_IMAGENUM_SN;SN mode
-!TP_RAW_XTRANS;X-Trans
-!TP_RAW_XTRANSFAST;Fast X-Trans
-!TP_SHARPENING_BLUR;Blur radius
