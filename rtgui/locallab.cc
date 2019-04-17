@@ -963,8 +963,8 @@ Locallab::Locallab():
     enacbMaskConn = enacbMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enacbMaskChanged));
 
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
-//    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
-//    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     

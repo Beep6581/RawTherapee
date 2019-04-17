@@ -2398,11 +2398,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const bool expshow = ((lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2)  &&  senstype == 1);
         const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
         const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
-       // const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2)  &&  senstype == 6);
+        const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2)  &&  senstype == 6);
         const bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
         const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
         const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
-        const bool previewcb = ((lp.showmaskcbmet == 2)  &&  senstype == 6);
+        const bool previewcb = ((lp.showmaskcbmet == 4)  &&  senstype == 6);
 
         std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
         std::unique_ptr<LabImage> origblurmask;
@@ -2429,7 +2429,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
         const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
         const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
-        const bool usemaskcb = (lp.enacbMask || lp.showmaskcbmet == 2) && senstype == 6;
+        const bool usemaskcb = (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 4) && senstype == 6;
         const bool usemaskall = (usemaskSH || usemaskcol || usemaskexp || usemaskcb);
 
         if (usemaskall)
@@ -2587,12 +2587,15 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                 float factorx = localFactor;
                                 float diflc = 0.f;
                                 float newhr = 0.f;
+                                float difL = 0.f;
 
-                                if ( senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
+                                if (senstype == 2 || senstype == 3 || senstype == 8) {//all except color and light (TODO) and exposure
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
-                                    diflc = (lightc * fli - original->L[y][x]) * factorx; //328.f * realstrdE * factorx;
+                                } else if (senstype == 6) {
+                                    difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -2629,14 +2632,15 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
+                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6) {
+                                        
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
-                                    } else if (senstype == 1) {
+                                   } else if (senstype == 1) {
                                         // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH || previewcb) {
+                                        if (previewcol || previewexp || previewSH) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -2644,7 +2648,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH || previewcb) {
+                                        if (previewcol || previewexp || previewSH  || previewcb) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -2691,7 +2695,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
-                                    } else if (previewcol || previewexp || previewSH || previewcb) {
+                                    } else if (cbshow) {
+                                        transformed->L[y][x] = CLIP(12000.f + difL);
+                                        transformed->a[y][x] = CLIPC(difa);
+                                        transformed->b[y][x] = CLIPC(difb);
+                                    } else if (previewcol || previewexp || previewSH  || previewcb) {
                                         transformed->a[y][x] = 0.f;
                                         transformed->b[y][x] = (difb);
                                     }
@@ -2704,12 +2712,14 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                             case 2: { // inside selection => full effect, no transition
                                 float diflc = 0.f;
                                 float newhr = 0.f;
-
-                                if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
+                                float difL = 0.f;
+                                if (senstype == 2 || senstype == 3 || senstype == 8) { //retinex & cbdl
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
-                                    diflc = lightc * fli - original->L[y][x];//328.f * realstrdE;
+                                } else if (senstype == 6) {
+                                    difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
+                                    transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9 ) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
@@ -2746,13 +2756,13 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 6 || senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9) {
+                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH || previewcb) {
+                                        if (previewcol || previewexp || previewSH) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -2760,7 +2770,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         flia = (100.f + 0.3f * lp.strengrid * realstradE + realstrchdE) / 100.f;
                                         flib = (100.f + 0.3f * lp.strengrid * realstrbdE + realstrchdE) / 100.f;
 
-                                        if (previewcol || previewexp || previewSH || previewcb) {
+                                        if (previewcol || previewexp || previewSH) {
                                             flia = (100.f + realstradE + realstrchdE) / 100.f;
                                             flib = (100.f + realstrbdE + realstrchdE) / 100.f;
                                         }
@@ -2803,6 +2813,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
 
                                     if (expshow || colshow || SHshow) {
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
+                                        transformed->a[y][x] = CLIPC(difa);
+                                        transformed->b[y][x] = CLIPC(difb);
+                                    } else if (cbshow) {
+                                        transformed->L[y][x] = CLIP(12000.f + difL);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
                                     } else if (previewcol || previewexp || previewSH || previewcb) {
@@ -4959,7 +4973,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //end TM
 
 //begin cbdl
-        if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f  || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) && lp.cbdlena) {
+        if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f  || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) && lp.cbdlena) {
             if (call <= 3) { //call from simpleprocess dcrop improcc
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -4969,6 +4983,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int bfw = xend - xstart;
                  //   int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                  //   int bfw = int (lp.lx + lp.lxL) + del;
+                        printf("mascb0=%i \n", lp.showmaskcbmet);
 
                 if (bfw > 32 && bfh > 32) {
                     array2D<float> bufsh(bfw, bfh);
@@ -4979,7 +4994,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     std::unique_ptr<LabImage> bufmaskorigcb;
                     std::unique_ptr<LabImage> bufmaskblurcb;
                     std::unique_ptr<LabImage> originalmaskcb;
-                    if ( lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) {
+                    if (lp.showmaskcbmet == 2  || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
                         bufmaskorigcb.reset(new LabImage(bfw, bfh));
                         bufmaskblurcb.reset(new LabImage(bfw, bfh));
                         originalmaskcb.reset(new LabImage(bfw, bfh));
@@ -5001,7 +5016,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    if (lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) {
+                    if (lp.showmaskcbmet == 2  || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -5016,7 +5032,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     kmaskLexp = 32768.f * LIM01(1.f - locllmascbCurve[500.f * ligh]);
                                 }
 
-                                if (lp.showmaskcbmet != 2) {
+                                if (lp.showmaskcbmet != 4) {
                                     if (locccmascbCurve && lcmascbutili) {
                                         float chromask = 0.0001f + sqrt(SQR((loctemp->a[ir][jr]) / fab) + SQR((loctemp->b[ir][jr]) / fab));
                                         kmaskCH = LIM01(1.f - locccmascbCurve[500.f *  chromask]);
@@ -5034,7 +5050,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     float valHH = LIM01(1.f - lochhmascbCurve[500.f *  h]);
 
-                                    if (lp.showmaskcbmet != 2) {
+                                    if (lp.showmaskcbmet != 4) {
                                         kmaskCH += valHH;
                                     }
 
@@ -5073,7 +5089,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     float radiusb = 1.f / sk;
 
-                    if (lp.enacbMask || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2) {
+                    if (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) {
 
 #ifdef _OPENMP
                         #pragma omp parallel
@@ -5084,10 +5100,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             gaussianBlur(bufmaskblurcb->b, bufmaskorigcb->b, bfw, bfh, 1.f + (0.5f * lp.radmacb) / sk);
                         }
 
-                        if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 2 || lp.enacbMask) {
+                        if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 4 || lp.enacbMask) {
+
                             blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), original, bufmaskorigcb.get(), originalmaskcb.get(), lp.blendmacb);
 
-                        } else if (lp.showmaskcbmet == 1) {
+                        } else if (lp.showmaskcbmet == 3) {
                             showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get());
                             return;
                         }
@@ -5099,7 +5116,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     constexpr float b_r = 170.f;
                     constexpr double skinprot = 0.;
                     constexpr int choice = 0;
-                    if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 2 || lp.enacbMask) {
+                    if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 1  || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 4 || lp.enacbMask) {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
