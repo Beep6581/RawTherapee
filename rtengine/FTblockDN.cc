@@ -42,7 +42,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 
 #define TS 64       // Tile size
