@@ -479,6 +479,7 @@ public:
         bool scaltm;
         bool rewei;
         bool sensitm;
+        bool softradiustm;
         // Retinex
         bool expreti;
         bool retinexMethod;

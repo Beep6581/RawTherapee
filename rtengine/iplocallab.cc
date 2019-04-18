@@ -182,6 +182,7 @@ struct local_params {
     float softradiuscol;
     float softradiuscb;
     float softradiusret;
+    float softradiustm;
     float blendmaexp;
     float radmaSH;
     float blendmaSH;
@@ -505,6 +506,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
+    float softradiustma = ((float) locallab.spots.at(sp).softradiustm);
     float softradiuscbdl = ((float) locallab.spots.at(sp).softradiuscb);
     float blendmaskSH = ((float) locallab.spots.at(sp).blendmaskSH) / 100.f ;
     float radmaskSH = ((float) locallab.spots.at(sp).radmaskSH);
@@ -580,6 +582,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
     lp.softradiuscb = softradiuscbdl;
+    lp.softradiustm = softradiustma;
     lp.struexc = structexclude;
     lp.blendmaexp = blendmaskexpo;
     lp.blendmaSH = blendmaskSH;
@@ -4916,7 +4919,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int bfw = xend - xstart;
 
                 if (bfw > 0 && bfh > 0) {
-                    JaggedArray<float> buflight(bfw, bfh);
+                    array2D<float> buflight(bfw, bfh);
                     JaggedArray<float> bufchro(bfw, bfh);
                     std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh)); //buffer for data in zone limit
                     std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh)); //buffer for data in zone limit
@@ -4965,6 +4968,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufchro[y][x] /= coefC;
                         }
                     }
+
+                    if (lp.softradiustm > 0.f) {
+                        softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
+                    }
+                    
                     bufgb.reset();
                     transit_shapedetect(8, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 }

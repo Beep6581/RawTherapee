@@ -918,6 +918,7 @@ HISTORY_MSG_670;Local - cbdl mask C
 HISTORY_MSG_671;Local - cbdl mask L
 HISTORY_MSG_672;Local - cbdl mask CL
 HISTORY_MSG_673;Local - Use cbdl mask
+HISTORY_MSG_675;Local - TM soft radius
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
