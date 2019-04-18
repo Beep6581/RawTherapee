@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2019 TooWaBoo
-  Version 3.06
+  Version 3.07
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -274,13 +274,13 @@ textview:selected, treeview:selected {
     margin-top: 0.25em;
 }
 #RightNotebook #HistoryPanel {
-    margin-top: 0.333333333333333333em;
+    margin-top: 0.416666666666666666em;
 }
 #HistoryPanel > border {
     margin-top: 1.75em;
 }
 #HistoryPanel > label {
-    margin: 0 0 -1.5em 0;
+    margin: 0 0 -1.416666666666666666em 0;
     padding: 0 0 0 0.083333333333333333em;
 }
 
@@ -325,6 +325,7 @@ fontchooser scrolledwindow,
 }
 #Navigator label {
     padding: 0;
+    margin: 0.083333333333333333em 0 0;
 }
 
 /*** end ***************************************************************************************/
@@ -692,7 +693,7 @@ scrollbar:not(.overlay-indicator):hover {
 /*** Scale**************************************************************************************/
 scale {
     padding: 0;
-   min-height: 1.833333333333333333em;
+    min-height: 1.833333333333333333em;
     margin: 0 -0.333333333333333333em;
 }
 
@@ -727,7 +728,7 @@ scale.color trough {
 }
 
 scale trough highlight {
-    background-color: transparent;
+    background-color: @accent-color2;
     background-image: linear-gradient(to bottom, shade (@accent-color2,1.22), shade(@accent-color2,.88));
     border: 0.083333333333333333em solid shade(@bg-dark-grey,0.9);
     margin: 0 -0.583333333333333333em;
@@ -779,7 +780,7 @@ progressbar trough {
 }
 
 progressbar trough progress {
-    background-color: transparent;
+    background-color: @accent-color2;
     border-radius: 0.416666666666666666em;
     border: 0.083333333333333333em solid @bg-button-border;
 }
@@ -816,6 +817,7 @@ progressbar.vertical trough.empty {
 progressbar trough.empty progress {
     border-color: transparent;
     background-image: none;
+    background-color:transparent;
     box-shadow: none;
 }
 
