@@ -34,12 +34,15 @@ ControlSpotPanel::ControlSpotPanel():
     EditSubscriber(ET_OBJECTS),
     FoldableToolPanel(this, "controlspotpanel", M("TP_LOCALLAB_SETTINGS")),
 
-    button_add_(M("TP_LOCALLAB_BUTTON_ADD")),
-    button_delete_(M("TP_LOCALLAB_BUTTON_DEL")),
-    button_duplicate_(M("TP_LOCALLAB_BUTTON_DUPL")),
+    scrolledwindow_(Gtk::manage(new Gtk::ScrolledWindow())),
+    treeview_(Gtk::manage(new Gtk::TreeView())),
 
-    button_rename_(M("TP_LOCALLAB_BUTTON_REN")),
-    button_visibility_(M("TP_LOCALLAB_BUTTON_VIS")),
+    button_add_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_ADD")))),
+    button_delete_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_DEL")))),
+    button_duplicate_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_DUPL")))),
+
+    button_rename_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_REN")))),
+    button_visibility_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_VIS")))),
 
     shape_(Gtk::manage(new MyComboBoxText())),
     spotMethod_(Gtk::manage(new MyComboBoxText())),
@@ -75,46 +78,42 @@ ControlSpotPanel::ControlSpotPanel():
     excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF"))))
 {
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
-    hbox1_->pack_start(button_add_);
-    hbox1_->pack_start(button_delete_);
-    hbox1_->pack_start(button_duplicate_);
+    buttonaddconn_ = button_add_->signal_clicked().connect(
+                         sigc::mem_fun(*this, &ControlSpotPanel::on_button_add));
+    buttondeleteconn_ = button_delete_->signal_clicked().connect(
+                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_delete));
+    buttonduplicateconn_ = button_duplicate_->signal_clicked().connect(
+                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
+    hbox1_->pack_start(*button_add_);
+    hbox1_->pack_start(*button_delete_);
+    hbox1_->pack_start(*button_duplicate_);
     pack_start(*hbox1_);
 
     Gtk::HBox* const hbox2_ = Gtk::manage(new Gtk::HBox(true, 4));
-    hbox2_->pack_start(button_rename_);
-    hbox2_->pack_start(button_visibility_);
+    buttonrenameconn_ = button_rename_->signal_clicked().connect(
+                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_rename));
+    buttonvisibilityconn_ = button_visibility_->signal_clicked().connect(
+                                sigc::mem_fun(*this, &ControlSpotPanel::on_button_visibility));
+    hbox2_->pack_start(*button_rename_);
+    hbox2_->pack_start(*button_visibility_);
     pack_start(*hbox2_);
 
-    buttonaddconn_ = button_add_.signal_clicked().connect(
-                         sigc::mem_fun(*this, &ControlSpotPanel::on_button_add));
-    buttondeleteconn_ = button_delete_.signal_clicked().connect(
-                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_delete));
-    buttonduplicateconn_ = button_duplicate_.signal_clicked().connect(
-                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
-
-
-    buttonrenameconn_ = button_rename_.signal_clicked().connect(
-                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_rename));
-    buttonvisibilityconn_ = button_visibility_.signal_clicked().connect(
-                                sigc::mem_fun(*this, &ControlSpotPanel::on_button_visibility));
-
-    treeview_.set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
-
-    scrolledwindow_.add(treeview_);
-    scrolledwindow_.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    scrolledwindow_.set_min_content_height(150);
-    pack_start(scrolledwindow_);
-
     treemodel_ = Gtk::ListStore::create(spots_);
-
-    treeview_.set_model(treemodel_);
-    treeviewconn_ = treeview_.get_selection()->signal_changed().connect(
+    treeview_->set_model(treemodel_);
+    treeviewconn_ = treeview_->get_selection()->signal_changed().connect(
                         sigc::mem_fun(
                             *this, &ControlSpotPanel::controlspotChanged));
+    treeview_->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
+
+    // Disable search to prevent hijacking keyboard shortcuts #5265
+    treeview_->set_enable_search(false);
+    treeview_->signal_key_press_event().connect(
+            sigc::mem_fun(
+                    *this, &ControlSpotPanel::blockTreeviewSearch), false);
 
     auto cell = Gtk::manage(new Gtk::CellRendererText());
-    int cols_count = treeview_.append_column("ID", *cell);
-    auto col = treeview_.get_column(cols_count - 1);
+    int cols_count = treeview_->append_column("ID", *cell);
+    auto col = treeview_->get_column(cols_count - 1);
 
     if (col) {
         col->set_cell_data_func(
@@ -123,8 +122,8 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     cell = Gtk::manage(new Gtk::CellRendererText());
-    cols_count = treeview_.append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
-    col = treeview_.get_column(cols_count - 1);
+    cols_count = treeview_->append_column(M("TP_LOCALLAB_COL_NAME"), *cell);
+    col = treeview_->get_column(cols_count - 1);
 
     if (col) {
         col->set_cell_data_func(
@@ -133,14 +132,19 @@ ControlSpotPanel::ControlSpotPanel():
     }
 
     cell = Gtk::manage(new Gtk::CellRendererText());
-    cols_count = treeview_.append_column(M("TP_LOCALLAB_COL_VIS"), *cell);
-    col = treeview_.get_column(cols_count - 1);
+    cols_count = treeview_->append_column(M("TP_LOCALLAB_COL_VIS"), *cell);
+    col = treeview_->get_column(cols_count - 1);
 
     if (col) {
         col->set_cell_data_func(
             *cell, sigc::mem_fun(
                 *this, &ControlSpotPanel::render_isvisible));
     }
+
+    scrolledwindow_->add(*treeview_);
+    scrolledwindow_->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    scrolledwindow_->set_min_content_height(150);
+    pack_start(*scrolledwindow_);
 
     Gtk::HBox* const ctboxshape = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshape = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"));
@@ -218,7 +222,6 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
     ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
-//    qualityMethod_->append(M("TP_LOCALLAB_STD"));
     qualityMethod_->append(M("TP_LOCALLAB_ENH"));
     qualityMethod_->append(M("TP_LOCALLAB_ENHDEN"));
     qualityMethod_->set_active(1);
@@ -242,7 +245,6 @@ ControlSpotPanel::ControlSpotPanel():
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
     
-
     Gtk::Frame* const artifFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ARTIF")));
     artifFrame->set_label_align(0.025, 0.5);
     artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
@@ -408,7 +410,7 @@ void ControlSpotPanel::on_button_rename()
     }
 
     // Get actual control spot name
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -429,7 +431,7 @@ void ControlSpotPanel::on_button_rename()
         if (newname != actualname) { // Event is only raised if name is updated
             nameChanged_ = true;
             row[spots_.name] = newname;
-            treeview_.columns_autosize();
+            treeview_->columns_autosize();
             listener->panelChanged(EvLocallabSpotName, newname);
         }
     }
@@ -444,7 +446,7 @@ void ControlSpotPanel::on_button_visibility()
     }
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -468,12 +470,27 @@ void ControlSpotPanel::on_button_visibility()
     }
 }
 
+bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)
+{
+    // printf("blockTreeviewSearch\n");
+
+    if (event->state & Gdk::CONTROL_MASK) { // Ctrl
+        if (event->keyval == GDK_KEY_f || event->keyval == GDK_KEY_F) {
+            // No action is performed to avoid activating treeview search
+            return true;
+        }
+    }
+
+    // Otherwise key action is transfered to treeview widget
+    return false;
+}
+
 void ControlSpotPanel::load_ControlSpot_param()
 {
     // printf("load_ControlSpot_param\n");
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -525,7 +542,7 @@ void ControlSpotPanel::shapeChanged()
     // printf("shapeChanged\n");
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -548,7 +565,7 @@ void ControlSpotPanel::spotMethodChanged()
     // printf("spotMethodChanged\n");
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -581,7 +598,7 @@ void ControlSpotPanel::shapeMethodChanged()
     const int method = shapeMethod_->get_active_row_number();
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -659,7 +676,7 @@ void ControlSpotPanel::qualityMethodChanged()
     // printf("qualityMethodChanged\n");
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -760,7 +777,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     const int method = shapeMethod_->get_active_row_number();
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -931,7 +948,7 @@ void ControlSpotPanel::avoidChanged()
     // printf("avoidChanged\n");
 
     // Get selected control spot
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
         return;
@@ -1300,7 +1317,7 @@ CursorShape ControlSpotPanel::getCursor(int objectID) const
     // printf("Object ID: %d\n", objectID);
 
     // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
     if (!s->count_selected_rows()) {
          return CSHandOpen;
      }
@@ -1337,7 +1354,7 @@ CursorShape ControlSpotPanel::getCursor(int objectID) const
 bool ControlSpotPanel::mouseOver(int modifierKey)
 {
     EditDataProvider* editProvider_ = getEditProvider();
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!editProvider_ || !s->count_selected_rows()) { // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
         return false;
@@ -1460,7 +1477,7 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
     // printf("button1Pressed\n");
 
     EditDataProvider *provider = getEditProvider();
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!provider || lastObject_ == -1 || !s->count_selected_rows()) { // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
         return false;
@@ -1474,7 +1491,7 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
         Gtk::TreeModel::Row r = *iter;
 
         if (r[spots_.curveid] == curveId_) {
-            treeview_.set_cursor(treemodel_->get_path(r));
+            treeview_->set_cursor(treemodel_->get_path(r));
             break;
         }
     }
@@ -1496,7 +1513,7 @@ bool ControlSpotPanel::drag1(int modifierKey)
     // printf("drag1\n");
 
     EditDataProvider *provider = getEditProvider();
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     if (!provider || lastObject_ == -1 || !s->count_selected_rows()) { // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
         return false;
@@ -1687,7 +1704,7 @@ int ControlSpotPanel::getSelectedSpot()
 
     MyMutex::MyLock lock(mTreeview);
 
-    const auto s = treeview_.get_selection();
+    const auto s = treeview_->get_selection();
 
     // Check if treeview has row, otherwise return 0
     if (!s->count_selected_rows()) {
@@ -1716,7 +1733,7 @@ void ControlSpotPanel::setSelectedSpot(int id)
         Gtk::TreeModel::Row row = *iter;
 
         if (row[spots_.id] == id) {
-            treeview_.set_cursor(treemodel_->get_path(row));
+            treeview_->set_cursor(treemodel_->get_path(row));
             load_ControlSpot_param();
             updateParamVisibility();
             updateCurveOpacity(row);
@@ -1935,19 +1952,19 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
 
     // Set widgets edited states
     if (!se->nbspot || !se->selspot) {
-        treeview_.set_sensitive(false);
-        button_add_.set_sensitive(false);
-        button_delete_.set_sensitive(false);
-        button_duplicate_.set_sensitive(false);
-        button_rename_.set_sensitive(false);
-        button_visibility_.set_sensitive(false);
+        treeview_->set_sensitive(false);
+        button_add_->set_sensitive(false);
+        button_delete_->set_sensitive(false);
+        button_duplicate_->set_sensitive(false);
+        button_rename_->set_sensitive(false);
+        button_visibility_->set_sensitive(false);
     } else {
-        treeview_.set_sensitive(true);
-        button_add_.set_sensitive(true);
-        button_delete_.set_sensitive(true);
-        button_duplicate_.set_sensitive(true);
-        button_rename_.set_sensitive(se->name);
-        button_visibility_.set_sensitive(se->isvisible);
+        treeview_->set_sensitive(true);
+        button_add_->set_sensitive(true);
+        button_delete_->set_sensitive(true);
+        button_duplicate_->set_sensitive(true);
+        button_rename_->set_sensitive(se->name);
+        button_visibility_->set_sensitive(se->isvisible);
     }
 
     if (!se->shape) {

@@ -225,6 +225,8 @@ private:
     void on_button_rename();
     void on_button_visibility();
 
+    bool blockTreeviewSearch(GdkEventKey* event);
+
     void load_ControlSpot_param();
 
     void controlspotChanged();
@@ -309,21 +311,21 @@ private:
     ControlSpots spots_;
 
     // Child widgets
-    Gtk::ScrolledWindow scrolledwindow_;
-    Gtk::TreeView treeview_;
+    Gtk::ScrolledWindow* const scrolledwindow_;
+    Gtk::TreeView* const treeview_;
     sigc::connection treeviewconn_;
     Glib::RefPtr<Gtk::ListStore> treemodel_;
 
-    Gtk::Button button_add_;
+    Gtk::Button* const button_add_;
     sigc::connection buttonaddconn_;
-    Gtk::Button button_delete_;
+    Gtk::Button* const button_delete_;
     sigc::connection buttondeleteconn_;
-    Gtk::Button button_duplicate_;
+    Gtk::Button* const button_duplicate_;
     sigc::connection buttonduplicateconn_;
 
-    Gtk::Button button_rename_;
+    Gtk::Button* const button_rename_;
     sigc::connection buttonrenameconn_;
-    Gtk::Button button_visibility_;
+    Gtk::Button* const button_visibility_;
     sigc::connection buttonvisibilityconn_;
 
     MyComboBoxText* const shape_;
