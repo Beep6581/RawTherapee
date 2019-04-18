@@ -700,7 +700,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.expcomp = CLIP24(lp.expcomp); //to prevent crash with Old pp3 with integer
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
-//    lp.strucc = local_struc;
     lp.war = local_warm;
     lp.hsena = locallab.spots.at(sp).expshadhigh && llColorMask == 0 && llExpMask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
     lp.highlihs = highhs;
@@ -1719,7 +1718,6 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
 }
 
 static void calclight(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
-//replace L-curve that does not work in local or bad
 {
     lumnew = koef != -100.f ? CLIPLOC(lightCurveloc[lum]) : 0.f;
 }
@@ -2584,13 +2582,13 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                     const float realstrchdE = reducdE * clc;
 /* comment on processus deltaE
         * the algo uses 3 different ways to manage deltaE according to the type of intervention
-        * if we call "applyproc" the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
+        * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
         
-        * direct : in this case we use directly the datas produced upstream by "applyproc", with only a reguation produce for deltaE by reducdE 
-        * direct we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, DEnoise
+        * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE 
+        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise
         
-        * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f * factorx * realstrdE 
-        * in this case we found "applyproc" which result in direct use on L : Exposure, Color and Light, Shadows highlight, softLight
+        * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE 
+        * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight
         
         * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
         * in this case we found "applyproc" which result in large variations of L : Retinex, TM, and others
@@ -2654,7 +2652,6 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                    } else if (senstype == 1) {
-                                        // printf("rdE=%f chdE=%f", realstradE, realstrchdE);
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
                                         flib = (100.f + realstrbdE + 100.f * realstrchdE) / 100.f;
 
@@ -2731,7 +2728,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                 float diflc = 0.f;
                                 float newhr = 0.f;
                                 float difL = 0.f;
-                                if (senstype == 2  || senstype == 8) { //retinex & cbdl
+                                if (senstype == 2  || senstype == 8) {
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
@@ -3274,7 +3271,6 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
 
         avg2 /= 32768.f;
         avg = avg2 / nc2;
-//        printf("calc avg=%f \n", avg);
 // double precision for large summations
         double aveA = 0.;
         double aveB = 0.;
@@ -3297,9 +3293,6 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         int spotSise2; // = 0.88623f * max (1,  lp.cir / sk); //18
 
         // very small region, don't use omp here
-//      printf("cy=%i cx=%i yc=%f xc=%f circ=%i spot=%i tH=%i tW=%i sk=%i\n", cy, cx, lp.yc, lp.xc, lp.cir, spotSize, transformed->H, transformed->W, sk);
-//      printf("ymin=%i ymax=%i\n", max (cy, (int) (lp.yc - spotSize)),min (transformed->H + cy, (int) (lp.yc + spotSize + 1)) );
-//      printf("xmin=%i xmax=%i\n", max (cx, (int) (lp.xc - spotSize)),min (transformed->W + cx, (int) (lp.xc + spotSize + 1)) );
         LabImage *sobelL;
         LabImage *deltasobelL;
         LabImage *origsob;
@@ -3371,7 +3364,6 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
                 aveL += original->L[y - cy][x - cx];
                 aveA += original->a[y - cy][x - cx];
                 aveB += original->b[y - cy][x - cx];
-                //    aveblend += 100.f * blend2[y - cy][x - cx];
                 aveChro += sqrtf(SQR(original->b[y - cy][x - cx]) + SQR(original->a[y - cy][x - cx]));
                 nab++;
             }
@@ -3436,7 +3428,6 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
             lumarefblur = 0.f;
         }
 
-        //    printf("hueblur=%f hue=%f\n", huerefblur, hueref);
         chromaref = aveChro;
         lumaref = avL;
 
@@ -3678,16 +3669,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask)
 {
-    
 /* comment on processus deltaE
         * the algo uses 3 different ways to manage deltaE according to the type of intervention
-        * if we call "applyproc" the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
+        * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
         
-        * direct : in this case we use directly the datas produced upstream by "applyproc", with only a reguation produce for deltaE by reducdE 
-        * direct we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, DEnoise
+        * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE 
+        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise
         
-        * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f * factorx * realstrdE 
-        * in this case we found "applyproc" which result in direct use on L : Exposure, Color and Light, Shadows highlight, softLight
+        * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE 
+        * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight
         
         * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
         * in this case we found "applyproc" which result in large variations of L : Retinex, TM, and others
@@ -3723,11 +3713,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             levred = 7;
             noiscfactiv = false;
         }
-
-
-// we must here detect : general case, skin, sky,...foliages ???
-
-
 
 
         if (lp.excmet == 1  && call <= 3) {//exclude
@@ -3855,7 +3840,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (tmp1.get() && lp.stren > 0.1f) {
                 float mean = 0.f;//0 best result
-                float variance = lp.stren ; //(double) SQR(lp.stren)/sk;
+                float variance = lp.stren ;
                 addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
             }
 
@@ -4894,8 +4879,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if (bfw > 0 && bfh > 0) {
                     JaggedArray<float> buflight(bfw, bfh);
                     JaggedArray<float> bufl_ab(bfw, bfh);
-                    std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
-                    std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+                    std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -4954,8 +4939,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if (bfw > 0 && bfh > 0) {
                     array2D<float> buflight(bfw, bfh);
                     JaggedArray<float> bufchro(bfw, bfh);
-                    std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh)); //buffer for data in zone limit
-                    std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh)); //buffer for data in zone limit
+                    std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -5022,9 +5007,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
                 int bfh = yend - ystart;
                 int bfw = xend - xstart;
-                 //   int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-                 //   int bfw = int (lp.lx + lp.lxL) + del;
-                        printf("mascb0=%i \n", lp.showmaskcbmet);
 
                 if (bfw > 32 && bfh > 32) {
                     array2D<float> bufsh(bfw, bfh);
@@ -5517,7 +5499,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (call == 2) { //call from simpleprocess
                 bufloca.reset(new LabImage(bfw, bfh));
 
-                //  JaggedArray<float> hbuffer(bfw, bfh);
                 int begy = lp.yc - lp.lyT;
                 int begx = lp.xc - lp.lxL;
                 int yEn = lp.yc + lp.ly;
@@ -5788,7 +5769,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
 
-                //printf("minL=%f maxL=%f coef=%f\n",  minL, maxL, coef);
 
                 for (int ir = 0; ir < Hd; ir++) {
                     for (int jr = 0; jr < Wd; jr++) {
@@ -6131,7 +6111,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         if (lp.expchroma != 0.f) {
                             constexpr float ampli = 70.f;
                             const float ch = (1.f + 0.02f * lp.expchroma);
-                            //convert data curve near values of slider -100 + 100, to be used after to detection shape
                             const float chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
 
 #ifdef _OPENMP
@@ -6409,13 +6388,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float chprosl = 1.f;
 
                         if (lp.chro != 0.f) {
-                            const float ch = (1.f + 0.01f * lp.chro) ; //* (chromat * adjustr)  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more;
+                            const float ch = (1.f + 0.01f * lp.chro) ;
 
-                            if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
+                            if (ch <= 1.f) {
                                 chprosl = 99.f * ch - 99.f;
                             } else {
                                 constexpr float ampli = 70.f;
-                                chprosl = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                                chprosl = CLIPCHRO(ampli * ch - ampli);
                             }
                         }
 
@@ -6435,7 +6414,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     const float chromat = sqrt(SQR(bufcolcalca) +  SQR(bufcolcalcb));
                                     const float ch = cclocalcurve[chromat * adjustr] / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
                                     constexpr float ampli = 25.f;
-                                    chprocu = CLIPCHRO(ampli * ch - ampli);  //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+                                    chprocu = CLIPCHRO(ampli * ch - ampli);
                                 }
 
                                 bufchro[ir][jr] = chprosl + chprocu;
@@ -6452,7 +6431,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
 
                                 if (lllocalcurve && locallutili  && lp.qualcurvemet != 0) {// L=f(L) curve enhanced
-                                    bufcolcalcL = 0.5f * lllocalcurve[bufcolcalcL * 2.f];// / ((lighn + 0.00001f) * 1.9f) ; // / ((lighn) / 1.9f) / 3.61f; //lh between 0 and 0 50 or more
+                                    bufcolcalcL = 0.5f * lllocalcurve[bufcolcalcL * 2.f];
                                 }
 
                                 if (loclhCurve && LHutili && lp.qualcurvemet != 0) {
