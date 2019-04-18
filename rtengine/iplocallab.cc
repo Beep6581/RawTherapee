@@ -2582,7 +2582,22 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                     const float realstradE = reducdE * cla;
                     const float realstrbdE = reducdE * clb;
                     const float realstrchdE = reducdE * clc;
-
+/* comment on processus deltaE
+        * the algo uses 3 different ways to manage deltaE according to the type of intervention
+        * if we call "applyproc" the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
+        
+        * direct : in this case we use directly the datas produced upstream by "applyproc", with only a reguation produce for deltaE by reducdE 
+        * direct we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, DEnoise
+        
+        * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f * factorx * realstrdE 
+        * in this case we found "applyproc" which result in direct use on L : Exposure, Color and Light, Shadows highlight, softLight
+        
+        * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
+        * in this case we found "applyproc" which result in large variations of L : Retinex, TM, and others
+        
+        * if you change you must test before
+        
+*/
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         switch (zone) {
@@ -3663,6 +3678,24 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask)
 {
+    
+/* comment on processus deltaE
+        * the algo uses 3 different ways to manage deltaE according to the type of intervention
+        * if we call "applyproc" the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
+        
+        * direct : in this case we use directly the datas produced upstream by "applyproc", with only a reguation produce for deltaE by reducdE 
+        * direct we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, DEnoise
+        
+        * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f * factorx * realstrdE 
+        * in this case we found "applyproc" which result in direct use on L : Exposure, Color and Light, Shadows highlight, softLight
+        
+        * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
+        * in this case we found "applyproc" which result in large variations of L : Retinex, TM, and others
+        
+        * if you change you must test before
+        
+*/
+    
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
         BENCHFUN
