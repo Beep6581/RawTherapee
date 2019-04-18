@@ -5205,9 +5205,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 }
                     transit_shapedetect(6, loctemp.get(), originalmaskcb.get(), buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-
+                    
+                    bool nochroma = (lp.showmaskcbmet == 2  || lp.showmaskcbmet == 1);
                     //chroma CBDL begin here
-                    if (lp.chromacb > 0.f) {
+                    if (lp.chromacb > 0.f && !nochroma) {
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
