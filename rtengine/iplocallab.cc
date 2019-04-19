@@ -2585,7 +2585,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
         
         * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE 
-        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise
+        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, Localcontrast
         
         * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE 
         * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight
@@ -3674,7 +3674,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
         
         * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE 
-        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise
+        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, Local contrast
         
         * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE 
         * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight
