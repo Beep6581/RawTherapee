@@ -647,15 +647,17 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 
 /* Filter buttons*/
 #ToolBarPanelFileBrowser .smallbuttonbox {
-    min-height: 0;
+    min-height: 1.166666666666666666em;
     padding: 0;
     margin: 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox:nth-child(2) {
-    margin: 0 0 -0.166666666666666666em;
+    margin-top: 0.166666666666666666em;
+    margin-bottom: -0.166666666666666666em;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image {
-    margin: -0.166666666666666666em;
+    margin: -1em 0;
+    padding: 0;
     min-width: 0;
     min-height: 0;
 }
@@ -663,7 +665,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
     min-height: 0;
     min-width: 1.166666666666666666em;
     padding: 0;
-    margin: 0 0.25em;
+    margin: 0 0.166666666666666666em;
     border: none;
     border-radius: 0;
 }
