@@ -1,9 +1,16 @@
-RAWTHERAPEE 5.6 RELEASE NOTES
+RAWTHERAPEE 5.6-dev RELEASE NOTES
 
-This is RawTherapee 5.6, released on 2019-04-20.
+This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
+
+While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
+- Development versions only had limited testing, so there may be bugs unknown to us.
+- You should report these bugs so that they get fixed for the next stable release. See
+  www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
+- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
+- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
 
 
 
@@ -19,24 +26,16 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to a meaningful axis (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New features since 5.5:
-- Pseudo-HiDPI support, for a smooth and sharp user interface regardless of screen size. Pseudo-HiDPI mode is disabled by default, enable it in Preferences > General > Appearance. Scaling in RawTherapee depends on font size, DPI and display scaling. While scaling has been tested to work well in Windows, Linux and macOS, there are some macOS display modes which are incompatible with it, specifically those modes suffixed by "(HiDPI)" in macOS Display settings. Some versions of macOS (10.14.*) seem to not list any modes, in which case the user must just give it a try.
-- Ability to move tools to a new Favorites tab, http://rawpedia.rawtherapee.com/Favorites_Tab
-- "Unclipped" processing profile, to make it easy to save an image while preserving data across the whole tonal range, http://rawpedia.rawtherapee.com/Unclipped
-- User-adjustable tiles-per-thread settings in Preferences > Performance, for users who want to find optimal values for their system. The default value of 2 tiles-per-thread performs best overall.
-- Hundreds of speed optimizations, bug fixes, and overall improvements.
+New features since 5.6:
+TODO.
 
 
 
 NEWS RELEVANT TO PACKAGE MAINTAINERS
 
-New since 5.5:
-- Requires librsvg >=2.40.
-- GTK+ versions 3.24.2 - 3.24.6 have an issue where combobox menu scroll-arrows are missing when the combobox list does not fit vertically on the screen. As a result, users would not be able to scroll in the following comboboxes: Processing Profiles, Film Simulation, and the camera and lens profiles in Profiled Lens Correction.
-
 In general:
 - To get the source code, either clone from git or use the tarball from http://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
-- Requires GTK+ version >=3.16, though >=3.22.24 is recommended.
+- Requires GTK+ version >=3.16, though >=3.22.24 is recommended. GTK+ versions 3.24.2 - 3.24.6 have an issue with missing combobox menu arrows and are to be avoided.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
 - Use -O3, it will make RawTherapee faster with no known side-effects.
