@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.6-rc2 RELEASE NOTES
+RAWTHERAPEE 5.6 RELEASE NOTES
 
-This is RawTherapee 5.6 Release Candidate 2, released on 2019-04-17. This is not the final release yet.
+This is RawTherapee 5.6, released on 2019-04-20.
 
 Start by reading the "Getting Started" article on RawPedia:
 http://rawpedia.rawtherapee.com/
