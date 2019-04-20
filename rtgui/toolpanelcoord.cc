@@ -273,6 +273,8 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     toolBar = new ToolBar();
     toolBar->setToolBarListener(this);
+
+    prevPage = toolPanelNotebook->get_nth_page(0);
 }
 
 void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num)
@@ -283,10 +285,14 @@ void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num
         if (page == locallabPanelSW) {
             toolBar->blockEditDeactivation(); // Avoid edit tool deactivation when Locallab page is active (except if pressing other tools button)
             locallab->subscribe();
-        } else {
+        }
+
+        if (prevPage == locallabPanelSW) { // To deactivate Locallab only when switching from Locallab page
             toolBar->blockEditDeactivation(false);
             locallab->unsubscribe();
         }
+
+        prevPage = page;
     }
 }
 
@@ -1053,26 +1059,36 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
+    notebookconn.block(true); // "signal_switch_page" event is blocked to avoid unsubscribing Locallab (allows a correct behavior when switching to another tool using toolbar)
+
     switch (tool) {
         case TMCropSelect:
+            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
             crop->setExpanded(true);
             toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
+            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
             break;
 
         case TMSpotWB:
+            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
             whitebalance->setExpanded(true);
             toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*colorPanelSW));
+            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
             break;
 
         case TMStraighten:
+            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
             lensgeom->setExpanded(true);
             rotate->setExpanded(true);
             toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
+            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
             break;
 
         default:
             break;
     }
+
+    notebookconn.block(false);
 }
 
 void ToolPanelCoordinator::editModeSwitchedOff()
