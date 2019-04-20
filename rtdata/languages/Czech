@@ -2318,4 +2318,8 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit celý obrázek obrazovce\nZkratka: <b>Alt<
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
 !PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
