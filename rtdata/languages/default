@@ -740,28 +740,28 @@ HISTORY_MSG_489;DRC - Detail
 HISTORY_MSG_490;DRC - Amount
 HISTORY_MSG_491;White Balance
 HISTORY_MSG_492;RGB Curves
-HISTORY_MSG_493;L*a*b* Adjustments
-HISTORY_MSG_495;L*a*b Spot created
-HISTORY_MSG_496;L*a*b Spot deleted
-HISTORY_MSG_497;L*a*b Spot selected
-HISTORY_MSG_498;L*a*b Spot name
-HISTORY_MSG_499;L*a*b Spot visibility
-HISTORY_MSG_500;L*a*b Spot shape
-HISTORY_MSG_501;L*a*b Spot method
-HISTORY_MSG_502;L*a*b Spot shape method
-HISTORY_MSG_503;L*a*b Spot locX
-HISTORY_MSG_504;L*a*b Spot locXL
-HISTORY_MSG_505;L*a*b Spot locY
-HISTORY_MSG_506;L*a*b Spot locYT
-HISTORY_MSG_507;L*a*b Spot center
-HISTORY_MSG_508;L*a*b Spot circrad
-HISTORY_MSG_509;L*a*b Spot quality method
-HISTORY_MSG_510;L*a*b Spot transition
-HISTORY_MSG_511;L*a*b Spot thresh
-HISTORY_MSG_512;L*a*b Spot deltaE-weakening
-HISTORY_MSG_513;L*a*b Spot scope
-HISTORY_MSG_514;L*a*b Spot structure
-HISTORY_MSG_515;Local L*a*b*
+HISTORY_MSG_493;Local Adjustments
+HISTORY_MSG_495;Local Spot created
+HISTORY_MSG_496;Local Spot deleted
+HISTORY_MSG_497;Local Spot selected
+HISTORY_MSG_498;Local Spot name
+HISTORY_MSG_499;Local Spot visibility
+HISTORY_MSG_500;Local Spot shape
+HISTORY_MSG_501;Local Spot method
+HISTORY_MSG_502;Local Spot shape method
+HISTORY_MSG_503;Local Spot locX
+HISTORY_MSG_504;Local Spot locXL
+HISTORY_MSG_505;Local Spot locY
+HISTORY_MSG_506;Local Spot locYT
+HISTORY_MSG_507;Local Spot center
+HISTORY_MSG_508;Local Spot circrad
+HISTORY_MSG_509;Local Spot quality method
+HISTORY_MSG_510;Local Spot transition
+HISTORY_MSG_511;Local Spot thresh
+HISTORY_MSG_512;Local Spot deltaE-weakening
+HISTORY_MSG_513;Local Spot scope
+HISTORY_MSG_514;Local Spot structure
+HISTORY_MSG_515;Local Adjustements
 HISTORY_MSG_516;Local - Color and light
 HISTORY_MSG_517;Local - Enable super
 HISTORY_MSG_518;Local - Lightness
@@ -903,7 +903,7 @@ HISTORY_MSG_655;Local - SH mask slope
 HISTORY_MSG_656;Local - Color soft radius
 HISTORY_MSG_657;Local - Retinex soft radius
 HISTORY_MSG_658;Local - CBDL soft radius
-HISTORY_MSG_659;L*a*b Spot transition-weakening
+HISTORY_MSG_659;Local Spot transition-weakening
 HISTORY_MSG_660;Local - cbdl clarity
 HISTORY_MSG_661;Local - cbdl contrast residual
 HISTORY_MSG_662;Local - deNoise lum f 0
@@ -1151,7 +1151,7 @@ NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
-PARTIALPASTE_LOCALLABGROUP;Local L*a*b Settings
+PARTIALPASTE_LOCALLABGROUP;Local Adjustements Settings
 PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;Chromatic aberration correction
@@ -1191,7 +1191,7 @@ PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 PARTIALPASTE_IPTCINFO;IPTC
 PARTIALPASTE_LABCURVE;L*a*b* adjustments
 PARTIALPASTE_LENSGROUP;Lens Related Settings
-PARTIALPASTE_LOCALLAB;Local L*a*b*
+PARTIALPASTE_LOCALLAB;Local Adjustements
 PARTIALPASTE_LOCGROUP;Local 
 PARTIALPASTE_LENSPROFILE;Profiled lens correction
 PARTIALPASTE_LOCALCONTRAST;Local contrast
@@ -2049,7 +2049,7 @@ TP_LOCALLAB_REWEI;Reweighting iterates
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INVERS;Inverse
-TP_LOCALLAB_LABEL;Local L*a*b*
+TP_LOCALLAB_LABEL;Local Adjustements
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
