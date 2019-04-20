@@ -1784,6 +1784,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RETINEX;Retinex
+!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
