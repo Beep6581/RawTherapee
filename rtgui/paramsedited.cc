@@ -1052,6 +1052,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).scaltm = locallab.spots.at(j).scaltm && pSpot.scaltm == otherSpot.scaltm;
                 locallab.spots.at(j).rewei = locallab.spots.at(j).rewei && pSpot.rewei == otherSpot.rewei;
                 locallab.spots.at(j).sensitm = locallab.spots.at(j).sensitm && pSpot.sensitm == otherSpot.sensitm;
+                locallab.spots.at(j).softradiustm = locallab.spots.at(j).softradiustm && pSpot.softradiustm == otherSpot.softradiustm;
                 // Retinex
                 locallab.spots.at(j).expreti = locallab.spots.at(j).expreti && pSpot.expreti == otherSpot.expreti;
                 locallab.spots.at(j).retinexMethod = locallab.spots.at(j).retinexMethod && pSpot.retinexMethod == otherSpot.retinexMethod;
@@ -1093,7 +1094,17 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensicb = locallab.spots.at(j).sensicb && pSpot.sensicb == otherSpot.sensicb;
                 locallab.spots.at(j).clarityml = locallab.spots.at(j).clarityml && pSpot.clarityml == otherSpot.clarityml;
                 locallab.spots.at(j).contresid = locallab.spots.at(j).contresid && pSpot.contresid == otherSpot.contresid;
+                locallab.spots.at(j).blurcbdl = locallab.spots.at(j).blurcbdl && pSpot.blurcbdl == otherSpot.blurcbdl;
+                locallab.spots.at(j).blendmaskcb = locallab.spots.at(j).blendmaskcb && pSpot.blendmaskcb == otherSpot.blendmaskcb;
+                locallab.spots.at(j).radmaskcb = locallab.spots.at(j).radmaskcb && pSpot.radmaskcb == otherSpot.radmaskcb;
+                locallab.spots.at(j).chromaskcb = locallab.spots.at(j).chromaskcb && pSpot.chromaskcb == otherSpot.chromaskcb;
+                locallab.spots.at(j).gammaskcb = locallab.spots.at(j).gammaskcb && pSpot.gammaskcb == otherSpot.gammaskcb;
+                locallab.spots.at(j).slomaskcb = locallab.spots.at(j).slomaskcb && pSpot.slomaskcb == otherSpot.slomaskcb;
                 locallab.spots.at(j).softradiuscb = locallab.spots.at(j).softradiuscb && pSpot.softradiuscb == otherSpot.softradiuscb;
+                locallab.spots.at(j).enacbMask = locallab.spots.at(j).enacbMask && pSpot.enacbMask == otherSpot.enacbMask;
+                locallab.spots.at(j).CCmaskcbcurve = locallab.spots.at(j).CCmaskcbcurve && pSpot.CCmaskcbcurve == otherSpot.CCmaskcbcurve;
+                locallab.spots.at(j).LLmaskcbcurve = locallab.spots.at(j).LLmaskcbcurve && pSpot.LLmaskcbcurve == otherSpot.LLmaskcbcurve;
+                locallab.spots.at(j).HHmaskcbcurve = locallab.spots.at(j).HHmaskcbcurve && pSpot.HHmaskcbcurve == otherSpot.HHmaskcbcurve;
                 // Denoise
                 locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
@@ -3009,6 +3020,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensitm = mods.locallab.spots.at(i).sensitm;
         }
 
+        if (locallab.spots.at(i).softradiustm) {
+            toEdit.locallab.spots.at(i).softradiustm = mods.locallab.spots.at(i).softradiustm;
+        }
+
         // Retinex
         if (locallab.spots.at(i).expreti) {
             toEdit.locallab.spots.at(i).expreti = mods.locallab.spots.at(i).expreti;
@@ -3145,6 +3160,46 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).contresid) {
             toEdit.locallab.spots.at(i).contresid = mods.locallab.spots.at(i).contresid;
+        }
+
+        if (locallab.spots.at(i).blurcbdl) {
+            toEdit.locallab.spots.at(i).blurcbdl = mods.locallab.spots.at(i).blurcbdl;
+        }
+
+        if (locallab.spots.at(i).blendmaskcb) {
+            toEdit.locallab.spots.at(i).blendmaskcb = mods.locallab.spots.at(i).blendmaskcb;
+        }
+
+        if (locallab.spots.at(i).radmaskcb) {
+            toEdit.locallab.spots.at(i).radmaskcb = mods.locallab.spots.at(i).radmaskcb;
+        }
+
+        if (locallab.spots.at(i).chromaskcb) {
+            toEdit.locallab.spots.at(i).chromaskcb = mods.locallab.spots.at(i).chromaskcb;
+        }
+
+        if (locallab.spots.at(i).gammaskcb) {
+            toEdit.locallab.spots.at(i).gammaskcb = mods.locallab.spots.at(i).gammaskcb;
+        }
+
+        if (locallab.spots.at(i).slomaskcb) {
+            toEdit.locallab.spots.at(i).slomaskcb = mods.locallab.spots.at(i).slomaskcb;
+        }
+
+        if (locallab.spots.at(i).enacbMask) {
+            toEdit.locallab.spots.at(i).enacbMask = mods.locallab.spots.at(i).enacbMask;
+        }
+
+        if (locallab.spots.at(i).CCmaskcbcurve) {
+            toEdit.locallab.spots.at(i).CCmaskcbcurve = mods.locallab.spots.at(i).CCmaskcbcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskcbcurve) {
+            toEdit.locallab.spots.at(i).LLmaskcbcurve = mods.locallab.spots.at(i).LLmaskcbcurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskcbcurve) {
+            toEdit.locallab.spots.at(i).HHmaskcbcurve = mods.locallab.spots.at(i).HHmaskcbcurve;
         }
 
         if (locallab.spots.at(i).softradiuscb) {
@@ -4270,6 +4325,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     scaltm(v),
     rewei(v),
     sensitm(v),
+    softradiustm(v),
     // Retinex
     expreti(v),
     retinexMethod(v),
@@ -4307,7 +4363,17 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensicb(v),
     clarityml(v),
     contresid(v),
+    blurcbdl(v),
+    blendmaskcb(v),
+    radmaskcb(v),
+    chromaskcb(v),
+    gammaskcb(v),
+    slomaskcb(v),
     softradiuscb(v),
+    enacbMask(v),
+    CCmaskcbcurve(v),
+    LLmaskcbcurve(v),
+    HHmaskcbcurve(v),
     // Denoise
     expdenoi(v),
     noiselumf(v),
@@ -4452,6 +4518,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     scaltm = v;
     rewei = v;
     sensitm = v;
+    softradiustm = v;
     // Retinex
     expreti = v;
     retinexMethod = v;
@@ -4493,7 +4560,17 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensicb = v;
     clarityml = v;
     contresid = v;
+    blurcbdl = v;
+    blendmaskcb = v;
+    radmaskcb = v;
+    chromaskcb = v;
+    gammaskcb = v;
+    slomaskcb = v;
     softradiuscb = v;
+    enacbMask = v;
+    CCmaskcbcurve = v;
+    LLmaskcbcurve = v;
+    HHmaskcbcurve = v;
     // Denoise
     expdenoi = v;
     noiselumf = v;

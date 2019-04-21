@@ -23,8 +23,10 @@
 #include "multilangmgr.h"
 #include <iomanip>
 #include "editwidgets.h"
+#include "options.h"
 
 using namespace rtengine;
+extern Options options;
 
 //-----------------------------------------------------------------------------
 // ControlSpotPanel
@@ -61,10 +63,10 @@ ControlSpotPanel::ControlSpotPanel():
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITVALUE"), 5, 95, 1, 60))),
-    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 8.0, 0.1, 2.0))),
-    iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 4.0, 0.1, 2.0))),
-    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.3, 1.7, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 4.0, 0.1, 1.0))),
+    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
+    iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
+    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 8.0, 0.1, 1.0))),
 
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
 
@@ -76,6 +78,8 @@ ControlSpotPanel::ControlSpotPanel():
     eventType(None),
     excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF"))))
 {
+    bool showtooltip = options.showtooltip;
+
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
     buttonaddconn_ = button_add_->signal_clicked().connect(
                          sigc::mem_fun(*this, &ControlSpotPanel::on_button_add));
@@ -160,7 +164,7 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxspotmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
     ctboxspotmethod->pack_start(*labelspotmethod, Gtk::PACK_SHRINK, 4);
-    ctboxspotmethod->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
+    if(showtooltip) ctboxspotmethod->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
     spotMethod_->append(M("TP_LOCALLAB_EXNORM"));
     spotMethod_->append(M("TP_LOCALLAB_EXECLU"));
     spotMethod_->set_active(0);
@@ -171,9 +175,9 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*ctboxspotmethod);
 
     excluFrame->set_label_align(0.025, 0.5);
-    excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
+    if(showtooltip) excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
     ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
-    sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
+    if(showtooltip) sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
     sensiexclu_->setAdjusterListener(this);
     structexclu_->setAdjusterListener(this);
     excluBox->pack_start(*sensiexclu_);
@@ -184,7 +188,7 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
     ctboxshapemethod->pack_start(*labelshapemethod, Gtk::PACK_SHRINK, 4);
-    ctboxshapemethod->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
+    if(showtooltip) ctboxshapemethod->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
     shapeMethod_->append(M("TP_LOCALLAB_IND"));
     shapeMethod_->append(M("TP_LOCALLAB_SYM"));
     shapeMethod_->append(M("TP_LOCALLAB_INDSL"));
@@ -220,7 +224,7 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxqualitymethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
-    ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
+    if(showtooltip) ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
     qualityMethod_->append(M("TP_LOCALLAB_ENH"));
     qualityMethod_->append(M("TP_LOCALLAB_ENHDEN"));
     qualityMethod_->set_active(1);
@@ -232,10 +236,10 @@ ControlSpotPanel::ControlSpotPanel():
 
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);
-    transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+    if(showtooltip) transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
     ToolParamBlock* const transitBox = Gtk::manage(new ToolParamBlock());
-    transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
-    transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
+    if(showtooltip) transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+    if(showtooltip) transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
     transit_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
 
@@ -246,7 +250,7 @@ ControlSpotPanel::ControlSpotPanel():
     
     Gtk::Frame* const artifFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ARTIF")));
     artifFrame->set_label_align(0.025, 0.5);
-    artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
+    if(showtooltip) artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
     thresh_->setAdjusterListener(this);
     struc_->setAdjusterListener(this);

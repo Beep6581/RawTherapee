@@ -120,6 +120,10 @@ void RTImage::changeImage (const Glib::ustring& imageName)
 {
     clear ();
 
+    if (imageName.empty()) {
+        return;
+    }
+
     if (pixbuf) {
         auto iterator = pixbufCache.find (imageName);
         assert(iterator != pixbufCache.end ());
@@ -167,6 +171,17 @@ void RTImage::init()
 {
     dpiBack = RTScalable::getDPI();
     scaleBack = RTScalable::getScale();
+}
+
+void RTImage::cleanup()
+{
+    for (auto& entry : pixbufCache) {
+        entry.second.reset();
+    }
+    for (auto& entry : surfaceCache) {
+        entry.second.clear();
+    }
+    RTScalable::cleanup();
 }
 
 void RTImage::updateImages()

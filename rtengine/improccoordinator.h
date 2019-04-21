@@ -245,6 +245,9 @@ protected:
     LocCCmaskSHCurve locccmasSHCurve;
     LocLLmaskSHCurve locllmasSHCurve;
     LocHHmaskSHCurve lochhmasSHCurve;
+    LocCCmaskcbCurve locccmascbCurve;
+    LocLLmaskcbCurve locllmascbCurve;
+    LocHHmaskcbCurve lochhmascbCurve;
 
     bool locallutili;
     bool localcutili;
@@ -258,6 +261,9 @@ protected:
     bool lcmasSHutili;
     bool lhmasSHutili;
     bool llmasSHutili;
+    bool lcmascbutili;
+    bool lhmascbutili;
+    bool llmascbutili;
     bool LHutili;
     bool HHutili;
     LUTf huerefs;
@@ -272,6 +278,7 @@ protected:
     int locallColorMask;
     int locallExpMask;
     int locallSHMask;
+    int locallcbMask;
     float avg;
     
 public:
@@ -341,11 +348,12 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask) override
+    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask) override
     {
         this->locallColorMask = locallColorMask;
         this->locallExpMask = locallExpMask;
         this->locallSHMask = locallSHMask;
+        this->locallcbMask = locallcbMask;
     }
 
     void setProgressListener (ProgressListener* pl) override

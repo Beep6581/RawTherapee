@@ -1063,6 +1063,7 @@ struct LocallabParams {
         int scaltm;
         int rewei;
         int sensitm;
+        double softradiustm;
         // Retinex
         bool expreti;
         Glib::ustring retinexMethod;
@@ -1098,9 +1099,19 @@ struct LocallabParams {
         int chromacbdl;
         double threshold;
         int sensicb;
-        int clarityml;
+        double clarityml;
         int contresid;
+        double blurcbdl;
         double softradiuscb;
+        bool enacbMask;
+        std::vector<double> CCmaskcbcurve;
+        std::vector<double> LLmaskcbcurve;
+        std::vector<double> HHmaskcbcurve;
+        int blendmaskcb;
+        double radmaskcb;
+        double chromaskcb;
+        double gammaskcb;
+        double slomaskcb;
         // Denoise
         bool expdenoi;
         int noiselumf;

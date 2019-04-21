@@ -349,6 +349,7 @@ void Options::setDefaults()
     fontSize = 10;
     CPFontFamily = "default";
     CPFontSize = 8;
+    pseudoHiDPISupport = false;
     lastScale = 5;
     lastShowAllExif = false;
     panAccelFactor = 5;
@@ -594,7 +595,7 @@ void Options::setDefaults()
     rtSettings.reduclow = 0.85;//transition for luminance out scope
     rtSettings.detectshape = true;//experimental new detection shape
     rtSettings.previewselection = 5;//betwen 1 to 40
-    rtSettings.cbdlsensi = 0.4;//betwen 0.001 to 1
+    rtSettings.cbdlsensi = 1.0;//betwen 0.001 to 1
 
 // end locallab
 
@@ -1282,6 +1283,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("GUI", "CPFontSize")) {
                     CPFontSize = keyFile.get_integer("GUI", "CPFontSize");
+                }
+
+                if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
+                	pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
                 }
 
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
@@ -2129,6 +2134,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FontSize", fontSize);
         keyFile.set_string("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer("GUI", "CPFontSize", CPFontSize);
+        keyFile.set_boolean("GUI", "PseudoHiDPISupport", pseudoHiDPISupport);
         keyFile.set_integer("GUI", "LastPreviewScale", lastScale);
         keyFile.set_boolean("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer("GUI", "PanAccelFactor", panAccelFactor);

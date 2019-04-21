@@ -56,7 +56,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     Glib::RefPtr<Gdk::Pixbuf> rotate        = RTImage::createPixbufFromFile("rotate-aroundnode-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> wait          = RTImage::createPixbufFromFile("gears.png"); // Currently unused, create *-hicontrast once used.
 
-    double s = RTScalable::getTweakedDPI() / 96.;  // RTScalable::getDPI() might be preferable, however it imply a lot of work to support this option
+    double s = RTScalable::getTweakedDPI() / RTScalable::baseDPI;  // RTScalable::getDPI() might be preferable, however it imply a lot of work to support this option
 
     cAdd = add                  ? Gdk::Cursor::create(display, add, (int)(8.*s), (int)(8.*s))           : Gdk::Cursor::create(display, Gdk::PLUS);
     cAddPicker = colPickAdd     ? Gdk::Cursor::create(display, colPickAdd, (int)(4.*s), (int)(21.*s))   : Gdk::Cursor::create(display, Gdk::PLUS);

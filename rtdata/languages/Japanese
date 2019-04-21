@@ -2311,4 +2311,5 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !QUEUE_LOCATION_TITLE;Output Location

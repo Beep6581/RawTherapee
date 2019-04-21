@@ -1563,6 +1563,146 @@ void LocretigainCurverab::Set(const std::vector<double> &curvePoints)
     }
 }
 
+LocHHmaskcbCurve::LocHHmaskcbCurve() : sum(0.f) {};
+
+void LocHHmaskcbCurve::Reset()
+{
+    lutLocHHmaskcbCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskcbCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskcbCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskcbCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskcbCurve[i] < 0.02f) {
+            lutLocHHmaskcbCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskcbCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmaskcbCurve::Set(const std::vector<double> &curvePoints, bool & lhmascbutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmascbutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmaskcbCurve::LocLLmaskcbCurve() : sum(0.f) {};
+
+void LocLLmaskcbCurve::Reset()
+{
+    lutLocLLmaskcbCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskcbCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskcbCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskcbCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskcbCurve[i] < 0.02f) {
+            lutLocLLmaskcbCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskcbCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskcbCurve::Set(const std::vector<double> &curvePoints,  bool & llmascbutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmascbutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmaskcbCurve::LocCCmaskcbCurve() : sum(0.f) {};
+
+void LocCCmaskcbCurve::Reset()
+{
+    lutLocCCmaskcbCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskcbCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskcbCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskcbCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskcbCurve[i] < 0.02f) {
+            lutLocCCmaskcbCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskcbCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskcbCurve::Set(const std::vector<double> &curvePoints,  bool & lcmascbutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmascbutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
 LocHHmaskSHCurve::LocHHmaskSHCurve() : sum(0.f) {};
 
 void LocHHmaskSHCurve::Reset()

@@ -79,6 +79,7 @@
 #78 19.01.2019 Erweiterung (TooWaBoo) RT 5.5
 #79 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
 #80 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
+#81 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -1118,6 +1119,7 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Schriftart Farbwähler
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Farbe/Transparenz für Schnittmaske
 PREFERENCES_APPEARANCE_MAINFONT;Schriftart:
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Farbe der Navigationshilfe
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI-Modus
 PREFERENCES_APPEARANCE_THEME;Oberflächendesign
 PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
 PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden
@@ -1337,6 +1339,7 @@ QUEUE_FORMAT_TITLE;Dateiformat
 QUEUE_LOCATION_FOLDER;In dieses Verzeichnis speichern
 QUEUE_LOCATION_TEMPLATE;Dynamisches Verzeichnis verwenden
 QUEUE_LOCATION_TEMPLATE_TOOLTIP;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
+QUEUE_LOCATION_TITLE;Ausgabeverzeichnis
 QUEUE_STARTSTOP_TOOLTIP;Startet / Stoppt die Verarbeitung\nder Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
 SAMPLEFORMAT_0;Unbekanntes Datenformat
 SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
@@ -2355,8 +2358,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!QUEUE_LOCATION_TITLE;Output Location

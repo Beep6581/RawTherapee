@@ -479,6 +479,7 @@ public:
         bool scaltm;
         bool rewei;
         bool sensitm;
+        bool softradiustm;
         // Retinex
         bool expreti;
         bool retinexMethod;
@@ -516,7 +517,18 @@ public:
         bool sensicb;
         bool clarityml;
         bool contresid;
+        bool blurcbdl;
+        bool blendmaskcb;
+        bool radmaskcb;
+        bool chromaskcb;
+        bool gammaskcb;
+        bool slomaskcb;
         bool softradiuscb;
+        bool enacbMask;
+        bool CCmaskcbcurve;
+        bool LLmaskcbcurve;
+        bool HHmaskcbcurve;
+
         // Denoise
         bool expdenoi;
         bool noiselumf;

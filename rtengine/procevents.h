@@ -690,7 +690,18 @@ enum ProcEventCode {
     EvLocallabcontresid = 660,
     Evlocallabnoiselumf0 = 661,
     Evlocallabnoiselumf2 = 662,
-
+    EvLocallabblurcbdl = 663,
+    Evlocallabblendmaskcb = 664,
+    Evlocallabradmaskcb = 665,
+    Evlocallabchromaskcb = 666,
+    Evlocallabgammaskcb = 667,
+    Evlocallabslomaskcb = 668,
+    EvlocallabCCmaskcbshape = 669,
+    EvlocallabLLmaskcbshape = 670,
+    EvlocallabHHmaskcbshape = 671,
+    EvLocallabEnacbMask = 672,
+    EvlocallabshowmaskcbMethod = 673,
+    Evlocallabsoftradiustm = 674,
     NUMOFEVENTS
 };
 
