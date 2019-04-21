@@ -335,7 +335,7 @@ public:
     bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
 
     Ellipse ();
-    Ellipse (rtengine::Coord& center, int radYT, int radY, int radXL, int radX, bool filled = false, bool radiusInImageSpace = false);
+    Ellipse (const rtengine::Coord& center, int radYT, int radY, int radXL, int radX, bool filled = false, bool radiusInImageSpace = false);
 
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
     void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
@@ -562,7 +562,7 @@ inline Line::Line (int beginX, int beginY, int endX, int endY) :
         begin (beginX, beginY), end (endX, endY) {
 }
 
-inline Ellipse::Ellipse (rtengine::Coord& center, int radYT, int radY, int radXL, int radX,
+inline Ellipse::Ellipse (const rtengine::Coord& center, int radYT, int radY, int radXL, int radX,
         bool filled, bool radiusInImageSpace) :
         center (center), radYT (radYT), radY (radY), radXL (radXL), radX (radX), filled (filled),
                 radiusInImageSpace (radiusInImageSpace) {

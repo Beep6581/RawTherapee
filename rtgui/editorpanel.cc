@@ -1687,6 +1687,11 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 case GDK_KEY_F5:
                     openThm->openDefaultViewer (3);
                     return true;
+
+                case GDK_KEY_f:
+                case GDK_KEY_F:
+                    // No action is performed to avoid Gtk-CRITICAL due to Locallab treeview when treeview isn't focused
+                    return true;
             }
         } //if (!ctrl)
     } //if (!alt)

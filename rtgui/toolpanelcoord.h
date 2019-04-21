@@ -207,6 +207,7 @@ private:
     EditDataProvider *editDataProvider;
     sigc::connection notebookconn;
     bool photoLoadedOnce; // Used to indicated that a photo has been loaded yet
+    Gtk::Widget* prevPage;
 
 public:
     CoarsePanel* coarse;

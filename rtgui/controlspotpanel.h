@@ -97,11 +97,26 @@ public:
         bool avoid;
     };
 
+    /**
+     * An event type enumeration allows exchanges of spot panel event type from and to ControlSpotClass
+     */
+    enum eventType {
+        None = 0,
+        SpotCreation = 1,
+        SpotDeletion = 2,
+        SpotSelection = 3,
+        SpotDuplication = 4
+    };
+
     // Constructor and management functions
     /**
      * Default constructor of ControlSpotPanel class
      */
     ControlSpotPanel();
+    /**
+     * Destructor of ControlSpotPanel class
+     */
+    ~ControlSpotPanel();
     /**
      * Implementation of setEditProvider function of toolpanel.h
      *
@@ -111,7 +126,7 @@ public:
     /**
      * Getter of the event type raised by this panel
      *
-     * @return The raised event type (0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event)
+     * @return The raised event type (refer to eventType enumeration)
      */
     int getEventType();
     /**
@@ -120,7 +135,7 @@ public:
      * @param id The spot id to get params
      * @return A SpotRow structure containing params of associated spot
      */
-    SpotRow* getSpot(int id);
+    SpotRow* getSpot(const int id);
     /**
      * Get of spot id list
      *
@@ -138,7 +153,7 @@ public:
      *
      * @param id The id of spot to be selected
      */
-    void setSelectedSpot(int id);
+    void setSelectedSpot(const int id);
 
     // Control spot creation functions
     /**
@@ -168,7 +183,7 @@ public:
      *
      * @param id The id of the spot to be deleted
      */
-    void deleteControlSpot(int id);
+    void deleteControlSpot(const int id);
 
     // Panel widgets management functions
     /**
@@ -225,6 +240,8 @@ private:
     void on_button_rename();
     void on_button_visibility();
 
+    bool blockTreeviewSearch(GdkEventKey* event);
+
     void load_ControlSpot_param();
 
     void controlspotChanged();
@@ -245,10 +262,10 @@ private:
 
     void disableParamlistener(bool cond);
 
-    void addControlSpotCurve(Gtk::TreeModel::Row row);
-    void updateControlSpotCurve(Gtk::TreeModel::Row row);
-    void deleteControlSpotCurve(Gtk::TreeModel::Row row);
-    void updateCurveOpacity(Gtk::TreeModel::Row selectedRow);
+    void addControlSpotCurve(Gtk::TreeModel::Row& row);
+    void updateControlSpotCurve(const Gtk::TreeModel::Row& row);
+    void deleteControlSpotCurve(Gtk::TreeModel::Row& row);
+    void updateCurveOpacity(const Gtk::TreeModel::Row& selectedRow);
     CursorShape getCursor(int objectID) const;
     bool mouseOver(int modifierKey);
     bool button1Pressed(int modifierKey);
@@ -294,31 +311,36 @@ private:
         public Gtk::Dialog
     {
     public:
+        enum DialogButton {
+            OkButton = 1,
+            CancelButton = 2
+        };
+
         RenameDialog(const Glib::ustring &actualname, Gtk::Window &parent);
         Glib::ustring get_new_name();
 
     private:
-        Gtk::Entry newname_;
+        Gtk::Entry* const newname_;
     };
 
     ControlSpots spots_;
 
     // Child widgets
-    Gtk::ScrolledWindow scrolledwindow_;
-    Gtk::TreeView treeview_;
+    Gtk::ScrolledWindow* const scrolledwindow_;
+    Gtk::TreeView* const treeview_;
     sigc::connection treeviewconn_;
     Glib::RefPtr<Gtk::ListStore> treemodel_;
 
-    Gtk::Button button_add_;
+    Gtk::Button* const button_add_;
     sigc::connection buttonaddconn_;
-    Gtk::Button button_delete_;
+    Gtk::Button* const button_delete_;
     sigc::connection buttondeleteconn_;
-    Gtk::Button button_duplicate_;
+    Gtk::Button* const button_duplicate_;
     sigc::connection buttonduplicateconn_;
 
-    Gtk::Button button_rename_;
+    Gtk::Button* const button_rename_;
     sigc::connection buttonrenameconn_;
-    Gtk::Button button_visibility_;
+    Gtk::Button* const button_visibility_;
     sigc::connection buttonvisibilityconn_;
 
     MyComboBoxText* const shape_;
@@ -351,13 +373,16 @@ private:
 
     // Internal variables
     int lastObject_;
-    rtengine::Coord* lastCoord_;
+    rtengine::Coord lastCoord_;
     bool nbSpotChanged_;
     bool selSpotChanged_;
     bool nameChanged_;
     bool visibilityChanged_;
     int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event, 4 = Spot duplication event
     Gtk::Frame* const excluFrame;
+
+    // Row background color
+    Gdk::RGBA colorMouseover, colorNominal;
 
     // Treeview mutex
     MyMutex mTreeview;
