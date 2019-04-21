@@ -1,4 +1,4 @@
-RAWTHERAPEE 5.5-dev RELEASE NOTES
+RAWTHERAPEE 5.6-dev RELEASE NOTES
 
 This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 
@@ -26,7 +26,7 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to a meaningful axis (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New features since 5.5:
+New features since 5.6:
 TODO.
 
 
@@ -35,7 +35,7 @@ NEWS RELEVANT TO PACKAGE MAINTAINERS
 
 In general:
 - To get the source code, either clone from git or use the tarball from http://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
-- Requires GTK+ version >=3.16, though >=3.22.24 is recommended.
+- Requires GTK+ version >=3.16, though >=3.22.24 is recommended. GTK+ versions 3.24.2 - 3.24.6 have an issue with missing combobox menu arrows and are to be avoided.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
 - Use -O3, it will make RawTherapee faster with no known side-effects.
