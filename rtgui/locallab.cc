@@ -1366,7 +1366,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     LocallabParams::LocallabSpot* newSpot;
 
     switch (spotPanelEvent) {
-        case (1): // 1 = Spot creation event
+        case (ControlSpotPanel::SpotCreation): // Spot creation event
             // Spot creation (default initialization)
             newSpot = new LocallabParams::LocallabSpot();
             spotId = expsettings->getNewId();
@@ -1459,7 +1459,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             break;
 
-        case (2): // 2 = Spot deletion event
+        case (ControlSpotPanel::SpotDeletion): // Spot deletion event
             // Get deleted spot index in ProcParams and update it
             spotId = expsettings->getSelectedSpot();
 
@@ -1515,7 +1515,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             break;
 
-        case (3):  // 3 = Spot selection event
+        case (ControlSpotPanel::SpotSelection):  // Spot selection event
             spotId = expsettings->getSelectedSpot();
 
             for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
@@ -1541,7 +1541,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             break;
 
-        case (4): // 4 = Spot duplication event
+        case (ControlSpotPanel::SpotDuplication): // Spot duplication event
             newSpot = nullptr;
             spotId = expsettings->getSelectedSpot();
 

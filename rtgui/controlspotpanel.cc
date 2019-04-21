@@ -69,12 +69,11 @@ ControlSpotPanel::ControlSpotPanel():
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
 
     lastObject_(-1),
-    lastCoord_(new Coord()),
     nbSpotChanged_(false),
     selSpotChanged_(false),
     nameChanged_(false),
     visibilityChanged_(false),
-    eventType(0),
+    eventType(None),
     excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF"))))
 {
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
@@ -265,6 +264,31 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*avoid_);
 
     show_all();
+
+    // Define row background color
+    // Mouseovered spot (opaque orange)
+    colorMouseover.set_red(1.);
+    colorMouseover.set_green(100. / 255.);
+    colorMouseover.set_blue(0.);
+    colorMouseover.set_alpha(1.);
+    // Nominal spot (transparent black)
+    colorNominal.set_red(0.);
+    colorNominal.set_green(0.);
+    colorNominal.set_blue(0.);
+    colorNominal.set_alpha(0.);
+}
+
+ControlSpotPanel::~ControlSpotPanel()
+{
+    // visibleGeometry
+    for (auto i = EditSubscriber::visibleGeometry.begin(); i != EditSubscriber::visibleGeometry.end(); ++i) {
+        delete *i;
+    }
+
+    // mouseOverGeometry
+    for (auto i = EditSubscriber::mouseOverGeometry.begin(); i != EditSubscriber::mouseOverGeometry.end(); ++i) {
+        delete *i;
+    }
 }
 
 void ControlSpotPanel::setEditProvider(EditDataProvider* provider)
@@ -277,22 +301,17 @@ void ControlSpotPanel::render_id(
 {
     auto row = *iter;
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
-    int value = row[spots_.id];
-    ct->property_text() = std::to_string(value);
-    // Render background color
-    Gdk::RGBA color;
-    if (row[spots_.mouseover]) { // Orange
-        color.set_red(1.);
-        color.set_green(100. / 255.);
-        color.set_blue(0.);
-        color.set_alpha(1.);
-    } else { // Transparent black
-        color.set_red(0.);
-        color.set_green(0.);
-        color.set_blue(0.);
-        color.set_alpha(0.);
+
+    // Render cell text
+    ct->property_text() = std::to_string(row[spots_.id]);
+
+    // Render cell background color
+    if (row[spots_.mouseover]) {
+        ct->property_background_rgba() = colorMouseover;
+    } else {
+        ct->property_background_rgba() = colorNominal;
     }
-    ct->property_background_rgba() = color;
+
 }
 
 void ControlSpotPanel::render_name(
@@ -300,22 +319,16 @@ void ControlSpotPanel::render_name(
 {
     auto row = *iter;
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
-    auto value = row[spots_.name];
-    ct->property_text() = value;
-    Gdk::RGBA color;
-    // Render background color
-    if (row[spots_.mouseover]) { // Orange
-        color.set_red(1.);
-        color.set_green(100. / 255.);
-        color.set_blue(0.);
-        color.set_alpha(1.);
-    } else { // Transparent black
-        color.set_red(0.);
-        color.set_green(0.);
-        color.set_blue(0.);
-        color.set_alpha(0.);
+
+    // Render cell text
+    ct->property_text() = row[spots_.name];
+
+    // Render cell background color
+    if (row[spots_.mouseover]) {
+        ct->property_background_rgba() = colorMouseover;
+    } else {
+        ct->property_background_rgba() = colorNominal;
     }
-    ct->property_background_rgba() = color;
 }
 
 void ControlSpotPanel::render_isvisible(
@@ -323,28 +336,20 @@ void ControlSpotPanel::render_isvisible(
 {
     auto row = *iter;
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
-    auto value = row[spots_.isvisible];
 
-    if (value) {
+    // Render cell text
+    if (row[spots_.isvisible]) {
         ct->property_text() = M("TP_LOCALLAB_ROW_VIS");
     } else {
         ct->property_text() = M("TP_LOCALLAB_ROW_NVIS");
     }
 
-    // Render background color
-    Gdk::RGBA color;
-    if (row[spots_.mouseover]) { // Orange
-        color.set_red(1.);
-        color.set_green(100. / 255.);
-        color.set_blue(0.);
-        color.set_alpha(1.);
-    } else { // Transparent black
-        color.set_red(0.);
-        color.set_green(0.);
-        color.set_blue(0.);
-        color.set_alpha(0.);
+    // Render cell background color
+    if (row[spots_.mouseover]) {
+        ct->property_background_rgba() = colorMouseover;
+    } else {
+        ct->property_background_rgba() = colorNominal;
     }
-    ct->property_background_rgba() = color;
 }
 
 void ControlSpotPanel::on_button_add()
@@ -358,7 +363,7 @@ void ControlSpotPanel::on_button_add()
     // Raise event
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
-    eventType = 1; // 1 = Spot creation event
+    eventType = SpotCreation;
     const int newId = getNewId();
     listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId));
 }
@@ -374,7 +379,7 @@ void ControlSpotPanel::on_button_delete()
     // Raise event
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
-    eventType = 2; // 2 = Spot deletion event
+    eventType = SpotDeletion;
     const int delId = getSelectedSpot();
     listener->panelChanged(EvLocallabSpotDeleted, "ID#" + std::to_string(delId));
 }
@@ -394,7 +399,7 @@ void ControlSpotPanel::on_button_duplicate()
     }
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
-    eventType = 4; // 4 = Spot duplication event
+    eventType = SpotDuplication;
     const int newId = getNewId();
     listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId)
                                 + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
@@ -502,23 +507,23 @@ void ControlSpotPanel::load_ControlSpot_param()
     // Load param in selected control spot
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
-    sensiexclu_->setValue(static_cast<double>(row[spots_.sensiexclu]));
-    structexclu_->setValue(static_cast<double>(row[spots_.structexclu]));
-    struc_->setValue(static_cast<double>(row[spots_.struc]));
+    sensiexclu_->setValue((double)row[spots_.sensiexclu]);
+    structexclu_->setValue((double)row[spots_.structexclu]);
+    struc_->setValue((double)row[spots_.struc]);
     shapeMethod_->set_active(row[spots_.shapeMethod]);
-    locX_->setValue(static_cast<double>(row[spots_.locX]));
-    locXL_->setValue(static_cast<double>(row[spots_.locXL]));
-    locY_->setValue(static_cast<double>(row[spots_.locY]));
-    locYT_->setValue(static_cast<double>(row[spots_.locYT]));
-    centerX_->setValue(static_cast<double>(row[spots_.centerX]));
-    centerY_->setValue(static_cast<double>(row[spots_.centerY]));
-    circrad_->setValue(static_cast<double>(row[spots_.circrad]));
+    locX_->setValue((double)row[spots_.locX]);
+    locXL_->setValue((double)row[spots_.locXL]);
+    locY_->setValue((double)row[spots_.locY]);
+    locYT_->setValue((double)row[spots_.locYT]);
+    centerX_->setValue((double)row[spots_.centerX]);
+    centerY_->setValue((double)row[spots_.centerY]);
+    circrad_->setValue((double)row[spots_.circrad]);
     qualityMethod_->set_active(row[spots_.qualityMethod]);
-    transit_->setValue(static_cast<double>(row[spots_.transit]));
-    thresh_->setValue(static_cast<double>(row[spots_.thresh]));
-    iter_->setValue(static_cast<double>(row[spots_.iter]));
-    balan_->setValue(static_cast<double>(row[spots_.balan]));
-    transitweak_->setValue(static_cast<double>(row[spots_.transitweak]));
+    transit_->setValue((double)row[spots_.transit]);
+    thresh_->setValue((double)row[spots_.thresh]);
+    iter_->setValue((double)row[spots_.iter]);
+    balan_->setValue((double)row[spots_.balan]);
+    transitweak_->setValue((double)row[spots_.transitweak]);
     avoid_->set_active(row[spots_.avoid]);
 }
 
@@ -532,7 +537,7 @@ void ControlSpotPanel::controlspotChanged()
 
     // Raise event
     selSpotChanged_ = true;
-    eventType = 3; // 3 = Spot selection event
+    eventType = SpotSelection;
     const int selId = getSelectedSpot();
     listener->panelChanged(EvLocallabSpotSelected, "ID#" + std::to_string(selId));
 }
@@ -614,8 +619,8 @@ void ControlSpotPanel::shapeMethodChanged()
         disableParamlistener(false);
 
         row[spots_.shapeMethod] = shapeMethod_->get_active_row_number();
-        row[spots_.locXL] = static_cast<int>(locX_->getValue());
-        row[spots_.locYT] = static_cast<int>(locY_->getValue());
+        row[spots_.locXL] = locX_->getIntValue();
+        row[spots_.locYT] = locY_->getIntValue();
 
         updateControlSpotCurve(row);
     } else { // In batch mode, sliders are always independent
@@ -787,7 +792,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     Gtk::TreeModel::Row row = *iter;
 
     if (a == sensiexclu_) {
-        row[spots_.sensiexclu] = (int) sensiexclu_->getValue();
+        row[spots_.sensiexclu] = sensiexclu_->getIntValue();
 
         if (listener) {
             listener->panelChanged(EvLocallabSpotSensiexclu, sensiexclu_->getTextValue());
@@ -795,7 +800,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == structexclu_) {
-        row[spots_.structexclu] = (int) structexclu_->getValue();
+        row[spots_.structexclu] = structexclu_->getIntValue();
 
         if (listener) {
             listener->panelChanged(Evlocallabstructexlu, structexclu_->getTextValue());
@@ -811,13 +816,13 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == locX_) {
-        row[spots_.locX] = (int) locX_->getValue();
+        row[spots_.locX] = locX_->getIntValue();
 
         if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locXL_->setValue(locX_->getValue());
             disableParamlistener(false);
-            row[spots_.locXL] = (int) locXL_->getValue();
+            row[spots_.locXL] = locXL_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -828,13 +833,13 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == locXL_) {
-        row[spots_.locXL] = (int) locXL_->getValue();
+        row[spots_.locXL] = locXL_->getIntValue();
 
         if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locX_->setValue(locXL_->getValue());
             disableParamlistener(false);
-            row[spots_.locX] = (int) locX_->getValue();
+            row[spots_.locX] = locX_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -845,13 +850,13 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == locY_) {
-        row[spots_.locY] = (int) locY_->getValue();
+        row[spots_.locY] = locY_->getIntValue();
 
         if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locYT_->setValue(locY_->getValue());
             disableParamlistener(false);
-            row[spots_.locYT] = (int) locYT_->getValue();
+            row[spots_.locYT] = locYT_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -862,13 +867,13 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == locYT_) {
-        row[spots_.locYT] = (int) locYT_->getValue();
+        row[spots_.locYT] = locYT_->getIntValue();
 
         if (!batchMode && (method == 1 || method == 3)) { // Symmetrical cases (in batch mode, sliders are always independent)
             disableParamlistener(true);
             locY_->setValue(locYT_->getValue());
             disableParamlistener(false);
-            row[spots_.locY] = (int) locY_->getValue();
+            row[spots_.locY] = locY_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -879,8 +884,8 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == centerX_ || a == centerY_) {
-        row[spots_.centerX] = (int) centerX_->getValue();
-        row[spots_.centerY] = (int) centerY_->getValue();
+        row[spots_.centerX] = centerX_->getIntValue();
+        row[spots_.centerY] = centerY_->getIntValue();
 
         updateControlSpotCurve(row);
 
@@ -890,7 +895,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == circrad_) {
-        row[spots_.circrad] = (int) circrad_->getValue();
+        row[spots_.circrad] = circrad_->getIntValue();
 
         updateControlSpotCurve(row);
 
@@ -900,7 +905,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == transit_) {
-        row[spots_.transit] = (int) transit_->getValue();
+        row[spots_.transit] = transit_->getIntValue();
 
         if (listener) {
             listener->panelChanged(EvLocallabSpotTransit, transit_->getTextValue());
@@ -917,7 +922,6 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == iter_) {
-      //  row[spots_.iter] = (int) iter_->getValue();
         row[spots_.iter] = iter_->getValue();
 
         if (listener) {
@@ -1036,7 +1040,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     avoid_->set_sensitive(cond);
 }
 
-void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row row)
+void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
 {
     // printf("addControlSpotCurve\n");
 
@@ -1120,7 +1124,7 @@ void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row row)
     row[spots_.curveid] = EditSubscriber::visibleGeometry.size() / 7;
 }
 
-void ControlSpotPanel::updateControlSpotCurve(Gtk::TreeModel::Row row)
+void ControlSpotPanel::updateControlSpotCurve(const Gtk::TreeModel::Row& row)
 {
     const int curveid_ = row[spots_.curveid];
     EditDataProvider* const dataProvider = getEditProvider();
@@ -1251,7 +1255,7 @@ void ControlSpotPanel::updateControlSpotCurve(Gtk::TreeModel::Row row)
     }
 }
 
-void ControlSpotPanel::deleteControlSpotCurve(Gtk::TreeModel::Row row)
+void ControlSpotPanel::deleteControlSpotCurve(Gtk::TreeModel::Row& row)
 {
     const int curveid_ = row[spots_.curveid];
 
@@ -1262,27 +1266,21 @@ void ControlSpotPanel::deleteControlSpotCurve(Gtk::TreeModel::Row row)
     }
 
     // visibleGeometry
-    EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + 6);
-    EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + 5);
-    EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + 4);
-    EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + 3);
-    EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + 2);
-    EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + 1);
-    EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7);
+    for (int i = 6; i >= 0; i--) {
+        delete *(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + i);
+        EditSubscriber::visibleGeometry.erase(EditSubscriber::visibleGeometry.begin() + (curveid_ - 1) * 7 + i);
+    }
 
     // mouseOverGeometry
-    EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + 6);
-    EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + 5);
-    EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + 4);
-    EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + 3);
-    EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + 2);
-    EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + 1);
-    EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7);
+    for (int i = 6; i >= 0; i--) {
+        delete *(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + i);
+        EditSubscriber::mouseOverGeometry.erase(EditSubscriber::mouseOverGeometry.begin() + (curveid_ - 1) * 7 + i);
+    }
 
     row[spots_.curveid] = 0; // Reset associated curve id
 
     // Reordering curve id
-    Gtk::TreeModel::Children children = treemodel_->children();
+    const Gtk::TreeModel::Children children = treemodel_->children();
 
     for (auto iter = children.begin(); iter != children.end(); iter++) {
         Gtk::TreeModel::Row r = *iter;
@@ -1293,7 +1291,7 @@ void ControlSpotPanel::deleteControlSpotCurve(Gtk::TreeModel::Row row)
     }
 }
 
-void ControlSpotPanel::updateCurveOpacity(Gtk::TreeModel::Row selectedRow)
+void ControlSpotPanel::updateCurveOpacity(const Gtk::TreeModel::Row& selectedRow)
 {
     const int curveid_ = selectedRow[spots_.curveid];
 
@@ -1322,7 +1320,7 @@ CursorShape ControlSpotPanel::getCursor(int objectID) const
          return CSHandOpen;
      }
 
-    int rem_ = objectID % 7;
+    const int rem_ = objectID % 7;
 
     switch (rem_) {
         case (0): // centerCircle: (curveid_ - 1) * 7
@@ -1362,22 +1360,21 @@ bool ControlSpotPanel::mouseOver(int modifierKey)
 
     // Get selected row
     const auto selIter = s->get_selected();
-    Gtk::TreeModel::Row selRow = *selIter;
+    const Gtk::TreeModel::Row selRow = *selIter;
 
-    int object_ = editProvider_->object;
+    const int object_ = editProvider_->object;
 
     if (object_ != lastObject_) {
         if (object_ == -1) {
             // Reset mouseOver preview for visibleGeometry
-            for (int it_ = 0; it_ < (int) EditSubscriber::visibleGeometry.size(); it_++) {
+            for (size_t it_ = 0; it_ < EditSubscriber::visibleGeometry.size(); it_++) {
                 EditSubscriber::visibleGeometry.at(it_)->state = Geometry::NORMAL;
             }
 
             // Reset mouseOver preview for TreeView
-            Gtk::TreeModel::Children children = treemodel_->children();
-            Gtk::TreeModel::Children::iterator iter;
+            const Gtk::TreeModel::Children children = treemodel_->children();
 
-            for (iter = children.begin(); iter != children.end(); iter++) {
+            for (auto iter = children.begin(); iter != children.end(); iter++) {
                 Gtk::TreeModel::Row row = *iter;
                 row[spots_.mouseover] = false;
             }
@@ -1387,13 +1384,13 @@ bool ControlSpotPanel::mouseOver(int modifierKey)
             return false;
         }
 
-        int curveId_ = object_ / 7 + 1;
-        int rem = object_ % 7;
+        const int curveId_ = object_ / 7 + 1;
+        const int rem = object_ % 7;
 
         // Manage mouseOver preview for TreeView
-        Gtk::TreeModel::Children children = treemodel_->children();
-        Gtk::TreeModel::Children::iterator iter;
-        for (iter = children.begin(); iter != children.end(); iter++) {
+        const Gtk::TreeModel::Children children = treemodel_->children();
+
+        for (auto iter = children.begin(); iter != children.end(); iter++) {
             Gtk::TreeModel::Row row = *iter;
             if (row[spots_.curveid] == curveId_ && *row != *selRow) {
                 row[spots_.mouseover] = true;
@@ -1484,11 +1481,11 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
     }
 
     // Select associated control spot
-    int curveId_ = lastObject_ / 7 + 1;
+    const int curveId_ = lastObject_ / 7 + 1;
     Gtk::TreeModel::Children children = treemodel_->children();
 
     for (auto iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row r = *iter;
+        const Gtk::TreeModel::Row r = *iter;
 
         if (r[spots_.curveid] == curveId_) {
             treeview_->set_cursor(treemodel_->get_path(r));
@@ -1496,7 +1493,7 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
         }
     }
 
-    lastCoord_->set(provider->posImage.x + provider->deltaImage.x, provider->posImage.y + provider->deltaImage.y);
+    lastCoord_.set(provider->posImage.x + provider->deltaImage.x, provider->posImage.y + provider->deltaImage.y);
     EditSubscriber::action = EditSubscriber::Action::DRAGGING;    
     return true;
 }
@@ -1524,18 +1521,18 @@ bool ControlSpotPanel::drag1(int modifierKey)
 
     int imW, imH;
     provider->getImageSize(imW, imH);
-    int rem = lastObject_ % 7;
-    int method = shapeMethod_->get_active_row_number();
-    Coord* newCoord = new Coord(provider->posImage.x + provider->deltaImage.x, provider->posImage.y + provider->deltaImage.y);
+    const int rem = lastObject_ % 7;
+    const int method = shapeMethod_->get_active_row_number();
+    Coord newCoord = Coord(provider->posImage.x + provider->deltaImage.x, provider->posImage.y + provider->deltaImage.y);
 
     // Circle, Ellipses and Rectangle
     if (rem >= 0 && rem < 3) {
-        double deltaX = (double (newCoord->x) - double (lastCoord_->x)) * 2000. / double (imW);
-        double deltaY = (double (newCoord->y) - double (lastCoord_->y)) * 2000. / double (imH);
+        double deltaX = (double (newCoord.x) - double (lastCoord_.x)) * 2000. / double (imW);
+        double deltaY = (double (newCoord.y) - double (lastCoord_.y)) * 2000. / double (imH);
         centerX_->setValue(centerX_->getValue() + deltaX);
         centerY_->setValue(centerY_->getValue() + deltaY);
-        row[spots_.centerX] = (int) centerX_->getValue();
-        row[spots_.centerY] = (int) centerY_->getValue();
+        row[spots_.centerX] = centerX_->getIntValue();
+        row[spots_.centerY] = centerY_->getIntValue();
 
         updateControlSpotCurve(row);
 
@@ -1546,15 +1543,15 @@ bool ControlSpotPanel::drag1(int modifierKey)
 
     // cirX
     if (rem == 3) {
-        double deltaX = (double (newCoord->x) - double (lastCoord_->x)) * 2000. / double (imW);
+        double deltaX = (double (newCoord.x) - double (lastCoord_.x)) * 2000. / double (imW);
         locX_->setValue(locX_->getValue() + deltaX);
-        row[spots_.locX] = (int) locX_->getValue();
+        row[spots_.locX] = locX_->getIntValue();
 
         if (method == 1 || method == 3) { // Symmetrical cases
             disableParamlistener(true);
             locXL_->setValue(locX_->getValue());
             disableParamlistener(false);
-            row[spots_.locXL] = (int) locXL_->getValue();
+            row[spots_.locXL] = locXL_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -1566,15 +1563,15 @@ bool ControlSpotPanel::drag1(int modifierKey)
 
     // cirXL
     if (rem == 4) {
-        double deltaXL = (double (lastCoord_->x) - double (newCoord->x)) * 2000. / double (imW);
+        double deltaXL = (double (lastCoord_.x) - double (newCoord.x)) * 2000. / double (imW);
         locXL_->setValue(locXL_->getValue() + deltaXL);
-        row[spots_.locXL] = (int) locXL_->getValue();
+        row[spots_.locXL] = locXL_->getIntValue();
 
         if (method == 1 || method == 3) { // Symmetrical cases
             disableParamlistener(true);
             locX_->setValue(locXL_->getValue());
             disableParamlistener(false);
-            row[spots_.locX] = (int) locX_->getValue();
+            row[spots_.locX] = locX_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -1586,15 +1583,15 @@ bool ControlSpotPanel::drag1(int modifierKey)
 
     // cirY
     if (rem == 5) {
-        double deltaY = (double (newCoord->y) - double (lastCoord_->y)) * 2000. / double (imH);
+        double deltaY = (double (newCoord.y) - double (lastCoord_.y)) * 2000. / double (imH);
         locY_->setValue(locY_->getValue() + deltaY);
-        row[spots_.locY] = (int) locY_->getValue();
+        row[spots_.locY] = locY_->getIntValue();
 
         if (method == 1 || method == 3) { // Symmetrical cases
             disableParamlistener(true);
             locYT_->setValue(locY_->getValue());
             disableParamlistener(false);
-            row[spots_.locYT] = (int) locYT_->getValue();
+            row[spots_.locYT] = locYT_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -1606,15 +1603,15 @@ bool ControlSpotPanel::drag1(int modifierKey)
 
     // cirYT
     if (rem == 6) {
-        double deltaYT = (double (lastCoord_->y) - double (newCoord->y)) * 2000. / double (imH);
+        double deltaYT = (double (lastCoord_.y) - double (newCoord.y)) * 2000. / double (imH);
         locYT_->setValue(locYT_->getValue() + deltaYT);
-        row[spots_.locYT] = (int) locYT_->getValue();
+        row[spots_.locYT] = locYT_->getIntValue();
 
         if (method == 1 || method == 3) { // Symmetrical cases
             disableParamlistener(true);
             locY_->setValue(locYT_->getValue());
             disableParamlistener(false);
-            row[spots_.locY] = (int) locY_->getValue();
+            row[spots_.locY] = locY_->getIntValue();
         }
 
         updateControlSpotCurve(row);
@@ -1624,18 +1621,18 @@ bool ControlSpotPanel::drag1(int modifierKey)
         }
     }
 
-    lastCoord_->set(newCoord->x, newCoord->y);
+    lastCoord_.set(newCoord.x, newCoord.y);
     return true;
 }
 
 int ControlSpotPanel::getEventType()
 {
     const int tmp = eventType;
-    eventType = 0; // Re-initialization at 0 if event type gotten
+    eventType = None; // Re-initialization at "None" if event type gotten
     return tmp;
 }
 
-ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
+ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
 {
     // printf("getSpot: %d\n", id);
 
@@ -1643,11 +1640,10 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(int id)
 
     SpotRow* r = new SpotRow();
 
-    Gtk::TreeModel::Children children = treemodel_->children();
-    Gtk::TreeModel::Children::iterator iter;
+    const Gtk::TreeModel::Children children = treemodel_->children();
 
-    for (iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
+    for (auto iter = children.begin(); iter != children.end(); iter++) {
+        const Gtk::TreeModel::Row row = *iter;
 
         if (row[spots_.id] == id) {
             r->id = row[spots_.id];
@@ -1687,11 +1683,10 @@ std::vector<int>* ControlSpotPanel::getSpotIdList()
 
     std::vector<int>* r = new std::vector<int>();
 
-    Gtk::TreeModel::Children children = treemodel_->children();
-    Gtk::TreeModel::Children::iterator iter;
+    const Gtk::TreeModel::Children children = treemodel_->children();
 
-    for (iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
+    for (auto iter = children.begin(); iter != children.end(); iter++) {
+        const Gtk::TreeModel::Row row = *iter;
         r->push_back(row[spots_.id]);
     }
 
@@ -1711,14 +1706,14 @@ int ControlSpotPanel::getSelectedSpot()
         return 0;
     }
 
-    auto iter = s->get_selected();
-    Gtk::TreeModel::Row row = *iter;
+    const auto iter = s->get_selected();
+    const Gtk::TreeModel::Row row = *iter;
     int id = row[spots_.id];
 
     return id;
 }
 
-void ControlSpotPanel::setSelectedSpot(int id)
+void ControlSpotPanel::setSelectedSpot(const int id)
 {
     // printf("setSelectedSpot: %d\n", id);
 
@@ -1726,11 +1721,10 @@ void ControlSpotPanel::setSelectedSpot(int id)
 
     disableParamlistener(true);
 
-    Gtk::TreeModel::Children children = treemodel_->children();
-    Gtk::TreeModel::Children::iterator iter;
+    const Gtk::TreeModel::Children children = treemodel_->children();
 
-    for (iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
+    for (auto iter = children.begin(); iter != children.end(); iter++) {
+        const Gtk::TreeModel::Row row = *iter;
 
         if (row[spots_.id] == id) {
             treeview_->set_cursor(treemodel_->get_path(row));
@@ -1749,12 +1743,11 @@ int ControlSpotPanel::getNewId()
 
     // Looking for maximum used id
     int max_row_id = 0;
-    Gtk::TreeModel::Children children = treemodel_->children();
-    Gtk::TreeModel::Children::iterator iter;
+    const Gtk::TreeModel::Children children = treemodel_->children();
 
-    for (iter = children.begin(); iter != children.end(); iter++) {
-        Gtk::TreeModel::Row row = *iter;
-        int iter_id = row[spots_.id];
+    for (auto iter = children.begin(); iter != children.end(); iter++) {
+        const Gtk::TreeModel::Row row = *iter;
+        const int iter_id = row[spots_.id];
         max_row_id = std::max(max_row_id, iter_id);
     }
 
@@ -1813,10 +1806,9 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
 
     disableParamlistener(true);
 
-    Gtk::TreeModel::Children children = treemodel_->children();
-    Gtk::TreeModel::Children::iterator iter;
+    const Gtk::TreeModel::Children children = treemodel_->children();
 
-    for (iter = children.begin(); iter != children.end(); iter++) {
+    for (auto iter = children.begin(); iter != children.end(); iter++) {
         Gtk::TreeModel::Row row = *iter;
 
         if (row[spots_.id] == spot->id) {
@@ -1855,7 +1847,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
     return 0;
 }
 
-void ControlSpotPanel::deleteControlSpot(int id)
+void ControlSpotPanel::deleteControlSpot(const int id)
 {
     // printf("deleteControlSpot: %d\n", id);
 
@@ -1863,10 +1855,9 @@ void ControlSpotPanel::deleteControlSpot(int id)
 
     disableParamlistener(true);
 
-    Gtk::TreeModel::Children children = treemodel_->children();
-    Gtk::TreeModel::Children::iterator iter;
+    const Gtk::TreeModel::Children children = treemodel_->children();
 
-    for (iter = children.begin(); iter != children.end(); iter++) {
+    for (auto iter = children.begin(); iter != children.end(); iter++) {
         Gtk::TreeModel::Row row = *iter;
 
         if (row[spots_.id] == id) {
