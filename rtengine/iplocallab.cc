@@ -1583,16 +1583,16 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
     float kab = 1.f;
     balancedeltaE(kL, kab);
 
-    LabImage *origblur = new LabImage(GW, GH);
+    LabImage origblur(GW, GH);
 
     float radius = 3.f / sk;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        gaussianBlur(original->L, origblur->L, GW, GH, radius);
-        gaussianBlur(original->a, origblur->a, GW, GH, radius);
-        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+        gaussianBlur(original->L, origblur.L, GW, GH, radius);
+        gaussianBlur(original->a, origblur.a, GW, GH, radius);
+        gaussianBlur(original->b, origblur.b, GW, GH, radius);
 
     }
 #ifdef _OPENMP
@@ -1624,8 +1624,8 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
                 calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
             }
 
-                float rL = origblur->L[y][x] / 327.68f;
-                float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
+                float rL = origblur.L[y][x] / 327.68f;
+                float dE = sqrt(kab * SQR(refa - origblur.a[y][x] / 327.68f) + kab * SQR(refb - origblur.b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                 float reducdE;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn , reducdE);
             switch (zone) {
