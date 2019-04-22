@@ -1486,36 +1486,39 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, const float hueref, const 
 
 void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const float hueref, const float chromaref,  const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro, int sk)
 {
-    // BENCHFUN
-//inverse local retinex
-    float ach = (float)lp.trans / 100.f;
-    int GW = transformed->W;
-    int GH = transformed->H;
-    float refa = chromaref * cos(hueref);
-    float refb = chromaref * sin(hueref);
+    //inverse local retinex
+    const float ach = lp.trans / 100.f;
+    const int GW = transformed->W;
+    const int GH = transformed->H;
+
+    const float refa = chromaref * cos(hueref) * 327.68f;
+    const float refb = chromaref * sin(hueref) * 327.68f;
+    const float refL = lumaref * 327.68f;
 
     //balance deltaE
     float kL = lp.balance;
     float kab = 1.f;
     balancedeltaE(kL, kab);
+    kab /= SQR(327.68f);
+    kL /= SQR(327.68f);
 
-    LabImage *origblur = new LabImage(GW, GH);
+    LabImage origblur(GW, GH);
 
-    float radius = 3.f / sk;
+    const float radius = 3.f / sk;
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        gaussianBlur(original->L, origblur->L, GW, GH, radius);
-        gaussianBlur(original->a, origblur->a, GW, GH, radius);
-        gaussianBlur(original->b, origblur->b, GW, GH, radius);
+        gaussianBlur(original->L, origblur.L, GW, GH, radius);
+        gaussianBlur(original->a, origblur.a, GW, GH, radius);
+        gaussianBlur(original->b, origblur.b, GW, GH, radius);
 
     }
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
     {
-        const int limscope = 80;
+        constexpr int limscope = 80;
         const float mindE = 2.f + MINSCOPE * lp.sensh * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -1526,13 +1529,13 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 #endif
 
         for (int y = 0; y < transformed->H; y++) {
-            int loy = cy + y;
+            const int loy = cy + y;
 
             for (int x = 0; x < transformed->W; x++) {
-                int lox = cx + x;
+                const int lox = cx + x;
 
                 int zone;
-                float localFactor;
+                float localFactor = 0.f;
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
@@ -1540,73 +1543,30 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
-                float rL = origblur->L[y][x] / 327.68f;
+                if (zone == 2) { // inside selection => no effect, keep original values
+                    continue;
+                }
+
                 float reducdE = 0.f;
-                float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
+                const float dE = sqrt(kab * (SQR(refa - origblur.a[y][x]) + SQR(refb - origblur.b[y][x])) + kL * SQR(refL - origblur.L[y][x]));
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh , reducdE);
 
-                switch (zone) {
-                    case 0: { // outside selection and outside transition zone => full effect, no transition
-                        if (chro == 0) {
-                            float difL = tmp1->L[y][x] - original->L[y][x];
-                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                reducdE *= (1.f - localFactor);
 
-                        }
+                if (chro == 0) {
+                    const float difL = tmp1->L[y][x] - original->L[y][x];
+                    transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                } else /* if (chro == 1) */ {
+                    const float difa = tmp1->a[y][x] - original->a[y][x];
+                    const float difb = tmp1->b[y][x] - original->b[y][x];
 
-                        if (chro == 1) {
-
-                            float difa = tmp1->a[y][x] - original->a[y][x];
-                            float difb = tmp1->b[y][x] - original->b[y][x];
-
-
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * reducdE);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * reducdE);
-                        }
-
-                        break;
-                    }
-
-                    case 1: { // inside transition zone
-                        float factorx = 1.f - localFactor;
-
-                        if (chro == 0) {
-                            float difL = tmp1->L[y][x] - original->L[y][x];
-                            difL *= factorx;
-                            transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-                        }
-
-                        if (chro == 1) {
-                            float difa = tmp1->a[y][x] - original->a[y][x];
-                            float difb = tmp1->b[y][x] - original->b[y][x];
-
-                            difa *= factorx;
-                            difb *= factorx;
-
-                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa * reducdE);
-                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb * reducdE);
-                        }
-
-                        break;
-                    }
-
-                    case 2: { // inside selection => no effect, keep original values
-                        if (chro == 0) {
-                            transformed->L[y][x] = original->L[y][x];
-                        }
-
-                        if (chro == 1) {
-                            transformed->a[y][x] = original->a[y][x];
-                            transformed->b[y][x] = original->b[y][x];
-                        }
-                    }
+                    transformed->a[y][x] = CLIPC(original->a[y][x] + difa * reducdE);
+                    transformed->b[y][x] = CLIPC(original->b[y][x] + difb * reducdE);
                 }
             }
         }
     }
 }
-
-
-
 
 void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
