@@ -270,9 +270,6 @@ DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider
 // todo: bitmask containing desired actions, taken from changesSinceLast
 void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 {
-    // TODO Locallab printf
-    printf("updatePreviewImage\n");
-
     MyMutex::MyLock processingLock(mProcessing);
 
     constexpr int numofphases = 14;
