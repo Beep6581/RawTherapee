@@ -1718,13 +1718,11 @@ int ControlSpotPanel::getSelectedSpot()
     return id;
 }
 
-void ControlSpotPanel::setSelectedSpot(const int id)
+bool ControlSpotPanel::setSelectedSpot(const int id)
 {
     // printf("setSelectedSpot: %d\n", id);
 
     MyMutex::MyLock lock(mTreeview);
-
-    disableParamlistener(true);
 
     const Gtk::TreeModel::Children children = treemodel_->children();
 
@@ -1732,14 +1730,20 @@ void ControlSpotPanel::setSelectedSpot(const int id)
         const Gtk::TreeModel::Row row = *iter;
 
         if (row[spots_.id] == id) {
+            disableParamlistener(true);
+
             treeview_->set_cursor(treemodel_->get_path(row));
             load_ControlSpot_param();
             updateParamVisibility();
             updateCurveOpacity(row);
+
+            disableParamlistener(false);
+
+            return true;
         }
     }
 
-    disableParamlistener(false);
+    return false;
 }
 
 int ControlSpotPanel::getNewId()

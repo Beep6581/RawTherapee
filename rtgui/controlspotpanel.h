@@ -152,8 +152,9 @@ public:
      * Setter of selected spot
      *
      * @param id The id of spot to be selected
+     * @return True if a spot corresponding to the id has been selected
      */
-    void setSelectedSpot(const int id);
+    bool setSelectedSpot(const int id);
 
     // Control spot creation functions
     /**

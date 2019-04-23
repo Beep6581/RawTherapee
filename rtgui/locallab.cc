@@ -1569,13 +1569,21 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 if (pp->locallab.spots.at(i).id == spotId) {
                     // ProcParams update
                     pp->locallab.nbspot--;
-                    pp->locallab.selspot = 0;
                     pp->locallab.spots.erase(pp->locallab.spots.begin() + i);
                     expsettings->deleteControlSpot(spotId);
 
-                    // Select one remaining spot
+                    // Select the first remaining spot before deleted one
                     if (pp->locallab.nbspot > 0) {
-                        expsettings->setSelectedSpot(pp->locallab.spots.at(pp->locallab.selspot).id);
+                        for (int j = i - 1; j >= 0; j--) { // procparams spots uses zero-based index whereas spot ids use one-based index
+                            if (expsettings->setSelectedSpot(j + 1)) { // True if an existing spot has been selected on controlspotpanel
+                                pp->locallab.selspot = j;
+
+                                break;
+                            }
+                        }
+                    } else {
+                        // Reset selspot
+                        pp->locallab.selspot = 0;
                     }
 
                     // Update Locallab tools GUI with selected spot
