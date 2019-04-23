@@ -26,6 +26,7 @@
         <keyword>pp3</keyword>
         <keyword>graphics</keyword>
     </keywords>
+    <content_rating type="oars-1.0" />
     <metadata_license>CC-BY-SA-4.0</metadata_license>
     <project_license>GPL-3.0+</project_license>
     <url type="bugtracker">https://github.com/Beep6581/RawTherapee/issues/new</url>
