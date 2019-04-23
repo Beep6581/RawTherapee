@@ -1110,6 +1110,7 @@ void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
     cirYT->filled = true;
     cirYT->datum = Geometry::IMAGE;
     centerCircle = new Circle();
+    centerCircle->filled = true;
     centerCircle->datum = Geometry::IMAGE;
     centerCircle->radiusInImageSpace = true;
     shape_ellipse = new Ellipse();
