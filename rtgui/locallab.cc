@@ -1467,6 +1467,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     ControlSpotPanel::SpotRow* r;
     LocallabParams::LocallabSpot* newSpot;
 
+    int imW, imH; // Size of image
+    int prW, prH; // Size of preview area
+    int prX, prY; // Coord of preview area center
+    EditDataProvider* const provider = expsettings->getEditProvider();
+
     switch (spotPanelEvent) {
         case (ControlSpotPanel::SpotCreation): // Spot creation event
             // Spot creation (default initialization)
@@ -1503,12 +1508,30 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->shapeMethod = 3;
             }
 
+            // Calculate spot size and center position according to preview area
+            if (provider && !batchMode) {
+                provider->getImageSize(imW, imH);
+                provider->getPreviewCenterPos(prX, prY);
+                provider->getPreviewSize(prW, prH);
+
+                if (imW && imH) { // Image loaded
+                    // Spot center position computation
+                    newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
+                    newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
+                    // Ellipse/rectangle size computation
+                    newSpot->locX = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locX);
+                    newSpot->locXL = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locXL);
+                    newSpot->locY = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locY);
+                    newSpot->locYT = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locYT);
+                }
+            }
             r->locX = newSpot->locX;
             r->locXL = newSpot->locXL;
             r->locY = newSpot->locY;
             r->locYT = newSpot->locYT;
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
+
             r->circrad = newSpot->circrad;
 
             if (newSpot->qualityMethod == "enh") {
@@ -1699,12 +1722,30 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->shapeMethod = 3;
             }
 
+            // Calculate spot size and center position according to preview area
+            if (provider && !batchMode) {
+                provider->getImageSize(imW, imH);
+                provider->getPreviewCenterPos(prX, prY);
+                provider->getPreviewSize(prW, prH);
+
+                if (imW && imH) { // Image loaded
+                    // Spot center position computation
+                    newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
+                    newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
+                    // Ellipse/rectangle size computation
+                    newSpot->locX = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locX);
+                    newSpot->locXL = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locXL);
+                    newSpot->locY = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locY);
+                    newSpot->locYT = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locYT);
+                }
+            }
             r->locX = newSpot->locX;
             r->locXL = newSpot->locXL;
             r->locY = newSpot->locY;
             r->locYT = newSpot->locYT;
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
+
             r->circrad = newSpot->circrad;
 
             if (newSpot->qualityMethod == "enh") {
