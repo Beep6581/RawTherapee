@@ -483,6 +483,7 @@ bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
 
             // Raise event
             visibilityChanged_ = true;
+            eventType = SpotAllVisibilityChanged;
 
             if (!selVisibility) {
                 listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS_ALL"));

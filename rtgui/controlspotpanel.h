@@ -105,7 +105,8 @@ public:
         SpotCreation = 1,
         SpotDeletion = 2,
         SpotSelection = 3,
-        SpotDuplication = 4
+        SpotDuplication = 4,
+        SpotAllVisibilityChanged = 5
     };
 
     // Constructor and management functions

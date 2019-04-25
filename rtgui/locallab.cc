@@ -1794,6 +1794,29 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             break;
 
+        case (ControlSpotPanel::SpotAllVisibilityChanged): // Event when updating visibility of all spots
+            r = expsettings->getSpot(expsettings->getSelectedSpot());
+
+            // ProcParams update
+            for (size_t i = 0; i < pp->locallab.spots.size(); i++) {
+                pp->locallab.spots.at(i).isvisible = r->isvisible;
+            }
+
+            if (pe) {
+                for (size_t i = 0; i < pe->locallab.spots.size(); i++) {
+                    pe->locallab.spots.at(i).isvisible = true;
+                }
+            }
+
+            // ParamsEdited update
+            if (pedited) {
+                for (size_t i = 0; i < pedited->locallab.spots.size(); i++) {
+                    pedited->locallab.spots.at(i).isvisible = true;
+                }
+            }
+
+            break;
+
         default: // Spot or locallab GUI updated
             if (pp->locallab.nbspot > 0) {
                 r = expsettings->getSpot(expsettings->getSelectedSpot());
