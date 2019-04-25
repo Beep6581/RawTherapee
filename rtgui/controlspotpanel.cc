@@ -95,8 +95,9 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const hbox2_ = Gtk::manage(new Gtk::HBox(true, 4));
     buttonrenameconn_ = button_rename_->signal_clicked().connect(
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_rename));
-    buttonvisibilityconn_ = button_visibility_->signal_clicked().connect(
+    buttonvisibilityconn_ = button_visibility_->signal_button_release_event().connect(
                                 sigc::mem_fun(*this, &ControlSpotPanel::on_button_visibility));
+    if(showtooltip) button_visibility_->set_tooltip_markup(M("TP_LOCALLAB_VIS_TOOLTIP"));
     hbox2_->pack_start(*button_rename_);
     hbox2_->pack_start(*button_visibility_);
     pack_start(*hbox2_);
@@ -446,37 +447,70 @@ void ControlSpotPanel::on_button_rename()
     }
 }
 
-void ControlSpotPanel::on_button_visibility()
+bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
 {
     // printf("on_button_visibility\n");
 
     if (!listener) {
-        return;
+        return true;
     }
 
     // Get selected control spot
     const auto s = treeview_->get_selection();
 
     if (!s->count_selected_rows()) {
-        return;
+        return true;
     }
 
     const auto iter = s->get_selected();
     const Gtk::TreeModel::Row row = *iter;
 
-    // Update visibility
-    row[spots_.isvisible] = !(bool)row[spots_.isvisible];
-    updateControlSpotCurve(row);
+    const int ctrl = event->state & GDK_CONTROL_MASK;
 
-    // Raise event
-    visibilityChanged_ = true;
-    const int id = getSelectedSpot();
+    if (event->button == 1) { // Left click on button
+        if (ctrl) { // Ctrl+click case: all spots are shown/hidden
+            // Get visibility of selected spot
+            const bool selVisibility = row[spots_.isvisible];
 
-    if ((bool)row[spots_.isvisible]) {
-        listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " ID#" + std::to_string(id));
-    } else {
-        listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS") + " ID#" + std::to_string(id));
+            // Update visibility of all spot
+            const Gtk::TreeModel::Children children = treemodel_->children();
+
+            for (auto i = children.begin(); i != children.end(); i++) {
+                Gtk::TreeModel::Row r = *i;
+                r[spots_.isvisible] = !selVisibility;
+                updateControlSpotCurve(r);
+            }
+
+            // Raise event
+            visibilityChanged_ = true;
+
+            if (!selVisibility) {
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS_ALL"));
+            } else {
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS_ALL"));
+            }
+
+            return true;
+        } else { // Click case: only selected spot is shown/hidden
+            // Update visibility for selected spot only
+            row[spots_.isvisible] = !row[spots_.isvisible];
+            updateControlSpotCurve(row);
+
+            // Raise event
+            visibilityChanged_ = true;
+            const int id = getSelectedSpot();
+
+            if (row[spots_.isvisible]) {
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " ID#" + std::to_string(id));
+            } else {
+                listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_NVIS") + " ID#" + std::to_string(id));
+            }
+
+            return true;
+        }
     }
+
+    return false;
 }
 
 bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)

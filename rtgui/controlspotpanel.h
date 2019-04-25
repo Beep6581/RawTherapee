@@ -239,7 +239,7 @@ private:
     void on_button_delete();
     void on_button_duplicate();
     void on_button_rename();
-    void on_button_visibility();
+    bool on_button_visibility(GdkEventButton* event);
 
     bool blockTreeviewSearch(GdkEventKey* event);
 

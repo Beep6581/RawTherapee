@@ -2131,10 +2131,13 @@ TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_EV_VIS;Show
 TP_LOCALLAB_EV_NVIS;Hide
+TP_LOCALLAB_EV_VIS_ALL;Show all
+TP_LOCALLAB_EV_NVIS_ALL;Hide all
 TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
 TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_EV_DUPL;Copy of
 TP_LOCALLAB_DUPLSPOTNAME;Copy
+TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right
