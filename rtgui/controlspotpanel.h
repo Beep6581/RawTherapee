@@ -20,6 +20,7 @@
 
 #ifndef _CONTROLSPOTPANEL_H_
 #define _CONTROLSPOTPANEL_H_
+#include <memory>
 
 #include "../rtengine/coord.h"
 #include "adjuster.h"
@@ -141,7 +142,7 @@ public:
      *
      * @return A vector contening the list of spot id
      */
-    std::vector<int>* getSpotIdList();
+    std::vector<int> getSpotIdList();
     /**
      * Getter of selected spot id
      *
@@ -153,7 +154,7 @@ public:
      *
      * @param id The id of spot to be selected
      */
-    void setSelectedSpot(const int id);
+    void setSelectedSpot(int id);
 
     // Control spot creation functions
     /**
@@ -183,7 +184,7 @@ public:
      *
      * @param id The id of the spot to be deleted
      */
-    void deleteControlSpot(const int id);
+    void deleteControlSpot(int id);
 
     // Panel widgets management functions
     /**
@@ -197,7 +198,7 @@ public:
      *
      * @param se A SpotEdited structure containing the widgets edited states to update
      */
-    void setEditedStates(SpotEdited* se);
+    void setEditedStates(const SpotEdited& se);
     /**
      * Implementation of setDefaults function of toolpanel.h
      *

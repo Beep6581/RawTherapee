@@ -611,7 +611,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
 
     // Resize LocallabSpotEdited according to src[0]
     locallab.spots.clear();
-    locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(true));
+//    locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(true));
+    locallab.spots.resize(p.locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(true));
 
     for (size_t i = 1; i < src.size(); i++) {
         const ProcParams& other = src[i];
@@ -1126,7 +1127,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
             // locallab.id and locallab.spots are set to false because cannot be combined
             locallab.id = false;
             locallab.spots.clear();
-            locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(false));
+//            locallab.spots.resize(p.locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(false));
+            locallab.spots.resize(p.locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(false));
         }
 
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
@@ -2520,9 +2522,9 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.locallab.spots.clear();
 
         for (size_t i = 0; i < mods.locallab.spots.size(); i++) {
-            LocallabParams::LocallabSpot *newSpot = new LocallabParams::LocallabSpot();
-            newSpot->id = mods.locallab.spots.at(i).id;
-            toEdit.locallab.spots.push_back(*newSpot);
+            LocallabParams::LocallabSpot newSpot;
+            newSpot.id = mods.locallab.spots.at(i).id;
+            toEdit.locallab.spots.push_back(newSpot);
         }
 
         // Common spots in tmpLocallab and mods are restored in toEdit

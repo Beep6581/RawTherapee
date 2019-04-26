@@ -4957,7 +4957,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             // Initialize LocallabSpotEdited to false according to nbspot
             if (pedited) {
                 pedited->locallab.spots.clear();
-                pedited->locallab.spots.resize(locallab.nbspot, new LocallabParamsEdited::LocallabSpotEdited(false));
+                pedited->locallab.spots.resize(locallab.nbspot, LocallabParamsEdited::LocallabSpotEdited(false));
             }
 
             for (int i = 0; i < locallab.nbspot; i++) {
