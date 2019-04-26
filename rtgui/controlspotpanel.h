@@ -18,19 +18,21 @@
  *  2018 Pierre Cabrera <pierre.cab@gmail.com>
  */
 
-#ifndef _CONTROLSPOTPANEL_H_
-#define _CONTROLSPOTPANEL_H_
+#pragma once
+
 #include <memory>
+#include <string>
+
+#include <gtkmm.h>
 
 #include "../rtengine/coord.h"
+
 #include "adjuster.h"
 #include "editcallbacks.h"
 #include "guiutils.h"
 #include "threadutils.h"
-#include "toolpanel.h"
-#include <gtkmm.h>
-#include <string>
 #include "thresholdadjuster.h"
+#include "toolpanel.h"
 
 class ControlSpotPanel:
     public ToolParamBlock,
@@ -388,5 +390,3 @@ private:
     // Treeview mutex
     MyMutex mTreeview;
 };
-
-#endif // _CONTROLSPOTPANEL_H_

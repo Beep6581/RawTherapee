@@ -53,7 +53,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
-    
+
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
     locX_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH"), 2, 3000, 1, 250))),
     locXL_(Gtk::manage(new Adjuster(M("TP_LOCAL_WIDTH_L"), 2, 3000, 1, 250))),
@@ -86,7 +86,7 @@ ControlSpotPanel::ControlSpotPanel():
     buttondeleteconn_ = button_delete_->signal_clicked().connect(
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_delete));
     buttonduplicateconn_ = button_duplicate_->signal_clicked().connect(
-                            sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
+                               sigc::mem_fun(*this, &ControlSpotPanel::on_button_duplicate));
     hbox1_->pack_start(*button_add_);
     hbox1_->pack_start(*button_delete_);
     hbox1_->pack_start(*button_duplicate_);
@@ -111,8 +111,8 @@ ControlSpotPanel::ControlSpotPanel():
     // Disable search to prevent hijacking keyboard shortcuts #5265
     treeview_->set_enable_search(false);
     treeview_->signal_key_press_event().connect(
-            sigc::mem_fun(
-                    *this, &ControlSpotPanel::blockTreeviewSearch), false);
+        sigc::mem_fun(
+            *this, &ControlSpotPanel::blockTreeviewSearch), false);
 
     auto cell = Gtk::manage(new Gtk::CellRendererText());
     int cols_count = treeview_->append_column("ID", *cell);
@@ -164,7 +164,11 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxspotmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
     ctboxspotmethod->pack_start(*labelspotmethod, Gtk::PACK_SHRINK, 4);
-    if(showtooltip) ctboxspotmethod->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
+
+    if (showtooltip) {
+        ctboxspotmethod->set_tooltip_markup(M("TP_LOCALLAB_EXCLUTYPE_TOOLTIP"));
+    }
+
     spotMethod_->append(M("TP_LOCALLAB_EXNORM"));
     spotMethod_->append(M("TP_LOCALLAB_EXECLU"));
     spotMethod_->set_active(0);
@@ -175,9 +179,17 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*ctboxspotmethod);
 
     excluFrame->set_label_align(0.025, 0.5);
-    if(showtooltip) excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
+
+    if (showtooltip) {
+        excluFrame->set_tooltip_text(M("TP_LOCALLAB_EXCLUF_TOOLTIP"));
+    }
+
     ToolParamBlock* const excluBox = Gtk::manage(new ToolParamBlock());
-    if(showtooltip) sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
+
+    if (showtooltip) {
+        sensiexclu_->set_tooltip_text(M("TP_LOCALLAB_SENSIEXCLU_TOOLTIP"));
+    }
+
     sensiexclu_->setAdjusterListener(this);
     structexclu_->setAdjusterListener(this);
     excluBox->pack_start(*sensiexclu_);
@@ -188,7 +200,11 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
     ctboxshapemethod->pack_start(*labelshapemethod, Gtk::PACK_SHRINK, 4);
-    if(showtooltip) ctboxshapemethod->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
+
+    if (showtooltip) {
+        ctboxshapemethod->set_tooltip_markup(M("TP_LOCALLAB_STYPE_TOOLTIP"));
+    }
+
     shapeMethod_->append(M("TP_LOCALLAB_IND"));
     shapeMethod_->append(M("TP_LOCALLAB_SYM"));
     shapeMethod_->append(M("TP_LOCALLAB_INDSL"));
@@ -224,7 +240,11 @@ ControlSpotPanel::ControlSpotPanel():
     Gtk::HBox* const ctboxqualitymethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
-    if(showtooltip) ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
+
+    if (showtooltip) {
+        ctboxqualitymethod->set_tooltip_markup(M("TP_LOCALLAB_METHOD_TOOLTIP"));
+    }
+
     qualityMethod_->append(M("TP_LOCALLAB_ENH"));
     qualityMethod_->append(M("TP_LOCALLAB_ENHDEN"));
     qualityMethod_->set_active(1);
@@ -236,10 +256,21 @@ ControlSpotPanel::ControlSpotPanel():
 
     Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
     transitFrame->set_label_align(0.025, 0.5);
-    if(showtooltip) transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+
+    if (showtooltip) {
+        transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+    }
+
     ToolParamBlock* const transitBox = Gtk::manage(new ToolParamBlock());
-    if(showtooltip) transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
-    if(showtooltip) transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
+
+    if (showtooltip) {
+        transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+    }
+
+    if (showtooltip) {
+        transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
+    }
+
     transit_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
 
@@ -247,10 +278,14 @@ ControlSpotPanel::ControlSpotPanel():
     transitBox->pack_start(*transitweak_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
-    
+
     Gtk::Frame* const artifFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ARTIF")));
     artifFrame->set_label_align(0.025, 0.5);
-    if(showtooltip) artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
+
+    if (showtooltip) {
+        artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
+    }
+
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
     thresh_->setAdjusterListener(this);
     struc_->setAdjusterListener(this);
@@ -264,7 +299,7 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*artifFrame);
 
     avoidConn_  = avoid_->signal_toggled().connect(
-            sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
+                      sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     pack_start(*avoid_);
 
     show_all();
@@ -398,16 +433,18 @@ void ControlSpotPanel::on_button_duplicate()
 
     // Raise event
     const int selId = getSelectedSpot();
+
     if (selId == 0) { // No selected spot to duplicate
         return;
     }
+
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDuplication;
     const int newId = getNewId();
     listener->panelChanged(EvLocallabSpotCreated, "ID#" + std::to_string(newId)
-                                + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
-                                + std::to_string(selId) + ")");
+                           + " (" + M("TP_LOCALLAB_EV_DUPL") + " ID#"
+                           + std::to_string(selId) + ")");
 }
 
 void ControlSpotPanel::on_button_rename()
@@ -437,6 +474,7 @@ void ControlSpotPanel::on_button_rename()
     // Update actual name and raise event
     if (status == RenameDialog::OkButton) {
         const Glib::ustring newname = d.get_new_name();
+
         if (newname != actualname) { // Event is only raised if name is updated
             nameChanged_ = true;
             row[spots_.name] = newname;
@@ -708,6 +746,7 @@ void ControlSpotPanel::updateParamVisibility()
 
     // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with shapeMethodChanged function)
     const int method = shapeMethod_->get_active_row_number();
+
     if (!batchMode) {
         if (method == 1 || method == 3) { // Symmetrical cases
             locXL_->hide();
@@ -810,7 +849,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(Evlocallabstructexlu, structexclu_->getTextValue());
         }
     }
-    
+
     if (a == struc_) {
         row[spots_.struc] = struc_->getValue();
 
@@ -1320,9 +1359,10 @@ CursorShape ControlSpotPanel::getCursor(int objectID) const
 
     // When there is no control spot (i.e. no selected row), objectID can unexpectedly be different from -1 and produced not desired behavior
     const auto s = treeview_->get_selection();
+
     if (!s->count_selected_rows()) {
-         return CSHandOpen;
-     }
+        return CSHandOpen;
+    }
 
     const int rem_ = objectID % 7;
 
@@ -1396,6 +1436,7 @@ bool ControlSpotPanel::mouseOver(int modifierKey)
 
         for (auto iter = children.begin(); iter != children.end(); iter++) {
             Gtk::TreeModel::Row row = *iter;
+
             if (row[spots_.curveid] == curveId_ && *row != *selRow) {
                 row[spots_.mouseover] = true;
             } else {
@@ -1498,7 +1539,7 @@ bool ControlSpotPanel::button1Pressed(int modifierKey)
     }
 
     lastCoord_.set(provider->posImage.x + provider->deltaImage.x, provider->posImage.y + provider->deltaImage.y);
-    EditSubscriber::action = EditSubscriber::Action::DRAGGING;    
+    EditSubscriber::action = EditSubscriber::Action::DRAGGING;
     return true;
 }
 
