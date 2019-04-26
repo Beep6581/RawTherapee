@@ -467,8 +467,8 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
 
     // Manage Locallab mask visibility
     if (event == rtengine::EvlocallabshowmaskcolMethod || event == rtengine::EvlocallabshowmaskexpMethod || event == rtengine::EvlocallabshowmaskSHMethod || event == rtengine::EvlocallabshowmaskcbMethod) {
-        Locallab::llMaskVisibility* maskStruc = locallab->getMaskVisibility();
-        ipc->setLocallabMaskVisibility(maskStruc->colorMask, maskStruc->expMask, maskStruc->SHMask,  maskStruc->cbMask);
+        const Locallab::MaskVisibility maskStruc = locallab->getMaskVisibility();
+        ipc->setLocallabMaskVisibility(maskStruc.colorMask, maskStruc.expMask, maskStruc.SHMask,  maskStruc.cbMask);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing

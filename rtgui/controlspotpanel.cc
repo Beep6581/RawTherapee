@@ -1677,49 +1677,45 @@ int ControlSpotPanel::getEventType()
     return tmp;
 }
 
-ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
+ControlSpotPanel::SpotRow ControlSpotPanel::getSpot(int id) const
 {
     // printf("getSpot: %d\n", id);
 
     MyMutex::MyLock lock(mTreeview);
 
-    SpotRow* r = new SpotRow();
+    SpotRow res = {};
 
-    const Gtk::TreeModel::Children children = treemodel_->children();
-
-    for (auto iter = children.begin(); iter != children.end(); iter++) {
-        const Gtk::TreeModel::Row row = *iter;
-
+    for (const auto& row : treemodel_->children()) {
         if (row[spots_.id] == id) {
-            r->id = row[spots_.id];
-            r->name = row[spots_.name];
-            r->isvisible = row[spots_.isvisible];
-            r->shape = row[spots_.shape];
-            r->spotMethod = row[spots_.spotMethod];
-            r->sensiexclu = row[spots_.sensiexclu];
-            r->structexclu = row[spots_.structexclu];
-            r->struc = row[spots_.struc];
-            r->shapeMethod = row[spots_.shapeMethod];
-            r->locX = row[spots_.locX];
-            r->locXL = row[spots_.locXL];
-            r->locY = row[spots_.locY];
-            r->locYT = row[spots_.locYT];
-            r->centerX = row[spots_.centerX];
-            r->centerY = row[spots_.centerY];
-            r->circrad = row[spots_.circrad];
-            r->qualityMethod = row[spots_.qualityMethod];
-            r->transit = row[spots_.transit];
-            r->thresh = row[spots_.thresh];
-            r->iter = row[spots_.iter];
-            r->balan = row[spots_.balan];
-            r->transitweak = row[spots_.transitweak];
-            r->avoid = row[spots_.avoid];
+            res.id = row[spots_.id];
+            res.name = row[spots_.name];
+            res.isvisible = row[spots_.isvisible];
+            res.shape = row[spots_.shape];
+            res.spotMethod = row[spots_.spotMethod];
+            res.sensiexclu = row[spots_.sensiexclu];
+            res.structexclu = row[spots_.structexclu];
+            res.struc = row[spots_.struc];
+            res.shapeMethod = row[spots_.shapeMethod];
+            res.locX = row[spots_.locX];
+            res.locXL = row[spots_.locXL];
+            res.locY = row[spots_.locY];
+            res.locYT = row[spots_.locYT];
+            res.centerX = row[spots_.centerX];
+            res.centerY = row[spots_.centerY];
+            res.circrad = row[spots_.circrad];
+            res.qualityMethod = row[spots_.qualityMethod];
+            res.transit = row[spots_.transit];
+            res.thresh = row[spots_.thresh];
+            res.iter = row[spots_.iter];
+            res.balan = row[spots_.balan];
+            res.transitweak = row[spots_.transitweak];
+            res.avoid = row[spots_.avoid];
 
-            return r;
+            break;
         }
     }
 
-    return nullptr;
+    return res;
 }
 
 std::vector<int> ControlSpotPanel::getSpotIdList()
@@ -1799,39 +1795,39 @@ int ControlSpotPanel::getNewId()
 }
 
 
-void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
+void ControlSpotPanel::addControlSpot(const SpotRow& newSpot)
 {
-    // printf("addControlSpot: %d\n", newSpot->id);
+    // printf("addControlSpot: %d\n", newSpot.id);
 
     MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
     Gtk::TreeModel::Row row = * (treemodel_->append());
     row[spots_.mouseover] = false;
-    row[spots_.id] = newSpot->id;
-    row[spots_.name] = newSpot->name;
-    row[spots_.isvisible] = newSpot->isvisible;
+    row[spots_.id] = newSpot.id;
+    row[spots_.name] = newSpot.name;
+    row[spots_.isvisible] = newSpot.isvisible;
     row[spots_.curveid] = 0; // No associated curve
-    row[spots_.shape] = newSpot->shape;
-    row[spots_.spotMethod] = newSpot->spotMethod;
-    row[spots_.sensiexclu] = newSpot->sensiexclu;
-    row[spots_.structexclu] = newSpot->structexclu;
-    row[spots_.struc] = newSpot->struc;
-    row[spots_.shapeMethod] = newSpot->shapeMethod;
-    row[spots_.locX] = newSpot->locX;
-    row[spots_.locXL] = newSpot->locXL;
-    row[spots_.locY] = newSpot->locY;
-    row[spots_.locYT] = newSpot->locYT;
-    row[spots_.centerX] = newSpot->centerX;
-    row[spots_.centerY] = newSpot->centerY;
-    row[spots_.circrad] = newSpot->circrad;
-    row[spots_.qualityMethod] = newSpot->qualityMethod;
-    row[spots_.transit] = newSpot->transit;
-    row[spots_.thresh] = newSpot->thresh;
-    row[spots_.iter] = newSpot->iter;
-    row[spots_.balan] = newSpot->balan;
-    row[spots_.transitweak] = newSpot->transitweak;
-    row[spots_.avoid] = newSpot->avoid;
+    row[spots_.shape] = newSpot.shape;
+    row[spots_.spotMethod] = newSpot.spotMethod;
+    row[spots_.sensiexclu] = newSpot.sensiexclu;
+    row[spots_.structexclu] = newSpot.structexclu;
+    row[spots_.struc] = newSpot.struc;
+    row[spots_.shapeMethod] = newSpot.shapeMethod;
+    row[spots_.locX] = newSpot.locX;
+    row[spots_.locXL] = newSpot.locXL;
+    row[spots_.locY] = newSpot.locY;
+    row[spots_.locYT] = newSpot.locYT;
+    row[spots_.centerX] = newSpot.centerX;
+    row[spots_.centerY] = newSpot.centerY;
+    row[spots_.circrad] = newSpot.circrad;
+    row[spots_.qualityMethod] = newSpot.qualityMethod;
+    row[spots_.transit] = newSpot.transit;
+    row[spots_.thresh] = newSpot.thresh;
+    row[spots_.iter] = newSpot.iter;
+    row[spots_.balan] = newSpot.balan;
+    row[spots_.transitweak] = newSpot.transitweak;
+    row[spots_.avoid] = newSpot.avoid;
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -1912,60 +1908,60 @@ void ControlSpotPanel::deleteControlSpot(const int id)
     disableParamlistener(false);
 }
 
-ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
+ControlSpotPanel::SpotEdited ControlSpotPanel::getEditedStates() const
 {
     // printf("getEditedStates\n");
 
-    SpotEdited* se = new SpotEdited();
+    SpotEdited se = {};
 
     if (nbSpotChanged_) {
-        se->nbspot = true;
+        se.nbspot = true;
         // nbSpotChanged_ = false;
     } else {
-        se->nbspot = false;
+        se.nbspot = false;
     }
 
     if (selSpotChanged_) {
-        se->selspot = true;
+        se.selspot = true;
         // selSpotChanged_ = false;
     } else {
-        se->selspot = false;
+        se.selspot = false;
     }
 
     if (nameChanged_) {
-        se->name = true;
+        se.name = true;
         // nameChanged_ = false;
     } else {
-        se->name = false;
+        se.name = false;
     }
 
     if (visibilityChanged_) {
-        se->isvisible = true;
+        se.isvisible = true;
         // visibilityChanged_ = false;
     } else {
-        se->isvisible = false;
+        se.isvisible = false;
     }
 
-    se->shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->sensiexclu = sensiexclu_->getEditedState();
-    se->structexclu = structexclu_->getEditedState();
-    se->struc = struc_->getEditedState();
-    se->shapeMethod = shapeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->locX = locX_->getEditedState();
-    se->locXL = locXL_->getEditedState();
-    se->locY = locY_->getEditedState();
-    se->locYT = locYT_->getEditedState();
-    se->centerX = centerX_->getEditedState();
-    se-> centerY = centerY_->getEditedState();
-    se->circrad = circrad_->getEditedState();
-    se->qualityMethod = qualityMethod_->get_active_text() != M("GENERAL_UNCHANGED");
-    se->transit = transit_->getEditedState();
-    se->thresh = thresh_->getEditedState();
-    se->iter = iter_->getEditedState();
-    se->balan = balan_->getEditedState();
-    se->transitweak = transitweak_->getEditedState();
-    se->avoid = !avoid_->get_inconsistent();
+    se.shape = shape_->get_active_text() != M("GENERAL_UNCHANGED");
+    se.spotMethod = spotMethod_->get_active_text() != M("GENERAL_UNCHANGED");
+    se.sensiexclu = sensiexclu_->getEditedState();
+    se.structexclu = structexclu_->getEditedState();
+    se.struc = struc_->getEditedState();
+    se.shapeMethod = shapeMethod_->get_active_text() != M("GENERAL_UNCHANGED");
+    se.locX = locX_->getEditedState();
+    se.locXL = locXL_->getEditedState();
+    se.locY = locY_->getEditedState();
+    se.locYT = locYT_->getEditedState();
+    se.centerX = centerX_->getEditedState();
+    se. centerY = centerY_->getEditedState();
+    se.circrad = circrad_->getEditedState();
+    se.qualityMethod = qualityMethod_->get_active_text() != M("GENERAL_UNCHANGED");
+    se.transit = transit_->getEditedState();
+    se.thresh = thresh_->getEditedState();
+    se.iter = iter_->getEditedState();
+    se.balan = balan_->getEditedState();
+    se.transitweak = transitweak_->getEditedState();
+    se.avoid = !avoid_->get_inconsistent();
 
     return se;
 }

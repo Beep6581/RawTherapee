@@ -138,7 +138,7 @@ public:
      * @param id The spot id to get params
      * @return A SpotRow structure containing params of associated spot
      */
-    SpotRow* getSpot(const int id);
+    SpotRow getSpot(int id) const;
     /**
      * Get of spot id list
      *
@@ -170,7 +170,7 @@ public:
      *
      * @param newSpot A SpotRow structure containing new spot params
      */
-    void addControlSpot(SpotRow* newSpot);
+    void addControlSpot(const SpotRow& newSpot);
 
     // Control spot update function
     /**
@@ -194,7 +194,7 @@ public:
      *
      * @return A SpotEdited structure containing the widgets edited states
      */
-    SpotEdited* getEditedStates();
+    SpotEdited getEditedStates() const;
     /**
      * Setter of panel widgets edited states
      *
@@ -388,5 +388,5 @@ private:
     Gdk::RGBA colorMouseover, colorNominal;
 
     // Treeview mutex
-    MyMutex mTreeview;
+    mutable MyMutex mTreeview;
 };

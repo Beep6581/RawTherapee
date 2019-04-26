@@ -1255,31 +1255,32 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
         // printf("nh=%f nl=%f nc=%f\n", normHuer, normLumar, normChromar);
 
         idle_register.add(
-        [this, normHuer, normLumar, normChromar]() -> bool {
-            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            [this, normHuer, normLumar, normChromar]() -> bool
+            {
+                GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
-            // Update Color & Light mask background
-            CCmaskshape->updateLocallabBackground(normChromar);
-            LLmaskshape->updateLocallabBackground(normLumar);
-            HHmaskshape->updateLocallabBackground(normHuer);
+                // Update Color & Light mask background
+                CCmaskshape->updateLocallabBackground(normChromar);
+                LLmaskshape->updateLocallabBackground(normLumar);
+                HHmaskshape->updateLocallabBackground(normHuer);
 
-            // Update Exposure mask background
-            CCmaskexpshape->updateLocallabBackground(normChromar);
-            LLmaskexpshape->updateLocallabBackground(normLumar);
-            HHmaskexpshape->updateLocallabBackground(normHuer);
+                // Update Exposure mask background
+                CCmaskexpshape->updateLocallabBackground(normChromar);
+                LLmaskexpshape->updateLocallabBackground(normLumar);
+                HHmaskexpshape->updateLocallabBackground(normHuer);
 
-            // Update Shadow Highlight mask background
-            CCmaskSHshape->updateLocallabBackground(normChromar);
-            LLmaskSHshape->updateLocallabBackground(normLumar);
-            HHmaskSHshape->updateLocallabBackground(normHuer);
+                // Update Shadow Highlight mask background
+                CCmaskSHshape->updateLocallabBackground(normChromar);
+                LLmaskSHshape->updateLocallabBackground(normLumar);
+                HHmaskSHshape->updateLocallabBackground(normHuer);
 
-            // Update CBDL mask background
-            CCmaskcbshape->updateLocallabBackground(normChromar);
-            LLmaskcbshape->updateLocallabBackground(normLumar);
-            HHmaskcbshape->updateLocallabBackground(normHuer);
+                // Update CBDL mask background
+                CCmaskcbshape->updateLocallabBackground(normChromar);
+                LLmaskcbshape->updateLocallabBackground(normLumar);
+                HHmaskcbshape->updateLocallabBackground(normHuer);
 
-            return false;
-        }
+                return false;
+            }
         );
     }
 }
@@ -1364,59 +1365,59 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
      }
 
     // Add existent spots based on pp
-    ControlSpotPanel::SpotRow* const r = new ControlSpotPanel::SpotRow();
+    ControlSpotPanel::SpotRow r = {};
 
     for (int i = 0; i < pp->locallab.nbspot && i < (int)pp->locallab.spots.size(); i++) {
-        r->id = pp->locallab.spots.at(i).id;
-        r->name = pp->locallab.spots.at(i).name;
-        r->isvisible = pp->locallab.spots.at(i).isvisible;
+        r.id = pp->locallab.spots.at(i).id;
+        r.name = pp->locallab.spots.at(i).name;
+        r.isvisible = pp->locallab.spots.at(i).isvisible;
 
         if (pp->locallab.spots.at(i).shape == "ELI") {
-            r->shape = 0;
+            r.shape = 0;
         } else {
-            r->shape = 1;
+            r.shape = 1;
         }
 
         if (pp->locallab.spots.at(i).spotMethod == "norm") {
-            r->spotMethod = 0;
+            r.spotMethod = 0;
         } else {
-            r->spotMethod = 1;
+            r.spotMethod = 1;
         }
 
-        r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
-        r->structexclu = pp->locallab.spots.at(i).structexclu;
-        r->struc = pp->locallab.spots.at(i).struc;
+        r.sensiexclu = pp->locallab.spots.at(i).sensiexclu;
+        r.structexclu = pp->locallab.spots.at(i).structexclu;
+        r.struc = pp->locallab.spots.at(i).struc;
 
         if (pp->locallab.spots.at(i).shapeMethod == "IND") {
-            r->shapeMethod = 0;
+            r.shapeMethod = 0;
         } else if (pp->locallab.spots.at(i).shapeMethod == "SYM") {
-            r->shapeMethod = 1;
+            r.shapeMethod = 1;
         } else if (pp->locallab.spots.at(i).shapeMethod == "INDSL") {
-            r->shapeMethod = 2;
+            r.shapeMethod = 2;
         } else {
-            r->shapeMethod = 3;
+            r.shapeMethod = 3;
         }
 
-        r->locX = pp->locallab.spots.at(i).locX;
-        r->locXL = pp->locallab.spots.at(i).locXL;
-        r->locY = pp->locallab.spots.at(i).locY;
-        r->locYT = pp->locallab.spots.at(i).locYT;
-        r->centerX = pp->locallab.spots.at(i).centerX;
-        r->centerY = pp->locallab.spots.at(i).centerY;
-        r->circrad = pp->locallab.spots.at(i).circrad;
+        r.locX = pp->locallab.spots.at(i).locX;
+        r.locXL = pp->locallab.spots.at(i).locXL;
+        r.locY = pp->locallab.spots.at(i).locY;
+        r.locYT = pp->locallab.spots.at(i).locYT;
+        r.centerX = pp->locallab.spots.at(i).centerX;
+        r.centerY = pp->locallab.spots.at(i).centerY;
+        r.circrad = pp->locallab.spots.at(i).circrad;
 
         if (pp->locallab.spots.at(i).qualityMethod == "enh") {
-            r->qualityMethod = 0;
+            r.qualityMethod = 0;
         } else {
-            r->qualityMethod = 1;
+            r.qualityMethod = 1;
         }
 
-        r->transit = pp->locallab.spots.at(i).transit;
-        r->thresh = pp->locallab.spots.at(i).thresh;
-        r->iter = pp->locallab.spots.at(i).iter;
-        r->balan = pp->locallab.spots.at(i).balan;
-        r->transitweak = pp->locallab.spots.at(i).transitweak;
-        r->avoid = pp->locallab.spots.at(i).avoid;
+        r.transit = pp->locallab.spots.at(i).transit;
+        r.thresh = pp->locallab.spots.at(i).thresh;
+        r.iter = pp->locallab.spots.at(i).iter;
+        r.balan = pp->locallab.spots.at(i).balan;
+        r.transitweak = pp->locallab.spots.at(i).transitweak;
+        r.avoid = pp->locallab.spots.at(i).avoid;
 
         expsettings->addControlSpot(r);
     }
@@ -1459,62 +1460,62 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
     const int spotPanelEvent = expsettings->getEventType();
     int spotId;
-    ControlSpotPanel::SpotRow* r;
+    ControlSpotPanel::SpotRow r;
     LocallabParams::LocallabSpot newSpot;
 
     switch (spotPanelEvent) {
         case ControlSpotPanel::SpotCreation: { // Spot creation event
             spotId = expsettings->getNewId();
-            r = new ControlSpotPanel::SpotRow();
-            r->id = newSpot.id = spotId;
-            r->name = newSpot.name = M("TP_LOCALLAB_SPOTNAME") + std::to_string(spotId);
-            r->isvisible = newSpot.isvisible;
+            r = {};
+            r.id = newSpot.id = spotId;
+            r.name = newSpot.name = M("TP_LOCALLAB_SPOTNAME") + std::to_string(spotId);
+            r.isvisible = newSpot.isvisible;
 
             if (newSpot.shape == "ELI") {
-                r->shape = 0;
+                r.shape = 0;
             } else {
-                r->shape = 1;
+                r.shape = 1;
             }
 
             if (newSpot.spotMethod == "norm") {
-                r->spotMethod = 0;
+                r.spotMethod = 0;
             } else {
-                r->spotMethod = 1;
+                r.spotMethod = 1;
             }
 
-            r->sensiexclu = newSpot.sensiexclu;
-            r->structexclu = newSpot.structexclu;
-            r->struc = newSpot.struc;
+            r.sensiexclu = newSpot.sensiexclu;
+            r.structexclu = newSpot.structexclu;
+            r.struc = newSpot.struc;
 
             if (newSpot.shapeMethod == "IND") {
-                r->shapeMethod = 0;
+                r.shapeMethod = 0;
             } else if (newSpot.shapeMethod == "SYM") {
-                r->shapeMethod = 1;
+                r.shapeMethod = 1;
             } else if (newSpot.shapeMethod == "INDSL") {
-                r->shapeMethod = 2;
+                r.shapeMethod = 2;
             } else {
-                r->shapeMethod = 3;
+                r.shapeMethod = 3;
             }
 
-            r->locX = newSpot.locX;
-            r->locXL = newSpot.locXL;
-            r->locY = newSpot.locY;
-            r->locYT = newSpot.locYT;
-            r->centerX = newSpot.centerX;
-            r->centerY = newSpot.centerY;
-            r->circrad = newSpot.circrad;
+            r.locX = newSpot.locX;
+            r.locXL = newSpot.locXL;
+            r.locY = newSpot.locY;
+            r.locYT = newSpot.locYT;
+            r.centerX = newSpot.centerX;
+            r.centerY = newSpot.centerY;
+            r.circrad = newSpot.circrad;
 
             if (newSpot.qualityMethod == "enh") {
-                r->qualityMethod = 0;
+                r.qualityMethod = 0;
             } else {
-                r->qualityMethod = 1;
+                r.qualityMethod = 1;
             }
-            r->transit = newSpot.transit;
-            r->thresh = newSpot.thresh;
-            r->iter = newSpot.iter;
-            r->balan = newSpot.balan;
-            r->transitweak = newSpot.transitweak;
-            r->avoid = newSpot.avoid;
+            r.transit = newSpot.transit;
+            r.thresh = newSpot.thresh;
+            r.iter = newSpot.iter;
+            r.balan = newSpot.balan;
+            r.transitweak = newSpot.transitweak;
+            r.avoid = newSpot.avoid;
             
             expsettings->addControlSpot(r);
 
@@ -1657,56 +1658,56 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
             // Spot creation (initialization at currently selected spot)
             spotId = expsettings->getNewId();
-            r = new ControlSpotPanel::SpotRow();
-            r->id = newSpot.id = spotId;
-            r->name = newSpot.name = newSpot.name + " - " + M("TP_LOCALLAB_DUPLSPOTNAME");
-            r->isvisible = newSpot.isvisible;
+            r = {};
+            r.id = newSpot.id = spotId;
+            r.name = newSpot.name = newSpot.name + " - " + M("TP_LOCALLAB_DUPLSPOTNAME");
+            r.isvisible = newSpot.isvisible;
 
             if (newSpot.shape == "ELI") {
-                r->shape = 0;
+                r.shape = 0;
             } else {
-                r->shape = 1;
+                r.shape = 1;
             }
 
             if (newSpot.spotMethod == "norm") {
-                r->spotMethod = 0;
+                r.spotMethod = 0;
             } else {
-                r->spotMethod = 1;
+                r.spotMethod = 1;
             }
-            r->sensiexclu = newSpot.sensiexclu;
-            r->structexclu = newSpot.structexclu;
-            r->struc = newSpot.struc;
+            r.sensiexclu = newSpot.sensiexclu;
+            r.structexclu = newSpot.structexclu;
+            r.struc = newSpot.struc;
 
             if (newSpot.shapeMethod == "IND") {
-                r->shapeMethod = 0;
+                r.shapeMethod = 0;
             } else if (newSpot.shapeMethod == "SYM") {
-                r->shapeMethod = 1;
+                r.shapeMethod = 1;
             } else if (newSpot.shapeMethod == "INDSL") {
-                r->shapeMethod = 2;
+                r.shapeMethod = 2;
             } else {
-                r->shapeMethod = 3;
+                r.shapeMethod = 3;
             }
             
-            r->locX = newSpot.locX;
-            r->locXL = newSpot.locXL;
-            r->locY = newSpot.locY;
-            r->locYT = newSpot.locYT;
-            r->centerX = newSpot.centerX;
-            r->centerY = newSpot.centerY;
-            r->circrad = newSpot.circrad;
+            r.locX = newSpot.locX;
+            r.locXL = newSpot.locXL;
+            r.locY = newSpot.locY;
+            r.locYT = newSpot.locYT;
+            r.centerX = newSpot.centerX;
+            r.centerY = newSpot.centerY;
+            r.circrad = newSpot.circrad;
 
             if (newSpot.qualityMethod == "enh") {
-                r->qualityMethod = 0;
+                r.qualityMethod = 0;
             } else {
-                r->qualityMethod = 1;
+                r.qualityMethod = 1;
             }
             
-            r->transit = newSpot.transit;
-            r->thresh = newSpot.thresh;
-            r->iter = newSpot.iter;
-            r->balan = newSpot.balan;
-            r->transitweak = newSpot.transitweak;
-            r->avoid = newSpot.avoid;
+            r.transit = newSpot.transit;
+            r.thresh = newSpot.thresh;
+            r.iter = newSpot.iter;
+            r.balan = newSpot.balan;
+            r.transitweak = newSpot.transitweak;
+            r.avoid = newSpot.avoid;
             expsettings->addControlSpot(r);
 
             // ProcParams update
@@ -1749,55 +1750,55 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 // ProcParams update
                 if (pp->locallab.selspot < (int)pp->locallab.spots.size()) {
                     // Control spot settings
-                    pp->locallab.spots.at(pp->locallab.selspot).name = r->name;
-                    pp->locallab.spots.at(pp->locallab.selspot).isvisible = r->isvisible;
+                    pp->locallab.spots.at(pp->locallab.selspot).name = r.name;
+                    pp->locallab.spots.at(pp->locallab.selspot).isvisible = r.isvisible;
 
-                    if (r->shape == 0) {
+                    if (r.shape == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shape = "ELI";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).shape = "RECT";
                     }
 
-                    if (r->spotMethod == 0) {
+                    if (r.spotMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "norm";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
                     }
 
-                    pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
-                    pp->locallab.spots.at(pp->locallab.selspot).structexclu = r->structexclu;
-                    pp->locallab.spots.at(pp->locallab.selspot).struc = r->struc;
+                    pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r.sensiexclu;
+                    pp->locallab.spots.at(pp->locallab.selspot).structexclu = r.structexclu;
+                    pp->locallab.spots.at(pp->locallab.selspot).struc = r.struc;
 
-                    if (r->shapeMethod == 0) {
+                    if (r.shapeMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "IND";
-                    } else if (r->shapeMethod == 1) {
+                    } else if (r.shapeMethod == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "SYM";
-                    } else if (r->shapeMethod == 2) {
+                    } else if (r.shapeMethod == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "INDSL";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "SYMSL";
                     }
 
-                    pp->locallab.spots.at(pp->locallab.selspot).locX = r->locX;
-                    pp->locallab.spots.at(pp->locallab.selspot).locXL = r->locXL;
-                    pp->locallab.spots.at(pp->locallab.selspot).locY = r->locY;
-                    pp->locallab.spots.at(pp->locallab.selspot).locYT = r->locYT;
-                    pp->locallab.spots.at(pp->locallab.selspot).centerX = r->centerX;
-                    pp->locallab.spots.at(pp->locallab.selspot).centerY = r->centerY;
-                    pp->locallab.spots.at(pp->locallab.selspot).circrad = r->circrad;
+                    pp->locallab.spots.at(pp->locallab.selspot).locX = r.locX;
+                    pp->locallab.spots.at(pp->locallab.selspot).locXL = r.locXL;
+                    pp->locallab.spots.at(pp->locallab.selspot).locY = r.locY;
+                    pp->locallab.spots.at(pp->locallab.selspot).locYT = r.locYT;
+                    pp->locallab.spots.at(pp->locallab.selspot).centerX = r.centerX;
+                    pp->locallab.spots.at(pp->locallab.selspot).centerY = r.centerY;
+                    pp->locallab.spots.at(pp->locallab.selspot).circrad = r.circrad;
 
-                    if (r->qualityMethod == 0) {
+                    if (r.qualityMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enh";
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).qualityMethod = "enhden";
                     }
 
-                    pp->locallab.spots.at(pp->locallab.selspot).transit = r->transit;
-                    pp->locallab.spots.at(pp->locallab.selspot).thresh = r->thresh;
-                    pp->locallab.spots.at(pp->locallab.selspot).iter = r->iter;
-                    pp->locallab.spots.at(pp->locallab.selspot).balan = r->balan;
-                    pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
-                    pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
+                    pp->locallab.spots.at(pp->locallab.selspot).transit = r.transit;
+                    pp->locallab.spots.at(pp->locallab.selspot).thresh = r.thresh;
+                    pp->locallab.spots.at(pp->locallab.selspot).iter = r.iter;
+                    pp->locallab.spots.at(pp->locallab.selspot).balan = r.balan;
+                    pp->locallab.spots.at(pp->locallab.selspot).transitweak = r.transitweak;
+                    pp->locallab.spots.at(pp->locallab.selspot).avoid = r.avoid;
                     // Color & Light
                     pp->locallab.spots.at(pp->locallab.selspot).expcolor = expcolor->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).curvactiv = curvactiv->get_active();
@@ -1999,32 +2000,32 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).sensiden = sensiden->getIntValue();
                 }
 
-                ControlSpotPanel::SpotEdited* const se = expsettings->getEditedStates();
+                const ControlSpotPanel::SpotEdited se = expsettings->getEditedStates();
 
                 if (pe) {
                     if (pp->locallab.selspot < (int)pe->locallab.spots.size()) {
-                        pe->locallab.spots.at(pp->locallab.selspot).name = pe->locallab.spots.at(pp->locallab.selspot).name || se->name;
-                        pe->locallab.spots.at(pp->locallab.selspot).isvisible = pe->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
-                        pe->locallab.spots.at(pp->locallab.selspot).shape = pe->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
-                        pe->locallab.spots.at(pp->locallab.selspot).spotMethod = pe->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
-                        pe->locallab.spots.at(pp->locallab.selspot).sensiexclu = pe->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
-                        pe->locallab.spots.at(pp->locallab.selspot).structexclu = pe->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
-                        pe->locallab.spots.at(pp->locallab.selspot).struc = pe->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
-                        pe->locallab.spots.at(pp->locallab.selspot).shapeMethod = pe->locallab.spots.at(pp->locallab.selspot).shapeMethod || se->shapeMethod;
-                        pe->locallab.spots.at(pp->locallab.selspot).locX = pe->locallab.spots.at(pp->locallab.selspot).locX || se->locX;
-                        pe->locallab.spots.at(pp->locallab.selspot).locXL = pe->locallab.spots.at(pp->locallab.selspot).locXL || se->locXL;
-                        pe->locallab.spots.at(pp->locallab.selspot).locY = pe->locallab.spots.at(pp->locallab.selspot).locY || se->locY;
-                        pe->locallab.spots.at(pp->locallab.selspot).locYT = pe->locallab.spots.at(pp->locallab.selspot).locYT || se->locYT;
-                        pe->locallab.spots.at(pp->locallab.selspot).centerX = pe->locallab.spots.at(pp->locallab.selspot).centerX || se->centerX;
-                        pe->locallab.spots.at(pp->locallab.selspot).centerY = pe->locallab.spots.at(pp->locallab.selspot).centerY || se->centerY;
-                        pe->locallab.spots.at(pp->locallab.selspot).circrad = pe->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
-                        pe->locallab.spots.at(pp->locallab.selspot).qualityMethod = pe->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
-                        pe->locallab.spots.at(pp->locallab.selspot).transit = pe->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
-                        pe->locallab.spots.at(pp->locallab.selspot).thresh = pe->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
-                        pe->locallab.spots.at(pp->locallab.selspot).iter = pe->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
-                        pe->locallab.spots.at(pp->locallab.selspot).transitweak = pe->locallab.spots.at(pp->locallab.selspot).transitweak || se->transitweak;
-                        pe->locallab.spots.at(pp->locallab.selspot).balan = pe->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
-                        pe->locallab.spots.at(pp->locallab.selspot).avoid = pe->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
+                        pe->locallab.spots.at(pp->locallab.selspot).name = pe->locallab.spots.at(pp->locallab.selspot).name || se.name;
+                        pe->locallab.spots.at(pp->locallab.selspot).isvisible = pe->locallab.spots.at(pp->locallab.selspot).isvisible || se.isvisible;
+                        pe->locallab.spots.at(pp->locallab.selspot).shape = pe->locallab.spots.at(pp->locallab.selspot).shape || se.shape;
+                        pe->locallab.spots.at(pp->locallab.selspot).spotMethod = pe->locallab.spots.at(pp->locallab.selspot).spotMethod || se.spotMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).sensiexclu = pe->locallab.spots.at(pp->locallab.selspot).sensiexclu || se.sensiexclu;
+                        pe->locallab.spots.at(pp->locallab.selspot).structexclu = pe->locallab.spots.at(pp->locallab.selspot).structexclu || se.structexclu;
+                        pe->locallab.spots.at(pp->locallab.selspot).struc = pe->locallab.spots.at(pp->locallab.selspot).struc || se.struc;
+                        pe->locallab.spots.at(pp->locallab.selspot).shapeMethod = pe->locallab.spots.at(pp->locallab.selspot).shapeMethod || se.shapeMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).locX = pe->locallab.spots.at(pp->locallab.selspot).locX || se.locX;
+                        pe->locallab.spots.at(pp->locallab.selspot).locXL = pe->locallab.spots.at(pp->locallab.selspot).locXL || se.locXL;
+                        pe->locallab.spots.at(pp->locallab.selspot).locY = pe->locallab.spots.at(pp->locallab.selspot).locY || se.locY;
+                        pe->locallab.spots.at(pp->locallab.selspot).locYT = pe->locallab.spots.at(pp->locallab.selspot).locYT || se.locYT;
+                        pe->locallab.spots.at(pp->locallab.selspot).centerX = pe->locallab.spots.at(pp->locallab.selspot).centerX || se.centerX;
+                        pe->locallab.spots.at(pp->locallab.selspot).centerY = pe->locallab.spots.at(pp->locallab.selspot).centerY || se.centerY;
+                        pe->locallab.spots.at(pp->locallab.selspot).circrad = pe->locallab.spots.at(pp->locallab.selspot).circrad || se.circrad;
+                        pe->locallab.spots.at(pp->locallab.selspot).qualityMethod = pe->locallab.spots.at(pp->locallab.selspot).qualityMethod || se.qualityMethod;
+                        pe->locallab.spots.at(pp->locallab.selspot).transit = pe->locallab.spots.at(pp->locallab.selspot).transit || se.transit;
+                        pe->locallab.spots.at(pp->locallab.selspot).thresh = pe->locallab.spots.at(pp->locallab.selspot).thresh || se.thresh;
+                        pe->locallab.spots.at(pp->locallab.selspot).iter = pe->locallab.spots.at(pp->locallab.selspot).iter || se.iter;
+                        pe->locallab.spots.at(pp->locallab.selspot).transitweak = pe->locallab.spots.at(pp->locallab.selspot).transitweak || se.transitweak;
+                        pe->locallab.spots.at(pp->locallab.selspot).balan = pe->locallab.spots.at(pp->locallab.selspot).balan || se.balan;
+                        pe->locallab.spots.at(pp->locallab.selspot).avoid = pe->locallab.spots.at(pp->locallab.selspot).avoid || se.avoid;
                         // Color & Light
                         pe->locallab.spots.at(pp->locallab.selspot).expcolor = pe->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).curvactiv = pe->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -2204,28 +2205,28 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
                     if (pp->locallab.selspot < (int)pedited->locallab.spots.size()) {
                         // Control spot settings
-                        pedited->locallab.spots.at(pp->locallab.selspot).name = pedited->locallab.spots.at(pp->locallab.selspot).name || se->name;
-                        pedited->locallab.spots.at(pp->locallab.selspot).isvisible = pedited->locallab.spots.at(pp->locallab.selspot).isvisible || se->isvisible;
-                        pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se->shape;
-                        pedited->locallab.spots.at(pp->locallab.selspot).spotMethod = pedited->locallab.spots.at(pp->locallab.selspot).spotMethod || se->spotMethod;
-                        pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu = pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu || se->sensiexclu;
-                        pedited->locallab.spots.at(pp->locallab.selspot).structexclu = pedited->locallab.spots.at(pp->locallab.selspot).structexclu || se->structexclu;
-                        pedited->locallab.spots.at(pp->locallab.selspot).struc = pedited->locallab.spots.at(pp->locallab.selspot).struc || se->struc;
-                        pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod = pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod || se->shapeMethod;
-                        pedited->locallab.spots.at(pp->locallab.selspot).locX = pedited->locallab.spots.at(pp->locallab.selspot).locX || se->locX;
-                        pedited->locallab.spots.at(pp->locallab.selspot).locXL = pedited->locallab.spots.at(pp->locallab.selspot).locXL || se->locXL;
-                        pedited->locallab.spots.at(pp->locallab.selspot).locY = pedited->locallab.spots.at(pp->locallab.selspot).locY || se->locY;
-                        pedited->locallab.spots.at(pp->locallab.selspot).locYT = pedited->locallab.spots.at(pp->locallab.selspot).locYT || se->locYT;
-                        pedited->locallab.spots.at(pp->locallab.selspot).centerX = pedited->locallab.spots.at(pp->locallab.selspot).centerX || se->centerX;
-                        pedited->locallab.spots.at(pp->locallab.selspot).centerY = pedited->locallab.spots.at(pp->locallab.selspot).centerY || se->centerY;
-                        pedited->locallab.spots.at(pp->locallab.selspot).circrad = pedited->locallab.spots.at(pp->locallab.selspot).circrad || se->circrad;
-                        pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod || se->qualityMethod;
-                        pedited->locallab.spots.at(pp->locallab.selspot).transit = pedited->locallab.spots.at(pp->locallab.selspot).transit || se->transit;
-                        pedited->locallab.spots.at(pp->locallab.selspot).thresh = pedited->locallab.spots.at(pp->locallab.selspot).thresh || se->thresh;
-                        pedited->locallab.spots.at(pp->locallab.selspot).iter = pedited->locallab.spots.at(pp->locallab.selspot).iter || se->iter;
-                        pedited->locallab.spots.at(pp->locallab.selspot).balan = pedited->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
-                        pedited->locallab.spots.at(pp->locallab.selspot).transitweak = pedited->locallab.spots.at(pp->locallab.selspot).transitweak || se->transitweak;
-                        pedited->locallab.spots.at(pp->locallab.selspot).avoid = pedited->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
+                        pedited->locallab.spots.at(pp->locallab.selspot).name = pedited->locallab.spots.at(pp->locallab.selspot).name || se.name;
+                        pedited->locallab.spots.at(pp->locallab.selspot).isvisible = pedited->locallab.spots.at(pp->locallab.selspot).isvisible || se.isvisible;
+                        pedited->locallab.spots.at(pp->locallab.selspot).shape = pedited->locallab.spots.at(pp->locallab.selspot).shape || se.shape;
+                        pedited->locallab.spots.at(pp->locallab.selspot).spotMethod = pedited->locallab.spots.at(pp->locallab.selspot).spotMethod || se.spotMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu = pedited->locallab.spots.at(pp->locallab.selspot).sensiexclu || se.sensiexclu;
+                        pedited->locallab.spots.at(pp->locallab.selspot).structexclu = pedited->locallab.spots.at(pp->locallab.selspot).structexclu || se.structexclu;
+                        pedited->locallab.spots.at(pp->locallab.selspot).struc = pedited->locallab.spots.at(pp->locallab.selspot).struc || se.struc;
+                        pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod = pedited->locallab.spots.at(pp->locallab.selspot).shapeMethod || se.shapeMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locX = pedited->locallab.spots.at(pp->locallab.selspot).locX || se.locX;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locXL = pedited->locallab.spots.at(pp->locallab.selspot).locXL || se.locXL;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locY = pedited->locallab.spots.at(pp->locallab.selspot).locY || se.locY;
+                        pedited->locallab.spots.at(pp->locallab.selspot).locYT = pedited->locallab.spots.at(pp->locallab.selspot).locYT || se.locYT;
+                        pedited->locallab.spots.at(pp->locallab.selspot).centerX = pedited->locallab.spots.at(pp->locallab.selspot).centerX || se.centerX;
+                        pedited->locallab.spots.at(pp->locallab.selspot).centerY = pedited->locallab.spots.at(pp->locallab.selspot).centerY || se.centerY;
+                        pedited->locallab.spots.at(pp->locallab.selspot).circrad = pedited->locallab.spots.at(pp->locallab.selspot).circrad || se.circrad;
+                        pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod = pedited->locallab.spots.at(pp->locallab.selspot).qualityMethod || se.qualityMethod;
+                        pedited->locallab.spots.at(pp->locallab.selspot).transit = pedited->locallab.spots.at(pp->locallab.selspot).transit || se.transit;
+                        pedited->locallab.spots.at(pp->locallab.selspot).thresh = pedited->locallab.spots.at(pp->locallab.selspot).thresh || se.thresh;
+                        pedited->locallab.spots.at(pp->locallab.selspot).iter = pedited->locallab.spots.at(pp->locallab.selspot).iter || se.iter;
+                        pedited->locallab.spots.at(pp->locallab.selspot).balan = pedited->locallab.spots.at(pp->locallab.selspot).balan || se.balan;
+                        pedited->locallab.spots.at(pp->locallab.selspot).transitweak = pedited->locallab.spots.at(pp->locallab.selspot).transitweak || se.transitweak;
+                        pedited->locallab.spots.at(pp->locallab.selspot).avoid = pedited->locallab.spots.at(pp->locallab.selspot).avoid || se.avoid;
                         // Color & Light
                         pedited->locallab.spots.at(pp->locallab.selspot).expcolor = pedited->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).curvactiv = pedited->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -2754,15 +2755,14 @@ void Locallab::resetMaskVisibility()
     enableListener();
 }
 
-Locallab::llMaskVisibility* Locallab::getMaskVisibility()
+Locallab::MaskVisibility Locallab::getMaskVisibility() const
 {
-    llMaskVisibility* maskStruct = new llMaskVisibility();
-    maskStruct->colorMask = showmaskcolMethod->get_active_row_number();
-    maskStruct->expMask = showmaskexpMethod->get_active_row_number();
-    maskStruct->SHMask = showmaskSHMethod->get_active_row_number();
-    maskStruct->cbMask = showmaskcbMethod->get_active_row_number();
-    
-    return maskStruct;
+    return {
+        showmaskcolMethod->get_active_row_number(),
+        showmaskexpMethod->get_active_row_number(),
+        showmaskSHMethod->get_active_row_number(),
+        showmaskcbMethod->get_active_row_number()
+    };
 }
 
 void Locallab::enaColorMaskChanged()

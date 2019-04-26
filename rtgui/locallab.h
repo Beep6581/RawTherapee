@@ -43,8 +43,114 @@ class Locallab :
     public ThresholdAdjusterListener
 
 {
+public:
+    struct MaskVisibility {
+        int colorMask;
+        int expMask;
+        int SHMask;
+        int cbMask;
+    };
+
+    Locallab();
+    ~Locallab();
+
+    // FoldableToolPanel management functions
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited, int id);
+    void setBatchMode(bool batchMode);
+    void trimValues(rtengine::procparams::ProcParams* pp);
+    void setListener(ToolPanelListener* tpl);
+    void enableListener();
+    void disableListener();
+    void writeOptions(std::vector<int> &tpOpen);
+    void updateToolState(std::vector<int> &tpOpen);
+    void refChanged(double huer, double lumar, double chromar);
+
+    // Mask visibility management functions
+    void resetMaskVisibility();
+    MaskVisibility getMaskVisibility() const;
+
+    // EditProvider management function
+    void setEditProvider(EditDataProvider* provider);
+    void subscribe();
+    void unsubscribe();
+
+    // FoldableToolPanel event function
+    void enabledChanged();
+
+    // Curve management function
+    void autoOpenCurve();
+
+    // Curve event function
+    void curveChanged(CurveEditor* ce);
+
+    // Adjuster event function
+    void adjusterChanged(Adjuster* a, double newval);
+    void adjusterAutoToggled(Adjuster* a, bool newval);
+
+    // ThresholdAdjuster event functions
+    virtual void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+
 private:
-    IdleRegister idle_register;
+    // Expander management functions
+    void foldAllButMe(GdkEventButton* event, MyExpander *expander);
+    void enableToggled(MyExpander *expander);
+
+    // ButtonCheck event functions
+    // Color & Light
+    void curvactivChanged();
+    void inversChanged();
+    void enaColorMaskChanged();
+    // Exposure
+    void enaExpMaskChanged();
+    void inversexChanged();
+    //Shadows Highlight
+    void enaSHMaskChanged();
+    void inversshChanged();
+    // Vibrance
+    void protectskins_toggled();
+    void avoidcolorshift_toggled();
+    void pastsattog_toggled();
+    // Blur & Noise
+    void activlumChanged();
+    // Retinex
+    void inversretChanged();
+    // Sharpening
+    void inversshaChanged();
+    //CBDL
+    void enacbMaskChanged();
+    // ComboBox event functions
+    // Color & Light
+    void qualitycurveMethodChanged();
+    void gridMethodChanged();
+    void showmaskcolMethodChanged();
+    //Exposure
+    void showmaskexpMethodChanged();
+    //Shadows Highlight
+    void showmaskSHMethodChanged();
+    // Blur & Noise
+    void blurMethodChanged();
+    // Retinex
+    void retinexMethodChanged();
+    //CBDL
+    void showmaskcbMethodChanged();
+    // Other widgets event functions
+    void lumacontrastMinusPressed();
+    void lumaneutralPressed();
+    void lumacontrastPlusPressed();
+
+    // Locallab GUI management function
+    void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);
+    void updateSpecificGUIState();
+    void setParamEditable(bool cond);
 
     // Expander widgets
     ControlSpotPanel* const expsettings;
@@ -305,112 +411,5 @@ private:
 //    ParamsEdited* pe;
     std::unique_ptr<ParamsEdited> pe;
 
-    // Expander management functions
-    void foldAllButMe(GdkEventButton* event, MyExpander *expander);
-    void enableToggled(MyExpander *expander);
-
-    // ButtonCheck event functions
-    // Color & Light
-    void curvactivChanged();
-    void inversChanged();
-    void enaColorMaskChanged();
-    // Exposure
-    void enaExpMaskChanged();
-    void inversexChanged();
-    //Shadows Highlight
-    void enaSHMaskChanged();
-    void inversshChanged();
-    // Vibrance
-    void protectskins_toggled();
-    void avoidcolorshift_toggled();
-    void pastsattog_toggled();
-    // Blur & Noise
-    void activlumChanged();
-    // Retinex
-    void inversretChanged();
-    // Sharpening
-    void inversshaChanged();
-    //CBDL
-    void enacbMaskChanged();
-    // ComboBox event functions
-    // Color & Light
-    void qualitycurveMethodChanged();
-    void gridMethodChanged();
-    void showmaskcolMethodChanged();
-    //Exposure
-    void showmaskexpMethodChanged();
-    //Shadows Highlight
-    void showmaskSHMethodChanged();
-    // Blur & Noise
-    void blurMethodChanged();
-    // Retinex
-    void retinexMethodChanged();
-    //CBDL
-    void showmaskcbMethodChanged();
-    // Other widgets event functions
-    void lumacontrastMinusPressed();
-    void lumaneutralPressed();
-    void lumacontrastPlusPressed();
-
-    // Locallab GUI management function
-    void updateLocallabGUI(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited, int index);
-    void updateSpecificGUIState();
-    void setParamEditable(bool cond);
-
-
-public:
-    Locallab();
-    ~Locallab();
-
-    // FoldableToolPanel management functions
-    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited, int id);
-    void setBatchMode(bool batchMode);
-    void trimValues(rtengine::procparams::ProcParams* pp);
-    void setListener(ToolPanelListener* tpl);
-    void enableListener();
-    void disableListener();
-    void writeOptions(std::vector<int> &tpOpen);
-    void updateToolState(std::vector<int> &tpOpen);
-    void refChanged(double huer, double lumar, double chromar);
-
-    // Mask visibility management functions
-    struct llMaskVisibility {
-        int colorMask;
-        int expMask;
-        int SHMask;
-        int cbMask;
-    };
-
-    void resetMaskVisibility();
-    llMaskVisibility* getMaskVisibility();
-
-    // EditProvider management function
-    void setEditProvider(EditDataProvider* provider);
-    void subscribe();
-    void unsubscribe();
-
-    // FoldableToolPanel event function
-    void enabledChanged();
-
-    // Curve management function
-    void autoOpenCurve();
-
-    // Curve event function
-    void curveChanged(CurveEditor* ce);
-
-    // Adjuster event function
-    void adjusterChanged(Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
-
-    // ThresholdAdjuster event functions
-    virtual void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
-    std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
+    IdleRegister idle_register;
 };
