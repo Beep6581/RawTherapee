@@ -2561,6 +2561,11 @@ Camera constants:
         "dcraw_matrix": [ 6984, -812, -975, -4792, 13481, 1381, -1056, 2355, 4873 ] // ColorMatrix1 (D65, wrong order) from Adobe DNG Converter 11.2.1
     },
 
+    {
+        "make_model": [ "samsung SM-N960F" ],
+        "dcraw_matrix": [ 6632, -622, -1104, -5659, 14819, 773, -1846, 4465, 4967 ] // ColorMatrix1 from Adobe DNG Converter 11.1
+    },
+
     // Dummy test entry to test the parser and show the format with all entries active
     {
         "make_model": "DummyMake DummyModel",
