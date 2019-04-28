@@ -1,8 +1,8 @@
+cmake_minimum_required(VERSION 3.5)
+
+# Compiler id for Apple Clang
 if(APPLE)
-    cmake_minimum_required(VERSION 3.3)
     cmake_policy(SET CMP0025 NEW)
-else()
-    cmake_minimum_required(VERSION 2.8.8)
 endif()
 
 # Must stay before the project() command:

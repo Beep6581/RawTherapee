@@ -788,7 +788,7 @@ bool ThumbBrowserBase::Internal::on_key_press_event (GdkEventKey* event)
 bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
-    //grab_focus ();
+    grab_focus ();
 
     parent->eventTime = event->time;
 
