@@ -105,7 +105,8 @@ public:
         SpotCreation = 1,
         SpotDeletion = 2,
         SpotSelection = 3,
-        SpotDuplication = 4
+        SpotDuplication = 4,
+        SpotAllVisibilityChanged = 5
     };
 
     // Constructor and management functions
@@ -152,8 +153,9 @@ public:
      * Setter of selected spot
      *
      * @param id The id of spot to be selected
+     * @return True if a spot corresponding to the id has been selected
      */
-    void setSelectedSpot(const int id);
+    bool setSelectedSpot(const int id);
 
     // Control spot creation functions
     /**
@@ -238,7 +240,7 @@ private:
     void on_button_delete();
     void on_button_duplicate();
     void on_button_rename();
-    void on_button_visibility();
+    bool on_button_visibility(GdkEventButton* event);
 
     bool blockTreeviewSearch(GdkEventKey* event);
 

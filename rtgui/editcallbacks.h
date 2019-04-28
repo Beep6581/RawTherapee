@@ -193,4 +193,6 @@ public:
     int getPipetteRectSize () const;
     EditSubscriber* getCurrSubscriber() const;
     virtual void getImageSize (int &w, int&h) = 0;
+    virtual void getPreviewCenterPos(int &x, int &y) = 0;
+    virtual void getPreviewSize(int &w, int &h) = 0;
 };

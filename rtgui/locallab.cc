@@ -1467,6 +1467,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
     ControlSpotPanel::SpotRow* r;
     LocallabParams::LocallabSpot* newSpot;
 
+    int imW, imH; // Size of image
+    int prW, prH; // Size of preview area
+    int prX, prY; // Coord of preview area center
+    EditDataProvider* const provider = expsettings->getEditProvider();
+
     switch (spotPanelEvent) {
         case (ControlSpotPanel::SpotCreation): // Spot creation event
             // Spot creation (default initialization)
@@ -1503,12 +1508,30 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->shapeMethod = 3;
             }
 
+            // Calculate spot size and center position according to preview area
+            if (provider && !batchMode) {
+                provider->getImageSize(imW, imH);
+                provider->getPreviewCenterPos(prX, prY);
+                provider->getPreviewSize(prW, prH);
+
+                if (imW && imH) { // Image loaded
+                    // Spot center position computation
+                    newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
+                    newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
+                    // Ellipse/rectangle size computation
+                    newSpot->locX = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locX);
+                    newSpot->locXL = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locXL);
+                    newSpot->locY = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locY);
+                    newSpot->locYT = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locYT);
+                }
+            }
             r->locX = newSpot->locX;
             r->locXL = newSpot->locXL;
             r->locY = newSpot->locY;
             r->locYT = newSpot->locYT;
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
+
             r->circrad = newSpot->circrad;
 
             if (newSpot->qualityMethod == "enh") {
@@ -1569,13 +1592,21 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 if (pp->locallab.spots.at(i).id == spotId) {
                     // ProcParams update
                     pp->locallab.nbspot--;
-                    pp->locallab.selspot = 0;
                     pp->locallab.spots.erase(pp->locallab.spots.begin() + i);
                     expsettings->deleteControlSpot(spotId);
 
-                    // Select one remaining spot
+                    // Select the first remaining spot before deleted one
                     if (pp->locallab.nbspot > 0) {
-                        expsettings->setSelectedSpot(pp->locallab.spots.at(pp->locallab.selspot).id);
+                        for (int j = i - 1; j >= 0; j--) { // procparams spots uses zero-based index whereas spot ids use one-based index
+                            if (expsettings->setSelectedSpot(j + 1)) { // True if an existing spot has been selected on controlspotpanel
+                                pp->locallab.selspot = j;
+
+                                break;
+                            }
+                        }
+                    } else {
+                        // Reset selspot
+                        pp->locallab.selspot = 0;
                     }
 
                     // Update Locallab tools GUI with selected spot
@@ -1691,12 +1722,30 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 r->shapeMethod = 3;
             }
 
+            // Calculate spot size and center position according to preview area
+            if (provider && !batchMode) {
+                provider->getImageSize(imW, imH);
+                provider->getPreviewCenterPos(prX, prY);
+                provider->getPreviewSize(prW, prH);
+
+                if (imW && imH) { // Image loaded
+                    // Spot center position computation
+                    newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
+                    newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
+                    // Ellipse/rectangle size computation
+                    newSpot->locX = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locX);
+                    newSpot->locXL = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->locXL);
+                    newSpot->locY = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locY);
+                    newSpot->locYT = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->locYT);
+                }
+            }
             r->locX = newSpot->locX;
             r->locXL = newSpot->locXL;
             r->locY = newSpot->locY;
             r->locYT = newSpot->locYT;
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
+
             r->circrad = newSpot->circrad;
 
             if (newSpot->qualityMethod == "enh") {
@@ -1741,6 +1790,29 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                 pedited->locallab.selspot = true;
                 pedited->locallab.id = true;
                 pedited->locallab.spots.push_back(new LocallabParamsEdited::LocallabSpotEdited(true));
+            }
+
+            break;
+
+        case (ControlSpotPanel::SpotAllVisibilityChanged): // Event when updating visibility of all spots
+            r = expsettings->getSpot(expsettings->getSelectedSpot());
+
+            // ProcParams update
+            for (size_t i = 0; i < pp->locallab.spots.size(); i++) {
+                pp->locallab.spots.at(i).isvisible = r->isvisible;
+            }
+
+            if (pe) {
+                for (size_t i = 0; i < pe->locallab.spots.size(); i++) {
+                    pe->locallab.spots.at(i).isvisible = true;
+                }
+            }
+
+            // ParamsEdited update
+            if (pedited) {
+                for (size_t i = 0; i < pedited->locallab.spots.size(); i++) {
+                    pedited->locallab.spots.at(i).isvisible = true;
+                }
             }
 
             break;
