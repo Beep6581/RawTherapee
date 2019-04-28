@@ -67,6 +67,7 @@ ControlSpotPanel::ControlSpotPanel():
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
     balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 8.0, 0.1, 1.0))),
+    transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
 
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
 
@@ -241,11 +242,14 @@ ControlSpotPanel::ControlSpotPanel():
     ToolParamBlock* const transitBox = Gtk::manage(new ToolParamBlock());
     if(showtooltip) transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
     if(showtooltip) transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
+    if(showtooltip) transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
     transit_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
+    transitgrad_->setAdjusterListener(this);
 
     transitBox->pack_start(*transit_);
     transitBox->pack_start(*transitweak_);
+    transitBox->pack_start(*transitgrad_);
     transitFrame->add(*transitBox);
     pack_start(*transitFrame);
     
@@ -563,6 +567,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     iter_->setValue((double)row[spots_.iter]);
     balan_->setValue((double)row[spots_.balan]);
     transitweak_->setValue((double)row[spots_.transitweak]);
+    transitgrad_->setValue((double)row[spots_.transitgrad]);
     avoid_->set_active(row[spots_.avoid]);
 }
 
@@ -984,6 +989,14 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == transitgrad_) {
+        row[spots_.transitgrad] = transitgrad_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotTransitgrad, transitgrad_->getTextValue());
+        }
+    }
+
 }
 
 void ControlSpotPanel::avoidChanged()
@@ -1050,6 +1063,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     iter_->block(cond);
     balan_->block(cond);
     transitweak_->block(cond);
+    transitgrad_->block(cond);
     avoidConn_.block(cond);
 }
 
@@ -1076,6 +1090,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     iter_->set_sensitive(cond);
     balan_->set_sensitive(cond);
     transitweak_->set_sensitive(cond);
+    transitgrad_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
 }
 
@@ -1708,6 +1723,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->iter = row[spots_.iter];
             r->balan = row[spots_.balan];
             r->transitweak = row[spots_.transitweak];
+            r->transitgrad = row[spots_.transitgrad];
             r->avoid = row[spots_.avoid];
 
             return r;
@@ -1833,6 +1849,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.iter] = newSpot->iter;
     row[spots_.balan] = newSpot->balan;
     row[spots_.transitweak] = newSpot->transitweak;
+    row[spots_.transitgrad] = newSpot->transitgrad;
     row[spots_.avoid] = newSpot->avoid;
     updateParamVisibility();
     disableParamlistener(false);
@@ -1877,6 +1894,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.iter] = spot->iter;
             row[spots_.balan] = spot->balan;
             row[spots_.transitweak] = spot->transitweak;
+            row[spots_.transitgrad] = spot->transitgrad;
             row[spots_.avoid] = spot->avoid;
 
             updateControlSpotCurve(row);
@@ -1967,6 +1985,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->iter = iter_->getEditedState();
     se->balan = balan_->getEditedState();
     se->transitweak = transitweak_->getEditedState();
+    se->transitgrad = transitgrad_->getEditedState();
     se->avoid = !avoid_->get_inconsistent();
 
     return se;
@@ -2035,6 +2054,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     iter_->setEditedState(se->iter ? Edited : UnEdited);
     balan_->setEditedState(se->balan ? Edited : UnEdited);
     transitweak_->setEditedState(se->transitweak ? Edited : UnEdited);
+    transitgrad_->setEditedState(se->transitgrad ? Edited : UnEdited);
     avoid_->set_inconsistent(multiImage && !se->avoid);
 
     // Update Control Spot GUI according to widgets edited states
@@ -2079,6 +2099,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
     iter_->setDefault(defSpot->iter);
     balan_->setDefault(defSpot->balan);
     transitweak_->setDefault(defSpot->transitweak);
+    transitgrad_->setDefault(defSpot->transitgrad);
 
     // Set default edited states for adjusters
     if (!pedited) {
@@ -2097,6 +2118,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         iter_->setDefaultEditedState(Irrelevant);
         balan_->setDefaultEditedState(Irrelevant);
         transitweak_->setDefaultEditedState(Irrelevant);
+        transitgrad_->setDefaultEditedState(Irrelevant);
     } else {
         const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
 
@@ -2119,6 +2141,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
         balan_->setDefaultEditedState(defSpotState->balan ? Edited : UnEdited);
         transitweak_->setDefaultEditedState(defSpotState->transitweak ? Edited : UnEdited);
+        transitgrad_->setDefaultEditedState(defSpotState->transitgrad ? Edited : UnEdited);
     }
 }
 
@@ -2142,6 +2165,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     iter_->showEditedCB();
     balan_->showEditedCB();
     transitweak_->showEditedCB();
+    transitgrad_->showEditedCB();
 
     // Set batch mode for comboBoxText
     shape_->append(M("GENERAL_UNCHANGED"));
@@ -2180,6 +2204,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(iter);
     add(balan);
     add(transitweak);
+    add(transitgrad);
     add(avoid);
 }
 

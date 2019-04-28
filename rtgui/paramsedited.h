@@ -375,6 +375,7 @@ public:
         bool iter;
         bool balan;
         bool transitweak;
+        bool transitgrad;
         bool avoid;
         // Color & Light
         bool expcolor;

@@ -64,6 +64,7 @@ public:
         double iter;
         double balan;
         double transitweak;
+        double transitgrad;
         bool avoid;
     };
 
@@ -94,6 +95,7 @@ public:
         bool iter;
         bool balan;
         bool transitweak;
+        bool transitgrad;
         bool avoid;
     };
 
@@ -306,6 +308,7 @@ private:
         Gtk::TreeModelColumn<double> iter;
         Gtk::TreeModelColumn<double> balan;
         Gtk::TreeModelColumn<double> transitweak;
+        Gtk::TreeModelColumn<double> transitgrad;
         Gtk::TreeModelColumn<bool> avoid;
     };
 
@@ -369,6 +372,7 @@ private:
     Adjuster* const iter_;
     Adjuster* const balan_;
     Adjuster* const transitweak_;
+    Adjuster* const transitgrad_;
 
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;

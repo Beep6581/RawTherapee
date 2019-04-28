@@ -948,6 +948,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).iter = locallab.spots.at(j).iter && pSpot.iter == otherSpot.iter;
                 locallab.spots.at(j).balan = locallab.spots.at(j).balan && pSpot.balan == otherSpot.balan;
                 locallab.spots.at(j).transitweak = locallab.spots.at(j).transitweak && pSpot.transitweak == otherSpot.transitweak;
+                locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
                 // Color & Light
                 locallab.spots.at(j).expcolor = locallab.spots.at(j).expcolor && pSpot.expcolor == otherSpot.expcolor;
@@ -2629,6 +2630,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).transitweak = mods.locallab.spots.at(i).transitweak;
         }
 
+        if (locallab.spots.at(i).transitgrad) {
+            toEdit.locallab.spots.at(i).transitgrad = mods.locallab.spots.at(i).transitgrad;
+        }
+
         if (locallab.spots.at(i).avoid) {
             toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
         }
@@ -4221,6 +4226,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     iter(v),
     balan(v),
     transitweak(v),
+    transitgrad(v),
     avoid(v),
     // Color & Light
     expcolor(v),
@@ -4414,6 +4420,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     iter = v;
     balan = v;
     transitweak = v;
+    transitgrad = v;
     avoid = v;
     // Color & Light
     expcolor = v;

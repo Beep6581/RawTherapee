@@ -919,6 +919,7 @@ HISTORY_MSG_671;Local - cbdl mask L
 HISTORY_MSG_672;Local - cbdl mask CL
 HISTORY_MSG_673;Local - Use cbdl mask
 HISTORY_MSG_675;Local - TM soft radius
+HISTORY_MSG_676;Local Spot transition-differentiation
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2111,9 +2112,11 @@ TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle lin
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
-TP_LOCALLAB_TRANSIT;Transition
+TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
 TP_LOCALLAB_TRANSITVALUE;Transition value
+TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
+TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 
 TP_LOCALLAB_TRANSITWEAK;Transition weakening
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic  
 TP_LOCALLAB_VIBRANCE;Vibrance

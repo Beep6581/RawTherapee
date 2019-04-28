@@ -101,43 +101,59 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut) {
     }
 }
 
-float calcLocalFactor(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
+float calcLocalFactor(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach, const float gradient)
 {
 //elipse x2/a2 + y2/b2=1
 //transition elipsoidal
 //x==>lox y==>loy
 // a==> dx  b==>dy
-
+//printf("grad=%f", gradient);
+    float eps = 0.0001f;
     float kelip = dx / dy;
     float belip = sqrt((rtengine::SQR((lox - lcx) / kelip) + rtengine::SQR(loy - lcy)));    //determine position ellipse ==> a and b
+    if(belip == 0.f) {
+        belip = eps;
+    }
+    //gradient allows differenciation between transition x and y
+    float rapy = fabs((loy - lcy) / belip);
     float aelip = belip * kelip;
     float degrad = aelip / dx;
+    float gradreal = gradient * rapy + 1.f;
     float ap = rtengine::RT_PI_F / (1.f - ach);
     float bp = rtengine::RT_PI_F - ap;
-    return 0.5f * (1.f + xcosf(degrad * ap + bp));  //trigo cos transition
-
+    float retreal = pow(0.5f * (1.f + xcosf(degrad * ap + bp)), rtengine::SQR(gradreal));
+    return retreal;  //trigo cos transition
 }
-float calcLocalFactorrect(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
+
+float calcLocalFactorrect(const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach, const float gradient)
 {
     float eps = 0.0001f;
     float krap = fabs(dx / dy);
     float kx = (lox - lcx);
     float ky = (loy - lcy);
     float ref = 0.f;
+    //gradient allows differenciation between transition x and y
 
     if (fabs(kx / (ky + eps)) < krap) {
         ref = sqrt(rtengine::SQR(dy) * (1.f + rtengine::SQR(kx / (ky + eps))));
     } else {
         ref = sqrt(rtengine::SQR(dx) * (1.f + rtengine::SQR(ky / (kx + eps))));
     }
-
+ 
     float rad = sqrt(rtengine::SQR(kx) + rtengine::SQR(ky));
+    if(rad == 0.f) {
+        rad = eps;
+    }
+    float rapy = fabs((loy - lcy) / rad);
+    float gradreal = gradient * rapy + 1.f;
+    
     float coef = rad / ref;
     float ac = 1.f / (ach - 1.f);
     float fact = ac * (coef - 1.f);
-    return fact;
+    return pow(fact, rtengine::SQR(gradreal));
 
 }
+
 
 }
 
@@ -210,6 +226,7 @@ struct local_params {
     double stren;
     int trans;
     float transweak;
+    float transgrad;
     int dehaze;
     bool inv;
     bool invex;
@@ -519,6 +536,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurSH = (float) locallab.spots.at(sp).blurSHde;
     int local_transit = locallab.spots.at(sp).transit;
     float local_transitweak = (float)locallab.spots.at(sp).transitweak;
+    float local_transitgrad = (float)locallab.spots.at(sp).transitgrad;
     float radius = (float) locallab.spots.at(sp).radius;
     double sharradius = ((double) locallab.spots.at(sp).sharradius);
     sharradius = CLIP42_35(sharradius);
@@ -625,6 +643,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     lp.trans = local_transit;
     lp.transweak = local_transitweak;
+    lp.transgrad = local_transitgrad;
     lp.rad = radius;
     lp.stren = strength;
     lp.sensbn = local_sensibn;
@@ -710,8 +729,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senshs = local_sensihs;
 }
 
-
-
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
 {
     zone = 0;
@@ -721,7 +738,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach);
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -730,7 +747,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -740,7 +757,7 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach);
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
@@ -749,14 +766,13 @@ static void calcTransitionrect(const float lox, const float loy, const float ach
             zone = 2;
         } else {
             zone = 1;
-            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach);
+            localFactor = calcLocalFactorrect(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad);
             localFactor = pow(localFactor, lp.transweak);
         }
 
     }
 
 }
-
 
 
 static void calcTransition(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
@@ -774,7 +790,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
             }
         }
     } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
@@ -785,7 +801,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lx)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
@@ -796,7 +812,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach, lp.transgrad), lp.transweak);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
@@ -807,7 +823,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             zone = (zoneVal > 1.f && ((SQR((lox - lp.xc) / (lp.lxL)) + SQR((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone == 1) {
-                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach), lp.transweak);
+                localFactor = pow(calcLocalFactor(lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach, lp.transgrad), lp.transweak);
             }
         }
     }
