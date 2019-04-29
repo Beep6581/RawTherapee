@@ -1018,6 +1018,11 @@ void Crop::update(int todo)
 
             }
 
+            if (!WaveParams.expclari && WaveParams.CLmethod != "all") {
+                params.wavelet.CLmethod = "all";
+                params.wavelet.Backmethod = "grey";
+            }
+
             parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {

@@ -882,6 +882,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 }
 
+                if (!WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    params->wavelet.CLmethod = "all";
+                    params->wavelet.Backmethod = "grey";
+                }
+
                 ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
 
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
