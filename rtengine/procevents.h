@@ -532,7 +532,7 @@ public:
     ProcEvent(): code_(0) {}
     ProcEvent(ProcEventCode code): code_(code) {}
     explicit ProcEvent(int code): code_(code) {}
-    operator int() { return code_; }
+    operator int() const { return code_; }
 
 private:
     int code_;

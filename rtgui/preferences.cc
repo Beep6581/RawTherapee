@@ -398,7 +398,7 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECTTHR2"), ADDSET_WA_EDGEDETECTTHR2, true);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_BAYER_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_RAW_SENSOR_BAYER_LABEL"));
     appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_BAYER_FALSE_COLOR_SUPPRESSION, false);
     appendBehavList (mi, M ("TP_RAW_DCBITERATIONS") + ", " + M("TP_RAW_LMMSEITERATIONS"), ADDSET_BAYER_ITER, false);
     appendBehavList (mi, M ("TP_RAW_DUALDEMOSAICCONTRAST"), ADDSET_BAYER_DUALDEMOZCONTRAST, false);
@@ -407,28 +407,28 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_RAW_PIXELSHIFTEPERISO"), ADDSET_BAYER_PS_EPERISO, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_XTRANS_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_RAW_SENSOR_XTRANS_LABEL"));
     appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_XTRANS_FALSE_COLOR_SUPPRESSION, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_PREPROCESS_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_PREPROCESS_LABEL"));
     appendBehavList (mi, M ("TP_PREPROCESS_GREENEQUIL"), ADDSET_PREPROCESS_GREENEQUIL, false);
     appendBehavList (mi, M ("TP_PREPROCESS_LINEDENOISE"), ADDSET_PREPROCESS_LINEDENOISE, true);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_EXPOS_WHITEPOINT_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_EXPOS_WHITEPOINT_LABEL"));
     appendBehavList (mi, M ("TP_RAWEXPOS_LINEAR"), ADDSET_RAWEXPOS_LINEAR, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_RAWEXPOS_BLACKS"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_EXPOS_BLACKPOINT_LABEL"));
     appendBehavList (mi, M ("TP_RAWEXPOS_RGB"), ADDSET_RAWEXPOS_BLACKS, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_FLATFIELD_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_FLATFIELD_LABEL"));
     appendBehavList (mi, M ("TP_FLATFIELD_CLIPCONTROL"), ADDSET_RAWFFCLIPCONTROL, true);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_CHROMATABERR_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_RAWCACORR_LABEL"));
     appendBehavList (mi, M ("TP_RAWCACORR_CARED") + ", " + M ("TP_RAWCACORR_CABLUE"), ADDSET_RAWCACORR, true);
 
     behTreeView->expand_all ();
@@ -1048,12 +1048,15 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     navGuideColorCB = Gtk::manage(new Gtk::ColorButton());
     navGuideColorCB->set_use_alpha(true);
 
+    pseudoHiDPI = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_APPEARANCE_PSEUDOHIDPI") + Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")"));
+    setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+
     Gtk::VSeparator *vSep = Gtk::manage(new Gtk::VSeparator());
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
     appearanceGrid->attach(*themeRestartLbl,    2, 0, 2, 1);
-    appearanceGrid->attach(*vSep,               2, 1, 1, 3);
+    appearanceGrid->attach(*vSep,               2, 1, 1, 2);
     appearanceGrid->attach(*mainFontLbl,        0, 1, 1, 1);
     appearanceGrid->attach(*mainFontFB,         1, 1, 1, 1);
     appearanceGrid->attach(*cropMaskColorLbl,   3, 1, 1, 1);
@@ -1062,6 +1065,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     appearanceGrid->attach(*colorPickerFontFB,  1, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorLbl,   3, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorCB,    4, 2, 1, 1);
+    appearanceGrid->attach(*pseudoHiDPI,        0, 3, 5, 1);
 
     appearanceFrame->add(*appearanceGrid);
     vbGeneral->attach_next_to(*appearanceFrame, *flang, Gtk::POS_BOTTOM, 2, 1);
@@ -1461,7 +1465,7 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     // BatchQueueDone
     Gtk::HBox* pBatchQueueDone = Gtk::manage ( new Gtk::HBox() );
 
-    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
+    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_QUEUEDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
     pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 4);
 
     txtSndBatchQueueDone = Gtk::manage (new Gtk::Entry());
@@ -1641,6 +1645,8 @@ void Preferences::storePreferences ()
         moptions.CPFontFamily = cpfd.get_family();
         moptions.CPFontSize = cpfd.get_size() / Pango::SCALE;
     }
+
+    moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
 
 #ifdef WIN32
     moptions.gimpDir = gimpDir->get_filename ();
@@ -1905,6 +1911,8 @@ void Preferences::fillPreferences ()
     } else {
         colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.CPFontFamily, options.CPFontSize));
     }
+
+    pseudoHiDPI->set_active(options.pseudoHiDPISupport);
 
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);

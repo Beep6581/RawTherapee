@@ -260,7 +260,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
             iso_speed = tag->toDouble ();
         }
 
-        if ((tag = exif->getTag ("DateTimeOriginal"))) {
+        if ((tag = exif->findTag("DateTimeOriginal", true))) {
             if (sscanf ((const char*)tag->getValue(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
                 time.tm_year -= 1900;
                 time.tm_mon -= 1;

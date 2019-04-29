@@ -109,7 +109,7 @@ void HSVEqualizer::autoOpenCurve ()
     bool active = hshape->openIfNonlinear();
 
     if (!active) {
-        sshape->openIfNonlinear();
+        active = sshape->openIfNonlinear();
     }
 
     if (!active) {

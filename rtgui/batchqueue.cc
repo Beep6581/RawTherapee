@@ -860,9 +860,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     Glib::ustring path = "";
 
     if (options.saveUsePathTemplate) {
-        int ix = 0;
+        unsigned int ix = 0;
 
-        while (options.savePathTemplate[ix] != 0) {
+        while (ix < options.savePathTemplate.size()) {
             if (options.savePathTemplate[ix] == '%') {
                 ix++;
 

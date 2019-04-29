@@ -26,6 +26,7 @@
         <keyword>pp3</keyword>
         <keyword>graphics</keyword>
     </keywords>
+    <content_rating type="oars-1.0" />
     <metadata_license>CC-BY-SA-4.0</metadata_license>
     <project_license>GPL-3.0+</project_license>
     <url type="bugtracker">https://github.com/Beep6581/RawTherapee/issues/new</url>
@@ -35,6 +36,9 @@
     <url type="translate">https://discuss.pixls.us/t/localization-how-to-translate-rawtherapee-and-rawpedia/2594</url>
     <launchable type="desktop-id">rawtherapee.desktop</launchable>
     <releases>
+        <release version="5.6" date="2019-04-20" type="stable"></release>
+        <release version="5.6~rc2" date="2019-04-17" type="development"></release>
+        <release version="5.6~rc1" date="2019-04-10" type="development"></release>
         <release version="5.5" date="2018-12-17" type="stable"></release>
     </releases>
     <provides>

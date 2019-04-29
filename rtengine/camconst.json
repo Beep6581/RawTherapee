@@ -1224,6 +1224,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon PowerShot SX150 IS",
+        "dcraw_matrix": [ 13481, -4867, -1063, -2074, 9960, 2472, -170, 1474, 3894 ], // Adobe DNG Converter 11.1 ColorMatrix1 (there is only one matrix and illuminant, and it's for daylight)
         "raw_crop": [ 26, 10, 4364, 3254 ] // cut 2pix left and right
     },
 
@@ -1605,9 +1606,9 @@ Camera constants:
         "make_model" : "Nikon Z 6",
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
         "pdaf_pattern" : [0, 12],
-        "pdaf_offset" : 32        
+        "pdaf_offset" : 32
     },
-    
+
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",
         "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // DNG_v8.8 D65
@@ -2553,6 +2554,16 @@ Camera constants:
     { // Quality C
         "make_model": [ "Hasselblad H6D-100cMS" ],
         "raw_crop": [ 64, 108, 11608, 8708 ]
+    },
+
+    {
+        "make_model": [ "HUAWEI DLI-L22" ],
+        "dcraw_matrix": [ 6984, -812, -975, -4792, 13481, 1381, -1056, 2355, 4873 ] // ColorMatrix1 (D65, wrong order) from Adobe DNG Converter 11.2.1
+    },
+
+    {
+        "make_model": [ "samsung SM-N960F" ],
+        "dcraw_matrix": [ 6632, -622, -1104, -5659, 14819, 773, -1846, 4465, 4967 ] // ColorMatrix1 from Adobe DNG Converter 11.1
     },
 
     // Dummy test entry to test the parser and show the format with all entries active

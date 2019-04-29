@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2019 TooWaBoo
-  Version 3.05
+  Version 3.08
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ undershoot {
 
 label {
     padding: 0.083333333333333333em 0;
-    margin: 0.19em;
+    margin: 0.125em 0.166666666666666666em;
     min-height: 1.333333333333333333em;
 }
 
@@ -274,13 +274,13 @@ textview:selected, treeview:selected {
     margin-top: 0.25em;
 }
 #RightNotebook #HistoryPanel {
-    margin-top: 0.333333333333333333em;
+    margin-top: 0.416666666666666666em;
 }
 #HistoryPanel > border {
     margin-top: 1.75em;
 }
 #HistoryPanel > label {
-    margin: 0 0 -1.5em 0;
+    margin: 0 0 -1.416666666666666666em 0;
     padding: 0 0 0 0.083333333333333333em;
 }
 
@@ -325,6 +325,7 @@ fontchooser scrolledwindow,
 }
 #Navigator label {
     padding: 0;
+    margin: 0.083333333333333333em 0 0;
 }
 
 /*** end ***************************************************************************************/
@@ -692,7 +693,7 @@ scrollbar:not(.overlay-indicator):hover {
 /*** Scale**************************************************************************************/
 scale {
     padding: 0;
-   min-height: 1.833333333333333333em;
+    min-height: 1.833333333333333333em;
     margin: 0 -0.333333333333333333em;
 }
 
@@ -727,7 +728,7 @@ scale.color trough {
 }
 
 scale trough highlight {
-    background-color: transparent;
+    background-color: @accent-color2;
     background-image: linear-gradient(to bottom, shade (@accent-color2,1.22), shade(@accent-color2,.88));
     border: 0.083333333333333333em solid shade(@bg-dark-grey,0.9);
     margin: 0 -0.583333333333333333em;
@@ -779,7 +780,7 @@ progressbar trough {
 }
 
 progressbar trough progress {
-    background-color: transparent;
+    background-color: @accent-color2;
     border-radius: 0.416666666666666666em;
     border: 0.083333333333333333em solid @bg-button-border;
 }
@@ -816,6 +817,7 @@ progressbar.vertical trough.empty {
 progressbar trough.empty progress {
     border-color: transparent;
     background-image: none;
+    background-color:transparent;
     box-shadow: none;
 }
 
@@ -1341,7 +1343,7 @@ button,
 #BeforeAfterContainer button {
     min-height: 1.666666666666666666em;
     min-width: 1.666666666666666666em;/*x*/
-    margin: 0.19em;
+    margin: 0.125em;
     border-radius: 0.2em;
     border: 0.083333333333333333em solid @bg-button-border;
     background-color: transparent;
@@ -1414,7 +1416,7 @@ combobox entry.combo + button.combo {
 }
 #WB-Size-Helper {
     min-width: 3.5em;
-    margin: 0.19em;
+    margin: 0.125em;
 }
 
 combobox arrow {
@@ -1536,9 +1538,9 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #RightNotebook > stack > scrolledwindow:last-child button.image-button, /* Fast Export */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
-    min-height: 2.5em;
-    min-width: 2.5em;
-    margin: 0 0.19em;
+    min-height: 2.333333333333333333em;
+    min-width: 2.333333333333333333em;
+    margin: 0 0.125em;
 }
 #ToolBarPanelFileBrowser > button:first-child,
 #EditorTopPanel > button:first-child,
@@ -1558,43 +1560,45 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter button */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
-    margin: 0.19em;
+    margin: 0.125em;
 }
 
 #EditorTopPanel button.narrowbutton {
+    min-width: 0;
+    padding: 0 0.13em;
+}
+
+#EditorTopPanel button.narrowbutton image{
     min-width: 0.833333333333333333em;
-    padding: 0 0.166666666666666666em;
 }
 
 /* Image close button */
 #MainNotebook > header tab #CloseButton {
-    padding: 0;
-    margin: 0.333333333333333333em 0 0.416666666666666666em 0.19em;
-    min-width: 1.5em;
+    padding: 0.166666666666666666em;
+    margin: 0.333333333333333333em 0 0.5em 0.19em;
+    min-width: 0;
     min-height: 0;
-}
-#MainNotebook > header tab #CloseButton image{
-    min-width: 1.333333333333333333em;
-    min-height: 1.333333333333333333em;
 }
 
 /* Filter buttons*/
 #ToolBarPanelFileBrowser .smallbuttonbox {
-    min-height: 1.333333333333333333em;
+    min-height: 1.166666666666666666em;
     padding: 0;
     margin: 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox:nth-child(2) {
-    margin: 0.083333333333333333em 0 -0.166666666666666666em;
+    margin-top: 0.166666666666666666em;
+    margin-bottom: -0.166666666666666666em;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image {
-    margin: -0.19em;
-    min-width: 1.333333333333333333em;
-    min-height: 1.333333333333333333em;
+    margin: -1em;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton {
     min-height: 0;
-    min-width: 1.333333333333333333em;
+    min-width: 1.166666666666666666em;
     padding: 0;
     margin: 0 0.25em;
     border: none;
@@ -1806,7 +1810,7 @@ popover button.text-button:active {
 checkbutton,
 radiobutton {
     padding: 0.083333333333333333em 0;
-    margin: 0.19em;
+    margin: 0.125em;
     min-height: 1.666666666666666666em;/*x*/
 }
 
@@ -1847,10 +1851,10 @@ frame > checkbutton check{
 
 #PartialPaste checkbutton {
     padding: 0;
-    margin: 0.19em 0 0 0.583333333333333333em;
+    margin: 0 0 0 0.583333333333333333em;
 }
 #PartialPaste checkbutton:not(#PartialPasteHeader) {
-    margin: 0 0 0 1.166666666666666666em;
+    margin: 0 0 0 1.125em;
 }
 
 /*** end ***************************************************************************************/
@@ -1859,7 +1863,7 @@ frame > checkbutton check{
 #MyExpander entry,
 entry,
 spinbutton {
-    margin: 0.19em;
+    margin: 0.125em;
     padding: 0 0.333333333333333333em;
     min-height: 1.666666666666666666em;/*x*/
     min-width: 0;
@@ -1891,7 +1895,7 @@ spinbutton {
 }
 
 #MyExpander spinbutton {
-    margin: 0.19em;
+    margin: 0.125em;
     padding: 0;
     min-height: 1.333333333333333333em;
     min-width: 0;
@@ -1904,12 +1908,12 @@ spinbutton {
 }
 /* Needed for Reset & and Auto button height*/
 #MyExpander button + label + spinbutton {
-    margin-top: 0.333333333333333333em;
-    margin-bottom: 0.333333333333333333em;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
 }
 #MyExpander checkbutton + label + spinbutton {
-    margin-top: 0.416666666666666666em;
-    margin-bottom: 0.416666666666666666em;
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
 }
 /**/
 

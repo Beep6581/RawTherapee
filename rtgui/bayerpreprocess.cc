@@ -124,7 +124,7 @@ void BayerPreProcess::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
     if (pedited) {
         pedited->raw.bayersensor.linenoise = lineDenoise->getEditedState();
         pedited->raw.bayersensor.greenEq = greenEqThreshold->getEditedState();
-        pedited->raw.bayersensor.linenoise = lineDenoiseDirection->get_active_row_number() != 3;
+        pedited->raw.bayersensor.linenoiseDirection = lineDenoiseDirection->get_active_row_number() != 3;
         pedited->raw.bayersensor.pdafLinesFilter = !pdafLinesFilter->get_inconsistent();
     }
 }
