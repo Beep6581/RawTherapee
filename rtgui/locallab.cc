@@ -932,13 +932,13 @@ Locallab::Locallab():
     expmaskcb->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcb));
     expmaskcb->setLevel (2);
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         Glib::ustring ss;
         ss = Glib::ustring::format(i);
 
         if (i == 0) {
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
-        } else if (i == 4) {
+        } else if (i == 5) {
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
         }
 
@@ -1011,7 +1011,7 @@ Locallab::Locallab():
     lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::lumacontrastPlusPressed));
     cbdlBox->pack_start(*buttonBox);
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         cbdlBox->pack_start(*multiplier[i]);
     }
 
@@ -1313,7 +1313,7 @@ void Locallab::lumaneutralPressed()
 {
     // printf("lumaneutralPressed\n");
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         multiplier[i]->setValue(1.0);
     }
 
@@ -1325,8 +1325,8 @@ void Locallab::lumacontrastPlusPressed()
 {
     // printf("lumacontrastPlusPressed\n");
 
-    for (int i = 0; i < 5; i++) {
-        float inc = (5 - i);
+    for (int i = 0; i < 6; i++) {
+        float inc = (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc);
     }
 
@@ -1338,8 +1338,8 @@ void Locallab::lumacontrastMinusPressed()
 {
     // printf("lumacontrastMinusPressed\n");
 
-    for (int i = 0; i < 5; i++) {
-        float inc = - (5 - i);
+    for (int i = 0; i < 6; i++) {
+        float inc = - (6 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc);
     }
 
@@ -2039,7 +2039,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     // Contrast by detail levels
                     pp->locallab.spots.at(pp->locallab.selspot).expcbdl = expcbdl->getEnabled();
 
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 6; i++) {
                         pp->locallab.spots.at(pp->locallab.selspot).mult[i] = multiplier[i]->getValue();
                     }
 
@@ -2238,7 +2238,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         // Contrast by detail levels
                         pe->locallab.spots.at(pp->locallab.selspot).expcbdl = pe->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < 6; i++) {
                             pe->locallab.spots.at(pp->locallab.selspot).mult[i] = pe->locallab.spots.at(pp->locallab.selspot).mult[i] || multiplier[i]->getEditedState();
                         }
 
@@ -2439,7 +2439,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         // Contrast by detail levels
                         pedited->locallab.spots.at(pp->locallab.selspot).expcbdl = pedited->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < 6; i++) {
                             pedited->locallab.spots.at(pp->locallab.selspot).mult[i] = pedited->locallab.spots.at(pp->locallab.selspot).mult[i] || multiplier[i]->getEditedState();
                         }
 
@@ -3393,7 +3393,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     lclightness->setDefault(defSpot->lclightness);
     sensilc->setDefault((double)defSpot->sensilc);
     // Contrast by detail levels
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         multiplier[i]->setDefault(defSpot->mult[i]);
     }
 
@@ -3514,7 +3514,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         lclightness->setDefaultEditedState(Irrelevant);
         sensilc->setDefaultEditedState(Irrelevant);
         // Contrast by detail levels
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             multiplier[i]->setDefaultEditedState(Irrelevant);
         }
 
@@ -3639,7 +3639,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         lclightness->setDefaultEditedState(defSpotState->lclightness ? Edited : UnEdited);
         sensilc->setDefaultEditedState(defSpotState->sensilc ? Edited : UnEdited);
         // Contrast by detail levels
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             multiplier[i]->setDefaultEditedState(defSpotState->mult[i] ? Edited : UnEdited);
         }
 
@@ -4213,7 +4213,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
 
     // Contrast by detail levels
     if (getEnabled() && expcbdl->getEnabled()) {
-        if (a == multiplier[0] || a == multiplier[1] || a == multiplier[2] || a == multiplier[3] || a == multiplier[4]) {
+        if (a == multiplier[0] || a == multiplier[1] || a == multiplier[2] || a == multiplier[3] || a == multiplier[4] || a == multiplier[5]) {
             if (listener) {
                 listener->panelChanged(EvlocallabEqualizer,
                                        Glib::ustring::compose("%1, %2, %3, %4, %5",
@@ -4493,7 +4493,7 @@ void Locallab::setBatchMode(bool batchMode)
     lclightness->showEditedCB();
     sensilc->showEditedCB();
     // Contrast by detail levels
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         multiplier[i]->showEditedCB();
     }
 
@@ -4947,7 +4947,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         // Contrast by detail levels
         expcbdl->setEnabled(pp->locallab.spots.at(index).expcbdl);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             multiplier[i]->setValue(pp->locallab.spots.at(index).mult[i]);
         }
 
@@ -5180,7 +5180,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 // Contrast by detail levels
                 expcbdl->set_inconsistent(!spotState->expcbdl);
 
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 6; i++) {
                     multiplier[i]->setEditedState(spotState->mult[i] ? Edited : UnEdited);
                 }
 

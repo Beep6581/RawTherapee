@@ -35,12 +35,12 @@ namespace rtengine
 {
 
 constexpr int maxlevel = 6;
-constexpr int maxlevelloc = 5;
+constexpr int maxlevelloc = 6;//5
 constexpr float noise = 2000;
 
 //sequence of scales
 constexpr int scales[maxlevel] = {1, 2, 4, 8, 16, 32};
-constexpr int scalesloc[5] = {1, 2, 4, 8, 16};
+constexpr int scalesloc[6] = {1, 2, 4, 8, 16, 32};
 extern const Settings* settings;
 
 //sequence of scales
@@ -297,10 +297,10 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     }
 
     int level;
-    float multi[5] = {1.f, 1.f, 1.f, 1.f, 1.f};
-    float scalefl[5];
+    float multi[6] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
+    float scalefl[6];
 
-    for (int lv = 0; lv < 5; lv++) {
+    for (int lv = 0; lv < 6; lv++) {
         scalefl[lv] = ((float) scalesloc[lv]) / (float) scaleprev;
 
         if (lv >= 1) {

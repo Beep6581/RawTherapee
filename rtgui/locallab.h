@@ -189,7 +189,7 @@ private:
     Adjuster* const lclightness;
     Adjuster* const sensilc;
     // Contrast by detail levels
-    Adjuster* multiplier[5];
+    Adjuster* multiplier[6];
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const clarityml;

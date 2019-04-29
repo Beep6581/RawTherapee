@@ -2495,7 +2495,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensilc(19),
     // Contrast by detail levels
     expcbdl(false),
-    mult{1.0, 1.0, 1.0, 1.0, 1.0},
+    mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
     chromacbdl(0),
     threshold(0.2),
     sensicb(15),
@@ -2693,7 +2693,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 if (mult[i] != other.mult[i]) {
                     return false;
@@ -3846,7 +3846,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 // Contrast by detail levels
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), spot.expcbdl, keyFile);
 
-                for (int j = 0; j < 5; j++) {
+                for (int j = 0; j < 6; j++) {
                     saveToKeyfile(!pedited || pedited->locallab.spots.at(i).mult[j], "Locallab", "Mult" + std::to_string(j) + "_" + std::to_string(i), spot.mult[j], keyFile);
                 }
 
@@ -5140,7 +5140,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 // Contrast by detail levels
                 assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, spot.expcbdl, spotEdited.expcbdl);
 
-                for (int j = 0; j < 5; j ++) {
+                for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Mult" + std::to_string(j) + "_" + std::to_string(i), pedited, spot.mult[j], spotEdited.mult[j]);
                 }
 

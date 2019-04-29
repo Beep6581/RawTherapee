@@ -1086,7 +1086,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 // Contrast by detail levels
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
 
-                for (int k = 0; k < 5; k++) {
+                for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).mult[k] = locallab.spots.at(j).mult[k] && pSpot.mult[k] == otherSpot.mult[k];
                 }
 
@@ -3141,7 +3141,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).expcbdl = mods.locallab.spots.at(i).expcbdl;
         }
 
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 6; j++) {
             if (locallab.spots.at(i).mult[j]) {
                 toEdit.locallab.spots.at(i).mult[j] = mods.locallab.spots.at(i).mult[j];
             }
@@ -4558,7 +4558,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     // Contrast by detail levels
     expcbdl = v;
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         mult[i] = v;
     }
 

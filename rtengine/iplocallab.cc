@@ -255,7 +255,7 @@ struct local_params {
     float noiselc;
     float noisecf;
     float noisecc;
-    float mulloc[5];
+    float mulloc[6];
     float threshol;
 //    float chromacb;
     float strengt;
@@ -477,9 +477,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     float local_noisecf = ((float)locallab.spots.at(sp).noisechrof) / 10.f;
     float local_noisecc = ((float)locallab.spots.at(sp).noisechroc) / 10.f;
-    float multi[5];
+    float multi[6];
 
-    for (int y = 0; y < 5; y++) {
+    for (int y = 0; y < 6; y++) {
         multi[y] = ((float) locallab.spots.at(sp).mult[y]);
     }
 
@@ -689,7 +689,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.rewe = rewe;
     lp.senstm = local_sensitm;
 
-    for (int y = 0; y < 5; y++) {
+    for (int y = 0; y < 6; y++) {
         lp.mulloc[y] = CLIP04(multi[y]);//to prevent crash with old pp3 integer
     }
 
@@ -3917,7 +3917,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
         // but if user select volontary denoise, it is that choice the good (prioritary)
         bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0); // only if one slider ore more is engaged
-        bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) ;//only if user want cbdl
+        bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f) ;//only if user want cbdl
         bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
 
         if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) || execdenoi) {  // sk == 1 ??
@@ -5015,7 +5015,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //end TM
 
 //begin cbdl
-        if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f  || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) && lp.cbdlena) {
+        if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) && lp.cbdlena) {
             if (call <= 3) { //call from simpleprocess dcrop improcc
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -5024,7 +5024,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 int bfh = yend - ystart;
                 int bfw = xend - xstart;
 
-                if (bfw > 32 && bfh > 32) {
+                if (bfw > 65 && bfh > 65) {
                     array2D<float> bufsh(bfw, bfh);
                     array2D<float> &buflight = bufsh;
                     JaggedArray<float> bufchrom(bfw, bfh, true);
@@ -5169,12 +5169,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    if(lp.clarityml != 0.f && lp.mulloc[4] == 1.0) {//enabled last level to retrieve level 5 and residual image in case user not select level 5
-                        lp.mulloc[4]= 1.001f;
+                    if(lp.clarityml != 0.f && lp.mulloc[5] == 1.0) {//enabled last level to retrieve level 5 and residual image in case user not select level 5
+                        lp.mulloc[5]= 1.001f;
                     }
 
-                    if(lp.contresid != 0.f && lp.mulloc[4] == 1.0) {//enabled last level to retrieve level 5 and residual image in case user not select level 5
-                        lp.mulloc[4]= 1.001f;
+                    if(lp.contresid != 0.f && lp.mulloc[5] == 1.0) {//enabled last level to retrieve level 5 and residual image in case user not select level 5
+                        lp.mulloc[5]= 1.001f;
                     }
 
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
@@ -5217,7 +5217,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                        float multc[5];
+                        float multc[6];
                         float clarich = 0.5f * lp.clarityml;
 
                         if(clarich > 0.f && lp.mulloc[0] == 1.f) { //to enabled in case of user select only clarity
@@ -5228,7 +5228,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             lp.mulloc[0] = 1.01f;
                         }
 
-                        for (int lv = 0; lv < 5; lv++) {
+                        for (int lv = 0; lv < 6; lv++) {
                             multc[lv] = rtengine::max((lp.chromacb * ((float) lp.mulloc[lv] - 1.f) / 100.f) + 1.f, 0.f);
                         }
                         

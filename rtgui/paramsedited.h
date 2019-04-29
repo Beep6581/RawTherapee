@@ -512,7 +512,7 @@ public:
         bool sensilc;
         // Contrast by detail levels
         bool expcbdl;
-        bool mult[5];
+        bool mult[6];
         bool chromacbdl;
         bool threshold;
         bool sensicb;
