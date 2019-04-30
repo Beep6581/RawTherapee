@@ -2464,7 +2464,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     rewei(0),
     sensitm(19),
     softradiustm(0.0),
-    amount(80),
+    amount(95),
     // Retinex
     expreti(false),
     retinexMethod("high"),
