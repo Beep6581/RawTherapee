@@ -2457,13 +2457,14 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     activlum(false),
     // Tone Mapping
     exptonemap(false),
-    stren(1),
+    stren(10),
     gamma(100),
     estop(140),
     scaltm(10),
     rewei(0),
     sensitm(19),
     softradiustm(0.0),
+    amount(80),
     // Retinex
     expreti(false),
     retinexMethod("high"),
@@ -2661,6 +2662,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && rewei == other.rewei
         && sensitm == other.sensitm
         && softradiustm == other.softradiustm
+        && amount == other.amount
         // Retinex
         && expreti == other.expreti
         && retinexMethod == other.retinexMethod
@@ -3814,6 +3816,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).rewei, "Locallab", "Rewei_" + std::to_string(i), spot.rewei, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensitm, "Locallab", "Sensitm_" + std::to_string(i), spot.sensitm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiustm, "Locallab", "Softradiustm_" + std::to_string(i), spot.softradiustm, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).amount, "Locallab", "Amount_" + std::to_string(i), spot.amount, keyFile);
                 // Retinex
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expreti, "Locallab", "Expreti_" + std::to_string(i), spot.expreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).retinexMethod, "Locallab", "retinexMethod_" + std::to_string(i), spot.retinexMethod, keyFile);
@@ -5108,6 +5111,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Rewei_" + std::to_string(i), pedited, spot.rewei, spotEdited.rewei);
                 assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + std::to_string(i), pedited, spot.sensitm, spotEdited.sensitm);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiustm_" + std::to_string(i), pedited, spot.softradiustm, spotEdited.softradiustm);
+                assignFromKeyfile(keyFile, "Locallab", "Amount_" + std::to_string(i), pedited, spot.amount, spotEdited.amount);
                 // Retinex
                 assignFromKeyfile(keyFile, "Locallab", "Expreti_" + std::to_string(i), pedited, spot.expreti, spotEdited.expreti);
                 assignFromKeyfile(keyFile, "Locallab", "retinexMethod_" + std::to_string(i), pedited, spot.retinexMethod, spotEdited.retinexMethod);

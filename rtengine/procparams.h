@@ -1065,6 +1065,7 @@ struct LocallabParams {
         int rewei;
         int sensitm;
         double softradiustm;
+        int amount;
         // Retinex
         bool expreti;
         Glib::ustring retinexMethod;

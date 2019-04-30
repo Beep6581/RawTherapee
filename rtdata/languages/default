@@ -799,7 +799,7 @@ HISTORY_MSG_549;Local - Blur scope
 HISTORY_MSG_550;Local - Blur method
 HISTORY_MSG_551;Local - Blur Luminance only
 HISTORY_MSG_552;Local - Tone mapping
-HISTORY_MSG_553;Local - TM strength
+HISTORY_MSG_553;Local - TM compression strength
 HISTORY_MSG_554;Local - TM gamma
 HISTORY_MSG_555;Local - TM edge stopping
 HISTORY_MSG_556;Local - TM scale
@@ -920,6 +920,8 @@ HISTORY_MSG_672;Local - cbdl mask CL
 HISTORY_MSG_673;Local - Use cbdl mask
 HISTORY_MSG_675;Local - TM soft radius
 HISTORY_MSG_676;Local Spot transition-differentiation
+HISTORY_MSG_677;Local - TM amount
+
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1967,6 +1969,7 @@ TP_LENSPROFILE_USE_HEADER;Correct
 TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ADJ;Equalizer blue-red
+TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but can reduce the scope of detection.\nThreshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nThreshold structure take into account the structure level of solid areas
 TP_LOCALLAB_AVOID;Avoid color shift
@@ -2066,7 +2069,7 @@ TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_RETI;Retinex
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
-TP_LOCALLAB_STREN;Strength
+TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_STR;Strength

@@ -263,6 +263,7 @@ struct local_params {
     float esto;
     float scalt;
     float rewe;
+    float amo;
     bool colorena;
     bool blurena;
     bool tonemapena;
@@ -389,6 +390,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float est = ((float)locallab.spots.at(sp).estop) / 100.f;
     float scal_tm = ((float)locallab.spots.at(sp).scaltm) / 10.f;
     float rewe = ((float)locallab.spots.at(sp).rewei);
+    float amo = ((float)locallab.spots.at(sp).amount);
     float strlight = ((float)locallab.spots.at(sp).streng);
     float strucc = locallab.spots.at(sp).struc;
 
@@ -688,6 +690,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.scalt = scal_tm;
     lp.rewe = rewe;
     lp.senstm = local_sensitm;
+    lp.amo = amo;
 
     for (int y = 0; y < 6; y++) {
         lp.mulloc[y] = CLIP04(multi[y]);//to prevent crash with old pp3 integer
@@ -2371,7 +2374,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         const int bfw = xend - xstart;
         const int bfh = yend - ystart;
-
+printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
         const float ach = lp.trans / 100.f;
         float varsens = lp.sensex;
 
@@ -4969,8 +4972,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufgb->b[y - ystart][x - xstart] = original->b[y][x];
                         }
                     }
-
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), 5, sk);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            tmp1->L[y][x] =  0.01f* (lp.amo * tmp1->L[y][x] + (100.f - lp.amo) * bufgb->L[y][x]);
+                        }
+                    }
+
                     float minL = tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;
                     float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));

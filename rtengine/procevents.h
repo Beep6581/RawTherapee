@@ -703,6 +703,7 @@ enum ProcEventCode {
     EvlocallabshowmaskcbMethod = 673,
     Evlocallabsoftradiustm = 674,
     EvLocallabSpotTransitgrad = 675,
+    Evlocallabamount = 676,
     NUMOFEVENTS
 };
 
