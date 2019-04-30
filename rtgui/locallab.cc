@@ -138,7 +138,7 @@ Locallab::Locallab():
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     // Tone Mapping
     stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -50, 200, 1, 10))),
-    gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 80, 400, 1, 100))),
+    gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 40, 400, 1, 100))),
     estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 10, 400, 1, 140))),
     scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 1, 100, 1, 10))),
     rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 9, 1, 0))),

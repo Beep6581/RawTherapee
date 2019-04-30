@@ -2374,7 +2374,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         const int bfw = xend - xstart;
         const int bfh = yend - ystart;
-printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
+        //printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
         const float ach = lp.trans / 100.f;
         float varsens = lp.sensex;
 
@@ -2399,8 +2399,10 @@ printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
         } else if (senstype == 9)   //Shadow highlight
         {
             varsens =  lp.senshs;
+        } else if (senstype == 10) //local contrast
+        {
+            varsens =  lp.senslc;
         }
-
         //sobel
         sobelref /= 100.f;
         meansobel /= 100.f;
@@ -2604,13 +2606,13 @@ printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
         * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
         
         * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE 
-        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, Localcontrast
+        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, TM 
         
         * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE 
-        * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight
+        * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight, Localcontrast
         
         * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
-        * in this case we found "applyproc" which result in large variations of L : Retinex, TM, and others
+        * in this case we found "applyproc" which result in large variations of L : Retinex
         
         * if you change you must test before
         
@@ -2628,7 +2630,7 @@ printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
-                                } else if (senstype == 6 || senstype == 8) {
+                                } else if (senstype == 6 || senstype == 8  || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
@@ -2667,7 +2669,7 @@ printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6) {
+                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
                                         
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                    } else if (senstype == 1) {
@@ -2751,7 +2753,7 @@ printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
-                                } else if (senstype == 6 || senstype == 8) {
+                                } else if (senstype == 6 || senstype == 8 || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
                                 } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
@@ -2790,7 +2792,7 @@ printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6) {
+                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
@@ -3693,13 +3695,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         * if we call "applyproc" : the datas produced upstream in bfw, bfh coordinate by the function producing something curves, retinex, exposure, etc.
         
         * direct : in this case we use directly the datas produced upstream by "applyproc", with only a regulation produce for deltaE by reducdE 
-        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, Local contrast
+        * direct : we found in this case "applyproc" modify data with low amplitude : BlurNoise, CBDL, Denoise, Sharp, TM
         
         * with first use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type 328.f *  realstrdE 
-        * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight
+        * in this case we found "applyproc" which result in direct use on Luminance : Exposure, Color and Light, Shadows highlight, SoftLight, Local contrast
         
         * with second use of "buflight" on which is apply "applyproc", in this case we apply  realstrdE = reducdE * buflight with a function of type fli = (100.f + realstrdE) / 100.f;
-        * in this case we found "applyproc" which result in large variations of L : Retinex, TM, and others
+        * in this case we found "applyproc" which result in large variations of L : Retinex
         
         * if you change you must test before
         
@@ -5516,53 +5518,70 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 //local contrast
-        if (lp.lcamount > 0.f && call < 3  && lp.lcena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
-            int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
-            int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
-            JaggedArray<float> loctemp(bfw, bfh);
-            std::unique_ptr<LabImage> bufloca;
+        if (lp.lcamount > 0.f && call < 3  && lp.lcena) {
+                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                const int bfh = yend - ystart;
+                const int bfw = xend - xstart;
 
-            LabImage *localContrastSource;
-            if (call == 2) { //call from simpleprocess
-                bufloca.reset(new LabImage(bfw, bfh));
 
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
-                int yEn = lp.yc + lp.ly;
-                int xEn = lp.xc + lp.lx;
+                if (bfw > 0 && bfh > 0) {
+                    array2D<float> buflight(bfw, bfh);
+                    JaggedArray<float> bufchro(bfw, bfh);
+                    std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < transformed->H ; y++) {
-                    const int loy = cy + y;
-                    if (loy >= begy && loy < yEn) {
-                        for (int x = 0; x < transformed->W; x++) {
-                            const int lox = cx + x;
-                            if (lox >= begx && lox < xEn) {
-                                bufloca->L[loy - begy][lox - begx] = original->L[y][x];
-                            }
+                    for (int y = ystart; y < yend; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            bufgb->L[y - ystart][x - xstart] = original->L[y][x];
+                            bufgb->a[y - ystart][x - xstart] = original->a[y][x];
+                            bufgb->b[y - ystart][x - xstart] = original->b[y][x];
+                            tmp1->a[y - ystart][x - xstart] = original->a[y][x];
+                            tmp1->b[y - ystart][x - xstart] = original->b[y][x];
                         }
                     }
+                    
+                    LocalContrastParams localContrastParams;
+                    localContrastParams.enabled = true;
+                    localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
+                    localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
+                    localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
+                    localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
+                    ImProcFunctions::localContrast(bufgb.get(), tmp1->L, localContrastParams, sk);
+
+                    float minL =  tmp1->L[0][0] - bufgb->L[0][0];
+                    float maxL = minL;
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
+#endif
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            buflight[ir][jr] =  tmp1->L[ir][jr] - bufgb->L[ir][jr];
+                            minL = rtengine::min(minL, buflight[ir][jr]);
+                            maxL = rtengine::max(maxL, buflight[ir][jr]);
+                        }
+                    }
+                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            buflight[y][x] /= coef;
+                        }
+                    }
+
+                    bufgb.reset();
+                    transit_shapedetect(10, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 }
-
-                localContrastSource = bufloca.get();
-            } else { //call from dcrop.cc
-                localContrastSource = original;
-            }
-            LocalContrastParams localContrastParams;
-            localContrastParams.enabled = true;
-            localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
-            localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
-            localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
-            localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-            ImProcFunctions::localContrast(localContrastSource, loctemp, localContrastParams, sk);
-
-            //sharpen ellipse and transition
-            Sharp_Local(call, loctemp, 1,  hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
         }
-
 
         if (!lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
             int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
