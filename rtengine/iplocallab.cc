@@ -1670,72 +1670,72 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
         #pragma omp for schedule(dynamic,16)
 #endif
 
-    for (int y = 0; y < transformed->H; y++) {
-        int loy = cy + y;
+        for (int y = 0; y < transformed->H; y++) {
+            int loy = cy + y;
 
-        for (int x = 0; x < transformed->W; x++) {
-            int lox = cx + x;
+            for (int x = 0; x < transformed->W; x++) {
+                int lox = cx + x;
 
-            int zone;
-            float localFactor;
+                int zone;
+                float localFactor;
 
-            if (lp.shapmet == 0) {
-                calcTransition(lox, loy, ach, lp, zone, localFactor);
-            } else if (lp.shapmet == 1) {
-                calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
-            }
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else if (lp.shapmet == 1) {
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
 
                 float rL = origblur->L[y][x] / 327.68f;
                 float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                 float reducdE;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn , reducdE);
-            switch (zone) {
-                case 0: { // outside selection and outside transition zone => full effect, no transition
-                    float difL = tmp1->L[y][x] - original->L[y][x];
-                    transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                switch (zone) {
+                    case 0: { // outside selection and outside transition zone => full effect, no transition
+                        float difL = tmp1->L[y][x] - original->L[y][x];
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
-                    if (!lp.actsp) {
-                        transformed->a[y][x] = CLIPC(tmp1->a[y][x]);
-                        transformed->b[y][x] = CLIPC(tmp1->b[y][x]);
+                        if (!lp.actsp) {
+                            transformed->a[y][x] = CLIPC(tmp1->a[y][x]);
+                            transformed->b[y][x] = CLIPC(tmp1->b[y][x]);
+                        }
+
+                        break;
                     }
 
-                    break;
-                }
+                    case 1: { // inside transition zone
+                        float difL = tmp1->L[y][x] - original->L[y][x];
+                        float difa = tmp1->a[y][x] - original->a[y][x];
+                        float difb = tmp1->b[y][x] - original->b[y][x];
 
-                case 1: { // inside transition zone
-                    float difL = tmp1->L[y][x] - original->L[y][x];
-                    float difa = tmp1->a[y][x] - original->a[y][x];
-                    float difb = tmp1->b[y][x] - original->b[y][x];
+                        float factorx = 1.f - localFactor;
+                        difL *= factorx;
+                        difa *= factorx;
+                        difb *= factorx;
 
-                    float factorx = 1.f - localFactor;
-                    difL *= factorx;
-                    difa *= factorx;
-                    difb *= factorx;
+                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
-                    transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                        if (!lp.actsp) {
 
-                    if (!lp.actsp) {
+                            transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
+                            transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                        }
 
-                        transformed->a[y][x] = CLIPC(original->a[y][x] + difa);
-                        transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
+                        break;
                     }
 
-                    break;
-                }
+                    case 2: { // inside selection => no effect, keep original values
+                        transformed->L[y][x] = original->L[y][x];
 
-                case 2: { // inside selection => no effect, keep original values
-                    transformed->L[y][x] = original->L[y][x];
+                        if (!lp.actsp) {
 
-                    if (!lp.actsp) {
-
-                        transformed->a[y][x] = original->a[y][x];
-                        transformed->b[y][x] = original->b[y][x];
+                            transformed->a[y][x] = original->a[y][x];
+                            transformed->b[y][x] = original->b[y][x];
+                        }
                     }
                 }
             }
         }
     }
-}
     delete origblur;
 }
 
