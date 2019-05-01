@@ -1621,7 +1621,9 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                 }
             }
         }
+        
     }
+    delete origblur;
 }
 
 
@@ -1734,6 +1736,7 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
         }
     }
 }
+    delete origblur;
 }
 
 static void calclight(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
@@ -5542,6 +5545,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufgb->L[y - ystart][x - xstart] = original->L[y][x];
                             bufgb->a[y - ystart][x - xstart] = original->a[y][x];
                             bufgb->b[y - ystart][x - xstart] = original->b[y][x];
+                            tmp1->L[y - ystart][x - xstart] = original->L[y][x];
                             tmp1->a[y - ystart][x - xstart] = original->a[y][x];
                             tmp1->b[y - ystart][x - xstart] = original->b[y][x];
                         }
@@ -5553,7 +5557,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
                     localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-                    ImProcFunctions::localContrast(bufgb.get(), tmp1->L, localContrastParams, sk);
+                    ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, sk);
 
                     float minL =  tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;

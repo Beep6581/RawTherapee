@@ -145,6 +145,7 @@ Locallab::Locallab():
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50, 100, 1, 95))),
+    satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100, 100, 1, 20))),
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
@@ -769,6 +770,7 @@ Locallab::Locallab():
     rewei->setAdjusterListener(this);
 
     amount->setAdjusterListener(this);
+    satur->setAdjusterListener(this);
 
     if(showtooltip) sensitm->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensitm->setAdjusterListener(this);
@@ -778,6 +780,7 @@ Locallab::Locallab():
     tmBox->pack_start(*amount);
     tmBox->pack_start(*stren);
     tmBox->pack_start(*gamma);
+    tmBox->pack_start(*satur);
     tmBox->pack_start(*estop);
     tmBox->pack_start(*scaltm);
     tmBox->pack_start(*rewei);
@@ -2001,6 +2004,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).estop = estop->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).scaltm = scaltm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).rewei = rewei->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).satur = satur->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensitm = sensitm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiustm = softradiustm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).amount = amount->getIntValue();
@@ -2209,6 +2213,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).estop = pe->locallab.spots.at(pp->locallab.selspot).estop || estop->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).scaltm = pe->locallab.spots.at(pp->locallab.selspot).scaltm || scaltm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).rewei = pe->locallab.spots.at(pp->locallab.selspot).rewei || rewei->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).satur = pe->locallab.spots.at(pp->locallab.selspot).satur || satur->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensitm = pe->locallab.spots.at(pp->locallab.selspot).sensitm || sensitm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiustm = pe->locallab.spots.at(pp->locallab.selspot).softradiustm || softradiustm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).amount = pe->locallab.spots.at(pp->locallab.selspot).amount || amount->getEditedState();
@@ -2411,6 +2416,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).estop = pedited->locallab.spots.at(pp->locallab.selspot).estop || estop->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).scaltm = pedited->locallab.spots.at(pp->locallab.selspot).scaltm || scaltm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).rewei = pedited->locallab.spots.at(pp->locallab.selspot).rewei || rewei->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).satur = pedited->locallab.spots.at(pp->locallab.selspot).satur || satur->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensitm = pedited->locallab.spots.at(pp->locallab.selspot).sensitm || sensitm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiustm = pedited->locallab.spots.at(pp->locallab.selspot).softradiustm || softradiustm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).amount = pedited->locallab.spots.at(pp->locallab.selspot).amount || amount->getEditedState();
@@ -3375,6 +3381,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     estop->setDefault((double)defSpot->estop);
     scaltm->setDefault((double)defSpot->scaltm);
     rewei->setDefault((double)defSpot->rewei);
+    satur->setDefault((double)defSpot->satur);
     sensitm->setDefault((double)defSpot->sensitm);
     softradiustm->setDefault(defSpot->softradiustm);
     amount->setDefault((double)defSpot->amount);
@@ -3497,6 +3504,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         estop->setDefaultEditedState(Irrelevant);
         scaltm->setDefaultEditedState(Irrelevant);
         rewei->setDefaultEditedState(Irrelevant);
+        satur->setDefaultEditedState(Irrelevant);
         sensitm->setDefaultEditedState(Irrelevant);
         softradiustm->setDefaultEditedState(Irrelevant);
         amount->setDefaultEditedState(Irrelevant);
@@ -3623,6 +3631,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         estop->setDefaultEditedState(defSpotState->estop ? Edited : UnEdited);
         scaltm->setDefaultEditedState(defSpotState->scaltm ? Edited : UnEdited);
         rewei->setDefaultEditedState(defSpotState->rewei ? Edited : UnEdited);
+        satur->setDefaultEditedState(defSpotState->satur ? Edited : UnEdited);
         sensitm->setDefaultEditedState(defSpotState->sensitm ? Edited : UnEdited);
         softradiustm->setDefaultEditedState(defSpotState->softradiustm ? Edited : UnEdited);
         amount->setDefaultEditedState(defSpotState->amount ? Edited : UnEdited);
@@ -4101,6 +4110,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == satur) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsatur, satur->getTextValue());
+            }
+        }
+
     }
 
     // Retinex
@@ -4486,6 +4501,7 @@ void Locallab::setBatchMode(bool batchMode)
     estop->showEditedCB();
     scaltm->showEditedCB();
     rewei->showEditedCB();
+    satur->showEditedCB();
     sensitm->showEditedCB();
     softradiustm->showEditedCB();
     amount->showEditedCB();
@@ -4918,6 +4934,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         estop->setValue(pp->locallab.spots.at(index).estop);
         scaltm->setValue(pp->locallab.spots.at(index).scaltm);
         rewei->setValue(pp->locallab.spots.at(index).rewei);
+        satur->setValue(pp->locallab.spots.at(index).satur);
         sensitm->setValue(pp->locallab.spots.at(index).sensitm);
         softradiustm->setValue(pp->locallab.spots.at(index).softradiustm);
         amount->setValue(pp->locallab.spots.at(index).amount);
@@ -5156,6 +5173,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 estop->setEditedState(spotState->estop ? Edited : UnEdited);
                 scaltm->setEditedState(spotState->scaltm ? Edited : UnEdited);
                 rewei->setEditedState(spotState->rewei ? Edited : UnEdited);
+                satur->setEditedState(spotState->satur ? Edited : UnEdited);
                 sensitm->setEditedState(spotState->sensitm ? Edited : UnEdited);
                 softradiustm->setEditedState(spotState->softradiustm ? Edited : UnEdited);
                 amount->setEditedState(spotState->amount ? Edited : UnEdited);

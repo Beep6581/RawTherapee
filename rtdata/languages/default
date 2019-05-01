@@ -921,7 +921,7 @@ HISTORY_MSG_673;Local - Use cbdl mask
 HISTORY_MSG_675;Local - TM soft radius
 HISTORY_MSG_676;Local Spot transition-differentiation
 HISTORY_MSG_677;Local - TM amount
-
+HISTORY_MSG_678;Local - TM saturation
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2020,6 +2020,7 @@ TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
 TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
 TP_LOCALLAB_LABGRID;Color correction grid
+TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!

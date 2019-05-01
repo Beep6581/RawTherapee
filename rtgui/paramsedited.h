@@ -479,6 +479,7 @@ public:
         bool estop;
         bool scaltm;
         bool rewei;
+        bool satur;
         bool sensitm;
         bool softradiustm;
         bool amount;

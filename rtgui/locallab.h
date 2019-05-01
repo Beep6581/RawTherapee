@@ -167,6 +167,7 @@ private:
     Adjuster* const sensitm;
     Adjuster* const softradiustm;
     Adjuster* const amount;
+    Adjuster* const satur;
     // Retinex
     Adjuster* const str;
     Adjuster* const chrrt;

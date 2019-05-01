@@ -2462,6 +2462,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     estop(140),
     scaltm(10),
     rewei(0),
+    satur(20),
     sensitm(19),
     softradiustm(0.0),
     amount(95),
@@ -2660,6 +2661,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && estop == other.estop
         && scaltm == other.scaltm
         && rewei == other.rewei
+        && satur == other.satur
         && sensitm == other.sensitm
         && softradiustm == other.softradiustm
         && amount == other.amount
@@ -3814,6 +3816,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).estop, "Locallab", "Estop_" + std::to_string(i), spot.estop, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).scaltm, "Locallab", "Scaltm_" + std::to_string(i), spot.scaltm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).rewei, "Locallab", "Rewei_" + std::to_string(i), spot.rewei, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).satur, "Locallab", "Satur_" + std::to_string(i), spot.satur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensitm, "Locallab", "Sensitm_" + std::to_string(i), spot.sensitm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiustm, "Locallab", "Softradiustm_" + std::to_string(i), spot.softradiustm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).amount, "Locallab", "Amount_" + std::to_string(i), spot.amount, keyFile);
@@ -5109,6 +5112,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Estop_" + std::to_string(i), pedited, spot.estop, spotEdited.estop);
                 assignFromKeyfile(keyFile, "Locallab", "Scaltm_" + std::to_string(i), pedited, spot.scaltm, spotEdited.scaltm);
                 assignFromKeyfile(keyFile, "Locallab", "Rewei_" + std::to_string(i), pedited, spot.rewei, spotEdited.rewei);
+                assignFromKeyfile(keyFile, "Locallab", "Satur_" + std::to_string(i), pedited, spot.satur, spotEdited.satur);
                 assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + std::to_string(i), pedited, spot.sensitm, spotEdited.sensitm);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiustm_" + std::to_string(i), pedited, spot.softradiustm, spotEdited.softradiustm);
                 assignFromKeyfile(keyFile, "Locallab", "Amount_" + std::to_string(i), pedited, spot.amount, spotEdited.amount);

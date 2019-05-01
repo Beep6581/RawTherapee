@@ -704,6 +704,7 @@ enum ProcEventCode {
     Evlocallabsoftradiustm = 674,
     EvLocallabSpotTransitgrad = 675,
     Evlocallabamount = 676,
+    Evlocallabsatur = 677,
     NUMOFEVENTS
 };
 
