@@ -3810,72 +3810,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 
-//Blur and noise
-
-        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
-            std::unique_ptr<LabImage> tmp1;
-
-            if (call <= 3 && lp.blurmet == 0) {
-                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                const int bfh = yend - ystart;
-                const int bfw = xend - xstart;
-
-                if (bfw > 0 && bfh > 0) {
-                    tmp1.reset(new LabImage(bfw, bfh));
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = ystart; y < yend ; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                            tmp1->a[y - ystart][x - xstart] = original->a[y][x];
-                            tmp1->b[y - ystart][x - xstart] = original->b[y][x];
-                        }
-                    }
-
-#ifdef _OPENMP
-                    #pragma omp parallel
-#endif
-
-                    {
-                        gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
-                    }
-                }
-            } else {
-                const int GW = transformed->W;
-                const int GH = transformed->H;
-                tmp1.reset(new LabImage(transformed->W, transformed->H));
-
-#ifdef _OPENMP
-                #pragma omp parallel
-#endif
-                {
-                    gaussianBlur(original->L, tmp1->L, GW, GH, radius);
-                    gaussianBlur(original->a, tmp1->a, GW, GH, radius);
-                    gaussianBlur(original->b, tmp1->b, GW, GH, radius);
-                }
-            }
-
-            if (tmp1.get() && lp.stren > 0.1f) {
-                float mean = 0.f;//0 best result
-                float variance = lp.stren ;
-                addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
-            }
-
-            if (lp.blurmet == 0) { //blur and noise (center)
-                if (tmp1.get()) {
-                    BlurNoise_Local(tmp1.get(), hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-                }
-            } else {
-               InverseBlurNoise_Local(lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
-            }
-        }
 
 
         //local impulse
@@ -4888,148 +4822,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 
-
-//vibrance
-
-        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
-            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                const int bfh = yend - ystart;
-                const int bfw = xend - xstart;
-
-                if (bfw > 0 && bfh > 0) {
-                    JaggedArray<float> buflight(bfw, bfh);
-                    JaggedArray<float> bufl_ab(bfw, bfh);
-                    std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
-                    std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = ystart; y < yend; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
-                            bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
-                            bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
-                        }
-                    }
-
-                    VibranceParams vibranceParams;
-                    vibranceParams.enabled = params->locallab.spots.at(sp).expvibrance;
-                    vibranceParams.pastels = params->locallab.spots.at(sp).pastels;
-                    vibranceParams.saturated = params->locallab.spots.at(sp).saturated;
-                    vibranceParams.psthreshold = params->locallab.spots.at(sp).psthreshold;
-                    vibranceParams.protectskins = params->locallab.spots.at(sp).protectskins;
-                    vibranceParams.avoidcolorshift = params->locallab.spots.at(sp).avoidcolorshift;
-                    vibranceParams.pastsattog = params->locallab.spots.at(sp).pastsattog;
-                    vibranceParams.skintonescurve = params->locallab.spots.at(sp).skintonescurve;
-
-                    bufexpfin->CopyFrom(bufexporig.get());
-                    ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            buflight[y][x] = CLIPRET((bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f);
-                            bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))) / 250.f);
-                        }
-                    }
-
-                    bufexpfin.reset();
-                    transit_shapedetect(2, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-                }
-            }
-        }
-
-
-//Tone mapping
-
-        if (lp.strengt != 0.f  && lp.tonemapena) {
-            if (call <= 3) { //simpleprocess dcrop improcc
-                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                const int bfh = yend - ystart;
-                const int bfw = xend - xstart;
-
-                if (bfw > 0 && bfh > 0) {
-                    array2D<float> buflight(bfw, bfh);
-                    JaggedArray<float> bufchro(bfw, bfh);
-                    std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
-                    std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = ystart; y < yend; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            bufgb->L[y - ystart][x - xstart] = original->L[y][x];
-                            bufgb->a[y - ystart][x - xstart] = original->a[y][x];
-                            bufgb->b[y - ystart][x - xstart] = original->b[y][x];
-                        }
-                    }
-                    ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), 5, sk);
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            tmp1->L[y][x] =  0.01f* (lp.amo * tmp1->L[y][x] + (100.f - lp.amo) * bufgb->L[y][x]);
-                        }
-                    }
-
-                    float minL = tmp1->L[0][0] - bufgb->L[0][0];
-                    float maxL = minL;
-                    float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
-                    float maxC = minC;
-
-#ifdef _OPENMP
-                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
-#endif
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            buflight[ir][jr] = tmp1->L[ir][jr] - bufgb->L[ir][jr];
-                            minL = rtengine::min(minL, buflight[ir][jr]);
-                            maxL = rtengine::max(maxL, buflight[ir][jr]);
-                            bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
-                            minC = rtengine::min(minC, bufchro[ir][jr]);
-                            maxC = rtengine::max(maxC, bufchro[ir][jr]);
-                        }
-                    }
-                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
-                    float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            buflight[y][x] /= coef;
-                            bufchro[y][x] /= coefC;
-                        }
-                    }
-
-                    if (lp.softradiustm > 0.f) {
-                        softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
-                    }
-                    
-                    bufgb.reset();
-                    transit_shapedetect(8, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-                }
-            }
-        }
-//end TM
-
 //begin cbdl
         if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f || lp.clarityml != 0.f || lp.contresid != 0.f  || lp.enacbMask || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 3 || lp.showmaskcbmet == 4) && lp.cbdlena) {
             if (call <= 3) { //call from simpleprocess dcrop improcc
@@ -5288,6 +5080,216 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 //end cbdl_Local
+
+
+//Blur and noise
+
+        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+            std::unique_ptr<LabImage> tmp1;
+
+            if (call <= 3 && lp.blurmet == 0) {
+                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                const int bfh = yend - ystart;
+                const int bfw = xend - xstart;
+
+                if (bfw > 0 && bfh > 0) {
+                    tmp1.reset(new LabImage(bfw, bfh));
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = ystart; y < yend ; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            tmp1->L[y - ystart][x - xstart] = original->L[y][x];
+                            tmp1->a[y - ystart][x - xstart] = original->a[y][x];
+                            tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                        }
+                    }
+
+#ifdef _OPENMP
+                    #pragma omp parallel
+#endif
+
+                    {
+                        gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                    }
+                }
+            } else {
+                const int GW = transformed->W;
+                const int GH = transformed->H;
+                tmp1.reset(new LabImage(transformed->W, transformed->H));
+
+#ifdef _OPENMP
+                #pragma omp parallel
+#endif
+                {
+                    gaussianBlur(original->L, tmp1->L, GW, GH, radius);
+                    gaussianBlur(original->a, tmp1->a, GW, GH, radius);
+                    gaussianBlur(original->b, tmp1->b, GW, GH, radius);
+                }
+            }
+
+            if (tmp1.get() && lp.stren > 0.1f) {
+                float mean = 0.f;//0 best result
+                float variance = lp.stren ;
+                addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
+            }
+
+            if (lp.blurmet == 0) { //blur and noise (center)
+                if (tmp1.get()) {
+                    BlurNoise_Local(tmp1.get(), hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                }
+            } else {
+               InverseBlurNoise_Local(lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+            }
+        }
+
+//vibrance
+
+        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
+            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
+                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                const int bfh = yend - ystart;
+                const int bfw = xend - xstart;
+
+                if (bfw > 0 && bfh > 0) {
+                    JaggedArray<float> buflight(bfw, bfh);
+                    JaggedArray<float> bufl_ab(bfw, bfh);
+                    std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = ystart; y < yend; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                            bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
+                            bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                        }
+                    }
+
+                    VibranceParams vibranceParams;
+                    vibranceParams.enabled = params->locallab.spots.at(sp).expvibrance;
+                    vibranceParams.pastels = params->locallab.spots.at(sp).pastels;
+                    vibranceParams.saturated = params->locallab.spots.at(sp).saturated;
+                    vibranceParams.psthreshold = params->locallab.spots.at(sp).psthreshold;
+                    vibranceParams.protectskins = params->locallab.spots.at(sp).protectskins;
+                    vibranceParams.avoidcolorshift = params->locallab.spots.at(sp).avoidcolorshift;
+                    vibranceParams.pastsattog = params->locallab.spots.at(sp).pastsattog;
+                    vibranceParams.skintonescurve = params->locallab.spots.at(sp).skintonescurve;
+
+                    bufexpfin->CopyFrom(bufexporig.get());
+                    ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            buflight[y][x] = CLIPRET((bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f);
+                            bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))) / 250.f);
+                        }
+                    }
+
+                    bufexpfin.reset();
+                    transit_shapedetect(2, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                }
+            }
+        }
+
+
+//Tone mapping
+
+        if (lp.strengt != 0.f  && lp.tonemapena) {
+            if (call <= 3) { //simpleprocess dcrop improcc
+                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                const int bfh = yend - ystart;
+                const int bfw = xend - xstart;
+
+                if (bfw > 0 && bfh > 0) {
+                    array2D<float> buflight(bfw, bfh);
+                    JaggedArray<float> bufchro(bfw, bfh);
+                    std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = ystart; y < yend; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            bufgb->L[y - ystart][x - xstart] = original->L[y][x];
+                            bufgb->a[y - ystart][x - xstart] = original->a[y][x];
+                            bufgb->b[y - ystart][x - xstart] = original->b[y][x];
+                        }
+                    }
+                    ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), 5, sk);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            tmp1->L[y][x] =  0.01f* (lp.amo * tmp1->L[y][x] + (100.f - lp.amo) * bufgb->L[y][x]);
+                        }
+                    }
+
+                    float minL = tmp1->L[0][0] - bufgb->L[0][0];
+                    float maxL = minL;
+                    float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
+                    float maxC = minC;
+
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
+#endif
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            buflight[ir][jr] = tmp1->L[ir][jr] - bufgb->L[ir][jr];
+                            minL = rtengine::min(minL, buflight[ir][jr]);
+                            maxL = rtengine::max(maxL, buflight[ir][jr]);
+                            bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
+                            minC = rtengine::min(minC, bufchro[ir][jr]);
+                            maxC = rtengine::max(maxC, bufchro[ir][jr]);
+                        }
+                    }
+                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+                    float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            buflight[y][x] /= coef;
+                            bufchro[y][x] /= coefC;
+                        }
+                    }
+
+                    if (lp.softradiustm > 0.f) {
+                        softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
+                    }
+                    
+                    bufgb.reset();
+                    transit_shapedetect(8, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                }
+            }
+        }
+//end TM
+
 
 //shadow highlight
 
