@@ -5211,7 +5211,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //Tone mapping
 
-        if (lp.strengt != 0.f  && lp.tonemapena) {
+        if (lp.strengt != 0.f  && lp.tonemapena  && !params->epd.enabled) {
             if (call <= 3) { //simpleprocess dcrop improcc
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);

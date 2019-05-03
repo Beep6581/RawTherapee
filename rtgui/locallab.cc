@@ -767,6 +767,7 @@ Locallab::Locallab():
     exptonemap->setLabel(TMTitleHBox);
     exptonemap->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptonemap));
     enabletonemapConn = exptonemap->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), exptonemap));
+    if(showtooltip) exptonemap->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
 
     stren->setAdjusterListener(this);
 
