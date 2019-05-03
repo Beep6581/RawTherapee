@@ -5237,7 +5237,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufgb->b[y - ystart][x - xstart] = original->b[y][x];
                         }
                     }
-                    ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), 0, sk);//iterate to 0 calculate with edgstopping, improve result 
+                    int itera = 0;
+                    if(call == 1) {
+                      //  itera = 5;
+                    }
+                    ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
