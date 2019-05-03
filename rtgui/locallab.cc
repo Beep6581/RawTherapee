@@ -52,7 +52,7 @@ Locallab::Locallab():
     expvibrance(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE"))),
     expsoft(new MyExpander(true, M("TP_LOCALLAB_SOFT"))),
     expblur(new MyExpander(true, M("TP_LOCALLAB_BLUFR"))),
-    exptonemap(new MyExpander(true, M("TP_LOCALLAB_TM"))),
+    exptonemap(new MyExpander(true, new Gtk::HBox())),
     expreti(new MyExpander(true, new Gtk::HBox())),
     expsharp(new MyExpander(true, new Gtk::HBox())),
     expcontrast(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST"))),
@@ -756,6 +756,15 @@ Locallab::Locallab():
     panel->pack_start(*expblur, false, false);
 
     // Tone Mapping
+    Gtk::HBox* const TMTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const TMLabel = Gtk::manage(new Gtk::Label());
+    TMLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_TM")) + Glib::ustring("</b>"));
+    TMLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    TMTitleHBox->pack_start(*TMLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    RTImage *TMImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+    if(showtooltip) TMImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+    TMTitleHBox->pack_end(*TMImage, Gtk::PACK_SHRINK, 0);
+    exptonemap->setLabel(TMTitleHBox);
     exptonemap->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), exptonemap));
     enabletonemapConn = exptonemap->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), exptonemap));
 
