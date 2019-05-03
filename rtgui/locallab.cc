@@ -796,7 +796,7 @@ Locallab::Locallab():
     tmBox->pack_start(*estop);
     tmBox->pack_start(*scaltm);
     tmBox->pack_start(*rewei);
-    tmBox->pack_start(*softradiustm);
+//    tmBox->pack_start(*softradiustm);
     tmBox->pack_start(*sensitm);
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
