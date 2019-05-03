@@ -786,6 +786,7 @@ Locallab::Locallab():
     sensitm->setAdjusterListener(this);
     softradiustm->setAdjusterListener(this);
     if(showtooltip) estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
+    if(showtooltip) rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
 
     ToolParamBlock* const tmBox = Gtk::manage(new ToolParamBlock());
     tmBox->pack_start(*amount);
@@ -800,7 +801,7 @@ Locallab::Locallab():
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
 
-   panel->pack_start(*exptonemap, false, false);
+    panel->pack_start(*exptonemap, false, false);
 
     // Retinex
     Gtk::HBox* const retiTitleHBox = Gtk::manage(new Gtk::HBox());
@@ -1344,7 +1345,7 @@ void Locallab::lumacontrastPlusPressed()
     // printf("lumacontrastPlusPressed\n");
 
     for (int i = 0; i < 6; i++) {
-        float inc = (6 - i);
+        float inc = (5 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc);
     }
 
@@ -1357,7 +1358,7 @@ void Locallab::lumacontrastMinusPressed()
     // printf("lumacontrastMinusPressed\n");
 
     for (int i = 0; i < 6; i++) {
-        float inc = - (6 - i);
+        float inc = - (5 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + 0.01f * inc);
     }
 
@@ -4258,12 +4259,13 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == multiplier[0] || a == multiplier[1] || a == multiplier[2] || a == multiplier[3] || a == multiplier[4] || a == multiplier[5]) {
             if (listener) {
                 listener->panelChanged(EvlocallabEqualizer,
-                                       Glib::ustring::compose("%1, %2, %3, %4, %5",
+                                       Glib::ustring::compose("%1, %2, %3, %4, %5, %6",
                                                Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[0]->getValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[1]->getValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[2]->getValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[3]->getValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[4]->getValue())));
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[4]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[5]->getValue())));
             }
         }
 

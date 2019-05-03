@@ -4375,7 +4375,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensilc(v),
     // Contrast by detail levels
     expcbdl(v),
-    mult{v, v, v, v, v},
+    mult{v, v, v, v, v, v},
     chromacbdl(v),
     threshold(v),
     sensicb(v),

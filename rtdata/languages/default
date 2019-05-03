@@ -2124,7 +2124,7 @@ TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that o
 TP_LOCALLAB_TRANSITWEAK;Transition weakening
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic
 TP_LOCALLAB_TONEMAP_TOOLTIP;Tone Mapping - main menu must be disabled
-TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;Increase Edge stopping, increase processing time - but increases the effects 
+TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;Increase Edge stopping - or Reweighting iterates, increase processing time - but increases the effects 
 TP_LOCALLAB_VIBRANCE;Vibrance
 TP_LOCALLAB_WARM;Warm - Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
