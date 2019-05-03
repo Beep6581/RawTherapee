@@ -5375,7 +5375,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
-    float ss = (1.f / s) - 1.f;
+    float ss = 1.f - s;
     float sat = 1.f + (2.5f * satur) * ss;
 //    printf("s=%f  ss=%f sat=%f \n", s, ss, sat);
     if(sat == 1.f) sat = 1.001f;

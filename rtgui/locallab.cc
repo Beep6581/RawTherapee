@@ -145,7 +145,7 @@ Locallab::Locallab():
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50, 100, 1, 95))),
-    satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100, 100, 1, 20))),
+    satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100, 100, 1, 5))),
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),

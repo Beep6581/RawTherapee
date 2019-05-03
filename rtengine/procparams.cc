@@ -2462,7 +2462,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     estop(140),
     scaltm(10),
     rewei(0),
-    satur(20),
+    satur(5),
     sensitm(19),
     softradiustm(0.0),
     amount(95),
