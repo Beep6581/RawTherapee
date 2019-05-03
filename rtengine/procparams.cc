@@ -2459,7 +2459,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     exptonemap(false),
     stren(10),
     gamma(100),
-    estop(140),
+    estop(80),
     scaltm(10),
     rewei(0),
     satur(5),
