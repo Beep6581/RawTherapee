@@ -5225,6 +5225,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     JaggedArray<float> bufchro(bfw, bfh);
                     std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
+                    array2D<float> ble(bfw, bfh);
+                    array2D<float> guid(bfw, bfh);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -5280,13 +5282,24 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         for (int x = 0; x < bfw; x++) {
                             buflight[y][x] /= coef;
                             bufchro[y][x] /= coefC;
+                            guid[y][x] = (bufgb->L[y][x]) / 32768.f;
+                            ble[y][x] = (tmp1->L[y][x]) / 32768.f;
                         }
                     }
 
                     if (lp.softradiustm > 0.f) {
-                        softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
+                        guidedFilter(guid, ble, ble, 0.1f * lp.softradiustm / sk, 0.0001, multiThread, 4);
                     }
-                    
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            tmp1->L[y][x] = LIM01(ble[y][x]) * 32768.f;
+                        }
+                    }
                     bufgb.reset();
                     transit_shapedetect(8, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 }
