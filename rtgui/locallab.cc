@@ -175,7 +175,7 @@ Locallab::Locallab():
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
     blurcbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCBDL"), 0., 100., 0.1, 0.))),
     sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 15))),
-    softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
+    softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.01, 0.))),
     blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
     chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -4260,12 +4260,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabEqualizer,
                                        Glib::ustring::compose("%1, %2, %3, %4, %5, %6",
-                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[0]->getValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[1]->getValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[2]->getValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[3]->getValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[4]->getValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(0), multiplier[5]->getValue())));
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[0]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[1]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[2]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[3]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[4]->getValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[5]->getValue())));
             }
         }
 

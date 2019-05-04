@@ -1126,7 +1126,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
         }
     }
 
-    guidedFilter(guidsoft, buflight, buflight, rad * 10.f / sk, 0.04, multiThread, 4); //lp.softradiuscol
+    guidedFilter(guidsoft, buflight, buflight, rad * 5.f / sk, 0.001, multiThread, 4);
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -5275,29 +5275,30 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
 
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for
 #endif
 
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
                             buflight[y][x] /= coef;
                             bufchro[y][x] /= coefC;
-                   //         guid[y][x] = (bufgb->L[y][x]) / 32768.f;
-                   //         ble[y][x] = (tmp1->L[y][x]) / 32768.f;
+                  //          guid[y][x] = (bufgb->L[y][x]) / 32768.f;
+                  //          ble[y][x] = (tmp1->L[y][x] - bufgb->L[y][x]) / 32768.f;
                         }
                     }
-
-                    if (lp.softradiustm > 0.f) {
-                    //    guidedFilter(guid, ble, ble, 0.1f * lp.softradiustm / sk, 0.0001, multiThread, 4);
-                    }
 /*
+                    if (lp.softradiustm > 0.f) {
+                        guidedFilter(guid, ble, ble, 0.1f * lp.softradiustm / sk, 0.0001, multiThread);
+                        softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
+                    }
+
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for
 #endif
 
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
-                            tmp1->L[y][x] = LIM01(ble[y][x]) * 32768.f;
+                            tmp1->L[y][x] = 32768.f * LIM01(ble[y][x]) + bufgb->L[y][x];
                         }
                     }
 */
