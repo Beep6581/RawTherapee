@@ -5292,7 +5292,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     float edgest = ((float)params->locallab.spots.at(sp).estop) / 100.f;
     float sca  = ((float)params->locallab.spots.at(sp).scaltm) / 10.f;
     float gamm = ((float)params->locallab.spots.at(sp).gamma) / 100.f;
-    float satur = ((float)params->locallab.spots.at(sp).satur) / 100.f;
+//    float satur = ((float)params->locallab.spots.at(sp).satur) / 100.f;
     float rew = ((float)params->locallab.spots.at(sp).rewei);
     //Pointers to whole data and size of it.
     float *L = lab->L[0];
@@ -5375,10 +5375,10 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
-    float ss = 1.f - s;
-    float sat = 1.f + (2.5f * satur) * ss;
+//    float ss = 1.f - s;
+//    float sat = 1.f + (2.5f * satur) * ss;
 //    printf("s=%f  ss=%f sat=%f \n", s, ss, sat);
-    if(sat == 1.f) sat = 1.001f;
+//    if(sat == 1.f) sat = 1.001f;
 #ifdef _OPENMP
     #pragma omp parallel for            // removed schedule(dynamic,10)
 #endif
@@ -5388,8 +5388,8 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
         int y = i - x * WW;
 
         tmp1->L[x][y] = L[i] * maxL * (1.f / gamm) + minL;
-        tmp1->a[x][y] = sat  * a[i];
-        tmp1->b[x][y] = sat  * b[i];
+        tmp1->a[x][y] = s  * a[i];
+        tmp1->b[x][y] = s  * b[i];
 
     }
 }

@@ -792,7 +792,7 @@ Locallab::Locallab():
     tmBox->pack_start(*amount);
     tmBox->pack_start(*stren);
     tmBox->pack_start(*gamma);
-    tmBox->pack_start(*satur);
+//    tmBox->pack_start(*satur);
     tmBox->pack_start(*estop);
     tmBox->pack_start(*scaltm);
     tmBox->pack_start(*rewei);
