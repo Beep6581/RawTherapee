@@ -30,7 +30,6 @@
 #include "gauss.h"
 #include "improcfun.h"
 #include "procparams.h"
-#define CLIPLOC(x) LIM(x,0.f,32767.f)
 
 namespace rtengine
 {
@@ -66,7 +65,7 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const Lo
                 bufval *= (bufval > 0.f) ? light : dark;
             }
 
-            destination[y][x] = CLIPLOC(std::max(0.0001f, lab->L[y][x] + bufval));
+            destination[y][x] = LIM(lab->L[y][x] + bufval, 0.0001f, 32767.f);
         }
     }
 }
