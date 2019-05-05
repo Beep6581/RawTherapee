@@ -37,6 +37,8 @@
 #include "batchqueue.h"
 #include "placesbrowser.h"
 
+#define USE_IR // Experimental switch for previewReady() / _refreshProgressBar()
+
 using namespace std;
 
 #define CHECKTIME 2000
@@ -52,8 +54,9 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hasValidCurrentEFS(false),
     filterPanel(nullptr),
     exportPanel(nullptr),
-    previewsToLoad(0),
-    previewsLoaded(0),
+    previews_to_load(0),
+    previews_loaded(0),
+    previews_prev_precentage(0),
     modifierKey(0),
     coarsePanel(cp),
     toolBar(tb)
@@ -627,8 +630,8 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         }
 
         closeDir ();
-        previewsToLoad = 0;
-        previewsLoaded = 0;
+        previews_to_load = 0;
+        previews_loaded = 0;
 
         // if openfile exists, we have to open it first (it is a command line argument)
         if (!openfile.empty()) {
@@ -651,7 +654,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 
         _refreshProgressBar ();
 
-        if (previewsToLoad == 0) {
+        if (previews_to_load == 0) {
             filepanel->loadingThumbs(M("PROGRESSBAR_NOIMAGES"), 0);
         } else {
             filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"), 0);
@@ -691,43 +694,101 @@ void FileCatalog::enableTabMode(bool enable)
     redrawAll();
 }
 
-void FileCatalog::_refreshProgressBar ()
+void FileCatalog::_refreshProgressBar()
 {
     // In tab mode, no progress bar at all
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
-    if (!inTabMode) {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+    if (inTabMode) {
+        return;
+    }
 
-        Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-        Gtk::Grid* grid = Gtk::manage (new Gtk::Grid ());
-        Gtk::Label *label = nullptr;
+#ifndef USE_IR
+    GThreadLock lock;
+#endif
 
-        if (!previewsToLoad ) {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("folder-closed.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-            int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
+    const int previews_to_load_copy = previews_to_load;
+    const int previews_loaded_copy = previews_loaded;
+    const int percentage =
+        previews_to_load_copy
+            ? previews_loaded_copy * 100 / previews_to_load_copy
+            : 0;
 
-            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") +
-                                                 (filteredCount != previewsLoaded ? " [" + Glib::ustring::format(filteredCount) + "/" : " (")
-                                                 + Glib::ustring::format(previewsLoaded) +
-                                                 (filteredCount != previewsLoaded ? "]" : ")")));
-        } else {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("magnifier.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
-            filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
-        }
+    if (previews_prev_precentage.exchange(percentage) == percentage) {
+        return;
+    }
 
-        if( options.mainNBVertical ) {
-            label->set_angle(90);
-        }
+    Gtk::Notebook* const notebook = static_cast<Gtk::Notebook*>(filepanel->get_parent());
+    Gtk::Grid* const grid = Gtk::manage(new Gtk::Grid());
+    Gtk::Label* label = nullptr;
 
-        grid->attach_next_to(*label, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-        grid->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-        grid->show_all ();
+    if (!previews_to_load_copy) {
+        grid->attach_next_to(
+            *Gtk::manage(new RTImage("folder-closed.png")),
+            options.mainNBVertical
+                ? Gtk::POS_TOP
+                : Gtk::POS_RIGHT,
+            1,
+            1
+        );
 
-        if (nb) {
-            nb->set_tab_label(*filepanel, *grid);
-        }
+        const int filtered_count = std::min(fileBrowser->getNumFiltered(), previews_loaded_copy);
+
+        label = Gtk::manage(
+            new Gtk::Label(
+                M("MAIN_FRAME_FILEBROWSER")
+                + (
+                    filtered_count != previews_loaded_copy
+                        ? " [" + Glib::ustring::format(filtered_count) + "/"
+                        : " ("
+                )
+                + Glib::ustring::format(previews_loaded_copy)
+                + (
+                    filtered_count != previews_loaded_copy
+                        ? "]"
+                        : ")"
+                )
+            )
+        );
+    } else {
+        grid->attach_next_to(
+            *Gtk::manage(new RTImage("magnifier.png")),
+            options.mainNBVertical
+                ? Gtk::POS_TOP
+                : Gtk::POS_RIGHT,
+            1,
+            1
+        );
+
+        label = Gtk::manage(
+            new Gtk::Label(
+                M("MAIN_FRAME_FILEBROWSER")
+                + " ["
+                + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), percentage)
+                + "%]"
+            )
+        );
+
+        filepanel->loadingThumbs("", percentage);
+    }
+
+    if (options.mainNBVertical) {
+        label->set_angle(90);
+    }
+
+    grid->attach_next_to(
+        *label,
+        options.mainNBVertical
+            ? Gtk::POS_TOP
+            : Gtk::POS_RIGHT,
+        1,
+        1
+    );
+    grid->set_tooltip_markup(M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+    grid->show_all();
+
+    if (notebook) {
+        notebook->set_tab_label(*filepanel, *grid);
     }
 }
 
@@ -791,9 +852,19 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
         dirEFS.expcomp.insert (cfs->expcomp);
     }
 
-    previewsLoaded++;
+    ++previews_loaded;
 
+#ifdef USE_IR
+    idle_register.add(
+        [this]() -> bool
+        {
+            _refreshProgressBar();
+            return false;
+        }
+    );
+#else
     _refreshProgressBar();
+#endif
 }
 
 // Called within GTK UI thread
@@ -803,7 +874,7 @@ void FileCatalog::previewsFinishedUI ()
     {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
         redrawAll ();
-        previewsToLoad = 0;
+        previews_to_load = 0;
 
         if (filterPanel) {
             filterPanel->set_sensitive (true);
@@ -975,7 +1046,7 @@ void FileCatalog::deleteRequested(const std::vector<FileBrowserEntry*>& tbe, boo
                 ::g_remove (procfNameParamFile.c_str ());
             }
 
-            previewsLoaded--;
+            --previews_loaded;
         }
 
         _refreshProgressBar();
@@ -1049,7 +1120,7 @@ void FileCatalog::copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, b
                         // remove from browser
                         fileBrowser->delEntry (src_fPath);
 
-                        previewsLoaded--;
+                        --previews_loaded;
                     } else {
                         src_file->copy(dest_file);
                     }
@@ -1691,7 +1762,7 @@ void FileCatalog::reparseDirectory ()
     for (size_t i = 0; i < fileNamesToDel.size(); i++) {
         delete fileBrowser->delEntry (fileNamesToDel[i]);
         cacheMgr->deleteEntry (fileNamesToDel[i]);
-        previewsLoaded--;
+        --previews_loaded;
     }
 
     if (!fileNamesToDel.empty ()) {
@@ -1763,7 +1834,7 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
         }
 
         previewLoader->add(selectedDirectoryId, file->get_parse_name(), this);
-        previewsToLoad++;
+        ++previews_to_load;
 
     } catch(Gio::Error&) {}
 }

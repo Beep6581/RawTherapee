@@ -16,22 +16,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _FILECATALOG_
-#define _FILECATALOG_
+#pragma once
 
-#include "filebrowser.h"
-#include "exiffiltersettings.h"
-#include <giomm.h>
-#include "fileselectionlistener.h"
+#include <atomic>
 #include <set>
-#include "fileselectionchangelistener.h"
+
+#include <giomm.h>
+
 #include "coarsepanel.h"
-#include "toolbar.h"
-#include "filterpanel.h"
+#include "exiffiltersettings.h"
 #include "exportpanel.h"
-#include "previewloader.h"
+#include "filebrowser.h"
+#include "fileselectionchangelistener.h"
+#include "fileselectionlistener.h"
+#include "filterpanel.h"
 #include "multilangmgr.h"
+#include "previewloader.h"
 #include "threadutils.h"
+#include "toolbar.h"
 
 class FilePanel;
 /*
@@ -128,9 +130,9 @@ private:
     FilterPanel* filterPanel;
     ExportPanel* exportPanel;
 
-    int previewsToLoad;
-    int previewsLoaded;
-
+    std::atomic<int> previews_to_load;
+    std::atomic<int> previews_loaded;
+    std::atomic<int> previews_prev_precentage;
 
     std::vector<Glib::ustring> fileNameList;
     std::set<Glib::ustring> editedFiles;
@@ -163,7 +165,7 @@ public:
     void previewReady (int dir_id, FileBrowserEntry* fdn) override;
     void previewsFinished (int dir_id) override;
     void previewsFinishedUI ();
-    void _refreshProgressBar ();
+    void _refreshProgressBar();
 
     void setInspector(Inspector* inspector)
     {
@@ -286,5 +288,3 @@ inline void FileCatalog::setDirSelector (const FileCatalog::DirSelectionSlot& se
 {
     this->selectDir = selectDir;
 }
-
-#endif
