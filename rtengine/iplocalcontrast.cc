@@ -30,6 +30,7 @@
 #include "gauss.h"
 #include "improcfun.h"
 #include "procparams.h"
+#define CLIPLOC(x) LIM(x,0.f,32767.f)
 
 namespace rtengine
 {
@@ -47,7 +48,7 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const Lo
     const float light = localContrastParams.lightness;
     array2D<float> buf(width, height);
     const float sigma = localContrastParams.radius / scale;
-    // printf("wi%i he=%i am=%f da=%f li=%f si=%f\n", width, height, a, dark, light, sigma);
+    //printf("wi%i he=%i am=%f da=%f li=%f si=%f\n", width, height, a, dark, light, sigma);
 #ifdef _OPENMP
     #pragma omp parallel if(multiThread)
 #endif
@@ -65,7 +66,7 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const Lo
                 bufval *= (bufval > 0.f) ? light : dark;
             }
 
-            destination[y][x] = std::max(0.0001f, lab->L[y][x] + bufval);
+            destination[y][x] = CLIPLOC(std::max(0.0001f, lab->L[y][x] + bufval));
         }
     }
 }

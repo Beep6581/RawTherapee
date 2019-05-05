@@ -2377,7 +2377,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
         const int bfw = xend - xstart;
         const int bfh = yend - ystart;
-        //printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
+       // printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
         const float ach = lp.trans / 100.f;
         float varsens = lp.sensex;
 
@@ -2633,10 +2633,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
-                                } else if (senstype == 6 || senstype == 8  || senstype == 10) {
+                                } else if (senstype == 6 || senstype == 8 ) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3  || senstype == 10) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -2756,10 +2756,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
-                                } else if (senstype == 6 || senstype == 8 || senstype == 10) {
+                                } else if (senstype == 6 || senstype == 8) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3  || senstype == 10) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -5588,6 +5588,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int ir = 0; ir < bfh; ir++) {
                         for (int jr = 0; jr < bfw; jr++) {
                             buflight[ir][jr] =  tmp1->L[ir][jr] - bufgb->L[ir][jr];
+                            bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
                             minL = rtengine::min(minL, buflight[ir][jr]);
                             maxL = rtengine::max(maxL, buflight[ir][jr]);
                         }
@@ -5605,6 +5606,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     bufgb.reset();
                     transit_shapedetect(10, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    tmp1.reset();
                 }
         }
 
