@@ -283,6 +283,9 @@ FramesData::FramesData(const Glib::ustring &fname) :
         if (lens.empty()) {
             lens = "Unknown";
         }
+        if (lens.empty()) {
+            lens = "Unknown";
+        }
 
         std::string datetime_taken;
         if (find_exif_tag("Exif.Image.DateTimeOriginal")) {
