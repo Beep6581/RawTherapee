@@ -5975,7 +5975,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 
 
-        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || (lp.showmaskexpmet == 4 && lp.struexp > 0.f) || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -6021,7 +6021,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         ImProcFunctions::blendstruc(bfw, bfh, bufexporig.get(), 3.f / (sk * 1.4f), lp.struexp, blend2, sk, multiThread);
 
                         if (lp.showmaskexpmet == 4) {
-                            printf("showmaskexp\n");
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
