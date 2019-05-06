@@ -5356,7 +5356,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
     float sat = s + 0.3f * s * satur;
-    printf("s=%f  sat=%f \n", s, sat);
+    //printf("s=%f  sat=%f \n", s, sat);
     if(sat == 1.f) sat = 1.001f;
 #ifdef _OPENMP
     #pragma omp parallel for            // removed schedule(dynamic,10)
