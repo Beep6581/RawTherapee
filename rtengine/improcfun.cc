@@ -5656,18 +5656,17 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
 double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size)
 {
     if (fname != "") {
-        rtengine::RawMetaDataLocation ri;
         int w_raw = -1, h_raw = thumb_size;
         int w_thumb = -1, h_thumb = thumb_size;
 
         eSensorType sensorType = rtengine::ST_NONE;
-        Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, w_thumb, h_thumb, 1, FALSE);
+        Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw (fname, sensorType, w_thumb, h_thumb, 1, FALSE);
 
         if (!thumb) {
             return 0.0;
         }
 
-        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, sensorType, w_raw, h_raw, 1, 1.0, FALSE);
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw(fname, sensorType, w_raw, h_raw, 1, 1.0, FALSE);
 
         if (!raw) {
             delete thumb;

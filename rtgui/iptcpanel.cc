@@ -16,19 +16,66 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <set>
 #include "iptcpanel.h"
 #include "clipboard.h"
 #include "rtimage.h"
+#include "../rtengine/imagedata.h"
 
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-IPTCPanel::IPTCPanel () :
+namespace {
+
+const std::string CAPTION("Iptc.Application2.Caption");
+const std::string CAPTION_WRITER("Iptc.Application2.Writer");
+const std::string CATEGORY("Iptc.Application2.Category");
+const std::string CITY("Iptc.Application2.City");
+const std::string COPYRIGHT("Iptc.Application2.Copyright");
+const std::string COUNTRY("Iptc.Application2.CountryName");
+const std::string CREATOR("Iptc.Application2.Byline");
+const std::string CREATOR_JOB_TITLE("Iptc.Application2.BylineTitle");
+const std::string CREDIT("Iptc.Application2.Credit");
+const std::string DATE_CREATED("Iptc.Application2.DateCreated");
+const std::string HEADLINE("Iptc.Application2.Headline");
+const std::string INSTRUCTIONS("Iptc.Application2.SpecialInstructions");
+const std::string KEYWORDS("Iptc.Application2.Keywords");
+const std::string PROVINCE("Iptc.Application2.ProvinceState");
+const std::string SOURCE("Iptc.Application2.Source");
+const std::string SUPPLEMENTAL_CATEGORIES("Iptc.Application2.SuppCategory");
+const std::string TITLE("Iptc.Application2.ObjectName");
+const std::string TRANS_REFERENCE("Iptc.Application2.TransmissionReference");
+
+const std::set<std::string> iptc_keys = {
+    CAPTION,
+    CAPTION_WRITER,
+    CATEGORY,
+    CITY,
+    COPYRIGHT,
+    COUNTRY,
+    CREATOR,
+    CREATOR_JOB_TITLE,
+    CREDIT,
+    DATE_CREATED,
+    HEADLINE,
+    INSTRUCTIONS,
+    KEYWORDS,
+    PROVINCE,
+    SOURCE,
+    SUPPLEMENTAL_CATEGORIES,
+    TITLE,
+    TRANS_REFERENCE
+};
+
+} // namespace
+
+
+IPTCPanel::IPTCPanel():
     changeList(new rtengine::procparams::IPTCPairs),
     defChangeList(new rtengine::procparams::IPTCPairs),
-    embeddedData(new rtengine::procparams::IPTCPairs)
+    embeddedData(new rtengine::procparams::IPTCPairs)    
 {
 
     set_spacing (4);
@@ -441,11 +488,20 @@ void IPTCPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
 
 void IPTCPanel::setImageData (const FramesMetaData* id)
 {
-
+    embeddedData->clear();
     if (id) {
-        *embeddedData = id->getIPTCData ();
-    } else {
-        embeddedData->clear ();
+        try {
+            auto img = open_exiv2(id->getFileName());
+            img->readMetadata();
+            auto &iptc = img->iptcData();
+            for (auto &tag : iptc) {
+                if (iptc_keys.find(tag.key()) != iptc_keys.end()) {
+                    (*embeddedData)[tag.key()].push_back(tag.toString());
+                }
+            }
+        } catch (Exiv2::AnyError &exc) {
+            embeddedData->clear();
+        }
     }
 
     file->set_sensitive (!embeddedData->empty());
@@ -570,32 +626,32 @@ void IPTCPanel::updateChangeList ()
 {
 
     changeList->clear ();
-    (*changeList)["Caption"        ].push_back (captionText->get_text ());
-    (*changeList)["CaptionWriter"  ].push_back (captionWriter->get_text ());
-    (*changeList)["Headline"       ].push_back (headline->get_text ());
-    (*changeList)["Instructions"   ].push_back (instructions->get_text ());
+    (*changeList)[CAPTION].push_back (captionText->get_text ());
+    (*changeList)[CAPTION_WRITER].push_back (captionWriter->get_text ());
+    (*changeList)[HEADLINE].push_back (headline->get_text ());
+    (*changeList)[INSTRUCTIONS].push_back (instructions->get_text ());
 
     for (unsigned int i = 0; i < keywords->size(); i++) {
-        (*changeList)["Keywords"       ].push_back (keywords->get_text (i));
+        (*changeList)[KEYWORDS].push_back (keywords->get_text (i));
     }
 
-    (*changeList)["Category"       ].push_back (category->get_entry()->get_text ());
+    (*changeList)[CATEGORY].push_back (category->get_entry()->get_text ());
 
     for (unsigned int i = 0; i < suppCategories->size(); i++) {
-        (*changeList)["SupplementalCategories"].push_back (suppCategories->get_text (i));
+        (*changeList)[SUPPLEMENTAL_CATEGORIES].push_back (suppCategories->get_text (i));
     }
 
-    (*changeList)["Creator"        ].push_back (creator->get_text ());
-    (*changeList)["CreatorJobTitle"].push_back (creatorJobTitle->get_text ());
-    (*changeList)["Credit"         ].push_back (credit->get_text ());
-    (*changeList)["Source"         ].push_back (source->get_text ());
-    (*changeList)["Copyright"      ].push_back (copyright->get_text ());
-    (*changeList)["City"           ].push_back (city->get_text ());
-    (*changeList)["Province"       ].push_back (province->get_text ());
-    (*changeList)["Country"        ].push_back (country->get_text ());
-    (*changeList)["Title"          ].push_back (title->get_text ());
-    (*changeList)["DateCreated"    ].push_back (dateCreated->get_text ());
-    (*changeList)["TransReference" ].push_back (transReference->get_text ());
+    (*changeList)[CREATOR].push_back (creator->get_text ());
+    (*changeList)[CREATOR_JOB_TITLE].push_back (creatorJobTitle->get_text ());
+    (*changeList)[CREDIT].push_back (credit->get_text ());
+    (*changeList)[SOURCE].push_back (source->get_text ());
+    (*changeList)[COPYRIGHT].push_back (copyright->get_text ());
+    (*changeList)[CITY].push_back (city->get_text ());
+    (*changeList)[PROVINCE].push_back (province->get_text ());
+    (*changeList)[COUNTRY].push_back (country->get_text ());
+    (*changeList)[TITLE].push_back (title->get_text ());
+    (*changeList)[DATE_CREATED].push_back (dateCreated->get_text ());
+    (*changeList)[TRANS_REFERENCE].push_back (transReference->get_text ());
 
     notifyListener ();
 }
@@ -629,45 +685,45 @@ void IPTCPanel::applyChangeList ()
     suppCategory->get_entry()->set_text ("");
 
     for (rtengine::procparams::IPTCPairs::const_iterator i = changeList->begin(); i != changeList->end(); ++i) {
-        if (i->first == "Caption" && !i->second.empty()) {
+        if (i->first == CAPTION && !i->second.empty()) {
             captionText->set_text (i->second.at(0));
-        } else if (i->first == "CaptionWriter" && !i->second.empty()) {
+        } else if (i->first == CAPTION_WRITER && !i->second.empty()) {
             captionWriter->set_text (i->second.at(0));
-        } else if (i->first == "Headline" && !i->second.empty()) {
+        } else if (i->first == HEADLINE && !i->second.empty()) {
             headline->set_text (i->second.at(0));
-        } else if (i->first == "Instructions" && !i->second.empty()) {
+        } else if (i->first == INSTRUCTIONS && !i->second.empty()) {
             instructions->set_text (i->second.at(0));
-        } else if (i->first == "Keywords")
+        } else if (i->first == KEYWORDS)
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 keywords->append (i->second.at(j));
             }
-        else if (i->first == "Category" && !i->second.empty()) {
+        else if (i->first == CATEGORY && !i->second.empty()) {
             category->get_entry()->set_text (i->second.at(0));
-        } else if (i->first == "SupplementalCategories")
+        } else if (i->first == SUPPLEMENTAL_CATEGORIES)
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 suppCategories->append (i->second.at(j));
             }
-        else if (i->first == "Creator" && !i->second.empty()) {
+        else if (i->first == CREATOR && !i->second.empty()) {
             creator->set_text (i->second.at(0));
-        } else if (i->first == "CreatorJobTitle" && !i->second.empty()) {
+        } else if (i->first == CREATOR_JOB_TITLE && !i->second.empty()) {
             creatorJobTitle->set_text (i->second.at(0));
-        } else if (i->first == "Credit" && !i->second.empty()) {
+        } else if (i->first == CREDIT && !i->second.empty()) {
             credit->set_text (i->second.at(0));
-        } else if (i->first == "Source" && !i->second.empty()) {
+        } else if (i->first == SOURCE && !i->second.empty()) {
             source->set_text (i->second.at(0));
-        } else if (i->first == "Copyright" && !i->second.empty()) {
+        } else if (i->first == COPYRIGHT && !i->second.empty()) {
             copyright->set_text (i->second.at(0));
-        } else if (i->first == "City" && !i->second.empty()) {
+        } else if (i->first == CITY && !i->second.empty()) {
             city->set_text (i->second.at(0));
-        } else if (i->first == "Province" && !i->second.empty()) {
+        } else if (i->first == PROVINCE && !i->second.empty()) {
             province->set_text (i->second.at(0));
-        } else if (i->first == "Country" && !i->second.empty()) {
+        } else if (i->first == COUNTRY && !i->second.empty()) {
             country->set_text (i->second.at(0));
-        } else if (i->first == "Title" && !i->second.empty()) {
+        } else if (i->first == TITLE && !i->second.empty()) {
             title->set_text (i->second.at(0));
-        } else if (i->first == "DateCreated" && !i->second.empty()) {
+        } else if (i->first == DATE_CREATED && !i->second.empty()) {
             dateCreated->set_text (i->second.at(0));
-        } else if (i->first == "TransReference" && !i->second.empty()) {
+        } else if (i->first == TRANS_REFERENCE && !i->second.empty()) {
             transReference->set_text (i->second.at(0));
         }
     }

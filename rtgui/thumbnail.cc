@@ -34,6 +34,8 @@
 #include "extprog.h"
 #include "profilestorecombobox.h"
 #include "procparamchangers.h"
+#include "ppversion.h"
+#include "version.h"
 
 using namespace rtengine::procparams;
 
@@ -153,24 +155,23 @@ void Thumbnail::_generateThumbnailImage ()
         //     image out of the RAW. Mark as "quick".
         //  2. if we don't find that then just grab the real image.
         bool quick = false;
-        rtengine::RawMetaDataLocation ri;
 
         rtengine::eSensorType sensorType = rtengine::ST_NONE;
         if ( initial_ && options.internalThumbIfUntouched) {
             quick = true;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, tw, th, 1, TRUE);
+            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, sensorType, tw, th, 1, TRUE);
         }
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams->wb.equal, TRUE);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, sensorType, tw, th, 1, pparams->wb.equal, TRUE);
         }
 
         cfs.sensortype = sensorType;
         if (tpp) {
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
-            infoFromImage (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(ri)));
+            infoFromImage (fname);
         }
     }
 
@@ -218,6 +219,67 @@ const ProcParams& Thumbnail::getProcParamsU ()
     return *pparams; // there is no valid pp to return, but we have to return something
 }
 
+
+namespace {
+
+bool CPBDump(const Glib::ustring &commFName, const Glib::ustring &imageFName,
+             const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
+             const CacheImageData* cfs, const bool flagMode)
+{
+    const auto kf = new Glib::KeyFile;
+
+    if (!kf) {
+        return false;
+    }
+
+    FILE *f = nullptr;
+
+    // open the file in write mode
+    f = g_fopen (commFName.c_str (), "wt");
+
+    if (f == nullptr) {
+        printf ("CPBDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
+        delete kf;
+        return false;
+    }
+
+    try {
+
+        kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
+        kf->set_string ("RT General", "AppVersion", RTVERSION);
+        kf->set_integer ("RT General", "ProcParamsVersion", PPVERSION);
+        kf->set_string ("RT General", "ImageFileName", imageFName);
+        kf->set_string ("RT General", "OutputProfileFileName", profileFName);
+        kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
+        kf->set_boolean ("RT General", "FlaggingMode", flagMode);
+
+        kf->set_integer ("Common Data", "FrameCount", cfs->frameCount);
+        kf->set_integer ("Common Data", "SampleFormat", cfs->sampleFormat);
+        kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
+        kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
+        kf->set_double ("Common Data", "FNumber", cfs->fnumber);
+        kf->set_double ("Common Data", "Shutter", cfs->shutter);
+        kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
+        kf->set_integer ("Common Data", "ISO", cfs->iso);
+        kf->set_string ("Common Data", "Lens", cfs->lens);
+        kf->set_string ("Common Data", "Make", cfs->camMake);
+        kf->set_string ("Common Data", "Model", cfs->camModel);
+
+    } catch (Glib::KeyFileError&) {}
+
+    try {
+        fprintf (f, "%s", kf->to_data().c_str());
+    } catch (Glib::KeyFileError&) {}
+
+    fclose (f);
+    delete kf;
+
+    return true;
+}
+
+
+} // namespace
+
 /** @brief  Create default params on demand and returns a new updatable object
  *
  *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
@@ -242,7 +304,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
     const bool create = (!hasProcParams() || force);
-    const bool run_cpb = !options.CPBPath.empty() && !defaultPparamsPath.empty() && cfs && cfs->exifValid && create;
+    const bool run_cpb = false; //!options.CPBPath.empty() && !defaultPparamsPath.empty() && cfs && cfs->exifValid && create;
 
     const Glib::ustring outFName =
         (options.paramsLoadLocation == PLL_Input && options.saveParamsFile) ?
@@ -251,16 +313,8 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     if (!run_cpb) {
         if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
-            rtengine::FramesMetaData* imageMetaData;
-            if (getType() == FT_Raw) {
-                // Should we ask all frame's MetaData ?
-                imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
-            } else {
-                // Should we ask all frame's MetaData ?
-                imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
-            }
-            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
-            delete imageMetaData;
+            std::unique_ptr<rtengine::FramesMetaData> imageMetaData(rtengine::FramesMetaData::fromFile(fname));
+            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData.get());
             int err = pp->pparams->save(outFName);
             pp->deleteInstance();
             delete pp;
@@ -275,28 +329,11 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         }
     } else {
         // First generate the communication file, with general values and EXIF metadata
-        rtengine::FramesMetaData* imageMetaData;
-
-        if (getType() == FT_Raw) {
-            // Should we ask all frame's MetaData ?
-            imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
-        } else {
-            // Should we ask all frame's MetaData ?
-            imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
-        }
-
         Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
 
-        const rtexif::TagDirectory* exifDir = nullptr;
-
-        if (imageMetaData && (exifDir = imageMetaData->getRootExifData())) {
-            exifDir->CPBDump(tmpFileName, fname, outFName,
-                             defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
-                             cfs,
-                             flaggingMode);
-        }
-        delete imageMetaData;
-
+        CPBDump(tmpFileName, fname, outFName,
+                defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension), cfs, flaggingMode);
+        
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
 
@@ -778,9 +815,9 @@ ThFileType Thumbnail::getType ()
     return (ThFileType) cfs.format;
 }
 
-int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml)
+int Thumbnail::infoFromImage (const Glib::ustring& fname)
 {
-    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname, std::move(rml));
+    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname);
 
     if (!idata) {
         return 0;

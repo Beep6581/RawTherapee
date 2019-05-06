@@ -11,9 +11,10 @@ include_directories(${EXTRA_INCDIR}
     ${LCMS_INCLUDE_DIRS}
     ${LENSFUN_INCLUDE_DIRS}
     ${RSVG_INCLUDE_DIRS}
+    ${EXIV2_INCLUDE_DIRS}
     )
 
-link_directories("${PROJECT_SOURCE_DIR}/rtexif"
+link_directories(
     ${EXPAT_LIBRARY_DIRS}
     ${EXTRA_LIBDIR}
     ${FFTW3F_LIBRARY_DIRS}
@@ -170,7 +171,7 @@ endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
 
-target_link_libraries(rtengine rtexif
+target_link_libraries(rtengine
     ${EXPAT_LIBRARIES}
     ${EXTRA_LIB}
     ${FFTW3F_LIBRARIES}
@@ -186,6 +187,7 @@ target_link_libraries(rtengine rtexif
     ${ZLIB_LIBRARIES}
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
+    ${EXIV2_LIBRARIES}
     )
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

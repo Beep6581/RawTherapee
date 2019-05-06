@@ -303,7 +303,3 @@ int CacheImageData::save (const Glib::ustring& fname)
     }
 }
 
-rtengine::procparams::IPTCPairs CacheImageData::getIPTCData(unsigned int frame) const
-{
-    return {};
-}

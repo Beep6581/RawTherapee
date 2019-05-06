@@ -19,7 +19,6 @@
 #ifndef _THUMBPROCESSINGPARAMETERS_
 #define _THUMBPROCESSINGPARAMETERS_
 
-#include "rawmetadatalocation.h"
 #include <glibmm.h>
 #include <lcms2.h>
 #include "image8.h"
@@ -82,10 +81,9 @@ public:
     int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
     void     getDimensions  (int& w, int& h, double& scaleFac);
 
-    static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false, bool forHistogramMatching = false);
-    static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching = false);
+    static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false, bool forHistogramMatching = false);
+    static Thumbnail* loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching = false);
     static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode = false);
-    static RawMetaDataLocation loadMetaDataFromRaw (const Glib::ustring& fname);
 
     void getCamWB     (double& temp, double& green);
     void getAutoWB    (double& temp, double& green, double equal, double tempBias);
