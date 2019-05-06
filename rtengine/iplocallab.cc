@@ -2918,6 +2918,17 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
 
     if (senstype == 1) { //exposure
         temp = new LabImage(GW, GH);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < transformed->H; y++) {
+                for (int x = 0; x < transformed->W; x++) {
+                    temp->a[y][x] = original->a[y][x];
+                    temp->b[y][x] = original->b[y][x];
+                    temp->L[y][x] = original->L[y][x];
+                }
+            }
 
         ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc);
 
@@ -6216,8 +6227,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
                         }
                     }
-
+                    bufexpfin.reset();
                     transit_shapedetect(1, bufexporig.get(), originalmaskexp.get(), buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                    bufexporig.reset();
 
                 }
             }
