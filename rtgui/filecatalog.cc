@@ -24,20 +24,60 @@
 
 #include <glib/gstdio.h>
 
+#include "../rtengine/noncopyable.h"
 #include "../rtengine/rt_math.h"
 
-#include "guiutils.h"
-#include "options.h"
-#include "rtimage.h"
-#include "cachemanager.h"
-#include "multilangmgr.h"
-#include "filepanel.h"
-#include "renamedlg.h"
-#include "thumbimageupdater.h"
 #include "batchqueue.h"
+#include "cachemanager.h"
+#include "filepanel.h"
+#include "guiutils.h"
+#include "multilangmgr.h"
+#include "options.h"
 #include "placesbrowser.h"
+#include "renamedlg.h"
+#include "rtimage.h"
+#include "threadutils.h"
+#include "thumbimageupdater.h"
 
-#define USE_IR // Experimental switch for previewReady() / _refreshProgressBar()
+namespace
+{
+
+class Semaphore final :
+    public rtengine::NonCopyable
+{
+public:
+    Semaphore(long _value = 0) :
+        value(_value)
+    {
+    }
+
+    void wait()
+    {
+        mutex.lock();
+        --value;
+        if (value < 0) {
+            condition.wait(mutex);
+        }
+        mutex.unlock();
+    }
+
+    void post()
+    {
+        mutex.lock();
+        ++value;
+        if (value <= 0) {
+            condition.signal();
+        }
+        mutex.unlock();
+    }
+
+private:
+    Glib::Threads::Mutex mutex;
+    Glib::Threads::Cond condition;
+    long value;
+};
+
+}
 
 using namespace std;
 
@@ -56,7 +96,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     exportPanel(nullptr),
     previews_to_load(0),
     previews_loaded(0),
-    previews_prev_precentage(0),
+    previews_prev_percentage(0),
     modifierKey(0),
     coarsePanel(cp),
     toolBar(tb)
@@ -702,10 +742,6 @@ void FileCatalog::_refreshProgressBar()
         return;
     }
 
-#ifndef USE_IR
-    GThreadLock lock;
-#endif
-
     const int previews_to_load_copy = previews_to_load;
     const int previews_loaded_copy = previews_loaded;
     const int percentage =
@@ -713,7 +749,7 @@ void FileCatalog::_refreshProgressBar()
             ? previews_loaded_copy * 100 / previews_to_load_copy
             : 0;
 
-    if (previews_prev_precentage.exchange(percentage) == percentage) {
+    if (previews_prev_percentage.exchange(percentage) == percentage) {
         return;
     }
 
@@ -768,7 +804,7 @@ void FileCatalog::_refreshProgressBar()
             )
         );
 
-        filepanel->loadingThumbs("", percentage);
+        filepanel->loadingThumbs("", percentage / 100.0);
     }
 
     if (options.mainNBVertical) {
@@ -853,17 +889,22 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 
     ++previews_loaded;
 
-#ifdef USE_IR
-    idle_register.add(
-        [this]() -> bool
-        {
-            _refreshProgressBar();
-            return false;
-        }
-    );
-#else
-    _refreshProgressBar();
-#endif
+    if (shouldRefreshProgressBar()) {
+        Semaphore semaphore;
+
+        idle_register.add(
+            [this, &semaphore]() -> bool
+            {
+                _refreshProgressBar();
+                semaphore.post();
+                return false;
+            }
+        );
+
+        // Problem: If we wait here while the IdleRegister is destroyed
+        // we'll wait forever.
+        semaphore.wait();
+    }
 }
 
 // Called within GTK UI thread
@@ -1977,6 +2018,18 @@ void FileCatalog::trashChanged ()
         bTrash->set_image(*iTrashShowFull);
     }
 }
+
+bool FileCatalog::shouldRefreshProgressBar() const
+{
+    const int previews_to_load_copy = previews_to_load;
+    const int previews_loaded_copy = previews_loaded;
+    const int percentage =
+        previews_to_load_copy
+            ? previews_loaded_copy * 100 / previews_to_load_copy
+            : 0;
+    return percentage != previews_prev_percentage;
+}
+
 
 // Called within GTK UI thread
 void FileCatalog::buttonQueryClearPressed ()

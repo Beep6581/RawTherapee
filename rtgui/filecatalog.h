@@ -132,7 +132,7 @@ private:
 
     std::atomic<int> previews_to_load;
     std::atomic<int> previews_loaded;
-    std::atomic<int> previews_prev_precentage;
+    std::atomic<int> previews_prev_percentage;
 
     std::vector<Glib::ustring> fileNameList;
     std::set<Glib::ustring> editedFiles;
@@ -147,6 +147,8 @@ private:
     std::vector<Glib::ustring> getFileList ();
     BrowserFilter getFilter ();
     void trashChanged ();
+
+    bool shouldRefreshProgressBar() const;
 
 public:
     // thumbnail browsers
