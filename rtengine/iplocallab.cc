@@ -2633,10 +2633,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + (lightc * fli - original->L[y][x]) * factorx);
-                                } else if (senstype == 6 || senstype == 8 ) {
+                                } else if (senstype == 6 || senstype == 8 || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3  || senstype == 10) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -2756,10 +2756,10 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                     const float lightc = bufexporig->L[y - ystart][x - xstart];
                                     const float fli = (100.f + realstrdE) / 100.f;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + lightc * fli - original->L[y][x]);
-                                } else if (senstype == 6 || senstype == 8) {
+                                } else if (senstype == 6 || senstype == 8  || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3  || senstype == 10) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -5244,6 +5244,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                       //  itera = 5;
                     }
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5 
+/*  //to reactivate if we change transit_shapedetct parameters
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -5252,7 +5253,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             tmp1->L[y][x] =  0.01f* (lp.amo * tmp1->L[y][x] + (100.f - lp.amo) * bufgb->L[y][x]);
                         }
                     }
-
+*/
                     float minL = tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;
                     float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
@@ -5289,7 +5290,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 /*
                     if (lp.softradiustm > 0.f) {
                         guidedFilter(guid, ble, ble, 0.1f * lp.softradiustm / sk, 0.0001, multiThread);
-                        softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
+                     //   softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
                     }
 
 #ifdef _OPENMP

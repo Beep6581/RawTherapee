@@ -1063,7 +1063,7 @@ struct LocallabParams {
         int estop;
         int scaltm;
         int rewei;
-        int satur;
+        double satur;
         int sensitm;
         double softradiustm;
         int amount;

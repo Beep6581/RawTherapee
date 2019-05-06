@@ -5292,7 +5292,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     float edgest = ((float)params->locallab.spots.at(sp).estop) / 100.f;
     float sca  = ((float)params->locallab.spots.at(sp).scaltm) / 10.f;
     float gamm = ((float)params->locallab.spots.at(sp).gamma) / 100.f;
-//    float satur = ((float)params->locallab.spots.at(sp).satur) / 100.f;
+    float satur = ((float)params->locallab.spots.at(sp).satur) / 100.f;
     float rew = ((float)params->locallab.spots.at(sp).rewei);
     //Pointers to whole data and size of it.
     float *L = lab->L[0];
@@ -5304,34 +5304,15 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     EdgePreservingDecomposition epd(lab->W, lab->H);
 
     //Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
-    float minL = FLT_MAX;
-    float maxL = 0.f;
-    #pragma omp parallel
-    {
-        float lminL = FLT_MAX;
-        float lmaxL = 0.f;
-        #pragma omp for
+    float minL = L[0];
+    float maxL = minL;
 
-        for (i = 0; i < N; i++) {
-            if (L[i] < lminL) {
-                lminL = L[i];
-            }
-
-            if (L[i] > lmaxL) {
-                lmaxL = L[i];
-            }
-        }
-
-        #pragma omp critical
-
-        if (lminL < minL) {
-            minL = lminL;
-        }
-
-        if (lmaxL > maxL) {
-            maxL = lmaxL;
-        }
-
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
+#endif
+    for (i = 0; i < N; i++) {
+        minL = rtengine::min(minL, L[i]);
+        maxL = rtengine::max(maxL, L[i]);
     }
 
     if (minL > 0.0f) {
@@ -5345,7 +5326,6 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     #pragma omp parallel for
 
     for (i = 0; i < N; i++)
-        //{L[i] = (L[i] - minL)/32767.0f;
     {
         L[i] = (L[i] - minL) / maxL;
         L[i] *= gamm;
@@ -5375,10 +5355,9 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
-//    float ss = 1.f - s;
-//    float sat = 1.f + (2.5f * satur) * ss;
-//    printf("s=%f  ss=%f sat=%f \n", s, ss, sat);
-//    if(sat == 1.f) sat = 1.001f;
+    float sat = s + 0.3f * s * satur;
+    printf("s=%f  sat=%f \n", s, sat);
+    if(sat == 1.f) sat = 1.001f;
 #ifdef _OPENMP
     #pragma omp parallel for            // removed schedule(dynamic,10)
 #endif
@@ -5388,8 +5367,8 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
         int y = i - x * WW;
 
         tmp1->L[x][y] = L[i] * maxL * (1.f / gamm) + minL;
-        tmp1->a[x][y] = s  * a[i];
-        tmp1->b[x][y] = s  * b[i];
+        tmp1->a[x][y] = sat * a[i];
+        tmp1->b[x][y] = sat * b[i];
 
     }
 }

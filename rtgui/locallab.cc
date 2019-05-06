@@ -139,13 +139,13 @@ Locallab::Locallab():
     // Tone Mapping
     stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -50, 200, 1, 10))),
     gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 40, 400, 1, 100))),
-    estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 10, 400, 1, 80))),
-    scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 1, 100, 1, 10))),
+    estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 10, 400, 1, 70))),
+    scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 1, 100, 1, 40))),
     rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50, 100, 1, 95))),
-    satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100, 100, 1, 5))),
+    satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
@@ -789,14 +789,14 @@ Locallab::Locallab():
     if(showtooltip) rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
 
     ToolParamBlock* const tmBox = Gtk::manage(new ToolParamBlock());
-    tmBox->pack_start(*amount);
+//    tmBox->pack_start(*amount);//to use if we change transit_shapedetect parameters
     tmBox->pack_start(*stren);
     tmBox->pack_start(*gamma);
-//    tmBox->pack_start(*satur);
+    tmBox->pack_start(*satur);
     tmBox->pack_start(*estop);
     tmBox->pack_start(*scaltm);
     tmBox->pack_start(*rewei);
-//    tmBox->pack_start(*softradiustm);
+//    tmBox->pack_start(*softradiustm);//always bad with TM ??
     tmBox->pack_start(*sensitm);
     exptonemap->add(*tmBox);
     exptonemap->setLevel(2);
@@ -2016,7 +2016,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).estop = estop->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).scaltm = scaltm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).rewei = rewei->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).satur = satur->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).satur = satur->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensitm = sensitm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiustm = softradiustm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).amount = amount->getIntValue();
@@ -3393,7 +3393,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     estop->setDefault((double)defSpot->estop);
     scaltm->setDefault((double)defSpot->scaltm);
     rewei->setDefault((double)defSpot->rewei);
-    satur->setDefault((double)defSpot->satur);
+    satur->setDefault(defSpot->satur);
     sensitm->setDefault((double)defSpot->sensitm);
     softradiustm->setDefault(defSpot->softradiustm);
     amount->setDefault((double)defSpot->amount);
