@@ -137,14 +137,14 @@ Locallab::Locallab():
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     // Tone Mapping
-    stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -50, 200, 1, 10))),
-    gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 40, 400, 1, 100))),
-    estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 10, 400, 1, 70))),
-    scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 1, 100, 1, 40))),
+    stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
+    gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
+    estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 0.1, 4.0, 0.01, 0.5))),
+    scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 0.1, 10.0, 0.01, 4.0))),
     rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
-    amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50, 100, 1, 95))),
+    amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
     satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
@@ -2011,15 +2011,15 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).activlum = activlum->get_active();
                     // Tone Mapping
                     pp->locallab.spots.at(pp->locallab.selspot).exptonemap = exptonemap->getEnabled();
-                    pp->locallab.spots.at(pp->locallab.selspot).stren = stren->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).gamma = gamma->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).estop = estop->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).scaltm = scaltm->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).stren = stren->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).gamma = gamma->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).estop = estop->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).scaltm = scaltm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).rewei = rewei->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).satur = satur->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensitm = sensitm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiustm = softradiustm->getValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).amount = amount->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).amount = amount->getValue();
                     // Retinex
                     pp->locallab.spots.at(pp->locallab.selspot).expreti = expreti->getEnabled();
 
@@ -3388,15 +3388,15 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     strength->setDefault((double)defSpot->strength);
     sensibn->setDefault((double)defSpot->sensibn);
     // Tone Mapping
-    stren->setDefault((double)defSpot->stren);
-    gamma->setDefault((double)defSpot->gamma);
-    estop->setDefault((double)defSpot->estop);
-    scaltm->setDefault((double)defSpot->scaltm);
+    stren->setDefault(defSpot->stren);
+    gamma->setDefault(defSpot->gamma);
+    estop->setDefault(defSpot->estop);
+    scaltm->setDefault(defSpot->scaltm);
     rewei->setDefault((double)defSpot->rewei);
     satur->setDefault(defSpot->satur);
     sensitm->setDefault((double)defSpot->sensitm);
     softradiustm->setDefault(defSpot->softradiustm);
-    amount->setDefault((double)defSpot->amount);
+    amount->setDefault(defSpot->amount);
     // Retinex
     str->setDefault((double)defSpot->str);
     chrrt->setDefault((double)defSpot->chrrt);

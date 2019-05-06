@@ -385,10 +385,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int w = oW;
     int h = oH;
     int circr = locallab.spots.at(sp).circrad;
-    float streng = ((float)locallab.spots.at(sp).stren) / 100.f;
-    float gam = ((float)locallab.spots.at(sp).gamma) / 100.f;
-    float est = ((float)locallab.spots.at(sp).estop) / 100.f;
-    float scal_tm = ((float)locallab.spots.at(sp).scaltm) / 10.f;
+    float streng = ((float)locallab.spots.at(sp).stren);
+    float gam = ((float)locallab.spots.at(sp).gamma);
+    float est = ((float)locallab.spots.at(sp).estop);
+    float scal_tm = ((float)locallab.spots.at(sp).scaltm);
     float rewe = ((float)locallab.spots.at(sp).rewei);
     float amo = ((float)locallab.spots.at(sp).amount);
     float strlight = ((float)locallab.spots.at(sp).streng);
@@ -5250,7 +5250,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
-                            tmp1->L[y][x] =  0.01f* (lp.amo * tmp1->L[y][x] + (100.f - lp.amo) * bufgb->L[y][x]);
+                            tmp1->L[y][x] = (lp.amo * tmp1->L[y][x] + (1.f - lp.amo) * bufgb->L[y][x]);
                         }
                     }
 */

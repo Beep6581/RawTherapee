@@ -5288,10 +5288,10 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
 void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, unsigned int Iterates, int skip)
 {
 
-    float stren = ((float)params->locallab.spots.at(sp).stren) / 100.f;
-    float edgest = ((float)params->locallab.spots.at(sp).estop) / 100.f;
-    float sca  = ((float)params->locallab.spots.at(sp).scaltm) / 10.f;
-    float gamm = ((float)params->locallab.spots.at(sp).gamma) / 100.f;
+    float stren = ((float)params->locallab.spots.at(sp).stren);
+    float edgest = ((float)params->locallab.spots.at(sp).estop);
+    float sca  = ((float)params->locallab.spots.at(sp).scaltm);
+    float gamm = ((float)params->locallab.spots.at(sp).gamma);
     float satur = ((float)params->locallab.spots.at(sp).satur) / 100.f;
     float rew = ((float)params->locallab.spots.at(sp).rewei);
     //Pointers to whole data and size of it.
@@ -5356,7 +5356,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
     float sat = s + 0.3f * s * satur;
-    //printf("s=%f  sat=%f \n", s, sat);
+    printf("s=%f  sat=%f \n", s, sat);
     if(sat == 1.f) sat = 1.001f;
 #ifdef _OPENMP
     #pragma omp parallel for            // removed schedule(dynamic,10)

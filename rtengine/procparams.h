@@ -1058,15 +1058,15 @@ struct LocallabParams {
         bool activlum;
         // Tone Mapping
         bool exptonemap;
-        int stren;
-        int gamma;
-        int estop;
-        int scaltm;
+        double stren;
+        double gamma;
+        double estop;
+        double scaltm;
         int rewei;
         double satur;
         int sensitm;
         double softradiustm;
-        int amount;
+        double amount;
         // Retinex
         bool expreti;
         Glib::ustring retinexMethod;
