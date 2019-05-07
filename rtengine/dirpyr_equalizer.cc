@@ -852,8 +852,6 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     
 
      
-    AlignedBuffer<float> blurbufcbdl(width * height);
-    float rad = 0.05f * blurcb * fabs((level + 1) * (multbis[level] - 1.f));
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -865,14 +863,19 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
              
             }
         }
-        if(blurcb > 0.f) {
+
+        if(blurcb > 0.f && choice == 0) {
+            AlignedBuffer<float> blurbufcbdl(width * height);
+            float rad = 0.05f * blurcb * fabs((level + 1) * (multbis[level] - 1.f));
+
 #ifdef _OPENMP
             #pragma omp parallel if (multiThread)
 #endif            
             boxblur<float, float>(buffer, buffer, blurbufcbdl.data, rad, rad, width, height);
+            blurbufcbdl.resize(0); 
         }
+
         irangefn.clear();
-        blurbufcbdl.resize(0); 
 }
 
 void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[maxlevel], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, float b_l, float t_l, float t_r)
