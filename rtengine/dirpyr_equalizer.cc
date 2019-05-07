@@ -323,7 +323,7 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     }
 
     if (settings->verbose) {
-        printf("CbDL local mult0=%f  1=%f 2=%f 3=%f 4=%f\n", multi[0], multi[1], multi[2], multi[3], multi[4]);
+        printf("CbDL local mult0=%f  1=%f 2=%f 3=%f 4=%f 5%f\n", multi[0], multi[1], multi[2], multi[3], multi[4], multi[5]);
     }
 
     multi_array2D<float, maxlevelloc> dirpyrlo(srcwidth, srcheight);
@@ -818,7 +818,7 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     } else {
         offs = -1.f;
     }
-    float multbis[5];
+    float multbis[6];
 
     multbis[level] = mult[level]; //multbis to reduce artifacts for high values mult
 
@@ -826,9 +826,10 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
         multbis[level] = 1.f + 0.65f * (mult[level] - 1.f);
     }
 
-    //  if(level == 5 && mult[level] > 1.f) {
-    //      multbis[level] = 1.f + 0.45f * (mult[level] - 1.f);
-    //  }
+    if (level == 5 && mult[level] > 1.f) {
+        multbis[level] = 1.f + 0.45f * (mult[level] - 1.f);
+    }
+
     double sensicrash = 1.;//settings->cbdlsensi;
     LUTf irangefn(0x20000);
     {
