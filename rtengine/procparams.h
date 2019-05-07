@@ -1099,7 +1099,7 @@ struct LocallabParams {
         // Contrast by detail levels
         bool expcbdl;
         double mult[6];
-        int chromacbdl;
+        double chromacbdl;
         double threshold;
         int sensicb;
         double clarityml;

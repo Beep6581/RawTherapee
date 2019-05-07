@@ -834,7 +834,7 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
     LUTf irangefn(0x20000);
     {
         const float noisehi = 1.33f * noise * sensicrash * dirpyrThreshold / expf(level * log(3.0)), noiselo = 0.66f * noise * sensicrash * dirpyrThreshold / expf(level * log(3.0));
-        //printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
+       // printf("level=%i multlev=%f noisehi=%f noiselo=%f skinprot=%f\n",level,mult[level], noisehi, noiselo, skinprot);
        // printf("noihi=%f noilo=%f\n", noisehi, noiselo);
 
         for (int i = 0; i < 0x20000; i++) {
@@ -867,6 +867,7 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
         if(blurcb > 0.f && choice == 0) {
             AlignedBuffer<float> blurbufcbdl(width * height);
             float rad = 0.05f * blurcb * fabs((level + 1) * (multbis[level] - 1.f));
+         //   printf("rad=%f  level=%i\n", rad, level);
 
 #ifdef _OPENMP
             #pragma omp parallel if (multiThread)

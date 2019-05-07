@@ -207,7 +207,7 @@ struct local_params {
     float slomaSH;
     float radmacb;
     float blendmacb;
-    float chromacb;
+    float chromacbm;
     float gammacb;
     float slomacb;
     float struexp;
@@ -257,7 +257,7 @@ struct local_params {
     float noisecc;
     float mulloc[6];
     float threshol;
-//    float chromacb;
+    float chromacb;
     float strengt;
     float gamm;
     float esto;
@@ -612,7 +612,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.slomaSH = slomaskSH;
     lp.blendmacb = blendmaskcb;
     lp.radmacb = radmaskcb;
-    lp.chromacb = chromaskcb;
+    lp.chromacbm = chromaskcb;
     lp.gammacb = gammaskcb;
     lp.slomacb = slomaskcb;
 
@@ -4862,7 +4862,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     array2D<float> guid(bfw, bfh);
                     float meanfab, fab;
 
-                    mean_fab(xstart, ystart, bfw, bfh, loctemp.get(), original, fab, meanfab, lp.chromaSH);
+                    mean_fab(xstart, ystart, bfw, bfh, loctemp.get(), original, fab, meanfab, lp.chromacbm);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -4995,7 +4995,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if(lp.contresid != 0.f && lp.mulloc[5] == 1.0) {//enabled last level to retrieve level 5 and residual image in case user not select level 5
                         lp.mulloc[5]= 1.001f;
                     }
-
+                    /*
+                        for (int lv = 0; lv < 6; lv++) {
+                           printf("mulloc=%f lv=%i\n",  lp.mulloc[lv], lv);
+                        }
+                    */
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
                     if (lp.softradiuscb > 0.f) {
@@ -5048,7 +5052,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         for (int lv = 0; lv < 6; lv++) {
-                            multc[lv] = rtengine::max((lp.chromacb * ((float) lp.mulloc[lv] - 1.f) / 100.f) + 1.f, 0.f);
+                            multc[lv] = rtengine::max((lp.chromacb * ((float) lp.mulloc[lv] - 1.f)) + 1.f, 0.01f);
+                         //   printf("multc=%f lev=%i\n", multc[lv], lv);
                         }
                         choice = 1;
                         ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, multc, rtengine::max(lp.chromacb, 1.f), lp.threshol, clarich, 0.f, lp.blurcbdl, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk, multiThread);

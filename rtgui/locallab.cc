@@ -169,7 +169,7 @@ Locallab::Locallab():
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Contrast by detail levels
-    chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0))),
+    chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
     threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
     clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
@@ -2064,7 +2064,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).mult[i] = multiplier[i]->getValue();
                     }
 
-                    pp->locallab.spots.at(pp->locallab.selspot).chromacbdl = chromacbdl->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).chromacbdl = chromacbdl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).threshold = threshold->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensicb = sensicb->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).clarityml = clarityml->getValue();
@@ -3424,7 +3424,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         multiplier[i]->setDefault(defSpot->mult[i]);
     }
 
-    chromacbdl->setDefault((double)defSpot->chromacbdl);
+    chromacbdl->setDefault(defSpot->chromacbdl);
     threshold->setDefault(defSpot->threshold);
     sensicb->setDefault((double)defSpot->sensicb);
     clarityml->setDefault(defSpot->clarityml);

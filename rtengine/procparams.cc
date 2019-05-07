@@ -2498,7 +2498,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Contrast by detail levels
     expcbdl(false),
     mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
-    chromacbdl(0),
+    chromacbdl(0.),
     threshold(0.2),
     sensicb(15),
     clarityml(0.1),
