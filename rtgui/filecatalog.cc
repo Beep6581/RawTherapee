@@ -46,7 +46,7 @@ class Semaphore final :
     public rtengine::NonCopyable
 {
 public:
-    Semaphore(long _value = 0) :
+    Semaphore(unsigned long _value = 0) :
         value(_value)
     {
     }
@@ -54,10 +54,10 @@ public:
     void wait()
     {
         mutex.lock();
-        --value;
-        if (value < 0) {
+        while (!value) {
             condition.wait(mutex);
         }
+        --value;
         mutex.unlock();
     }
 
@@ -65,16 +65,14 @@ public:
     {
         mutex.lock();
         ++value;
-        if (value <= 0) {
-            condition.signal();
-        }
+        condition.signal();
         mutex.unlock();
     }
 
 private:
     Glib::Threads::Mutex mutex;
     Glib::Threads::Cond condition;
-    long value;
+    unsigned long value;
 };
 
 }
@@ -829,6 +827,39 @@ void FileCatalog::_refreshProgressBar()
 
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 {
+    class SynchronizedRefresh final :
+        rtengine::NonCopyable
+    {
+    public:
+        SynchronizedRefresh(FileCatalog& _self) :
+            self(_self)
+        {
+        }
+
+        ~SynchronizedRefresh()
+        {
+            // This additional post() won't hurt normally but is crucial
+            // when the IdleRegister is destroyed.
+            semaphore.post();
+        }
+
+        bool operator ()()
+        {
+            self._refreshProgressBar();
+            semaphore.post();
+            return false;
+        }
+
+        void wait()
+        {
+            semaphore.wait();
+        }
+
+    private:
+        FileCatalog& self;
+
+        Semaphore semaphore;
+    };
 
     if ( dir_id != selectedDirectoryId ) {
         delete fdn;
@@ -890,20 +921,11 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
     ++previews_loaded;
 
     if (shouldRefreshProgressBar()) {
-        Semaphore semaphore;
+        SynchronizedRefresh synchronized_refresh(*this);
 
-        idle_register.add(
-            [this, &semaphore]() -> bool
-            {
-                _refreshProgressBar();
-                semaphore.post();
-                return false;
-            }
-        );
+        idle_register.add(std::ref(synchronized_refresh));
 
-        // Problem: If we wait here while the IdleRegister is destroyed
-        // we'll wait forever.
-        semaphore.wait();
+        synchronized_refresh.wait();
     }
 }
 
