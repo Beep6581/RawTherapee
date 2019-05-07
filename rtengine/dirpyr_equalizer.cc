@@ -409,12 +409,12 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     
     
     for (int level = lastlevel - 1; level > 0; level--) {
-        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], residbuff, srcwidth, srcheight, level, multi, blurcb, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, multiThread);
+        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], residbuff, srcwidth, srcheight, level, multi, blurcb, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, scaleprev, multiThread);
     }
 
     scale = scalesloc[0];
 
-    idirpyr_eq_channel_loc(dirpyrlo[0], src, residbuff, srcwidth, srcheight, 0, multi, blurcb, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, multiThread);
+    idirpyr_eq_channel_loc(dirpyrlo[0], src, residbuff, srcwidth, srcheight, 0, multi, blurcb, dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, scaleprev, multiThread);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     array2D<float> loct(srcwidth, srcheight);
@@ -806,7 +806,7 @@ void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, i
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[5], const float blurcb, const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, bool multiThread)
+void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[6], const float blurcb, const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev, bool multiThread)
 {
     //  const float skinprotneg = -skinprot;
 //   const float factorHard = (1.f - skinprotneg / 100.f);
@@ -864,9 +864,9 @@ void ImProcFunctions::idirpyr_eq_channel_loc(float ** data_coarse, float ** data
             }
         }
 
-        if(blurcb > 0.f && choice == 0) {
+        if(blurcb > 0.f && choice == 0  && level != 5) {
             AlignedBuffer<float> blurbufcbdl(width * height);
-            float rad = 0.05f * blurcb * fabs((level + 1) * (multbis[level] - 1.f));
+            float rad = 0.05f * blurcb * fabs((level + 1) * (multbis[level] - 1.f)) / scaleprev;
          //   printf("rad=%f  level=%i\n", rad, level);
 
 #ifdef _OPENMP
