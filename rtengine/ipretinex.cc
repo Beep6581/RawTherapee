@@ -49,6 +49,7 @@
 #include "rawimagesource.h"
 #include "rtengine.h"
 #include "StopWatch.h"
+#include "guidedfilter.h"
 
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 
@@ -1016,6 +1017,29 @@ void ImProcFunctions::MSRLocal(int sp, float** luminance, float** templ, const f
                 }
             }
         }
+//here add GuidFilter for transmission map
+                    array2D<float> ble(W_L, H_L);
+                    array2D<float> guid(W_L, H_L);
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+            for (int i = 0; i < H_L; i ++)
+                for (int j = 0; j < W_L; j++) {
+                    guid[i][j] = src[i][j]/32768.f;
+                    ble[i][j] = luminance[i][j]/32768.f;
+                }
+
+            if (loc.spots.at(sp).softradiusret > 0.f) {
+                guidedFilter(guid, ble, ble, loc.spots.at(sp).softradiusret * 10.f / skip,  1e-5, multiThread, 4);
+            }
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+            for (int i = 0; i < H_L; i ++)
+                for (int j = 0; j < W_L; j++) {
+                    luminance[i][j]= ble[i][j] * 32768.f;
+                }
 
         if (shmap) {
             delete shmap;

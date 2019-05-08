@@ -5867,7 +5867,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 if (lp.softradiusret > 0.f) {
-                    softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
+                   // softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
                 }
 
                 transit_shapedetect_retinex(4, bufreti, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
