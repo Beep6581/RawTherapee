@@ -3243,7 +3243,7 @@ void Locallab::inversretChanged()
     } else if (inversret->get_active()) {
         sensih->show();
         dehaz->show();
-        softradiuscol->hide();
+        softradiuscol->show();
     } else {
         sensih->show();
         dehaz->show();
@@ -5394,7 +5394,7 @@ void Locallab::updateSpecificGUIState()
         softradiusret->show();
     } else if (inversret->get_active()) {
         sensih->show();
-        softradiusret->hide();
+        softradiusret->show();
     } else {
         sensih->show();
         softradiusret->show();
