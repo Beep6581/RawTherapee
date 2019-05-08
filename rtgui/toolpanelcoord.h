@@ -248,7 +248,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defparams) override;
 
     // DirSelectionListener interface
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void dirSelected (const Glib::ustring& dirname);
 
     // to support the GUI:
     CropGUIListener* getCropGUIListener (); // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes

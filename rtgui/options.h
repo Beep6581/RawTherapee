@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
 #include <exception>
+#include <set>
 
 #define STARTUPDIR_CURRENT 0
 #define STARTUPDIR_HOME    1
@@ -132,6 +133,8 @@ private:
     short defProfError;
     Glib::ustring userProfilePath;
     Glib::ustring globalProfilePath;
+    std::set<std::string> parsedExtensionsSet;  // Set containing the collate_keys of all retained extensions
+
     bool checkProfilePath (Glib::ustring &path);
     bool checkDirPath (Glib::ustring &path, Glib::ustring errString);
     void updatePaths();
@@ -422,8 +425,8 @@ public:
     Glib::ustring getGlobalProfilePath();
     Glib::ustring findProfilePath (Glib::ustring &profName);
     bool is_parse_extention (Glib::ustring fname);
-    bool has_retained_extention (Glib::ustring fname);
-    bool is_extention_enabled (Glib::ustring ext);
+    bool has_retained_extension (const Glib::ustring &fname) const;
+    bool is_extension_enabled (const Glib::ustring &ext) const;
     bool is_defProfRawMissing();
     bool is_bundledDefProfRawMissing();
     bool is_defProfImgMissing();

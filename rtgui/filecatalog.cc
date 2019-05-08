@@ -608,32 +608,35 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 {
     std::vector<Glib::ustring> names;
 
-    std::set<std::string> extensions;
-    for (const auto& parsedExt : options.parsedExtensions) {
-        extensions.emplace(parsedExt.casefold_collate_key());
-    }
-
     try {
 
-        auto dir = Gio::File::create_for_path(selectedDirectory);
+        const auto dir = Gio::File::create_for_path(selectedDirectory);
 
-        auto enumerator = dir->enumerate_children("standard::name");
+        const auto enumerator = dir->enumerate_children(options.fbShowHidden ? "standard::name,standard::type" : "standard::name,standard::type,standard::is-hidden");
 
         while (true) {
             try {
-                auto file = enumerator->next_file();
+                const auto file = enumerator->next_file();
                 if (!file) {
                     break;
                 }
 
+                if (file->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
+                    continue;
+                }
+
+                if (!options.fbShowHidden && file->is_hidden()) {
+                    continue;
+                }
+
                 const Glib::ustring fname = file->get_name();
 
-                auto lastdot = fname.find_last_of('.') + 1;
+                const auto lastdot = fname.find_last_of('.') + 1;
                 if (lastdot >= fname.length()) {
                     continue;
                 }
 
-                if (extensions.count(fname.substr(lastdot).casefold_collate_key()) == 0) {
+                if (!options.is_extension_enabled(fname.substr(lastdot))) {
                     continue;
                 }
 
@@ -656,11 +659,11 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
     return names;
 }
 
-void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
+void FileCatalog::dirSelected (const Glib::ustring& dirname)
 {
 
     try {
-        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dirname);
+        const Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dirname);
 
         if (!dir) {
             return;
@@ -670,11 +673,6 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         previews_to_load = 0;
         previews_loaded = 0;
 
-        // if openfile exists, we have to open it first (it is a command line argument)
-        if (!openfile.empty()) {
-            addAndOpenFile (openfile);
-        }
-
         selectedDirectory = dir->get_parse_name();
         //printf("FileCatalog::dirSelected  selectedDirectory = %s\n",selectedDirectory.c_str());
         BrowsePath->set_text (selectedDirectory);
@@ -682,11 +680,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         fileNameList = getFileList ();
 
         for (unsigned int i = 0; i < fileNameList.size(); i++) {
-            Glib::RefPtr<Gio::File> f = Gio::File::create_for_path(fileNameList[i]);
-
-            if (f->get_parse_name() != openfile) { // if we opened a file at the beginning don't add it again
-                checkAndAddFile (f);
-            }
+            checkAndAddFile(fileNameList[i]);
         }
 
         _refreshProgressBar ();
@@ -1842,7 +1836,7 @@ void FileCatalog::reparseDirectory ()
             }
 
         if (!found) {
-            checkAndAddFile (Gio::File::create_for_parse_name (nfileNameList[i]));
+            checkAndAddFile (nfileNameList[i]);
             _refreshProgressBar ();
         }
     }
@@ -1853,7 +1847,7 @@ void FileCatalog::reparseDirectory ()
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal)
 {
 
-    if (options.has_retained_extention(file->get_parse_name())
+    if (options.has_retained_extension(file->get_parse_name())
             && (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED)) {
         if (!internal) {
             GThreadLock lock;
@@ -1864,41 +1858,16 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
     }
 }
 
-void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
+void FileCatalog::checkAndAddFile (const Glib::ustring &fname)
 {
 
-    if (!file) {
+    if (fname.empty()) {
         return;
     }
 
-    try {
+    previewLoader->add(selectedDirectoryId, fname, this);
+    ++previews_to_load;
 
-        const auto info = file->query_info("standard::*");
-
-        if (!info || info->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
-            return;
-        }
-
-        if (!options.fbShowHidden && info->is_hidden()) {
-            return;
-        }
-
-        Glib::ustring ext;
-
-        const auto lastdot = info->get_name().find_last_of('.');
-
-        if (lastdot != Glib::ustring::npos) {
-            ext = info->get_name().substr(lastdot + 1);
-        }
-
-        if (!options.is_extention_enabled(ext)) {
-            return;
-        }
-
-        previewLoader->add(selectedDirectoryId, file->get_parse_name(), this);
-        ++previews_to_load;
-
-    } catch(Gio::Error&) {}
 }
 
 void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
@@ -1928,7 +1897,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
             ext = info->get_name ().substr (lastdot + 1);
         }
 
-        if (!options.is_extention_enabled(ext)) {
+        if (!options.is_extension_enabled(ext)) {
             return;
         }
 

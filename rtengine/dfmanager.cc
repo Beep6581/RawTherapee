@@ -342,7 +342,7 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 {
     auto ext = getFileExtension(filename);
 
-    if (ext.empty() || !options.is_extention_enabled(ext)) {
+    if (ext.empty() || !options.is_extension_enabled(ext)) {
         return nullptr;
     }
 

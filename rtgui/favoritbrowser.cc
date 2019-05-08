@@ -88,7 +88,7 @@ void FavoritBrowser::selectionChanged ()
     }
 }
 
-void FavoritBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
+void FavoritBrowser::dirSelected (const Glib::ustring& dirname)
 {
 
     lastSelectedDir = dirname;

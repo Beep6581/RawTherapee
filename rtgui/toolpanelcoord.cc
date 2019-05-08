@@ -984,7 +984,7 @@ void ToolPanelCoordinator::editModeSwitchedOff ()
     }
 }
 
-void ToolPanelCoordinator::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
+void ToolPanelCoordinator::dirSelected (const Glib::ustring& dirname)
 {
 
     flatfield->setShortcutPath (dirname);

@@ -62,7 +62,7 @@ public:
     PlacesBrowser ();
 
     void setDirSelector (const DirSelectionSlot& selectDir);
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void dirSelected (const Glib::ustring& dirname);
 
     void refreshPlacesList ();
     void mountChanged (const Glib::RefPtr<Gio::Mount>& m);

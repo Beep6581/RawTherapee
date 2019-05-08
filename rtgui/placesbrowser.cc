@@ -300,7 +300,7 @@ void PlacesBrowser::selectionChanged ()
     }
 }
 
-void PlacesBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
+void PlacesBrowser::dirSelected (const Glib::ustring& dirname)
 {
 
     lastSelectedDir = dirname;

@@ -412,6 +412,7 @@ void Options::setDefaults()
     favorites.clear();
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
+    parsedExtensionsSet.clear();
     renameUseTemplates = false;
     renameTemplates.clear();
     thumbnailZoomRatios.clear();
@@ -648,10 +649,12 @@ Options* Options::copyFrom(Options* other)
 void Options::filterOutParsedExtensions()
 {
     parsedExtensions.clear();
+    parsedExtensionsSet.clear();
 
     for (unsigned int i = 0; i < parseExtensions.size(); i++)
         if (parseExtensionsEnabled[i]) {
             parsedExtensions.push_back(parseExtensions[i].lowercase());
+            parsedExtensionsSet.emplace(parseExtensions[i].casefold_collate_key());
         }
 }
 
@@ -2464,20 +2467,14 @@ bool Options::is_parse_extention(Glib::ustring fname)
 /*
  * return true if fname ends with one of the retained image file extensions
  */
-bool Options::has_retained_extention(Glib::ustring fname)
+bool Options::has_retained_extension(const Glib::ustring &fname) const
 {
 
-    Glib::ustring ext = getExtension(fname).lowercase();
+    const Glib::ustring ext = getExtension(fname);
 
     if (!ext.empty()) {
         // there is an extension to the filename
-
-        // look out if it has one of the retained extensions
-        for (unsigned int i = 0; i < parsedExtensions.size(); i++) {
-            if (ext == parsedExtensions[i]) {
-                return true;
-            }
-        }
+        return is_extension_enabled(ext);
     }
 
     return false;
@@ -2486,14 +2483,9 @@ bool Options::has_retained_extention(Glib::ustring fname)
 /*
  * return true if ext is an enabled extension
  */
-bool Options::is_extention_enabled(Glib::ustring ext)
+bool Options::is_extension_enabled(const Glib::ustring &ext) const
 {
-    for (int j = 0; j < (int)parseExtensions.size(); j++)
-        if (parseExtensions[j].casefold() == ext.casefold()) {
-            return j >= (int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
-        }
-
-    return false;
+    return parsedExtensionsSet.count(ext.casefold_collate_key()) == 1;
 }
 
 Glib::ustring Options::getUserProfilePath()

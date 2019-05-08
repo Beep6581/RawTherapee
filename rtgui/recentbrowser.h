@@ -40,7 +40,7 @@ public:
     void setDirSelector (const DirSelectionSlot& selectDir);
 
     void selectionChanged ();
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void dirSelected (const Glib::ustring& dirname);
 };
 
 inline void RecentBrowser::setDirSelector (const RecentBrowser::DirSelectionSlot& selectDir)

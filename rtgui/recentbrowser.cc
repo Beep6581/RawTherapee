@@ -51,7 +51,7 @@ void RecentBrowser::selectionChanged ()
     }
 }
 
-void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
+void RecentBrowser::dirSelected (const Glib::ustring& dirname)
 {
 
     ssize_t numFolders = options.recentFolders.size();

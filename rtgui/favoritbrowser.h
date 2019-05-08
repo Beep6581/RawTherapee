@@ -55,7 +55,7 @@ public:
     {
         listener = l;
     }
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile = "");
+    void dirSelected (const Glib::ustring& dirname);
 
     void addPressed ();
     void delPressed ();

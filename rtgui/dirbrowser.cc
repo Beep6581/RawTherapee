@@ -46,7 +46,7 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
             return subDirs;
         }
 
-        auto enumerator = dir->enumerate_children ("standard::name,standard::type,standard::is-hidden");
+        const auto enumerator = dir->enumerate_children (addHidden ? "standard::name,standard::type" : "standard::name,standard::type,standard::is-hidden");
 
         while (true) {
             try {
@@ -376,6 +376,7 @@ void DirBrowser::addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustri
     child->set_value (dtColumns.dirname, fullname);
     Gtk::TreeModel::iterator fooRow = dirTreeModel->append(child->children());
     fooRow->set_value (dtColumns.filename, Glib::ustring("foo"));
+
 }
 
 void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column)
@@ -384,7 +385,7 @@ void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewC
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
 
     if (Glib::file_test (dname, Glib::FILE_TEST_IS_DIR))
-        dirSelectionSignal (dname, Glib::ustring());
+        dirSelectionSignal (dname);
 }
 
 Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
@@ -451,7 +452,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
     return path;
 }
 
-void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileName)
+void DirBrowser::open (const Glib::ustring& dirname)
 {
 
     dirtree->collapse_all ();
@@ -468,13 +469,8 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
     Gtk::TreePath path = expandToDir (absDirPath);
     dirtree->scroll_to_row (path);
     dirtree->get_selection()->select (path);
-    Glib::ustring absFilePath;
 
-    if (!fileName.empty()) {
-        absFilePath = Glib::build_filename (absDirPath, fileName);
-    }
-
-    dirSelectionSignal (absDirPath, absFilePath);
+    dirSelectionSignal (absDirPath);
 }
 
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName)
@@ -490,6 +486,6 @@ void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::
 void DirBrowser::selectDir (Glib::ustring dir)
 {
 
-    open (dir, "");
+    open (dir);
 }
 

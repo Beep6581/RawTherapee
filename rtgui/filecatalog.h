@@ -143,7 +143,7 @@ private:
     IdleRegister idle_register;
 
     void addAndOpenFile (const Glib::ustring& fname);
-    void checkAndAddFile (Glib::RefPtr<Gio::File> info);
+    void checkAndAddFile (const Glib::ustring &fname);
     std::vector<Glib::ustring> getFileList ();
     BrowserFilter getFilter ();
     void trashChanged ();
@@ -159,7 +159,7 @@ public:
 
     FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel);
     ~FileCatalog() override;
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void dirSelected (const Glib::ustring& dirname);
     void closeDir    ();
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
 

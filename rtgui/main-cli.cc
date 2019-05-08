@@ -448,7 +448,7 @@ int processLineParams ( int argc, char **argv )
 
                         if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
                             bool notAll = allExtensions && !options.is_parse_extention (argument);
-                            bool notRetained = !allExtensions && !options.has_retained_extention (argument);
+                            bool notRetained = !allExtensions && !options.has_retained_extension (argument);
 
                             if (notAll || notRetained) {
                                 if (notAll) {
@@ -481,7 +481,7 @@ int processLineParams ( int argc, char **argv )
                                     const auto fileName = Glib::build_filename (argument, file->get_name());
                                     bool isDir = file->get_file_type() == Gio::FILE_TYPE_DIRECTORY;
                                     bool notAll = allExtensions && !options.is_parse_extention (fileName);
-                                    bool notRetained = !allExtensions && !options.has_retained_extention (fileName);
+                                    bool notRetained = !allExtensions && !options.has_retained_extension (fileName);
 
                                     if (isDir || notAll || notRetained) {
                                         if (isDir) {
