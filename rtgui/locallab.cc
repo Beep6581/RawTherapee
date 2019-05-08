@@ -826,8 +826,10 @@ Locallab::Locallab():
     str->setAdjusterListener(this);
 
     neigh->setAdjusterListener(this);
+    if(showtooltip) neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
 
     vart->setAdjusterListener(this);
+    if(showtooltip) vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
 
     dehaz->setAdjusterListener(this);
 
@@ -836,6 +838,7 @@ Locallab::Locallab():
     if(showtooltip) sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensih->setAdjusterListener(this);
     softradiusret->setAdjusterListener(this);
+    if(showtooltip) softradiusret->set_tooltip_text(M("TP_LOCALLAB_GUIDFILTER_TOOLTIP"));
 
     LocalcurveEditorgainT->setCurveListener(this);
 

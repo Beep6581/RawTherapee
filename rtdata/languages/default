@@ -2033,6 +2033,7 @@ TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_GUIDFILTER;Guide filter radius
+TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - reduce if non misty images 
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
@@ -2069,7 +2070,8 @@ TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADMASKCOL;Radius
 TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_CONTRESID;Contrast
-TP_LOCALLAB_RETI;Retinex
+TP_LOCALLAB_RETI;Retinex - strong local contrast
+TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if misty images and depending on whether you want to act on the front or the background
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRGRID;Strength
