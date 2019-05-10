@@ -17,43 +17,32 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <functional>
+
 #include <strings.h>
-#include <glib/gstdio.h>
 #include <tiff.h>
+
+#include <glib/gstdio.h>
+
 #include <exiv2/exiv2.hpp>
 
 #include "imagedata.h"
 #include "imagesource.h"
 #include "rt_math.h"
+
 #pragma GCC diagnostic warning "-Wextra"
 #define PRINT_HDR_PS_DETECTION 0
 
 using namespace rtengine;
 
-
-// namespace {
-
-// Glib::ustring to_utf8 (const std::string& str)
-// {
-//     try {
-//         return Glib::locale_to_utf8 (str);
-//     } catch (Glib::Error&) {
-//         return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
-//     }
-// }
-
-// } // namespace
-
-
 namespace rtengine {
 
 extern const Settings *settings;
 
-Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname)
+Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
 {
 #ifdef EXV_UNICODE_PATH
-    auto *ws = g_utf8_to_utf16(fname.c_str(), -1, NULL, NULL, NULL);
-    std::wstring wfname(ws);
+    const auto* const ws = g_utf8_to_utf16(fname.c_str(), -1, NULL, NULL, NULL);
+    const std::wstring wfname(ws);
     g_free(ws);
     auto image = Exiv2::ImageFactory::open(wfname);
 #else
@@ -65,13 +54,12 @@ Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname)
 } // namespace rtengine
 
 
-
 FramesMetaData* FramesMetaData::fromFile (const Glib::ustring& fname)
 {
     return new FramesData(fname);
 }
 
-FramesData::FramesData(const Glib::ustring &fname):
+FramesData::FramesData(const Glib::ustring &fname) :
     ok_(false),
     fname_(fname),
     dcrawFrameCount(0),
@@ -110,7 +98,7 @@ FramesData::FramesData(const Glib::ustring &fname):
     try {
         auto image = open_exiv2(fname);
         image->readMetadata();
-        auto &exif = image->exifData();
+        const auto& exif = image->exifData();
         ok_ = true;
 
         // taken and adapted from darktable (src/common/exif.cc)
@@ -133,66 +121,72 @@ FramesData::FramesData(const Glib::ustring &fname):
    You should have received a copy of the GNU General Public License
    along with darktable.  If not, see <http://www.gnu.org/licenses/>.
  */
-        
+
         Exiv2::ExifData::const_iterator pos;
-    
+
         const auto find_exif_tag =
-            [&](const std::string &name) -> bool
+            [&exif, &pos](const std::string &name) -> bool
             {
                 pos = exif.findKey(Exiv2::ExifKey(name));
-                return (pos != exif.end() && pos->size());
+                return pos != exif.end() && pos->size();
             };
 
         const auto find_tag =
-            [&](decltype(Exiv2::make) func) -> bool
+            [&exif, &pos](decltype(Exiv2::make) func) -> bool
             {
                 pos = func(exif);
                 return pos != exif.end() && pos->size();
             };
 
-        /* List of tag names taken from exiv2's printSummary() in actions.cpp */
+        // List of tag names taken from exiv2's printSummary() in actions.cpp
 
         if (find_tag(Exiv2::make)) {
             make = pos->print(&exif);
         }
-        
+
         if (find_tag(Exiv2::model)) {
             model = pos->print(&exif);
         }
 
         if (make.size() > 0) {
             for (const auto& corp : {
-                    "Canon",
-                    "NIKON",
-                    "EPSON",
-                    "KODAK",
-                    "Kodak",
-                    "OLYMPUS",
-                    "PENTAX",
-                    "RICOH",
-                    "MINOLTA",
-                    "Minolta",
-                    "Konica",
-                    "CASIO",
-                    "Sinar",
-                    "Phase One",
-                    "SAMSUNG",
-                    "Mamiya",
-                    "MOTOROLA",
-                    "Leaf",
-                    "Panasonic"
-                  }) {
+                "Canon",
+                "NIKON",
+                "EPSON",
+                "KODAK",
+                "Kodak",
+                "OLYMPUS",
+                "PENTAX",
+                "RICOH",
+                "MINOLTA",
+                "Minolta",
+                "Konica",
+                "CASIO",
+                "Sinar",
+                "Phase One",
+                "SAMSUNG",
+                "Mamiya",
+                "MOTOROLA",
+                "Leaf",
+                "Panasonic"
+            }) {
                 if (make.find(corp) != std::string::npos) { // Simplify company names
                     make = corp;
                     break;
                 }
             }
-        }            
-        make.erase(make.find_last_not_of(' ') + 1);
-        model.erase(model.find_last_not_of(' ') + 1);
+        }
+        std::string::size_type nonspace_pos = make.find_last_not_of(' ');
+        if (nonspace_pos != std::string::npos && nonspace_pos + 1 < make.size()) {
+            make.erase(nonspace_pos + 1);
+        }
+        nonspace_pos = model.find_last_not_of(' ');
+        if (nonspace_pos != std::string::npos && nonspace_pos + 1 < model.size()) {
+            model.erase(nonspace_pos + 1);
+        }
 
-        if (make.length() > 0 && model.find(make + " ") == 0) {
-            model = model.substr(make.length() + 1);
+        if (!make.empty() && model.find(make + ' ') == 0) {
+            model.erase(0, make.size() + 1);
         }
 
         if (find_tag(Exiv2::exposureTime)) {
@@ -203,24 +197,28 @@ FramesData::FramesData(const Glib::ustring &fname):
             aperture = pos->toFloat();
         }
 
-        /* Read ISO speed - Nikon happens to return a pair for Lo and Hi modes */
+        // Read ISO speed - Nikon happens to return a pair for Lo and Hi modes
         if (find_tag(Exiv2::isoSpeed)) {
-            // if standard exif iso tag, use the old way of interpreting the return value to be more regression-save
-            if (strcmp(pos->key().c_str(), "Exif.Photo.ISOSpeedRatings") == 0) {
-                int isofield = pos->count() > 1 ? 1 : 0;
+            // If standard exif iso tag, use the old way of interpreting the return value to be more regression-save
+            if (pos->key() == "Exif.Photo.ISOSpeedRatings") {
+                const long isofield = pos->count() > 1 ? 1 : 0;
                 iso_speed = pos->toFloat(isofield);
             } else {
-                std::string str = pos->print();
-                iso_speed = std::atof(str.c_str());
+                iso_speed = std::atof(pos->print().c_str());
             }
         }
-        // some newer cameras support iso settings that exceed the 16 bit of exif's ISOSpeedRatings
+        // Some newer cameras support iso settings that exceed the 16 bit of exif's ISOSpeedRatings
         if (iso_speed == 65535 || iso_speed == 0) {
             if (find_exif_tag("Exif.PentaxDng.ISO") || find_exif_tag("Exif.Pentax.ISO")) {
-                std::string str = pos->print();
-                iso_speed = std::atof(str.c_str());
-            } else if((!g_strcmp0(make.c_str(), "SONY") || !g_strcmp0(make.c_str(), "Canon"))
-                    && find_exif_tag("Exif.Photo.RecommendedExposureIndex")) {
+                iso_speed = std::atof(pos->print().c_str());
+            }
+            else if (
+                (
+                    make == "SONY"
+                    || make == "Canon"
+                )
+                && find_exif_tag("Exif.Photo.RecommendedExposureIndex")
+            ) {
                 iso_speed = pos->toFloat();
             }
         }
@@ -240,9 +238,9 @@ FramesData::FramesData(const Glib::ustring &fname):
         }
 
         if (find_tag(Exiv2::subjectDistance)) {
-            focus_dist = (0.01 * pow(10, pos->toFloat() / 40));
+            focus_dist = (0.01 * std::pow(10, pos->toFloat() / 40));
         }
-        
+
         if (find_tag(Exiv2::orientation)) {
             orientation = pos->print(&exif);
         }
@@ -257,7 +255,8 @@ FramesData::FramesData(const Glib::ustring &fname):
         std::string datetime_taken;
         if (find_exif_tag("Exif.Image.DateTimeOriginal")) {
             datetime_taken = pos->print(&exif);
-        } else if(find_exif_tag("Exif.Photo.DateTimeOriginal")) {
+        }
+        else if (find_exif_tag("Exif.Photo.DateTimeOriginal")) {
             datetime_taken = pos->print(&exif);
         }
         if (sscanf(datetime_taken.c_str(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
@@ -275,23 +274,23 @@ FramesData::FramesData(const Glib::ustring &fname):
         // Special file type detection (HDR, PixelShift)
         // ------------------------
         uint16 bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
-        auto bps = exif.findKey(Exiv2::ExifKey("Exif.Image.BitsPerSample"));
-        auto spp = exif.findKey(Exiv2::ExifKey("Exif.Image.SamplesPerPixel"));
-        auto sf = exif.findKey(Exiv2::ExifKey("Exif.Image.SampleFormat"));
-        auto pi = exif.findKey(Exiv2::ExifKey("Exif.Image.PhotometricInterpretation"));
-        auto c = exif.findKey(Exiv2::ExifKey("Exif.Image.Compression"));
+        const auto bps = exif.findKey(Exiv2::ExifKey("Exif.Image.BitsPerSample"));
+        const auto spp = exif.findKey(Exiv2::ExifKey("Exif.Image.SamplesPerPixel"));
+        const auto sf = exif.findKey(Exiv2::ExifKey("Exif.Image.SampleFormat"));
+        const auto pi = exif.findKey(Exiv2::ExifKey("Exif.Image.PhotometricInterpretation"));
+        const auto c = exif.findKey(Exiv2::ExifKey("Exif.Image.Compression"));
 
-        if ((!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX")))) {
-//             if (find_exif_tag("Exif.Pentax.HDR") && pos->toLong() > 0) {
-//                 isHDR = true;
-// #if PRINT_HDR_PS_DETECTION
-//                 printf("HDR detected ! -> \"HDR\" tag found\n");
-// #endif
-//             } else
+        if (
+            !make.compare(0, 6, "PENTAX")
+            || (
+                !make.compare(0, 5, "RICOH")
+                && !model.compare (0, 6, "PENTAX")
+            )
+        ) {
             if (find_exif_tag("Exif.Pentax.DriveMode")) {
                 std::string buf = pos->toString(3);
                 buf[3] = 0;
-                if (!strcmp(buf.c_str(), "HDR")) {
+                if (buf == "HDR") {
                     isHDR = true;
 #if PRINT_HDR_PS_DETECTION
                     printf("HDR detected ! -> DriveMode = \"HDR\"\n");
@@ -299,8 +298,14 @@ FramesData::FramesData(const Glib::ustring &fname):
                 }
             }
 
-            if (!isHDR && find_exif_tag("Exif.Pentax.Quality") &&
-                (pos->toLong() == 7 || pos->toLong() == 8)) {
+            if (
+                !isHDR
+                && find_exif_tag("Exif.Pentax.Quality")
+                && (
+                    pos->toLong() == 7
+                    || pos->toLong() == 8
+                )
+            ) {
                 isPixelShift = true;
 #if PRINT_HDR_PS_DETECTION
                 printf("PixelShift detected ! -> \"Quality\" = 7\n");
@@ -434,7 +439,7 @@ FramesData::FramesData(const Glib::ustring &fname):
 #endif
             }
         }
-    } catch(Exiv2::AnyError &e) {
+    } catch (const Exiv2::AnyError& e) {
         if (settings->verbose) {
             std::cerr << "EXIV2 ERROR: " << e.what() << std::endl;
         }
@@ -564,7 +569,7 @@ void FramesData::setDCRawFrameCount(unsigned int frameCount)
 
 unsigned int FramesData::getFrameCount() const
 {
-    return dcrawFrameCount ? dcrawFrameCount : 1;
+    return std::max(1U, dcrawFrameCount);
 }
 
 
@@ -578,7 +583,7 @@ Glib::ustring FramesData::getFileName() const
 
 std::string FramesMetaData::apertureToString(double aperture)
 {
-
+	// TODO: Replace sprintf()
     char buffer[256];
     sprintf (buffer, "%0.1f", aperture);
     return buffer;
@@ -618,18 +623,21 @@ std::string FramesMetaData::expcompToString(double expcomp, bool maskZeroexpcomp
 
 double FramesMetaData::shutterFromString(std::string s)
 {
-    size_t i = s.find_first_of ('/');
+    const std::string::size_type i = s.find_first_of ('/');
 
     if (i == std::string::npos) {
-        return atof (s.c_str());
+        return std::atof(s.c_str());
     } else {
-        return atof (s.substr(0, i).c_str()) / atof (s.substr(i + 1).c_str());
+        const double denominator = std::atof(s.substr(i + 1).c_str());
+        return
+            denominator
+                ? std::atof(s.substr(0, i).c_str()) / denominator
+                : 0.0;
     }
 }
 
 double FramesMetaData::apertureFromString(std::string s)
 {
 
-    return atof(s.c_str());
+    return std::atof(s.c_str());
 }
-

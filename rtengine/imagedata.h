@@ -16,24 +16,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __IMAGEDATA_H__
-#define __IMAGEDATA_H__
+#pragma once
 
 #include <cstdio>
 #include <memory>
-#include "rawimage.h"
 #include <string>
+
 #include <glibmm.h>
+
 #include <exiv2/exiv2.hpp>
+
+#include "rawimage.h"
 #include "rtengine.h"
 
 namespace rtengine
 {
 
-Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname);
+Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname); // TODO: Global function?
 
 
-class FramesData : public FramesMetaData {
+class FramesData :
+    public FramesMetaData
+{
 private:
     bool ok_;
     Glib::ustring fname_;
@@ -52,9 +56,9 @@ private:
     IIOSampleFormat sampleFormat;
     bool isPixelShift;
     bool isHDR;
-    
+
 public:
-    FramesData (const Glib::ustring& fname);
+    FramesData(const Glib::ustring& fname);
 
     void setDCRawFrameCount(unsigned int frameCount);
     unsigned int getFrameCount() const override;
@@ -80,6 +84,4 @@ public:
     Glib::ustring getFileName() const override;
 };
 
-
 }
-#endif

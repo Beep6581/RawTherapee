@@ -36,7 +36,6 @@
 #endif
 
 #include "imageio.h"
-//#include "iptcpairs.h"
 #include "iccjpeg.h"
 #include "color.h"
 #include "imagedata.h"
@@ -78,27 +77,51 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 
 }
 
-Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
-
-void ImageIO::setOutputProfile  (const char* pdata, int plen)
+MetadataInfo::MetadataInfo(const Glib::ustring& src) :
+    src_(src),
+    exif_(new rtengine::procparams::ExifPairs),
+    iptc_(new rtengine::procparams::IPTCPairs)
 {
+}
 
-    delete [] profileData;
+const Glib::ustring& MetadataInfo::filename() const
+{
+    return src_;
+}
 
-    if (pdata) {
-        profileData = new char [plen];
-        memcpy (profileData, pdata, plen);
-    } else {
-        profileData = nullptr;
-    }
+const rtengine::procparams::ExifPairs& MetadataInfo::exif() const
+{
+    return *exif_;
+}
 
-    profileLength = plen;
+const rtengine::procparams::IPTCPairs& MetadataInfo::iptc() const
+{
+    return *iptc_;
+}
+
+void MetadataInfo::setExif(const rtengine::procparams::ExifPairs &exif)
+{
+    *exif_ = exif;
+}
+
+void MetadataInfo::setIptc(const rtengine::procparams::IPTCPairs &iptc)
+{
+    *iptc_ = iptc;
+}
+
+void ImageIO::setMetadata(MetadataInfo info)
+{
+    metadataInfo = std::move(info);
+}
+
+void ImageIO::setOutputProfile(const std::string& pdata)
+{
+    profileData = pdata;
 }
 
 ImageIO::ImageIO() :
     pl(nullptr),
     embProfile(nullptr),
-    profileData(nullptr),
     profileLength(0),
     loadedProfileData(nullptr),
     loadedProfileDataJpg(false),
@@ -116,8 +139,6 @@ ImageIO::~ImageIO ()
     }
 
     deleteLoadedProfileData();
-    // delete exifRoot;
-    delete [] profileData;
 }
 
 void png_read_data(png_struct_def  *png_ptr, unsigned char *data, size_t length);
@@ -853,7 +874,7 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 #if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
     png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
 #endif
-    
+
     png_infop info = png_create_info_struct(png);
 
     if (!info) {
@@ -887,13 +908,13 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
     png_set_IHDR(png, info, width, height, bps, PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_BASE);
 
-    if (profileData) {
+    if (!profileData.empty()) {
 #if PNG_LIBPNG_VER < 10500
-        png_charp profdata = reinterpret_cast<png_charp>(profileData);
+        png_const_charp profdata = reinterpret_cast<png_const_charp>(profileData.data());
 #else
-        png_bytep profdata = reinterpret_cast<png_bytep>(profileData);
+        png_const_bytep profdata = reinterpret_cast<png_const_bytep>(profileData.data());
 #endif
-        png_set_iCCP(png, info, const_cast<png_charp>("icc"), 0, profdata, profileLength);
+        png_set_iCCP(png, info, "icc", 0, profdata, profileData.size());
     }
 
     int rowlen = width * 3 * bps / 8;
@@ -1034,8 +1055,8 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     jpeg_start_compress(&cinfo, TRUE);
 
     // write icc profile to the output
-    if (profileData) {
-        write_icc_profile (&cinfo, (JOCTET*)profileData, profileLength);
+    if (!profileData.empty()) {
+        write_icc_profile (&cinfo, reinterpret_cast<const JOCTET*>(profileData.data()), profileData.size());
     }
 
     // write image data
@@ -1115,7 +1136,7 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     unsigned char* linebuffer = new unsigned char[lineWidth];
 
     // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
-    const char *mode = "w";
+    const char* const mode = "w";
 #ifdef WIN32
     FILE *file = g_fopen_withBinaryAndLock (fname);
     int fileno = _fileno(file);
@@ -1153,8 +1174,8 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     if (!uncompressed) {
         TIFFSetField (out, TIFFTAG_PREDICTOR, (bps == 16 || bps == 32) && isFloat ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);
     }
-    if (profileData) {
-        TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
+    if (!profileData.empty()) {
+        TIFFSetField (out, TIFFTAG_ICCPROFILE, profileData.size(), profileData.data());
     }
 
     for (int row = 0; row < height; row++) {
@@ -1338,7 +1359,6 @@ void ImageIO::deleteLoadedProfileData( )
     loadedProfileData = nullptr;
 }
 
-
 bool ImageIO::saveMetadata(const Glib::ustring &fname) const
 {
     if (metadataInfo.filename().empty()) {
@@ -1351,15 +1371,16 @@ bool ImageIO::saveMetadata(const Glib::ustring &fname) const
         src->readMetadata();
         dst->setMetadata(*src);
         dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
-        for (auto &p : metadataInfo.exif()) {
+        for (const auto& p : metadataInfo.exif()) {
             try {
                 dst->exifData()[p.first] = p.second;
-            } catch (Exiv2::AnyError &exc) {}
+            } catch (const Exiv2::AnyError& exc) {
+            }
         }
-        for (auto &p : metadataInfo.iptc()) {
+        for (const auto& p : metadataInfo.iptc()) {
             try {
-                auto &v = p.second;
-                if (v.size() >= 1) {
+                auto& v = p.second;
+                if (!v.empty()) {
                     dst->iptcData()[p.first] = v[0];
                     for (size_t j = 1; j < v.size(); ++j) {
                         Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
@@ -1367,11 +1388,12 @@ bool ImageIO::saveMetadata(const Glib::ustring &fname) const
                         dst->iptcData().add(d);
                     }
                 }
-            } catch (Exiv2::AnyError &exc) {}
+            } catch (const Exiv2::AnyError& exc) {
+            }
         }
         dst->writeMetadata();
         return true;
-    } catch (Exiv2::AnyError &exc) {
+    } catch (const Exiv2::AnyError& exc) {
         std::cout << "EXIF ERROR: " << exc.what() << std::endl;
         return false;
     }

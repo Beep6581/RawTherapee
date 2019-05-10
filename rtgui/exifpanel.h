@@ -20,10 +20,22 @@
 #define _EXIFPANEL_
 
 #include <memory>
+
 #include <gtkmm.h>
-#include <unordered_set>
 
 #include "toolpanel.h"
+
+namespace rtengine
+{
+
+namespace procparams
+{
+
+class ExifPairs;
+
+}
+
+}
 
 class ExifPanel : public Gtk::VBox, public ToolPanel
 {
@@ -67,11 +79,11 @@ private:
     Gtk::Button* reset;
     Gtk::Button* resetAll;
 
-    std::vector<std::pair<std::string, Glib::ustring>> editable_;
+    const std::vector<std::pair<std::string, Glib::ustring>> editableTags;
 
     Gtk::TreeModel::Children addTag(const std::string &key, const Glib::ustring &label, const Glib::ustring &value, bool editable, bool edited);
     void refreshTags();
-    void resetIt (Gtk::TreeModel::iterator iter);
+    void resetIt(const Gtk::TreeModel::const_iterator& iter);
     void resetPressed();
     void resetAllPressed();
     void addPressed();

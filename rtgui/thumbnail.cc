@@ -15,27 +15,90 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "multilangmgr.h"
-#include "thumbnail.h"
-#include <sstream>
-#include <iomanip>
-#include "options.h"
-#include "../rtengine/mytime.h"
 #include <cstdio>
 #include <cstdlib>
+#include <iomanip>
+#include <sstream>
+
 #include <glibmm.h>
-#include "../rtengine/imagedata.h"
-#include "../rtengine/procparams.h"
+
 #include <glib/gstdio.h>
 
-#include "../rtengine/dynamicprofile.h"
-#include "guiutils.h"
+#include "thumbnail.h"
+
 #include "batchqueue.h"
 #include "extprog.h"
-#include "profilestorecombobox.h"
-#include "procparamchangers.h"
+#include "guiutils.h"
+#include "multilangmgr.h"
+#include "options.h"
 #include "ppversion.h"
+#include "procparamchangers.h"
+#include "profilestorecombobox.h"
 #include "version.h"
+
+#include "../rtengine/dynamicprofile.h"
+#include "../rtengine/imagedata.h"
+#include "../rtengine/mytime.h"
+#include "../rtengine/procparams.h"
+
+namespace {
+
+bool CPBDump(
+    const Glib::ustring& commFName,
+    const Glib::ustring& imageFName,
+    const Glib::ustring& profileFName,
+    const Glib::ustring& defaultPParams,
+    const CacheImageData* cfs,
+    bool flagMode
+)
+{
+    const std::unique_ptr<Glib::KeyFile> kf(new Glib::KeyFile);
+
+    if (!kf) {
+        return false;
+    }
+
+    // open the file in write mode
+    const std::unique_ptr<FILE, decltype(&std::fclose)> f(g_fopen(commFName.c_str (), "wt"), &std::fclose);
+
+    if (!f) {
+        printf ("CPBDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
+        return false;
+    }
+
+    try {
+        kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
+        kf->set_string ("RT General", "AppVersion", RTVERSION);
+        kf->set_integer ("RT General", "ProcParamsVersion", PPVERSION);
+        kf->set_string ("RT General", "ImageFileName", imageFName);
+        kf->set_string ("RT General", "OutputProfileFileName", profileFName);
+        kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
+        kf->set_boolean ("RT General", "FlaggingMode", flagMode);
+
+        kf->set_integer ("Common Data", "FrameCount", cfs->frameCount);
+        kf->set_integer ("Common Data", "SampleFormat", cfs->sampleFormat);
+        kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
+        kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
+        kf->set_double ("Common Data", "FNumber", cfs->fnumber);
+        kf->set_double ("Common Data", "Shutter", cfs->shutter);
+        kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
+        kf->set_integer ("Common Data", "ISO", cfs->iso);
+        kf->set_string ("Common Data", "Lens", cfs->lens);
+        kf->set_string ("Common Data", "Make", cfs->camMake);
+        kf->set_string ("Common Data", "Model", cfs->camModel);
+
+    } catch (const Glib::KeyFileError&) {
+    }
+
+    try {
+        fprintf (f.get(), "%s", kf->to_data().c_str());
+    } catch (const Glib::KeyFileError&) {
+    }
+
+    return true;
+}
+
+} // namespace
 
 using namespace rtengine::procparams;
 
@@ -219,67 +282,6 @@ const ProcParams& Thumbnail::getProcParamsU ()
     return *pparams; // there is no valid pp to return, but we have to return something
 }
 
-
-namespace {
-
-bool CPBDump(const Glib::ustring &commFName, const Glib::ustring &imageFName,
-             const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
-             const CacheImageData* cfs, const bool flagMode)
-{
-    const auto kf = new Glib::KeyFile;
-
-    if (!kf) {
-        return false;
-    }
-
-    FILE *f = nullptr;
-
-    // open the file in write mode
-    f = g_fopen (commFName.c_str (), "wt");
-
-    if (f == nullptr) {
-        printf ("CPBDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
-        delete kf;
-        return false;
-    }
-
-    try {
-
-        kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
-        kf->set_string ("RT General", "AppVersion", RTVERSION);
-        kf->set_integer ("RT General", "ProcParamsVersion", PPVERSION);
-        kf->set_string ("RT General", "ImageFileName", imageFName);
-        kf->set_string ("RT General", "OutputProfileFileName", profileFName);
-        kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
-        kf->set_boolean ("RT General", "FlaggingMode", flagMode);
-
-        kf->set_integer ("Common Data", "FrameCount", cfs->frameCount);
-        kf->set_integer ("Common Data", "SampleFormat", cfs->sampleFormat);
-        kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
-        kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
-        kf->set_double ("Common Data", "FNumber", cfs->fnumber);
-        kf->set_double ("Common Data", "Shutter", cfs->shutter);
-        kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
-        kf->set_integer ("Common Data", "ISO", cfs->iso);
-        kf->set_string ("Common Data", "Lens", cfs->lens);
-        kf->set_string ("Common Data", "Make", cfs->camMake);
-        kf->set_string ("Common Data", "Model", cfs->camModel);
-
-    } catch (Glib::KeyFileError&) {}
-
-    try {
-        fprintf (f, "%s", kf->to_data().c_str());
-    } catch (Glib::KeyFileError&) {}
-
-    fclose (f);
-    delete kf;
-
-    return true;
-}
-
-
-} // namespace
-
 /** @brief  Create default params on demand and returns a new updatable object
  *
  *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
@@ -304,7 +306,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
     const bool create = (!hasProcParams() || force);
-    const bool run_cpb = false; //!options.CPBPath.empty() && !defaultPparamsPath.empty() && cfs && cfs->exifValid && create;
+    const bool run_cpb = false;
 
     const Glib::ustring outFName =
         (options.paramsLoadLocation == PLL_Input && options.saveParamsFile) ?
@@ -313,16 +315,24 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     if (!run_cpb) {
         if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
-            std::unique_ptr<rtengine::FramesMetaData> imageMetaData(rtengine::FramesMetaData::fromFile(fname));
-            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData.get());
-            int err = pp->pparams->save(outFName);
-            pp->deleteInstance();
-            delete pp;
-            if (!err) {
+        	const auto pp_deleter =
+        	    [](PartialProfile* pp)
+        	    {
+        	        pp->deleteInstance();
+        	        delete pp;
+        	    };
+            const std::unique_ptr<const rtengine::FramesMetaData> imageMetaData(rtengine::FramesMetaData::fromFile(fname));
+            const std::unique_ptr<PartialProfile, decltype(pp_deleter)> pp(
+                imageMetaData
+                    ? ProfileStore::getInstance()->loadDynamicProfile(imageMetaData.get())
+                    : nullptr,
+                pp_deleter
+            );
+            if (pp && !pp->pparams->save(outFName)) {
                 loadProcParams();
             }
         } else if (create && defProf != DEFPROFILE_DYNAMIC) {
-            const PartialProfile *p = ProfileStore::getInstance()->getProfile(defProf);
+            const PartialProfile* const p = ProfileStore::getInstance()->getProfile(defProf);
             if (p && !p->pparams->save(outFName)) {
                 loadProcParams();
             }
@@ -333,7 +343,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
         CPBDump(tmpFileName, fname, outFName,
                 defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension), cfs, flaggingMode);
-        
+
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
 

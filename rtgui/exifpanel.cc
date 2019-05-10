@@ -16,13 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <unordered_set>
+
 #include "exifpanel.h"
 
 #include "guiutils.h"
 #include "rtimage.h"
 #include "options.h"
-#include "../rtengine/imagedata.h"
 
+#include "../rtengine/imagedata.h"
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
@@ -31,15 +33,15 @@ using namespace rtengine::procparams;
 ExifPanel::ExifPanel() :
     idata(nullptr),
     changeList(new rtengine::procparams::ExifPairs),
-    defChangeList(new rtengine::procparams::ExifPairs)
+    defChangeList(new rtengine::procparams::ExifPairs),
+    editableTags{
+        {"Exif.Photo.UserComment", "User Comment"},
+        {"Exif.Image.Artist", "Artist"},
+        {"Exif.Image.Copyright", "Copyright"},
+        {"Exif.Image.ImageDescription", "Image Description"}
+    }
 {
-    editable_ = {
-        { "Exif.Photo.UserComment", "User Comment" },
-        { "Exif.Image.Artist", "Artist" },
-        { "Exif.Image.Copyright", "Copyright" },
-        { "Exif.Image.ImageDescription", "Image Description"}
-    };
-    
+
     exifTree = Gtk::manage (new Gtk::TreeView());
     scrolledWindow = Gtk::manage (new Gtk::ScrolledWindow());
 
@@ -57,7 +59,7 @@ ExifPanel::ExifPanel() :
     exifTree->set_model (exifTreeModel);
     exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
     exifTree->set_show_expanders(false);
-        
+
     keepicon = RTImage::createPixbufFromFile ("tick-small.png");
     editicon = RTImage::createPixbufFromFile("add-small.png");
 
@@ -204,54 +206,61 @@ void ExifPanel::refreshTags()
 {
     Glib::RefPtr<Gtk::TreeSelection> selection = exifTree->get_selection();
     std::vector<Gtk::TreeModel::Path> sel = selection->get_selected_rows();
-    
+
     exifTreeModel->clear();
-    
+
     if (!idata) {
         return;
     }
 
-    Glib::ustring fn = idata->getFileName();
+    const Glib::ustring fn = idata->getFileName();
     if (fn.empty()) {
         return;
     }
 
     std::unordered_set<std::string> ed;
-    for (auto &p : editable_) {
+    for (const auto &p : editableTags) {
         ed.insert(p.first);
     }
-    
+
     try {
         auto img = open_exiv2(fn);
         img->readMetadata();
-        auto &exif = img->exifData();
-        
-        for (auto &p : *changeList) {
+        auto& exif = img->exifData();
+
+        for (const auto& p : *changeList) {
             try {
                 exif[p.first] = p.second;
-            } catch (Exiv2::AnyError &exc) {
+            } catch (const Exiv2::AnyError& exc) {
             }
         }
 
-        for (auto &p : editable_) {
-            auto pos = exif.findKey(Exiv2::ExifKey(p.first));
+        for (const auto& p : editableTags) {
+            const auto pos = exif.findKey(Exiv2::ExifKey(p.first));
             if (pos != exif.end() && pos->size()) {
-                bool edited = changeList->find(pos->key()) != changeList->end();
+                const bool edited = changeList->find(pos->key()) != changeList->end();
                 addTag(pos->key(), pos->tagLabel(), pos->print(&exif), true, edited);
             }
         }
-        for (auto &tag : exif) {
-            bool editable = ed.find(tag.key()) != ed.end();
-            if (!editable && !tag.tagLabel().empty() && tag.typeId() != Exiv2::undefined &&
-                (tag.typeId() == Exiv2::asciiString || tag.size() < 256)) {
+        for (const auto& tag : exif) {
+            const bool editable = ed.find(tag.key()) != ed.end();
+            if (
+                !editable
+                && !tag.tagLabel().empty()
+                && tag.typeId() != Exiv2::undefined
+                && (
+                    tag.typeId() == Exiv2::asciiString
+                    || tag.size() < 256
+                )
+            ) {
                 addTag(tag.key(), tag.tagLabel(), tag.print(&exif), false, false);
             }
         }
-    } catch (Exiv2::AnyError &exc) {
+    } catch (const Exiv2::AnyError& exc) {
         return;
     }
 
-    for (auto &p : sel) {
+    for (const auto& p : sel) {
         exifTree->get_selection()->select(p);
     }
 }
@@ -277,13 +286,13 @@ void ExifPanel::exifSelectionChanged ()
 }
 
 
-void ExifPanel::resetIt (Gtk::TreeModel::iterator  iter)
+void ExifPanel::resetIt(const Gtk::TreeModel::const_iterator& iter)
 {
     if (!iter) {
         return;
     }
 
-    auto key = iter->get_value(exifColumns.key);
+    const auto key = iter->get_value(exifColumns.key);
     changeList->erase(key);
 }
 
@@ -324,7 +333,7 @@ void ExifPanel::addPressed ()
     Gtk::Label* tlabel = new Gtk::Label (M ("EXIFPANEL_ADDTAGDLG_SELECTTAG") + ":");
     MyComboBoxText* tcombo = new MyComboBoxText ();
 
-    for (auto &p : editable_) {
+    for (const auto& p : editableTags) {
         tcombo->append(p.second);
     }
 
@@ -339,11 +348,11 @@ void ExifPanel::addPressed ()
     Glib::ustring sel;
     Glib::ustring val;
     {
-        Glib::RefPtr<Gtk::TreeSelection> selection = exifTree->get_selection();
-        std::vector<Gtk::TreeModel::Path> rows = selection->get_selected_rows();
+        const Glib::RefPtr<Gtk::TreeSelection> selection = exifTree->get_selection();
+        const std::vector<Gtk::TreeModel::Path> rows = selection->get_selected_rows();
 
         if (rows.size() == 1) {
-            Gtk::TreeModel::iterator iter = exifTreeModel->get_iter(rows[0]);
+            const Gtk::TreeModel::iterator iter = exifTreeModel->get_iter(rows[0]);
             if (iter->get_value(exifColumns.editable)) {
                 sel = iter->get_value(exifColumns.key);
                 val = iter->get_value(exifColumns.value_nopango);
@@ -351,11 +360,11 @@ void ExifPanel::addPressed ()
         }
     }
 
-    if (sel == "") {
+    if (sel.empty()) {
         tcombo->set_active(0);
     } else {
-        for (size_t i = 0; i < editable_.size(); ++i) {
-            if (editable_[i].first == sel) {
+        for (size_t i = 0; i < editableTags.size(); ++i) {
+            if (editableTags[i].first == sel) {
                 tcombo->set_active(i);
                 break;
             }
@@ -375,8 +384,8 @@ void ExifPanel::addPressed ()
     hb2->show ();
 
     if (dialog->run () == Gtk::RESPONSE_OK) {
-        auto key = editable_[tcombo->get_active_row_number()].first;
-        auto value = ventry->get_text();
+        auto key = editableTags[tcombo->get_active_row_number()].first;
+        const auto value = ventry->get_text();
         (*changeList)[key] = value;
         refreshTags();
         notifyListener ();

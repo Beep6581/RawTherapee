@@ -1075,8 +1075,104 @@ struct MetaDataParams {
 };
 
 
-typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
-typedef std::map<Glib::ustring, std::vector<Glib::ustring>> IPTCPairs;
+/**
+  * Minimal wrapper allowing forward declaration for representing a key/value for the exif metadata information
+  */
+class ExifPairs final
+{
+private:
+    using Pairs = std::map<Glib::ustring, Glib::ustring>;
+
+public:
+    using const_iterator = Pairs::const_iterator;
+    using size_type = Pairs::size_type;
+
+    const_iterator find(const Glib::ustring& key) const
+    {
+        return pairs.find(key);
+    }
+
+    const_iterator begin() const
+    {
+        return pairs.begin();
+    }
+
+    const_iterator end() const
+    {
+        return pairs.end();
+    }
+
+    void clear()
+    {
+        pairs.clear();
+    }
+
+    size_type erase(const Glib::ustring& key)
+    {
+        return pairs.erase(key);
+    }
+
+    Glib::ustring& operator[](const Glib::ustring& key)
+    {
+        return pairs[key];
+    }
+
+    bool operator ==(const ExifPairs& other) const
+    {
+        return pairs == other.pairs;
+    }
+
+private:
+    Pairs pairs;
+};
+
+/**
+  * The IPTC key/value pairs
+  */
+class IPTCPairs final
+{
+public:
+    using iterator = std::map<Glib::ustring, std::vector<Glib::ustring>>::iterator;
+    using const_iterator = std::map<Glib::ustring, std::vector<Glib::ustring>>::const_iterator;
+
+    iterator find(const Glib::ustring& key)
+    {
+        return pairs.find(key);
+    }
+
+    const_iterator begin() const
+    {
+        return pairs.begin();
+    }
+
+    const_iterator end() const
+    {
+        return pairs.end();
+    }
+
+    bool empty() const
+    {
+        return pairs.empty();
+    }
+
+    void clear()
+    {
+        pairs.clear();
+    }
+
+    std::vector<Glib::ustring>& operator[](const Glib::ustring& key)
+    {
+        return pairs[key];
+    }
+
+    bool operator ==(const IPTCPairs& other) const
+    {
+        return pairs == other.pairs;
+    }
+
+private:
+    std::map<Glib::ustring, std::vector<Glib::ustring>> pairs;
+};
 
 struct WaveletParams {
     std::vector<double> ccwcurve;

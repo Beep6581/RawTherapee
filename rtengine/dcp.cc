@@ -40,7 +40,8 @@ extern const Settings* settings;
 
 using namespace rtengine;
 
-namespace {
+namespace
+{
 
 // This sRGB gamma is taken from DNG reference code, with the added linear extension past 1.0, as we run clipless here
 
@@ -442,8 +443,8 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
     return res;
 }
 
-
 class DCPMetadata {
+    // TODO: Review
     enum TagType {
         INVALID = 0,
         BYTE = 1,
@@ -465,10 +466,10 @@ class DCPMetadata {
         INTEL = 0x4949,
         MOTOROLA = 0x4D4D
     };
-    
+
 public:
     explicit DCPMetadata(FILE *file): order_(UNKNOWN), file_(file) {}
-    
+
     bool parse()
     {
         int offset = 0;
@@ -487,7 +488,7 @@ public:
         unsigned short bo;
         fread(&bo, 1, 2, f);
         order_ = ByteOrder(int(bo));
-        
+
         get2(f, order_);
         if (!offset) {
             offset = get4(f, order_);
@@ -513,12 +514,12 @@ public:
 
         return true;
     }
-    
+
     bool find(int id) const
     {
         return tags_.find(id) != tags_.end();
     }
-    
+
     std::string toString(int id)
     {
         auto it = tags_.find(id);
@@ -578,12 +579,12 @@ public:
             return 0;
         }
     }
-    
+
     int toShort(int id, int ofs=0)
     {
         return toInt(id, ofs, SHORT);
     }
-    
+
     double toDouble(int id, int ofs=0)
     {
         auto it = tags_.find(id);
@@ -592,7 +593,7 @@ public:
         }
 
         auto &t = it->second;
-        
+
         union IntFloat {
             uint32_t i;
             float f;
@@ -651,7 +652,7 @@ private:
             return s[0] << 8 | s[1];
         }
     }
-    
+
     static int sget4(unsigned char *s, ByteOrder order)
     {
         if (order == INTEL) {
@@ -660,21 +661,21 @@ private:
             return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
         }
     }
-    
+
     static unsigned short get2(FILE* f, ByteOrder order)
-    { 
+    {
         unsigned char str[2] = { 0xff, 0xff };
         fread (str, 1, 2, f);
         return sget2(str, order);
     }
-    
+
     static int get4(FILE *f, ByteOrder order)
-    { 
+    {
         unsigned char str[4] = { 0xff, 0xff, 0xff, 0xff };
         fread (str, 1, 4, f);
         return sget4 (str, order);
     }
-    
+
     static short int int2_to_signed(short unsigned int i)
     {
         union {
@@ -744,7 +745,6 @@ private:
 
 } // namespace
 
-
 struct DCPProfile::ApplyState::Data {
     float pro_photo[3][3];
     float work[3][3];
@@ -778,22 +778,22 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     constexpr int tiff_float_size = 4;
 
     enum TagKey {
-        COLOR_MATRIX_1 = 50721,
-        COLOR_MATRIX_2 = 50722,
-        PROFILE_HUE_SAT_MAP_DIMS = 50937,
-        PROFILE_HUE_SAT_MAP_DATA_1 = 50938,
-        PROFILE_HUE_SAT_MAP_DATA_2 = 50939,
-        PROFILE_TONE_CURVE = 50940,
-        PROFILE_TONE_COPYRIGHT = 50942,
-        CALIBRATION_ILLUMINANT_1 = 50778,
-        CALIBRATION_ILLUMINANT_2 = 50779,
-        FORWARD_MATRIX_1 = 50964,
-        FORWARD_MATRIX_2 = 50965,
-        PROFILE_LOOK_TABLE_DIMS = 50981, // ProfileLookup is the low quality variant
-        PROFILE_LOOK_TABLE_DATA = 50982,
-        PROFILE_HUE_SAT_MAP_ENCODING = 51107,
-        PROFILE_LOOK_TABLE_ENCODING = 51108,
-        BASELINE_EXPOSURE_OFFSET = 51109
+        TAG_KEY_COLOR_MATRIX_1 = 50721,
+        TAG_KEY_COLOR_MATRIX_2 = 50722,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS = 50937,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1 = 50938,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2 = 50939,
+        TAG_KEY_PROFILE_TONE_CURVE = 50940,
+        TAG_KEY_PROFILE_TONE_COPYRIGHT = 50942,
+        TAG_KEY_CALIBRATION_ILLUMINANT_1 = 50778,
+        TAG_KEY_CALIBRATION_ILLUMINANT_2 = 50779,
+        TAG_KEY_FORWARD_MATRIX_1 = 50964,
+        TAG_KEY_FORWARD_MATRIX_2 = 50965,
+        TAG_KEY_PROFILE_LOOK_TABLE_DIMS = 50981, // ProfileLookup is the low quality variant
+        TAG_KEY_PROFILE_LOOK_TABLE_DATA = 50982,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING = 51107,
+        TAG_KEY_PROFILE_LOOK_TABLE_ENCODING = 51108,
+        TAG_KEY_BASELINE_EXPOSURE_OFFSET = 51109
     };
 
     static const float adobe_camera_raw_default_curve[] = {
@@ -1065,46 +1065,46 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     DCPMetadata md(file);
     if (!md.parse()) {
-        printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        printf ("Unable to load DCP profile '%s'.", filename.c_str());
         return;
     }
 
     light_source_1 =
-        md.find(CALIBRATION_ILLUMINANT_1) ?
-        md.toShort(CALIBRATION_ILLUMINANT_1) :
-        -1;
+        md.find(TAG_KEY_CALIBRATION_ILLUMINANT_1)
+            ? md.toShort(TAG_KEY_CALIBRATION_ILLUMINANT_1)
+            : -1;
     light_source_2 =
-        md.find(CALIBRATION_ILLUMINANT_2) ?
-        md.toShort(CALIBRATION_ILLUMINANT_2) :
-        -1;
+        md.find(TAG_KEY_CALIBRATION_ILLUMINANT_2)
+            ? md.toShort(TAG_KEY_CALIBRATION_ILLUMINANT_2)
+            : -1;
     temperature_1 = calibrationIlluminantToTemperature(light_source_1);
     temperature_2 = calibrationIlluminantToTemperature(light_source_2);
 
-    const bool has_second_hue_sat = md.find(PROFILE_HUE_SAT_MAP_DATA_2); // Some profiles have two matrices, but just one huesat
+    const bool has_second_hue_sat = md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2); // Some profiles have two matrices, but just one huesat
 
     // Fetch Forward Matrices, if any
-    has_forward_matrix_1 = md.find(FORWARD_MATRIX_1);
+    has_forward_matrix_1 = md.find(TAG_KEY_FORWARD_MATRIX_1);
 
     if (has_forward_matrix_1) {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
-                forward_matrix_1[row][col] = md.toDouble(FORWARD_MATRIX_1, (col + row * 3) * 8);
+                forward_matrix_1[row][col] = md.toDouble(TAG_KEY_FORWARD_MATRIX_1, (col + row * 3) * 8);
             }
         }
     }
 
-    has_forward_matrix_2 = md.find(FORWARD_MATRIX_2);
+    has_forward_matrix_2 = md.find(TAG_KEY_FORWARD_MATRIX_2);
 
     if (has_forward_matrix_2) {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
-                forward_matrix_2[row][col] = md.toDouble(FORWARD_MATRIX_2, (col + row * 3) * 8);
+                forward_matrix_2[row][col] = md.toDouble(TAG_KEY_FORWARD_MATRIX_2, (col + row * 3) * 8);
             }
         }
     }
 
     // Color Matrix (one is always there)
-    if (!md.find(COLOR_MATRIX_1)) {
+    if (!md.find(TAG_KEY_COLOR_MATRIX_1)) {
         std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
         fclose(file);
         return;
@@ -1114,24 +1114,24 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 3; ++col) {
-            color_matrix_1[row][col] = md.toDouble(COLOR_MATRIX_1, (col + row * 3) * 8);
+            color_matrix_1[row][col] = md.toDouble(TAG_KEY_COLOR_MATRIX_1, (col + row * 3) * 8);
         }
     }
 
-    if (md.find(PROFILE_LOOK_TABLE_DIMS)) {
-        look_info.hue_divisions = md.toInt(PROFILE_LOOK_TABLE_DIMS, 0);
-        look_info.sat_divisions = md.toInt(PROFILE_LOOK_TABLE_DIMS, 4);
-        look_info.val_divisions = md.toInt(PROFILE_LOOK_TABLE_DIMS, 8);
+    if (md.find(TAG_KEY_PROFILE_LOOK_TABLE_DIMS)) {
+        look_info.hue_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 0);
+        look_info.sat_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 4);
+        look_info.val_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 8);
 
-        look_info.srgb_gamma = md.find(PROFILE_LOOK_TABLE_ENCODING) && md.toInt(PROFILE_LOOK_TABLE_ENCODING);
+        look_info.srgb_gamma = md.find(TAG_KEY_PROFILE_LOOK_TABLE_ENCODING) && md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_ENCODING);
 
-        look_info.array_count = md.getCount(PROFILE_LOOK_TABLE_DATA) / 3;
+        look_info.array_count = md.getCount(TAG_KEY_PROFILE_LOOK_TABLE_DATA) / 3;
         look_table.resize(look_info.array_count);
 
         for (unsigned int i = 0; i < look_info.array_count; i++) {
-            look_table[i].hue_shift = md.toDouble(PROFILE_LOOK_TABLE_DATA, (i * 3) * tiff_float_size);
-            look_table[i].sat_scale = md.toDouble(PROFILE_LOOK_TABLE_DATA, (i * 3 + 1) * tiff_float_size);
-            look_table[i].val_scale = md.toDouble(PROFILE_LOOK_TABLE_DATA, (i * 3 + 2) * tiff_float_size);
+            look_table[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3) * tiff_float_size);
+            look_table[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3 + 1) * tiff_float_size);
+            look_table[i].val_scale = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3 + 2) * tiff_float_size);
         }
 
         // Precalculated constants for table application
@@ -1148,20 +1148,20 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         look_info.pc.val_step = look_info.hue_divisions * look_info.pc.hue_step;
     }
 
-    if (md.find(PROFILE_HUE_SAT_MAP_DIMS)) {
-        delta_info.hue_divisions = md.toInt(PROFILE_HUE_SAT_MAP_DIMS, 0);
-        delta_info.sat_divisions = md.toInt(PROFILE_HUE_SAT_MAP_DIMS, 4);
-        delta_info.val_divisions = md.toInt(PROFILE_HUE_SAT_MAP_DIMS, 8);
+    if (md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS)) {
+        delta_info.hue_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 0);
+        delta_info.sat_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 4);
+        delta_info.val_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 8);
 
-        delta_info.srgb_gamma = md.find(PROFILE_HUE_SAT_MAP_ENCODING) && md.toInt(PROFILE_HUE_SAT_MAP_ENCODING);
+        delta_info.srgb_gamma = md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING) && md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING);
 
-        delta_info.array_count = md.getCount(PROFILE_HUE_SAT_MAP_DATA_1) / 3;
+        delta_info.array_count = md.getCount(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1) / 3;
         deltas_1.resize(delta_info.array_count);
 
         for (unsigned int i = 0; i < delta_info.array_count; ++i) {
-            deltas_1[i].hue_shift = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_1, (i * 3) * tiff_float_size);
-            deltas_1[i].sat_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 1) * tiff_float_size);
-            deltas_1[i].val_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 2) * tiff_float_size);
+            deltas_1[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3) * tiff_float_size);
+            deltas_1[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 1) * tiff_float_size);
+            deltas_1[i].val_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 2) * tiff_float_size);
         }
 
         delta_info.pc.h_scale =
@@ -1181,14 +1181,14 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         // Second matrix
         has_color_matrix_2 = true;
 
-        bool cm2 = md.find(COLOR_MATRIX_2);
+        const bool cm2 = md.find(TAG_KEY_COLOR_MATRIX_2);
 
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
                 color_matrix_2[row][col] =
                     cm2
-                    ? md.toDouble(COLOR_MATRIX_2, (col + row * 3) * 8)
-                    : color_matrix_1[row][col];
+                        ? md.toDouble(TAG_KEY_COLOR_MATRIX_2, (col + row * 3) * 8)
+                        : color_matrix_1[row][col];
             }
         }
 
@@ -1198,20 +1198,20 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
             // Saturation maps. Need to be unwinded.
             for (unsigned int i = 0; i < delta_info.array_count; ++i) {
-                deltas_2[i].hue_shift = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_2, (i * 3) * tiff_float_size);
-                deltas_2[i].sat_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 1) * tiff_float_size);
-                deltas_2[i].val_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 2) * tiff_float_size);
+                deltas_2[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3) * tiff_float_size);
+                deltas_2[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 1) * tiff_float_size);
+                deltas_2[i].val_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 2) * tiff_float_size);
             }
         }
     }
 
-    has_baseline_exposure_offset = md.find(BASELINE_EXPOSURE_OFFSET);
+    has_baseline_exposure_offset = md.find(TAG_KEY_BASELINE_EXPOSURE_OFFSET);
     if (has_baseline_exposure_offset) {
-        baseline_exposure_offset = md.toDouble(BASELINE_EXPOSURE_OFFSET);
+        baseline_exposure_offset = md.toDouble(TAG_KEY_BASELINE_EXPOSURE_OFFSET);
     }
 
     // Read tone curve points, if any, but disable to RTs own profiles
-    if (md.find(PROFILE_TONE_CURVE)) {
+    if (md.find(TAG_KEY_PROFILE_TONE_CURVE)) {
         std::vector<double> curve_points = {
             static_cast<double>(DCT_Spline) // The first value is the curve type
         };
@@ -1219,9 +1219,9 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         // Push back each X/Y coordinates in a loop
         bool curve_is_linear = true;
 
-        for (unsigned int i = 0, n = md.getCount(PROFILE_TONE_CURVE); i < n; i += 2) {
-            const double x = md.toDouble(PROFILE_TONE_CURVE, (i + 0) * tiff_float_size);
-            const double y = md.toDouble(PROFILE_TONE_CURVE, (i + 1) * tiff_float_size);
+        for (unsigned int i = 0, n = md.getCount(TAG_KEY_PROFILE_TONE_CURVE); i < n; i += 2) {
+            const double x = md.toDouble(TAG_KEY_PROFILE_TONE_CURVE, (i + 0) * tiff_float_size);
+            const double y = md.toDouble(TAG_KEY_PROFILE_TONE_CURVE, (i + 1) * tiff_float_size);
 
             if (x != y) {
                 curve_is_linear = false;
@@ -1237,7 +1237,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
             tone_curve.Set(DiagonalCurve(curve_points, CURVES_MIN_POLY_POINTS));
         }
     } else {
-        if (md.find(PROFILE_TONE_COPYRIGHT) && md.toString(PROFILE_TONE_COPYRIGHT).find("Adobe Systems") != std::string::npos) {
+        if (md.find(TAG_KEY_PROFILE_TONE_COPYRIGHT) && md.toString(TAG_KEY_PROFILE_TONE_COPYRIGHT).find("Adobe Systems") != std::string::npos) {
             // An Adobe profile without tone curve is expected to have the Adobe Default Curve, we add that
             std::vector<double> curve_points = {
                 static_cast<double>(DCT_Spline)
@@ -2076,7 +2076,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
     std::deque<Glib::ustring> dirs = {
         rt_profile_dir,
-        Glib::build_filename(options.rtdir, "dcpprofiles")        
+        Glib::build_filename(options.rtdir, "dcpprofiles")
     };
 
     while (!dirs.empty()) {

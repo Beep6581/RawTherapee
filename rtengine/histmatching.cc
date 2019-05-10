@@ -280,7 +280,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     {
         eSensorType sensor_type;
         int w, h;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), sensor_type, w, h, 1, false, true, true));
+        const std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), sensor_type, w, h, 1, false, true, true));
         if (!thumb) {
             if (settings->verbose) {
                 std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
@@ -312,7 +312,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         eSensorType sensor_type;
         double scale;
         int w = fw / skip, h = fh / skip;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), sensor_type, w, h, 1, false, false, true));
+        const std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), sensor_type, w, h, 1, false, false, true));
         if (!thumb) {
             if (settings->verbose) {
                 std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;

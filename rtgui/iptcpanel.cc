@@ -17,11 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <set>
+
 #include "iptcpanel.h"
+
 #include "clipboard.h"
 #include "rtimage.h"
-#include "../rtengine/imagedata.h"
 
+#include "../rtengine/imagedata.h"
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
@@ -71,11 +73,10 @@ const std::set<std::string> iptc_keys = {
 
 } // namespace
 
-
 IPTCPanel::IPTCPanel():
     changeList(new rtengine::procparams::IPTCPairs),
     defChangeList(new rtengine::procparams::IPTCPairs),
-    embeddedData(new rtengine::procparams::IPTCPairs)    
+    embeddedData(new rtengine::procparams::IPTCPairs)
 {
 
     set_spacing (4);
@@ -493,13 +494,13 @@ void IPTCPanel::setImageData (const FramesMetaData* id)
         try {
             auto img = open_exiv2(id->getFileName());
             img->readMetadata();
-            auto &iptc = img->iptcData();
-            for (auto &tag : iptc) {
+            auto& iptc = img->iptcData();
+            for (const auto& tag : iptc) {
                 if (iptc_keys.find(tag.key()) != iptc_keys.end()) {
                     (*embeddedData)[tag.key()].push_back(tag.toString());
                 }
             }
-        } catch (Exiv2::AnyError &exc) {
+        } catch (const Exiv2::AnyError& exc) {
             embeddedData->clear();
         }
     }

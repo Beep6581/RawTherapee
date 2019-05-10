@@ -87,7 +87,6 @@ public:
     // FramesMetaData interface
     //-------------------------------------------------------------------------
 
-    /* unsigned int getRootCount () const override { return -1; } */
     unsigned int getFrameCount () const override { return frameCount; }
     bool hasExif() const override  { return false; }
     tm getDateTime() const override { return tm{}; }

@@ -726,7 +726,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     rm *= expcomp;
     gm *= expcomp;
     bm *= expcomp;
-    
+
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
@@ -1693,7 +1693,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
 
     // Load complete Exif information
-    idata = new FramesData (fname);
+    idata = new FramesData(fname); // TODO: std::unique_ptr<>
     idata->setDCRawFrameCount (numFrames);
 
     green(W, H);
@@ -1931,16 +1931,16 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (!bitmapBads) {
             bitmapBads = new PixelsMap(W, H);
         }
-        
+
         int n = f.mark(rawData, *bitmapBads);
         totBP += n;
 
         if (n > 0) {
             if (settings->verbose) {
-                printf("Marked %d hot pixels from PDAF lines\n", n);            
+                printf("Marked %d hot pixels from PDAF lines\n", n);
             }
 
-            auto &thresh = f.greenEqThreshold();        
+            auto &thresh = f.greenEqThreshold();
             if (numFrames == 4) {
                 for (int i = 0; i < 4; ++i) {
                     green_equilibrate(thresh, *rawDataFrames[i]);
@@ -1959,7 +1959,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
             return cc && cc->get_globalGreenEquilibration();
         };
-    
+
     if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (globalGreenEq() && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString( RAWParams::BayerSensor::Method::VNG4))) ) {
         if (settings->verbose) {
             printf("Performing global green equilibration...\n");
@@ -4120,7 +4120,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                 }
             }
         }
-        
+
         lcmsMutex->lock ();
 
         switch (camera_icc_type) {

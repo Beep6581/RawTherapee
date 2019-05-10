@@ -295,15 +295,14 @@ bool saveToKeyfile(
     return false;
 }
 
-
-const std::map<Glib::ustring, Glib::ustring> exif_keys = {
+const std::map<std::string, std::string> exif_keys = {
     {"Copyright", "Exif.Image.Copyright"},
     {"Artist", "Exif.Image.Artist"},
     {"ImageDescription", "Exif.Image.ImageDescription"},
     {"Exif.UserComment", "Exif.Photo.UserComment"}
 };
 
-const std::map<Glib::ustring, Glib::ustring> iptc_keys = {
+const std::map<std::string, std::string> iptc_keys = {
     {"Title", "Iptc.Application2.ObjectName"},
     {"Category", "Iptc.Application2.Category"},
     {"SupplementalCategories", "Iptc.Application2.SuppCategory"},
@@ -3168,9 +3167,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Dehaze
         saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);
 
 // Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
@@ -3611,7 +3610,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // IPTC change list
         if (!pedited || pedited->iptc) {
-            std::map<Glib::ustring, Glib::ustring> m;
+            std::map<std::string, std::string> m;
             for (auto &p : iptc_keys) {
                 m[p.second] = p.first;
             }
@@ -4800,7 +4799,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
             assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
         }
-        
+
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -5193,6 +5192,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 if (it == iptc_keys.end()) {
                     continue;
                 }
+
                 auto kk = it->second;
                 const IPTCPairs::iterator element = iptc.find(kk);
 

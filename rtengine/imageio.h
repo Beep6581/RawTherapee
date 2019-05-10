@@ -31,35 +31,44 @@
 #include <memory>
 
 #include <glibmm.h>
-#include "rtengine.h"
-#include "imageformat.h"
-#include "imagedimensions.h"
-#include "iimage.h"
+
 #include "colortemp.h"
-#include "procparams.h"
+#include "iimage.h"
+#include "imagedimensions.h"
+#include "imageformat.h"
+#include "rtengine.h"
 
 namespace rtengine
 {
 
+namespace procparams
+{
+
+class ExifPairs;
+class IPTCPairs;
+
+}
+
 class ProgressListener;
 class Imagefloat;
 
-class MetadataInfo {
+class MetadataInfo final
+{
 public:
-    explicit MetadataInfo(const Glib::ustring &src=Glib::ustring()):
-        src_(src) {}
+    explicit MetadataInfo(const Glib::ustring& src = {});
 
-    const Glib::ustring &filename() const { return src_; }
+    const Glib::ustring& filename() const;
 
-    const rtengine::procparams::ExifPairs &exif() const { return exif_; }
-    const rtengine::procparams::IPTCPairs &iptc() const { return iptc_; }
-    void setExif(const rtengine::procparams::ExifPairs &exif) { exif_ = exif; }
-    void setIptc(const rtengine::procparams::IPTCPairs &iptc) { iptc_ = iptc; }
+    const rtengine::procparams::ExifPairs& exif() const;
+    const rtengine::procparams::IPTCPairs& iptc() const;
+
+    void setExif(const rtengine::procparams::ExifPairs &exif);
+    void setIptc(const rtengine::procparams::IPTCPairs &iptc);
 
 private:
     Glib::ustring src_;
-    rtengine::procparams::ExifPairs exif_;
-    rtengine::procparams::IPTCPairs iptc_;
+    std::unique_ptr<rtengine::procparams::ExifPairs> exif_;
+    std::unique_ptr<rtengine::procparams::IPTCPairs> iptc_;
 };
 
 class ImageIO : virtual public ImageDatas
@@ -68,7 +77,7 @@ class ImageIO : virtual public ImageDatas
 protected:
     ProgressListener* pl;
     cmsHPROFILE embProfile;
-    char* profileData;
+    std::string profileData;
     int profileLength;
     char* loadedProfileData;
     bool loadedProfileDataJpg;
@@ -82,8 +91,6 @@ private:
     void deleteLoadedProfileData( );
 
 public:
-    static Glib::ustring errorMsg[6];
-
     ImageIO();
     ~ImageIO() override;
 
@@ -118,8 +125,8 @@ public:
     cmsHPROFILE getEmbeddedProfile () const;
     void getEmbeddedProfileData (int& length, unsigned char*& pdata) const;
 
-    void setMetadata(const MetadataInfo &info) { metadataInfo = info; }
-    void setOutputProfile (const char* pdata, int plen);
+    void setMetadata(MetadataInfo info);
+    void setOutputProfile(const std::string& pdata);
 
     bool saveMetadata(const Glib::ustring &fname) const;
 

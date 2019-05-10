@@ -47,15 +47,14 @@ enum RenderingIntent : int;
 namespace procparams
 {
 
-typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
-typedef std::map<Glib::ustring, std::vector<Glib::ustring>> IPTCPairs;
+class ProcParams;
+class IPTCPairs;
 
 struct RAWParams;
 struct ColorManagementParams;
 struct CropParams;
 
 enum class ToneCurveMode : int;
-class ProcParams;
 
 }
 
@@ -140,7 +139,7 @@ public:
       * Use it only for raw files. In caseof jpgs and tiffs pass a NULL pointer.
       * @param firstFrameOnly must be true to get the MetaData of the first frame only, e.g. for a PixelShift file.
       * @return The metadata */
-    static FramesMetaData* fromFile (const Glib::ustring& fname);
+    static FramesMetaData* fromFile(const Glib::ustring& fname);
 
     virtual Glib::ustring getFileName() const = 0;
 };

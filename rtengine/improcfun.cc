@@ -5656,6 +5656,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
 double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size)
 {
     if (fname != "") {
+    	// TODO: std::unique_ptr<> to the rescue
         int w_raw = -1, h_raw = thumb_size;
         int w_thumb = -1, h_thumb = thumb_size;
 
