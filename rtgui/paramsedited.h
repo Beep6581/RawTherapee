@@ -495,6 +495,15 @@ public:
         bool localTgaincurve;
         bool inversret;
         bool softradiusret;
+        bool CCmaskreticurve;
+        bool LLmaskreticurve;
+        bool HHmaskreticurve;
+        bool enaretiMask;
+        bool blendmaskreti;
+        bool radmaskreti;
+        bool chromaskreti;
+        bool gammaskreti;
+        bool slomaskreti;
         // Sharpening
         bool expsharp;
         bool sharcontrast;

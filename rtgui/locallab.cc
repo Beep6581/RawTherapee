@@ -62,6 +62,7 @@ Locallab::Locallab():
     expmaskexp(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
     expmasksh(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
     expmaskcb(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
+    expmaskreti(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
 
     // CurveEditorGroup widgets
     // Color & Light
@@ -77,6 +78,7 @@ Locallab::Locallab():
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     // Retinex
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
+    maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     //CBDL
     maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     
@@ -154,6 +156,11 @@ Locallab::Locallab():
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
     softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDFILTER"), 0.0, 100.0, 0.1, 0.))),
+    blendmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    radmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
+    chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+    gammaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+    slomaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     // Sharpening
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
@@ -214,6 +221,7 @@ Locallab::Locallab():
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     // Retinex
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+    enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     // Sharpening
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     //CBDL
@@ -232,6 +240,7 @@ Locallab::Locallab():
     blurMethod(Gtk::manage(new MyComboBoxText())),
     // Retinex
     retinexMethod(Gtk::manage(new MyComboBoxText())),
+    showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
     //CBDL
     showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
 
@@ -816,6 +825,10 @@ Locallab::Locallab():
     expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
     enableretiConn = expreti->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expreti));
 
+    setExpandAlignProperties (expmaskreti, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expmaskreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskreti));
+    expmaskreti->setLevel (2);
+
     retinexMethod->append(M("TP_RETINEX_LOW"));
     retinexMethod->append(M("TP_RETINEX_UNIFORM"));
     retinexMethod->append(M("TP_RETINEX_HIGH"));
@@ -851,6 +864,60 @@ Locallab::Locallab():
 
     inversretConn  = inversret->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversretChanged));
 
+    maskretiCurveEditorG->setCurveListener(this);
+
+    CCmaskretishape = static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
+    CCmaskretishape->setIdentityValue(0.);
+    CCmaskretishape->setResetCurve(FlatCurveType(defSpot.CCmaskreticurve.at(0)), defSpot.CCmaskreticurve);
+    if(showtooltip) CCmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    CCmaskretishape->setBottomBarColorProvider(this, 7);
+
+    LLmaskretishape = static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
+    LLmaskretishape->setIdentityValue(0.);
+    LLmaskretishape->setResetCurve(FlatCurveType(defSpot.LLmaskreticurve.at(0)), defSpot.LLmaskreticurve);
+    if(showtooltip) LLmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    LLmaskretishape->setBottomBarBgGradient(mllshape);
+
+    HHmaskretishape = static_cast<FlatCurveEditor *>(maskretiCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
+    HHmaskretishape->setIdentityValue(0.);
+    HHmaskretishape->setResetCurve(FlatCurveType(defSpot.HHmaskreticurve.at(0)), defSpot.HHmaskreticurve);
+    if(showtooltip) HHmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    HHmaskretishape->setCurveColorProvider(this, 6);
+    HHmaskretishape->setBottomBarColorProvider(this, 6);
+
+    maskretiCurveEditorG->curveListComplete();
+    enaretiMaskConn = enaretiMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaretiMaskChanged));
+
+    showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+    showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMASK"));
+    showmaskretiMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
+    
+
+    showmaskretiMethod->set_active(0);
+    if(showtooltip) showmaskretiMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+    showmaskretiMethodConn  = showmaskretiMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskretiMethodChanged));
+
+
+
+    blendmaskreti->setAdjusterListener(this);
+    radmaskreti->setAdjusterListener(this);
+    chromaskreti->setAdjusterListener(this);
+    gammaskreti->setAdjusterListener(this);
+    slomaskreti->setAdjusterListener(this);
+
+    ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
+    maskretiBox->pack_start(*showmaskretiMethod, Gtk::PACK_SHRINK, 4);
+    maskretiBox->pack_start(*enaretiMask, Gtk::PACK_SHRINK, 0);
+    maskretiBox->pack_start(*maskretiCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskretiBox->pack_start(*blendmaskreti, Gtk::PACK_SHRINK, 0);
+    maskretiBox->pack_start(*radmaskreti, Gtk::PACK_SHRINK, 0);
+    maskretiBox->pack_start(*chromaskreti, Gtk::PACK_SHRINK, 0);
+    maskretiBox->pack_start(*gammaskreti, Gtk::PACK_SHRINK, 0);
+    maskretiBox->pack_start(*slomaskreti, Gtk::PACK_SHRINK, 0);
+    expmaskreti->add(*maskretiBox);
+
     ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*str);
@@ -861,6 +928,7 @@ Locallab::Locallab():
     retiBox->pack_start(*softradiusret);
     retiBox->pack_start(*sensih);
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+//    retiBox->pack_start(*expmaskreti);
     retiBox->pack_start(*inversret);
     expreti->add(*retiBox);
     expreti->setLevel(2);
@@ -1163,6 +1231,7 @@ void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
         expmaskexp->set_expanded(expmaskexp == expander);
         expmasksh->set_expanded(expmasksh == expander);
         expmaskcb->set_expanded(expmaskcb == expander);
+        expmaskreti->set_expanded(expmaskreti == expander);
 
     }
 }
@@ -1253,6 +1322,7 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expmaskexp->get_expanded());
     tpOpen.push_back(expmasksh->get_expanded());
     tpOpen.push_back(expmaskcb->get_expanded());
+    tpOpen.push_back(expmaskreti->get_expanded());
 
 }
 
@@ -1302,6 +1372,11 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
             LLmaskcbshape->updateLocallabBackground(normLumar);
             HHmaskcbshape->updateLocallabBackground(normHuer);
 
+            // Update Retinex mask background
+            CCmaskretishape->updateLocallabBackground(normChromar);
+            LLmaskretishape->updateLocallabBackground(normLumar);
+            HHmaskretishape->updateLocallabBackground(normHuer);
+
             return false;
         }
         );
@@ -1310,7 +1385,7 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
 
 void Locallab::updateToolState(std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() >= 18) {
+    if (tpOpen.size() >= 19) {
         expsettings->setExpanded(tpOpen.at(0));
         expcolor->set_expanded(tpOpen.at(1));
         expexpose->set_expanded(tpOpen.at(2));
@@ -1328,6 +1403,7 @@ void Locallab::updateToolState(std::vector<int> &tpOpen)
         expmaskexp->set_expanded(tpOpen.at(14));
         expmasksh->set_expanded(tpOpen.at(15));
         expmaskcb->set_expanded(tpOpen.at(16));
+        expmaskreti->set_expanded(tpOpen.at(17));
     }
 }
 
@@ -2043,6 +2119,16 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).localTgaincurve = cTgainshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).inversret = inversret->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiusret = softradiusret->getValue();
+
+                    pp->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve = LLmaskretishape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve = CCmaskretishape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).HHmaskreticurve = HHmaskretishape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).enaretiMask = enaretiMask->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).blendmaskreti = blendmaskreti->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).radmaskreti = radmaskreti->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).chromaskreti = chromaskreti->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).gammaskreti = gammaskreti->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).slomaskreti = slomaskreti->getValue();
                     // Sharpening
                     pp->locallab.spots.at(pp->locallab.selspot).expsharp = expsharp->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).sharcontrast = sharcontrast->getIntValue();
@@ -2244,6 +2330,15 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).inversret = pe->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiusret = pe->locallab.spots.at(pp->locallab.selspot).softradiusret || softradiusret->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve || !CCmaskretishape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve || !LLmaskretishape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).HHmaskreticurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskreticurve || !HHmaskretishape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).enaretiMask = pe->locallab.spots.at(pp->locallab.selspot).enaretiMask || !enaretiMask->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).blendmaskreti = pe->locallab.spots.at(pp->locallab.selspot).blendmaskreti || blendmaskreti->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).radmaskreti = pe->locallab.spots.at(pp->locallab.selspot).radmaskreti || radmaskreti->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).chromaskreti = pe->locallab.spots.at(pp->locallab.selspot).chromaskreti || chromaskreti->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).gammaskreti = pe->locallab.spots.at(pp->locallab.selspot).gammaskreti || gammaskreti->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).slomaskreti = pe->locallab.spots.at(pp->locallab.selspot).slomaskreti || slomaskreti->getEditedState();
                         // Sharpening
                         pe->locallab.spots.at(pp->locallab.selspot).expsharp = pe->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).sharcontrast = pe->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -2435,6 +2530,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).sensitm = pedited->locallab.spots.at(pp->locallab.selspot).sensitm || sensitm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiustm = pedited->locallab.spots.at(pp->locallab.selspot).softradiustm || softradiustm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).amount = pedited->locallab.spots.at(pp->locallab.selspot).amount || amount->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).enaretiMask = pedited->locallab.spots.at(pp->locallab.selspot).enaretiMask || !enaretiMask->get_inconsistent();
                         // Retinex
                         pedited->locallab.spots.at(pp->locallab.selspot).expreti = pedited->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod = pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2447,6 +2543,15 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).inversret = pedited->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiusret = pedited->locallab.spots.at(pp->locallab.selspot).softradiusret || softradiusret->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve || !CCmaskretishape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve || !LLmaskretishape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).HHmaskreticurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskreticurve || !HHmaskretishape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).enaretiMask = pedited->locallab.spots.at(pp->locallab.selspot).enaretiMask || !enaretiMask->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).blendmaskreti = pedited->locallab.spots.at(pp->locallab.selspot).blendmaskreti || blendmaskreti->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).radmaskreti = pedited->locallab.spots.at(pp->locallab.selspot).radmaskreti || radmaskreti->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).chromaskreti = pedited->locallab.spots.at(pp->locallab.selspot).chromaskreti || chromaskreti->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).gammaskreti = pedited->locallab.spots.at(pp->locallab.selspot).gammaskreti || gammaskreti->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).slomaskreti = pedited->locallab.spots.at(pp->locallab.selspot).slomaskreti || slomaskreti->getEditedState();
                         // Sharpening
                         pedited->locallab.spots.at(pp->locallab.selspot).expsharp = pedited->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast = pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -2738,6 +2843,25 @@ void Locallab::curveChanged(CurveEditor* ce)
                 listener->panelChanged(EvlocallabCTgainCurve, M("HISTORY_CUSTOMCURVE"));
             }
         }
+        
+        if (ce == CCmaskretishape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCCmaskretishape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == LLmaskretishape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskretishape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == HHmaskretishape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHmaskretishape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+        
     }
 }
 
@@ -2795,6 +2919,7 @@ void Locallab::showmaskcolMethodChanged()
         showmaskexpMethod->set_active(0);
         showmaskSHMethod->set_active(0);
         showmaskcbMethod->set_active(0);
+        showmaskretiMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -2811,6 +2936,7 @@ void Locallab::showmaskexpMethodChanged()
         showmaskcolMethod->set_active(0);
         showmaskcbMethod->set_active(0);
         showmaskSHMethod->set_active(0);
+        showmaskretiMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -2827,6 +2953,7 @@ void Locallab::showmaskSHMethodChanged()
         showmaskcolMethod->set_active(0);
         showmaskexpMethod->set_active(0);
         showmaskcbMethod->set_active(0);
+        showmaskretiMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -2843,10 +2970,28 @@ void Locallab::showmaskcbMethodChanged()
        showmaskcolMethod->set_active(0);
        showmaskSHMethod->set_active(0);
        showmaskexpMethod->set_active(0);
+       showmaskretiMethod->set_active(0);
     enableListener();
 
     if (listener) {
         listener->panelChanged(EvlocallabshowmaskcbMethod, "");
+    }
+}
+
+void Locallab::showmaskretiMethodChanged()
+{
+    // printf("showmaskSHMethodChanged\n");
+
+    // When one mask state is changed, other masks are deactivated
+    disableListener();
+       showmaskcolMethod->set_active(0);
+       showmaskSHMethod->set_active(0);
+       showmaskexpMethod->set_active(0);
+       showmaskcbMethod->set_active(0);
+    enableListener();
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskretiMethod, "");
     }
 }
 
@@ -2859,6 +3004,7 @@ void Locallab::resetMaskVisibility()
     showmaskexpMethod->set_active(0);
     showmaskSHMethod->set_active(0);
     showmaskcbMethod->set_active(0);
+    showmaskretiMethod->set_active(0);
     enableListener();
 }
 
@@ -2869,6 +3015,7 @@ Locallab::llMaskVisibility* Locallab::getMaskVisibility()
     maskStruct->expMask = showmaskexpMethod->get_active_row_number();
     maskStruct->SHMask = showmaskSHMethod->get_active_row_number();
     maskStruct->cbMask = showmaskcbMethod->get_active_row_number();
+    maskStruct->retiMask = showmaskretiMethod->get_active_row_number();
  //   printf("SHmask=%i \n", maskStruct->SHMask);
  //   printf("cbmask=%i \n", maskStruct->cbMask);
     
@@ -2946,6 +3093,31 @@ void Locallab::enaSHMaskChanged()
         }
     }
 }
+
+void Locallab::enaretiMaskChanged()
+{
+    // printf("enacbMaskChanged\n");
+
+    if (multiImage) {
+        if (enaretiMask->get_inconsistent()) {
+            enaretiMask->set_inconsistent(false);
+            enaretiMaskConn.block(true);
+            enaretiMask->set_active(false);
+            enaretiMaskConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expreti->getEnabled()) {
+        if (listener) {
+            if (enaretiMask->get_active()) {
+                listener->panelChanged(EvLocallabEnaretiMask, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvLocallabEnaretiMask, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
 
 void Locallab::enacbMaskChanged()
 {
@@ -3408,6 +3580,11 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     dehaz->setDefault((double)defSpot->dehaz);
     sensih->setDefault((double)defSpot->sensih);
     softradiusret->setDefault(defSpot->softradiusret);
+    blendmaskreti->setDefault((double)defSpot->blendmaskreti);
+    radmaskreti->setDefault(defSpot->radmaskreti);
+    chromaskreti->setDefault(defSpot->chromaskreti);
+    gammaskreti->setDefault(defSpot->gammaskreti);
+    slomaskreti->setDefault(defSpot->slomaskreti);
     // Sharpening
     sharcontrast->setDefault((double)defSpot->sharcontrast);
     sharradius->setDefault(defSpot->sharradius);
@@ -3531,6 +3708,11 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         dehaz->setDefaultEditedState(Irrelevant);
         sensih->setDefaultEditedState(Irrelevant);
         softradiusret->setDefaultEditedState(Irrelevant);
+        blendmaskreti->setDefaultEditedState(Irrelevant);
+        radmaskreti->setDefaultEditedState(Irrelevant);
+        chromaskreti->setDefaultEditedState(Irrelevant);
+        gammaskreti->setDefaultEditedState(Irrelevant);
+        slomaskreti->setDefaultEditedState(Irrelevant);
         // Sharpening
         sharcontrast->setDefaultEditedState(Irrelevant);
         sharradius->setDefaultEditedState(Irrelevant);
@@ -3658,6 +3840,11 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         dehaz->setDefaultEditedState(defSpotState->dehaz ? Edited : UnEdited);
         sensih->setDefaultEditedState(defSpotState->sensih ? Edited : UnEdited);
         softradiusret->setDefaultEditedState(defSpotState->softradiusret ? Edited : UnEdited);
+        blendmaskreti->setDefaultEditedState(defSpotState->blendmaskreti ? Edited : UnEdited);
+        radmaskreti->setDefaultEditedState(defSpotState->radmaskreti ? Edited : UnEdited);
+        chromaskreti->setDefaultEditedState(defSpotState->chromaskreti ? Edited : UnEdited);
+        gammaskreti->setDefaultEditedState(defSpotState->gammaskreti ? Edited : UnEdited);
+        slomaskreti->setDefaultEditedState(defSpotState->slomaskreti ? Edited : UnEdited);
         // Sharpening
         sharcontrast->setDefaultEditedState(defSpotState->sharcontrast ? Edited : UnEdited);
         sharradius->setDefaultEditedState(defSpotState->sharradius ? Edited : UnEdited);
@@ -4177,6 +4364,36 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == blendmaskreti) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmaskreti, blendmaskreti->getTextValue());
+            }
+        }
+
+        if (a == radmaskreti) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradmaskreti, radmaskreti->getTextValue());
+            }
+        }
+
+        if (a == chromaskreti) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromaskreti, chromaskreti->getTextValue());
+            }
+        }
+
+        if (a == gammaskreti) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgammaskreti, gammaskreti->getTextValue());
+            }
+        }
+
+        if (a == slomaskreti) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslomaskreti, slomaskreti->getTextValue());
+            }
+        }
+
     }
 
     // Sharpening
@@ -4529,6 +4746,11 @@ void Locallab::setBatchMode(bool batchMode)
     dehaz->showEditedCB();
     sensih->showEditedCB();
     softradiusret->showEditedCB();
+    blendmaskreti->showEditedCB();
+    radmaskreti->showEditedCB();
+    chromaskreti->showEditedCB();
+    gammaskreti->showEditedCB();
+    slomaskreti->showEditedCB();
     // Sharpening
     sharradius->showEditedCB();
     sharamount->showEditedCB();
@@ -4586,6 +4808,7 @@ void Locallab::setBatchMode(bool batchMode)
     showmaskexpMethod->hide();
     showmaskSHMethod->hide();
     showmaskcbMethod->hide();
+    showmaskretiMethod->hide();
 }
 
 std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
@@ -4756,6 +4979,8 @@ void Locallab::enableListener()
     enableretiConn.block(false);
     retinexMethodConn.block(false);
     inversretConn.block(false);
+    enaretiMaskConn.block(false);
+    showmaskretiMethodConn.block(false);
     // Sharpening
     enablesharpConn.block(false);
     inversshaConn.block(false);
@@ -4809,6 +5034,8 @@ void Locallab::disableListener()
     enableretiConn.block(true);
     retinexMethodConn.block(true);
     inversretConn.block(true);
+    enaretiMaskConn.block(true);
+    showmaskretiMethodConn.block(true);
     // Sharpening
     enablesharpConn.block(true);
     inversshaConn.block(true);
@@ -4975,6 +5202,15 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         cTgainshape->setCurve(pp->locallab.spots.at(index).localTgaincurve);
         inversret->set_active(pp->locallab.spots.at(index).inversret);
         softradiusret->setValue(pp->locallab.spots.at(index).softradiusret);
+        CCmaskretishape->setCurve(pp->locallab.spots.at(index).CCmaskreticurve);
+        LLmaskretishape->setCurve(pp->locallab.spots.at(index).LLmaskreticurve);
+        HHmaskretishape->setCurve(pp->locallab.spots.at(index).HHmaskreticurve);
+        enaretiMask->set_active(pp->locallab.spots.at(index).enaretiMask);
+        blendmaskreti->setValue(pp->locallab.spots.at(index).blendmaskreti);
+        radmaskreti->setValue(pp->locallab.spots.at(index).radmaskreti);
+        chromaskreti->setValue(pp->locallab.spots.at(index).chromaskreti);
+        gammaskreti->setValue(pp->locallab.spots.at(index).gammaskreti);
+        slomaskreti->setValue(pp->locallab.spots.at(index).slomaskreti);
 
         // Sharpening
         expsharp->setEnabled(pp->locallab.spots.at(index).expsharp);
@@ -5210,6 +5446,15 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 cTgainshape->setUnChanged(!spotState->localTgaincurve);
                 inversret->set_inconsistent(multiImage && !spotState->inversret);
                 softradiusret->setEditedState(spotState->softradiusret ? Edited : UnEdited);
+                CCmaskretishape->setUnChanged(!spotState->CCmaskreticurve);
+                LLmaskretishape->setUnChanged(!spotState->LLmaskreticurve);
+                HHmaskretishape->setUnChanged(!spotState->HHmaskreticurve);
+                enaretiMask->set_inconsistent(multiImage && !spotState->enaretiMask);
+                blendmaskreti->setEditedState(spotState->blendmaskreti ? Edited : UnEdited);
+                radmaskreti->setEditedState(spotState->radmaskreti ? Edited : UnEdited);
+                chromaskreti->setEditedState(spotState->chromaskreti ? Edited : UnEdited);
+                gammaskreti->setEditedState(spotState->gammaskreti ? Edited : UnEdited);
+                slomaskreti->setEditedState(spotState->slomaskreti ? Edited : UnEdited);
 
                 // Sharpening
                 expsharp->set_inconsistent(!spotState->expsharp);
@@ -5395,10 +5640,11 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && inversret->get_inconsistent()) {
         sensih->show();
         softradiusret->show();
+        showmaskretiMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversret->get_active()) {
         sensih->show();
         softradiusret->show();
-    } else {
+        showmaskretiMethod->hide();
         sensih->show();
         softradiusret->show();
     }

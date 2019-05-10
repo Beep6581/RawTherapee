@@ -279,6 +279,7 @@ protected:
     int locallExpMask;
     int locallSHMask;
     int locallcbMask;
+    int locallretiMask;
     float avg;
     
 public:
@@ -348,12 +349,13 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask) override
+    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask, int locallretiMask) override
     {
         this->locallColorMask = locallColorMask;
         this->locallExpMask = locallExpMask;
         this->locallSHMask = locallSHMask;
         this->locallcbMask = locallcbMask;
+        this->locallretiMask = locallretiMask;
     }
 
     void setProgressListener (ProgressListener* pl) override

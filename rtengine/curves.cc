@@ -1563,6 +1563,150 @@ void LocretigainCurverab::Set(const std::vector<double> &curvePoints)
     }
 }
 
+LocHHmaskretiCurve::LocHHmaskretiCurve() : sum(0.f) {};
+
+void LocHHmaskretiCurve::Reset()
+{
+    lutLocHHmaskretiCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskretiCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskretiCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskretiCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskretiCurve[i] < 0.02f) {
+            lutLocHHmaskretiCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskretiCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmaskretiCurve::Set(const std::vector<double> &curvePoints, bool & lhmasretiutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmasretiutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmaskretiCurve::LocLLmaskretiCurve() : sum(0.f) {};
+
+void LocLLmaskretiCurve::Reset()
+{
+    lutLocLLmaskretiCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskretiCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskretiCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskretiCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskretiCurve[i] < 0.02f) {
+            lutLocLLmaskretiCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskretiCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskretiCurve::Set(const std::vector<double> &curvePoints,  bool & llmasretiutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmasretiutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmaskretiCurve::LocCCmaskretiCurve() : sum(0.f) {};
+
+void LocCCmaskretiCurve::Reset()
+{
+    lutLocCCmaskretiCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskretiCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskretiCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskretiCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskretiCurve[i] < 0.02f) {
+            lutLocCCmaskretiCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskretiCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskretiCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasretiutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmasretiutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+
+
+
+
 LocHHmaskcbCurve::LocHHmaskcbCurve() : sum(0.f) {};
 
 void LocHHmaskcbCurve::Reset()

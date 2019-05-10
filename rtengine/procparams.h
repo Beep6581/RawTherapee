@@ -1079,6 +1079,15 @@ struct LocallabParams {
         std::vector<double> localTgaincurve;
         bool inversret;
         double softradiusret;
+        std::vector<double> CCmaskreticurve;
+        std::vector<double> LLmaskreticurve;
+        std::vector<double> HHmaskreticurve;
+        bool enaretiMask;
+        int blendmaskreti;
+        double radmaskreti;
+        double chromaskreti;
+        double gammaskreti;
+        double slomaskreti;
         // Sharpening
         bool expsharp;
         int sharcontrast;

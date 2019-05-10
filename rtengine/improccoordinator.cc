@@ -204,6 +204,7 @@ ImProcCoordinator::ImProcCoordinator() :
     locallExpMask(0),
     locallSHMask(0),
     locallcbMask(0),
+    locallretiMask(0),
     avg(0),
     retistrsav(nullptr)
 

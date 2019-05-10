@@ -1068,6 +1068,15 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).localTgaincurve = locallab.spots.at(j).localTgaincurve && pSpot.localTgaincurve == otherSpot.localTgaincurve;
                 locallab.spots.at(j).inversret = locallab.spots.at(j).inversret && pSpot.inversret == otherSpot.inversret;
                 locallab.spots.at(j).softradiusret = locallab.spots.at(j).softradiusret && pSpot.softradiusret == otherSpot.softradiusret;
+                locallab.spots.at(j).CCmaskreticurve = locallab.spots.at(j).CCmaskreticurve && pSpot.CCmaskreticurve == otherSpot.CCmaskreticurve;
+                locallab.spots.at(j).LLmaskreticurve = locallab.spots.at(j).LLmaskreticurve && pSpot.LLmaskreticurve == otherSpot.LLmaskreticurve;
+                locallab.spots.at(j).HHmaskreticurve = locallab.spots.at(j).HHmaskreticurve && pSpot.HHmaskreticurve == otherSpot.HHmaskreticurve;
+                locallab.spots.at(j).enaretiMask = locallab.spots.at(j).enaretiMask && pSpot.enaretiMask == otherSpot.enaretiMask;
+                locallab.spots.at(j).blendmaskreti = locallab.spots.at(j).blendmaskreti && pSpot.blendmaskreti == otherSpot.blendmaskreti;
+                locallab.spots.at(j).radmaskreti = locallab.spots.at(j).radmaskreti && pSpot.radmaskreti == otherSpot.radmaskreti;
+                locallab.spots.at(j).chromaskreti = locallab.spots.at(j).chromaskreti && pSpot.chromaskreti == otherSpot.chromaskreti;
+                locallab.spots.at(j).gammaskreti = locallab.spots.at(j).gammaskreti && pSpot.gammaskreti == otherSpot.gammaskreti;
+                locallab.spots.at(j).slomaskreti = locallab.spots.at(j).slomaskreti && pSpot.slomaskreti == otherSpot.slomaskreti;
                 // Sharpening
                 locallab.spots.at(j).expsharp = locallab.spots.at(j).expsharp && pSpot.expsharp == otherSpot.expsharp;
                 locallab.spots.at(j).sharcontrast = locallab.spots.at(j).sharcontrast && pSpot.sharcontrast == otherSpot.sharcontrast;
@@ -3084,6 +3093,42 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).inversret = mods.locallab.spots.at(i).inversret;
         }
 
+        if (locallab.spots.at(i).CCmaskreticurve) {
+            toEdit.locallab.spots.at(i).CCmaskreticurve = mods.locallab.spots.at(i).CCmaskreticurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskreticurve) {
+            toEdit.locallab.spots.at(i).LLmaskreticurve = mods.locallab.spots.at(i).LLmaskreticurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskreticurve) {
+            toEdit.locallab.spots.at(i).HHmaskreticurve = mods.locallab.spots.at(i).HHmaskreticurve;
+        }
+
+        if (locallab.spots.at(i).enaretiMask) {
+            toEdit.locallab.spots.at(i).enaretiMask = mods.locallab.spots.at(i).enaretiMask;
+        }
+
+        if (locallab.spots.at(i).blendmaskreti) {
+            toEdit.locallab.spots.at(i).blendmaskreti = mods.locallab.spots.at(i).blendmaskreti;
+        }
+
+        if (locallab.spots.at(i).radmaskreti) {
+            toEdit.locallab.spots.at(i).radmaskreti = mods.locallab.spots.at(i).radmaskreti;
+        }
+
+        if (locallab.spots.at(i).chromaskreti) {
+            toEdit.locallab.spots.at(i).chromaskreti = mods.locallab.spots.at(i).chromaskreti;
+        }
+
+        if (locallab.spots.at(i).gammaskreti) {
+            toEdit.locallab.spots.at(i).gammaskreti = mods.locallab.spots.at(i).gammaskreti;
+        }
+
+        if (locallab.spots.at(i).slomaskreti) {
+            toEdit.locallab.spots.at(i).slomaskreti = mods.locallab.spots.at(i).slomaskreti;
+        }
+
         // Sharpening
         if (locallab.spots.at(i).expsharp) {
             toEdit.locallab.spots.at(i).expsharp = mods.locallab.spots.at(i).expsharp;
@@ -4356,6 +4401,15 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     localTgaincurve(v),
     inversret(v),
     softradiusret(v),
+    CCmaskreticurve(v),
+    LLmaskreticurve(v),
+    HHmaskreticurve(v),
+    enaretiMask(v),
+    blendmaskreti(v),
+    radmaskreti(v),
+    chromaskreti(v),
+    gammaskreti(v),
+    slomaskreti(v),
     // Sharpening
     expsharp(v),
     sharcontrast(v),
@@ -4552,6 +4606,15 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     localTgaincurve = v;
     inversret = v;
     softradiusret = v;
+    CCmaskreticurve = v;
+    LLmaskreticurve = v;
+    HHmaskreticurve = v;
+    enaretiMask = v;
+    blendmaskreti = v;
+    radmaskreti = v;
+    chromaskreti = v;
+    gammaskreti = v;
+    slomaskreti = v;
     // Sharpening
     expsharp = v;
     sharcontrast = v;

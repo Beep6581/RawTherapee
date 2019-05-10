@@ -2478,6 +2478,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     localTgaincurve{(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35},
     inversret(false),
     softradiusret(0.0),
+    CCmaskreticurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
+    LLmaskreticurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    HHmaskreticurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
+    enaretiMask(false),
+    blendmaskreti(0),
+    radmaskreti(10.0),
+    chromaskreti(0.0),
+    gammaskreti(1.0),
+    slomaskreti(0.0),
     // Sharpening
     expsharp(false),
     sharcontrast(20),
@@ -2677,6 +2686,15 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && localTgaincurve == other.localTgaincurve
         && inversret == other.inversret
         && softradiusret == other.softradiusret
+        && CCmaskreticurve == other.CCmaskreticurve
+        && LLmaskreticurve == other.LLmaskreticurve
+        && HHmaskreticurve == other.HHmaskreticurve
+        && enaretiMask == other.enaretiMask
+        && blendmaskreti == other.blendmaskreti
+        && radmaskreti == other.radmaskreti
+        && chromaskreti == other.chromaskreti
+        && gammaskreti == other.gammaskreti
+        && slomaskreti == other.slomaskreti
         // Sharpening
         && expsharp == other.expsharp
         && sharcontrast == other.sharcontrast
@@ -3820,6 +3838,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensitm, "Locallab", "Sensitm_" + std::to_string(i), spot.sensitm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiustm, "Locallab", "Softradiustm_" + std::to_string(i), spot.softradiustm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).amount, "Locallab", "Amount_" + std::to_string(i), spot.amount, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskreticurve, "Locallab", "CCmaskretiCurve_" + std::to_string(i), spot.CCmaskreticurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskreticurve, "Locallab", "LLmaskretiCurve_" + std::to_string(i), spot.LLmaskreticurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskreticurve, "Locallab", "HHmaskretiCurve_" + std::to_string(i), spot.HHmaskreticurve, keyFile);
                 // Retinex
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expreti, "Locallab", "Expreti_" + std::to_string(i), spot.expreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).retinexMethod, "Locallab", "retinexMethod_" + std::to_string(i), spot.retinexMethod, keyFile);
@@ -3832,6 +3853,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localTgaincurve, "Locallab", "TgainCurve_" + std::to_string(i), spot.localTgaincurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inversret, "Locallab", "Inversret_" + std::to_string(i), spot.inversret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiusret, "Locallab", "Softradiusret_" + std::to_string(i), spot.softradiusret, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enaretiMask, "Locallab", "EnaretiMask_" + std::to_string(i), spot.enaretiMask, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskreti, "Locallab", "Blendmaskreti_" + std::to_string(i), spot.blendmaskreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskreti, "Locallab", "Radmaskreti_" + std::to_string(i), spot.radmaskreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskreti, "Locallab", "Chromaskreti_" + std::to_string(i), spot.chromaskreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskreti, "Locallab", "Gammaskreti_" + std::to_string(i), spot.gammaskreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskreti, "Locallab", "Slomaskreti_" + std::to_string(i), spot.slomaskreti, keyFile);
                 // Sharpening
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsharp, "Locallab", "Expsharp_" + std::to_string(i), spot.expsharp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sharcontrast, "Locallab", "Sharcontrast_" + std::to_string(i), spot.sharcontrast, keyFile);
@@ -5128,6 +5155,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + std::to_string(i), pedited, spot.localTgaincurve, spotEdited.localTgaincurve);
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + std::to_string(i), pedited, spot.inversret, spotEdited.inversret);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiusret_" + std::to_string(i), pedited, spot.softradiusret, spotEdited.softradiusret);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskretiCurve_" + std::to_string(i), pedited, spot.CCmaskreticurve, spotEdited.CCmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + std::to_string(i), pedited, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskretiCurve_" + std::to_string(i), pedited, spot.HHmaskreticurve, spotEdited.HHmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "EnaretiMask_" + std::to_string(i), pedited, spot.enaretiMask, spotEdited.enaretiMask);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskreti_" + std::to_string(i), pedited, spot.blendmaskreti, spotEdited.blendmaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskreti_" + std::to_string(i), pedited, spot.radmaskreti, spotEdited.radmaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskreti_" + std::to_string(i), pedited, spot.chromaskreti, spotEdited.chromaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskreti_" + std::to_string(i), pedited, spot.gammaskreti, spotEdited.gammaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskreti_" + std::to_string(i), pedited, spot.slomaskreti, spotEdited.slomaskreti);
                 // Sharpening
                 assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, spot.expsharp, spotEdited.expsharp);
                 assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + std::to_string(i), pedited, spot.sharcontrast, spotEdited.sharcontrast);
@@ -5159,11 +5195,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Contresid_" + std::to_string(i), pedited, spot.contresid, spotEdited.contresid);
                 assignFromKeyfile(keyFile, "Locallab", "Blurcbdl_" + std::to_string(i), pedited, spot.blurcbdl, spotEdited.blurcbdl);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscb_" + std::to_string(i), pedited, spot.softradiuscb, spotEdited.softradiuscb);
-                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcb_" + std::to_string(i), pedited, spot.blendmaskcb, spotEdited.blendmaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "EnacbMask_" + std::to_string(i), pedited, spot.enacbMask, spotEdited.enacbMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskcbCurve_" + std::to_string(i), pedited, spot.CCmaskcbcurve, spotEdited.CCmaskcbcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcbCurve_" + std::to_string(i), pedited, spot.LLmaskcbcurve, spotEdited.LLmaskcbcurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskcbCurve_" + std::to_string(i), pedited, spot.HHmaskcbcurve, spotEdited.HHmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcb_" + std::to_string(i), pedited, spot.blendmaskcb, spotEdited.blendmaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskcb_" + std::to_string(i), pedited, spot.radmaskcb, spotEdited.radmaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcb_" + std::to_string(i), pedited, spot.chromaskcb, spotEdited.chromaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskcb_" + std::to_string(i), pedited, spot.gammaskcb, spotEdited.gammaskcb);

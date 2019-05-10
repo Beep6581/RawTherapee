@@ -705,6 +705,16 @@ enum ProcEventCode {
     EvLocallabSpotTransitgrad = 675,
     Evlocallabamount = 676,
     Evlocallabsatur = 677,
+    EvlocallabCCmaskretishape = 678,
+    EvlocallabLLmaskretishape = 679,
+    EvlocallabHHmaskretishape = 680,
+    EvLocallabEnaretiMask = 681,
+    Evlocallabblendmaskreti = 682,
+    Evlocallabradmaskreti = 683,
+    Evlocallabchromaskreti = 684,
+    Evlocallabgammaskreti = 685,
+    Evlocallabslomaskreti = 686,
+    EvlocallabshowmaskretiMethod = 687,
     NUMOFEVENTS
 };
 

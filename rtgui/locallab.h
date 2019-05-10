@@ -64,6 +64,7 @@ private:
     MyExpander* const expmaskexp;
     MyExpander* const expmasksh;
     MyExpander* const expmaskcb;
+    MyExpander* const expmaskreti;
     sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
@@ -95,7 +96,11 @@ private:
     DiagonalCurveEditor* skinTonesCurve;
     // Retinex
     CurveEditorGroup* const LocalcurveEditorgainT;
+    CurveEditorGroup* const maskretiCurveEditorG;
     FlatCurveEditor* cTgainshape;
+    FlatCurveEditor* CCmaskretishape;
+    FlatCurveEditor* LLmaskretishape;
+    FlatCurveEditor* HHmaskretishape;
     //Cbdl
     CurveEditorGroup* const maskcbCurveEditorG;
     FlatCurveEditor* CCmaskcbshape;
@@ -176,6 +181,13 @@ private:
     Adjuster* const dehaz;
     Adjuster* const sensih;
     Adjuster* const softradiusret;
+
+    Adjuster* const blendmaskreti;
+    Adjuster* const radmaskreti;
+    Adjuster* const chromaskreti;
+    Adjuster* const gammaskreti;
+    Adjuster* const slomaskreti;
+
     // Sharpening
     Adjuster* const sharcontrast;
     Adjuster* const sharradius;
@@ -246,6 +258,8 @@ private:
     // Retinex
     Gtk::CheckButton* const inversret;
     sigc::connection inversretConn;
+    Gtk::CheckButton* const enaretiMask;
+    sigc::connection enaretiMaskConn;
     // Sharpening
     Gtk::CheckButton* const inverssha;
     sigc::connection inversshaConn;
@@ -273,6 +287,8 @@ private:
     // Retinex
     MyComboBoxText* const retinexMethod;
     sigc::connection retinexMethodConn;
+    MyComboBoxText* const showmaskretiMethod;
+    sigc::connection showmaskretiMethodConn;
     //CBDL
     MyComboBoxText* const showmaskcbMethod;
     sigc::connection showmaskcbMethodConn;
@@ -329,6 +345,7 @@ private:
     void activlumChanged();
     // Retinex
     void inversretChanged();
+    void enaretiMaskChanged();
     // Sharpening
     void inversshaChanged();
     //CBDL
@@ -346,6 +363,7 @@ private:
     void blurMethodChanged();
     // Retinex
     void retinexMethodChanged();
+    void showmaskretiMethodChanged();
     //CBDL
     void showmaskcbMethodChanged();
     // Other widgets event functions
@@ -383,6 +401,7 @@ public:
         int expMask;
         int SHMask;
         int cbMask;
+        int retiMask;
     };
 
     void resetMaskVisibility();
