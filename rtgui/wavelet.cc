@@ -2349,6 +2349,8 @@ void Wavelet::ushamethodChanged()
         Lmethod->set_sensitive(true);
         Dirmethod->set_sensitive(true);
         Dirmethod->set_active(3);
+        CLmethod->set_sensitive(false);
+        Backmethod->set_sensitive(false);
     } else if (ushamethod->get_active_row_number() == 0 && expclari->getEnabled() == true) {
         Backmethod->set_active(0);
         CLmethod->set_active(1);
@@ -2356,6 +2358,8 @@ void Wavelet::ushamethodChanged()
         Dirmethod->set_active(3);
         Lmethod->set_sensitive(true);
         Dirmethod->set_sensitive(true);
+        CLmethod->set_sensitive(false);
+        Backmethod->set_sensitive(false);
   /*  }  else if (ushamethod->get_active_row_number() == 0 || expclari->getEnabled() == false) {
         Backmethod->set_active(1);
         CLmethod->set_active(3);
@@ -2371,6 +2375,8 @@ void Wavelet::ushamethodChanged()
         Dirmethod->set_active(3);
         Lmethod->set_sensitive(false);
         Dirmethod->set_sensitive(false);
+        CLmethod->set_sensitive(true);
+        Backmethod->set_sensitive(true);
     }
 
     if (listener && (multiImage || getEnabled())) {
@@ -3238,6 +3244,8 @@ void Wavelet::enableToggled(MyExpander *expander)
                     Dirmethod->set_active(3);
                     Lmethod->set_sensitive(false);
                     Dirmethod->set_sensitive(false);
+                    CLmethod->set_sensitive(true);
+                    Backmethod->set_sensitive(true);
                 }
             } else  {
                 if (showmask->get_active()) {
@@ -3251,6 +3259,8 @@ void Wavelet::enableToggled(MyExpander *expander)
                     Lmethod->set_sensitive(true);
                     Dirmethod->set_sensitive(true);
                     Dirmethod->set_active(3);
+                    CLmethod->set_sensitive(false);
+                    Backmethod->set_sensitive(false);
                 } else if (ushamethod->get_active_row_number() == 0) {
                     Backmethod->set_active(0);
                     CLmethod->set_active(1);
@@ -3258,6 +3268,8 @@ void Wavelet::enableToggled(MyExpander *expander)
                     Dirmethod->set_active(3);
                     Lmethod->set_sensitive(true);
                     Dirmethod->set_sensitive(true);
+                    CLmethod->set_sensitive(false);
+                    Backmethod->set_sensitive(false);
                 }
             }
             event = EvWavenaclari;
