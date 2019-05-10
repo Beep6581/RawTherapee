@@ -2332,16 +2332,18 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                     float reducdE;
 
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
+                    const float realstrdE = reducdE * cli;
 
-                    reducdE /= 100.f;
-                    cli *= reducdE;
+                   // reducdE /= 100.f;
+                   // cli *= reducdE;
                     clc *= reducdE;
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         if (senstype == 4) {//all except color and light (TODO) and exposure
                             float lightc = bufexporig->L[loy - begy][lox - begx];
                             float fli = 1.f + cli;
-                            float diflc = lightc * fli - original->L[y][x];
+                            float diflc;// = lightc * fli - original->L[y][x];
+                            diflc = 328.f * realstrdE;
                             diflc *= localFactor;
                             transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                         }
@@ -3702,7 +3704,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocretigainCurve & locRETgainCcurve, LUTf & lllocalcurve, bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, const LocCCmaskexpCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskexpCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskexpCurve & lochhmasexpCurve, bool & lhmasexputili,
                                 const LocCCmaskSHCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskSHCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskSHCurve & lochhmasSHCurve, bool & lhmasSHutili,
                                 const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask)
+                                const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili,
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask)
 {
 /* comment on processus deltaE
         * the algo uses 3 different ways to manage deltaE according to the type of intervention
