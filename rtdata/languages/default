@@ -922,6 +922,16 @@ HISTORY_MSG_675;Local - TM soft radius
 HISTORY_MSG_676;Local Spot transition-differentiation
 HISTORY_MSG_677;Local - TM amount
 HISTORY_MSG_678;Local - TM saturation
+HISTORY_MSG_679;Local - Retinex mask C
+HISTORY_MSG_680;Local - Retinex mask L
+HISTORY_MSG_681;Local - Retinex mask CL
+HISTORY_MSG_682;Local - Retinex mask
+HISTORY_MSG_683;Local - Retinex mask Blend
+HISTORY_MSG_684;Local - Retinex mask radius
+HISTORY_MSG_685;Local - Retinex mask chroma
+HISTORY_MSG_686;Local - Retinex mask gamma
+HISTORY_MSG_687;Local - Retinex mask slope
+HISTORY_MSG_689;Local - Retinex mask transmission map
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2119,6 +2129,7 @@ TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle lin
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
+TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
 TP_LOCALLAB_TRANSITVALUE;Transition value

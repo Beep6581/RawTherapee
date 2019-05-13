@@ -2482,6 +2482,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     LLmaskreticurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmaskreticurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     enaretiMask(false),
+    enaretiMasktmap(false),
     blendmaskreti(0),
     radmaskreti(10.0),
     chromaskreti(0.0),
@@ -2690,6 +2691,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && LLmaskreticurve == other.LLmaskreticurve
         && HHmaskreticurve == other.HHmaskreticurve
         && enaretiMask == other.enaretiMask
+        && enaretiMasktmap == other.enaretiMasktmap
         && blendmaskreti == other.blendmaskreti
         && radmaskreti == other.radmaskreti
         && chromaskreti == other.chromaskreti
@@ -3854,6 +3856,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inversret, "Locallab", "Inversret_" + std::to_string(i), spot.inversret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiusret, "Locallab", "Softradiusret_" + std::to_string(i), spot.softradiusret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enaretiMask, "Locallab", "EnaretiMask_" + std::to_string(i), spot.enaretiMask, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).enaretiMasktmap, "Locallab", "EnaretiMasktmap_" + std::to_string(i), spot.enaretiMasktmap, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendmaskreti, "Locallab", "Blendmaskreti_" + std::to_string(i), spot.blendmaskreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radmaskreti, "Locallab", "Radmaskreti_" + std::to_string(i), spot.radmaskreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskreti, "Locallab", "Chromaskreti_" + std::to_string(i), spot.chromaskreti, keyFile);
@@ -5159,6 +5162,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + std::to_string(i), pedited, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskretiCurve_" + std::to_string(i), pedited, spot.HHmaskreticurve, spotEdited.HHmaskreticurve);
                 assignFromKeyfile(keyFile, "Locallab", "EnaretiMask_" + std::to_string(i), pedited, spot.enaretiMask, spotEdited.enaretiMask);
+                assignFromKeyfile(keyFile, "Locallab", "EnaretiMasktmap_" + std::to_string(i), pedited, spot.enaretiMasktmap, spotEdited.enaretiMasktmap);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskreti_" + std::to_string(i), pedited, spot.blendmaskreti, spotEdited.blendmaskreti);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskreti_" + std::to_string(i), pedited, spot.radmaskreti, spotEdited.radmaskreti);
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskreti_" + std::to_string(i), pedited, spot.chromaskreti, spotEdited.chromaskreti);

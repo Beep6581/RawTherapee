@@ -1083,6 +1083,7 @@ struct LocallabParams {
         std::vector<double> LLmaskreticurve;
         std::vector<double> HHmaskreticurve;
         bool enaretiMask;
+        bool enaretiMasktmap;
         int blendmaskreti;
         double radmaskreti;
         double chromaskreti;

@@ -1072,6 +1072,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).LLmaskreticurve = locallab.spots.at(j).LLmaskreticurve && pSpot.LLmaskreticurve == otherSpot.LLmaskreticurve;
                 locallab.spots.at(j).HHmaskreticurve = locallab.spots.at(j).HHmaskreticurve && pSpot.HHmaskreticurve == otherSpot.HHmaskreticurve;
                 locallab.spots.at(j).enaretiMask = locallab.spots.at(j).enaretiMask && pSpot.enaretiMask == otherSpot.enaretiMask;
+                locallab.spots.at(j).enaretiMasktmap = locallab.spots.at(j).enaretiMasktmap && pSpot.enaretiMasktmap == otherSpot.enaretiMasktmap;
                 locallab.spots.at(j).blendmaskreti = locallab.spots.at(j).blendmaskreti && pSpot.blendmaskreti == otherSpot.blendmaskreti;
                 locallab.spots.at(j).radmaskreti = locallab.spots.at(j).radmaskreti && pSpot.radmaskreti == otherSpot.radmaskreti;
                 locallab.spots.at(j).chromaskreti = locallab.spots.at(j).chromaskreti && pSpot.chromaskreti == otherSpot.chromaskreti;
@@ -3109,6 +3110,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).enaretiMask = mods.locallab.spots.at(i).enaretiMask;
         }
 
+        if (locallab.spots.at(i).enaretiMasktmap) {
+            toEdit.locallab.spots.at(i).enaretiMasktmap = mods.locallab.spots.at(i).enaretiMasktmap;
+        }
+
         if (locallab.spots.at(i).blendmaskreti) {
             toEdit.locallab.spots.at(i).blendmaskreti = mods.locallab.spots.at(i).blendmaskreti;
         }
@@ -4405,6 +4410,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LLmaskreticurve(v),
     HHmaskreticurve(v),
     enaretiMask(v),
+    enaretiMasktmap(v),
     blendmaskreti(v),
     radmaskreti(v),
     chromaskreti(v),
@@ -4610,6 +4616,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LLmaskreticurve = v;
     HHmaskreticurve = v;
     enaretiMask = v;
+    enaretiMasktmap = v;
     blendmaskreti = v;
     radmaskreti = v;
     chromaskreti = v;

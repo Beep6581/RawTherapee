@@ -499,6 +499,7 @@ public:
         bool LLmaskreticurve;
         bool HHmaskreticurve;
         bool enaretiMask;
+        bool enaretiMasktmap;
         bool blendmaskreti;
         bool radmaskreti;
         bool chromaskreti;

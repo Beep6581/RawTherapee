@@ -260,6 +260,8 @@ private:
     sigc::connection inversretConn;
     Gtk::CheckButton* const enaretiMask;
     sigc::connection enaretiMaskConn;
+    Gtk::CheckButton* const enaretiMasktmap;
+    sigc::connection enaretiMasktmapConn;
     // Sharpening
     Gtk::CheckButton* const inverssha;
     sigc::connection inversshaConn;
@@ -346,6 +348,7 @@ private:
     // Retinex
     void inversretChanged();
     void enaretiMaskChanged();
+    void enaretiMasktmapChanged();
     // Sharpening
     void inversshaChanged();
     //CBDL
