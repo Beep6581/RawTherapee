@@ -4901,7 +4901,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float meanfab, fab;
 
                     mean_fab(xstart, ystart, bfw, bfh, loctemp.get(), original, fab, meanfab, lp.chromacbm);
-                  //  printf("fab=%f \n", fab);
+                    printf("fab=%f lpchro=%f \n", fab, lp.chromacbm);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)

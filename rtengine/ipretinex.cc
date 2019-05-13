@@ -1051,6 +1051,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 
                // printf("minL=%f maxL=%f\n", minL, maxL);
                 float fab = 4000.f;//value must be good in most cases
+              //  fab *= (1.f + 0.01f * loc.spots.at(sp).chromaskreti);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -1148,8 +1149,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                                 bufreti->L[y][x] +=  bufmaskorigreti->L[y][x] * modr; 
                             }
 
-                            bufreti->a[y][x] *= (1.f + bufmaskorigreti->a[y][x] * modr);
-                            bufreti->b[y][x] *= (1.f + bufmaskorigreti->b[y][x] * modr);
+                            bufreti->a[y][x] *= (1.f + bufmaskorigreti->a[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
+                            bufreti->b[y][x] *= (1.f + bufmaskorigreti->b[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
                         }
                     }
                 } 
