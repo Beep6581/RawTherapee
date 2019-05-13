@@ -43,7 +43,6 @@ protected:
     Gtk::Grid* grid;
     Gtk::Label* label;
     Gtk::Image *imageIcon1;
-    Gtk::Image *imageIcon2;
     MyHScale* slider;
     MySpinButton* spin;
     Gtk::Button* reset;
@@ -60,7 +59,6 @@ protected:
     double ctorDefaultVal;      // default value at construction time
     EditedState editedState;
     EditedState defEditedState;
-    EditedState autoState;
     int digits;
     Gtk::CheckButton* editedCheckBox;
     bool afterReset;
@@ -75,28 +73,25 @@ protected:
     double logPivot;
     bool logAnchorMiddle;
 
-    double shapeValue (double a);
-    void   refreshLabelStyle ();
+    double shapeValue (double a) const;
     double2double_fun value2slider, slider2value;
 
-    double getSliderValue();
+    double getSliderValue() const;
     void setSliderValue(double val);
 
 public:
 
     int delay;
 
-    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = nullptr, Gtk::Image *imgIcon2 = nullptr, double2double_fun slider2value = nullptr, double2double_fun value2slider = nullptr);
+    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = nullptr, Gtk::Image *imgIcon2 = nullptr, double2double_fun slider2value_ = nullptr, double2double_fun value2slider_ = nullptr);
     ~Adjuster () override;
 
     // Add an "Automatic" checkbox next to the reset button.
     void addAutoButton(Glib::ustring tooltip = "");
-    // Remove the "Automatic" checkbox next to the reset button.
-    void delAutoButton();
     // Send back the value of og the Auto checkbox
     bool getAutoValue ()
     {
-        return automatic != nullptr ? automatic->get_active () : false;
+        return automatic ? automatic->get_active() : false;
     }
     void setAutoValue (bool a);
     bool notifyListenerAutoToggled ();
@@ -107,7 +102,7 @@ public:
             automatic->set_inconsistent(i);
         }
     }
-    bool getAutoInconsistent ()
+    bool getAutoInconsistent () const
     {
         return automatic ? automatic->get_inconsistent() : true /* we have to return something */;
     }
@@ -118,27 +113,27 @@ public:
     }
 
     // return the value trimmed to the limits at construction time
-    double getValue ()
+    double getValue () const
     {
-        return shapeValue(spin->get_value ());
+        return shapeValue(spin->get_value());
     }
     // return the value trimmed to the limits at construction time
-    int getIntValue ()
+    int getIntValue () const
     {
-        return spin->get_value_as_int ();
+        return spin->get_value_as_int();
     }
     // return the value trimmed to the limits at construction time,
     // method only used by the history manager, so decoration is added if addMode=true
-    Glib::ustring getTextValue ()
+    Glib::ustring getTextValue () const
     {
         if (addMode) {
-            return Glib::ustring::compose("<i>%1</i>", spin->get_text ());
+            return Glib::ustring::compose("<i>%1</i>", spin->get_text());
         } else {
-            return spin->get_text ();
+            return spin->get_text();
         }
     }
 
-    void setLabel (Glib::ustring lbl)
+    void setLabel (const Glib::ustring &lbl)
     {
         label->set_label(lbl);
     }
@@ -165,7 +160,7 @@ public:
     }
 
     void setAddMode(bool addM);
-    bool getAddMode()
+    bool getAddMode() const
     {
         return addMode;
     };
@@ -177,11 +172,11 @@ public:
     void resetValue (bool toInitial);
     void resetPressed (GdkEventButton* event);
     void editedToggled ();
-    void trimValue (double &val);
-    void trimValue (float &val);
-    void trimValue (int &val);
+    void trimValue (double &val) const;
+    void trimValue (float &val) const;
+    void trimValue (int &val) const;
 
-    void setLogScale(double base, double pivot, bool anchorMiddle=false);
+    void setLogScale(double base, double pivot, bool anchorMiddle = false);
 };
 
 #endif
