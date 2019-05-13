@@ -856,6 +856,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 LabImage *unshar = nullptr;
                 Glib::ustring provis;
                 LabImage *provradius = nullptr;
+                bool procont = WaveParams.expcontrast;
+                bool prochro = WaveParams.expchroma;
+                bool proedge = WaveParams.expedge;
+                bool profin = WaveParams.expfinal;
+                bool proton = WaveParams.exptoning;
+                bool pronois = WaveParams.expnoise; 
 
                 if(WaveParams.showmask) {
                  //   WaveParams.showmask = false;
@@ -887,7 +893,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     params->wavelet.Backmethod = "grey";
                 }
 
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    WaveParams.expcontrast = false;
+                    WaveParams.expchroma = false;
+                    WaveParams.expedge = false;
+                    WaveParams.expfinal = false;
+                    WaveParams.exptoning = false;
+                    WaveParams.expnoise = false; 
+                }
+
                 ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
+
+
+                if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                    WaveParams.expcontrast = procont;
+                    WaveParams.expchroma = prochro;
+                    WaveParams.expedge = proedge;
+                    WaveParams.expfinal = profin;
+                    WaveParams.exptoning = proton;
+                    WaveParams.expnoise = pronois; 
+                }
 
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
                     float mL = (float)(WaveParams.mergeL / 100.f);
@@ -924,17 +949,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (WaveParams.softrad > 0.f) {
                         array2D<float> ble(pW, pH);
                         array2D<float> guid(pW, pH);
-                        /*
-                        #ifdef _OPENMP
-                                                const int numThreads = omp_get_max_threads();
-                        #endif
-
-                                                bool multiTh = false;
-
-                                                if (numThreads > 1) {
-                                                    multiTh = true;
-                                                }
-                        */
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -973,6 +987,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
                 }
+                
             }
 
             ipf.softLight(nprevl);

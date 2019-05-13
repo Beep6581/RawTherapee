@@ -992,6 +992,12 @@ void Crop::update(int todo)
             LabImage *unshar = nullptr;
             Glib::ustring provis;
             LabImage *provradius = nullptr;
+            bool procont = WaveParams.expcontrast;
+            bool prochro = WaveParams.expchroma;
+            bool proedge = WaveParams.expedge;
+            bool profin = WaveParams.expfinal;
+            bool proton = WaveParams.exptoning;
+            bool pronois = WaveParams.expnoise; 
 
             if(WaveParams.showmask) {
            //     WaveParams.showmask = false;
@@ -1023,7 +1029,26 @@ void Crop::update(int todo)
                 params.wavelet.Backmethod = "grey";
             }
 
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                WaveParams.expcontrast = false;
+                WaveParams.expchroma = false;
+                WaveParams.expedge = false;
+                WaveParams.expfinal = false;
+                WaveParams.exptoning = false;
+                WaveParams.expnoise = false; 
+            }
+
             parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
+
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                WaveParams.expcontrast = procont;
+                WaveParams.expchroma = prochro;
+                WaveParams.expedge = proedge;
+                WaveParams.expfinal = profin;
+                WaveParams.exptoning = proton;
+                WaveParams.expnoise = pronois; 
+            }
+
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
 

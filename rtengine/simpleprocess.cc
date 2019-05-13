@@ -1129,6 +1129,13 @@ private:
             WavOpacityCurveW waOpacityCurveW;
             WavOpacityCurveWL waOpacityCurveWL;
             LabImage *provradius = nullptr;
+            bool procont = WaveParams.expcontrast;
+            bool prochro = WaveParams.expchroma;
+            bool proedge = WaveParams.expedge;
+            bool profin = WaveParams.expfinal;
+            bool proton = WaveParams.exptoning;
+            bool pronois = WaveParams.expnoise; 
+            
 /*
             if(WaveParams.showmask) {
                 WaveParams.showmask = false;
@@ -1153,7 +1160,25 @@ private:
                 params.wavelet.CLmethod = provis;
             }
 
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                WaveParams.expcontrast = false;
+                WaveParams.expchroma = false;
+                WaveParams.expedge = false;
+                WaveParams.expfinal = false;
+                WaveParams.exptoning = false;
+                WaveParams.expnoise = false; 
+            }
+
             ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
+
+            if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
+                WaveParams.expcontrast = procont;
+                WaveParams.expchroma = prochro;
+                WaveParams.expedge = proedge;
+                WaveParams.expfinal = profin;
+                WaveParams.exptoning = proton;
+                WaveParams.expnoise = pronois; 
+            }
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
                 float mL = (float)(WaveParams.mergeL / 100.f);
