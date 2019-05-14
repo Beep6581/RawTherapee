@@ -94,6 +94,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     exportPanel(nullptr),
     previews_to_load(0),
     previews_loaded(0),
+    previews_prev_num_filtered(0),
     previews_prev_percentage(0),
     modifierKey(0),
     coarsePanel(cp),
@@ -736,14 +737,17 @@ void FileCatalog::_refreshProgressBar()
 
     const int previews_to_load_copy = previews_to_load;
     const int previews_loaded_copy = previews_loaded;
+    const int num_filtered = fileBrowser->getNumFiltered();
     const int percentage =
         previews_to_load_copy
             ? previews_loaded_copy * 100 / previews_to_load_copy
             : 0;
 
-    if (previews_prev_percentage.exchange(percentage) == percentage) {
+    if (previews_prev_num_filtered == num_filtered && previews_prev_percentage.exchange(percentage) == percentage) {
         return;
     }
+
+    previews_prev_num_filtered = num_filtered; // C++14: Use std::exchange() above
 
     Gtk::Notebook* const notebook = static_cast<Gtk::Notebook*>(filepanel->get_parent());
     Gtk::Grid* const grid = Gtk::manage(new Gtk::Grid());

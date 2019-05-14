@@ -132,6 +132,7 @@ private:
 
     std::atomic<int> previews_to_load;
     std::atomic<int> previews_loaded;
+    int previews_prev_num_filtered;
     std::atomic<int> previews_prev_percentage;
 
     std::vector<Glib::ustring> fileNameList;
