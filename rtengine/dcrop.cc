@@ -1046,7 +1046,41 @@ void Crop::update(int todo)
                 WaveParams.expedge = proedge;
                 WaveParams.expfinal = profin;
                 WaveParams.exptoning = proton;
-                WaveParams.expnoise = pronois; 
+                WaveParams.expnoise = pronois;
+                if (WaveParams.softrad > 0.f) {
+                    array2D<float> ble(labnCrop->W, labnCrop->H);
+                    array2D<float> guid(labnCrop->W, labnCrop->H);
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < labnCrop->H ; ir++)
+                        for (int jr = 0; jr < labnCrop->W; jr++) {
+                            ble[ir][jr] = (labnCrop->L[ir][jr]) / 32768.f;
+                            guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
+                        }
+                    double epsilmax = 0.0001;
+                    double epsilmin = 0.00001;
+                    double aepsil = (epsilmax - epsilmin) / 90.f;
+                    double bepsil = epsilmax - 100.f * aepsil;
+                    double epsil = aepsil * WaveParams.softrad + bepsil;
+                    
+                    float blur = 10.f / skip * (0.0001f + 0.8f * WaveParams.softrad);
+                    rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+
+
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < labnCrop->H; ir++)
+                        for (int jr = 0; jr < labnCrop->W; jr++) {
+                            labnCrop->L[ir][jr] = 32768.f * ble[ir][jr];
+                        }
+                }
+                
             }
 
 
@@ -1082,41 +1116,6 @@ void Crop::update(int todo)
 
                 delete unshar;
                 unshar    = NULL;
-
-                if (WaveParams.softrad > 0.f) {
-                    array2D<float> ble(labnCrop->W, labnCrop->H);
-                    array2D<float> guid(labnCrop->W, labnCrop->H);
-
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < labnCrop->H ; ir++)
-                        for (int jr = 0; jr < labnCrop->W; jr++) {
-                            ble[ir][jr] = (labnCrop->L[ir][jr]  - provradius->L[ir][jr]) / 32768.f;
-                            guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
-                        }
-                    double epsilmax = 0.001;
-                    double epsilmin = 0.0001;
-                    double aepsil = (epsilmax - epsilmin) / 90.f;
-                    double bepsil = epsilmax - 100.f * aepsil;
-                    double epsil = aepsil * WaveParams.softrad + bepsil;
-                    
-                    float blur = 10.f / skip * (0.001f + 0.8f * WaveParams.softrad);
-                    rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
-
-
-
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < labnCrop->H; ir++)
-                        for (int jr = 0; jr < labnCrop->W; jr++) {
-                            labnCrop->L[ir][jr] =  provradius->L[ir][jr] + 32768.f * ble[ir][jr];
-                        }
-                }
-
                 if (WaveParams.softrad > 0.f) {
                     delete provradius;
                     provradius    = NULL;

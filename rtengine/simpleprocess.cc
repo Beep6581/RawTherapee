@@ -1177,7 +1177,53 @@ private:
                 WaveParams.expedge = proedge;
                 WaveParams.expfinal = profin;
                 WaveParams.exptoning = proton;
-                WaveParams.expnoise = pronois; 
+                WaveParams.expnoise = pronois;
+                
+                if (WaveParams.softrad > 0.f) {
+                    array2D<float> ble(fw, fh);
+                    array2D<float> guid(fw, fh);
+                    /*
+                    #ifdef _OPENMP
+                                            const int numThreads = omp_get_max_threads();
+                    #endif
+
+                                            bool multiTh = false;
+
+                                            if (numThreads > 1) {
+                                                multiTh = true;
+                                            }
+                    */
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < fh; ir++)
+                        for (int jr = 0; jr < fw; jr++) {
+                            ble[ir][jr] = (labView->L[ir][jr]) / 32768.f;
+                            guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
+                        }
+                    double epsilmax = 0.0001;
+                    double epsilmin = 0.00001;
+                    double aepsil = (epsilmax - epsilmin) / 90.f;
+                    double bepsil = epsilmax - 100.f * aepsil;
+                    double epsil = aepsil * WaveParams.softrad + bepsil;
+
+                    float blur = 10.f / 1 * (0.0001f + 0.8f * WaveParams.softrad);
+                    // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
+                    rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+
+
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < fh; ir++)
+                        for (int jr = 0; jr < fw; jr++) {
+                            labView->L[ir][jr] = 32768.f * ble[ir][jr];
+                        }
+                }
+                
             }
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
@@ -1211,51 +1257,6 @@ private:
 
                 delete unshar;
                 unshar    = NULL;
-
-                if (WaveParams.softrad > 0.f) {
-                    array2D<float> ble(fw, fh);
-                    array2D<float> guid(fw, fh);
-                    /*
-                    #ifdef _OPENMP
-                                            const int numThreads = omp_get_max_threads();
-                    #endif
-
-                                            bool multiTh = false;
-
-                                            if (numThreads > 1) {
-                                                multiTh = true;
-                                            }
-                    */
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < fh; ir++)
-                        for (int jr = 0; jr < fw; jr++) {
-                            ble[ir][jr] = (labView->L[ir][jr]  - provradius->L[ir][jr]) / 32768.f;
-                            guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
-                        }
-                    double epsilmax = 0.001;
-                    double epsilmin = 0.0001;
-                    double aepsil = (epsilmax - epsilmin) / 90.f;
-                    double bepsil = epsilmax - 100.f * aepsil;
-                    double epsil = aepsil * WaveParams.softrad + bepsil;
-
-                    float blur = 10.f / 1 * (0.001f + 0.8f * WaveParams.softrad);
-                    // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
-                    rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
-
-
-
-#ifdef _OPENMP
-                    #pragma omp parallel for
-#endif
-
-                    for (int ir = 0; ir < fh; ir++)
-                        for (int jr = 0; jr < fw; jr++) {
-                            labView->L[ir][jr] =  provradius->L[ir][jr] + 32768.f * ble[ir][jr];
-                        }
-                }
 
                 if (WaveParams.softrad > 0.f) {
                     delete provradius;

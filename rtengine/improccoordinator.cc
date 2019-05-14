@@ -911,7 +911,42 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expedge = proedge;
                     WaveParams.expfinal = profin;
                     WaveParams.exptoning = proton;
-                    WaveParams.expnoise = pronois; 
+                    WaveParams.expnoise = pronois;
+                    
+                    if (WaveParams.softrad > 0.f) {
+                        array2D<float> ble(pW, pH);
+                        array2D<float> guid(pW, pH);
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < pH; ir++)
+                            for (int jr = 0; jr < pW; jr++) {
+                                ble[ir][jr] = (nprevl->L[ir][jr]) / 32768.f;
+                                guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
+                            }
+                        double epsilmax = 0.0001;
+                        double epsilmin = 0.00001;
+                        double aepsil = (epsilmax - epsilmin) / 90.f;
+                        double bepsil = epsilmax - 100.f * aepsil;
+                        double epsil = aepsil * WaveParams.softrad + bepsil;
+
+                        float blur = 10.f / scale * (0.0001f + 0.8f * WaveParams.softrad);
+                        // rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiTh);
+                        rtengine::guidedFilter(guid, ble, ble, blur, epsil, false);
+
+
+
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < pH; ir++)
+                            for (int jr = 0; jr < pW; jr++) {
+                                nprevl->L[ir][jr] =  32768.f * ble[ir][jr];
+                            }
+                    }
+                    
                 }
 
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
@@ -919,6 +954,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float mC = (float)(WaveParams.mergeC / 100.f);
                     float mL0;
                     float mC0;
+
+
 
                     if ((WaveParams.CLmethod == "one" || WaveParams.CLmethod == "inf")  && WaveParams.Backmethod == "black") {
                         mL0 = mC0 = 0.f;
@@ -945,7 +982,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     delete unshar;
                     unshar    = NULL;
-
+/*
                     if (WaveParams.softrad > 0.f) {
                         array2D<float> ble(pW, pH);
                         array2D<float> guid(pW, pH);
@@ -979,7 +1016,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 nprevl->L[ir][jr] =  provradius->L[ir][jr] + 32768.f * ble[ir][jr];
                             }
                     }
-
+*/
                     if (WaveParams.softrad > 0.f) {
                         delete provradius;
                         provradius    = NULL;
@@ -987,7 +1024,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
                 }
-                
+               
             }
 
             ipf.softLight(nprevl);
