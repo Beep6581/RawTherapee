@@ -2273,8 +2273,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
 
         const float refa = chromaref * cos(hueref);
         const float refb = chromaref * sin(hueref);
-        const bool retishow = ((lp.showmaskretimet == 1 || lp.showmaskretimet == 2)  &&  senstype == 4);
-        const bool previewreti = ((lp.showmaskretimet == 4)  &&  senstype == 4);
+        const bool retishow = ((lp.showmaskretimet == 1 || lp.showmaskretimet == 2));
+        const bool previewreti = ((lp.showmaskretimet == 4));
 
         //balance deltaE
         float kL = lp.balance;
@@ -2353,7 +2353,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
 
                    // reducdE /= 100.f;
                    // cli *= reducdE;
-                    clc *= reducdE;
+                    clc *= reducdE / 100.f;
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         if (senstype == 4) {//all except color and light (TODO) and exposure
@@ -2373,9 +2373,9 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                         const float chra = bufexporig->a[loy - begy][lox - begx];
                         const float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                        if (senstype == 4) {
+                      //  if (senstype == 4) {
                             fliab = 1.f + clc;
-                        }
+                      //  }
 
                         const float difa = (chra * fliab - original->a[y][x]) * localFactor;
                         const float difb = (chrb * fliab - original->b[y][x]) * localFactor;
@@ -2392,7 +2392,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                         }
                         if(previewreti) {
                             transformed->a[y][x] = 0.f;
-                            transformed->b[y][x] = difb;
+                            transformed->b[y][x] = CLIPC(difb);
                         }
                     }
                 }
@@ -4901,7 +4901,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float meanfab, fab;
 
                     mean_fab(xstart, ystart, bfw, bfh, loctemp.get(), original, fab, meanfab, lp.chromacbm);
-                    printf("fab=%f lpchro=%f \n", fab, lp.chromacbm);
+                //    printf("fab=%f lpchro=%f \n", fab, lp.chromacbm);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)

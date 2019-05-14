@@ -894,7 +894,7 @@ Locallab::Locallab():
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-//    showmaskretiMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
+    showmaskretiMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
     
 
     showmaskretiMethod->set_active(0);

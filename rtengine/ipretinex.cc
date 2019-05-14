@@ -53,6 +53,7 @@
 
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #define CLIPLOC(x) LIM(x,0.f,32767.f)
+#define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
 
 namespace
 {
@@ -1095,7 +1096,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                             kmaskLexp += 32768.f * valHH;
                         }
                            // printf("km=%f ",kmaskLexp); 
-                            bufmaskblurreti->L[ir][jr] = CLIPLOC(kmaskLexp);
+                            bufmaskblurreti->L[ir][jr] = kmaskLexp;
                             bufmaskblurreti->a[ir][jr] = kmaskCH;
                             bufmaskblurreti->b[ir][jr] = kmaskCH;
                             ble[ir][jr] = bufmaskblurreti->L[ir][jr] / 32768.f;
@@ -1146,11 +1147,15 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                                 out[y][x] += fabs(modr) * bufmaskorigreti->L[y][x];
                                 out[y][x] = LIM(out[y][x],0.f,60000.f);
                             } else {
-                                bufreti->L[y][x] +=  bufmaskorigreti->L[y][x] * modr; 
+                                bufreti->L[y][x] +=  bufmaskorigreti->L[y][x] * modr;
+                                bufreti->L[y][x] = CLIPLOC(bufreti->L[y][x]);
+
                             }
 
                             bufreti->a[y][x] *= (1.f + bufmaskorigreti->a[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
                             bufreti->b[y][x] *= (1.f + bufmaskorigreti->b[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
+                            bufreti->a[y][x] = CLIPC(bufreti->a[y][x]);
+                            bufreti->b[y][x] = CLIPC(bufreti->b[y][x]);
                         }
                     }
                 } 
@@ -1163,8 +1168,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     for (int y = 0; y < H_L; y++) {
                         for (int x = 0; x < W_L; x++) {
                         bufmask->L[y][x] = 6000.f + CLIPLOC(bufmaskorigreti->L[y][x]);
-                        bufmask->a[y][x] = bufreti->a[y][x] * bufmaskorigreti->a[y][x];
-                        bufmask->b[y][x] = bufreti->b[y][x] * bufmaskorigreti->b[y][x];
+                        bufmask->a[y][x] = CLIPC(bufreti->a[y][x] * bufmaskorigreti->a[y][x]);
+                        bufmask->b[y][x] = CLIPC(bufreti->b[y][x] * bufmaskorigreti->b[y][x]);
                         }
                     }
 
