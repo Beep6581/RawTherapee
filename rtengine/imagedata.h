@@ -22,8 +22,6 @@
 #include <memory>
 #include <string>
 
-#include <exiv2/exiv2.hpp>
-
 #include "imageio.h"
 
 namespace Glib
@@ -35,8 +33,6 @@ class ustring;
 
 namespace rtengine
 {
-
-Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname); // TODO: Global function?
 
 class FramesData final :
     public FramesMetaData

@@ -145,6 +145,7 @@ set(RTENGINESOURCEFILES
     lj92.c
     lmmse_demosaic.cc
     loadinitial.cc
+    metadata.cc
     munselllch.cc
     myfile.cc
     panasonic_decoders.cc

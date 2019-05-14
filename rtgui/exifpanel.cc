@@ -25,6 +25,7 @@
 #include "options.h"
 
 #include "../rtengine/imagedata.h"
+#include "../rtengine/metadata.h"
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
@@ -225,9 +226,9 @@ void ExifPanel::refreshTags()
     }
 
     try {
-        auto img = open_exiv2(fn);
-        img->readMetadata();
-        auto& exif = img->exifData();
+        rtengine::Exiv2Metadata meta(fn);
+        meta.load();
+        auto& exif = meta.exifData();
 
         for (const auto& p : *changeList) {
             try {

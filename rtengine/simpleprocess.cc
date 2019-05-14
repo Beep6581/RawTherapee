@@ -37,6 +37,7 @@
 #include "mytime.h"
 #include "guidedfilter.h"
 #include "color.h"
+#include "metadata.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -945,10 +946,10 @@ private:
 
         if (params.locallab.enabled && params.locallab.spots.size() > 0) {
             ipf.rgb2lab(*baseImg, *labView, params.icm.workingProfile);
-            
+
             MyTime t1, t2;
             t1.set();
-            
+
             const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
             const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
             std::unique_ptr<LabImage> savenormtmView;
@@ -994,7 +995,7 @@ private:
             LocLLmaskCurve locllmas_Curve;
             LocHHmaskCurve lochhmas_Curve;
             LocHHmaskCurve lochhhmas_Curve;
-            
+
             LocwavCurve loclmasCurveblwav;
             LocwavCurve loclmasCurvecolwav;
             LocwavCurve loclmasCurve_wav;
@@ -1073,7 +1074,7 @@ private:
                 const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
                 const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
                 const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
-                
+
                 const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
                 const bool lhmas_utili = lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve);
@@ -1129,7 +1130,7 @@ private:
                 float stdtme;
                 float meanretie;
                 float stdretie;
-                
+
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
@@ -1148,8 +1149,8 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
-                        lllocalcurve, locallutili, 
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve,
+                        lllocalcurve, locallutili,
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,
                         loclhCurve, lochhCurve, locchCurve,
@@ -1164,7 +1165,7 @@ private:
                         lmasklclocalcurve, localmasklcutili,
                         lmaskloglocalcurve, localmasklogutili,
                         lmasklocal_curve, localmask_utili,
-                        
+
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                         locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
@@ -1428,8 +1429,8 @@ private:
             bool proedge = WaveParams.expedge;
             bool profin = WaveParams.expfinal;
             bool proton = WaveParams.exptoning;
-            bool pronois = WaveParams.expnoise; 
-            
+            bool pronois = WaveParams.expnoise;
+
 /*
             if(WaveParams.showmask) {
                 WaveParams.showmask = false;
@@ -1456,7 +1457,7 @@ private:
                 WaveParams.expedge = false;
                 WaveParams.expfinal = false;
                 WaveParams.exptoning = false;
-                WaveParams.expnoise = false; 
+                WaveParams.expnoise = false;
             }
 
             ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
@@ -1468,7 +1469,7 @@ private:
                 WaveParams.expfinal = profin;
                 WaveParams.exptoning = proton;
                 WaveParams.expnoise = pronois;
-                
+
                 if (WaveParams.softrad > 0.f) {
                     array2D<float> ble(fw, fh);
                     array2D<float> guid(fw, fh);
@@ -1523,7 +1524,7 @@ private:
                         }
                 delete tmpImage;
                 }
-                
+
             }
 
             if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari") && WaveParams.expclari && WaveParams.CLmethod != "all") {
@@ -1730,7 +1731,7 @@ private:
             readyImg = tempImage;
         }
 
-        MetadataInfo info(imgsrc->getFileName());
+        Exiv2Metadata info(imgsrc->getFileName());
         switch (params.metadata.mode) {
         case MetaDataParams::TUNNEL:
             readyImg->setMetadata(std::move(info));

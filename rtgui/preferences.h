@@ -223,6 +223,9 @@ class Preferences final :
     Gtk::ComboBoxText *cropGuidesCombo;
     Gtk::CheckButton *cropAutoFitCB;
 
+    Gtk::ComboBoxText *metadataSyncCombo;
+    Gtk::ComboBoxText *xmpSidecarCombo;
+
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
 

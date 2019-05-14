@@ -1773,6 +1773,11 @@ public:
         return pairs.erase(key);
     }
 
+    bool empty() const
+    {
+        return pairs.empty();
+    }
+
     Glib::ustring& operator[](const Glib::ustring& key)
     {
         return pairs[key];

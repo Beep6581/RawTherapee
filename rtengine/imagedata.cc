@@ -22,11 +22,11 @@
 #include <tiff.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
-#include <exiv2/exiv2.hpp>
 
 #include "imagedata.h"
 #include "imagesource.h"
 #include "rt_math.h"
+#include "metadata.h"
 #include "utils.h"
 
 #pragma GCC diagnostic warning "-Wextra"
@@ -51,24 +51,6 @@ const std::string& validateUft8(const std::string& str, const std::string& on_er
 namespace rtengine {
 
 extern const Settings *settings;
-
-Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
-{
-#ifdef EXV_UNICODE_PATH
-    glong ws_size = 0;
-    gunichar2* const ws = g_utf8_to_utf16(fname.c_str(), -1, nullptr, &ws_size, nullptr);
-    std::wstring wfname;
-    wfname.reserve(ws_size);
-    for (glong i = 0; i < ws_size; ++i) {
-        wfname.push_back(ws[i]);
-    }
-    g_free(ws);
-    auto image = Exiv2::ImageFactory::open(wfname);
-#else
-    auto image = Exiv2::ImageFactory::open(fname);
-#endif
-    return image;
-}
 
 } // namespace rtengine
 
@@ -106,9 +88,9 @@ FramesData::FramesData(const Glib::ustring &fname) :
     lens.clear();
 
     try {
-        auto image = open_exiv2(fname);
-        image->readMetadata();
-        const auto& exif = image->exifData();
+        Exiv2Metadata meta(fname);
+        meta.load();
+        const auto& exif = meta.exifData();
         ok_ = true;
 
         // taken and adapted from darktable (src/common/exif.cc)
@@ -189,7 +171,7 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
     /*
     TODO: Implement ratings in exiv2 situations. See PR #5325
-        
+
     // Look for Rating metadata in the following order:
     // 1. EXIF
     // 2. XMP

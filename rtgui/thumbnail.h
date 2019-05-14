@@ -88,6 +88,8 @@ class Thumbnail
 
     Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const;
 
+    void saveMetadata();
+
 public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);

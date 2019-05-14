@@ -33,6 +33,7 @@
 #include <glib/gstdio.h>
 
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/metadata.h"
 #include "../rtengine/profilestore.h"
 #include "../rtengine/settings.h"
 #include "guiutils.h"
@@ -1026,6 +1027,10 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
     if (updateCacheImageData) {
         cfs.save (getCacheFileName ("data", ".txt"));
     }
+
+    if (updatePParams && pparamsValid) {
+        saveMetadata();
+    }
 }
 
 Thumbnail::~Thumbnail ()
@@ -1204,6 +1209,33 @@ void Thumbnail::getCamWB(double& temp, double& green) const
     }
 }
 
+void Thumbnail::saveMetadata()
+{
+    if (options.rtSettings.metadata_xmp_sync != rtengine::Settings::MetadataXmpSync::READ_WRITE) {
+        return;
+    }
+
+    if (pparams->exif.empty() && pparams->iptc.empty()) {
+        return;
+    }
+
+    auto fn = rtengine::Exiv2Metadata::xmpSidecarPath(fname);
+    try {
+        auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+        rtengine::Exiv2Metadata meta;
+        meta.xmpData() = std::move(xmp);
+        meta.setExif(pparams->exif);
+        meta.setIptc(pparams->iptc);
+        meta.saveToXmp(fn);
+        if (options.rtSettings.verbose) {
+            std::cout << "saved edited metadata for " << fname << " to "
+                      << fn << std::endl;
+        }
+    } catch (Exiv2::AnyError &exc) {
+        std::cerr << "ERROR saving metadata for " << fname << " to " << fn
+                  << ": " << exc.what() << std::endl;
+    }
+}
 void Thumbnail::getSpotWB(int x, int y, int rect, double& temp, double& green)
 {
     if (tpp) {

@@ -31,6 +31,7 @@
 #include "image8.h"
 #include "imagefloat.h"
 #include "improcfun.h"
+#include "metadata.h"
 #include "labimage.h"
 #include "lcp.h"
 #include "procparams.h"
@@ -320,7 +321,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
-        
+
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
             if (rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) && rp.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO)) {
@@ -528,8 +529,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         lastAwbauto = "";
                         autoWB.useDefaults(params->wb.equal);
                     }
-                    
-                    
+
+
                 }
 
                 currWB = autoWB;
@@ -542,11 +543,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (autowb && awbListener && params->wb.method ==  "autitcgreen") {
                 awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
-            } 
+            }
 
             if (autowb && awbListener && params->wb.method ==  "autold") {
                 awbListener->WBChanged(params->wb.temperature, params->wb.green, -1.f);
-            } 
+            }
 
             /*
                     GammaValues g_a;
@@ -748,7 +749,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 whiteev = new float[sizespot];
                 bool *Autogr = nullptr;
                 Autogr = new bool[sizespot];
-                
+
                 float *locx = nullptr;
                 locx = new float[sizespot];
                 float *locy = nullptr;
@@ -761,7 +762,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 centx = new float[sizespot];
                 float *centy = nullptr;
                 centy = new float[sizespot];
-                
+
                 for (int sp = 0; sp < sizespot; sp++) {
                     log[sp] = params->locallab.spots.at(sp).explog;
                     autocomput[sp] = params->locallab.spots.at(sp).autocompute;
@@ -865,7 +866,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
       //  if ((todo & (M_LUMINANCE + M_COLOR)) || (todo & M_AUTOEXP)) {
         //    if (todo & M_RGBCURVE) {
         if (((todo & (M_AUTOEXP | M_RGBCURVE)) || (todo & M_CROP)) && params->locallab.enabled && !params->locallab.spots.empty()) {
-            
+
             ipf.rgb2lab(*oprevi, *oprevl, params->icm.workingProfile);
 
             nprevl->CopyFrom(oprevl);
@@ -964,7 +965,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool llmaslogutili = locllmaslogCurve.Set(params->locallab.spots.at(sp).LLmaskcurveL);
                 const bool lcmaslogutili = locccmaslogCurve.Set(params->locallab.spots.at(sp).CCmaskcurveL);
                 const bool lhmaslogutili = lochhmaslogCurve.Set(params->locallab.spots.at(sp).HHmaskcurveL);
-                
+
                 const bool lcmas_utili = locccmas_Curve.Set(params->locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params->locallab.spots.at(sp).LLmask_curve);
                 const bool lhmas_utili = lochhmas_Curve.Set(params->locallab.spots.at(sp).HHmask_curve);
@@ -1053,7 +1054,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int xxe = xend * ww;
                 int yys = ysta * hh;
                 int yye = yend * hh;
-                        
+
                 if(istm) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
                     ipf.mean_sig (nprevl->L, meantme, stdtme, xxs, xxe, yys, yye);
                 }
@@ -1073,7 +1074,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float stdtm = stdtms[sp] = stdtme;
                 float meanreti = meanretis[sp] = meanretie;
                 float stdreti = stdretis[sp] = stdretie;
-                
+
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 sca);
@@ -1125,7 +1126,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                               locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
                               locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
-                              
+
                               locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
                               lochhhmas_Curve, lhhmas_utili,
                               loclmasCurveblwav, lmasutiliblwav,
@@ -1145,13 +1146,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               meantm, stdtm, meanreti, stdreti);
 
 
-                
+
                 if(istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
                     ipf.mean_sig (savenormtm.get()->L, meanf, stdf, xxs, xxe, yys, yye);
-                    
-                    //using 2 unused variables  noiselumc and softradiustm  
+
+                    //using 2 unused variables  noiselumc and softradiustm
                     params->locallab.spots.at(sp).noiselumc = (int) meanf;
                     params->locallab.spots.at(sp).softradiustm = stdf ;
                 }
@@ -1160,7 +1161,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float meanf = 0.f;
                     float stdf = 0.f;
                     ipf.mean_sig (savenormreti.get()->L, meanf, stdf,xxs, xxe, yys, yye );
-                    //using 2 unused variables  sensihs and sensiv  
+                    //using 2 unused variables  sensihs and sensiv
                     params->locallab.spots.at(sp).sensihs = (int) meanf;
                     params->locallab.spots.at(sp).sensiv = (int) stdf;
                 }
@@ -1207,9 +1208,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //*************************************************************
             // end locallab
             //*************************************************************
-            
+
         }
-        
+
         if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
             //complexCurve also calculated pre-curves histogram depending on crop
             CurveFactory::complexCurve(params->toneCurve.expcomp, params->toneCurve.black / 65535.0,
@@ -1412,7 +1413,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool proedge = WaveParams.expedge;
                 bool profin = WaveParams.expfinal;
                 bool proton = WaveParams.exptoning;
-                bool pronois = WaveParams.expnoise; 
+                bool pronois = WaveParams.expnoise;
 
                 if(WaveParams.showmask) {
                  //   WaveParams.showmask = false;
@@ -1436,7 +1437,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expedge = false;
                     WaveParams.expfinal = false;
                     WaveParams.exptoning = false;
-                    WaveParams.expnoise = false; 
+                    WaveParams.expnoise = false;
                 }
 
                 ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, wavdenoise, wavdenoiseh, wavblcurve, waOpacityCurveRG, waOpacityCurveSH, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, scale);
@@ -1449,7 +1450,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     WaveParams.expfinal = profin;
                     WaveParams.exptoning = proton;
                     WaveParams.expnoise = pronois;
-                    
+
                     if (WaveParams.softrad > 0.f) {
 
                         array2D<float> ble(pW, pH);
@@ -1479,7 +1480,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 tmpImage->b(ir, jr) = Z;
                                 ble[ir][jr] = Y / 32768.f;
                             }
-    
+
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;
                         double aepsil = (epsilmax - epsilmin) / 100.f;
@@ -1505,11 +1506,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 Color::XYZ2Lab(X, Y, Z, L, a, b);
                                 nprevl->L[ir][jr] =  L;
                             }
-      
+
                     delete tmpImage;
 
                     }
-                    
+
                 }
 
                 if ((WaveParams.ushamethod == "sharp" || WaveParams.ushamethod == "clari")  && WaveParams.expclari && WaveParams.CLmethod != "all") {
@@ -1518,7 +1519,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float mL0;
                     float mC0;
                     float background = 0.f;
-                    int show = 0; 
+                    int show = 0;
 
 
 
@@ -1560,8 +1561,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     delete unshar;
                     unshar    = NULL;
-                    
-                    
+
+
 /*
                     if (WaveParams.softrad > 0.f) {
                         array2D<float> ble(pW, pH);
@@ -1606,7 +1607,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
                 }
-               
+
             }
 
             ipf.softLight(nprevl, params->softlight);
@@ -1689,7 +1690,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
               //      acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
                //     acListener->wbCamChanged(params->wb.temperature, 1.f);    //real temp and tint = 1.
                // }
-                
+
             } else {
                 // CIECAM is disabled, we free up its image buffer to save some space
                 if (ncie) {
@@ -2127,7 +2128,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
 // Issue 2500            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
             params->wb.method = "autold";//same result as before muliple Auto WB
-            
+
            // imgsrc->getAutoWBMultipliers(rm, gm, bm);
             double tempitc = 5000.;
             double greenitc = 1.;
@@ -2374,7 +2375,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         im = tempImage;
     }
 
-    im->setMetadata(MetadataInfo(imgsrc->getFileName()));
+    im->setMetadata(Exiv2Metadata(imgsrc->getFileName(), false));
 
     im->saveTIFF(fname, 16, false, true);
     delete im;
