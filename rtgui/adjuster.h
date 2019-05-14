@@ -83,87 +83,40 @@ public:
 
     int delay;
 
-    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = nullptr, Gtk::Image *imgIcon2 = nullptr, double2double_fun slider2value_ = nullptr, double2double_fun value2slider_ = nullptr);
+    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = nullptr, Gtk::Image *imgIcon2 = nullptr, double2double_fun slider2value = nullptr, double2double_fun value2slider = nullptr);
     ~Adjuster () override;
 
     // Add an "Automatic" checkbox next to the reset button.
-    void addAutoButton(Glib::ustring tooltip = "");
+    void addAutoButton(const Glib::ustring &tooltip = "");
     // Send back the value of og the Auto checkbox
-    bool getAutoValue ()
-    {
-        return automatic ? automatic->get_active() : false;
-    }
-    void setAutoValue (bool a);
-    bool notifyListenerAutoToggled ();
-    void autoToggled ();
-    void setAutoInconsistent (bool i)
-    {
-        if (automatic) {
-            automatic->set_inconsistent(i);
-        }
-    }
-    bool getAutoInconsistent () const
-    {
-        return automatic ? automatic->get_inconsistent() : true /* we have to return something */;
-    }
-
-    void setAdjusterListener (AdjusterListener* alistener)
-    {
-        adjusterListener = alistener;
-    }
-
+    bool getAutoValue() const;
+    void setAutoValue(bool a);
+    bool notifyListenerAutoToggled();
+    void autoToggled();
+    void setAutoInconsistent(bool i);
+    bool getAutoInconsistent() const;
+    void setAdjusterListener(AdjusterListener* alistener);
     // return the value trimmed to the limits at construction time
-    double getValue () const
-    {
-        return shapeValue(spin->get_value());
-    }
+    double getValue() const;
     // return the value trimmed to the limits at construction time
-    int getIntValue () const
-    {
-        return spin->get_value_as_int();
-    }
+    int getIntValue() const;
     // return the value trimmed to the limits at construction time,
     // method only used by the history manager, so decoration is added if addMode=true
-    Glib::ustring getTextValue () const
-    {
-        if (addMode) {
-            return Glib::ustring::compose("<i>%1</i>", spin->get_text());
-        } else {
-            return spin->get_text();
-        }
-    }
-
-    void setLabel (const Glib::ustring &lbl)
-    {
-        label->set_label(lbl);
-    }
+    Glib::ustring getTextValue() const;
+    void setLabel (const Glib::ustring &lbl);
     void setValue (double a);
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);
     void setDefault (double def);
     // will let the adjuster throw it's "changed" signal when the mouse button is released. Can work altogether with the delay value.
     void throwOnButtonRelease(bool throwOnBRelease = true);
-    void setNbDisplayedChars (int nbr)
-    {
-        spin->set_width_chars(nbr);
-        spin->set_max_width_chars(nbr);
-    }
     void setEditedState (EditedState eState);
     EditedState getEditedState ();
     void setDefaultEditedState (EditedState eState);
     void showEditedCB ();
-    bool block(bool isBlocked)
-    {
-        bool oldValue = blocked;
-        blocked = isBlocked;
-        return oldValue;
-    }
-
+    bool block(bool isBlocked);
     void setAddMode(bool addM);
-    bool getAddMode() const
-    {
-        return addMode;
-    };
+    bool getAddMode() const;
     void spinChanged ();
     void sliderChanged ();
     bool notifyListener ();
@@ -175,7 +128,6 @@ public:
     void trimValue (double &val) const;
     void trimValue (float &val) const;
     void trimValue (int &val) const;
-
     void setLogScale(double base, double pivot, bool anchorMiddle = false);
 };
 

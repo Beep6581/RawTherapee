@@ -25,16 +25,30 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-#define MIN_RESET_BUTTON_HEIGHT 17
 
 namespace {
+
+constexpr int MIN_RESET_BUTTON_HEIGHT = 17;
+
 double one2one(double val)
 {
     return val;
 }
 }
 
-Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1, Gtk::Image *imgIcon2, double2double_fun slider2value_, double2double_fun value2slider_) :
+Adjuster::Adjuster (
+    Glib::ustring vlabel,
+    double vmin,
+    double vmax,
+    double vstep,
+    double vdefault,
+    Gtk::Image *imgIcon1,
+    Gtk::Image *imgIcon2,
+    double2double_fun slider2value,
+    double2double_fun value2slider)
+
+    :
+
     adjustmentName(std::move(vlabel)),
     grid(nullptr),
     label(nullptr),
@@ -52,8 +66,8 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     logBase(0),
     logPivot(0),
     logAnchorMiddle(false),
-    value2slider(value2slider_ ? value2slider_ : one2one),
-    slider2value(slider2value_ ? slider2value_ : one2one),
+    value2slider(value2slider ? value2slider : &one2one),
+    slider2value(slider2value ? slider2value : &one2one),
     delay(options.adjusterMinDelay)
 
 {
@@ -156,13 +170,12 @@ Adjuster::~Adjuster ()
     delayConnection.block(true);
     adjusterListener = nullptr;
 
-    delete automatic;
 }
 
-void Adjuster::addAutoButton (Glib::ustring tooltip)
+void Adjuster::addAutoButton (const Glib::ustring &tooltip)
 {
     if (!automatic) {
-        automatic = new Gtk::CheckButton();
+        automatic = Gtk::manage(new Gtk::CheckButton());
         //automatic->add (*Gtk::manage (new RTImage ("gears.png")));
         automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
         setExpandAlignProperties(automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
@@ -302,8 +315,8 @@ void Adjuster::resetPressed (GdkEventButton* event)
 
 double Adjuster::shapeValue (double a) const
 {
-    const double pow10 = pow(10.0, digits);
-    const double val = round(a * pow10) / pow10;
+    const double pow10 = std::pow(10.0, digits);
+    const double val = std::round(a * pow10) / pow10;
     return val == -0.0 ? 0.0 : val;
 }
 
@@ -313,7 +326,7 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
     spinChange.block(true);
 
     double pow10 = vstep;
-    for (digits = 0; fabs(pow10 - floor(pow10)) > 0.000000000001; digits++, pow10 *= 10.0);
+    for (digits = 0; std::fabs(pow10 - floor(pow10)) > 0.000000000001; digits++, pow10 *= 10.0);
 
     const double shapeVal = shapeValue(vdefault);
     spin->set_digits(digits);
@@ -557,7 +570,6 @@ void Adjuster::showEditedCB ()
 
 void Adjuster::editedToggled ()
 {
-
     if (adjusterListener && !blocked) {
         adjusterListener->adjusterChanged(this, spin->get_value());
     }
@@ -567,26 +579,20 @@ void Adjuster::editedToggled ()
 
 void Adjuster::trimValue (double &val) const
 {
-
     val = rtengine::LIM(val, vMin, vMax);
-
 }
 
 void Adjuster::trimValue (int &val) const
 {
-
     val = rtengine::LIM<int>(val, vMin, vMax);
-
 }
 
 void Adjuster::trimValue (float &val) const
 {
-
     val = rtengine::LIM<float>(val, vMin, vMax);
-
 }
 
-inline double Adjuster::getSliderValue() const
+double Adjuster::getSliderValue() const
 {
     double val = slider->get_value();
     if (logBase) {
@@ -596,29 +602,28 @@ inline double Adjuster::getSliderValue() const
             if (val >= mmid) {
                 double range = vMax - mmid;
                 double x = (val - mmid) / range;
-                val = logPivot + (pow(logBase, x) - 1.0) / (logBase - 1.0) * (vMax - logPivot);
+                val = logPivot + (std::pow(logBase, x) - 1.0) / (logBase - 1.0) * (vMax - logPivot);
             } else {
                 double range = mmid - vMin;
                 double x = (mmid - val) / range;
-                val = logPivot - (pow(logBase, x) - 1.0) / (logBase - 1.0) * (logPivot - vMin);
+                val = logPivot - (std::pow(logBase, x) - 1.0) / (logBase - 1.0) * (logPivot - vMin);
             }
         } else {
             if (val >= logPivot) {
                 double range = vMax - logPivot;
                 double x = (val - logPivot) / range;
-                val = logPivot + (pow(logBase, x) - 1.0) / (logBase - 1.0) * range;
+                val = logPivot + (std::pow(logBase, x) - 1.0) / (logBase - 1.0) * range;
             } else {
                 double range = logPivot - vMin;
                 double x = (logPivot - val) / range;
-                val = logPivot - (pow(logBase, x) - 1.0) / (logBase - 1.0) * range;
+                val = logPivot - (std::pow(logBase, x) - 1.0) / (logBase - 1.0) * range;
             }
         }
     }
     return val;
 }
 
-
-inline void Adjuster::setSliderValue(double val)
+void Adjuster::setSliderValue(double val)
 {
     if (logBase) {
         if (logAnchorMiddle) {
@@ -626,27 +631,26 @@ inline void Adjuster::setSliderValue(double val)
             if (val >= logPivot) {
                 double range = vMax - logPivot;
                 double x = (val - logPivot) / range;
-                val = (vMin + mid) + log(x * (logBase - 1.0) + 1.0) / log(logBase) * mid;
+                val = (vMin + mid) + std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * mid;
             } else {
                 double range = logPivot - vMin;
                 double x = (logPivot - val) / range;
-                val = (vMin + mid) - log(x * (logBase - 1.0) + 1.0) / log(logBase) * mid;
+                val = (vMin + mid) - std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * mid;
             }
         } else {
             if (val >= logPivot) {
                 double range = vMax - logPivot;
                 double x = (val - logPivot) / range;
-                val = logPivot + log(x * (logBase - 1.0) + 1.0) / log(logBase) * range;
+                val = logPivot + std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * range;
             } else {
                 double range = logPivot - vMin;
                 double x = (logPivot - val) / range;
-                val = logPivot - log(x * (logBase - 1.0) + 1.0) / log(logBase) * range;
+                val = logPivot - std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * range;
             }
         }
     }
     slider->set_value(val);
 }
-
 
 void Adjuster::setLogScale(double base, double pivot, bool anchorMiddle)
 {
@@ -661,4 +665,62 @@ void Adjuster::setLogScale(double base, double pivot, bool anchorMiddle)
     
     sliderChange.block(false);
     spinChange.block(false);
+}
+
+bool Adjuster::getAutoValue() const
+{
+    return automatic ? automatic->get_active() : false;
+}
+
+void Adjuster::setAutoInconsistent(bool i)
+{
+    if (automatic) {
+        automatic->set_inconsistent(i);
+    }
+}
+
+bool Adjuster::getAutoInconsistent() const
+{
+    return automatic ? automatic->get_inconsistent() : true /* we have to return something */;
+}
+
+void Adjuster::setAdjusterListener (AdjusterListener* alistener)
+{
+    adjusterListener = alistener;
+}
+
+double Adjuster::getValue() const
+{
+    return shapeValue(spin->get_value());
+}
+
+int Adjuster::getIntValue() const
+{
+    return spin->get_value_as_int();
+}
+
+Glib::ustring Adjuster::getTextValue() const
+{
+    if (addMode) {
+        return Glib::ustring::compose("<i>%1</i>", spin->get_text());
+    } else {
+        return spin->get_text();
+    }
+}
+
+void Adjuster::setLabel(const Glib::ustring &lbl)
+{
+    label->set_label(lbl);
+}
+
+bool Adjuster::block(bool isBlocked)
+{
+    bool oldValue = blocked;
+    blocked = isBlocked;
+    return oldValue;
+}
+
+bool Adjuster::getAddMode() const
+{
+    return addMode;
 }
