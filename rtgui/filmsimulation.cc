@@ -8,8 +8,6 @@
 
 #include "../rtengine/clutstore.h"
 #include "../rtengine/procparams.h"
-#define BENCHMARK
-#include "../rtengine/StopWatch.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -307,7 +305,6 @@ ClutComboBox::ClutModel::ClutModel(const Glib::ustring &path)
 
 int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
 {
-    BENCHFUNMICRO
     if (path.empty() || !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
         return 0;
     }
