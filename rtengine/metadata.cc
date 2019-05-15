@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 #include <glib/gstdio.h>
+#include <iostream>
+
 #include "metadata.h"
 #include "settings.h"
 #include "../rtgui/version.h"
@@ -65,7 +67,7 @@ Exiv2Metadata::Exiv2Metadata():
 
 
 Exiv2Metadata::Exiv2Metadata(const Glib::ustring &path):
-    src_(""),
+    src_(path),
     merge_xmp_(settings->metadata_xmp_sync != Settings::MetadataXmpSync::NONE),
     image_(nullptr),
     exif_(new rtengine::procparams::ExifPairs),
@@ -154,20 +156,27 @@ void Exiv2Metadata::setIptc(const rtengine::procparams::IPTCPairs &iptc)
 
 void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst) const
 {
-    auto xmp = getXmpSidecar(src_);
-    Exiv2::ExifData exif;
-    Exiv2::IptcData iptc;
-    Exiv2::moveXmpToExif(xmp, exif);
-    Exiv2::moveXmpToIptc(xmp, iptc);
+    try { 
+        auto xmp = getXmpSidecar(src_);
+        Exiv2::ExifData exif;
+        Exiv2::IptcData iptc;
+        Exiv2::moveXmpToIptc(xmp, iptc);
+        Exiv2::moveXmpToExif(xmp, exif);
 
-    for (auto &datum : exif) {
-        dst->exifData()[datum.key()] = datum;
-    }
-    for (auto &datum : iptc) {
-        dst->iptcData()[datum.key()] = datum;
-    }
-    for (auto &datum : xmp) {
-        dst->xmpData()[datum.key()] = datum;
+        for (auto &datum : exif) {
+            dst->exifData()[datum.key()] = datum;
+        }
+        for (auto &datum : iptc) {
+            dst->iptcData()[datum.key()] = datum;
+        }
+        for (auto &datum : xmp) {
+            dst->xmpData()[datum.key()] = datum;
+        }
+    } catch (Exiv2::AnyError &exc) {
+        if (settings->verbose) {
+            std::cerr << "Error loading metadata from XMP sidecar: "
+                      << exc.what() << std::endl;
+        }
     }
 }
 
@@ -286,6 +295,18 @@ Exiv2::XmpData Exiv2Metadata::getXmpSidecar(const Glib::ustring &path)
         ret = image->xmpData();
     }
     return ret;
+}
+
+
+void Exiv2Metadata::init()
+{
+    Exiv2::XmpParser::initialize();
+}
+
+
+void Exiv2Metadata::cleanup()
+{
+    Exiv2::XmpParser::terminate();
 }
 
 } // namespace rtengine
