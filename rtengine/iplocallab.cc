@@ -1112,6 +1112,43 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     }
 }
 
+void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, double epsilmax, double epsilmin,  float thres, int sk, bool multiThread)
+{
+                    if (rad > 0.f) {
+                        array2D<float> ble(bfw, bfh);
+                        array2D<float> guid(bfw, bfh);
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                ble[ir][jr] = (bufcolfin->L[ir][jr]) / 32768.f;
+                                guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
+                            }
+
+                    //    double epsilmax = 0.0001;
+                    //    double epsilmin = 0.00001;
+                        double aepsil = (epsilmax - epsilmin) / 90.f;
+                        double bepsil = epsilmax - 100.f * aepsil;
+                        double epsil = aepsil * rad + bepsil;
+
+                        float blur = 10.f / sk * (thres + 0.8f * rad);
+                        rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
+
+
+
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
+                            }
+                    }
+}
+
+
 void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &buflight, float rad, int bfh, int bfw, int sk, bool multiThread)
 {
     float minlig = buflight[0][0];
@@ -6266,7 +6303,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                             }
                         }
-
+                        
+                        if (lp.softradiusexp > 0.f) {
+                            softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                        }
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -6279,7 +6319,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                         if (lp.softradiusexp > 0.f) {
-                            softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
+                       //     softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
                         }
                     }
                     bufexpfin.reset();
@@ -6317,6 +6357,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufcolorig;
+                std::unique_ptr<LabImage> bufcolfin;
                 std::unique_ptr<LabImage> bufmaskblurcol;
                 std::unique_ptr<LabImage> originalmaskcol;
 
@@ -6350,6 +6391,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                     float meansob = 0.f;
                     bufcolorig.reset(new LabImage(bfw, bfh));
+                    bufcolfin.reset(new LabImage(bfw, bfh));
 
                     if (lp.showmaskcolmet == 2  || lp.enaColorMask || lp.showmaskcolmet == 3 || lp.showmaskcolmet == 5) {
                         bufmaskblurcol.reset(new LabImage(bfw, bfh, true));
@@ -6363,6 +6405,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int y = 0; y < bfh ; y++) {
                         for (int x = 0; x < bfw; x++) {
                             bufcolorig->L[y][x] = original->L[y + ystart][x + xstart];
+                            bufcolfin->L[y][x] = original->L[y + ystart][x + xstart];
                         }
                     }
 
@@ -6610,16 +6653,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 }
 
-                                buflight[ir][jr] = CLIPRET((bufcolcalcL - bufcolorig->L[ir][jr]) / 328.f);
+                               // buflight[ir][jr] = CLIPRET((bufcolcalcL - bufcolorig->L[ir][jr]) / 328.f);
                                 buf_a[ir][jr] = CLIPRET((bufcolcalca - bufcolorig->a[ir][jr]) / 328.f);;
                                 buf_b[ir][jr] = CLIPRET((bufcolcalcb - bufcolorig->b[ir][jr]) / 328.f);;
-
+                                bufcolfin->L[ir][jr] = bufcolcalcL;
 
                             }
 
                         if (lp.softradiuscol > 0.f) {
-                            softprocess(bufcolorig.get(), buflight, lp.softradiuscol, bfh, bfw, sk, multiThread);
+                            softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                          //  softprocess(bufcolorig.get(), buflight, lp.softradiuscol, bfh, bfw, sk, multiThread);
                         }
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                buflight[ir][jr] = CLIPRET((bufcolfin->L[ir][jr] - bufcolorig->L[ir][jr]) / 328.f);
+                            }
 
                     }
 
