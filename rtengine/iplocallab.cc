@@ -5901,7 +5901,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         maxL = rtengine::max(maxL, buflight[ir][jr]);
                     }
                 }
-printf("minLlab=%f maxllab=%f\n", minL, maxL);
                 float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
 
 

@@ -848,12 +848,10 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 {
     BENCHFUN
     bool py = true;
-//printf("msrllretimask=%i\n", llretiMask);
     if (py) {//enabled
         float         mean, stddv, maxtr, mintr;
         float         delta;
         constexpr float eps = 2.f;
-        //   constexpr bool useHsl = false; //never used
         constexpr bool useHslLin = false;//never used
         const float offse = 0.f; //loc.offs;
         const float chrT = (float)(loc.spots.at(sp).chrrt) / 100.f;
@@ -862,7 +860,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         const float strength = loc.spots.at(sp).str / 100.f; // Blend with original L channel data
         float limD = 10.f;//(float) loc.limd;
         limD = pow(limD, 1.7f);  //about 2500 enough
-        //limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
         const float elogt = 2.71828f;
 
@@ -893,7 +890,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         constexpr auto maxRetinexScales = 8;
         float RetinexScales[maxRetinexScales];
 
-      //  retinex_scales(RetinexScales, scal, moderetinex, nei, high);
         retinex_scales(RetinexScales, scal, moderetinex, nei, high);
 
 
@@ -906,14 +902,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             src[i] = &srcBuffer[i * W_L];
         }
 
-        float hi = 0.f;
-        float lo = 0.f;
-        const float shHighlights = (100.f - 0.f) / 100.f; //loc.highlights
-        const float shShadows = (100.f - 0.f) / 100.f; //loc.shadows
-        const int mapmet = (hi > 0 || lo > 0) ? 4 : 0;
-        //  const double shradius = mapmet == 4 ? loc.radius : 40.;
-        const double shradius = mapmet == 4 ? 40 : 40.;
-        constexpr int it = 1;//in case of !!
 
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -939,7 +927,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             pond /= log(elogt);
         }
 
-        auto shmap = mapmet == 4 ? new SHMap(W_L, H_L) : nullptr;
 
         float *buffer = new float[W_L * H_L];
 
@@ -955,70 +942,13 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 } else   // reuse result of last iteration
                 {
                     // out was modified in last iteration => restore it
-                    if (((mapmet == 4)) && it == 1) {
-
-#ifdef _OPENMP
-                        #pragma omp for
-#endif
-
-                        for (int i = 0; i < H_L; i++) {
-                            for (int j = 0; j < W_L; j++) {
-                                out[i][j] = buffer[i * W_L + j];
-                            }
-                        }
-                    }
 
                     gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                 }
-
-                if ((mapmet == 4) && it == 1 && scale > 0)
-                {
-                    // out will be modified => store it for use in next iteration. We even don't need a new buffer because 'buffer' is free after gaussianBlur :)
-#ifdef _OPENMP
-                    #pragma omp for
-#endif
-
-                    for (int i = 0; i < H_L; i++) {
-                        for (int j = 0; j < W_L; j++) {
-                            buffer[i * W_L + j] = out[i][j];
-                        }
-                    }
-                }
             }
 
-            float h_th, s_th;
-            float h_thcomp, s_thcomp;
-
-            if ((mapmet == 4) && it == 1) {
-                shmap->updateL(out, shradius, true, 1);
-                h_thcomp = 0.f;//shmap->max_f - loc.htonalwidth * (shmap->max_f - shmap->avg) / 100.f;
-                h_th = h_thcomp - (shHighlights * h_thcomp);
-                s_thcomp = 0.f;//loc.stonalwidth * (shmap->avg - shmap->min_f) / 100.f;
-                s_th = s_thcomp - (shShadows * s_thcomp);
-            }
-
-            if ((mapmet == 4) && it == 1) {
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int i = 0; i < H_L; i++) {
-                    for (int j = 0; j < W_L; j++) {
-                        float mapval = 1.f + shmap->map[i][j];
-
-                        if (mapval > h_thcomp) {
-                            out[i][j] *= h_th / mapval + shHighlights;
-                        } else if (mapval < s_thcomp) {
-                            out[i][j] *= s_th / mapval + shShadows;
-                        }
-                    }
-                }
-
-            }
 
         if(lum == 1 && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) {//only mask with luminance
-       // printf("OK masques\n");
             array2D<float> loctemp(W_L, H_L);
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);
@@ -1037,22 +967,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     }
                 }
                 
-                float minL = loctemp[0][0];
-                float maxL = minL;
-#ifdef _OPENMP
-                #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16)
-#endif
-
-                for (int ir = 0; ir < H_L; ir++) {
-                    for (int jr = 0; jr < W_L; jr++) {
-                        minL = rtengine::min(minL, loctemp[ir][jr]);
-                        maxL = rtengine::max(maxL, loctemp[ir][jr]);
-                    }
-                }
-                
-               // printf("minL=%f maxL=%f\n", minL, maxL);
                 float fab = 4000.f;//value must be good in most cases
-              //  fab *= (1.f + 0.01f * loc.spots.at(sp).chromaskreti);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -1145,7 +1060,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                         for (int x = 0; x < W_L; x++) {
                             if(retiMasktmap){
                                 out[y][x] += fabs(modr) * bufmaskorigreti->L[y][x];
-                                out[y][x] = LIM(out[y][x],0.f,60000.f);
+                                out[y][x] = LIM(out[y][x],0.f,100000.f);
                             } else {
                                 bufreti->L[y][x] +=  bufmaskorigreti->L[y][x] * modr;
                                 bufreti->L[y][x] = CLIPLOC(bufreti->L[y][x]);
@@ -1174,12 +1089,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     }
 
                 }
-
-
 }
-
-
-
 
 #ifdef __SSE2__
             vfloat pondv = F2V(pond);
@@ -1241,14 +1151,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
                     luminance[i][j]= ble[i][j] * 32768.f;
-                  //  printf("lu=%f ", luminance[i][j]);
                 }
-
-        if (shmap) {
-            delete shmap;
-        }
-
-        shmap = nullptr;
 
         delete [] buffer;
         delete [] outBuffer;
@@ -1257,99 +1160,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         mean = 0.f;
         stddv = 0.f;
 
-
-
-
-
-        mean = 0.f;
-        stddv = 0.f;
-
         mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
    //     printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
-
-        //  mean_stddv( luminance, mean, stddv, W_L, H_L, logBetaGain, maxtr, mintr);
-
-        bool retcurve = false;//wavRETCcurve
-
-        if (retcurve && mean != 0.f && stddv != 0.f) { //if curve
-            float asig = 0.166666f / stddv;
-            float bsig = 0.5f - asig * mean;
-            float amax = 0.333333f / (maxtr - mean - stddv);
-            float bmax = 1.f - amax * maxtr;
-            float amin = 0.333333f / (mean - stddv - mintr);
-            float bmin = -amin * mintr;
-
-            asig *= 500.f;
-            bsig *= 500.f;
-            amax *= 500.f;
-            bmax *= 500.f;
-            amin *= 500.f;
-            bmin *= 500.f;
-            /*
-            #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-            #endif
-
-                        for (int i = 0; i < H_L; i++ )
-                            for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
-                                float absciss;
-
-                                if (LIKELY (fabsf (luminance[i][j] - mean) < stddv)) {
-                                    absciss = asig * luminance[i][j] + bsig;
-                                } else if (luminance[i][j] >= mean) {
-                                    absciss = amax * luminance[i][j] + bmax;
-                                } else {
-                                    absciss = amin * luminance[i][j] + bmin;
-                                }
-
-                                // luminance[i][j] *= (-1.f + 4.f * wavRETCcurve[absciss]); //new transmission
-                            }
-            */
-            // median filter on transmission  ==> reduce artifacts
-            bool ty = false;
-
-            if (ty) {//not used here to simplify interface
-                int wid = W_L;
-                int hei = H_L;
-                float *tmL[hei] ALIGNED16;
-                float *tmLBuffer = new float[wid * hei];
-                int borderL = 1;
-
-                for (int i = 0; i < hei; i++) {
-                    tmL[i] = &tmLBuffer[i * wid];
-                }
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int i = borderL; i < hei - borderL; i++) {
-                    // float pp[9], temp;
-
-                    for (int j = borderL; j < wid - borderL; j++) {
-                        tmL[i][j] = median(luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1]);  //3x3
-                    }
-                }
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int i = borderL; i < hei - borderL; i++) {
-                    for (int j = borderL; j < wid - borderL; j++) {
-                        luminance[i][j] = tmL[i][j];
-                    }
-                }
-
-                delete [] tmLBuffer;
-
-            }
-
-            // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
-            //  mean_stddv( luminance, mean, stddv, W_L, H_L, 1.f, maxtr, mintr);
-            mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-
-        }
 
         float epsil = 0.1f;
 
@@ -1366,7 +1178,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         }
 
         delta = maxi - mini;
-        printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
+       // printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
         if (!delta) {
             delta = 1.0f;
@@ -1413,7 +1225,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             cdfactor *= 2.f;
         }
 
-
         const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
         float str = strength * (chrome == 0 ? 1.f : chrT);
 #ifdef _OPENMP
@@ -1448,8 +1259,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     cdmax = cd > cdmax ? cd : cdmax;
                     cdmin = cd < cdmin ? cd : cdmin;
                     luminance[i][j] = LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
-                    //   templ[i][j] = LIM( cd, 0.f, maxclip ) * str + (1.f - str) * originalLuminance[i][j];
-                    //  luminance[i][j] = LIM( cd, 0.f, maxclip );
                 }
 
 #ifdef _OPENMP
@@ -1466,11 +1275,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         Tsigma = stddv;
         Tmin = mintr;
         Tmax = maxtr;
-
-
     }
-
-
-
 }
 }
