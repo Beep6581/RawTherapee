@@ -1126,8 +1126,6 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
                                 guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
                             }
 
-                    //    double epsilmax = 0.0001;
-                    //    double epsilmin = 0.00001;
                         double aepsil = (epsilmax - epsilmin) / 90.f;
                         double bepsil = epsilmax - 100.f * aepsil;
                         double epsil = aepsil * rad + bepsil;
@@ -5077,27 +5075,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     */
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
-
                     if (lp.softradiuscb > 0.f) {
-                        array2D<float> ble(bfw, bfh);
-                        array2D<float> guid(bfw, bfh);
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                ble[ir][jr] = (loctemp->L[ir][jr]  - origcbdl->L[ir][jr]) / 32768.f;
-                                guid[ir][jr] = origcbdl->L[ir][jr] / 32768.f;
-                            }
-
-                        rtengine::guidedFilter(guid, ble, ble, (lp.softradiuscb * 2.f / sk), 0.001, multiThread);
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                loctemp->L[ir][jr] =  origcbdl->L[ir][jr] + 32768.f * ble[ir][jr];
-                            }
+                        softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
                     }
 
                 }
@@ -5346,6 +5325,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 */
+/*
+                    if (lp.softradiustm > 0.f) {
+                      softproc(bufgb.get(), tmp1.get(), lp.softradiustm, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+
+ //                       guidedFilter(guid, ble, ble, 0.1f * lp.softradiustm / sk, 0.0001, multiThread);
+                     //   softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
+                    }
+*/
+
                     float minL = tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;
                     float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
