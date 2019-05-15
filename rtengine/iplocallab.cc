@@ -2398,7 +2398,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                             diflc = 328.f * realstrdE;
                             diflc *= localFactor;
                             if(!showmas) transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
-                            else  transformed->L[y][x] = bufmask->L[loy - begy][lox - begx]; ; //bufexporig->L[loy - begy][lox - begx];
+                            else  transformed->L[y][x] =  bufmask->L[loy - begy][lox - begx]; ; //bufexporig->L[loy - begy][lox - begx];
                             if(retishow) {
                                 transformed->L[y][x] = CLIP(12000.f + diflc);
                             }
