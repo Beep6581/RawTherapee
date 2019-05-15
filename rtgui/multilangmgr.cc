@@ -179,7 +179,7 @@ void MultiLangMgr::load(const Glib::ustring &language, const std::vector<Glib::u
                      value.replace(pos, 2, "\n");
                      pos++;
                 }
-                hint = translations.emplace_hint(hint, key, value);
+                hint = translations.emplace_hint(hint, std::move(key), std::move(value));
             }
         }
     }

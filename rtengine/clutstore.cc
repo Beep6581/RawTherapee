@@ -270,7 +270,8 @@ void rtengine::HaldCLUT::splitClutFilename(
     const Glib::ustring& filename,
     Glib::ustring& name,
     Glib::ustring& extension,
-    Glib::ustring& profile_name
+    Glib::ustring& profile_name,
+    bool checkProfile
 )
 {
     Glib::ustring basename = Glib::path_get_basename(filename);
@@ -284,17 +285,19 @@ void rtengine::HaldCLUT::splitClutFilename(
         name = basename;
     }
 
-    profile_name = "sRGB";
+    if (checkProfile) {
+        profile_name = "sRGB";
 
-    if (!name.empty()) {
-        for (const auto& working_profile : rtengine::ICCStore::getInstance()->getWorkingProfiles()) {
-            if (
-                !working_profile.empty() // This isn't strictly needed, but an empty wp name should be skipped anyway
-                && std::search(name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend()) == name.rbegin()
-            ) {
-                profile_name = working_profile;
-                name.erase(name.size() - working_profile.size());
-                break;
+        if (!name.empty()) {
+            for (const auto& working_profile : rtengine::ICCStore::getInstance()->getWorkingProfiles()) {
+                if (
+                    !working_profile.empty() // This isn't strictly needed, but an empty wp name should be skipped anyway
+                    && std::search(name.rbegin(), name.rend(), working_profile.rbegin(), working_profile.rend()) == name.rbegin()
+                ) {
+                    profile_name = working_profile;
+                    name.erase(name.size() - working_profile.size());
+                    break;
+                }
             }
         }
     }

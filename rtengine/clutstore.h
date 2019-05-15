@@ -39,7 +39,8 @@ public:
         const Glib::ustring& filename,
         Glib::ustring& name,
         Glib::ustring& extension,
-        Glib::ustring& profile_name
+        Glib::ustring& profile_name,
+        bool checkProfile = true
     );
 
 private:
