@@ -1282,11 +1282,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
         for (int ir = 0; ir < lab->H; ir++)
             for (int jr = 0; jr < lab->W; jr++) {
-                ble[ir][jr] = (dst->L[ir][jr]  - provradius->L[ir][jr]) / 32768.f;
+                ble[ir][jr] = dst->L[ir][jr] / 32768.f;
                 guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
             }
 
-    //    float blur = 10.f / skip * (0.1f + 0.1f * waparams.softradend);
         double epsilmax = 0.001;
         double epsilmin = 0.0001;
         double aepsil = (epsilmax - epsilmin) / 90.f;
@@ -1305,7 +1304,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
         for (int ir = 0; ir < lab->H; ir++)
             for (int jr = 0; jr < lab->W; jr++) {
-                dst->L[ir][jr] =  provradius->L[ir][jr] + 32768.f * ble[ir][jr];
+                dst->L[ir][jr] = 32768.f * ble[ir][jr];
             }
     }
 
