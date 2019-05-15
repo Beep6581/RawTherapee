@@ -364,7 +364,7 @@ int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
     }
 
     // Fill menu structure with CLUT files
-    std::set<Glib::ustring> entries;
+    std::set<std::string> entries;
 
     unsigned long fileCount = 0;
 
@@ -390,10 +390,10 @@ int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
             Glib::ustring name;
             Glib::ustring extension;
             Glib::ustring profileName;
-            HaldCLUT::splitClutFilename (entry, name, extension, profileName);
+            HaldCLUT::splitClutFilename (entry, name, extension, profileName, false);
 
             extension = extension.casefold();
-            if (extension.compare("tif") != 0 && extension.compare("png") != 0) {
+            if (extension != "png" && extension != "tif") {
                 continue;
             }
 
