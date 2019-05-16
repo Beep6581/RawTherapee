@@ -458,8 +458,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0;
     lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0;
-    lp.enaretiMask = locallab.spots.at(sp).enaretiMask;// && llretiMask == 0 ;// && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0;
-    if(lp.enaretiMask) printf("lp.enaretiMasktrue\n"); else printf("lp.enaretiMaskfalse\n");
+    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0;
+   // if(lp.enaretiMask) printf("lp.enaretiMasktrue\n"); else printf("lp.enaretiMaskfalse\n");
 
 
     if (locallab.spots.at(sp).blurMethod == "norm") {
@@ -2296,7 +2296,7 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
     }
 }
 
-void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufexporig, LabImage * bufmask, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     BENCHFUN {
@@ -2316,9 +2316,12 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         float kab = 1.f;
         balancedeltaE(kL, kab);
         bool showmas = false ;
-        if(lp.showmaskretimet == 3) showmas = true;
+        if(lp.showmaskretimet == 3) {
+            showmas = true;
+        }
         std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
         const float radius = 3.f / sk;
+        const bool usemaskreti = (lp.showmaskretimet == 2 || lp.enaretiMask || lp.showmaskretimet == 4) && senstype == 4  && !lp.enaretiMasktmap;
 
 #ifdef _OPENMP
         #pragma omp parallel
@@ -2327,7 +2330,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
             gaussianBlur(original->L, origblur->L, GW, GH, radius);
             gaussianBlur(original->a, origblur->a, GW, GH, radius);
             gaussianBlur(original->b, origblur->b, GW, GH, radius);
-
         }
 
 
@@ -2374,9 +2376,12 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                     }
 
                     float rL = origblur->L[y][x] / 327.68f;
-
-                    const float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-
+                    float dE;
+                    if(!usemaskreti) {
+                        dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
+                    } else {
+                        dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
+                    }
                     float cli = buflight[loy - begy][lox - begx];
                     //float clc = bufchro[loy - begy][lox - begx];
                     float clc = previewreti ? settings->previewselection * 100.f : bufchro[loy - begy][lox - begx];
@@ -5747,6 +5752,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             LabImage *bufreti = nullptr;
             LabImage *bufmask = nullptr;
+            LabImage *buforig = nullptr;
+            LabImage *buforigmas = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
             array2D<float> buflight(bfw, bfh);
@@ -5762,6 +5769,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 Wd = bfw;
                 bufreti = new LabImage(bfw, bfh);
                 bufmask = new LabImage(bfw, bfh);
+                if(!lp.enaretiMasktmap && lp.enaretiMask) {
+                    buforig = new LabImage(bfw, bfh);
+                    buforigmas = new LabImage(bfw, bfh);
+                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -5797,6 +5808,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufmask->L[loy - begy][lox - begx] = original->L[y][x];
                             bufmask->a[loy - begy][lox - begx] = original->a[y][x];
                             bufmask->b[loy - begy][lox - begx] = original->b[y][x];
+                            if(!lp.enaretiMasktmap && lp.enaretiMask) {
+                                buforig->L[loy - begy][lox - begx] = original->L[y][x];
+                                buforig->a[loy - begy][lox - begx] = original->a[y][x];
+                                buforig->b[loy - begy][lox - begx] = original->b[y][x];
+                            }
                         }
                     }
 
@@ -5901,7 +5917,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-            ImProcFunctions::MSRLocal(sp, 1, bufreti, bufmask, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+            ImProcFunctions::MSRLocal(sp, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
             locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -5939,7 +5955,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                    // softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
                 }
 
-                transit_shapedetect_retinex(4, bufreti, bufmask, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect_retinex(4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                 
             } else {
                 InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
@@ -5973,7 +5989,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                 }
 
-                ImProcFunctions::MSRLocal(sp, 0, bufreti, bufmask, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                ImProcFunctions::MSRLocal(sp, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                    locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 
                 if (!lp.invret && call <= 3) {
@@ -6033,7 +6049,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                 if (!lp.invret) {
-                        transit_shapedetect_retinex(5, tmpl, bufmask, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect_retinex(5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                 } else {
                     InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
                 }
@@ -6045,6 +6061,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             delete [] origBuffer1;
             if (bufmask) {
                 delete bufmask;
+            }
+            if(!lp.enaretiMasktmap && lp.enaretiMask) {
+                if (buforig) {
+                    delete buforig;
+                }
+                if (buforigmas) {
+                    delete buforigmas;
+                }
             }
             if (bufreti) {
                 delete  bufreti;

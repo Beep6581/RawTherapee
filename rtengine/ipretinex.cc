@@ -843,7 +843,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
     }
 }
 
-void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * bufmask, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
+void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
  const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, LabImage * transformed, bool retiMasktmap, bool retiMask)
 {
     BENCHFUN
@@ -1050,9 +1050,9 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                         gaussianBlur(bufmaskblurreti->b, bufmaskorigreti->b, W_L, H_L, 1.f + (0.5f * loc.spots.at(sp).radmaskreti) / skip);
                     }
 
+                    float modr = 0.01f * (float) loc.spots.at(sp).blendmaskreti;
 
                 if(llretiMask != 3 && retiMask) {
-                    float modr = 0.01f * (float) loc.spots.at(sp).blendmaskreti;
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -1073,8 +1073,41 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                             bufreti->b[y][x] = CLIPC(bufreti->b[y][x]);
                         }
                     }
-                } 
-                
+                }
+                if(!retiMasktmap  && retiMask) {//new original blur mask for deltaE
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < H_L; y++) {
+                        for (int x = 0; x < W_L; x++) {
+
+                            buforig->L[y][x] += (modr * bufmaskorigreti->L[y][x]);
+                            buforig->a[y][x] *= (1.f + modr * bufmaskorigreti->a[y][x]);
+                            buforig->b[y][x] *= (1.f + modr * bufmaskorigreti->b[y][x]);
+
+                            buforig->L[y][x] = CLIP(buforig->L[y][x]);
+                            buforig->a[y][x] = CLIPC(buforig->a[y][x]);
+                            buforig->b[y][x] = CLIPC(buforig->b[y][x]);
+
+                            buforig->L[y][x] = CLIP(buforig->L[y][x] - bufmaskorigreti->L[y][x]);
+                            buforig->a[y][x] = CLIPC(buforig->a[y][x] * (1.f - bufmaskorigreti->a[y][x]));
+                            buforig->b[y][x] = CLIPC(buforig->b[y][x] * (1.f - bufmaskorigreti->b[y][x]));
+                        }
+                    }
+                    
+                float radius = 3.f / skip;
+
+#ifdef _OPENMP
+                #pragma omp parallel if (multiThread)
+#endif
+                    {
+                        gaussianBlur(buforig->L, buforigmas->L, W_L, H_L, radius);
+                        gaussianBlur(buforig->a, buforigmas->a, W_L, H_L, radius);
+                        gaussianBlur(buforig->b, buforigmas->b, W_L, H_L, radius);
+                    }
+                    
+                }
+
                 if(llretiMask == 3){
 
 #ifdef _OPENMP
@@ -1110,7 +1143,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     for (; j < W_L - 3; j += 4) {
                         _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  (vclampf(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
                     }
-                } else {//always Lab mode due to Wavelet
+                } else {
                     for (; j < W_L - 3; j += 4) {
                         _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv *  xlogf(vclampf(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv) ));
                     }
