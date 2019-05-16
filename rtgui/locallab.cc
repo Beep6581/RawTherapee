@@ -1035,7 +1035,7 @@ Locallab::Locallab():
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
         }
 
-        multiplier[i] = Gtk::manage(new Adjuster(ss, 0.0, 4.0, 0.01, 1.0));
+        multiplier[i] = Gtk::manage(new Adjuster(std::move(ss), 0.0, 4.0, 0.01, 1.0));
         multiplier[i]->setAdjusterListener(this);
     }
 
