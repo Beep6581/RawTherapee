@@ -28,7 +28,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 
-BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RAW_LABEL"), true)
+BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar)
 {
 
     auto m = ProcEventMapper::getInstance();

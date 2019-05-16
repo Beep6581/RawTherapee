@@ -27,7 +27,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP_RAW_LABEL"), true)
+XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar)
 {
     auto m = ProcEventMapper::getInstance();
     EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
