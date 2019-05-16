@@ -28,7 +28,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", M("TP_PREPROCESS_LABEL"), true)
+BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", M("TP_PREPROCESS_LABEL"), options.prevdemo != PD_Sidecar)
 {
     auto m = ProcEventMapper::getInstance();
     EvLineDenoiseDirection = m->newEvent(DARKFRAME, "HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION");
