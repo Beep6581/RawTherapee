@@ -3408,13 +3408,7 @@ void Locallab::inversshaChanged()
     }
 
     // Update Sharpening GUI according to inverssha button state (to be compliant with updateSpecificGUIState function)
-    if (multiImage && inverssha->get_inconsistent()) {
-        sensisha->show();
-    } else if (inverssha->get_active()) {
-        sensisha->show();
-    } else {
-        sensisha->show();
-    }
+    sensisha->show();
 
     if (getEnabled() && expsharp->getEnabled()) {
         if (listener) {
@@ -5557,41 +5551,34 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 void Locallab::updateSpecificGUIState()
 {
     // Update Color & Light GUI according to invers button state (to be compliant with inversChanged function)
+    sensi->show();
+    llCurveEditorG->show();
+    curvactiv->hide();
+    blurcolde->show();
+
     if (multiImage && invers->get_inconsistent()) {
-        sensi->show();
-        llCurveEditorG->show();
         HCurveEditorG->show();
-        curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
         expmaskcol->show();
         structcol->show();
-        blurcolde->show();
         softradiuscol->show();
         showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         gridFrame->hide();
     } else if (invers->get_active()) {
-        sensi->show();
-        llCurveEditorG->show();
         HCurveEditorG->hide();
-        curvactiv->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
         expmaskcol->hide();
         softradiuscol->hide();
         structcol->hide();
-        blurcolde->show();
         gridFrame->hide();
     } else {
-        sensi->show();
-        llCurveEditorG->show();
         HCurveEditorG->show();
-        curvactiv->hide();
         qualitycurveMethod->show();
         labqualcurv->show();
         expmaskcol->show();
         structcol->show();
-        blurcolde->show();
         gridFrame->show();
         softradiuscol->show();
 
@@ -5601,27 +5588,19 @@ void Locallab::updateSpecificGUIState()
     }
 
     // Update Exposure GUI according to black adjuster state (to be compliant with adjusterChanged function)
+    sensiex->show();
+    curveEditorG->show();
+    blurexpde->show();
+
     if (multiImage && inversex->get_inconsistent()) {
-        sensiex->show();
-        curveEditorG->show();
-    //    maskexpFrame->show();
         structexp->show();
-        blurexpde->show();
         softradiusexp->show();
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
-        sensiex->show();
-        curveEditorG->show();
-    //    maskexpFrame->hide();
         structexp->hide();
-        blurexpde->show();
         softradiusexp->hide();
     } else {
-        sensiex->show();
-        curveEditorG->show();
-    //    maskexpFrame->show();
         structexp->show();
-        blurexpde->show();
         softradiusexp->show();
 
         if (batchMode) {
@@ -5630,23 +5609,12 @@ void Locallab::updateSpecificGUIState()
     }
 
     // Update SH GUI according to black adjuster state (to be compliant with adjusterChanged function)
+    sensihs->show();
+    blurSHde->show();
     if (multiImage && inversex->get_inconsistent()) {
-        sensihs->show();
-     //   maskSHFrame->show();
-        blurSHde->show();
         showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
-    } else if (inverssh->get_active()) {
-        sensihs->show();
-    //    maskSHFrame->hide();
-        blurSHde->show();
-    } else {
-        sensihs->show();
-    //    maskSHFrame->show();
-        blurSHde->show();
-
-        if (batchMode) {
-            showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
-        }
+    } else if (batchMode && !inverssh->get_active()) {
+        showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     }
 
 
@@ -5686,13 +5654,7 @@ void Locallab::updateSpecificGUIState()
     }
 
     // Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)
-    if (multiImage && inverssha->get_inconsistent()) {
-        sensisha->show();
-    } else if (inverssha->get_active()) {
-        sensisha->show();
-    } else {
-        sensisha->show();
-    }
+    sensisha->show();
 }
 
 void Locallab::autoOpenCurve()
