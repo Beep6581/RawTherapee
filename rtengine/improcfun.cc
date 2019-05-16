@@ -2521,9 +2521,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         int j = jstart, tj = 0;
 #ifdef __SSE2__
-						float tmpr[4] ALIGNED16;
-						float tmpg[4] ALIGNED16;
-						float tmpb[4] ALIGNED16;
+                        float tmpr[4] ALIGNED16;
+                        float tmpg[4] ALIGNED16;
+                        float tmpb[4] ALIGNED16;
 
                         for (; j < tW - 3; j+=4, tj+=4) {
                             //brightness/contrast
