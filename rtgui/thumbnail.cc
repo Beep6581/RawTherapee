@@ -1006,15 +1006,22 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
 
 int Thumbnail::getRank  () const
 {
-    return pparams->rank;
+    // prefer the user-set rank over the embedded Rating
+    // pparams->rank == -1 means that there is no saved rank yet, so we should
+    // next look for the embedded Rating metadata.
+    if (pparams->rank != -1) {
+        return pparams->rank;
+    } else {
+        return cfs.rating;
+    }
 }
 
 void Thumbnail::setRank  (int rank)
 {
     if (pparams->rank != rank) {
         pparams->rank = rank;
-        pparamsValid = true;
     }
+    pparamsValid = true;
 }
 
 int Thumbnail::getColorLabel  () const

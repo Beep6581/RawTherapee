@@ -188,9 +188,17 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         orientation = tag->valueToString ();
     }
 
+    // Look for Rating metadata in the following order:
+    // 1. EXIF
+    // 2. XMP
+    // 3. pp3 sidecar file
     tag = newFrameRootDir->findTagUpward("Rating");
-    if (tag) {
+    if (tag && tag->toInt() != 0) {
         rating = tag->toInt();
+    }
+    char sXMPRating[64];
+    if (newFrameRootDir->getXMPTagValue("xmp:Rating", sXMPRating)) {
+        rating = atoi(sXMPRating);
     }
 
     tag = newFrameRootDir->findTagUpward("MakerNote");

@@ -48,8 +48,8 @@ protected:
     double expcomp;
     std::string make, model, serial;
     std::string orientation;
-    std::string lens;
     int rating;
+    std::string lens;
     IIOSampleFormat sampleFormat;
 
     // each frame has the knowledge of "being an"
