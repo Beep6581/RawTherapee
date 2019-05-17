@@ -200,6 +200,16 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
     if (newFrameRootDir->getXMPTagValue("xmp:Rating", sXMPRating)) {
         rating = atoi(sXMPRating);
     }
+    // guard against out-of-range values
+    if (rating > 5) {
+        rating = 5;
+    }
+    // Currently, Rating=-1 is not supported. A value of -1 should mean
+    // "Rejected" according to the specification. Maybe in the future, Rating=-1
+    // sets InTrash=true?
+    if (rating < 0) {
+        rating = 0;
+    }
 
     tag = newFrameRootDir->findTagUpward("MakerNote");
     rtexif::TagDirectory* mnote = nullptr;
