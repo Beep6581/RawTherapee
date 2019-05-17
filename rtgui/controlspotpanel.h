@@ -388,7 +388,7 @@ private:
     Gtk::Frame* const excluFrame;
 
     // Row background color
-    Gdk::RGBA colorMouseover, colorNominal;
+    Gdk::RGBA colorMouseover, colorNominal, colorMouseovertext;
 
     // Treeview mutex
     MyMutex mTreeview;

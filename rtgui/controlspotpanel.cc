@@ -280,6 +280,12 @@ ControlSpotPanel::ControlSpotPanel():
     colorMouseover.set_green(100. / 255.);
     colorMouseover.set_blue(0.);
     colorMouseover.set_alpha(1.);
+
+    colorMouseovertext.set_red(0.6);
+    colorMouseovertext.set_green(100. / 255.);
+    colorMouseovertext.set_blue(0.);
+    colorMouseovertext.set_alpha(0.5);
+    
     // Nominal spot (transparent black)
     colorNominal.set_red(0.);
     colorNominal.set_green(0.);
@@ -316,7 +322,7 @@ void ControlSpotPanel::render_id(
 
     // Render cell background color
     if (row[spots_.mouseover]) {
-        ct->property_background_rgba() = colorMouseover;
+        ct->property_background_rgba() = colorMouseovertext;
     } else {
         ct->property_background_rgba() = colorNominal;
     }
@@ -334,7 +340,7 @@ void ControlSpotPanel::render_name(
 
     // Render cell background color
     if (row[spots_.mouseover]) {
-        ct->property_background_rgba() = colorMouseover;
+        ct->property_background_rgba() = colorMouseovertext;
     } else {
         ct->property_background_rgba() = colorNominal;
     }
@@ -355,7 +361,7 @@ void ControlSpotPanel::render_isvisible(
 
     // Render cell background color
     if (row[spots_.mouseover]) {
-        ct->property_background_rgba() = colorMouseover;
+        ct->property_background_rgba() = colorMouseovertext;
     } else {
         ct->property_background_rgba() = colorNominal;
     }
