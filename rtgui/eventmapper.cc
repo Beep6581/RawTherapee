@@ -19,12 +19,13 @@
  */
 
 #include "eventmapper.h"
+#include "multilangmgr.h"
 
 
 ProcEventMapper::ProcEventMapper()
 {
     for (int event = 0; event < rtengine::NUMOFEVENTS; ++event) {
-        history_msgs_[event] = "HISTORY_MSG_" + std::to_string(event + 1);
+        history_msgs_[event] = M("HISTORY_MSG_" + std::to_string(event + 1));
     }
 }
 
@@ -38,16 +39,22 @@ ProcEventMapper *ProcEventMapper::getInstance()
 
 rtengine::ProcEvent ProcEventMapper::newEvent(int action, const std::string &history_msg)
 {
-    rtengine::ProcEvent event = rtengine::RefreshMapper::getInstance()->newEvent();
-    rtengine::RefreshMapper::getInstance()->mapEvent(event, action);    
+    std::string eventkey = std::to_string(action) + history_msg;
+    const auto ret = events_.find(eventkey);
+    if (ret == events_.end()) {
+        rtengine::ProcEvent event = rtengine::RefreshMapper::getInstance()->newEvent();
+        rtengine::RefreshMapper::getInstance()->mapEvent(event, action);
+        events_.emplace(std::move(eventkey), event);
+        if (history_msg.empty()) {
+            history_msgs_[event] = M("HISTORY_MSG_" + std::to_string(event + 1));
+        } else {
+            history_msgs_[event] = M(history_msg);
+        }
 
-    if (history_msg.empty()) {
-        history_msgs_[event] = "HISTORY_MSG_" + std::to_string(event + 1);
+        return event;
     } else {
-        history_msgs_[event] = history_msg;
+        return ret->second;
     }
-    
-    return event;
 }
 
 
