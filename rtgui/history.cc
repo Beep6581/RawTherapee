@@ -234,15 +234,14 @@ void History::procParamsChanged(
         return;
     }
 
-    selchangehist.block (true);
-    selchangebm.block (true);
+    selchangehist.block(true);
+    selchangebm.block(true);
 
     if (ev == EvPhotoLoaded) {
-        initHistory ();
+        initHistory();
     }
 
     // construct formatted list content
-    Glib::ustring text = M(ProcEventMapper::getInstance()->getHistoryMsg(ev));
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
@@ -252,12 +251,12 @@ void History::procParamsChanged(
         ++iter;
 
         while (iter) {
-            iter = historyModel->erase (iter);
+            iter = historyModel->erase(iter);
         }
     }
 
     // lookup the last remaining item in the list
-    int size = historyModel->children().size ();
+    const int size = historyModel->children().size();
     Gtk::TreeModel::Row row;
 
     if (size > 0) {
@@ -267,50 +266,44 @@ void History::procParamsChanged(
     // if there is no last item or its chev!=ev, create a new one
     if (size == 0 || !row || row[historyColumns.chev] != ev || ev == EvProfileChanged
             || ev == EvLocallabSpotCreated || ev == EvLocallabSpotDeleted) { // Special cases: If Locallab spot is created , deleted or duplicated several times in a row, a new history row is used
-//       Gtk::TreeModel::Row newrow = * (historyModel->append());
-//       newrow[historyColumns.realText] = eventDescrArray[ev];
         Gtk::TreeModel::Row newrow = * (historyModel->append());
-        newrow[historyColumns.text] = text;
+        newrow[historyColumns.text] = ProcEventMapper::getInstance()->getHistoryMsg(ev);
         newrow[historyColumns.value] = g_markup_escape_text (descr.c_str(), -1);
         newrow[historyColumns.chev] = ev;
         newrow[historyColumns.params] = *params;
         newrow[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
 
         if (ev != EvBookmarkSelected) {
-            selection->select (newrow);
+            selection->select(newrow);
         }
 
         if (blistener && row && !blistenerLock) {
-            blistener->historyBeforeLineChanged (row[historyColumns.params]);
+            blistener->historyBeforeLineChanged(row[historyColumns.params]);
         } else if (blistener && size == 0 && !blistenerLock) {
-            blistener->historyBeforeLineChanged (newrow[historyColumns.params]);
+            blistener->historyBeforeLineChanged(newrow[historyColumns.params]);
         }
-    }
-    // else just update it
-    else {
-        row[historyColumns.text] = text;
-        row[historyColumns.value] = g_markup_escape_text (descr.c_str(), -1);
-        row[historyColumns.chev] = ev;
+    } else { // else just update it
+        row[historyColumns.value] = g_markup_escape_text(descr.c_str(), -1);
         row[historyColumns.params] = *params;
         row[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
 
         if (ev != EvBookmarkSelected) {
-            selection->select (row);
+            selection->select(row);
         }
     }
 
     if (ev != EvBookmarkSelected) {
-        bTreeView->get_selection()->unselect_all ();
+        bTreeView->get_selection()->unselect_all();
     }
 
 
     if (!selection->get_selected_rows().empty()) {
         std::vector<Gtk::TreeModel::Path> selp = selection->get_selected_rows();
-        hTreeView->scroll_to_row (*selp.begin());
+        hTreeView->scroll_to_row(*selp.begin());
     }
 
-    selchangehist.block (false);
-    selchangebm.block (false);
+    selchangehist.block(false);
+    selchangebm.block(false);
 }
 
 void History::clearParamChanges ()

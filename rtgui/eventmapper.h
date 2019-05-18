@@ -20,6 +20,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include <unordered_map>
 #include "../rtengine/refreshmap.h"
 
@@ -34,4 +35,5 @@ private:
     ProcEventMapper();
     
     std::unordered_map<int, std::string> history_msgs_;
+    std::map<std::string, rtengine::ProcEvent> events_;
 };
