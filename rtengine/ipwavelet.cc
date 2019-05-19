@@ -1668,7 +1668,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 //tone mapping
     if(cp.tonemap && cp.contmet == 2  && cp.resena) {
         //iterate = 5
-        EPDToneMapResid(WavCoeffs_L0, 5, skip, cp, W_L, H_L, max0, min0);
+        EPDToneMapResid(WavCoeffs_L0, 0, skip, cp, W_L, H_L, max0, min0);
 
     }
 
