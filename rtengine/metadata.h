@@ -64,6 +64,7 @@ private:
     void do_merge_xmp(Exiv2::Image* dst) const;
     void import_exif_pairs(Exiv2::ExifData& out) const;
     void import_iptc_pairs(Exiv2::IptcData& out) const;
+    void remove_unwanted(Exiv2::Image* dst) const;
     
     Glib::ustring src_;
     bool merge_xmp_;

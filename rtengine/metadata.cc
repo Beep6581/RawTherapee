@@ -187,11 +187,7 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
     dst->readMetadata();
     if (image_.get()) {
         dst->setMetadata(*image_);
-        auto it =
-            dst->exifData().findKey(Exiv2::ExifKey("Exif.Image.Orientation"));
-        if (it != dst->exifData().end()) {
-            dst->exifData().erase(it);
-        }
+        remove_unwanted(dst.get());
         if (merge_xmp_) {
             do_merge_xmp(dst.get());
         }
@@ -205,6 +201,23 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
     import_exif_pairs(dst->exifData());
     import_iptc_pairs(dst->iptcData());
     dst->writeMetadata();    
+}
+
+
+void Exiv2Metadata::remove_unwanted(Exiv2::Image *dst) const
+{
+    static const std::vector<std::string> keys = {
+        "Exif.Image.Orientation",
+        "Exif.Photo.MakerNote"
+    };
+    for (auto &k : keys) {
+        auto it = dst->exifData().findKey(Exiv2::ExifKey(k));
+        if (it != dst->exifData().end()) {
+            dst->exifData().erase(it);
+        }
+    }
+    Exiv2::ExifThumb thumb(dst->exifData());
+    thumb.erase();
 }
 
 
