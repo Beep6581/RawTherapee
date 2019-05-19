@@ -1076,7 +1076,7 @@ private:
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
-            ipf.EPDToneMap(labView, 5, 1);
+            ipf.EPDToneMap (labView, 0, 1);
         }
 
 
@@ -1322,7 +1322,7 @@ private:
             float CAMMean = NAN;
 
             float d, dj, yb;
-            ipf.ciecam_02float(cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
+            ipf.ciecam_02float (cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, 1, true, d, dj, yb, 1);
         }
 
         delete cieView;
