@@ -187,6 +187,11 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
     dst->readMetadata();
     if (image_.get()) {
         dst->setMetadata(*image_);
+        auto it =
+            dst->exifData().findKey(Exiv2::ExifKey("Exif.Image.Orientation"));
+        if (it != dst->exifData().end()) {
+            dst->exifData().erase(it);
+        }
         if (merge_xmp_) {
             do_merge_xmp(dst.get());
         }
