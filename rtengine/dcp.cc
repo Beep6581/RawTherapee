@@ -443,8 +443,9 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
     return res;
 }
 
-class DCPMetadata {
-    // TODO: Review
+class DCPMetadata
+{
+private:
     enum TagType {
         INVALID = 0,
         BYTE = 1,
@@ -468,47 +469,46 @@ class DCPMetadata {
     };
 
 public:
-    explicit DCPMetadata(FILE *file): order_(UNKNOWN), file_(file) {}
+    explicit DCPMetadata(FILE* file) :
+        file_(file),
+        order_(UNKNOWN)
+    {
+    }
 
     bool parse()
     {
-        int offset = 0;
-        FILE *f = file_;
-
-        if (!f) {
+        if (!file_) {
 #ifndef NDEBUG
-            std::cerr << "ERROR : no file opened !" << std::endl;
+            std::cerr << "ERROR: No file opened." << std::endl;
 #endif
             return false;
         }
+
         setlocale(LC_NUMERIC, "C"); // to set decimal point in sscanf
 
         // read tiff header
-        fseek(f, 0, SEEK_SET);
-        unsigned short bo;
-        fread(&bo, 1, 2, f);
-        order_ = ByteOrder(int(bo));
+        std::fseek(file_, 0, SEEK_SET);
+        std::uint16_t bo;
+        std::fread(&bo, 1, 2, file_);
+        order_ = ByteOrder(bo);
 
-        get2(f, order_);
-        if (!offset) {
-            offset = get4(f, order_);
-        }
+        get2(); // Skip
 
-        // seek to IFD
-        fseek(f, offset, SEEK_SET);
+        // Seek to IFD
+        const std::size_t offset = get4();
+        std::fseek(file_, offset, SEEK_SET);
 
-        // first read the IFD directory
-        int numtags = get2(f, order_);
+        // First read the IFD directory
+        const std::uint16_t numtags = get2();
 
-        if (numtags <= 0 || numtags > 1000) { // KodakIfd has lots of tags, thus 1000 as the limit
+        if (numtags > 1000) { // KodakIfd has lots of tags, thus 1000 as the limit
             return false;
         }
 
-        int base = 0;
-        for (int i = 0; i < numtags; i++) {
-            Tag t;
-            if (parse_tag(t, f, base, order_)) {
-                tags_[t.id] = std::move(t);
+        for (std::uint16_t i = 0; i < numtags; ++i) {
+            Tag tag;
+            if (parseTag(tag)) {
+                tags_[tag.id] = std::move(tag);
             }
         }
 
@@ -520,227 +520,298 @@ public:
         return tags_.find(id) != tags_.end();
     }
 
-    std::string toString(int id)
+    std::string toString(int id) const
     {
-        auto it = tags_.find(id);
-        if (it != tags_.end()) {
-            auto &t = it->second;
-            if (t.type == ASCII) {
-                std::ostringstream buf;
-                unsigned char *value = &(t.value[0]);
-                buf << value;
-                return buf.str();
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag != tags_.end()) {
+            if (tag->second.type == ASCII) {
+                return std::string(tag->second.value.begin(), tag->second.value.end()).c_str();
             }
         }
-        return "";
+        return {};
     }
 
-    int toInt(int id, int ofs=0, TagType astype=INVALID)
+    std::int32_t toInt(int id, std::size_t offset = 0, TagType as_type = INVALID) const
     {
-        auto it = tags_.find(id);
-        if (it == tags_.end()) {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag == tags_.end()) {
             return 0;
         }
 
-        auto &t = it->second;
-        int a;
-        unsigned char *value = &(t.value[0]);
-
-        if (astype == INVALID) {
-            astype = t.type;
+        if (as_type == INVALID) {
+            as_type = tag->second.type;
         }
 
-        switch (astype) {
-        case SBYTE:
-            return reinterpret_cast<signed char *>(value)[ofs];
+        switch (as_type) {
+            case SBYTE: {
+                if (offset < tag->second.value.size()) {
+                    return static_cast<signed char>(tag->second.value[offset]);
+                }
+                return 0;
+            }
 
-        case BYTE:
-            return value[ofs];
+            case BYTE: {
+                if (offset < tag->second.value.size()) {
+                    return tag->second.value[offset];
+                }
+                return 0;
+            }
 
-        case SSHORT:
-            return int2_to_signed(sget2(value + ofs, order_));
+            case SSHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
+                }
+                return 0;
+            }
 
-        case SHORT:
-            return sget2(value + ofs, order_);
+            case SHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return sget2(tag->second.value.data() + offset);
+                }
+                return 0;
+            }
 
-        case SLONG:
-        case LONG:
-            return sget4 (value + ofs, order_);
+            case SLONG:
+            case LONG: {
+                if (offset + 3 < tag->second.value.size()) {
+                    return sget4(tag->second.value.data() + offset);
+                }
+                return 0;
+            }
 
-        case SRATIONAL:
-        case RATIONAL:
-            a = sget4(value + ofs + 4, order_);
-            return a == 0 ? 0 : int(sget4(value + ofs, order_)) / a;
+            case SRATIONAL:
+            case RATIONAL: {
+                if (offset + 7 < tag->second.value.size()) {
+                    const std::uint32_t denominator = sget4(tag->second.value.data() + offset + 4);
+                    return
+                        denominator == 0
+                            ? 0
+                            : static_cast<std::int32_t>(sget4(tag->second.value.data() + offset)) / denominator;
+                }
+                return 0;
+            }
 
-        case FLOAT:
-            return toDouble(id, ofs);
+            case FLOAT: {
+                return toDouble(id, offset);
+            }
 
-        default:
-            return 0;
+            default: {
+                return 0;
+            }
         }
     }
 
-    int toShort(int id, int ofs=0)
+    int toShort(int id, std::size_t offset = 0) const
     {
-        return toInt(id, ofs, SHORT);
+        return toInt(id, offset, SHORT);
     }
 
-    double toDouble(int id, int ofs=0)
+    double toDouble(int id, std::size_t offset = 0) const
     {
-        auto it = tags_.find(id);
-        if (it == tags_.end()) {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag == tags_.end()) {
             return 0.0;
         }
 
-        auto &t = it->second;
+        switch (tag->second.type) {
+            case SBYTE: {
+                if (offset < tag->second.value.size()) {
+                    return static_cast<signed char>(tag->second.value[offset]);
+                }
+                return 0.0;
+            }
 
-        union IntFloat {
-            uint32_t i;
-            float f;
-        } conv;
+            case BYTE: {
+                if (offset < tag->second.value.size()) {
+                    return tag->second.value[offset];
+                }
+                return 0.0;
+            }
 
-        int ud, dd;
-        unsigned char *value = &(t.value[0]);
+            case SSHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
+                }
+                return 0.0;
+            }
 
-        switch (t.type) {
-        case SBYTE:
-            return int((reinterpret_cast<signed char*> (value))[ofs]);
+            case SHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return sget2(tag->second.value.data() + offset);
+                }
+                return 0.0;
+            }
 
-        case BYTE:
-            return int(value[ofs]);
+            case SLONG:
+            case LONG: {
+                if (offset + 3 < tag->second.value.size()) {
+                    return sget4(tag->second.value.data() + offset);
+                }
+                return 0.0;
+            }
 
-        case SSHORT:
-            return int2_to_signed(sget2(value + ofs, order_));
+            case SRATIONAL:
+            case RATIONAL: {
+                if (offset + 7 < tag->second.value.size()) {
+                    const std::int32_t numerator = sget4(tag->second.value.data() + offset);
+                    const std::int32_t denominator = sget4(tag->second.value.data() + offset + 4);
+                    return
+                        denominator == 0
+                            ? 0.0
+                            : static_cast<double>(numerator) / static_cast<double>(denominator);
+                }
+                return 0.0;
+            }
 
-        case SHORT:
-            return sget2(value + ofs, order_);
+            case FLOAT: {
+                union IntFloat {
+                    std::uint32_t i;
+                    float f;
+                } conv;
 
-        case SLONG:
-        case LONG:
-            return sget4(value + ofs, order_);
+                conv.i = sget4(tag->second.value.data() + offset);
+                return conv.f;  // IEEE FLOATs are already C format, they just need a recast
+            }
 
-        case SRATIONAL:
-        case RATIONAL:
-            ud = sget4(value + ofs, order_);
-            dd = sget4(value + ofs + 4, order_);
-            return (dd ? double(ud)/double(dd) : 0.0);
-
-        case FLOAT:
-            conv.i = sget4(value + ofs, order_);
-            return conv.f;  // IEEE FLOATs are already C format, they just need a recast
-
-        default:
-            return 0.;
+            default: {
+                return 0.0;
+            }
         }
     }
 
-    unsigned int getCount(int id)
+    unsigned int getCount(int id) const
     {
-        auto it = tags_.find(id);
-        if (it != tags_.end()) {
-            return it->second.count;
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag != tags_.end()) {
+            return tag->second.count;
         }
         return 0;
     }
 
 private:
-    static unsigned short sget2(unsigned char *s, ByteOrder order)
+    struct Tag {
+        int id;
+        std::vector<unsigned char> value;
+        TagType type;
+        unsigned int count;
+    };
+
+    using Tags = std::unordered_map<int, Tag>;
+
+    std::uint16_t sget2(const std::uint8_t* s) const
     {
-        if (order == INTEL) {
+        if (order_ == INTEL) {
             return s[0] | s[1] << 8;
         } else {
             return s[0] << 8 | s[1];
         }
     }
 
-    static int sget4(unsigned char *s, ByteOrder order)
+    std::uint32_t sget4(const std::uint8_t* s) const
     {
-        if (order == INTEL) {
+        if (order_ == INTEL) {
             return s[0] | s[1] << 8 | s[2] << 16 | s[3] << 24;
         } else {
             return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
         }
     }
 
-    static unsigned short get2(FILE* f, ByteOrder order)
+    std::uint16_t get2()
     {
-        unsigned char str[2] = { 0xff, 0xff };
-        fread (str, 1, 2, f);
-        return sget2(str, order);
+        std::uint16_t res = std::numeric_limits<std::uint16_t>::max();
+        std::fread(&res, 1, 2, file_);
+        return sget2(reinterpret_cast<const std::uint8_t*>(&res));
     }
 
-    static int get4(FILE *f, ByteOrder order)
+    std::uint32_t get4()
     {
-        unsigned char str[4] = { 0xff, 0xff, 0xff, 0xff };
-        fread (str, 1, 4, f);
-        return sget4 (str, order);
-    }
-
-    static short int int2_to_signed(short unsigned int i)
-    {
-        union {
-            short unsigned int i;
-            short int s;
-        } u;
-        u.i = i;
-        return u.s;
+        std::uint32_t res = std::numeric_limits<std::uint32_t>::max();
+        std::fread(&res, 1, 4, file_);
+        return sget4(reinterpret_cast<const std::uint8_t*>(&res));
     }
 
     static int getTypeSize(TagType type)
     {
-        return ("11124811248484"[type < 14 ? type : 0] - '0');
-    }
+        switch (type) {
+            case INVALID:
+            case BYTE:
+            case ASCII:
+            case SBYTE:
+            case UNDEFINED: {
+                return 1;
+            }
 
-    struct Tag {
-        int id;
-        std::vector<unsigned char> value;
-        TagType type;
-        unsigned int count;
+            case SHORT:
+            case SSHORT: {
+                return 2;
+            }
 
-        Tag(): id(0), value(), type(INVALID), count(0) {}
-    };
+            case LONG:
+            case SLONG:
+            case FLOAT: {
+                return 4;
+            }
 
-    bool parse_tag(Tag &t, FILE *f, int base, ByteOrder order)
-    {
-        t.id = get2(f, order);
-        t.type  = (TagType)get2(f, order);
-        t.count = get4(f, order);
-
-        if (!t.count) {
-            t.count = 1;
+            case RATIONAL:
+            case SRATIONAL:
+            case DOUBLE: {
+                return 8;
+            }
         }
 
-        // filter out invalid tags
-        // note the large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
+        return 1;
+    }
+
+    bool parseTag(Tag& tag)
+    {
+        tag.id = get2();
+        tag.type  = TagType(get2());
+        tag.count = std::max(1U, get4());
+
+        // Filter out invalid tags
+        // Note: The large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
         // (only a small part of it will actually be parsed though)
-        if ((int)t.type < 1 || (int)t.type > 12 || t.count > 10 * 1024 * 1024) {
-            t.type = INVALID;
+        if (
+            tag.type == INVALID
+            || tag.type > DOUBLE
+            || tag.count > 10 * 1024 * 1024
+        ) {
+            tag.type = INVALID;
             return false;
         }
 
-        // store next Tag's position in file
-        int save = ftell(f) + 4;
+        // Store next Tag's position in file
+        const std::size_t saved_position = std::ftell(file_) + 4;
 
-        // load value field (possibly seek before)
-        int valuesize = t.count * getTypeSize(t.type);
+        // Load value field (possibly seek before)
+        const std::size_t value_size = tag.count * getTypeSize(tag.type);
 
-        if (valuesize > 4) {
-            fseek(f, get4(f, order) + base, SEEK_SET);
+        if (value_size > 4) {
+            if (std::fseek(file_, get4(), SEEK_SET) == -1) {
+                tag.type = INVALID;
+                return false;
+            }
         }
 
-        // read value
-        t.value.resize(valuesize + 1);
-        auto readSize = fread(&(t.value[0]), 1, valuesize, f);
-        t.value[readSize] = '\0';
+        // Read value
+        tag.value.resize(value_size + 1);
+        const std::size_t read = std::fread(tag.value.data(), 1, value_size, file_);
+        if (read != value_size) {
+            tag.type = INVALID;
+            return false;
+        }
+        tag.value[read] = '\0';
 
-        // seek back to the saved position
-        fseek(f, save, SEEK_SET);
+        // Seek back to the saved position
+        std::fseek(file_, saved_position, SEEK_SET);
+
         return true;
     }
 
-    std::unordered_map<int, Tag> tags_;
+    FILE* const file_;
+
+    Tags tags_;
     ByteOrder order_;
-    FILE *file_;
 };
 
 } // namespace
