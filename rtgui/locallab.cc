@@ -149,9 +149,9 @@ Locallab::Locallab():
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
     satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
     // Retinex
-    str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
+    str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 14, 200, 1, 150))),
+    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4, 200, 1, 150))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 50, 500, 1, 70))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
@@ -161,6 +161,7 @@ Locallab::Locallab():
     chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.1, 5.0, 0.01, 1.))),
     slomaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    blendreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDRETI"), 0.0, 100.0, 0.1, 80.))),//not used
     // Sharpening
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
@@ -908,6 +909,7 @@ Locallab::Locallab():
     chromaskreti->setAdjusterListener(this);
     gammaskreti->setAdjusterListener(this);
     slomaskreti->setAdjusterListener(this);
+    blendreti->setAdjusterListener(this);
 
     ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
     maskretiBox->pack_start(*showmaskretiMethod, Gtk::PACK_SHRINK, 4);
@@ -923,6 +925,7 @@ Locallab::Locallab():
 
     ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
+    //retiBox->pack_start(*blendreti);
     retiBox->pack_start(*str);
     retiBox->pack_start(*chrrt);
     retiBox->pack_start(*neigh);
@@ -2118,7 +2121,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).retinexMethod = "high";
                     }
 
-                    pp->locallab.spots.at(pp->locallab.selspot).str = str->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).str = str->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).chrrt = chrrt->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).neigh = neigh->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).vart = vart->getIntValue();
@@ -2138,6 +2141,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskreti = chromaskreti->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskreti = gammaskreti->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskreti = slomaskreti->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).blendreti = blendreti->getValue();
                     // Sharpening
                     pp->locallab.spots.at(pp->locallab.selspot).expsharp = expsharp->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).sharcontrast = sharcontrast->getIntValue();
@@ -2349,6 +2353,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromaskreti = pe->locallab.spots.at(pp->locallab.selspot).chromaskreti || chromaskreti->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskreti = pe->locallab.spots.at(pp->locallab.selspot).gammaskreti || gammaskreti->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskreti = pe->locallab.spots.at(pp->locallab.selspot).slomaskreti || slomaskreti->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).blendreti = pe->locallab.spots.at(pp->locallab.selspot).blendreti || blendreti->getEditedState();
                         // Sharpening
                         pe->locallab.spots.at(pp->locallab.selspot).expsharp = pe->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).sharcontrast = pe->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -2564,6 +2569,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromaskreti = pedited->locallab.spots.at(pp->locallab.selspot).chromaskreti || chromaskreti->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskreti = pedited->locallab.spots.at(pp->locallab.selspot).gammaskreti || gammaskreti->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskreti = pedited->locallab.spots.at(pp->locallab.selspot).slomaskreti || slomaskreti->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).blendreti = pedited->locallab.spots.at(pp->locallab.selspot).blendreti || blendreti->getEditedState();
                         // Sharpening
                         pedited->locallab.spots.at(pp->locallab.selspot).expsharp = pedited->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast = pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -3604,7 +3610,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     softradiustm->setDefault(defSpot->softradiustm);
     amount->setDefault(defSpot->amount);
     // Retinex
-    str->setDefault((double)defSpot->str);
+    str->setDefault(defSpot->str);
     chrrt->setDefault((double)defSpot->chrrt);
     neigh->setDefault((double)defSpot->neigh);
     vart->setDefault((double)defSpot->vart);
@@ -3616,6 +3622,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromaskreti->setDefault(defSpot->chromaskreti);
     gammaskreti->setDefault(defSpot->gammaskreti);
     slomaskreti->setDefault(defSpot->slomaskreti);
+    blendreti->setDefault(defSpot->blendreti);
     // Sharpening
     sharcontrast->setDefault((double)defSpot->sharcontrast);
     sharradius->setDefault(defSpot->sharradius);
@@ -3744,6 +3751,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskreti->setDefaultEditedState(Irrelevant);
         gammaskreti->setDefaultEditedState(Irrelevant);
         slomaskreti->setDefaultEditedState(Irrelevant);
+        blendreti->setDefaultEditedState(Irrelevant);
         // Sharpening
         sharcontrast->setDefaultEditedState(Irrelevant);
         sharradius->setDefaultEditedState(Irrelevant);
@@ -3876,6 +3884,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskreti->setDefaultEditedState(defSpotState->chromaskreti ? Edited : UnEdited);
         gammaskreti->setDefaultEditedState(defSpotState->gammaskreti ? Edited : UnEdited);
         slomaskreti->setDefaultEditedState(defSpotState->slomaskreti ? Edited : UnEdited);
+        blendreti->setDefaultEditedState(defSpotState->blendreti ? Edited : UnEdited);
         // Sharpening
         sharcontrast->setDefaultEditedState(defSpotState->sharcontrast ? Edited : UnEdited);
         sharradius->setDefaultEditedState(defSpotState->sharradius ? Edited : UnEdited);
@@ -4425,6 +4434,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == blendreti) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendreti, blendreti->getTextValue());
+            }
+        }
+
     }
 
     // Sharpening
@@ -4782,6 +4797,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromaskreti->showEditedCB();
     gammaskreti->showEditedCB();
     slomaskreti->showEditedCB();
+    blendreti->showEditedCB();
     // Sharpening
     sharradius->showEditedCB();
     sharamount->showEditedCB();
@@ -5245,6 +5261,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromaskreti->setValue(pp->locallab.spots.at(index).chromaskreti);
         gammaskreti->setValue(pp->locallab.spots.at(index).gammaskreti);
         slomaskreti->setValue(pp->locallab.spots.at(index).slomaskreti);
+        blendreti->setValue(pp->locallab.spots.at(index).blendreti);
 
         // Sharpening
         expsharp->setEnabled(pp->locallab.spots.at(index).expsharp);
@@ -5490,6 +5507,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromaskreti->setEditedState(spotState->chromaskreti ? Edited : UnEdited);
                 gammaskreti->setEditedState(spotState->gammaskreti ? Edited : UnEdited);
                 slomaskreti->setEditedState(spotState->slomaskreti ? Edited : UnEdited);
+                blendreti->setEditedState(spotState->blendreti ? Edited : UnEdited);
 
                 // Sharpening
                 expsharp->set_inconsistent(!spotState->expsharp);

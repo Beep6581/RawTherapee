@@ -505,6 +505,7 @@ public:
         bool chromaskreti;
         bool gammaskreti;
         bool slomaskreti;
+        bool blendreti;
         // Sharpening
         bool expsharp;
         bool sharcontrast;

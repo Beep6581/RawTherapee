@@ -2322,7 +2322,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
         const float radius = 3.f / sk;
         const bool usemaskreti = (lp.showmaskretimet == 2 || lp.enaretiMask || lp.showmaskretimet == 4) && senstype == 4  && !lp.enaretiMasktmap;
-
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -2342,6 +2341,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+printf("OK use3\n");
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -2377,11 +2377,11 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
 
                     float rL = origblur->L[y][x] / 327.68f;
                     float dE;
-                    if(!usemaskreti) {
+                //    if(!usemaskreti) {
                         dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                    } else {
-                        dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
-                    }
+                //    } else {
+                 //       dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
+                 //   }
                     float cli = buflight[loy - begy][lox - begx];
                     //float clc = bufchro[loy - begy][lox - begx];
                     float clc = previewreti ? settings->previewselection * 100.f : bufchro[loy - begy][lox - begx];
@@ -2391,21 +2391,23 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
                     const float realstrdE = reducdE * cli;
 
-                   // reducdE /= 100.f;
-                   // cli *= reducdE;
-                    clc *= reducdE / 100.f;
+                    reducdE /= 100.f;
+                    cli *= reducdE;
+                    clc *= reducdE;
 
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         if (senstype == 4) {//all except color and light (TODO) and exposure
-                         //  float lightc = bufexporig->L[loy - begy][lox - begx];
-                         //   float fli = 1.f + cli;
-                            float diflc;// = lightc * fli - original->L[y][x];
-                            diflc = 328.f * realstrdE;
+                            float lightc = bufexporig->L[loy - begy][lox - begx];
+                            float fli = 1.f + cli;
+                            float diflc = lightc * fli - original->L[y][x];
+                            float diflc2 = 328.f * realstrdE;
                             diflc *= localFactor;
+                            diflc2 *= localFactor;
+                            
                             if(!showmas) transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                             else  transformed->L[y][x] =  bufmask->L[loy - begy][lox - begx]; ; //bufexporig->L[loy - begy][lox - begx];
                             if(retishow) {
-                                transformed->L[y][x] = CLIP(12000.f + diflc);
+                                transformed->L[y][x] = CLIP(12000.f + diflc2);
                             }
                         }
 
@@ -2438,7 +2440,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                 }
             }
         }
-                //    if(showmas) return;
+                    if(showmas  || retishow || previewreti) return;
 
     }
 }
@@ -5851,6 +5853,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
 
+
             LabImage *tmpl = nullptr;
 
             if (!lp.invret && call <= 3) {
@@ -5919,6 +5922,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
             ImProcFunctions::MSRLocal(sp, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
             locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
+
+
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
