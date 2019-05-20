@@ -45,24 +45,24 @@ Locallab::Locallab():
     FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), false, true),
 
     // Expander widgets
-    expsettings(new ControlSpotPanel()),
-    expcolor(new MyExpander(true, M("TP_LOCALLAB_COFR"))),
-    expexpose(new MyExpander(true, M("TP_LOCALLAB_EXPOSE"))),
-    expshadhigh(new MyExpander(true, M("TP_LOCALLAB_SHADHIGH"))),
-    expvibrance(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE"))),
-    expsoft(new MyExpander(true, M("TP_LOCALLAB_SOFT"))),
-    expblur(new MyExpander(true, M("TP_LOCALLAB_BLUFR"))),
-    exptonemap(new MyExpander(true, new Gtk::HBox())),
-    expreti(new MyExpander(true, new Gtk::HBox())),
-    expsharp(new MyExpander(true, new Gtk::HBox())),
-    expcontrast(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST"))),
-    expcbdl(new MyExpander(true, new Gtk::HBox())),
-    expdenoi(new MyExpander(true, new Gtk::HBox())),
-    expmaskcol(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
-    expmaskexp(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
-    expmasksh(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
-    expmaskcb(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
-    expmaskreti(new MyExpander(false, M("TP_LOCALLAB_SHOW"))),
+    expsettings(Gtk::manage(new ControlSpotPanel())),
+    expcolor(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_COFR")))),
+    expexpose(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_EXPOSE")))),
+    expshadhigh(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_SHADHIGH")))),
+    expvibrance(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE")))),
+    expsoft(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_SOFT")))),
+    expblur(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_BLUFR")))),
+    exptonemap(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
+    expreti(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
+    expsharp(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
+    expcontrast(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST")))),
+    expcbdl(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
+    expdenoi(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
+    expmaskcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
+    expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
+    expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
+    expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
+    expmaskreti(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
 
     // CurveEditorGroup widgets
     // Color & Light
@@ -449,10 +449,10 @@ Locallab::Locallab():
     maskcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
-    expmaskcol->add(*maskcolBox);
+    expmaskcol->add(*maskcolBox, false);
     colorBox->pack_start(*expmaskcol);
 
-    expcolor->add(*colorBox);
+    expcolor->add(*colorBox, false);
     expcolor->setLevel(2);
 
     panel->pack_start(*expcolor, false, false);
@@ -567,10 +567,10 @@ Locallab::Locallab():
     maskexpBox->pack_start(*chromaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*gammaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*slomaskexp, Gtk::PACK_SHRINK, 0);
-    expmaskexp->add(*maskexpBox);
+    expmaskexp->add(*maskexpBox, false);
     exposeBox->pack_start(*expmaskexp);
 
-    expexpose->add(*exposeBox);
+    expexpose->add(*exposeBox, false);
     expexpose->setLevel(2);
 
     panel->pack_start(*expexpose, false, false);
@@ -657,10 +657,10 @@ Locallab::Locallab():
     maskSHBox->pack_start(*chromaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*gammaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*slomaskSH, Gtk::PACK_SHRINK, 0);
-    expmasksh->add(*maskSHBox);
+    expmasksh->add(*maskSHBox, false);
     shadhighBox->pack_start(*expmasksh);
 
-    expshadhigh->add(*shadhighBox);
+    expshadhigh->add(*shadhighBox, false);
     expshadhigh->setLevel(2);
 
     panel->pack_start(*expshadhigh, false, false);
@@ -713,7 +713,7 @@ Locallab::Locallab():
     vibranceBox->pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*sensiv, Gtk::PACK_SHRINK, 0);
     vibranceBox->pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    expvibrance->add(*vibranceBox);
+    expvibrance->add(*vibranceBox, false);
     expvibrance->setLevel(2);
 
     panel->pack_start(*expvibrance, false, false);
@@ -729,7 +729,7 @@ Locallab::Locallab():
     ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
     softBox->pack_start(*streng);
     softBox->pack_start(*sensisf);
-    expsoft->add(*softBox);
+    expsoft->add(*softBox, false);
     expsoft->setLevel(2);
 
     panel->pack_start(*expsoft, false, false);
@@ -760,7 +760,7 @@ Locallab::Locallab():
     blurrBox->pack_start(*sensibn);
     blurrBox->pack_start(*blurMethod);
     blurrBox->pack_start(*activlum);
-    expblur->add(*blurrBox);
+    expblur->add(*blurrBox, false);
     expblur->setLevel(2);
 
     panel->pack_start(*expblur, false, false);
@@ -808,7 +808,7 @@ Locallab::Locallab():
     tmBox->pack_start(*rewei);
 //    tmBox->pack_start(*softradiustm);//always bad with TM ??
     tmBox->pack_start(*sensitm);
-    exptonemap->add(*tmBox);
+    exptonemap->add(*tmBox, false);
     exptonemap->setLevel(2);
 
     panel->pack_start(*exptonemap, false, false);
@@ -919,7 +919,7 @@ Locallab::Locallab():
     maskretiBox->pack_start(*chromaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*gammaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*slomaskreti, Gtk::PACK_SHRINK, 0);
-    expmaskreti->add(*maskretiBox);
+    expmaskreti->add(*maskretiBox, false);
 
     ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
@@ -933,7 +933,7 @@ Locallab::Locallab():
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*expmaskreti);
     retiBox->pack_start(*inversret);
-    expreti->add(*retiBox);
+    expreti->add(*retiBox, false);
     expreti->setLevel(2);
 
     panel->pack_start(*expreti, false, false);
@@ -977,7 +977,7 @@ Locallab::Locallab():
     sharpBox->pack_start(*sharblur);
     sharpBox->pack_start(*sensisha);
     sharpBox->pack_start(*inverssha);
-    expsharp->add(*sharpBox);
+    expsharp->add(*sharpBox, false);
     expsharp->setLevel(2);
 
     panel->pack_start(*expsharp, false, false);
@@ -1002,7 +1002,7 @@ Locallab::Locallab():
     contrastBox->pack_start(*lcdarkness);
     contrastBox->pack_start(*lclightness);
     contrastBox->pack_start(*sensilc);
-    expcontrast->add(*contrastBox);
+    expcontrast->add(*contrastBox, false);
     expcontrast->setLevel(2);
 
     panel->pack_start(*expcontrast, false, false);
@@ -1117,7 +1117,7 @@ Locallab::Locallab():
     maskcbBox->pack_start(*chromaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*gammaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*slomaskcb, Gtk::PACK_SHRINK, 0);
-    expmaskcb->add(*maskcbBox);
+    expmaskcb->add(*maskcbBox, false);
 
     Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
     cbdlBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
@@ -1133,7 +1133,7 @@ Locallab::Locallab():
     cbdlBox->pack_start(*softradiuscb);
     cbdlBox->pack_start(*sensicb);
     cbdlBox->pack_start(*expmaskcb);
-    expcbdl->add(*cbdlBox);
+    expcbdl->add(*cbdlBox, false);
     expcbdl->setLevel(2);
 
     panel->pack_start(*expcbdl, false, false);
@@ -1192,7 +1192,7 @@ Locallab::Locallab():
     denoisBox->pack_start(*wavFrame);
     denoisBox->pack_start(*bilateral);
     denoisBox->pack_start(*sensiden);
-    expdenoi->add(*denoisBox);
+    expdenoi->add(*denoisBox, false);
     expdenoi->setLevel(2);
 
     panel->pack_start(*expdenoi, false, false);
@@ -1210,9 +1210,14 @@ Locallab::~Locallab()
 
     delete llCurveEditorG;
     delete HCurveEditorG;
+    delete maskCurveEditorG;
     delete curveEditorG;
+    delete maskexpCurveEditorG;
+    delete maskSHCurveEditorG;
     delete curveEditorGG;
     delete LocalcurveEditorgainT;
+    delete maskretiCurveEditorG;
+    delete maskcbCurveEditorG;
 }
 void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
 {
