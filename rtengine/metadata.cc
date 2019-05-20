@@ -207,8 +207,7 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
 void Exiv2Metadata::remove_unwanted(Exiv2::Image *dst) const
 {
     static const std::vector<std::string> keys = {
-        "Exif.Image.Orientation",
-        "Exif.Photo.MakerNote"
+        "Exif.Image.Orientation"
     };
     for (auto &k : keys) {
         auto it = dst->exifData().findKey(Exiv2::ExifKey(k));
