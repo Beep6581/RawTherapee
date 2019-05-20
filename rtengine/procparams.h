@@ -1070,7 +1070,7 @@ struct LocallabParams {
         // Retinex
         bool expreti;
         Glib::ustring retinexMethod;
-        int str;
+        double str;
         int chrrt;
         int neigh;
         int vart;
@@ -1089,6 +1089,7 @@ struct LocallabParams {
         double chromaskreti;
         double gammaskreti;
         double slomaskreti;
+        double blendreti;
         // Sharpening
         bool expsharp;
         int sharcontrast;

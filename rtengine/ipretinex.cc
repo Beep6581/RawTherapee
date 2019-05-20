@@ -1267,6 +1267,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             //            float absciss;
             float cdmax = -999999.f, cdmin = 999999.f;
             float gan = 0.5f;
+            float blreti = 0.01f * loc.spots.at(sp).blendreti;
+            
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
@@ -1292,6 +1294,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     cdmax = cd > cdmax ? cd : cdmax;
                     cdmin = cd < cdmin ? cd : cdmin;
                     luminance[i][j] = LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
+//                    luminance[i][j] = blreti * luminance[i][j] + (1.f - blreti) * originalLuminance[i][j];
                 }
 
 #ifdef _OPENMP
@@ -1303,6 +1306,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             }
 
         }
+//printf("OK useretinex\n");
 
         Tmean = mean;
         Tsigma = stddv;
