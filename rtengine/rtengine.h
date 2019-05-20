@@ -1,4 +1,5 @@
-/*
+/* -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -122,7 +123,7 @@ public:
     /** @return the orientation of the image */
     virtual std::string getOrientation() const = 0;
     /** @return the rating of the image */
-    virtual int getRating () const = 0;
+    virtual int getRating() const = 0;
 
     /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
     virtual bool getPixelShift () const = 0;

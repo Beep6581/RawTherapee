@@ -81,8 +81,8 @@ public:
     std::string getLens() const override;
     std::string getSerialNumber() const;
     std::string getOrientation() const override;
-    int getRating() const override;
     Glib::ustring getFileName() const override;
+    int getRating() const override;
 };
 
 }

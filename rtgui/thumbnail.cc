@@ -387,7 +387,7 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt)
  * The result is a complete ProcParams with default values merged with the values
  * from the loaded ProcParams (sidecar or cache file).
 */
-void Thumbnail::loadProcParams ()
+void Thumbnail::loadProcParams()
 {
     MyMutex::MyLock lock(mutex);
 

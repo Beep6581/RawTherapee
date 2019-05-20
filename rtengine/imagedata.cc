@@ -287,6 +287,10 @@ FramesData::FramesData(const Glib::ustring &fname) :
             expcomp = pos->toFloat();
         }
 
+        if (find_exif_tag("Exif.Image.Rating")) {
+            rating = pos->toLong();
+        }
+
         // -----------------------
         // Special file type detection (HDR, PixelShift)
         // ------------------------
@@ -567,12 +571,6 @@ std::string FramesData::getOrientation() const
 }
 
 
-int FramesData::getRating() const
-{
-    return rating;
-}
-
-
 void FramesData::setDCRawFrameCount(unsigned int frameCount)
 {
     dcrawFrameCount = frameCount;
@@ -587,6 +585,12 @@ unsigned int FramesData::getFrameCount() const
 Glib::ustring FramesData::getFileName() const
 {
     return fname_;
+}
+
+
+int FramesData::getRating() const
+{
+    return rating;
 }
 
 //------inherited functions--------------//
