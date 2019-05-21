@@ -852,16 +852,17 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         float         mean, stddv, maxtr, mintr;
         float         delta;
         constexpr float eps = 2.f;
-        constexpr bool useHslLin = false;//never used
+        bool useHslLin = false;
         const float offse = 0.f; //loc.offs;
         const float chrT = (float)(loc.spots.at(sp).chrrt) / 100.f;
-        const int scal = scall;//3;//loc.scale;;
+        const int scal = (loc.spots.at(sp).scalereti);
         const float vart = loc.spots.at(sp).vart / 100.f;//variance
         const float strength = loc.spots.at(sp).str / 100.f; // Blend with original L channel data
         float limD = 10.f;//(float) loc.limd;
         limD = pow(limD, 1.7f);  //about 2500 enough
         float ilimD = 1.f / limD;
         const float elogt = 2.71828f;
+        if(scal <= 3) useHslLin = true;
 
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
@@ -880,7 +881,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         } else if (loc.spots.at(sp).retinexMethod == "low") {
             moderetinex = 1;
         } else {
-            if (loc.spots.at(sp).retinexMethod == "high") { // default to 2 ( deh.retinexMethod == "high" )
+            if (loc.spots.at(sp).retinexMethod == "high") {
                 moderetinex = 2;
             }
         }
@@ -1267,7 +1268,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             //            float absciss;
             float cdmax = -999999.f, cdmin = 999999.f;
             float gan = 0.5f;
-            float blreti = 0.01f * loc.spots.at(sp).blendreti;
             
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -1294,7 +1294,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     cdmax = cd > cdmax ? cd : cdmax;
                     cdmin = cd < cdmin ? cd : cdmin;
                     luminance[i][j] = LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
-//                    luminance[i][j] = blreti * luminance[i][j] + (1.f - blreti) * originalLuminance[i][j];
                 }
 
 #ifdef _OPENMP

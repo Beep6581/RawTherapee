@@ -1078,7 +1078,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromaskreti = locallab.spots.at(j).chromaskreti && pSpot.chromaskreti == otherSpot.chromaskreti;
                 locallab.spots.at(j).gammaskreti = locallab.spots.at(j).gammaskreti && pSpot.gammaskreti == otherSpot.gammaskreti;
                 locallab.spots.at(j).slomaskreti = locallab.spots.at(j).slomaskreti && pSpot.slomaskreti == otherSpot.slomaskreti;
-                locallab.spots.at(j).blendreti = locallab.spots.at(j).blendreti && pSpot.blendreti == otherSpot.blendreti;
+                locallab.spots.at(j).scalereti = locallab.spots.at(j).scalereti && pSpot.scalereti == otherSpot.scalereti;
                 // Sharpening
                 locallab.spots.at(j).expsharp = locallab.spots.at(j).expsharp && pSpot.expsharp == otherSpot.expsharp;
                 locallab.spots.at(j).sharcontrast = locallab.spots.at(j).sharcontrast && pSpot.sharcontrast == otherSpot.sharcontrast;
@@ -3135,8 +3135,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskreti = mods.locallab.spots.at(i).slomaskreti;
         }
 
-        if (locallab.spots.at(i).blendreti) {
-            toEdit.locallab.spots.at(i).blendreti = mods.locallab.spots.at(i).blendreti;
+        if (locallab.spots.at(i).scalereti) {
+            toEdit.locallab.spots.at(i).scalereti = mods.locallab.spots.at(i).scalereti;
         }
 
         // Sharpening
@@ -4421,7 +4421,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromaskreti(v),
     gammaskreti(v),
     slomaskreti(v),
-    blendreti(v),
+    scalereti(v),
     // Sharpening
     expsharp(v),
     sharcontrast(v),
@@ -4628,7 +4628,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromaskreti = v;
     gammaskreti = v;
     slomaskreti = v;
-    blendreti = v;
+    scalereti = v;
     // Sharpening
     expsharp = v;
     sharcontrast = v;

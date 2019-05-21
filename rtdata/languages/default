@@ -932,7 +932,7 @@ HISTORY_MSG_685;Local - Retinex mask chroma
 HISTORY_MSG_686;Local - Retinex mask gamma
 HISTORY_MSG_687;Local - Retinex mask slope
 HISTORY_MSG_689;Local - Retinex mask transmission map
-HISTORY_MSG_690;Local - Retinex blend with original
+HISTORY_MSG_690;Local - Retinex scale
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1987,7 +1987,7 @@ TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance deltaE ab-L
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLENDMASKCOL;Blend
-TP_LOCALLAB_BLENDRETI;Blend Luminance with original
+TP_LOCALLAB_SCALERETI;Scale
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLUFR;Blur & Noise
 TP_LOCALLAB_BLURDE;Blur Shape detection

@@ -2310,7 +2310,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         const float refb = chromaref * sin(hueref);
         const bool retishow = ((lp.showmaskretimet == 1 || lp.showmaskretimet == 2));
         const bool previewreti = ((lp.showmaskretimet == 4));
-
         //balance deltaE
         float kL = lp.balance;
         float kab = 1.f;
@@ -2321,7 +2320,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         }
         std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
         const float radius = 3.f / sk;
-        const bool usemaskreti = (lp.showmaskretimet == 2 || lp.enaretiMask || lp.showmaskretimet == 4) && senstype == 4  && !lp.enaretiMasktmap;
+        const bool usemaskreti = lp.enaretiMask && senstype == 4  && !lp.enaretiMasktmap;
+        float strcli = 0.03f * lp.str;
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -2341,7 +2341,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-printf("OK use3\n");
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -2377,11 +2376,11 @@ printf("OK use3\n");
 
                     float rL = origblur->L[y][x] / 327.68f;
                     float dE;
-                //    if(!usemaskreti) {
+                    if(!usemaskreti) {
                         dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                //    } else {
-                 //       dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
-                 //   }
+                    } else {
+                        dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
+                    }
                     float cli = buflight[loy - begy][lox - begx];
                     //float clc = bufchro[loy - begy][lox - begx];
                     float clc = previewreti ? settings->previewselection * 100.f : bufchro[loy - begy][lox - begx];
@@ -2394,7 +2393,7 @@ printf("OK use3\n");
                     reducdE /= 100.f;
                     cli *= reducdE;
                     clc *= reducdE;
-
+                    cli *= (1.f + strcli);
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         if (senstype == 4) {//all except color and light (TODO) and exposure
                             float lightc = bufexporig->L[loy - begy][lox - begx];
@@ -2407,7 +2406,7 @@ printf("OK use3\n");
                             if(!showmas) transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                             else  transformed->L[y][x] =  bufmask->L[loy - begy][lox - begx]; ; //bufexporig->L[loy - begy][lox - begx];
                             if(retishow) {
-                                transformed->L[y][x] = CLIP(12000.f + diflc2);
+                                transformed->L[y][x] = CLIP(12000.f + diflc);
                             }
                         }
 

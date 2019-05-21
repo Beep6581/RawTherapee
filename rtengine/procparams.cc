@@ -2471,7 +2471,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     retinexMethod("high"),
     str(0.0),
     chrrt(0),
-    neigh(170),
+    neigh(150),
     vart(70),
     dehaz(0),
     sensih(30),
@@ -2488,7 +2488,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromaskreti(0.0),
     gammaskreti(1.0),
     slomaskreti(0.0),
-    blendreti(80.0),
+    scalereti(4.0),
     // Sharpening
     expsharp(false),
     sharcontrast(20),
@@ -2698,7 +2698,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chromaskreti == other.chromaskreti
         && gammaskreti == other.gammaskreti
         && slomaskreti == other.slomaskreti
-        && blendreti == other.blendreti
+        && scalereti == other.scalereti
         // Sharpening
         && expsharp == other.expsharp
         && sharcontrast == other.sharcontrast
@@ -3864,7 +3864,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskreti, "Locallab", "Chromaskreti_" + std::to_string(i), spot.chromaskreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskreti, "Locallab", "Gammaskreti_" + std::to_string(i), spot.gammaskreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskreti, "Locallab", "Slomaskreti_" + std::to_string(i), spot.slomaskreti, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blendreti, "Locallab", "Blendreti_" + std::to_string(i), spot.blendreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).scalereti, "Locallab", "Scalereti_" + std::to_string(i), spot.scalereti, keyFile);
                 // Sharpening
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsharp, "Locallab", "Expsharp_" + std::to_string(i), spot.expsharp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sharcontrast, "Locallab", "Sharcontrast_" + std::to_string(i), spot.sharcontrast, keyFile);
@@ -5171,7 +5171,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskreti_" + std::to_string(i), pedited, spot.chromaskreti, spotEdited.chromaskreti);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskreti_" + std::to_string(i), pedited, spot.gammaskreti, spotEdited.gammaskreti);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskreti_" + std::to_string(i), pedited, spot.slomaskreti, spotEdited.slomaskreti);
-                assignFromKeyfile(keyFile, "Locallab", "Blendreti_" + std::to_string(i), pedited, spot.blendreti, spotEdited.blendreti);
+                assignFromKeyfile(keyFile, "Locallab", "Scalereti_" + std::to_string(i), pedited, spot.scalereti, spotEdited.scalereti);
                 // Sharpening
                 assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, spot.expsharp, spotEdited.expsharp);
                 assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + std::to_string(i), pedited, spot.sharcontrast, spotEdited.sharcontrast);
