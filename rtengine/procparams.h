@@ -1090,6 +1090,9 @@ struct LocallabParams {
         double gammaskreti;
         double slomaskreti;
         double scalereti;
+        double darkness;
+        double lightnessreti;
+        double limd;
         // Sharpening
         bool expsharp;
         int sharcontrast;

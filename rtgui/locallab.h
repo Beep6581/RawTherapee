@@ -188,6 +188,9 @@ private:
     Adjuster* const gammaskreti;
     Adjuster* const slomaskreti;
     Adjuster* const scalereti;
+    Adjuster* const darkness;
+    Adjuster* const lightnessreti;
+    Adjuster* const limd;
 
     // Sharpening
     Adjuster* const sharcontrast;

@@ -858,11 +858,16 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         const int scal = (loc.spots.at(sp).scalereti);
         const float vart = loc.spots.at(sp).vart / 100.f;//variance
         const float strength = loc.spots.at(sp).str / 100.f; // Blend with original L channel data
-        float limD = 10.f;//(float) loc.limd;
+        const float dar = loc.spots.at(sp).darkness;
+        const float lig = loc.spots.at(sp).lightnessreti;
+        
+        float limD = loc.spots.at(sp).limd;//10.f
         limD = pow(limD, 1.7f);  //about 2500 enough
         float ilimD = 1.f / limD;
         const float elogt = 2.71828f;
-        if(scal <= 3) useHslLin = true;
+        if(scal <= 3) {
+            useHslLin = true;
+        }
 
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
@@ -928,7 +933,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             pond /= log(elogt);
         }
 
-
         float *buffer = new float[W_L * H_L];
 
         for (int scale = scal - 1; scale >= 0; scale--) {
@@ -948,6 +952,21 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 }
             }
 
+        if(scale == 1) {//equalize last scale with darkness and lightness
+            if (dar != 1.f || lig != 1.f) {
+
+#ifdef _OPENMP
+            #pragma omp parallel
+#endif
+                for (int y = 0; y < H_L; ++y) {
+                    for (int x = 0; x < W_L; ++x) {
+                        float buf = (src[y][x] - out[y][x]) * strength;
+                        buf *= (buf > 0.f) ? lig : dar;
+                        out[y][x] = LIM(out[y][x] + buf, 0.f, 100000.f);
+                    }
+                }
+            }
+        }
 
         if(lum == 1 && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) {//only mask with luminance
             array2D<float> loctemp(W_L, H_L);
@@ -1163,6 +1182,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 }
             }
         }
+        
+
 //here add GuidFilter for transmission map
                     array2D<float> ble(W_L, H_L);
                     array2D<float> guid(W_L, H_L);
@@ -1295,6 +1316,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     cdmin = cd < cdmin ? cd : cdmin;
                     luminance[i][j] = LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
                 }
+                
+                
 
 #ifdef _OPENMP
             #pragma omp critical

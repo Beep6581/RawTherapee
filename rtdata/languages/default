@@ -933,6 +933,9 @@ HISTORY_MSG_686;Local - Retinex mask gamma
 HISTORY_MSG_687;Local - Retinex mask slope
 HISTORY_MSG_689;Local - Retinex mask transmission map
 HISTORY_MSG_690;Local - Retinex scale
+HISTORY_MSG_691;Local - Retinex darkness
+HISTORY_MSG_692;Local - Retinex lightness
+HISTORY_MSG_693;Local - Retinex threshold
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2016,6 +2019,9 @@ TP_LOCALLAB_CURVENH;Super
 TP_LOCALLAB_CURVENHSU;Combined HueChroma (experimental)
 TP_LOCALLAB_CURVENCONTRAST;Super+Contrast threshold (experimental)
 TP_LOCALLAB_CURVENSOB2;Combined HueChroma + Contrast threshold (experimental)
+TP_LOCALLAB_DARKRETI;Darkness
+TP_LOCALLAB_LIGHTRETI;Lightness
+TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DEHAZ;Dehaze
 TP_LOCALLAB_GRIDONE;Color Toning

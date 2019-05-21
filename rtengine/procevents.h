@@ -717,6 +717,9 @@ enum ProcEventCode {
     EvlocallabshowmaskretiMethod = 687,
     EvLocallabEnaretiMasktmap = 688,
     Evlocallabscalereti = 689,
+    Evlocallabdarkness = 690,
+    Evlocallablightnessreti = 691,
+    Evlocallablimd = 692,
     NUMOFEVENTS
 };
 
