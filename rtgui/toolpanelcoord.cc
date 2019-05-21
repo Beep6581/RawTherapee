@@ -955,22 +955,38 @@ void ToolPanelCoordinator::toolSelected (ToolMode tool)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
+    auto checkFavorite = [this](FoldableToolPanel* tool) {
+        for (auto fav : favorites) {
+            if (fav == tool) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     switch (tool) {
-        case TMCropSelect:
-            crop->setExpanded (true);
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*transformPanelSW));
+        case TMCropSelect: {
+            crop->setExpanded(true);
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(crop) ? *favoritePanelSW : *transformPanelSW));
             break;
+        }
 
-        case TMSpotWB:
-            whitebalance->setExpanded (true);
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*colorPanelSW));
+        case TMSpotWB: {
+            whitebalance->setExpanded(true);
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(whitebalance) ? *favoritePanelSW : *colorPanelSW));
             break;
+        }
 
-        case TMStraighten:
-            lensgeom->setExpanded (true);
-            rotate->setExpanded (true);
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*transformPanelSW));
+        case TMStraighten: {
+            rotate->setExpanded(true);
+            bool isFavorite = checkFavorite(rotate);
+            if (!isFavorite) {
+                isFavorite = checkFavorite(lensgeom);
+                lensgeom->setExpanded(true);
+            }
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(isFavorite ? *favoritePanelSW : *transformPanelSW));
             break;
+        }
 
         default:
             break;
