@@ -499,6 +499,8 @@ void ParamsEdited::set(bool v)
     wavelet.resconH = v;
     wavelet.reschro = v;
     wavelet.tmrs = v;
+    wavelet.edgs = v;
+    wavelet.scale = v;
     wavelet.gamma = v;
     wavelet.sup = v;
     wavelet.sky = v;
@@ -1073,6 +1075,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.resconH = wavelet.resconH && p.wavelet.resconH == other.wavelet.resconH;
         wavelet.reschro = wavelet.reschro && p.wavelet.reschro == other.wavelet.reschro;
         wavelet.tmrs = wavelet.tmrs && p.wavelet.tmrs == other.wavelet.tmrs;
+        wavelet.edgs = wavelet.edgs && p.wavelet.edgs == other.wavelet.edgs;
+        wavelet.scale = wavelet.scale && p.wavelet.scale == other.wavelet.scale;
         wavelet.gamma = wavelet.gamma && p.wavelet.gamma == other.wavelet.gamma;
         wavelet.sup = wavelet.sup && p.wavelet.sup == other.wavelet.sup;
         wavelet.sky = wavelet.sky && p.wavelet.sky == other.wavelet.sky;
@@ -3071,6 +3075,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.tmrs) {
         toEdit.wavelet.tmrs = dontforceSet && options.baBehav[ADDSET_WA_TMRS] ? toEdit.wavelet.tmrs + mods.wavelet.tmrs : mods.wavelet.tmrs;
+    }
+
+    if (wavelet.edgs) {
+        toEdit.wavelet.edgs = dontforceSet && options.baBehav[ADDSET_WA_EDGS] ? toEdit.wavelet.edgs + mods.wavelet.edgs : mods.wavelet.edgs;
+    }
+
+    if (wavelet.scale) {
+        toEdit.wavelet.scale = dontforceSet && options.baBehav[ADDSET_WA_SCALE] ? toEdit.wavelet.scale + mods.wavelet.scale : mods.wavelet.scale;
     }
 
     if (wavelet.gamma) {

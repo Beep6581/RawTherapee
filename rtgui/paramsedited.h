@@ -498,6 +498,8 @@ struct WaveletParamsEdited {
     bool resconH;
     bool reschro;
     bool tmrs;
+    bool edgs;
+    bool scale;
     bool gamma;
     bool sup;
     bool sky;

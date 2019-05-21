@@ -1590,8 +1590,8 @@ void ImProcFunctions::EPDToneMapResid(float * WavCoeffs_L0,  unsigned int Iterat
 
 
     float stren = cp.tmstrength;
-    float edgest = params->epd.edgeStopping;
-    float sca = params->epd.scale;
+    float edgest = params->wavelet.edgs;
+    float sca = params->wavelet.scale;
     float gamm = params->wavelet.gamma;
     float rew = params->epd.reweightingIterates;
     EdgePreservingDecomposition epd2(W_L, H_L);
@@ -1769,6 +1769,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     {
         if (contrast != 0.f  && cp.resena && max0 > 0.0) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
             {
+                //
 #ifdef _OPENMP
                 #pragma omp for
 #endif
@@ -1794,7 +1795,8 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                 }
             }
         }
-
+        
+//
         if (cp.tonemap && cp.contmet == 1  && cp.resena) {
             float maxp = max0 * 256.f;
             float minp = min0 * 256.f;

@@ -1222,6 +1222,8 @@ struct WaveletParams {
     int resconH;
     int reschro;
     double tmrs;
+    double edgs;
+    double scale;
     double gamma;
     int sup;
     double sky;

@@ -781,6 +781,8 @@ HISTORY_MSG_WAVMERGEC;Merge C
 HISTORY_MSG_WAVSOFTRAD;Soft radius clarity
 HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
+HISTORY_MSG_WAVEDGS;Edge stopping
+HISTORY_MSG_WAVSCALE;Scale
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2228,8 +2230,10 @@ TP_WAVELET_TILESIZE;Tiling method
 TP_WAVELET_TILESLIT;Little tiles
 TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
 TP_WAVELET_TMSTRENGTH;Compression strength
-TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image.
 TP_WAVELET_TMTYPE;Compression method
+TP_WAVELET_TMEDGS;Edge stopping
+TP_WAVELET_TMSCALE;Scale
 TP_WAVELET_TON;Toning
 TP_WAVELET_USHARP;Clarity method
 TP_WAVELET_USH;None

@@ -81,6 +81,8 @@ Wavelet::Wavelet() :
     resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     tmrs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSTRENGTH"), -1.0, 2.0, 0.01, 0.0))),
+    edgs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMEDGS"), 0.1, 4.0, 0.01, 1.4))),
+    scale(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSCALE"), 0.1, 10.0, 0.01, 1.0))),
     gamma(Gtk::manage(new Adjuster(M("TP_WAVELET_COMPGAMMA"), 0.4, 2.0, 0.01, 1.0))),
     sup(Gtk::manage(new Adjuster(M("TP_WAVELET_SUPE"), -100, 350, 1, 0))),
     sky(Gtk::manage(new Adjuster(M("TP_WAVELET_SKY"), -100., 100.0, 1., 0.))),
@@ -163,6 +165,8 @@ Wavelet::Wavelet() :
     EvWavsoftrad = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSOFTRAD");
     EvWavsoftradend = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSOFTRADEND");
     EvWavshowmask = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSHOWMASK");
+    EvWavedgs = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVEDGS");
+    EvWavscale = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSCALE");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -704,6 +708,16 @@ Wavelet::Wavelet() :
     resBox->pack_start(*gamma);
     gamma->setAdjusterListener(this);
 
+    //edgs->set_tooltip_text(M("TP_WAVELET_TMEDGS_TOOLTIP"));
+
+    resBox->pack_start(*edgs);
+    edgs->setAdjusterListener(this);
+
+    //scale->set_tooltip_text(M("TP_WAVELET_TMSCALE_TOOLTIP"));
+
+    resBox->pack_start(*scale);
+    scale->setAdjusterListener(this);
+
     Gtk::HSeparator* const separatorR1 = Gtk::manage(new  Gtk::HSeparator());
     resBox->pack_start(*separatorR1, Gtk::PACK_SHRINK, 2);
 
@@ -1203,6 +1217,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     resconH->setValue(pp->wavelet.resconH);
     reschro->setValue(pp->wavelet.reschro);
     tmrs->setValue(pp->wavelet.tmrs);
+    edgs->setValue(pp->wavelet.edgs);
+    scale->setValue(pp->wavelet.scale);
     gamma->setValue(pp->wavelet.gamma);
     sup->setValue(pp->wavelet.sup);
     sky->setValue(pp->wavelet.sky);
@@ -1350,6 +1366,8 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         resconH->setEditedState(pedited->wavelet.resconH ? Edited : UnEdited);
         reschro->setEditedState(pedited->wavelet.reschro ? Edited : UnEdited);
         tmrs->setEditedState(pedited->wavelet.tmrs ? Edited : UnEdited);
+        edgs->setEditedState(pedited->wavelet.edgs ? Edited : UnEdited);
+        scale->setEditedState(pedited->wavelet.scale ? Edited : UnEdited);
         gamma->setEditedState(pedited->wavelet.gamma ? Edited : UnEdited);
         sup->setEditedState(pedited->wavelet.sup ? Edited : UnEdited);
         sky->setEditedState(pedited->wavelet.sky ? Edited : UnEdited);
@@ -1529,6 +1547,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.resconH        = resconH->getValue();
     pp->wavelet.reschro        = reschro->getValue();
     pp->wavelet.tmrs           = tmrs->getValue();
+    pp->wavelet.edgs           = edgs->getValue();
+    pp->wavelet.scale          = scale->getValue();
     pp->wavelet.gamma          = gamma->getValue();
     pp->wavelet.sup            = sup->getValue();
     pp->wavelet.sky            = sky->getValue();
@@ -1636,6 +1656,8 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.resconH         = resconH->getEditedState();
         pedited->wavelet.reschro         = reschro->getEditedState();
         pedited->wavelet.tmrs            = tmrs->getEditedState();
+        pedited->wavelet.edgs            = edgs->getEditedState();
+        pedited->wavelet.scale           = scale->getEditedState();
         pedited->wavelet.gamma           = gamma->getEditedState();
         pedited->wavelet.sup             = sup->getEditedState();
         pedited->wavelet.sky             = sky->getEditedState();
@@ -1867,6 +1889,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     resconH->setDefault(defParams->wavelet.resconH);
     reschro->setDefault(defParams->wavelet.reschro);
     tmrs->setDefault(defParams->wavelet.tmrs);
+    edgs->setDefault(defParams->wavelet.edgs);
+    scale->setDefault(defParams->wavelet.scale);
     gamma->setDefault(defParams->wavelet.gamma);
     sup->setDefault(defParams->wavelet.sup);
     sky->setDefault(defParams->wavelet.sky);
@@ -1925,6 +1949,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         resconH->setDefault(defParams->wavelet.resconH);
         reschro->setDefault(defParams->wavelet.reschro);
         tmrs->setDefault(defParams->wavelet.tmrs);
+        edgs->setDefault(defParams->wavelet.edgs);
+        scale->setDefault(defParams->wavelet.scale);
         gamma->setDefault(defParams->wavelet.gamma);
         sup->setDefault(defParams->wavelet.sup);
         sky->setDefaultEditedState(pedited->wavelet.sky ? Edited : UnEdited);
@@ -1972,6 +1998,8 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         resconH->setDefaultEditedState(Irrelevant);
         reschro->setDefaultEditedState(Irrelevant);
         tmrs->setDefaultEditedState(Irrelevant);
+        edgs->setDefaultEditedState(Irrelevant);
+        scale->setDefaultEditedState(Irrelevant);
         gamma->setDefaultEditedState(Irrelevant);
         sup->setDefaultEditedState(Irrelevant);
         sky->setDefaultEditedState(Irrelevant);
@@ -2274,6 +2302,14 @@ void Wavelet::TMmethodUpdateUI()
         }
     }
     */
+            if(TMmethod->get_active_row_number() == 1) {
+               edgs->show();
+               scale->show();
+            } else if (TMmethod->get_active_row_number() == 0) {
+               edgs->hide();
+               scale->hide();
+            }
+   
 }
 
 void Wavelet::TMmethodChanged()
@@ -2476,6 +2512,8 @@ void Wavelet::setBatchMode(bool batchMode)
     resconH->showEditedCB();
     reschro->showEditedCB();
     tmrs->showEditedCB();
+    edgs->showEditedCB();
+    scale->showEditedCB();
     gamma->showEditedCB();
     sup->showEditedCB();
     sky->showEditedCB();
@@ -2524,7 +2562,7 @@ void Wavelet::setBatchMode(bool batchMode)
 
 void Wavelet::adjusterUpdateUI(Adjuster* a)
 {
-    /*
+ /*   
         if (!batchMode) {
             if (a == tmrs ) {
                 float tm;
@@ -2537,10 +2575,10 @@ void Wavelet::adjusterUpdateUI(Adjuster* a)
                 tm=tmrs->getValue();
                 if(tm==0.f) tmr->hide();
                 else tmr->show();
-                );
+                
             }
         }
-    */
+ */  
 }
 
 void Wavelet::adjusterChanged(Adjuster* a, double newval)
@@ -2554,12 +2592,25 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavresconH, resconH->getTextValue());
         } else if (a == reschro) {
             listener->panelChanged(EvWavreschro, reschro->getTextValue());
-        } else if (a == tmrs) {
+        } else if (a == tmrs) {            
             adjusterUpdateUI(a);
             listener->panelChanged(EvWavtmrs, tmrs->getTextValue());
+            if(tmrs->getValue() != 0 && TMmethod->get_active_row_number() == 1) {
+               edgs->show();
+               scale->show();
+            } else if (TMmethod->get_active_row_number() == 0) {
+               edgs->hide();
+               scale->hide();
+            }
         } else if (a == gamma) {
             adjusterUpdateUI(a);
             listener->panelChanged(EvWavgamma, gamma->getTextValue());
+        } else if (a == edgs) {
+            adjusterUpdateUI(a);
+            listener->panelChanged(EvWavedgs, edgs->getTextValue());
+        } else if (a == scale) {
+            adjusterUpdateUI(a);
+            listener->panelChanged(EvWavscale, scale->getTextValue());
         } else if (a == sky) {
             listener->panelChanged(EvWavsky, sky->getTextValue());
         } else if (a == sup) {
@@ -3130,7 +3181,7 @@ void Wavelet::colorForValue(double valX, double valY, enum ColorCaller::ElemType
     caller->ccGreen = double(G);
     caller->ccBlue = double(B);
 }
-void Wavelet::setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd,  bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add)
+void Wavelet::setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool edgsadd, bool scaleadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd,  bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add)
 {
 
     for (int i = 0; i < 9; i++) {
@@ -3148,6 +3199,8 @@ void Wavelet::setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool th
     resconH->setAddMode(resconHadd);
     reschro->setAddMode(reschroadd);
     tmrs->setAddMode(tmrsadd);
+    edgs->setAddMode(edgsadd);
+    scale->setAddMode(scaleadd);
     thr->setAddMode(thradd);
     thrH->setAddMode(thrHadd);
     sky->setAddMode(skyadd);

@@ -389,6 +389,8 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_WAVELET_THRH"), ADDSET_WA_THRRH, true);
     appendBehavList (mi, M ("TP_WAVELET_RESCHRO"), ADDSET_WA_RESCHRO, true);
     appendBehavList (mi, M ("TP_WAVELET_TMSTRENGTH"), ADDSET_WA_TMRS, true);
+    appendBehavList (mi, M ("TP_WAVELET_TMEDGS"), ADDSET_WA_EDGS, true);
+    appendBehavList (mi, M ("TP_WAVELET_TMSCALE"), ADDSET_WA_SCALE, true);
     appendBehavList (mi, M ("TP_WAVELET_SKY"), ADDSET_WA_SKYPROTECT, true);
     appendBehavList (mi, M ("TP_WAVELET_CONTRA"), ADDSET_WA_CONTRAST, true);
     appendBehavList (mi, M ("TP_WAVELET_STRENGTH"), ADDSET_WA_STRENGTH, true);
