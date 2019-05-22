@@ -953,14 +953,16 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             }
 
         if(scale == 1) {//equalize last scale with darkness and lightness
+        
             if (dar != 1.f || lig != 1.f) {
+                float value = pow(strength, 0.4f);
 
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
                 for (int y = 0; y < H_L; ++y) {
                     for (int x = 0; x < W_L; ++x) {
-                        float buf = (src[y][x] - out[y][x]) * strength;
+                        float buf = (src[y][x] - out[y][x]) * value;
                         buf *= (buf > 0.f) ? lig : dar;
                         out[y][x] = LIM(out[y][x] + buf, 0.f, 100000.f);
                     }
