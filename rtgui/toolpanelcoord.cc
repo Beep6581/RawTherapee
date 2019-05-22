@@ -1059,36 +1059,42 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
-    notebookconn.block(true); // "signal_switch_page" event is blocked to avoid unsubscribing Locallab (allows a correct behavior when switching to another tool using toolbar)
+    auto checkFavorite = [this](FoldableToolPanel* tool) {
+        for (auto fav : favorites) {
+            if (fav == tool) {
+                return true;
+            }
+        }
+        return false;
+    };
 
     switch (tool) {
-        case TMCropSelect:
-            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
+        case TMCropSelect: {
             crop->setExpanded(true);
-            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
-            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(crop) ? *favoritePanelSW : *transformPanelSW));
             break;
+        }
 
-        case TMSpotWB:
-            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
+        case TMSpotWB: {
             whitebalance->setExpanded(true);
-            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*colorPanelSW));
-            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(whitebalance) ? *favoritePanelSW : *colorPanelSW));
             break;
+        }
 
-        case TMStraighten:
-            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
-            lensgeom->setExpanded(true);
+        case TMStraighten: {
             rotate->setExpanded(true);
-            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
-            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
+            bool isFavorite = checkFavorite(rotate);
+            if (!isFavorite) {
+                isFavorite = checkFavorite(lensgeom);
+                lensgeom->setExpanded(true);
+            }
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(isFavorite ? *favoritePanelSW : *transformPanelSW));
             break;
+        }
 
         default:
             break;
     }
-
-    notebookconn.block(false);
 }
 
 void ToolPanelCoordinator::editModeSwitchedOff()
