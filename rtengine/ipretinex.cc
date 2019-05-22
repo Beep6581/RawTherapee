@@ -893,7 +893,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
         const float high = 0.f; // Dummy to pass to retinex_scales(...)
 
-        constexpr auto maxRetinexScales = 8;
+        constexpr auto maxRetinexScales = 10;
         float RetinexScales[maxRetinexScales];
 
         retinex_scales(RetinexScales, scal, moderetinex, nei, high);
@@ -1197,9 +1197,9 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     guid[i][j] = src[i][j]/32768.f;
                     ble[i][j] = luminance[i][j]/32768.f;
                 }
-
+            double epsilon = 4. * 1e-5 / (double) scal;
             if (loc.spots.at(sp).softradiusret > 0.f) {
-                guidedFilter(guid, ble, ble, loc.spots.at(sp).softradiusret * 10.f / skip,  1e-5, multiThread, 4);
+                guidedFilter(guid, ble, ble, loc.spots.at(sp).softradiusret * 10.f / skip,  epsilon, multiThread, 4);
             }
 
 #ifdef _OPENMP
