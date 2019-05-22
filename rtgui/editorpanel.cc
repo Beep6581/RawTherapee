@@ -484,7 +484,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     histogramPanel = nullptr;
 
     profilep = Gtk::manage (new ProfilePanel ());
-    ppframe = new Gtk::Frame ();
+    ppframe = Gtk::manage(new Gtk::Frame());
     ppframe->set_name ("ProfilePanel");
     ppframe->add (*profilep);
     ppframe->set_label (M ("PROFILEPANEL_LABEL"));
@@ -627,7 +627,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright->pack2 (*vsubboxright, true, true);
 
     // Save buttons
-    Gtk::Grid *iops = new Gtk::Grid ();
+    Gtk::Grid *iops = Gtk::manage(new Gtk::Grid());
     iops->set_name ("IopsPanel");
     iops->set_orientation (Gtk::ORIENTATION_HORIZONTAL);
     iops->set_row_spacing (2);
@@ -661,7 +661,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     progressLabel->set_fraction (0.0);
 
     // tbRightPanel_1
-    tbRightPanel_1 = new Gtk::ToggleButton ();
+    tbRightPanel_1 = Gtk::manage(new Gtk::ToggleButton());
     iRightPanel_1_Show = new RTImage ("panel-to-left.png");
     iRightPanel_1_Hide = new RTImage ("panel-to-right.png");
     tbRightPanel_1->set_relief (Gtk::RELIEF_NONE);
@@ -671,7 +671,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     setExpandAlignProperties (tbRightPanel_1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     // ShowHideSidePanels
-    tbShowHideSidePanels = new Gtk::ToggleButton ();
+    tbShowHideSidePanels = Gtk::manage(new Gtk::ToggleButton());
     iShowHideSidePanels = new RTImage ("crossed-arrows-out.png");
     iShowHideSidePanels_exit = new RTImage ("crossed-arrows-in.png");
     tbShowHideSidePanels->set_relief (Gtk::RELIEF_NONE);
@@ -883,7 +883,6 @@ EditorPanel::~EditorPanel ()
 
     delete tpc;
 
-    delete ppframe;
     delete leftsubbox;
     delete leftbox;
     delete vsubboxright;
