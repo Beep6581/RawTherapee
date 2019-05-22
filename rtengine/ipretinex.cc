@@ -970,7 +970,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             }
         }
 
-        if(lum == 1 && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) {//only mask with luminance
+        if(lum == 1 && scale == 1 && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) {//only mask with luminance on last scale
             array2D<float> loctemp(W_L, H_L);
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);
@@ -1262,10 +1262,9 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
         mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
         float asig = 0.f, bsig = 0.f, amax = 0.f, bmax = 0.f, amin = 0.f, bmin = 0.f;
-        //   bool gaincurve = false; //wavRETgainCcurve
-        const bool hasWavRetGainCurve =  locRETgainCcurve && mean != 0.f && stddv != 0.f;
+        const bool hasRetGainCurve =  locRETgainCcurve && mean != 0.f && stddv != 0.f;
 
-        if (hasWavRetGainCurve) { //if curve
+        if (hasRetGainCurve) { //if curve
             asig = 0.166666f / stddv;
             bsig = 0.5f - asig * mean;
             amax = 0.333333f / (maxtr - mean - stddv);
@@ -1298,7 +1297,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
-                    if (hasWavRetGainCurve) {
+                    if (hasRetGainCurve) {
                         float absciss;
 
                         if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
@@ -1330,7 +1329,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             }
 
         }
-//printf("OK useretinex\n");
 
         Tmean = mean;
         Tsigma = stddv;
