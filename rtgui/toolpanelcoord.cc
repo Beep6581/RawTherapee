@@ -1058,6 +1058,7 @@ void ToolPanelCoordinator::updateTPVScrollbar(bool hide)
 void ToolPanelCoordinator::toolSelected(ToolMode tool)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+    notebookconn.block(true); // "signal_switch_page" event is blocked to avoid unsubscribing Locallab (allows a correct behavior when switching to another tool using toolbar)
 
     auto checkFavorite = [this](FoldableToolPanel* tool) {
         for (auto fav : favorites) {
@@ -1070,18 +1071,23 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
 
     switch (tool) {
         case TMCropSelect: {
+            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
             crop->setExpanded(true);
             toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(crop) ? *favoritePanelSW : *transformPanelSW));
+            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
             break;
         }
 
         case TMSpotWB: {
+            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
             whitebalance->setExpanded(true);
             toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(whitebalance) ? *favoritePanelSW : *colorPanelSW));
+            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
             break;
         }
 
         case TMStraighten: {
+            toolBar->blockEditDeactivation(false); // To allow deactivating Locallab when switching to another tool using toolbar
             rotate->setExpanded(true);
             bool isFavorite = checkFavorite(rotate);
             if (!isFavorite) {
@@ -1089,12 +1095,15 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
                 lensgeom->setExpanded(true);
             }
             toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(isFavorite ? *favoritePanelSW : *transformPanelSW));
+            prevPage = toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()); // Updating prevPage as "signal_switch_page" event
             break;
         }
 
         default:
             break;
     }
+
+    notebookconn.block(false);
 }
 
 void ToolPanelCoordinator::editModeSwitchedOff()
