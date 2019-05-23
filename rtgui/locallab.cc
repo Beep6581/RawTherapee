@@ -4463,11 +4463,11 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
 
         if (a == scalereti) {
             if(scalereti->getValue() == 1) {
-                limd->hide();
+              //  limd->hide();
                 LocalcurveEditorgainT->hide();
                 retinexMethod->hide();
             } else {
-                limd->show();
+              //  limd->show();
                 LocalcurveEditorgainT->show();
                 retinexMethod->show();
             }
@@ -5185,11 +5185,11 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         }
 
         if(pp->locallab.spots.at(index).scalereti == 1) {
-            limd->hide();
+         //   limd->hide();
             LocalcurveEditorgainT->hide();
             retinexMethod->hide();
         } else {
-            limd->show();
+         //   limd->show();
             LocalcurveEditorgainT->show();
             retinexMethod->show();
         }
