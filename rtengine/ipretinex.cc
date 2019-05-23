@@ -865,6 +865,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         const float dar = loc.spots.at(sp).darkness;
         const float lig = loc.spots.at(sp).lightnessreti;
         float value = pow(strength, 0.4f);
+        float value_1 = pow(strength, 0.3f);
 
         float limD = loc.spots.at(sp).limd;//10.f
         limD = pow(limD, 1.7f);  //about 2500 enough
@@ -1223,7 +1224,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
             for (int y = 0; y < H_L; ++y) {
                 for (int x = 0; x < W_L; ++x) {
-                    float buf = (src[y][x] - out[y][x]) * value;
+                    float buf = (src[y][x] - out[y][x]) * value_1;
                     buf *= (buf > 0.f) ? lig : dar;
                     luminance[y][x] = LIM(src[y][x] + (1.f + kval) * buf, 0.f, 32768.f);
                 }
