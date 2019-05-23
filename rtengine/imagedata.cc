@@ -41,8 +41,13 @@ extern const Settings *settings;
 Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
 {
 #ifdef EXV_UNICODE_PATH
-    const auto* const ws = g_utf8_to_utf16(fname.c_str(), -1, NULL, NULL, NULL);
-    const std::wstring wfname(ws);
+    glong ws_size = 0;
+    gunichar2* const ws = g_utf8_to_utf16(fname.c_str(), -1, nullptr, &ws_size, nullptr);
+    std::wstring wfname;
+    wfname.reserve(ws_size);
+    for (glong i = 0; i < ws_size; ++i) {
+        wfname.push_back(ws[i]);
+    }
     g_free(ws);
     auto image = Exiv2::ImageFactory::open(wfname);
 #else
