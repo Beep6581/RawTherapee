@@ -306,6 +306,7 @@ struct local_params {
     float chromareti;
     float gammareti;
     float slomareti;
+    int scalereti;
 };
 
 static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius, bool multiThread = false)
@@ -575,6 +576,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool inversesha = locallab.spots.at(sp).inverssha;
     double strength = (double) locallab.spots.at(sp).strength;
     float str = (float)locallab.spots.at(sp).str;
+    int scaleret = (float)locallab.spots.at(sp).scalereti;
 
     int local_sensihs = locallab.spots.at(sp).sensihs;
     int highhs = locallab.spots.at(sp).highlights;
@@ -589,6 +591,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float slomaskcb = ((float) locallab.spots.at(sp).slomaskcb);
     bool enaretiMasktm = locallab.spots.at(sp).enaretiMasktmap;
     lp.enaretiMasktmap =  enaretiMasktm;
+    lp.scalereti = scaleret;
     lp.cir = circr;
     lp.actsp = acti;
     lp.xc = w * local_center_x;
@@ -2322,6 +2325,10 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
         const float radius = 3.f / sk;
         const bool usemaskreti = lp.enaretiMask && senstype == 4  && !lp.enaretiMasktmap;
         float strcli = 0.03f * lp.str;
+        if(lp.scalereti == 1) {
+            strcli = 0.015 * lp.str;
+        }
+        
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
