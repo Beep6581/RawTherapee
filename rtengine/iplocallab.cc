@@ -453,8 +453,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskSHmet = llSHMask;
     lp.showmaskcbmet = llcbMask;
     lp.showmaskretimet = llretiMask;
-    printf("llretiMask=%i\n", llretiMask);
-    if(locallab.spots.at(sp).enaretiMask) printf("enaritrue\n"); else printf("enaritfalse\n");
+    //printf("llretiMask=%i\n", llretiMask);
+    //if(locallab.spots.at(sp).enaretiMask) printf("enaritrue\n"); else printf("enaritfalse\n");
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0;
     lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0;

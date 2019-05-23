@@ -151,7 +151,7 @@ Locallab::Locallab():
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4, 300, 1, 150))),
+    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4, 500, 1, 150))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 10, 500, 1, 70))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
@@ -4462,6 +4462,15 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         }
 
         if (a == scalereti) {
+            if(scalereti->getValue() == 1) {
+                limd->hide();
+                LocalcurveEditorgainT->hide();
+                retinexMethod->hide();
+            } else {
+                limd->show();
+                LocalcurveEditorgainT->show();
+                retinexMethod->show();
+            }
             if (listener) {
                 listener->panelChanged(Evlocallabscalereti, scalereti->getTextValue());
             }
@@ -5173,6 +5182,16 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             gridMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).gridMethod == "two") {
             gridMethod->set_active(1);
+        }
+
+        if(pp->locallab.spots.at(index).scalereti == 1) {
+            limd->hide();
+            LocalcurveEditorgainT->hide();
+            retinexMethod->hide();
+        } else {
+            limd->show();
+            LocalcurveEditorgainT->show();
+            retinexMethod->show();
         }
 
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
