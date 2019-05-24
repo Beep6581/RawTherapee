@@ -95,11 +95,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Kolorowe etykiety\n\nUżyj za pomocą rozwijanej 
 FILEBROWSER_COPYPROFILE;Kopiuj profil
 FILEBROWSER_CURRENT_NAME;Obecna nazwa:
 FILEBROWSER_DARKFRAME;Czarna klatka
-FILEBROWSER_DELETEDLGLABEL;Potwierdzenie usunięcia pliku
-FILEBROWSER_DELETEDLGMSG;Na pewno usunąć zaznaczone %1 plików?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Na pewno usunąć wybrany plik %1 WŁĄCZNIE z wersją utworzoną przez kolejkę przetwarzania?
+FILEBROWSER_DELETEDIALOG_HEADER;Potwierdzenie usunięcia pliku
+FILEBROWSER_DELETEDIALOG_SELECTED;Na pewno usunąć zaznaczone %1 plików?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Na pewno usunąć wybrany plik %1 WŁĄCZNIE z wersją utworzoną przez kolejkę przetwarzania?
 FILEBROWSER_EMPTYTRASH;Wyczyść kosz
-FILEBROWSER_EMPTYTRASHHINT;Definitywnie usuwa pliki z kosza
 FILEBROWSER_EXTPROGMENU;Otwórz za pomocą
 FILEBROWSER_FLATFIELD;Puste pole
 FILEBROWSER_MOVETODARKFDIR;Przenieś do katalogu zawierającego czarne klatki

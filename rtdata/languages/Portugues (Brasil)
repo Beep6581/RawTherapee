@@ -119,11 +119,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Etiqueta de cor.\n\nUse o menu suspenso ou atalho
 FILEBROWSER_COPYPROFILE;Copiar perfil
 FILEBROWSER_CURRENT_NAME;Nome atual:
 FILEBROWSER_DARKFRAME;Quadro escuro
-FILEBROWSER_DELETEDLGLABEL;Confirmação de exclusão de arquivo
-FILEBROWSER_DELETEDLGMSG;Tens certeza de que desejas excluir os <b>%1</b> arquivos selecionados?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Tens certeza de que desejas excluir os <b>%1</b> arquivos selecionados <b>incluindo</b> uma versão processada em fila?
+FILEBROWSER_DELETEDIALOG_HEADER;Confirmação de exclusão de arquivo
+FILEBROWSER_DELETEDIALOG_SELECTED;Tens certeza de que desejas excluir os <b>%1</b> arquivos selecionados?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Tens certeza de que desejas excluir os <b>%1</b> arquivos selecionados <b>incluindo</b> uma versão processada em fila?
 FILEBROWSER_EMPTYTRASH;Esvaziar lixeira
-FILEBROWSER_EMPTYTRASHHINT;Excluir permanentemente os arquivos da lixeira.
 FILEBROWSER_EXTPROGMENU;Abrir com
 FILEBROWSER_FLATFIELD;Flat-Field
 FILEBROWSER_MOVETODARKFDIR;Mover para o diretório de quadros escuros

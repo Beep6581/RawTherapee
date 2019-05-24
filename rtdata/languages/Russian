@@ -112,11 +112,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<
 FILEBROWSER_COPYPROFILE;Скопировать профиль
 FILEBROWSER_CURRENT_NAME;Текущее имя:
 FILEBROWSER_DARKFRAME;Темновой кадр
-FILEBROWSER_DELETEDLGLABEL;Подтверждение удаления файла
-FILEBROWSER_DELETEDLGMSG;Вы уверены, что хотите удалить <b>%1</b> выбранный(ых) файл(ов)?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Вы уверены, что хотите удалить <b>%1</b> выделенных файлов, <b>включая</b> обработанные версии?
+FILEBROWSER_DELETEDIALOG_HEADER;Подтверждение удаления файла
+FILEBROWSER_DELETEDIALOG_SELECTED;Вы уверены, что хотите удалить <b>%1</b> выбранный(ых) файл(ов)?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Вы уверены, что хотите удалить <b>%1</b> выделенных файлов, <b>включая</b> обработанные версии?
 FILEBROWSER_EMPTYTRASH;Очистить корзину
-FILEBROWSER_EMPTYTRASHHINT;Удалить файлы из корзины без возможности восстановления
 FILEBROWSER_EXTPROGMENU;Открыть с помощью
 FILEBROWSER_FLATFIELD;Плоское поле
 FILEBROWSER_MOVETODARKFDIR;Переместить в каталог темновых кадров

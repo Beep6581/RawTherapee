@@ -118,11 +118,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou l
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_DARKFRAME;Trame Noire
-FILEBROWSER_DELETEDLGLABEL;Confirmation de la suppression de fichier
-FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnés, INCLUANT une version déjà traitée?
+FILEBROWSER_DELETEDIALOG_HEADER;Confirmation de la suppression de fichier
+FILEBROWSER_DELETEDIALOG_SELECTED;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnés, INCLUANT une version déjà traitée?
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
-FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
 FILEBROWSER_EXTPROGMENU;Ouvrir avec
 FILEBROWSER_FLATFIELD;Champ Uniforme
 FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
