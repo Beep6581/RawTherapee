@@ -944,15 +944,17 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         float *buffer = new float[W_L * H_L];
 
         for (int scale = scal - 1; scale >= 0; scale--) {
-            printf("retscale=%f scale=%i \n", RetinexScales[scale], scale);
+            //    printf("retscale=%f scale=%i \n", RetinexScales[scale], scale);
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
             {
 
-                if (scale == scal - 1) {
+                if (scale == scal - 1)
+                {
                     gaussianBlur(src, out, W_L, H_L, RetinexScales[scale], buffer);
-                } else { // reuse result of last iteration
+                } else   // reuse result of last iteration
+                {
                     // out was modified in last iteration => restore it
 
                     gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
@@ -1163,6 +1165,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 }
             }
 
+
+
 #ifdef __SSE2__
             vfloat pondv = F2V(pond);
             vfloat limMinv = F2V(ilimD);
@@ -1202,6 +1206,62 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             }
         }
 
+        if (scal != 1) {
+            float mintran = luminance[0][0];
+            float maxtran = mintran;
+
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
+#endif
+
+            for (int ir = 0; ir < H_L; ir++) {
+                for (int jr = 0; jr < W_L; jr++) {
+                    mintran = rtengine::min(luminance[ir][jr], mintran);
+                    maxtran = rtengine::max(luminance[ir][jr], maxtran);
+                }
+            }
+
+            float deltatran = maxtran - mintran;
+
+//               printf("minT=%f maxT=%f delt=%f \n", mintran, maxtran, deltatran);
+//here add GuidFilter for transmission map
+            array2D<float> ble(W_L, H_L);
+            array2D<float> guid(W_L, H_L);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int i = 0; i < H_L; i ++)
+                for (int j = 0; j < W_L; j++) {
+                    guid[i][j] = src[i][j] / 32768.f;
+                    ble[i][j] = (luminance[i][j] + mintran) / deltatran;
+                }
+
+            double epsilmax = 1e-5;
+            double epsilmin = 1e-6;
+            float radi = loc.spots.at(sp).softradiusret;
+
+            if (loc.spots.at(sp).softradiusret > 0.f) {
+                double aepsil = (epsilmax - epsilmin) / 90.f;
+                double bepsil = epsilmax - 100.f * aepsil;
+                double epsil = aepsil * radi + bepsil;
+
+                float blur = 10.f / skip * (0.00001f + 0.8f * radi);
+                rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
+
+            }
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int i = 0; i < H_L; i ++)
+                for (int j = 0; j < W_L; j++) {
+                    luminance[i][j] = ble[i][j] * deltatran + mintran;
+                }
+        }
+
+
         if (scal == 1) { //use only local contrast
             float kval = 1.f;
 #ifdef _OPENMP
@@ -1211,6 +1271,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             for (int y = 0; y < H_L; ++y) {
                 for (int x = 0; x < W_L; ++x) {
                     float threslow = threslum * 163.f;
+
                     if (src[y][x] < threslow) {
                         kval = src[y][x] / threslow;
                     }
@@ -1269,44 +1330,62 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 }
         }
 
-//here add GuidFilter for transmission map
-        array2D<float> ble(W_L, H_L);
-        array2D<float> guid(W_L, H_L);
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int i = 0; i < H_L; i ++)
-            for (int j = 0; j < W_L; j++) {
-                guid[i][j] = src[i][j] / 32768.f;
-                ble[i][j] = luminance[i][j] / 32768.f;
-            }
-
-        double epsilon = 4. * 1e-5 / (double) scal;
-        float radi = loc.spots.at(sp).softradiusret > 0.f;
-
         if (scal == 1) {
-            epsilon = 1e-6;
-            radi /= 10.f;
-        }
-
-        if (loc.spots.at(sp).softradiusret > 0.f) {
-            guidedFilter(guid, ble, ble, radi * 10.f / skip,  epsilon, multiThread, 4);
-        }
+            float mintran = luminance[0][0];
+            float maxtran = mintran;
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
 #endif
 
-        for (int i = 0; i < H_L; i ++)
-            for (int j = 0; j < W_L; j++) {
-                luminance[i][j] = ble[i][j] * 32768.f;
+            for (int ir = 0; ir < H_L; ir++) {
+                for (int jr = 0; jr < W_L; jr++) {
+                    mintran = rtengine::min(luminance[ir][jr], mintran);
+                    maxtran = rtengine::max(luminance[ir][jr], maxtran);
+                }
             }
+
+            float deltatran = maxtran - mintran;
+            array2D<float> ble(W_L, H_L);
+            array2D<float> guid(W_L, H_L);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int i = 0; i < H_L; i ++)
+                for (int j = 0; j < W_L; j++) {
+                    guid[i][j] = src[i][j] / 32768.f;
+                    ble[i][j] = (luminance[i][j] + mintran) / deltatran;
+                }
+
+            double epsilmax = 1e-3;
+            double epsilmin = 1e-4;
+            float radi = loc.spots.at(sp).softradiusret;
+
+            if (loc.spots.at(sp).softradiusret > 0.f) {
+                double aepsil = (epsilmax - epsilmin) / 90.f;
+                double bepsil = epsilmax - 100.f * aepsil;
+                double epsil = aepsil * radi + bepsil;
+
+                float blur = 10.f / skip * (0.001f + 0.1f * radi);
+                rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
+
+            }
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int i = 0; i < H_L; i ++)
+                for (int j = 0; j < W_L; j++) {
+                    luminance[i][j] = ble[i][j] * deltatran + mintran;
+                }
+        }
 
         delete [] buffer;
         delete [] outBuffer;
         outBuffer = nullptr;
-        delete [] srcBuffer;
+//        delete [] srcBuffer;
         float str = strength * (chrome == 0 ? 1.f : chrT);
 
         if (scal != 1) {
@@ -1423,6 +1502,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     minCD = minCD < cdmin ? minCD : cdmin;
                 }
             }
+
+
         } else {
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -1430,7 +1511,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
-                    luminance[i][j] =  luminance[i][j] * str + (1.f - str) * originalLuminance[i][j];
+                    luminance[i][j] =  CLIPLOC(luminance[i][j]) * str + (1.f - str) * originalLuminance[i][j];
 
                 }
 

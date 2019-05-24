@@ -1150,7 +1150,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
 }
 
 
-void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &buflight, float rad, int bfh, int bfw, int sk, bool multiThread)
+void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &buflight, float rad, int bfh, int bfw, double epsilmax, double epsilmin,  float thres, int sk, bool multiThread)
 {
     float minlig = buflight[0][0];
 
@@ -1176,8 +1176,13 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
             guidsoft[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
         }
     }
+    double aepsil = (epsilmax - epsilmin) / 90.f;
+    double bepsil = epsilmax - 100.f * aepsil;
+    double epsil = aepsil * rad + bepsil;
+    float blur = 1.f / sk * (thres + 0.8f * rad);
+    guidedFilter(guidsoft, buflight, buflight, blur, epsil,  multiThread, 4);
 
-    guidedFilter(guidsoft, buflight, buflight, rad * 5.f / sk, 0.001, multiThread, 4);
+  //  guidedFilter(guidsoft, buflight, buflight, rad * 100.f / sk, 0.001, multiThread, 4);
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -5962,8 +5967,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                if (lp.softradiusret > 0.f) {
-                   // softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, multiThread);
+                if (lp.softradiusret > 0.f && lp.scalereti != 1) {
+                //    softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, 0.01, 0.001, 0.0001f, multiThread);
+                   //softproc(bufreti, tmpl, lp.softradiusret, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
                 }
 
                 transit_shapedetect_retinex(4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
@@ -6329,6 +6335,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         
                         if (lp.softradiusexp > 0.f) {
                             softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                       //     softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
                         }
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
