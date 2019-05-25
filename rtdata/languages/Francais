@@ -101,7 +101,7 @@ EXPORT_PIPELINE;Pipeline de Traitement
 EXPORT_PUTTOQUEUEFAST;Mettre dans la file de traitement\npour Export Rapide
 EXPORT_RAW_DMETHOD;Méthode de dématriçage
 EXPORT_USE_FAST_PIPELINE;Dédié\n(traitement complet sur une image rédimmentionnée)
-EXPORT_USE_FAST_PIPELINE_TIP;Utilise un pipeline de traitement dédié pour les images en Export Rapide, qui priviliégie la vitesse sur la qualité. Le redimentionnement des images est fait dès que possible, au lieu d'être fait à la fin comme dans le pipeline normal. L'accélération peut être significative, mais soyez prêt à voir des artéfacts et une dégradation générale de la qualité de sortie.
+EXPORT_USE_FAST_PIPELINE_TIP;Utilise un pipeline de traitement dédié pour les images en Export Rapide, qui privilégie la vitesse sur la qualité. Le redimensionnement des images est fait dès que possible, au lieu d'être fait à la fin comme dans le pipeline normal. L'accélération peut être significative, mais soyez prêt à voir des artéfacts et une dégradation générale de la qualité de sortie.
 EXPORT_USE_NORMAL_PIPELINE;Standard\n(ignore des étapes, redimentionne à la fin)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;file de traitement
@@ -118,11 +118,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou l
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_DARKFRAME;Trame Noire
-FILEBROWSER_DELETEDLGLABEL;Confirmation de la suppression de fichier
-FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnés, INCLUANT une version déjà traitée?
+FILEBROWSER_DELETEDIALOG_HEADER;Confirmation de la suppression de fichier
+FILEBROWSER_DELETEDIALOG_SELECTED;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnés, INCLUANT une version déjà traitée?
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
-FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
 FILEBROWSER_EXTPROGMENU;Ouvrir avec
 FILEBROWSER_FLATFIELD;Champ Uniforme
 FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
@@ -1017,7 +1016,7 @@ PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
 PARTIALPASTE_RAW_IMAGENUM;Sub-image
 PARTIALPASTE_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
-PARTIALPASTE_RESIZE;Redimentionnement
+PARTIALPASTE_RESIZE;Redimensionnement
 PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_RGBCURVES;Courbes RVB
 PARTIALPASTE_ROTATION;Rotation
@@ -1786,7 +1785,7 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Verticale
 TP_PREPROCESS_NO_FOUND;Aucun trouvé
 TP_PREPROCESS_PDAFLINESFILTER;Filtre de ligne PDAF
 TP_PRSHARPENING_LABEL;Netteté post-redimensionnement
-TP_PRSHARPENING_TOOLTIP;Augmente la netteté de l'image après le redimentionnement. Ne fonctionne que si la méthode de redimensionnement "Lanczos" est utilisé. Il est impossible de prévisualiser les effets de cet outil. Cf. RawPedia pour les instructions d'utilisation.
+TP_PRSHARPENING_TOOLTIP;Augmente la netteté de l'image après le redimensionnement. Ne fonctionne que si la méthode de redimensionnement "Lanczos" est utilisée. Il est impossible de prévisualiser les effets de cet outil. Cf. RawPedia pour les instructions d'utilisation.
 TP_RAWCACORR_AUTO;Correction automatique
 TP_RAWCACORR_AUTOIT;Itérations
 TP_RAWCACORR_AUTOIT_TOOLTIP;Ce réglage est disponible si "Correction-auto" est activé.\nCorrection-auto est conservatif, signifiant qu'il ne corrige souvent pas toute l'aberration chromatique.\nPour corriger l'aberration restante, vous pouvez uttiliser jusqu'à cinq itérations de de la correction automatique de l'aberration chromatique.\nChaque itération réduira l'aberration restante de l'itération précédente avec un prix d'un temps de traitement plus long.
@@ -2265,6 +2264,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !MAIN_FRAME_PLACES_DEL;Remove
 !PROGRESSBAR_DECODING;Decoding...
 !PROGRESSBAR_GREENEQUIL;Green equilibration...

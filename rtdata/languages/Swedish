@@ -93,11 +93,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Färgetikett\n\nAnvänd menyn eller kortkommandon
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
 FILEBROWSER_DARKFRAME;Svartbild
-FILEBROWSER_DELETEDLGLABEL;Bekräftelse vid borttag
-FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filerna?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Är du säker på att du vill ta bort de valda filerna %1 OCH den behandlade versionen?
+FILEBROWSER_DELETEDIALOG_HEADER;Bekräftelse vid borttag
+FILEBROWSER_DELETEDIALOG_SELECTED;Är du säker på att du vill ta bort de valda %1 filerna?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Är du säker på att du vill ta bort de valda filerna %1 OCH den behandlade versionen?
 FILEBROWSER_EMPTYTRASH;Töm papperskorgen
-FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
 FILEBROWSER_EXTPROGMENU;Öppna med
 FILEBROWSER_FLATFIELD;Plattfält
 FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
@@ -1769,6 +1768,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !GENERAL_CURRENT;Current
 !GENERAL_RESET;Reset

@@ -84,11 +84,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Натпис у боји.\n\nКористите �
 FILEBROWSER_COPYPROFILE;Умножи профил
 FILEBROWSER_CURRENT_NAME;Тренутно име:
 FILEBROWSER_DARKFRAME;Тамни кадар
-FILEBROWSER_DELETEDLGLABEL;Брисање датотеке
-FILEBROWSER_DELETEDLGMSG;Да ли сигурно желите да обришете %1 датотека?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Да ли желите да обришете %1 изабраних датотека, укључујући и оне које су заказане?
+FILEBROWSER_DELETEDIALOG_HEADER;Брисање датотеке
+FILEBROWSER_DELETEDIALOG_SELECTED;Да ли сигурно желите да обришете %1 датотека?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Да ли желите да обришете %1 изабраних датотека, укључујући и оне које су заказане?
 FILEBROWSER_EMPTYTRASH;Избаци смеће
-FILEBROWSER_EMPTYTRASHHINT;Трајно брише датотеке из смећа
 FILEBROWSER_EXTPROGMENU;Отвори помоћу
 FILEBROWSER_FLATFIELD;Равно поље
 FILEBROWSER_MOVETODARKFDIR;Пребаци у фасциклу са тамним кадровима
@@ -1230,6 +1229,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
