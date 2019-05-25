@@ -2488,7 +2488,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromaskreti(0.0),
     gammaskreti(1.0),
     slomaskreti(0.0),
-    scalereti(4.0),
+    scalereti(3.0),
     darkness(1.0),
     lightnessreti(1.0),
     limd(8.0),

@@ -873,7 +873,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         float threslum = loc.spots.at(sp).limd;
         const float elogt = 2.71828f;
 
-        if (scal <= 3) {
+        if (scal < 3) {
             useHslLin = true;
         }
 
@@ -1386,7 +1386,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         delete [] outBuffer;
         outBuffer = nullptr;
 //        delete [] srcBuffer;
-        float str = strength * (chrome == 0 ? 1.f : chrT);
+        float str = strength * (chrome == 0 ? 1.f : 0.8f * chrT);
 
         if (scal != 1) {
             mean = 0.f;

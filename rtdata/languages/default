@@ -901,7 +901,7 @@ HISTORY_MSG_653;Local - SH mask chroma
 HISTORY_MSG_654;Local - SH mask gamma
 HISTORY_MSG_655;Local - SH mask slope
 HISTORY_MSG_656;Local - Color soft radius
-HISTORY_MSG_657;Local - Retinex Guide Filter radius
+HISTORY_MSG_657;Local - Retinex Guided Filter radius
 HISTORY_MSG_658;Local - CBDL soft radius
 HISTORY_MSG_659;Local Spot transition-weakening
 HISTORY_MSG_660;Local - cbdl clarity
@@ -2050,7 +2050,7 @@ TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
-TP_LOCALLAB_GUIDFILTER;Guide filter radius
+TP_LOCALLAB_GUIDFILTER;Guided filter radius
 TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - reduce if non misty images 
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3

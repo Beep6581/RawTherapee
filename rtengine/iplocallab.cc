@@ -2426,9 +2426,9 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                         const float chra = bufexporig->a[loy - begy][lox - begx];
                         const float chrb = bufexporig->b[loy - begy][lox - begx];
 
-                      //  if (senstype == 4) {
+                        if (senstype == 5) {
                             fliab = 1.f + clc;
-                      //  }
+                        }
 
                         const float difa = (chra * fliab - original->a[y][x]) * localFactor;
                         const float difb = (chrb * fliab - original->b[y][x]) * localFactor;
@@ -6314,7 +6314,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
 
-                        if (lp.expchroma != 0.f) {
                             constexpr float ampli = 70.f;
                             const float ch = (1.f + 0.02f * lp.expchroma);
                             const float chprosl = ch <= 1.f ? 99.f * ch - 99.f : CLIPCHRO(ampli * ch - ampli);
@@ -6327,11 +6326,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float epsi = bufexporig->L[ir][jr] == 0.f ? 0.001f : 0.f;
                                     const float rapexp = bufexpfin->L[ir][jr] / (bufexporig->L[ir][jr] + epsi);
-
-                                    bufl_ab[ir][jr] = chprosl * rapexp;
+                                    if(rapexp >= 1.f) {
+                                        bufl_ab[ir][jr] = chprosl * rapexp;
+                                    } else {
+                                        bufl_ab[ir][jr] = chprosl * rapexp;
+                                    }
                                 }
                             }
-                        }
                         
                         if (lp.softradiusexp > 0.f) {
                             softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
