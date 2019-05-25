@@ -6006,9 +6006,33 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                 }
 
-                ImProcFunctions::MSRLocal(sp, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
+                if(params->locallab.spots.at(sp).chrrt <= 20.f) {
+                    //first step change saturation whithout Retinex ==> gain of time and memory
+                    float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
+                    DiagonalCurve reti_satur({
+                        DCT_NURBS,
+                        0, 0,
+                        0.1, 0.1 + satreal / 150.0,
+                        0.7,  min(1.0, 0.7 + satreal / 300.0),
+                        1, 1
+                    });
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
 
+                    for (int i = 0; i < Hd; i++)
+                        for (int j = 0; j < Wd; j++) {
+                            float buf = LIM01(orig[i][j] / 40000.f);
+                            buf = reti_satur.getVal(buf);
+                            buf *= 40000.f;
+                            orig[i][j] = buf;
+                        }
+                }
+            
+                if(params->locallab.spots.at(sp).chrrt > 20.f){ //second step active Retinex Chroma
+                    ImProcFunctions::MSRLocal(sp, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                    locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
+                }
                 if (!lp.invret && call <= 3) {
 
 #ifdef _OPENMP

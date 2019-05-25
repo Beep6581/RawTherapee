@@ -1386,7 +1386,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         delete [] outBuffer;
         outBuffer = nullptr;
 //        delete [] srcBuffer;
-        float str = strength * (chrome == 0 ? 1.f : 0.8f * chrT);
+        float str = strength * (chrome == 0 ? 1.f : 0.4f * chrT);
+        const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
 
         if (scal != 1) {
             mean = 0.f;
@@ -1455,8 +1456,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 cdfactor *= 2.f;
             }
 
-            const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
-            // float str = strength * (chrome == 0 ? 1.f : chrT);
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
@@ -1511,7 +1510,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
-                    luminance[i][j] =  CLIPLOC(luminance[i][j]) * str + (1.f - str) * originalLuminance[i][j];
+                    luminance[i][j] =   LIM(luminance[i][j], 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
 
                 }
 
