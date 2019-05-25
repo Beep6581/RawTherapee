@@ -80,6 +80,7 @@
 #79 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
 #80 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
 #81 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
+#82 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2361,5 +2362,5 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+FILEBROWSER_DELETEDIALOG_ALL;Möchten Sie wirklich <b>%1</b> Dateien unwiderruflich löschen?
+FILEBROWSER_EMPTYTRASHHINT;Alle Dateien im Papierkorb\nunwiderruflich löschen.
