@@ -119,11 +119,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Etiqueta de cor.\n\nUse o menu suspenso ou atalho
 FILEBROWSER_COPYPROFILE;Copiar
 FILEBROWSER_CURRENT_NAME;Nome atual:
 FILEBROWSER_DARKFRAME;Fotograma escuro
-FILEBROWSER_DELETEDLGLABEL;Confirmação de eliminação de ficheiro
-FILEBROWSER_DELETEDLGMSG;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados <b>incluindo</b> uma versão processada na fila?
+FILEBROWSER_DELETEDIALOG_HEADER;Confirmação de eliminação de ficheiro
+FILEBROWSER_DELETEDIALOG_SELECTED;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados <b>incluindo</b> uma versão processada na fila?
 FILEBROWSER_EMPTYTRASH;Esvaziar o caixote do lixo
-FILEBROWSER_EMPTYTRASHHINT;Eliminar permanentemente os ficheiros do caixote do lixo.
 FILEBROWSER_EXTPROGMENU;Abrir com
 FILEBROWSER_FLATFIELD;Campo plano
 FILEBROWSER_MOVETODARKFDIR;Mover para a pasta de fotogramas escuros
@@ -2263,6 +2262,8 @@ ZOOMPANEL_ZOOMOUT;Afastar\nAtalho: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !MAIN_FRAME_PLACES_DEL;Remove
 !PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PROGRESSBAR_DECODING;Decoding...

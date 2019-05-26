@@ -83,11 +83,10 @@ FILEBROWSER_CLEARPROFILE;Neteja
 FILEBROWSER_COPYPROFILE;Copia
 FILEBROWSER_CURRENT_NAME;Nom actual:
 FILEBROWSER_DARKFRAME;Marc fosc
-FILEBROWSER_DELETEDLGLABEL;Confirmació d'esborrar fitxer
-FILEBROWSER_DELETEDLGMSG;Segur que voleu esborrar els <b>%1</b> fitxers?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Segur que voleu suprimir els fitxers <b>%1</b> seleccionats <b>incloent</b> la versió processada a la cua?
+FILEBROWSER_DELETEDIALOG_HEADER;Confirmació d'esborrar fitxer
+FILEBROWSER_DELETEDIALOG_SELECTED;Segur que voleu esborrar els <b>%1</b> fitxers?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Segur que voleu suprimir els fitxers <b>%1</b> seleccionats <b>incloent</b> la versió processada a la cua?
 FILEBROWSER_EMPTYTRASH;Buida paperera
-FILEBROWSER_EMPTYTRASHHINT;Buida permanentment la paperera
 FILEBROWSER_EXTPROGMENU;Obre amb
 FILEBROWSER_FLATFIELD;Camp pla
 FILEBROWSER_MOVETODARKFDIR;Canvia al directori de camps foscos
@@ -943,6 +942,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow

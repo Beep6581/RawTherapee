@@ -121,11 +121,12 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n
 FILEBROWSER_COPYPROFILE;Copy
 FILEBROWSER_CURRENT_NAME;Current name:
 FILEBROWSER_DARKFRAME;Dark-frame
-FILEBROWSER_DELETEDLGLABEL;File delete confirmation
-FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1</b> files?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+FILEBROWSER_DELETEDIALOG_HEADER;File delete confirmation:
+FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to delete the selected <b>%1</b> files?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
 FILEBROWSER_EMPTYTRASH;Empty trash
-FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files from trash.
+FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 FILEBROWSER_EXTPROGMENU;Open with
 FILEBROWSER_FLATFIELD;Flat-Field
 FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
