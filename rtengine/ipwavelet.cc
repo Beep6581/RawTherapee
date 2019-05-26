@@ -1663,11 +1663,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     int H_L = WaveletCoeffs_L.level_H(0);
     float * WavCoeffs_L0 = WaveletCoeffs_L.coeff0;
 
-    float maxh = 2.5f; //amplification contrast above mean
-    float maxl = 2.5f; //reduction contrast under mean
     float contrast = cp.contrast;
-    float multL = (float)contrast * (maxl - 1.f) / 100.f + 1.f;
-    float multH = (float) contrast * (maxh - 1.f) / 100.f + 1.f;
     double avedbl = 0.0; // use double precision for large summations
     float max0 = 0.f;
     float min0 = FLT_MAX;
@@ -1735,14 +1731,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     max0 /= 327.68f;
     min0 /= 327.68f;
     float ave = avedbl / (double)(W_L * H_L);
-    float av = ave / 327.68f;
-    float ah = (multH - 1.f) / (av - max0); //
-    float bh = 1.f - max0 * ah;
-    float al = (multL - 1.f) / (av - min0);
-    float bl = 1.f - min0 * al;
-    float factorx = 1.f;
-//      float *koeLi[9];
-//      float maxkoeLi[9];
+    float avg = ave / 32768.f;
     float *koeLi[12];
     float maxkoeLi[12];
 
@@ -1763,35 +1752,32 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             koeLi[j][i] = 0.f;
         }
 
+    avg = LIM01(avg);
+    double contreal = 0.6 * contrast;
+    DiagonalCurve resid_contrast({
+        DCT_NURBS,
+            0, 0,
+            avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
+            avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
+            1, 1
+        });
+
+
 #ifdef _OPENMP
     #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
     {
         if (contrast != 0.f  && cp.resena && max0 > 0.0) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
             {
-                //
+
 #ifdef _OPENMP
-                #pragma omp for
+            #pragma omp for
 #endif
-
-                for (int i = 0; i < W_L * H_L; i++) { //contrast
-                    if (WavCoeffs_L0[i] < 32768.f) {
-                        float prov;
-
-                        if (WavCoeffs_L0[i] > ave) {
-                            float kh = ah * (WavCoeffs_L0[i] / 327.68f) + bh;
-                            prov = WavCoeffs_L0[i];
-                            WavCoeffs_L0[i] = ave + kh * (WavCoeffs_L0[i] - ave);
-                        } else {
-                            float kl = al * (WavCoeffs_L0[i] / 327.68f) + bl;
-                            prov = WavCoeffs_L0[i];
-                            WavCoeffs_L0[i] = ave - kl * (ave - WavCoeffs_L0[i]);
-                        }
-
-                        float diflc = WavCoeffs_L0[i] - prov;
-                        diflc *= factorx;
-                        WavCoeffs_L0[i] =  prov + diflc;
-                    }
+                for (int i = 0; i < W_L * H_L; i++) {
+                    float buf = LIM01( WavCoeffs_L0[i] / 32768.f);
+                    buf = resid_contrast.getVal(buf);
+                    buf *= 32768.f;
+                    WavCoeffs_L0[i] = buf;
                 }
             }
         }
