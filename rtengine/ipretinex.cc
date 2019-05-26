@@ -1385,8 +1385,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         delete [] buffer;
         delete [] outBuffer;
         outBuffer = nullptr;
-//        delete [] srcBuffer;
-        float str = strength * (chrome == 0 ? 1.f : 0.4f * chrT);
+        float str = strength * (chrome == 0 ? 1.f : 0.8f * chrT);
         const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
 
         if (scal != 1) {

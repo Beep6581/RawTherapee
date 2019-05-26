@@ -5966,12 +5966,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         buflight[ir][jr] /= coef;
                     }
                 }
-
+/*
                 if (lp.softradiusret > 0.f && lp.scalereti != 1) {
                 //    softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, 0.01, 0.001, 0.0001f, multiThread);
                    //softproc(bufreti, tmpl, lp.softradiusret, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
                 }
-
+*/
                 transit_shapedetect_retinex(4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                 
             } else {
@@ -6006,30 +6006,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                 }
 
-                if(params->locallab.spots.at(sp).chrrt <= 20.f) {
-                    //first step change saturation whithout Retinex ==> gain of time and memory
-                    float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
-                    DiagonalCurve reti_satur({
-                        DCT_NURBS,
-                        0, 0,
-                        0.1, 0.1 + satreal / 150.0,
-                        0.7,  min(1.0, 0.7 + satreal / 300.0),
-                        1, 1
-                    });
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-                    for (int i = 0; i < Hd; i++)
-                        for (int j = 0; j < Wd; j++) {
-                            float buf = LIM01(orig[i][j] / 40000.f);
-                            buf = reti_satur.getVal(buf);
-                            buf *= 40000.f;
-                            orig[i][j] = buf;
-                        }
-                }
+                //first step change saturation whithout Retinex ==> gain of time and memory
+                float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
+                DiagonalCurve reti_satur({
+                    DCT_NURBS,
+                    0, 0,
+                    0.1, 0.1 + satreal / 150.0,
+                    0.7,  min(1.0, 0.7 + satreal / 300.0),
+                    1, 1
+                });
             
-                if(params->locallab.spots.at(sp).chrrt > 20.f){ //second step active Retinex Chroma
+                if(params->locallab.spots.at(sp).chrrt > 30.f){ //second step active Retinex Chroma
                     ImProcFunctions::MSRLocal(sp, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                     locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
                 }
@@ -6045,6 +6032,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             float2 sincosval;
                             sincosval.y = Chprov == 0.0f ? 1.f : bufreti->a[ir][jr] / Chprov;
                             sincosval.x = Chprov == 0.0f ? 0.f : bufreti->b[ir][jr] / Chprov;
+                            if(params->locallab.spots.at(sp).chrrt <= 30.f) {//first step
+                                float buf = LIM01(orig[ir][jr] / 40000.f);
+                                buf = reti_satur.getVal(buf);
+                                buf *= 40000.f;
+                                orig[ir][jr] = buf;
+                            }
                             tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
                             tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
                         }
