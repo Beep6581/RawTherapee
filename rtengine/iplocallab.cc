@@ -6042,7 +6042,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
                         }
 
-                    float minC = sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0]));
+                    float minC = sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0])) - orig1[0][0];
                     float maxC = minC;
 #ifdef _OPENMP
                     #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
@@ -6050,7 +6050,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
-                            bufchro[ir][jr] = sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr]));
+                            bufchro[ir][jr] = sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - orig1[ir][jr];
                             minC = rtengine::min(minC, bufchro[ir][jr]);
                             maxC = rtengine::max(maxC, bufchro[ir][jr]);
                         }
