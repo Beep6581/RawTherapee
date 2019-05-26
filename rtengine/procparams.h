@@ -1071,9 +1071,9 @@ struct LocallabParams {
         bool expreti;
         Glib::ustring retinexMethod;
         double str;
-        int chrrt;
-        int neigh;
-        int vart;
+        double chrrt;
+        double neigh;
+        double vart;
         int dehaz;
         int sensih;
         std::vector<double> localTgaincurve;

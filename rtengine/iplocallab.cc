@@ -2400,20 +2400,21 @@ void ImProcFunctions::transit_shapedetect_retinex(int senstype, LabImage * bufex
                     float reducdE;
 
                     calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens , reducdE);
-                    const float realstrdE = reducdE * cli;
+                  //  const float realstrdE = reducdE * cli;
 
                     reducdE /= 100.f;
                     cli *= reducdE;
                     clc *= reducdE;
                     cli *= (1.f + strcli);
+                   // clc *= (1.f + strcli);
                     if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
                         if (senstype == 4) {//all except color and light (TODO) and exposure
                             float lightc = bufexporig->L[loy - begy][lox - begx];
                             float fli = 1.f + cli;
                             float diflc = lightc * fli - original->L[y][x];
-                            float diflc2 = 328.f * realstrdE;
+                           // float diflc2 = 328.f * realstrdE;
                             diflc *= localFactor;
-                            diflc2 *= localFactor;
+                           // diflc2 *= localFactor;
                             
                             if(!showmas) transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                             else  transformed->L[y][x] =  bufmask->L[loy - begy][lox - begx]; ; //bufexporig->L[loy - begy][lox - begx];
@@ -6005,18 +6006,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             orig1[ir][jr] = sqrt(SQR(transformed->a[ir][jr]) + SQR(transformed->b[ir][jr]));
                         }
                 }
+                float maxChro = orig1[0][0];
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16)
+#endif
+
+                for (int ir = 0; ir < Hd; ir++) {
+                    for (int jr = 0; jr < Wd; jr++) {
+                        maxChro = rtengine::max(maxChro, orig1[ir][jr]);
+                    }
+                }
+                float divchro = maxChro;
 
                 //first step change saturation whithout Retinex ==> gain of time and memory
                 float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
+                if(params->locallab.spots.at(sp).chrrt <= 0.2f) {
+                    satreal /= 10.f;
+                }
                 DiagonalCurve reti_satur({
                     DCT_NURBS,
                     0, 0,
-                    0.1, 0.1 + satreal / 150.0,
-                    0.7,  min(1.0, 0.7 + satreal / 300.0),
+                    0.2, 0.2 + satreal / 250.0,
+                    0.6,  min(1.0, 0.6 + satreal / 250.0),
                     1, 1
                 });
-            
-                if(params->locallab.spots.at(sp).chrrt > 30.f){ //second step active Retinex Chroma
+
+                if(params->locallab.spots.at(sp).chrrt > 40.f){ //second step active Retinex Chroma
                     ImProcFunctions::MSRLocal(sp, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                     locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
                 }
@@ -6032,10 +6047,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             float2 sincosval;
                             sincosval.y = Chprov == 0.0f ? 1.f : bufreti->a[ir][jr] / Chprov;
                             sincosval.x = Chprov == 0.0f ? 0.f : bufreti->b[ir][jr] / Chprov;
-                            if(params->locallab.spots.at(sp).chrrt <= 30.f) {//first step
-                                float buf = LIM01(orig[ir][jr] / 40000.f);
+                            if(params->locallab.spots.at(sp).chrrt <= 40.f) {//first step
+                                float buf = LIM01(orig[ir][jr] / divchro);
                                 buf = reti_satur.getVal(buf);
-                                buf *= 40000.f;
+                                buf *= divchro;
                                 orig[ir][jr] = buf;
                             }
                             tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
@@ -6083,7 +6098,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                 if (!lp.invret) {
-                        transit_shapedetect_retinex(5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect_retinex(5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                 } else {
                     InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
                 }

@@ -150,9 +150,9 @@ Locallab::Locallab():
     satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
-    chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4, 500, 1, 150))),
-    vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 10, 500, 1, 70))),
+    chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
+    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 500., 0.5, 150.))),
+    vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 10.0, 500., 0.1, 70.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
     softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDFILTER"), 0.0, 100.0, 0.1, 0.))),
@@ -2131,9 +2131,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).str = str->getValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).chrrt = chrrt->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).neigh = neigh->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).vart = vart->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).chrrt = chrrt->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).neigh = neigh->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).vart = vart->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).dehaz = dehaz->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensih = sensih->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).localTgaincurve = cTgainshape->getCurve();
@@ -3629,9 +3629,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     amount->setDefault(defSpot->amount);
     // Retinex
     str->setDefault(defSpot->str);
-    chrrt->setDefault((double)defSpot->chrrt);
-    neigh->setDefault((double)defSpot->neigh);
-    vart->setDefault((double)defSpot->vart);
+    chrrt->setDefault(defSpot->chrrt);
+    neigh->setDefault(defSpot->neigh);
+    vart->setDefault(defSpot->vart);
     dehaz->setDefault((double)defSpot->dehaz);
     sensih->setDefault((double)defSpot->sensih);
     softradiusret->setDefault(defSpot->softradiusret);

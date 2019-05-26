@@ -2097,7 +2097,7 @@ TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_NEIGH;Radius
-TP_LOCALLAB_VART;Contrast
+TP_LOCALLAB_VART;Contrast (variance)
 TP_LOCALLAB_SENSI;Scope
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSIH;Scope
