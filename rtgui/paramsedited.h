@@ -519,6 +519,7 @@ struct WaveletParamsEdited {
     bool edgthresh;
     bool thr;
     bool thrH;
+    bool radius;
     bool skinprotect;
     bool hueskin;
     bool hueskin2;

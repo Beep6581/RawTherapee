@@ -77,8 +77,8 @@ Wavelet::Wavelet() :
     tmr(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_BALCHRO")))),
     showmask(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_SHOWMASK")))),
     neutralchButton(Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")))),
-    rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
-    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
+    rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), 0, 100, 1, 0))),
+    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), 0, 100, 1, 0))),
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     tmrs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMSTRENGTH"), -1.0, 2.0, 0.01, 0.0))),
     edgs(Gtk::manage(new Adjuster(M("TP_WAVELET_TMEDGS"), 0.1, 4.0, 0.01, 1.4))),
@@ -90,8 +90,9 @@ Wavelet::Wavelet() :
     chroma(Gtk::manage(new Adjuster(M("TP_WAVELET_CHRO"), 1, 9, 1, 5))),
     chro(Gtk::manage(new Adjuster(M("TP_WAVELET_CHR"), 0., 100., 1., 0.))),
     contrast(Gtk::manage(new Adjuster(M("TP_WAVELET_CONTRA"), -100, 100, 1, 0))),
-    thr(Gtk::manage(new Adjuster(M("TP_WAVELET_THR"), 0, 100, 1, 35))),
-    thrH(Gtk::manage(new Adjuster(M("TP_WAVELET_THRH"), 0, 100, 1, 65))),
+    thr(Gtk::manage(new Adjuster(M("TP_WAVELET_THR"), 0, 100, 1, 30))),
+    thrH(Gtk::manage(new Adjuster(M("TP_WAVELET_THRH"), 0, 100, 1, 70))),
+    radius(Gtk::manage(new Adjuster(M("TP_WAVELET_RADIUS"), 0, 100, 1, 40))),
     skinprotect(Gtk::manage(new Adjuster(M("TP_WAVELET_SKIN"), -100, 100, 1, 0.))),
     edgrad(Gtk::manage(new Adjuster(M("TP_WAVELET_EDRAD"), 0, 100, 1, 15))),
     edgval(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0, 100, 1, 0))),
@@ -167,6 +168,7 @@ Wavelet::Wavelet() :
     EvWavshowmask = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSHOWMASK");
     EvWavedgs = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVEDGS");
     EvWavscale = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVSCALE");
+    EvWavradius = m->newEvent(DIRPYREQUALIZER, "HISTORY_MSG_WAVRADIUS");
 
     expsettings->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Wavelet::foldAllButMe), expsettings));
 
@@ -677,6 +679,9 @@ Wavelet::Wavelet() :
 
     thrH->setAdjusterListener(this);
     resBox->pack_start(*thrH, Gtk::PACK_SHRINK);
+
+    radius->setAdjusterListener(this);
+    resBox->pack_start(*radius, Gtk::PACK_SHRINK);
 
     contrast->set_tooltip_text(M("TP_WAVELET_CONTRA_TOOLTIP"));
     contrast->setAdjusterListener(this);
@@ -1231,6 +1236,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     edgthresh->setValue(pp->wavelet.edgthresh);
     thr->setValue(pp->wavelet.thr);
     thrH->setValue(pp->wavelet.thrH);
+    radius->setValue(pp->wavelet.radius);
     skinprotect->setValue(pp->wavelet.skinprotect);
     hueskin->setValue<int>(pp->wavelet.hueskin);
     hueskin2->setValue<int>(pp->wavelet.hueskin2);
@@ -1406,6 +1412,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         edgval->setEditedState(pedited->wavelet.edgval ? Edited : UnEdited);
         thr->setEditedState(pedited->wavelet.thr ? Edited : UnEdited);
         thrH->setEditedState(pedited->wavelet.thrH ? Edited : UnEdited);
+        radius->setEditedState(pedited->wavelet.radius ? Edited : UnEdited);
         skinprotect->setEditedState(pedited->wavelet.skinprotect ? Edited : UnEdited);
         hueskin->setEditedState(pedited->wavelet.hueskin ? Edited : UnEdited);
         hueskin2->setEditedState(pedited->wavelet.hueskin2 ? Edited : UnEdited);
@@ -1567,6 +1574,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     pp->wavelet.edgthresh      = edgthresh->getValue();
     pp->wavelet.thr            = thr->getValue();
     pp->wavelet.thrH           = thrH->getValue();
+    pp->wavelet.radius         = radius->getValue();
     pp->wavelet.hueskin        = hueskin->getValue<int> ();
     pp->wavelet.hueskin2       = hueskin2->getValue<int> ();
     pp->wavelet.skinprotect    = skinprotect->getValue();
@@ -1676,6 +1684,7 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->wavelet.edgval          = edgval->getEditedState();
         pedited->wavelet.thr             = thr->getEditedState();
         pedited->wavelet.thrH            = thrH->getEditedState();
+        pedited->wavelet.radius          = radius->getEditedState();
         pedited->wavelet.hueskin         = hueskin->getEditedState();
         pedited->wavelet.hueskin2        = hueskin2->getEditedState();
         pedited->wavelet.skinprotect     = skinprotect->getEditedState();
@@ -1910,6 +1919,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
     edgthresh->setDefault(defParams->wavelet.edgthresh);
     thr->setDefault(defParams->wavelet.thr);
     thrH->setDefault(defParams->wavelet.thrH);
+    radius->setDefault(defParams->wavelet.radius);
     hueskin->setDefault<int> (defParams->wavelet.hueskin);
     hueskin2->setDefault<int> (defParams->wavelet.hueskin2);
     hllev->setDefault<int> (defParams->wavelet.hllev);
@@ -1970,6 +1980,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         edgthresh->setDefault(defParams->wavelet.edgthresh);
         thr->setDefaultEditedState(pedited->wavelet.thr ? Edited : UnEdited);
         thrH->setDefaultEditedState(pedited->wavelet.thrH ? Edited : UnEdited);
+        radius->setDefaultEditedState(pedited->wavelet.radius ? Edited : UnEdited);
         skinprotect->setDefaultEditedState(pedited->wavelet.skinprotect ? Edited : UnEdited);
         hueskin->setDefaultEditedState(pedited->wavelet.hueskin ? Edited : UnEdited);
         hueskin2->setDefaultEditedState(pedited->wavelet.hueskin2 ? Edited : UnEdited);
@@ -2019,6 +2030,7 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
         edgthresh->setDefaultEditedState(Irrelevant);
         thr->setDefaultEditedState(Irrelevant);
         thrH->setDefaultEditedState(Irrelevant);
+        radius->setDefaultEditedState(Irrelevant);
         skinprotect->setDefaultEditedState(Irrelevant);
         hueskin->setDefaultEditedState(Irrelevant);
         hueskin2->setDefaultEditedState(Irrelevant);
@@ -2533,6 +2545,7 @@ void Wavelet::setBatchMode(bool batchMode)
     edgthresh->showEditedCB();
     thr->showEditedCB();
     thrH->showEditedCB();
+    radius->showEditedCB();
     skinprotect->showEditedCB();
     hueskin->showEditedCB();
     hueskin2->showEditedCB();
@@ -2625,6 +2638,8 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavthr, thr->getTextValue());
         } else if (a == thrH) {
             listener->panelChanged(EvWavthrH, thrH->getTextValue());
+        } else if (a == radius) {
+            listener->panelChanged(EvWavradius, radius->getTextValue());
         } else if (a == threshold) {
             listener->panelChanged(EvWavThreshold, threshold->getTextValue());
         } else if (a == threshold2) {
@@ -3181,7 +3196,7 @@ void Wavelet::colorForValue(double valX, double valY, enum ColorCaller::ElemType
     caller->ccGreen = double(G);
     caller->ccBlue = double(B);
 }
-void Wavelet::setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool edgsadd, bool scaleadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd,  bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add)
+void Wavelet::setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool edgsadd, bool scaleadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool radiusadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd,  bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add)
 {
 
     for (int i = 0; i < 9; i++) {
@@ -3203,6 +3218,7 @@ void Wavelet::setAdjusterBehavior(bool multiplieradd, bool thresholdadd, bool th
     scale->setAddMode(scaleadd);
     thr->setAddMode(thradd);
     thrH->setAddMode(thrHadd);
+    radius->setAddMode(radiusadd);
     sky->setAddMode(skyadd);
     edgrad->setAddMode(edgradadd);
     edgval->setAddMode(edgvaladd);

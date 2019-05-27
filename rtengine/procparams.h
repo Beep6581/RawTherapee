@@ -1243,6 +1243,7 @@ struct WaveletParams {
     int edgthresh;
     int thr;
     int thrH;
+    int radius;
     double skinprotect;
     Threshold<int> hueskin;
     Threshold<int> hueskin2;

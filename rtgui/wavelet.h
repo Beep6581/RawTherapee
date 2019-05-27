@@ -50,7 +50,7 @@ public:
     void autoOpenCurve () override;
     void curveChanged (CurveEditor* ce) override;
     void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool edgsadd, bool scaleadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
+    void setAdjusterBehavior (bool multiplieradd, bool thresholdadd, bool threshold2add, bool thresadd, bool chroadd, bool chromaadd, bool contrastadd, bool skinadd, bool reschroadd, bool tmrsadd, bool edgsadd, bool scaleadd, bool resconadd, bool resconHadd, bool thradd, bool thrHadd, bool radiusadd, bool skyadd, bool edgradadd, bool edgvaladd, bool strengthadd, bool gammaadd, bool edgedetectadd, bool edgedetectthradd, bool edgedetectthr2add);
     void setBatchMode (bool batchMode) override;
     void setDefaults  (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setEditProvider (EditDataProvider *provider) override;
@@ -74,6 +74,7 @@ private:
     rtengine::ProcEvent EvWavshowmask;
     rtengine::ProcEvent EvWavedgs;
     rtengine::ProcEvent EvWavscale;
+    rtengine::ProcEvent EvWavradius;
 
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
 
@@ -180,6 +181,7 @@ private:
     Adjuster* const contrast;
     Adjuster* const thr;
     Adjuster* const thrH;
+    Adjuster* const radius;
     Adjuster* const skinprotect;
     Adjuster* const edgrad;
     Adjuster* const edgval;

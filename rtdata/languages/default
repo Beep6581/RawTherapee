@@ -784,6 +784,7 @@ HISTORY_MSG_WAVSOFTRADEND;Soft radius final
 HISTORY_MSG_WAVSHOWMASK;Show wavelet mask
 HISTORY_MSG_WAVEDGS;Edge stopping
 HISTORY_MSG_WAVSCALE;Scale
+HISTORY_MSG_WAVRADIUS;Radius Shadows-Highlight
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2202,6 +2203,7 @@ TP_WAVELET_OPACITYWL;Final local contrast
 TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
+TP_WAVELET_RADIUS;Radius Shadows - Highlight
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
