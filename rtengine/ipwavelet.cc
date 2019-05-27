@@ -1595,7 +1595,7 @@ void ImProcFunctions::EPDToneMapResid(float * WavCoeffs_L0,  unsigned int Iterat
     float edgest = params->wavelet.edgs;
     float sca = params->wavelet.scale;
     float gamm = params->wavelet.gamma;
-    float rew = params->epd.reweightingIterates;
+    int rew = 0; //params->epd.reweightingIterates;
     EdgePreservingDecomposition epd2(W_L, H_L);
     cp.TMmeth = 2; //default after testing
 

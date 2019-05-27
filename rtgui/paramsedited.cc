@@ -520,6 +520,7 @@ void ParamsEdited::set(bool v)
     wavelet.edgthresh = v;
     wavelet.thr = v;
     wavelet.thrH = v;
+    wavelet.radius = v;
     wavelet.skinprotect = v;
     wavelet.hueskin = v;
     wavelet.hueskin2 = v;
@@ -1096,6 +1097,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.edgthresh = wavelet.edgthresh && p.wavelet.edgthresh == other.wavelet.edgthresh;
         wavelet.thr = wavelet.thr && p.wavelet.thr == other.wavelet.thr;
         wavelet.thrH = wavelet.thrH && p.wavelet.thrH == other.wavelet.thrH;
+        wavelet.radius = wavelet.radius && p.wavelet.radius == other.wavelet.radius;
         wavelet.hueskin = wavelet.hueskin && p.wavelet.hueskin == other.wavelet.hueskin;
         wavelet.hueskin2 = wavelet.hueskin2 && p.wavelet.hueskin2 == other.wavelet.hueskin2;
         wavelet.hllev = wavelet.hllev && p.wavelet.hllev == other.wavelet.hllev;
@@ -2926,6 +2928,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wavelet.thrH) {
         toEdit.wavelet.thrH = dontforceSet && options.baBehav[ADDSET_WA_THRRH] ? toEdit.wavelet.thrH + mods.wavelet.thrH : mods.wavelet.thrH;
+    }
+
+    if (wavelet.radius) {
+        toEdit.wavelet.radius = dontforceSet && options.baBehav[ADDSET_WA_RADIUS] ? toEdit.wavelet.radius + mods.wavelet.radius : mods.wavelet.radius;
     }
 
     if (wavelet.sup) {
