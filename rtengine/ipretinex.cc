@@ -1259,6 +1259,8 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 for (int j = 0; j < W_L; j++) {
                     luminance[i][j] = ble[i][j] * deltatran + mintran;
                 }
+            ble(0,0);
+            guid(0,0);
         }
 
 
@@ -1380,11 +1382,16 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 for (int j = 0; j < W_L; j++) {
                     luminance[i][j] = ble[i][j] * deltatran + mintran;
                 }
-        }
+            ble(0,0);
+            guid(0,0);
 
+        }
         delete [] buffer;
         delete [] outBuffer;
         outBuffer = nullptr;
+        delete [] srcBuffer;
+        srcBuffer = nullptr;
+        
         float str = strength * (chrome == 0 ? 1.f : 0.8f * (chrT - 0.4f));
         const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
 

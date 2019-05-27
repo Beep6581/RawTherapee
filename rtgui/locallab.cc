@@ -151,7 +151,7 @@ Locallab::Locallab():
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 500., 0.5, 150.))),
+    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 500., 0.5, 50.))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 10.0, 500., 0.1, 70.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),

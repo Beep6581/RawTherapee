@@ -2471,7 +2471,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     retinexMethod("high"),
     str(0.0),
     chrrt(0.0),
-    neigh(150.),
+    neigh(50.),
     vart(70.),
     dehaz(0),
     sensih(30),
