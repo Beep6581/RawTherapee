@@ -965,9 +965,9 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
                 if (dar != 1.f || lig != 1.f) {
 //                    float value = pow(strength, 0.4f);
-
+ 
 #ifdef _OPENMP
-                    #pragma omp parallel
+                    #pragma omp parallel for
 #endif
 
                     for (int y = 0; y < H_L; ++y) {
