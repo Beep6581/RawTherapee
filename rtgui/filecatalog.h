@@ -204,7 +204,7 @@ public:
 
     void filterApplied() override;
     void openRequested(const std::vector<Thumbnail*>& tbe) override;
-    void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed) override;
+    void deleteRequested(const std::vector<FileBrowserEntry*>& tbe, bool inclBatchProcessed, bool onlySelected) override;
     void copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, bool moveRequested) override;
     void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode) override;
     void renameRequested(const std::vector<FileBrowserEntry*>& tbe) override;

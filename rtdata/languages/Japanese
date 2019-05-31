@@ -152,11 +152,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;カラー・ラベル\n\nドロップダウン・
 FILEBROWSER_COPYPROFILE;プロファイルをコピー
 FILEBROWSER_CURRENT_NAME;現在の名前:
 FILEBROWSER_DARKFRAME;ダークフレーム
-FILEBROWSER_DELETEDLGLABEL;ファイル削除確認
-FILEBROWSER_DELETEDLGMSG;選択済みのファイル <b>%1</b> を削除してもいいですか?
-FILEBROWSER_DELETEDLGMSGINCLPROC;バッチ処理に<b>組み込まれている</b>選択済みのファイル <b>%1</b> を削除してもいいですか?
+FILEBROWSER_DELETEDIALOG_HEADER;ファイル削除確認
+FILEBROWSER_DELETEDIALOG_SELECTED;選択済みのファイル <b>%1</b> を削除してもいいですか?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;バッチ処理に<b>組み込まれている</b>選択済みのファイル <b>%1</b> を削除してもいいですか?
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
-FILEBROWSER_EMPTYTRASHHINT;ゴミ箱のファイルを完全に削除する
 FILEBROWSER_EXTPROGMENU;..で開く
 FILEBROWSER_FLATFIELD;フラットフィールド
 FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
@@ -2311,5 +2310,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !QUEUE_LOCATION_TITLE;Output Location

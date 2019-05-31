@@ -122,11 +122,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Kleur label\n\nGebruik keuzemenu of nSneltoets:\n
 FILEBROWSER_COPYPROFILE;Kopieer profiel
 FILEBROWSER_CURRENT_NAME;Huidige naam:
 FILEBROWSER_DARKFRAME;Donkerframe
-FILEBROWSER_DELETEDLGLABEL;Bevestiging bestand verwijderen
-FILEBROWSER_DELETEDLGMSG;Weet u zeker dat u de geselecteerde %1 bestanden wilt verwijderen?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Weet u zeker dat u de %1 geselecteerde bestanden wilt verwijderen *inclusief* de versies van de verwerkingsrij?
+FILEBROWSER_DELETEDIALOG_HEADER;Bevestiging bestand verwijderen
+FILEBROWSER_DELETEDIALOG_SELECTED;Weet u zeker dat u de geselecteerde %1 bestanden wilt verwijderen?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Weet u zeker dat u de %1 geselecteerde bestanden wilt verwijderen *inclusief* de versies van de verwerkingsrij?
 FILEBROWSER_EMPTYTRASH;Leeg prullenbak
-FILEBROWSER_EMPTYTRASHHINT;Verwijder bestanden in prullenbak voorgoed
 FILEBROWSER_EXTPROGMENU;Open met
 FILEBROWSER_FLATFIELD;Vlakveld
 FILEBROWSER_MOVETODARKFDIR;Verplaats naar map met donkerframes
@@ -1980,6 +1979,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !GENERAL_CURRENT;Current
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
