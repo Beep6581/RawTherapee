@@ -860,7 +860,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         const float offse = 0.f; //loc.offs;
         const float chrT = (float)(loc.spots.at(sp).chrrt) / 100.f;
         const int scal = (loc.spots.at(sp).scalereti);
-        const float vart = loc.spots.at(sp).vart / 100.f;//variance
+        float vart = loc.spots.at(sp).vart / 100.f;//variance
         const float strength = loc.spots.at(sp).str / 100.f; // Blend with original L channel data
         const float dar = loc.spots.at(sp).darkness;
         const float lig = loc.spots.at(sp).lightnessreti;
@@ -880,11 +880,18 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
         int nei = (int)(krad * loc.spots.at(sp).neigh);
-
+        //several test to find good values ???!!!
+        //very difficult to do because 4 factor are correlate with skip and cannot been solved
+        // size of spots
+        // radius - neigh
+        // scal
+        // variance vart
         if (skip >= 4) {
-            nei = (int)(0.1f * nei + 2.f);     //not too bad
+            nei = (int)(nei / (1.5f * skip) + 2.f)/ sqrt(scal / 3.f);     //not too bad
+            vart *= skip;
         } else if (skip > 1 && skip < 4) {
-            nei = (int)(0.3f * nei + 2.f);
+            nei = (int)(nei / skip + 10.f) / sqrt(scal / 3.f);
+            vart *= skip;
         }
 
         int moderetinex = 0;
@@ -944,7 +951,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         float *buffer = new float[W_L * H_L];
 
         for (int scale = scal - 1; scale >= 0; scale--) {
-            //    printf("retscale=%f scale=%i \n", RetinexScales[scale], scale);
+                printf("retscale=%f scale=%i \n", RetinexScales[scale], scale);
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
