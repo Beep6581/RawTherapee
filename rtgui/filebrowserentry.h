@@ -50,7 +50,7 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
 {
 
     double scale;
-    static bool iconsLoaded;
+    static std::atomic<bool> iconsLoaded;
     bool wasInside;
     ImageAreaToolListener* iatlistener;
     int press_x, press_y, action_x, action_y;
