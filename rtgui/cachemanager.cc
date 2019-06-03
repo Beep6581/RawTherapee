@@ -20,15 +20,16 @@
 #include <memory>
 #include <iostream>
 
-#include <glib/gstdio.h>
 #include <dirent.h>
 #include <giomm.h>
+#include <glib/gstdio.h>
 
 #ifdef WIN32
 #include <windows.h>
 #endif
 
 #include "cachemanager.h"
+
 #include "guiutils.h"
 #include "options.h"
 #include "procparamchangers.h"
@@ -352,7 +353,9 @@ void CacheManager::applyCacheSizeLimitation () const
     }
 
     closedir(cachedir);
-    numFiles -= 2; // because . and .. are counted
+    if (numFiles > 2) {
+        numFiles -= 2; // because . and .. are counted
+    }
 
     if (numFiles <= options.maxCacheEntries) {
         return;
@@ -363,7 +366,7 @@ void CacheManager::applyCacheSizeLimitation () const
     std::vector<FNameMTime> files;
     files.reserve(numFiles);
 
-    constexpr auto md5_size = 32;
+    constexpr std::size_t md5_size = 32;
     // get filenames and timestamps
     try {
         const auto dir = Gio::File::create_for_path(Glib::build_filename(baseDir, "data"));
@@ -383,15 +386,19 @@ void CacheManager::applyCacheSizeLimitation () const
         return;
     }
 
-    constexpr auto reserve = 0.05f; // reserve 5% free cache space
-    const size_t toDelete = files.size() - options.maxCacheEntries + options.maxCacheEntries * reserve;
+    const std::size_t toDelete = files.size() - options.maxCacheEntries + options.maxCacheEntries * 100 / 5; // reserve 5% free cache space
 
-    std::nth_element(files.begin(), files.begin() + toDelete, files.end(), [] (const FNameMTime& lhs, const FNameMTime& rhs)
-    {
-        return lhs.second < rhs.second;
-    });
+    std::nth_element(
+        files.begin(),
+        files.begin() + toDelete,
+        files.end(),
+        [](const FNameMTime& lhs, const FNameMTime& rhs) -> bool
+        {
+            return lhs.second < rhs.second;
+        }
+    );
 
-    for (auto entry = files.begin(); entry < files.begin() + toDelete; ++entry) {
+    for (std::vector<FNameMTime>::const_iterator entry = files.begin(), end = files.begin() + toDelete; entry != end; ++entry) {
         const auto& name = entry->first;
         const auto name_size = name.size() - md5_size;
         const auto fname = name.substr(0, name_size - 5);
