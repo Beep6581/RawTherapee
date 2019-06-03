@@ -656,7 +656,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             float cdfactor = 32768.f / delta;
             maxCD = -9999999.f;
             minCD = 9999999.f;
-            // coeff for auto    "transmission" with 2 sigma #95% datas
+            // coeff for auto    "transmission" with 2 sigma #95% data
             float aza = 16300.f / (2.f * stddv);
             float azb = -aza * (mean - 2.f * stddv);
             float bza = 16300.f / (2.f * stddv);

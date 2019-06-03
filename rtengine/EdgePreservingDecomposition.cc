@@ -406,7 +406,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     fp = 1;
 
     for(int ii = 1; ii < m; ii++) {
-        fp = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);    //Guarunteed positive since StartRows must be created in increasing order.
+        fp = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);    //Guaranteed positive since StartRows must be created in increasing order.
         mic = mic + fp;
     }
 
