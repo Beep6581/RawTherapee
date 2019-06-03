@@ -80,6 +80,7 @@
 #79 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
 #80 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
 #81 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
+#82 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -200,11 +201,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;<b>Farbmarkierung</b>\n\nTaste: <b>Strg</b> + <b>
 FILEBROWSER_COPYPROFILE;Profil kopieren
 FILEBROWSER_CURRENT_NAME;Aktueller Name:
 FILEBROWSER_DARKFRAME;Dunkelbild
-FILEBROWSER_DELETEDLGLABEL;Dateien löschen
-FILEBROWSER_DELETEDLGMSG;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen, mit allen aus der Stapelverarbeitung resultierenden zugehörigen Ausgabedateien?
+FILEBROWSER_DELETEDIALOG_HEADER;Dateien löschen
+FILEBROWSER_DELETEDIALOG_SELECTED;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen, mit allen aus der Stapelverarbeitung resultierenden zugehörigen Ausgabedateien?
 FILEBROWSER_EMPTYTRASH;Papierkorb leeren
-FILEBROWSER_EMPTYTRASHHINT;Dateien endgültig aus Papierkorb löschen
 FILEBROWSER_EXTPROGMENU;Öffnen mit
 FILEBROWSER_FLATFIELD;Weißbild
 FILEBROWSER_MOVETODARKFDIR;In Dunkelbild-Verzeichnis verschieben
@@ -2344,7 +2344,7 @@ TP_WBALANCE_SOLUX47;Solux 4700K (Vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Manuell setzen
 TP_WBALANCE_TEMPBIAS;AWB-Temperatur-Korrektur
-TP_WBALANCE_TEMPBIAS_TOOLTIP;Prozentuale Korrektur der Farbtemperatur des automatischen\nWeißabgleichs in Richtung wärmer oder kälter.\nDer Korreturwert berechnet sich aus:\nAWB-Temperatur + AWB-Temperatur * AWB-Temperatur-Korrektur
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Prozentuale Korrektur der Farbtemperatur des automatischen\nWeißabgleichs in Richtung wärmer oder kälter.\nDer Korrekturwert berechnet sich aus:\nAWB-Temperatur + AWB-Temperatur * AWB-Temperatur-Korrektur
 TP_WBALANCE_TEMPERATURE;Farbtemperatur
 TP_WBALANCE_TUNGSTEN;Glühlampe
 TP_WBALANCE_WATER1;Unterwasser 1
@@ -2358,3 +2358,9 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+FILEBROWSER_DELETEDIALOG_ALL;Möchten Sie wirklich <b>%1</b> Dateien unwiderruflich löschen?
+FILEBROWSER_EMPTYTRASHHINT;Alle Dateien im Papierkorb\nunwiderruflich löschen.

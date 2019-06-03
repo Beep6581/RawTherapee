@@ -95,11 +95,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Kolorowe etykiety\n\nUżyj za pomocą rozwijanej 
 FILEBROWSER_COPYPROFILE;Kopiuj profil
 FILEBROWSER_CURRENT_NAME;Obecna nazwa:
 FILEBROWSER_DARKFRAME;Czarna klatka
-FILEBROWSER_DELETEDLGLABEL;Potwierdzenie usunięcia pliku
-FILEBROWSER_DELETEDLGMSG;Na pewno usunąć zaznaczone %1 plików?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Na pewno usunąć wybrany plik %1 WŁĄCZNIE z wersją utworzoną przez kolejkę przetwarzania?
+FILEBROWSER_DELETEDIALOG_HEADER;Potwierdzenie usunięcia pliku
+FILEBROWSER_DELETEDIALOG_SELECTED;Na pewno usunąć zaznaczone %1 plików?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Na pewno usunąć wybrany plik %1 WŁĄCZNIE z wersją utworzoną przez kolejkę przetwarzania?
 FILEBROWSER_EMPTYTRASH;Wyczyść kosz
-FILEBROWSER_EMPTYTRASHHINT;Definitywnie usuwa pliki z kosza
 FILEBROWSER_EXTPROGMENU;Otwórz za pomocą
 FILEBROWSER_FLATFIELD;Puste pole
 FILEBROWSER_MOVETODARKFDIR;Przenieś do katalogu zawierającego czarne klatki
@@ -1393,6 +1392,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.

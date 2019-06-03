@@ -179,11 +179,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Etiquetar con color\n\nUse menú desplegable o at
 FILEBROWSER_COPYPROFILE;Copiar perfil
 FILEBROWSER_CURRENT_NAME;Nombre actual:
 FILEBROWSER_DARKFRAME;Toma Negra
-FILEBROWSER_DELETEDLGLABEL;Confirmación de borrar archivos
-FILEBROWSER_DELETEDLGMSG;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados?
-FILEBROWSER_DELETEDLGMSGINCLPROC;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados <b>incluyendo</b> la versión procesada en la cola?
+FILEBROWSER_DELETEDIALOG_HEADER;Confirmación de borrar archivos
+FILEBROWSER_DELETEDIALOG_SELECTED;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados <b>incluyendo</b> la versión procesada en la cola?
 FILEBROWSER_EMPTYTRASH;Vaciar papelera
-FILEBROWSER_EMPTYTRASHHINT;Borrar definitivamente los archivos en la papelera
 FILEBROWSER_EXTPROGMENU;Abrir con
 FILEBROWSER_FLATFIELD;Campo plano
 FILEBROWSER_MOVETODARKFDIR;Mover a carpeta de Tomas Negras
@@ -2320,6 +2319,8 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 
 !CURVEEDITOR_CATMULLROM;Flexible
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_TAB_FAVORITES;Favorites

@@ -81,11 +81,10 @@ FILEBROWSER_CLEARPROFILE;Feldolgozási paraméter törlése
 FILEBROWSER_COPYPROFILE;Feldolgozási paraméterek másolása
 FILEBROWSER_CURRENT_NAME;Aktuális név:
 FILEBROWSER_DARKFRAME;Referencia  feketekép (dark frame)
-FILEBROWSER_DELETEDLGLABEL;Állománytörlés megerősítése
-FILEBROWSER_DELETEDLGMSG;Biztosan törölni kívánja a kijelölt %1 képet?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Biztos vagy benne, hogy törölni szeredné a kiválasztott %1 állományt, beleértve a feldolgozási sorba helyezett változatát IS?
+FILEBROWSER_DELETEDIALOG_HEADER;Állománytörlés megerősítése
+FILEBROWSER_DELETEDIALOG_SELECTED;Biztosan törölni kívánja a kijelölt %1 képet?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Biztos vagy benne, hogy törölni szeredné a kiválasztott %1 állományt, beleértve a feldolgozási sorba helyezett változatát IS?
 FILEBROWSER_EMPTYTRASH;Kuka ürítése
-FILEBROWSER_EMPTYTRASHHINT;A kukában lévő képek végleges, állományrendszerből történő eltávolítása.
 FILEBROWSER_FLATFIELD;Flat Field
 FILEBROWSER_MOVETODARKFDIR;Mozgatás a 'dark frame' könyvtárba
 FILEBROWSER_MOVETOFLATFIELDDIR;Flat Fields könyvtárba mozgatás
@@ -871,6 +870,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None

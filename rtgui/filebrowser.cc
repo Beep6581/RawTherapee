@@ -753,9 +753,9 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     if (m == open) {
         openRequested(mselected);
     } else if (m == remove) {
-        tbl->deleteRequested (mselected, false);
+        tbl->deleteRequested (mselected, false, true);
     } else if (m == removeInclProc) {
-        tbl->deleteRequested (mselected, true);
+        tbl->deleteRequested (mselected, true, true);
     } else if (m == trash) {
         toTrashRequested (mselected);
     } else if (m == untrash) {
