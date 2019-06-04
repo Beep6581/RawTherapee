@@ -386,7 +386,7 @@ void CacheManager::applyCacheSizeLimitation () const
         return;
     }
 
-    const std::size_t toDelete = files.size() - options.maxCacheEntries + options.maxCacheEntries * 100 / 5; // reserve 5% free cache space
+    const std::size_t toDelete = files.size() - options.maxCacheEntries + options.maxCacheEntries * 5 / 100; // reserve 5% free cache space
 
     std::nth_element(
         files.begin(),
