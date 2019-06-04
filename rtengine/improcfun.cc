@@ -729,7 +729,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
         const float hue = params->colorappearance.colorh;
         const float rstprotection = 100. - params->colorappearance.rstprotection;
 
-        // extracting datas from 'params' to avoid cache flush (to be confirmed)
+        // extracting data from 'params' to avoid cache flush (to be confirmed)
         const ColorAppearanceParams::TcMode curveMode = params->colorappearance.curveMode;
         const bool hasColCurve1 = bool (customColCurve1);
         const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
@@ -1668,7 +1668,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
 
 
-//all this treatments reduce artifacts, but can lead to slighty different results
+//all this treatments reduce artifacts, but can lead to slightly different results
 
                 if (params->defringe.enabled)
                     if (execsharp) {
@@ -2231,7 +2231,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     const float shoulder = ((65536.0 / max (1.0f, exp_scale)) * (hlcomprthresh / 200.0)) + 0.1;
     const float hlrange = 65536.0 - shoulder;
     const bool isProPhoto = (params->icm.workingProfile == "ProPhoto");
-    // extracting datas from 'params' to avoid cache flush (to be confirmed)
+    // extracting data from 'params' to avoid cache flush (to be confirmed)
     ToneCurveMode curveMode = params->toneCurve.curveMode;
     ToneCurveMode curveMode2 = params->toneCurve.curveMode2;
     bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated

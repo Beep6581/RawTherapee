@@ -44,7 +44,7 @@
 
 // User's settings directory, including images' profiles if used
 Glib::ustring Options::rtdir;
-// User's cached datas' directory
+// User's cached data directory
 Glib::ustring Options::cacheBaseDir;
 
 Options options;
