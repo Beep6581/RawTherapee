@@ -4,6 +4,9 @@
 #if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
 #endif
+#if (__GNUC__ >= 9)
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 #endif
 
 /*RT*/#include <glib.h>
