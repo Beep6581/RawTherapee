@@ -44,6 +44,8 @@ private:
     static LUTf initInvGrad ();
     static void colorSpaceConversion_ (Imagefloat* im, const procparams::ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
     int  defTransform        (int tran);
+    bool channelsAvg(Coord spotPos, int spotSize, float avgs[3], const FilmNegativeParams &params);
+
 
 protected:
     MyMutex getImageMutex;  // locks getImage
@@ -116,6 +118,8 @@ public:
     int load(const Glib::ustring &fname) override { return load(fname, false); }
     int load(const Glib::ustring &fname, bool firstFrameOnly);
     void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) override;
+    void        filmNegativeProcess (const procparams::FilmNegativeParams &params) override;
+    bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, float newExps[3]) override;
     void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) override;
     void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) override;
     void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) override;

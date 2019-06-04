@@ -132,6 +132,7 @@ set(RTENGINESOURCEFILES
     ipdehaze.cc
     iplabregions.cc
     lj92.c
+    filmnegativeproc.cc
     )
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)

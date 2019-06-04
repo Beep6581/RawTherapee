@@ -209,6 +209,11 @@ private:
         imgsrc->setCurrentFrame (params.raw.bayersensor.imageNum);
         imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
+        // After preprocess, run film negative processing if enabled
+        if(imgsrc->getSensorType() == ST_BAYER && params.filmNegative.enabled) {
+            imgsrc->filmNegativeProcess (params.filmNegative);
+        }
+
         if (pl) {
             pl->setProgress (0.20);
         }

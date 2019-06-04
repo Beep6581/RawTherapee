@@ -2360,3 +2360,16 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_EXPONENTS;Film negative exponents changed
+!TP_FILMNEGATIVE_BLUE;Blue exponent
+!TP_FILMNEGATIVE_GREEN;Green exponent
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking 2 neutral reference spots in the image; one white (light gray) and one black (dark gray).\nThe order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red exponent
+!TP_FILMNEGATIVE_REF_SPOTS;Film negative reference spots

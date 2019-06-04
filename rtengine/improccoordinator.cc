@@ -277,6 +277,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
 
             highDetailPreprocessComputed = highDetailNeeded;
+
+            // After preprocess, run film negative processing if enabled
+            if((todo & M_RAW) && (imgsrc->getSensorType() == ST_BAYER || imgsrc->getSensorType() == ST_FUJI_XTRANS) && params->filmNegative.enabled) {
+                imgsrc->filmNegativeProcess (params->filmNegative);
+            }
         }
 
         /*
@@ -1249,6 +1254,32 @@ void ImProcCoordinator::getSpotWB(int x, int y, int rect, double& temp, double& 
         tgreen = currWB.getGreen();
     }
 }
+
+bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB, float* newExps)
+{
+
+    {
+        MyMutex::MyLock lock(mProcessing);
+
+        auto xlate = [this](int x, int y) {
+            std::vector<Coord2D> points, red, green, blue;
+
+            points.push_back(Coord2D(x, y));
+            ipf.transCoord(fw, fh, points, red, green, blue);
+            return green[0];
+        };
+
+        int tr = getCoarseBitMask(params->coarse);
+
+        Coord2D p1 = xlate(xA, yA);
+        Coord2D p2 = xlate(xB, yB);
+
+        return imgsrc->getFilmNegativeExponents(p1, p2, tr, params->filmNegative, newExps);
+
+    } // end of mutex locking
+
+}
+
 
 void ImProcCoordinator::getAutoCrop(double ratio, int &x, int &y, int &w, int &h)
 {

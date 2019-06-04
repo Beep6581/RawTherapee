@@ -2735,6 +2735,32 @@ bool MetaDataParams::operator!=(const MetaDataParams &other) const
 }
 
 
+FilmNegativeParams::FilmNegativeParams() :
+    enabled(false),
+    redExp(1.36),
+    greenExp(1.0),
+    blueExp(0.86)
+{
+}
+
+bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && redExp   == other.redExp
+        && greenExp == other.greenExp
+        && blueExp  == other.blueExp;
+}
+
+bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
+{
+    return !(*this == other);
+}
+
+
+
+
+
 ProcParams::ProcParams()
 {
     setDefaults();
@@ -3565,6 +3591,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
+
+// Film negative
+        saveToKeyfile(!pedited || pedited->filmNegative.enabled, "Film Negative", "Enabled", filmNegative.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.redExp, "Film Negative", "RedExponent", filmNegative.redExp, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.blueExp, "Film Negative", "BlueExponent", filmNegative.blueExp, keyFile);
+
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5108,6 +5141,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", pedited, raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", pedited, raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
         }
+
+        if (keyFile.has_group("Film Negative")) {
+            assignFromKeyfile(keyFile, "Film Negative", "Enabled", pedited, filmNegative.enabled, pedited->filmNegative.enabled);
+            assignFromKeyfile(keyFile, "Film Negative", "RedExponent", pedited, filmNegative.redExp, pedited->filmNegative.redExp);
+            assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
+            assignFromKeyfile(keyFile, "Film Negative", "BlueExponent", pedited, filmNegative.blueExp, pedited->filmNegative.blueExp);
+        }
+
 
         if (keyFile.has_group("MetaData")) {
             int mode = int(MetaDataParams::TUNNEL);

@@ -43,6 +43,7 @@ struct LensProfParams;
 struct RAWParams;
 struct RetinexParams;
 struct ToneCurveParams;
+struct FilmNegativeParams;
 
 }
 
@@ -77,6 +78,8 @@ public:
     ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
     virtual void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) {};
+    virtual void        filmNegativeProcess (const procparams::FilmNegativeParams &params) {};
+    virtual bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, float newExps[3]) { return false; };
     virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) {};
     virtual void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
     virtual void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};

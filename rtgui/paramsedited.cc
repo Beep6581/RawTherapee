@@ -580,6 +580,10 @@ void ParamsEdited::set(bool v)
     dehaze.showDepthMap = v;
     dehaze.depth = v;
     metadata.mode = v;
+    filmNegative.enabled = v;
+    filmNegative.redExp = v;
+    filmNegative.greenExp = v;
+    filmNegative.blueExp = v;
 
     exif = v;
     iptc = v;
@@ -1142,6 +1146,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
+        filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
+        filmNegative.redExp = filmNegative.redExp && p.filmNegative.redExp == other.filmNegative.redExp;
+        filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
+        filmNegative.blueExp = filmNegative.blueExp && p.filmNegative.blueExp == other.filmNegative.blueExp;
 
 //      How the hell can we handle that???
 //      exif = exif && p.exif==other.exif
@@ -3175,6 +3183,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.metadata.mode     = mods.metadata.mode;
     }
 
+    if (filmNegative.enabled) {
+        toEdit.filmNegative.enabled     = mods.filmNegative.enabled;
+    }
+
+    if (filmNegative.redExp) {
+        toEdit.filmNegative.redExp     = mods.filmNegative.redExp;
+    }
+
+    if (filmNegative.greenExp) {
+        toEdit.filmNegative.greenExp     = mods.filmNegative.greenExp;
+    }
+
+    if (filmNegative.blueExp) {
+        toEdit.filmNegative.blueExp     = mods.filmNegative.blueExp;
+    }
+
     // Exif changes are added to the existing ones
     if (exif)
         for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); ++i) {
@@ -3215,4 +3239,9 @@ bool LensProfParamsEdited::isUnchanged() const
 bool RetinexParamsEdited::isUnchanged() const
 {
     return enabled && retinexcolorspace && gammaretinex && gam && slope;
+}
+
+bool FilmNegativeParamsEdited::isUnchanged() const
+{
+    return enabled && redExp && greenExp && blueExp;
 }
