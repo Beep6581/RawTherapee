@@ -881,16 +881,17 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         //to test on several images
         int nei = (int)(krad * loc.spots.at(sp).neigh);
         //several test to find good values ???!!!
-        //very difficult to do because 4 factor are correlate with skip and cannot been solved
+        //very difficult to do because 4 factor are correlate with skip and cannot been solved easily
         // size of spots
         // radius - neigh
         // scal
         // variance vart
+        //not too bad proposition
         if (skip >= 4) {
-            nei = (int)(nei / (1.5f * skip) + 2.f)/ sqrt(scal / 3.f);     //not too bad
+            nei = (int)(nei / (1.5f * skip) + 2.f)/ sqrt(scal / 3.f); 
             vart *= skip;
         } else if (skip > 1 && skip < 4) {
-            nei = (int)(nei / skip + 10.f) / sqrt(scal / 3.f);
+            nei = (int)(nei / skip + 3.f) / sqrt(scal / 3.f);
             vart *= skip;
         }
 

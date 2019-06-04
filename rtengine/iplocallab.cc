@@ -3570,6 +3570,281 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     }
 }
 
+static double *cos_table(size_t size)
+{
+    double *table = NULL;
+    double pi_size;
+    size_t i;
+
+    /* allocate the cosinus table */
+    if (NULL == (table = (double *) malloc(sizeof(double) * size))) {
+        fprintf(stderr, "allocation error\n");
+        abort();
+    }
+
+    /*
+     * fill the cosinus table,
+     * table[i] = cos(i Pi / n) for i in [0..n[
+     */
+    pi_size = rtengine::RT_PI / size;
+    for (i = 0; i < size; i++)
+        table[i] = cos(pi_size * i);
+
+    return table;
+}
+
+static void mean_dt(const float *data, size_t size, double *mean_p, double *dt_p)
+{
+    double mean, dt;
+    const float *ptr_data;
+    size_t i;
+
+    mean = 0.;
+    dt = 0.;
+    ptr_data = data;
+    for (i = 0; i < size; i++) {
+        mean += *ptr_data;
+        dt += (*ptr_data) * (*ptr_data);
+        ptr_data++;
+    }
+    mean /= (double) size;
+    dt /= (double) size;
+    dt -= (mean * mean);
+    dt = sqrt(dt);
+
+    *mean_p = mean;
+    *dt_p = dt;
+
+    return;
+}
+
+void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t size)
+{
+    double mean_ref, mean_data, dt_ref, dt_data;
+    double a, b;
+    size_t i;
+    float *ptr_data;
+
+    if (NULL == data || NULL == ref) {
+        fprintf(stderr, "a pointer is NULL and should not be so\n");
+        abort();
+    }
+
+    /* compute mean and variance of the two arrays */
+    mean_dt(ref, size, &mean_ref, &dt_ref);
+    mean_dt(data, size, &mean_data, &dt_data);
+
+    /* compute the normalization coefficients */
+    a = dt_ref / dt_data;
+    b = mean_ref - a * mean_data;
+
+    /* normalize the array */
+    ptr_data = data;
+    for (i = 0; i < size; i++) {
+        *ptr_data = a * *ptr_data + b;
+        ptr_data++;
+    }
+
+    return;
+}
+
+static float *retinex_poisson_dct(float *data, size_t nx, size_t ny, double m)
+{
+    double *cosx = NULL, *cosy = NULL;
+    size_t i;
+    double m2;
+
+    /*
+     * get the cosinus tables
+     * cosx[i] = cos(i Pi / nx) for i in [0..nx[
+     * cosy[i] = cos(i Pi / ny) for i in [0..ny[
+     */
+    cosx = cos_table(nx);
+    cosy = cos_table(ny);
+
+    /*
+     * we will now multiply data[i, j] by
+     * m / (4 - 2 * cosx[i] - 2 * cosy[j]))
+     * and set data[0, 0] to 0
+     */
+    m2 = m / 2.;
+    /*
+     * handle the first value, data[0, 0] = 0
+     * after that, by construction, we always have
+     * cosx[] + cosy[] != 2.
+     */
+    data[0] = 0.;
+    /*
+     * continue with all the array:
+     * i % nx is the position on the x axis (column number)
+     * i / nx is the position on the y axis (row number)
+     */
+    for (i = 1; i < nx * ny; i++)
+        data[i] *= m2 / (2. - cosx[i % nx] - cosy[i / nx]);
+
+    free(cosx);
+    free(cosy);
+
+    return data;
+}
+
+
+
+static float *discrete_laplacian_threshold(float *data_out, const float *data_in, size_t nx, size_t ny, float t)
+{
+    size_t i, j;
+    float *ptr_out;
+    float diff;
+    /* pointers to the current and neighbour values */
+    const float *ptr_in, *ptr_in_xm1, *ptr_in_xp1, *ptr_in_ym1, *ptr_in_yp1;
+
+    if (NULL == data_in || NULL == data_out) {
+        fprintf(stderr, "a pointer is NULL and should not be so\n");
+        abort();
+    }
+
+    /* pointers to the data and neighbour values */
+    /*
+     *                 y-1
+     *             x-1 ptr x+1
+     *                 y+1
+     *    <---------------------nx------->
+     */
+    ptr_in = data_in;
+    ptr_in_xm1 = data_in - 1;
+    ptr_in_xp1 = data_in + 1;
+    ptr_in_ym1 = data_in - nx;
+    ptr_in_yp1 = data_in + nx;
+    ptr_out = data_out;
+    for (j = 0; j < ny; j++) {
+        for (i = 0; i < nx; i++) {
+            *ptr_out = 0.;
+            /* row differences */
+            if (0 < i) {
+                diff = *ptr_in - *ptr_in_xm1;
+                if (fabs(diff) > t)
+                    *ptr_out += diff;
+            }
+            if (nx - 1 > i) {
+                diff = *ptr_in - *ptr_in_xp1;
+                if (fabs(diff) > t)
+                    *ptr_out += diff;
+            }
+            /* column differences */
+            if (0 < j) {
+                diff = *ptr_in - *ptr_in_ym1;
+                if (fabs(diff) > t)
+                    *ptr_out += diff;
+            }
+            if (ny - 1 > j) {
+                diff = *ptr_in - *ptr_in_yp1;
+                if (fabs(diff) > t)
+                    *ptr_out += diff;
+            }
+            ptr_in++;
+            ptr_in_xm1++;
+            ptr_in_xp1++;
+            ptr_in_ym1++;
+            ptr_in_yp1++;
+            ptr_out++;
+        }
+    }
+
+    return data_out;
+}
+
+void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, int numThreads)
+{
+        fftwf_plan dct_fw, dct_bw;
+        float *data_fft, *data_tmp, *data;
+
+        if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+
+        (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh /*0.05f * fabs(lp.ligh)*/);
+        if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+        if (NULL == (data = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+
+        dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+        fftwf_execute(dct_fw);
+        fftwf_free(data_tmp);
+
+                    /* solve the Poisson PDE in Fourier space */
+                    /* 1. / (float) (nx * ny)) is the DCT normalisation term, see libfftw */
+        (void) retinex_poisson_dct(data_fft, bfw, bfh, 1./(double) (bfw * bfh));
+
+        dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+        fftwf_execute(dct_bw);
+        fftwf_destroy_plan(dct_fw);
+        fftwf_destroy_plan(dct_bw);
+        fftwf_free(data_fft);
+        fftwf_cleanup();
+        normalize_mean_dt(data, datain, bfw * bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) { 
+                dataout[y * bfw + x]   = CLIPLOC(multy * data[y * bfw + x]);
+            }
+        }
+}
+
+void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int sigmafft)
+{
+    float *out; // *outfft; 
+    fftwf_plan p;// ps;
+    int image_size, image_sizechange;
+    int i, j, index;
+    double norm_x, norm_y;
+
+    out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));
+
+    /*compute the Fourier transform of the input data*/
+
+    p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10,FFTW_ESTIMATE);
+    fftwf_execute(p);
+    fftwf_destroy_plan(p);
+
+    /*define the gaussian constants for the convolution*/
+
+    norm_x = rtengine::RT_PI/(double) bfw;
+    norm_y = rtengine::RT_PI/(double) bfh;
+    norm_x = norm_x * norm_x;
+    norm_y = norm_y * norm_y;
+
+    image_size = bfw * bfh;
+    image_sizechange = 4 * image_size;
+
+        for(j=0; j< bfh; j++){
+            index = j * bfw;
+            for(i=0; i< bfh; i++)
+                out[i+index]*= exp((float)(-radius)*(norm_x * i * i + norm_y * j * j));
+        }
+ 
+        p = fftwf_plan_r2r_2d(bfh, bfw, out, output, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);
+
+
+    fftwf_execute(p);
+
+    for(index=0; index < image_size; index++)
+        output[index] /= image_sizechange;
+
+    fftwf_destroy_plan(p);
+    fftwf_free(out);
+
+}
+
+
 void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin, int numThreads, const struct local_params & lp, int chrom)
 {
 
