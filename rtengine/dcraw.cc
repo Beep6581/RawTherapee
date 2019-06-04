@@ -9279,6 +9279,8 @@ void CLASS identify()
     apply_tiff();
     if (!strcmp(model, "X-T3")) {
         height = raw_height - 2;
+    } else if (!strcmp(model, "GFX 100")) {
+        load_flags = 0;
     }
     if (!load_raw) {
       load_raw = &CLASS unpacked_load_raw;
