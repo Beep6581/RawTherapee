@@ -4,6 +4,9 @@
 #if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
 #endif
+#if (__GNUC__ >= 9)
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 #endif
 
 /*RT*/#include <glib.h>
@@ -2504,11 +2507,19 @@ void CLASS unpacked_load_raw()
 
   while (1 << ++bits < maximum);
   read_shorts (raw_image, raw_width*raw_height);
-  for (row=0; row < raw_height; row++)
-    for (col=0; col < raw_width; col++)
-      if ((RAW(row,col) >>= load_flags) >> bits
-	&& (unsigned) (row-top_margin) < height
-	&& (unsigned) (col-left_margin) < width) derror();
+  if (load_flags) {
+      for (row=0; row < raw_height; row++)
+        for (col=0; col < raw_width; col++)
+          if ((RAW(row,col) >>= load_flags) >> bits
+        && (unsigned) (row-top_margin) < height
+        && (unsigned) (col-left_margin) < width) derror();
+  } else if (bits < 16) {
+      for (row=0; row < raw_height; row++)
+        for (col=0; col < raw_width; col++)
+          if (RAW(row,col) >> bits
+        && (unsigned) (row-top_margin) < height
+        && (unsigned) (col-left_margin) < width) derror();
+  }
 }
 
 
@@ -9279,6 +9290,8 @@ void CLASS identify()
     apply_tiff();
     if (!strcmp(model, "X-T3")) {
         height = raw_height - 2;
+    } else if (!strcmp(model, "GFX 100")) {
+        load_flags = 0;
     }
     if (!load_raw) {
       load_raw = &CLASS unpacked_load_raw;

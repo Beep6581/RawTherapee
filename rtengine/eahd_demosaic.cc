@@ -415,7 +415,7 @@ void RawImageSource::eahd_demosaic ()
         }
     }
 
-    // finish H-2th and H-1th row, homogenity value is still valailable
+    // finish H-2th and H-1th row, homogeneity value is still available
     for (int i = H - 1; i < H + 1; i++)
         for (int j = 0; j < W; j++) {
             int hc = homh[(i - 1) % 3][j];

@@ -1245,6 +1245,11 @@ Camera constants:
         "ranges": { "white": 64886 }
     },
 
+    { // Quality C
+        "make_model": "FUJIFILM GFX 100",
+        "raw_crop": [ 0, 2, 11664, 8734 ]
+    },
+
     { // Quality B
         "make_model": "FUJIFILM GFX 50S",
         "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65

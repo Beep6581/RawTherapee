@@ -1636,7 +1636,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag)
     }
 }
 
-// Set datas relative to cursor position
+// Set data relative to cursor position
 void MyFlatCurve::getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey)
 {
     int tx, ty;
