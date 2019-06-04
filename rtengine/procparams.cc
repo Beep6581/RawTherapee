@@ -3965,7 +3965,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             if (ppVersion >= 346) {
                 assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, sharpenMicro.uniformity, pedited->sharpenMicro.uniformity);
             } else {
-                double temp;
+                double temp = 50.0;
                 assignFromKeyfile(keyFile, "SharpenMicro", "Uniformity", pedited, temp, pedited->sharpenMicro.uniformity);
                 sharpenMicro.uniformity = temp / 10;
             }
