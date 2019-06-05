@@ -3660,6 +3660,16 @@ void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t si
 
 static float *retinex_poisson_dct(float *data, size_t nx, size_t ny, double m)
 {
+/*
+ * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
+ *
+
+ * @file retinex_pde_lib.c discrete Poisson equation
+ * @brief laplacian, DFT and Poisson routines
+ *
+ * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+ */
+    
     double *cosx = NULL, *cosy = NULL;
     size_t i;
     double m2;
@@ -3765,6 +3775,16 @@ static float *discrete_laplacian_threshold(float *data_out, const float *data_in
 
 void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, int numThreads)
 {
+/*
+ * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
+ *
+
+ * @file retinex_pde_lib.c discrete Poisson equation
+ * @brief laplacian, DFT and Poisson routines
+ *
+ * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+ */
+ 
         fftwf_plan dct_fw, dct_bw;
         float *data_fft, *data_tmp, *data;
 
@@ -3773,7 +3793,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
             abort();
         }
 
-        (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh /*0.05f * fabs(lp.ligh)*/);
+        (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
         if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
             fprintf(stderr, "allocation error\n");
             abort();
@@ -3787,8 +3807,8 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         fftwf_execute(dct_fw);
         fftwf_free(data_tmp);
 
-                    /* solve the Poisson PDE in Fourier space */
-                    /* 1. / (float) (nx * ny)) is the DCT normalisation term, see libfftw */
+        /* solve the Poisson PDE in Fourier space */
+        /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
         (void) retinex_poisson_dct(data_fft, bfw, bfh, 1./(double) (bfw * bfh));
 
         dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
