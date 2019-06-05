@@ -1038,6 +1038,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expsoft = locallab.spots.at(j).expsoft && pSpot.expsoft == otherSpot.expsoft;
                 locallab.spots.at(j).streng = locallab.spots.at(j).streng && pSpot.streng == otherSpot.streng;
                 locallab.spots.at(j).sensisf = locallab.spots.at(j).sensisf && pSpot.sensisf == otherSpot.sensisf;
+                locallab.spots.at(j).laplace = locallab.spots.at(j).laplace && pSpot.laplace == otherSpot.laplace;
+                locallab.spots.at(j).softMethod = locallab.spots.at(j).softMethod && pSpot.softMethod == otherSpot.softMethod;
                 // Blur & Noise
                 locallab.spots.at(j).expblur = locallab.spots.at(j).expblur && pSpot.expblur == otherSpot.expblur;
                 locallab.spots.at(j).radius = locallab.spots.at(j).radius && pSpot.radius == otherSpot.radius;
@@ -2987,6 +2989,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensisf = mods.locallab.spots.at(i).sensisf;
         }
 
+        if (locallab.spots.at(i).laplace) {
+            toEdit.locallab.spots.at(i).laplace = mods.locallab.spots.at(i).laplace;
+        }
+
+        if (locallab.spots.at(i).softMethod) {
+            toEdit.locallab.spots.at(i).softMethod = mods.locallab.spots.at(i).softMethod;
+        }
+
         // Blur & Noise
         if (locallab.spots.at(i).expblur) {
             toEdit.locallab.spots.at(i).expblur = mods.locallab.spots.at(i).expblur;
@@ -4396,6 +4406,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expsoft(v),
     streng(v),
     sensisf(v),
+    laplace(v),
+    softMethod(v),
     // Blur & Noise
     expblur(v),
     radius(v),
@@ -4606,6 +4618,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expsoft = v;
     streng = v;
     sensisf = v;
+    laplace = v;
+    softMethod = v;
     // Blur & Noise
     expblur = v;
     radius = v;

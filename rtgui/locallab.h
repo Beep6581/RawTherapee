@@ -158,6 +158,7 @@ private:
     Adjuster* const sensiv;
     // Soft Light
     Adjuster* const streng;
+    Adjuster* const laplace;
     Adjuster* const sensisf;
     // Blur & Noise
     Adjuster* const radius;
@@ -290,6 +291,9 @@ private:
     // Blur & Noise
     MyComboBoxText* const blurMethod;
     sigc::connection blurMethodConn;
+    //soft light
+    MyComboBoxText* const softMethod;
+    sigc::connection softMethodConn;
     // Retinex
     MyComboBoxText* const retinexMethod;
     sigc::connection retinexMethodConn;
@@ -368,6 +372,8 @@ private:
     void showmaskSHMethodChanged();
     // Blur & Noise
     void blurMethodChanged();
+    // Soft light
+    void softMethodChanged();
     // Retinex
     void retinexMethodChanged();
     void showmaskretiMethodChanged();

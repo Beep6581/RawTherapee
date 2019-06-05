@@ -2448,6 +2448,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expsoft(false),
     streng(0),
     sensisf(15),
+    laplace(30),
+    softMethod("soft"),
     // Blur & Noise
     expblur(false),
     radius(1.0),
@@ -2661,6 +2663,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && expsoft == other.expsoft
         && streng == other.streng
         && sensisf == other.sensisf
+        && laplace == other.laplace
+        && softMethod == other.softMethod
         // Blur & Noise
         && expblur == other.expblur
         && radius == other.radius
@@ -3830,6 +3834,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsoft, "Locallab", "Expsoft_" + std::to_string(i), spot.expsoft, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).streng, "Locallab", "Streng_" + std::to_string(i), spot.streng, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensisf, "Locallab", "Sensisf_" + std::to_string(i), spot.sensisf, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).laplace, "Locallab", "Laplace_" + std::to_string(i), spot.laplace, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softMethod, "Locallab", "SoftMethod_" + std::to_string(i), spot.softMethod, keyFile);
                 // Blur & Noise
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expblur, "Locallab", "Expblur_" + std::to_string(i), spot.expblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radius, "Locallab", "Radius_" + std::to_string(i), spot.radius, keyFile);
@@ -5140,6 +5146,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, spot.expsoft, spotEdited.expsoft);
                 assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, spot.streng, spotEdited.streng);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, spot.sensisf, spotEdited.sensisf);
+                assignFromKeyfile(keyFile, "Locallab", "Laplace_" + std::to_string(i), pedited, spot.laplace, spotEdited.laplace);
+                assignFromKeyfile(keyFile, "Locallab", "SoftMethod_" + std::to_string(i), pedited, spot.softMethod, spotEdited.softMethod);
                 // Blur & Noise
                 assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, spot.expblur, spotEdited.expblur);
                 assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, spot.radius, spotEdited.radius);

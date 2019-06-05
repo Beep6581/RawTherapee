@@ -219,6 +219,7 @@ struct local_params {
     int shamo, shdamp, shiter, senssha, sensv;
     float neig;
     float strng;
+    float lap;
     float lcamount;
     double shrad;
     double shblurr;
@@ -246,6 +247,7 @@ struct local_params {
     int showmaskcbmet;
     int showmaskretimet;
     int blurmet;
+    int softmet;
     float noiself;
     float noiself0;
     float noiself2;
@@ -402,6 +404,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float amo = ((float)locallab.spots.at(sp).amount);
     float strlight = ((float)locallab.spots.at(sp).streng);
     float strucc = locallab.spots.at(sp).struc;
+    float laplac = ((float)locallab.spots.at(sp).laplace);
 
     float thre = locallab.spots.at(sp).thresh;
 
@@ -461,6 +464,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0;
     lp.enaretiMask = locallab.spots.at(sp).enaretiMask && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0;
    // if(lp.enaretiMask) printf("lp.enaretiMasktrue\n"); else printf("lp.enaretiMaskfalse\n");
+
+    if (locallab.spots.at(sp).softMethod == "soft") {
+        lp.softmet = 0;
+    } else if (locallab.spots.at(sp).softMethod == "reti") {
+        lp.softmet = 1;
+    } 
 
 
     if (locallab.spots.at(sp).blurMethod == "norm") {
@@ -654,6 +663,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.senssf = local_sensisf;
     lp.strng = strlight;
     lp.neig = neigh;
+    lp.lap = laplac;
 
     if (lp.ligh >= -2.f && lp.ligh <= 2.f) {
         lp.ligh /= 5.f;
@@ -5897,8 +5907,33 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 SoftLightParams softLightParams;
                 softLightParams.enabled = true;
                 softLightParams.strength = lp.strng;
-                ImProcFunctions::softLight(bufexpfin.get(), softLightParams);
-
+                if(lp.softmet == 0) {
+                    ImProcFunctions::softLight(bufexpfin.get(), softLightParams);
+                } else if(lp.softmet == 1) {
+                    float *datain = new float[bfw*bfh];
+                    float *dataout = new float[bfw*bfh];
+    
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            datain[y * bfw + x] = bufexpfin->L[y][x] / (10.9f * lp.lap);
+                        }
+                    }
+             
+                    ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 0.1f * lp.strng, 10.9f * lp.lap, 1);
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                        bufexpfin->L[y][x] = dataout[y * bfw + x];
+                        }
+                    }
+                    delete [] datain;
+                    delete [] dataout;
+                }
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif

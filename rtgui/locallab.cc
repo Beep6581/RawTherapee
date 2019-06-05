@@ -133,6 +133,7 @@ Locallab::Locallab():
     sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     //Soft Light
     streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
+    laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 20, 40, 1, 30))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
     // Blur & Noise
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.0, 100.0, 0.1, 1.0))),
@@ -243,6 +244,8 @@ Locallab::Locallab():
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
     // Blur & Noise
     blurMethod(Gtk::manage(new MyComboBoxText())),
+    //soft Method
+    softMethod(Gtk::manage(new MyComboBoxText())),
     // Retinex
     retinexMethod(Gtk::manage(new MyComboBoxText())),
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
@@ -725,13 +728,22 @@ Locallab::Locallab():
     // Soft Light
     expsoft->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsoft));
     enablesoftConn = expsoft->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expsoft));
+    softMethod->append(M("TP_LOCALLAB_SOFTM"));
+    softMethod->append(M("TP_LOCALLAB_RETIM"));
+    softMethod->set_active(0);
+    if(showtooltip) softMethod->set_tooltip_markup(M("TP_LOCALLAB_SOFTMETHOD_TOOLTIP"));
+    softMethodConn = softMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::softMethodChanged));
+
 
     streng->setAdjusterListener(this);
+    laplace->setAdjusterListener(this);
 
     sensisf->setAdjusterListener(this);
 
     ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
+    softBox->pack_start(*softMethod);
     softBox->pack_start(*streng);
+    softBox->pack_start(*laplace);
     softBox->pack_start(*sensisf);
     expsoft->add(*softBox, false);
     expsoft->setLevel(2);
@@ -2095,11 +2107,19 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).expsoft = expsoft->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).streng = streng->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensisf = sensisf->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).laplace = laplace->getIntValue();
+                    if (softMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).softMethod = "soft";
+                    } else if (softMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).softMethod = "reti";
+                    } 
+
                     // Blur & Noise
                     pp->locallab.spots.at(pp->locallab.selspot).expblur = expblur->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).radius = radius->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).strength = strength->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensibn = sensibn->getIntValue();
+
 
                     if (blurMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).blurMethod = "norm";
@@ -2325,6 +2345,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).expsoft = pe->locallab.spots.at(pp->locallab.selspot).expsoft || !expsoft->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).streng = pe->locallab.spots.at(pp->locallab.selspot).streng || streng->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensisf = pe->locallab.spots.at(pp->locallab.selspot).sensisf || sensisf->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).laplace = pe->locallab.spots.at(pp->locallab.selspot).laplace || laplace->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).softMethod = pe->locallab.spots.at(pp->locallab.selspot).softMethod || softMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         // Blur & Noise
                         pe->locallab.spots.at(pp->locallab.selspot).expblur = pe->locallab.spots.at(pp->locallab.selspot).expblur || !expblur->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).radius = pe->locallab.spots.at(pp->locallab.selspot).radius || radius->getEditedState();
@@ -2542,6 +2564,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).expsoft = pedited->locallab.spots.at(pp->locallab.selspot).expsoft || !expsoft->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).streng = pedited->locallab.spots.at(pp->locallab.selspot).streng || streng->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensisf = pedited->locallab.spots.at(pp->locallab.selspot).sensisf || sensisf->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).laplace = pedited->locallab.spots.at(pp->locallab.selspot).laplace || laplace->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).softMethod = pedited->locallab.spots.at(pp->locallab.selspot).softMethod || softMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         // Blur & Noise
                         pedited->locallab.spots.at(pp->locallab.selspot).expblur = pedited->locallab.spots.at(pp->locallab.selspot).expblur || !expblur->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).radius = pedited->locallab.spots.at(pp->locallab.selspot).radius || radius->getEditedState();
@@ -2911,6 +2935,23 @@ void Locallab::retinexMethodChanged()
         }
     }
 }
+
+void Locallab::softMethodChanged()
+{
+    // printf("softMethodChanged\n");
+    if (softMethod->get_active_row_number() == 0) {
+       laplace->hide();
+    } else {
+       laplace->show();
+    }
+
+    if (getEnabled() && expsoft->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabsoftMethod, softMethod->get_active_text());
+        }
+    }
+}
+
 
 void Locallab::blurMethodChanged()
 {
@@ -3613,6 +3654,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     // Soft Light
     streng->setDefault((double)defSpot->streng);
     sensisf->setDefault((double)defSpot->sensisf);
+    laplace->setDefault((double)defSpot->laplace);
     // Blur & Noise
     radius->setDefault(defSpot->radius);
     strength->setDefault((double)defSpot->strength);
@@ -3745,6 +3787,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         // Soft Light
         streng->setDefaultEditedState(Irrelevant);
         sensisf->setDefaultEditedState(Irrelevant);
+        laplace->setDefaultEditedState(Irrelevant);
         // Blur & Noise
         radius->setDefaultEditedState(Irrelevant);
         strength->setDefaultEditedState(Irrelevant);
@@ -3881,6 +3924,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         // Soft Light
         streng->setDefaultEditedState(defSpotState->streng ? Edited : UnEdited);
         sensisf->setDefaultEditedState(defSpotState->sensisf ? Edited : UnEdited);
+        laplace->setDefaultEditedState(defSpotState->laplace ? Edited : UnEdited);
         // Blur & Noise
         radius->setDefaultEditedState(defSpotState->radius ? Edited : UnEdited);
         strength->setDefaultEditedState(defSpotState->strength ? Edited : UnEdited);
@@ -4305,6 +4349,13 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabsensisf, sensisf->getTextValue());
             }
         }
+
+        if (a == laplace) {
+            if (listener) {
+                listener->panelChanged(Evlocallablaplace, laplace->getTextValue());
+            }
+        }
+        
     }
 
 
@@ -4823,6 +4874,7 @@ void Locallab::setBatchMode(bool batchMode)
     // Soft Light
     streng->showEditedCB();
     sensisf->showEditedCB();
+    laplace->showEditedCB();
     // Blur & Noise
     radius->showEditedCB();
     streng->showEditedCB();
@@ -4902,6 +4954,8 @@ void Locallab::setBatchMode(bool batchMode)
     // Color & Light
     qualitycurveMethod->append(M("GENERAL_UNCHANGED"));
     gridMethod->append(M("GENERAL_UNCHANGED"));
+    // softlight
+    softMethod->append(M("GENERAL_UNCHANGED"));
     // Blur & Noise
     blurMethod->append(M("GENERAL_UNCHANGED"));
     // Retinex
@@ -5073,6 +5127,7 @@ void Locallab::enableListener()
     pastsattogconn.block(false);
     // Soft Light
     enablesoftConn.block(false);
+    softMethodConn.block(false);
     // Blur & Noise
     enableblurConn.block(false);
     blurMethodConn.block(false);
@@ -5129,6 +5184,7 @@ void Locallab::disableListener()
     pastsattogconn.block(true);
     // Soft Light
     enablesoftConn.block(true);
+    softMethodConn.block(true);
     // Blur & Noise
     enableblurConn.block(true);
     blurMethodConn.block(true);
@@ -5271,6 +5327,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         expsoft->setEnabled(pp->locallab.spots.at(index).expsoft);
         streng->setValue(pp->locallab.spots.at(index).streng);
         sensisf->setValue(pp->locallab.spots.at(index).sensisf);
+        laplace->setValue(pp->locallab.spots.at(index).laplace);
+
+        if (pp->locallab.spots.at(index).softMethod == "soft") {
+            softMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).softMethod == "reti") {
+            softMethod->set_active(1);
+        }
 
         // Blur & Noise
         expblur->setEnabled(pp->locallab.spots.at(index).expblur);
@@ -5526,6 +5589,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 expsoft->set_inconsistent(!spotState->expsoft);
                 streng->setEditedState(spotState->streng ? Edited : UnEdited);
                 sensisf->setEditedState(spotState->sensisf ? Edited : UnEdited);
+                laplace->setEditedState(spotState->laplace ? Edited : UnEdited);
+                if (!spotState->softMethod) {
+                    softMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
 
                 // Blur & Noise
                 expblur->set_inconsistent(!spotState->expblur);

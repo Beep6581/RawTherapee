@@ -465,6 +465,8 @@ public:
         bool expsoft;
         bool streng;
         bool sensisf;
+        bool laplace;
+        bool softMethod;
         // Blur & Noise
         bool expblur;
         bool radius;

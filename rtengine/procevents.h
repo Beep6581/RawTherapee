@@ -720,6 +720,8 @@ enum ProcEventCode {
     Evlocallabdarkness = 690,
     Evlocallablightnessreti = 691,
     Evlocallablimd = 692,
+    Evlocallablaplace = 693,
+    EvlocallabsoftMethod = 694,
     NUMOFEVENTS
 };
 
