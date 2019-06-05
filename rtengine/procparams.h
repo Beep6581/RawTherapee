@@ -1049,7 +1049,7 @@ struct LocallabParams {
         bool expsoft;
         int streng;
         int sensisf;
-        int laplace;
+        double laplace;
         Glib::ustring softMethod;
         // Blur & Noise
         bool expblur;

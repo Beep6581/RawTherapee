@@ -133,7 +133,7 @@ Locallab::Locallab():
     sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     //Soft Light
     streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
-    laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 20, 40, 1, 30))),
+    laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0.5, 60., 0.1, 20.))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
     // Blur & Noise
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.0, 100.0, 0.1, 1.0))),
@@ -2107,7 +2107,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).expsoft = expsoft->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).streng = streng->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensisf = sensisf->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).laplace = laplace->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).laplace = laplace->getValue();
                     if (softMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).softMethod = "soft";
                     } else if (softMethod->get_active_row_number() == 1) {
@@ -3654,7 +3654,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     // Soft Light
     streng->setDefault((double)defSpot->streng);
     sensisf->setDefault((double)defSpot->sensisf);
-    laplace->setDefault((double)defSpot->laplace);
+    laplace->setDefault(defSpot->laplace);
     // Blur & Noise
     radius->setDefault(defSpot->radius);
     strength->setDefault((double)defSpot->strength);

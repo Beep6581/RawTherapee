@@ -2448,7 +2448,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expsoft(false),
     streng(0),
     sensisf(15),
-    laplace(30),
+    laplace(20.),
     softMethod("soft"),
     // Blur & Noise
     expblur(false),
