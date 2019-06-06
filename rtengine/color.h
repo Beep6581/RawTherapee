@@ -1796,7 +1796,7 @@ public:
     static inline double huelab_to_huehsv2 (float HH)
     {
         //hr=translate Hue Lab value  (-Pi +Pi) in approximative hr (hsv values) (0 1) [red 1/6 yellow 1/6 green 1/6 cyan 1/6 blue 1/6 magenta 1/6 ]
-        // with multi linear correspondances (I expect there is no error !!)
+        // with multi linear correspondences (I expect there is no error !!)
         double hr = 0.0;
         //always put h between 0 and 1
 

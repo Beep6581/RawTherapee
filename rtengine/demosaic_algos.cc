@@ -1206,10 +1206,10 @@ void RawImageSource::igv_interpolate(int winw, int winh)
             }
 
             for (; col < width; col++, indx += 2) {
-                dest1[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
+                dest1[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT data
                 col++;
                 if(col < width)
-                    dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT datas
+                    dest2[indx >> 1] = CLIP(rawData[row][col]); //rawData = RT data
             }
         }
 
@@ -1561,7 +1561,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
         for (int row = 0; row < height - 0; row++)
             for (int col = 0, indx = row * width + col; col < width - 0; col++, indx++) {
                 int c = FC(row, col);
-                rgb[c][indx] = CLIP(rawData[row][col]); //rawData = RT datas
+                rgb[c][indx] = CLIP(rawData[row][col]); //rawData = RT data
             }
 
 //  border_interpolate2(7, rgb);
