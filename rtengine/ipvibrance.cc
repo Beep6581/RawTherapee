@@ -610,6 +610,7 @@ void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams 
 
                 const float fyy = Color::c1By116 * Lprov + Color::c16By116;
                 const float yy_ = (Lprov > Color::epskap) ? fyy * fyy*fyy : Lprov / Color::kappaf;
+                float ChprovOld = std::numeric_limits<float>::min();
                 do {
                     inGamut = true;
 
@@ -623,9 +624,14 @@ void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams 
                             hhModified = false;
                         }
                     }
-
                     aprovn = Chprov * sincosval.y;
                     bprovn = Chprov * sincosval.x;
+
+                    if (Chprov == ChprovOld) { // avoid endless loop
+                        break;
+                    } else {
+                        ChprovOld = Chprov;
+                    }
 
                     float fxx = 0.002f * aprovn + fyy;
                     float fzz = fyy - 0.005f * bprovn;
