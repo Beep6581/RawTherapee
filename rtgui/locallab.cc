@@ -743,7 +743,7 @@ Locallab::Locallab():
     ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
     softBox->pack_start(*softMethod);
     softBox->pack_start(*streng);
-    softBox->pack_start(*laplace);
+//    softBox->pack_start(*laplace);
     softBox->pack_start(*sensisf);
     expsoft->add(*softBox, false);
     expsoft->setLevel(2);

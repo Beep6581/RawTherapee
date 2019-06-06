@@ -5938,11 +5938,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
-                            datain[y * bfw + x] = bufexpfin->L[y][x] / (10.9f * lp.lap);
+                      //      datain[y * bfw + x] = bufexpfin->L[y][x] / (10.9f * lp.lap);
+                            datain[y * bfw + x] = bufexpfin->L[y][x];
                         }
                     }
              
-                    ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 0.1f * lp.strng, 10.9f * lp.lap, 1);
+                   // ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 5.f * lp.strng, 10.9f * lp.lap, 1);
+                    ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 8.f * lp.strng, 1.f, 1);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
