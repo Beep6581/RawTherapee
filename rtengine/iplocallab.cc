@@ -1955,6 +1955,54 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
     }
 }
 
+
+static void deltaEforLaplace (float *dE, const local_params& lp, int bfw, int bfh, LabImage* bufexporig, const float hueref, const float chromaref, const float lumaref)
+{
+
+    const float refa = chromaref * cos(hueref);
+    const float refb = chromaref * sin(hueref);
+    const float refL = lumaref;
+    float maxdE = 5.f + MAXSCOPE * lp.lap;
+    float *dEforLaplace = new float [bfw * bfh];
+    float maxC = sqrt((SQR(refa - bufexporig->a[0][0] / 327.68f) + SQR(refb - bufexporig->b[0][0]/327.68f)) +  SQR(refL - bufexporig->L[0][0]/327.68f));
+  //  float sumde = 0.f;
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(max:maxC) // reduction(+:sumde)
+#endif
+    for (int y = 0; y < bfh; y++) {
+        for (int x = 0; x < bfw; x++) {
+            dEforLaplace[y * bfw + x] = sqrt((SQR(refa - bufexporig->a[y][x] / 327.68f) + SQR(refb - bufexporig->b[y][x]/327.68f)) +  SQR(refL - bufexporig->L[y][x]/327.68f));
+            maxC = rtengine::max(maxC, dEforLaplace[y * bfw + x]);
+        //    sumde += dEforLaplace[y * bfw + x];
+        }
+    }
+ //  float mxde = sumde /(bfh * bfw);
+ //   maxC = 0.5f * (mxde + maxC);
+    if(maxdE > maxC) {
+        maxdE = maxC - 1.f;
+    }
+    float ade = 1.f / (maxdE - maxC);
+    float bde = -ade * maxC; 
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+    for (int y = 0; y < bfh; y++) {
+        for (int x = 0; x < bfw; x++) {
+    
+            float reducdEforLap = 1.f;
+            if(dEforLaplace[y * bfw + x] < maxdE) {
+                reducdEforLap = 1.f;
+            } else {
+                reducdEforLap = ade * dEforLaplace[y * bfw + x] + bde;
+            }
+            dE[y * bfw + x] = reducdEforLap;
+        }
+    }
+    delete [] dEforLaplace;
+}
+
+
 static void showmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* transformed, LabImage* bufmaskorigSH)
 {
 #ifdef _OPENMP
@@ -3761,6 +3809,7 @@ static float *discrete_laplacian_threshold(float *data_out, const float *data_in
                 if (fabs(diff) > t)
                     *ptr_out += diff;
             }
+            
             ptr_in++;
             ptr_in_xm1++;
             ptr_in_xp1++;
@@ -3773,7 +3822,7 @@ static float *discrete_laplacian_threshold(float *data_out, const float *data_in
     return data_out;
 }
 
-void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, int numThreads)
+void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE)
 {
 /*
  * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -3783,30 +3832,57 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
  * @brief laplacian, DFT and Poisson routines
  *
  * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+ * adapted by Jacques Desmis 2019 <jdesmis@gmail.com>
  */
  
-        fftwf_plan dct_fw, dct_bw;
-        float *data_fft, *data_tmp, *data;
-
+        fftwf_plan dct_fw, dct_fw04, dct_bw;
+        float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
         if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
             fprintf(stderr, "allocation error\n");
             abort();
         }
-
+        if (NULL == (data_tmp04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+        //first call to laplacian with plein strength
         (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
         if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
             fprintf(stderr, "allocation error\n");
             abort();
         }
+        //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
+        (void) discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
+        if (NULL == (data_fft04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+        
         if (NULL == (data = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
             fprintf(stderr, "allocation error\n");
             abort();
         }
-
+        //execute first
         dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
         fftwf_execute(dct_fw);
-        fftwf_free(data_tmp);
+        //execute second
+        dct_fw04 = fftwf_plan_r2r_2d(bfh, bfw, data_tmp04, data_fft04, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+        fftwf_execute(dct_fw04);
 
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+        for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref 
+            for (int x = 0; x < bfw; x++) {
+                float prov = pow(dE[y * bfw + x], 4.5f);
+                data_fft[y * bfw + x] = prov * data_fft[y * bfw + x] + (1.f - prov) * data_fft04[y * bfw + x];
+            }
+        }
+        fftwf_free(data_fft04);
+        fftwf_free(data_tmp);
+        fftwf_free(data_tmp04);
+        fftwf_destroy_plan(dct_fw04);
+        
         /* solve the Poisson PDE in Fourier space */
         /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
         (void) retinex_poisson_dct(data_fft, bfw, bfh, 1./(double) (bfw * bfh));
@@ -3829,7 +3905,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         }
 }
 
-void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int sigmafft)
+void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius)
 {
     float *out; // *outfft; 
     fftwf_plan p;// ps;
@@ -5932,19 +6008,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 } else if(lp.softmet == 1) {
                     float *datain = new float[bfw*bfh];
                     float *dataout = new float[bfw*bfh];
+                    float *dE = new float[bfw*bfh];
+                    deltaEforLaplace (dE, lp, bfw, bfh, bufexpfin.get(), hueref, chromaref, lumaref);
     
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
                     for (int y = 0; y < bfh; y++) {
                         for (int x = 0; x < bfw; x++) {
-                      //      datain[y * bfw + x] = bufexpfin->L[y][x] / (10.9f * lp.lap);
                             datain[y * bfw + x] = bufexpfin->L[y][x];
                         }
                     }
              
-                   // ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 5.f * lp.strng, 10.9f * lp.lap, 1);
-                    ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 8.f * lp.strng, 1.f, 1);
+                ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 8.f * lp.strng, 1.f, dE);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -5955,6 +6031,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                     delete [] datain;
                     delete [] dataout;
+                    delete [] dE;
                 }
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)

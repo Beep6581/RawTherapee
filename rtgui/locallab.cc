@@ -133,7 +133,7 @@ Locallab::Locallab():
     sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     //Soft Light
     streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
-    laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0.5, 60., 0.1, 20.))),
+    laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 20.))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
     // Blur & Noise
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.0, 100.0, 0.1, 1.0))),
@@ -743,7 +743,7 @@ Locallab::Locallab():
     ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
     softBox->pack_start(*softMethod);
     softBox->pack_start(*streng);
-//    softBox->pack_start(*laplace);
+    softBox->pack_start(*laplace);
     softBox->pack_start(*sensisf);
     expsoft->add(*softBox, false);
     expsoft->setLevel(2);

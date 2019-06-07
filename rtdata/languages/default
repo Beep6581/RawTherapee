@@ -2030,7 +2030,7 @@ TP_LOCALLAB_DEHAZ;Dehaze
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_LUM;Curves LC
-TP_LOCALLAB_LAPLACE;Laplacian threshold
+TP_LOCALLAB_LAPLACE;Laplacian threshold deltaE
 TP_LOCALLAB_HLH;Curves H
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
