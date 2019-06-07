@@ -165,11 +165,8 @@ cp /opt/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
 # Copy liblensfun to Frameworks
 cp /opt/local/lib/liblensfun.2.dylib "${RESOURCES}/../Frameworks"
 
-# Copy libiomp5 to Frameworks
-cp /opt/local/lib/libomp/libiomp5.dylib "${RESOURCES}/../Frameworks"
-
-# Copy the libiomp5 license into the app bundle
-cp "${PROJECT_SOURCE_DIR}/licenses/osx_libiomp5_LICENSE.txt" "${RESOURCES}"
+# Copy libomp to Frameworks
+cp /opt/local/lib/libomp.dylib "${RESOURCES}/../Frameworks"
 
 # Install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
@@ -207,7 +204,7 @@ plutil -convert binary1 "${CONTENTS}/Info.plist"
 
 # Sign the app
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
-codesign --deep --force -v -s "${CODESIGNID}"  "${APP}"
+codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${APP}"
 spctl -a -vvvv "${APP}"
  
 function CreateDmg {
@@ -237,7 +234,7 @@ function CreateDmg {
     hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
 
     # Sign disk image
-    codesign --deep --force -v -s "${CODESIGNID}" "${dmg_name}.dmg"
+    codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
 
     # Zip disk image for redistribution
     zip "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
