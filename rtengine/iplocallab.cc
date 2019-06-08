@@ -3905,44 +3905,96 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         }
 }
 
-void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius)
-{
-    float *out; // *outfft; 
-    fftwf_plan p;// ps;
-    int image_size, image_sizechange;
-    int i, j, index;
-    double norm_x, norm_y;
+void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern)
+{ 
+/* 
+    ** Jacques Desmis june 2019 - inspired by Copyright 2013 IPOL Image Processing On Line http://www.ipol.im/
+    ** when I read documentation on various FFT blur we found 2 possibilities
+    ** 0) kernel gauss is used with "normal" datas
+    ** 1) kernel gauss is used with FFT
+    ** fftkern allows to change 0) or 1) and test  
+    
+    ** input real datas to blur
+    ** output real datas blurred with radius
+    ** bfw bfh width and high area
+    ** radius = sigma for kernel
+    ** n_x n_y relative width and high for kernel
+    ** Gaussain blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2) 
+*/
 
-    out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));
+    float *out; //for FFT datas
+    float *kern;//for kernel gauss
+    float *outkern;//for FFT kernel
+
+    fftwf_plan p, pkern;//plan for FFT
+    int image_size, image_sizechange;
+    double n_x, n_y;//relative coordonates for kernel Gauss
+
+    out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
+
+    if(fftkern == 1) {//allocate memory FFT if kernel fft = 1
+        kern = new float[bfw*bfh];
+        outkern = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
+    }
 
     /*compute the Fourier transform of the input data*/
 
-    p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10,FFTW_ESTIMATE);
+    p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10,FFTW_ESTIMATE);//FFT 2 dimensions forward
     fftwf_execute(p);
     fftwf_destroy_plan(p);
 
-    /*define the gaussian constants for the convolution*/
+    /*define the gaussian constants for the convolution kernel*/
 
-    norm_x = rtengine::RT_PI/(double) bfw;
-    norm_y = rtengine::RT_PI/(double) bfh;
-    norm_x = norm_x * norm_x;
-    norm_y = norm_y * norm_y;
+    n_x = rtengine::RT_PI/(double) bfw;
+    n_y = rtengine::RT_PI/(double) bfh;
+    n_x = n_x * n_x;
+    n_y = n_y * n_y;
 
     image_size = bfw * bfh;
     image_sizechange = 4 * image_size;
 
-        for(j=0; j< bfh; j++){
-            index = j * bfw;
-            for(i=0; i< bfh; i++)
-                out[i+index]*= exp((float)(-radius)*(norm_x * i * i + norm_y * j * j));
+    if(fftkern == 1) {//convolution with FFT kernel
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+        for(int j = 0; j < bfh; j++){
+            int index = j * bfw;
+            for(int i = 0; i < bfh; i++)
+                kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel 
         }
- 
-        p = fftwf_plan_r2r_2d(bfh, bfw, out, output, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);
 
+        /*compute the Fourier transform of the kernel data*/
+        pkern = fftwf_plan_r2r_2d(bfh, bfw, kern, outkern, FFTW_REDFT10, FFTW_REDFT10,FFTW_ESTIMATE);//FFT 2 dimensions forward
+        fftwf_execute(pkern);
+        fftwf_destroy_plan(pkern);
 
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+        for(int j = 0; j < bfh; j++){
+            int index = j * bfw;
+            for(int i = 0; i < bfh; i++)
+                out[i + index] *= outkern[i + index];//apply Gauss kernel whith FFT
+        }
+
+        fftwf_free(outkern);
+        delete [] kern;
+
+    } else if (fftkern == 0) {//whithout FFT kernel
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+        for(int j = 0; j < bfh; j++){
+            int index = j * bfw;
+            for(int i = 0; i < bfh; i++)
+                out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT
+        }
+    }
+
+    p = fftwf_plan_r2r_2d(bfh, bfw, out, output, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);//FFT 2 dimensions backward
     fftwf_execute(p);
 
-    for(index=0; index < image_size; index++)
+    for(int index = 0; index < image_size; index++)//restore datas
         output[index] /= image_sizechange;
 
     fftwf_destroy_plan(p);
