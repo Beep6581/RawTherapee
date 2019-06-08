@@ -235,6 +235,7 @@ struct local_params {
     bool curvact;
     bool invrad;
     bool invret;
+    bool equret;
     bool invshar;
     bool actsp;
     float str;
@@ -580,6 +581,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool inverseex = locallab.spots.at(sp).inversex;
     bool inversesh = locallab.spots.at(sp).inverssh;
 
+    bool equilret = locallab.spots.at(sp).equilret;
     bool inverserad = false; // Provision
     bool inverseret = locallab.spots.at(sp).inversret;
     bool inversesha = locallab.spots.at(sp).inverssha;
@@ -684,6 +686,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.curvact = curvacti;
     lp.invrad = inverserad;
     lp.invret = inverseret;
+    lp.equret = equilret;
     lp.invshar = inversesha;
     lp.str = str;
     lp.shrad = sharradius;
@@ -6405,6 +6408,30 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
                 }
+
+            if(lp.equret) {//equilibrate luminance before / after MSR
+                float *datain = new float[Hd * Wd];
+                float *data = new float[Hd * Wd];
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+                for (int ir = 0; ir < Hd; ir += 1)
+                    for (int jr = 0; jr < Wd; jr += 1) {
+                        datain[ir * Wd + jr] = orig1[ir][jr];
+                        data[ir * Wd + jr] = orig[ir][jr];                    
+                    }
+                
+                normalize_mean_dt(data, datain, Hd * Wd);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+                for (int ir = 0; ir < Hd; ir += 1)
+                    for (int jr = 0; jr < Wd; jr += 1) {
+                    tmpl->L[ir][jr] = data[ir * Wd + jr];
+                    }
+                delete [] datain;
+                delete [] data;
+            }
 
             if (!lp.invret) {
                 float minL = tmpl->L[0][0] - bufreti->L[0][0];

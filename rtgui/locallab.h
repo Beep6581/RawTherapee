@@ -261,6 +261,8 @@ private:
     Gtk::CheckButton* const activlum;
     sigc::connection activlumConn;
     // Retinex
+    Gtk::CheckButton* const equilret;
+    sigc::connection equilretConn;
     Gtk::CheckButton* const inversret;
     sigc::connection inversretConn;
     Gtk::CheckButton* const enaretiMask;
@@ -354,6 +356,7 @@ private:
     // Blur & Noise
     void activlumChanged();
     // Retinex
+    void equilretChanged();
     void inversretChanged();
     void enaretiMaskChanged();
     void enaretiMasktmapChanged();

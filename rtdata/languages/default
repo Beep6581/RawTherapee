@@ -937,8 +937,9 @@ HISTORY_MSG_690;Local - Retinex scale
 HISTORY_MSG_691;Local - Retinex darkness
 HISTORY_MSG_692;Local - Retinex lightness
 HISTORY_MSG_693;Local - Retinex threshold
-HISTORY_MSG_694;Local - Retinex Laplcian threshold
+HISTORY_MSG_694;Local - Retinex Laplacian threshold
 HISTORY_MSG_695;Local - Soft method
+HISTORY_MSG_696;Local - Retinex Normalize
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2032,6 +2033,7 @@ TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_LUM;Curves LC
 TP_LOCALLAB_LAPLACE;Laplacian threshold deltaE
 TP_LOCALLAB_HLH;Curves H
+TP_LOCALLAB_EQUIL;Normalize Luminance
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light

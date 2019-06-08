@@ -496,6 +496,7 @@ public:
         bool sensih;
         bool localTgaincurve;
         bool inversret;
+        bool equilret;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;

@@ -1069,6 +1069,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensih = locallab.spots.at(j).sensih && pSpot.sensih == otherSpot.sensih;
                 locallab.spots.at(j).localTgaincurve = locallab.spots.at(j).localTgaincurve && pSpot.localTgaincurve == otherSpot.localTgaincurve;
                 locallab.spots.at(j).inversret = locallab.spots.at(j).inversret && pSpot.inversret == otherSpot.inversret;
+                locallab.spots.at(j).equilret = locallab.spots.at(j).equilret && pSpot.equilret == otherSpot.equilret;
                 locallab.spots.at(j).softradiusret = locallab.spots.at(j).softradiusret && pSpot.softradiusret == otherSpot.softradiusret;
                 locallab.spots.at(j).CCmaskreticurve = locallab.spots.at(j).CCmaskreticurve && pSpot.CCmaskreticurve == otherSpot.CCmaskreticurve;
                 locallab.spots.at(j).LLmaskreticurve = locallab.spots.at(j).LLmaskreticurve && pSpot.LLmaskreticurve == otherSpot.LLmaskreticurve;
@@ -3108,6 +3109,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).inversret = mods.locallab.spots.at(i).inversret;
         }
 
+        if (locallab.spots.at(i).equilret) {
+            toEdit.locallab.spots.at(i).equilret = mods.locallab.spots.at(i).equilret;
+        }
+
         if (locallab.spots.at(i).CCmaskreticurve) {
             toEdit.locallab.spots.at(i).CCmaskreticurve = mods.locallab.spots.at(i).CCmaskreticurve;
         }
@@ -4437,6 +4442,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensih(v),
     localTgaincurve(v),
     inversret(v),
+    equilret(v),
     softradiusret(v),
     CCmaskreticurve(v),
     LLmaskreticurve(v),
@@ -4649,6 +4655,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensih = v;
     localTgaincurve = v;
     inversret = v;
+    equilret = v;
     softradiusret = v;
     CCmaskreticurve = v;
     LLmaskreticurve = v;

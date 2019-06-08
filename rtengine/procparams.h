@@ -1080,6 +1080,7 @@ struct LocallabParams {
         int sensih;
         std::vector<double> localTgaincurve;
         bool inversret;
+        bool equilret;
         double softradiusret;
         std::vector<double> CCmaskreticurve;
         std::vector<double> LLmaskreticurve;
