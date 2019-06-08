@@ -887,12 +887,17 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         // scal
         // variance vart
         //not too bad proposition
+        float divsca = 1.f;
+        if(scal >=3) divsca = sqrt(scal / 3.f); 
+
         if (skip >= 4) {
-            nei = (int)(nei / (1.5f * skip) + 2.f)/ sqrt(scal / 3.f); 
-            vart *= skip;
+            //nei = (int)(0.1f * nei + 2.f);     //not too bad
+            nei = (int)(nei / (1.5f * skip))/ divsca; 
+            vart *= sqrt(skip);
         } else if (skip > 1 && skip < 4) {
-            nei = (int)(nei / skip + 3.f) / sqrt(scal / 3.f);
-            vart *= skip;
+            //nei = (int)(0.3f * nei + 2.f);
+            nei = (int)(nei / skip) / divsca;
+            vart *= sqrt(skip);
         }
 
         int moderetinex = 0;

@@ -224,6 +224,8 @@ Locallab::Locallab():
     pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
     // Blur & Noise
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
+    //TM
+    equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     // Retinex
     equilret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
@@ -814,10 +816,12 @@ Locallab::Locallab():
     softradiustm->setAdjusterListener(this);
     if(showtooltip) estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
     if(showtooltip) rewei->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
+    equiltmConn  = equiltm->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::equiltmChanged));
 
     ToolParamBlock* const tmBox = Gtk::manage(new ToolParamBlock());
 //    tmBox->pack_start(*amount);//to use if we change transit_shapedetect parameters
     tmBox->pack_start(*stren);
+    tmBox->pack_start(*equiltm);
     tmBox->pack_start(*gamma);
     tmBox->pack_start(*satur);
     tmBox->pack_start(*estop);
@@ -2142,6 +2146,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).sensitm = sensitm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiustm = softradiustm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).amount = amount->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).equiltm = equiltm->get_active();
                     // Retinex
                     pp->locallab.spots.at(pp->locallab.selspot).expreti = expreti->getEnabled();
 
@@ -2369,6 +2374,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).sensitm = pe->locallab.spots.at(pp->locallab.selspot).sensitm || sensitm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiustm = pe->locallab.spots.at(pp->locallab.selspot).softradiustm || softradiustm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).amount = pe->locallab.spots.at(pp->locallab.selspot).amount || amount->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).equiltm = pe->locallab.spots.at(pp->locallab.selspot).equiltm || !equiltm->get_inconsistent();
                         // Retinex
                         pe->locallab.spots.at(pp->locallab.selspot).expreti = pe->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).retinexMethod = pe->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2591,6 +2597,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).amount = pedited->locallab.spots.at(pp->locallab.selspot).amount || amount->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).enaretiMask = pedited->locallab.spots.at(pp->locallab.selspot).enaretiMask || !enaretiMask->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).enaretiMasktmap = pedited->locallab.spots.at(pp->locallab.selspot).enaretiMasktmap || !enaretiMasktmap->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).equiltm = pedited->locallab.spots.at(pp->locallab.selspot).equiltm || !equiltm->get_inconsistent();
                         // Retinex
                         pedited->locallab.spots.at(pp->locallab.selspot).expreti = pedited->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod = pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -3496,6 +3503,33 @@ void Locallab::inversshaChanged()
         }
     }
 }
+
+void Locallab::equiltmChanged()
+{
+    // printf("inversretChanged\n");
+
+    if (multiImage) {
+        if (equiltm->get_inconsistent()) {
+            equiltm->set_inconsistent(false);
+            equiltmConn.block(true);
+            equiltm->set_active(false);
+            equiltmConn.block(false);
+        }
+    }
+
+
+    if (getEnabled() && exptonemap->getEnabled()) {
+        if (listener) {
+            if (inversret->get_active()) {
+                listener->panelChanged(Evlocallabequiltm, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabequiltm, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+
 
 void Locallab::equilretChanged()
 {
@@ -5167,6 +5201,7 @@ void Locallab::enableListener()
     activlumConn.block(false);
     // Tone Mapping
     enabletonemapConn.block(false);
+    equiltmConn.block(false);
     // Retinex
     enableretiConn.block(false);
     retinexMethodConn.block(false);
@@ -5225,6 +5260,7 @@ void Locallab::disableListener()
     activlumConn.block(true);
     // Tone Mapping
     enabletonemapConn.block(true);
+    equiltmConn.block(true);
     // Retinex
     enableretiConn.block(true);
     retinexMethodConn.block(true);
@@ -5395,6 +5431,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         sensitm->setValue(pp->locallab.spots.at(index).sensitm);
         softradiustm->setValue(pp->locallab.spots.at(index).softradiustm);
         amount->setValue(pp->locallab.spots.at(index).amount);
+        equiltm->set_active(pp->locallab.spots.at(index).equiltm);
 
         // Retinex
         expreti->setEnabled(pp->locallab.spots.at(index).expreti);
@@ -5653,6 +5690,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensitm->setEditedState(spotState->sensitm ? Edited : UnEdited);
                 softradiustm->setEditedState(spotState->softradiustm ? Edited : UnEdited);
                 amount->setEditedState(spotState->amount ? Edited : UnEdited);
+                equiltm->set_inconsistent(multiImage && !spotState->equiltm);
 
                 // Retinex
                 expreti->set_inconsistent(!spotState->expreti);

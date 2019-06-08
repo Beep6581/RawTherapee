@@ -260,6 +260,9 @@ private:
     // Blur & Noise
     Gtk::CheckButton* const activlum;
     sigc::connection activlumConn;
+    //Tone mapping
+    Gtk::CheckButton* const equiltm;
+    sigc::connection equiltmConn;
     // Retinex
     Gtk::CheckButton* const equilret;
     sigc::connection equilretConn;
@@ -355,6 +358,8 @@ private:
     void pastsattog_toggled();
     // Blur & Noise
     void activlumChanged();
+    //TM
+    void equiltmChanged();
     // Retinex
     void equilretChanged();
     void inversretChanged();

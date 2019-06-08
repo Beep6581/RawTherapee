@@ -236,6 +236,7 @@ struct local_params {
     bool invrad;
     bool invret;
     bool equret;
+    bool equtm;
     bool invshar;
     bool actsp;
     float str;
@@ -580,6 +581,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensisf = locallab.spots.at(sp).sensisf;
     bool inverseex = locallab.spots.at(sp).inversex;
     bool inversesh = locallab.spots.at(sp).inverssh;
+    bool equiltm = locallab.spots.at(sp).equiltm;
 
     bool equilret = locallab.spots.at(sp).equilret;
     bool inverserad = false; // Provision
@@ -687,6 +689,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.invrad = inverserad;
     lp.invret = inverseret;
     lp.equret = equilret;
+    lp.equtm = equiltm;
     lp.invshar = inversesha;
     lp.str = str;
     lp.shrad = sharradius;
@@ -2621,6 +2624,30 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                 gaussianBlur(originalmask->a, origblurmask->a, bfw, bfh, radius);
                 gaussianBlur(originalmask->b, origblurmask->b, bfw, bfh, radius);
             }
+        }
+        
+        if(lp.equtm  && senstype == 8) {//normalize luminance for Tone mapping
+            float *datain = new float[bfh * bfw];
+            float *data = new float[bfh * bfw];
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int y = ystart; y < yend; y++)
+                for (int x = xstart; x < xend; x++) {
+                    datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
+                    data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
+                }
+            normalize_mean_dt(data, datain, bfh * bfw);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int y = ystart; y < yend; y++)
+                for (int x = xstart; x < xend; x++) {
+                    bufexporig->L[y - ystart][x - xstart] = data[(y - ystart) * bfw + x - xstart];
+                }
+            delete [] datain;
+            delete [] data;
         }
 
 #ifdef _OPENMP
@@ -5770,6 +5797,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                       //  itera = 5;
                     }
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5 
+
+
+
 /*  //to reactivate if we change transit_shapedetct parameters
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
