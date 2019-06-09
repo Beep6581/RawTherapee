@@ -307,7 +307,21 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
 
     } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
 
-        // TODO
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:totBP) schedule(dynamic,16)
+#endif
+
+        for(int i = 0; i < H; i++)
+            for(int j = 0; j < W; j++) {
+                if (rawData[i][j] >= MAX_OUT_VALUE) {
+                    bitmapBads.set(j, i);
+                    totBP++;
+                }
+            }
+
+        if (totBP > 0) {
+            interpolateBadPixelsXtrans( bitmapBads );
+        }
 
     }
 
