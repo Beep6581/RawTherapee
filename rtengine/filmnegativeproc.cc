@@ -255,9 +255,10 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
 #endif
         for (int row = 0; row < H; row ++) {
             for (int col = 0; col < W; col++) {
-                int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                // Apply the multipliers
-                rawData[row][col] *= mults[c];
+                int c = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
+                // Apply the multipliers, clamp max output value to 65535
+                float out = rawData[row][col] * mults[c];
+                rawData[row][col] = out > 65535.f ? 65535.f : out;
             }
         }
         
@@ -268,9 +269,10 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
 #endif
         for (int row = 0; row < H; row ++) {
             for (int col = 0; col < W; col++) {
-                int c  = ri->XTRANSFC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                // Apply the multipliers
-                rawData[row][col] *= mults[c];
+                int c = ri->XTRANSFC(row, col);                        // three colors,  0=R, 1=G,  2=B
+                // Apply the multipliers, clamp max output value to 65535
+                float out = rawData[row][col] * mults[c];
+                rawData[row][col] = out > 65535.f ? 65535.f : out;
             }
         }
 
