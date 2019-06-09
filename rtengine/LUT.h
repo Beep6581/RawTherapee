@@ -444,7 +444,7 @@ public:
             }
 
             idx = 0;
-        } else if (idx > maxs) {
+        } else if (index > maxsf) {
             if (clip & LUT_CLIP_ABOVE) {
                 return data[upperBound];
             }
