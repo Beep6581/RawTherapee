@@ -1300,6 +1300,7 @@ int RawImageSource::interpolateBadPixelsXtrans(PixelsMap &bitmapBads)
                 for (dx = -2, dy = 0; dx <= 2 && !distance2PixelFound; dx += 4)
                     if (ri->XTRANSFC(row, col + dx) == pixelColor) {
                         distance2PixelFound = true;
+                        break;
                     }
 
                 if (!distance2PixelFound)
@@ -1308,6 +1309,7 @@ int RawImageSource::interpolateBadPixelsXtrans(PixelsMap &bitmapBads)
                     for (dx = 0, dy = -2; dy <= 2 && !distance2PixelFound; dy += 4)
                         if (ri->XTRANSFC(row + dy, col) == pixelColor) {
                             distance2PixelFound = true;
+                            break;
                         }
 
                 // calculate the value of its virtual counterpart (marked with a V in above examples)
