@@ -2626,7 +2626,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
             }
         }
         
-        if(lp.equtm  && senstype == 8) {//normalize luminance for Tone mapping
+        if(lp.equtm  && senstype == 8) {//normalize luminance for Tone mapping , at this place we can use for others senstype!
             float *datain = new float[bfh * bfw];
             float *data = new float[bfh * bfw];
 
@@ -3708,6 +3708,16 @@ static void mean_dt(const float *data, size_t size, double *mean_p, double *dt_p
 
 void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t size)
 {
+/*
+ * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
+ *
+
+ * @file retinex_pde_lib.c discrete Poisson equation
+ * @brief laplacian, DFT and Poisson routines
+ *
+ * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+ */
+    
     double mean_ref, mean_data, dt_ref, dt_data;
     double a, b;
     size_t i;
@@ -5797,27 +5807,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                       //  itera = 5;
                     }
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5 
-
-
-
-/*  //to reactivate if we change transit_shapedetct parameters
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            tmp1->L[y][x] = (lp.amo * tmp1->L[y][x] + (1.f - lp.amo) * bufgb->L[y][x]);
-                        }
-                    }
-*/
-/*
-                    if (lp.softradiustm > 0.f) {
-                      softproc(bufgb.get(), tmp1.get(), lp.softradiustm, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
-
- //                       guidedFilter(guid, ble, ble, 0.1f * lp.softradiustm / sk, 0.0001, multiThread);
-                     //   softprocess(bufgb.get(), buflight, lp.softradiustm, bfh, bfw, sk, multiThread);
-                    }
-*/
 
                     float minL = tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;
