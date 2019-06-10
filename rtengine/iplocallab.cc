@@ -3874,7 +3874,16 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
  * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
  * adapted by Jacques Desmis 2019 <jdesmis@gmail.com>
  */
- 
+
+/*
+#ifdef RT_FFTW3F_OMP
+
+    if (multiThread) {
+        fftwf_init_threads();
+        fftwf_plan_with_nthreads ( omp_get_max_threads() );
+    }
+#endif
+*/
         fftwf_plan dct_fw, dct_fw04, dct_bw;
         float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
         if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
@@ -3945,6 +3954,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         }
 }
 
+
 void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern)
 { 
 /* 
@@ -3952,15 +3962,16 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     ** when I read documentation on various FFT blur we found 2 possibilities
     ** 0) kernel gauss is used with "normal" datas
     ** 1) kernel gauss is used with FFT
-    ** fftkern allows to change 0) or 1) and test  
+    ** fftkern allows to change 0) or 1) and test  It seems the good solution is with 0, but I keep the code in case of ??
     
     ** input real datas to blur
     ** output real datas blurred with radius
     ** bfw bfh width and high area
     ** radius = sigma for kernel
     ** n_x n_y relative width and high for kernel
-    ** Gaussain blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2) 
+    ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2) 
 */
+    BENCHFUN
 
     float *out; //for FFT datas
     float *kern;//for kernel gauss
@@ -3999,7 +4010,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
 #endif
         for(int j = 0; j < bfh; j++){
             int index = j * bfw;
-            for(int i = 0; i < bfh; i++)
+            for(int i = 0; i < bfw; i++)
                 kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel 
         }
 
@@ -4013,7 +4024,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
 #endif
         for(int j = 0; j < bfh; j++){
             int index = j * bfw;
-            for(int i = 0; i < bfh; i++)
+            for(int i = 0; i < bfw; i++)
                 out[i + index] *= outkern[i + index];//apply Gauss kernel whith FFT
         }
 
@@ -4026,7 +4037,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
 #endif
         for(int j = 0; j < bfh; j++){
             int index = j * bfw;
-            for(int i = 0; i < bfh; i++)
+            for(int i = 0; i < bfw; i++)
                 out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT
         }
     }
@@ -4034,13 +4045,17 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     p = fftwf_plan_r2r_2d(bfh, bfw, out, output, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE);//FFT 2 dimensions backward
     fftwf_execute(p);
 
-    for(int index = 0; index < image_size; index++)//restore datas
+    for(int index = 0; index < image_size; index++) {//restore datas
         output[index] /= image_sizechange;
+         output[index] = CLIPLOC(output[index]);
+    }
 
     fftwf_destroy_plan(p);
     fftwf_free(out);
 
 }
+
+
 
 
 void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin, int numThreads, const struct local_params & lp, int chrom)
