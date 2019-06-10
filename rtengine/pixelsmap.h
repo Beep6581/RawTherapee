@@ -39,7 +39,7 @@ class PixelsMap :
     int w; // line width in base_t units
     int h; // height
     typedef unsigned long base_t;
-    static const size_t base_t_size = sizeof(base_t);
+    static constexpr size_t base_t_size = sizeof(base_t);
     base_t *pm;
 
 public:

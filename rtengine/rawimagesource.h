@@ -102,7 +102,7 @@ protected:
     void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
-    unsigned FC(int row, int col)
+    unsigned FC(int row, int col) const
     {
         return ri->FC(row, col);
     }
