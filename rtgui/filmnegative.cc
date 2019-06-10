@@ -154,7 +154,7 @@ void FilmNegative::adjusterChanged(Adjuster* a, double newval)
                 blueRatio = newval / greenExp->getValue();
             }
             enableListener();
-            
+
             if(getEnabled()) {
                 listener->panelChanged (EvFilmNegativeExponents, Glib::ustring::compose (
                     "R=%1 ; G=%2 ; B=%3", redExp->getTextValue(), greenExp->getTextValue(), blueExp->getTextValue()));
@@ -287,6 +287,8 @@ bool FilmNegative::button1Pressed(int modifierKey)
                 redExp->setValue(newExps[0]);
                 greenExp->setValue(newExps[1]);
                 blueExp->setValue(newExps[2]);
+                redRatio = redExp->getValue() / greenExp->getValue();
+                blueRatio = blueExp->getValue() / greenExp->getValue();
                 enableListener();
 
                 if (listener && getEnabled()) {
