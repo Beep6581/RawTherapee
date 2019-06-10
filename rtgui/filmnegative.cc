@@ -34,7 +34,7 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
 {
 
     auto mkExponentAdjuster = [this](Glib::ustring label, double defaultVal) {
-        Adjuster *adj = Gtk::manage(new Adjuster (label, 0.3, 3, 0.01, defaultVal)); //exponent
+        Adjuster *adj = Gtk::manage(new Adjuster (label, 0.3, 5, 0.001, defaultVal)); //exponent
         adj->setAdjusterListener (this);
     
         if (adj->delay < options.adjusterMaxDelay) {
@@ -48,6 +48,9 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
     redExp   = mkExponentAdjuster(M("TP_FILMNEGATIVE_RED"), 1.36);
     greenExp = mkExponentAdjuster(M("TP_FILMNEGATIVE_GREEN"), 1.0);
     blueExp  = mkExponentAdjuster(M("TP_FILMNEGATIVE_BLUE"), 0.86);
+
+    redRatio = redExp->getValue() / greenExp->getValue();
+    blueRatio = blueExp->getValue() / greenExp->getValue();
 
     auto m = ProcEventMapper::getInstance();
     EvFilmNegativeEnabled = m->newEvent(ALL, "HISTORY_MSG_FILMNEGATIVE_ENABLED");
@@ -139,10 +142,23 @@ void FilmNegative::enabledChanged()
 
 void FilmNegative::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (listener) {
         if(a == redExp || a == greenExp || a == blueExp) {
-            listener->panelChanged (EvFilmNegativeExponents, Glib::ustring::compose (
-                "R=%1 ; G=%2 ; B=%3", redExp->getTextValue(), greenExp->getTextValue(), blueExp->getTextValue()));
+            disableListener();
+            if(a == greenExp) {
+                redExp->setValue(a->getValue() * redRatio);
+                blueExp->setValue(a->getValue() * blueRatio);
+            } else if(a == redExp) {
+                redRatio = newval / greenExp->getValue();
+            } else if(a == blueExp) {
+                blueRatio = newval / greenExp->getValue();
+            }
+            enableListener();
+            
+            if(getEnabled()) {
+                listener->panelChanged (EvFilmNegativeExponents, Glib::ustring::compose (
+                    "R=%1 ; G=%2 ; B=%3", redExp->getTextValue(), greenExp->getTextValue(), blueExp->getTextValue()));
+            }
         }
     }
 }

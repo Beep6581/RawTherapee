@@ -54,6 +54,8 @@ private:
     Gtk::ToggleButton* spotbutton;
     sigc::connection spotConn;
 
+    double redRatio, blueRatio;
+
     void editToggled ();
 
 public:

@@ -104,8 +104,8 @@ bool RawImageSource::getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int
       std::swap(clearVals, denseVals);
 
     if (settings->verbose) {
-        printf("Clear film values:  R=%f G=%f B=%f\n", clearVals[0], clearVals[1], clearVals[2]);
-        printf("Dense film values:  R=%f G=%f B=%f\n", denseVals[0], denseVals[1], denseVals[2]);
+        printf("Clear film values:  R=%g G=%g B=%g\n", clearVals[0], clearVals[1], clearVals[2]);
+        printf("Dense film values:  R=%g G=%g B=%g\n", denseVals[0], denseVals[1], denseVals[2]);
     }
 
     float denseGreenRatio = clearVals[1] / denseVals[1];
@@ -119,7 +119,7 @@ bool RawImageSource::getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int
             newExps[ch] = CLAMP(logBase(clearVals[ch] / denseVals[ch], denseGreenRatio), 0.3f, 3.f);
 
     if (settings->verbose)
-        printf("New exponents:  R=%f G=%f B=%f\n", newExps[0], newExps[1], newExps[2]);
+        printf("New exponents:  R=%g G=%g B=%g\n", newExps[0], newExps[1], newExps[2]);
 
     return true;
 }
@@ -230,20 +230,23 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
     float mults[3] = { 1.f };  // Channel normalization multipliers
 
     for (int c=0; c<3; c++) {
-        // Find median values for each channel using a histogram search function
-        findMinMaxPercentile(&cvs[c][0], cvs[c].size(), 0.5f, medians[c], 0.5f, medians[c], true);
-        // Determine the channel multipler so that N times the median becomes 65k. This clips away
-        // the values in the dark border surrounding the negative (due to the film holder, for example),
-        // the reciprocal of which have blown up to stellar values.
-        mults[c] = MAX_OUT_VALUE / (medians[c] * 24);
+        // Find median values for each channel
+        if(cvs[c].size() > 0) {
+            std::sort(cvs[c].begin(), cvs[c].end());
+            medians[c] = cvs[c].at(cvs[c].size() / 2);
+            // Determine the channel multipler so that N times the median becomes 65k. This clips away
+            // the values in the dark border surrounding the negative (due to the film holder, for example),
+            // the reciprocal of which have blown up to stellar values.
+            mults[c] = MAX_OUT_VALUE / (medians[c] * 24);
+        }
     }
 
 
     t4.set();
     if (settings->verbose) {
         printf("Sample count : %lu, %lu, %lu\n", cvs[0].size(), cvs[1].size(), cvs[2].size());
-        printf("Medians : %f %f %f\n", medians[0], medians[1], medians[2] );
-        printf("Computed multipliers : %f %f %f\n", mults[0], mults[1], mults[2] );
+        printf("Medians : %g %g %g\n", medians[0], medians[1], medians[2] );
+        printf("Computed multipliers : %g %g %g\n", mults[0], mults[1], mults[2] );
         printf("Median calc time us: %d\n", t4.etime(t3));
     }
 
