@@ -45,6 +45,7 @@
 #define offset 25   // shift between tiles
 #define fTS ((TS/2+1))  // second dimension of Fourier tiles
 #define blkrad 1    // radius of block averaging
+#define offset2 25   // shift between tiles
 
 #define epsilon 0.001f/(TS*TS) //tolerance
 #define MAXSCOPE 1.25f
@@ -3757,7 +3758,8 @@ static float *retinex_poisson_dct(float *data, size_t nx, size_t ny, double m)
  *
  * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
  */
-    
+    BENCHFUN
+
     double *cosx = NULL, *cosy = NULL;
     size_t i;
     double m2;
@@ -3800,9 +3802,11 @@ static float *retinex_poisson_dct(float *data, size_t nx, size_t ny, double m)
 
 static float *discrete_laplacian_threshold(float *data_out, const float *data_in, size_t nx, size_t ny, float t)
 {
+    BENCHFUN
+
     size_t i, j;
     float *ptr_out;
-    float diff;
+    float diff=0.f;
     /* pointers to the current and neighbour values */
     const float *ptr_in, *ptr_in_xm1, *ptr_in_xp1, *ptr_in_ym1, *ptr_in_yp1;
 
@@ -3826,7 +3830,7 @@ static float *discrete_laplacian_threshold(float *data_out, const float *data_in
     ptr_out = data_out;
     for (j = 0; j < ny; j++) {
         for (i = 0; i < nx; i++) {
-            *ptr_out = 0.;
+            *ptr_out = 0.f;
             /* row differences */
             if (0 < i) {
                 diff = *ptr_in - *ptr_in_xm1;
@@ -3875,6 +3879,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
  * adapted by Jacques Desmis 2019 <jdesmis@gmail.com>
  */
 
+    BENCHFUN
 /*
 #ifdef RT_FFTW3F_OMP
 
@@ -3882,6 +3887,9 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         fftwf_init_threads();
         fftwf_plan_with_nthreads ( omp_get_max_threads() );
     }
+
+// #else
+//   fftwf_plan_with_nthreads( 2 );
 #endif
 */
         fftwf_plan dct_fw, dct_fw04, dct_bw;
@@ -3974,8 +3982,8 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     BENCHFUN
 
     float *out; //for FFT datas
-    float *kern;//for kernel gauss
-    float *outkern;//for FFT kernel
+    float *kern = nullptr;//for kernel gauss
+    float *outkern = nullptr;//for FFT kernel
 
     fftwf_plan p, pkern;//plan for FFT
     int image_size, image_sizechange;
@@ -4055,11 +4063,220 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
 
 }
 
+void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numblox_W, int min_numblox_W, float **tmp1, int numThreads, double radius)
+{
+    BENCHFUN
+    float epsil = 0.001f/(tilssize * tilssize);
+    fftwf_plan plan_forward_blox[2];
+    fftwf_plan plan_backward_blox[2];
+
+    array2D<float> tilemask_in(tilssize, tilssize);
+    array2D<float> tilemask_out(tilssize, tilssize);
+
+    float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * tilssize * tilssize * sizeof(float)));
+    float *fLbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * tilssize * tilssize * sizeof(float)));
+
+    int nfwd[2] = {tilssize, tilssize};
+
+    //for DCT:
+    fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
+    fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
+
+    // Creating the plans with FFTW_MEASURE instead of FFTW_ESTIMATE speeds up the execute a bit
+    plan_forward_blox[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Lbloxtmp, nullptr, 1, tilssize * tilssize, fLbloxtmp, nullptr, 1, tilssize * tilssize, fwdkind, FFTW_MEASURE | FFTW_DESTROY_INPUT);
+    plan_backward_blox[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fLbloxtmp, nullptr, 1, tilssize * tilssize, Lbloxtmp, nullptr, 1, tilssize * tilssize, bwdkind, FFTW_MEASURE | FFTW_DESTROY_INPUT);
+    plan_forward_blox[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Lbloxtmp, nullptr, 1, tilssize * tilssize, fLbloxtmp, nullptr, 1, tilssize * tilssize, fwdkind, FFTW_MEASURE | FFTW_DESTROY_INPUT);
+    plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, tilssize * tilssize, Lbloxtmp, nullptr, 1, tilssize * tilssize, bwdkind, FFTW_MEASURE | FFTW_DESTROY_INPUT);
+    fftwf_free(Lbloxtmp);
+    fftwf_free(fLbloxtmp);
+    const int border = MAX(2, tilssize / 16);
+
+    for (int i = 0; i < tilssize; ++i) {
+        float i1 = abs((i > tilssize / 2 ? i - tilssize + 1 : i));
+        float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
+        float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * i1) / (2 * border))) : 1.0f);
+
+        for (int j = 0; j < tilssize; ++j) {
+            float j1 = abs((j > tilssize / 2 ? j - tilssize + 1 : j));
+            tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsil;
+            tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI_F * j1) / (2 * border))) : 1.0f)) + epsil;
+
+        }
+    }
+
+    float *LbloxArray[numThreads];
+    float *fLbloxArray[numThreads];
+
+    const int numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
+    const int numblox_H = ceil((static_cast<float>(GH)) / (offset2)) + 2 * blkrad;
+
+    array2D<float> Lresult(GW, GH, ARRAY2D_CLEAR_DATA);
+    array2D<float> totwt(GW, GH, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
+
+    for (int i = 0; i < numThreads; ++i) {
+        LbloxArray[i]  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * tilssize * tilssize * sizeof(float)));
+        fLbloxArray[i] = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * tilssize * tilssize * sizeof(float)));
+    }
+
+#ifdef _OPENMP
+    int masterThread = omp_get_thread_num();
+#endif
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+#ifdef _OPENMP
+        int subThread = masterThread * 1 + omp_get_thread_num();
+#else
+        int subThread = 0;
+#endif
+        float *Lblox = LbloxArray[subThread];
+        float *fLblox = fLbloxArray[subThread];
+        float pBuf[GW + tilssize + 2 * blkrad * offset2] ALIGNED16;
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int vblk = 0; vblk < numblox_H; ++vblk) {
+
+            int top = (vblk - blkrad) * offset2;
+            float * datarow = pBuf + blkrad * offset2;
+
+            for (int i = 0; i < tilssize; ++i) {
+                int row = top + i;
+                int rr = row;
+
+                if (row < 0) {
+                    rr = MIN(-row, GH - 1);
+                } else if (row >= GH) {
+                    rr = MAX(0, 2 * GH - 2 - row);
+                }
+
+                for (int j = 0; j < GW; ++j) {
+                    datarow[j] = (tmp1[rr][j]);
+                }
+
+                for (int j = -blkrad * offset2; j < 0; ++j) {
+                    datarow[j] = datarow[MIN(-j, GW - 1)];
+                }
+
+                for (int j = GW; j < GW + tilssize + blkrad * offset2; ++j) {
+                    datarow[j] = datarow[MAX(0, 2 * GW - 2 - j)];
+                }//now we have a padded data row
+
+                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                    int left = (hblk - blkrad) * offset2;
+                    int indx = (hblk) * tilssize; //index of block in malloc
+
+                    if (top + i >= 0 && top + i < GH) {
+                        int j;
+
+                        for (j = 0; j < min((-left), tilssize); ++j) {
+                            Lblox[(indx + i)*tilssize + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                        }
+
+                        for (; j < min(tilssize, GW - left); ++j) {
+                            Lblox[(indx + i)*tilssize + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                            totwt[top + i][left + j] += tilemask_in[i][j] * tilemask_out[i][j];
+                        }
+
+                        for (; j < tilssize; ++j) {
+                            Lblox[(indx + i)*tilssize + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                        }
+                    } else {
+                        for (int j = 0; j < tilssize; ++j) {
+                            Lblox[(indx + i)*tilssize + j] = tilemask_in[i][j] * datarow[left + j]; // luma data
+                        }
+                    }
+
+                }
+
+            }//end of filling block row
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            //fftwf_print_plan (plan_forward_blox);
+            if (numblox_W == max_numblox_W) {
+                fftwf_execute_r2r(plan_forward_blox[0], Lblox, fLblox);    // DCT an entire row of tiles
+            } else {
+                fftwf_execute_r2r(plan_forward_blox[1], Lblox, fLblox);    // DCT an entire row of tiles
+            }
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            double n_x = rtengine::RT_PI/(double) tilssize;
+            double n_y = rtengine::RT_PI/(double) tilssize;
+            n_x = n_x * n_x;
+            n_y = n_y * n_y;
+            //radius = 30.f;
+            for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                    int blkstart = hblk * tilssize * tilssize;
+                    for(int j = 0; j < tilssize; j++){
+                        int index = j * tilssize;
+                        for(int i = 0; i < tilssize; i++)
+                            fLblox[blkstart + index + i] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));
+                    }
+            }//end of horizontal block loop
+
+            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            //now perform inverse FT of an entire row of blocks
+            if (numblox_W == max_numblox_W) {
+                fftwf_execute_r2r(plan_backward_blox[0], fLblox, Lblox);    //for DCT
+            } else {
+                fftwf_execute_r2r(plan_backward_blox[1], fLblox, Lblox);    //for DCT
+            }
+
+            int topproc = (vblk - blkrad) * offset2;
+            const int numblox_W = ceil((static_cast<float>(GW)) / (offset2));
+            const float DCTnorm = 1.0f / (4 * tilssize * tilssize); //for DCT
+
+            int imin = MAX(0, - topproc);
+            int bottom = MIN(topproc + tilssize, GH);
+            int imax = bottom - topproc;
+            for (int i = imin; i < imax; ++i) {
+                for (int hblk = 0; hblk < numblox_W; ++hblk) {
+                    int left = (hblk - blkrad) * offset2;
+                    int right  = MIN(left + tilssize, GW);
+                    int jmin = MAX(0, -left);
+                    int jmax = right - left;
+                    int indx = hblk * tilssize;
+                    for (int j = jmin; j < jmax; ++j) {
+                        Lresult[topproc + i][left + j] += tilemask_out[i][j] * Lblox[(indx + i) * tilssize + j] * DCTnorm; //for DCT
+                    }
+                }
+            }
+        }//end of vertical block loop
+    }
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
+
+    #pragma omp parallel for
+#endif
+
+    for (int i = 0; i < GH; ++i) {
+        for (int j = 0; j < GW; ++j) {
+            tmp1[i][j] = Lresult[i][j] / totwt[i][j];
+            tmp1[i][j] = CLIPLOC(tmp1[i][j]);
+        }
+    }
+
+    for (int i = 0; i < numThreads; ++i) {
+        fftwf_free(LbloxArray[i]);
+        fftwf_free(fLbloxArray[i]);
+    }
+
+    fftwf_destroy_plan(plan_forward_blox[0]);
+    fftwf_destroy_plan(plan_backward_blox[0]);
+    fftwf_destroy_plan(plan_forward_blox[1]);
+    fftwf_destroy_plan(plan_backward_blox[1]);
+    fftwf_cleanup();
+}
 
 
 
 void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin, int numThreads, const struct local_params & lp, int chrom)
 {
+    BENCHFUN
 
     fftwf_plan plan_forward_blox[2];
     fftwf_plan plan_backward_blox[2];
@@ -6064,6 +6281,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 // soft light
         if (lp.strng > 0.f && call <= 3 && lp.sfena) {
+ 
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -6095,6 +6313,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if(lp.softmet == 0) {
                     ImProcFunctions::softLight(bufexpfin.get(), softLightParams);
                 } else if(lp.softmet == 1) {
+                     MyMutex::MyLock lock(*fftwMutex);
+
                     float *datain = new float[bfw*bfh];
                     float *dataout = new float[bfw*bfh];
                     float *dE = new float[bfw*bfh];
@@ -6933,6 +7153,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
 
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+/*
+//test for fftw blur with tiles....
+            int GW = original->W;
+            int GH = original->H;
+            MyMutex::MyLock lock (*fftwMutex);
+
+            double radius = 80.f;
+            int tilssize = 512;
+#ifdef _OPENMP
+            const int numThreads = omp_get_max_threads();
+#else
+            const int numThreads = 1;
+
+#endif
+            int max_numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
+                // calculate min size of numblox_W.
+            int min_numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
+            fftw_tile_blur(GW, GH, tilssize , max_numblox_W, min_numblox_W, original->L, numThreads, radius);
+*/
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
