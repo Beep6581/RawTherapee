@@ -3980,6 +3980,16 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2) 
 */
     BENCHFUN
+#ifdef RT_FFTW3F_OMP
+
+    if (multiThread) {
+        fftwf_init_threads();
+        fftwf_plan_with_nthreads ( omp_get_max_threads() );
+    }
+
+// #else
+//   fftwf_plan_with_nthreads( 2 );
+#endif
 
     float *out; //for FFT datas
     float *kern = nullptr;//for kernel gauss
@@ -7154,13 +7164,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
 /*
-//test for fftw blur with tiles....
+//test for fftw blur with tiles....not good we can see tiles - very long time
             int GW = original->W;
             int GH = original->H;
             MyMutex::MyLock lock (*fftwMutex);
 
-            double radius = 80.f;
-            int tilssize = 512;
+            double radius = 100.f;
+            int tilssize = 64;
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -7172,6 +7182,38 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int min_numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
             fftw_tile_blur(GW, GH, tilssize , max_numblox_W, min_numblox_W, original->L, numThreads, radius);
 */
+/*
+//test for fftw blur : good result speedup moderate , but less used of memory than gaussianblur
+            int GW = original->W;
+            int GH = original->H;
+            MyMutex::MyLock lock (*fftwMutex);
+
+            float *datain = new float[GW*GH];
+            float *dataout = new float[GW*GH];
+            float radius = 500.f;
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < GH; y++) {
+                        for (int x = 0; x < GW; x++) {
+                            datain[y * GW + x] =original->L[y][x];
+                        }
+                    }
+                    fftw_convol_blur(datain, dataout, GW, GH, radius, 0);
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < GH; y++) {
+                        for (int x = 0; x < GW; x++) {
+                           original->L[y][x] = dataout[y * GW + x];
+                        }
+                    }
+
+            delete [] datain;
+            delete [] dataout;
+            
+*/
+
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
