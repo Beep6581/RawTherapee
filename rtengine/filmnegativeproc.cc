@@ -29,6 +29,9 @@
 #include "opthelper.h"
 #include "rt_algo.h"
 
+//#define BENCHMARK
+#include "StopWatch.h"
+
 namespace rtengine
 {
 
@@ -126,6 +129,8 @@ bool RawImageSource::getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int
 
 void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &params)
 {
+//    BENCHFUNMICRO
+
     if(!params.enabled)
         return;
 
@@ -199,19 +204,23 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
             // to get the reciprocals. Avoid trouble with zeroes, minimum pixel value is 1.
             const float exps0 = -exps[FC(row, col)];
             const float exps1 = -exps[FC(row, col + 1)];
+            const float mult0 = mults[FC(row, col)];
+            const float mult1 = mults[FC(row, col + 1)];
 #ifdef __SSE2__
             const vfloat expsv = _mm_setr_ps(exps0, exps1, exps0, exps1);
+            const vfloat multsv = _mm_setr_ps(mult0, mult1, mult0, mult1);
             const vfloat onev = F2V(1.f);
+            const vfloat c65535v = F2V(65535.f);
             for (; col < W - 3; col+=4) {
-                STVFU(rawData[row][col], pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv));
+                STVFU(rawData[row][col], vminf(multsv * pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv), c65535v));
             }
 #endif // __SSE2__
             for (; col < W - 1; col+=2) {
-                rawData[row][col] = pow_F(max(rawData[row][col], 1.f), exps0);
-                rawData[row][col + 1] = pow_F(max(rawData[row][col + 1], 1.f), exps1);
+                rawData[row][col] = rtengine::min(mult0 * pow_F(max(rawData[row][col], 1.f), exps0), 65535.f);
+                rawData[row][col + 1] = rtengine::min(mult1 * pow_F(max(rawData[row][col + 1], 1.f), exps1), 65535.f);
             }
             if (col < W) {
-                rawData[row][col] = pow_F(max(rawData[row][col], 1.f), exps0);
+                rawData[row][col] = rtengine::min(mult0 * pow_F(max(rawData[row][col], 1.f), exps0), 65535.f);
             }
         }
     } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
@@ -223,24 +232,29 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
             // Exponents are expressed as positive in the parameters, so negate them in order
             // to get the reciprocals. Avoid trouble with zeroes, minimum pixel value is 1.
             const float expsc[6] = {-exps[ri->XTRANSFC(row, 0)], -exps[ri->XTRANSFC(row, 1)], -exps[ri->XTRANSFC(row, 2)], -exps[ri->XTRANSFC(row, 3)], -exps[ri->XTRANSFC(row, 4)], -exps[ri->XTRANSFC(row, 5)]};
+            const float multsc[6] = {mults[ri->XTRANSFC(row, 0)], mults[ri->XTRANSFC(row, 1)], mults[ri->XTRANSFC(row, 2)], mults[ri->XTRANSFC(row, 3)], mults[ri->XTRANSFC(row, 4)], mults[ri->XTRANSFC(row, 5)]};
 #ifdef __SSE2__
             const vfloat expsv0 = _mm_setr_ps(expsc[0], expsc[1], expsc[2], expsc[3]);
             const vfloat expsv1 = _mm_setr_ps(expsc[4], expsc[5], expsc[0], expsc[1]);
             const vfloat expsv2 = _mm_setr_ps(expsc[2], expsc[3], expsc[4], expsc[5]);
+            const vfloat multsv0 = _mm_setr_ps(multsc[0], multsc[1], multsc[2], multsc[3]);
+            const vfloat multsv1 = _mm_setr_ps(multsc[4], multsc[5], multsc[0], multsc[1]);
+            const vfloat multsv2 = _mm_setr_ps(multsc[2], multsc[3], multsc[4], multsc[5]);
             const vfloat onev = F2V(1.f);
+            const vfloat c65535v = F2V(65535.f);
             for (; col < W - 11; col+=12) {
-                STVFU(rawData[row][col], pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv0));
-                STVFU(rawData[row][col + 4], pow_F(vmaxf(LVFU(rawData[row][col + 4]), onev), expsv1));
-                STVFU(rawData[row][col + 8], pow_F(vmaxf(LVFU(rawData[row][col + 8]), onev), expsv2));
+                STVFU(rawData[row][col], vminf(multsv0 * pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv0), c65535v));
+                STVFU(rawData[row][col + 4], vminf(multsv1 * pow_F(vmaxf(LVFU(rawData[row][col + 4]), onev), expsv1), c65535v));
+                STVFU(rawData[row][col + 8], vminf(multsv2 * pow_F(vmaxf(LVFU(rawData[row][col + 8]), onev), expsv2), c65535v));
             }
 #endif // __SSE2__
             for (; col < W - 5; col+=6) {
                 for (int c = 0; c < 6; ++c) {
-                    rawData[row][col + c] = pow_F(max(rawData[row][col + c], 1.f), expsc[c]);
+                    rawData[row][col + c] = rtengine::min(multsc[c] * pow_F(max(rawData[row][col + c], 1.f), expsc[c]), 65535.f);
                 }
             }
             for (int c = 0; col < W; col++, c++) {
-                rawData[row][col + c] = pow_F(max(rawData[row][col + c], 1.f), expsc[c]);
+                rawData[row][col + c] = rtengine::min(multsc[c] * pow_F(max(rawData[row][col + c], 1.f), expsc[c]), 65535.f);
             }
         }
     }
@@ -250,41 +264,8 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
     if (settings->verbose)
         printf("Pow loop time us: %d\n", t4.etime(t3));
 
-    if(ri->getSensorType() == ST_BAYER) {
-
-#ifdef _OPENMP
-        #pragma omp for nowait
-#endif
-        for (int row = 0; row < H; row ++) {
-            for (int col = 0; col < W; col++) {
-                int c = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                // Apply the multipliers, clamp max output value to 65535
-                float out = rawData[row][col] * mults[c];
-                rawData[row][col] = out > 65535.f ? 65535.f : out;
-            }
-        }
-        
-    } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
-
-#ifdef _OPENMP
-        #pragma omp for nowait
-#endif
-        for (int row = 0; row < H; row ++) {
-            for (int col = 0; col < W; col++) {
-                int c = ri->XTRANSFC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                // Apply the multipliers, clamp max output value to 65535
-                float out = rawData[row][col] * mults[c];
-                rawData[row][col] = out > 65535.f ? 65535.f : out;
-            }
-        }
-
-    }
-
 
     t5.set();
-    if (settings->verbose)
-        printf("Mult loop time us: %d\n", t5.etime(t4));
-
 
     PixelsMap bitmapBads(W, H);
 
