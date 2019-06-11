@@ -53,8 +53,8 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
     blueRatio = blueExp->getValue() / greenExp->getValue();
 
     auto m = ProcEventMapper::getInstance();
-    EvFilmNegativeEnabled = m->newEvent(ALL, "HISTORY_MSG_FILMNEGATIVE_ENABLED");
-    EvFilmNegativeExponents = m->newEvent(ALL, "HISTORY_MSG_FILMNEGATIVE_EXPONENTS");
+    EvFilmNegativeEnabled = m->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED");
+    EvFilmNegativeExponents = m->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_EXPONENTS");
 
 
     spotgrid = Gtk::manage(new Gtk::Grid());
