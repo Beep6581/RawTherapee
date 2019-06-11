@@ -34,7 +34,7 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
 {
 
     auto mkExponentAdjuster = [this](Glib::ustring label, double defaultVal) {
-        Adjuster *adj = Gtk::manage(new Adjuster (label, 0.3, 5, 0.001, defaultVal)); //exponent
+        Adjuster *adj = Gtk::manage(new Adjuster (label, 0.3, 6, 0.001, defaultVal)); //exponent
         adj->setAdjusterListener (this);
     
         if (adj->delay < options.adjusterMaxDelay) {
@@ -45,9 +45,9 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
         return adj;
     };
 
-    redExp   = mkExponentAdjuster(M("TP_FILMNEGATIVE_RED"), 1.36);
-    greenExp = mkExponentAdjuster(M("TP_FILMNEGATIVE_GREEN"), 1.0);
-    blueExp  = mkExponentAdjuster(M("TP_FILMNEGATIVE_BLUE"), 0.86);
+    redExp   = mkExponentAdjuster(M("TP_FILMNEGATIVE_RED"), 2.72);
+    greenExp = mkExponentAdjuster(M("TP_FILMNEGATIVE_GREEN"), 2.0);
+    blueExp  = mkExponentAdjuster(M("TP_FILMNEGATIVE_BLUE"), 1.72);
 
     redRatio = redExp->getValue() / greenExp->getValue();
     blueRatio = blueExp->getValue() / greenExp->getValue();
