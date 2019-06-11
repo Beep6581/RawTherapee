@@ -134,6 +134,61 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
     MyTime t1, t2, t3,t4, t5, t6;
     t1.set();
 
+    // Channel vectors to calculate medians
+    std::vector<float> cvs[3] = {
+        std::vector<float>(),
+        std::vector<float>(),
+        std::vector<float>()
+    };
+
+    // Sample one every 5 pixels, and push the value in the appropriate channel vector.
+    // Chose an odd step, not multiple of the CFA size, to get a chance to visit each channel.
+    if(ri->getSensorType() == ST_BAYER) {
+        for (int row = 0; row < H; row+=5) {
+            for (int col = 0; col < W; col+=5) {
+                int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
+                cvs[c].push_back(rawData[row][col]);
+            }
+        }
+    } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
+        for (int row = 0; row < H; row+=5) {
+            for (int col = 0; col < W; col+=5) {
+                int c  = ri->XTRANSFC(row, col);                        // three colors,  0=R, 1=G,  2=B
+                cvs[c].push_back(rawData[row][col]);
+            }
+        }
+    }
+
+    const float MAX_OUT_VALUE = 65000.f;
+
+    t2.set();
+    if (settings->verbose)
+        printf("Median vector fill loop time us: %d\n", t2.etime(t1));
+
+    float medians[3];  // Channel median values
+    float mults[3] = { 1.f };  // Channel normalization multipliers
+
+    for (int c=0; c<3; c++) {
+        // Find median values for each channel
+        if(cvs[c].size() > 0) {
+            findMinMaxPercentile(&cvs[c][0], cvs[c].size(), 0.5f, medians[c], 0.5f, medians[c], true);
+            medians[c] = pow_F(max(medians[c], 1.f), -exps[c]);
+            // Determine the channel multipler so that N times the median becomes 65k. This clips away
+            // the values in the dark border surrounding the negative (due to the film holder, for example),
+            // the reciprocal of which have blown up to stellar values.
+            mults[c] = MAX_OUT_VALUE / (medians[c] * 24);
+        }
+    }
+
+    t3.set();
+    if (settings->verbose) {
+        printf("Sample count : %lu, %lu, %lu\n", cvs[0].size(), cvs[1].size(), cvs[2].size());
+        printf("Medians : %g %g %g\n", medians[0], medians[1], medians[2] );
+        printf("Computed multipliers : %g %g %g\n", mults[0], mults[1], mults[2] );
+        printf("Median calc time us: %d\n", t3.etime(t2));
+    }
+
+
     if(ri->getSensorType() == ST_BAYER) {
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16)
@@ -191,65 +246,9 @@ void RawImageSource::filmNegativeProcess(const procparams::FilmNegativeParams &p
     }
 
 
-    t2.set();
-    if (settings->verbose)
-        printf("Pow loop time us: %d\n", t2.etime(t1));
-
-    // Channel vectors to calculate medians
-    std::vector<float> cvs[3] = {
-        std::vector<float>(),
-        std::vector<float>(),
-        std::vector<float>()
-    };
-
-    // Sample one every 5 pixels, and push the value in the appropriate channel vector.
-    // Chose an odd step, not multiple of the CFA size, to get a chance to visit each channel.
-    if(ri->getSensorType() == ST_BAYER) {
-        for (int row = 0; row < H; row+=5) {
-            for (int col = 0; col < W; col+=5) {
-                int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                cvs[c].push_back(rawData[row][col]);
-            }
-        }
-    } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
-        for (int row = 0; row < H; row+=5) {
-            for (int col = 0; col < W; col+=5) {
-                int c  = ri->XTRANSFC(row, col);                        // three colors,  0=R, 1=G,  2=B
-                cvs[c].push_back(rawData[row][col]);
-            }
-        }
-    }
-
-    const float MAX_OUT_VALUE = 65000.f;
-
-    t3.set();
-    if (settings->verbose)
-        printf("Median vector fill loop time us: %d\n", t3.etime(t2));
-
-    float medians[3];  // Channel median values
-    float mults[3] = { 1.f };  // Channel normalization multipliers
-
-    for (int c=0; c<3; c++) {
-        // Find median values for each channel
-        if(cvs[c].size() > 0) {
-            std::sort(cvs[c].begin(), cvs[c].end());
-            medians[c] = cvs[c].at(cvs[c].size() / 2);
-            // Determine the channel multipler so that N times the median becomes 65k. This clips away
-            // the values in the dark border surrounding the negative (due to the film holder, for example),
-            // the reciprocal of which have blown up to stellar values.
-            mults[c] = MAX_OUT_VALUE / (medians[c] * 24);
-        }
-    }
-
-
     t4.set();
-    if (settings->verbose) {
-        printf("Sample count : %lu, %lu, %lu\n", cvs[0].size(), cvs[1].size(), cvs[2].size());
-        printf("Medians : %g %g %g\n", medians[0], medians[1], medians[2] );
-        printf("Computed multipliers : %g %g %g\n", mults[0], mults[1], mults[2] );
-        printf("Median calc time us: %d\n", t4.etime(t3));
-    }
-
+    if (settings->verbose)
+        printf("Pow loop time us: %d\n", t4.etime(t3));
 
     if(ri->getSensorType() == ST_BAYER) {
 
