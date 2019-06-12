@@ -161,6 +161,7 @@ set(NONCLISOURCEFILES
     labgrid.cc
     softlight.cc
     dehaze.cc
+    filmnegative.cc
     )
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

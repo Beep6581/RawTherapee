@@ -1501,6 +1501,23 @@ struct RAWParams {
     static Glib::ustring getFlatFieldBlurTypeString(FlatFieldBlurType type);
 };
 
+
+/**
+  * Parameters of film negative
+  */
+struct FilmNegativeParams {
+    bool enabled;
+    double redExp;
+    double greenExp;
+    double blueExp;
+
+    FilmNegativeParams();
+
+    bool operator ==(const FilmNegativeParams& other) const;
+    bool operator !=(const FilmNegativeParams& other) const;
+};
+
+
 /**
   * This class holds all the processing parameters applied on the images
   */
@@ -1558,6 +1575,8 @@ public:
     MetaDataParams          metadata;        ///< Metadata parameters
     ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
     IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
+
+    FilmNegativeParams      filmNegative;    ///< Film negative parameters
 
     /**
       * The constructor only sets the hand-wired defaults.

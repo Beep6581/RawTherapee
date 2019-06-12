@@ -666,6 +666,15 @@ struct MetaDataParamsEdited {
     bool mode;
 };
 
+struct FilmNegativeParamsEdited {
+    bool enabled;
+    bool redExp;
+    bool greenExp;
+    bool blueExp;
+
+    bool isUnchanged() const;
+};
+
 struct ParamsEdited {
     GeneralParamsEdited general;
     ToneCurveParamsEdited toneCurve;
@@ -710,6 +719,7 @@ struct ParamsEdited {
     SoftLightParamsEdited softlight;
     DehazeParamsEdited dehaze;
     MetaDataParamsEdited metadata;
+    FilmNegativeParamsEdited filmNegative;
     bool exif;
     bool iptc;
 

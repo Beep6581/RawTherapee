@@ -82,6 +82,7 @@
 #include "softlight.h"
 #include "dehaze.h"
 #include "guiutils.h"
+#include "filmnegative.h"
 
 class ImageEditorCoordinator;
 
@@ -97,7 +98,8 @@ class ToolPanelCoordinator :
     public CropPanelListener,
     public ICMPanelListener,
     public ImageAreaToolListener,
-    public rtengine::ImageTypeListener
+    public rtengine::ImageTypeListener,
+    public FilmNegProvider
 {
 protected:
     WhiteBalance* whitebalance;
@@ -152,6 +154,7 @@ protected:
     XTransRAWExposure* xtransrawexposure;
     FattalToneMapping *fattal;
     MetaDataPanel* metadata;
+    FilmNegative* filmNegative;
 
     std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -287,6 +290,9 @@ public:
     //FFProvider interface
     rtengine::RawImage* getFF() override;
     Glib::ustring GetCurrentImageFilePath() override;
+
+    // FilmNegProvider interface
+    bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, float* newExps) override;
 
     // rotatelistener interface
     void straightenRequested () override;
