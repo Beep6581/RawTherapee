@@ -2734,7 +2734,6 @@ bool MetaDataParams::operator!=(const MetaDataParams &other) const
     return !(*this == other);
 }
 
-
 FilmNegativeParams::FilmNegativeParams() :
     enabled(false),
     redExp(2.72),
@@ -2756,10 +2755,6 @@ bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
 {
     return !(*this == other);
 }
-
-
-
-
 
 ProcParams::ProcParams()
 {
@@ -3597,7 +3592,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.redExp, "Film Negative", "RedExponent", filmNegative.redExp, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.blueExp, "Film Negative", "BlueExponent", filmNegative.blueExp, keyFile);
-
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5149,7 +5143,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Film Negative", "BlueExponent", pedited, filmNegative.blueExp, pedited->filmNegative.blueExp);
         }
 
-
         if (keyFile.has_group("MetaData")) {
             int mode = int(MetaDataParams::TUNNEL);
             assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
@@ -5272,7 +5265,8 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && metadata == other.metadata
         && exif == other.exif
         && iptc == other.iptc
-        && dehaze == other.dehaze;
+        && dehaze == other.dehaze
+        && filmNegative == other.filmNegative;
 }
 
 bool ProcParams::operator !=(const ProcParams& other) const

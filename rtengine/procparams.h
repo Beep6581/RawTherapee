@@ -728,7 +728,6 @@ struct DirPyrDenoiseParams {
     bool operator !=(const DirPyrDenoiseParams& other) const;
 
     void getCurves(NoiseCurve& lCurve, NoiseCurve& cCurve) const;
-
 };
 
 // EPD related parameters.
@@ -1056,7 +1055,6 @@ struct ColorManagementParams {
     bool operator !=(const ColorManagementParams& other) const;
 };
 
-
 /**
   * Parameters for metadata handling
   */
@@ -1295,7 +1293,6 @@ struct HSVEqualizerParams {
     bool operator !=(const HSVEqualizerParams& other) const;
 };
 
-
 /**
  *  Film simualtion params
  */
@@ -1309,7 +1306,6 @@ struct FilmSimulationParams {
     bool operator ==(const FilmSimulationParams& other) const;
     bool operator !=(const FilmSimulationParams& other) const;
 };
-
 
 struct SoftLightParams {
     bool enabled;
@@ -1333,7 +1329,6 @@ struct DehazeParams {
     bool operator==(const DehazeParams &other) const;
     bool operator!=(const DehazeParams &other) const;
 };
-
 
 /**
   * Parameters for RAW demosaicing, common to all sensor type
@@ -1501,7 +1496,6 @@ struct RAWParams {
     static Glib::ustring getFlatFieldBlurTypeString(FlatFieldBlurType type);
 };
 
-
 /**
   * Parameters of film negative
   */
@@ -1516,7 +1510,6 @@ struct FilmNegativeParams {
     bool operator ==(const FilmNegativeParams& other) const;
     bool operator !=(const FilmNegativeParams& other) const;
 };
-
 
 /**
   * This class holds all the processing parameters applied on the images
@@ -1566,6 +1559,7 @@ public:
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
     SoftLightParams         softlight;       ///< softlight parameters
     DehazeParams            dehaze;          ///< dehaze parameters
+    FilmNegativeParams      filmNegative;    ///< Film negative parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image
@@ -1575,8 +1569,6 @@ public:
     MetaDataParams          metadata;        ///< Metadata parameters
     ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
     IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
-
-    FilmNegativeParams      filmNegative;    ///< Film negative parameters
 
     /**
       * The constructor only sets the hand-wired defaults.

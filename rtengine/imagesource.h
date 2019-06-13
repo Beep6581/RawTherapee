@@ -16,20 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _IMAGESOURCE_
-#define _IMAGESOURCE_
+#pragma once
+
+#include <vector>
 
 #include <glibmm.h>
-#include <vector>
-#include "rtengine.h"
+
 #include "colortemp.h"
 #include "coord2d.h"
 #include "dcp.h"
-#include "LUT.h"
-#include "imagedata.h"
-#include "image8.h"
 #include "image16.h"
+#include "image8.h"
+#include "imagedata.h"
 #include "imagefloat.h"
+#include "LUT.h"
+#include "rtengine.h"
 
 namespace rtengine
 {
@@ -39,11 +40,11 @@ namespace procparams
 
 struct CoarseTransformParams;
 struct ColorManagementParams;
+struct FilmNegativeParams;
 struct LensProfParams;
 struct RAWParams;
 struct RetinexParams;
 struct ToneCurveParams;
-struct FilmNegativeParams;
 
 }
 
@@ -57,6 +58,7 @@ public:
     double cam_xyz[3][3] = {};
 };
 
+// TODO: Move implementation to .cc (Flössie)
 class ImageSource : public InitialImage
 {
 
@@ -180,5 +182,5 @@ public:
     }
     virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
 };
+
 }
-#endif

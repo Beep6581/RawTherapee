@@ -1025,8 +1025,5 @@ void ToolPanelCoordinator::setEditProvider (EditDataProvider *provider)
 
 bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, float* newExps)
 {
-    if(!ipc)
-        return false;
-
-    return ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps);
+    return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps);
 }
