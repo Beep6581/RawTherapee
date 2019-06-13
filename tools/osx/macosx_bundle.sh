@@ -155,6 +155,12 @@ ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 # Copy libjpeg-turbo into the app bundle
 cp /opt/local/lib/libjpeg.62.dylib "${RESOURCES}/../Frameworks"
 
+# Copy libexpat into the app bundle
+cp /opt/local/lib/libexpat.1.dylib "${RESOURCES}/../Frameworks"
+
+# Copy libz into the app bundle
+cp /opt/local/lib/libz.1.dylib "${RESOURCES}/../Frameworks"
+
 # Copy libtiff into the app bundle
 cp /opt/local/lib/libtiff.5.dylib "${RESOURCES}/../Frameworks"
 
