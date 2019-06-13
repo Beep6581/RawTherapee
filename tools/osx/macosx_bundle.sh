@@ -219,7 +219,7 @@ fi
 NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
 if ! test -z "$NOTARY" ; then
     ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
-    uuid=`xcrun altool --notarize-app --primary-bundle-id "com.filmulator" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
+    uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.rawtherapee" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
     echo "Result= $uuid" # Display identifier string
     sleep 15
     while :
@@ -276,7 +276,7 @@ function CreateDmg {
     # Notarize the dmg
     if ! test -z "$NOTARY" ; then
         zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
-        uuid=`xcrun altool --notarize-app --primary-bundle-id "com.filmulator" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
+        uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
         echo "dmg Result= $uuid" # Display identifier string
         sleep 15
         while :
