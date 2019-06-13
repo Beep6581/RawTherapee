@@ -256,6 +256,10 @@ if(APPLE)
     if("${CODESIGNID}")
         set(CODESIGNID "${CODESIGNID}" CACHE STRING "Codesigning Identity")
     endif()
+    if("${NOTARY}")
+        set(NOTARY "${NOTARY}" CACHE STRING "Notarization Identity")
+    endif()
+
 endif()
 
 # Enforce absolute paths for non-bundle builds:
