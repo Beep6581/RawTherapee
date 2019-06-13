@@ -204,9 +204,38 @@ plutil -convert binary1 "${CONTENTS}/Info.plist"
 
 # Sign the app
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
-codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${APP}"
-spctl -a -vvvv "${APP}"
- 
+if ! test -z "$CODESIGNID" ; then
+    codesign --deep --force -v -s "${CODESIGNID}" --timestamp -o runtime "${APP}"
+    spctl -a -vvvv "${APP}"
+fi
+
+# Notarize the app
+NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
+if ! test -z "$NOTARY" ; then
+    ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
+    uuid=`xcrun altool --notarize-app --primary-bundle-id "com.filmulator" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
+    echo "Result= $uuid" # Display identifier string
+    sleep 15
+    while :
+        do
+        fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY}  2>&1`  # get the status
+        status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
+        if [ "$status1" = "success" ]; then
+            xcrun stapler staple *app   #  staple the ticket
+            xcrun stapler validate -v *app
+            echo "Notarization success"
+            break
+        elif [ "$status1" = "in" ]; then
+            echo "Notarization still in progress, sleeping for 15 seconds and trying again"
+            sleep 15
+        else
+            echo "Notarization failed fullstatus below"
+            echo "$fullstatus"
+            exit 1
+        fi
+    done
+fi
+
 function CreateDmg {
     local srcDir="$(mktemp -dt $$)"
 
@@ -234,7 +263,36 @@ function CreateDmg {
     hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
 
     # Sign disk image
-    codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
+        if ! test -z "$CODESIGNID" ; then
+            codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
+        fi
+
+    # Notarize the dmg
+    if ! test -z "$NOTARY" ; then
+        zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
+        uuid=`xcrun altool --notarize-app --primary-bundle-id "com.filmulator" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
+        echo "dmg Result= $uuid" # Display identifier string
+        sleep 15
+        while :
+        do
+            fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY} 2>&1`  # get the status
+            status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
+            if [ "$status1" = "success" ]; then
+                xcrun stapler staple "${dmg_name}.dmg"   #  staple the ticket
+                xcrun stapler validate -v "${dmg_name}.dmg"
+                echo "dmg Notarization success"
+                break
+            elif [ "$status1" = "in" ]; then
+                echo "dmg Notarization still in progress, sleeping for 15 seconds and trying again"
+                sleep 15
+            else
+                echo "dmg Notarization failed fullstatus below"
+                echo "$fullstatus"
+            exit 1
+            fi
+        done
+    fi
+
 
     # Zip disk image for redistribution
     zip "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
