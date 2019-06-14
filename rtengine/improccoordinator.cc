@@ -967,17 +967,23 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     } else {
                         mL0 = mL = mC0 = mC = 0.f;
                     }
+                float indic = 1.f;
 
-
+                if(WaveParams.showmask){
+                    mL0 = mC0 = -1.f;
+                    indic = -1.f;
+                    mL = fabs(mL);
+                    mC = fabs(mC);
+                }
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
 
                     for (int x = 0; x < pH; x++)
                         for (int y = 0; y < pW; y++) {
-                            nprevl->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) - mL * nprevl->L[x][y];
-                            nprevl->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * nprevl->a[x][y];
-                            nprevl->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * nprevl->b[x][y];
+                            nprevl->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) - mL * indic * nprevl->L[x][y];
+                            nprevl->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * nprevl->a[x][y];
+                            nprevl->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * nprevl->b[x][y];
                         }
 
                     delete unshar;

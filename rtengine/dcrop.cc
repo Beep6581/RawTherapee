@@ -1102,6 +1102,14 @@ void Crop::update(int todo)
                     mL0 = mL = mC0 = mC = 0.f;
                 }
 
+                float indic = 1.f;
+                if(WaveParams.showmask){
+                    mL0 = mC0 = -1.f;
+                    indic = -1.f;
+                    mL = fabs(mL);
+                    mC = fabs(mC);
+                }
+
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -1109,9 +1117,9 @@ void Crop::update(int todo)
 
                 for (int x = 0; x < labnCrop->H; x++)
                     for (int y = 0; y < labnCrop->W; y++) {
-                        labnCrop->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) - mL * labnCrop->L[x][y];
-                        labnCrop->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * labnCrop->a[x][y];
-                        labnCrop->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * labnCrop->b[x][y];
+                        labnCrop->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) - mL * indic * labnCrop->L[x][y];
+                        labnCrop->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * labnCrop->a[x][y];
+                        labnCrop->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * labnCrop->b[x][y];
                     }
 
                 delete unshar;

@@ -501,7 +501,7 @@ Wavelet::Wavelet() :
     clariBox->pack_start(*mergeL);
     clariBox->pack_start(*mergeC);
     clariBox->pack_start(*softrad);
-//    clariBox->pack_start(*showmask);
+    clariBox->pack_start(*showmask);
 
 // Edge Sharpness
     ToolParamBlock* const edgBox = Gtk::manage(new ToolParamBlock());
@@ -3064,46 +3064,6 @@ void Wavelet::avoidToggled()
 
 void Wavelet::showmaskToggled()
 {
-    if (ushamethod->get_active_row_number() == 1 && showmask->get_active()) {
-        Backmethod->set_active(2);
-        CLmethod->set_active(2);
-        Lmethod->set_active(6);
-        Lmethod->set_sensitive(true);
-        Dirmethod->set_sensitive(true);
-        Dirmethod->set_active(3);
-        expclari->setEnabled(false);
-
-    } else if (ushamethod->get_active_row_number() == 0 && showmask->get_active()) {
-        Backmethod->set_active(0);
-        CLmethod->set_active(1);
-        Lmethod->set_active(2);
-        Dirmethod->set_active(3);
-        Lmethod->set_sensitive(true);
-        Dirmethod->set_sensitive(true);
-        expclari->setEnabled(false);
-
-    }
-
-    if (ushamethod->get_active_row_number() == 1 && !showmask->get_active()) {
-        Backmethod->set_active(2);
-        CLmethod->set_active(2);
-        Lmethod->set_active(6);
-        Lmethod->set_sensitive(true);
-        Dirmethod->set_sensitive(true);
-        Dirmethod->set_active(3);
-        expclari->setEnabled(true);
-
-    } else if (ushamethod->get_active_row_number() == 0 && !showmask->get_active()) {
-        Backmethod->set_active(0);
-        CLmethod->set_active(1);
-        Lmethod->set_active(2);
-        Dirmethod->set_active(3);
-        Lmethod->set_sensitive(true);
-        Dirmethod->set_sensitive(true);
-        expclari->setEnabled(true);
-
-    }
-
     if (multiImage) {
         if (showmask->get_inconsistent()) {
             showmask->set_inconsistent(false);
@@ -3306,20 +3266,15 @@ void Wavelet::enableToggled(MyExpander *expander)
             event = EvWavenafin;
         } else if (expander == expclari) {
             if (expclari->getEnabled() == false) {
-                if (! showmask->get_active()) {
-                    Backmethod->set_active(1);
-                    CLmethod->set_active(3);
-                    Lmethod->set_active(3);
-                    Dirmethod->set_active(3);
-                    Lmethod->set_sensitive(false);
-                    Dirmethod->set_sensitive(false);
-                    CLmethod->set_sensitive(true);
-                    Backmethod->set_sensitive(true);
-                }
+                Backmethod->set_active(1);
+                CLmethod->set_active(3);
+                Lmethod->set_active(3);
+                Dirmethod->set_active(3);
+                Lmethod->set_sensitive(false);
+                Dirmethod->set_sensitive(false);
+                CLmethod->set_sensitive(true);
+                Backmethod->set_sensitive(true);
             } else  {
-                if (showmask->get_active()) {
-                    showmask->set_active(false);
-                }
 
                 if (ushamethod->get_active_row_number() == 1) {
                     Backmethod->set_active(2);
