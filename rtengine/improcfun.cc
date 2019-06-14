@@ -1261,8 +1261,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             }
 
                             Qpro = Qanc * (Qq / Qold);
-                            //   Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
-                            Jpro = Jpro * SQR (Qq / Qold);
+                            Jpro = SQR ((10.f * Qpro) / wh);
 
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
@@ -1342,11 +1341,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                                 Qold = 0.001f;
                             }
 
-                            //  Qpro = (float) (Qq * (coef) / 327.68f);
                             Qpro = Qanc * (Qq / Qold);
-                            Jpro = Jpro * SQR (Qq / Qold);
-
-                            // Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
+                            Jpro = SQR ((10.f * Qpro) / wh);
 
                             if (t1L) { //to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
                                 coef = 2.f; //adapt Q to J approximation
