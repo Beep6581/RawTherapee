@@ -66,7 +66,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
                 if (plistener) {
                     plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_RCD")));
                 }
-                rcd_demosaic(winw, winh, rawData, red, green, blue, cfa, setProgCancel);
+                rcd_demosaic(winw, winh, rawData, red, green, blue, cfa, setProgCancel, options.chunkSizeRCD, options.measure);
             }
         } else {
             unsigned xtrans[6][6];
@@ -121,7 +121,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_RCD")));
             }
-            rcd_demosaic(winw, winh, rawData, red, green, blue, cfa, setProgCancel);
+            rcd_demosaic(winw, winh, rawData, red, green, blue, cfa, setProgCancel, options.chunkSizeRCD, options.measure);
         }
     } else {
         if (plistener) {

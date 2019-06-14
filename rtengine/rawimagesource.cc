@@ -2199,7 +2199,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                     plistener->setProgress(p);
                 return false;
             };
-            rcd_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel);
+            rcd_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel, options.chunkSizeRCD, options.measure);
         } else {
             nodemosaic(false);
         }
