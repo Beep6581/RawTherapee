@@ -2224,7 +2224,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             ri->getXtransMatrix(xtrans);
             float rgb_cam[3][4];
             ri->getRgbCam(rgb_cam);
-            markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false);
+            markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false, options.chunkSizeXT, options.measure);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_XTRANS")));
@@ -2233,7 +2233,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             ri->getXtransMatrix(xtrans);
             float rgb_cam[3][4];
             ri->getRgbCam(rgb_cam);
-            markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true);
+            markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true, options.chunkSizeXT, options.measure);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) || raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::TWO_PASS)) {
             if (!autoContrast) {
                 double threshold = raw.xtranssensor.dualDemosaicContrast;

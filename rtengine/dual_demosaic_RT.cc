@@ -82,9 +82,9 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
                 return false;
             };
             if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
-                markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true);
+                markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true, options.chunkSizeXT, options.measure);
             } else {
-                markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false);
+                markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false, options.chunkSizeXT, options.measure);
             }
         }
 
@@ -137,9 +137,9 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
         float rgb_cam[3][4];
         ri->getRgbCam(rgb_cam);
         if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) ) {
-            markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true);
+            markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 3, true, options.chunkSizeXT, options.measure);
         } else {
-            markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false);
+            markesteijn_demosaic(winw, winh, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false, options.chunkSizeXT, options.measure);
         }
         if (plistener) {
             plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_XTRANSFAST")));
