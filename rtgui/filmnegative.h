@@ -50,6 +50,9 @@ private:
     Adjuster* greenExp;
     Adjuster* blueExp;
 
+    Gtk::CheckButton* lockChannels;
+    sigc::connection lockChannelsConn;
+
     Gtk::Grid* spotgrid;
     Gtk::ToggleButton* spotbutton;
     sigc::connection spotConn;
@@ -57,6 +60,7 @@ private:
     double redRatio, blueRatio;
 
     void editToggled ();
+    void lockChannelsToggled ();
 
 public:
 
