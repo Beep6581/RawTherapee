@@ -82,7 +82,7 @@ float logBase(float base, float num) {
     return log(num) / log(base);
 }
 
-bool RawImageSource::getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, float newExps[3])
+bool RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
 {
     float clearVals[3], denseVals[3];
 

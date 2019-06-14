@@ -16,23 +16,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _NEG_H_
-#define _NEG_H_
+#pragma once
+
+#include <array>
 
 #include <gtkmm.h>
-#include "toolpanel.h"
-#include "adjuster.h"
-#include "guiutils.h"
-#include "wbprovider.h"
-#include "editcallbacks.h"
-#include "../rtengine/procparams.h"
 
+#include "adjuster.h"
+#include "editcallbacks.h"
+#include "guiutils.h"
+#include "toolpanel.h"
+#include "wbprovider.h"
+
+#include "../rtengine/procparams.h"
 
 class FilmNegProvider
 {
 public:
     virtual ~FilmNegProvider() = default;
-    virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, float* newExps) = 0;
+    virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
 };
 
 class FilmNegative : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber
@@ -89,5 +91,3 @@ public:
     bool pick1(bool picked) override;
 
 };
-
-#endif

@@ -1262,7 +1262,7 @@ void ImProcCoordinator::getSpotWB(int x, int y, int rect, double& temp, double& 
     }
 }
 
-bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB, float* newExps)
+bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps)
 {
     MyMutex::MyLock lock(mProcessing);
 

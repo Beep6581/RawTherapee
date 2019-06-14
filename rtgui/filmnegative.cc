@@ -281,8 +281,8 @@ bool FilmNegative::button1Pressed(int modifierKey)
             // User has selected 2 reference gray spots. Calculating new exponents
             // from channel values and updating parameters.
 
-            float newExps[3];
-            if(fnp->getFilmNegativeExponents(refSpotCoords[0], refSpotCoords[1], newExps)) {
+            std::array<float, 3> newExps;
+            if (fnp->getFilmNegativeExponents(refSpotCoords[0], refSpotCoords[1], newExps)) {
                 disableListener();
                 redExp->setValue(newExps[0]);
                 greenExp->setValue(newExps[1]);
