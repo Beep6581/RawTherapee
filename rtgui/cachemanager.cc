@@ -16,17 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "cachemanager.h"
 
 #include <memory>
 #include <iostream>
 
-#include <glib/gstdio.h>
+#include <dirent.h>
 #include <giomm.h>
+#include <glib/gstdio.h>
 
 #ifdef WIN32
 #include <windows.h>
 #endif
+
+#include "cachemanager.h"
 
 #include "guiutils.h"
 #include "options.h"
@@ -340,66 +342,69 @@ Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subDir,
 void CacheManager::applyCacheSizeLimitation () const
 {
     // first count files without fetching file name and timestamp.
+    auto cachedir = opendir(Glib::build_filename(baseDir, "data").c_str());
+    if (!cachedir) {
+        return;
+    }
+
     std::size_t numFiles = 0;
-    try {
+    while (readdir(cachedir)) {
+        ++numFiles;
+    }
 
-        const auto dirName = Glib::build_filename (baseDir, "data");
-        const auto dir = Gio::File::create_for_path (dirName);
-
-        auto enumerator = dir->enumerate_children ("");
-
-        while (numFiles <= options.maxCacheEntries && enumerator->next_file ()) {
-            ++numFiles;
-        }
-
-    } catch (Glib::Exception&) {}
+    closedir(cachedir);
+    if (numFiles > 2) {
+        numFiles -= 2; // because . and .. are counted
+    }
 
     if (numFiles <= options.maxCacheEntries) {
         return;
     }
 
     using FNameMTime = std::pair<Glib::ustring, Glib::TimeVal>;
+
     std::vector<FNameMTime> files;
+    files.reserve(numFiles);
 
+    constexpr std::size_t md5_size = 32;
+    // get filenames and timestamps
     try {
+        const auto dir = Gio::File::create_for_path(Glib::build_filename(baseDir, "data"));
+        const auto enumerator = dir->enumerate_children("standard::name,time::modified");
 
-        const auto dirName = Glib::build_filename (baseDir, "data");
-        const auto dir = Gio::File::create_for_path (dirName);
-
-        auto enumerator = dir->enumerate_children ("standard::name,time::modified");
-
-        while (auto file = enumerator->next_file ()) {
-            files.emplace_back (file->get_name (), file->modification_time ());
+        while (const auto file = enumerator->next_file()) {
+            const auto name = file->get_name();
+            if (name.size() >= md5_size + 5) {
+                files.emplace_back(name, file->modification_time());
+            }
         }
 
     } catch (Glib::Exception&) {}
 
-    if (files.size () <= options.maxCacheEntries) {
+    if (files.size() <= options.maxCacheEntries) {
+        // limit not reached
         return;
     }
 
-    std::sort (files.begin (), files.end (), [] (const FNameMTime& lhs, const FNameMTime& rhs)
-    {
-        return lhs.second < rhs.second;
-    });
+    const std::size_t toDelete = files.size() - options.maxCacheEntries + options.maxCacheEntries * 5 / 100; // reserve 5% free cache space
 
-    auto cacheEntries = files.size ();
-
-    for (auto entry = files.begin (); cacheEntries-- > options.maxCacheEntries; ++entry) {
-
-        const auto& name = entry->first;
-
-        constexpr auto md5_size = 32;
-        const auto name_size = name.size();
-
-        if (name_size < md5_size + 5) {
-            continue;
+    std::nth_element(
+        files.begin(),
+        files.begin() + toDelete,
+        files.end(),
+        [](const FNameMTime& lhs, const FNameMTime& rhs) -> bool
+        {
+            return lhs.second < rhs.second;
         }
+    );
 
-        const auto fname = name.substr (0, name_size - md5_size - 5);
-        const auto md5 = name.substr (name_size - md5_size - 4, md5_size);
+    for (std::vector<FNameMTime>::const_iterator entry = files.begin(), end = files.begin() + toDelete; entry != end; ++entry) {
+        const auto& name = entry->first;
+        const auto name_size = name.size() - md5_size;
+        const auto fname = name.substr(0, name_size - 5);
+        const auto md5 = name.substr(name_size - 4, md5_size);
 
-        deleteFiles (fname, md5, true, false);
+        deleteFiles(fname, md5, true, false);
     }
 }
 

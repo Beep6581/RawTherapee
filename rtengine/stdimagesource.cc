@@ -17,11 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "stdimagesource.h"
-#include "mytime.h"
+
+#include "color.h"
+#include "curves.h"
 #include "iccstore.h"
 #include "imageio.h"
-#include "curves.h"
-#include "color.h"
+#include "mytime.h"
+#include "procparams.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -337,6 +339,11 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
 
     return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal);
 }
+
+void StdImageSource::flushRGB() {
+    img->allocate(0, 0);
+};
+
 
 }
 

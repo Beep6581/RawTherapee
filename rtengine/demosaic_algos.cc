@@ -30,7 +30,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -74,7 +74,7 @@ void RawImageSource::ppg_demosaic()
     if (plistener) {
         // looks like ppg isn't supported anymore
         //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::ppg)));
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("GENERAL_NA")));
         plistener->setProgress (0.0);
     }
 
@@ -383,12 +383,12 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
     if (plistener) {
         // this function seems to be unused
         //plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::jdl)));
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "xxx"));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("GENERAL_NA")));
         plistener->setProgress (0.0);
     }
 
 #ifdef _OPENMP
-    #pragma omp parallel default(none) shared(image,width,height,u,w,v,y,x,z,dif,chr) private(row,col,f,g,indx,c,d,i)
+    #pragma omp parallel shared(image,width,height,u,w,v,y,x,z,dif,chr) private(row,col,f,g,indx,c,d,i)
 #endif
     {
 #ifdef _OPENMP

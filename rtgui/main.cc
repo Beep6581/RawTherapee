@@ -28,7 +28,6 @@
 #include <giomm.h>
 #include <iostream>
 #include <tiffio.h>
-#include "../rtengine/icons.h"
 #include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
@@ -65,8 +64,7 @@ Glib::ustring argv2;
 bool simpleEditor = false;
 bool gimpPlugin = false;
 bool remote = false;
-Glib::RefPtr<Gtk::CssProvider> cssForced;
-Glib::RefPtr<Gtk::CssProvider> cssRT;
+unsigned char initialGdkScale = 1;
 //Glib::Threads::Thread* mainThread;
 
 namespace
@@ -133,6 +131,10 @@ int processLineParams ( int argc, char **argv )
 
         if ( currParam.at (0) == '-' && currParam.size() > 1 ) {
             switch ( currParam.at (1) ) {
+                case '-':
+                    // GTK --argument, we're skipping it
+                    break;
+
 #ifdef WIN32
 
                 case 'w': // This case is handled outside this function
@@ -247,103 +249,8 @@ RTWindow *create_rt_window()
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
     defaultIconTheme->append_search_path (icon_path);
 
-    rtengine::setPaths();
-    MyExpander::init();  // has to stay AFTER rtengine::setPaths
-
-    // ------- loading theme files
-
-    Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-
-    if (screen) {
-        Gtk::Settings::get_for_screen (screen)->property_gtk_theme_name() = "Adwaita";
-        Gtk::Settings::get_for_screen (screen)->property_gtk_application_prefer_dark_theme() = true;
-
-#if defined(__APPLE__)
-        // This will force screen resolution regarding font, but I don't think it's compliant with Gtk guidelines...
-        // Do not confuse with screen scaling, where everything is scaled up !
-        screen->set_resolution (96.);
-#endif
-
-        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
-        Glib::ustring filename;
-        Glib::MatchInfo mInfo;
-        bool match = regex->match(options.theme + ".css", mInfo);
-        if (match) {
-            // save old theme (name + version)
-            Glib::ustring initialTheme(options.theme);
-
-            // update version
-            auto pos = options.theme.find("-GTK3-");
-            Glib::ustring themeRootName(options.theme.substr(0, pos));
-            if (GTK_MINOR_VERSION < 20) {
-                options.theme = themeRootName + "-GTK3-_19";
-            } else {
-                options.theme = themeRootName + "-GTK3-20_";
-            }
-            // check if this version exist
-            if (!Glib::file_test(Glib::build_filename(argv0, "themes", options.theme + ".css"), Glib::FILE_TEST_EXISTS)) {
-                // set back old theme version if the actual one doesn't exist yet
-                options.theme = initialTheme;
-            }
-        }
-        filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
-
-        if (!match || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-            options.theme = "RawTherapee-GTK";
-
-            // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
-            if (GTK_MINOR_VERSION < 20) {
-                options.theme = options.theme + "3-_19";
-            } else {
-                options.theme = options.theme + "3-20_";
-            }
-
-            filename = Glib::build_filename (argv0, "themes", options.theme + ".css");
-        }
-
-        cssRT = Gtk::CssProvider::create();
-
-        try {
-            cssRT->load_from_path (filename);
-            Gtk::StyleContext::add_provider_for_screen (screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-        } catch (Glib::Error &err) {
-            printf ("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
-        } catch (...) {
-            printf ("Error: Can't load css file \"%s\"\n", filename.c_str());
-        }
-
-        // Set the font face and size
-        if (options.fontFamily != "default") {
-            try {
-                cssForced = Gtk::CssProvider::create();
-                //GTK318
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
-#else
-                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
-#endif
-                //GTK318
-                Gtk::StyleContext::add_provider_for_screen (screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-            } catch (Glib::Error &err) {
-                printf ("Error: \"%s\"\n", err.what().c_str());
-            } catch (...) {
-                printf ("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
-            }
-        }
-    }
-
-#ifndef NDEBUG
-    else if (!screen) {
-        printf ("ERROR: Can't get default screen!\n");
-    }
-
-#endif
-
-    // ------- end loading theme files
-
     //gdk_threads_enter ();
     RTWindow *rtWindow = new RTWindow();
-
     return rtWindow;
 }
 
@@ -620,6 +527,16 @@ int main (int argc, char **argv)
     }
 
     int ret = 0;
+
+    if (options.pseudoHiDPISupport) {
+		// Reading/updating GDK_SCALE early if it exists
+		const gchar *gscale = g_getenv("GDK_SCALE");
+		if (gscale && gscale[0] == '2') {
+			initialGdkScale = 2;
+		}
+		// HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
+		g_setenv("GDK_SCALE", "1", true);
+    }
 
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
     gdk_threads_init();

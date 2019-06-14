@@ -21,6 +21,7 @@
 #include <cstring>
 #include <functional>
 #include "../rtengine/rt_math.h"
+#include "../rtengine/procparams.h"
 
 #include <fstream>
 #include <iomanip>
@@ -197,7 +198,7 @@ void BatchQueue::addEntries (const std::vector<BatchQueueEntry*>& entries, bool 
             // recovery save
             const auto tempFile = getTempFilenameForParams (entry->filename);
 
-            if (!entry->params.save (tempFile))
+            if (!entry->params->save (tempFile))
                 entry->savedParamsFile = tempFile;
 
             entry->selected = false;
@@ -344,7 +345,7 @@ bool BatchQueue::loadBatchQueue ()
             auto prevw = prevh;
             thumb->getThumbnailSize (prevw, prevh, &pparams);
 
-            auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb);
+            auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb, options.overwriteOutputFile);
             thumb->decreaseRef ();  // Removing the refCount acquired by cacheMgr->getEntry
             entry->setParent (this);
 
@@ -642,7 +643,7 @@ void BatchQueue::error(const Glib::ustring& descr)
         bqbs->setButtonListener (this);
         processing->addButtonSet (bqbs);
         processing->processing = false;
-        processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, processing->params);
+        processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, *processing->params);
         processing = nullptr;
         redraw ();
     }
@@ -678,7 +679,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         }
 
         // The output filename's extension is forced to the current or selected output format,
-        // despite what the user have set in the fielneame's field of the "Save as" dialgo box
+        // despite what the user have set in the filename's field of the "Save as" dialog box
         fname = autoCompleteFileName (removeExtension(processing->outFileName), saveFormat.format);
         //fname = autoCompleteFileName (removeExtension(processing->outFileName), getExtension(processing->outFileName));
     }
@@ -706,7 +707,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
             // We keep the extension to avoid overwriting the profile when we have
             // the same output filename with different extension
             //processing->params.save (removeExtension(fname) + paramFileExtension);
-            processing->params.save (fname + ".out" + paramFileExtension);
+            processing->params->save (fname + ".out" + paramFileExtension);
         }
 
         if (processing->thumbnail) {
@@ -859,9 +860,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     Glib::ustring path = "";
 
     if (options.saveUsePathTemplate) {
-        int ix = 0;
+        unsigned int ix = 0;
 
-        while (options.savePathTemplate[ix] != 0) {
+        while (ix < options.savePathTemplate.size()) {
             if (options.savePathTemplate[ix] == '%') {
                 ix++;
 
@@ -941,7 +942,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 
     // In overwrite mode we TRY to delete the old file first.
     // if that's not possible (e.g. locked by viewer, R/O), we revert to the standard naming scheme
-    bool inOverwriteMode = options.overwriteOutputFile;
+    bool inOverwriteMode = processing->overwriteFile;
 
     for (int tries = 0; tries < 100; tries++) {
         if (tries == 0) {

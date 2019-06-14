@@ -16,9 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "rawexposure.h"
-#include "guiutils.h"
 #include <sstream>
+
+#include "rawexposure.h"
+
+#include "guiutils.h"
+#include "options.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -33,19 +38,7 @@ RAWExposure::RAWExposure () : FoldableToolPanel(this, "rawexposure", M("TP_EXPOS
     }
 
     PexPos->show();
-    PexPreser = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_PRESER"), 0, 2.5, 0.1, 0));
-    PexPreser->setAdjusterListener (this);
-
-    if (PexPreser->delay < options.adjusterMaxDelay) {
-        PexPreser->delay = options.adjusterMaxDelay;
-    }
-
-    PexPreser->show();
-
     pack_start( *PexPos, Gtk::PACK_SHRINK, 4);//exposi
-    // raw highlight exposure setting is obsolete, removing from GUI
-    //pack_start( *PexPreser, Gtk::PACK_SHRINK, 4);
-
     PexPos->setLogScale(100, 0);
 }
 
@@ -55,11 +48,9 @@ void RAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
     if(pedited ) {
         PexPos->setEditedState( pedited->raw.exPos ? Edited : UnEdited );
-        PexPreser->setEditedState( pedited->raw.exPreser ? Edited : UnEdited );
     }
 
     PexPos->setValue (pp->raw.expos);
-    PexPreser->setValue (pp->raw.preser);//exposi
 
     enableListener ();
 }
@@ -67,11 +58,9 @@ void RAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 void RAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     pp->raw.expos = PexPos->getValue();
-    pp->raw.preser = PexPreser->getValue();//exposi
 
     if (pedited) {
         pedited->raw.exPos = PexPos->getEditedState ();
-        pedited->raw.exPreser = PexPreser->getEditedState ();//exposi
     }
 
 }
@@ -83,8 +72,6 @@ void RAWExposure::adjusterChanged(Adjuster* a, double newval)
 
         if (a == PexPos ) {
             listener->panelChanged (EvPreProcessExpCorrLinear,  value );
-        } else if (a == PexPreser && ABS(PexPos->getValue() - 1.0) > 0.0001) { // update takes long, only do it if it would have an effect
-            listener->panelChanged (EvPreProcessExpCorrPH,  value );
         }
     }
 }
@@ -97,33 +84,27 @@ void RAWExposure::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
     PexPos->showEditedCB ();
-    PexPreser->showEditedCB ();//exposure
 }
 
 void RAWExposure::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
     PexPos->setDefault( defParams->raw.expos);
-    PexPreser->setDefault( defParams->raw.preser);
 
     if (pedited) {
         PexPos->setDefaultEditedState( pedited->raw.exPos ? Edited : UnEdited);
-        PexPreser->setDefaultEditedState( pedited->raw.exPreser ? Edited : UnEdited);
     } else {
         PexPos->setDefaultEditedState( Irrelevant );
-        PexPreser->setDefaultEditedState( Irrelevant );
     }
 }
 
-void RAWExposure::setAdjusterBehavior (bool pexposadd, bool pexpreseradd)
+void RAWExposure::setAdjusterBehavior (bool pexposadd)
 {
 
     PexPos->setAddMode(pexposadd);
-    PexPreser->setAddMode(pexpreseradd);
 }
 
 void RAWExposure::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
     PexPos->trimValue(pp->raw.expos);
-    PexPreser->trimValue(pp->raw.preser);
 }

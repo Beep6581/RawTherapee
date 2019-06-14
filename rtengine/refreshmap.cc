@@ -83,9 +83,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RGBCURVE,         // EvSHSHTonalW,
     RGBCURVE,         // EvSHLContrast,
     RETINEX,          // EvSHRadius,
-    ALL,              // EvCTRotate,
-    ALL,              // EvCTHFlip,
-    ALL,              // EvCTVFlip,
+    ALLNORAW,         // EvCTRotate,
+    ALLNORAW,         // EvCTHFlip,
+    ALLNORAW,         // EvCTVFlip,
     TRANSFORM,        // EvROTDegree,
     TRANSFORM,        // EvTransAutoFill,
     TRANSFORM,        // EvDISTAmount,
@@ -151,7 +151,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DARKFRAME,        // EvPreProcessAutoDF
     DARKFRAME,        // EvPreProcessDFFile
     DARKFRAME,        // EvPreProcessExpCorrLinear
-    DARKFRAME,        // EvPreProcessExpCorrPH
+    0,                // --unused--
     FLATFIELD,        // EvFlatFieldFile,
     FLATFIELD,        // EvFlatFieldAutoSelect,
     FLATFIELD,        // EvFlatFieldBlurRadius,

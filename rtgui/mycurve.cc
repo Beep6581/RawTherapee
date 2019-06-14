@@ -21,11 +21,30 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(nullptr), cursor_type(CSArrow), graphW(0), graphH(0), mod_type(Gdk::MODIFIER_MASK), cursorX(0), cursorY(0), snapToMinDistX(0.0), snapToMinDistY(0.0), snapToValX(0.0), snapToValY(0.0)
+MyCurve::MyCurve () :
+    pipetteR(-1.f),
+    pipetteG(-1.f),
+    pipetteB(-1.f),
+    pipetteVal(-1.f),
+    listener(nullptr),
+    cursor_type(CSArrow),
+    graphX(0),
+    graphY(0),
+    graphW(0),
+    graphH(0),
+    mod_type(Gdk::MODIFIER_MASK),
+    cursorX(0),
+    cursorY(0),
+    snapToMinDistX(0.0),
+    snapToMinDistY(0.0),
+    snapToValX(0.0),
+    snapToValY(0.0)
 {
 
-    graphX = get_allocation().get_width() - RADIUS * 2;
-    graphY = get_allocation().get_height() - RADIUS * 2;
+    int s = RTScalable::getScale();
+    int pointDiameter = (int)(RADIUS * 2.) * s;
+    graphW = get_allocation().get_width() - pointDiameter;
+    graphH = get_allocation().get_height() - pointDiameter;
     prevGraphW = graphW;
     prevGraphH = graphH;
     buttonPressed = false;
@@ -55,26 +74,17 @@ MyCurve::~MyCurve ()
     }
 }
 
-int MyCurve::calcDimensions ()
+void MyCurve::calcDimensions ()
 {
-    int newRequestedW, newRequestedH;
+    double newRequestedW, newRequestedH;
+    double s = (double)RTScalable::getScale();
 
     newRequestedW = newRequestedH = get_allocation().get_width();
 
-    if (leftBar && !bottomBar) {
-        newRequestedH -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
-    }
-
-    if (!leftBar && bottomBar) {
-        newRequestedH += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
-    }
-
-    graphW = newRequestedW - RADIUS - (leftBar   ? (CBAR_WIDTH + CBAR_MARGIN) : RADIUS);
-    graphH = newRequestedH - RADIUS - (bottomBar ? (CBAR_WIDTH + CBAR_MARGIN) : RADIUS);
-    graphX = newRequestedW - RADIUS - graphW;
-    graphY = RADIUS + graphH;
-
-    return newRequestedH;
+    graphX = ((double)RADIUS + (leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN : 0.)) * s;
+    graphH = graphW = newRequestedW - graphX - (double)RADIUS * s;
+    graphY = (double)RADIUS * s + graphW;
+    return;
 }
 
 Gtk::SizeRequestMode MyCurve::get_request_mode_vfunc () const
@@ -92,27 +102,22 @@ void MyCurve::get_preferred_height_vfunc (int &minimum_height, int &natural_heig
 
 void MyCurve::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    natural_width = minimum_width = GRAPH_SIZE + 2 * RADIUS;
+    int s = RTScalable::getScale();
+    natural_width = minimum_width = (GRAPH_SIZE + (int)(RADIUS * 2.) + (leftBar ? (CBAR_WIDTH + 2 + CBAR_MARGIN) : 0)) * s;
 }
 
 void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
     minimum_height = width;
 
+    int s = RTScalable::getScale();
     if (leftBar && !bottomBar) {
-        minimum_height -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+        minimum_height -= (CBAR_WIDTH + 2 + CBAR_MARGIN) * s;
     }
 
     if (!leftBar && bottomBar) {
-        minimum_height += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+        minimum_height += (CBAR_WIDTH + 2 + CBAR_MARGIN) * s;
     }
-
-    /*
-    graphW = width          - RADIUS - (leftBar   ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
-    graphH = minimum_height - RADIUS - (bottomBar ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
-    graphX = width          - RADIUS - graphW;
-    graphY = RADIUS + graphH;
-    */
 
     natural_height = minimum_height;
 }
@@ -174,10 +179,10 @@ bool MyCurve::snapCoordinateY(double testedVal, double realVal)
 
 float MyCurve::getVal(LUTf &curve, int x)
 {
-    if (size_t(graphW - 2) == curve.getSize()) {
+    if (size_t(graphW) == curve.getSize()) {
         return curve[x];
     } else {
-        return curve.getVal01(float(x) / (graphW - 3));
+        return curve.getVal01(float(x) / graphW);
     }
 }
 

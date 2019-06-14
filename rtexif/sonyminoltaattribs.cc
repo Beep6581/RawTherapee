@@ -25,7 +25,7 @@
 namespace rtexif
 {
 
-class SANoYesInterpreter : public ChoiceInterpreter
+class SANoYesInterpreter : public ChoiceInterpreter<>
 {
 public:
     SANoYesInterpreter ()
@@ -36,7 +36,7 @@ public:
 };
 SANoYesInterpreter saNoYesInterpreter;
 
-class SAOnOffInterpreter : public ChoiceInterpreter
+class SAOnOffInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter ()
@@ -48,7 +48,7 @@ public:
 };
 SAOnOffInterpreter saOnOffInterpreter;
 
-class SAOnOffInterpreter2 : public ChoiceInterpreter
+class SAOnOffInterpreter2 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter2 ()
@@ -59,7 +59,7 @@ public:
 };
 SAOnOffInterpreter2 saOnOffInterpreter2;
 
-class SAOnOffInterpreter3 : public ChoiceInterpreter
+class SAOnOffInterpreter3 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter3 ()
@@ -71,7 +71,7 @@ public:
 };
 SAOnOffInterpreter3 saOnOffInterpreter3;
 
-class SAOnOffInterpreter4 : public ChoiceInterpreter
+class SAOnOffInterpreter4 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter4 ()
@@ -84,7 +84,7 @@ public:
 };
 SAOnOffInterpreter4 saOnOffInterpreter4;
 
-class SAOnOffInterpreter5 : public ChoiceInterpreter
+class SAOnOffInterpreter5 : public ChoiceInterpreter<>
 {
 public:
     SAOnOffInterpreter5 ()
@@ -95,7 +95,7 @@ public:
 };
 SAOnOffInterpreter5 saOnOffInterpreter5;
 
-class SAHighISONoiseReduction : public ChoiceInterpreter
+class SAHighISONoiseReduction : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction ()
@@ -110,7 +110,7 @@ public:
 };
 SAHighISONoiseReduction saHighISONoiseReduction;
 
-class SAHighISONoiseReduction2 : public ChoiceInterpreter
+class SAHighISONoiseReduction2 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction2 ()
@@ -124,7 +124,7 @@ public:
 };
 SAHighISONoiseReduction2 saHighISONoiseReduction2;
 
-class SAHighISONoiseReduction3 : public ChoiceInterpreter
+class SAHighISONoiseReduction3 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction3 ()
@@ -137,7 +137,7 @@ public:
 };
 SAHighISONoiseReduction3 saHighISONoiseReduction3;
 
-class SAHighISONoiseReduction4 : public ChoiceInterpreter
+class SAHighISONoiseReduction4 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction4 ()
@@ -150,7 +150,7 @@ public:
 };
 SAHighISONoiseReduction4 saHighISONoiseReduction4;
 
-class SAHighISONoiseReduction5 : public ChoiceInterpreter
+class SAHighISONoiseReduction5 : public ChoiceInterpreter<>
 {
 public:
     SAHighISONoiseReduction5 ()
@@ -161,7 +161,7 @@ public:
 };
 SAHighISONoiseReduction5 saHighISONoiseReduction5;
 
-class SASmileShutterMode : public ChoiceInterpreter
+class SASmileShutterMode : public ChoiceInterpreter<>
 {
 public:
     SASmileShutterMode ()
@@ -173,7 +173,7 @@ public:
 };
 SASmileShutterMode saSmileShutterMode;
 
-class SAHDRLevel : public ChoiceInterpreter
+class SAHDRLevel : public ChoiceInterpreter<>
 {
 public:
     SAHDRLevel ()
@@ -191,7 +191,7 @@ public:
 };
 SAHDRLevel saHDRLevel;
 
-class SAViewingMode : public ChoiceInterpreter
+class SAViewingMode : public ChoiceInterpreter<>
 {
 public:
     SAViewingMode ()
@@ -204,7 +204,7 @@ public:
 };
 SAViewingMode saViewingMode;
 
-class SAFlashAction : public ChoiceInterpreter
+class SAFlashAction : public ChoiceInterpreter<>
 {
 public:
     SAFlashAction ()
@@ -215,7 +215,7 @@ public:
 };
 SAFlashAction saFlashAction;
 
-class SALiveViewFocusMode : public ChoiceInterpreter
+class SALiveViewFocusMode : public ChoiceInterpreter<>
 {
 public:
     SALiveViewFocusMode ()
@@ -227,7 +227,7 @@ public:
 };
 SALiveViewFocusMode saLiveViewFocusMode;
 
-class SALensMount : public ChoiceInterpreter
+class SALensMount : public ChoiceInterpreter<>
 {
 public:
     SALensMount ()
@@ -239,7 +239,7 @@ public:
 };
 SALensMount saLensMount;
 
-class SASweepPanoramaSize : public ChoiceInterpreter
+class SASweepPanoramaSize : public ChoiceInterpreter<>
 {
 public:
     SASweepPanoramaSize ()
@@ -250,7 +250,7 @@ public:
 };
 SASweepPanoramaSize saSweepPanoramaSize;
 
-class SASweepPanoramaDirection : public ChoiceInterpreter
+class SASweepPanoramaDirection : public ChoiceInterpreter<>
 {
 public:
     SASweepPanoramaDirection ()
@@ -263,7 +263,7 @@ public:
 };
 SASweepPanoramaDirection saSweepPanoramaDirection;
 
-class SALiveViewAFSetting : public ChoiceInterpreter
+class SALiveViewAFSetting : public ChoiceInterpreter<>
 {
 public:
     SALiveViewAFSetting ()
@@ -275,7 +275,7 @@ public:
 };
 SALiveViewAFSetting saLiveViewAFSetting;
 
-class SAPanoramaSize3D : public ChoiceInterpreter
+class SAPanoramaSize3D : public ChoiceInterpreter<>
 {
 public:
     SAPanoramaSize3D ()
@@ -288,7 +288,7 @@ public:
 };
 SAPanoramaSize3D saPanoramaSize3D;
 
-class SALiveViewMetering : public ChoiceInterpreter
+class SALiveViewMetering : public ChoiceInterpreter<>
 {
 public:
     SALiveViewMetering ()
@@ -300,7 +300,7 @@ public:
 };
 SALiveViewMetering saLiveViewMetering;
 
-class SAWhiteBalanceInterpreter: public ChoiceInterpreter
+class SAWhiteBalanceInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAWhiteBalanceInterpreter()
@@ -319,7 +319,7 @@ public:
 };
 SAWhiteBalanceInterpreter saWhiteBalanceInterpreter;
 
-class SAWhiteBalanceSettingInterpreter: public ChoiceInterpreter
+class SAWhiteBalanceSettingInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAWhiteBalanceSettingInterpreter()
@@ -379,7 +379,7 @@ public:
 };
 SAWhiteBalanceSettingInterpreter saWhiteBalanceSettingInterpreter;
 
-class SASceneModeInterpreter : public ChoiceInterpreter
+class SASceneModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     SASceneModeInterpreter ()
@@ -413,7 +413,7 @@ public:
 };
 SASceneModeInterpreter saSceneModeInterpreter;
 
-class SAZoneMatchingInterpreter : public ChoiceInterpreter
+class SAZoneMatchingInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAZoneMatchingInterpreter ()
@@ -425,7 +425,7 @@ public:
 };
 SAZoneMatchingInterpreter saZoneMatchingInterpreter;
 
-class SADynamicRangeOptimizerInterpreter : public ChoiceInterpreter
+class SADynamicRangeOptimizerInterpreter : public ChoiceInterpreter<>
 {
 public:
     SADynamicRangeOptimizerInterpreter ()
@@ -448,7 +448,7 @@ public:
 };
 SADynamicRangeOptimizerInterpreter saDynamicRangeOptimizerInterpreter;
 
-class SAColorModeInterpreter : public ChoiceInterpreter
+class SAColorModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAColorModeInterpreter ()
@@ -477,7 +477,7 @@ public:
 };
 SAColorModeInterpreter saColorModeInterpreter;
 
-class SAExposureModeInterpreter : public ChoiceInterpreter
+class SAExposureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAExposureModeInterpreter ()
@@ -517,7 +517,7 @@ public:
 };
 SAExposureModeInterpreter saExposureModeInterpreter;
 
-class SAQualityInterpreter : public ChoiceInterpreter
+class SAQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAQualityInterpreter ()
@@ -528,7 +528,7 @@ public:
 };
 SAQualityInterpreter saQualityInterpreter;
 
-class SAAntiBlurInterpreter : public ChoiceInterpreter
+class SAAntiBlurInterpreter : public ChoiceInterpreter<>
 {
 public:
     SAAntiBlurInterpreter ()
@@ -895,6 +895,9 @@ public:
             {6553, "Sigma 30mm f/1.4 DC DN | C"},
             {6553, "Sigma 85mm f/1.4 DG HSM | A"},
             {6553, "Sigma 16mm f/1.4 DC DN | C"},
+            {6553, "Sigma 105mm f/1.4 DG HSM | A"},
+            {6553, "Sigma 56mm f/1.4 DC DN | C"},
+            {6553, "Sigma 70-200mm f/2.8 DG OS HSM | S"},
             {6553, "Sigma 70mm f/2.8 DG MACRO | A"},
             {6553, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
             {6553, "Tamron 28-75mm f/2.8 Di III RXD"},
@@ -905,6 +908,7 @@ public:
             {6553, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
             {6553, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
             {6553, "Voigtlander NOKTON classic 35mm f/1.4"},
+            {6553, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"},
             {6553, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"},
             {6553, "Zeiss Touit 12mm f/2.8"},
             {6553, "Zeiss Touit 32mm f/1.8"},
@@ -1116,6 +1120,9 @@ public:
             {65535, "Sigma 30mm f/1.4 DC DN | C"},
             {65535, "Sigma 85mm f/1.4 DG HSM | A"},
             {65535, "Sigma 16mm f/1.4 DC DN | C"},
+            {65535, "Sigma 105mm f/1.4 DG HSM | A"},
+            {65535, "Sigma 56mm f/1.4 DC DN | C"},
+            {65535, "Sigma 70-200mm f/2.8 DG OS HSM | S"},
             {65535, "Sigma 70mm f/2.8 DG MACRO | A"},
             {65535, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
             {65535, "Tamron 28-75mm f/2.8 Di III RXD"},
@@ -1126,6 +1133,7 @@ public:
             {65535, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
             {65535, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
             {65535, "Voigtlander NOKTON classic 35mm f/1.4"},
+            {65535, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"},
             {65535, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"},
             {65535, "Zeiss Touit 12mm f/2.8"},
             {65535, "Zeiss Touit 32mm f/1.8"},
@@ -1146,11 +1154,11 @@ public:
             {65535, "Samyang 500mm Mirror f/8.0"},
             {65535, "Pentacon Auto 135mm f/2.8"},
             {65535, "Pentacon Auto 29mm f/2.8"},
-            {65535, "Helios 44-2 58mm f/2.0"}
+            {65535, "Helios 44-2 58mm f/2.0"},
         };
     }
 
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int lensID = t->toInt();
         Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
@@ -1269,13 +1277,13 @@ public:
         choices.insert (p_t (49236, "Zeiss Loxia 25mm f/2.4"));
         choices.insert (p_t (49457, "Tamron 28-75mm f/2.8 Di III RXD"));
         choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C"));
-        choices.insert (p_t (50481, "Sigma 50mm f/1.4 DG HSM | A + MC-11"));
+        choices.insert (p_t (50481, "Sigma 50mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50482, "Sigma 18-300mm f/3.5-6.3 DC MACRO OS HSM | C + MC-11"));
         choices.insert (p_t (50483, "Sigma 18-35mm f/1.8 DC HSM | A + MC-11"));
         choices.insert (p_t (50484, "Sigma 24-35mm f/2 DG HSM | A + MC-11"));
         choices.insert (p_t (50486, "Sigma 150-600mm f/5-6.3 DG OS HSM | C + MC-11"));
         choices.insert (p_t (50487, "Sigma 20mm f/1.4 DG HSM | A + MC-11"));
-        choices.insert (p_t (50488, "Sigma 35mm f/1.4 DG HSM | A + MC-11"));
+        choices.insert (p_t (50488, "Sigma 35mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50489, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + MC-11"));
         choices.insert (p_t (50490, "Sigma 120-300mm f/2.8 DG OS HSM | S + MC-11"));
         choices.insert (p_t (50492, "Sigma 24-105mm f/4 DG OS HSM | A + MC-11"));
@@ -1284,6 +1292,9 @@ public:
         choices.insert (p_t (50499, "Sigma 85mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50501, "Sigma 100-400mm f/5-6.3 DG OS HSM | C + MC-11"));
         choices.insert (p_t (50503, "Sigma 16mm f/1.4 DC DN | C"));
+        choices.insert (p_t (50507, "Sigma 105mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (50508, "Sigma 56mm f/1.4 DC DN | C"));
+        choices.insert (p_t (50512, "Sigma 70-200mm f/2.8 DG OS HSM | S"));
         choices.insert (p_t (50513, "Sigma 70mm f/2.8 DG MACRO | A"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
@@ -1291,13 +1302,14 @@ public:
         choices.insert (p_t (50995, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"));
         choices.insert (p_t (50996, "Voigtlander NOKTON 40mm f/1.2 Aspherical"));
         choices.insert (p_t (50997, "Voigtlander NOKTON classic 35mm f/1.4"));
+        choices.insert (p_t (50998, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"));
         choices.insert (p_t (50999, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"));
         choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 FE or Samyang AF 35mm f/2.8 FE"));
         choices.insert (p_t (51505, "Samyang AF 35mm f/2.8 FE"));
         choices.insert (p_t (51507, "Samyang AF 35mm f/1.4"));
     }
 
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int lensID = t->toInt();
         Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
@@ -1331,7 +1343,7 @@ public:
 };
 SALensID2Interpreter saLensID2Interpreter;
 
-class MATeleconverterInterpreter : public ChoiceInterpreter
+class MATeleconverterInterpreter : public ChoiceInterpreter<>
 {
 public:
     MATeleconverterInterpreter ()
@@ -1349,7 +1361,7 @@ public:
 };
 MATeleconverterInterpreter maTeleconverterInterpreter;
 
-class MAQualityInterpreter : public ChoiceInterpreter
+class MAQualityInterpreter : public ChoiceInterpreter<>
 {
 public:
     MAQualityInterpreter ()
@@ -1367,7 +1379,7 @@ public:
 };
 MAQualityInterpreter maQualityInterpreter;
 
-class MAImageSizeInterpreter : public ChoiceInterpreter
+class MAImageSizeInterpreter : public ChoiceInterpreter<>
 {
 public:
     MAImageSizeInterpreter ()
@@ -1382,7 +1394,7 @@ public:
 };
 MAImageSizeInterpreter maImageSizeInterpreter;
 
-class SAQualityInterpreter2 : public ChoiceInterpreter
+class SAQualityInterpreter2 : public ChoiceInterpreter<>
 {
 public:
     SAQualityInterpreter2 ()
@@ -1398,7 +1410,7 @@ public:
 };
 SAQualityInterpreter2 saQualityInterpreter2;
 
-class SAQualityInterpreter3 : public ChoiceInterpreter
+class SAQualityInterpreter3 : public ChoiceInterpreter<>
 {
 public:
     SAQualityInterpreter3 ()
@@ -1411,7 +1423,7 @@ public:
 };
 SAQualityInterpreter3 saQualityInterpreter3;
 
-class SADriveMode : public ChoiceInterpreter
+class SADriveMode : public ChoiceInterpreter<>
 {
 public:
     SADriveMode ()
@@ -1433,7 +1445,7 @@ public:
 };
 SADriveMode saDriveMode;
 
-class SADriveMode2 : public ChoiceInterpreter
+class SADriveMode2 : public ChoiceInterpreter<>
 {
 public:
     SADriveMode2 ()
@@ -1449,7 +1461,7 @@ public:
 };
 SADriveMode2 saDriveMode2;
 
-class SADriveMode3 : public ChoiceInterpreter
+class SADriveMode3 : public ChoiceInterpreter<>
 {
 public:
     SADriveMode3 ()
@@ -1475,7 +1487,7 @@ public:
 };
 SADriveMode3 saDriveMode3;
 
-class SAFocusMode: public ChoiceInterpreter
+class SAFocusMode: public ChoiceInterpreter<>
 {
 public:
     SAFocusMode ()
@@ -1490,7 +1502,7 @@ public:
 };
 SAFocusMode saFocusMode;
 
-class SAFocusMode2: public ChoiceInterpreter
+class SAFocusMode2: public ChoiceInterpreter<>
 {
 public:
     SAFocusMode2 ()
@@ -1504,7 +1516,7 @@ public:
 };
 SAFocusMode2 saFocusMode2;
 
-class SAFocusModeSetting3: public ChoiceInterpreter
+class SAFocusModeSetting3: public ChoiceInterpreter<>
 {
 public:
     SAFocusModeSetting3 ()
@@ -1519,7 +1531,7 @@ public:
 };
 SAFocusModeSetting3 saFocusModeSetting3;
 
-class SAAFMode: public ChoiceInterpreter
+class SAAFMode: public ChoiceInterpreter<>
 {
 public:
     SAAFMode()
@@ -1537,7 +1549,7 @@ public:
 };
 SAAFMode saAFMode;
 
-class SAAFAreaMode: public ChoiceInterpreter
+class SAAFAreaMode: public ChoiceInterpreter<>
 {
 public:
     SAAFAreaMode ()
@@ -1549,7 +1561,7 @@ public:
 };
 SAAFAreaMode saAFAreaMode;
 
-class SAAFAreaMode2: public ChoiceInterpreter
+class SAAFAreaMode2: public ChoiceInterpreter<>
 {
 public:
     SAAFAreaMode2 ()
@@ -1562,7 +1574,7 @@ public:
 };
 SAAFAreaMode2 saAFAreaMode2;
 
-class SAAFPointSelected: public ChoiceInterpreter
+class SAAFPointSelected: public ChoiceInterpreter<>
 {
 public:
     SAAFPointSelected ()
@@ -1582,7 +1594,7 @@ public:
 };
 SAAFPointSelected saAFPointSelected;
 
-class SACameraInfoAFPointSelected: public ChoiceInterpreter
+class SACameraInfoAFPointSelected: public ChoiceInterpreter<>
 {
 public:
     SACameraInfoAFPointSelected ()
@@ -1607,7 +1619,7 @@ public:
 };
 SACameraInfoAFPointSelected saCameraInfoAFPointSelected;
 
-class SACameraInfoAFPoint: public ChoiceInterpreter
+class SACameraInfoAFPoint: public ChoiceInterpreter<>
 {
 public:
     SACameraInfoAFPoint ()
@@ -1635,7 +1647,7 @@ public:
 };
 SACameraInfoAFPoint saCameraInfoAFPoint;
 
-class SAAFPointSelected2: public ChoiceInterpreter
+class SAAFPointSelected2: public ChoiceInterpreter<>
 {
 public:
     SAAFPointSelected2 ()
@@ -1653,7 +1665,7 @@ public:
 };
 SAAFPointSelected2 saAFPointSelected2;
 
-class SAMeteringMode0_3: public ChoiceInterpreter
+class SAMeteringMode0_3: public ChoiceInterpreter<>
 {
 public:
     SAMeteringMode0_3 ()
@@ -1665,7 +1677,7 @@ public:
 };
 SAMeteringMode0_3 saMeteringMode0_3;
 
-class SAMeteringMode1_3: public ChoiceInterpreter
+class SAMeteringMode1_3: public ChoiceInterpreter<>
 {
 public:
     SAMeteringMode1_3 ()
@@ -1677,7 +1689,7 @@ public:
 };
 SAMeteringMode1_3 saMeteringMode1_3;
 
-class SAMeteringMode1_4: public ChoiceInterpreter
+class SAMeteringMode1_4: public ChoiceInterpreter<>
 {
 public:
     SAMeteringMode1_4 ()
@@ -1689,7 +1701,7 @@ public:
 };
 SAMeteringMode1_4 saMeteringMode1_4;
 
-class SADynamicRangeOptimizerMode: public ChoiceInterpreter
+class SADynamicRangeOptimizerMode: public ChoiceInterpreter<>
 {
 public:
     SADynamicRangeOptimizerMode ()
@@ -1703,7 +1715,7 @@ public:
 };
 SADynamicRangeOptimizerMode saDynamicRangeOptimizerMode;
 
-class SADynamicRangeOptimizerSetting: public ChoiceInterpreter
+class SADynamicRangeOptimizerSetting: public ChoiceInterpreter<>
 {
 public:
     SADynamicRangeOptimizerSetting ()
@@ -1715,7 +1727,7 @@ public:
 };
 SADynamicRangeOptimizerSetting saDynamicRangeOptimizerSetting;
 
-class SACreativeStyle: public ChoiceInterpreter
+class SACreativeStyle: public ChoiceInterpreter<>
 {
 public:
     SACreativeStyle ()
@@ -1738,7 +1750,7 @@ public:
 };
 SACreativeStyle saCreativeStyle;
 
-class SACreativeStyle2: public ChoiceInterpreter
+class SACreativeStyle2: public ChoiceInterpreter<>
 {
 public:
     SACreativeStyle2 ()
@@ -1754,7 +1766,7 @@ public:
 };
 SACreativeStyle2 saCreativeStyle2;
 
-class SACreativeStyleSetting: public ChoiceInterpreter
+class SACreativeStyleSetting: public ChoiceInterpreter<>
 {
 public:
     SACreativeStyleSetting ()
@@ -1769,7 +1781,7 @@ public:
 };
 SACreativeStyleSetting saCreativeStyleSetting;
 
-class SAFlashControl: public ChoiceInterpreter
+class SAFlashControl: public ChoiceInterpreter<>
 {
 public:
     SAFlashControl ()
@@ -1780,7 +1792,7 @@ public:
 };
 SAFlashControl saFlashControl;
 
-class SAFlashMode: public ChoiceInterpreter
+class SAFlashMode: public ChoiceInterpreter<>
 {
 public:
     SAFlashMode ()
@@ -1791,7 +1803,7 @@ public:
 };
 SAFlashMode saFlashMode;
 
-class SAFlashMode2: public ChoiceInterpreter
+class SAFlashMode2: public ChoiceInterpreter<>
 {
 public:
     SAFlashMode2 ()
@@ -1806,7 +1818,7 @@ public:
 };
 SAFlashMode2 saFlashMode2;
 
-class SAExposureProgram: public ChoiceInterpreter
+class SAExposureProgram: public ChoiceInterpreter<>
 {
 public:
     SAExposureProgram ()
@@ -1829,7 +1841,7 @@ public:
 };
 SAExposureProgram saExposureProgram;
 
-class SAExposureProgram2: public ChoiceInterpreter
+class SAExposureProgram2: public ChoiceInterpreter<>
 {
 public:
     SAExposureProgram2 ()
@@ -1870,7 +1882,7 @@ public:
 };
 SAExposureProgram2 saExposureProgram2;
 
-class SARotation: public ChoiceInterpreter
+class SARotation: public ChoiceInterpreter<>
 {
 public:
     SARotation ()
@@ -1883,7 +1895,7 @@ public:
 };
 SARotation saRotation;
 
-class SASonyImageSize: public ChoiceInterpreter
+class SASonyImageSize: public ChoiceInterpreter<>
 {
 public:
     SASonyImageSize ()
@@ -1895,7 +1907,7 @@ public:
 };
 SASonyImageSize saSonyImageSize;
 
-class SASonyImageSize3: public ChoiceInterpreter
+class SASonyImageSize3: public ChoiceInterpreter<>
 {
 public:
     SASonyImageSize3 ()
@@ -1910,7 +1922,7 @@ public:
 };
 SASonyImageSize3 saSonyImageSize3;
 
-class SAAspectRatio: public ChoiceInterpreter
+class SAAspectRatio: public ChoiceInterpreter<>
 {
 public:
     SAAspectRatio ()
@@ -1921,7 +1933,7 @@ public:
 };
 SAAspectRatio saAspectRatio;
 
-class SAAspectRatio2: public ChoiceInterpreter
+class SAAspectRatio2: public ChoiceInterpreter<>
 {
 public:
     SAAspectRatio2 ()
@@ -1932,7 +1944,7 @@ public:
 };
 SAAspectRatio2 saAspectRatio2;
 
-class SAExposureLevelIncrements: public ChoiceInterpreter
+class SAExposureLevelIncrements: public ChoiceInterpreter<>
 {
 public:
     SAExposureLevelIncrements ()
@@ -1943,7 +1955,7 @@ public:
 };
 SAExposureLevelIncrements saExposureLevelIncrements;
 
-class SAAFIlluminator: public ChoiceInterpreter
+class SAAFIlluminator: public ChoiceInterpreter<>
 {
 public:
     SAAFIlluminator ()
@@ -1955,7 +1967,7 @@ public:
 };
 SAAFIlluminator saAFIlluminator;
 
-class SAColorSpace1_2: public ChoiceInterpreter
+class SAColorSpace1_2: public ChoiceInterpreter<>
 {
 public:
     SAColorSpace1_2 ()
@@ -1966,7 +1978,7 @@ public:
 };
 SAColorSpace1_2 saColorSpace1_2;
 
-class SAColorSpace0_5: public ChoiceInterpreter
+class SAColorSpace0_5: public ChoiceInterpreter<>
 {
 public:
     SAColorSpace0_5 ()
@@ -1978,7 +1990,7 @@ public:
 };
 SAColorSpace0_5 saColorSpace0_5;
 
-class SAColorSpace5_6: public ChoiceInterpreter
+class SAColorSpace5_6: public ChoiceInterpreter<>
 {
 public:
     SAColorSpace5_6 ()
@@ -1989,7 +2001,7 @@ public:
 };
 SAColorSpace5_6 saColorSpace5_6;
 
-class SAReleaseModeInterpreter: public ChoiceInterpreter
+class SAReleaseModeInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAReleaseModeInterpreter ()
@@ -2004,7 +2016,7 @@ public:
 };
 SAReleaseModeInterpreter saReleaseModeInterpreter;
 
-class SAImageStyleInterpreter: public ChoiceInterpreter
+class SAImageStyleInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAImageStyleInterpreter ()
@@ -2028,7 +2040,7 @@ public:
 };
 SAImageStyleInterpreter saImageStyleInterpreter;
 
-class SAPictureEffectInterpreter: public ChoiceInterpreter
+class SAPictureEffectInterpreter: public ChoiceInterpreter<>
 {
 public:
     SAPictureEffectInterpreter()
@@ -2073,7 +2085,7 @@ public:
 };
 SAPictureEffectInterpreter saPictureEffectInterpreter;
 
-class SACameraInfoFocusStatusInterpreter : public ChoiceInterpreter
+class SACameraInfoFocusStatusInterpreter : public ChoiceInterpreter<>
 {
 public:
     SACameraInfoFocusStatusInterpreter()
@@ -2091,7 +2103,7 @@ class SAExposureTimeInterpreter : public Interpreter
 {
 public:
     SAExposureTimeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         double a = t->toDouble();
 
@@ -2151,7 +2163,7 @@ class SAFNumberInterpreter : public Interpreter
 {
 public:
     SAFNumberInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         double a = double (t->toDouble());
 
@@ -2211,7 +2223,7 @@ class SAISOSettingInterpreter : public Interpreter
 {
 public:
     SAISOSettingInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
 
@@ -2252,7 +2264,7 @@ class SAExposureCompSetInterpreter : public Interpreter
 {
 public:
     SAExposureCompSetInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         double a = t->toDouble();
         char buffer[32];
@@ -2273,7 +2285,7 @@ class SAAFMicroAdjValueInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjValueInterpreter() {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] - 20);
@@ -2290,7 +2302,7 @@ class SAAFMicroAdjModeInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjModeInterpreter() {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->getValue()[0] & 0x80;
 
@@ -2312,7 +2324,7 @@ class SAAFMicroAdjRegisteredLensesInterpreter : public Interpreter
 {
 public:
     SAAFMicroAdjRegisteredLensesInterpreter() {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
@@ -2329,7 +2341,7 @@ class SAFocusStatusInterpreter : public Interpreter
 {
 public:
     SAFocusStatusInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::string retval;
         int a = t->toInt();
@@ -2368,7 +2380,7 @@ class SAColorTemperatureSettingInterpreter : public Interpreter
 {
 public:
     SAColorTemperatureSettingInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->toInt());

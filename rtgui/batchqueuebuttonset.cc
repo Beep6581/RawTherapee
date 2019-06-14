@@ -23,17 +23,17 @@
 
 bool BatchQueueButtonSet::iconsLoaded = false;
 
-Cairo::RefPtr<Cairo::ImageSurface> BatchQueueButtonSet::cancelIcon;
-Cairo::RefPtr<Cairo::ImageSurface> BatchQueueButtonSet::headIcon;
-Cairo::RefPtr<Cairo::ImageSurface> BatchQueueButtonSet::tailIcon;
+Cairo::RefPtr<RTSurface> BatchQueueButtonSet::cancelIcon;
+Cairo::RefPtr<RTSurface> BatchQueueButtonSet::headIcon;
+Cairo::RefPtr<RTSurface> BatchQueueButtonSet::tailIcon;
 
 BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry)
 {
 
     if (!iconsLoaded) {
-        cancelIcon = RTImage::createFromPng ("cancel-small.png");
-        headIcon   = RTImage::createFromPng ("goto-start-small.png");
-        tailIcon   = RTImage::createFromPng ("goto-end-small.png");
+        cancelIcon = Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png"));
+        headIcon = Cairo::RefPtr<RTSurface>(new RTSurface("goto-start-small.png"));
+        tailIcon = Cairo::RefPtr<RTSurface>(new RTSurface("goto-end-small.png"));
         iconsLoaded = true;
     }
 

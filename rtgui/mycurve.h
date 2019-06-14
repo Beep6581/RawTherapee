@@ -29,9 +29,9 @@
 #include "guiutils.h"
 #include "options.h"
 
-#define RADIUS          3   /** radius of the control points */
-#define CBAR_WIDTH      10  /** width of the colored bar (border included) */
-#define CBAR_MARGIN     2   /** spacing between the colored bar and the graph */
+#define RADIUS          3.5 /** radius of the control points ; must be x.5 to target the center of a pixel */
+#define CBAR_WIDTH      10  /** inner width of the colored bar (border excluded) */
+#define CBAR_MARGIN     1   /** spacing between the colored bar and the graph's bullet when set at 0,0 */
 #define SQUARE          2   /** half length of the square shape of the tangent handles */
 #define MIN_DISTANCE    5   /** min distance between control points */
 #define GRAPH_SIZE      150 /** size of the curve editor graphic */
@@ -67,8 +67,8 @@ protected:
     ColoredBar *leftBar;
     ColoredBar *bottomBar;
     CursorShape cursor_type;
-    int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points or for the colored bar
-    int prevGraphW, prevGraphH;         /// previous inner width and height of the editor
+    double graphX, graphY, graphW, graphH; /// position and dimensions of the inner graphic area, excluding the graph's border and the surrounding space for the points or for the colored bar
+    double prevGraphW, prevGraphH;         /// previous inner width and height of the editor
     Gdk::ModifierType mod_type;
     int cursorX;        /// X coordinate in the graph of the cursor
     int cursorY;        /// Y coordinate in the graph of the cursor
@@ -96,16 +96,10 @@ protected:
     std::vector<double> editedPos;
 
     virtual std::vector<double> get_vector (int veclen) = 0;
-    int getGraphMinSize()
-    {
-        return GRAPH_SIZE + RADIUS + 1;
-    }
     bool snapCoordinateX(double testedVal, double realVal);
     bool snapCoordinateY(double testedVal, double realVal);
     float getVal(LUTf &curve, int x);
-
-    // return value = new requested height
-    int calcDimensions ();
+    void calcDimensions ();
 
 public:
     MyCurve ();

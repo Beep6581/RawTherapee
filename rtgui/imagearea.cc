@@ -23,6 +23,7 @@
 #include "multilangmgr.h"
 #include "cropwindow.h"
 #include "../rtengine/refreshmap.h"
+#include "../rtengine/procparams.h"
 #include "options.h"
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), fullImageWidth(0), fullImageHeight(0)
@@ -659,7 +660,7 @@ void ImageArea::initialImageArrived ()
             } else {
                 mainCropWindow->zoomFit();
             }
-        } else if ((options.cropAutoFit || options.bgcolor != 0) && mainCropWindow->cropHandler.cropParams.enabled) {
+        } else if ((options.cropAutoFit || options.bgcolor != 0) && mainCropWindow->cropHandler.cropParams->enabled) {
             mainCropWindow->zoomFitCrop();
         }
         fullImageWidth = w;
@@ -759,14 +760,14 @@ Gtk::SizeRequestMode ImageArea::get_request_mode_vfunc () const
 
 void ImageArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height= 50;
-    natural_height = 300;
+    minimum_height= 50 * RTScalable::getScale();
+    natural_height = 300 * RTScalable::getScale();
 }
 
 void ImageArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 100;
-    natural_width = 400;
+    minimum_width = 100 * RTScalable::getScale();
+    natural_width = 400 * RTScalable::getScale();
 }
 
 void ImageArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const

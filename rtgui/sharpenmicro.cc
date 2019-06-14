@@ -18,9 +18,13 @@
  */
 #include <cmath>
 #include <sstream>
+
 #include "sharpenmicro.h"
-#include "guiutils.h"
+
 #include "eventmapper.h"
+#include "guiutils.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -32,7 +36,7 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SH
     auto m = ProcEventMapper::getInstance();
     EvSharpenMicroContrast = m->newEvent(SHARPENING, "HISTORY_MSG_MICROCONTRAST_CONTRAST");
 
-    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_CONTRAST"), 0, 100, 1, 20));
+    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_CONTRAST"), 0, 200, 1, 20));
     contrast->setAdjusterListener (this);
     contrast->show();
 

@@ -48,7 +48,7 @@ public:
     private:
         struct Data;
 
-        std::unique_ptr<Data> data;
+        const std::unique_ptr<Data> data;
 
         friend class DCPProfile;
     };

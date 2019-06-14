@@ -484,14 +484,14 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     histogramPanel = nullptr;
 
     profilep = Gtk::manage (new ProfilePanel ());
-    ppframe = new Gtk::Frame ();
+    ppframe = Gtk::manage(new Gtk::Frame());
     ppframe->set_name ("ProfilePanel");
     ppframe->add (*profilep);
     ppframe->set_label (M ("PROFILEPANEL_LABEL"));
     //leftsubbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
 
     navigator = Gtk::manage (new Navigator ());
-    navigator->previewWindow->set_size_request (-1, 150);
+    navigator->previewWindow->set_size_request (-1, 150 * RTScalable::getScale());
     leftsubbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
 
     history = Gtk::manage (new History ());
@@ -627,7 +627,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright->pack2 (*vsubboxright, true, true);
 
     // Save buttons
-    Gtk::Grid *iops = new Gtk::Grid ();
+    Gtk::Grid *iops = Gtk::manage(new Gtk::Grid());
     iops->set_name ("IopsPanel");
     iops->set_orientation (Gtk::ORIENTATION_HORIZONTAL);
     iops->set_row_spacing (2);
@@ -661,7 +661,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     progressLabel->set_fraction (0.0);
 
     // tbRightPanel_1
-    tbRightPanel_1 = new Gtk::ToggleButton ();
+    tbRightPanel_1 = Gtk::manage(new Gtk::ToggleButton());
     iRightPanel_1_Show = new RTImage ("panel-to-left.png");
     iRightPanel_1_Hide = new RTImage ("panel-to-right.png");
     tbRightPanel_1->set_relief (Gtk::RELIEF_NONE);
@@ -671,7 +671,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     setExpandAlignProperties (tbRightPanel_1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     // ShowHideSidePanels
-    tbShowHideSidePanels = new Gtk::ToggleButton ();
+    tbShowHideSidePanels = Gtk::manage(new Gtk::ToggleButton());
     iShowHideSidePanels = new RTImage ("crossed-arrows-out.png");
     iShowHideSidePanels_exit = new RTImage ("crossed-arrows-in.png");
     tbShowHideSidePanels->set_relief (Gtk::RELIEF_NONE);
@@ -883,7 +883,6 @@ EditorPanel::~EditorPanel ()
 
     delete tpc;
 
-    delete ppframe;
     delete leftsubbox;
     delete leftbox;
     delete vsubboxright;
@@ -1057,14 +1056,14 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     } else {
         Gtk::Allocation alloc;
         iareapanel->imageArea->on_resized (alloc);
+
+        // When passing a photo as an argument to the RawTherapee executable, the user wants
+        // this auto-loaded photo's thumbnail to be selected and visible in the Filmstrip.
+        EditorPanel::syncFileBrowser();
     }
 
     history->resetSnapShotNumber();
     navigator->setInvalid(ipc->getFullWidth(),ipc->getFullHeight());
-
-    // When passing a photo as an argument to the RawTherapee executable, the user wants
-    // this auto-loaded photo's thumbnail to be selected and visible in the Filmstrip.
-    EditorPanel::syncFileBrowser();
 }
 
 void EditorPanel::close ()
@@ -1835,7 +1834,7 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry ()
     isrc->getImageSource()->getFullSize (fullW, fullH, pparams.coarse.rotate == 90 || pparams.coarse.rotate == 270 ? TR_R90 : TR_NONE);
     int prevh = BatchQueue::calcMaxThumbnailHeight();
     int prevw = int ((size_t)fullW * (size_t)prevh / (size_t)fullH);
-    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prevw, prevh, openThm);
+    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prevw, prevh, openThm, options.overwriteOutputFile);
 }
 
 
@@ -1928,6 +1927,7 @@ void EditorPanel::saveAsPressed ()
             BatchQueueEntry* bqe = createBatchQueueEntry ();
             bqe->outFileName = fnameOut;
             bqe->saveFormat = saveAsDialog->getFormat ();
+            bqe->overwriteFile = !saveAsDialog->getAutoSuffix();
             bqe->forceFormatOpts = saveAsDialog->getForceFormatOpts ();
             parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
             fnameOK = true;

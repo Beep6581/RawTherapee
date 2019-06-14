@@ -19,21 +19,31 @@
 #ifndef _MEXIF3_
 #define _MEXIF3_
 
-#include <cstdio>
-#include <vector>
-#include <map>
-#include <string>
-#include <sstream>
-#include <iomanip>
-#include <cstdlib>
 #include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <iomanip>
+#include <map>
 #include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include <glibmm.h>
 
-#include "../rtengine/procparams.h"
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rawmetadatalocation.h"
+
+namespace rtengine
+{
+
+namespace procparams
+{
+    class ExifPairs;
+}
+
+}
 
 class CacheImageData;
 
@@ -57,7 +67,7 @@ const enum ByteOrder HOSTORDER = MOTOROLA;
 #endif
 enum MNKind {NOMK, IFD, HEADERIFD, NIKON3, OLYMPUS2, FUJI, TABLESUBDIR};
 
-bool extractLensInfo (std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
+bool extractLensInfo (const std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
 
 unsigned short sget2 (unsigned char *s, ByteOrder order);
 int sget4 (unsigned char *s, ByteOrder order);
@@ -292,7 +302,7 @@ public:
     int     getDistanceFrom (const TagDirectory *root);
 
     // additional getter/setter for more comfortable use
-    std::string valueToString         ();
+    std::string valueToString         () const;
     std::string nameToString          (int i = 0);
     void        valueFromString       (const std::string& value);
     void        userCommentFromString (const Glib::ustring& text);
@@ -371,7 +381,7 @@ class Interpreter
 public:
     Interpreter () {}
     virtual ~Interpreter() {};
-    virtual std::string toString (Tag* t)
+    virtual std::string toString (const Tag* t) const
     {
         char buffer[1024];
         t->toString (buffer);
@@ -482,22 +492,26 @@ public:
 };
 
 extern Interpreter stdInterpreter;
+
+template<typename T = std::uint32_t>
 class ChoiceInterpreter : public Interpreter
 {
 protected:
-    std::map<int, std::string> choices;
+    using Choices = std::map<T, std::string>;
+    using ChoicesIterator = typename Choices::const_iterator;
+    Choices choices;
 public:
     ChoiceInterpreter () {};
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
-        std::map<int, std::string>::iterator r = choices.find (t->toInt());
+        const typename std::map<T, std::string>::const_iterator r = choices.find(t->toInt());
 
         if (r != choices.end()) {
             return r->second;
         } else {
             char buffer[1024];
-            t->toString (buffer);
-            return std::string (buffer);
+            t->toString(buffer);
+            return buffer;
         }
     }
 };
@@ -507,11 +521,11 @@ class IntLensInterpreter : public Interpreter
 {
 protected:
     typedef std::multimap< T, std::string> container_t;
-    typedef typename std::multimap< T, std::string>::iterator it_t;
+    typedef typename std::multimap< T, std::string>::const_iterator it_t;
     typedef std::pair< T, std::string> p_t;
     container_t choices;
 
-    virtual std::string guess (const T lensID, double focalLength, double maxApertureAtFocal, double *lensInfoArray)
+    virtual std::string guess (const T lensID, double focalLength, double maxApertureAtFocal, double *lensInfoArray) const
     {
         it_t r;
         size_t nFound = choices.count ( lensID );

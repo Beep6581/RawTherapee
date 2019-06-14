@@ -20,9 +20,6 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-using namespace rtengine;
-using namespace rtengine::procparams;
-
 SensorBayer::SensorBayer () : FoldableToolPanel(this, "sensorbayer", M("TP_RAW_SENSOR_BAYER_LABEL"))
 {
 

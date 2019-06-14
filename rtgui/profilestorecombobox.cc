@@ -24,9 +24,6 @@
 #include "toolpanel.h"
 #include "guiutils.h"
 
-using namespace rtengine;
-using namespace rtengine::procparams;
-
 ProfileStoreLabel::ProfileStoreLabel (const ProfileStoreEntry *entry) : Gtk::Label (entry->label), entry (entry)
 {
     set_alignment (0, 0.5);

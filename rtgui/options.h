@@ -212,6 +212,7 @@ public:
     int fontSize;                // RT's main font size (units: pt)
     Glib::ustring CPFontFamily;  // ColorPicker font family
     int CPFontSize;              // ColorPicker font size (units: pt)
+    bool pseudoHiDPISupport;
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;
@@ -314,7 +315,12 @@ public:
     bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
     prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
     bool serializeTiffRead;
-
+    bool measure;
+    size_t chunkSizeAMAZE;
+    size_t chunkSizeCA;
+    size_t chunkSizeRCD;
+    size_t chunkSizeRGB;
+    size_t chunkSizeXT;
     bool menuGroupRank;
     bool menuGroupLabel;
     bool menuGroupFileOperations;
@@ -363,7 +369,7 @@ public:
     Glib::ustring fastexport_icm_input_profile;
     Glib::ustring fastexport_icm_working_profile;
     Glib::ustring fastexport_icm_output_profile;
-    rtengine::RenderingIntent fastexport_icm_outputIntent;
+    int fastexport_icm_outputIntent;
     bool          fastexport_icm_outputBPC;
     Glib::ustring fastexport_icm_custom_output_profile;
     bool          fastexport_resize_enabled;

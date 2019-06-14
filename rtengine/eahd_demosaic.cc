@@ -216,7 +216,7 @@ void RawImageSource::eahd_demosaic ()
 {
     BENCHFUN
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)));
+        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_EAHD")));
         plistener->setProgress (0.0);
     }
 
@@ -415,7 +415,7 @@ void RawImageSource::eahd_demosaic ()
         }
     }
 
-    // finish H-2th and H-1th row, homogenity value is still valailable
+    // finish H-2th and H-1th row, homogeneity value is still available
     for (int i = H - 1; i < H + 1; i++)
         for (int j = 0; j < W; j++) {
             int hc = homh[(i - 1) % 3][j];
@@ -431,7 +431,9 @@ void RawImageSource::eahd_demosaic ()
         }
 
     // Interpolate R and B
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for (int i = 0; i < H; i++) {
         if (i == 0) {
             interpolate_row_rb_mul_pp (rawData, red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);

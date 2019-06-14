@@ -22,6 +22,7 @@
 #include "bilateral2.h"
 #include "jaggedarray.h"
 #include "rt_math.h"
+#include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
 //#define BENCHMARK

@@ -1224,6 +1224,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon PowerShot SX150 IS",
+        "dcraw_matrix": [ 13481, -4867, -1063, -2074, 9960, 2472, -170, 1474, 3894 ], // Adobe DNG Converter 11.1 ColorMatrix1 (there is only one matrix and illuminant, and it's for daylight)
         "raw_crop": [ 26, 10, 4364, 3254 ] // cut 2pix left and right
     },
 
@@ -1242,6 +1243,11 @@ Camera constants:
     { // Quality C
         "make_model": "DJI FC6310",
         "ranges": { "white": 64886 }
+    },
+
+    { // Quality C
+        "make_model": "FUJIFILM GFX 100",
+        "raw_crop": [ 0, 2, 11664, 8734 ]
     },
 
     { // Quality B
@@ -1306,27 +1312,23 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": "FUJIFILM X-E3",
-        "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG v10 D65
-        "ranges": { "white": 16100 }
-    },
-
-    { // Quality B
         "make_model": "FUJIFILM X-PRO1",
         "dcraw_matrix": [ 10413,-3996,-993,-3721,11640,2361,-733,1540,6011 ], // DNG_v9.4 D65
         "ranges": { "white": 4080 }
     },
 
     { // Quality B
-        "make_model": [ "FUJIFILM X-PRO2", "FUJIFILM X-T2", "FUJIFILM X100F", "FUJIFILM X-T20" ],
+        "make_model": [ "FUJIFILM X-T2", "FUJIFILM X-T20", "FUJIFILM X-E3", "FUJIFILM X100F", "FUJIFILM X-PRO2", "FUJIFILM X-H1" ],
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
-        //"raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - experimental crop
+        // "raw_crop": [ 0, 5, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for lossless compressed files
+        // "raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for uncompressed files
+        "raw_crop": [ 0, 5, 6032, 4026 ], // full raw 6160,4032, Usable 6032,4026 - for uncompressed and lossless compressed files (but reduces height by 6 pixels)
         "ranges": { "white": 16100 }
     },
 
     { // Quality C, only raw crop
         "make_model": [ "FUJIFILM X-T3" ],
-        "raw_crop": [ 0, 0, 6254, 0]
+        "raw_crop": [ 0, 5, 6252, 4176]
     },    
     
     { // Quality B
@@ -1609,9 +1611,9 @@ Camera constants:
         "make_model" : "Nikon Z 6",
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
         "pdaf_pattern" : [0, 12],
-        "pdaf_offset" : 32        
+        "pdaf_offset" : 32
     },
-    
+
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",
         "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // DNG_v8.8 D65
@@ -2244,9 +2246,8 @@ Camera constants:
         "make_model": "Sigma SD14",
         "dcraw_matrix": [ 16411,-4764,-2383,8110,2603,-645,3135,3878,1984 ], // experimental inverted icc wp12 - build with BL=15
         //"dcraw_matrix": [ 13804,-4156,-1896,6917,1909,-431,2768,2989,1741 ], // experimental inverted icc wp10 - build with BL=15
-        "ranges": { "black": 0, "white": 16383 }, // peripheral black stripes give BL around 37
-        "raw_crop": [ 0, 0, -0, -0 ]
-        //"raw_crop": [ 18, 12, 2652, 1768 ]
+        "ranges": { "black": 15, "white": 7000 },
+        "raw_crop": [ 18, 12, 2652, 1768 ]
     },
 
     { // Quality C, correction for frame width
@@ -2430,6 +2431,11 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 }
     },
 
+    { // Quality C
+        "make_model": [ "Sony DSC-R1" ],
+        "raw_crop": [ 0, 0, 3924, 2608 ]
+    },
+
     { // Quality A
         "make_model": [ "Sony DSC-RX100M2", "Sony DSC-RX100M3", "Sony DSC-RX100M4", "Sony DSC-RX100M5" ],
         "dcraw_matrix": [ 6596,-2079,-562,-4782,13016,1933,-970,1581,5181 ], // DNG_v9.8 D65
@@ -2553,6 +2559,16 @@ Camera constants:
     { // Quality C
         "make_model": [ "Hasselblad H6D-100cMS" ],
         "raw_crop": [ 64, 108, 11608, 8708 ]
+    },
+
+    {
+        "make_model": [ "HUAWEI DLI-L22" ],
+        "dcraw_matrix": [ 6984, -812, -975, -4792, 13481, 1381, -1056, 2355, 4873 ] // ColorMatrix1 (D65, wrong order) from Adobe DNG Converter 11.2.1
+    },
+
+    {
+        "make_model": [ "samsung SM-N960F" ],
+        "dcraw_matrix": [ 6632, -622, -1104, -5659, 14819, 773, -1846, 4465, 4967 ] // ColorMatrix1 from Adobe DNG Converter 11.1
     },
 
     // Dummy test entry to test the parser and show the format with all entries active

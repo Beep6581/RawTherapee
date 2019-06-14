@@ -28,7 +28,7 @@
 
 #include "noncopyable.h"
 
-class ParamsEdited;
+struct ParamsEdited;
 
 namespace rtengine
 {
@@ -44,7 +44,7 @@ class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
 
-enum RenderingIntent {
+enum RenderingIntent : int {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
     RI_RELATIVE = INTENT_RELATIVE_COLORIMETRIC,
     RI_SATURATION = INTENT_SATURATION,
@@ -249,35 +249,35 @@ private:
     bool is_double;
 };
 
+enum class ToneCurveMode : int {
+    STD,               // Standard modes, the curve is applied on all component individually
+    WEIGHTEDSTD,       // Weighted standard mode
+    FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
+    SATANDVALBLENDING, // Modify the Saturation and Value channel
+    LUMINANCE,         // Modify the Luminance channel with coefficients from Rec 709's
+    PERCEPTUAL         // Keep color appearance constant using perceptual modeling
+};
+
 /**
   * Parameters of the tone curve
   */
 struct ToneCurveParams {
-    enum class TcMode {
-        STD,               // Standard modes, the curve is applied on all component individually
-        WEIGHTEDSTD,       // Weighted standard mode
-        FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
-        SATANDVALBLENDING, // Modify the Saturation and Value channel
-        LUMINANCE,         // Modify the Luminance channel with coefficients from Rec 709's
-        PERCEPTUAL         // Keep color appearance constant using perceptual modeling
-    };
-
-    bool        autoexp;
-    double      clip;
-    bool        hrenabled;  // Highlight Reconstruction enabled
-    Glib::ustring method;   // Highlight Reconstruction's method
-    double      expcomp;
-    std::vector<double>   curve;
-    std::vector<double>   curve2;
-    TcMode   curveMode;
-    TcMode   curveMode2;
-    int         brightness;
-    int         black;
-    int         contrast;
-    int         saturation;
-    int         shcompr;
-    int         hlcompr;        // Highlight Recovery's compression
-    int         hlcomprthresh;  // Highlight Recovery's threshold
+    bool autoexp;
+    double clip;
+    bool hrenabled; // Highlight Reconstruction enabled
+    Glib::ustring method; // Highlight Reconstruction's method
+    double expcomp;
+    std::vector<double> curve;
+    std::vector<double> curve2;
+    ToneCurveMode curveMode;
+    ToneCurveMode curveMode2;
+    int brightness;
+    int black;
+    int contrast;
+    int saturation;
+    int shcompr;
+    int hlcompr; // Highlight Recovery's compression
+    int hlcomprthresh; // Highlight Recovery's threshold
     bool histmatching; // histogram matching
     bool fromHistMatching;
     bool clampOOG; // clamp out of gamut colours
@@ -473,7 +473,7 @@ struct ColorToningParams {
     };
     std::vector<LabCorrectionRegion> labregions;
     int labregionsShowMask;
-    
+
     ColorToningParams();
 
     bool operator ==(const ColorToningParams& other) const;
@@ -1076,14 +1076,89 @@ struct MetaDataParams {
 
 
 /**
-  * Typedef for representing a key/value for the exif metadata information
+  * Minimal wrapper allowing forward declaration for representing a key/value for the exif metadata information
   */
-typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
+class ExifPairs final
+{
+public:
+    using const_iterator = std::map<Glib::ustring, Glib::ustring>::const_iterator;
+
+    const_iterator begin() const
+    {
+        return pairs.begin();
+    }
+
+    const_iterator end() const
+    {
+        return pairs.end();
+    }
+
+    void clear()
+    {
+        pairs.clear();
+    }
+
+    Glib::ustring& operator[](const Glib::ustring& key)
+    {
+        return pairs[key];
+    }
+
+    bool operator ==(const ExifPairs& other) const
+    {
+        return pairs == other.pairs;
+    }
+
+private:
+    std::map<Glib::ustring, Glib::ustring> pairs;
+};
 
 /**
   * The IPTC key/value pairs
   */
-typedef std::map<Glib::ustring, std::vector<Glib::ustring>> IPTCPairs;
+class IPTCPairs final
+{
+public:
+    using iterator = std::map<Glib::ustring, std::vector<Glib::ustring>>::iterator;
+    using const_iterator = std::map<Glib::ustring, std::vector<Glib::ustring>>::const_iterator;
+
+    iterator find(const Glib::ustring& key)
+    {
+        return pairs.find(key);
+    }
+
+    const_iterator begin() const
+    {
+        return pairs.begin();
+    }
+
+    const_iterator end() const
+    {
+        return pairs.end();
+    }
+
+    bool empty() const
+    {
+        return pairs.empty();
+    }
+
+    void clear()
+    {
+        pairs.clear();
+    }
+
+    std::vector<Glib::ustring>& operator[](const Glib::ustring& key)
+    {
+        return pairs[key];
+    }
+
+    bool operator ==(const IPTCPairs& other) const
+    {
+        return pairs == other.pairs;
+    }
+
+private:
+    std::map<Glib::ustring, std::vector<Glib::ustring>> pairs;
+};
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
@@ -1369,6 +1444,7 @@ struct RAWParams {
         Glib::ustring method;
         bool dualDemosaicAutoContrast;
         double dualDemosaicContrast;
+        int border;
         int ccSteps;
         double blackred;
         double blackgreen;
@@ -1411,7 +1487,6 @@ struct RAWParams {
 
     // exposure before interpolation
     double expos;
-    double preser;
 
     bool hotPixelFilter;
     bool deadPixelFilter;

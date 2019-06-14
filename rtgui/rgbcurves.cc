@@ -18,6 +18,8 @@
  */
 #include "rgbcurves.h"
 
+#include "../rtengine/procparams.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -115,7 +117,7 @@ void RGBCurves::autoOpenCurve  ()
     bool active = Rshape->openIfNonlinear();
 
     if (!active) {
-        Gshape->openIfNonlinear();
+        active = Gshape->openIfNonlinear();
     }
 
     if (!active) {

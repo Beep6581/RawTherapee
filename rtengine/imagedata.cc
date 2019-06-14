@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <functional>
 #include <strings.h>
 #include <glib/gstdio.h>
 #include <tiff.h>
@@ -24,6 +25,8 @@
 #include "iptcpairs.h"
 #include "imagesource.h"
 #include "rt_math.h"
+#include "procparams.h"
+
 #pragma GCC diagnostic warning "-Wextra"
 #define PRINT_HDR_PS_DETECTION 0
 
@@ -41,6 +44,22 @@ Glib::ustring to_utf8 (const std::string& str)
     } catch (Glib::Error&) {
         return Glib::convert_with_fallback (str, "UTF-8", "ISO-8859-1", "?");
     }
+}
+
+template<typename T>
+T getFromFrame(
+    const std::vector<std::unique_ptr<FrameData>>& frames,
+    std::size_t frame,
+    const std::function<T (const FrameData&)>& function
+)
+{
+    if (frame < frames.size()) {
+        return function(*frames[frame]);
+    }
+    if (!frames.empty()) {
+        return function(*frames[0]);
+    }
+    return {};
 }
 
 }
@@ -241,7 +260,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
             iso_speed = tag->toDouble ();
         }
 
-        if ((tag = exif->getTag ("DateTimeOriginal"))) {
+        if ((tag = exif->findTag("DateTimeOriginal", true))) {
             if (sscanf ((const char*)tag->getValue(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
                 time.tm_year -= 1900;
                 time.tm_mon -= 1;
@@ -281,6 +300,38 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
         }
 
         if (lens == "Unknown") {
+            const auto lens_from_make_and_model =
+                [this, exif]() -> bool
+                {
+                    if (!exif) {
+                        return false;
+                    }
+
+                    const rtexif::Tag* const lens_model = exif->getTag(0xA434);
+
+                    if (lens_model) {
+                        const rtexif::Tag* const lens_make = exif->getTag(0xA433);
+                        const std::string make =
+                            lens_make
+                                ? lens_make->valueToString()
+                                : std::string();
+                        const std::string model = lens_model->valueToString();
+
+                        if (!model.empty()) {
+                            lens = make;
+
+                            if (!lens.empty()) {
+                                lens += ' ';
+                            }
+
+                            lens += model;
+
+                            return true;
+                        }
+                    }
+
+                    return false;
+                };
 
             if (mnote) {
 
@@ -321,6 +372,11 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                                         lensOk = true;
                                     }
                                 }
+                            }
+                            // If MakeNotes are vague, fall back to Exif LensMake and LensModel if set
+                            // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html#LensType
+                            if (lens == "Manual Lens No CPU") {
+                                lens_from_make_and_model();
                             }
                         }
                     }
@@ -387,15 +443,25 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                     rtexif::Tag *lt = mnote->getTag("LensType");
 
                     if ( lt ) {
-                        std::string ldata = lt->valueToString ();
+                        if (lt->toInt()) {
+                            std::string ldata = lt->valueToString ();
 
-                        if (ldata.size() > 1) {
-                            found = true;
-                            lens = "Canon " + ldata;
+                            if (ldata.size() > 1) {
+                                found = true;
+                                lens = "Canon " + ldata;
+                            }
+                        } else {
+                            found = lens_from_make_and_model();
                         }
                     }
 
-                    if( !found || lens.substr(lens.find(' ')).length() < 7 ) {
+                    const std::string::size_type first_space_pos = lens.find(' ');
+                    const std::string::size_type remaining_size =
+                        first_space_pos != std::string::npos
+                            ? lens.size() - first_space_pos
+                            : 0;
+
+                    if( !found || remaining_size < 7U ) {
                         lt = mnote->findTag("LensID");
 
                         if ( lt ) {
@@ -418,7 +484,14 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                         }
                     }
                     if (mnote->getTag ("LensType")) {
-                        lens = mnote->getTag ("LensType")->valueToString ();
+                        lens = mnote->getTag ("LensType")->valueToString();
+                        // If MakeNotes are vague, fall back to Exif LensMake and LensModel if set
+                        // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Pentax.html#LensType
+                        if (lens == "M-42 or No Lens" || lens == "K or M Lens" || lens == "A Series Lens" || lens == "Sigma") {
+                            lens_from_make_and_model();
+                        }
+                    } else {
+                        lens_from_make_and_model();
                     }
 
                     // Try to get the FocalLength from the LensInfo structure, where length below 10mm will be correctly set
@@ -440,6 +513,9 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 } else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
                     if (mnote->getTag ("LensID")) {
                         lens = mnote->getTag ("LensID")->valueToString ();
+                        if (lens == "Unknown") {
+                            lens_from_make_and_model();
+                        }
                     }
                 } else if (!make.compare (0, 7, "OLYMPUS")) {
                     if (mnote->getTag ("Equipment"))  {
@@ -448,6 +524,9 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                         if (eq->getTag ("LensType")) {
                             lens = eq->getTag ("LensType")->valueToString ();
                         }
+                    }
+                    if (lens == "Unknown") {
+                        lens_from_make_and_model();
                     }
                 } else if (mnote && !make.compare (0, 9, "Panasonic")) {
                     if (mnote->getTag ("LensType")) {
@@ -463,9 +542,7 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
                 }
             } else if (exif->getTag ("DNGLensInfo")) {
                 lens = exif->getTag ("DNGLensInfo")->valueToString ();
-            } else if (exif->getTag ("LensModel")) {
-                lens = exif->getTag ("LensModel")->valueToString ();
-            } else if (exif->getTag ("LensInfo")) {
+            } else if (!lens_from_make_and_model() && exif->getTag ("LensInfo")) {
                 lens = exif->getTag ("LensInfo")->valueToString ();
             }
         }
@@ -900,74 +977,196 @@ procparams::IPTCPairs FramesData::getIPTCData (unsigned int frame) const
     }
 }
 
-bool FramesData::hasExif (unsigned int frame) const
+bool FramesData::hasExif(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? false : frames.at(frame)->hasExif ();
-}
-bool FramesData::hasIPTC (unsigned int frame) const
-{
-    return frames.empty() || frame >= frames.size()  ?  false : frames.at(frame)->hasIPTC ();
+    return getFromFrame<bool>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.hasExif();
+        }
+    );
 }
 
-tm FramesData::getDateTime (unsigned int frame) const
+bool FramesData::hasIPTC(unsigned int frame) const
 {
-    if (frames.empty() || frame >= frames.size() ) {
-        return {};
-    } else {
-        return frames.at(frame)->getDateTime ();
-    }
+    return getFromFrame<bool>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.hasIPTC();
+        }
+    );
 }
+
+tm FramesData::getDateTime(unsigned int frame) const
+{
+    return getFromFrame<tm>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getDateTime();
+        }
+    );
+}
+
 time_t FramesData::getDateTimeAsTS(unsigned int frame) const
 {
-     return frames.empty() || frame >= frames.size()  ? 0 : frames.at(frame)->getDateTimeAsTS ();
+    return getFromFrame<time_t>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getDateTimeAsTS();
+        }
+    );
 }
-int FramesData::getISOSpeed (unsigned int frame) const
+
+int FramesData::getISOSpeed(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0 : frames.at(frame)->getISOSpeed ();
+    return getFromFrame<int>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getISOSpeed();
+        }
+    );
 }
-double FramesData::getFNumber  (unsigned int frame) const
+
+double FramesData::getFNumber(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getFNumber ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFNumber();
+        }
+    );
 }
-double FramesData::getFocalLen (unsigned int frame) const
+
+double FramesData::getFocalLen(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getFocalLen ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFocalLen();
+        }
+    );
 }
-double FramesData::getFocalLen35mm (unsigned int frame) const
+
+double FramesData::getFocalLen35mm(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getFocalLen35mm ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFocalLen35mm();
+        }
+    );
 }
-float FramesData::getFocusDist (unsigned int frame) const
+
+float FramesData::getFocusDist(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0.f : frames.at(frame)->getFocusDist ();
+    return getFromFrame<float>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getFocusDist();
+        }
+    );
 }
-double FramesData::getShutterSpeed (unsigned int frame) const
+
+double FramesData::getShutterSpeed(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getShutterSpeed ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getShutterSpeed();
+        }
+    );
 }
-double FramesData::getExpComp  (unsigned int frame) const
+
+double FramesData::getExpComp(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0. : frames.at(frame)->getExpComp ();
+    return getFromFrame<double>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getExpComp();
+        }
+    );
 }
-std::string FramesData::getMake     (unsigned int frame) const
+
+std::string FramesData::getMake(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getMake ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getMake();
+        }
+    );
 }
-std::string FramesData::getModel    (unsigned int frame) const
+
+std::string FramesData::getModel(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getModel ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getModel();
+        }
+    );
 }
-std::string FramesData::getLens     (unsigned int frame) const
+
+std::string FramesData::getLens(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getLens ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getLens();
+        }
+    );
 }
-std::string FramesData::getSerialNumber (unsigned int frame) const
+
+std::string FramesData::getSerialNumber(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getSerialNumber ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getSerialNumber();
+        }
+    );
 }
-std::string FramesData::getOrientation (unsigned int frame) const
+
+std::string FramesData::getOrientation(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? std::string() : frames.at(frame)->getOrientation ();
+    return getFromFrame<std::string>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getOrientation();
+        }
+    );
 }
 
 
@@ -1102,35 +1301,31 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
         FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
-            const bool has_rml_exif_base = rml->exifBase >= 0;
             rtexif::ExifManager exifManager (f, std::move(rml), firstFrameOnly);
-
-            if (has_rml_exif_base) {
-                if (exifManager.f && exifManager.rml) {
-                    if (exifManager.rml->exifBase >= 0) {
-                        exifManager.parseRaw ();
-
-                    } else if (exifManager.rml->ciffBase >= 0) {
-                        exifManager.parseCIFF ();
-                    }
-                }
-
-                // copying roots
-                roots = exifManager.roots;
-
-                // creating FrameData
-                for (auto currFrame : exifManager.frames) {
-                    frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
-                }
-                for (auto currRoot : roots) {
-                    rtexif::Tag* t = currRoot->getTag(0x83BB);
-
-                    if (t && !iptc) {
-                        iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
-                        break;
-                    }
+            if (exifManager.f && exifManager.rml) {
+                if (exifManager.rml->exifBase >= 0) {
+                    exifManager.parseRaw ();
+                } else if (exifManager.rml->ciffBase >= 0) {
+                    exifManager.parseCIFF ();
                 }
             }
+
+            // copying roots
+            roots = exifManager.roots;
+
+            // creating FrameData
+            for (auto currFrame : exifManager.frames) {
+                frames.push_back(std::unique_ptr<FrameData>(new FrameData(currFrame, currFrame->getRoot(), roots.at(0))));
+            }
+            for (auto currRoot : roots) {
+                rtexif::Tag* t = currRoot->getTag(0x83BB);
+
+                if (t && !iptc) {
+                    iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
+                    break;
+                }
+            }
+
             fclose (f);
         }
     } else if (hasJpegExtension(fname)) {

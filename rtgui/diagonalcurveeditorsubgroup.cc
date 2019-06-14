@@ -56,7 +56,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     customCurve = Gtk::manage (new MyDiagonalCurve ());
     customCurve->setType (DCT_Spline);
-    
+
     Gtk::Grid* customCurveBox= Gtk::manage (new Gtk::Grid ());
     customCurveBox->get_style_context()->add_class("curve-curvebox");
     customCurveBox->add(*customCurve);
@@ -148,7 +148,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     NURBSCurve = Gtk::manage (new MyDiagonalCurve ());
     NURBSCurve->setType (DCT_NURBS);
-    
+
     Gtk::Grid* NURBSCurveBox= Gtk::manage (new Gtk::Grid ());
     NURBSCurveBox->get_style_context()->add_class("curve-curvebox");
     NURBSCurveBox->add(*NURBSCurve);
@@ -240,7 +240,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     paramCurve = Gtk::manage (new MyDiagonalCurve ());
     paramCurve->setType (DCT_Parametric);
-    
+
     Gtk::Grid* paramCurveBox= Gtk::manage (new Gtk::Grid ());
     paramCurveBox->get_style_context()->add_class("curve-curvebox");
     paramCurveBox->add(*paramCurve);
@@ -450,18 +450,18 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
         editedAdjuster = nullptr;
         int n = 0;
 
-        if (provider->pipetteVal[0] != -1.f) {
-            pipetteVal += provider->pipetteVal[0];
+        if (provider->getPipetteVal1() != -1.f) {
+            pipetteVal += provider->getPipetteVal1();
             ++n;
         }
 
-        if (provider->pipetteVal[1] != -1.f) {
-            pipetteVal += provider->pipetteVal[1];
+        if (provider->getPipetteVal2() != -1.f) {
+            pipetteVal += provider->getPipetteVal2();
             ++n;
         }
 
-        if (provider->pipetteVal[2] != -1.f) {
-            pipetteVal += provider->pipetteVal[2];
+        if (provider->getPipetteVal3() != -1.f) {
+            pipetteVal += provider->getPipetteVal3();
             ++n;
         }
 
@@ -669,9 +669,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
         } else {
             // dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
             if (!leftBar) {
-				leftBar = new ColoredBar(RTO_Bottom2Top);
-				
-				
+                leftBar = new ColoredBar(RTO_Bottom2Top);
             }
 
             if (barColorProvider) {
@@ -734,6 +732,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
                 dCurve->paramCurveEd.at(3)
             );
 
+            double s = (double)RTScalable::getScale();
             highlights->setValue (dCurve->paramCurveEd.at(4));
             highlights->setLabel(label[3]);
             lights->setValue (dCurve->paramCurveEd.at(5));
@@ -744,7 +743,10 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             shadows->setLabel(label[0]);
             shcSelector->coloredBar.setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
             shcSelector->coloredBar.setBgGradient(bgGradient);
-            shcSelector->setMargins( (leftBar ? CBAR_WIDTH + CBAR_MARGIN : RADIUS), RADIUS );
+            shcSelector->setMargins(
+                    (int)( ((leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN + RADIUS : RADIUS) - 1.5) * s ),
+                    (int)((RADIUS - 1.5) * s)
+                    );
             paramCurve->setColoredBar(leftBar, nullptr);
             paramCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editParam, editParamConn);
@@ -1197,7 +1199,7 @@ bool DiagonalCurveEditorSubGroup::curveReset(CurveEditor *ce)
         customCurve->reset (dce->customResetCurve, dce->getIdentityValue());
         return true;
 
-    case (DCT_CatumullRom) : 
+    case (DCT_CatumullRom) :
         customCurve->reset (dce->catmullRomResetCurve, dce->getIdentityValue());
         return true;
 

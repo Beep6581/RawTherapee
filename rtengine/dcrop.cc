@@ -17,11 +17,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dcrop.h"
 #include "curves.h"
+#include "dcrop.h"
 #include "mytime.h"
+#include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
+#include "../rtgui/editcallbacks.h"
 
 namespace
 {
@@ -87,7 +89,7 @@ void Crop::setListener(DetailedCropListener* il)
 
 EditUniqueID Crop::getCurrEditID()
 {
-    EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
+    const EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
     return subscriber ? subscriber->getEditID() : EUID_None;
 }
 
@@ -100,7 +102,7 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber)
     MyMutex::MyLock lock(cropMutex);
 
     // At this point, editCrop.dataProvider->currSubscriber is the old subscriber
-    EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
+    const EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
 
     if (newSubscriber == nullptr || (oldSubscriber != nullptr && oldSubscriber->getPipetteBufferType() != newSubscriber->getPipetteBufferType())) {
         if (PipetteBuffer::imgFloatBuffer != nullptr) {
@@ -131,7 +133,7 @@ void Crop::update(int todo)
 {
     MyMutex::MyLock cropLock(cropMutex);
 
-    ProcParams& params = parent->params;
+    ProcParams& params = *parent->params;
 //       CropGUIListener* cropgl;
 
     // No need to update todo here, since it has already been changed in ImprocCoordinator::updatePreviewImage,
@@ -875,7 +877,7 @@ void Crop::update(int todo)
         parent->ipf.labColorCorrectionRegions(labnCrop);
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
-            parent->ipf.EPDToneMap(labnCrop, 5, skip);
+            parent->ipf.EPDToneMap(labnCrop, 0, skip);
         }
 
         //parent->ipf.EPDToneMap(labnCrop, 5, 1);    //Go with much fewer than normal iterates for fast redisplay.
@@ -1022,7 +1024,7 @@ void Crop::update(int todo)
 
             float d, dj, yb; // not used after this block
             parent->ipf.ciecam_02float(cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
+                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 0, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
         } else {
             // CIECAM is disabled, we free up its image buffer to save some space
             if (cieCrop) {
@@ -1116,7 +1118,7 @@ void Crop::freeAll()
 namespace
 {
 
-bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int w, int h, const ProcParams &params)
+bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int w, int h, const procparams::ProcParams &params)
 {
     if (x == 0 && y == 0 && w == fw && h == fh) {
         return false;
@@ -1177,7 +1179,7 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
     parent->ipf.transCoord(parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
 
-    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
+    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, *parent->params)) {
         // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
         int dW = int (double (parent->fw) * 0.15 / (2 * skip));
         int dH = int (double (parent->fh) * 0.15 / (2 * skip));

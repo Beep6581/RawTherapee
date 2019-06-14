@@ -24,6 +24,8 @@
 
 #include "improcfun.h"
 
+#include "procparams.h"
+
 namespace rtengine {
 
 namespace {

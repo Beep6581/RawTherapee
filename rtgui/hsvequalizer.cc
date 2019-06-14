@@ -16,9 +16,10 @@
  *
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  */
-
 #include "hsvequalizer.h"
+
 #include "../rtengine/color.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -108,7 +109,7 @@ void HSVEqualizer::autoOpenCurve ()
     bool active = hshape->openIfNonlinear();
 
     if (!active) {
-        sshape->openIfNonlinear();
+        active = sshape->openIfNonlinear();
     }
 
     if (!active) {

@@ -19,13 +19,13 @@
 #include "lwbutton.h"
 #include "guiutils.h"
 
-LWButton::LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring tooltip)
+LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring tooltip)
     : xpos(0), ypos(0), halign(ha), valign(va), icon(i), bgr(0.0), bgg(0.0), bgb(0.0), fgr(0.0), fgg(0.0), fgb(0.0), state(Normal), listener(nullptr), actionCode(aCode), actionData(aData), toolTip(tooltip)
 {
 
     if (i)  {
-        w = i->get_width () + 2;
-        h = i->get_height () + 2;
+        w = i->getWidth () + 2;
+        h = i->getHeight () + 2;
     } else {
         w = h = 2;
     }
@@ -52,20 +52,20 @@ void LWButton::getPosition (int& x, int& y)
     y = ypos;
 }
 
-void LWButton::setIcon (Cairo::RefPtr<Cairo::ImageSurface> i)
+void LWButton::setIcon (Cairo::RefPtr<RTSurface> i)
 {
 
     icon = i;
 
     if (i)  {
-        w = i->get_width () + 2;
-        h = i->get_height () + 2;
+        w = i->getWidth () + 2;
+        h = i->getHeight () + 2;
     } else {
         w = h = 2;
     }
 }
 
-Cairo::RefPtr<Cairo::ImageSurface> LWButton::getIcon ()
+Cairo::RefPtr<RTSurface> LWButton::getIcon ()
 {
 
     return icon;
@@ -205,7 +205,7 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
     }
 
     if (icon) {
-        context->set_source (icon, xpos + dilat, ypos + dilat);
+        context->set_source (icon->get(), xpos + dilat, ypos + dilat);
         context->paint ();
     }
 }

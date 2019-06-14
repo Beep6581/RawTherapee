@@ -18,6 +18,7 @@
  */
 #include "rtengine.h"
 #include "improcfun.h"
+#include "procparams.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -705,7 +706,9 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
     }
 
     bool darkening = (params->vignetting.amount <= 0.0);
+#ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
 
     for (int y = 0; y < transformed->getHeight(); y++) {
         double vig_y_d = applyVignetting ? (double) (y + cy) - vig_h2 : 0.0;
@@ -817,7 +820,9 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 #endif
     // main cycle
     bool darkening = (params->vignetting.amount <= 0.0);
+#ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
+#endif
 
     for (int y = 0; y < transformed->getHeight(); y++) {
         for (int x = 0; x < transformed->getWidth(); x++) {
@@ -964,7 +969,9 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
     chTrans[1] = transformed->g.ptrs;
     chTrans[2] = transformed->b.ptrs;
 
+#ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
+#endif
 
     for (int y = 0; y < transformed->getHeight(); y++) {
         for (int x = 0; x < transformed->getWidth(); x++) {

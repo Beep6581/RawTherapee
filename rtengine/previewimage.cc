@@ -18,11 +18,13 @@
  */
 
 #include "previewimage.h"
+
 #include "iimage.h"
-#include "utils.h"
 #include "iimage.h"
-#include "rtthumbnail.h"
+#include "procparams.h"
 #include "rawimagesource.h"
+#include "rtthumbnail.h"
+#include "utils.h"
 
 using namespace rtengine;
 using namespace procparams;
@@ -77,7 +79,9 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
                 previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
                 previewImage->flush();
 
+#ifdef _OPENMP
                 #pragma omp parallel for
+#endif
                 for (unsigned int i = 0; i < (unsigned int)(h); ++i) {
                     const unsigned char *src = data + i * w * 3;
                     unsigned char *dst = previewImage->get_data() + i * w * 4;
@@ -119,7 +123,9 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.raw);
             rtengine::Image8 output(fw, fh);
             rawImage.convertColorSpace(&image, params.icm, wb);
+#ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 10)
+#endif
             for (int i = 0; i < fh; ++i)
                 for (int j = 0; j < fw; ++j) {
                     image.r(i, j) = Color::gamma2curve[image.r(i, j)];
@@ -139,7 +145,9 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
                 previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
                 previewImage->flush();
 
-                #pragma omp parallel for 
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
                 for (unsigned int i = 0; i < (unsigned int)(h); i++) {
                     const unsigned char *src = data + i * w * 3;
                     unsigned char *dst = previewImage->get_data() + i * w * 4;

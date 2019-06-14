@@ -1771,10 +1771,10 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
 {
 
 #ifdef __SSE2__
-    vfloat minvalfv = F2V(0.f);
-    vfloat maxvalfv = F2V(MAXVALF);
-    vfloat c500v = F2V(500.f);
-    vfloat c200v = F2V(200.f);
+    const vfloat minvalfv = ZEROV;
+    const vfloat maxvalfv = F2V(MAXVALF);
+    const vfloat c500v = F2V(500.f);
+    const vfloat c200v = F2V(200.f);
 #endif
     int i = 0;
     
@@ -1787,9 +1787,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
         const vfloat yv = F2V(wp[1][0]) * rv + F2V(wp[1][1]) * gv + F2V(wp[1][2]) * bv;
         const vfloat zv = F2V(wp[2][0]) * rv + F2V(wp[2][1]) * gv + F2V(wp[2][2]) * bv;
 
-        vmask maxMask = vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv);
-        vmask minMask = vmaskf_lt(vminf(xv, vminf(yv, zv)), minvalfv);
-        if (_mm_movemask_ps((vfloat)maxMask) || _mm_movemask_ps((vfloat)minMask)) {
+        if (_mm_movemask_ps((vfloat)vorm(vmaskf_gt(vmaxf(xv, vmaxf(yv, zv)), maxvalfv), vmaskf_lt(vminf(xv, vminf(yv, zv)), minvalfv)))) {
             // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
             for(int k = 0; k < 4; ++k) {
                 float x = xv[k];
@@ -1869,6 +1867,51 @@ void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], 
         float y = wp[1][0] * rv + wp[1][1] * gv + wp[1][2] * bv;
 
         L[i] = computeXYZ2LabY(y);
+    }
+}
+
+void Color::Lab2RGBLimit(float *L, float *a, float *b, float *R, float *G, float *B, const float wp[3][3], float limit, float afactor, float bfactor, int width)
+{
+
+    int i = 0;
+
+#ifdef __SSE2__
+    const vfloat wpv[3][3] = {
+                              {F2V(wp[0][0]), F2V(wp[0][1]), F2V(wp[0][2])},
+                              {F2V(wp[1][0]), F2V(wp[1][1]), F2V(wp[1][2])},
+                              {F2V(wp[2][0]), F2V(wp[2][1]), F2V(wp[2][2])}
+                             };
+    const vfloat limitv = F2V(limit);
+    const vfloat afactorv = F2V(afactor);
+    const vfloat bfactorv = F2V(bfactor);
+
+    for(;i < width - 3; i+=4) {
+        const vfloat Lv = LVFU(L[i]);
+        vfloat av = LVFU(a[i]);
+        vfloat bv = LVFU(b[i]);
+
+        const vmask mask = vmaskf_gt(SQRV(av) + SQRV(bv), limitv);
+        av = vself(mask, av * afactorv, av);
+        bv = vself(mask, bv * bfactorv, bv);
+        vfloat Xv, Yv, Zv;
+        Lab2XYZ(Lv, av, bv, Xv, Yv, Zv);
+        vfloat Rv, Gv, Bv;
+        xyz2rgb(Xv, Yv, Zv, Rv, Gv, Bv, wpv);
+        STVFU(R[i], Rv);
+        STVFU(G[i], Gv);
+        STVFU(B[i], Bv);
+    }
+#endif
+    for(;i < width; ++i) {
+        float X, Y, Z;
+        float av = a[i];
+        float bv = b[i];
+        if (SQR(av) + SQR(bv) > limit) {
+            av *= afactor;
+            bv *= bfactor;
+        }
+        Lab2XYZ(L[i], av, bv, X, Y, Z);
+        xyz2rgb(X, Y, Z, R[i], G[i], B[i], wp);
     }
 }
 

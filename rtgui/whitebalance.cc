@@ -35,27 +35,22 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM) + 1];
-/*
-Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbCameraPB, WhiteBalance::wbAutoPB, WhiteBalance::wbSunPB, WhiteBalance::wbTungstenPB,
-                          WhiteBalance::wbCloudyPB, WhiteBalance::wbShadePB, WhiteBalance::wbFluorescentPB, WhiteBalance::wbLampPB,
-                          WhiteBalance::wbFlashPB, WhiteBalance::wbLedPB, WhiteBalance::wbCustomPB;
-*/
 
 void WhiteBalance::init ()
 {
-    wbPixbufs[toUnderlying(WBEntry::Type::CAMERA)]      = RTImage::createFromFile ("wb-camera-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::AUTO)]        = RTImage::createFromFile ("wb-auto-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::DAYLIGHT)]    = RTImage::createFromFile ("wb-sun-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::CLOUDY)]      = RTImage::createFromFile ("wb-cloudy-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::SHADE)]       = RTImage::createFromFile ("wb-shade-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::WATER)]       = RTImage::createFromFile ("wb-water-small.png");
-  //wbPixbufs[WBEntry::Type::WATER2]                    = RTImage::createFromFile ("wb-water-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::TUNGSTEN)]    = RTImage::createFromFile ("wb-tungsten-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::FLUORESCENT)] = RTImage::createFromFile ("wb-fluorescent-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::LAMP)]        = RTImage::createFromFile ("wb-lamp-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::FLASH)]       = RTImage::createFromFile ("wb-flash-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::LED)]         = RTImage::createFromFile ("wb-led-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM)]      = RTImage::createFromFile ("wb-custom-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CAMERA)]      = RTImage::createPixbufFromFile ("wb-camera-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::AUTO)]        = RTImage::createPixbufFromFile ("wb-auto-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::DAYLIGHT)]    = RTImage::createPixbufFromFile ("wb-sun-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CLOUDY)]      = RTImage::createPixbufFromFile ("wb-cloudy-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::SHADE)]       = RTImage::createPixbufFromFile ("wb-shade-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::WATER)]       = RTImage::createPixbufFromFile ("wb-water-small.png");
+  //wbPixbufs[toUnderlying(WBEntry::Type::WATER2)]      = RTImage::createPixbufFromFile ("wb-water-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::TUNGSTEN)]    = RTImage::createPixbufFromFile ("wb-tungsten-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLUORESCENT)] = RTImage::createPixbufFromFile ("wb-fluorescent-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LAMP)]        = RTImage::createPixbufFromFile ("wb-lamp-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::FLASH)]       = RTImage::createPixbufFromFile ("wb-flash-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::LED)]         = RTImage::createPixbufFromFile ("wb-led-small.png");
+    wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM)]      = RTImage::createPixbufFromFile ("wb-custom-small.png");
 }
 
 void WhiteBalance::cleanup ()

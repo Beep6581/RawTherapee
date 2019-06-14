@@ -26,22 +26,25 @@
 #include "multilangmgr.h"
 #include "thumbbrowserbase.h"
 
+#include "../rtengine/procparams.h"
+
 bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 
-BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm) :
+BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm, bool overwrite) :
     ThumbBrowserEntryBase(fname),
     opreview(nullptr),
     origpw(prevw),
     origph(prevh),
     opreviewDone(false),
     job(pjob),
-    params(pparams),
+    params(new rtengine::procparams::ProcParams(pparams)),
     progress(0),
     outFileName(""),
     sequence(0),
     forceFormatOpts(false),
-    fast_pipeline(job->fastPipeline())
+    fast_pipeline(job->fastPipeline()),
+    overwriteFile(overwrite)
 {
 
     thumbnail = thm;
@@ -55,7 +58,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 #endif
 
     if (!iconsLoaded) {
-        savedAsIcon = RTImage::createFromFile ("save-small.png");
+        savedAsIcon = RTImage::createPixbufFromFile ("save-small.png");
         iconsLoaded = true;
     }
 
@@ -93,7 +96,7 @@ void BatchQueueEntry::refreshThumbnailImage ()
         // creating the image buffer first
         //if (!opreview) opreview = new guint8[(origpw+1) * origph * 3];
         // this will asynchronously compute the original preview and land at this.updateImage
-        batchQueueEntryUpdater.process (nullptr, origpw, origph, preh, this, &params, thumbnail);
+        batchQueueEntryUpdater.process (nullptr, origpw, origph, preh, this, params.get(), thumbnail);
     } else {
         // this will asynchronously land at this.updateImage
         batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);

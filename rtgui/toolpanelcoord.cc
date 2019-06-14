@@ -768,8 +768,8 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
     const rtengine::FramesMetaData *imd = ipc->getInitialImage()->getMetaData();
 
     if (imd) {
-        // int iso = imd->getISOSpeed();              temporarilly removed because unused
-        // double shutter = imd->getShutterSpeed();   temporarilly removed because unused
+        // int iso = imd->getISOSpeed();              temporarily removed because unused
+        // double shutter = imd->getShutterSpeed();   temporarily removed because unused
         double aperture = imd->getFNumber();
         double focallength = imd->getFocalLen();
         std::string maker ( imd->getMake()  );
@@ -955,22 +955,38 @@ void ToolPanelCoordinator::toolSelected (ToolMode tool)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
+    auto checkFavorite = [this](FoldableToolPanel* tool) {
+        for (auto fav : favorites) {
+            if (fav == tool) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     switch (tool) {
-        case TMCropSelect:
-            crop->setExpanded (true);
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*transformPanelSW));
+        case TMCropSelect: {
+            crop->setExpanded(true);
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(crop) ? *favoritePanelSW : *transformPanelSW));
             break;
+        }
 
-        case TMSpotWB:
-            whitebalance->setExpanded (true);
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*colorPanelSW));
+        case TMSpotWB: {
+            whitebalance->setExpanded(true);
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(checkFavorite(whitebalance) ? *favoritePanelSW : *colorPanelSW));
             break;
+        }
 
-        case TMStraighten:
-            lensgeom->setExpanded (true);
-            rotate->setExpanded (true);
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*transformPanelSW));
+        case TMStraighten: {
+            rotate->setExpanded(true);
+            bool isFavorite = checkFavorite(rotate);
+            if (!isFavorite) {
+                isFavorite = checkFavorite(lensgeom);
+                lensgeom->setExpanded(true);
+            }
+            toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(isFavorite ? *favoritePanelSW : *transformPanelSW));
             break;
+        }
 
         default:
             break;

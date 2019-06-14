@@ -18,6 +18,8 @@
  */
 
 #include "pipettebuffer.h"
+#include "../rtgui/editcallbacks.h"
+#include "imagefloat.h"
 
 namespace rtengine
 {
@@ -132,13 +134,17 @@ bool PipetteBuffer::bufferCreated()
     return false;
 }
 
-void PipetteBuffer::getPipetteData(float* v, int x, int y, int squareSize)
+void PipetteBuffer::getPipetteData(int x, int y, const int squareSize)
 {
     if (ready && dataProvider && dataProvider->getCurrSubscriber()) {
         switch (dataProvider->getCurrSubscriber()->getPipetteBufferType()) {
         case (BT_IMAGEFLOAT):
             if (imgFloatBuffer) {
+                float v[3];
                 imgFloatBuffer->getPipetteData(v[0], v[1], v[2], x, y, squareSize, 0);
+                dataProvider->setPipetteVal1(v[0]);
+                dataProvider->setPipetteVal2(v[1]);
+                dataProvider->setPipetteVal3(v[2]);
                 return;
             }
 
@@ -146,7 +152,11 @@ void PipetteBuffer::getPipetteData(float* v, int x, int y, int squareSize)
 
         case (BT_LABIMAGE):
             if (LabBuffer) {
+                float v[3];
                 LabBuffer->getPipetteData(v[0], v[1], v[2], x, y, squareSize);
+                dataProvider->setPipetteVal1(v[0]);
+                dataProvider->setPipetteVal2(v[1]);
+                dataProvider->setPipetteVal3(v[2]);
                 return;
             }
 
@@ -154,14 +164,19 @@ void PipetteBuffer::getPipetteData(float* v, int x, int y, int squareSize)
 
         case (BT_SINGLEPLANE_FLOAT):
             if (singlePlaneBuffer.data != nullptr) {
-                singlePlaneBuffer.getPipetteData(v[0], x, y, squareSize, 0);
-                v[1] = v[2] = -1.f;
+                float v;
+                singlePlaneBuffer.getPipetteData(v, x, y, squareSize, 0);
+                dataProvider->setPipetteVal1(v);
+                dataProvider->setPipetteVal2(-1.f);
+                dataProvider->setPipetteVal3(-1.f);
                 return;
             }
         }
     }
 
-    v[0] = v[1] = v[2] = -1.f;
+    dataProvider->setPipetteVal1(-1.f);
+    dataProvider->setPipetteVal2(-1.f);
+    dataProvider->setPipetteVal3(-1.f);
 }
 
 }

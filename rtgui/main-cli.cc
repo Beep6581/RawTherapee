@@ -28,16 +28,17 @@
 #include <giomm.h>
 #include <iostream>
 #include <tiffio.h>
-#include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
+#include "../rtengine/procparams.h"
+#include "../rtengine/profilestore.h"
 #include "options.h"
-#include "../rtengine/icons.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
+#include "pathutils.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -45,6 +46,8 @@
 #include <glib/gstdio.h>
 #include <glibmm/threads.h>
 #else
+#include <windows.h>
+#include <shlobj.h>
 #include <glibmm/thread.h>
 #include "conio.h"
 #endif
@@ -195,8 +198,6 @@ int main (int argc, char **argv)
         options.defProfImg = DEFPROFILE_INTERNAL;
     }
 
-    rtengine::setPaths();
-
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
 
 #ifndef WIN32
@@ -284,6 +285,10 @@ int processLineParams ( int argc, char **argv )
 
         if ( currParam.at (0) == '-' && currParam.size() > 1) {
             switch ( currParam.at (1) ) {
+                case '-':
+                    // GTK --argument, we're skipping it
+                    break;
+
                 case 'O':
                     copyParamsFile = true;
 

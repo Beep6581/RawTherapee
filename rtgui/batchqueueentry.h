@@ -19,6 +19,8 @@
 #ifndef _BATCHQUEUEENTRY_
 #define _BATCHQUEUEENTRY_
 
+#include <memory>
+
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
 #include "thumbbrowserentrybase.h"
@@ -46,7 +48,7 @@ public:
     static Glib::RefPtr<Gdk::Pixbuf> savedAsIcon;
 
     rtengine::ProcessingJob* job;
-    rtengine::procparams::ProcParams params;
+    const std::unique_ptr<rtengine::procparams::ProcParams> params;
     Glib::ustring savedParamsFile;
     double progress;
     Glib::ustring outFileName;
@@ -54,8 +56,9 @@ public:
     SaveFormat saveFormat;
     bool forceFormatOpts;
     bool fast_pipeline;
+    bool overwriteFile;
 
-    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = nullptr);
+    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = nullptr, bool overwrite = false);
     ~BatchQueueEntry () override;
 
     void refreshThumbnailImage () override;

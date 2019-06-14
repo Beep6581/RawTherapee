@@ -20,14 +20,19 @@
 
 #include "guiutils.h"
 #include "rtimage.h"
+#include "options.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 using namespace rtexif;
 
-ExifPanel::ExifPanel () : idata (nullptr)
+ExifPanel::ExifPanel() :
+    idata(nullptr),
+    changeList(new rtengine::procparams::ExifPairs),
+    defChangeList(new rtengine::procparams::ExifPairs)
 {
-
     recursiveOp = true;
 
     exifTree = Gtk::manage (new Gtk::TreeView());
@@ -48,9 +53,9 @@ ExifPanel::ExifPanel () : idata (nullptr)
     exifTree->set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_NONE);
     exifTree->set_row_separator_func (sigc::mem_fun(*this, &ExifPanel::rowSeperatorFunc));
 
-    delicon = RTImage::createFromFile ("cancel-small.png");
-    keepicon = RTImage::createFromFile ("tick-small.png");
-    editicon = RTImage::createFromFile ("add-small.png");
+    delicon = RTImage::createPixbufFromFile ("cancel-small.png");
+    keepicon = RTImage::createPixbufFromFile ("tick-small.png");
+    editicon = RTImage::createPixbufFromFile ("add-small.png");
 
     Gtk::TreeView::Column *viewcol = Gtk::manage (new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage (new Gtk::CellRendererPixbuf ());
@@ -100,21 +105,21 @@ ExifPanel::ExifPanel () : idata (nullptr)
     setExpandAlignProperties (buttons2, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     remove = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_REMOVE")
-    remove->set_image (*Gtk::manage (new Gtk::Image (delicon)));
+    remove->set_image (*Gtk::manage (new RTImage(delicon)));
     remove->set_tooltip_text (M ("EXIFPANEL_REMOVEHINT"));
     remove->get_style_context()->add_class ("Left");
     setExpandAlignProperties (remove, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     buttons1->attach_next_to (*remove, Gtk::POS_LEFT, 1, 1);
 
     keep = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_KEEP")
-    keep->set_image (*Gtk::manage (new Gtk::Image (keepicon)));
+    keep->set_image (*Gtk::manage (new RTImage(keepicon)));
     keep->set_tooltip_text (M ("EXIFPANEL_KEEPHINT"));
     keep->get_style_context()->add_class ("MiddleH");
     setExpandAlignProperties (keep, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     buttons1->attach_next_to (*keep, Gtk::POS_RIGHT, 1, 1);
 
     add = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_ADDEDIT")
-    add->set_image (*Gtk::manage (new Gtk::Image (editicon)));
+    add->set_image (*Gtk::manage (new RTImage(editicon)));
     add->set_tooltip_text (M ("EXIFPANEL_ADDEDITHINT"));
     add->get_style_context()->add_class ("Right");
     setExpandAlignProperties (add, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
@@ -128,7 +133,7 @@ ExifPanel::ExifPanel () : idata (nullptr)
     buttons2->attach_next_to (*showAll, Gtk::POS_LEFT, 1, 1);
 
     reset = Gtk::manage (new Gtk::Button ()); // M("EXIFPANEL_RESET")
-    reset->set_image (*Gtk::manage (new RTImage ("undo.png", "redo.png")));
+    reset->set_image (*Gtk::manage (new RTImage("undo.png", "redo.png")));
     reset->set_tooltip_text (M ("EXIFPANEL_RESETHINT"));
     reset->get_style_context()->add_class ("MiddleH");
     setExpandAlignProperties (reset, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
@@ -166,7 +171,7 @@ void ExifPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener ();
 
-    changeList = pp->exif;
+    *changeList = pp->exif;
     setImageData (idata);
     applyChangeList ();
     exifSelectionChanged ();
@@ -178,13 +183,13 @@ void ExifPanel::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
 //    updateChangeList ();
-    pp->exif = changeList;
+    pp->exif = *changeList;
 }
 
 void ExifPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
 
-    defChangeList = defParams->exif;
+    *defChangeList = defParams->exif;
 }
 
 void ExifPanel::setImageData (const FramesMetaData* id)
@@ -457,7 +462,7 @@ void ExifPanel::resetAllPressed ()
 {
 
     setImageData (idata);
-    changeList = defChangeList;
+    *changeList = *defChangeList;
     applyChangeList ();
     exifSelectionChanged ();
     notifyListener ();
@@ -661,11 +666,11 @@ void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string pre
 
     for (iter = root.begin(); iter != root.end(); ++iter)  {
         if (iter->get_value (exifColumns.edited)) {
-            changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
+            (*changeList)[ prefix + iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
         } else if (iter->get_value (exifColumns.action) == AC_WRITE && iter->get_value (exifColumns.icon) == delicon) {
-            changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#delete";
+            (*changeList)[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#delete";
         } else if (iter->get_value (exifColumns.action) == AC_DONTWRITE && iter->get_value (exifColumns.icon) == keepicon) {
-            changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#keep";
+            (*changeList)[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#keep";
         }
 
         if (iter->get_value (exifColumns.icon) == keepicon) {
@@ -677,14 +682,14 @@ void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string pre
 void ExifPanel::updateChangeList ()
 {
 
-    changeList.clear ();
+    changeList->clear ();
     updateChangeList (exifTreeModel->children(), "");
 }
 
 void ExifPanel::applyChangeList ()
 {
 
-    for (rtengine::procparams::ExifPairs::iterator i = changeList.begin(); i != changeList.end(); ++i) {
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList->begin(); i != changeList->end(); ++i) {
         editTag (exifTreeModel->children(), i->first, i->second);
     }
 }

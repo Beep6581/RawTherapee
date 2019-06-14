@@ -33,7 +33,7 @@ class OLOnOffInterpreter : public Interpreter
 {
 public:
     OLOnOffInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         if (t->toInt() == 0) {
             return "Off";
@@ -48,7 +48,7 @@ class OLYesNoInterpreter : public Interpreter
 {
 public:
     OLYesNoInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         if (t->toInt() == 0) {
             return "No";
@@ -63,7 +63,7 @@ class OLApertureInterpreter : public Interpreter
 {
 public:
     OLApertureInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         str.precision (2);
@@ -194,7 +194,7 @@ public:
         lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         lenses["05 01 10"] = "Tamron 14-150mm f/3.5-5.8 Di III";
     }
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream lid;
         lid.setf (std::ios_base::hex, std::ios_base::basefield);
@@ -203,7 +203,7 @@ public:
         lid << std::setw (2) << std::setfill ('0') << t->toInt (2) << ' '; //model
         lid << std::setw (2) << std::setfill ('0') << t->toInt (3); // submodel
 
-        std::map<std::string, std::string>::iterator r = lenses.find (lid.str());
+        std::map<std::string, std::string>::const_iterator r = lenses.find (lid.str());
 
         if (r != lenses.end()) {
             return r->second;
@@ -214,7 +214,7 @@ public:
 };
 OLLensTypeInterpreter olLensTypeInterpreter;
 
-class OLFlashTypeInterpreter : public ChoiceInterpreter
+class OLFlashTypeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFlashTypeInterpreter ()
@@ -226,7 +226,7 @@ public:
 };
 OLFlashTypeInterpreter olFlashTypeInterpreter;
 
-class OLExposureModeInterpreter : public ChoiceInterpreter
+class OLExposureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLExposureModeInterpreter ()
@@ -240,7 +240,7 @@ public:
 };
 OLExposureModeInterpreter olExposureModeInterpreter;
 
-class OLMeteringModeInterpreter : public ChoiceInterpreter
+class OLMeteringModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLMeteringModeInterpreter ()
@@ -255,7 +255,7 @@ public:
 };
 OLMeteringModeInterpreter olMeteringModeInterpreter;
 
-class OLFocusModeInterpreter : public ChoiceInterpreter
+class OLFocusModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFocusModeInterpreter ()
@@ -270,7 +270,7 @@ public:
 };
 OLFocusModeInterpreter olFocusModeInterpreter;
 
-class OLWhitebalance2Interpreter : public ChoiceInterpreter
+class OLWhitebalance2Interpreter : public ChoiceInterpreter<>
 {
 public:
     OLWhitebalance2Interpreter ()
@@ -302,7 +302,7 @@ public:
 };
 OLWhitebalance2Interpreter olWhitebalance2Interpreter;
 
-class OLSceneModeInterpreter : public ChoiceInterpreter
+class OLSceneModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLSceneModeInterpreter ()
@@ -368,7 +368,7 @@ public:
 };
 OLSceneModeInterpreter olSceneModeInterpreter;
 
-class OLPictureModeBWFilterInterpreter : public ChoiceInterpreter
+class OLPictureModeBWFilterInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeBWFilterInterpreter ()
@@ -383,7 +383,7 @@ public:
 };
 OLPictureModeBWFilterInterpreter olPictureModeBWFilterInterpreter;
 
-class OLPictureModeToneInterpreter : public ChoiceInterpreter
+class OLPictureModeToneInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeToneInterpreter ()
@@ -398,7 +398,7 @@ public:
 };
 OLPictureModeToneInterpreter olPictureModeToneInterpreter;
 
-class OLImageQuality2Interpreter : public ChoiceInterpreter
+class OLImageQuality2Interpreter : public ChoiceInterpreter<>
 {
 public:
     OLImageQuality2Interpreter ()
@@ -412,7 +412,7 @@ public:
 };
 OLImageQuality2Interpreter olImageQuality2Interpreter;
 
-class OLDevEngineInterpreter : public ChoiceInterpreter
+class OLDevEngineInterpreter : public ChoiceInterpreter<>
 {
 public:
     // RawDevEngine
@@ -426,7 +426,7 @@ public:
 };
 OLDevEngineInterpreter olDevEngineInterpreter;
 
-class OLPictureModeInterpreter : public ChoiceInterpreter
+class OLPictureModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLPictureModeInterpreter ()
@@ -449,7 +449,7 @@ public:
 };
 OLPictureModeInterpreter olPictureModeInterpreter;
 
-class OLColorSpaceInterpreter : public ChoiceInterpreter
+class OLColorSpaceInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLColorSpaceInterpreter ()
@@ -465,7 +465,7 @@ class OLNoiseFilterInterpreter : public Interpreter
 {
 public:
     OLNoiseFilterInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt (0);
         int b = t->toInt (2);
@@ -490,7 +490,7 @@ class OLFlashModeInterpreter : public Interpreter
 {
 public:
     OLFlashModeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         int a = t->toInt ();
@@ -509,7 +509,7 @@ class OLNoiseReductionInterpreter : public Interpreter
 {
 public:
     OLNoiseReductionInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         std::ostringstream str;
         int a = t->toInt ();
@@ -522,7 +522,7 @@ public:
 };
 OLNoiseReductionInterpreter olNoiseReductionInterpreter;
 
-class OLFlashModelInterpreter : public ChoiceInterpreter
+class OLFlashModelInterpreter : public ChoiceInterpreter<>
 {
 public:
     OLFlashModelInterpreter ()

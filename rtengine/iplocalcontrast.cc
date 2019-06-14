@@ -26,9 +26,10 @@
 #include <omp.h>
 #endif
 
-#include "improcfun.h"
-#include "gauss.h"
 #include "array2D.h"
+#include "gauss.h"
+#include "improcfun.h"
+#include "procparams.h"
 
 namespace rtengine {
 

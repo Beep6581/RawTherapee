@@ -32,6 +32,8 @@
 
 #include "rtexif.h"
 
+#include "../rtengine/procparams.h"
+
 #include "../rtgui/cacheimagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
@@ -1767,7 +1769,7 @@ std::string Tag::nameToString (int i)
     return buffer;
 }
 
-std::string Tag::valueToString ()
+std::string Tag::valueToString () const
 {
 
     if (attrib && attrib->interpreter) {
@@ -2116,6 +2118,7 @@ void ExifManager::parseCIFF ()
     }
     parseCIFF (rml->ciffLength, root);
     root->sort ();
+    parse(true);
 }
 
 Tag* ExifManager::saveCIFFMNTag (TagDirectory* root, int len, const char* name)
@@ -3439,7 +3442,7 @@ short int int2_to_signed (short unsigned int i)
  * <focal>-<focal>mm f/<aperture>-<aperture>
  * NB: no space between separator '-'; no space between focal length and 'mm'
  */
-bool extractLensInfo (std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal)
+bool extractLensInfo (const std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal)
 {
     minFocal = 0.0;
     maxFocal = 0.0;

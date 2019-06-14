@@ -17,8 +17,11 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "crop.h"
+
 #include "options.h"
 #include "rtimage.h"
+
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -202,7 +205,7 @@ Crop::Crop():
     ppisubgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(ppisubgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    Gtk::Label* ppilab = Gtk::manage (new Gtk::Label (M("TP_CROP_PPI")));
+    Gtk::Label* ppilab = Gtk::manage (new Gtk::Label (M("TP_CROP_PPI") + ":"));
     setExpandAlignProperties(ppilab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     ppi = Gtk::manage (new MySpinButton ());

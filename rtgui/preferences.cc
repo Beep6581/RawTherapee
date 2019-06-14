@@ -22,7 +22,6 @@
 #include "splash.h"
 #include "cachemanager.h"
 #include "addsetids.h"
-#include "../rtengine/icons.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include <sstream>
@@ -30,6 +29,25 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+namespace {
+void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
+    Gtk::HBox* HB = Gtk::manage ( new Gtk::HBox () );
+    HB->set_spacing (4);
+    if (!toolTip.empty()) {
+        HB->set_tooltip_text (M (toolTip));
+    }
+    Gtk::Label* label = Gtk::manage ( new Gtk::Label (M (labelText) + ":", Gtk::ALIGN_START));
+    spin = Gtk::manage ( new Gtk::SpinButton () );
+    spin->set_digits (digits);
+    spin->set_increments (inc0, inc1);
+    spin->set_max_length (maxLength); // Will this be sufficient? :)
+    spin->set_range (range0, range1);
+    HB->pack_start (*label, Gtk::PACK_SHRINK, 0);
+    HB->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+    where->add(*HB);
+}
+}
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -158,11 +176,7 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     sigc::connection setc = cr_set->signal_toggled().connect (sigc::mem_fun (*this, &Preferences::behSetRadioToggled));
 
     behTreeView->get_column (1)->add_attribute (*cr_add, "visible", behavColumns.visible);
-    behTreeView->get_column (1)->set_sizing (Gtk::TREE_VIEW_COLUMN_FIXED);
-    behTreeView->get_column (1)->set_fixed_width (50);
     behTreeView->get_column (2)->add_attribute (*cr_set, "visible", behavColumns.visible);
-    behTreeView->get_column (2)->set_sizing (Gtk::TREE_VIEW_COLUMN_FIXED);
-    behTreeView->get_column (2)->set_fixed_width (50);
 
     // fill model
     Gtk::TreeModel::iterator mi, ci;
@@ -384,7 +398,7 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_WAVELET_EDGEDETECTTHR2"), ADDSET_WA_EDGEDETECTTHR2, true);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_BAYER_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_RAW_SENSOR_BAYER_LABEL"));
     appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_BAYER_FALSE_COLOR_SUPPRESSION, false);
     appendBehavList (mi, M ("TP_RAW_DCBITERATIONS") + ", " + M("TP_RAW_LMMSEITERATIONS"), ADDSET_BAYER_ITER, false);
     appendBehavList (mi, M ("TP_RAW_DUALDEMOSAICCONTRAST"), ADDSET_BAYER_DUALDEMOZCONTRAST, false);
@@ -393,29 +407,28 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_RAW_PIXELSHIFTEPERISO"), ADDSET_BAYER_PS_EPERISO, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_RAW_SENSOR_XTRANS_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_RAW_SENSOR_XTRANS_LABEL"));
     appendBehavList (mi, M ("TP_RAW_FALSECOLOR"), ADDSET_XTRANS_FALSE_COLOR_SUPPRESSION, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_PREPROCESS_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_PREPROCESS_LABEL"));
     appendBehavList (mi, M ("TP_PREPROCESS_GREENEQUIL"), ADDSET_PREPROCESS_GREENEQUIL, false);
     appendBehavList (mi, M ("TP_PREPROCESS_LINEDENOISE"), ADDSET_PREPROCESS_LINEDENOISE, true);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_EXPOS_WHITEPOINT_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_EXPOS_WHITEPOINT_LABEL"));
     appendBehavList (mi, M ("TP_RAWEXPOS_LINEAR"), ADDSET_RAWEXPOS_LINEAR, false);
-    appendBehavList (mi, M ("TP_RAWEXPOS_PRESER"), ADDSET_RAWEXPOS_PRESER, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_RAWEXPOS_BLACKS"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_EXPOS_BLACKPOINT_LABEL"));
     appendBehavList (mi, M ("TP_RAWEXPOS_RGB"), ADDSET_RAWEXPOS_BLACKS, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_FLATFIELD_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_FLATFIELD_LABEL"));
     appendBehavList (mi, M ("TP_FLATFIELD_CLIPCONTROL"), ADDSET_RAWFFCLIPCONTROL, true);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M ("TP_CHROMATABERR_LABEL"));
+    mi->set_value (behavColumns.label, M("MAIN_TAB_RAW") + " - " + M("TP_RAWCACORR_LABEL"));
     appendBehavList (mi, M ("TP_RAWCACORR_CARED") + ", " + M ("TP_RAWCACORR_CABLUE"), ADDSET_RAWCACORR, true);
 
     behTreeView->expand_all ();
@@ -539,10 +552,10 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     saveParamsPreference->append (M ("PREFERENCES_PROFILESAVEINPUT"));
     saveParamsPreference->append (M ("PREFERENCES_PROFILESAVECACHE"));
     saveParamsPreference->append (M ("PREFERENCES_PROFILESAVEBOTH"));
-    Gtk::Label *splab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILESAVELOCATION") + ":"));
+    Gtk::Label *splab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILESAVELOCATION") + ":", Gtk::ALIGN_START));
     vbdp->attach (*splab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     vbdp->attach (*saveParamsPreference, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILELOADPR") + ":"));
+    Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILELOADPR") + ":", Gtk::ALIGN_START));
     loadParamsPreference = Gtk::manage (new Gtk::ComboBoxText ());
     loadParamsPreference->append (M ("PREFERENCES_PROFILEPRCACHE"));
     loadParamsPreference->append (M ("PREFERENCES_PROFILEPRFILE"));
@@ -601,13 +614,13 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     // Crop
     Gtk::Frame *cropFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CROP")));
     Gtk::Grid *cropGrid = Gtk::manage(new Gtk::Grid());
-    Gtk::Label *cropGuidesLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": "));
+    Gtk::Label *cropGuidesLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ", Gtk::ALIGN_START));
     cropGuidesCombo = Gtk::manage(new Gtk::ComboBoxText());
     cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_NONE"));
     cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_FRAME"));
     cropGuidesCombo->append(M("PREFERENCES_CROP_GUIDES_FULL"));
     cropAutoFitCB = Gtk::manage(new Gtk::CheckButton());
-    Gtk::Label *cropAutoFitLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT")));
+    Gtk::Label *cropAutoFitLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_AUTO_FIT"), Gtk::ALIGN_START));
     cropAutoFitLbl->set_line_wrap(true);
     cropAutoFitCB->add(*cropAutoFitLbl);
     cropGrid->attach(*cropGuidesLbl, 0, 0, 1, 1);
@@ -631,7 +644,7 @@ Gtk::Widget* Preferences::getPerformancePanel ()
 
     Gtk::Frame* fprevdemo = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_PREVDEMO")));
     Gtk::HBox* hbprevdemo = Gtk::manage (new Gtk::HBox (false, 4));
-    Gtk::Label* lprevdemo = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PREVDEMO_LABEL")));
+    Gtk::Label* lprevdemo = Gtk::manage (new Gtk::Label (M("PREFERENCES_PREVDEMO_LABEL"), Gtk::ALIGN_START));
     cprevdemo = Gtk::manage (new Gtk::ComboBoxText ());
     cprevdemo->append (M ("PREFERENCES_PREVDEMO_FAST"));
     cprevdemo->append (M ("PREFERENCES_PREVDEMO_SIDECAR"));
@@ -650,38 +663,36 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     vbPerformance->pack_start (*ftiffserialize, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fclut = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CLUTSCACHE")) );
-    Gtk::HBox* clutCacheSizeHB = Gtk::manage ( new Gtk::HBox () );
-    clutCacheSizeHB->set_spacing (4);
-    Gtk::Label* CLUTLl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_CLUTSCACHE_LABEL") + ":", Gtk::ALIGN_START));
-    clutCacheSizeSB = Gtk::manage ( new Gtk::SpinButton () );
-    clutCacheSizeSB->set_digits (0);
-    clutCacheSizeSB->set_increments (1, 5);
-    clutCacheSizeSB->set_max_length (2); // Will this be sufficient? :)
 #ifdef _OPENMP
-    clutCacheSizeSB->set_range (1, 3 * omp_get_num_procs());
+    placeSpinBox(fclut, clutCacheSizeSB, "PREFERENCES_CLUTSCACHE_LABEL", 0, 1, 5, 2, 1, 3 * omp_get_num_procs());
 #else
-    clutCacheSizeSB->set_range (1, 12);
+    placeSpinBox(fclut, clutCacheSizeSB, "PREFERENCES_CLUTSCACHE_LABEL", 0, 1, 5, 2, 1, 12);
 #endif
-    clutCacheSizeHB->pack_start (*CLUTLl, Gtk::PACK_SHRINK, 0);
-    clutCacheSizeHB->pack_end (*clutCacheSizeSB, Gtk::PACK_SHRINK, 0);
-    fclut->add (*clutCacheSizeHB);
     vbPerformance->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* finspect = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_INSPECT_LABEL")) );
-    Gtk::HBox* maxIBuffersHB = Gtk::manage ( new Gtk::HBox () );
-    maxIBuffersHB->set_spacing (4);
-    maxIBuffersHB->set_tooltip_text (M ("PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP"));
-    Gtk::Label* maxIBufferLbl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_INSPECT_MAXBUFFERS_LABEL") + ":", Gtk::ALIGN_START));
-    maxInspectorBuffersSB = Gtk::manage ( new Gtk::SpinButton () );
-    maxInspectorBuffersSB->set_digits (0);
-    maxInspectorBuffersSB->set_increments (1, 5);
-    maxInspectorBuffersSB->set_max_length (2);
-    maxInspectorBuffersSB->set_range (1, 12); // ... we have to set a limit, 12 seem to be enough even for systems with tons of RAM
-    maxIBuffersHB->pack_start (*maxIBufferLbl, Gtk::PACK_SHRINK, 0);
-    maxIBuffersHB->pack_end (*maxInspectorBuffersSB, Gtk::PACK_SHRINK, 0);
+    Gtk::Frame* fchunksize = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CHUNKSIZES")) );
+    Gtk::VBox* chunkSizeVB = Gtk::manage ( new Gtk::VBox () );
 
+    Gtk::HBox* measureHB = Gtk::manage ( new Gtk::HBox () );
+    measureHB->set_spacing (4);
+    measureCB = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_PERFORMANCE_MEASURE")) );
+    measureCB->set_tooltip_text (M ("PREFERENCES_PERFORMANCE_MEASURE_HINT"));
+    measureHB->pack_start(*measureCB, Gtk::PACK_SHRINK, 0);
+    chunkSizeVB->add(*measureHB);
+
+    placeSpinBox(chunkSizeVB, chunkSizeAMSB, "PREFERENCES_CHUNKSIZE_RAW_AMAZE", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeCASB, "PREFERENCES_CHUNKSIZE_RAW_CA", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeRCDSB, "PREFERENCES_CHUNKSIZE_RAW_RCD", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeRGBSB, "PREFERENCES_CHUNKSIZE_RGB", 0, 1, 5, 2, 1, 16);
+    placeSpinBox(chunkSizeVB, chunkSizeXTSB, "PREFERENCES_CHUNKSIZE_RAW_XT", 0, 1, 5, 2, 1, 16);
+
+    fchunksize->add (*chunkSizeVB);
+
+    vbPerformance->pack_start (*fchunksize, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Frame* finspect = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_INSPECT_LABEL")) );
     Gtk::VBox *inspectorvb = Gtk::manage(new Gtk::VBox());
-    inspectorvb->add(*maxIBuffersHB);
+    placeSpinBox(inspectorvb, maxInspectorBuffersSB, "PREFERENCES_INSPECT_MAXBUFFERS_LABEL", 0, 1, 5, 2, 1, 12, "PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP");
 
     Gtk::HBox *insphb = Gtk::manage(new Gtk::HBox());
     thumbnailInspectorMode = Gtk::manage(new Gtk::ComboBoxText());
@@ -697,23 +708,14 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     Gtk::Frame* threadsFrame = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PERFORMANCE_THREADS")) );
     Gtk::VBox* threadsVBox = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
 
-    Gtk::HBox* threadsHBox = Gtk::manage (new Gtk::HBox (Gtk::PACK_SHRINK, 4));
-    Gtk::Label* threadsLbl = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_PERFORMANCE_THREADS_LABEL") + ":", Gtk::ALIGN_START));
-    threadsSpinBtn = Gtk::manage ( new Gtk::SpinButton () );
-    threadsSpinBtn->set_digits (0);
-    threadsSpinBtn->set_increments (1, 5);
-    threadsSpinBtn->set_max_length (2); // Will this be sufficient? :)
 #ifdef _OPENMP
     int maxThreadNumber = omp_get_max_threads();
 #else
     int maxThreadNumber = 10;
 #endif
-    threadsSpinBtn->set_range (0, maxThreadNumber);
 
-    threadsHBox->pack_start (*threadsLbl, Gtk::PACK_SHRINK, 2);
-    threadsHBox->pack_end (*threadsSpinBtn, Gtk::PACK_SHRINK, 2);
+    placeSpinBox(threadsVBox, threadsSpinBtn, "PREFERENCES_PERFORMANCE_THREADS_LABEL", 0, 1, 5, 2, 0, maxThreadNumber);
 
-    threadsVBox->pack_start (*threadsHBox, Gtk::PACK_SHRINK);
     threadsFrame->add (*threadsVBox);
 
     vbPerformance->pack_start (*threadsFrame, Gtk::PACK_SHRINK, 4);
@@ -891,7 +893,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     Gtk::Label* flayoutlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_EDITORLAYOUT") + ":"));
     setExpandAlignProperties (flayoutlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    editorLayout = Gtk::manage (new Gtk::ComboBoxText ());
+    editorLayout = Gtk::manage (new MyComboBoxText ());
     setExpandAlignProperties (editorLayout, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     editorLayout->append (M ("PREFERENCES_SINGLETAB"));
     editorLayout->append (M ("PREFERENCES_SINGLETABVERTAB"));
@@ -1046,12 +1048,15 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     navGuideColorCB = Gtk::manage(new Gtk::ColorButton());
     navGuideColorCB->set_use_alpha(true);
 
+    pseudoHiDPI = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_APPEARANCE_PSEUDOHIDPI") + Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")"));
+    setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+
     Gtk::VSeparator *vSep = Gtk::manage(new Gtk::VSeparator());
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
     appearanceGrid->attach(*themeRestartLbl,    2, 0, 2, 1);
-    appearanceGrid->attach(*vSep,               2, 1, 1, 3);
+    appearanceGrid->attach(*vSep,               2, 1, 1, 2);
     appearanceGrid->attach(*mainFontLbl,        0, 1, 1, 1);
     appearanceGrid->attach(*mainFontFB,         1, 1, 1, 1);
     appearanceGrid->attach(*cropMaskColorLbl,   3, 1, 1, 1);
@@ -1060,6 +1065,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     appearanceGrid->attach(*colorPickerFontFB,  1, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorLbl,   3, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorCB,    4, 2, 1, 1);
+    appearanceGrid->attach(*pseudoHiDPI,        0, 3, 5, 1);
 
     appearanceFrame->add(*appearanceGrid);
     vbGeneral->attach_next_to(*appearanceFrame, *flang, Gtk::POS_BOTTOM, 2, 1);
@@ -1269,7 +1275,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     vbro->pack_start (*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
     Gtk::HBox* hbrecent = Gtk::manage ( new Gtk::HBox () );
-    Gtk::Label* labrecent = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_MAXRECENTFOLDERS") + ":") );
+    Gtk::Label* labrecent = Gtk::manage (new Gtk::Label (M("PREFERENCES_MAXRECENTFOLDERS") + ":", Gtk::ALIGN_START));
     maxRecentFolders = Gtk::manage ( new Gtk::SpinButton () );
     hbrecent->pack_start (*labrecent, Gtk::PACK_SHRINK, 4);
     hbrecent->pack_start (*maxRecentFolders, Gtk::PACK_SHRINK, 4);
@@ -1282,11 +1288,11 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
 
 
     Gtk::Frame* frmnu = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_MENUOPTIONS")) );
-    
+
     Gtk::Grid* menuGrid = Gtk::manage(new Gtk::Grid());
     menuGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(menuGrid, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    
+
     ckbmenuGroupRank = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPRANK")) );
     setExpandAlignProperties(ckbmenuGroupRank, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     ckbmenuGroupLabel = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPLABEL")) );
@@ -1294,12 +1300,15 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     setExpandAlignProperties(ckbmenuGroupFileOperations, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     ckbmenuGroupProfileOperations = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPPROFILEOPERATIONS")) );
     ckbmenuGroupExtProg = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_MENUGROUPEXTPROGS")) );
-    
+
+    Gtk::Label* groupRestartNeeded = Gtk::manage(new Gtk::Label (Glib::ustring ("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")", Gtk::ALIGN_START));
+
     menuGrid->attach (*ckbmenuGroupRank, 0, 0, 1, 1);
     menuGrid->attach (*ckbmenuGroupLabel, 1, 0, 1, 1);
     menuGrid->attach (*ckbmenuGroupFileOperations, 0, 1, 1, 1);
     menuGrid->attach (*ckbmenuGroupProfileOperations, 1, 1, 1, 1);
-    menuGrid->attach (*ckbmenuGroupExtProg, 0, 2, 2, 1);
+    menuGrid->attach (*ckbmenuGroupExtProg, 0, 2, 1, 1);
+    menuGrid->attach (*groupRestartNeeded, 1, 2, 1, 1);
 
     frmnu->add (*menuGrid);
 
@@ -1307,7 +1316,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel ()
     Gtk::Frame* fre = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PARSEDEXT")) );
     Gtk::VBox* vbre = Gtk::manage ( new Gtk::VBox () );
     Gtk::HBox* hb0 = Gtk::manage ( new Gtk::HBox () );
-    Gtk::Label* elab = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_PARSEDEXTADD") + ":") );
+    Gtk::Label* elab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PARSEDEXTADD") + ":", Gtk::ALIGN_START));
     hb0->pack_start (*elab, Gtk::PACK_SHRINK, 4);
     extension = Gtk::manage ( new Gtk::Entry () );
     extension->set_width_chars (5);
@@ -1441,7 +1450,7 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     swSounds = Gtk::manage(new Gtk::ScrolledWindow());
     swSounds->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-    Gtk::VBox* vbSounds = new Gtk::VBox ();
+    Gtk::VBox* vbSounds = Gtk::manage(new Gtk::VBox ());
 
     ckbSndEnable = Gtk::manage ( new Gtk::CheckButton (M ("GENERAL_ENABLE")));
     sndEnableConn = ckbSndEnable->signal_toggled().connect (sigc::mem_fun (*this, &Preferences::sndEnableToggled));
@@ -1449,14 +1458,14 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     vbSounds->pack_start (*ckbSndEnable, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hblSndHelp = Gtk::manage (new Gtk::HBox ());
-    Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_HELP")));
+    Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP"), Gtk::ALIGN_START));
     hblSndHelp->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
     vbSounds->pack_start (*hblSndHelp, Gtk::PACK_SHRINK, 4);
 
     // BatchQueueDone
     Gtk::HBox* pBatchQueueDone = Gtk::manage ( new Gtk::HBox() );
 
-    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring (":")));
+    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_QUEUEDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
     pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 4);
 
     txtSndBatchQueueDone = Gtk::manage (new Gtk::Entry());
@@ -1467,13 +1476,13 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     // LngEditProcDone
     Gtk::HBox* pSndLngEditProcDone = Gtk::manage ( new Gtk::HBox() );
 
-    Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring (":")));
+    Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring (":"), Gtk::ALIGN_START));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 4);
 
     txtSndLngEditProcDone = Gtk::manage (new Gtk::Entry());
     pSndLngEditProcDone->pack_start (*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M ("PREFERENCES_SND_THRESHOLDSECS") + Glib::ustring (":")));
+    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_THRESHOLDSECS") + Glib::ustring (":"), Gtk::ALIGN_START));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
 
     spbSndLngEditProcDoneSecs = Gtk::manage ( new Gtk::SpinButton () );
@@ -1637,6 +1646,8 @@ void Preferences::storePreferences ()
         moptions.CPFontSize = cpfd.get_size() / Pango::SCALE;
     }
 
+    moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
+
 #ifdef WIN32
     moptions.gimpDir = gimpDir->get_filename ();
     moptions.psDir = psDir->get_filename ();
@@ -1784,6 +1795,12 @@ void Preferences::storePreferences ()
 
     moptions.rgbDenoiseThreadLimit = threadsSpinBtn->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
+    moptions.measure = measureCB->get_active();
+    moptions.chunkSizeAMAZE = chunkSizeAMSB->get_value_as_int();
+    moptions.chunkSizeCA = chunkSizeCASB->get_value_as_int();
+    moptions.chunkSizeRCD = chunkSizeRCDSB->get_value_as_int();
+    moptions.chunkSizeRGB = chunkSizeRGBSB->get_value_as_int();
+    moptions.chunkSizeXT = chunkSizeXTSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
     moptions.rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(thumbnailInspectorMode->get_active_row_number());
 
@@ -1895,6 +1912,8 @@ void Preferences::fillPreferences ()
         colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.CPFontFamily, options.CPFontSize));
     }
 
+    pseudoHiDPI->set_active(options.pseudoHiDPISupport);
+
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
     showExpComp->set_active (moptions.fbShowExpComp);
@@ -1988,6 +2007,12 @@ void Preferences::fillPreferences ()
 
     threadsSpinBtn->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
+    measureCB->set_active (moptions.measure);
+    chunkSizeAMSB->set_value (moptions.chunkSizeAMAZE);
+    chunkSizeCASB->set_value (moptions.chunkSizeCA);
+    chunkSizeRGBSB->set_value (moptions.chunkSizeRGB);
+    chunkSizeRCDSB->set_value (moptions.chunkSizeRCD);
+    chunkSizeXTSB->set_value (moptions.chunkSizeXT);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
     thumbnailInspectorMode->set_active(int(moptions.rtSettings.thumbnail_inspector_mode));
 
@@ -2099,7 +2124,6 @@ void Preferences::cancelPressed ()
 {
     // set the initial theme back
     if (themeFNames.at (themeCBT->get_active_row_number ()).longFName != options.theme) {
-        rtengine::setPaths();
         RTImage::updateImages();
         switchThemeTo (options.theme);
     }
@@ -2157,7 +2181,6 @@ void Preferences::themeChanged ()
 {
 
     moptions.theme = themeFNames.at (themeCBT->get_active_row_number ()).longFName;
-    rtengine::setPaths();
     RTImage::updateImages();
     switchThemeTo (moptions.theme);
 }
@@ -2334,11 +2357,11 @@ void Preferences::switchFontTo (const Glib::ustring &newFontFamily, const int ne
 
         try {
             //GTK318
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", newFontFamily, newFontSize));
-#else
-            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize));
-#endif
+//#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+//            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", newFontFamily, newFontSize * RTScalable::getScale()));
+//#else
+            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize * RTScalable::getScale()));
+//#endif
             //GTK318
         } catch (Glib::Error &err) {
             printf ("Error: \"%s\"\n", err.what().c_str());
@@ -2385,7 +2408,7 @@ void Preferences::workflowUpdate ()
             || moptions.rtSettings.printerBPC     != options.rtSettings.printerBPC
             || moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent) {
         // Update the position of the Histogram
-        parent->updateProfiles (moptions.rtSettings.printerProfile, moptions.rtSettings.printerIntent, moptions.rtSettings.printerBPC);
+        parent->updateProfiles (moptions.rtSettings.printerProfile, rtengine::RenderingIntent(moptions.rtSettings.printerIntent), moptions.rtSettings.printerBPC);
     }
 
 }

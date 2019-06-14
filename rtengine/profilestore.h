@@ -27,8 +27,20 @@
 #include "noncopyable.h"
 #include "dynamicprofile.h"
 
-
 // forward decl
+namespace rtengine
+{
+
+namespace procparams
+{
+
+class AutoPartialProfile;
+class PartialProfile;
+
+}
+
+}
+
 class DynamicProfileRule;
 class DynamicProfileRules;
 

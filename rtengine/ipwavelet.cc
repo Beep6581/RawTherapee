@@ -40,6 +40,7 @@
 #include "median.h"
 #include "EdgePreservingDecomposition.h"
 #include "iccstore.h"
+#include "procparams.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -1667,7 +1668,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 //tone mapping
     if(cp.tonemap && cp.contmet == 2  && cp.resena) {
         //iterate = 5
-        EPDToneMapResid(WavCoeffs_L0, 5, skip, cp, W_L, H_L, max0, min0);
+        EPDToneMapResid(WavCoeffs_L0, 0, skip, cp, W_L, H_L, max0, min0);
 
     }
 
@@ -3003,7 +3004,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             if(useChromAndHue) {
                 float modhue = varhue[ii][jj];
                 modchro = varchrom[ii * 2][jj * 2];
-                // hue chroma skin with initial lab datas
+                // hue chroma skin with initial lab data
                 scale = 1.f;
 
                 if(skinprot > 0.f) {
@@ -3215,7 +3216,7 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
                 float LL100 = labco->L[ii * 2][jj * 2] / 327.68f;
                 float modhue = varhue[ii][jj];
                 float modchro = varchrom[ii * 2][jj * 2];
-                // hue chroma skin with initial lab datas
+                // hue chroma skin with initial lab data
                 float scale = 1.f;
 
                 if(skinprot > 0.f) {
@@ -3251,7 +3252,7 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
             float modchro = varchrom[ii * 2][jj * 2];
 
             if(useSkinControl) {
-                // hue chroma skin with initial lab datas
+                // hue chroma skin with initial lab data
                 float LL100 = labco->L[ii * 2][jj * 2] / 327.68f;
                 float modhue = varhue[ii][jj];
 

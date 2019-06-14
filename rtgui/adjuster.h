@@ -43,7 +43,6 @@ protected:
     Gtk::Grid* grid;
     Gtk::Label* label;
     Gtk::Image *imageIcon1;
-    Gtk::Image *imageIcon2;
     MyHScale* slider;
     MySpinButton* spin;
     Gtk::Button* reset;
@@ -60,7 +59,6 @@ protected:
     double ctorDefaultVal;      // default value at construction time
     EditedState editedState;
     EditedState defEditedState;
-    EditedState autoState;
     int digits;
     Gtk::CheckButton* editedCheckBox;
     bool afterReset;
@@ -75,11 +73,10 @@ protected:
     double logPivot;
     bool logAnchorMiddle;
 
-    double shapeValue (double a);
-    void   refreshLabelStyle ();
+    double shapeValue (double a) const;
     double2double_fun value2slider, slider2value;
 
-    double getSliderValue();
+    double getSliderValue() const;
     void setSliderValue(double val);
 
 public:
@@ -90,85 +87,36 @@ public:
     ~Adjuster () override;
 
     // Add an "Automatic" checkbox next to the reset button.
-    void addAutoButton(Glib::ustring tooltip = "");
-    // Remove the "Automatic" checkbox next to the reset button.
-    void delAutoButton();
+    void addAutoButton(const Glib::ustring &tooltip = "");
     // Send back the value of og the Auto checkbox
-    bool getAutoValue ()
-    {
-        return automatic != nullptr ? automatic->get_active () : false;
-    }
-    void setAutoValue (bool a);
-    bool notifyListenerAutoToggled ();
-    void autoToggled ();
-    void setAutoInconsistent (bool i)
-    {
-        if (automatic) {
-            automatic->set_inconsistent(i);
-        }
-    }
-    bool getAutoInconsistent ()
-    {
-        return automatic ? automatic->get_inconsistent() : true /* we have to return something */;
-    }
-
-    void setAdjusterListener (AdjusterListener* alistener)
-    {
-        adjusterListener = alistener;
-    }
-
+    bool getAutoValue() const;
+    void setAutoValue(bool a);
+    bool notifyListenerAutoToggled();
+    void autoToggled();
+    void setAutoInconsistent(bool i);
+    bool getAutoInconsistent() const;
+    void setAdjusterListener(AdjusterListener* alistener);
     // return the value trimmed to the limits at construction time
-    double getValue ()
-    {
-        return shapeValue(spin->get_value ());
-    }
+    double getValue() const;
     // return the value trimmed to the limits at construction time
-    int getIntValue ()
-    {
-        return spin->get_value_as_int ();
-    }
+    int getIntValue() const;
     // return the value trimmed to the limits at construction time,
     // method only used by the history manager, so decoration is added if addMode=true
-    Glib::ustring getTextValue ()
-    {
-        if (addMode) {
-            return Glib::ustring::compose("<i>%1</i>", spin->get_text ());
-        } else {
-            return spin->get_text ();
-        }
-    }
-
-    void setLabel (Glib::ustring lbl)
-    {
-        label->set_label(lbl);
-    }
+    Glib::ustring getTextValue() const;
+    void setLabel (const Glib::ustring &lbl);
     void setValue (double a);
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);
     void setDefault (double def);
     // will let the adjuster throw it's "changed" signal when the mouse button is released. Can work altogether with the delay value.
     void throwOnButtonRelease(bool throwOnBRelease = true);
-    void setNbDisplayedChars (int nbr)
-    {
-        spin->set_width_chars(nbr);
-        spin->set_max_width_chars(nbr);
-    }
     void setEditedState (EditedState eState);
     EditedState getEditedState ();
     void setDefaultEditedState (EditedState eState);
     void showEditedCB ();
-    bool block(bool isBlocked)
-    {
-        bool oldValue = blocked;
-        blocked = isBlocked;
-        return oldValue;
-    }
-
+    bool block(bool isBlocked);
     void setAddMode(bool addM);
-    bool getAddMode()
-    {
-        return addMode;
-    };
+    bool getAddMode() const;
     void spinChanged ();
     void sliderChanged ();
     bool notifyListener ();
@@ -177,11 +125,10 @@ public:
     void resetValue (bool toInitial);
     void resetPressed (GdkEventButton* event);
     void editedToggled ();
-    void trimValue (double &val);
-    void trimValue (float &val);
-    void trimValue (int &val);
-
-    void setLogScale(double base, double pivot, bool anchorMiddle=false);
+    void trimValue (double &val) const;
+    void trimValue (float &val) const;
+    void trimValue (int &val) const;
+    void setLogScale(double base, double pivot, bool anchorMiddle = false);
 };
 
 #endif

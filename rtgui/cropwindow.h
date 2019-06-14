@@ -29,7 +29,8 @@
 #include "cropguilistener.h"
 #include "pointermotionlistener.h"
 #include "cursormanager.h"
-#include "edit.h"
+#include "editbuffer.h"
+#include "editcoordsys.h"
 
 class CropWindow;
 

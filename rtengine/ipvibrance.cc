@@ -27,6 +27,7 @@
 #include "../rtgui/thresholdselector.h"
 #include "curves.h"
 #include "color.h"
+#include "procparams.h"
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -39,8 +40,6 @@ namespace rtengine
 {
 
 using namespace procparams;
-
-extern const Settings* settings;
 
 void fillCurveArrayVib (DiagonalCurve* diagCurve, LUTf &outCurve)
 {
@@ -170,7 +169,9 @@ void ImProcFunctions::vibrance (LabImage* lab)
         {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
     };
 
+#ifdef _OPENMP
     #pragma omp parallel if (multiThread)
+#endif
     {
 
 #ifdef __SSE2__
@@ -179,7 +180,9 @@ void ImProcFunctions::vibrance (LabImage* lab)
 #endif
         float sathue[5], sathue2[4]; // adjust sat in function of hue
 
+#ifdef _OPENMP
         #pragma omp for schedule(dynamic, 16)
+#endif
 
         for (int i = 0; i < height; i++) {
 #ifdef __SSE2__
@@ -609,6 +612,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
                 const float fyy = Color::c1By116 * Lprov + Color::c16By116;
                 const float yy_ = (Lprov > Color::epskap) ? fyy * fyy*fyy : Lprov / Color::kappaf;
+                float ChprovOld = std::numeric_limits<float>::min();
                 do {
                     inGamut = true;
 
@@ -622,9 +626,14 @@ void ImProcFunctions::vibrance (LabImage* lab)
                             hhModified = false;
                         }
                     }
-
                     aprovn = Chprov * sincosval.y;
                     bprovn = Chprov * sincosval.x;
+
+                    if (Chprov == ChprovOld) { // avoid endless loop
+                        break;
+                    } else {
+                        ChprovOld = Chprov;
+                    }
 
                     float fxx = 0.002f * aprovn + fyy;
                     float fzz = fyy - 0.005f * bprovn;

@@ -32,6 +32,7 @@
 #include "profilestore.h"
 #include "../rtgui/threadutils.h"
 #include "rtlensfun.h"
+#include "procparams.h"
 
 namespace rtengine
 {
@@ -112,6 +113,7 @@ void cleanup ()
     ProcParams::cleanup ();
     Color::cleanup ();
     RawImageSource::cleanup ();
+
 #ifdef RT_FFTW3F_OMP
     fftwf_cleanup_threads();
 #else

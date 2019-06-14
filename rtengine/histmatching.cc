@@ -24,6 +24,7 @@
 #include "color.h"
 #include "rt_math.h"
 #include "iccstore.h"
+#include "procparams.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "improcfun.h"
 //#define BENCHMARK
@@ -68,7 +69,7 @@ CdfInfo getCdf(const IImage8 &img)
         sum += ret.cdf[i];
         ret.cdf[i] = sum;
     }
-    
+
     return ret;
 }
 
@@ -100,7 +101,7 @@ int findMatch(int val, const std::vector<int> &cdf, int j)
 void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 {
     curve.clear();
-    
+
     int idx = 15;
     for (; idx < int(mapping.size()); ++idx) {
         if (mapping[idx] >= idx) {
@@ -108,7 +109,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         }
     }
     if (idx == int(mapping.size())) {
-        for (idx = 1; idx < int(mapping.size()); ++idx) {
+        for (idx = 1; idx < int(mapping.size())-1; ++idx) {
             if (mapping[idx] >= idx) {
                 break;
             }
@@ -159,7 +160,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         doit(start, idx, idx > step ? step : idx / 2, true);
         doit(idx, end, step, idx - step > step / 2 && std::abs(curve[curve.size()-2] - coord(idx)) > 0.01);
     }
-    
+
     if (curve.size() > 2 && (1 - curve[curve.size()-2] <= coord(step) / 3)) {
         curve.pop_back();
         curve.pop_back();
@@ -178,7 +179,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
             return (x - xa) / (xb - xa) * (yb - ya) + ya;
         };
     idx = -1;
-    for (size_t i = curve.size()-1; i > 0; i -= 2) {
+    for (ssize_t i = curve.size()-1; i > 0; i -= 2) {
         if (curve[i] <= 0.f) {
             idx = i+1;
             break;
@@ -206,7 +207,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
             }
         }
     }
-        
+
     if (curve.size() < 4) {
         curve = { DCT_Linear }; // not enough points, fall back to linear
     } else {
@@ -232,7 +233,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, std::vector<double> &outCurve)
 {
     BENCHFUN
-        
+
     if (settings->verbose) {
         std::cout << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
     }
@@ -248,7 +249,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                     && a.dcpIlluminant == b.dcpIlluminant);
         };
 
-    if (!histMatchingCache.empty() && same_profile(histMatchingParams, cp)) {
+    if (!histMatchingCache.empty() && same_profile(*histMatchingParams, cp)) {
         if (settings->verbose) {
             std::cout << "tone curve found in cache" << std::endl;
         }
@@ -274,7 +275,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.outputProfile = ColorManagementParams::NoICMString;
-    
+
     std::unique_ptr<IImage8> source;
     {
         RawMetaDataLocation rml;
@@ -286,14 +287,17 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                 std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
-            histMatchingParams = cp;
+            *histMatchingParams = cp;
             return;
-        } else if (w * 10 < fw) {
+        } else if (w * 33 < fw || w * h < 19200) {
+             // Some cameras have extremely small thumbs, for example Canon PowerShot A3100 IS has 128x96 thumbs.
+             // For them we skip histogram matching.
+             // With 160x120 thumbs from RICOH GR DIGITAL 2 it works fine, so we use 19200 as limit.
             if (settings->verbose) {
                 std::cout << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
             }
             histMatchingCache = outCurve;
-            histMatchingParams = cp;
+            *histMatchingParams = cp;
             return;
         }
         skip = LIM(skip * fh / h, 6, 10); // adjust the skip factor -- the larger the thumbnail, the less we should skip to get a good match
@@ -303,7 +307,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
             std::cout << "histogram matching: extracted embedded thumbnail" << std::endl;
         }
     }
-    
+
     std::unique_ptr<IImage8> target;
     {
         RawMetaDataLocation rml;
@@ -316,7 +320,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                 std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
-            histMatchingParams = cp;
+            *histMatchingParams = cp;
             return;
         }
         target.reset(thumb->processImage(neutral, sensor_type, fh / skip, TI_Nearest, getMetaData(), scale, false, true));
@@ -388,7 +392,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     }
 
     histMatchingCache = outCurve;
-    histMatchingParams = cp;
+    *histMatchingParams = cp;
 }
 
 } // namespace rtengine

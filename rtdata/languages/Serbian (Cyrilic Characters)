@@ -5,9 +5,6 @@ ABOUT_TAB_CREDITS;Заслуге
 ABOUT_TAB_LICENSE;Лиценца
 ABOUT_TAB_RELEASENOTES;Белешке о издању
 ABOUT_TAB_SPLASH;Увод
-BATCHQUEUE_AUTOSTART;Сам започни
-BATCHQUEUE_AUTOSTARTHINT;Покреће обраду фотографија када их закажете
-BATCHQUEUE_DESTFILENAME;Путања и име датотеке
 BATCH_PROCESSING;обрада
 CURVEEDITOR_CURVE;Кривуља
 CURVEEDITOR_CURVES;Кривуље
@@ -68,7 +65,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Занемари [raw] ЛММСЕ корак�
 EXPORT_BYPASS_SHARPENEDGE;Занемари оштрење ивице
 EXPORT_BYPASS_SHARPENING;Занемари оштрење
 EXPORT_BYPASS_SHARPENMICRO;Занемари микроконтраст
-EXPORT_BYPASS_SH_HQ;Занемари оштру маску за Сенке/Светло
 EXPORT_FASTEXPORTOPTIONS;<b>Опције за брз извоз</b>
 EXPORT_INSTRUCTIONS;Брз извоз омогућава да заобиђете неке од захтевних и споријих процеса приликом развијања слика и да закажете фотографије за брзо развијање. Овј метод је добар за брзо развијање слика у мањој резолуцији, када вам је битно да фотографије добијете што пре или када желите примените задовољавајуће параметре за развијање већег броја фотографија одједном без измене њихових профила.
 EXPORT_MAXHEIGHT;Највећа висина:
@@ -77,12 +73,10 @@ EXPORT_PUTTOQUEUEFAST;  Закажи за брз извоз
 EXPORT_RAW_DMETHOD;Начин расклапања мозаика
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;заказано-развијено
-FILEBROWSER_ADDDELTEMPLATE;Додај/уклони шаблоне...
 FILEBROWSER_APPLYPROFILE;Примени профил
 FILEBROWSER_APPLYPROFILE_PARTIAL;Примени профил (половично)
 FILEBROWSER_AUTODARKFRAME;Сам одреди тамни кадар
 FILEBROWSER_AUTOFLATFIELD;Аутоматски одреди равно поље
-FILEBROWSER_BROWSEPATHBUTTONHINT;Кликните за одлазак на узабрану путању
 FILEBROWSER_BROWSEPATHHINT;Укуцајте путању за разгледање (<b>Ctrl-o</b> поставља фокус, <b>Ctrl-Enter</b> приказује у разгледачу датотека);nПречице путања: <b>~</b> — лични директоријум, <b>!</b> — директоријум са сликама
 FILEBROWSER_CACHE;Остава
 FILEBROWSER_CLEARPROFILE;Обриши профил
@@ -90,11 +84,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Натпис у боји.\n\nКористите �
 FILEBROWSER_COPYPROFILE;Умножи профил
 FILEBROWSER_CURRENT_NAME;Тренутно име:
 FILEBROWSER_DARKFRAME;Тамни кадар
-FILEBROWSER_DELETEDLGLABEL;Брисање датотеке
-FILEBROWSER_DELETEDLGMSG;Да ли сигурно желите да обришете %1 датотека?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Да ли желите да обришете %1 изабраних датотека, укључујући и оне које су заказане?
+FILEBROWSER_DELETEDIALOG_HEADER;Брисање датотеке
+FILEBROWSER_DELETEDIALOG_SELECTED;Да ли сигурно желите да обришете %1 датотека?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Да ли желите да обришете %1 изабраних датотека, укључујући и оне које су заказане?
 FILEBROWSER_EMPTYTRASH;Избаци смеће
-FILEBROWSER_EMPTYTRASHHINT;Трајно брише датотеке из смећа
 FILEBROWSER_EXTPROGMENU;Отвори помоћу
 FILEBROWSER_FLATFIELD;Равно поље
 FILEBROWSER_MOVETODARKFDIR;Пребаци у фасциклу са тамним кадровима
@@ -179,7 +172,6 @@ GENERAL_WARNING;Упозорење
 HISTOGRAM_TOOLTIP_B;Приказује плави хистограм
 HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
 HISTOGRAM_TOOLTIP_CHRO;Прикажи/сакриј хистограм хроминансе.
-HISTOGRAM_TOOLTIP_FULL;Укључује приказ потпуног или хистограма у размери.
 HISTOGRAM_TOOLTIP_G;Приказује зелени хистограм
 HISTOGRAM_TOOLTIP_L;Приказује ЦиеЛаб хитограм
 HISTOGRAM_TOOLTIP_R;Приказује црвени хистограм
@@ -312,7 +304,6 @@ HISTORY_MSG_121;Сам исправи аберације
 HISTORY_MSG_122;Сам примени тамни кадар
 HISTORY_MSG_123;Датотека за тамни кадар
 HISTORY_MSG_124;Линеарна исправка експ.
-HISTORY_MSG_125;Поправка експ. уз очување светлог
 HISTORY_MSG_126;Датотека са равним пољем
 HISTORY_MSG_127;Сам изабери равно поље
 HISTORY_MSG_128;Полупречник равног поља
@@ -469,15 +460,14 @@ MAIN_BUTTON_SENDTOEDITOR;Уреди
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Уређује тренутну слику у спољном програму <b>Ctrl+Е</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Приказује/сакрива све бочне површине <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Напусти цео екран
-MAIN_FRAME_BATCHQUEUE;Заказане датотеке
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Заказано  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Уређивач
 MAIN_FRAME_EDITOR_TOOLTIP; Уређивач  <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Разгледач датотека
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Разгледач датотека  <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Места
 MAIN_FRAME_PLACES_ADD;Додај
-MAIN_FRAME_PLACES_DEL;Уклони
+MAIN_FRAME_QUEUE;Заказане датотеке
+MAIN_FRAME_QUEUE_TOOLTIP; Заказано  <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Recent Фасцикле
 MAIN_MSG_ALREADYEXISTS;Датотека већ постоји.
 MAIN_MSG_CANNOTLOAD;Не могу да учитам слику
@@ -570,7 +560,6 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Линијски филтер шума
 PARTIALPASTE_RAWCACORR_AUTO;Ауто хроматске аберације
 PARTIALPASTE_RAWEXPOS_BLACK;Ниво црне
 PARTIALPASTE_RAWEXPOS_LINEAR;Линеарни фактор исправке RAW беле тачке
-PARTIALPASTE_RAWEXPOS_PRESER;Raw тачка беле уз очување светлих делова
 PARTIALPASTE_RAWGROUP;Raw подешавања
 PARTIALPASTE_RAW_DCBENHANCE;Примени корак ДЦБ побољшања
 PARTIALPASTE_RAW_DCBITERATIONS;Број ДЦБ понављања
@@ -596,7 +585,6 @@ PREFERENCES_BEHADDALLHINT;Поставља све параметре у режи
 PREFERENCES_BEHAVIOR;Понашање
 PREFERENCES_BEHSETALL;Све у „Постави“
 PREFERENCES_BEHSETALLHINT;Поставља све параметре у режим <b>Постави</b>.\nЊихово подешавање помоћу алата из панела за заказано ће бити <b>апсолутне</b> вредности као што су и изабране.
-PREFERENCES_BLACKBODY;Обична сијалица
 PREFERENCES_CACHEMAXENTRIES;Највећи број мест у остави
 PREFERENCES_CACHEOPTS;Подешавање оставе
 PREFERENCES_CACHETHUMBHEIGHT;Највећа висина приказа
@@ -607,10 +595,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Кључни  формати
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Назив
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;БрОзнаке
 PREFERENCES_CUSTPROFBUILDPATH;Извршна путања
-PREFERENCES_D50;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Нађен
 PREFERENCES_DARKFRAMESHOTS;снимака
 PREFERENCES_DARKFRAMETEMPLATES;шаблони
@@ -625,25 +609,13 @@ PREFERENCES_DIRSOFTWARE;Директоријум са инсталацијом
 PREFERENCES_EDITORLAYOUT;Размештај програма
 PREFERENCES_EXTERNALEDITOR;Спољни уређивач
 PREFERENCES_FBROWSEROPTS;Опције разгледача датотеке
-PREFERENCES_FILEFORMAT;Формат датотеке
 PREFERENCES_FLATFIELDFOUND;Нађено
 PREFERENCES_FLATFIELDSDIR;Директоријум за равна поља
 PREFERENCES_FLATFIELDSHOTS;снимака
 PREFERENCES_FLATFIELDTEMPLATES;шаблони
-PREFERENCES_FLUOF2;Флоресцентна F2
-PREFERENCES_FLUOF7;Флоресцентна F7
-PREFERENCES_FLUOF11;Флоресцентна F11
 PREFERENCES_FORIMAGE;За датотеке са сликама
 PREFERENCES_FORRAW;За RAW датотеке
 PREFERENCES_GIMPPATH;Директоријум са инсталираним Гимпом
-PREFERENCES_GREY;Yb луминанса излазног уређаја (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Хистограм у левој површи
 PREFERENCES_HLTHRESHOLD;Праг за одсечене светле делове
 PREFERENCES_ICCDIR;ИЦЦ директоријум
@@ -660,14 +632,8 @@ PREFERENCES_MENUGROUPLABEL;Групиши обележавање
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Групиши радње са профилима
 PREFERENCES_MENUGROUPRANK;Групиши оцењивање
 PREFERENCES_MENUOPTIONS;Опције менија
-PREFERENCES_METADATA;Метаподаци
 PREFERENCES_MULTITAB;Режим у више листова
 PREFERENCES_MULTITABDUALMON;Режим у више листова, на другом монитору
-PREFERENCES_OUTDIR;Излазни директоријум
-PREFERENCES_OUTDIRFOLDER;Сачувај у фасциклу
-PREFERENCES_OUTDIRFOLDERHINT;Ставља сачуване слике у 
-PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Постави преко умањеног приказа
 PREFERENCES_OVERWRITEOUTPUTFILE;Препиши постојеће излазне датотеке
 PREFERENCES_PANFACTORLABEL;Фактор
@@ -691,9 +657,9 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Додај компензацију екс�
 PREFERENCES_SHTHRESHOLD;Праг за одсечене тамне делове
 PREFERENCES_SINGLETAB;Режим у једном листу
 PREFERENCES_SINGLETABVERTAB;Режим у једном листу, вертикални листови
-PREFERENCES_SND_BATCHQUEUEDONE;Обрађене су заказане датотеке
 PREFERENCES_SND_HELP;Унесите путању до датотеке или оставите празно уколико не желите звук. На Windows-у можете да користите „SystemDefault“, „SystemAsterisk“ за системске звуке.
 PREFERENCES_SND_LNGEDITPROCDONE;Уредник је завршио обраду
+PREFERENCES_SND_QUEUEDONE;Обрађене су заказане датотеке
 PREFERENCES_SND_THRESHOLDSECS;бр. секунди
 PREFERENCES_STARTUPIMDIR;Директоријум по покретању
 PREFERENCES_TAB_BROWSER;Преглед датотека
@@ -703,9 +669,7 @@ PREFERENCES_TAB_IMPROC;Обрада сликe
 PREFERENCES_TAB_SOUND;Звуци
 PREFERENCES_TP_LABEL;Површ алата:
 PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
-PREFERENCES_TUNNELMETADATA;Копирај неизмењене IPTC/XMP (када је слика означена другим програмом)
 PREFERENCES_USEBUNDLEDPROFILES;Користи профиле који долазе уз програм
-PREFERENCES_VIEW;Баланс беле излазног уређаја (монитор, ТВ, пројакетор и др.)
 PREFERENCES_WORKFLOW;Ток обраде
 PROFILEPANEL_COPYPPASTE;Параметри за копирање
 PROFILEPANEL_GLOBALPROFILES;Профили из програма
@@ -739,14 +703,19 @@ PROGRESSBAR_SAVEPNG;Чувам PNG датотеку...
 PROGRESSBAR_SAVETIFF;Чувам TIFF датотеку...
 PROGRESSBAR_SNAPSHOT_ADDED;Додат је снимак
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профил измењен у разгледачу
-P_GAMMA_CURV;гама
 QINFO_ISO;ИСО
 QINFO_NOEXIF;Нису доступни Exif подаци.
+QUEUE_AUTOSTART;Сам започни
+QUEUE_AUTOSTART_TOOLTIP;Покреће обраду фотографија када их закажете
+QUEUE_DESTFILENAME;Путања и име датотеке
+QUEUE_FORMAT_TITLE;Формат датотеке
+QUEUE_LOCATION_FOLDER;Сачувај у фасциклу
+QUEUE_LOCATION_TEMPLATE;Употреби шаблон
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;Сам додај суфикс уколико датотека већ постоји
 SAVEDLG_FILEFORMAT;Формат датотеке
 SAVEDLG_FORCEFORMATOPTS;Приморај могућности за чување
 SAVEDLG_JPEGQUAL;JPEG квалитет
-SAVEDLG_PNGCOMPR;PNG паковање
 SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_PUTTOQUEUEHEAD;Премешта слику на почетак заказаних
 SAVEDLG_PUTTOQUEUETAIL;Премешта слику на крај заказаних
@@ -829,7 +798,6 @@ TP_CHMIXER_BLUE;Плава
 TP_CHMIXER_GREEN;Зелена
 TP_CHMIXER_LABEL;Мешање канала
 TP_CHMIXER_RED;Црвена
-TP_CHROMATABERR_LABEL;Хроматске аберације
 TP_COARSETRAF_TOOLTIP_HFLIP;Изврће слику хоризонтално
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Окреће слику улево
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Окреће слику удесно
@@ -883,8 +851,6 @@ TP_COLORAPP_SURROUND_DARK;Тамно
 TP_COLORAPP_SURROUND_DIM;Затамњено
 TP_COLORAPP_SURROUND_EXDARK;Јако тамно
 TP_COLORAPP_SURROUND_TOOLTIP;Мења тонове и боје како би се прилагодило условима уређаја за приказ.\n\n<b>Просечно</b>: Просечно осветљено окружење (уобичајено). Слика неће бити измењена.\n\n<b>Затамњено</b>: Затамњено окружење (ТВ). Слика ће постати за нијансу тамнија.\n\n<b>Тамно</b>: Тамно окружење (пројектор). Слика ће постати још више тамна.\n\n<b>Јако тамно</b>: Екстрамно тамно окружење (cutsheet). Слика ће постати изузетно тамна.
-TP_COLORAPP_SURSOURCE;Тамно окружење
-TP_COLORAPP_SURSOURCE_TOOLTIP;Може да се користи уколико слика има тамне ивице.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Освтљеност
 TP_COLORAPP_TCMODE_CHROMA;Хрома
 TP_COLORAPP_TCMODE_COLORF;Живост боја
@@ -908,7 +874,6 @@ TP_CROP_GTRULETHIRDS;Правило трећина
 TP_CROP_GUIDETYPE;Вођицe:
 TP_CROP_H;В
 TP_CROP_LABEL;Исецање
-TP_CROP_PPI;ППИ=
 TP_CROP_W;Ш
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -920,12 +885,9 @@ TP_DEFRINGE_THRESHOLD;Праг
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Хроминанса: Плава-Жута
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Боја
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Хроминанса - црвена-зелена
-TP_DIRPYRDENOISE_ENH;Побољшани режим
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Повећава квалитет уклањања шума на уштрб око 20% времена за обраду.
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Детаљи луминансе
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Луминанса
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Начин
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Дирекционо пирамидно уклањање шума
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;РГБ
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;За рав слике можете користити РГБ или Лаб режиме.\n\nЗа остале слике се користи Лаб, без обзира на избор.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Гама
@@ -975,10 +937,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Хоризонтално
 TP_FLATFIELD_BT_VERTHORIZ;Хориз. и вертик.
 TP_FLATFIELD_BT_VERTICAL;Вертикално
 TP_FLATFIELD_LABEL;Равно поље
-TP_GAMMA_CURV;Гама
-TP_GAMMA_FREE;Гама слобода
-TP_GAMMA_OUTPUT;Излазна гама
-TP_GAMMA_SLOP;нагиб (линеарни)
 TP_GENERAL_11SCALE_TOOLTIP;Ефект овог алата или његових опција се види само у размери 1:1.
 TP_GRADIENT_CENTER;Центар
 TP_GRADIENT_CENTER_X;Центар X
@@ -1004,8 +962,6 @@ TP_HSVEQUALIZER_HUE;Нијанса
 TP_HSVEQUALIZER_LABEL;Уједначење ХСВ канала
 TP_HSVEQUALIZER_SAT;Засићеност
 TP_HSVEQUALIZER_VAL;Вредност
-TP_ICM_BLENDCMSMATRIX;Утопи светле делове у матрицу
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Омогућите како би повратили преосветљене делове уколико користите LUT ICC профиле.
 TP_ICM_DCPILLUMINANT;Илуминантно
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Интерполирано
 TP_ICM_INPUTCAMERA;Подразумевано из апарата
@@ -1090,9 +1046,8 @@ TP_PREPROCESS_NO_FOUND;Није пронађено
 TP_RAWCACORR_AUTO;Исправи хроматске аберације
 TP_RAWCACORR_CABLUE;Плава
 TP_RAWCACORR_CARED;Црвена
-TP_RAWEXPOS_BLACKS;Ниво црне
+TP_RAWCACORR_LABEL;Хроматске аберације
 TP_RAWEXPOS_LINEAR;Линеарни фактор корекције
-TP_RAWEXPOS_PRESER;Очување светлих делова
 TP_RAWEXPOS_TWOGREEN;Обе зелене
 TP_RAW_DCBENHANCE;Примени ДЦБ побољшање
 TP_RAW_DCBITERATIONS;Број ДЦБ пролаза
@@ -1132,10 +1087,8 @@ TP_SAVEDIALOG_OK_TIP;Пречица: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Светло
 TP_SHADOWSHLIGHTS_HLTONALW;Ширина тонова
 TP_SHADOWSHLIGHTS_LABEL;Сенке/Светло
-TP_SHADOWSHLIGHTS_LOCALCONTR;Локални контраст
 TP_SHADOWSHLIGHTS_RADIUS;Полупречник
 TP_SHADOWSHLIGHTS_SHADOWS;Сенке
-TP_SHADOWSHLIGHTS_SHARPMASK;Оштра маска
 TP_SHADOWSHLIGHTS_SHTONALW;Ширина тонова
 TP_SHARPENEDGE_AMOUNT;Количина
 TP_SHARPENEDGE_LABEL;Ивице
@@ -1242,7 +1195,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -1274,8 +1226,11 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
 !EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
@@ -1654,6 +1609,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
+!MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_ADVANCED;Advanced
 !MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
@@ -1702,6 +1658,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
 !PREFERENCES_APPEARANCE_MAINFONT;Main font
 !PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
+!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PREFERENCES_APPEARANCE_THEME;Theme
 !PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_CACHECLEAR;Clear
@@ -1709,6 +1666,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_CHUNKSIZES;Tiles per thread
+!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
+!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
+!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
+!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
+!PREFERENCES_CHUNKSIZE_RGB;RGB processing
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
@@ -1724,19 +1687,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
-!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_GREYSC;Scene Yb luminance (%)
-!PREFERENCES_GREYSC18;Yb=18 CIE L#50
-!PREFERENCES_GREYSCA;Automatic
-!PREFERENCES_HISTOGRAMWORKING;Use working profile for main histogram and Navigator
 !PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_IMG_RELOAD_NEEDED;These changes require the image to be reloaded (or a new image to be opened) to take effect.
 !PREFERENCES_INSPECT_LABEL;Inspect
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
@@ -1750,6 +1706,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PERFORMANCE_MEASURE;Measure
+!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 !PREFERENCES_PERFORMANCE_THREADS;Threads
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
 !PREFERENCES_PREVDEMO;Preview Demosaic Method
@@ -1776,9 +1734,17 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
 !PROFILEPANEL_PDYNAMIC;Dynamic
+!PROGRESSBAR_DECODING;Decoding...
+!PROGRESSBAR_GREENEQUIL;Green equilibration...
+!PROGRESSBAR_HLREC;Highlight reconstruction...
+!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+!PROGRESSBAR_LINEDENOISE;Line noise filter...
+!PROGRESSBAR_RAWCACORR;Raw CA correction...
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
@@ -1869,15 +1835,15 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
+!TP_CROP_PPI;PPI
 !TP_CROP_RESETCROP;Reset
 !TP_CROP_SELECTCROP;Select
 !TP_DEHAZE_DEPTH;Depth
 !TP_DEHAZE_LABEL;Haze Removal
-!TP_DEHAZE_SHOW_DEPTH_MAP;Show Depth Map
+!TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
-!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 !TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
@@ -1913,7 +1879,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
 !TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TYPE_3X3;3×3
 !TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
 !TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1962,14 +1927,14 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_ICM_WORKING_TRC_NONE;None
 !TP_ICM_WORKING_TRC_SLOPE;Slope
 !TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically
+!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually
+!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Select the lens profile:
+!TP_LENSPROFILE_MODE_HEADER;Lens Profile
 !TP_LENSPROFILE_USE_CA;Chromatic aberration
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric
-!TP_LENSPROFILE_USE_HEADER;Select distortions to correct:
+!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+!TP_LENSPROFILE_USE_HEADER;Correct
 !TP_LENSPROFILE_USE_VIGNETTING;Vignetting
 !TP_LOCALCONTRAST_AMOUNT;Amount
 !TP_LOCALCONTRAST_DARKNESS;Darkness level
@@ -1995,7 +1960,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
-!TP_RAWCACORR_CASTR;Strength
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -2024,7 +1988,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAW_HPHD;HPHD
 !TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_IMAGENUM_SN;SN mode
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_LMMSE;LMMSE
 !TP_RAW_MONO;Mono
 !TP_RAW_NONE;None (Shows sensor pattern)
@@ -2040,15 +2005,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2064,6 +2026,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.\n+fast gives less artifacts in flat areas
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
 !TP_RAW_VNG4;VNG4
+!TP_RAW_XTRANS;X-Trans
+!TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
 !TP_RETINEX_CONTEDIT_HSL;HSL histogram
 !TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
@@ -2081,7 +2045,6 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High

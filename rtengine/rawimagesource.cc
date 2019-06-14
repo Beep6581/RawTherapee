@@ -37,6 +37,7 @@
 #include "pdaflinesfilter.h"
 #include "camconst.h"
 #include "../rtgui/multilangmgr.h"
+#include "procparams.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -429,7 +430,6 @@ RawImageSource::RawImageSource ()
     , plistener(nullptr)
     , scale_mul{}
     , c_black{}
-    , c_white{}
     , cblacksom{}
     , ref_pre_mul{}
     , refwb_red(0.0)
@@ -454,6 +454,7 @@ RawImageSource::RawImageSource ()
     , red(0, 0)
     , blue(0, 0)
     , rawDirty(true)
+    , histMatchingParams(new procparams::ColorManagementParams)
 {
     camProfile = nullptr;
     embProfile = nullptr;
@@ -638,6 +639,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
         bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                       || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+
+        for (int i = 0; i < 4; ++i) {
+            c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
+        }
+
         float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
@@ -1293,6 +1299,7 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
                 for(dx = -2, dy = 0; dx <= 2 && !distance2PixelFound; dx += 4)
                     if(ri->XTRANSFC(row, col + dx) == pixelColor) {
                         distance2PixelFound = true;
+                        break;
                     }
 
                 if(!distance2PixelFound)
@@ -1301,6 +1308,7 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
                     for(dx = 0, dy = -2; dy <= 2 && !distance2PixelFound; dy += 4)
                         if(ri->XTRANSFC(row + dy, col) == pixelColor) {
                             distance2PixelFound = true;
+                            break;
                         }
 
                 // calculate the value of its virtual counterpart (marked with a V in above examples)
@@ -1518,7 +1526,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     fileName = fname;
 
     if (plistener) {
-        plistener->setProgressStr ("Decoding...");
+        plistener->setProgressStr ("PROGRESSBAR_DECODING");
         plistener->setProgress (0.0);
     }
     ri = new RawImage(fname);
@@ -1616,10 +1624,6 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
     camProfile = ICCStore::getInstance()->createFromMatrix (imatrices.xyz_cam, false, "Camera");
     inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
-
-    for (int c = 0; c < 4; c++) {
-        c_white[c] = ri->get_white(c);
-    }
 
     // First we get the "as shot" ("Camera") white balance and store it
     float pre_mul[4];
@@ -1794,6 +1798,19 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
                 copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
             }
         }
+    } else if (numFrames == 2 && currFrame == 2) { // average the frames
+        if(!rawDataBuffer[0]) {
+            rawDataBuffer[0] = new array2D<float>;
+        }
+        rawDataFrames[1] = rawDataBuffer[0];
+        copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1]);
+        copyOriginalPixels(raw, ri, rid, rif, rawData);
+
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                rawData[i][j] = (rawData[i][j] + (*rawDataFrames[1])[i][j]) * 0.5f;
+            }
+        }
     } else {
         copyOriginalPixels(raw, ri, rid, rif, rawData);
     }
@@ -1896,7 +1913,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if ( ri->getSensorType() == ST_BAYER && (raw.hotPixelFilter > 0 || raw.deadPixelFilter > 0)) {
         if (plistener) {
-            plistener->setProgressStr ("Hot/Dead Pixel Filter...");
+            plistener->setProgressStr ("PROGRESSBAR_HOTDEADPIXELFILTER");
             plistener->setProgress (0.0);
         }
 
@@ -1963,7 +1980,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if ( ri->getSensorType() == ST_BAYER && raw.bayersensor.greenthresh > 0) {
         if (plistener) {
-            plistener->setProgressStr ("Green equilibrate...");
+            plistener->setProgressStr ("PROGRESSBAR_GREENEQUIL");
             plistener->setProgress (0.0);
         }
 
@@ -1997,7 +2014,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if ( ri->getSensorType() == ST_BAYER && raw.bayersensor.linenoise > 0 ) {
         if (plistener) {
-            plistener->setProgressStr ("Line Denoise...");
+            plistener->setProgressStr ("PROGRESSBAR_LINEDENOISE");
             plistener->setProgress (0.0);
         }
 
@@ -2014,7 +2031,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if ( (raw.ca_autocorrect || fabs(raw.cared) > 0.001 || fabs(raw.cablue) > 0.001) && ri->getSensorType() == ST_BAYER ) { // Auto CA correction disabled for X-Trans, for now...
         if (plistener) {
-            plistener->setProgressStr ("CA Auto Correction...");
+            plistener->setProgressStr ("PROGRESSBAR_RAWCACORR");
             plistener->setProgress (0.0);
         }
         std::function<bool(double)> setProgCancel = [this](double p) -> bool {
@@ -2032,16 +2049,6 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], *rawDataFrames[3], cfa, setProgCancel, fitParams, true);
         } else {
             CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, rawData, cfa, setProgCancel, fitParams, false);
-        }
-    }
-
-    if ( raw.expos != 1 ) {
-        if(numFrames == 4) {
-            for(int i = 0; i < 4; ++i) {
-                processRawWhitepoint(raw.expos, raw.preser, *rawDataFrames[i]);
-            }
-        } else {
-            processRawWhitepoint(raw.expos, raw.preser, rawData);
         }
     }
 
@@ -2079,7 +2086,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         const unsigned cfa[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
         if ( raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_HPHD")));
                 plistener->setProgress(0.0);
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
@@ -2090,7 +2097,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             hphd_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_VNG4")));
                 plistener->setProgress(0.0);
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
@@ -2101,7 +2108,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             vng4_demosaic(W, H, rawData, red, green, blue, cfa4, setProgCancel);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AHD")));
                 plistener->setProgress(0.0);
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
@@ -2114,7 +2121,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             ahd_demosaic(W, H, rawData, red, green, blue, cfa, rgb_cam, setProgCancel);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AMAZE")));
                 plistener->setProgress(0.0);
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
@@ -2136,7 +2143,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             pixelshift(0, 0, W, H, raw, currFrame, ri->get_maker(), ri->get_model(), raw.expos);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_DCB")));
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
                 if(plistener)
@@ -2148,7 +2155,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             eahd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_IGV")));
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
                 if(plistener)
@@ -2158,7 +2165,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             igv_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_LMMSE")));
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
                 if(plistener)
@@ -2167,13 +2174,13 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             };
             if (lmmse_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel, raw.bayersensor.lmmse_iterations) == RP_MEMORY_ERROR) {
                 if (plistener) {
-                    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)));
+                    plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_IGV")));
                 }
                 igv_demosaic(W, H, rawData, red, green, blue, cfa, setProgCancel);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_FAST")));
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
                 if(plistener)
@@ -2185,7 +2192,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             nodemosaic(true);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCD)));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_RCD")));
             }
             std::function<bool(double)> setProgCancel = [this](double p) -> bool {
                 if(plistener)
@@ -2203,12 +2210,15 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             return false;
         };
         if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST) ) {
+            if (plistener) {
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_XTRANSFAST")));
+            }
             unsigned xtrans[6][6];
             ri->getXtransMatrix(xtrans);
             xtransfast_demosaic(W, H, rawData, red, green, blue, xtrans, setProgCancel);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::ONE_PASS)) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_XTRANS")));
             }
             unsigned xtrans[6][6];
             ri->getXtransMatrix(xtrans);
@@ -2217,7 +2227,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             markesteijn_demosaic(W, H, rawData, red, green, blue, xtrans, rgb_cam, setProgCancel, 1, false);
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::THREE_PASS) ) {
             if (plistener) {
-                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), "Xtrans"));
+                plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_XTRANS")));
             }
             unsigned xtrans[6][6];
             ri->getXtransMatrix(xtrans);
@@ -3520,7 +3530,9 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 
             }
 
+#ifdef _OPENMP
             #pragma omp single
+#endif
 
             for (int col = W - (W % 8); col < W; col++) {
                 int len = boxH / 2 + 1;
@@ -3628,6 +3640,10 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
     for(int i = 0; i < 4 ; i++) {
         cblacksom[i] = max( c_black[i] + black_lev[i], 0.0f );    // adjust black level
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        c_white[i] = (ri->get_white(i) - cblacksom[i]) / raw.expos + cblacksom[i];
     }
 
     initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
@@ -4834,13 +4850,13 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     histGreenRaw.clear();
     histBlueRaw.clear();
 
-    const float maxWhite = rtengine::max(ri->get_white(0), ri->get_white(1), ri->get_white(2), ri->get_white(3));
+    const float maxWhite = rtengine::max(c_white[0], c_white[1], c_white[2], c_white[3]);
     const float scale = maxWhite <= 1.f ? 65535.f : 1.f; // special case for float raw images in [0.0;1.0] range
     const float multScale = maxWhite <= 1.f ? 1.f / 255.f : 255.f;
-    const float mult[4] = { multScale / (ri->get_white(0) - cblacksom[0]),
-                            multScale / (ri->get_white(1) - cblacksom[1]),
-                            multScale / (ri->get_white(2) - cblacksom[2]),
-                            multScale / (ri->get_white(3) - cblacksom[3])
+    const float mult[4] = { multScale / (c_white[0] - cblacksom[0]),
+                            multScale / (c_white[1] - cblacksom[1]),
+                            multScale / (c_white[2] - cblacksom[2]),
+                            multScale / (c_white[3] - cblacksom[3])
                           };
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);

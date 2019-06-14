@@ -27,6 +27,8 @@
 #include "mycurve.h"
 #include "guiutils.h"
 
+class EditDataProvider;
+
 class ToneCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener
 {
 private:
@@ -81,7 +83,7 @@ protected:
     int nextHlcompr;
     int nextHlcomprthresh;
     bool nextHLRecons;
-    rtengine::procparams::ToneCurveParams::TcMode nextToneCurveMode;
+    rtengine::procparams::ToneCurveMode nextToneCurveMode;
     std::vector<double> nextToneCurve;
 
     void setHistmatching(bool enabled);
@@ -132,7 +134,7 @@ public:
     void histmatchingToggled();
 
     void autoExpChanged(double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons) override;
-    void autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveParams::TcMode curveMode, const std::vector<double>& curve) override;
+    void autoMatchedToneCurveChanged(rtengine::procparams::ToneCurveMode curveMode, const std::vector<double>& curve) override;
 
     void setRaw (bool raw);
 

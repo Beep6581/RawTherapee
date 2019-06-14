@@ -78,6 +78,7 @@ int calculate_subsampling(int w, int h, int r)
 
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling)
 {
+
     const int W = src.width();
     const int H = src.height();
 
@@ -135,16 +136,6 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     const array2D<float> &p = src;
     array2D<float> &q = dst;
 
-    AlignedBuffer<float> blur_buf(I.width() * I.height());
-    const auto f_mean =
-        [&](array2D<float> &d, array2D<float> &s, int rad) -> void
-        {
-            rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
-            float **src = s;
-            float **dst = d;
-            boxblur<float, float>(src, dst, blur_buf.data, rad, rad, s.width(), s.height());
-        };
-
     const auto f_subsample =
         [=](array2D<float> &d, const array2D<float> &s) -> void
         {
@@ -153,8 +144,21 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
 
     const auto f_upsample = f_subsample;
     
-    const int w = W / subsampling;
-    const int h = H / subsampling;
+    const size_t w = W / subsampling;
+    const size_t h = H / subsampling;
+
+    AlignedBuffer<float> blur_buf(w * h);
+    const auto f_mean =
+        [&](array2D<float> &d, array2D<float> &s, int rad) -> void
+        {
+            rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
+            float **src = s;
+            float **dst = d;
+#ifdef _OPENMP
+            #pragma omp parallel if (multithread)
+#endif
+            boxblur<float, float>(src, dst, blur_buf.data, rad, rad, s.width(), s.height());
+        };
 
     array2D<float> I1(w, h);
     array2D<float> p1(w, h);
@@ -203,6 +207,9 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     apply(SUBMUL, b, a, meanI, meanp);
     DEBUG_DUMP(b);
 
+    meanI.free(); // frees w * h * 4 byte
+    meanp.free(); // frees w * h * 4 byte
+
     array2D<float> &meana = a;
     f_mean(meana, a, r1);
     DEBUG_DUMP(meana);
@@ -211,11 +218,13 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     f_mean(meanb, b, r1);
     DEBUG_DUMP(meanb);
 
+    blur_buf.resize(0); // frees w * h * 4 byte
+
     array2D<float> meanA(W, H);
     f_upsample(meanA, meana);
     DEBUG_DUMP(meanA);
 
-    array2D<float> meanB(W, H);
+    array2D<float> &meanB = q;
     f_upsample(meanB, meanb);
     DEBUG_DUMP(meanB);
 

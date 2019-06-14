@@ -19,7 +19,8 @@
 
 #include "wavelet.h"
 #include <cmath>
-#include "edit.h"
+
+#include "editcallbacks.h"
 #include "guiutils.h"
 #include "rtimage.h"
 
@@ -289,7 +290,7 @@ Wavelet::Wavelet() :
             ss = Glib::ustring::compose( "%1", (i + 1));
         }
 
-        correction[i] = Gtk::manage ( new Adjuster (ss, -100, 350, 1, 0) );
+        correction[i] = Gtk::manage(new Adjuster(std::move(ss), -100, 350, 1, 0));
         correction[i]->setAdjusterListener(this);
         levBox->pack_start(*correction[i]);
     }
@@ -397,7 +398,7 @@ Wavelet::Wavelet() :
             ss = Glib::ustring::compose( "%1", (i + 1));
         }
 
-        correctionch[i] = Gtk::manage ( new Adjuster (ss, -100, 100, 1, 0) );
+        correctionch[i] = Gtk::manage(new Adjuster(std::move(ss), -100, 100, 1, 0));
         correctionch[i]->setAdjusterListener(this);
         chBox->pack_start(*correctionch[i]);
     }

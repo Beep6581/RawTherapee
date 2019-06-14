@@ -1,12 +1,13 @@
+#include <chrono>
 #include <map>
 #include <set>
 
 #include "filmsimulation.h"
 
-#include <chrono>
-
 #include "options.h"
+
 #include "../rtengine/clutstore.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -262,10 +263,17 @@ void ClutComboBox::setBatchMode(bool yes)
 }
 
 
+void ClutComboBox::cleanup()
+{
+    cm.reset();
+    cm2.reset();
+}
+
+
 void ClutComboBox::updateUnchangedEntry()
 {
     auto c = m_model()->children();
-    
+
     if (batchMode) {
         if (c.empty() || c[c.size()-1][m_columns().clutFilename] != "NULL") {
             Gtk::TreeModel::Row row = *(m_model()->append());
@@ -356,7 +364,7 @@ int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
     }
 
     // Fill menu structure with CLUT files
-    std::set<Glib::ustring> entries;
+    std::set<std::string> entries;
 
     unsigned long fileCount = 0;
 
@@ -382,10 +390,10 @@ int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
             Glib::ustring name;
             Glib::ustring extension;
             Glib::ustring profileName;
-            HaldCLUT::splitClutFilename (entry, name, extension, profileName);
+            HaldCLUT::splitClutFilename (entry, name, extension, profileName, false);
 
             extension = extension.casefold();
-            if (extension.compare("tif") != 0 && extension.compare("png") != 0) {
+            if (extension != "png" && extension != "tif") {
                 continue;
             }
 

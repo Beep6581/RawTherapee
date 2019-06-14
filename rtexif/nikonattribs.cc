@@ -34,7 +34,7 @@ class NAISOInterpreter : public Interpreter
 {
 public:
     NAISOInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         sprintf (buffer, "%d", t->toInt (2));
@@ -47,7 +47,7 @@ class NAISOInfoISOInterpreter : public Interpreter
 {
 public:
     NAISOInfoISOInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         char buffer[32];
         int a = t->toInt();
@@ -83,7 +83,7 @@ class NAISOExpansionInterpreter : public Interpreter
 {
 public:
     NAISOExpansionInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
 
@@ -142,7 +142,7 @@ class NALensTypeInterpreter : public Interpreter
 {
 public:
     NALensTypeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
         std::ostringstream str;
@@ -155,7 +155,7 @@ public:
 };
 NALensTypeInterpreter naLensTypeInterpreter;
 
-class NAFlashModeInterpreter : public ChoiceInterpreter
+class NAFlashModeInterpreter : public ChoiceInterpreter<>
 {
 public:
     NAFlashModeInterpreter ()
@@ -170,7 +170,7 @@ public:
 };
 NAFlashModeInterpreter naFlashModeInterpreter;
 
-class NAHiISONRInterpreter : public ChoiceInterpreter
+class NAHiISONRInterpreter : public ChoiceInterpreter<>
 {
 public:
     // HighISONoiseReduction
@@ -191,7 +191,7 @@ class NAShootingModeInterpreter : public Interpreter
 {
 public:
     NAShootingModeInterpreter () {}
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
         int a = t->toInt();
         std::ostringstream str;
@@ -234,14 +234,26 @@ public:
         afpchoices[0x9] = "Far Left";
         afpchoices[0xa] = "Far Right";
     }
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
+        const auto get_from_choices =
+            [](const std::map<int, std::string>& choices, int index) -> std::string
+            {
+                const std::map<int, std::string>::const_iterator choice = choices.find(index);
+
+                if (choice != choices.end()) {
+                    return choice->second;
+                }
+
+                return {};
+            };
+
         int am = t->toInt (0, BYTE);
         int afp = t->toInt (1, BYTE);
         int aff = t->toInt (2, SHORT);
         std::ostringstream str;
-        str << "AFAreaMode = " << amchoices[am] << std::endl;
-        str << "AFAreaMode = " << afpchoices[afp] << std::endl;
+        str << "AFAreaMode = " << get_from_choices(amchoices, am) << std::endl;
+        str << "AFAreaMode = " << get_from_choices(afpchoices, afp) << std::endl;
 
         std::ostringstream af;
 
@@ -314,7 +326,7 @@ class NALensDataInterpreter : public Interpreter
     static const std::map<std::string, std::string> lenses;
 
 public:
-    std::string toString (Tag* t) override
+    std::string toString (const Tag* t) const override
     {
 
         static const unsigned char xlat[2][256] = {
@@ -999,6 +1011,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"A1 40 18 37 2C 34 A3 06", "AF-S DX Nikkor 10-24mm f/3.5-4.5G ED"},
     {"A1 41 19 31 2C 2C 4B 06", "Sigma 10-20mm f/3.5 EX DC HSM"},
     {"A1 54 55 55 0C 0C BC 06", "AF-S Nikkor 58mm f/1.4G"},
+    {"A2 38 5C 8E 34 40 CD 86", "AF-P DX Nikkor 70-300mm f/4.5-6.3G VR"},
     {"A2 40 2D 53 2C 3C BD 0E", "AF-S DX Nikkor 18-55mm f/3.5-5.6G VR II"},
     {"A2 48 5C 80 24 24 A4 0E", "AF-S Nikkor 70-200mm f/2.8G ED VR II"},
     {"A3 38 5C 8E 34 40 CE 0E", "AF-P DX Nikkor 70-300mm f/4.5-6.3G ED"},
@@ -1075,11 +1088,13 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"C8 54 62 62 0C 0C 4B 46", "Sigma 85mm f/1.4 DG HSM | A"},
     {"C9 48 37 5C 24 24 4B 4E", "Sigma 24-70mm f/2.8 DG OS HSM | A"},
     {"CA 48 27 3E 24 24 DF 4E", "Tamron SP 15-30mm f/2.8 Di VC USD G2 (A041)"},
+    {"CB 3C 2B 44 24 31 DF 46", "Tamron 17-35mm f/2.8-4 Di OSD (A037)"},
     {"CC 4C 50 68 14 14 4B 06", "Sigma 50-100mm f/1.8 DC HSM | A"},
     {"CD 3D 2D 70 2E 3C 4B 0E", "Sigma 18-125mm f/3.8-5.6 DC OS HSM"},
     {"CE 34 76 A0 38 40 4B 0E", "Sigma 150-500mm f/5-6.3 DG OS APO HSM"},
     {"CE 47 37 5C 25 25 DF 4E", "Tamron SP 24-70mm f/2.8 Di VC USD G2 (A032)"},
     {"CF 38 6E 98 34 3C 4B 0E", "Sigma APO 120-400mm f/4.5-5.6 DG OS HSM"},
+    {"CF 47 5C 8E 31 3D DF 0E", "Tamron SP 70-300mm f/4-5.6 Di VC USD (A030)"},
     {"DC 48 19 19 24 24 4B 06", "Sigma 10mm f/2.8 EX DC HSM Fisheye"},
     {"DE 54 50 50 0C 0C 4B 06", "Sigma 50mm f/1.4 EX DG HSM"},
     {"E0 3C 5C 8E 30 3C 4B 06", "Sigma 70-300mm f/4-5.6 APO DG Macro HSM"},
@@ -1133,7 +1148,26 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"FE 53 5C 80 24 24 84 06", "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)"},
     {"FE 54 5C 80 24 24 DF 0E", "Tamron SP 70-200mm f/2.8 Di VC USD (A009)"},
     {"FE 54 64 64 24 24 DF 0E", "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1 (F004)"},
-    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"}
+    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"},
+
+    // There are cases where one lens uses multiple IDs which change based on the focal length or aperture.
+    // These IDs cannot be listed using ExifTool, and so must be entered manually below.
+    // #4135
+
+    {"92 2B 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (210mm)
+    {"92 2C 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (185mm)
+    {"92 2D 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (155mm)
+    {"92 2E 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (130mm)
+    {"92 2F 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (105mm)
+    {"92 30 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (90mm)
+    {"92 32 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (75mm)
+    {"92 33 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (62mm)
+    {"92 35 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (52mm)
+    {"92 37 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (44mm)
+    {"92 39 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (38mm)
+    {"92 3A 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (32mm)
+    {"92 3E 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (22mm)
+    {"92 40 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"} // (18mm)
 };
 
 const TagAttrib nikonISOInfoAttribs[] = {
