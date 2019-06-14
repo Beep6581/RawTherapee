@@ -56,7 +56,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
                 if (plistener) {
                     plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AMAZE")));
                 }
-                amaze_demosaic(winw, winh, 0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f);
+                amaze_demosaic(winw, winh, 0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f, options.chunkSizeAMAZE, options.measure);
             } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
                 if (plistener) {
                     plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_DCB")));
@@ -111,7 +111,7 @@ void RawImageSource::dual_demosaic(bool isBayer, const RAWParams &raw, int winw,
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AMAZE")));
             }
-            amaze_demosaic(winw, winh, 0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f);
+            amaze_demosaic(winw, winh, 0, 0, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f, options.chunkSizeAMAZE, options.measure);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4) ) {
             if (plistener) {
                 plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_DCB")));

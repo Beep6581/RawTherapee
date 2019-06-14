@@ -2129,7 +2129,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                     plistener->setProgress(p);
                 return false;
             };
-            amaze_demosaic (W, H, 0, 0, W, H, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f);
+            amaze_demosaic (W, H, 0, 0, W, H, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f, options.chunkSizeAMAZE, options.measure);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {

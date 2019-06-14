@@ -309,7 +309,7 @@ BENCHFUN
             plistener->setProgress(p);
             return false;
         };
-        amaze_demosaic(winw, winh, winx, winy, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f);
+        amaze_demosaic(winw, winh, winx, winy, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f, options.chunkSizeAMAZE, options.measure);
         return;
     }
 
@@ -358,7 +358,7 @@ BENCHFUN
                         plistener->setProgress(p);
                         return false;
                     };
-                    amaze_demosaic(winw, winh, winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f);
+                    amaze_demosaic(winw, winh, winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f, options.chunkSizeAMAZE, options.measure);
                 }
                 multi_array2D<float, 3> redTmp(winw, winh);
                 multi_array2D<float, 3> greenTmp(winw, winh);
@@ -390,7 +390,7 @@ BENCHFUN
                             plistener->setProgress(p);
                             return false;
                         };
-                        amaze_demosaic(winw, winh, winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], cfa, setProgCancel, initialGain, border, 65535.f, 65535.f);
+                        amaze_demosaic(winw, winh, winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], cfa, setProgCancel, initialGain, border, 65535.f, 65535.f, options.chunkSizeAMAZE, options.measure);
                     }
                 }
 
@@ -439,7 +439,7 @@ BENCHFUN
                         plistener->setProgress(p);
                         return false;
                     };
-                    amaze_demosaic(winw, winh, winx, winy, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f);
+                    amaze_demosaic(winw, winh, winx, winy, winw, winh, rawData, red, green, blue, cfa, setProgCancel, initialGain, border, 65535.f, 65535.f, options.chunkSizeAMAZE, options.measure);
                 }
             }
         }
