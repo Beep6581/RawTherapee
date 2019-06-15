@@ -3880,18 +3880,12 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
  */
 
     BENCHFUN
-/*
-#ifdef RT_FFTW3F_OMP
-
+#ifdef _OPENMP
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads ( omp_get_max_threads() );
     }
-
-// #else
-//   fftwf_plan_with_nthreads( 2 );
 #endif
-*/
         fftwf_plan dct_fw, dct_fw04, dct_bw;
         float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
         if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
@@ -3950,6 +3944,9 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         fftwf_destroy_plan(dct_bw);
         fftwf_free(data_fft);
         fftwf_cleanup();
+        if (multiThread) {
+            fftwf_cleanup_threads();
+        }
         normalize_mean_dt(data, datain, bfw * bfh);
 
 #ifdef _OPENMP
@@ -3980,16 +3977,14 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2) 
 */
     BENCHFUN
-#ifdef RT_FFTW3F_OMP
-
+   
+#ifdef _OPENMP
     if (multiThread) {
         fftwf_init_threads();
         fftwf_plan_with_nthreads ( omp_get_max_threads() );
     }
-
-// #else
-//   fftwf_plan_with_nthreads( 2 );
 #endif
+
 
     float *out; //for FFT datas
     float *kern = nullptr;//for kernel gauss
@@ -4008,7 +4003,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
 
     /*compute the Fourier transform of the input data*/
 
-    p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10,FFTW_ESTIMATE);//FFT 2 dimensions forward
+    p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10,  FFTW_ESTIMATE);//FFT 2 dimensions forward  FFTW_MEASURE FFTW_ESTIMATE
     fftwf_execute(p);
     fftwf_destroy_plan(p);
 
@@ -4070,7 +4065,9 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
 
     fftwf_destroy_plan(p);
     fftwf_free(out);
-
+    if (multiThread) {
+        fftwf_cleanup_threads();
+    }
 }
 
 void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numblox_W, int min_numblox_W, float **tmp1, int numThreads, double radius)
@@ -6577,7 +6574,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     delete tmpImage;
                 }
             }
-
+            
             float *orig[Hd] ALIGNED16;
             float *origBuffer = new float[Hd * Wd];
 
@@ -7164,7 +7161,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
 /*
-//test for fftw blur with tiles....not good we can see tiles - very long time
+//test for fftw blur with tiles  fftw_tile_blur....not good we can see tiles - very long time
             int GW = original->W;
             int GH = original->H;
             MyMutex::MyLock lock (*fftwMutex);
@@ -7182,13 +7179,31 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int min_numblox_W = ceil((static_cast<float>(GW)) / (offset2)) + 2 * blkrad;
             fftw_tile_blur(GW, GH, tilssize , max_numblox_W, min_numblox_W, original->L, numThreads, radius);
 */
+
 /*
-//test for fftw blur : good result speedup moderate , but less used of memory than gaussianblur
-            int GW = original->W;
-            int GH = original->H;
+//test for fftw blur with fftw_convol_blur: good result speedup moderate , but less used of memory than gaussianblur
+
+//with FFTW curious results ex with playraw23_hombre.pef -  size 4942*3276
+// with size 4942*3276 time for tIF 3200ms
+// with size 4941*3275 time for TIF 950ms...no differences in TIF
+// "step" to reproduce about 6 pixels
+//another strange with DSCF1337.RAF 4012*6018  time 1318ms
+// with 4004*6016 time 1091ms
+//with 4004*6013 time 4057ms...steps seem also about 6 or 8
+//NEF D200 best with 3888 * 2607 instead of 3892 2608
+//D700 4275*2835 instead 4276*2836
+//PANA LX100 4120*3095 instead of 4120*3096
+//I have compared many things with FFTF COS -0.5 2*n -0.5, prime factor decomposition....nothing found
+//I have read doc...nothing about that
+            int GW = original->W-lp.ligh;//for test change size W
+            int GH = original->H- lp.cont;//test for chnage size H
+            printf("Gw=%i Gh=%i\n", GW, GH);
             MyMutex::MyLock lock (*fftwMutex);
 
-            float *datain = new float[GW*GH];
+
+            float *datain = nullptr; //new float[GW*GH];
+            datain = (float*) fftwf_malloc(sizeof(float) * (GW * GH));//allocate real datas for FFT
+
             float *dataout = new float[GW*GH];
             float radius = 500.f;
 #ifdef _OPENMP
@@ -7199,7 +7214,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             datain[y * GW + x] =original->L[y][x];
                         }
                     }
-                    fftw_convol_blur(datain, dataout, GW, GH, radius, 0);
+            fftw_convol_blur(datain, dataout, GW, GH, radius, 0);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7209,10 +7224,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-            delete [] datain;
+          //  delete [] datain;
             delete [] dataout;
-            
+            fftwf_free(datain);
 */
+
 
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
