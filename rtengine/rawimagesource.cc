@@ -2042,13 +2042,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         double fitParams[2][2][16];
         unsigned cfa[2][2] = {{FC(0,0), FC(0,1)},{FC(1,0),FC(1,1)}};
         if(numFrames == 4) {
-            CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], *rawDataFrames[0], cfa, setProgCancel, fitParams, false);
+            CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], *rawDataFrames[0], cfa, setProgCancel, fitParams, false, 65535.f, 65535.f, options.chunkSizeCA, options.measure);
             for(int i = 1; i < 3; ++i) {
-                CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], *rawDataFrames[i], cfa, setProgCancel, fitParams, true);
+                CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], *rawDataFrames[i], cfa, setProgCancel, fitParams, true, 65535.f, 65535.f, options.chunkSizeCA, options.measure);
             }
-            CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], *rawDataFrames[3], cfa, setProgCancel, fitParams, true);
+            CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], *rawDataFrames[3], cfa, setProgCancel, fitParams, true, 65535.f, 65535.f, options.chunkSizeCA, options.measure);
         } else {
-            CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, rawData, cfa, setProgCancel, fitParams, false);
+            CA_correct(0, 0, W, H, raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, rawData, cfa, setProgCancel, fitParams, false, 65535.f, 65535.f, options.chunkSizeCA, options.measure);
         }
     }
 
