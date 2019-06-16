@@ -2961,7 +2961,16 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
                 printf ("Applying Highlight Recovery: Color propagation...\n");
             }
 
-            HLRecovery_inpaint (red, green, blue);
+            if (plistener) {
+                plistener->setProgressStr ("PROGRESSBAR_HLREC");
+                plistener->setProgress(0.0);
+            }
+            std::function<bool(double)> setProgCancel = [this](double p) -> bool {
+                if(plistener)
+                    plistener->setProgress(p);
+                return false;
+            };
+            HLRecovery_inpaint(W, H, red, green, blue, chmax, clmax, setProgCancel);
             rgbSourceModified = true;
         }
     }

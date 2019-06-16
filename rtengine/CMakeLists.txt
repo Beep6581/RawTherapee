@@ -59,7 +59,6 @@ set(RTENGINESOURCEFILES
     flatcurves.cc
     gauss.cc
     green_equil_RT.cc
-    hilite_recon.cc
     iccjpeg.cc
     iccstore.cc
     iimage.cc
