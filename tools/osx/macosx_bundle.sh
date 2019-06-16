@@ -101,7 +101,7 @@ ETC="${RESOURCES}/etc"
 EXECUTABLE="${MACOS}/rawtherapee"
 
 msg "Removing old files:"
-rm -rf "${APP}" "${PROJECT_NAME}_*.dmg"
+rm -rf "${APP}" "${PROJECT_NAME}_*.dmg" "*zip"
 
 msg "Creating bundle container:"
 install -d  "${RESOURCES}" \
@@ -134,7 +134,7 @@ rm -r "${LIB}"/gdk-pixbuf-2.0
 
 "${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/libpix*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
 "${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/{im*.so,libprint*.so}      > "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|@executable_path/../|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Users/rb/repo-rt/build/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
 "${GTK_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
@@ -188,30 +188,37 @@ find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib
 done
 
 msg "Registering @loader_path into the executable:"
-echo "   install_name_tool -add_rpath @loader_path/../Frameworks '${EXECUTABLE}'" | bash -v
+echo "   install_name_tool -add_rpath @executable_path/../../Frameworks '${EXECUTABLE}'" | bash -v
 echo "   install_name_tool -add_rpath @loader_path/../Frameworks '${EXECUTABLE}-cli'" | bash -v
 
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
-
+ditto "${PROJECT_SOURCE_DIR}/build/Resources" "${RESOURCES}"
 # Executable loader
 # Note: executable is renamed to 'rawtherapee-bin'.
-mv "${MACOS}/rawtherapee" "${MACOS}/rawtherapee-bin"
+mkdir "${MACOS}/bin"
+mv "${MACOS}/rawtherapee" "${MACOS}/bin/rawtherapee-bin"
 install -m 0755 "${PROJECT_SOURCE_DATA_DIR}/executable_loader.in" "${MACOS}/rawtherapee"
 # App bundle resources
 cp "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 cp "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist-bin.in" "${CONTENTS}/MacOS/bin/Info.plist"
 sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
     "${CONTENTS}/Info.plist"
 plutil -convert binary1 "${CONTENTS}/Info.plist"
-
+plutil -convert binary1 "${CONTENTS}/MacOS/bin/Info.plist"
 # Sign the app
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
 if ! test -z "$CODESIGNID" ; then
-    codesign --deep --force -v -s "${CODESIGNID}" --timestamp -o runtime "${APP}"
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/rt.entitlements" "${CONTENTS}/Entitlements.plist"
+plutil -convert binary1 "${CONTENTS}/Entitlements.plist"
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/rt-bin.entitlements" "${CONTENTS}/MacOS/bin/Entitlements.plist"
+plutil -convert binary1 "${CONTENTS}/MacOS/bin/Entitlements.plist"
+codesign -v -s "${CODESIGNID}" -i "com.rawtherapee.rawtherapee-bin" --timestamp -o runtime --entitlements "${APP}/Contents/MacOS/bin/Entitlements.plist" "${APP}/Contents/MacOS/bin/rawtherapee-bin"
+codesign --deep --preserve-metadata=identifier,entitlements,runtime --strict -v -s "${CODESIGNID}" -i "com.rawtherapee.rawtherapee" --timestamp -o runtime --entitlements "${APP}/Contents/Entitlements.plist" "${APP}"
     spctl -a -vvvv "${APP}"
 fi
 
@@ -276,7 +283,7 @@ function CreateDmg {
     # Notarize the dmg
     if ! test -z "$NOTARY" ; then
         zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
-        uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
+        uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
         echo "dmg Result= $uuid" # Display identifier string
         sleep 15
         while :
