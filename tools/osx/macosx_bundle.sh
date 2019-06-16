@@ -134,7 +134,7 @@ rm -r "${LIB}"/gdk-pixbuf-2.0
 
 "${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/libpix*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
 "${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/{im*.so,libprint*.so}      > "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Users/rb/repo-rt/build/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
 "${GTK_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
