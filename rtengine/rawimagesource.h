@@ -43,7 +43,6 @@ private:
     static LUTf initInvGrad ();
     static void colorSpaceConversion_ (Imagefloat* im, const procparams::ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
     int  defTransform        (int tran);
-    bool channelsAvg(Coord spotPos, int spotSize, float avgs[3], const FilmNegativeParams &params);
 
 protected:
     MyMutex getImageMutex;  // locks getImage

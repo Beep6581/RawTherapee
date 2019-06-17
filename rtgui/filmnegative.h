@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2019 rom9
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,66 +28,66 @@
 #include "toolpanel.h"
 #include "wbprovider.h"
 
-#include "../rtengine/procparams.h"
+#include "../rtengine/noncopyable.h"
 
 class FilmNegProvider
 {
 public:
     virtual ~FilmNegProvider() = default;
+
     virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
 };
 
-class FilmNegative : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public EditSubscriber
+class FilmNegative :
+    public rtengine::NonCopyable,
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public EditSubscriber
 {
-
-private:
-    rtengine::ProcEvent EvFilmNegativeExponents;
-    rtengine::ProcEvent EvFilmNegativeEnabled;
-
-    std::vector<rtengine::Coord> refSpotCoords;
-
-    FilmNegProvider *fnp;
-
-    Adjuster* redExp;
-    Adjuster* greenExp;
-    Adjuster* blueExp;
-
-    Gtk::Grid* spotgrid;
-    Gtk::ToggleButton* spotbutton;
-    sigc::connection spotConn;
-
-    double redRatio, blueRatio;
-
-    void editToggled ();
-
 public:
+    FilmNegative();
+    ~FilmNegative() override;
 
-    FilmNegative ();
-    ~FilmNegative () override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
 
-    void setFilmNegProvider(FilmNegProvider* p)
-    {
-        fnp = p;
-    };
-
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
-
-    void adjusterChanged (Adjuster* a, double newval) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterAutoToggled(Adjuster* a, bool newval) override;
-    void spotPressed ();
     void enabledChanged() override;
 
-    void setEditProvider (EditDataProvider* provider) override;
+    void setFilmNegProvider(FilmNegProvider* p);
+
+    void setEditProvider(EditDataProvider* provider) override;
 
     // EditSubscriber interface
     CursorShape getCursor(int objectID) const override;
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
-    void switchOffEditMode () override;
+    void switchOffEditMode() override;
     bool pick1(bool picked) override;
 
+private:
+    void editToggled();
+
+    const rtengine::ProcEvent evFilmNegativeExponents;
+    const rtengine::ProcEvent evFilmNegativeEnabled;
+
+    std::vector<rtengine::Coord> refSpotCoords;
+
+    FilmNegProvider* fnp;
+
+    Adjuster* const redExp;
+    Adjuster* const greenExp;
+    Adjuster* const blueExp;
+
+    Gtk::Grid* const spotgrid;
+    Gtk::ToggleButton* const spotbutton;
+    sigc::connection spotConn;
+
+    double redRatio;
+    double blueRatio;
 };

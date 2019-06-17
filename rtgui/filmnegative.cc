@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2019 rom9
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,52 +16,52 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "filmnegative.h"
-
 #include <iomanip>
 
-#include "rtimage.h"
-#include "options.h"
+#include "filmnegative.h"
+
 #include "editwidgets.h"
 #include "eventmapper.h"
+#include "options.h"
+#include "rtimage.h"
 
+#include "../rtengine/procparams.h"
 
-using namespace rtengine;
-using namespace rtengine::procparams;
-
-
-FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FILMNEGATIVE_LABEL"), false, true), EditSubscriber(ET_OBJECTS)
+namespace
 {
 
-    auto mkExponentAdjuster = [this](Glib::ustring label, double defaultVal) {
-        Adjuster *adj = Gtk::manage(new Adjuster (label, 0.3, 6, 0.001, defaultVal)); //exponent
-        adj->setAdjusterListener (this);
-    
-        if (adj->delay < options.adjusterMaxDelay) {
-            adj->delay = options.adjusterMaxDelay;
-        }
-    
-        adj->show();
-        return adj;
-    };
+Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring& label, double defaultVal)
+{
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, 0.3, 6, 0.001, defaultVal)); // exponent
+    adj->setAdjusterListener(listener);
 
-    redExp   = mkExponentAdjuster(M("TP_FILMNEGATIVE_RED"), 2.72);
-    greenExp = mkExponentAdjuster(M("TP_FILMNEGATIVE_GREEN"), 2.0);
-    blueExp  = mkExponentAdjuster(M("TP_FILMNEGATIVE_BLUE"), 1.72);
+    if (adj->delay < options.adjusterMaxDelay) {
+        adj->delay = options.adjusterMaxDelay;
+    }
 
-    redRatio = redExp->getValue() / greenExp->getValue();
-    blueRatio = blueExp->getValue() / greenExp->getValue();
+    adj->show();
+    return adj;
+}
 
-    auto m = ProcEventMapper::getInstance();
-    EvFilmNegativeEnabled = m->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED");
-    EvFilmNegativeExponents = m->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_EXPONENTS");
+}
 
-
-    spotgrid = Gtk::manage(new Gtk::Grid());
+FilmNegative::FilmNegative() :
+    FoldableToolPanel(this, "filmnegative", M("TP_FILMNEGATIVE_LABEL"), false, true),
+    EditSubscriber(ET_OBJECTS),
+    evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_EXPONENTS")),
+    evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
+    fnp(nullptr),
+    redExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 2.72)),
+    greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 2.0)),
+    blueExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 1.72)),
+    spotgrid(Gtk::manage(new Gtk::Grid())),
+    spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
+    redRatio(redExp->getValue() / greenExp->getValue()),
+    blueRatio(blueExp->getValue() / greenExp->getValue())
+{
     spotgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    spotbutton = Gtk::manage (new Gtk::ToggleButton (M("TP_FILMNEGATIVE_PICK")));
     setExpandAlignProperties(spotbutton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotbutton->get_style_context()->add_class("independent");
     spotbutton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
@@ -83,120 +83,47 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
     // spotsize->append ("4");
 
     spotgrid->attach (*spotbutton, 0, 1, 1, 1);
-//    spotgrid->attach (*slab, 1, 0, 1, 1);
+    // spotgrid->attach (*slab, 1, 0, 1, 1);
     // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
-    pack_start (*redExp, Gtk::PACK_SHRINK, 0);
-    pack_start (*greenExp, Gtk::PACK_SHRINK, 0);
-    pack_start (*blueExp, Gtk::PACK_SHRINK, 0);
-    pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
+    pack_start(*redExp, Gtk::PACK_SHRINK, 0);
+    pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
+    pack_start(*blueExp, Gtk::PACK_SHRINK, 0);
+    pack_start(*spotgrid, Gtk::PACK_SHRINK, 0);
 
-    spotbutton->signal_toggled().connect( sigc::mem_fun(*this, &FilmNegative::editToggled) );
-//    spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
-
+    spotbutton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
+    // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 
     // Editing geometry; create the spot rectangle
-    Rectangle *spotRect = new Rectangle();
+    Rectangle* const spotRect = new Rectangle();
     spotRect->filled = false;
     
-    EditSubscriber::visibleGeometry.push_back( spotRect );
+    visibleGeometry.push_back(spotRect);
 
     // Stick a dummy rectangle over the whole image in mouseOverGeometry.
-    // This is to make sure the getCursor call is fired everywhere.
-    Rectangle *imgRect = new Rectangle();
+    // This is to make sure the getCursor() call is fired everywhere.
+    Rectangle* imgRect = new Rectangle();
     imgRect->filled = true;
 
-    EditSubscriber::mouseOverGeometry.push_back( imgRect );
-
+    mouseOverGeometry.push_back(imgRect);
 }
 
 FilmNegative::~FilmNegative()
 {
-//    idle_register.destroy();
-
-    for (std::vector<Geometry*>::const_iterator i = visibleGeometry.begin(); i != visibleGeometry.end(); ++i) {
-        delete *i;
+    for (auto geometry : visibleGeometry) {
+        delete geometry;
     }
 
-    for (std::vector<Geometry*>::const_iterator i = mouseOverGeometry.begin(); i != mouseOverGeometry.end(); ++i) {
-        delete *i;
-    }
-
-}
-
-
-
-void FilmNegative::enabledChanged()
-{
-    if (listener) {
-        if (get_inconsistent()) {
-            listener->panelChanged(EvFilmNegativeEnabled, M("GENERAL_UNCHANGED"));
-        } else if (getEnabled()) {
-            listener->panelChanged(EvFilmNegativeEnabled, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvFilmNegativeEnabled, M("GENERAL_DISABLED"));
-        }
+    for (auto geometry : mouseOverGeometry) {
+        delete geometry;
     }
 }
 
-
-void FilmNegative::adjusterChanged(Adjuster* a, double newval)
+void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
-    if (listener) {
-        if(a == redExp || a == greenExp || a == blueExp) {
-            disableListener();
-            if(a == greenExp) {
-                redExp->setValue(a->getValue() * redRatio);
-                blueExp->setValue(a->getValue() * blueRatio);
-            } else if(a == redExp) {
-                redRatio = newval / greenExp->getValue();
-            } else if(a == blueExp) {
-                blueRatio = newval / greenExp->getValue();
-            }
-            enableListener();
+    disableListener();
 
-            if(getEnabled()) {
-                listener->panelChanged (EvFilmNegativeExponents, Glib::ustring::compose (
-                    "R=%1 ; G=%2 ; B=%3", redExp->getTextValue(), greenExp->getTextValue(), blueExp->getTextValue()));
-            }
-        }
-    }
-}
-
-void FilmNegative::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
-void FilmNegative::setEditProvider (EditDataProvider* provider)
-{
-    EditSubscriber::setEditProvider(provider);
-}
-
-void FilmNegative::editToggled ()
-{
-    if (spotbutton->get_active()) {
-        subscribe();
-
-        int w, h;
-        getEditProvider()->getImageSize(w, h);
-
-        // Stick a dummy rectangle over the whole image in mouseOverGeometry.
-        // This is to make sure the getCursor call is fired everywhere.
-        const auto imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
-        imgRect->setXYWH(0, 0, w, h);
-
-    } else {
-        this->refSpotCoords.clear();        
-        unsubscribe();
-    }
-}
-
-
-void FilmNegative::read (const ProcParams* pp, const ParamsEdited* pedited)
-{
-    disableListener ();
-
-    if(pedited) {
+    if (pedited) {
         redExp->setEditedState(pedited->filmNegative.redExp ? Edited : UnEdited);
         greenExp->setEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
         blueExp->setEditedState(pedited->filmNegative.blueExp ? Edited : UnEdited);
@@ -208,10 +135,10 @@ void FilmNegative::read (const ProcParams* pp, const ParamsEdited* pedited)
     greenExp->setValue(pp->filmNegative.greenExp);
     blueExp->setValue(pp->filmNegative.blueExp);
 
-    enableListener ();
+    enableListener();
 }
 
-void FilmNegative::write (ProcParams* pp, ParamsEdited* pedited)
+void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     pp->filmNegative.redExp = redExp->getValue();
     pp->filmNegative.greenExp = greenExp->getValue();
@@ -226,37 +153,103 @@ void FilmNegative::write (ProcParams* pp, ParamsEdited* pedited)
     }
 }
 
-void FilmNegative::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
     redExp->setValue(defParams->filmNegative.redExp);
     greenExp->setValue(defParams->filmNegative.greenExp);
     blueExp->setValue(defParams->filmNegative.blueExp);
 
     if (pedited) {
-        redExp->setDefaultEditedState (pedited->filmNegative.redExp ? Edited : UnEdited);
-        greenExp->setDefaultEditedState (pedited->filmNegative.greenExp ? Edited : UnEdited);
-        blueExp->setDefaultEditedState (pedited->filmNegative.blueExp ? Edited : UnEdited);
+        redExp->setDefaultEditedState(pedited->filmNegative.redExp ? Edited : UnEdited);
+        greenExp->setDefaultEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
+        blueExp->setDefaultEditedState(pedited->filmNegative.blueExp ? Edited : UnEdited);
     } else {
-        redExp->setDefaultEditedState (Irrelevant);
-        greenExp->setDefaultEditedState (Irrelevant);
-        blueExp->setDefaultEditedState (Irrelevant);
+        redExp->setDefaultEditedState(Irrelevant);
+        greenExp->setDefaultEditedState(Irrelevant);
+        blueExp->setDefaultEditedState(Irrelevant);
     }
 }
 
-void FilmNegative::setBatchMode (bool batchMode)
+void FilmNegative::setBatchMode(bool batchMode)
 {
     spotConn.disconnect();
     removeIfThere(this, spotgrid, false);
-    ToolPanel::setBatchMode (batchMode);
-    redExp->showEditedCB ();
-    greenExp->showEditedCB ();
-    blueExp->showEditedCB ();
+    ToolPanel::setBatchMode(batchMode);
+    redExp->showEditedCB();
+    greenExp->showEditedCB();
+    blueExp->showEditedCB();
+}
+
+void FilmNegative::adjusterChanged(Adjuster* a, double newval)
+{
+    if (listener) {
+        if (a == redExp || a == greenExp || a == blueExp) {
+            disableListener();
+            if (a == greenExp) {
+                redExp->setValue(a->getValue() * redRatio);
+                blueExp->setValue(a->getValue() * blueRatio);
+            }
+            else if (a == redExp) {
+                redRatio = newval / greenExp->getValue();
+            }
+            else if (a == blueExp) {
+                blueRatio = newval / greenExp->getValue();
+            }
+            enableListener();
+
+            if (getEnabled()) {
+                listener->panelChanged(
+                    evFilmNegativeExponents,
+                    Glib::ustring::compose(
+                        "R=%1 ; G=%2 ; B=%3",
+                        redExp->getTextValue(),
+                        greenExp->getTextValue(),
+                        blueExp->getTextValue()
+                    )
+                );
+            }
+        }
+    }
+}
+
+void FilmNegative::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+}
+
+void FilmNegative::enabledChanged()
+{
+    if (listener) {
+        if (get_inconsistent()) {
+            listener->panelChanged(evFilmNegativeEnabled, M("GENERAL_UNCHANGED"));
+        }
+        else if (getEnabled()) {
+            listener->panelChanged(evFilmNegativeEnabled, M("GENERAL_ENABLED"));
+        }
+        else {
+            listener->panelChanged(evFilmNegativeEnabled, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+void FilmNegative::setFilmNegProvider(FilmNegProvider* p)
+{
+    fnp = p;
+}
+
+void FilmNegative::setEditProvider(EditDataProvider* provider)
+{
+    EditSubscriber::setEditProvider(provider);
+}
+
+CursorShape FilmNegative::getCursor(int objectID) const
+{
+   return CSSpotWB;
 }
 
 bool FilmNegative::mouseOver(int modifierKey)
 {
-    EditDataProvider *provider = getEditProvider();
-    const auto spotRect = static_cast<Rectangle*>(visibleGeometry.at(0));
+    EditDataProvider* const provider = getEditProvider();
+    Rectangle* const spotRect = static_cast<Rectangle*>(visibleGeometry.at(0));
     spotRect->setXYWH(provider->posImage.x - 16, provider->posImage.y - 16, 32, 32);
 
     return true;
@@ -264,20 +257,18 @@ bool FilmNegative::mouseOver(int modifierKey)
 
 bool FilmNegative::button1Pressed(int modifierKey)
 {
-    EditDataProvider *provider = getEditProvider();
+    EditDataProvider* const provider = getEditProvider();
 
-    if(provider) { // debug. remove me
+    if (provider) { // TODO: Remove me (rom9)
         printf("x=%d y=%d pv1=%f pv2=%f pv3=%f\n", provider->posImage.x, provider->posImage.y, provider->getPipetteVal1(), provider->getPipetteVal2(), provider->getPipetteVal3());
     }
     
     EditSubscriber::action = EditSubscriber::Action::NONE;
 
     if (listener) {
-
         refSpotCoords.push_back(provider->posImage);
 
-        if(refSpotCoords.size() == 2) {
-            
+        if (refSpotCoords.size() == 2) {
             // User has selected 2 reference gray spots. Calculating new exponents
             // from channel values and updating parameters.
 
@@ -292,8 +283,15 @@ bool FilmNegative::button1Pressed(int modifierKey)
                 enableListener();
 
                 if (listener && getEnabled()) {
-                    listener->panelChanged (EvFilmNegativeExponents, Glib::ustring::compose (
-                        "R=%1 ; G=%2 ; B=%3", redExp->getTextValue(), greenExp->getTextValue(), blueExp->getTextValue()));
+                    listener->panelChanged(
+                        evFilmNegativeExponents,
+                        Glib::ustring::compose(
+                            "R=%1 ; G=%2 ; B=%3",
+                            redExp->getTextValue(),
+                            greenExp->getTextValue(),
+                            blueExp->getTextValue()
+                        )
+                    );
                 }
             }
 
@@ -304,35 +302,50 @@ bool FilmNegative::button1Pressed(int modifierKey)
     return true;
 }
 
-bool FilmNegative::button1Released ()
+bool FilmNegative::button1Released()
 {
-    EditDataProvider *provider = getEditProvider();
+    EditDataProvider* const provider = getEditProvider();
 
-    if(provider) { // debug. remove me
+    if (provider) { // TODO: Remove me (rom9)
         printf("x=%d y=%d pv1=%f pv2=%f pv3=%f\n", provider->posImage.x, provider->posImage.y, provider->getPipetteVal1(), provider->getPipetteVal2(), provider->getPipetteVal3());
     }
 
     EditSubscriber::action = EditSubscriber::Action::NONE;
+
     return true;
 }
 
-// TODO remove me ; couldn't make Action::PICKING work
-bool FilmNegative::pick1 (bool picked) {
-    EditDataProvider *provider = getEditProvider();
-    if(provider) { // debug. remove me
+void FilmNegative::switchOffEditMode()
+{
+    refSpotCoords.clear();
+    unsubscribe();
+    spotbutton->set_active(false);
+}
+
+// TODO: Remove me ; couldn't make Action::PICKING work (rom9)
+bool FilmNegative::pick1(bool picked)
+{
+    EditDataProvider* const provider = getEditProvider();
+    if (provider) { // TODO: Remove me (rom9)
         printf("Picked pick=%d x=%d y=%d pv1=%f pv2=%f pv3=%f\n", picked, provider->posImage.x, provider->posImage.y, provider->getPipetteVal1(), provider->getPipetteVal2(), provider->getPipetteVal3());
     }
     return true;
 }
 
-CursorShape FilmNegative::getCursor(int objectID) const
+void FilmNegative::editToggled()
 {
-   return CSSpotWB;
-}
+    if (spotbutton->get_active()) {
+        subscribe();
 
-void FilmNegative::switchOffEditMode ()
-{
-    refSpotCoords.clear();
-    unsubscribe();
-    spotbutton->set_active(false);
+        int w, h;
+        getEditProvider()->getImageSize(w, h);
+
+        // Stick a dummy rectangle over the whole image in mouseOverGeometry.
+        // This is to make sure the getCursor() call is fired everywhere.
+        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        imgRect->setXYWH(0, 0, w, h);
+    } else {
+        refSpotCoords.clear();
+        unsubscribe();
+    }
 }
