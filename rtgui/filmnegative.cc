@@ -49,12 +49,19 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
     greenExp = mkExponentAdjuster(M("TP_FILMNEGATIVE_GREEN"), 2.0);
     blueExp  = mkExponentAdjuster(M("TP_FILMNEGATIVE_BLUE"), 1.72);
 
+    redExp->set_sensitive(false);
+    blueExp->set_sensitive(false);
+
     redRatio = redExp->getValue() / greenExp->getValue();
     blueRatio = blueExp->getValue() / greenExp->getValue();
 
     auto m = ProcEventMapper::getInstance();
     EvFilmNegativeEnabled = m->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED");
     EvFilmNegativeExponents = m->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_EXPONENTS");
+
+    lockChannels = Gtk::manage (new Gtk::CheckButton (M("TP_FILMNEGATIVE_LOCKCHANNELS")));
+    lockChannels->set_tooltip_text(M("TP_FILMNEGATIVE_LOCKCHANNELS_TOOLTIP"));
+    lockChannels->set_active (true);
 
 
     spotgrid = Gtk::manage(new Gtk::Grid());
@@ -86,11 +93,13 @@ FilmNegative::FilmNegative () : FoldableToolPanel(this, "filmnegative", M("TP_FI
 //    spotgrid->attach (*slab, 1, 0, 1, 1);
     // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
+    pack_start (*lockChannels, Gtk::PACK_SHRINK, 0);
     pack_start (*redExp, Gtk::PACK_SHRINK, 0);
     pack_start (*greenExp, Gtk::PACK_SHRINK, 0);
     pack_start (*blueExp, Gtk::PACK_SHRINK, 0);
     pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
 
+    lockChannels->signal_toggled().connect( sigc::mem_fun(*this, &FilmNegative::lockChannelsToggled) );
     spotbutton->signal_toggled().connect( sigc::mem_fun(*this, &FilmNegative::editToggled) );
 //    spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 
@@ -191,6 +200,12 @@ void FilmNegative::editToggled ()
     }
 }
 
+void FilmNegative::lockChannelsToggled ()
+{
+    bool unlocked = !lockChannels->get_active();
+    redExp->set_sensitive(unlocked);
+    blueExp->set_sensitive(unlocked);
+}
 
 void FilmNegative::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -245,12 +260,18 @@ void FilmNegative::setDefaults (const ProcParams* defParams, const ParamsEdited*
 
 void FilmNegative::setBatchMode (bool batchMode)
 {
-    spotConn.disconnect();
-    removeIfThere(this, spotgrid, false);
-    ToolPanel::setBatchMode (batchMode);
-    redExp->showEditedCB ();
-    greenExp->showEditedCB ();
-    blueExp->showEditedCB ();
+    if(batchMode) {
+        spotConn.disconnect();
+        lockChannelsConn.disconnect();
+        removeIfThere(this, spotgrid, false);
+        removeIfThere(this, lockChannels, false);
+        redExp->set_sensitive(true);
+        blueExp->set_sensitive(true);
+        ToolPanel::setBatchMode (batchMode);
+        redExp->showEditedCB ();
+        greenExp->showEditedCB ();
+        blueExp->showEditedCB ();
+    }
 }
 
 bool FilmNegative::mouseOver(int modifierKey)
