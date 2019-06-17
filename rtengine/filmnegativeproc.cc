@@ -189,17 +189,36 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     // Choose an odd step, not a multiple of the CFA size, to get a chance to visit each channel.
     if (ri->getSensorType() == ST_BAYER) {
         for (int row = 0; row < H; row += 5) {
-            for (int col = 0; col < W; col += 5) {
-                const int c = FC(row, col); // three colors: 0=R, 1=G, 2=B
-                cvs[c].push_back(rawData[row][col]);
+            const int c0 = ri->FC(row, 0);
+            const int c1 = ri->FC(row, 5);
+            int col = 0;
+            for (; col < W - 5; col += 10) {
+                cvs[c0].push_back(rawData[row][col]);
+                cvs[c1].push_back(rawData[row][col + 5]);
+            }
+            if (col < W) {
+                cvs[c0].push_back(rawData[row][col]);
             }
         }
     }
     else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         for (int row = 0; row < H; row += 5) {
-            for (int col = 0; col < W; col += 5) {
-                const int c = ri->XTRANSFC(row, col); // three colors: 0=R, 1=G, 2=B
-                cvs[c].push_back(rawData[row][col]);
+            const std::array<unsigned int, 6> cs = {
+                ri->XTRANSFC(row, 0),
+                ri->XTRANSFC(row, 5),
+                ri->XTRANSFC(row, 10),
+                ri->XTRANSFC(row, 15),
+                ri->XTRANSFC(row, 20),
+                ri->XTRANSFC(row, 25)
+            };
+            int col = 0;
+            for (; col < W - 25; col += 30) {
+                for (int c = 0; c < 6; ++c) {
+                    cvs[cs[c]].push_back(rawData[row][col + c * 5]);
+                }
+            }
+            for (int c = 0; col < W; col += 5, ++c) {
+                cvs[cs[c]].push_back(rawData[row][col]);
             }
         }
     }

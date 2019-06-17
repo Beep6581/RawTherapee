@@ -58,7 +58,7 @@ public:
     void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void enabledChanged() override;
 
-    void setFilmNegProvider(FilmNegProvider* p);
+    void setFilmNegProvider(FilmNegProvider* provider);
 
     void setEditProvider(EditDataProvider* provider) override;
 
@@ -72,6 +72,7 @@ public:
 
 private:
     void editToggled();
+    void lockChannelsToggled();
 
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;
@@ -83,6 +84,9 @@ private:
     Adjuster* const redExp;
     Adjuster* const greenExp;
     Adjuster* const blueExp;
+
+    Gtk::CheckButton* const lockChannels;
+    sigc::connection lockChannelsConn;
 
     Gtk::Grid* const spotgrid;
     Gtk::ToggleButton* const spotbutton;
