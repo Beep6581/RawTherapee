@@ -274,10 +274,6 @@ bool FilmNegative::button1Pressed(int modifierKey)
 {
     EditDataProvider* const provider = getEditProvider();
 
-    if (provider) { // TODO: Remove me (rom9)
-        printf("x=%d y=%d pv1=%f pv2=%f pv3=%f\n", provider->posImage.x, provider->posImage.y, provider->getPipetteVal1(), provider->getPipetteVal2(), provider->getPipetteVal3());
-    }
-    
     EditSubscriber::action = EditSubscriber::Action::NONE;
 
     if (listener) {
@@ -319,14 +315,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
 bool FilmNegative::button1Released()
 {
-    EditDataProvider* const provider = getEditProvider();
-
-    if (provider) { // TODO: Remove me (rom9)
-        printf("x=%d y=%d pv1=%f pv2=%f pv3=%f\n", provider->posImage.x, provider->posImage.y, provider->getPipetteVal1(), provider->getPipetteVal2(), provider->getPipetteVal3());
-    }
-
     EditSubscriber::action = EditSubscriber::Action::NONE;
-
     return true;
 }
 
@@ -335,16 +324,6 @@ void FilmNegative::switchOffEditMode()
     refSpotCoords.clear();
     unsubscribe();
     spotbutton->set_active(false);
-}
-
-// TODO: Remove me ; couldn't make Action::PICKING work (rom9)
-bool FilmNegative::pick1(bool picked)
-{
-    EditDataProvider* const provider = getEditProvider();
-    if (provider) { // TODO: Remove me (rom9)
-        printf("Picked pick=%d x=%d y=%d pv1=%f pv2=%f pv3=%f\n", picked, provider->posImage.x, provider->posImage.y, provider->getPipetteVal1(), provider->getPipetteVal2(), provider->getPipetteVal3());
-    }
-    return true;
 }
 
 void FilmNegative::editToggled()

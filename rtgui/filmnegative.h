@@ -68,7 +68,6 @@ public:
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
     void switchOffEditMode() override;
-    bool pick1(bool picked) override;
 
 private:
     void editToggled();
