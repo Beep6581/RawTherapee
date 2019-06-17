@@ -210,7 +210,7 @@ private:
         imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
         // After preprocess, run film negative processing if enabled
-        if(imgsrc->getSensorType() == ST_BAYER && params.filmNegative.enabled) {
+        if (imgsrc->getSensorType() == ST_BAYER && params.filmNegative.enabled) {
             imgsrc->filmNegativeProcess (params.filmNegative);
         }
 

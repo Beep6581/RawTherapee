@@ -137,7 +137,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //---
     filmNegative        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FILMNEGATIVE")) );
 
-
     Gtk::VBox* vboxes[8];
     Gtk::HSeparator* hseps[8];
 
@@ -254,7 +253,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[7]->pack_start (*raw_ca_avoid_colourshift, Gtk::PACK_SHRINK, 2);
     vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[7]->pack_start (*filmNegative, Gtk::PACK_SHRINK, 2);
-
 
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
@@ -983,7 +981,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.filmNegative.blueExp   = falsePE.filmNegative.blueExp;
     }
 
-
     if (dstPE) {
         *dstPE = filterPE;
     }
@@ -991,4 +988,3 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     // Apply the filter!
     filterPE.combine(*dstPP, *srcPP, true);
 }
-
