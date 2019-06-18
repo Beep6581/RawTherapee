@@ -172,10 +172,12 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         return;
     }
 
+    // Exponents are expressed as positive in the parameters, so negate them in order
+    // to get the reciprocals.
     const std::array<float, 3> exps = {
-        static_cast<float>(params.redExp),
-        static_cast<float>(params.greenExp),
-        static_cast<float>(params.blueExp)
+        static_cast<float>(-params.redExp),
+        static_cast<float>(-params.greenExp),
+        static_cast<float>(-params.blueExp)
     };
     
     MyTime t1, t2, t3,t4, t5;
@@ -244,8 +246,8 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         // Find median values for each channel
         if (!cvs[c].empty()) {
             findMinMaxPercentile(cvs[c].data(), cvs[c].size(), 0.5f, medians[c], 0.5f, medians[c], true);
-            medians[c] = pow_F(rtengine::max(medians[c], 1.f), -exps[c]);
-            // Determine the channel multipler so that N times the median becomes 65k. This clips away
+            medians[c] = pow_F(rtengine::max(medians[c], 1.f), exps[c]);
+            // Determine the channel multiplier so that N times the median becomes 65k. This clips away
             // the values in the dark border surrounding the negative (due to the film holder, for example),
             // the reciprocal of which have blown up to stellar values.
             mults[c] = MAX_OUT_VALUE / (medians[c] * 24.f);
@@ -274,10 +276,9 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
 #endif
         for (int row = 0; row < H; ++row) {
             int col = 0;
-            // Exponents are expressed as positive in the parameters, so negate them in order
-            // to get the reciprocals. Avoid trouble with zeroes, minimum pixel value is 1.
-            const float exps0 = -exps[FC(row, col)];
-            const float exps1 = -exps[FC(row, col + 1)];
+            // Avoid trouble with zeroes, minimum pixel value is 1.
+            const float exps0 = exps[FC(row, col)];
+            const float exps1 = exps[FC(row, col + 1)];
             const float mult0 = mults[FC(row, col)];
             const float mult1 = mults[FC(row, col + 1)];
 #ifdef __SSE2__
@@ -306,15 +307,14 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
 #endif
         for (int row = 0; row < H; row ++) {
             int col = 0;
-            // Exponents are expressed as positive in the parameters, so negate them in order
-            // to get the reciprocals. Avoid trouble with zeroes, minimum pixel value is 1.
+            // Avoid trouble with zeroes, minimum pixel value is 1.
             const std::array<float, 6> expsc = {
-                -exps[ri->XTRANSFC(row, 0)],
-                -exps[ri->XTRANSFC(row, 1)],
-                -exps[ri->XTRANSFC(row, 2)],
-                -exps[ri->XTRANSFC(row, 3)],
-                -exps[ri->XTRANSFC(row, 4)],
-                -exps[ri->XTRANSFC(row, 5)]
+                exps[ri->XTRANSFC(row, 0)],
+                exps[ri->XTRANSFC(row, 1)],
+                exps[ri->XTRANSFC(row, 2)],
+                exps[ri->XTRANSFC(row, 3)],
+                exps[ri->XTRANSFC(row, 4)],
+                exps[ri->XTRANSFC(row, 5)]
             };
             const std::array<float, 6> multsc = {
                 mults[ri->XTRANSFC(row, 0)],
