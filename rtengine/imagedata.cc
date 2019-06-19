@@ -69,37 +69,40 @@ FramesMetaData* FramesMetaData::fromFile (const Glib::ustring& fname, std::uniqu
     return new FramesData (fname, std::move(rml), firstFrameOnly);
 }
 
-FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir)
-    : frameRootDir(frameRootDir_), iptc(nullptr), time(), timeStamp(), iso_speed(0), aperture(0.), focal_len(0.), focal_len35mm(0.), focus_dist(0.f),
-      shutter(0.), expcomp(0.), make("Unknown"), model("Unknown"), orientation("Unknown"), rating(0), lens("Unknown"),
-      sampleFormat(IIOSF_UNKNOWN), isPixelShift(false), isHDR(false)
+FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir) :
+    frameRootDir(frameRootDir_),
+    iptc(nullptr),
+    time{},
+    timeStamp{},
+    iso_speed(0),
+    aperture(0.),
+    focal_len(0.),
+    focal_len35mm(0.),
+    focus_dist(0.f),
+    shutter(0.),
+    expcomp(0.),
+    make("Unknown"),
+    model("Unknown"),
+    orientation("Unknown"),
+    rating(0),
+    lens("Unknown"),
+    sampleFormat(IIOSF_UNKNOWN),
+    isPixelShift(false),
+    isHDR(false)
 {
-    memset (&time, 0, sizeof(time));
-
     if (!frameRootDir) {
         return;
     }
 
-    rtexif::Tag* tag;
-    rtexif::TagDirectory* newFrameRootDir = frameRootDir;
-
-    memset(&time, 0, sizeof(time));
-    timeStamp = 0;
-    iso_speed = 0;
-    aperture = 0.0;
-    focal_len = 0.0;
-    focal_len35mm = 0.0;
-    focus_dist = 0.0f;
-    shutter = 0.0;
-    expcomp = 0.0;
     make.clear();
     model.clear();
     serial.clear();
     orientation.clear();
     lens.clear();
-    rating = 0;
 
-    tag = newFrameRootDir->findTag("Make");
+    rtexif::TagDirectory* newFrameRootDir = frameRootDir;
+
+    rtexif::Tag* tag = newFrameRootDir->findTag("Make");
     if (!tag) {
         newFrameRootDir = rootDir;
         tag = newFrameRootDir->findTag("Make");
@@ -198,17 +201,11 @@ FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory*
     }
     char sXMPRating[64];
     if (newFrameRootDir->getXMPTagValue("xmp:Rating", sXMPRating)) {
-        rating = atoi(sXMPRating);
-    }
-    // guard against out-of-range values
-    if (rating > 5) {
-        rating = 5;
-    }
-    // Currently, Rating=-1 is not supported. A value of -1 should mean
-    // "Rejected" according to the specification. Maybe in the future, Rating=-1
-    // sets InTrash=true?
-    if (rating < 0) {
-        rating = 0;
+        // Guard against out-of-range values (<0, >5)
+        rating = rtengine::max(0, rtengine::min(5, atoi(sXMPRating)));
+        // Currently, Rating=-1 is not supported. A value of -1 should mean
+        // "Rejected" according to the specification. Maybe in the future, Rating=-1
+        // sets InTrash=true?
     }
 
     tag = newFrameRootDir->findTagUpward("MakerNote");
@@ -1197,14 +1194,20 @@ std::string FramesData::getOrientation(unsigned int frame) const
         }
     );
 }
-int FramesData::getRating (unsigned int frame) const
+
+int FramesData::getRating(unsigned int frame) const
 {
-    return frames.empty() || frame >= frames.size()  ? 0 : frames.at(frame)->getRating ();
+    return getFromFrame<int>(
+        frames,
+        frame,
+        [](const FrameData& frame_data)
+        {
+            return frame_data.getRating();
+        }
+    );
 }
 
-
 //------inherited functions--------------//
-
 
 std::string FramesMetaData::apertureToString (double aperture)
 {

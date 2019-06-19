@@ -127,7 +127,7 @@ public:
     std::string getModel (unsigned int frame = 0) const override;
     std::string getLens (unsigned int frame = 0) const override;
     std::string getSerialNumber (unsigned int frame = 0) const;
-    std::string getOrientation (unsigned int frame = 0) const;
+    std::string getOrientation (unsigned int frame = 0) const override;
     int getRating (unsigned int frame = 0) const override;
 };
 
