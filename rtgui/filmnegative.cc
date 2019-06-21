@@ -54,18 +54,11 @@ FilmNegative::FilmNegative() :
     redExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 2.72)),
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 2.0)),
     blueExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 1.72)),
-    lockChannels(Gtk::manage(new Gtk::CheckButton(M("TP_FILMNEGATIVE_LOCKCHANNELS")))),
     spotgrid(Gtk::manage(new Gtk::Grid())),
     spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
     redRatio(redExp->getValue() / greenExp->getValue()),
     blueRatio(blueExp->getValue() / greenExp->getValue())
 {
-    redExp->set_sensitive(false);
-    blueExp->set_sensitive(false);
-
-    lockChannels->set_tooltip_text(M("TP_FILMNEGATIVE_LOCKCHANNELS_TOOLTIP"));
-    lockChannels->set_active (true);
-
     spotgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
@@ -93,13 +86,11 @@ FilmNegative::FilmNegative() :
     // spotgrid->attach (*slab, 1, 0, 1, 1);
     // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
-    pack_start(*lockChannels, Gtk::PACK_SHRINK, 0);
     pack_start(*redExp, Gtk::PACK_SHRINK, 0);
     pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
     pack_start(*blueExp, Gtk::PACK_SHRINK, 0);
     pack_start(*spotgrid, Gtk::PACK_SHRINK, 0);
 
-    lockChannels->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::lockChannelsToggled));
     spotbutton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
     // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 
@@ -183,11 +174,7 @@ void FilmNegative::setBatchMode(bool batchMode)
 {
     if (batchMode) {
         spotConn.disconnect();
-        lockChannelsConn.disconnect();
         removeIfThere(this, spotgrid, false);
-        removeIfThere(this, lockChannels, false);
-        redExp->set_sensitive(true);
-        blueExp->set_sensitive(true);
         ToolPanel::setBatchMode(batchMode);
         redExp->showEditedCB();
         greenExp->showEditedCB();
@@ -342,11 +329,4 @@ void FilmNegative::editToggled()
         refSpotCoords.clear();
         unsubscribe();
     }
-}
-
-void FilmNegative::lockChannelsToggled()
-{
-    const bool unlocked = !lockChannels->get_active();
-    redExp->set_sensitive(unlocked);
-    blueExp->set_sensitive(unlocked);
 }

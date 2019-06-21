@@ -71,7 +71,6 @@ public:
 
 private:
     void editToggled();
-    void lockChannelsToggled();
 
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;
@@ -83,9 +82,6 @@ private:
     Adjuster* const redExp;
     Adjuster* const greenExp;
     Adjuster* const blueExp;
-
-    Gtk::CheckButton* const lockChannels;
-    sigc::connection lockChannelsConn;
 
     Gtk::Grid* const spotgrid;
     Gtk::ToggleButton* const spotbutton;
