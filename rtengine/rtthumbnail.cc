@@ -39,8 +39,11 @@
 #include "settings.h"
 #include "procparams.h"
 #include <locale.h>
+#define BENCHMARK
 #include "StopWatch.h"
 #include "median.h"
+
+#include "rt_algo.h"
 
 namespace
 {
@@ -1166,6 +1169,75 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
 
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
+
+    if(isRaw && params.filmNegative.enabled) {
+        StopWatch stop1("Thumbnail film negative", true);
+
+        // Channel exponents
+        const float rexp = -params.filmNegative.redExp;
+        const float gexp = -params.filmNegative.greenExp;
+        const float bexp = -params.filmNegative.blueExp;
+
+        // Need to calculate channel averages, to fake the same conditions
+        // found in rawimagesource, where get_ColorsCoeff is called with
+        // forceAutoWB=true.
+        float rsum = 0.f, gsum = 0.f, bsum = 0.f;
+
+        // Channel vectors to calculate medians
+        std::vector<float> rv, gv, bv;
+
+        for (int i = 0; i < rheight; i++) {
+            for (int j = 0; j < rwidth; j++) {
+                const float r = baseImg->r(i, j);
+                const float g = baseImg->g(i, j);
+                const float b = baseImg->b(i, j);
+
+                rsum += r;
+                gsum += g;
+                bsum += b;
+
+                rv.push_back(r);
+                gv.push_back(g);
+                bv.push_back(b);
+            }
+        }
+
+        const float ravg = rsum / (rheight*rwidth);
+        const float gavg = gsum / (rheight*rwidth);
+        const float bavg = bsum / (rheight*rwidth);
+
+        // Shifting current WB multipliers, based on channel averages.
+        rmi /= (gavg/ravg);
+        // gmi /= (gAvg/gAvg);  green chosen as reference channel
+        bmi /= (gavg/bavg);
+
+        float rmed, gmed, bmed;
+        findMinMaxPercentile(rv.data(), rv.size(), 0.5f, rmed, 0.5f, rmed, true);
+        findMinMaxPercentile(gv.data(), gv.size(), 0.5f, gmed, 0.5f, gmed, true);
+        findMinMaxPercentile(bv.data(), bv.size(), 0.5f, bmed, 0.5f, bmed, true);
+
+        rmed = powf(rmed, rexp);
+        gmed = powf(gmed, gexp);
+        bmed = powf(bmed, bexp);
+
+        const float MAX_OUT_VALUE = 65000.f;
+        const float rmult = (MAX_OUT_VALUE / (rmed * 24)) ;
+        const float gmult = (MAX_OUT_VALUE / (gmed * 24)) ;
+        const float bmult = (MAX_OUT_VALUE / (bmed * 24)) ;
+
+        if (settings->verbose) {
+            printf("Thumbnail channel medians: %g %g %g\n", rmed, gmed, bmed);
+            printf("Thumbnail computed multipliers: %g %g %g\n", rmult, gmult, bmult);
+        }
+        
+        for (int i = 0; i < rheight; i++) {
+            for (int j = 0; j < rwidth; j++) {
+                baseImg->r(i, j) = CLIP(rmult * powf(baseImg->r (i, j), rexp));
+                baseImg->g(i, j) = CLIP(gmult * powf(baseImg->g (i, j), gexp));
+                baseImg->b(i, j) = CLIP(bmult * powf(baseImg->b (i, j), bexp));
+            }
+        }
+    }
 
     if (params.coarse.rotate) {
         baseImg->rotate (params.coarse.rotate);
