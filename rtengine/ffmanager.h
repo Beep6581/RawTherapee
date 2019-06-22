@@ -86,7 +86,6 @@ public:
 
 protected:
     typedef std::multimap<std::string, ffInfo> ffList_t;
-    typedef std::map<std::string, std::list<badPix> > bpList_t;
     ffList_t ffList;
     bool initialized;
     Glib::ustring currentPath;
