@@ -273,11 +273,12 @@ bool FilmNegative::button1Pressed(int modifierKey)
             std::array<float, 3> newExps;
             if (fnp->getFilmNegativeExponents(refSpotCoords[0], refSpotCoords[1], newExps)) {
                 disableListener();
-                redExp->setValue(newExps[0]);
-                greenExp->setValue(newExps[1]);
-                blueExp->setValue(newExps[2]);
-                redRatio = redExp->getValue() / greenExp->getValue();
-                blueRatio = blueExp->getValue() / greenExp->getValue();
+                // Leaving green exponent unchanged, setting red and blue exponents based on
+                // the ratios between newly calculated exponents.
+                redRatio = newExps[0] / newExps[1];
+                blueRatio = newExps[2] / newExps[1];
+                redExp->setValue(greenExp->getValue() * redRatio);
+                blueExp->setValue(greenExp->getValue() * blueRatio);
                 enableListener();
 
                 if (listener && getEnabled()) {

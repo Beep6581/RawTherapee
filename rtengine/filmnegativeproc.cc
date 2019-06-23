@@ -151,9 +151,9 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
     // compared to the ratio in the reference channel (green)
     for (int ch = 0; ch < 3; ++ch) {
         if (ch == 1) {
-            newExps[ch] = 2.f;  // Green is the reference channel
+            newExps[ch] = 1.f;  // Green is the reference channel
         } else {
-            newExps[ch] = CLAMP(2.f * logBase(clearVals[ch] / denseVals[ch], denseGreenRatio), 0.3f, 6.f);
+            newExps[ch] = CLAMP(logBase(clearVals[ch] / denseVals[ch], denseGreenRatio), 0.3f, 6.f);
         }
     }
 
