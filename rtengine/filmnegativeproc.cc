@@ -268,7 +268,6 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     if (ri->getSensorType() == ST_BAYER) {
 #ifdef __SSE2__
         const vfloat onev = F2V(1.f);
-        const vfloat c65535v = F2V(65535.f);
 #endif
 
 #ifdef _OPENMP
@@ -285,21 +284,20 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
             const vfloat expsv = _mm_setr_ps(exps0, exps1, exps0, exps1);
             const vfloat multsv = _mm_setr_ps(mult0, mult1, mult0, mult1);
             for (; col < W - 3; col += 4) {
-                STVFU(rawData[row][col], vminf(multsv * pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv), c65535v));
+                STVFU(rawData[row][col], multsv * pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv));
             }
 #endif // __SSE2__
             for (; col < W - 1; col += 2) {
-                rawData[row][col] = rtengine::min(mult0 * pow_F(rtengine::max(rawData[row][col], 1.f), exps0), 65535.f);
-                rawData[row][col + 1] = rtengine::min(mult1 * pow_F(rtengine::max(rawData[row][col + 1], 1.f), exps1), 65535.f);
+                rawData[row][col] = mult0 * pow_F(rtengine::max(rawData[row][col], 1.f), exps0);
+                rawData[row][col + 1] = mult1 * pow_F(rtengine::max(rawData[row][col + 1], 1.f), exps1);
             }
             if (col < W) {
-                rawData[row][col] = rtengine::min(mult0 * pow_F(rtengine::max(rawData[row][col], 1.f), exps0), 65535.f);
+                rawData[row][col] = mult0 * pow_F(rtengine::max(rawData[row][col], 1.f), exps0);
             }
         }
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
 #ifdef __SSE2__
         const vfloat onev = F2V(1.f);
-        const vfloat c65535v = F2V(65535.f);
 #endif
 
 #ifdef _OPENMP
@@ -332,18 +330,18 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
             const vfloat multsv1 = _mm_setr_ps(multsc[4], multsc[5], multsc[0], multsc[1]);
             const vfloat multsv2 = _mm_setr_ps(multsc[2], multsc[3], multsc[4], multsc[5]);
             for (; col < W - 11; col += 12) {
-                STVFU(rawData[row][col], vminf(multsv0 * pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv0), c65535v));
-                STVFU(rawData[row][col + 4], vminf(multsv1 * pow_F(vmaxf(LVFU(rawData[row][col + 4]), onev), expsv1), c65535v));
-                STVFU(rawData[row][col + 8], vminf(multsv2 * pow_F(vmaxf(LVFU(rawData[row][col + 8]), onev), expsv2), c65535v));
+                STVFU(rawData[row][col], multsv0 * pow_F(vmaxf(LVFU(rawData[row][col]), onev), expsv0));
+                STVFU(rawData[row][col + 4], multsv1 * pow_F(vmaxf(LVFU(rawData[row][col + 4]), onev), expsv1));
+                STVFU(rawData[row][col + 8], multsv2 * pow_F(vmaxf(LVFU(rawData[row][col + 8]), onev), expsv2));
             }
 #endif // __SSE2__
             for (; col < W - 5; col += 6) {
                 for (int c = 0; c < 6; ++c) {
-                    rawData[row][col + c] = rtengine::min(multsc[c] * pow_F(rtengine::max(rawData[row][col + c], 1.f), expsc[c]), 65535.f);
+                    rawData[row][col + c] = multsc[c] * pow_F(rtengine::max(rawData[row][col + c], 1.f), expsc[c]);
                 }
             }
             for (int c = 0; col < W; col++, c++) {
-                rawData[row][col + c] = rtengine::min(multsc[c] * pow_F(rtengine::max(rawData[row][col + c], 1.f), expsc[c]), 65535.f);
+                rawData[row][col + c] = multsc[c] * pow_F(rtengine::max(rawData[row][col + c], 1.f), expsc[c]);
             }
         }
     }
