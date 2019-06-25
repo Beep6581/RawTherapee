@@ -175,6 +175,14 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
                 row[methodColumns.colId] = i + 100;
             }
 
+            if (currType == WBEntry::Type::AUTO) {
+                // Creating the auto category
+                row = *(refTreeModel->append());
+                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+                row[methodColumns.colLabel] = M("TP_WBALANCE_AUTO_HEADER");
+                row[methodColumns.colId] = i + 100;
+            }
+
             if (currType == WBEntry::Type::WATER) {
                 // Creating the under water subcategory header
                 row = *(refTreeModel->append());
@@ -213,6 +221,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
                 || currType == WBEntry::Type::WATER
                 || currType == WBEntry::Type::FLASH
                 || currType == WBEntry::Type::LED
+                || currType == WBEntry::Type::AUTO
            ) {
             childrow = *(refTreeModel->append(row.children()));
             childrow[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];

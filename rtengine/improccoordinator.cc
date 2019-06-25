@@ -330,6 +330,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
             todo |= M_INIT;
 
+            bool autowb0 = false;
+        //  bool autoitc = false;
+            autowb0 = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
+        //  autoitc = (params.wb.method == "autitcgreen");
+        //  bool gamma = false;
+        //  bool cat = false;
+//        if (params.wb.wbcat02Method == "cam" && autoitc) {
+//            cat = true;
+//        }
+
+            if (autowb0) {
+                imgsrc->getrgbloc(false, false, false, 0, 0, fh, fw, 0, 0, fh, fw);
+            }
+
+
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
@@ -359,6 +374,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 dehaListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
             }
         }
+
+        bool autowb = false;
+        autowb = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
 
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window

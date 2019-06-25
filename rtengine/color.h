@@ -585,6 +585,7 @@ public:
     * @param xyz_rgb[3][3] transformation matrix to use for the conversion
     */
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]);
+    static void rgbxyY(float r, float g, float b, float &x, float &y, float &Y, float &xx, float &yy, float &zz, const double xyz_rgb[3][3]);
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3]);
 #ifdef __SSE2__
     static void rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3]);

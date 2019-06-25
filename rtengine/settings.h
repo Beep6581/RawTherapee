@@ -80,6 +80,14 @@ public:
     //  bool            bw_complementary;
     double          level0_cbdl;
     double          level123_cbdl;
+    int             itcwb_thres;
+    bool            itcwb_sort;
+    int             itcwb_greenrange;
+    int             itcwb_greendeltatemp;
+    bool            itcwb_forceextra;
+    int             itcwb_sizereference;
+    int             itcwb_delta;
+
     Glib::ustring   lensfunDbDirectory; ///< The directory containing the lensfun database. If empty, the system defaults will be used (as described in http://lensfun.sourceforge.net/manual/dbsearch.html)
 
     enum class ThumbnailInspectorMode {
