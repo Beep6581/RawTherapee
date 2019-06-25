@@ -79,14 +79,11 @@ private:
 
     FilmNegProvider* fnp;
 
-    Adjuster* const redExp;
     Adjuster* const greenExp;
-    Adjuster* const blueExp;
+    Adjuster* const redRatio;
+    Adjuster* const blueRatio;
 
     Gtk::Grid* const spotgrid;
     Gtk::ToggleButton* const spotbutton;
     sigc::connection spotConn;
-
-    double redRatio;
-    double blueRatio;
 };
