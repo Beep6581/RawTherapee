@@ -6726,7 +6726,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-
     int nbt = N_t;
     float **Tx = nullptr;
     float **Ty = nullptr;
@@ -7591,7 +7590,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     }
 
 
-
+printf("ok avant itc\n");
     if (wbpar.method == "autitcgreen") {
         bool extra = false;
 
@@ -7612,9 +7611,11 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         tempitc = 5000.;
 //       greenitc = greenref;
         itc = true;
+printf("ok avant itc 2\n");
 
         if (itc) {
             ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar);
+printf("ok apres itc \n");
         }
     }
 
@@ -7733,6 +7734,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
 void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
 {
     //used by auto WB local to calculate red, green, blue in local region
+    printf("OK RGBLOC\n");
     // int bfh = bf_h + 3, bfw = bf_w + 3;
     int bfh = H, bfw = W;
 
@@ -8081,7 +8083,9 @@ void RawImageSource::getAutoWBMultipliersloc(double & tempref, double & greenref
 
     if (wbpar.method == "aut"  || wbpar.method == "autosdw" || wbpar.method == "autedgsdw" || wbpar.method == "autitcgreen" || wbpar.method == "autedgrob" || wbpar.method == "autedg" || wbpar.method == "autorobust") {
         bool twotimes = false;
+        printf("OK avant auto\n");
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
+        printf("OK apres auto\n");
 
     }
 

@@ -376,7 +376,7 @@ class AutoWBListener
 {
 public:
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(double temp, double green) = 0;
+    virtual void WBChanged(double temp, double green, float studgood) = 0;
 };
 
 class FrameCountListener

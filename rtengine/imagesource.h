@@ -103,6 +103,7 @@ public:
 
     virtual void        convertColorSpace    (Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
     virtual void        getAutoWBMultipliers (double &rm, double &gm, double &bm) = 0;
+    virtual void        getAutoWBMultipliersloc(double &tempref, double &greenref, double &tempitc, double & greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw) = 0;
     virtual ColorTemp   getWB       () const = 0;
     virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) = 0;
     virtual void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams &cmp, const RAWParams &raw) = 0;

@@ -324,6 +324,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     Gtk::Image* itempbiasL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
     Gtk::Image* itempbiasR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
 
+    StudLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
+    StudLabel->set_tooltip_text(M("TP_WBALANCE_STUDLABEL_TOOLTIP"));
+
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
     equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
@@ -344,6 +347,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     boxgreen->pack_start(*igreenL);
     boxgreen->pack_start(*green);
     boxgreen->pack_start(*igreenR);*/
+    pack_start(*StudLabel);
 
     pack_start (*temp);
     //pack_start (*boxgreen);
@@ -477,6 +481,12 @@ void WhiteBalance::optChanged ()
             const WBEntry& currMethod = WBParams::getWbEntries()[methodId];
 
             tempBias->set_sensitive(currMethod.type == WBEntry::Type::AUTO);
+            bool autit = (currMethod.ppLabel == "autitcgreen");
+            if (autit) {
+                StudLabel->show();
+            } else {
+                StudLabel->hide();
+            }
 
             switch (currMethod.type) {
             case WBEntry::Type::CAMERA:
@@ -697,6 +707,13 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         tempBias->set_sensitive(wbValues.type == WBEntry::Type::AUTO);
+        bool autit = (wbValues.ppLabel == "autitcgreen");
+        if (autit) {
+            StudLabel->show();
+        } else {
+            StudLabel->hide();
+        }
+        
     }
 
     setEnabled(pp->wb.enabled);
@@ -915,15 +932,19 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
     return *(method->get_active());
 }
 
-void WhiteBalance::WBChanged(double temperature, double greenVal)
+void WhiteBalance::WBChanged(double temperature, double greenVal, float studgood)
 {
     idle_register.add(
-        [this, temperature, greenVal]() -> bool
+        [this, temperature, greenVal, studgood]() -> bool
         {
             disableListener();
             setEnabled(true);
             temp->setValue(temperature);
             green->setValue(greenVal);
+            StudLabel->set_text(
+                Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), studgood))
+            );            
             temp->setDefault(temperature);
             green->setDefault(greenVal);
             enableListener();

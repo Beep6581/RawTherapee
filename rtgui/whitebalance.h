@@ -41,6 +41,9 @@ class WhiteBalance : public ToolParamBlock, public AdjusterListener, public Fold
         WBLT_PP
     };
 
+private:
+    Gtk::Label*  StudLabel;
+
 protected:
     class MethodColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -118,7 +121,7 @@ public:
         wblistener = l;
     }
     void setWB (int temp, double green);
-    void WBChanged           (double temp, double green) override;
+    void WBChanged           (double temp, double green, float studgood) override;
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
