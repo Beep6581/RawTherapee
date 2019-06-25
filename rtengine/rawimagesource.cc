@@ -7907,7 +7907,7 @@ void RawImageSource::getAutoWBMultipliersloc(double & tempref, double & greenref
     //  int bfh = bf_h + 3, bfw = bf_w + 3;
     int bfh = H, bfw = W;
     if (wbpar.method == "autold") {
-
+            printf("OK auto OLD\n");
         if (fuji) {
             for (int i = 32; i < H - 32; i++) {
                 int fw = ri->get_FujiWidth();

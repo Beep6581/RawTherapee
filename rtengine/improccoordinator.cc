@@ -49,6 +49,7 @@ ImProcCoordinator::ImProcCoordinator() :
     imgsrc (nullptr),
     lastAwbEqual (0.),
     lastAwbTempBias (0.0),
+    lastAwbauto(""),
     monitorIntent (RI_RELATIVE),
     softProof(false),
     gamutCheck(false),
@@ -221,6 +222,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
     int readyphase = 0;
 
     bool highDetailNeeded = options.prevdemo == PD_Sidecar ? true : (todo & M_HIGHQUAL);
+                    printf("metwb=%s \n", params->wb.method.c_str());
 
     // Check if any detail crops need high detail. If not, take a fast path short cut
     if (!highDetailNeeded) {
@@ -242,6 +244,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
+                    printf("metwb2=%s \n", params->wb.method.c_str());
 
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
@@ -330,21 +333,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
             todo |= M_INIT;
 
-            bool autowb0 = false;
-        //  bool autoitc = false;
-       //     autowb0 = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
-            autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");
-            if(autowb0) printf("autoOKOKOK\n");                             
-            if(!autowb0) printf("NOOOOOOONNNNNN\n");
-
-
-       //     if (autowb0) {
-       //         printf("OK rgbloc avant\n");
-                imgsrc->getrgbloc(false, false, false, 0, 0, fh, fw, 0, 0, fh, fw);
-       //         printf("OK rgbloc apres\n");
-       //     }
-
-
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
@@ -358,6 +346,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 imgsrc->retinexPrepareBuffers(params->icm, params->retinex, conversionBuffer, lhist16RETI);
             }
         }
+
+            bool autowb0 = false;
+       //     autowb0 = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
+            autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");
+            printf("autowb0=%s \n", params->wb.method.c_str());
+
+
+
+       //     if (autowb0) {
+       //         printf("OK rgbloc avant\n");
+                imgsrc->getrgbloc(false, false, false, 0, 0, fh, fw, 0, 0, fh, fw);
+       //         printf("OK rgbloc apres\n");
+       //     }
 
         if ((todo & (M_RETINEX | M_INIT)) && params->retinex.enabled) {
             bool dehacontlutili = false;
@@ -379,6 +380,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         autowb = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
         if(autowb) printf("AUTOAUTO\n");
         if(!autowb) printf("PAS--NON\n");
+        printf("auto=%s \n", params->wb.method.c_str());
         
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
@@ -399,7 +401,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = imgsrc->getWB();
           //  } else if (params->wb.method == "Auto") {
             } else if (autowb) {
-                if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias) {
+                if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     double tempitc = 5000.f;
                     double greenitc = 1.;
