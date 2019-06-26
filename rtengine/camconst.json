@@ -1327,7 +1327,7 @@ Camera constants:
     },
 
     { // Quality C, only raw crop
-        "make_model": [ "FUJIFILM X-T3" ],
+        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30" ],
         "raw_crop": [ 0, 5, 6252, 4176]
     },    
     
@@ -2434,6 +2434,11 @@ Camera constants:
         "dcraw_matrix": [ 5838,-1430,-246,-3497,11477,2297,-748,1885,5778 ], // DNG_v9.2 D65
         "raw_crop": [ 0, 0, 4254, 2848 ],
         "ranges": { "black": 512, "white": 16300 }
+    },
+
+    { // Quality C
+        "make_model": [ "Sony DSC-HX99" ],
+        "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
     },
 
     { // Quality C
