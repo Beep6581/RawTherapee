@@ -270,8 +270,11 @@ void dfInfo::updateBadPixelList( RawImage *df )
 
 // ************************* class DFManager *********************************
 
-void DFManager::init( Glib::ustring pathname )
+void DFManager::init(const Glib::ustring& pathname)
 {
+    if (pathname.empty()) {
+        return;
+    }
     std::vector<Glib::ustring> names;
 
     auto dir = Gio::File::create_for_path (pathname);
