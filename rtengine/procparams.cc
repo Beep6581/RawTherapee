@@ -3215,23 +3215,23 @@ ProcParams::ProcParams()
 
 void ProcParams::setDefaults()
 {
-    toneCurve = ToneCurveParams();
+    toneCurve = {};
 
-    labCurve = LCurveParams();
+    labCurve = {};
 
-    rgbCurves = RGBCurvesParams();
+    rgbCurves = {};
 
-    localContrast = LocalContrastParams();
+    localContrast = {};
 
-    colorToning = ColorToningParams();
+    colorToning = {};
 
-    sharpenEdge = SharpenEdgeParams();
+    sharpenEdge = {};
 
-    sharpenMicro = SharpenMicroParams();
+    sharpenMicro = {};
 
-    sharpening = SharpeningParams();
+    sharpening = {};
 
-    prsharpening = SharpeningParams();
+    prsharpening = {};
     prsharpening.contrast = 15.0;
     prsharpening.method = "rld";
     prsharpening.deconvamount = 100;
@@ -3239,71 +3239,71 @@ void ProcParams::setDefaults()
     prsharpening.deconviter = 100;
     prsharpening.deconvdamping = 0;
 
-    vibrance = VibranceParams();
+    vibrance = {};
 
-    wb = WBParams();
+    wb = {};
 
-    colorappearance = ColorAppearanceParams();
+    colorappearance = {};
 
-    defringe = DefringeParams();
+    defringe = {};
 
-    impulseDenoise = ImpulseDenoiseParams();
+    impulseDenoise = {};
 
-    dirpyrDenoise = DirPyrDenoiseParams();
+    dirpyrDenoise = {};
 
-    epd = EPDParams();
+    epd = {};
 
-    fattal = FattalToneMappingParams();
+    fattal = {};
 
-    sh = SHParams();
+    sh = {};
 
-    crop = CropParams();
+    crop = {};
 
-    coarse = CoarseTransformParams();
+    coarse = {};
 
-    commonTrans = CommonTransformParams();
+    commonTrans = {};
 
-    rotate = RotateParams();
+    rotate = {};
 
-    distortion = DistortionParams();
+    distortion = {};
 
-    lensProf = LensProfParams();
+    lensProf = {};
 
-    perspective = PerspectiveParams();
+    perspective = {};
 
-    gradient = GradientParams();
+    gradient = {};
 
-    locallab = LocallabParams();
+    pcvignette = {};
 
-    pcvignette = PCVignetteParams();
+    vignetting = {};
 
-    vignetting = VignettingParams();
+    locallab = {};
 
-    chmixer = ChannelMixerParams();
+    chmixer = {};
 
-    blackwhite = BlackWhiteParams();
+    blackwhite = {};
 
-    cacorrection = CACorrParams();
+    cacorrection = {};
 
-    resize = ResizeParams();
+    resize = {};
 
-    icm = ColorManagementParams();
+    icm = {};
 
-    wavelet = WaveletParams();
+    wavelet = {};
 
-    dirpyrequalizer = DirPyrEqualizerParams();
+    dirpyrequalizer = {};
 
-    hsvequalizer = HSVEqualizerParams();
+    hsvequalizer = {};
 
-    filmSimulation = FilmSimulationParams();
+    filmSimulation = {};
 
-    softlight = SoftLightParams();
+    softlight = {};
 
-    dehaze = DehazeParams();
+    dehaze = {};
 
-    raw = RAWParams();
+    raw = {};
 
-    metadata = MetaDataParams();
+    metadata = {};
     exif.clear();
     iptc.clear();
 
@@ -3312,6 +3312,7 @@ void ProcParams::setDefaults()
     inTrash = false;
 
     ppVersion = PPVERSION;
+    
 }
 
 int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bool fnameAbsolute, ParamsEdited* pedited)
