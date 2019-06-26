@@ -20,6 +20,7 @@
 #include <glibmm/ustring.h>
 #include <map>
 #include <cmath>
+#include "pixelsmap.h"
 #include "rawimage.h"
 
 namespace rtengine
@@ -77,7 +78,7 @@ protected:
 class DFManager
 {
 public:
-    void init( Glib::ustring pathname );
+    void init(const Glib::ustring &pathname);
     Glib::ustring getPathname()
     {
         return currentPath;
