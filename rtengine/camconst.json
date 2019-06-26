@@ -2364,6 +2364,11 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 }
     },
 
+    { // Quality C, correction for frame width
+        "make_model": [ "Sony DSC-RX0M2" ],
+        "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
+    },
+
     { // Quality B, correction for frame width, crop modes covered
         "make_model": [ "Sony ILCE-7RM2", "Sony DSC-RX1RM2" ],
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
