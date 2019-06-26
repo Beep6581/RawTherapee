@@ -3658,6 +3658,32 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         }
     }
 }
+//doc fftw3 says optimum is with size 2^a * 3^b * 5^c * 7^d * 11^e * 13^f with e+f = 0 or 1
+//number for size between 8000 and 1
+ const int fftw_size[] = {8000, 7938, 7920, 7875, 7840, 7800, 7776, 7700, 7680, 7644, 7560, 7546, 7500, 7488, 7425, 7392, 7371, 7350, 7290, 7280, 7203, 7200, 7168, 
+    7128, 7056, 7040, 7020, 7000, 6930, 6912, 6875, 6860, 6825, 6804, 6750, 6720, 6656, 6615, 6600, 6561, 6552, 6500, 6480, 6468, 6400, 6370, 6336, 6318, 6300,
+    6272, 6250, 6240, 6237, 6174, 6160, 6144, 6125, 6075, 6048, 6000, 5940, 5880, 5850, 5832, 5824, 5775, 5760, 5670, 5632, 5625, 5616, 5600, 5544, 5500, 5488, 
+    5460, 5400, 5390, 5376, 5346, 5292, 5280, 5265, 5250, 5200, 5184, 5145, 5120, 5103, 5096, 5040, 5000, 4992, 4950, 4928, 4914, 4900, 4875, 4860, 4851,  4802, 
+    4800, 4752, 4725, 4704, 4680, 4620, 4608, 4550, 4536, 4500, 4480, 4459, 4455, 4410, 4400, 4375, 4374, 4368, 4320, 4312, 4224, 4212, 4200, 4160, 4158, 4125, 
+    4116, 4096, 4095, 4050, 4032, 4000, 3969, 3960, 3920, 3900, 3888, 3850, 3840, 3822, 3780, 3773, 3750, 3744, 3696, 3675, 3645, 3640, 3600, 3584, 3564, 3528, 
+    3520, 3510, 3500, 3465, 3456, 3430, 3402, 3375, 3360, 3328, 3300, 3276, 3250, 3240, 3234, 3200, 3185, 3168, 3159, 3150, 3136, 3125, 3120, 3087, 3080, 3072, 
+    3024, 3000, 2970, 2940, 2925, 2916, 2912, 2880, 2835, 2816, 2808, 2800, 2772, 2750, 2744, 2730, 2700, 2695, 2688, 2673, 2646, 2640, 2625, 2600, 2592, 2560, 
+    2548, 2520, 2500, 2496, 2475, 2464, 2457, 2450, 2430, 2401, 2400, 2376, 2352, 2340, 2310, 2304, 2275, 2268, 2250, 2240, 2205, 2200, 2187, 2184, 2160, 2156, 
+    2112, 2106, 2100, 2080, 2079, 2058, 2048, 2025, 2016, 2000, 1980, 1960, 1950, 1944, 1936, 1925, 1920, 1911, 1890, 1875, 1872, 1848, 1820, 1800, 1792, 1782, 
+    1764, 1760, 1755, 1750, 1728, 1715, 1701, 1680, 1664, 1650, 1638, 1625, 1620, 1617, 1600, 1584, 1575, 1568, 1560, 1540, 1536, 1512, 1500, 1485, 1470, 1458, 
+    1456, 1440, 1408, 1404, 1400, 1386, 1375, 1372, 1365, 1350, 1344, 1323, 1320, 1300, 1296, 1280, 1274, 1260, 1250, 1248, 1232, 1225, 1215, 1200, 1188, 1176, 
+    1170, 1155, 1152, 1134, 1125, 1120, 1100, 1092, 1080, 1078, 1056, 1053, 1050, 1040, 1029, 1024, 1008, 1000, 990, 980, 975, 972, 960, 945, 936, 924, 910, 900, 
+    896, 891, 882, 880, 875, 864, 840, 832, 825, 819, 810, 800, 792, 784, 780, 770, 768, 756, 750, 735, 729, 728, 720, 704, 702, 700, 693, 686, 675, 672, 660,
+    650, 648, 640, 637, 630, 625, 624, 616, 600, 594, 588, 585, 576, 567, 560, 550, 546, 540, 539, 528, 525, 520, 512, 504, 500, 495, 490, 486, 480, 468, 462, 455,
+    450, 448, 441, 440, 432, 420, 416, 405, 400, 396, 392, 390, 385, 384, 378, 375, 364, 360, 352, 351, 350, 343, 336, 330, 325, 324, 320, 315, 312, 308, 300, 297,
+    294, 288, 280, 275, 273, 270, 264, 260, 256, 252, 250, 245, 243, 240, 234, 231, 225, 224, 220, 216, 210, 208, 200, 198, 196, 195, 192, 189, 182, 180, 176, 175,
+    168, 165, 162, 160, 156, 154, 150, 147, 144, 143, 140, 135, 132, 130, 128, 126, 125, 120, 117, 112, 110, 108, 105, 104, 100, 99, 98, 96, 91, 90, 88, 84, 81,
+    80, 78, 77, 75, 72, 70, 66, 65, 64, 63, 60, 56, 55, 54, 52, 50, 49, 48, 45, 44, 42, 40, 39, 36, 35, 33, 32, 30, 28, 27, 26, 25, 24, 22, 21, 20, 18, 16, 15,
+    14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+};
+
+int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
+
 
 static double *cos_table(size_t size)
 {
@@ -3876,7 +3902,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
  * @brief laplacian, DFT and Poisson routines
  *
  * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
- * adapted by Jacques Desmis 2019 <jdesmis@gmail.com>
+ * adapted for Rawtherapee by Jacques Desmis 6-2019 <jdesmis@gmail.com>
  */
 
     BENCHFUN
@@ -3958,29 +3984,6 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
             }
         }
 }
-
-//doc fftw3 says optimum is with size 2^a * 3^b * 5^c * 7^d * 11^e * 13^f with e+f = 0 or 1
-//number for size between 8000 and 1
- const int fftw_size[] = {8000, 7938, 7920, 7875, 7840, 7800, 7776, 7700, 7680, 7644, 7560, 7546, 7500, 7488, 7425, 7392, 7371, 7350, 7290, 7280, 7203, 7200,
-    7168, 7128, 7056, 7040, 7020, 7000, 6930, 6912, 6875, 6860, 6825, 6804, 6750, 6720, 6656, 6615, 6600, 6561, 6552, 6500, 6480, 6468, 6400, 6370, 6336, 6318, 6300,
-    6272, 6250, 6240, 6237, 6174, 6160, 6144, 6125, 6075, 6048, 6000, 5940, 5880, 5850, 5832, 5824, 5775, 5760, 5670, 5632, 5625, 5616, 5600, 5544, 5500, //74
-    5488, 5460, 5400, 5390, 5376, 5346, 5292, 5280, 5265, 5250, 5200, 5184, 5145, 5120, 5103, 5096, 5040, 5000, 4992, 4950, 4928, 4914, 4900, 4875, 4860, 4851,
-    4802, 4800, 4752, 4725, 4704, 4680, 4620, 4608, 4550, 4536, 4500, 4480, 4459, 4455, 4410, 4400, 4375, 4374, 4368, 4320, 4312, 4224, 4212, 4200, 4160, 4158,
-    4125, 4116, 4096, 4095, 4050, 4032, 4000, 3969, 3960, 3920, 3900, 3888, 3850, 3840, 3822, 3780, 3773, 3750, 3744, 3696, 3675, 3645, 3640, 3600, 3584, 3564,
-    3528, 3520, 3510, 3500, 3465, 3456, 3430, 3402, 3375, 3360, 3328, 3300, 3276, 3250, 3240, 3234, 3200, 3185, 3168, 3159, 3150, 3136, 3125, 3120, 3087, 3080,
-    3072, 3024, 3000, 2970, 2940, 2925, 2916, 2912, 2880, 2835, 2816, 2808, 2800, 2772, 2750, 2744, 2730, 2700, 2695, 2688, 2673, 2646, 2640, 2625, 2600, 2592,
-    2560, 2548, 2520, 2500, 2496, 2475, 2464, 2457, 2450, 2430, 2401, 2400, 2376, 2352, 2340, 2310, 2304, 2275, 2268, 2250, 2240, 2205, 2200, 2187, 2184, 2160,
-    2156, 2112, 2106, 2100, 2080, 2079, 2058, 2048, 2025, 2016, 2000, 1980, 1960, 1950, 1944, 1936, 1925, 1920, 1911, 1890, 1875, 1872, 1848, 1820, 1800, 1792,
-    1782, 1764, 1760, 1755, 1750, 1728, 1715, 1701, 1680, 1664, 1650, 1638, 1625, 1620, 1617, 1600, 1584, 1575, 1568, 1560, 1540, 1536, 1512, 1500, 1485, 1470,
-    1458, 1456, 1440, 1408, 1404, 1400, 1386, 1375, 1372, 1365, 1350, 1344, 1323, 1320, 1300, 1296, 1280, 1274, 1260, 1250, 1248, 1232, 1225, 1215, 1200, 1188,
-    1176, 1170, 1155, 1152, 1134, 1125, 1120, 1100, 1092, 1080, 1078, 1056, 1053, 1050, 1040, 1029, 1024, 1008, 1000, 990, 980, 975, 972, 960, 945, 936, 924, 910,
-    900, 896, 891, 882, 880, 875, 864, 840, 832, 825, 819, 810, 800, 792, 784, 780, 770, 768, 756, 750, 735, 729, 728, 720, 704, 702, 700, 693, 686, 675, 672, 660,
-    650, 648, 640, 637, 630, 625, 624, 616, 600, 594, 588, 585, 576, 567, 560, 550, 546, 540, 539, 528, 525, 520, 512, 504, 500, 495, 490, 486, 480, 468, 462, 455,
-    450, 448, 441, 440, 432, 420, 416, 405, 400, 396, 392, 390, 385, 384, 378, 375, 364, 360, 352, 351, 350, 343, 336, 330, 325, 324, 320, 315, 312, 308, 300, 297,
-    294, 288, 280, 275, 273, 270, 264, 260, 256, 252, 250, 245, 243, 240, 234, 231, 225, 224, 220, 216, 210, 208, 200, 198, 196, 195, 192, 189, 182, 180, 176, 175,
-    168, 165, 162, 160, 156, 154, 150, 147, 144, 143, 140, 135, 132, 130, 128, 126, 125, 120, 117, 112, 110, 108, 105, 104, 100, 99, 98, 96, 91, 90, 88, 84, 81,
-    80, 78, 77, 75, 72, 70, 66, 65, 64, 63, 60, 56, 55, 54, 52, 50, 49, 48, 45, 44, 42, 40, 39, 36, 35, 33, 32, 30, 28, 27, 26, 25, 24, 22, 21, 20, 18, 16, 15,
-    14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 
 
 
@@ -6310,16 +6313,78 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 
-// soft light
+// soft light and Retinex_pde
         if (lp.strng > 0.f && call <= 3 && lp.sfena) {
- 
-            const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-            const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-            const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-            const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-            const int bfh = yend - ystart;
-            const int bfw = xend - xstart;
+            int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            int bfh = yend - ystart;
+            int bfw = xend - xstart;
+            //vriable for fast FFTW
+            int bfhr = bfh;
+            int bfwr = bfw;
+            bool reduH = false;
+            bool reduW = false;
+         //   printf("n_fftw=%i yst=%i yen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i \n", N_fftwsize,  ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, original->H);
+         //   printf("xst= %i xen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
+            if(lp.softmet == 1) {
+                int ftsizeH = 1;
+                int ftsizeW = 1;
 
+                for (int ft=0; ft < N_fftwsize; ft++) {//find best values
+                    if(fftw_size[ft] <= bfh) {
+                       ftsizeH = fftw_size[ft];
+                       break;
+                    }
+                }
+                
+                for (int ft=0; ft < N_fftwsize; ft++) {
+                    if(fftw_size[ft] <= bfw) {
+                        ftsizeW = fftw_size[ft];
+                        break;
+                    }
+                }
+                //printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+                //optimize with size fftw
+                if(ystart == 0 && yend < original->H) lp.ly -= (bfh - ftsizeH);
+                else if (ystart != 0 && yend == original->H) lp.lyT -= (bfh - ftsizeH);
+                else if(ystart != 0 && yend != original->H) {
+                    if(lp.ly <= lp.lyT) lp.lyT -= (bfh - ftsizeH);
+                    else lp.ly -= (bfh - ftsizeH);
+                }
+                else if(ystart == 0 && yend == original->H) {
+                    bfhr = ftsizeH;
+                    reduH = true;
+                }
+
+                if(xstart == 0 && xend < original->W) lp.lx -= (bfw - ftsizeW);
+                else if(xstart != 0 && xend == original->W) lp.lxL -= (bfw - ftsizeW);
+                else if(xstart != 0 && xend != original->W) {
+                    if(lp.lx <= lp.lxL) lp.lxL -= (bfw - ftsizeW);
+                    else lp.lx -= (bfw - ftsizeW);
+                }
+                else if(xstart == 0 && xend == original->W) {
+                    bfwr = ftsizeW;
+                    reduW = true;
+                }
+                //new values optimized
+                ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                bfh = bfhr = yend - ystart;
+                bfw = bfwr = xend - xstart;
+                if(reduH) {
+                    bfhr = ftsizeH;
+                }
+                if(reduW) {
+                    bfwr = ftsizeW;
+                }
+            }
+        //    printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i maxH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfhr, original->H, maxH);
+        //    printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
+            
             if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
@@ -6346,27 +6411,27 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 } else if(lp.softmet == 1) {
                      MyMutex::MyLock lock(*fftwMutex);
 
-                    float *datain = new float[bfw*bfh];
-                    float *dataout = new float[bfw*bfh];
-                    float *dE = new float[bfw*bfh];
-                    deltaEforLaplace (dE, lp, bfw, bfh, bufexpfin.get(), hueref, chromaref, lumaref);
+                    float *datain = new float[bfwr*bfhr];
+                    float *dataout = new float[bfwr*bfhr];
+                    float *dE = new float[bfwr*bfhr];
+                    deltaEforLaplace (dE, lp, bfwr, bfhr, bufexpfin.get(), hueref, chromaref, lumaref);
     
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            datain[y * bfw + x] = bufexpfin->L[y][x];
+                    for (int y = 0; y < bfhr; y++) {
+                        for (int x = 0; x < bfwr; x++) {
+                            datain[y * bfwr + x] = bufexpfin->L[y][x];
                         }
                     }
              
-                ImProcFunctions::retinex_pde(datain, dataout, bfw, bfh, 8.f * lp.strng, 1.f, dE);
+                ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                        bufexpfin->L[y][x] = dataout[y * bfw + x];
+                    for (int y = 0; y < bfhr; y++) {
+                        for (int x = 0; x < bfwr; x++) {
+                        bufexpfin->L[y][x] = dataout[y * bfwr + x];
                         }
                     }
                     delete [] datain;
