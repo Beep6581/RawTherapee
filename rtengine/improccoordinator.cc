@@ -192,6 +192,7 @@ ImProcCoordinator::ImProcCoordinator() :
     chromarefs(500, -100000.f),
     lumarefs(500, -100000.f),
     sobelrefs(500, -100000.f),
+    avgs(500, -100000.f),
     huer(0),
     huerblu(0),
     chromarblu(0),
@@ -199,13 +200,13 @@ ImProcCoordinator::ImProcCoordinator() :
     chromar(0),
     lumar(0),
     sobeler(0),
+    avg(0),
     lastspotdup(false),
     locallColorMask(0),
     locallExpMask(0),
     locallSHMask(0),
     locallcbMask(0),
     locallretiMask(0),
-    avg(0),
     retistrsav(nullptr)
 
 {
@@ -865,6 +866,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             float **shbuffer = nullptr;
             int sca = 1;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
+            float avge;
 
             for (int sp = 0; sp < params->locallab.nbspot && sp < (int)params->locallab.spots.size(); sp++) {
                 // Set local curves of current spot to LUT
@@ -919,9 +921,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 // Reference parameters computation
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avg);
+                    ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
                 } else {
-                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avg);
+                    ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
                 }
 
 //                printf("improc avg=%f\n", avg);
@@ -932,6 +934,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 chromar = chromarefs[sp] = chromare;
                 lumar = lumarefs[sp] = lumare ;
                 sobeler = sobelrefs[sp] = sobelre;
+                avg = avgs[sp] = avge;
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 sca);
@@ -969,6 +972,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 lllocalcurve.clear();
+                lightCurveloc.clear();
                 cclocalcurve.clear();
                 exlocalcurve.clear();
                 hltonecurveloc.clear();

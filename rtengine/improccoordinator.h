@@ -279,14 +279,15 @@ protected:
     LUTf chromarefs;
     LUTf lumarefs;
     LUTf sobelrefs;
+    LUTf avgs;
     double huer, huerblu, chromarblu, lumarblu, chromar, lumar, sobeler;
+    float avg;
     bool lastspotdup;
     int locallColorMask;
     int locallExpMask;
     int locallSHMask;
     int locallcbMask;
     int locallretiMask;
-    float avg;
     
 public:
 

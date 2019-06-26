@@ -1174,14 +1174,14 @@ private:
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
-                float avg = 0.f;
+                float avge;
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avg);
+                    ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
                 } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avg);
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
                 }
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avge,
                                                 1);
 
                 // No Locallab mask is shown in exported picture
@@ -1199,7 +1199,7 @@ private:
                 hltonecurveloc.clear();
                 shtonecurveloc.clear();
                 tonecurveloc.clear();
-
+                lightCurveloc.clear();
                 if (params.locallab.spots.at(sp).inverssha) {
 
                     for (int i = 0; i < fh; i++) {

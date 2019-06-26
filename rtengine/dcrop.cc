@@ -911,7 +911,7 @@ void Crop::update(int todo)
         bool lcmasretiutili = parent->lcmasretiutili;
         bool llmasretiutili = parent->llmasretiutili;
         
-        float avg = parent->avg;
+     //   float avg = parent->avg;
         LUTu dummy;
         bool needslocal = params.locallab.enabled;
         LocretigainCurve locRETgainCurve;
@@ -976,6 +976,7 @@ void Crop::update(int todo)
 
                 double cont = params.locallab.spots.at(sp).contrast;
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
+                float avge;
                 huerefblu = parent->huerefblurs[sp];
                 chromarefblu = parent->chromarefblurs[sp];
                 lumarefblu = parent->lumarefblurs[sp];
@@ -983,8 +984,9 @@ void Crop::update(int todo)
                 chromare = parent->chromarefs[sp];
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
+                avge = parent->avgs[sp];
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
-                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avg,
+                                                hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avge,
                                                 sca);
                 // Locallab mask are only shown for selected spot
                 if (sp == params.locallab.selspot) {
@@ -1003,6 +1005,7 @@ void Crop::update(int todo)
                                       LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0);
                 }
                 lllocalcurve2.clear();
+                lightCurveloc2.clear();
                 cclocalcurve2.clear();
                 exlocalcurve2.clear();
                 hltonecurveloc2.clear();

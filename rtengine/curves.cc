@@ -1125,7 +1125,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 
         int k = avg * 32768;
         avg = lightCurveloc[k];
-//        printf("avg=%f lumaref=%f\n", avg, lumare/100.f);
+        printf("avg=%f lumaref=%f\n", avg, lumare/100.f);
         std::vector<double> contrastcurvePoints;
         bool lumm = true;
 
