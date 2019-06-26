@@ -7590,7 +7590,6 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     }
 
 
-printf("ok avant itc\n");
     if (wbpar.method == "autitcgreen") {
         bool extra = false;
 
@@ -7611,11 +7610,9 @@ printf("ok avant itc\n");
         tempitc = 5000.;
 //       greenitc = greenref;
         itc = true;
-printf("ok avant itc 2\n");
 
         if (itc) {
             ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar);
-printf("ok apres itc \n");
         }
     }
 
@@ -7734,7 +7731,7 @@ printf("ok apres itc \n");
 void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
 {
     //used by auto WB local to calculate red, green, blue in local region
-    printf("OK RGBLOC\n");
+   // printf("OK RGBLOC\n");
     // int bfh = bf_h + 3, bfw = bf_w + 3;
     int bfh = H, bfw = W;
 
@@ -7875,7 +7872,7 @@ void  RawImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, in
 }
 
 //void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
-void RawImageSource::getAutoWBMultipliersloc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw)
+void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw)
 {
     BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -7907,7 +7904,7 @@ void RawImageSource::getAutoWBMultipliersloc(double & tempref, double & greenref
     //  int bfh = bf_h + 3, bfw = bf_w + 3;
     int bfh = H, bfw = W;
     if (wbpar.method == "autold") {
-            printf("OK auto OLD\n");
+          //  printf("OK auto OLD\n");
         if (fuji) {
             for (int i = 32; i < H - 32; i++) {
                 int fw = ri->get_FujiWidth();
@@ -8083,9 +8080,9 @@ void RawImageSource::getAutoWBMultipliersloc(double & tempref, double & greenref
 
     if (wbpar.method == "aut"  || wbpar.method == "autosdw" || wbpar.method == "autedgsdw" || wbpar.method == "autitcgreen" || wbpar.method == "autedgrob" || wbpar.method == "autedg" || wbpar.method == "autorobust") {
         bool twotimes = false;
-        printf("OK avant auto\n");
+    //    printf("OK avant auto\n");
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
-        printf("OK apres auto\n");
+    //    printf("OK apres auto\n");
 
     }
 

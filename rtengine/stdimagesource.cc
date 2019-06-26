@@ -318,7 +318,7 @@ void StdImageSource::WBauto(double &tempref, double &greenref, array2D<float> &r
 void  StdImageSource::getrgbloc(bool local, bool gamma, bool cat02, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
 {}
 
-void StdImageSource::getAutoWBMultipliersloc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw)
+void StdImageSource::getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw)
 {
     if (redAWBMul != -1.) {
         rm = redAWBMul;
@@ -327,7 +327,7 @@ void StdImageSource::getAutoWBMultipliersloc(double &tempref, double &greenref, 
         return;
     }
 
-    img->getAutoWBMultipliersloc(tempref, greenref, tempitc, greenitc,studgood, begx, begy, yEn, xEn, cx, cy, bf_h, bf_w, rm, gm, bm, params->wb, params->icm, params->raw);
+    img->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc,studgood, begx, begy, yEn, xEn, cx, cy, bf_h, bf_w, rm, gm, bm, params->wb, params->icm, params->raw);
 
     redAWBMul   = rm;
     greenAWBMul = gm;

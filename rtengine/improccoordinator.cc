@@ -222,7 +222,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
     int readyphase = 0;
 
     bool highDetailNeeded = options.prevdemo == PD_Sidecar ? true : (todo & M_HIGHQUAL);
-                    printf("metwb=%s \n", params->wb.method.c_str());
+                //    printf("metwb=%s \n", params->wb.method.c_str());
 
     // Check if any detail crops need high detail. If not, take a fast path short cut
     if (!highDetailNeeded) {
@@ -244,7 +244,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
-                    printf("metwb2=%s \n", params->wb.method.c_str());
+        printf("metwb2=%s \n", params->wb.method.c_str());
 
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
@@ -349,15 +349,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             bool autowb0 = false;
        //     autowb0 = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
-            autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");
+            autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");//in some cases autowb0 does not work ....params->wb.method still at "camera" instead of auto !!! 
             printf("autowb0=%s \n", params->wb.method.c_str());
 
 
 
        //     if (autowb0) {
-       //         printf("OK rgbloc avant\n");
                 imgsrc->getrgbloc(false, false, false, 0, 0, fh, fw, 0, 0, fh, fw);
-       //         printf("OK rgbloc apres\n");
        //     }
 
         if ((todo & (M_RETINEX | M_INIT)) && params->retinex.enabled) {
@@ -378,9 +376,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         bool autowb = false;
         autowb = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
-        if(autowb) printf("AUTOAUTO\n");
-        if(!autowb) printf("PAS--NON\n");
-        printf("auto=%s \n", params->wb.method.c_str());
+        printf("automethod=%s \n", params->wb.method.c_str());
         
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
@@ -399,33 +395,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
                 currWB = imgsrc->getWB();
-          //  } else if (params->wb.method == "Auto") {
+                lastAwbauto = ""; //reinitialize auto
             } else if (autowb) {
                 if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     double tempitc = 5000.f;
                     double greenitc = 1.;
- //                   imgsrc->getAutoWBMultipliers(rm, gm, bm);
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
-                 printf("tempref=%f greref=%f\n", tempref, greenref);
+                    printf("tempref=%f greref=%f\n", tempref, greenref);
 
-                    imgsrc->getAutoWBMultipliersloc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
+                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
 
-/*
-                    if (rm != -1.) {
-                        autoWB.update(rm, gm, bm, params->wb.equal, params->wb.tempBias);
-                        lastAwbEqual = params->wb.equal;
-                        lastAwbTempBias = params->wb.tempBias;
-                    } else {
-                        lastAwbEqual = -1.;
-                        lastAwbTempBias = 0.0;
-                        autoWB.useDefaults(params->wb.equal);
-                    }
-*/
-                    //double rr,gg,bb;
-                    //autoWB.getMultipliers(rr,gg,bb);
                 if (params->wb.method ==  "autitcgreen") {
                     params->wb.temperature = tempitc;
                     params->wb.green = greenitc;
@@ -441,10 +423,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     autoWB.update(rm, gm, bm, params->wb.equal, bias);
-                    //double temper = autoWB.getTemp();
-                    //double gre = autoWB.getGreen();
-                    //printf("temper=%f gre=%f \n", temper, gre);
-
                     lastAwbEqual = params->wb.equal;
                     lastAwbTempBias = params->wb.tempBias;
                     lastAwbauto = params->wb.method;
@@ -1254,7 +1232,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
             double greenitc = 1.;
             float studgood = 1000.f;
             double tempref, greenref;
-            imgsrc->getAutoWBMultipliersloc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
+            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
 
             if (rm != -1) {
                 autoWB.update(rm, gm, bm, equal, tempBias);
