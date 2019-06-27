@@ -1229,12 +1229,33 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             printf("Thumbnail channel medians: %g %g %g\n", rmed, gmed, bmed);
             printf("Thumbnail computed multipliers: %g %g %g\n", rmult, gmult, bmult);
         }
-        
+
+#ifdef __SSE2__
+        const vfloat clipv = F2V(MAXVALF);
+        const vfloat rexpv = F2V(rexp);
+        const vfloat gexpv = F2V(gexp);
+        const vfloat bexpv = F2V(bexp);
+        const vfloat rmultv = F2V(rmult);
+        const vfloat gmultv = F2V(gmult);
+        const vfloat bmultv = F2V(bmult);
+#endif
+
         for (int i = 0; i < rheight; i++) {
-            for (int j = 0; j < rwidth; j++) {
-                baseImg->r(i, j) = CLIP(rmult * powf(baseImg->r (i, j), rexp));
-                baseImg->g(i, j) = CLIP(gmult * powf(baseImg->g (i, j), gexp));
-                baseImg->b(i, j) = CLIP(bmult * powf(baseImg->b (i, j), bexp));
+            float *rline = baseImg->r(i);
+            float *gline = baseImg->g(i);
+            float *bline = baseImg->b(i);
+            int j = 0;
+#ifdef __SSE2__
+            for (; j < rwidth - 3; j +=4) {
+                STVFU(rline[j], vminf(rmultv * pow_F(LVFU(rline[j]), rexpv), clipv));
+                STVFU(gline[j], vminf(gmultv * pow_F(LVFU(gline[j]), gexpv), clipv));
+                STVFU(bline[j], vminf(bmultv * pow_F(LVFU(bline[j]), bexpv), clipv));
+            }
+#endif
+            for (; j < rwidth; ++j) {
+                rline[j] = CLIP(rmult * powf(rline[j], rexp));
+                gline[j] = CLIP(gmult * powf(gline[j], gexp));
+                bline[j] = CLIP(bmult * powf(bline[j], bexp));
             }
         }
     }
