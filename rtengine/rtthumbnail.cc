@@ -1253,9 +1253,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             }
 #endif
             for (; j < rwidth; ++j) {
-                rline[j] = CLIP(rmult * powf(rline[j], rexp));
-                gline[j] = CLIP(gmult * powf(gline[j], gexp));
-                bline[j] = CLIP(bmult * powf(bline[j], bexp));
+                rline[j] = CLIP(rmult * pow_F(rline[j], rexp));
+                gline[j] = CLIP(gmult * pow_F(gline[j], gexp));
+                bline[j] = CLIP(bmult * pow_F(bline[j], bexp));
             }
         }
     }
