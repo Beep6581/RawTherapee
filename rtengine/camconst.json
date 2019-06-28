@@ -1290,6 +1290,11 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
 
+    { // Quality C
+        "make_model": "FUJIFILM X-A5",
+        "ranges": { "white": 16100 }
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X-A10",
         "dcraw_matrix": [ 11540,-4999,-991,-2949,10963,2278,-382,1049,5605 ], // DNGv9.12 D65
@@ -1302,6 +1307,11 @@ Camera constants:
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
         //"dcraw_matrix": [ 9289,-3279,-632,-3539,11137,2758,-1049,1950,6544 ], // X-RITE D55
         //"raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296 - experimental crop
+        "ranges": { "white": 16100 }
+    },
+
+    { // Quality C
+        "make_model": [ "FUJIFILM X-T100" ],
         "ranges": { "white": 16100 }
     },
 
@@ -1327,7 +1337,7 @@ Camera constants:
     },
 
     { // Quality C, only raw crop
-        "make_model": [ "FUJIFILM X-T3" ],
+        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30" ],
         "raw_crop": [ 0, 5, 6252, 4176]
     },    
     
@@ -1675,6 +1685,11 @@ Camera constants:
         "global_green_equilibration" : true,
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "ranges": { "white": 4040 } // nominal 4056
+    },
+
+    { // Quality C
+        "make_model": [ "OLYMPUS E-PL9" ],
+        "ranges": { "white": 4080 } // nominal 4093
     },
 
     { // Quality B, with long exposure noise reduction White Level gets WL-BL = around 256_12-bit levels less
@@ -2364,6 +2379,11 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 }
     },
 
+    { // Quality C, correction for frame width
+        "make_model": [ "Sony DSC-RX0", "Sony DSC-RX0M2" ],
+        "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
+    },
+
     { // Quality B, correction for frame width, crop modes covered
         "make_model": [ "Sony ILCE-7RM2", "Sony DSC-RX1RM2" ],
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
@@ -2432,8 +2452,14 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": [ "Sony DSC-HX99" ],
+        "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
+    },
+
+    { // Quality C
         "make_model": [ "Sony DSC-R1" ],
-        "raw_crop": [ 0, 0, 3924, 2608 ]
+        "raw_crop": [ 0, 0, 3924, 2608 ],
+        "ranges": { "white": 16368 }
     },
 
     { // Quality A
