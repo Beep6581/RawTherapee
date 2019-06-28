@@ -48,7 +48,6 @@ bool channelsAvg(
     const rtengine::RawImage* ri,
     int width,
     int height,
-    array2D<float>& rawData,
     const float* cblacksom,
     rtengine::Coord spotPos,
     int spotSize,
@@ -115,13 +114,13 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
 
     // Sample first spot
     transformPosition(spotA.x, spotA.y, tran, spot.x, spot.y);
-    if (!channelsAvg(ri, W, H, rawData, cblacksom, spot, spotSize, currentParams, clearVals)) {
+    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, currentParams, clearVals)) {
         return false;
     }
 
     // Sample second spot
     transformPosition(spotB.x, spotB.y, tran, spot.x, spot.y);
-    if (!channelsAvg(ri, W, H, rawData, cblacksom, spot, spotSize, currentParams, denseVals)) {
+    if (!channelsAvg(ri, W, H, cblacksom, spot, spotSize, currentParams, denseVals)) {
         return false;
     }
 
