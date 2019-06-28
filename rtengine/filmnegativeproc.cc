@@ -49,6 +49,7 @@ bool channelsAvg(
     int width,
     int height,
     array2D<float>& rawData,
+    const float* cblacksom,
     rtengine::Coord spotPos,
     int spotSize,
     const rtengine::procparams::FilmNegativeParams& params,
@@ -83,13 +84,9 @@ bool channelsAvg(
 
             ++pxCount[ch];
 
-            // If film negative is currently enabled, undo the effect by elevating to 1/exp,
-            // in order to sample the original, linear value
-            if (params.enabled) {
-                avgs[ch] += powf(rawData[r][c], -1.f / (ch == 0 ? params.redExp : ch == 1 ? params.greenExp : params.blueExp));
-            } else {
-                avgs[ch] += rawData[r][c];
-            }
+            // Sample the original unprocessed values from RawImage, subtracting black levels.
+            // Scaling is irrelevant, as we are only interested in the ratio between two spots.
+            avgs[ch] += ri->data[r][c] - cblacksom[ch];
         }
     }
 
@@ -118,13 +115,13 @@ bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D s
 
     // Sample first spot
     transformPosition(spotA.x, spotA.y, tran, spot.x, spot.y);
-    if (!channelsAvg(ri, W, H, rawData, spot, spotSize, currentParams, clearVals)) {
+    if (!channelsAvg(ri, W, H, rawData, cblacksom, spot, spotSize, currentParams, clearVals)) {
         return false;
     }
 
     // Sample second spot
     transformPosition(spotB.x, spotB.y, tran, spot.x, spot.y);
-    if (!channelsAvg(ri, W, H, rawData, spot, spotSize, currentParams, denseVals)) {
+    if (!channelsAvg(ri, W, H, rawData, cblacksom, spot, spotSize, currentParams, denseVals)) {
         return false;
     }
 
@@ -263,7 +260,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         printf("Median calc time us: %d\n", t3.etime(t2));
     }
 
-    constexpr float CLIP_VAL = 20 * MAX_OUT_VALUE;
+    constexpr float CLIP_VAL = 65535.f;
 
     t3.set();
 
