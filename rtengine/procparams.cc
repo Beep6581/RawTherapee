@@ -2736,9 +2736,9 @@ bool MetaDataParams::operator!=(const MetaDataParams &other) const
 
 FilmNegativeParams::FilmNegativeParams() :
     enabled(false),
-    redExp(2.72),
-    greenExp(2.0),
-    blueExp(1.72)
+    redExp(2.04),
+    greenExp(1.5),
+    blueExp(1.29)
 {
 }
 

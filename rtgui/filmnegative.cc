@@ -30,14 +30,11 @@
 namespace
 {
 
-Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal, bool log)
+Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal)
 {
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.001, defaultVal)); // exponent
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.001, defaultVal));
     adj->setAdjusterListener(listener);
-
-    if (log) {
-        adj->setLogScale(10, minV, false);
-    }
+    adj->setLogScale(6, 1, true);
 
     if (adj->delay < options.adjusterMaxDelay) {
         adj->delay = options.adjusterMaxDelay;
@@ -55,9 +52,9 @@ FilmNegative::FilmNegative() :
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_EXPONENTS")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
     fnp(nullptr),
-    greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 2.0, false)),
-    redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 3, 1.36, true)),
-    blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 3, 0.86, true)),
+    greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 1.5)),
+    redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 3, 1.36)),
+    blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 3, 0.86)),
     spotgrid(Gtk::manage(new Gtk::Grid())),
     spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK"))))
 {
