@@ -33,8 +33,9 @@
 
 namespace rtengine
 {
+    LocallabParams          locallab;        ///< Local lab parameters
 
-void ImProcFunctions::localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, double scale)
+void ImProcFunctions::localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, bool fftwlc, double scale)
 {
     if (!localContrastParams.enabled) {
         return;
@@ -46,13 +47,17 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const Lo
     const float dark = localContrastParams.darkness;
     const float light = localContrastParams.lightness;
     array2D<float> buf(width, height);
-    const float sigma = localContrastParams.radius / scale;
+    float sigma = localContrastParams.radius / scale;
     //printf("wi%i he=%i am=%f da=%f li=%f si=%f\n", width, height, a, dark, light, sigma);
+    if(!fftwlc) {
 #ifdef _OPENMP
-    #pragma omp parallel if(multiThread)
+        #pragma omp parallel if(multiThread)
 #endif
-    gaussianBlur(lab->L, buf, width, height, sigma);
-
+        gaussianBlur(lab->L, buf, width, height, sigma);
+    } else {
+        sigma *= 50.f;//approximation to convert sigma "gaussianBlur" to FFTW blur 
+        ImProcFunctions::fftw_convol_blur2(lab->L, buf, width, height, sigma, 0);
+    }
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
 #endif

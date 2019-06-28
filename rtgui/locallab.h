@@ -275,6 +275,10 @@ private:
     // Sharpening
     Gtk::CheckButton* const inverssha;
     sigc::connection inversshaConn;
+    //local contrast
+    Gtk::CheckButton* const fftwlc;
+    sigc::connection fftwlcConn;
+    
     //CBDL
     Gtk::CheckButton* const enacbMask;
     sigc::connection enacbMaskConn;
@@ -367,6 +371,8 @@ private:
     void enaretiMasktmapChanged();
     // Sharpening
     void inversshaChanged();
+    // local contrast
+    void fftwlcChanged();
     //CBDL
     void enacbMaskChanged();
     // ComboBox event functions

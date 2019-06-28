@@ -2513,6 +2513,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lcdarkness(1.0),
     lclightness(1.0),
     sensilc(19),
+    fftwlc(false),
     // Contrast by detail levels
     expcbdl(false),
     mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
@@ -2730,6 +2731,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lcdarkness == other.lcdarkness
         && lclightness == other.lclightness
         && sensilc == other.sensilc
+        && fftwlc == other.fftwlc
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
@@ -3904,6 +3906,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lcdarkness_" + std::to_string(i), spot.lcdarkness, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lclightness_" + std::to_string(i), spot.lclightness, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilc, "Locallab", "Sensilc_" + std::to_string(i), spot.sensilc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwlc, "Locallab", "Fftwlc_" + std::to_string(i), spot.fftwlc, keyFile);
                 // Contrast by detail levels
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), spot.expcbdl, keyFile);
 
@@ -5218,6 +5221,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + std::to_string(i), pedited, spot.lcdarkness, spotEdited.lcdarkness);
                 assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + std::to_string(i), pedited, spot.lclightness, spotEdited.lclightness);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, spot.sensilc, spotEdited.sensilc);
+                assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + std::to_string(i), pedited, spot.fftwlc, spotEdited.fftwlc);
                 // Contrast by detail levels
                 assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, spot.expcbdl, spotEdited.expcbdl);
 

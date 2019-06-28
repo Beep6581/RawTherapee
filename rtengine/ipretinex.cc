@@ -54,9 +54,11 @@
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #define CLIPLOC(x) LIM(x,0.f,32767.f)
 #define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
+#define CLIPMAX(x) LIM(x,0.f,500000.f)
 
 namespace
 {
+    
 void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
 {
     double pwr = 1.0 / gamma;
@@ -922,6 +924,10 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
         const int H_L = height;
         const int W_L = width;
+        
+ //           array2D<float> src(W_L, H_L);
+ //           array2D<float> out(W_L, H_L);
+        
         float *src[H_L] ALIGNED16;
         float *srcBuffer = new float[H_L * W_L];
 
@@ -959,16 +965,19 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         for (int scale = scal - 1; scale >= 0; scale--) {
                 printf("retscale=%f scale=%i \n", RetinexScales[scale], scale);
 #ifdef _OPENMP
-            #pragma omp parallel
+            #pragma omp parallel  //disabled with FFTW
 #endif
             {
 
                 if (scale == scal - 1)
                 {
                     gaussianBlur(src, out, W_L, H_L, RetinexScales[scale], buffer);
+                    //ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, RetinexScales[scale], 0);
                 } else   // reuse result of last iteration
                 {
                     // out was modified in last iteration => restore it
+ 
+                   // ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), 0);
 
                     gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                 }
@@ -1184,7 +1193,6 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             vfloat pondv = F2V(pond);
             vfloat limMinv = F2V(ilimD);
             vfloat limMaxv = F2V(limD);
-
 #endif
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -1217,6 +1225,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     }
                 }
             }
+   
         }
 
         if (scal != 1) {
@@ -1400,11 +1409,13 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
         }
         delete [] buffer;
+//        src(0,0);
+//        out(0,0);
         delete [] outBuffer;
         outBuffer = nullptr;
         delete [] srcBuffer;
         srcBuffer = nullptr;
-        
+      
         float str = strength * (chrome == 0 ? 1.f : 0.8f * (chrT - 0.4f));
         const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
 
@@ -1413,7 +1424,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             stddv = 0.f;
 
             mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-            //     printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+          // printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
             float epsil = 0.1f;
 
@@ -1430,7 +1441,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
             }
 
             delta = maxi - mini;
-            // printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
+          //   printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
             if (!delta) {
                 delta = 1.0f;
@@ -1474,6 +1485,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                 bmin *= 500.f;
                 cdfactor *= 2.f;
             }
+            
 
 #ifdef _OPENMP
             #pragma omp parallel
@@ -1489,6 +1501,7 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
                 for (int i = 0; i < H_L; i ++)
                     for (int j = 0; j < W_L; j++) {
+                        
                         if (hasRetGainCurve) {
                             float absciss;
 
@@ -1502,12 +1515,12 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
 
                             gan = locRETgainCcurve[absciss]; //new gain function transmission
                         }
-
+                        
                         float cd = gan * cdfactor * luminance[i][j] + offse;
 
                         cdmax = cd > cdmax ? cd : cdmax;
                         cdmin = cd < cdmin ? cd : cdmin;
-                        luminance[i][j] = LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
+                        luminance[i][j] = CLIPMAX(LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j]);
                     }
 
 

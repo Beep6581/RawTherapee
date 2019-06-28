@@ -941,6 +941,7 @@ HISTORY_MSG_694;Local - Retinex Laplacian threshold
 HISTORY_MSG_695;Local - Soft method
 HISTORY_MSG_696;Local - Retinex Normalize
 HISTORY_MSG_697;Local - TM Normalize
+HISTORY_MSG_698;Local - Local contrast Fast Fourier
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2029,6 +2030,7 @@ TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DEHAZ;Dehaze
+TP_LOCALLAB_FFTW;Use Fast Fourier
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_LUM;Curves LC

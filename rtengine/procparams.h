@@ -1114,6 +1114,7 @@ struct LocallabParams {
         double lcdarkness;
         double lclightness;
         int sensilc;
+        bool fftwlc;
         // Contrast by detail levels
         bool expcbdl;
         double mult[6];

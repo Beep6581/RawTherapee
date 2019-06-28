@@ -175,7 +175,7 @@ Locallab::Locallab():
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
     sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Local Contrast
-    lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 200, 1, 80))),
+    lcradius(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20, 400, 1, 80))),
     lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
     lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
@@ -233,6 +233,8 @@ Locallab::Locallab():
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
     // Sharpening
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
+    // Local contrast
+    fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
     //CBDL
     enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     
@@ -1016,6 +1018,7 @@ Locallab::Locallab():
     // Local Contrast
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrast));
     enablecontrastConn = expcontrast->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcontrast));
+    fftwlcConn  = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwlcChanged));
 
     lcradius->setAdjusterListener(this);
 
@@ -1033,6 +1036,7 @@ Locallab::Locallab():
     contrastBox->pack_start(*lcdarkness);
     contrastBox->pack_start(*lclightness);
     contrastBox->pack_start(*sensilc);
+    contrastBox->pack_start(*fftwlc);
     expcontrast->add(*contrastBox, false);
     expcontrast->setLevel(2);
 
@@ -2200,6 +2204,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).lcdarkness = lcdarkness->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lclightness = lclightness->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensilc = sensilc->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fftwlc = fftwlc->get_active();
                     // Contrast by detail levels
                     pp->locallab.spots.at(pp->locallab.selspot).expcbdl = expcbdl->getEnabled();
 
@@ -2419,6 +2424,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).lcdarkness = pe->locallab.spots.at(pp->locallab.selspot).lcdarkness || lcdarkness->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lclightness = pe->locallab.spots.at(pp->locallab.selspot).lclightness || lclightness->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensilc = pe->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fftwlc = pe->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         // Contrast by detail levels
                         pe->locallab.spots.at(pp->locallab.selspot).expcbdl = pe->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -2642,6 +2648,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).lcdarkness = pedited->locallab.spots.at(pp->locallab.selspot).lcdarkness || lcdarkness->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lclightness = pedited->locallab.spots.at(pp->locallab.selspot).lclightness || lclightness->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensilc = pedited->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fftwlc = pedited->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         // Contrast by detail levels
                         pedited->locallab.spots.at(pp->locallab.selspot).expcbdl = pedited->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -3476,6 +3483,31 @@ void Locallab::activlumChanged()
         }
     }
 }
+
+void Locallab::fftwlcChanged()
+{
+    // printf("fftwlcChanged\n");
+
+    if (multiImage) {
+        if (fftwlc->get_inconsistent()) {
+            fftwlc->set_inconsistent(false);
+            fftwlcConn.block(true);
+            fftwlc->set_active(false);
+            fftwlcConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            if (fftwlc->get_active()) {
+                listener->panelChanged(Evlocallabfftwlc, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabfftwlc, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
 
 void Locallab::inversshaChanged()
 {
@@ -5215,6 +5247,7 @@ void Locallab::enableListener()
     inversshaConn.block(false);
     // Local Contrast
     enablecontrastConn.block(false);
+    fftwlcConn.block(false);
     // Contrast by detail levels
     enablecbdlConn.block(false);
     enacbMaskConn.block(false);
@@ -5274,6 +5307,7 @@ void Locallab::disableListener()
     inversshaConn.block(true);
     // Local Contrast
     enablecontrastConn.block(true);
+    fftwlcConn.block(true);
     // Contrast by detail levels
     enablecbdlConn.block(true);
     enacbMaskConn.block(true);
@@ -5487,6 +5521,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         lcdarkness->setValue(pp->locallab.spots.at(index).lcdarkness);
         lclightness->setValue(pp->locallab.spots.at(index).lclightness);
         sensilc->setValue(pp->locallab.spots.at(index).sensilc);
+        fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
 
         // Contrast by detail levels
         expcbdl->setEnabled(pp->locallab.spots.at(index).expcbdl);
@@ -5742,6 +5777,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 lcdarkness->setEditedState(spotState->lcdarkness ? Edited : UnEdited);
                 lclightness->setEditedState(spotState->lclightness ? Edited : UnEdited);
                 sensilc->setEditedState(spotState->sensilc ? Edited : UnEdited);
+                fftwlc->set_inconsistent(multiImage && !spotState->fftwlc);
 
                 // Contrast by detail levels
                 expcbdl->set_inconsistent(!spotState->expcbdl);

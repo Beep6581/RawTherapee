@@ -530,6 +530,7 @@ public:
         bool lcdarkness;
         bool lclightness;
         bool sensilc;
+        bool fftwlc;
         // Contrast by detail levels
         bool expcbdl;
         bool mult[6];

@@ -1202,7 +1202,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (crops[i]->hasListener() && (panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar) || (todo & (M_MONITOR | M_RGBCURVE | M_LUMACURVE)) || crops[i]->get_skip() == 1)) {
             crops[i]->update(todo);     // may call ourselves
         }
-
     if (panningRelatedChange || (todo & M_MONITOR)) {
         progress("Conversion to RGB...", 100 * readyphase / numofphases);
 

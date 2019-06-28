@@ -63,6 +63,7 @@
 #define CLIP04(x) LIM(x, 0.f, 4.f)
 #define CLIP42_35(x) LIM(x, 0.42, 3.5)
 #define CLIP2_30(x) LIM(x, 0.2, 3.)
+#define CLIPMAX(x) LIM(x,0.f,500000.f)
 
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"
@@ -4004,10 +4005,10 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2) 
 */
     BENCHFUN
-   
+  
 #ifdef _OPENMP
     if (multiThread) {
-        fftwf_init_threads();
+          fftwf_init_threads();
         fftwf_plan_with_nthreads ( omp_get_max_threads() );
     }
 #endif
@@ -4016,10 +4017,10 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     float *out; //for FFT datas
     float *kern = nullptr;//for kernel gauss
     float *outkern = nullptr;//for FFT kernel
-
-    fftwf_plan p, pkern;//plan for FFT
+    fftwf_plan p;
+    fftwf_plan pkern;//plan for FFT
     int image_size, image_sizechange;
-    double n_x, n_y;//relative coordonates for kernel Gauss
+    float n_x, n_y;//relative coordonates for kernel Gauss
 
     out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
 
@@ -4031,16 +4032,19 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     /*compute the Fourier transform of the input data*/
 
     p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10,  FFTW_ESTIMATE);//FFT 2 dimensions forward  FFTW_MEASURE FFTW_ESTIMATE
+ //   p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+
     fftwf_execute(p);
     fftwf_destroy_plan(p);
-
     /*define the gaussian constants for the convolution kernel*/
 
-    n_x = rtengine::RT_PI/(double) bfw;
-    n_y = rtengine::RT_PI/(double) bfh;
+  //  n_x = rtengine::RT_PI/(double) bfw;//ipol
+  //  n_y = rtengine::RT_PI/(double) bfh;
+    n_x = 1.f/(float) bfw;//gauss
+    n_y = 1.f/(float) bfh;
     n_x = n_x * n_x;
     n_y = n_y * n_y;
-
+    float radsig = 1.f / (2.f * rtengine::RT_PI * radius * radius);//gauss
     image_size = bfw * bfh;
     image_sizechange = 4 * image_size;
 
@@ -4051,9 +4055,9 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
         for(int j = 0; j < bfh; j++){
             int index = j * bfw;
             for(int i = 0; i < bfw; i++)
-                kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel 
+            //   kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel Ipol formula   
+                kern[ i+ index] = radsig * exp((float)(-(n_x * i * i + n_y * j * j)/ (2.f * radius * radius)));//calculate Gauss kernel  with Gauss formula
         }
-
         /*compute the Fourier transform of the kernel data*/
         pkern = fftwf_plan_r2r_2d(bfh, bfw, kern, outkern, FFTW_REDFT10, FFTW_REDFT10,FFTW_ESTIMATE);//FFT 2 dimensions forward
         fftwf_execute(pkern);
@@ -4087,7 +4091,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
 
     for(int index = 0; index < image_size; index++) {//restore datas
         output[index] /= image_sizechange;
-         output[index] = CLIPLOC(output[index]);
+        // output[index] = CLIPMAX(output[index]);
     }
 
     fftwf_destroy_plan(p);
@@ -4096,6 +4100,46 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
         fftwf_cleanup_threads();
     }
 }
+
+void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw, int bfh, float radius, int fftkern)
+{
+   MyMutex::MyLock lock(*fftwMutex);
+
+   float *input = nullptr;
+   if (NULL == (input = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+    
+   float *output = nullptr;
+   if (NULL == (output = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                for (int y = 0; y < bfh; y++) {
+                    for (int x = 0; x < bfw; x++) {
+                        input[y * bfw + x] =  input2[y][x];
+                    }
+                }
+                ImProcFunctions::fftw_convol_blur(input, output, bfw, bfh, radius, fftkern);
+                
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                for (int y = 0; y < bfh; y++) {
+                    for (int x = 0; x < bfw; x++) {
+                        output2[y][x] = output[y * bfw + x];
+                    }
+                }
+            fftwf_free(input);
+            fftwf_free(output);
+              
+}
+
 
 void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numblox_W, int min_numblox_W, float **tmp1, int numThreads, double radius)
 {
@@ -6313,7 +6357,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 
-// soft light and Retinex_pde
+// soft light and 
         if (lp.strng > 0.f && call <= 3 && lp.sfena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -6487,12 +6531,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                     
                     LocalContrastParams localContrastParams;
+                    LocallabParams locallabparams;
                     localContrastParams.enabled = true;
                     localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
                     localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
                     localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-                    ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, sk);
+                    bool fftwlc = false;
+                    if(params->locallab.spots.at(sp).fftwlc) fftwlc = true;
+                    ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
 
                     float minL =  tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;

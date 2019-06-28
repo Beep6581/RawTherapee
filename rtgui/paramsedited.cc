@@ -1103,6 +1103,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lcdarkness = locallab.spots.at(j).lcdarkness && pSpot.lcdarkness == otherSpot.lcdarkness;
                 locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
+                locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
                 // Contrast by detail levels
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
 
@@ -3236,6 +3237,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensilc   = mods.locallab.spots.at(i).sensilc;
         }
 
+        if (locallab.spots.at(i).fftwlc) {
+            toEdit.locallab.spots.at(i).fftwlc = mods.locallab.spots.at(i).fftwlc;
+        }
+
         // Contrast by detail levels
         if (locallab.spots.at(i).expcbdl) {
             toEdit.locallab.spots.at(i).expcbdl = mods.locallab.spots.at(i).expcbdl;
@@ -4481,6 +4486,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lcdarkness(v),
     lclightness(v),
     sensilc(v),
+    fftwlc(v),
     // Contrast by detail levels
     expcbdl(v),
     mult{v, v, v, v, v, v},
@@ -4695,6 +4701,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lcdarkness = v;
     lclightness = v;
     sensilc = v;
+    fftwlc = v;
     // Contrast by detail levels
     expcbdl = v;
 
