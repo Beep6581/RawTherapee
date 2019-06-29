@@ -6363,7 +6363,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 
-// soft light and 
+// soft light and retinex_pde
         if (lp.strng > 0.f && call <= 3 && lp.sfena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -6534,8 +6534,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             break;
                         }
                     }
-                //printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
-                //optimize with size fftw
+                    //printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+                    //optimize with size fftw
                     if(ystart == 0 && yend < original->H) lp.ly -= (bfh - ftsizeH);
                     else if (ystart != 0 && yend == original->H) lp.lyT -= (bfh - ftsizeH);
                     else if(ystart != 0 && yend != original->H) {
@@ -6557,7 +6557,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bfwr = ftsizeW;
                         reduW = true;
                     }
-                //new values optimized
+                    //new values optimized
                     ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                     yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
                     xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -6600,10 +6600,35 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
                     localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-                    bool fftwlc = false;
-                    if(params->locallab.spots.at(sp).fftwlc) fftwlc = true;
+                    bool fftwlc = false;                   
+                    if(!lp.ftwlc){
                         ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
-
+                    } else { 
+                        std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                        for (int y = 0; y < bfhr; y++) {
+                            for (int x = 0; x < bfwr; x++) {
+                            tmpfftw->L[y][x] = tmp1->L[y][x];
+                            tmpfftw->a[y][x] = tmp1->a[y][x];
+                            tmpfftw->b[y][x] = tmp1->b[y][x];
+                            }
+                        }
+                        fftwlc = true;
+                        ImProcFunctions::localContrast(tmpfftw.get(), tmpfftw->L, localContrastParams, fftwlc, sk);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                        for (int y = 0; y < bfhr; y++) {
+                            for (int x = 0; x < bfwr; x++) {
+                            tmp1->L[y][x] = tmpfftw->L[y][x];
+                            tmp1->a[y][x] = tmpfftw->a[y][x];
+                            tmp1->b[y][x] = tmpfftw->b[y][x];
+                            }
+                        }
+                      
+                    }
                     float minL =  tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;
 #ifdef _OPENMP
@@ -6694,6 +6719,51 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             LabImage *buforigmas = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
+          //  printf("before bfh=%i bfw=%i\n", bfh, bfw);
+            
+            if(lp.ftwreti) {
+                int ftsizeH = 1;
+                int ftsizeW = 1;
+
+                for (int ft=0; ft < N_fftwsize; ft++) {//find best values for FFTW
+                    if(fftw_size[ft] <= bfh) {
+                       ftsizeH = fftw_size[ft];
+                       break;
+                    }
+                }
+                
+                for (int ft=0; ft < N_fftwsize; ft++) {
+                    if(fftw_size[ft] <= bfw) {
+                        ftsizeW = fftw_size[ft];
+                        break;
+                    }
+                }
+                
+                int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+
+                if(ystart == 0 && yend < original->H) lp.ly -= (bfh - ftsizeH);
+                else if (ystart != 0 && yend == original->H) lp.lyT -= (bfh - ftsizeH);
+                else if(ystart != 0 && yend != original->H) {
+                    if(lp.ly <= lp.lyT) lp.lyT -= (bfh - ftsizeH);
+                    else lp.ly -= (bfh - ftsizeH);
+                }
+
+                if(xstart == 0 && xend < original->W) lp.lx -= (bfw - ftsizeW);
+                else if(xstart != 0 && xend == original->W) lp.lxL -= (bfw - ftsizeW);
+                else if(xstart != 0 && xend != original->W) {
+                    if(lp.lx <= lp.lxL) lp.lxL -= (bfw - ftsizeW);
+                    else lp.lx -= (bfw - ftsizeW);
+                }
+            //new size bfw, bfh not optimized if spot H > high or spot W > width ==> TODO
+            bfh = int (lp.ly + lp.lyT) + del;
+            bfw = int (lp.lx + lp.lxL) + del;
+            //printf("after bfh=%i bfw=%i  fftwH=%i fftww=%i\n", bfh, bfw, ftsizeH, ftsizeW);
+                
+            }
+
             array2D<float> buflight(bfw, bfh);
             JaggedArray<float> bufchro(bfw, bfh);
 
