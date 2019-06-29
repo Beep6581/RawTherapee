@@ -4008,7 +4008,9 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     ** bfw bfh width and high area
     ** radius = sigma for kernel
     ** n_x n_y relative width and high for kernel
-    ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2) 
+    ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2)
+    ** its traduction in Fourier transform is G(x,y) =  exp((-sigma)*(PI * x2 + PI * y2))
+    ** after several test the only result that works very well is with fftkern = 0 and algo = 0
 */
     BENCHFUN
   
@@ -4067,7 +4069,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
             int index = j * bfw;
             for(int i = 0; i < bfw; i++)
                if(algo == 0) {
-                kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel Ipol formula 
+                    kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel Ipol formula 
                } else if(algo == 1) {
                     kern[ i+ index] = radsig * exp((float)(-(n_x * i * i + n_y * j * j)/ (2.f * radius * radius)));//calculate Gauss kernel  with Gauss formula
                }
@@ -4090,17 +4092,24 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
         delete [] kern;
 
     } else if (fftkern == 0) {//whithout FFT kernel
+        if(algo == 0) {
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
-        for(int j = 0; j < bfh; j++){
-            int index = j * bfw;
-            for(int i = 0; i < bfw; i++)
-               if(algo == 0) {
+            for(int j = 0; j < bfh; j++){
+                int index = j * bfw;
+                for(int i = 0; i < bfw; i++)
                     out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT
-               } else if(algo == 1) {
+            } 
+        } else if(algo == 1) {
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for(int j = 0; j < bfh; j++){
+                int index = j * bfw;
+                for(int i = 0; i < bfw; i++)
                     out[i + index] *= radsig * exp((float)(-(n_x * i * i + n_y * j * j)/ (2.f * radius * radius)));//calculate Gauss kernel  with Gauss formula
-               }
+            }
         }
     }
 
