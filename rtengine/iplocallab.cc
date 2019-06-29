@@ -241,6 +241,7 @@ struct local_params {
     bool equtm;
     bool invshar;
     bool actsp;
+    bool ftwlc;
     float str;
     int qualmet;
     int qualcurvemet;
@@ -584,6 +585,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool inverseex = locallab.spots.at(sp).inversex;
     bool inversesh = locallab.spots.at(sp).inverssh;
     bool equiltm = locallab.spots.at(sp).equiltm;
+    bool fftwlc = locallab.spots.at(sp).fftwlc;
 
     bool equilret = locallab.spots.at(sp).equilret;
     bool inverserad = false; // Provision
@@ -764,6 +766,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.hltonalhs = hltonahs;
     lp.shtonalhs = shtonals;
     lp.senshs = local_sensihs;
+    lp.ftwlc = fftwlc;
 }
 
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
@@ -6501,19 +6504,76 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //local contrast
         if (lp.lcamount > 0.f && call < 3  && lp.lcena) {
-                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                const int bfh = yend - ystart;
-                const int bfw = xend - xstart;
+                int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                int bfh = yend - ystart;
+                int bfw = xend - xstart;
+                int bfhr = bfh;
+                int bfwr = bfw;
+                bool reduH = false;
+                bool reduW = false;
+                if(lp.ftwlc){
+                    int ftsizeH = 1;
+                    int ftsizeW = 1;
 
+                    for (int ft=0; ft < N_fftwsize; ft++) {//find best values
+                        if(fftw_size[ft] <= bfh) {
+                        ftsizeH = fftw_size[ft];
+                        break;
+                        }
+                    }
+                
+                    for (int ft=0; ft < N_fftwsize; ft++) {
+                        if(fftw_size[ft] <= bfw) {
+                            ftsizeW = fftw_size[ft];
+                            break;
+                        }
+                    }
+                //printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+                //optimize with size fftw
+                    if(ystart == 0 && yend < original->H) lp.ly -= (bfh - ftsizeH);
+                    else if (ystart != 0 && yend == original->H) lp.lyT -= (bfh - ftsizeH);
+                    else if(ystart != 0 && yend != original->H) {
+                        if(lp.ly <= lp.lyT) lp.lyT -= (bfh - ftsizeH);
+                        else lp.ly -= (bfh - ftsizeH);
+                    }
+                    else if(ystart == 0 && yend == original->H) {
+                        bfhr = ftsizeH;
+                        reduH = true;
+                    }
+
+                    if(xstart == 0 && xend < original->W) lp.lx -= (bfw - ftsizeW);
+                    else if(xstart != 0 && xend == original->W) lp.lxL -= (bfw - ftsizeW);
+                    else if(xstart != 0 && xend != original->W) {
+                        if(lp.lx <= lp.lxL) lp.lxL -= (bfw - ftsizeW);
+                        else lp.lx -= (bfw - ftsizeW);
+                    }
+                    else if(xstart == 0 && xend == original->W) {
+                        bfwr = ftsizeW;
+                        reduW = true;
+                    }
+                //new values optimized
+                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                    bfh = bfhr = yend - ystart;
+                    bfw = bfwr = xend - xstart;
+                    if(reduH) {
+                        bfhr = ftsizeH;
+                    }
+                    if(reduW) {
+                        bfwr = ftsizeW;
+                    }
+                }
 
                 if (bfw > 0 && bfh > 0) {
-                    array2D<float> buflight(bfw, bfh);
-                    JaggedArray<float> bufchro(bfw, bfh);
-                    std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
-                    std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
+                    array2D<float> buflight(bfwr, bfhr);
+                    JaggedArray<float> bufchro(bfwr, bfhr);
+                    std::unique_ptr<LabImage> bufgb(new LabImage(bfwr, bfhr));
+                    std::unique_ptr<LabImage> tmp1(new LabImage(bfwr, bfhr));
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -6539,15 +6599,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
                     bool fftwlc = false;
                     if(params->locallab.spots.at(sp).fftwlc) fftwlc = true;
-                    ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
+                        ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
 
                     float minL =  tmp1->L[0][0] - bufgb->L[0][0];
                     float maxL = minL;
 #ifdef _OPENMP
                     #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
 #endif
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
+                    for (int ir = 0; ir < bfhr; ir++) {
+                        for (int jr = 0; jr < bfwr; jr++) {
                             buflight[ir][jr] =  tmp1->L[ir][jr] - bufgb->L[ir][jr];
                             bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
                             minL = rtengine::min(minL, buflight[ir][jr]);
@@ -6559,8 +6619,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
+                    for (int y = 0; y < bfhr; y++) {
+                        for (int x = 0; x < bfwr; x++) {
                             buflight[y][x] /= coef;
                         }
                     }
