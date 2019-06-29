@@ -3994,7 +3994,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
 
 
 
-void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern)
+void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo)
 { 
 /* 
     ** Jacques Desmis june 2019 - inspired by Copyright 2013 IPOL Image Processing On Line http://www.ipol.im/
@@ -4026,7 +4026,9 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     fftwf_plan p;
     fftwf_plan pkern;//plan for FFT
     int image_size, image_sizechange;
-    float n_x, n_y;//relative coordonates for kernel Gauss
+    float n_x = 1.f;
+    float n_y = 1.f;//relative coordonates for kernel Gauss
+    float radsig = 1.f;
 
     out = (float*) fftwf_malloc(sizeof(float) * (bfw * bfh));//allocate real datas for FFT
 
@@ -4043,14 +4045,17 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     fftwf_execute(p);
     fftwf_destroy_plan(p);
     /*define the gaussian constants for the convolution kernel*/
-
-  //  n_x = rtengine::RT_PI/(double) bfw;//ipol
-  //  n_y = rtengine::RT_PI/(double) bfh;
-    n_x = 1.f/(float) bfw;//gauss
-    n_y = 1.f/(float) bfh;
+    if(algo == 0) {
+        n_x = rtengine::RT_PI/(double) bfw;//ipol
+        n_y = rtengine::RT_PI/(double) bfh;
+    } else if(algo == 1) {
+        n_x = 1.f/(float) bfw;//gauss
+        n_y = 1.f/(float) bfh;
+        radsig = 1.f / (2.f * rtengine::RT_PI * radius * radius);//gauss
+    }
     n_x = n_x * n_x;
     n_y = n_y * n_y;
-    float radsig = 1.f / (2.f * rtengine::RT_PI * radius * radius);//gauss
+
     image_size = bfw * bfh;
     image_sizechange = 4 * image_size;
 
@@ -4061,8 +4066,11 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
         for(int j = 0; j < bfh; j++){
             int index = j * bfw;
             for(int i = 0; i < bfw; i++)
-            //   kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel Ipol formula   
-                kern[ i+ index] = radsig * exp((float)(-(n_x * i * i + n_y * j * j)/ (2.f * radius * radius)));//calculate Gauss kernel  with Gauss formula
+               if(algo == 0) {
+                kern[ i+ index] = exp((float)(-radius)*(n_x * i * i + n_y * j * j));//calculate Gauss kernel Ipol formula 
+               } else if(algo == 1) {
+                    kern[ i+ index] = radsig * exp((float)(-(n_x * i * i + n_y * j * j)/ (2.f * radius * radius)));//calculate Gauss kernel  with Gauss formula
+               }
         }
         /*compute the Fourier transform of the kernel data*/
         pkern = fftwf_plan_r2r_2d(bfh, bfw, kern, outkern, FFTW_REDFT10, FFTW_REDFT10,FFTW_ESTIMATE);//FFT 2 dimensions forward
@@ -4088,7 +4096,11 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
         for(int j = 0; j < bfh; j++){
             int index = j * bfw;
             for(int i = 0; i < bfw; i++)
-                out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT
+               if(algo == 0) {
+                    out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT
+               } else if(algo == 1) {
+                    out[i + index] *= radsig * exp((float)(-(n_x * i * i + n_y * j * j)/ (2.f * radius * radius)));//calculate Gauss kernel  with Gauss formula
+               }
         }
     }
 
@@ -4107,7 +4119,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     }
 }
 
-void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw, int bfh, float radius, int fftkern)
+void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw, int bfh, float radius, int fftkern, int algo)
 {
    MyMutex::MyLock lock(*fftwMutex);
 
@@ -4131,7 +4143,7 @@ void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw
                         input[y * bfw + x] =  input2[y][x];
                     }
                 }
-                ImProcFunctions::fftw_convol_blur(input, output, bfw, bfh, radius, fftkern);
+                ImProcFunctions::fftw_convol_blur(input, output, bfw, bfh, radius, fftkern, algo);
                 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)

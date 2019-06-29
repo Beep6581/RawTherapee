@@ -961,7 +961,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         }
 
         float *buffer = new float[W_L * H_L];
-        float mulradiusfftw = 40.f;
+        float mulradiusfftw = 1.f;
         for (int scale = scal - 1; scale >= 0; scale--) {
             //    printf("retscale=%f scale=%i \n", mulradiusfftw * RetinexScales[scale], scale);
         if(!fftw) {
@@ -982,11 +982,11 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         } else {
                 if (scale == scal - 1)
                 {
-                    ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, mulradiusfftw * RetinexScales[scale], 0);
+                    ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, mulradiusfftw * RetinexScales[scale], 0, 0);
                 } else   // reuse result of last iteration
                 {
                     // out was modified in last iteration => restore it
-                   ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(mulradiusfftw * RetinexScales[scale]) - SQR(mulradiusfftw * RetinexScales[scale + 1])), 0);
+                   ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(mulradiusfftw * RetinexScales[scale]) - SQR(mulradiusfftw * RetinexScales[scale + 1])), 0, 0);
                 }
             
         }

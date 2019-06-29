@@ -55,8 +55,8 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const Lo
 #endif
         gaussianBlur(lab->L, buf, width, height, sigma);
     } else {
-        sigma *= 50.f;//approximation to convert sigma "gaussianBlur" to FFTW blur 
-        ImProcFunctions::fftw_convol_blur2(lab->L, buf, width, height, sigma, 0);
+        sigma *= 1.f;
+        ImProcFunctions::fftw_convol_blur2(lab->L, buf, width, height, sigma, 0, 0);
     }
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)
