@@ -242,6 +242,7 @@ struct local_params {
     bool invshar;
     bool actsp;
     bool ftwlc;
+    bool ftwreti;
     float str;
     int qualmet;
     int qualcurvemet;
@@ -586,6 +587,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool inversesh = locallab.spots.at(sp).inverssh;
     bool equiltm = locallab.spots.at(sp).equiltm;
     bool fftwlc = locallab.spots.at(sp).fftwlc;
+    bool fftwreti = locallab.spots.at(sp).fftwreti;
 
     bool equilret = locallab.spots.at(sp).equilret;
     bool inverserad = false; // Provision
@@ -767,6 +769,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.shtonalhs = shtonals;
     lp.senshs = local_sensihs;
     lp.ftwlc = fftwlc;
+    lp.ftwreti = fftwreti;
 }
 
 static void calcTransitionrect(const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
@@ -6570,10 +6573,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 if (bfw > 0 && bfh > 0) {
-                    array2D<float> buflight(bfwr, bfhr);
-                    JaggedArray<float> bufchro(bfwr, bfhr);
-                    std::unique_ptr<LabImage> bufgb(new LabImage(bfwr, bfhr));
-                    std::unique_ptr<LabImage> tmp1(new LabImage(bfwr, bfhr));
+                    array2D<float> buflight(bfw, bfh);
+                    JaggedArray<float> bufchro(bfw, bfh);
+                    std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -6853,7 +6856,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-            ImProcFunctions::MSRLocal(sp, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+            bool fftw = lp.ftwreti;
+            ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
             locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 
 
@@ -6975,9 +6979,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     0.6,  min(1.0, 0.6 + satreal / 250.0),
                     1, 1
                 });
-
+                bool fftw = false;
                 if(params->locallab.spots.at(sp).chrrt > 40.f){ //second step active Retinex Chroma
-                    ImProcFunctions::MSRLocal(sp, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                    ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                     locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
                 }
                 if (!lp.invret && call <= 3) {

@@ -725,6 +725,7 @@ enum ProcEventCode {
     Evlocallabequilret = 695,
     Evlocallabequiltm = 696,
     Evlocallabfftwlc = 697,
+    Evlocallabfftwreti = 698,
     NUMOFEVENTS
 };
 

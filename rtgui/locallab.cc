@@ -231,6 +231,7 @@ Locallab::Locallab():
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
+    fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
     // Sharpening
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     // Local contrast
@@ -848,6 +849,7 @@ Locallab::Locallab():
     expreti->setLabel(retiTitleHBox);
     expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
     enableretiConn = expreti->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expreti));
+    fftwretiConn  = fftwreti->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwretiChanged));
 
     setExpandAlignProperties (expmaskreti, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskreti));
@@ -951,6 +953,7 @@ Locallab::Locallab():
 
     ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
+    retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
     retiBox->pack_start(*str);
     retiBox->pack_start(*chrrt);
@@ -2187,6 +2190,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).darkness = darkness->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lightnessreti = lightnessreti->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).limd = limd->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fftwreti = fftwreti->get_active();
                     // Sharpening
                     pp->locallab.spots.at(pp->locallab.selspot).expsharp = expsharp->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).sharcontrast = sharcontrast->getIntValue();
@@ -2407,6 +2411,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).darkness = pe->locallab.spots.at(pp->locallab.selspot).darkness || darkness->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lightnessreti = pe->locallab.spots.at(pp->locallab.selspot).lightnessreti || lightnessreti->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).limd = pe->locallab.spots.at(pp->locallab.selspot).limd || limd->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fftwreti = pe->locallab.spots.at(pp->locallab.selspot).fftwreti || !fftwreti->get_inconsistent();
                         // Sharpening
                         pe->locallab.spots.at(pp->locallab.selspot).expsharp = pe->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).sharcontrast = pe->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -2631,6 +2636,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).darkness = pedited->locallab.spots.at(pp->locallab.selspot).darkness || darkness->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lightnessreti = pedited->locallab.spots.at(pp->locallab.selspot).lightnessreti || lightnessreti->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).limd = pedited->locallab.spots.at(pp->locallab.selspot).limd || limd->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fftwreti = pedited->locallab.spots.at(pp->locallab.selspot).fftwreti || !fftwreti->get_inconsistent();
                         // Sharpening
                         pedited->locallab.spots.at(pp->locallab.selspot).expsharp = pedited->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast = pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -3508,6 +3514,29 @@ void Locallab::fftwlcChanged()
     }
 }
 
+void Locallab::fftwretiChanged()
+{
+    // printf("fftwlcChanged\n");
+
+    if (multiImage) {
+        if (fftwreti->get_inconsistent()) {
+            fftwreti->set_inconsistent(false);
+            fftwretiConn.block(true);
+            fftwreti->set_active(false);
+            fftwretiConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expreti->getEnabled()) {
+        if (listener) {
+            if (fftwreti->get_active()) {
+                listener->panelChanged(Evlocallabfftwreti, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabfftwreti, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
 
 void Locallab::inversshaChanged()
 {
@@ -5242,6 +5271,7 @@ void Locallab::enableListener()
     enaretiMaskConn.block(false);
     enaretiMasktmapConn.block(false);
     showmaskretiMethodConn.block(false);
+    fftwretiConn.block(false);
     // Sharpening
     enablesharpConn.block(false);
     inversshaConn.block(false);
@@ -5302,6 +5332,7 @@ void Locallab::disableListener()
     enaretiMaskConn.block(true);
     enaretiMasktmapConn.block(true);
     showmaskretiMethodConn.block(true);
+    fftwretiConn.block(true);
     // Sharpening
     enablesharpConn.block(true);
     inversshaConn.block(true);
@@ -5502,6 +5533,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         darkness->setValue(pp->locallab.spots.at(index).darkness);
         lightnessreti->setValue(pp->locallab.spots.at(index).lightnessreti);
         limd->setValue(pp->locallab.spots.at(index).limd);
+        fftwreti->set_active(pp->locallab.spots.at(index).fftwreti);
 
         // Sharpening
         expsharp->setEnabled(pp->locallab.spots.at(index).expsharp);
@@ -5758,6 +5790,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 darkness->setEditedState(spotState->darkness ? Edited : UnEdited);
                 lightnessreti->setEditedState(spotState->lightnessreti ? Edited : UnEdited);
                 limd->setEditedState(spotState->limd ? Edited : UnEdited);
+                fftwreti->set_inconsistent(multiImage && !spotState->fftwreti);
 
                 // Sharpening
                 expsharp->set_inconsistent(!spotState->expsharp);

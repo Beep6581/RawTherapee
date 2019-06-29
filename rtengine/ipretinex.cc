@@ -848,7 +848,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
     }
 }
 
-void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
+void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                                const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, LabImage * transformed, bool retiMasktmap, bool retiMask)
 {
     BENCHFUN
@@ -961,9 +961,10 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
         }
 
         float *buffer = new float[W_L * H_L];
-
+        float mulradiusfftw = 20.f;
         for (int scale = scal - 1; scale >= 0; scale--) {
                 printf("retscale=%f scale=%i \n", RetinexScales[scale], scale);
+        if(!fftw) {
 #ifdef _OPENMP
             #pragma omp parallel  //disabled with FFTW
 #endif
@@ -982,7 +983,19 @@ void ImProcFunctions::MSRLocal(int sp, int lum, LabImage * bufreti, LabImage * b
                     gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), buffer);
                 }
             }
+        } else {
+                if (scale == scal - 1)
+                {
+                    ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, mulradiusfftw * RetinexScales[scale], 0);
+                } else   // reuse result of last iteration
+                {
+                    // out was modified in last iteration => restore it
+ 
+                   ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(mulradiusfftw * RetinexScales[scale]) - SQR(mulradiusfftw * RetinexScales[scale + 1])), 0);
 
+                }
+            
+        }
             if (scale == 1) { //equalize last scale with darkness and lightness
 
                 if (dar != 1.f || lig != 1.f) {

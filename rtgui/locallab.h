@@ -272,6 +272,8 @@ private:
     sigc::connection enaretiMaskConn;
     Gtk::CheckButton* const enaretiMasktmap;
     sigc::connection enaretiMasktmapConn;
+    Gtk::CheckButton* const fftwreti;
+    sigc::connection fftwretiConn;
     // Sharpening
     Gtk::CheckButton* const inverssha;
     sigc::connection inversshaConn;
@@ -369,6 +371,7 @@ private:
     void inversretChanged();
     void enaretiMaskChanged();
     void enaretiMasktmapChanged();
+    void fftwretiChanged();
     // Sharpening
     void inversshaChanged();
     // local contrast

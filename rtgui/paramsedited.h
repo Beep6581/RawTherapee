@@ -513,6 +513,7 @@ public:
         bool darkness;
         bool lightnessreti;
         bool limd;
+        bool fftwreti;
         // Sharpening
         bool expsharp;
         bool sharcontrast;
