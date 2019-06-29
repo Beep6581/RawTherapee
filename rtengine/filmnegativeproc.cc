@@ -101,9 +101,9 @@ bool channelsAvg(
 bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
 {
     newExps = {
-        static_cast<float>(currentParams.redExp),
+        static_cast<float>(currentParams.redRatio * currentParams.greenExp),
         static_cast<float>(currentParams.greenExp),
-        static_cast<float>(currentParams.blueExp)
+        static_cast<float>(currentParams.blueRatio * currentParams.greenExp)
     };
 
     constexpr int spotSize = 32; // TODO: Make this configurable?
@@ -171,9 +171,9 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     // Exponents are expressed as positive in the parameters, so negate them in order
     // to get the reciprocals.
     const std::array<float, 3> exps = {
-        static_cast<float>(-params.redExp),
+        static_cast<float>(-params.redRatio * params.greenExp),
         static_cast<float>(-params.greenExp),
-        static_cast<float>(-params.blueExp)
+        static_cast<float>(-params.blueRatio * params.greenExp)
     };
     
     MyTime t1, t2, t3,t4, t5;

@@ -17,18 +17,10 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <cmath>
-#include <iostream>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include "rtengine.h"
 #include "rtthumbnail.h"
-
-#include "mytime.h"
 #include "opthelper.h"
-#include "procparams.h"
 #include "rt_algo.h"
 #include "rtengine.h"
 #include "settings.h"
@@ -52,9 +44,9 @@ void rtengine::Thumbnail::processFilmNegative(
     StopWatch stop1("Thumbnail film negative", true);
 
     // Channel exponents
-    const float rexp = -params.filmNegative.redExp;
+    const float rexp = -params.filmNegative.redRatio * params.filmNegative.greenExp;
     const float gexp = -params.filmNegative.greenExp;
-    const float bexp = -params.filmNegative.blueExp;
+    const float bexp = -params.filmNegative.blueRatio * params.filmNegative.greenExp;
 
     // Need to calculate channel averages, to fake the same conditions
     // found in rawimagesource, where get_ColorsCoeff is called with

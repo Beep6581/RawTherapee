@@ -1501,9 +1501,9 @@ struct RAWParams {
   */
 struct FilmNegativeParams {
     bool enabled;
-    double redExp;
+    double redRatio;
     double greenExp;
-    double blueExp;
+    double blueRatio;
 
     FilmNegativeParams();
 

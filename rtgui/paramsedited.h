@@ -668,9 +668,9 @@ struct MetaDataParamsEdited {
 
 struct FilmNegativeParamsEdited {
     bool enabled;
-    bool redExp;
+    bool redRatio;
     bool greenExp;
-    bool blueExp;
+    bool blueRatio;
 
     bool isUnchanged() const;
 };

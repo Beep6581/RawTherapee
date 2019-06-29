@@ -49,7 +49,7 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
 FilmNegative::FilmNegative() :
     FoldableToolPanel(this, "filmnegative", M("TP_FILMNEGATIVE_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS),
-    evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_EXPONENTS")),
+    evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
     fnp(nullptr),
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 1.5)),  // master exponent (green channel)
@@ -123,45 +123,45 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     disableListener();
 
     if (pedited) {
-        redRatio->setEditedState(pedited->filmNegative.redExp ? Edited : UnEdited);
+        redRatio->setEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
         greenExp->setEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
-        blueRatio->setEditedState(pedited->filmNegative.blueExp ? Edited : UnEdited);
+        blueRatio->setEditedState(pedited->filmNegative.blueRatio ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->filmNegative.enabled);
     }
 
     setEnabled(pp->filmNegative.enabled);
-    redRatio->setValue(pp->filmNegative.redExp / pp->filmNegative.greenExp);
+    redRatio->setValue(pp->filmNegative.redRatio);
     greenExp->setValue(pp->filmNegative.greenExp);
-    blueRatio->setValue(pp->filmNegative.blueExp / pp->filmNegative.greenExp);
+    blueRatio->setValue(pp->filmNegative.blueRatio);
 
     enableListener();
 }
 
 void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-    pp->filmNegative.redExp = greenExp->getValue() * redRatio->getValue();
+    pp->filmNegative.redRatio = redRatio->getValue();
     pp->filmNegative.greenExp = greenExp->getValue();
-    pp->filmNegative.blueExp = greenExp->getValue() * blueRatio->getValue();
+    pp->filmNegative.blueRatio = blueRatio->getValue();
     pp->filmNegative.enabled = getEnabled();
 
     if (pedited) {
-        pedited->filmNegative.redExp = greenExp->getEditedState() || redRatio->getEditedState();
+        pedited->filmNegative.redRatio = redRatio->getEditedState();
         pedited->filmNegative.greenExp = greenExp->getEditedState();
-        pedited->filmNegative.blueExp = greenExp->getEditedState() || blueRatio->getEditedState();
+        pedited->filmNegative.blueRatio = blueRatio->getEditedState();
         pedited->filmNegative.enabled = !get_inconsistent();
     }
 }
 
 void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    redRatio->setValue(defParams->filmNegative.redExp / defParams->filmNegative.greenExp);
+    redRatio->setValue(defParams->filmNegative.redRatio);
     greenExp->setValue(defParams->filmNegative.greenExp);
-    blueRatio->setValue(defParams->filmNegative.blueExp / defParams->filmNegative.greenExp);
+    blueRatio->setValue(defParams->filmNegative.blueRatio);
 
     if (pedited) {
-        redRatio->setDefaultEditedState(pedited->filmNegative.redExp ? Edited : UnEdited);
+        redRatio->setDefaultEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
         greenExp->setDefaultEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
-        blueRatio->setDefaultEditedState(pedited->filmNegative.blueExp ? Edited : UnEdited);
+        blueRatio->setDefaultEditedState(pedited->filmNegative.blueRatio ? Edited : UnEdited);
     } else {
         redRatio->setDefaultEditedState(Irrelevant);
         greenExp->setDefaultEditedState(Irrelevant);
@@ -189,10 +189,10 @@ void FilmNegative::adjusterChanged(Adjuster* a, double newval)
                 listener->panelChanged(
                     evFilmNegativeExponents,
                     Glib::ustring::compose(
-                        "R=%1 ; G=%2 ; B=%3",
-                        greenExp->getValue() * redRatio->getValue(),
+                        "Ref=%1 ; R=%2 ; B=%3",
                         greenExp->getValue(),
-                        greenExp->getValue() * blueRatio->getValue()
+                        redRatio->getValue(),
+                        blueRatio->getValue()
                     )
                 );
             }
@@ -269,10 +269,10 @@ bool FilmNegative::button1Pressed(int modifierKey)
                     listener->panelChanged(
                         evFilmNegativeExponents,
                         Glib::ustring::compose(
-                            "R=%1 ; G=%2 ; B=%3",
-                            greenExp->getValue() * redRatio->getValue(),
+                            "Ref=%1 ; R=%2 ; B=%3",
                             greenExp->getValue(),
-                            greenExp->getValue() * blueRatio->getValue()
+                            redRatio->getValue(),
+                            blueRatio->getValue()
                         )
                     );
                 }

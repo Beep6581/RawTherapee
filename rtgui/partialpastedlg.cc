@@ -976,9 +976,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!filmNegative->get_active ()) {
         filterPE.filmNegative.enabled   = falsePE.filmNegative.enabled;
-        filterPE.filmNegative.redExp   = falsePE.filmNegative.redExp;
+        filterPE.filmNegative.redRatio   = falsePE.filmNegative.redRatio;
         filterPE.filmNegative.greenExp  = falsePE.filmNegative.greenExp;
-        filterPE.filmNegative.blueExp   = falsePE.filmNegative.blueExp;
+        filterPE.filmNegative.blueRatio   = falsePE.filmNegative.blueRatio;
     }
 
     if (dstPE) {

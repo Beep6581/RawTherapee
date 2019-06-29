@@ -581,9 +581,9 @@ void ParamsEdited::set(bool v)
     dehaze.depth = v;
     metadata.mode = v;
     filmNegative.enabled = v;
-    filmNegative.redExp = v;
+    filmNegative.redRatio = v;
     filmNegative.greenExp = v;
-    filmNegative.blueExp = v;
+    filmNegative.blueRatio = v;
 
     exif = v;
     iptc = v;
@@ -1147,9 +1147,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
         filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
-        filmNegative.redExp = filmNegative.redExp && p.filmNegative.redExp == other.filmNegative.redExp;
+        filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
-        filmNegative.blueExp = filmNegative.blueExp && p.filmNegative.blueExp == other.filmNegative.blueExp;
+        filmNegative.blueRatio = filmNegative.blueRatio && p.filmNegative.blueRatio == other.filmNegative.blueRatio;
 
 //      How the hell can we handle that???
 //      exif = exif && p.exif==other.exif
@@ -3187,16 +3187,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmNegative.enabled = mods.filmNegative.enabled;
     }
 
-    if (filmNegative.redExp) {
-        toEdit.filmNegative.redExp = mods.filmNegative.redExp;
+    if (filmNegative.redRatio) {
+        toEdit.filmNegative.redRatio = mods.filmNegative.redRatio;
     }
 
     if (filmNegative.greenExp) {
         toEdit.filmNegative.greenExp = mods.filmNegative.greenExp;
     }
 
-    if (filmNegative.blueExp) {
-        toEdit.filmNegative.blueExp = mods.filmNegative.blueExp;
+    if (filmNegative.blueRatio) {
+        toEdit.filmNegative.blueRatio = mods.filmNegative.blueRatio;
     }
 
     // Exif changes are added to the existing ones
@@ -3245,5 +3245,5 @@ bool RetinexParamsEdited::isUnchanged() const
 
 bool FilmNegativeParamsEdited::isUnchanged() const
 {
-    return enabled && redExp && greenExp && blueExp;
+    return enabled && redRatio && greenExp && blueRatio;
 }
