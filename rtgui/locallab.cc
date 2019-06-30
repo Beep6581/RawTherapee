@@ -152,7 +152,7 @@ Locallab::Locallab():
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 500., 0.5, 50.))),
+    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 1000., 0.5, 50.))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 4.0, 500., 0.1, 70.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
@@ -850,6 +850,7 @@ Locallab::Locallab():
     expreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expreti));
     enableretiConn = expreti->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expreti));
     fftwretiConn  = fftwreti->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwretiChanged));
+    if(showtooltip) fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
 
     setExpandAlignProperties (expmaskreti, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskreti));
@@ -1022,6 +1023,7 @@ Locallab::Locallab():
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrast));
     enablecontrastConn = expcontrast->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcontrast));
     fftwlcConn  = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwlcChanged));
+    if(showtooltip) fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
 
     lcradius->setAdjusterListener(this);
 
