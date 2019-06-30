@@ -36,10 +36,93 @@
 #define MINCHRO 0.
 #define MAXCHRO 150
 #define MAXCHROCC 100
+#define MINNEIGH 4
+#define MAXNEIGH 5000
+#define CENTERNEIGH 200
 
 using namespace rtengine;
 
 extern Options options;
+static double retiSlider2neigh(double sval)
+{
+
+    // slider range: 0 - 5000
+    double neigh;
+
+    if (sval <= 1000) {
+        // linear below center-temp
+        neigh = MINNEIGH + (sval / 1000.0) * (CENTERNEIGH - MINNEIGH);
+    } else {
+        const double slope = (double)(CENTERNEIGH - MINNEIGH) / (MAXNEIGH - CENTERNEIGH);
+        double x = (sval - 1000) / 1000; // x 0..1
+        double y = x * slope + (1.0 - slope) * pow(x, 4.0);
+        neigh = CENTERNEIGH + y * (MAXNEIGH - CENTERNEIGH);
+    }
+
+    if (neigh < MINNEIGH) {
+        neigh = MINNEIGH;
+    }
+
+    if (neigh > MAXNEIGH) {
+        neigh = MAXNEIGH;
+    }
+
+    return neigh;
+}
+
+static double retiNeigh2Slider(double neigh)
+{
+
+    double sval;
+
+    if (neigh <= CENTERNEIGH) {
+        sval = ((neigh - MINNEIGH) / (CENTERNEIGH - MINNEIGH)) * 1000.0;
+    } else {
+        const double slope = (double)(CENTERNEIGH - MINNEIGH) / (MAXNEIGH - CENTERNEIGH);
+        const double y = (neigh - CENTERNEIGH) / (MAXNEIGH - CENTERNEIGH);
+        double x = pow(y, 0.25); // rough guess of x, will be a little lower
+        double k = 0.1;
+        bool add = true;
+
+        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
+        // from tests, worst case is about 20 iterations, ie no problem
+        for (;;) {
+            double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
+
+            if (1000 * fabs(y1 - y) < 0.1) {
+                break;
+            }
+
+            if (y1 < y) {
+                if (!add) {
+                    k /= 2;
+                }
+
+                x += k;
+                add = true;
+            } else {
+                if (add) {
+                    k /= 2;
+                }
+
+                x -= k;
+                add = false;
+            }
+        }
+
+        sval = 1000.0 + x * 1000.0;
+    }
+
+    if (sval < 0) {
+        sval = 0;
+    }
+
+    if (sval > 5000) {
+        sval = 5000;
+    }
+
+    return sval;
+}
 
 Locallab::Locallab():
     FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), false, true),
@@ -152,7 +235,9 @@ Locallab::Locallab():
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 1000., 0.5, 50.))),
+    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, CENTERNEIGH, nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
+    
+   // neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 4000., 0.5, 50.))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 4.0, 500., 0.1, 70.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),

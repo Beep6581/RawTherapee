@@ -6948,7 +6948,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
             bool fftw = lp.ftwreti;
-            ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+            ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
             locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 
 

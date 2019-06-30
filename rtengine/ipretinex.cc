@@ -882,6 +882,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
         int nei = (int)(krad * loc.spots.at(sp).neigh);
+       // printf("neigh=%i\n", nei);
         //several test to find good values ???!!!
         //very difficult to do because 4 factor are correlate with skip and cannot been solved easily
         // size of spots
