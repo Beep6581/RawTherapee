@@ -979,7 +979,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 float ka = 19.f / 4600.f;
                 float kb = 1.f - 400 * ka;
                 kr = ka * sigm + kb;
-                float kga = -0.5f / 4600.f;
+                float kga = -0.14f / 4600.f;//decrease
                 float kgb = 1.f - 400.f * kga;
                 kg = kga * sigm + kgb;
                 if(sigm > 5000.f) {

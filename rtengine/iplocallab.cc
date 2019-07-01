@@ -4100,7 +4100,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
             for(int j = 0; j < bfh; j++){
                 int index = j * bfw;
                 for(int i = 0; i < bfw; i++)
-                    out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT
+                    out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT - some authors says radius*radius but huge differences with Gaussianblur
             } 
         } else if(algo == 1) {
 #ifdef _OPENMP

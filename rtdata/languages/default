@@ -2100,8 +2100,8 @@ TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_RETI;Retinex - Strong local contrast
 TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if misty images and depending on whether you want to act on the front or the background
-TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nDimensions can be reduced by a few pixels to optimize FFTW.
-TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization is not possible if the 2 delimiters of the Spot (vertical or horizontal) are outside the image
+TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.
+TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization is not possible if the 2 delimiters of the Spot (vertical or horizontal) are outside the image
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRGRID;Strength
