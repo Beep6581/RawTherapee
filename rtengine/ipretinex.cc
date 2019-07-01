@@ -969,26 +969,31 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             //emprical adjustement between FFTW radius and Gaussainblur
             //under 50 ==> 10.f
             // 400 ==> 1.f
-            float sigm = RetinexScales[scale];
-            float ak = -9.f / 350.f;
-            float bk = 10.f - 50.f * ak;
-            kr = ak * sigm + bk;
-            if(sigm < 50.f) kr = 10.f;
-            //above 400 at 5000 ==> 20.f
-            if(sigm > 400.f) {//increase ==> 5000
-                float ka = 19.f / 4600.f;
-                float kb = 1.f - 400 * ka;
-                kr = ka * sigm + kb;
-                float kga = -0.14f / 4600.f;//decrease
-                float kgb = 1.f - 400.f * kga;
-                kg = kga * sigm + kgb;
-                if(sigm > 5000.f) {
-                    kr = ka * 5000.f + kb;
-                    kg = kga * 5000.f + kgb;
-                }
+            float sigm = 1.f;
+            if(settings->fftwsigma == false) {//empirical formula
+                sigm = RetinexScales[scale];
+                float ak = -9.f / 350.f;
+                float bk = 10.f - 50.f * ak;
+                kr = ak * sigm + bk;
+                if(sigm < 50.f) kr = 10.f;
+                //above 400 at 5000 ==> 20.f
+                if(sigm > 400.f) {//increase ==> 5000
+                    float ka = 19.f / 4600.f;
+                    float kb = 1.f - 400 * ka;
+                    kr = ka * sigm + kb;
+                    float kga = -0.14f / 4600.f;//decrease
+                    float kgb = 1.f - 400.f * kga;
+                    kg = kga * sigm + kgb;
+                    if(sigm > 5000.f) {
+                        kr = ka * 5000.f + kb;
+                        kg = kga * 5000.f + kgb;
+                    }
                 
+                }
+            } else {//sigma *= sigma
+                    kg = 1.f;
+                    kr = sigm;
             }
-           
         if(!fftw) {
 #ifdef _OPENMP
             #pragma omp parallel  //disabled with FFTW

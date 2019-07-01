@@ -4010,7 +4010,8 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     ** n_x n_y relative width and high for kernel
     ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2)
     ** its traduction in Fourier transform is G(x,y) =  exp((-sigma)*(PI * x2 + PI * y2)), for some authors it is not sigma but sigma^2..I have tried...huge diffrences with Gaussianblur
-    ** after several test the only result that works very well is with fftkern = 0 and algo = 0, and as there is big differences with Gaussianblur, I put an empirical correction in Ipretinex and Iplocalcontrast
+    ** after several test the only result that works very well is with fftkern = 0 and algo = 0, and as there is differences with Gaussianblur, I put an empirical correction in Ipretinex and Iplocalcontrast
+    ** you can enabled or disabled this function with rtsettings.fftwsigma in options. By defaut empirical formula is disabled
     ** in fact no importance....if it is this function (for sigma) or another... we are not in research :)
 */
     BENCHFUN
@@ -4100,7 +4101,7 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
             for(int j = 0; j < bfh; j++){
                 int index = j * bfw;
                 for(int i = 0; i < bfw; i++)
-                    out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT - some authors says radius*radius but huge differences with Gaussianblur
+                    out[i + index] *= exp((float)(-radius)*(n_x * i * i + n_y * j * j));//apply Gauss kernel whithout FFT - some authors says radius*radius but differences with Gaussianblur
             } 
         } else if(algo == 1) {
 #ifdef _OPENMP

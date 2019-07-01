@@ -596,6 +596,7 @@ void Options::setDefaults()
     rtSettings.detectshape = true;//experimental new detection shape
     rtSettings.previewselection = 5;//betwen 1 to 40
     rtSettings.cbdlsensi = 1.0;//betwen 0.001 to 1
+    rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 
 // end locallab
 
@@ -758,6 +759,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("General", "Detectshape")) {
                     rtSettings.detectshape = keyFile.get_boolean("General", "Detectshape");
+                }
+
+                if (keyFile.has_key("General", "Fftwsigma")) {
+                    rtSettings.fftwsigma = keyFile.get_boolean("General", "Fftwsigma");
                 }
 
                 if (keyFile.has_key("General", "Cropsleep")) {
@@ -1988,6 +1993,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("General", "Reduchigh", rtSettings.reduchigh);
         keyFile.set_double("General", "Reduclow", rtSettings.reduclow);
         keyFile.set_boolean("General", "Detectshape", rtSettings.detectshape);
+        keyFile.set_boolean("General", "Fftwsigma", rtSettings.fftwsigma);
 
         keyFile.set_integer("External Editor", "EditorKind", editorToSendTo);
         keyFile.set_string("External Editor", "GimpDir", gimpDir);

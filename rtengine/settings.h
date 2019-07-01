@@ -84,6 +84,7 @@ public:
     double          reduchigh;
     double          reduclow;
     bool            detectshape;
+    bool            fftwsigma;
     int             previewselection;
     double          cbdlsensi;
 //    bool            showtooltip;
