@@ -4009,8 +4009,9 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     ** radius = sigma for kernel
     ** n_x n_y relative width and high for kernel
     ** Gaussian blur is given by G(x,y) = (1/2*PI*sigma) * exp(-(x2 + y2) / 2* sigma2)
-    ** its traduction in Fourier transform is G(x,y) =  exp((-sigma)*(PI * x2 + PI * y2))
-    ** after several test the only result that works very well is with fftkern = 0 and algo = 0
+    ** its traduction in Fourier transform is G(x,y) =  exp((-sigma)*(PI * x2 + PI * y2)), for some authors it is not sigma but sigma^2..I have tried...huge diffrences with Gaussianblur
+    ** after several test the only result that works very well is with fftkern = 0 and algo = 0, and as there is big differences with Gaussianblur, I put an empirical correction in Ipretinex and Iplocalcontrast
+    ** in fact no importance....if it is this function (for sigma) or another... we are not in research :)
 */
     BENCHFUN
   
