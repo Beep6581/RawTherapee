@@ -55,8 +55,17 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const Lo
 #endif
         gaussianBlur(lab->L, buf, width, height, sigma);
     } else {
-        sigma *= 1.f;
-        ImProcFunctions::fftw_convol_blur2(lab->L, buf, width, height, sigma, 0, 0);
+        float kr = 1.f;
+        //emprical adjustement between FFTW radius and Gaussainblur
+        //under 50 ==> 10.f
+        //above 400 ==> 1.f
+        float ak = -9.f / 350.f;
+        float bk = 10.f - 50.f * ak;
+        kr = ak * sigma + bk;
+        if(sigma < 50.f) kr = 10.f;
+        if(sigma > 400.f) kr = 1.f;
+     //   printf("kr=%f \n", kr);
+        ImProcFunctions::fftw_convol_blur2(lab->L, buf, width, height, kr * sigma, 0, 0);
     }
 #ifdef _OPENMP
     #pragma omp parallel for if(multiThread)

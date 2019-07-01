@@ -962,9 +962,20 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         }
 
         float *buffer = new float[W_L * H_L];
-        float mulradiusfftw = 1.f;
+        float kr = 1.f;
         for (int scale = scal - 1; scale >= 0; scale--) {
             //    printf("retscale=%f scale=%i \n", mulradiusfftw * RetinexScales[scale], scale);
+        //emprical adjustement between FFTW radius and Gaussainblur
+        //under 50 ==> 10.f
+        //above 400 ==> 1.f
+            float sigm = RetinexScales[scale];
+            float mulradiusfftw = 1.f;
+            float ak = -9.f / 350.f;
+            float bk = 10.f - 50.f * ak;
+            kr = ak * sigm + bk;
+            if(sigm < 50.f) kr = 10.f;
+            if(sigm > 400.f) kr = 1.f;
+           
         if(!fftw) {
 #ifdef _OPENMP
             #pragma omp parallel  //disabled with FFTW
@@ -983,11 +994,11 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         } else {
                 if (scale == scal - 1)
                 {
-                    ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, mulradiusfftw * RetinexScales[scale], 0, 0);
+                    ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (kr * RetinexScales[scale]), 0, 0);
                 } else   // reuse result of last iteration
                 {
                     // out was modified in last iteration => restore it
-                   ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(mulradiusfftw * RetinexScales[scale]) - SQR(mulradiusfftw * RetinexScales[scale + 1])), 0, 0);
+                  ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
                 }
             
         }
