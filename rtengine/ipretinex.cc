@@ -1012,11 +1012,19 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         } else {
                 if (scale == scal - 1)
                 {
-                    ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (kr * RetinexScales[scale]), 0, 0);
+                    if(settings->fftwsigma == false) {//empirical formula
+                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (kr * RetinexScales[scale]), 0, 0); 
+                    } else {
+                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (SQR(RetinexScales[scale])), 0, 0); 
+                    }
                 } else   // reuse result of last iteration
                 {
                     // out was modified in last iteration => restore it
-                  ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
+                    if(settings->fftwsigma == false) {//empirical formula
+                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
+                    } else {
+                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(SQR(RetinexScales[scale])) - SQR(SQR(RetinexScales[scale + 1]))), 0, 0);
+                    }
                 }
             
         }
