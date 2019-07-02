@@ -1023,10 +1023,9 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                     if(settings->fftwsigma == false) {//empirical formula
                         ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
                     } else {
-                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(SQR(RetinexScales[scale])) - SQR(SQR(RetinexScales[scale + 1]))), 0, 0);
+                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), 0, 0);
                     }
                 }
-            
         }
             if (scale == 1) { //equalize last scale with darkness and lightness
 
