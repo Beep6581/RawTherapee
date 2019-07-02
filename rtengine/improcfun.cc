@@ -76,7 +76,7 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
             //shadow tone curve
             vfloat Yv = cr * rv + cg * gv + cb * bv;
-            vfloat tonefactorv = shtonecurve(Yv);
+            vfloat tonefactorv = shtonecurve[Yv];
             STVF(rtemp[ti * tileSize + tj], rv * tonefactorv);
             STVF(gtemp[ti * tileSize + tj], gv * tonefactorv);
             STVF(btemp[ti * tileSize + tj], bv * tonefactorv);
