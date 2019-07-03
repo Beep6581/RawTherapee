@@ -37,8 +37,6 @@
 #include "ciecam02.h"
 #include "color.h"
 #include "iccstore.h"
-#undef CLIPD
-#define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
 using namespace std;
 
@@ -578,7 +576,7 @@ void CurveFactory::localLCurve(double br, double contr,  /*const std::vector<dou
             val = brightcurve->getVal(val);
 
             // store result in a temporary array
-            dcurve[i] = CLIPD(val);
+            dcurve[i] = val;
         }
 
         delete brightcurve;
@@ -898,33 +896,37 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
     //%%%%%%%%%%%%%%%%%%%%%%%%%%
     // change to [0,1] range
     shCurve.setClip(LUT_CLIP_ABOVE);  // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
-    float val = 1.f / 65535.f;
-    float val2 = simplebasecurve(val, black, 0.015 * shcompr);
-    shCurve[0] = CLIPD(val2) / val;
+    if (black == 0.0) {
+        shCurve.makeConstant(1.f);
+    } else {
+        const float val = 1.f / 65535.f;
+        shCurve[0] = simplebasecurve(val, black, 0.015 * shcompr) / val;
+    }
     // gamma correction
 
-    val = Color::gammatab_srgb[0] / 65535.f;
+    float val = Color::gammatab_srgb1[0];
 
     // apply brightness curve
     if (brightcurve) {
-        val = brightcurve->getVal(val);     // TODO: getVal(double) is very slow! Optimize with a LUTf
+        val = brightcurve->getVal(val);    // TODO: getVal(double) is very slow! Optimize with a LUTf
     }
 
     // store result in a temporary array
-    dcurve[0] = CLIPD(val);
+    dcurve[0] = LIM01<float>(val);
 
     for (int i = 1; i < 0x10000; i++) {
-        float val = i / 65535.f;
 
-        float   val2 = simplebasecurve(val, black, 0.015 * shcompr);
-        shCurve[i] = val2 / val;
+        if (black != 0.0) {
+            const float val = i / 65535.f;
+            shCurve[i] = simplebasecurve(val, black, 0.015 * shcompr) / val;
+        }
 
         // gamma correction
-        val = Color::gammatab_srgb[i] / 65535.f;
+        float val = Color::gammatab_srgb1[i];
 
         // apply brightness curve
         if (brightcurve) {
-            val = CLIPD(brightcurve->getVal(val));     // TODO: getVal(double) is very slow! Optimize with a LUTf
+            val = LIM01<float>(brightcurve->getVal (val));    // TODO: getVal(double) is very slow! Optimize with a LUTf
         }
 
         // store result in a temporary array
@@ -1110,7 +1112,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
             val = brightcurve.getVal(val);
 
             // store result in a temporary array
-            lightCurveloc[i] = CLIPD(val);
+            lightCurveloc[i] = val;
         }
 
 
@@ -1249,21 +1251,31 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%
     // change to [0,1] range
-    shCurve.setClip(LUT_CLIP_ABOVE);  // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
-    float val = 1.f / (maxran - 1.f);
-    float val2 = simplebasecurve(val, black, 0.015 * shcompr);
-    shCurve[0] = CLIPD(val2) / val;
+    shCurve.setClip(LUT_CLIP_ABOVE); // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
+    if (black == 0.0) {
+        shCurve.makeConstant(1.f);
+    } else {
+        const float val = 1.f / (maxran - 1.f);
+        shCurve[0] = simplebasecurve(val, black, 0.015 * shcompr) / val;
+    }
+    
+    
+    
     // gamma correction
 
-    val = Color::gammatab_bt709[0] / maxran;
+    float val = Color::gammatab_bt709[0] / maxran;
     // store result in a temporary array
-    dcurve[0] = CLIPD(val);
+    dcurve[0] = LIM01<float>(val);
 
     for (int i = 1; i < maxran; i++) {
         float val = i / (maxran - 1.f);
 
-        float   val2 = simplebasecurve(val, black, 0.015 * shcompr);
-        shCurve[i] = val2 / val;
+//        float   val2 = simplebasecurve(val, black, 0.015 * shcompr);
+//        shCurve[i] = val2 / val;
+        if (black != 0.0) {
+            const float val = i / 65535.f;
+            shCurve[i] = simplebasecurve(val, black, 0.015 * shcompr) / val;
+        }
 
         // gamma correction
         val = Color::gammatab_bt709[i] / maxran;
@@ -1360,7 +1372,7 @@ void CurveFactory::complexLCurve(double br, double contr, const std::vector<doub
             val = brightcurve.getVal(val);
 
             // store result in a temporary array
-            outCurve[i] = CLIPD(val);
+            outCurve[i] = LIM01<float>(val);
         }
 
     } else {
