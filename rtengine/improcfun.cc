@@ -76,7 +76,7 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
             //shadow tone curve
             vfloat Yv = cr * rv + cg * gv + cb * bv;
-            vfloat tonefactorv = shtonecurve(Yv);
+            vfloat tonefactorv = shtonecurve[Yv];
             STVF(rtemp[ti * tileSize + tj], rv * tonefactorv);
             STVF(gtemp[ti * tileSize + tj], gv * tonefactorv);
             STVF(btemp[ti * tileSize + tj], bv * tonefactorv);
@@ -2474,7 +2474,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 highlightToneCurve(hltonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, exp_scale, comp, hlrange);
-                shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
+                if (params->toneCurve.black != 0.0) {
+                    shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
+                }
 
                 if (dcpProf) {
                     dcpProf->step2ApplyTile (rtemp, gtemp, btemp, tW - jstart, tH - istart, TS, asIn);

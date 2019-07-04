@@ -30,7 +30,7 @@ using namespace rtengine::procparams;
 
 XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexposure", M("TP_EXPOS_BLACKPOINT_LABEL"))
 {
-    PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 0.1, 0)); //black level
+    PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 1.0, 0)); //black level
     PexBlackRed->setAdjusterListener (this);
 
     if (PexBlackRed->delay < options.adjusterMaxDelay) {
@@ -38,7 +38,7 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexpo
     }
 
     PexBlackRed->show();
-    PexBlackGreen = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_GREEN"), -2048, 2048, 0.1, 0)); //black level
+    PexBlackGreen = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_GREEN"), -2048, 2048, 1.0, 0)); //black level
     PexBlackGreen->setAdjusterListener (this);
 
     if (PexBlackGreen->delay < options.adjusterMaxDelay) {
@@ -46,7 +46,7 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexpo
     }
 
     PexBlackGreen->show();
-    PexBlackBlue = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_BLUE"), -2048, 2048, 0.1, 0)); //black level
+    PexBlackBlue = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_BLUE"), -2048, 2048, 1.0, 0)); //black level
     PexBlackBlue->setAdjusterListener (this);
 
     if (PexBlackBlue->delay < options.adjusterMaxDelay) {

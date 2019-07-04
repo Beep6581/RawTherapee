@@ -28,7 +28,7 @@ using namespace rtengine::procparams;
 
 BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, "bayerrawexposure", M("TP_EXPOS_BLACKPOINT_LABEL"), options.prevdemo != PD_Sidecar)
 {
-    PexBlack1 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_1"), -2048, 2048, 0.1, 0)); //black level
+    PexBlack1 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_1"), -2048, 2048, 1.0, 0)); //black level
     PexBlack1->setAdjusterListener (this);
 
     if (PexBlack1->delay < options.adjusterMaxDelay) {
@@ -36,7 +36,7 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, "bayerrawexposur
     }
 
     PexBlack1->show();
-    PexBlack2 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_2"), -2048, 2048, 0.1, 0)); //black level
+    PexBlack2 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_2"), -2048, 2048, 1.0, 0)); //black level
     PexBlack2->setAdjusterListener (this);
 
     if (PexBlack2->delay < options.adjusterMaxDelay) {
@@ -44,7 +44,7 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, "bayerrawexposur
     }
 
     PexBlack2->show();
-    PexBlack3 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_3"), -2048, 2048, 0.1, 0)); //black level
+    PexBlack3 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_3"), -2048, 2048, 1.0, 0)); //black level
     PexBlack3->setAdjusterListener (this);
 
     if (PexBlack3->delay < options.adjusterMaxDelay) {
@@ -52,7 +52,7 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, "bayerrawexposur
     }
 
     PexBlack3->show();
-    PexBlack0 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_0"), -2048, 2048, 0.1, 0)); //black level
+    PexBlack0 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_0"), -2048, 2048, 1.0, 0)); //black level
     PexBlack0->setAdjusterListener (this);
 
     if (PexBlack0->delay < options.adjusterMaxDelay) {
