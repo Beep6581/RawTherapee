@@ -101,7 +101,7 @@ ETC="${RESOURCES}/etc"
 EXECUTABLE="${MACOS}/rawtherapee"
 
 msg "Removing old files:"
-rm -rf "${APP}" "${PROJECT_NAME}_*.dmg"
+rm -rf "${APP}" "${PROJECT_NAME}_*.dmg" "*zip"
 
 msg "Creating bundle container:"
 install -d  "${RESOURCES}" \
@@ -134,7 +134,7 @@ rm -r "${LIB}"/gdk-pixbuf-2.0
 
 "${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/libpix*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
 "${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/{im*.so,libprint*.so}      > "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|@executable_path/../|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
 "${GTK_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
@@ -154,6 +154,12 @@ ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 
 # Copy libjpeg-turbo into the app bundle
 cp /opt/local/lib/libjpeg.62.dylib "${RESOURCES}/../Frameworks"
+
+# Copy libexpat into the app bundle
+cp /opt/local/lib/libexpat.1.dylib "${RESOURCES}/../Frameworks"
+
+# Copy libz into the app bundle
+cp /opt/local/lib/libz.1.dylib "${RESOURCES}/../Frameworks"
 
 # Copy libtiff into the app bundle
 cp /opt/local/lib/libtiff.5.dylib "${RESOURCES}/../Frameworks"
@@ -182,31 +188,67 @@ find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib
 done
 
 msg "Registering @loader_path into the executable:"
-echo "   install_name_tool -add_rpath @loader_path/../Frameworks '${EXECUTABLE}'" | bash -v
+echo "   install_name_tool -add_rpath @executable_path/../../Frameworks '${EXECUTABLE}'" | bash -v
 echo "   install_name_tool -add_rpath @loader_path/../Frameworks '${EXECUTABLE}-cli'" | bash -v
 
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
-
+ditto "${PROJECT_SOURCE_DIR}/build/Resources" "${RESOURCES}"
 # Executable loader
 # Note: executable is renamed to 'rawtherapee-bin'.
-mv "${MACOS}/rawtherapee" "${MACOS}/rawtherapee-bin"
+mkdir "${MACOS}/bin"
+mv "${MACOS}/rawtherapee" "${MACOS}/bin/rawtherapee-bin"
 install -m 0755 "${PROJECT_SOURCE_DATA_DIR}/executable_loader.in" "${MACOS}/rawtherapee"
 # App bundle resources
 cp "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 cp "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist-bin.in" "${CONTENTS}/MacOS/bin/Info.plist"
 sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
     "${CONTENTS}/Info.plist"
 plutil -convert binary1 "${CONTENTS}/Info.plist"
-
+plutil -convert binary1 "${CONTENTS}/MacOS/bin/Info.plist"
 # Sign the app
 CODESIGNID="$(cmake .. -LA -N | grep "CODESIGNID" | cut -d "=" -f2)"
-codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${APP}"
-spctl -a -vvvv "${APP}"
- 
+if ! test -z "$CODESIGNID" ; then
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/rt.entitlements" "${CONTENTS}/Entitlements.plist"
+plutil -convert binary1 "${CONTENTS}/Entitlements.plist"
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/rt-bin.entitlements" "${CONTENTS}/MacOS/bin/Entitlements.plist"
+plutil -convert binary1 "${CONTENTS}/MacOS/bin/Entitlements.plist"
+codesign -v -s "${CODESIGNID}" -i "com.rawtherapee.rawtherapee-bin" --timestamp -o runtime --entitlements "${APP}/Contents/MacOS/bin/Entitlements.plist" "${APP}/Contents/MacOS/bin/rawtherapee-bin"
+codesign --deep --preserve-metadata=identifier,entitlements,runtime --strict -v -s "${CODESIGNID}" -i "com.rawtherapee.rawtherapee" --timestamp -o runtime --entitlements "${APP}/Contents/Entitlements.plist" "${APP}"
+    spctl -a -vvvv "${APP}"
+fi
+
+# Notarize the app
+NOTARY="$(cmake .. -LA -N | grep "NOTARY" | cut -d "=" -f2)"
+if ! test -z "$NOTARY" ; then
+    ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
+    uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.rawtherapee" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
+    echo "Result= $uuid" # Display identifier string
+    sleep 15
+    while :
+        do
+        fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY}  2>&1`  # get the status
+        status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
+        if [ "$status1" = "success" ]; then
+            xcrun stapler staple *app   #  staple the ticket
+            xcrun stapler validate -v *app
+            echo "Notarization success"
+            break
+        elif [ "$status1" = "in" ]; then
+            echo "Notarization still in progress, sleeping for 15 seconds and trying again"
+            sleep 15
+        else
+            echo "Notarization failed fullstatus below"
+            echo "$fullstatus"
+            exit 1
+        fi
+    done
+fi
+
 function CreateDmg {
     local srcDir="$(mktemp -dt $$)"
 
@@ -234,7 +276,36 @@ function CreateDmg {
     hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
 
     # Sign disk image
-    codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
+        if ! test -z "$CODESIGNID" ; then
+            codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
+        fi
+
+    # Notarize the dmg
+    if ! test -z "$NOTARY" ; then
+        zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
+        uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
+        echo "dmg Result= $uuid" # Display identifier string
+        sleep 15
+        while :
+        do
+            fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY} 2>&1`  # get the status
+            status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
+            if [ "$status1" = "success" ]; then
+                xcrun stapler staple "${dmg_name}.dmg"   #  staple the ticket
+                xcrun stapler validate -v "${dmg_name}.dmg"
+                echo "dmg Notarization success"
+                break
+            elif [ "$status1" = "in" ]; then
+                echo "dmg Notarization still in progress, sleeping for 15 seconds and trying again"
+                sleep 15
+            else
+                echo "dmg Notarization failed fullstatus below"
+                echo "$fullstatus"
+            exit 1
+            fi
+        done
+    fi
+
 
     # Zip disk image for redistribution
     zip "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
