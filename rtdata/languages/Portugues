@@ -120,8 +120,6 @@ FILEBROWSER_COPYPROFILE;Copiar
 FILEBROWSER_CURRENT_NAME;Nome atual:
 FILEBROWSER_DARKFRAME;Fotograma escuro
 FILEBROWSER_DELETEDIALOG_HEADER;Confirmação de eliminação de ficheiro
-FILEBROWSER_DELETEDIALOG_SELECTED;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados <b>incluindo</b> uma versão processada na fila?
 FILEBROWSER_EMPTYTRASH;Esvaziar o caixote do lixo
 FILEBROWSER_EXTPROGMENU;Abrir com
 FILEBROWSER_FLATFIELD;Campo plano
@@ -156,8 +154,6 @@ FILEBROWSER_POPUPRANK2;Classificação 2 estrelas
 FILEBROWSER_POPUPRANK3;Classificação 3 estrelas
 FILEBROWSER_POPUPRANK4;Classificação 4 estrelas
 FILEBROWSER_POPUPRANK5;Classificação 5 estrelas
-FILEBROWSER_POPUPREMOVE;Eliminar
-FILEBROWSER_POPUPREMOVEINCLPROC;Eliminar com saída da fila
 FILEBROWSER_POPUPRENAME;Renomear
 FILEBROWSER_POPUPSELECTALL;Selecionar tudo
 FILEBROWSER_POPUPTRASH;Mover para o caixote do lixo
@@ -184,7 +180,6 @@ FILEBROWSER_SHOWDIRHINT;Limpar todos os filtros.\nAtalho: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Mostrar imagens editadas.\nAtalho: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imagens não editadas.\nAtalho: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostrar informações Exif.\n\nAtalhos:\n<b>i</b> - Modo de editor em várias abas,\n<b>Alt-i</b> - Modo de editor numa só aba.
-FILEBROWSER_SHOWNOTTRASHHINT;Mostrar apenas imagens não eliminadas.
 FILEBROWSER_SHOWORIGINALHINT;Mostrar apenas imagens originais.\n\nQuando existem várias imagens com o mesmo nome de ficheiro mas com extensões diferentes, a única considerada original é aquela cuja extensão está mais próxima da parte superior da lista de extensões analisadas em Preferências > Navegador de ficheiros > Extensões analisadas.
 FILEBROWSER_SHOWRANK1HINT;Mostrar imagens classificadas com 1 estrela.\nAtalho: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Mostrar imagens classificadas com 2 estrelas.\nAtalho: <b>2</b>
@@ -2262,8 +2257,13 @@ ZOOMPANEL_ZOOMOUT;Afastar\nAtalho: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !MAIN_FRAME_PLACES_DEL;Remove
 !PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PROGRESSBAR_DECODING;Decoding...
