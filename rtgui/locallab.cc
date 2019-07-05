@@ -337,6 +337,7 @@ Locallab::Locallab():
     blurMethod(Gtk::manage(new MyComboBoxText())),
     //soft Method
     softMethod(Gtk::manage(new MyComboBoxText())),
+    showmasksoftMethod(Gtk::manage(new MyComboBoxText())),
     // Retinex
     retinexMethod(Gtk::manage(new MyComboBoxText())),
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
@@ -826,13 +827,32 @@ Locallab::Locallab():
     softMethodConn = softMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::softMethodChanged));
 
 
+    ctboxsoftmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelsoftmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHOWDCT") + ":"));
+    ctboxsoftmethod->pack_start(*labelsoftmethod, Gtk::PACK_SHRINK, 4);
+
+    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWLAPLACE"));
+    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWFOURIER"));
+    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWPOISSON"));
+    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWNORMAL"));
+
+    showmasksoftMethod->set_active(0);
+    if(showtooltip) showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
+    showmasksoftMethodConn  = showmasksoftMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmasksoftMethodChanged));
+    ctboxsoftmethod->pack_start(*showmasksoftMethod);
+
+
     streng->setAdjusterListener(this);
     laplace->setAdjusterListener(this);
 
     sensisf->setAdjusterListener(this);
 
     ToolParamBlock* const softBox = Gtk::manage(new ToolParamBlock());
+    
     softBox->pack_start(*softMethod);
+ //   softBox->pack_start(*showmasksoftMethod, Gtk::PACK_SHRINK, 4);
+    softBox->pack_start(*ctboxsoftmethod);
     softBox->pack_start(*streng);
     softBox->pack_start(*laplace);
     softBox->pack_start(*sensisf);
@@ -3054,8 +3074,10 @@ void Locallab::softMethodChanged()
     // printf("softMethodChanged\n");
     if (softMethod->get_active_row_number() == 0) {
        laplace->hide();
+       ctboxsoftmethod->hide();
     } else {
        laplace->show();
+       ctboxsoftmethod->show();
     }
 
     if (getEnabled() && expsoft->getEnabled()) {
@@ -3185,6 +3207,23 @@ void Locallab::showmaskretiMethodChanged()
     }
 }
 
+void Locallab::showmasksoftMethodChanged()
+{
+    // printf("showmaskcolMethodChanged\n");
+
+    // When one mask state is changed, other masks are deactivated
+    disableListener();
+        showmaskexpMethod->set_active(0);
+        showmaskSHMethod->set_active(0);
+        showmaskcbMethod->set_active(0);
+        showmaskretiMethod->set_active(0);
+    enableListener();
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmasksoftMethod, "");
+    }
+}
+
 void Locallab::resetMaskVisibility()
 {
     // printf("resetMaskVisibility\n");
@@ -3206,6 +3245,7 @@ Locallab::llMaskVisibility* Locallab::getMaskVisibility()
     maskStruct->SHMask = showmaskSHMethod->get_active_row_number();
     maskStruct->cbMask = showmaskcbMethod->get_active_row_number();
     maskStruct->retiMask = showmaskretiMethod->get_active_row_number();
+    maskStruct->softMask = showmasksoftMethod->get_active_row_number();
  //   printf("SHmask=%i \n", maskStruct->SHMask);
     printf("retimask=%i \n", maskStruct->retiMask);
     
@@ -5343,6 +5383,7 @@ void Locallab::enableListener()
     // Soft Light
     enablesoftConn.block(false);
     softMethodConn.block(false);
+    showmasksoftMethodConn.block(false);
     // Blur & Noise
     enableblurConn.block(false);
     blurMethodConn.block(false);
@@ -5404,6 +5445,7 @@ void Locallab::disableListener()
     // Soft Light
     enablesoftConn.block(true);
     softMethodConn.block(true);
+    showmasksoftMethodConn.block(true);
     // Blur & Noise
     enableblurConn.block(true);
     blurMethodConn.block(true);

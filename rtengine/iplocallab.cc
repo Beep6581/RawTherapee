@@ -252,6 +252,7 @@ struct local_params {
     int showmaskSHmet;
     int showmaskcbmet;
     int showmaskretimet;
+    int showmasksoftmet;
     int blurmet;
     int softmet;
     float noiself;
@@ -397,7 +398,7 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
 
 
 
-static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask)
+static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask)
 {
     int w = oW;
     int h = oH;
@@ -463,7 +464,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskSHmet = llSHMask;
     lp.showmaskcbmet = llcbMask;
     lp.showmaskretimet = llretiMask;
-    //printf("llretiMask=%i\n", llretiMask);
+    lp.showmasksoftmet = llsoftMask;
+    printf("llsoftMask=%i\n", llsoftMask);
     //if(locallab.spots.at(sp).enaretiMask) printf("enaritrue\n"); else printf("enaritfalse\n");
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0;
@@ -3472,7 +3474,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0);
         int begy = lp.yc - lp.lyT;
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
@@ -3899,7 +3901,7 @@ static float *discrete_laplacian_threshold(float *data_out, const float *data_in
     return data_out;
 }
 
-void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE)
+void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE, int show)
 {
 /*
  * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -3921,6 +3923,14 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
 #endif
         fftwf_plan dct_fw, dct_fw04, dct_bw;
         float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
+        float *datashow = nullptr;
+        if(show != 0) {
+            if (NULL == (datashow = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+                fprintf(stderr, "allocation error\n");
+                abort();
+            }
+        }
+
         if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
             fprintf(stderr, "allocation error\n");
             abort();
@@ -3934,6 +3944,13 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
             fprintf(stderr, "allocation error\n");
             abort();
+        }
+        if(show == 1) {
+            for (int y = 0; y < bfh ; y++) {
+                for (int x = 0; x < bfw; x++) { 
+                    datashow[y * bfw + x]   = data_tmp[y * bfw + x];
+                }
+            }
         }
         //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
         (void) discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
@@ -3962,6 +3979,13 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
                 data_fft[y * bfw + x] = prov * data_fft[y * bfw + x] + (1.f - prov) * data_fft04[y * bfw + x];
             }
         }
+        if(show == 2) {
+            for (int y = 0; y < bfh ; y++) {
+                for (int x = 0; x < bfw; x++) { 
+                    datashow[y * bfw + x]   = data_fft[y * bfw + x];
+                }
+            }
+        }
         fftwf_free(data_fft04);
         fftwf_free(data_tmp);
         fftwf_free(data_tmp04);
@@ -3970,6 +3994,13 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         /* solve the Poisson PDE in Fourier space */
         /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
         (void) retinex_poisson_dct(data_fft, bfw, bfh, 1./(double) (bfw * bfh));
+        if(show == 3) {
+            for (int y = 0; y < bfh ; y++) {
+                for (int x = 0; x < bfw; x++) { 
+                    datashow[y * bfw + x]   = data_fft[y * bfw + x];
+                }
+            }
+        }
 
         dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
         fftwf_execute(dct_bw);
@@ -3979,16 +4010,28 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         fftwf_cleanup();
         if (multiThread) {
             fftwf_cleanup_threads();
+        } 
+        if( show != 4) {
+            normalize_mean_dt(data, datain, bfw * bfh);
         }
-        normalize_mean_dt(data, datain, bfw * bfh);
+        if(show == 0  || show == 4) {
 
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) { 
-                dataout[y * bfw + x]   = CLIPLOC(multy * data[y * bfw + x]);
+            for (int y = 0; y < bfh ; y++) {
+                for (int x = 0; x < bfw; x++) { 
+                    dataout[y * bfw + x]   = CLIPLOC(multy * data[y * bfw + x]);
+                }
             }
+        } else if(show == 1 || show == 2 || show == 3) {
+            for (int y = 0; y < bfh ; y++) {
+                for (int x = 0; x < bfw; x++) { 
+                    dataout[y * bfw + x]   = CLIPLOC(multy * datashow[y * bfw + x]);
+                }
+            }
+            
+            fftwf_free(datashow);
         }
 }
 
@@ -4606,7 +4649,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskSHCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskSHCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskSHCurve & lochhmasSHCurve, bool & lhmasSHutili,
                                 const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
                                 const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask)
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask)
 {
 /* comment on processus deltaE
         * the algo uses 3 different ways to manage deltaE according to the type of intervention
@@ -4636,7 +4679,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
 
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llExpMask, llSHMask, llcbMask, llretiMask);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llExpMask, llSHMask, llcbMask, llretiMask, llsoftMask);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
         int strred = 1;//(lp.strucc - 1);
@@ -6498,7 +6541,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
              
-                ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE);
+                ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, lp.showmasksoftmet);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif

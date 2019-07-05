@@ -305,6 +305,9 @@ private:
     //soft light
     MyComboBoxText* const softMethod;
     sigc::connection softMethodConn;
+    MyComboBoxText* const showmasksoftMethod;
+    sigc::connection showmasksoftMethodConn;
+    
     // Retinex
     MyComboBoxText* const retinexMethod;
     sigc::connection retinexMethodConn;
@@ -327,6 +330,7 @@ private:
     Gtk::Frame* residFrame;
     LabGrid *labgrid;
     // Others
+    Gtk::HBox* ctboxsoftmethod;
     /**
      * Used to store the default ProcParams when setDefaults function is called
      * When an other spot is selected, this default ProcParams is used to update adjusters default values
@@ -391,6 +395,7 @@ private:
     void blurMethodChanged();
     // Soft light
     void softMethodChanged();
+    void showmasksoftMethodChanged();
     // Retinex
     void retinexMethodChanged();
     void showmaskretiMethodChanged();
@@ -432,6 +437,7 @@ public:
         int SHMask;
         int cbMask;
         int retiMask;
+        int softMask;
     };
 
     void resetMaskVisibility();
