@@ -2362,6 +2362,6 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-FILEBROWSER_POPUPREMOVE;Unwiederuflich löschen
-FILEBROWSER_POPUPREMOVEINCLPROC;Unwiederuflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
+FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
+FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
 FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.
