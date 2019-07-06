@@ -20,6 +20,7 @@
 */
 
 #include <cstdint>
+#include <cstring>
 #include <vector>
 
 #include "noncopyable.h"
@@ -75,10 +76,10 @@ public:
     }
 
     // set pixels from a list
-    int set(const std::vector<badPix> &bp)
+    int set(const std::vector<badPix>& bp)
     {
-        for (std::vector<badPix>::const_iterator iter = bp.begin(); iter != bp.end(); ++iter) {
-            set(iter->x, iter->y);
+        for (const auto& bad_pix : bp) {
+            set(bad_pix.x, bad_pix.y);
         }
 
         return bp.size();
@@ -86,7 +87,7 @@ public:
 
     void clear()
     {
-        memset(pm, 0, h * w * base_t_size);
+        std::memset(pm, 0, h * w * base_t_size);
     }
     // return 0 if at least one pixel in the word(base_t) is set, otherwise return the number of pixels to skip to the next word base_t
     int skipIfZero(int x, int y) const
