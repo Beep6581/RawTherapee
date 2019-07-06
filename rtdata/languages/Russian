@@ -113,8 +113,6 @@ FILEBROWSER_COPYPROFILE;Скопировать профиль
 FILEBROWSER_CURRENT_NAME;Текущее имя:
 FILEBROWSER_DARKFRAME;Темновой кадр
 FILEBROWSER_DELETEDIALOG_HEADER;Подтверждение удаления файла
-FILEBROWSER_DELETEDIALOG_SELECTED;Вы уверены, что хотите удалить <b>%1</b> выбранный(ых) файл(ов)?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Вы уверены, что хотите удалить <b>%1</b> выделенных файлов, <b>включая</b> обработанные версии?
 FILEBROWSER_EMPTYTRASH;Очистить корзину
 FILEBROWSER_EXTPROGMENU;Открыть с помощью
 FILEBROWSER_FLATFIELD;Плоское поле
@@ -149,8 +147,6 @@ FILEBROWSER_POPUPRANK2;Рейтинг 2 **
 FILEBROWSER_POPUPRANK3;Рейтинг 3 ***
 FILEBROWSER_POPUPRANK4;Рейтинг 4 ****
 FILEBROWSER_POPUPRANK5;Рейтинг 5 *****
-FILEBROWSER_POPUPREMOVE;Удалить с диска
-FILEBROWSER_POPUPREMOVEINCLPROC;Удалить с диска и пакетной обработки
 FILEBROWSER_POPUPRENAME;Переименовать
 FILEBROWSER_POPUPSELECTALL;Выбрать все
 FILEBROWSER_POPUPTRASH;Удалить в корзину
@@ -177,7 +173,6 @@ FILEBROWSER_SHOWDIRHINT;Сбросить все фильтры.\nГорячая 
 FILEBROWSER_SHOWEDITEDHINT;Показать измененные изображения.\nГорячая клавиша: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Показать не измененные изображения.\nГорячая клавиша: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Показать информацию EXIF.\nГорячая клавиша: <b>i</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt-I</b>
-FILEBROWSER_SHOWNOTTRASHHINT;Показать только неудалённые изображения.
 FILEBROWSER_SHOWRANK1HINT;Показать изображения с рейтингом 1.\nГорячая клавиша: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Показать изображения с рейтингом 2.\nГорячая клавиша: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Показать изображения с рейтингом 3.\nГорячая клавиша: <b>3</b>
@@ -1470,8 +1465,13 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
@@ -1872,7 +1872,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORAPP_SURROUND_DARK;Dark
 !TP_COLORAPP_SURROUND_DIM;Dim
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
+!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 !TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 !TP_COLORAPP_TCMODE_CHROMA;Chroma
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness
