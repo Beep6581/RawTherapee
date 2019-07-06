@@ -3132,6 +3132,7 @@ void Locallab::showmaskcolMethodChanged()
         showmaskSHMethod->set_active(0);
         showmaskcbMethod->set_active(0);
         showmaskretiMethod->set_active(0);
+        showmasksoftMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -3149,6 +3150,7 @@ void Locallab::showmaskexpMethodChanged()
         showmaskcbMethod->set_active(0);
         showmaskSHMethod->set_active(0);
         showmaskretiMethod->set_active(0);
+        showmasksoftMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -3166,6 +3168,7 @@ void Locallab::showmaskSHMethodChanged()
         showmaskexpMethod->set_active(0);
         showmaskcbMethod->set_active(0);
         showmaskretiMethod->set_active(0);
+        showmasksoftMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -3183,6 +3186,7 @@ void Locallab::showmaskcbMethodChanged()
        showmaskSHMethod->set_active(0);
        showmaskexpMethod->set_active(0);
        showmaskretiMethod->set_active(0);
+       showmasksoftMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -3200,6 +3204,7 @@ void Locallab::showmaskretiMethodChanged()
        showmaskSHMethod->set_active(0);
        showmaskexpMethod->set_active(0);
        showmaskcbMethod->set_active(0);
+       showmasksoftMethod->set_active(0);
     enableListener();
 
     if (listener) {
@@ -3213,6 +3218,7 @@ void Locallab::showmasksoftMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+        showmaskcolMethod->set_active(0);
         showmaskexpMethod->set_active(0);
         showmaskSHMethod->set_active(0);
         showmaskcbMethod->set_active(0);
@@ -3234,6 +3240,7 @@ void Locallab::resetMaskVisibility()
     showmaskSHMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
+    showmasksoftMethod->set_active(0);
     enableListener();
 }
 
@@ -3247,7 +3254,7 @@ Locallab::llMaskVisibility* Locallab::getMaskVisibility()
     maskStruct->retiMask = showmaskretiMethod->get_active_row_number();
     maskStruct->softMask = showmasksoftMethod->get_active_row_number();
  //   printf("SHmask=%i \n", maskStruct->SHMask);
-    printf("retimask=%i \n", maskStruct->retiMask);
+ //   printf("retimask=%i \n", maskStruct->retiMask);
     
     return maskStruct;
 }
