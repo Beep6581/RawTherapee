@@ -2461,7 +2461,7 @@ Camera constants:
         "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
     },
 
-    { // Quality C
+    { // Quality B
         "make_model": [ "Sony DSC-R1" ],
         "raw_crop": [ 0, 0, 3924, 2608 ],
         "ranges": { "white": 16368 }
