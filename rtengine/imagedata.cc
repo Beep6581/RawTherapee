@@ -265,7 +265,7 @@ FramesData::FramesData(const Glib::ustring &fname) :
         if (lens.empty()) {
             lens = "Unknown";
         }
-        if (lens.empty()) {
+        if (lens.empty() || lens.find_first_not_of('-') == std::string::npos) {
             lens = "Unknown";
         }
 
