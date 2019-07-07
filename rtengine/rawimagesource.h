@@ -195,8 +195,6 @@ public:
     }
     static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
-    void boxblur2(float** src, float** dst, float** temp, int H, int W, int box );
-    void boxblur_resamp(float **src, float **dst, float** temp, int H, int W, int box, int samp );
     void MSR(float** luminance, float **originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, const RetinexParams &deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
     void HLRecovery_inpaint (float** red, float** green, float** blue) override;
     static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);

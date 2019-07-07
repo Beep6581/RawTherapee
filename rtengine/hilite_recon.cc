@@ -28,14 +28,11 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "opthelper.h"
-namespace rtengine
-{
+#define BENCHMARK
+#include "StopWatch.h"
 
-extern const Settings* settings;
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void RawImageSource::boxblur2(float** src, float** dst, float** temp, int H, int W, int box )
+namespace {
+void boxblur2(float** src, float** dst, float** temp, int startY, int startX, int H, int W, int box )
 {
     //box blur image channel; box size = 2*box+1
     //horizontal blur
@@ -45,23 +42,23 @@ void RawImageSource::boxblur2(float** src, float** dst, float** temp, int H, int
 
     for (int row = 0; row < H; row++) {
         int len = box + 1;
-        temp[row][0] = src[row][0] / len;
+        temp[row][0] = src[row + startY][startX] / len;
 
         for (int j = 1; j <= box; j++) {
-            temp[row][0] += src[row][j] / len;
+            temp[row][0] += src[row + startY][j + startX] / len;
         }
 
         for (int col = 1; col <= box; col++) {
-            temp[row][col] = (temp[row][col - 1] * len + src[row][col + box]) / (len + 1);
+            temp[row][col] = (temp[row][col - 1] * len + src[row + startY][col + box + startX]) / (len + 1);
             len ++;
         }
 
         for (int col = box + 1; col < W - box; col++) {
-            temp[row][col] = temp[row][col - 1] + (src[row][col + box] - src[row][col - box - 1]) / len;
+            temp[row][col] = temp[row][col - 1] + (src[row + startY][col + box + startX] - src[row + startY][col - box - 1 + startX]) / len;
         }
 
         for (int col = W - box; col < W; col++) {
-            temp[row][col] = (temp[row][col - 1] * len - src[row][col - box - 1]) / (len - 1);
+            temp[row][col] = (temp[row][col - 1] * len - src[row + startY][col - box - 1 + startX]) / (len - 1);
             len --;
         }
     }
@@ -210,7 +207,7 @@ void RawImageSource::boxblur2(float** src, float** dst, float** temp, int H, int
 
 }
 
-void RawImageSource::boxblur_resamp(float **src, float **dst, float ** temp, int H, int W, int box, int samp )
+void boxblur_resamp(float **src, float **dst, float ** temp, int H, int W, int box, int samp )
 {
 
 #ifdef _OPENMP
@@ -386,8 +383,16 @@ void RawImageSource::boxblur_resamp(float **src, float **dst, float ** temp, int
 
 }
 
+}
+namespace rtengine
+{
+
+extern const Settings* settings;
+
+
 void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** blue)
 {
+    BENCHFUN
     double progress = 0.0;
 
     if (plistener) {
@@ -477,28 +482,58 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     for (int c = 0; c < ColorCount; c++) {
         medFactor[c] = max(1.0f, max_f[c] / medpt) / (-blendpt);
     }
+    int minx = width - 1;
+    int maxx = 0;
+    int miny = height - 1;
+    int maxy = 0;
 
-    multi_array2D<float, 3> channelblur(width, height, 0, 48);
-    array2D<float> temp(width, height); // allocate temporary buffer
+    #pragma omp parallel for reduction(min:minx,miny) reduction(max:maxx,maxy) schedule(dynamic, 16)
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j< width; ++j) {
+            if(red[i][j] >= max_f[0] || green[i][j] >= max_f[1] || blue[i][j] >= max_f[2]) {
+                minx = std::min(minx, j);
+                maxx = std::max(maxx, j);
+                miny = std::min(miny, i);
+                maxy = std::max(maxy, i);
+            }
+        }
+    }
+
+    std::cout << "minx : " << minx << std::endl;
+    std::cout << "maxx : " << maxx << std::endl;
+    std::cout << "miny : " << miny << std::endl;
+    std::cout << "maxy : " << maxy << std::endl;
+
+    constexpr int blurBorder = 256;
+    minx = std::max(0, minx - blurBorder);
+    miny = std::max(0, miny - blurBorder);
+    maxx = std::min(width - 1, maxx + blurBorder);
+    maxy = std::min(height - 1, maxy + blurBorder);
+    const int blurWidth = maxx - minx + 1;
+    const int blurHeight = maxy - miny + 1;
+
+    std::cout << "Corrected area reduced by factor: " << (((float)width * height) / (blurWidth * blurHeight)) << std::endl;
+    multi_array2D<float, 3> channelblur(blurWidth, blurHeight, 0, 48);
+    array2D<float> temp(blurWidth, blurHeight); // allocate temporary buffer
 
     // blur RGB channels
 
-    boxblur2(red, channelblur[0], temp, height, width, 4);
+    boxblur2(red, channelblur[0], temp, miny, minx, blurHeight, blurWidth, 4);
 
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    boxblur2(green, channelblur[1], temp, height, width, 4);
+    boxblur2(green, channelblur[1], temp, miny, minx, blurHeight, blurWidth, 4);
 
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    boxblur2(blue, channelblur[2], temp, height, width, 4);
-
+    boxblur2(blue, channelblur[2], temp, miny, minx, blurHeight, blurWidth, 4);
+ 
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
@@ -509,9 +544,9 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     #pragma omp parallel for
 #endif
 
-    for(int i = 0; i < height; i++)
-        for(int j = 0; j < width; j++) {
-            channelblur[0][i][j] = fabsf(channelblur[0][i][j] - red[i][j]) + fabsf(channelblur[1][i][j] - green[i][j]) + fabsf(channelblur[2][i][j] - blue[i][j]);
+    for(int i = 0; i < blurHeight; i++)
+        for(int j = 0; j < blurWidth; j++) {
+            channelblur[0][i][j] = fabsf(channelblur[0][i][j] - red[i + miny][j + minx]) + fabsf(channelblur[1][i][j] - green[i + miny][j + minx]) + fabsf(channelblur[2][i][j] - blue[i + miny][j + minx]);
         }
 
     for (int c = 1; c < 3; c++) {
@@ -523,7 +558,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
         plistener->setProgress(progress);
     }
 
-    multi_array2D<float, 4> hilite_full(width, height, ARRAY2D_CLEAR_DATA, 32);
+    multi_array2D<float, 4> hilite_full(blurWidth, blurHeight, ARRAY2D_CLEAR_DATA, 32);
 
     if(plistener) {
         progress += 0.10;
@@ -538,18 +573,18 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     #pragma omp parallel for reduction(+:hipass_sum,hipass_norm) schedule(dynamic,16)
 #endif
 
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
+    for (int i = 0; i < blurHeight; i++) {
+        for (int j = 0; j < blurWidth; j++) {
             //if one or more channels is highlight but none are blown, add to highlight accumulator
-            if ((red[i][j] > thresh[0] || green[i][j] > thresh[1] || blue[i][j] > thresh[2]) &&
-                    (red[i][j] < max_f[0] && green[i][j] < max_f[1] && blue[i][j] < max_f[2])) {
+            if ((red[i + miny][j + minx] > thresh[0] || green[i + miny][j + minx] > thresh[1] || blue[i + miny][j + minx] > thresh[2]) &&
+                    (red[i + miny][j + minx] < max_f[0] && green[i + miny][j + minx] < max_f[1] && blue[i + miny][j + minx] < max_f[2])) {
 
                 hipass_sum += channelblur[0][i][j];
                 hipass_norm ++;
 
-                hilite_full[0][i][j] = red[i][j];
-                hilite_full[1][i][j] = green[i][j];
-                hilite_full[2][i][j] = blue[i][j];
+                hilite_full[0][i][j] = red[i + miny][j + minx];
+                hilite_full[1][i][j] = green[i + miny][j + minx];
+                hilite_full[2][i][j] = blue[i + miny][j + minx];
                 hilite_full[3][i][j] = 1.f;
 
             }
@@ -563,10 +598,10 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
         plistener->setProgress(progress);
     }
 
-    array2D<float> hilite_full4(width, height);
+    array2D<float> hilite_full4(blurWidth, blurHeight);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //blur highlight data
-    boxblur2(hilite_full[3], hilite_full4, temp, height, width, 1);
+    boxblur2(hilite_full[3], hilite_full4, temp, 0, 0, blurHeight, blurWidth, 1);
 
     temp.free(); // free temporary buffer
 
@@ -579,8 +614,8 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
+    for (int i = 0; i < blurHeight; i++) {
+        for (int j = 0; j < blurWidth; j++) {
             if (channelblur[0][i][j] > hipass_ave) {
                 //too much variation
                 hilite_full[0][i][j] = hilite_full[1][i][j] = hilite_full[2][i][j] = hilite_full[3][i][j] = 0.f;
@@ -597,18 +632,18 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     channelblur[0].free();    //free up some memory
     hilite_full4.free();    //free up some memory
 
-    int hfh = (height - (height % pitch)) / pitch;
-    int hfw = (width - (width % pitch)) / pitch;
+    int hfh = (blurHeight - (blurHeight % pitch)) / pitch;
+    int hfw = (blurWidth - (blurWidth % pitch)) / pitch;
 
     multi_array2D<float, 4> hilite(hfw + 1, hfh + 1, ARRAY2D_CLEAR_DATA, 48);
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // blur and resample highlight data; range=size of blur, pitch=sample spacing
 
-    array2D<float> temp2((width / pitch) + ((width % pitch) == 0 ? 0 : 1), height);
+    array2D<float> temp2((blurWidth / pitch) + ((blurWidth % pitch) == 0 ? 0 : 1), blurHeight);
 
     for (int m = 0; m < 4; m++) {
-        boxblur_resamp(hilite_full[m], hilite[m], temp2, height, width, range, pitch);
+        boxblur_resamp(hilite_full[m], hilite[m], temp2, blurHeight, blurWidth, range, pitch);
 
         if(plistener) {
             progress += 0.05;
@@ -953,12 +988,12 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-    for (int i = 0; i < height; i++) {
+    for (int i = 0; i < blurHeight; i++) {
         int i1 = min((i - (i % pitch)) / pitch, hfh - 1);
 
-        for (int j = 0; j < width; j++) {
+        for (int j = 0; j < blurWidth; j++) {
 
-            float pixel[3] = {red[i][j], green[i][j], blue[i][j]};
+            float pixel[3] = {red[i + miny][j + minx], green[i + miny][j + minx], blue[i + miny][j + minx]};
 
             if (pixel[0] < max_f[0] && pixel[1] < max_f[1] && pixel[2] < max_f[2]) {
                 continue;    //pixel not clipped
@@ -1109,36 +1144,36 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
                 float Y = (0.299 * clipfix[0] + 0.587 * clipfix[1] + 0.114 * clipfix[2]);
 
                 float factor = whitept / Y;
-                red[i][j]   = clipfix[0] * factor;
-                green[i][j] = clipfix[1] * factor;
-                blue[i][j]  = clipfix[2] * factor;
+                red[i + miny][j + minx]   = clipfix[0] * factor;
+                green[i + miny][j + minx] = clipfix[1] * factor;
+                blue[i + miny][j + minx]  = clipfix[2] * factor;
             } else {//some channels clipped
                 float notclipped[3] = {pixel[0] <= max_f[0] ? 1.f : 0.f, pixel[1] <= max_f[1] ? 1.f : 0.f, pixel[2] <= max_f[2] ? 1.f : 0.f};
 
                 if (notclipped[0] == 0.f) { //red clipped
-                    red[i][j]  = max(red[i][j], (clipfix[0] * ((notclipped[1] * pixel[1] + notclipped[2] * pixel[2]) /
+                    red[i + miny][j + minx]  = max(red[i + miny][j + minx], (clipfix[0] * ((notclipped[1] * pixel[1] + notclipped[2] * pixel[2]) /
                                                  (notclipped[1] * clipfix[1] + notclipped[2] * clipfix[2] + epsilon))));
                 }
 
                 if (notclipped[1] == 0.f) { //green clipped
-                    green[i][j] = max(green[i][j], (clipfix[1] * ((notclipped[2] * pixel[2] + notclipped[0] * pixel[0]) /
+                    green[i + miny][j + minx] = max(green[i + miny][j + minx], (clipfix[1] * ((notclipped[2] * pixel[2] + notclipped[0] * pixel[0]) /
                                                     (notclipped[2] * clipfix[2] + notclipped[0] * clipfix[0] + epsilon))));
                 }
 
                 if (notclipped[2] == 0.f) { //blue clipped
-                    blue[i][j]  = max(blue[i][j], (clipfix[2] * ((notclipped[0] * pixel[0] + notclipped[1] * pixel[1]) /
+                    blue[i + miny][j + minx]  = max(blue[i + miny][j + minx], (clipfix[2] * ((notclipped[0] * pixel[0] + notclipped[1] * pixel[1]) /
                                                    (notclipped[0] * clipfix[0] + notclipped[1] * clipfix[1] + epsilon))));
                 }
             }
 
-            Y = (0.299 * red[i][j] + 0.587 * green[i][j] + 0.114 * blue[i][j]);
+            Y = (0.299 * red[i + miny][j + minx] + 0.587 * green[i + miny][j + minx] + 0.114 * blue[i + miny][j + minx]);
 
             if (Y > whitept) {
                 float factor = whitept / Y;
 
-                red[i][j]   *= factor;
-                green[i][j] *= factor;
-                blue[i][j]  *= factor;
+                red[i + miny][j + minx]   *= factor;
+                green[i + miny][j + minx] *= factor;
+                blue[i + miny][j + minx]  *= factor;
             }
         }
     }
