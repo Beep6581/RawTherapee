@@ -3668,8 +3668,10 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     }
 }
 //doc fftw3 says optimum is with size 2^a * 3^b * 5^c * 7^d * 11^e * 13^f with e+f = 0 or 1
-//number for size between 15000 and 1
- const int fftw_size[] = {15000, 14976, 14850, 14784, 14742, 14700, 14625, 14580, 14560, 14553, 14336, 14406, 14400, 14256, 14175, 14112, 14080, 14040, 14000, 13860, 
+//number for size between 18144 and 1 ==> 18000 pixels cover 99% all sensor
+ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550, 17500, 17496, 17472, 17325, 17280, 17248, 17199, 17150, 17010, 16896, 16875, 16848, 16807, 
+    16800, 16640, 16632, 16500, 16464, 16384, 16380, 16250, 16200, 16170, 16128, 16038, 16000, 15925, 15876, 15840, 15795, 15750, 15680, 15625, 15600, 15552, 15435, 15400, 
+    15360, 15309, 15288, 15120, 15092, 15000, 14976, 14850, 14784, 14742, 14700, 14625, 14580, 14560, 14553, 14336, 14406, 14400, 14256, 14175, 14112, 14080, 14040, 14000, 13860, 
     13824, 13750, 13720, 13650, 13608, 13500, 13475, 13440, 13377, 13365, 13312, 13230, 13200, 13125, 13122, 13104, 13000, 12960, 12936, 12800, 12740, 12672, 12636, 12600, 
     12544, 12500, 12480, 12474, 12375, 12348, 12320, 12288, 12285, 12250, 12150, 12096, 12005, 12000, 11907, 11880, 11760, 11700, 11664, 11648, 11550, 11520, 11466, 11375,
     11340, 11319, 11264, 11250, 11232, 11200, 11088, 11025, 11000, 10976, 10935, 10920, 10800, 10780, 10752, 10692, 10584, 10560, 10530, 10400, 10395,  10368, 10290, 10240, 
@@ -6451,21 +6453,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
          //   printf("n_fftw=%i yst=%i yen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i \n", N_fftwsize,  ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, original->H);
          //   printf("xst= %i xen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
             if(lp.softmet == 1) {
-                /*
-                for (int n=0; n< 16; n++){
-                    for(int m=0; m < 10; m++) {
-                        for(int l=0; l < 7; l++) {
-                            for(int p=0; p < 5; p++) {
-                                for (int r=1; r < 2; r++){
+/*                
+                for (int n=0; n< 17; n++){
+                    for(int m=0; m < 11; m++) {
+                        for(int l=0; l < 8; l++) {
+                            for(int p=0; p < 6; p++) {
+                                for (int r=0; r < 2; r++){
                                     int bon = pow(2, n) * pow(3, m) * pow(5, l) * pow(7, p) * pow(13, r);
-                                    if(bon >= 10000  && bon < 15000) printf("b=%i", bon);
+                                    if(bon >= 18000  && bon < 18200) printf("b=%i", bon);
                                 }
                             }
                         }
                     }
                 }
-                
-                */
+*/
                 int ftsizeH = 1;
                 int ftsizeW = 1;
 
