@@ -235,7 +235,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
                                  df->data[row + 2][col - 2] + df->data[row + 2][col] + df->data[row + 2][col + 2]);
 
                     if( df->data[row][col] > m * threshold ) {
-                        badPixelsThread.push_back( badPix(col, row) );
+                        badPixelsThread.emplace_back(col, row);
                     }
                 }
 
@@ -566,7 +566,7 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
         if( numparms == 1 ) { // only one number in first line means, that this is the offset.
             offset = x;
         } else if(numparms == 2) {
-            bp.push_back( badPix(x + offset, y + offset) );
+            bp.emplace_back(x + offset, y + offset);
         }
 
         while( fgets(line, sizeof(line), file ) ) {
