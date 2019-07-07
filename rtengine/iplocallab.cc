@@ -3668,8 +3668,12 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     }
 }
 //doc fftw3 says optimum is with size 2^a * 3^b * 5^c * 7^d * 11^e * 13^f with e+f = 0 or 1
-//number for size between 10000 and 1
- const int fftw_size[] = {10000, 9984, 9900, 9604, 9856, 9828, 9800, 9750, 9720, 9702, 9625, 9600, 9555, 9504, 9477, 9450, 9408, 9375, 9360, 9261, 9240,
+//number for size between 15000 and 1
+ const int fftw_size[] = {15000, 14976, 14850, 14784, 14742, 14700, 14625, 14580, 14560, 14553, 14336, 14406, 14400, 14256, 14175, 14112, 14080, 14040, 14000, 13860, 
+    13824, 13750, 13720, 13650, 13608, 13500, 13475, 13440, 13377, 13365, 13312, 13230, 13200, 13125, 13122, 13104, 13000, 12960, 12936, 12800, 12740, 12672, 12636, 12600, 
+    12544, 12500, 12480, 12474, 12375, 12348, 12320, 12288, 12285, 12250, 12150, 12096, 12005, 12000, 11907, 11880, 11760, 11700, 11664, 11648, 11550, 11520, 11466, 11375,
+    11340, 11319, 11264, 11250, 11232, 11200, 11088, 11025, 11000, 10976, 10935, 10920, 10800, 10780, 10752, 10692, 10584, 10560, 10530, 10400, 10395,  10368, 10290, 10240, 
+    10206, 10192, 10125, 10080, 10000, 9984, 9900, 9604, 9856, 9828, 9800, 9750, 9720, 9702, 9625, 9600, 9555, 9504, 9477, 9450, 9408, 9375, 9360, 9261, 9240,
     9216, 9100, 9072, 9000, 8960, 8918, 8910, 8820, 8800, 8775, 8750, 8748, 8736, 8640, 8624, 8575, 8505, 8448, 8424, 8400, 8320, 8316, 8250, 8232, 8192, 8190, 8125,
     8100, 8085, 8064, 8019, 8000, 7938, 7920, 7875, 7840, 7800, 7776, 7700, 7680, 7644, 7560, 7546, 7500, 7488, 7425, 7392, 7371, 7350, 7290, 7280, 7203, 7200, 7168,
     7128, 7056, 7040, 7020, 7000, 6930, 6912, 6875, 6860, 6825, 6804, 6750, 6720, 6656, 6615, 6600, 6561, 6552, 6500, 6480, 6468, 6400, 6370, 6336, 6318, 6300,
@@ -6447,6 +6451,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
          //   printf("n_fftw=%i yst=%i yen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i \n", N_fftwsize,  ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, original->H);
          //   printf("xst= %i xen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
             if(lp.softmet == 1) {
+                /*
+                for (int n=0; n< 16; n++){
+                    for(int m=0; m < 10; m++) {
+                        for(int l=0; l < 7; l++) {
+                            for(int p=0; p < 5; p++) {
+                                for (int r=1; r < 2; r++){
+                                    int bon = pow(2, n) * pow(3, m) * pow(5, l) * pow(7, p) * pow(13, r);
+                                    if(bon >= 10000  && bon < 15000) printf("b=%i", bon);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                */
                 int ftsizeH = 1;
                 int ftsizeW = 1;
 
@@ -6463,7 +6482,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         break;
                     }
                 }
-              //  printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+               // printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
                 //optimize with size fftw
                 if(ystart == 0 && yend < original->H) lp.ly -= (bfh - ftsizeH);
                 else if (ystart != 0 && yend == original->H) lp.lyT -= (bfh - ftsizeH);
