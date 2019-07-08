@@ -617,191 +617,216 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
         }
     }
 
-
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel
+#endif
+    {
+#ifdef _OPENMP
+        #pragma omp for nowait
 #endif
 
-    for (int c = 0; c < 3; c++) {
-        for (int j = 1; j < hfw - 1; j++) {
-            for (int i = 2; i < hfh - 2; i++) {
-                //from left
-                if (hilite[3][i][j] > epsilon) {
-                    hilite_dir0[c][j][i] = hilite[c][i][j] / hilite[3][i][j];
-                } else {
-                    hilite_dir0[c][j][i] = 0.1f * ((hilite_dir0[0 + c][j - 1][i - 2] + hilite_dir0[0 + c][j - 1][i - 1] + hilite_dir0[0 + c][j - 1][i] + hilite_dir0[0 + c][j - 1][i + 1] + hilite_dir0[0 + c][j - 1][i + 2]) /
-                                                   (hilite_dir0[0 + 3][j - 1][i - 2] + hilite_dir0[0 + 3][j - 1][i - 1] + hilite_dir0[0 + 3][j - 1][i] + hilite_dir0[0 + 3][j - 1][i + 1] + hilite_dir0[0 + 3][j - 1][i + 2] + epsilon));
+        for (int c = 0; c < 3; c++) {
+            for (int j = 1; j < hfw - 1; j++) {
+                for (int i = 2; i < hfh - 2; i++) {
+                    //from left
+                    if (hilite[3][i][j] > epsilon) {
+                        hilite_dir0[c][j][i] = hilite[c][i][j] / hilite[3][i][j];
+                    } else {
+                        hilite_dir0[c][j][i] = 0.1f * ((hilite_dir0[0 + c][j - 1][i - 2] + hilite_dir0[0 + c][j - 1][i - 1] + hilite_dir0[0 + c][j - 1][i] + hilite_dir0[0 + c][j - 1][i + 1] + hilite_dir0[0 + c][j - 1][i + 2]) /
+                                                       (hilite_dir0[0 + 3][j - 1][i - 2] + hilite_dir0[0 + 3][j - 1][i - 1] + hilite_dir0[0 + 3][j - 1][i] + hilite_dir0[0 + 3][j - 1][i + 1] + hilite_dir0[0 + 3][j - 1][i + 2] + epsilon));
+                    }
+                }
+
+                if(hilite[3][2][j] <= epsilon) {
+                    hilite_dir[0 + c][0][j]  = hilite_dir0[c][j][2];
+                }
+
+                if(hilite[3][3][j] <= epsilon) {
+                    hilite_dir[0 + c][1][j]  = hilite_dir0[c][j][3];
+                }
+
+                if(hilite[3][hfh - 3][j] <= epsilon) {
+                    hilite_dir[4 + c][hfh - 1][j] = hilite_dir0[c][j][hfh - 3];
+                }
+
+                if(hilite[3][hfh - 4][j] <= epsilon) {
+                    hilite_dir[4 + c][hfh - 2][j] = hilite_dir0[c][j][hfh - 4];
                 }
             }
 
-            if(hilite[3][2][j] <= epsilon) {
-                hilite_dir[0 + c][0][j]  = hilite_dir0[c][j][2];
-            }
-
-            if(hilite[3][3][j] <= epsilon) {
-                hilite_dir[0 + c][1][j]  = hilite_dir0[c][j][3];
-            }
-
-            if(hilite[3][hfh - 3][j] <= epsilon) {
-                hilite_dir[4 + c][hfh - 1][j] = hilite_dir0[c][j][hfh - 3];
-            }
-
-            if(hilite[3][hfh - 4][j] <= epsilon) {
-                hilite_dir[4 + c][hfh - 2][j] = hilite_dir0[c][j][hfh - 4];
+            for (int i = 2; i < hfh - 2; i++) {
+                if(hilite[3][i][hfw - 2] <= epsilon) {
+                    hilite_dir4[c][hfw - 1][i] = hilite_dir0[c][hfw - 2][i];
+                }
             }
         }
 
-        for (int i = 2; i < hfh - 2; i++) {
-            if(hilite[3][i][hfw - 2] <= epsilon) {
-                hilite_dir4[c][hfw - 1][i] = hilite_dir0[c][hfw - 2][i];
+#ifdef _OPENMP
+        #pragma omp single
+#endif
+        {
+            for (int j = hfw - 2; j > 0; j--) {
+                for (int i = 2; i < hfh - 2; i++) {
+                    //from right
+                    if (hilite[3][i][j] > epsilon) {
+                        hilite_dir4[3][j][i] = 1.f;
+                    } else {
+                        hilite_dir4[3][j][i] = (hilite_dir4[3][(j + 1)][(i - 2)] + hilite_dir4[3][(j + 1)][(i - 1)] + hilite_dir4[3][(j + 1)][(i)] + hilite_dir4[3][(j + 1)][(i + 1)] + hilite_dir4[3][(j + 1)][(i + 2)]) == 0.f ? 0.f : 0.1f;
+                    }
+                }
+
+                if(hilite[3][2][j] <= epsilon) {
+                    hilite_dir[0 + 3][0][j] += hilite_dir4[3][j][2];
+                }
+
+                if(hilite[3][hfh - 3][j] <= epsilon) {
+                    hilite_dir[4 + 3][hfh - 1][j] += hilite_dir4[3][j][hfh - 3];
+                }
+            }
+
+            for (int i = 2; i < hfh - 2; i++) {
+                if(hilite[3][i][0] <= epsilon) {
+                    hilite_dir[0 + 3][i - 2][0] += hilite_dir4[3][0][i];
+                    hilite_dir[4 + 3][i + 2][0] += hilite_dir4[3][0][i];
+                }
+
+                if(hilite[3][i][1] <= epsilon) {
+                    hilite_dir[0 + 3][i - 2][1] += hilite_dir4[3][1][i];
+                    hilite_dir[4 + 3][i + 2][1] += hilite_dir4[3][1][i];
+                }
+
+                if(hilite[3][i][hfw - 2] <= epsilon) {
+                    hilite_dir[0 + 3][i - 2][hfw - 2] += hilite_dir4[3][hfw - 2][i];
+                    hilite_dir[4 + 3][i + 2][hfw - 2] += hilite_dir4[3][hfw - 2][i];
+                }
             }
         }
     }
-
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    for (int j = hfw - 2; j > 0; j--) {
-        for (int i = 2; i < hfh - 2; i++) {
-            //from right
-            if (hilite[3][i][j] > epsilon) {
-                hilite_dir4[3][j][i] = 1.f;
-            } else {
-                hilite_dir4[3][j][i] = (hilite_dir4[3][(j + 1)][(i - 2)] + hilite_dir4[3][(j + 1)][(i - 1)] + hilite_dir4[3][(j + 1)][(i)] + hilite_dir4[3][(j + 1)][(i + 1)] + hilite_dir4[3][(j + 1)][(i + 2)]) == 0.f ? 0.f : 0.1f;
-            }
-        }
-
-        if(hilite[3][2][j] <= epsilon) {
-            hilite_dir[0 + 3][0][j] += hilite_dir4[3][j][2];
-        }
-
-        if(hilite[3][hfh - 3][j] <= epsilon) {
-            hilite_dir[4 + 3][hfh - 1][j] += hilite_dir4[3][j][hfh - 3];
-        }
-    }
-
-    for (int i = 2; i < hfh - 2; i++) {
-        if(hilite[3][i][0] <= epsilon) {
-            hilite_dir[0 + 3][i - 2][0] += hilite_dir4[3][0][i];
-            hilite_dir[4 + 3][i + 2][0] += hilite_dir4[3][0][i];
-        }
-
-        if(hilite[3][i][1] <= epsilon) {
-            hilite_dir[0 + 3][i - 2][1] += hilite_dir4[3][1][i];
-            hilite_dir[4 + 3][i + 2][1] += hilite_dir4[3][1][i];
-        }
-
-        if(hilite[3][i][hfw - 2] <= epsilon) {
-            hilite_dir[0 + 3][i - 2][hfw - 2] += hilite_dir4[3][hfw - 2][i];
-            hilite_dir[4 + 3][i + 2][hfw - 2] += hilite_dir4[3][hfw - 2][i];
-        }
-    }
-
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel
+#endif
+    {
+#ifdef _OPENMP
+        #pragma omp for nowait
 #endif
 
-    for (int c = 0; c < 3; c++) {
-        for (int j = hfw - 2; j > 0; j--) {
-            for (int i = 2; i < hfh - 2; i++) {
-                //from right
-                if (hilite[3][i][j] > epsilon) {
-                    hilite_dir4[c][j][i] = hilite[c][i][j] / hilite[3][i][j];
-                } else {
-                    hilite_dir4[c][j][i] = 0.1 * ((hilite_dir4[c][(j + 1)][(i - 2)] + hilite_dir4[c][(j + 1)][(i - 1)] + hilite_dir4[c][(j + 1)][(i)] + hilite_dir4[c][(j + 1)][(i + 1)] + hilite_dir4[c][(j + 1)][(i + 2)]) /
-                                                  (hilite_dir4[3][(j + 1)][(i - 2)] + hilite_dir4[3][(j + 1)][(i - 1)] + hilite_dir4[3][(j + 1)][(i)] + hilite_dir4[3][(j + 1)][(i + 1)] + hilite_dir4[3][(j + 1)][(i + 2)] + epsilon));
+        for (int c = 0; c < 3; c++) {
+            for (int j = hfw - 2; j > 0; j--) {
+                for (int i = 2; i < hfh - 2; i++) {
+                    //from right
+                    if (hilite[3][i][j] > epsilon) {
+                        hilite_dir4[c][j][i] = hilite[c][i][j] / hilite[3][i][j];
+                    } else {
+                        hilite_dir4[c][j][i] = 0.1f * ((hilite_dir4[c][(j + 1)][(i - 2)] + hilite_dir4[c][(j + 1)][(i - 1)] + hilite_dir4[c][(j + 1)][(i)] + hilite_dir4[c][(j + 1)][(i + 1)] + hilite_dir4[c][(j + 1)][(i + 2)]) /
+                                                      (hilite_dir4[3][(j + 1)][(i - 2)] + hilite_dir4[3][(j + 1)][(i - 1)] + hilite_dir4[3][(j + 1)][(i)] + hilite_dir4[3][(j + 1)][(i + 1)] + hilite_dir4[3][(j + 1)][(i + 2)] + epsilon));
+                    }
+                }
+
+                if(hilite[3][2][j] <= epsilon) {
+                    hilite_dir[0 + c][0][j] += hilite_dir4[c][j][2];
+                }
+
+                if(hilite[3][hfh - 3][j] <= epsilon) {
+                    hilite_dir[4 + c][hfh - 1][j] += hilite_dir4[c][j][hfh - 3];
                 }
             }
 
-            if(hilite[3][2][j] <= epsilon) {
-                hilite_dir[0 + c][0][j] += hilite_dir4[c][j][2];
-            }
+            for (int i = 2; i < hfh - 2; i++) {
+                if(hilite[3][i][0] <= epsilon) {
+                    hilite_dir[0 + c][i - 2][0] += hilite_dir4[c][0][i];
+                    hilite_dir[4 + c][i + 2][0] += hilite_dir4[c][0][i];
+                }
 
-            if(hilite[3][hfh - 3][j] <= epsilon) {
-                hilite_dir[4 + c][hfh - 1][j] += hilite_dir4[c][j][hfh - 3];
-            }
-        }
+                if(hilite[3][i][1] <= epsilon) {
+                    hilite_dir[0 + c][i - 2][1] += hilite_dir4[c][1][i];
+                    hilite_dir[4 + c][i + 2][1] += hilite_dir4[c][1][i];
+                }
 
-        for (int i = 2; i < hfh - 2; i++) {
-            if(hilite[3][i][0] <= epsilon) {
-                hilite_dir[0 + c][i - 2][0] += hilite_dir4[c][0][i];
-                hilite_dir[4 + c][i + 2][0] += hilite_dir4[c][0][i];
-            }
-
-            if(hilite[3][i][1] <= epsilon) {
-                hilite_dir[0 + c][i - 2][1] += hilite_dir4[c][1][i];
-                hilite_dir[4 + c][i + 2][1] += hilite_dir4[c][1][i];
-            }
-
-            if(hilite[3][i][hfw - 2] <= epsilon) {
-                hilite_dir[0 + c][i - 2][hfw - 2] += hilite_dir4[c][hfw - 2][i];
-                hilite_dir[4 + c][i + 2][hfw - 2] += hilite_dir4[c][hfw - 2][i];
+                if(hilite[3][i][hfw - 2] <= epsilon) {
+                    hilite_dir[0 + c][i - 2][hfw - 2] += hilite_dir4[c][hfw - 2][i];
+                    hilite_dir[4 + c][i + 2][hfw - 2] += hilite_dir4[c][hfw - 2][i];
+                }
             }
         }
-    }
-
-    if(plistener) {
-        progress += 0.05;
-        plistener->setProgress(progress);
-    }
-
-
-    for (int i = 1; i < hfh - 1; i++)
-        for (int j = 2; j < hfw - 2; j++) {
-            //from top
-            if (hilite[3][i][j] > epsilon) {
-                hilite_dir[0 + 3][i][j] = 1.f;
-            } else {
-                hilite_dir[0 + 3][i][j] = (hilite_dir[0 + 3][i - 1][j - 2] + hilite_dir[0 + 3][i - 1][j - 1] + hilite_dir[0 + 3][i - 1][j] + hilite_dir[0 + 3][i - 1][j + 1] + hilite_dir[0 + 3][i - 1][j + 2]) == 0.f ? 0.f : 0.1f;
-            }
-        }
-
-    for (int j = 2; j < hfw - 2; j++) {
-        if(hilite[3][hfh - 2][j] <= epsilon) {
-            hilite_dir[4 + 3][hfh - 1][j] += hilite_dir[0 + 3][hfh - 2][j];
-        }
-    }
 
 #ifdef _OPENMP
-    #pragma omp parallel for
+        #pragma omp single
 #endif
+        {
+            for (int i = 1; i < hfh - 1; i++)
+                for (int j = 2; j < hfw - 2; j++) {
+                    //from top
+                    if (hilite[3][i][j] > epsilon) {
+                        hilite_dir[0 + 3][i][j] = 1.f;
+                    } else {
+                        hilite_dir[0 + 3][i][j] = (hilite_dir[0 + 3][i - 1][j - 2] + hilite_dir[0 + 3][i - 1][j - 1] + hilite_dir[0 + 3][i - 1][j] + hilite_dir[0 + 3][i - 1][j + 1] + hilite_dir[0 + 3][i - 1][j + 2]) == 0.f ? 0.f : 0.1f;
+                    }
+                }
 
-    for (int c = 0; c < 3; c++) {
-        for (int i = 1; i < hfh - 1; i++) {
             for (int j = 2; j < hfw - 2; j++) {
-                //from top
-                if (hilite[3][i][j] > epsilon) {
-                    hilite_dir[0 + c][i][j] = hilite[c][i][j] / hilite[3][i][j];
-                } else {
-                    hilite_dir[0 + c][i][j] = 0.1 * ((hilite_dir[0 + c][i - 1][j - 2] + hilite_dir[0 + c][i - 1][j - 1] + hilite_dir[0 + c][i - 1][j] + hilite_dir[0 + c][i - 1][j + 1] + hilite_dir[0 + c][i - 1][j + 2]) /
-                                                     (hilite_dir[0 + 3][i - 1][j - 2] + hilite_dir[0 + 3][i - 1][j - 1] + hilite_dir[0 + 3][i - 1][j] + hilite_dir[0 + 3][i - 1][j + 1] + hilite_dir[0 + 3][i - 1][j + 2] + epsilon));
+                if(hilite[3][hfh - 2][j] <= epsilon) {
+                    hilite_dir[4 + 3][hfh - 1][j] += hilite_dir[0 + 3][hfh - 2][j];
                 }
             }
         }
-
-        for (int j = 2; j < hfw - 2; j++) {
-            if(hilite[3][hfh - 2][j] <= epsilon) {
-                hilite_dir[4 + c][hfh - 1][j] += hilite_dir[0 + c][hfh - 2][j];
-            }
-        }
     }
-
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    for (int i = hfh - 2; i > 0; i--)
-        for (int j = 2; j < hfw - 2; j++) {
-            //from bottom
-            if (hilite[3][i][j] > epsilon) {
-                hilite_dir[4 + 3][i][j] = 1.f;
-            } else {
-                hilite_dir[4 + 3][i][j] = (hilite_dir[4 + 3][(i + 1)][(j - 2)] + hilite_dir[4 + 3][(i + 1)][(j - 1)] + hilite_dir[4 + 3][(i + 1)][(j)] + hilite_dir[4 + 3][(i + 1)][(j + 1)] + hilite_dir[4 + 3][(i + 1)][(j + 2)]) == 0.f ? 0.f : 0.1f;
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+#ifdef _OPENMP
+        #pragma omp for nowait
+#endif
+
+        for (int c = 0; c < 3; c++) {
+            for (int i = 1; i < hfh - 1; i++) {
+                for (int j = 2; j < hfw - 2; j++) {
+                    //from top
+                    if (hilite[3][i][j] > epsilon) {
+                        hilite_dir[0 + c][i][j] = hilite[c][i][j] / hilite[3][i][j];
+                    } else {
+                        hilite_dir[0 + c][i][j] = 0.1f * ((hilite_dir[0 + c][i - 1][j - 2] + hilite_dir[0 + c][i - 1][j - 1] + hilite_dir[0 + c][i - 1][j] + hilite_dir[0 + c][i - 1][j + 1] + hilite_dir[0 + c][i - 1][j + 2]) /
+                                                         (hilite_dir[0 + 3][i - 1][j - 2] + hilite_dir[0 + 3][i - 1][j - 1] + hilite_dir[0 + 3][i - 1][j] + hilite_dir[0 + 3][i - 1][j + 1] + hilite_dir[0 + 3][i - 1][j + 2] + epsilon));
+                    }
+                }
+            }
+
+            for (int j = 2; j < hfw - 2; j++) {
+                if(hilite[3][hfh - 2][j] <= epsilon) {
+                    hilite_dir[4 + c][hfh - 1][j] += hilite_dir[0 + c][hfh - 2][j];
+                }
             }
         }
+
+
+#ifdef _OPENMP
+        #pragma omp single
+#endif
+        for (int i = hfh - 2; i > 0; i--)
+            for (int j = 2; j < hfw - 2; j++) {
+                //from bottom
+                if (hilite[3][i][j] > epsilon) {
+                    hilite_dir[4 + 3][i][j] = 1.f;
+                } else {
+                    hilite_dir[4 + 3][i][j] = (hilite_dir[4 + 3][(i + 1)][(j - 2)] + hilite_dir[4 + 3][(i + 1)][(j - 1)] + hilite_dir[4 + 3][(i + 1)][(j)] + hilite_dir[4 + 3][(i + 1)][(j + 1)] + hilite_dir[4 + 3][(i + 1)][(j + 2)]) == 0.f ? 0.f : 0.1f;
+                }
+            }
+        }
+
+    if(plistener) {
+        progress += 0.05;
+        plistener->setProgress(progress);
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel for
@@ -814,7 +839,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
                 if (hilite[3][i][j] > epsilon) {
                     hilite_dir[4 + c][i][j] = hilite[c][i][j] / hilite[3][i][j];
                 } else {
-                    hilite_dir[4 + c][i][j] = 0.1 * ((hilite_dir[4 + c][(i + 1)][(j - 2)] + hilite_dir[4 + c][(i + 1)][(j - 1)] + hilite_dir[4 + c][(i + 1)][(j)] + hilite_dir[4 + c][(i + 1)][(j + 1)] + hilite_dir[4 + c][(i + 1)][(j + 2)]) /
+                    hilite_dir[4 + c][i][j] = 0.1f * ((hilite_dir[4 + c][(i + 1)][(j - 2)] + hilite_dir[4 + c][(i + 1)][(j - 1)] + hilite_dir[4 + c][(i + 1)][(j)] + hilite_dir[4 + c][(i + 1)][(j + 1)] + hilite_dir[4 + c][(i + 1)][(j + 2)]) /
                                                      (hilite_dir[4 + 3][(i + 1)][(j - 2)] + hilite_dir[4 + 3][(i + 1)][(j - 1)] + hilite_dir[4 + 3][(i + 1)][(j)] + hilite_dir[4 + 3][(i + 1)][(j + 1)] + hilite_dir[4 + 3][(i + 1)][(j + 2)] + epsilon));
                 }
             }
