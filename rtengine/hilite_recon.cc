@@ -36,10 +36,10 @@
 #include "StopWatch.h"
 
 namespace {
-void boxblur2(const float* const* src, float** dst, float** temp, int startY, int startX, int H, int W, int box)
+void boxblur2(const float* const* src, float** dst, float** temp, int startY, int startX, int H, int W, int bufferW, int box)
 {
     constexpr int numCols = 16;
-    assert((W % numCols) == 0);
+    assert((bufferW % numCols) == 0);
 
     //box blur image channel; box size = 2*box+1
     //horizontal blur
@@ -79,7 +79,7 @@ void boxblur2(const float* const* src, float** dst, float** temp, int startY, in
 #ifdef _OPENMP
     #pragma omp for
 #endif
-        for (int col = 0; col < W - numCols + 1; col += numCols) {
+        for (int col = 0; col < bufferW - numCols + 1; col += numCols) {
             float len = box + 1;
             for(int n = 0; n < numCols; n++) {
                 tempvalN[n] = temp[0][col + n] / len;
@@ -433,21 +433,21 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 
     // blur RGB channels
 
-    boxblur2(red, channelblur[0], temp, miny, minx, blurHeight, bufferWidth, 4);
+    boxblur2(red, channelblur[0], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
 
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    boxblur2(green, channelblur[1], temp, miny, minx, blurHeight, bufferWidth, 4);
+    boxblur2(green, channelblur[1], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
 
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    boxblur2(blue, channelblur[2], temp, miny, minx, blurHeight, bufferWidth, 4);
+    boxblur2(blue, channelblur[2], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
  
     if(plistener) {
         progress += 0.05;
@@ -516,7 +516,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     array2D<float> hilite_full4(bufferWidth, blurHeight);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //blur highlight data
-    boxblur2(hilite_full[3], hilite_full4, temp, 0, 0, blurHeight, bufferWidth, 1);
+    boxblur2(hilite_full[3], hilite_full4, temp, 0, 0, blurHeight, blurWidth, bufferWidth, 1);
 
     temp.free(); // free temporary buffer
 
