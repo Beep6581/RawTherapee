@@ -22,6 +22,10 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#ifndef NDEBUG
+#include <cassert>
+#endif
+
 #include <cstddef>
 #include <cmath>
 #include "array2D.h"
@@ -32,8 +36,11 @@
 #include "StopWatch.h"
 
 namespace {
-void boxblur2(float** src, float** dst, float** temp, int startY, int startX, int H, int W, int box )
+void boxblur2(const float* const* src, float** dst, float** temp, int startY, int startX, int H, int W, int box)
 {
+    constexpr int numCols = 16;
+    assert((W % numCols) == 0);
+
     //box blur image channel; box size = 2*box+1
     //horizontal blur
 #ifdef _OPENMP
@@ -63,148 +70,52 @@ void boxblur2(float** src, float** dst, float** temp, int startY, int startX, in
         }
     }
 
-#ifdef __SSE2__
     //vertical blur
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        float len = box + 1;
-        vfloat lenv = F2V( len );
-        vfloat lenp1v = F2V( len + 1.0f );
-        vfloat onev = F2V( 1.0f );
-        vfloat tempv, temp2v;
+        float tempvalN[numCols] ALIGNED64;
 #ifdef _OPENMP
-        #pragma omp for nowait
+    #pragma omp for
 #endif
-
-        for (int col = 0; col < W - 7; col += 8) {
-            tempv = LVFU(temp[0][col]) / lenv;
-            temp2v = LVFU(temp[0][col + 4]) / lenv;
-
+        for (int col = 0; col < W - numCols + 1; col += numCols) {
+            float len = box + 1;
+            for(int n = 0; n < numCols; n++) {
+                tempvalN[n] = temp[0][col + n] / len;
+            }
             for (int i = 1; i <= box; i++) {
-                tempv = tempv + LVFU(temp[i][col]) / lenv;
-                temp2v = temp2v + LVFU(temp[i][col + 4]) / lenv;
+                for(int n = 0; n < numCols; n++) {
+                    tempvalN[n] += temp[i][col + n] / len;
+                }
             }
-
-            _mm_storeu_ps( &dst[0][col], tempv);
-            _mm_storeu_ps( &dst[0][col + 4], temp2v);
-
+            for(int n = 0; n < numCols; n++) {
+                dst[0][col + n] = tempvalN[n];
+            }
             for (int row = 1; row <= box; row++) {
-                tempv = (tempv * lenv + LVFU(temp[(row + box)][col])) / lenp1v;
-                temp2v = (temp2v * lenv + LVFU(temp[(row + box)][col + 4])) / lenp1v;
-                _mm_storeu_ps( &dst[row][col], tempv);
-                _mm_storeu_ps( &dst[row][col + 4], temp2v);
-                lenv = lenp1v;
-                lenp1v = lenp1v + onev;
+                for(int n = 0; n < numCols; n++) {
+                    tempvalN[n] = (tempvalN[n] * len + temp[(row + box)][col + n]) / (len + 1);
+                    dst[row][col + n] = tempvalN[n];
+                }
+                len ++;
             }
-
+            const float rlen = 1.f / len;
             for (int row = box + 1; row < H - box; row++) {
-                tempv = tempv + (LVFU(temp[(row + box)][col]) - LVFU(temp[(row - box - 1)][col])) / lenv;
-                temp2v = temp2v + (LVFU(temp[(row + box)][col + 4]) - LVFU(temp[(row - box - 1)][col + 4])) / lenv;
-                _mm_storeu_ps( &dst[row][col], tempv);
-                _mm_storeu_ps( &dst[row][col + 4], temp2v);
+                for(int n = 0; n < numCols; n++) {
+                    tempvalN[n] = tempvalN[n] + (temp[(row + box)][col + n] - temp[(row - box - 1)][col + n]) * rlen;
+                    dst[row][col + n] = tempvalN[n];
+                }
             }
 
             for (int row = H - box; row < H; row++) {
-                lenp1v = lenv;
-                lenv = lenv - onev;
-                tempv = (tempv * lenp1v - LVFU(temp[(row - box - 1)][col])) / lenv;
-                temp2v = (temp2v * lenp1v - LVFU(temp[(row - box - 1)][col + 4])) / lenv;
-                _mm_storeu_ps( &dst[row][col], tempv );
-                _mm_storeu_ps( &dst[row][col + 4], temp2v );
-            }
-        }
-
-#ifdef _OPENMP
-        #pragma omp single
-#endif
-        {
-            for (int col = W - (W % 8); col < W - 3; col += 4) {
-                tempv = LVFU(temp[0][col]) / lenv;
-
-                for (int i = 1; i <= box; i++) {
-                    tempv = tempv + LVFU(temp[i][col]) / lenv;
+                for(int n = 0; n < numCols; n++) {
+                    tempvalN[n] = (dst[(row - 1)][col + n] * len - temp[(row - box - 1)][col + n]) / (len - 1);
+                    dst[row][col + n] = tempvalN[n];
                 }
-
-                _mm_storeu_ps( &dst[0][col], tempv);
-
-                for (int row = 1; row <= box; row++) {
-                    tempv = (tempv * lenv + LVFU(temp[(row + box)][col])) / lenp1v;
-                    _mm_storeu_ps( &dst[row][col], tempv);
-                    lenv = lenp1v;
-                    lenp1v = lenp1v + onev;
-                }
-
-                for (int row = box + 1; row < H - box; row++) {
-                    tempv = tempv + (LVFU(temp[(row + box)][col]) - LVFU(temp[(row - box - 1)][col])) / lenv;
-                    _mm_storeu_ps( &dst[row][col], tempv);
-                }
-
-                for (int row = H - box; row < H; row++) {
-                    lenp1v = lenv;
-                    lenv = lenv - onev;
-                    tempv = (tempv * lenp1v - LVFU(temp[(row - box - 1)][col])) / lenv;
-                    _mm_storeu_ps( &dst[row][col], tempv );
-                }
-            }
-
-            for (int col = W - (W % 4); col < W; col++) {
-                int len = box + 1;
-                dst[0][col] = temp[0][col] / len;
-
-                for (int i = 1; i <= box; i++) {
-                    dst[0][col] += temp[i][col] / len;
-                }
-
-                for (int row = 1; row <= box; row++) {
-                    dst[row][col] = (dst[(row - 1)][col] * len + temp[(row + box)][col]) / (len + 1);
-                    len ++;
-                }
-
-                for (int row = box + 1; row < H - box; row++) {
-                    dst[row][col] = dst[(row - 1)][col] + (temp[(row + box)][col] - temp[(row - box - 1)][col]) / len;
-                }
-
-                for (int row = H - box; row < H; row++) {
-                    dst[row][col] = (dst[(row - 1)][col] * len - temp[(row - box - 1)][col]) / (len - 1);
-                    len --;
-                }
+                len --;
             }
         }
     }
-
-#else
-    //vertical blur
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
-
-    for (int col = 0; col < W; col++) {
-        int len = box + 1;
-        dst[0][col] = temp[0][col] / len;
-
-        for (int i = 1; i <= box; i++) {
-            dst[0][col] += temp[i][col] / len;
-        }
-
-        for (int row = 1; row <= box; row++) {
-            dst[row][col] = (dst[(row - 1)][col] * len + temp[(row + box)][col]) / (len + 1);
-            len ++;
-        }
-
-        for (int row = box + 1; row < H - box; row++) {
-            dst[row][col] = dst[(row - 1)][col] + (temp[(row + box)][col] - temp[(row - box - 1)][col]) / len;
-        }
-
-        for (int row = H - box; row < H; row++) {
-            dst[row][col] = (dst[(row - 1)][col] * len - temp[(row - box - 1)][col]) / (len - 1);
-            len --;
-        }
-    }
-
-#endif
-
 }
 
 void boxblur_resamp(float **src, float **dst, float ** temp, int H, int W, int box, int samp )
@@ -263,19 +174,19 @@ void boxblur_resamp(float **src, float **dst, float ** temp, int H, int W, int b
         }
     }
 
-    static const int numCols = 8;   // process numCols columns at once for better L1 CPU cache usage
+    constexpr int numCols = 8;   // process numCols columns at once for better L1 CPU cache usage
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        float tempvalN[numCols] ALIGNED16;
+        float tempvalN[numCols] ALIGNED64;
 #ifdef _OPENMP
         #pragma omp for nowait
 #endif
 
         //vertical blur
         for (int col = 0; col < (W / samp) - (numCols - 1); col += numCols) {
-            int len = box + 1;
+            float len = box + 1;
 
             for(int n = 0; n < numCols; n++) {
                 tempvalN[n] = temp[0][col + n] / len;
@@ -304,10 +215,10 @@ void boxblur_resamp(float **src, float **dst, float ** temp, int H, int W, int b
 
                 len ++;
             }
-
+            const float rlen = 1.f / len;
             for (int row = box + 1; row < H - box; row++) {
                 for(int n = 0; n < numCols; n++) {
-                    tempvalN[n] = tempvalN[n] + (temp[(row + box)][col + n] - temp[(row - box - 1)][col + n]) / len;
+                    tempvalN[n] = tempvalN[n] + (temp[(row + box)][col + n] - temp[(row - box - 1)][col + n]) * rlen;
                 }
 
                 if(row % samp == 0) {
@@ -511,28 +422,32 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     maxy = std::min(height - 1, maxy + blurBorder);
     const int blurWidth = maxx - minx + 1;
     const int blurHeight = maxy - miny + 1;
+    const int bufferWidth = blurWidth + ((16 - (blurWidth % 16)) & 15);
+
+    std::cout << "blurWidth : " << blurWidth << std::endl;
+    std::cout << "bufferWidth : " << bufferWidth << std::endl;
 
     std::cout << "Corrected area reduced by factor: " << (((float)width * height) / (blurWidth * blurHeight)) << std::endl;
-    multi_array2D<float, 3> channelblur(blurWidth, blurHeight, 0, 48);
-    array2D<float> temp(blurWidth, blurHeight); // allocate temporary buffer
+    multi_array2D<float, 3> channelblur(bufferWidth, blurHeight, 0, 48);
+    array2D<float> temp(bufferWidth, blurHeight); // allocate temporary buffer
 
     // blur RGB channels
 
-    boxblur2(red, channelblur[0], temp, miny, minx, blurHeight, blurWidth, 4);
+    boxblur2(red, channelblur[0], temp, miny, minx, blurHeight, bufferWidth, 4);
 
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    boxblur2(green, channelblur[1], temp, miny, minx, blurHeight, blurWidth, 4);
+    boxblur2(green, channelblur[1], temp, miny, minx, blurHeight, bufferWidth, 4);
 
     if(plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
     }
 
-    boxblur2(blue, channelblur[2], temp, miny, minx, blurHeight, blurWidth, 4);
+    boxblur2(blue, channelblur[2], temp, miny, minx, blurHeight, bufferWidth, 4);
  
     if(plistener) {
         progress += 0.05;
@@ -558,7 +473,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
         plistener->setProgress(progress);
     }
 
-    multi_array2D<float, 4> hilite_full(blurWidth, blurHeight, ARRAY2D_CLEAR_DATA, 32);
+    multi_array2D<float, 4> hilite_full(bufferWidth, blurHeight, ARRAY2D_CLEAR_DATA, 32);
 
     if(plistener) {
         progress += 0.10;
@@ -598,10 +513,10 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
         plistener->setProgress(progress);
     }
 
-    array2D<float> hilite_full4(blurWidth, blurHeight);
+    array2D<float> hilite_full4(bufferWidth, blurHeight);
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     //blur highlight data
-    boxblur2(hilite_full[3], hilite_full4, temp, 0, 0, blurHeight, blurWidth, 1);
+    boxblur2(hilite_full[3], hilite_full4, temp, 0, 0, blurHeight, bufferWidth, 1);
 
     temp.free(); // free temporary buffer
 
