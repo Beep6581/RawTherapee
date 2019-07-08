@@ -102,7 +102,7 @@ private:
 
     static float computeXYZ2Lab(float f);
     static float computeXYZ2LabY(float f);
-    
+
 public:
 
     typedef enum Channel {
@@ -1094,7 +1094,7 @@ public:
 		//very small differences between the 2
         return x <= 0.003040 ? x * 12.92310 : 1.055 * exp(log(x) / sRGBGammaCurve) - 0.055;//continuous
       //  return x <= 0.003041 ? x * 12.92310 : 1.055011 * exp(log(x) / sRGBGammaCurve) - 0.055011;//continuous
-		
+
     }
 
 
@@ -1111,7 +1111,7 @@ public:
 		//very small differences between the 4
         return x <= 0.039286 ? x / 12.92310 : exp(log((x + 0.055) / 1.055) * sRGBGammaCurve);//continuous
       //  return x <= 0.039293 ? x / 12.92310 : exp(log((x + 0.055011) / 1.055011) * sRGBGammaCurve);//continuous
-		
+
     }
 
 
@@ -1509,8 +1509,8 @@ public:
         static const float C9 = 8.f, C8 = 15.f, C7 = 12.f, C4 = 7.f, C3 = 5.f, C2 = 5.f, C1 = 5.f;
         static const float H9 = 0.05f, H8 = 0.25f, H7 = 0.1f, H4 = 0.02f, H3 = 0.02f, H2 = 0.1f, H1 = 0.1f, H10 = -0.2f, H11 = -0.2f;
 
-        // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1, uses imolicit factor 1.0
-        // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit facor 0.6
+        // "real" skin color : take into account a slight usage of contrast and saturation in RT if option "skin" = 1, uses implicit factor 1.0
+        // wide area skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit factor 0.6
         // wide area for transition, uses explicit factor 0.4
 
         if  (lum >= 85.0f) {
@@ -1588,8 +1588,8 @@ public:
         static const float C9 = 8.f, C8 = 15.f, C7 = 12.f, C4 = 7.f, C3 = 5.f, C2 = 5.f, C1 = 5.f;
         static const float H9 = 0.05f, H8 = 0.25f, H7 = 0.1f, H4 = 0.02f, H3 = 0.02f, H2 = 0.1f, H1 = 0.1f, H10 = -0.2f, H11 = -0.2f;
 
-        // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1, uses imolicit factor 1.0
-        // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit facor 0.6
+        // "real" skin color : take into account a slight usage of contrast and saturation in RT if option "skin" = 1, uses implicit factor 1.0
+        // wide area skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit factor 0.6
         // wide area for transition, uses explicit factor 0.4
         if((b_l > -0.3f && b_r < 2.f)  || basc == 0) { //range maxi skin
             if  (lum >= 85.0f) {
@@ -1704,8 +1704,8 @@ public:
 
         hue = HH;
 
-        // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1, uses imolicit factor 1.0
-        // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit facor 0.6
+        // "real" skin color : take into account a slight usage of contrast and saturation in RT if option "skin" = 1, uses implicit factor 1.0
+        // wide area skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit factor 0.6
         // wide area for transition, uses explicit factor 0.4
 
         if  (lum >= 85.0f) {
