@@ -841,7 +841,7 @@ void Crop::update(int todo)
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
-        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, 
+        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);

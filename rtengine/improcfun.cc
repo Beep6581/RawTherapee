@@ -324,7 +324,7 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
         if (softProof) {
             cmsHPROFILE oprof = nullptr;
             RenderingIntent outIntent;
-
+            
             flags = cmsFLAGS_SOFTPROOFING | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
 
             if (!settings->printerProfile.empty()) {
