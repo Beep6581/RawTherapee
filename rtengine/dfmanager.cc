@@ -235,7 +235,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
                                  df->data[row + 2][col - 2] + df->data[row + 2][col] + df->data[row + 2][col + 2]);
 
                     if( df->data[row][col] > m * threshold ) {
-                        badPixelsThread.push_back( badPix(col, row) );
+                        badPixelsThread.emplace_back(col, row);
                     }
                 }
 
@@ -257,7 +257,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
                 }
 
                 if( df->data[row][3 * col] > m[0]*threshold || df->data[row][3 * col + 1] > m[1]*threshold || df->data[row][3 * col + 2] > m[2]*threshold) {
-                    badPixels.push_back( badPix(col, row) );
+                    badPixels.emplace_back(col, row);
                 }
             }
     }
@@ -270,8 +270,11 @@ void dfInfo::updateBadPixelList( RawImage *df )
 
 // ************************* class DFManager *********************************
 
-void DFManager::init( Glib::ustring pathname )
+void DFManager::init(const Glib::ustring& pathname)
 {
+    if (pathname.empty()) {
+        return;
+    }
     std::vector<Glib::ustring> names;
 
     auto dir = Gio::File::create_for_path (pathname);
@@ -563,12 +566,12 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
         if( numparms == 1 ) { // only one number in first line means, that this is the offset.
             offset = x;
         } else if(numparms == 2) {
-            bp.push_back( badPix(x + offset, y + offset) );
+            bp.emplace_back(x + offset, y + offset);
         }
 
         while( fgets(line, sizeof(line), file ) ) {
             if( sscanf(line, "%d %d", &x, &y) == 2 ) {
-                bp.push_back( badPix(x + offset, y + offset) );
+                bp.emplace_back(x + offset, y + offset);
             }
         }
     }
@@ -589,7 +592,7 @@ std::vector<badPix> *DFManager::getBadPixels ( const std::string &mak, const std
     bool found = false;
 
     if( !serial.empty() ) {
-        // search with sreial number first
+        // search with serial number first
         std::ostringstream s;
         s << mak << " " << mod << " " << serial;
         iter = bpList.find( s.str() );

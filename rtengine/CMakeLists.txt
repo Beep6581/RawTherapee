@@ -31,6 +31,7 @@ link_directories(
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
+    badpixels.cc
     CA_correct_RT.cc
     EdgePreservingDecomposition.cc
     FTblockDN.cc

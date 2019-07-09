@@ -123,8 +123,6 @@ FILEBROWSER_COPYPROFILE;Kopieer profiel
 FILEBROWSER_CURRENT_NAME;Huidige naam:
 FILEBROWSER_DARKFRAME;Donkerframe
 FILEBROWSER_DELETEDIALOG_HEADER;Bevestiging bestand verwijderen
-FILEBROWSER_DELETEDIALOG_SELECTED;Weet u zeker dat u de geselecteerde %1 bestanden wilt verwijderen?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Weet u zeker dat u de %1 geselecteerde bestanden wilt verwijderen *inclusief* de versies van de verwerkingsrij?
 FILEBROWSER_EMPTYTRASH;Leeg prullenbak
 FILEBROWSER_EXTPROGMENU;Open met
 FILEBROWSER_FLATFIELD;Vlakveld
@@ -159,8 +157,6 @@ FILEBROWSER_POPUPRANK2;Waardering 2 **
 FILEBROWSER_POPUPRANK3;Waardering 3 ***
 FILEBROWSER_POPUPRANK4;Waardering 4 ****
 FILEBROWSER_POPUPRANK5;Waardering 5 *****
-FILEBROWSER_POPUPREMOVE;Verwijder van bestandssysteem
-FILEBROWSER_POPUPREMOVEINCLPROC;Verwijder (met bestand in verwerkingsrij)
 FILEBROWSER_POPUPRENAME;Hernoem
 FILEBROWSER_POPUPSELECTALL;Alles selecteren
 FILEBROWSER_POPUPTRASH;Verplaats naar prullenbak
@@ -187,7 +183,6 @@ FILEBROWSER_SHOWDIRHINT;Verwijder alle filters.\nSneltoets: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Toon bewerkte foto's\nSneltoets: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Toon niet-bewerkte foto's\nSneltoets: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Toon EXIF-info
-FILEBROWSER_SHOWNOTTRASHHINT;Toon alleen niet-verwijderde foto's.
 FILEBROWSER_SHOWORIGINALHINT;Toon alleen originele afbeelding.\n\nAls er meerdere afbeeldingen zijn met dezelfde naam maar verschillende extensies, dan wordt de afbeelding waarvan de extensie het hoogst staat in de lijst met extensies in Voorkeuren > Bestandsnavigator > Extensies
 FILEBROWSER_SHOWRANK1HINT;Toon foto's met 1 ster.\nSneltoets: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Toon foto's met 2 sterren.\nSneltoets: <b>2</b>
@@ -1979,8 +1974,13 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !GENERAL_CURRENT;Current
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...

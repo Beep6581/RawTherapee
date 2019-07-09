@@ -300,7 +300,7 @@ ClutComboBox::ClutModel::ClutModel(const Glib::ustring &path)
 {
     m_model = Gtk::TreeStore::create (m_columns);
     //set_model (m_model);
-    count = parseDir(path);
+    count = path.empty() ? 0 : parseDir(path);
 }
 
 int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)

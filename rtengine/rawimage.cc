@@ -767,7 +767,7 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
                 this->data[row][col] = image[row * width + col][0];
             }
     } else {
-        if(get_maker() == "Sigma" && dng_version) { // Hack to prevent sigma dng files from crashing
+        if((get_maker() == "Sigma" || get_maker() == "Pentax" || get_maker() == "Sony") && dng_version) { // Hack to prevent sigma dng files and dng files from PixelShift2DNG from crashing
             height -= top_margin;
             width -= left_margin;
         }

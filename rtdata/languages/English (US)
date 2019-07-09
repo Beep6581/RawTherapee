@@ -122,12 +122,12 @@
 !FILEBROWSER_COPYPROFILE;Copy
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark-frame
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
 !FILEBROWSER_DELETEDIALOG_HEADER;File delete confirmation:
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
 !FILEBROWSER_EMPTYTRASH;Empty trash
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
 !FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_FLATFIELD;Flat-Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
@@ -161,8 +161,8 @@
 !FILEBROWSER_POPUPRANK3;Rank 3 ***
 !FILEBROWSER_POPUPRANK4;Rank 4 ****
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
-!FILEBROWSER_POPUPREMOVE;Delete
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_POPUPRENAME;Rename
 !FILEBROWSER_POPUPSELECTALL;Select all
 !FILEBROWSER_POPUPTRASH;Move to trash
@@ -189,7 +189,7 @@
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
 !FILEBROWSER_SHOWEXIFINFO;Show Exif info.\n\nShortcuts:\n<b>i</b> - Multiple Editor Tabs Mode,\n<b>Alt-i</b> - Single Editor Tab Mode.
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1-star.\nShortcut: <b>1</b>
 !FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2-star.\nShortcut: <b>2</b>
@@ -1430,7 +1430,7 @@
 !TP_COLORAPP_SURROUND_DARK;Dark
 !TP_COLORAPP_SURROUND_DIM;Dim
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
+!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 !TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 !TP_COLORAPP_TCMODE_CHROMA;Chroma
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness

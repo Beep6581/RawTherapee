@@ -5,7 +5,7 @@
 #set(CMAKE_BUILD_TYPE Release CACHE STRING "Between: None Debug Release RelWithDebInfo MinSizeRel.")
 
 set(CMAKE_INSTALL_PREFIX ./${CMAKE_BUILD_TYPE} CACHE PATH "Libraries installation path")
-set(DATADIR . CACHE PATH "Datas installation path")
+set(DATADIR . CACHE PATH "Data installation path")
 set(BINDIR . CACHE PATH "Binaries installation path")
 set(LIBDIR . CACHE PATH "Libraries installation path")
 set(DOCDIR ./doc CACHE PATH "Documentation installation path")

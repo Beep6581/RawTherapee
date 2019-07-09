@@ -768,8 +768,8 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
     const rtengine::FramesMetaData *imd = ipc->getInitialImage()->getMetaData();
 
     if (imd) {
-        // int iso = imd->getISOSpeed();              temporarilly removed because unused
-        // double shutter = imd->getShutterSpeed();   temporarilly removed because unused
+        // int iso = imd->getISOSpeed();              temporarily removed because unused
+        // double shutter = imd->getShutterSpeed();   temporarily removed because unused
         double aperture = imd->getFNumber();
         double focallength = imd->getFocalLen();
         std::string maker ( imd->getMake()  );
