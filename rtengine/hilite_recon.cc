@@ -406,6 +406,10 @@ void RawImageSource::HLRecovery_inpaint (float** red, float** green, float** blu
         }
     }
 
+    if (minx > maxx || miny > maxy) { // nothing to reconstruct
+        return;
+    }
+
     if (plistener) {
         progress += 0.05;
         plistener->setProgress(progress);
