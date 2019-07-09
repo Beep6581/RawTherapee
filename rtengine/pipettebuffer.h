@@ -16,13 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PIPETTEBUFFER_H_
-#define _PIPETTEBUFFER_H_
+#pragma once
 
-#include "../rtgui/editbuffer.h"
 #include "array2D.h"
-#include "iimage.h"
 #include "coord.h"
+#include "iimage.h"
+
+class EditDataProvider;
+class EditSubscriber;
+
+enum EditUniqueID : int;
 
 namespace rtengine
 {
@@ -90,9 +93,7 @@ public:
     bool bufferCreated();
 
     // get the pipette values
-    void getPipetteData(int x, int y, const int squareSize);
+    void getPipetteData(int x, int y, int squareSize);
 };
 
 }
-
-#endif
