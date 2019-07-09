@@ -25,8 +25,6 @@
 #include "editcallbacks.h"
 
 #include "../rtengine/curves.h"
-#include <cstring>
-#include <gdkmm/types.h>
 
 MyDiagonalCurve::MyDiagonalCurve () :
     MyCurve(),
