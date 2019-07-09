@@ -3,9 +3,11 @@
 //      Highlight reconstruction
 //
 //      copyright (c) 2008-2011  Emil Martinec <ejmartin@uchicago.edu>
+//      copyright (c) 2019 Ingo Weyrich <heckflosse67@gmx.de>
 //
 //
 // code dated: June 16, 2011
+// code dated: July 09. 2019, speedups by Ingo Weyrich <heckflosse67@gmx.de> 
 //
 //  hilite_recon.cc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -424,16 +426,6 @@ void RawImageSource::HLRecovery_inpaint (float** red, float** green, float** blu
     const int blurHeight = maxy - miny + 1;
     const int bufferWidth = blurWidth + ((16 - (blurWidth % 16)) & 15);
 
-    std::cout << "minx : " << minx << std::endl;
-    std::cout << "maxx : " << maxx << std::endl;
-    std::cout << "miny : " << miny << std::endl;
-    std::cout << "maxy : " << maxy << std::endl;
-
-    std::cout << "blurWidth : " << blurWidth << std::endl;
-    std::cout << "bufferWidth : " << bufferWidth << std::endl;
-
-    std::cout << "Corrected area reduced by factor: " << (((float)width * height) / (bufferWidth * blurHeight)) << std::endl;
-    std::cout << "Peak memory usage reduced from ~" << (30ul * ((size_t)width * (size_t)height)) / (1024*1024) << " Mb to ~" << (30ul * ((size_t)bufferWidth * (size_t)blurHeight)) / (1024*1024) << " Mb" << std::endl;
     multi_array2D<float, 3> channelblur(bufferWidth, blurHeight, 0, 48);
     array2D<float> temp(bufferWidth, blurHeight); // allocate temporary buffer
 
@@ -929,7 +921,7 @@ void RawImageSource::HLRecovery_inpaint (float** red, float** green, float** blu
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // now reconstruct clipped channels using color ratios
-StopWatch Stop1("last loop");
+
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -1113,7 +1105,6 @@ StopWatch Stop1("last loop");
             }
         }
     }
-std::cout << "progress : " << progress << std::endl;
 
     if (plistener) {
         plistener->setProgress(1.00);
