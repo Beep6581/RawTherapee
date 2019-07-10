@@ -85,8 +85,6 @@ FILEBROWSER_COPYPROFILE;Умножи профил
 FILEBROWSER_CURRENT_NAME;Тренутно име:
 FILEBROWSER_DARKFRAME;Тамни кадар
 FILEBROWSER_DELETEDIALOG_HEADER;Брисање датотеке
-FILEBROWSER_DELETEDIALOG_SELECTED;Да ли сигурно желите да обришете %1 датотека?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Да ли желите да обришете %1 изабраних датотека, укључујући и оне које су заказане?
 FILEBROWSER_EMPTYTRASH;Избаци смеће
 FILEBROWSER_EXTPROGMENU;Отвори помоћу
 FILEBROWSER_FLATFIELD;Равно поље
@@ -108,8 +106,6 @@ FILEBROWSER_POPUPPROCESS;Закажи за обраду
 FILEBROWSER_POPUPPROCESSFAST;Додај у заказано (брзи извоз)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Профил
 FILEBROWSER_POPUPRANK;Оцена
-FILEBROWSER_POPUPREMOVE;Уклони из система датотека
-FILEBROWSER_POPUPREMOVEINCLPROC;Уклони из система датотека и заказаног
 FILEBROWSER_POPUPRENAME;Преименуј
 FILEBROWSER_POPUPSELECTALL;Изабери све
 FILEBROWSER_POPUPTRASH;Премести у смеће
@@ -1229,8 +1225,10 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
@@ -1244,8 +1242,10 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !FILEBROWSER_POPUPRANK3;Rank 3 ***
 !FILEBROWSER_POPUPRANK4;Rank 4 ****
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)

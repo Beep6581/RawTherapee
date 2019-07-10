@@ -19,38 +19,36 @@
 #pragma once
 
 #include <gtkmm/image.h>
+
 #include "rtscalable.h"
 
 /**
  * @brief A derived class of Gtk::Image in order to handle theme-related icon sets.
  */
-class RTSurface : public RTScalable
+class RTSurface :
+    public RTScalable
 {
-
-private:
-
-    static double dpiBack; // used to keep track of master dpi change
-    static int scaleBack;  // used to keep track of master scale change
-    Cairo::RefPtr<Cairo::ImageSurface> surface;
-    void changeImage (Glib::ustring imageName);
-
 public:
+    RTSurface();
+    RTSurface(const Glib::ustring& fileName, const Glib::ustring& rtlFileName = {});
 
-    RTSurface ();
-    RTSurface (const RTSurface&  other);
-    RTSurface (Glib::ustring fileName, Glib::ustring rtlFileName = Glib::ustring());
+    void setImage(const Glib::ustring& fileName, const Glib::ustring& rtlFileName = {});
 
-    void setImage (Glib::ustring fileName, Glib::ustring rtlFileName = Glib::ustring());
     int getWidth() const;
     int getHeight() const;
     bool hasSurface() const;
 
-    const Cairo::RefPtr<Cairo::ImageSurface>& get() const;
+    Cairo::RefPtr<const Cairo::ImageSurface> get() const;
+    const Cairo::RefPtr<Cairo::ImageSurface>& get();
 
     static void init();
-    static void updateImages ();
-    static void setDPInScale (const double newDPI, const int newScale);
-    static void setScale (const int newScale);
+    static void updateImages();
+    static void setDPInScale(double newDPI, int newScale);
 
-    void from(Glib::RefPtr<RTSurface> other);
+private:
+    void changeImage(const Glib::ustring& imageName);
+
+    static double dpiBack; // used to keep track of master dpi change
+    static int scaleBack;  // used to keep track of master scale change
+    Cairo::RefPtr<Cairo::ImageSurface> surface;
 };

@@ -94,8 +94,6 @@ FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
 FILEBROWSER_DARKFRAME;Svartbild
 FILEBROWSER_DELETEDIALOG_HEADER;Bekräftelse vid borttag
-FILEBROWSER_DELETEDIALOG_SELECTED;Är du säker på att du vill ta bort de valda %1 filerna?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Är du säker på att du vill ta bort de valda filerna %1 OCH den behandlade versionen?
 FILEBROWSER_EMPTYTRASH;Töm papperskorgen
 FILEBROWSER_EXTPROGMENU;Öppna med
 FILEBROWSER_FLATFIELD;Plattfält
@@ -130,8 +128,6 @@ FILEBROWSER_POPUPRANK2;Betyg 2 **
 FILEBROWSER_POPUPRANK3;Betyg 3 ***
 FILEBROWSER_POPUPRANK4;Betyg 4 ****
 FILEBROWSER_POPUPRANK5;Betyg 5 *****
-FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
-FILEBROWSER_POPUPREMOVEINCLPROC;Ta bort från filsystemet inkl. den behandlade
 FILEBROWSER_POPUPRENAME;Byt namn
 FILEBROWSER_POPUPSELECTALL;Markera allt
 FILEBROWSER_POPUPTRASH;Flytta till papperskorgen
@@ -157,7 +153,6 @@ FILEBROWSER_SHOWDIRHINT;Återställ alla sökfilter.\nKortkommando: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder.\nKortkommando: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder.\nKortkommando: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information.\nKortkommando: <b>i</b>\n\nKortkommando i enkelbildsläget: <b>Alt-i</b>
-FILEBROWSER_SHOWNOTTRASHHINT;Visa endast ej borttagna bilder.
 FILEBROWSER_SHOWORIGINALHINT;Visa endast ursprungliga bilder.\n\nNär flera bilder finns med samma filnamn men med olika filändelser så anses den bild vara urpsrungsbilden som har sin ändelse närmst toppen i listan över filändelser i Inställningar > Filbläddrare > Hanterade filändelser
 FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1.\nKortkommando: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2.\nKortkommando: <b>2</b>
@@ -1768,9 +1763,14 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !GENERAL_CURRENT;Current
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...

@@ -68,7 +68,7 @@ TP_COLORAPP_CHROMA_M_TOOLTIP;Colourfulness in CIECAM02 differs from L*a*b* and R
 TP_COLORAPP_CURVEEDITOR3;Colour curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colourfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 TP_COLORAPP_LABEL;CIE Colour Appearance Model 2002
-TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colours to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
+TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colours to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 TP_COLORAPP_TCMODE_COLORF;Colourfulness
 TP_COLORTONING_COLOR;Colour
 TP_COLORTONING_LABEL;Colour Toning
@@ -239,12 +239,12 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !FILEBROWSER_COPYPROFILE;Copy
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark-frame
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
 !FILEBROWSER_DELETEDIALOG_HEADER;File delete confirmation:
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
 !FILEBROWSER_EMPTYTRASH;Empty trash
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
 !FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_FLATFIELD;Flat-Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
@@ -277,8 +277,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !FILEBROWSER_POPUPRANK3;Rank 3 ***
 !FILEBROWSER_POPUPRANK4;Rank 4 ****
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
-!FILEBROWSER_POPUPREMOVE;Delete
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_POPUPRENAME;Rename
 !FILEBROWSER_POPUPSELECTALL;Select all
 !FILEBROWSER_POPUPTRASH;Move to trash
@@ -305,7 +305,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
 !FILEBROWSER_SHOWEXIFINFO;Show Exif info.\n\nShortcuts:\n<b>i</b> - Multiple Editor Tabs Mode,\n<b>Alt-i</b> - Single Editor Tab Mode.
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1-star.\nShortcut: <b>1</b>
 !FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2-star.\nShortcut: <b>2</b>

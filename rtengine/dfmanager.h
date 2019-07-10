@@ -78,7 +78,7 @@ protected:
 class DFManager
 {
 public:
-    void init( Glib::ustring pathname );
+    void init(const Glib::ustring &pathname);
     Glib::ustring getPathname()
     {
         return currentPath;
