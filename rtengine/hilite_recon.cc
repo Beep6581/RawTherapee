@@ -33,9 +33,6 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 
-#define BENCHMARK
-#include "StopWatch.h"
-
 namespace
 {
 
@@ -295,7 +292,6 @@ extern const Settings* settings;
 
 void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue)
 {
-    BENCHFUN
     double progress = 0.0;
 
     if (plistener) {
