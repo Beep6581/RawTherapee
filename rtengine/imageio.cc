@@ -575,7 +575,11 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
 
     my_jpeg_stdio_src (&cinfo, file);
 
+#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+    if ( __builtin_setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 ) {
+#else
     if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 ) {
+#endif
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
             pl->setProgress (0.0);

@@ -563,7 +563,7 @@ public:
         }
     }
 
-    // compress a LUT<uint32_t> with size y into a LUT<uint32_t> with size x (y>x) by using the passTrough LUT to calculate indexes
+    // compress a LUT<uint32_t> with size y into a LUT<uint32_t> with size x (y>x) by using the passThrough LUT to calculate indexes
     template<typename U = T, typename = typename std::enable_if<std::is_same<U, std::uint32_t>::value>::type>
     void compressTo(LUT<T> &dest, unsigned int numVals, const LUT<float> &passThrough) const
     {

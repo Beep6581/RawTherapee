@@ -81,6 +81,7 @@
 #80 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
 #81 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
 #82 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
+#83 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -231,7 +232,7 @@ FILEBROWSER_POPUPMOVETO;Verschieben nach...
 FILEBROWSER_POPUPOPEN;Öffnen
 FILEBROWSER_POPUPOPENINEDITOR;Im Editor öffnen
 FILEBROWSER_POPUPPROCESS;Zur Warteschlange hinzufügen
-FILEBROWSER_POPUPPROCESSFAST;Zur Warteschlange hinzufügen (Schnelles Exportieren)
+FILEBROWSER_POPUPPROCESSFAST;Zur Warteschlange hinzufügen\n(Schnell-Export)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profiloperationen
 FILEBROWSER_POPUPRANK;Bewertung
 FILEBROWSER_POPUPRANK0;Nicht bewertet
@@ -240,8 +241,6 @@ FILEBROWSER_POPUPRANK2;Bewertung 2 **
 FILEBROWSER_POPUPRANK3;Bewertung 3 ***
 FILEBROWSER_POPUPRANK4;Bewertung 4 ****
 FILEBROWSER_POPUPRANK5;Bewertung 5 *****
-FILEBROWSER_POPUPREMOVE;Löschen
-FILEBROWSER_POPUPREMOVEINCLPROC;Löschen (auch Resultate der Stapelverarbeitung)
 FILEBROWSER_POPUPRENAME;Umbenennen
 FILEBROWSER_POPUPSELECTALL;Alle auswählen
 FILEBROWSER_POPUPTRASH;In den Papierkorb verschieben
@@ -268,7 +267,6 @@ FILEBROWSER_SHOWDIRHINT;Alle Filter zurücksetzen.\nTaste: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen.\nTaste: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen.\nTaste: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden.\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> + <b>i</b>
-FILEBROWSER_SHOWNOTTRASHHINT;Nur nicht gelöschte Bilder anzeigen.
 FILEBROWSER_SHOWORIGINALHINT;Zeige nur das Originalbild.\n\nWenn mehrere Bilder mit dem gleichen Dateinamen und unterschiedlichen Dateitypen existieren, ist das Originalbild das Bild, welches in der Liste "Dateitypen anzeigen" unter Einstellungen > Dateiverwaltung als erstes gefunden wird.
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen.\nTaste: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen.\nTaste: <b>2</b>
@@ -987,7 +985,7 @@ MAIN_TAB_DETAIL;Details
 MAIN_TAB_DETAIL_TOOLTIP;Taste: <b>Alt</b> + <b>d</b>
 MAIN_TAB_DEVELOP; Batchbearbeitung 
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Exportieren 
+MAIN_TAB_EXPORT; Schnell-Export 
 MAIN_TAB_EXPOSURE;Belichtung
 MAIN_TAB_EXPOSURE_TOOLTIP;Taste: <b>Alt</b> + <b>e</b>
 MAIN_TAB_FAVORITES;Favoriten
@@ -2360,3 +2358,10 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
+FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
+FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.
