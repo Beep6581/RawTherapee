@@ -16,10 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <string>
-#include <glibmm/ustring.h>
-#include <map>
+#pragma once
+
 #include <cmath>
+#include <map>
+#include <string>
+
+#include <glibmm/ustring.h>
+
 #include "rawimage.h"
 
 namespace rtengine
