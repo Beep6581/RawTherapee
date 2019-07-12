@@ -414,6 +414,7 @@ public:
         bool hlcompr;
         bool hlcomprthresh;
         bool black;
+        bool shadex;
         bool shcompr;
         bool expchroma;
         bool warm;

@@ -2397,6 +2397,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     hlcompr(0),
     hlcomprthresh(0),
     black(0),
+    shadex(0),
     shcompr(50),
     expchroma(30),
     warm(0),
@@ -2616,6 +2617,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && hlcompr == other.hlcompr
         && hlcomprthresh == other.hlcomprthresh
         && black == other.black
+        && shadex == other.shadex
         && shcompr == other.shcompr
         && expchroma == other.expchroma
         && warm == other.warm
@@ -3792,8 +3794,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).hlcompr, "Locallab", "Hlcompr_" + std::to_string(i), spot.hlcompr, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).hlcomprthresh, "Locallab", "Hlcomprthresh_" + std::to_string(i), spot.hlcomprthresh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).black, "Locallab", "Black_" + std::to_string(i), spot.black, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shadex, "Locallab", "Shadex_" + std::to_string(i), spot.shadex, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shcompr, "Locallab", "Shcompr_" + std::to_string(i), spot.shcompr, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shcompr, "Locallab", "Expchroma_" + std::to_string(i), spot.expchroma, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expchroma, "Locallab", "Expchroma_" + std::to_string(i), spot.expchroma, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).warm, "Locallab", "Warm_" + std::to_string(i), spot.warm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiex, "Locallab", "Sensiex_" + std::to_string(i), spot.sensiex, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).structexp, "Locallab", "Structexp_" + std::to_string(i), spot.structexp, keyFile);
@@ -5096,6 +5099,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + std::to_string(i), pedited, spot.hlcompr, spotEdited.hlcompr);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + std::to_string(i), pedited, spot.hlcomprthresh, spotEdited.hlcomprthresh);
                 assignFromKeyfile(keyFile, "Locallab", "Black_" + std::to_string(i), pedited, spot.black, spotEdited.black);
+                assignFromKeyfile(keyFile, "Locallab", "Shadex_" + std::to_string(i), pedited, spot.shadex, spotEdited.shadex);
                 assignFromKeyfile(keyFile, "Locallab", "Shcompr_" + std::to_string(i), pedited, spot.shcompr, spotEdited.shcompr);
                 assignFromKeyfile(keyFile, "Locallab", "Expchroma_" + std::to_string(i), pedited, spot.expchroma, spotEdited.expchroma);
                 assignFromKeyfile(keyFile, "Locallab", "Warm_" + std::to_string(i), pedited, spot.warm, spotEdited.warm);

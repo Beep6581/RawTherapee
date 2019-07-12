@@ -185,7 +185,8 @@ Locallab::Locallab():
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0))),
     black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0))),
-    shcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50))),
+    shadex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHADEX"), 0, 100, 1, 0))),
+    shcompr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHADEXCOMP"), 0, 100, 1, 50))),
     expchroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EXPCHROMA"), -50, 100, 1, 30))),
     warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
@@ -572,6 +573,7 @@ Locallab::Locallab():
     hlcomprthresh->setAdjusterListener(this);
 
     black->setAdjusterListener(this);
+    shadex->setAdjusterListener(this);
 
     shcompr->setAdjusterListener(this);
     expchroma->setAdjusterListener(this);
@@ -648,6 +650,7 @@ Locallab::Locallab():
     exposeBox->pack_start(*hlcompr);
     exposeBox->pack_start(*hlcomprthresh);
     exposeBox->pack_start(*black);
+    exposeBox->pack_start(*shadex);
     exposeBox->pack_start(*shcompr);
     exposeBox->pack_start(*expchroma);
     exposeBox->pack_start(*warm);
@@ -2177,6 +2180,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).hlcompr = hlcompr->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = hlcomprthresh->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).black = black->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).shadex = shadex->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).shcompr = shcompr->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).expchroma = expchroma->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).warm = warm->getIntValue();
@@ -2419,6 +2423,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).hlcompr = pe->locallab.spots.at(pp->locallab.selspot).hlcompr || hlcompr->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = pe->locallab.spots.at(pp->locallab.selspot).hlcomprthresh || hlcomprthresh->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).black = pe->locallab.spots.at(pp->locallab.selspot).black || black->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).shadex = pe->locallab.spots.at(pp->locallab.selspot).shadex || shadex->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).shcompr = pe->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).expchroma = pe->locallab.spots.at(pp->locallab.selspot).expchroma || expchroma->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).warm = pe->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
@@ -2642,6 +2647,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).hlcompr = pedited->locallab.spots.at(pp->locallab.selspot).hlcompr || hlcompr->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).hlcomprthresh = pedited->locallab.spots.at(pp->locallab.selspot).hlcomprthresh || hlcomprthresh->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).black = pedited->locallab.spots.at(pp->locallab.selspot).black || black->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).shadex = pedited->locallab.spots.at(pp->locallab.selspot).shadex || shadex->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).shcompr = pedited->locallab.spots.at(pp->locallab.selspot).shcompr || shcompr->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).expchroma = pedited->locallab.spots.at(pp->locallab.selspot).expchroma || expchroma->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).warm = pedited->locallab.spots.at(pp->locallab.selspot).warm || warm->getEditedState();
@@ -3495,6 +3501,7 @@ void Locallab::inversexChanged()
         expmaskexp->show();
         structexp->show();
         blurexpde->show();
+        shadex->show();
         softradiusexp->show();
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
@@ -3502,6 +3509,7 @@ void Locallab::inversexChanged()
         curveEditorG->show();
         expmaskexp->hide();
         structexp->hide();
+        shadex->hide();
         blurexpde->show();
         softradiusexp->hide();
 
@@ -3512,6 +3520,7 @@ void Locallab::inversexChanged()
         structexp->show();
         blurexpde->show();
         softradiusexp->show();
+        shadex->show();
 
         if (batchMode) {
             showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -3883,6 +3892,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     hlcompr->setDefault((double)defSpot->hlcompr);
     hlcomprthresh->setDefault((double)defSpot->hlcomprthresh);
     black->setDefault((double)defSpot->black);
+    shadex->setDefault((double)defSpot->shadex);
     shcompr->setDefault((double)defSpot->shcompr);
     expchroma->setDefault((double)defSpot->expchroma);
     warm->setDefault((double)defSpot->warm);
@@ -4016,6 +4026,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         hlcompr->setDefaultEditedState(Irrelevant);
         hlcomprthresh->setDefaultEditedState(Irrelevant);
         black->setDefaultEditedState(Irrelevant);
+        shadex->setDefaultEditedState(Irrelevant);
         shcompr->setDefaultEditedState(Irrelevant);
         expchroma->setDefaultEditedState(Irrelevant);
         warm->setDefaultEditedState(Irrelevant);
@@ -4153,6 +4164,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         hlcompr->setDefaultEditedState(defSpotState->hlcompr ? Edited : UnEdited);
         hlcomprthresh->setDefaultEditedState(defSpotState->hlcomprthresh ? Edited : UnEdited);
         black->setDefaultEditedState(defSpotState->black ? Edited : UnEdited);
+        shadex->setDefaultEditedState(defSpotState->shadex ? Edited : UnEdited);
         shcompr->setDefaultEditedState(defSpotState->shcompr ? Edited : UnEdited);
         expchroma->setDefaultEditedState(defSpotState->expchroma ? Edited : UnEdited);
         warm->setDefaultEditedState(defSpotState->warm ? Edited : UnEdited);
@@ -4398,6 +4410,15 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         }
     }
 
+    if (a == shadex) {
+        // Update Exposure GUI according to shadex adjuster state (to be compliant with updateSpecificGUIState function)
+        if (multiImage && shadex->getEditedState() != Edited) {
+            shcompr->set_sensitive(true);
+        } else {
+            shcompr->set_sensitive(!((int)shadex->getValue() == 0)); // At black = 0, shcompr value has no effect
+        }
+    }
+
     if (getEnabled() && expexpose->getEnabled()) {
         if (a == expcomp) {
             if (listener) {
@@ -4420,6 +4441,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == black) {
             if (listener) {
                 listener->panelChanged(Evlocallabblack, black->getTextValue());
+            }
+        }
+
+        if (a == shadex) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshadex, shadex->getTextValue());
             }
         }
 
@@ -5103,6 +5130,7 @@ void Locallab::setBatchMode(bool batchMode)
     hlcompr->showEditedCB();
     hlcomprthresh->showEditedCB();
     black->showEditedCB();
+    shadex->showEditedCB();
     shcompr->showEditedCB();
     expchroma->showEditedCB();
     warm->showEditedCB();
@@ -5545,6 +5573,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         hlcompr->setValue(pp->locallab.spots.at(index).hlcompr);
         hlcomprthresh->setValue(pp->locallab.spots.at(index).hlcomprthresh);
         black->setValue(pp->locallab.spots.at(index).black);
+        shadex->setValue(pp->locallab.spots.at(index).shadex);
         shcompr->setValue(pp->locallab.spots.at(index).shcompr);
         expchroma->setValue(pp->locallab.spots.at(index).expchroma);
         warm->setValue(pp->locallab.spots.at(index).warm);
@@ -5811,6 +5840,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 hlcompr->setEditedState(spotState->hlcompr ? Edited : UnEdited);
                 hlcomprthresh->setEditedState(spotState->hlcomprthresh ? Edited : UnEdited);
                 black->setEditedState(spotState->black ? Edited : UnEdited);
+                shadex->setEditedState(spotState->shadex ? Edited : UnEdited);
                 warm->setEditedState(spotState->warm ? Edited : UnEdited);
                 shcompr->setEditedState(spotState->shcompr ? Edited : UnEdited);
                 expchroma->setEditedState(spotState->expchroma ? Edited : UnEdited);
@@ -6038,14 +6068,16 @@ void Locallab::updateSpecificGUIState()
     if (multiImage && inversex->get_inconsistent()) {
         structexp->show();
         softradiusexp->show();
+        shadex->show();
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
         structexp->hide();
         softradiusexp->hide();
+        shadex->hide();
     } else {
         structexp->show();
         softradiusexp->show();
-
+        shadex->show();
         if (batchMode) {
             showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }
@@ -6065,6 +6097,12 @@ void Locallab::updateSpecificGUIState()
         shcompr->set_sensitive(true);
     } else {
         shcompr->set_sensitive(!((int)black->getValue() == 0)); // At black = 0, shcompr value has no effect
+    }
+
+    if (multiImage && shadex->getEditedState() != Edited) {
+        shcompr->set_sensitive(true);
+    } else {
+        shcompr->set_sensitive(!((int)shadex->getValue() == 0)); // At black = 0, shcompr value has no effect
     }
 
     // Update Vibrance GUI according to pastsattog button state (to be compliant with pastsattog_toggled function)

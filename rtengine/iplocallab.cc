@@ -291,6 +291,7 @@ struct local_params {
     float satur;
     int blac;
     int shcomp;
+    int shadex;
     int hlcomp;
     int hlcompthr;
     double expcomp;
@@ -756,6 +757,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.cut_past = cupas;
     lp.blac = locallab.spots.at(sp).black;
     lp.shcomp = locallab.spots.at(sp).shcompr;
+    lp.shadex = locallab.spots.at(sp).shadex;
     lp.hlcomp = locallab.spots.at(sp).hlcompr;
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
     lp.expcomp = locallab.spots.at(sp).expcomp;
@@ -6409,7 +6411,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufexpfin->b[y][x] = original->b[y + ystart][x + xstart];
                             }
                         }
-
                         ImProcFunctions::shadowsHighlights(bufexpfin.get(), lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
 
 #ifdef _OPENMP
@@ -7424,6 +7425,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufexpfin->b[y][x] = original->b[y + ystart][x + xstart];
                             }
                         }
+                        //shadows with ipshadowshighlight
+                        if(lp.shadex > 0) {
+                            ImProcFunctions::shadowsHighlights(bufexporig.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
+                        }
+                        
+                        
 
                         if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
 #ifdef _OPENMP

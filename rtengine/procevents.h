@@ -727,6 +727,7 @@ enum ProcEventCode {
     Evlocallabfftwlc = 697,
     Evlocallabfftwreti = 698,
     EvlocallabshowmasksoftMethod = 699,
+    Evlocallabshadex = 700,
     NUMOFEVENTS
 };
 

@@ -987,6 +987,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).hlcompr = locallab.spots.at(j).hlcompr && pSpot.hlcompr == otherSpot.hlcompr;
                 locallab.spots.at(j).hlcomprthresh = locallab.spots.at(j).hlcomprthresh && pSpot.hlcomprthresh == otherSpot.hlcomprthresh;
                 locallab.spots.at(j).black = locallab.spots.at(j).black && pSpot.black == otherSpot.black;
+                locallab.spots.at(j).shadex = locallab.spots.at(j).shadex && pSpot.shadex == otherSpot.shadex;
                 locallab.spots.at(j).shcompr = locallab.spots.at(j).shcompr && pSpot.shcompr == otherSpot.shcompr;
                 locallab.spots.at(j).expchroma = locallab.spots.at(j).expchroma && pSpot.expchroma == otherSpot.expchroma;
                 locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
@@ -2802,6 +2803,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).black = mods.locallab.spots.at(i).black;
         }
 
+        if (locallab.spots.at(i).shadex) {
+            toEdit.locallab.spots.at(i).shadex = mods.locallab.spots.at(i).shadex;
+        }
+
         if (locallab.spots.at(i).expchroma) {
             toEdit.locallab.spots.at(i).expchroma = mods.locallab.spots.at(i).expchroma;
         }
@@ -4375,6 +4380,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     hlcompr(v),
     hlcomprthresh(v),
     black(v),
+    shadex(v),
     shcompr(v),
     expchroma(v),
     warm(v),
@@ -4591,6 +4597,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     hlcompr = v;
     hlcomprthresh = v;
     black = v;
+    shadex = v;
     shcompr = v;
     expchroma = v;
     warm = v;
