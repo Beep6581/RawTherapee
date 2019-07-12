@@ -84,8 +84,6 @@ FILEBROWSER_COPYPROFILE;Copia
 FILEBROWSER_CURRENT_NAME;Nom actual:
 FILEBROWSER_DARKFRAME;Marc fosc
 FILEBROWSER_DELETEDIALOG_HEADER;Confirmació d'esborrar fitxer
-FILEBROWSER_DELETEDIALOG_SELECTED;Segur que voleu esborrar els <b>%1</b> fitxers?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Segur que voleu suprimir els fitxers <b>%1</b> seleccionats <b>incloent</b> la versió processada a la cua?
 FILEBROWSER_EMPTYTRASH;Buida paperera
 FILEBROWSER_EXTPROGMENU;Obre amb
 FILEBROWSER_FLATFIELD;Camp pla
@@ -108,8 +106,6 @@ FILEBROWSER_POPUPPROCESS;Posa a la cua
 FILEBROWSER_POPUPPROCESSFAST;Posa a la cua (export. ràpida)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Processant operacions de perfil
 FILEBROWSER_POPUPRANK;Rang
-FILEBROWSER_POPUPREMOVE;Esborra el fitxer
-FILEBROWSER_POPUPREMOVEINCLPROC;Esborra amb sortida de la cua
 FILEBROWSER_POPUPRENAME;Reanomena
 FILEBROWSER_POPUPSELECTALL;Selec. tot
 FILEBROWSER_POPUPTRASH;Llença a la paperera
@@ -942,8 +938,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
@@ -956,13 +954,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !FILEBROWSER_POPUPRANK3;Rank 3 ***
 !FILEBROWSER_POPUPRANK4;Rank 4 ****
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
 !FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
 !FILECHOOSER_FILTER_ANY;All files
@@ -1703,7 +1703,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_SURROUND_DARK;Dark
 !TP_COLORAPP_SURROUND_DIM;Dim
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
+!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 !TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 !TP_COLORAPP_TCMODE_CHROMA;Chroma
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness

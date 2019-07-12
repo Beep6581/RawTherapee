@@ -15,6 +15,7 @@
  * with ICC profiles exceeding 64K bytes in size.  See iccprofile.c
  * for details.
  */
+#pragma once
 
 #include <cstdio>       /* needed to define "FILE", "NULL" */
 #include "jpeglib.h"

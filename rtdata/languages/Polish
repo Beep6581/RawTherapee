@@ -96,8 +96,6 @@ FILEBROWSER_COPYPROFILE;Kopiuj profil
 FILEBROWSER_CURRENT_NAME;Obecna nazwa:
 FILEBROWSER_DARKFRAME;Czarna klatka
 FILEBROWSER_DELETEDIALOG_HEADER;Potwierdzenie usunięcia pliku
-FILEBROWSER_DELETEDIALOG_SELECTED;Na pewno usunąć zaznaczone %1 plików?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Na pewno usunąć wybrany plik %1 WŁĄCZNIE z wersją utworzoną przez kolejkę przetwarzania?
 FILEBROWSER_EMPTYTRASH;Wyczyść kosz
 FILEBROWSER_EXTPROGMENU;Otwórz za pomocą
 FILEBROWSER_FLATFIELD;Puste pole
@@ -132,8 +130,6 @@ FILEBROWSER_POPUPRANK2;Ocena 2 **
 FILEBROWSER_POPUPRANK3;Ocena 3 ***
 FILEBROWSER_POPUPRANK4;Ocena 4 ****
 FILEBROWSER_POPUPRANK5;Ocena 5 *****
-FILEBROWSER_POPUPREMOVE;Usuń z dysku
-FILEBROWSER_POPUPREMOVEINCLPROC;Usuń z dysku wraz z wynikiem przetwarzania
 FILEBROWSER_POPUPRENAME;Zmień nazwę
 FILEBROWSER_POPUPSELECTALL;Zaznacz wszystkie
 FILEBROWSER_POPUPTRASH;Przenieś do kosza
@@ -1392,10 +1388,14 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)

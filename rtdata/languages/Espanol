@@ -180,8 +180,6 @@ FILEBROWSER_COPYPROFILE;Copiar perfil
 FILEBROWSER_CURRENT_NAME;Nombre actual:
 FILEBROWSER_DARKFRAME;Toma Negra
 FILEBROWSER_DELETEDIALOG_HEADER;Confirmación de borrar archivos
-FILEBROWSER_DELETEDIALOG_SELECTED;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados?
-FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados <b>incluyendo</b> la versión procesada en la cola?
 FILEBROWSER_EMPTYTRASH;Vaciar papelera
 FILEBROWSER_EXTPROGMENU;Abrir con
 FILEBROWSER_FLATFIELD;Campo plano
@@ -216,8 +214,6 @@ FILEBROWSER_POPUPRANK2;Rango 2 **
 FILEBROWSER_POPUPRANK3;Rango 3 ***
 FILEBROWSER_POPUPRANK4;Rango 4 ****
 FILEBROWSER_POPUPRANK5;Rango 5 *****
-FILEBROWSER_POPUPREMOVE;Borrar
-FILEBROWSER_POPUPREMOVEINCLPROC;Borrar con salida de la cola
 FILEBROWSER_POPUPRENAME;Renombrar
 FILEBROWSER_POPUPSELECTALL;Seleccionar todo
 FILEBROWSER_POPUPTRASH;Mover a la papelera
@@ -244,7 +240,6 @@ FILEBROWSER_SHOWDIRHINT;Quitar todos los filtros.\nTecla de Atajo: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Mostrar imágenes editadas.\nTecla de Atajo: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imágenes no editadas.\nTecla de Atajo: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostrar datos Exif.\nTecla de Atajo: <b>i</b>\n\nTecla de Atajo en modo editor simple: <b>Alt-I</b>
-FILEBROWSER_SHOWNOTTRASHHINT;Mostrar solo las imágenes no borradas.
 FILEBROWSER_SHOWORIGINALHINT;Muestre solo imágenes originales. \nCuando existen varias imágenes con el mismo nombre de archivo pero con diferentes extensiones, la que se considera original es aquella cuya extensión está más cerca de la parte superior de la lista de extensiones analizadas en Preferencias> Explorador de archivos> Extensiones analizadas.
 FILEBROWSER_SHOWRANK1HINT;Mostrar imágenes con 1 estrella.\nTecla de Atajo: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Mostrar imágenes con 2 estrellas.\nTecla de Atajo: <b>2</b>
@@ -2319,8 +2314,13 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 
 !CURVEEDITOR_CATMULLROM;Flexible
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to delete all <b>%1</b> files in trash?
-!FILEBROWSER_EMPTYTRASHHINT;Permanently delete all files in trash.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_TAB_FAVORITES;Favorites

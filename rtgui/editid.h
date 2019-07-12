@@ -21,7 +21,7 @@
 
 
 /// @brief List of pipette editing operation
-enum EditUniqueID {
+enum EditUniqueID : int {
     EUID_None,  /// special value (default)
 
     EUID_ToneCurve1,

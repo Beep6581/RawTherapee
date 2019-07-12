@@ -1672,6 +1672,11 @@ Camera constants:
         "ranges": { "white": 4080 } // nominal 4095-4094, spread with some settings as long exposure
     },
 
+    { // Quality C, only raw crop for highres mode
+        "make_model": "OLYMPUS E-M1X",
+        "raw_crop": [ 0, 0, 10388, 0 ] // Highres mode largest valid, full 80Mp 10400X7792, works also for non highres mode because larger width will be ignored
+    },
+
     { // Quality B, crop correction
         "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10MarkII", "OLYMPUS E-M10 Mark III" ],
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
@@ -2456,7 +2461,7 @@ Camera constants:
         "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
     },
 
-    { // Quality C
+    { // Quality B
         "make_model": [ "Sony DSC-R1" ],
         "raw_crop": [ 0, 0, 3924, 2608 ],
         "ranges": { "white": 16368 }
