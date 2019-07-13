@@ -2107,7 +2107,7 @@ TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_SHADEX;Shadows
-TP_LOCALLAB_SHADEXCOMP;Shadows compresion and tonal width
+TP_LOCALLAB_SHADEXCOMP;Shadows compression & tonal width
 TP_LOCALLAB_SHOWLAPLACE;Laplacian (first)
 TP_LOCALLAB_SHOWFOURIER;Fourier (dct)
 TP_LOCALLAB_SHOWPOISSON;Poisson (pde)
