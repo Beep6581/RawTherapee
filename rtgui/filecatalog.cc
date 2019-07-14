@@ -37,6 +37,9 @@
 #include "batchqueue.h"
 #include "placesbrowser.h"
 
+#define BENCHMARK
+#include "../rtengine/StopWatch.h"
+
 using namespace std;
 
 #define CHECKTIME 2000
@@ -1672,7 +1675,7 @@ void FileCatalog::filterChanged ()
 
 void FileCatalog::reparseDirectory ()
 {
-
+BENCHFUN
     if (selectedDirectory.empty()) {
         return;
     }
@@ -1704,17 +1707,15 @@ void FileCatalog::reparseDirectory ()
     }
 
     // check if a new file has been added
+    // build a set of collate-keys for faster search
+    std::set<std::string> oldNames;
+    for (size_t j = 0; j < fileNameList.size(); j++) {
+        oldNames.insert(fileNameList[j].collate_key());
+    }
+
     for (size_t i = 0; i < nfileNameList.size(); i++) {
-        bool found = false;
-
-        for (size_t j = 0; j < fileNameList.size(); j++)
-            if (nfileNameList[i] == fileNameList[j]) {
-                found = true;
-                break;
-            }
-
-        if (!found) {
-            checkAndAddFile (Gio::File::create_for_parse_name (nfileNameList[i]));
+        if (oldNames.count(nfileNameList[i].collate_key()) == 0) {
+            checkAndAddFile (Gio::File::create_for_parse_name(nfileNameList[i]));
             _refreshProgressBar ();
         }
     }
