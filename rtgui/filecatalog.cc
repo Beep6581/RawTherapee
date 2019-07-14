@@ -566,44 +566,44 @@ void FileCatalog::closeDir ()
     redrawAll ();
 }
 
-std::vector<Glib::ustring> FileCatalog::getFileList ()
+std::vector<Glib::ustring> FileCatalog::getFileList()
 {
+    BENCHFUN
     std::vector<Glib::ustring> names;
 
-    std::set<Glib::ustring> extensions;
+    std::set<std::string> extensions;
     for (const auto& parsedExt : options.parsedExtensions) {
-        extensions.emplace (parsedExt.lowercase ());
+        extensions.emplace(parsedExt.lowercase());
     }
 
     try {
 
-        auto dir = Gio::File::create_for_path (selectedDirectory);
+        const auto dir = Gio::File::create_for_path(selectedDirectory);
 
-        auto enumerator = dir->enumerate_children ("standard::name");
+        auto enumerator = dir->enumerate_children("standard::name");
 
         while (true) {
             try {
-                auto file = enumerator->next_file ();
+                const auto file = enumerator->next_file();
                 if (!file) {
                     break;
                 }
 
-                const Glib::ustring fname = file->get_name ();
+                const Glib::ustring fname = file->get_name();
 
-                auto lastdot = fname.find_last_of ('.');
+                const auto lastdot = fname.find_last_of ('.');
                 if (lastdot >= fname.length () - 1) {
                     continue;
                 }
 
-                const auto fext = fname.substr (lastdot + 1).lowercase ();
-                if (extensions.count (fext) == 0) {
+                if (extensions.count(fname.substr(lastdot + 1).lowercase()) == 0) {
                     continue;
                 }
 
-                names.emplace_back (Glib::build_filename (selectedDirectory, fname));
+                names.emplace_back(Glib::build_filename(selectedDirectory, fname));
             } catch (Glib::Exception& exception) {
                 if (options.rtSettings.verbose) {
-                    std::cerr << exception.what () << std::endl;
+                    std::cerr << exception.what() << std::endl;
                 }
             }
         }
