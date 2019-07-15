@@ -38,7 +38,7 @@ class FileBrowserEntry;
 class FileBrowserListener
 {
 public:
-    virtual ~FileBrowserListener() = default;
+    virtual ~FileBrowserListener() = default; 
     virtual void filterApplied() = 0;
     virtual void openRequested(const std::vector<Thumbnail*>& tbe) = 0;
     virtual void developRequested(const std::vector<FileBrowserEntry*>& tbe, bool fastmode) = 0;
