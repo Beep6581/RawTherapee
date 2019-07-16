@@ -19,6 +19,7 @@
 #ifndef _OPTIONS_
 #define _OPTIONS_
 
+#include <set>
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
 #include <exception>
@@ -174,6 +175,7 @@ public:
     Glib::ustring startupPath;
     Glib::ustring profilePath; // can be an absolute or relative path; depending on this value, bundled profiles may not be found
     bool useBundledProfiles;   // only used if multiUser == true
+    Glib::ustring lastCopyMovePath;
     Glib::ustring loadSaveProfilePath;
     Glib::ustring lastSaveAsPath;
     int saveAsDialogWidth;
@@ -259,6 +261,7 @@ public:
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
+    std::set<std::string> parsedExtensionsSet;  // Set containing all retained extensions (lowercase)
     std::vector<int> tpOpen;
     bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
@@ -422,8 +425,8 @@ public:
     Glib::ustring getGlobalProfilePath();
     Glib::ustring findProfilePath (Glib::ustring &profName);
     bool is_parse_extention (Glib::ustring fname);
-    bool has_retained_extention (Glib::ustring fname);
-    bool is_extention_enabled (Glib::ustring ext);
+    bool has_retained_extention (const Glib::ustring& fname);
+    bool is_extention_enabled (const Glib::ustring& ext);
     bool is_defProfRawMissing();
     bool is_bundledDefProfRawMissing();
     bool is_defProfImgMissing();
