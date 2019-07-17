@@ -1974,6 +1974,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_DEHAZE;Haze removal
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
@@ -2120,12 +2121,11 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
 !TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_FILMNEGATIVE_BLUE;Blue ratio
-!TP_FILMNEGATIVE_GREEN;Green exponent
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking 2 neutral reference spots in the image; one white (light gray) and one black (dark gray).\nThe order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
 !TP_FILMNEGATIVE_LABEL;Film Negative
 !TP_FILMNEGATIVE_PICK;Pick white and black spots
 !TP_FILMNEGATIVE_RED;Red ratio
-!TP_FILMNEGATIVE_REF_SPOTS;Film negative reference spots
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.

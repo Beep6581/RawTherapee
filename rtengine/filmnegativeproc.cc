@@ -175,7 +175,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         static_cast<float>(-params.greenExp),
         static_cast<float>(-params.blueRatio * params.greenExp)
     };
-    
+
     MyTime t1, t2, t3,t4, t5;
 
     t1.set();

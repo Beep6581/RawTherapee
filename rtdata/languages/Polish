@@ -1735,6 +1735,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_EQUALIZER;Wavelet levels
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
@@ -1932,12 +1933,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
 !TP_FILMNEGATIVE_BLUE;Blue ratio
-!TP_FILMNEGATIVE_GREEN;Green exponent
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking 2 neutral reference spots in the image; one white (light gray) and one black (dark gray).\nThe order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
 !TP_FILMNEGATIVE_LABEL;Film Negative
 !TP_FILMNEGATIVE_PICK;Pick white and black spots
 !TP_FILMNEGATIVE_RED;Red ratio
-!TP_FILMNEGATIVE_REF_SPOTS;Film negative reference spots
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.

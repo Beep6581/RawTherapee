@@ -41,7 +41,6 @@ void rtengine::Thumbnail::processFilmNegative(
     const int rwidth, const int rheight,
     float &rmi, float &gmi, float &bmi
 ) {
-    StopWatch stop1("Thumbnail film negative", true);
 
     // Channel exponents
     const float rexp = -params.filmNegative.redRatio * params.filmNegative.greenExp;
