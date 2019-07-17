@@ -2853,7 +2853,10 @@ void ProcParams::setDefaults()
     exif.clear();
     iptc.clear();
 
-    rank = 0;
+    // -1 means that there's no pp3 data with rank yet. In this case, the
+    // embedded Rating metadata should take precedence. -1 should never be
+    // written to pp3 on disk.
+    rank = -1;
     colorlabel = 0;
     inTrash = false;
 

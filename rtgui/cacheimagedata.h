@@ -54,6 +54,7 @@ public:
     double focalLen, focalLen35mm;
     float focusDist;
     unsigned iso;
+    int rating;
     bool isHDR;
     bool isPixelShift;
     int sensortype;
@@ -108,6 +109,7 @@ public:
     std::string getModel    (unsigned int frame = 0) const override { return camModel; }
     std::string getLens     (unsigned int frame = 0) const override { return lens; }
     std::string getOrientation (unsigned int frame = 0) const override { return ""; } // TODO
+    int getRating (unsigned int frame = 0) const override { return rating; } // FIXME-piotr : missing rating
     bool getPixelShift () const override { return isPixelShift; }
     bool getHDR (unsigned int frame = 0) const override { return isHDR; }
     std::string getImageType (unsigned int frame) const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
