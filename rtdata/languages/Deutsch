@@ -2365,3 +2365,13 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
 FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
 FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.
+
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_FILMNEGATIVE_GREEN;Green exponent
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking 2 neutral reference spots in the image; one white (light gray) and one black (dark gray).\nThe order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red ratio
+!TP_FILMNEGATIVE_REF_SPOTS;Film negative reference spots
