@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _RAWIMAGESOURCE_
-#define _RAWIMAGESOURCE_
+#pragma once
 
+#include <array>
 #include <iostream>
 #include <memory>
 
@@ -37,7 +37,6 @@ namespace rtengine
 
 class RawImageSource : public ImageSource
 {
-
 private:
     static DiagonalCurve *phaseOneIccCurve;
     static DiagonalCurve *phaseOneIccCurveInv;
@@ -109,7 +108,6 @@ protected:
     inline void getRowStartEnd (int x, int &start, int &end);
     static void getProfilePreprocParams(cmsHPROFILE in, float& gammafac, float& lineFac, float& lineSum);
 
-
 public:
     RawImageSource ();
     ~RawImageSource () override;
@@ -117,6 +115,8 @@ public:
     int load(const Glib::ustring &fname) override { return load(fname, false); }
     int load(const Glib::ustring &fname, bool firstFrameOnly);
     void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) override;
+    void        filmNegativeProcess (const procparams::FilmNegativeParams &params) override;
+    bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps) override;
     void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) override;
     void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) override;
     void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) override;
@@ -307,5 +307,5 @@ protected:
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
 
 };
+
 }
-#endif

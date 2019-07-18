@@ -5,6 +5,7 @@
 .project
 .settings
 .directory
+.vscode
 
 CMakeCache.txt
 CMakeFiles
