@@ -269,7 +269,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
                     listener->panelChanged(
                         evFilmNegativeExponents,
                         Glib::ustring::compose(
-                            "Ref=%1 ; R=%2 ; B=%3",
+                            "Ref=%1\nR=%2\nB=%3",
                             greenExp->getValue(),
                             redRatio->getValue(),
                             blueRatio->getValue()
