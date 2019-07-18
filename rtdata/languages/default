@@ -944,6 +944,9 @@ HISTORY_MSG_697;Local - TM Normalize
 HISTORY_MSG_698;Local - Local contrast Fast Fourier
 HISTORY_MSG_699;Local - Retinex Fast Fourier
 HISTORY_MSG_701;Local - Exp Shadows
+HISTORY_MSG_703;Local - Exp Laplacian threshold
+HISTORY_MSG_704;Local - Exp PDE balance
+HISTORY_MSG_705;Local - Exp linearity
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2037,6 +2040,7 @@ TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_LUM;Curves LC
 TP_LOCALLAB_LAPLACE;Laplacian threshold deltaE
+TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_HLH;Curves H
 TP_LOCALLAB_EQUIL;Normalize Luminance
 TP_LOCALLAB_CHROMACBDL;Chroma
@@ -2064,6 +2068,8 @@ TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_GUIDFILTER;Guided filter radius
 TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - reduce if non misty images 
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
+TP_LOCALLAB_LAPLACEXP;Laplacian threshold
+TP_LOCALLAB_BALANEXP;PDE balance
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
 TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
@@ -2076,6 +2082,7 @@ TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail (DCT)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=2
 TP_LOCALLAB_PREVIEWSEL;Preview selection deltaE
+TP_LOCALLAB_PDEFRA;PDE
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_GAM;Gamma
@@ -2094,7 +2101,8 @@ TP_LOCALLAB_PROXI;DeltaE weakening
 TP_LOCALLAB_THRESDELTAE;Threshold deltaE-scope
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_MASK;Mask:
-TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts. 
+TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_PDE;Laplacian & PDE  
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADMASKCOL;Radius
 TP_LOCALLAB_RESID;Residual Image

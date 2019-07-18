@@ -433,6 +433,10 @@ public:
         bool gammaskexp;
         bool slomaskexp;
         bool softradiusexp;
+        bool expMethod;
+        bool laplacexp;
+        bool balanexp;
+        bool linear;
         // Shadow highlight
         bool expshadhigh;
         bool highlights;

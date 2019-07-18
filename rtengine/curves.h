@@ -364,6 +364,8 @@ public:
                                   LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc, float avg,
                                   int skip = 1);
 
+    static void Curvelocalhl(double ecomp, double hlcompr, double hlcomprthresh, LUTf & hlCurve);
+
     static void curveBW(const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
                         ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
 

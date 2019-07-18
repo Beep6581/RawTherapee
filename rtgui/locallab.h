@@ -140,6 +140,9 @@ private:
     Adjuster* const gammaskexp;
     Adjuster* const slomaskexp;
     Adjuster* const softradiusexp;
+    Adjuster* const laplacexp;
+    Adjuster* const balanexp;
+    Adjuster* const linear;
     //Shadow highlight
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;
@@ -297,6 +300,8 @@ private:
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
     sigc::connection showmaskexpMethodConn;
+    MyComboBoxText* const expMethod;
+    sigc::connection expMethodConn;
     //Shadows Highlight
     MyComboBoxText* const showmaskSHMethod;
     sigc::connection showmaskSHMethodConn;
@@ -328,6 +333,7 @@ private:
     Gtk::Button* const lumacontrastPlusButton;
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
     Gtk::Frame* gridFrame;
+    Gtk::Frame* pdeFrame;
     Gtk::Frame* residFrame;
     LabGrid *labgrid;
     // Others
@@ -390,6 +396,7 @@ private:
     void showmaskcolMethodChanged();
     //Exposure
     void showmaskexpMethodChanged();
+    void expMethodChanged();
     //Shadows Highlight
     void showmaskSHMethodChanged();
     // Blur & Noise

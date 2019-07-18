@@ -253,8 +253,12 @@ struct local_params {
     int showmaskcbmet;
     int showmaskretimet;
     int showmasksoftmet;
-    int blurmet;
+    float laplacexp;
+    float balanexp;
+    float linear;
+    int expmet;
     int softmet;
+    int blurmet;
     float noiself;
     float noiself0;
     float noiself2;
@@ -459,6 +463,16 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).gridMethod == "two") {
         lp.gridmet = 1;
     }
+
+    if (locallab.spots.at(sp).expMethod == "std") {
+        lp.expmet = 0;
+    } else if (locallab.spots.at(sp).expMethod == "pde") {
+        lp.expmet = 1;
+    }
+printf("lpexmet=%i \n", lp.expmet);
+    lp.laplacexp = locallab.spots.at(sp).laplacexp;
+    lp.balanexp = locallab.spots.at(sp).balanexp;
+    lp.linear = locallab.spots.at(sp).linear;
 
     lp.showmaskcolmet = llColorMask;
     lp.showmaskexpmet = llExpMask;
@@ -1223,18 +1237,20 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     }
 }
 
-void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve)
+void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, float mean)
 {
     BENCHFUN
     //exposure local
 
     constexpr float maxran = 65536.f;
-    const float exp_scale = pow(2.0, lp.expcomp);
-    const float comp = (max(0.0, lp.expcomp) + 1.0) * lp.hlcomp / 100.0;
-    const float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
-    const float hlrange = maxran - shoulder;
-
-
+    float exp_scale = pow(2.0, lp.expcomp);
+    float comp = (max(0.0, lp.expcomp) + 1.0) * lp.hlcomp / 100.0;
+    float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
+    float hlrange = maxran - shoulder;
+    float linear = lp.linear;
+  //  printf("linear=%f mean=%f expc=%f\n", linear, mean, lp.expcomp);
+    float kl = 1.f;
+    float addcomp = 0.f;
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -1242,9 +1258,19 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             float L = bufexporig->L[ir][jr];
+            if(L < mean && lp.expmet == 1 && lp.expcomp > 0.f && !lp.invex) {
+                float Llin = LIM01(L / 32768.f);
+                addcomp = linear * (-kl * Llin + kl);
+                exp_scale = pow(2.0, (lp.expcomp + addcomp));
+                shoulder = ((maxran / max(1.0f, (exp_scale + addcomp))) * (lp.hlcompthr / 200.0)) + 0.1;
+                comp = (max(0.0, (lp.expcomp + addcomp)) + 1.0) * lp.hlcomp / 100.0;
+                hlrange = maxran - shoulder;
+            }
+          //  CurveFactory::Curvelocalhl(comp, lp.hlcomp, lp.hlcompthr, hltonecurve);//to change with comp(ir,jr) if need
+            
             //highlight
             const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
-            L *= hlfactor;
+            L *= hlfactor * pow(2.0, addcomp);//approximation but pretty good with Laplacian
             //shadow tone curve
             const float shfactor = shtonecurve[2 * L];
             //tonecurve
@@ -2650,7 +2676,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                     datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
                     data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
                 }
-            normalize_mean_dt(data, datain, bfh * bfw);
+            normalize_mean_dt(data, datain, bfh * bfw, 1.f);
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -3120,8 +3146,8 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
                     temp->L[y][x] = original->L[y][x];
                 }
             }
-
-        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc);
+        float meanorig = 0.f;
+        ImProcFunctions::exlabLocal(lp, GH, GW, original, temp, hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
 
         if (exlocalcurve) {
 #ifdef _OPENMP
@@ -3752,7 +3778,7 @@ static void mean_dt(const float *data, size_t size, double *mean_p, double *dt_p
     return;
 }
 
-void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t size)
+void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t size, float mod)
 {
 /*
  * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -3768,6 +3794,7 @@ void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t si
     double a, b;
     size_t i;
     float *ptr_data;
+    float *ptr_dataold;
 
     if (NULL == data || NULL == ref) {
         fprintf(stderr, "a pointer is NULL and should not be so\n");
@@ -3784,8 +3811,11 @@ void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t si
 
     /* normalize the array */
     ptr_data = data;
+    ptr_dataold = data;
+    
     for (i = 0; i < size; i++) {
         *ptr_data = a * *ptr_data + b;
+        *ptr_data = mod * *ptr_data + (1.f - mod) * *ptr_dataold;
         ptr_data++;
     }
 
@@ -4022,7 +4052,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
             fftwf_cleanup_threads();
         } 
         if( show != 4) {
-            normalize_mean_dt(data, datain, bfw * bfh);
+            normalize_mean_dt(data, datain, bfw * bfh, 1.f);
         }
         if(show == 0  || show == 4) {
 
@@ -4045,6 +4075,68 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
         }
 }
 
+
+
+void ImProcFunctions::exposure_pde(float *dataor, float *datain, float * dataout, int bfw, int bfh, float thresh, float mod)
+{
+
+    BENCHFUN
+#ifdef _OPENMP
+    if (multiThread) {
+        fftwf_init_threads();
+        fftwf_plan_with_nthreads ( omp_get_max_threads() );
+    }
+#endif
+        fftwf_plan dct_fw, dct_bw;
+        float *data_fft, *data_tmp, *data;
+
+        if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+        //first call to laplacian with plein strength
+        (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
+        if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+        
+        if (NULL == (data = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+        //execute first
+        dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+        fftwf_execute(dct_fw);
+
+        fftwf_free(data_tmp);
+        
+        /* solve the Poisson PDE in Fourier space */
+        /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
+        (void) retinex_poisson_dct(data_fft, bfw, bfh, 1./(double) (bfw * bfh));
+
+        dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+        fftwf_execute(dct_bw);
+        fftwf_destroy_plan(dct_fw);
+        fftwf_destroy_plan(dct_bw);
+        fftwf_free(data_fft);
+        fftwf_cleanup();
+        if (multiThread) {
+            fftwf_cleanup_threads();
+        } 
+            normalize_mean_dt(data, dataor, bfw * bfh, mod);
+        {
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int y = 0; y < bfh ; y++) {
+                for (int x = 0; x < bfw; x++) { 
+                    dataout[y * bfw + x]   = CLIPLOC(data[y * bfw + x]);
+                }
+            }
+        } 
+}
 
 
 void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo)
@@ -6527,6 +6619,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            //    std::unique_ptr<LabImage> temp(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 JaggedArray<float> buflight(bfw, bfh);
                 JaggedArray<float> bufl_ab(bfw, bfh);
 
@@ -6553,6 +6646,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float *datain = new float[bfwr*bfhr];
                     float *dataout = new float[bfwr*bfhr];
                     float *dE = new float[bfwr*bfhr];
+                    
                     deltaEforLaplace (dE, lp, bfwr, bfhr, bufexpfin.get(), hueref, chromaref, lumaref);
     
 #ifdef _OPENMP
@@ -6560,6 +6654,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                     for (int y = 0; y < bfhr; y++) {
                         for (int x = 0; x < bfwr; x++) {
+                      //      datain[y * bfwr + x] = temp->L[y][x] - bufexpfin->L[y][x];
                             datain[y * bfwr + x] = bufexpfin->L[y][x];
                         }
                     }
@@ -6570,6 +6665,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
                     for (int y = 0; y < bfhr; y++) {
                         for (int x = 0; x < bfwr; x++) {
+                   //     bufexpfin->L[y][x] = dataout[y * bfwr + x] + bufexpfin->L[y][x];
                         bufexpfin->L[y][x] = dataout[y * bfwr + x];
                         }
                     }
@@ -7041,7 +7137,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         data[ir * Wd + jr] = orig[ir][jr];                    
                     }
                 
-                normalize_mean_dt(data, datain, Hd * Wd);
+                normalize_mean_dt(data, datain, Hd * Wd, 1.f);
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -7320,7 +7416,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float meanfab, fab;
 
                     mean_fab(xstart, ystart, bfw, bfh, bufexporig.get(), original, fab, meanfab, lp.chromaexp);
-
+                    float meanorig = 0.f;
+                    for (int ir = 0; ir < bfh; ir++)
+                        for (int jr = 0; jr < bfw; jr++) {
+                            meanorig += bufexporig->L[ir][jr];
+                        }
+                    meanorig /= (bfh*bfw);
+                 //   meanorig /= 32768.f;
+                  //  printf("meanor=%f \n", meanorig);
                     if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
@@ -7425,10 +7528,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufexpfin->b[y][x] = original->b[y + ystart][x + xstart];
                             }
                         }
-                        //shadows with ipshadowshighlight
-                        if(lp.shadex > 0) {
-                            ImProcFunctions::shadowsHighlights(bufexporig.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
-                        }
                         
                         
 
@@ -7446,14 +7545,47 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 lp.expcomp = 0.1f;    // to enabled
                             }
 
-                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
 
 
                         } else {
 
-                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc);
+                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, meanorig);
                         }
-
+//exposure_pde
+                if(lp.expmet == 1) {
+                    float *datain = new float[bfw*bfh];
+                    float *dataout = new float[bfw*bfh];
+                    float *dataor = new float[bfw*bfh];
+                    
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            datain[y * bfw + x] = bufexpfin->L[y][x];// - bufexporig->L[y][x];
+                            dataor[y * bfw + x] = bufexpfin->L[y][x];
+                        }
+                    }
+                ImProcFunctions::exposure_pde(dataor, datain, dataout, bfw, bfh, 12.f * lp.laplacexp, lp.balanexp);
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                        bufexpfin->L[y][x] = dataout[y * bfw + x] ;//+ bufexporig->L[y][x];
+                        }
+                    }
+                    delete [] datain;
+                    delete [] dataout;
+                    delete [] dataor;
+                }
+                
+                        //shadows with ipshadowshighlight
+                if(lp.shadex > 0) {
+                    ImProcFunctions::shadowsHighlights(bufexpfin.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
+                }
+                
                         //cat02
                         if (params->locallab.spots.at(sp).warm != 0) {
                             ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());

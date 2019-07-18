@@ -1054,6 +1054,72 @@ void CurveFactory::complexCurve(double ecomp, double black, double hlcompr, doub
 }
 
 
+void CurveFactory::Curvelocalhl(double ecomp, double hlcompr, double hlcomprthresh, LUTf & hlCurve)
+{
+
+    // a: slope of the curve
+    const float a = powf(2.0f, ecomp);
+
+
+
+
+    hlCurve.setClip(LUT_CLIP_BELOW);  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
+    float exp_scale = a;
+    float maxran = 65536.f;
+    float scale = maxran;
+    float comp = (max(0.0, ecomp) + 1.0) * hlcompr / 100.0;
+    float shoulder = ((scale / max(1.0f, exp_scale)) * (hlcomprthresh / 200.0)) + 0.1;
+
+    if (comp <= 0.0f) {
+        hlCurve.makeConstant(exp_scale);
+    } else {
+        hlCurve.makeConstant(exp_scale, shoulder + 1);
+
+        float scalemshoulder = scale - shoulder;
+
+#ifdef __SSE2__
+        int i = shoulder + 1;
+
+        if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
+            // change to [0,1] range
+            float val = (float)i - shoulder;
+            float R = val * comp / (scalemshoulder);
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            i++;
+        }
+
+        vdouble onev = _mm_set1_pd(1.0);
+        vdouble Rv = _mm_set_pd((i + 1 - shoulder) * (double)comp / scalemshoulder, (i - shoulder) * (double)comp / scalemshoulder);
+        vdouble incrementv = _mm_set1_pd(2.0 * comp / scalemshoulder);
+        vdouble exp_scalev = _mm_set1_pd(exp_scale);
+
+        //  for (; i < 0x10000; i += 2) {
+        for (; i < maxran; i += 2) {
+            // change to [0,1] range
+            vdouble resultv = xlog(onev + Rv * exp_scalev) / Rv;
+            vfloat resultfv = _mm_cvtpd_ps(resultv);
+            _mm_store_ss(&hlCurve[i], resultfv);
+            resultfv = PERMUTEPS(resultfv, _MM_SHUFFLE(1, 1, 1, 1));
+            _mm_store_ss(&hlCurve[i + 1], resultfv);
+            Rv += incrementv;
+        }
+
+#else
+        float R = comp / scalemshoulder;
+        float increment = R;
+
+        // for (int i = shoulder + 1; i < 0x10000; i++) {
+        for (int i = shoulder + 1; i < maxran; i++) {
+            // change to [0,1] range
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            R += increment;
+        }
+
+#endif
+
+    }
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,

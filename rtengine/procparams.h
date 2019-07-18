@@ -1018,6 +1018,10 @@ struct LocallabParams {
         double gammaskexp;
         double slomaskexp;
         double softradiusexp;
+        Glib::ustring expMethod;
+        double laplacexp;
+        double balanexp;
+        double linear;
         // Shadow highlight
         bool expshadhigh;
         int highlights;
