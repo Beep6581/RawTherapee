@@ -469,7 +469,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).expMethod == "pde") {
         lp.expmet = 1;
     }
-printf("lpexmet=%i \n", lp.expmet);
     lp.laplacexp = locallab.spots.at(sp).laplacexp;
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
@@ -480,7 +479,6 @@ printf("lpexmet=%i \n", lp.expmet);
     lp.showmaskcbmet = llcbMask;
     lp.showmaskretimet = llretiMask;
     lp.showmasksoftmet = llsoftMask;
-    printf("llsoftMask=%i\n", llsoftMask);
     //if(locallab.spots.at(sp).enaretiMask) printf("enaritrue\n"); else printf("enaritfalse\n");
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0;
@@ -7330,12 +7328,71 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
         if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
-            const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-            const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-            const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-            const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-            const int bfh = yend - ystart;
-            const int bfw = xend - xstart;
+            int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            int bfh = yend - ystart;
+            int bfw = xend - xstart;
+            //variable for fast FFTW
+            int bfhr = bfh;
+            int bfwr = bfw;
+            bool reduH = false;
+            bool reduW = false;
+            if(lp.expmet == 1) {
+                int ftsizeH = 1;
+                int ftsizeW = 1;
+
+                for (int ft=0; ft < N_fftwsize; ft++) {//find best values
+                    if(fftw_size[ft] <= bfh) {
+                       ftsizeH = fftw_size[ft];
+                       break;
+                    }
+                }
+                
+                for (int ft=0; ft < N_fftwsize; ft++) {
+                    if(fftw_size[ft] <= bfw) {
+                        ftsizeW = fftw_size[ft];
+                        break;
+                    }
+                }
+               // printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+                //optimize with size fftw
+                if(ystart == 0 && yend < original->H) lp.ly -= (bfh - ftsizeH);
+                else if (ystart != 0 && yend == original->H) lp.lyT -= (bfh - ftsizeH);
+                else if(ystart != 0 && yend != original->H) {
+                    if(lp.ly <= lp.lyT) lp.lyT -= (bfh - ftsizeH);
+                    else lp.ly -= (bfh - ftsizeH);
+                }
+                else if(ystart == 0 && yend == original->H) {
+                    bfhr = ftsizeH;
+                    reduH = true;
+                }
+
+                if(xstart == 0 && xend < original->W) lp.lx -= (bfw - ftsizeW);
+                else if(xstart != 0 && xend == original->W) lp.lxL -= (bfw - ftsizeW);
+                else if(xstart != 0 && xend != original->W) {
+                    if(lp.lx <= lp.lxL) lp.lxL -= (bfw - ftsizeW);
+                    else lp.lx -= (bfw - ftsizeW);
+                }
+                else if(xstart == 0 && xend == original->W) {
+                    bfwr = ftsizeW;
+                    reduW = true;
+                }
+                //new values optimized
+                ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                bfh = bfhr = yend - ystart;
+                bfw = bfwr = xend - xstart;
+                if(reduH) {
+                    bfhr = ftsizeH;
+                }
+                if(reduW) {
+                    bfwr = ftsizeW;
+                }
+            }
 
             if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -7554,26 +7611,27 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 //exposure_pde
                 if(lp.expmet == 1) {
-                    float *datain = new float[bfw*bfh];
-                    float *dataout = new float[bfw*bfh];
-                    float *dataor = new float[bfw*bfh];
+                    MyMutex::MyLock lock(*fftwMutex);
+                    float *datain = new float[bfwr*bfhr];
+                    float *dataout = new float[bfwr*bfhr];
+                    float *dataor = new float[bfwr*bfhr];
                     
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            datain[y * bfw + x] = bufexpfin->L[y][x];// - bufexporig->L[y][x];
-                            dataor[y * bfw + x] = bufexpfin->L[y][x];
+                    for (int y = 0; y < bfhr; y++) {
+                        for (int x = 0; x < bfwr; x++) {
+                            datain[y * bfwr + x] = bufexpfin->L[y][x];
+                            dataor[y * bfwr + x] = bufexpfin->L[y][x];
                         }
                     }
-                ImProcFunctions::exposure_pde(dataor, datain, dataout, bfw, bfh, 12.f * lp.laplacexp, lp.balanexp);
+                ImProcFunctions::exposure_pde(dataor, datain, dataout, bfwr, bfhr, 12.f * lp.laplacexp, lp.balanexp);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                        bufexpfin->L[y][x] = dataout[y * bfw + x] ;//+ bufexporig->L[y][x];
+                    for (int y = 0; y < bfhr; y++) {
+                        for (int x = 0; x < bfwr; x++) {
+                        bufexpfin->L[y][x] = dataout[y * bfwr + x] ;
                         }
                     }
                     delete [] datain;

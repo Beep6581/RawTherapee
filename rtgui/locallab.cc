@@ -3210,15 +3210,23 @@ void Locallab::showmaskexpMethodChanged()
 
 void Locallab::expMethodChanged()
 {
-    // printf("expMethodChanged\n");
-     if (expMethod->get_active_row_number() == 0) {
+     printf("expMethodChanged\n");
+    disableListener();
+        if (expMethod->get_active_row_number() == 0) {
+          //  printf("exp hide\n");
             pdeFrame->hide();
-     } else {
-         pdeFrame->show();
-     }
+            laplacexp->set_sensitive(false);
+            balanexp->set_sensitive(false);
+            linear->set_sensitive(false);
+        } else if(expMethod->get_active_row_number() == 1){
+          //  printf("exp show\n");
+            laplacexp->set_sensitive(true);
+            balanexp->set_sensitive(true);
+            linear->set_sensitive(true);
+            pdeFrame->show();
+        }
+    enableListener();
             
- //   disableListener();
- //   enableListener();
     if (getEnabled() && expexpose->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabexpMethod, "");
@@ -6244,6 +6252,11 @@ void Locallab::updateSpecificGUIState()
         saturated->set_sensitive(true);
     }
 
+     if (multiImage && expMethod->get_active_row_number() == 0) {
+         pdeFrame->hide();
+     } else if (expMethod->get_active_row_number() == 1) {
+         pdeFrame->show();
+     }
 
     // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
     if (multiImage && inversret->get_inconsistent()) {

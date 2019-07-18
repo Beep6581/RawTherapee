@@ -33,7 +33,6 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, in
     if (!ena || (!hightli && !shado)){
         return;
     }
-printf("shhashaaaa\n");
     const int width = lab->W;
     const int height = lab->H;
     const bool lab_mode = labmode;
