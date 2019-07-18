@@ -241,6 +241,8 @@ FILEBROWSER_POPUPRANK2;Bewertung 2 **
 FILEBROWSER_POPUPRANK3;Bewertung 3 ***
 FILEBROWSER_POPUPRANK4;Bewertung 4 ****
 FILEBROWSER_POPUPRANK5;Bewertung 5 *****
+FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
+FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
 FILEBROWSER_POPUPRENAME;Umbenennen
 FILEBROWSER_POPUPSELECTALL;Alle auswählen
 FILEBROWSER_POPUPTRASH;In den Papierkorb verschieben
@@ -267,6 +269,7 @@ FILEBROWSER_SHOWDIRHINT;Alle Filter zurücksetzen.\nTaste: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen.\nTaste: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen.\nTaste: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden.\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> + <b>i</b>
+FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.
 FILEBROWSER_SHOWORIGINALHINT;Zeige nur das Originalbild.\n\nWenn mehrere Bilder mit dem gleichen Dateinamen und unterschiedlichen Dateitypen existieren, ist das Originalbild das Bild, welches in der Liste "Dateitypen anzeigen" unter Einstellungen > Dateiverwaltung als erstes gefunden wird.
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen.\nTaste: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen.\nTaste: <b>2</b>
@@ -2362,6 +2365,12 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
-FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
-FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
+!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red ratio

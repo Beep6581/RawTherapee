@@ -8,7 +8,7 @@ set(CLISOURCEFILES
     paramsedited.cc
     pathutils.cc
     threadutils.cc
-    )
+)
 
 set(NONCLISOURCEFILES
     adjuster.cc
@@ -44,6 +44,7 @@ set(NONCLISOURCEFILES
     curveeditorgroup.cc
     darkframe.cc
     defringe.cc
+    dehaze.cc
     diagonalcurveeditorsubgroup.cc
     dirbrowser.cc
     dirpyrdenoise.cc
@@ -56,15 +57,18 @@ set(NONCLISOURCEFILES
     editwidgets.cc
     editwindow.cc
     epd.cc
+    eventmapper.cc
     exiffiltersettings.cc
     exifpanel.cc
     exportpanel.cc
     extprog.cc
+    fattaltonemap.cc
     filebrowser.cc
     filebrowserentry.cc
     filecatalog.cc
     filepanel.cc
     filethumbnailbuttonset.cc
+    filmnegative.cc
     filmsimulation.cc
     filterpanel.cc
     flatcurveeditorsubgroup.cc
@@ -84,13 +88,16 @@ set(NONCLISOURCEFILES
     inspector.cc
     iptcpanel.cc
     labcurve.cc
+    labgrid.cc
     lensgeom.cc
     lensprofile.cc
-	locallab.cc
+    localcontrast.cc
+    locallab.cc
     lockablecolorpicker.cc
     lwbutton.cc
     lwbuttonset.cc
     main.cc
+    metadatapanel.cc
     multilangmgr.cc
     mycurve.cc
     mydiagonalcurve.cc
@@ -124,8 +131,8 @@ set(NONCLISOURCEFILES
     rgbcurves.cc
     rotate.cc
     rtimage.cc
-    rtsurface.cc
     rtscalable.cc
+    rtsurface.cc
     rtwindow.cc
     saveasdlg.cc
     saveformatpanel.cc
@@ -136,6 +143,7 @@ set(NONCLISOURCEFILES
     sharpening.cc
     sharpenmicro.cc
     shcselector.cc
+    softlight.cc
     soundman.cc
     splash.cc
     threadutils.cc
@@ -156,14 +164,7 @@ set(NONCLISOURCEFILES
     xtransprocess.cc
     xtransrawexposure.cc
     zoompanel.cc
-    fattaltonemap.cc
-    localcontrast.cc
-    eventmapper.cc
-    metadatapanel.cc
-    labgrid.cc
-    softlight.cc
-    dehaze.cc
-    )
+)
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 

@@ -131,8 +131,10 @@ public:
     Gtk::CheckButton* ff_BlurType;
     Gtk::CheckButton* ff_ClipControl;
 
-    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, advancedConn, locallabConn;
+    Gtk::CheckButton* filmNegative;
 
+    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, advancedConn;
+    sigc::connection locallabConn;
     sigc::connection wbConn, exposureConn, localcontrastConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn;
     sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, fattalConn, dirpyreqConn, waveletConn, retinexConn, dehazeConn;
     sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn, filmSimulationConn, softlightConn;
@@ -141,6 +143,7 @@ public:
     sigc::connection metadataConn, exifchConn, iptcConn, icmConn;
     sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn, ff_ClipControlConn;
     sigc::connection raw_caredblueConn, raw_ca_autocorrectConn, raw_ca_avoid_colourshiftconn, raw_hotpix_filtConn, raw_deadpix_filtConn, raw_pdaf_lines_filterConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_borderConn, raw_imagenumConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_pixelshiftConn, raw_dcb_enhanceConn, raw_exposConn, raw_blackConn;
+    sigc::connection filmNegativeConn;
 
 public:
     PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent);

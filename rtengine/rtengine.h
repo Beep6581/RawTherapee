@@ -16,23 +16,29 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _RTENGINE_
-#define _RTENGINE_
+#pragma once
 
-#include "imageformat.h"
-#include "rt_math.h"
-#include "procevents.h"
-#include <lcms2.h>
-#include <string>
-#include <glibmm.h>
+#include <array>
 #include <ctime>
-#include "../rtexif/rtexif.h"
-#include "rawmetadatalocation.h"
+#include <string>
+
+#include <glibmm.h>
+
+#include <lcms2.h>
+
 #include "iimage.h"
-#include "utils.h"
-#include "../rtgui/threadutils.h"
-#include "settings.h"
+#include "imageformat.h"
 #include "LUT.h"
+#include "procevents.h"
+#include "rawmetadatalocation.h"
+#include "rt_math.h"
+#include "settings.h"
+#include "utils.h"
+
+#include "../rtexif/rtexif.h"
+
+#include "../rtgui/threadutils.h"
+
 
 /**
  * @file
@@ -134,6 +140,8 @@ public:
     virtual std::string getLens     (unsigned int frame = 0) const = 0;
     /** @return the orientation of the image */
     virtual std::string getOrientation (unsigned int frame = 0) const = 0;
+    /** @return the rating of the image */
+    virtual int getRating (unsigned int frame = 0) const = 0;
 
     /** @return true if the file is a PixelShift shot (Pentax and Sony bodies) */
     virtual bool getPixelShift () const = 0;
@@ -509,6 +517,7 @@ public:
     virtual bool        getAutoWB   (double& temp, double& green, double equal, double tempBias) = 0;
     virtual void        getCamWB    (double& temp, double& green) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
+    virtual bool        getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) = 0;
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
 
     virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) = 0;
@@ -623,6 +632,3 @@ void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl);
 
 extern MyMutex* lcmsMutex;
 }
-
-#endif
-

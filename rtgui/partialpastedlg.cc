@@ -257,6 +257,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_ca_avoid_colourshift, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*filmNegative, Gtk::PACK_SHRINK, 2);
 
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
@@ -405,6 +407,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_ca_autocorrectConn  = raw_ca_autocorrect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_caredblueConn       = raw_caredblue->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ca_avoid_colourshiftconn = raw_ca_avoid_colourshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    //---
+    filmNegativeConn        = filmNegative->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
 
     add_button (M("GENERAL_OK"), Gtk::RESPONSE_OK);
     add_button (M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
@@ -479,6 +483,7 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker raw_ca_autocorrectBlocker(raw_ca_autocorrectConn);
     ConnectionBlocker raw_caredblueBlocker(raw_caredblueConn);
     ConnectionBlocker raw_ca_avoid_colourshiftBlocker(raw_ca_avoid_colourshiftconn);
+    ConnectionBlocker filmNegativeBlocker(filmNegativeConn);
 
     raw->set_inconsistent (false);
 
@@ -507,6 +512,7 @@ void PartialPasteDlg::rawToggled ()
     raw_ca_autocorrect->set_active (raw->get_active ());
     raw_caredblue->set_active (raw->get_active ());
     raw_ca_avoid_colourshift->set_active (raw->get_active ());
+    filmNegative->set_active (raw->get_active());
 }
 
 void PartialPasteDlg::basicToggled ()
@@ -987,6 +993,13 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!locallab->get_active ()) {
         filterPE.locallab = falsePE.locallab;
+    }
+
+    if (!filmNegative->get_active ()) {
+        filterPE.filmNegative.enabled   = falsePE.filmNegative.enabled;
+        filterPE.filmNegative.redRatio   = falsePE.filmNegative.redRatio;
+        filterPE.filmNegative.greenExp  = falsePE.filmNegative.greenExp;
+        filterPE.filmNegative.blueRatio   = falsePE.filmNegative.blueRatio;
     }
 
     if (dstPE) {

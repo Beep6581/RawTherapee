@@ -94,6 +94,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     bayerrawexposure    = Gtk::manage(new BayerRAWExposure());
     xtransrawexposure   = Gtk::manage(new XTransRAWExposure());
     fattal              = Gtk::manage(new FattalToneMapping());
+    filmNegative        = Gtk::manage (new FilmNegative ());
 
     // So Demosaic, Line noise filter, Green Equilibration, Ca-Correction (garder le nom de section identique!) and Black-Level will be moved in a "Bayer sensor" tool,
     // and a separate Demosaic and Black Level tool will be created in an "X-Trans sensor" tool
@@ -158,6 +159,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (rawPanel, preprocess);
     addfavoritePanel (rawPanel, darkframe);
     addfavoritePanel (rawPanel, flatfield);
+    addfavoritePanel (rawPanel, filmNegative);
 
     int favoriteCount = 0;
     for(auto it = favorites.begin(); it != favorites.end(); ++it) {
@@ -270,6 +272,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     distortion->setLensGeomListener(this);
     crop->setCropPanelListener(this);
     icm->setICMPanelListener(this);
+    filmNegative->setFilmNegProvider (this);
 
     toolBar = new ToolBar();
     toolBar->setToolBarListener(this);
@@ -344,6 +347,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorbayer->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
+                    filmNegative->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -358,6 +362,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorbayer->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
+                    filmNegative->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -372,6 +377,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
+                    filmNegative->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -386,6 +392,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::hide();
+                    filmNegative->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -397,6 +404,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
             [this]() -> bool
             {
                 rawPanelSW->set_sensitive(false);
+                filmNegative->FoldableToolPanel::hide();
                 retinex->FoldableToolPanel::setGrayedOut(true);
 
                 return false;
@@ -539,7 +547,7 @@ void ToolPanelCoordinator::profileChange(
         lParams[1] = *mergedParams;
         pe.initFrom(lParams);
 
-        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged();
+        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged() && pe.filmNegative.isUnchanged();
     }
 
     *params = *mergedParams;
@@ -1126,4 +1134,9 @@ void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider)
     for (size_t i = 0; i < toolPanels.size(); i++) {
         toolPanels.at(i)->setEditProvider(provider);
     }
+}
+
+bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps)
+{
+    return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps);
 }

@@ -67,7 +67,7 @@ RawImage::~RawImage()
     }
 }
 
-eSensorType RawImage::getSensorType()
+eSensorType RawImage::getSensorType() const
 {
     if (isBayer()) {
         return ST_BAYER;

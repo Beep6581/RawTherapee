@@ -61,6 +61,8 @@ set(RTENGINESOURCEFILES
     eahd_demosaic.cc
     fast_demo.cc
     ffmanager.cc
+    filmnegativeproc.cc
+    filmnegativethumb.cc
     flatcurves.cc
     gauss.cc
     green_equil_RT.cc

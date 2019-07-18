@@ -1167,6 +1167,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
+    if (isRaw && params.filmNegative.enabled) {
+        processFilmNegative(params, baseImg, rwidth, rheight, rmi, gmi, bmi);
+    }
+
     if (params.coarse.rotate) {
         baseImg->rotate (params.coarse.rotate);
         rwidth = baseImg->getWidth();
