@@ -53,7 +53,7 @@ void LWButtonSet::getMinimalDimensions (int& w, int& h)
 void LWButtonSet::arrangeButtons (int x, int y, int w, int h)
 {
 
-    if (x == ax && y == ay && w == aw && ((h == -1 && ah == 0) || h == ah )) {
+    if (x == ax && y == ay && w == aw && (h == -1 || h == ah )) {
         return;
     }
 
