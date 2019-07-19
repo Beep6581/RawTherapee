@@ -2437,6 +2437,11 @@ Camera constants:
         "pdaf_offset" : 31
     },
 
+    { // Quality C,
+        "make_model": "Sony ILCE-7RM4",
+        "raw_crop": [ 0, 0, 9568, 0 ] // full raw frame 9600x6376 - 32 rightmost columns are garbage
+    },
+
     { // Quality B, color matrix copied from a7rm2
         "make_model": "Sony ILCE-9",
         "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // DNG_v9.12 D65

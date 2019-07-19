@@ -113,7 +113,7 @@ public:
         return float_raw_image;
     }
 
-    eSensorType getSensorType();
+    eSensorType getSensorType() const;
 
     void getRgbCam (float rgbcam[3][4]);
     void getXtransMatrix ( int xtransMatrix[6][6]);

@@ -728,7 +728,6 @@ struct DirPyrDenoiseParams {
     bool operator !=(const DirPyrDenoiseParams& other) const;
 
     void getCurves(NoiseCurve& lCurve, NoiseCurve& cCurve) const;
-
 };
 
 // EPD related parameters.
@@ -1056,7 +1055,6 @@ struct ColorManagementParams {
     bool operator !=(const ColorManagementParams& other) const;
 };
 
-
 /**
   * Parameters for metadata handling
   */
@@ -1295,7 +1293,6 @@ struct HSVEqualizerParams {
     bool operator !=(const HSVEqualizerParams& other) const;
 };
 
-
 /**
  *  Film simualtion params
  */
@@ -1309,7 +1306,6 @@ struct FilmSimulationParams {
     bool operator ==(const FilmSimulationParams& other) const;
     bool operator !=(const FilmSimulationParams& other) const;
 };
-
 
 struct SoftLightParams {
     bool enabled;
@@ -1333,7 +1329,6 @@ struct DehazeParams {
     bool operator==(const DehazeParams &other) const;
     bool operator!=(const DehazeParams &other) const;
 };
-
 
 /**
   * Parameters for RAW demosaicing, common to all sensor type
@@ -1502,6 +1497,21 @@ struct RAWParams {
 };
 
 /**
+  * Parameters of film negative
+  */
+struct FilmNegativeParams {
+    bool enabled;
+    double redRatio;
+    double greenExp;
+    double blueRatio;
+
+    FilmNegativeParams();
+
+    bool operator ==(const FilmNegativeParams& other) const;
+    bool operator !=(const FilmNegativeParams& other) const;
+};
+
+/**
   * This class holds all the processing parameters applied on the images
   */
 class ProcParams
@@ -1549,6 +1559,7 @@ public:
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
     SoftLightParams         softlight;       ///< softlight parameters
     DehazeParams            dehaze;          ///< dehaze parameters
+    FilmNegativeParams      filmNegative;    ///< Film negative parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image

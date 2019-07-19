@@ -2742,6 +2742,27 @@ bool MetaDataParams::operator!=(const MetaDataParams &other) const
     return !(*this == other);
 }
 
+FilmNegativeParams::FilmNegativeParams() :
+    enabled(false),
+    redRatio(1.36),
+    greenExp(1.5),
+    blueRatio(0.86)
+{
+}
+
+bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && redRatio   == other.redRatio
+        && greenExp == other.greenExp
+        && blueRatio  == other.blueRatio;
+}
+
+bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
+{
+    return !(*this == other);
+}
 
 ProcParams::ProcParams()
 {
@@ -2840,7 +2861,10 @@ void ProcParams::setDefaults()
     exif.clear();
     iptc.clear();
 
-    rank = 0;
+    // -1 means that there's no pp3 data with rank yet. In this case, the
+    // embedded Rating metadata should take precedence. -1 should never be
+    // written to pp3 on disk.
+    rank = -1;
     colorlabel = 0;
     inTrash = false;
 
@@ -3573,6 +3597,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
+
+// Film negative
+        saveToKeyfile(!pedited || pedited->filmNegative.enabled, "Film Negative", "Enabled", filmNegative.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.redRatio, "Film Negative", "RedRatio", filmNegative.redRatio, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5117,6 +5147,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", pedited, raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
         }
 
+        if (keyFile.has_group("Film Negative")) {
+            assignFromKeyfile(keyFile, "Film Negative", "Enabled", pedited, filmNegative.enabled, pedited->filmNegative.enabled);
+            assignFromKeyfile(keyFile, "Film Negative", "RedRatio", pedited, filmNegative.redRatio, pedited->filmNegative.redRatio);
+            assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
+            assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", pedited, filmNegative.blueRatio, pedited->filmNegative.blueRatio);
+        }
+
         if (keyFile.has_group("MetaData")) {
             int mode = int(MetaDataParams::TUNNEL);
             assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
@@ -5239,7 +5276,8 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && metadata == other.metadata
         && exif == other.exif
         && iptc == other.iptc
-        && dehaze == other.dehaze;
+        && dehaze == other.dehaze
+        && filmNegative == other.filmNegative;
 }
 
 bool ProcParams::operator !=(const ProcParams& other) const

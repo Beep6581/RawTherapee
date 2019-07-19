@@ -28,6 +28,7 @@ Development contributors, in last name alphabetical order:
   Adam Reichold
   Philip Rinn
   Jan Rinze
+  Alberto Romei
   Ben S.
   Andrey Skvortsov
   Fabio Suprani
