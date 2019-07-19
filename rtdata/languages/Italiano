@@ -1539,6 +1539,8 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 !HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
@@ -1652,6 +1654,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_DEHAZE;Haze removal
 !PARTIALPASTE_EQUALIZER;Wavelet levels
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PARTIALPASTE_FILMSIMULATION;Film simulation
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
@@ -1903,6 +1906,12 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
 !TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMSIMULATION_LABEL;Film Simulation
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_FILMSIMULATION_STRENGTH;Strength

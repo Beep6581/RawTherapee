@@ -48,6 +48,7 @@ protected:
     double expcomp;
     std::string make, model, serial;
     std::string orientation;
+    int rating;
     std::string lens;
     IIOSampleFormat sampleFormat;
 
@@ -84,6 +85,7 @@ public:
     std::string getLens () const;
     std::string getSerialNumber () const;
     std::string getOrientation () const;
+    int getRating () const;
 };
 
 class FramesData : public FramesMetaData {
@@ -126,6 +128,7 @@ public:
     std::string getLens (unsigned int frame = 0) const override;
     std::string getSerialNumber (unsigned int frame = 0) const;
     std::string getOrientation (unsigned int frame = 0) const override;
+    int getRating (unsigned int frame = 0) const override;
 };
 
 
