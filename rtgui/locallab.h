@@ -106,7 +106,7 @@ private:
     FlatCurveEditor* CCmaskcbshape;
     FlatCurveEditor* LLmaskcbshape;
     FlatCurveEditor* HHmaskcbshape;
-    
+
     // Adjuster widgets
     // Color & Light
     Adjuster* const lightness;
@@ -284,11 +284,11 @@ private:
     //local contrast
     Gtk::CheckButton* const fftwlc;
     sigc::connection fftwlcConn;
-    
+
     //CBDL
     Gtk::CheckButton* const enacbMask;
     sigc::connection enacbMaskConn;
-    
+
     // ComboBox widgets
     // Color & Light
     MyComboBoxText* const qualitycurveMethod;
@@ -313,7 +313,7 @@ private:
     sigc::connection softMethodConn;
     MyComboBoxText* const showmasksoftMethod;
     sigc::connection showmasksoftMethodConn;
-    
+
     // Retinex
     MyComboBoxText* const retinexMethod;
     sigc::connection retinexMethodConn;
