@@ -199,7 +199,7 @@ Locallab::Locallab():
     slomaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),
     laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 20.))),
-    balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.4, 1.1, 0.01, 0.8))),
+    balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.2, 1.0, 0.01, 0.5))),
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0., 1., 0.01, 0.))),
     //Shadow hightlights
     highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
@@ -670,9 +670,6 @@ Locallab::Locallab():
     exposeBox->pack_start(*expMethod);
     exposeBox->pack_start(*pdeFrame);
     
-//    exposeBox->pack_start(*laplacexp);
- //   exposeBox->pack_start(*linear);
- //   exposeBox->pack_start(*balanexp);
     exposeBox->pack_start(*expcomp);
     exposeBox->pack_start(*hlcompr);
     exposeBox->pack_start(*hlcomprthresh);
@@ -3210,20 +3207,18 @@ void Locallab::showmaskexpMethodChanged()
 
 void Locallab::expMethodChanged()
 {
-     printf("expMethodChanged\n");
+   //  printf("expMethodChanged\n");
     disableListener();
         if (expMethod->get_active_row_number() == 0) {
-          //  printf("exp hide\n");
-            pdeFrame->hide();
+            pdeFrame->set_sensitive(false);
             laplacexp->set_sensitive(false);
             balanexp->set_sensitive(false);
             linear->set_sensitive(false);
         } else if(expMethod->get_active_row_number() == 1){
-          //  printf("exp show\n");
             laplacexp->set_sensitive(true);
             balanexp->set_sensitive(true);
             linear->set_sensitive(true);
-            pdeFrame->show();
+            pdeFrame->set_sensitive(true);
         }
     enableListener();
             
@@ -3573,8 +3568,13 @@ void Locallab::inversexChanged()
         structexp->show();
         blurexpde->show();
         shadex->show();
-        pdeFrame->show();
         expMethod->show();
+        if (expMethod->get_active_row_number() == 0) {
+            pdeFrame->hide();
+        } else if (expMethod->get_active_row_number() == 1) {
+            pdeFrame->show();
+        }
+        
         softradiusexp->show();
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
@@ -3584,9 +3584,13 @@ void Locallab::inversexChanged()
         structexp->hide();
         shadex->hide();
         blurexpde->show();
-        softradiusexp->hide();
-        pdeFrame->hide();
+        softradiusexp->hide();        
         expMethod->hide();
+        if (expMethod->get_active_row_number() == 0) {
+            pdeFrame->hide();
+        } else if (expMethod->get_active_row_number() == 1) {
+            pdeFrame->hide();
+        }
 
     } else {
         sensiex->show();
@@ -3596,8 +3600,13 @@ void Locallab::inversexChanged()
         blurexpde->show();
         softradiusexp->show();
         shadex->show();
-        pdeFrame->show();
         expMethod->show();
+        if (expMethod->get_active_row_number() == 0) {
+            pdeFrame->hide();
+        } else if (expMethod->get_active_row_number() == 1) {
+            pdeFrame->show();
+        }
+        
 
         if (batchMode) {
             showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -6196,20 +6205,34 @@ void Locallab::updateSpecificGUIState()
         softradiusexp->show();
         shadex->show();
         expMethod->show();
-        pdeFrame->show();
+        if (expMethod->get_active_row_number() == 0) {
+            pdeFrame->hide();
+        } else if (expMethod->get_active_row_number() == 1) {
+            pdeFrame->show();
+        }
+        
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
         structexp->hide();
         softradiusexp->hide();
         shadex->hide();
         expMethod->hide();
-        pdeFrame->hide();
+        if (expMethod->get_active_row_number() == 0) {
+            pdeFrame->hide();
+        } else if (expMethod->get_active_row_number() == 1) {
+            pdeFrame->hide();
+        }
     } else {
         structexp->show();
         softradiusexp->show();
         shadex->show();
         expMethod->show();
-        pdeFrame->show();
+        if (expMethod->get_active_row_number() == 0) {
+            pdeFrame->hide();
+        } else if (expMethod->get_active_row_number() == 1) {
+            pdeFrame->show();
+        }
+        
         if (batchMode) {
             showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }

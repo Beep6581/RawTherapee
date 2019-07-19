@@ -2418,7 +2418,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     softradiusexp(0.0),
     expMethod("std"),
     laplacexp(20.0),
-    balanexp(0.8),
+    balanexp(0.5),
     linear(0.0),
     // Shadow highlight
     expshadhigh(false),

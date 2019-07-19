@@ -1247,7 +1247,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
     float hlrange = maxran - shoulder;
     float linear = lp.linear;
   //  printf("linear=%f mean=%f expc=%f\n", linear, mean, lp.expcomp);
-    float kl = 1.f;
+    float kl = 1.5f;
     float addcomp = 0.f;
 #ifdef _OPENMP
     #pragma omp parallel for
