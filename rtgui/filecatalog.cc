@@ -37,9 +37,6 @@
 #include "batchqueue.h"
 #include "placesbrowser.h"
 
-#define BENCHMARK
-#include "../rtengine/StopWatch.h"
-
 using namespace std;
 
 #define CHECKTIME 2000
@@ -568,7 +565,7 @@ void FileCatalog::closeDir ()
 
 std::vector<Glib::ustring> FileCatalog::getFileList()
 {
-    BENCHFUN
+
     std::vector<Glib::ustring> names;
 
     const std::set<std::string>& extensions = options.parsedExtensionsSet;
@@ -626,9 +623,9 @@ std::vector<Glib::ustring> FileCatalog::getFileList()
 
 void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
 {
-BENCHFUN
+
     try {
-        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dirname);
+        const Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path(dirname);
 
         if (!dir) {
             return;
@@ -1681,7 +1678,7 @@ void FileCatalog::filterChanged ()
 
 void FileCatalog::reparseDirectory ()
 {
-BENCHFUN
+
     if (selectedDirectory.empty()) {
         return;
     }

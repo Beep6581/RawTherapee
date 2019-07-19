@@ -68,9 +68,9 @@ public:
 
     void removeButtonSet ();
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
-    void getIconSize (int& w, int& h) override;
-    Glib::ustring getToolTip (int x, int y) override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea () override;
+    void getIconSize (int& w, int& h) const override;
+    Glib::ustring getToolTip (int x, int y) const override;
 
     // bqentryupdatelistener interface
     void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) override;
