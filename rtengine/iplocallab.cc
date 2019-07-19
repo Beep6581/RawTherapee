@@ -1256,7 +1256,6 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
     float shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
     float hlrange = maxran - shoulder;
     float linear = lp.linear;
-    //  printf("linear=%f mean=%f expc=%f\n", linear, mean, lp.expcomp);
     float kl = 1.5f;
     float addcomp = 0.f;
 #ifdef _OPENMP
@@ -1280,7 +1279,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
 
             //highlight
             const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
-            L *= hlfactor * pow(2.0, addcomp);//approximation but pretty good with Laplacian
+            L *= hlfactor * pow(2.0, addcomp);//approximation but pretty good with Laplacian and L < mean
             //shadow tone curve
             const float shfactor = shtonecurve[2 * L];
             //tonecurve
@@ -3866,8 +3865,7 @@ void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t si
     ptr_dataold = data;
 
     for (i = 0; i < size; i++) {
-        *ptr_data = mod * (a * *ptr_data + b) + (1.f - mod) * *ptr_dataold;
-        // *ptr_data = mod * *ptr_data + (1.f - mod) * *ptr_dataold;
+        *ptr_data = mod * (a * *ptr_data + b) + (1.f - mod) * *ptr_dataold;//normalize mean and stdv and balance PDE 
         ptr_data++;
     }
 
