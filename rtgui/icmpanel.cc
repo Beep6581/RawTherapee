@@ -701,10 +701,6 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void ICMPanel::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void ICMPanel::wpChanged()
 {
     if (listener) {

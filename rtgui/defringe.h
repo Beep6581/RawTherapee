@@ -50,7 +50,6 @@ public:
     void curveChanged   () override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void enabledChanged  () override;
     void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 

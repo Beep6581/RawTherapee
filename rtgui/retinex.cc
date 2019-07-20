@@ -1362,10 +1362,6 @@ void Retinex::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Retinex::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Retinex::autoOpenCurve  ()
 {
     cdshape->openIfNonlinear();

@@ -93,10 +93,6 @@ void PCVignette::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void PCVignette::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void PCVignette::enabledChanged ()
 {
 

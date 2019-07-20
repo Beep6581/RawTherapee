@@ -55,7 +55,6 @@ public:
 
     void updateRGBLabel      ();
     void adjusterChanged     (Adjuster* a, double newval) override;
-    void adjusterAutoToggled (Adjuster* a, bool newval) override;
     void setAdjusterBehavior (bool bwadd, bool bwgadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void enabledcc_toggled   ();

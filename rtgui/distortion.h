@@ -43,7 +43,6 @@ public:
     void setBatchMode   (bool batchMode) override;
 
     void adjusterChanged     (Adjuster* a, double newval) override;
-    void adjusterAutoToggled (Adjuster* a, bool newval) override;
     void setAdjusterBehavior (bool vadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void idPressed           ();

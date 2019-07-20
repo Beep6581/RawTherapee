@@ -2513,10 +2513,6 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Wavelet::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Wavelet::enabledUpdateUI ()
 {
     if (!batchMode) {

@@ -48,7 +48,6 @@ public:
     void hotPixelChanged();
     void deadPixelChanged();
     void adjusterChanged(Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
 
 
     //void adjusterChanged     (Adjuster* a, double newval);

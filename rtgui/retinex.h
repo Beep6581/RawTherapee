@@ -104,7 +104,6 @@ public:
     void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void trimValues            (rtengine::procparams::ProcParams* pp) override;
     void adjusterChanged       (Adjuster* a, double newval) override;
-    void adjusterAutoToggled   (Adjuster* a, bool newval) override;
     void autoOpenCurve         () override;
     void medianmapChanged        ();
     void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;

@@ -182,10 +182,6 @@ void ChMixer::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void ChMixer::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void ChMixer::enabledChanged()
 {
     if (listener) {

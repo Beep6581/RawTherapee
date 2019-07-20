@@ -104,7 +104,6 @@ public:
     float blendPipetteValues (CurveEditor *ce, float chan1, float chan2, float chan3) override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void neutral_pressed ();
     void autolevels_toggled ();
     void clip_changed ();

@@ -645,10 +645,6 @@ void ToneCurve::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void ToneCurve::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void ToneCurve::neutral_pressed ()
 {
 // This method deselects auto levels and HL reconstruction auto

@@ -200,10 +200,6 @@ void FilmNegative::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void FilmNegative::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void FilmNegative::enabledChanged()
 {
     if (listener) {

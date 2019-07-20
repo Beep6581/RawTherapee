@@ -273,10 +273,6 @@ void Resize::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Resize::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 int Resize::getComputedWidth()
 {
 

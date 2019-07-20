@@ -1246,10 +1246,6 @@ void DiagonalCurveEditorSubGroup::adjusterChanged(Adjuster* a, double newval)
     parent->curveChanged ();
 }
 
-void DiagonalCurveEditorSubGroup::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 /*
  * Listener called when the mouse is over a parametric curve's slider
  */
