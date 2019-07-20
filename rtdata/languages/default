@@ -2044,6 +2044,7 @@ TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DEHAZ;Dehaze
+TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE lead to very different results and needs differents settings that Standard\nMay be usefull for low exposure.\nPDE reduce artifacts and noise. 
 TP_LOCALLAB_FFTW;Use Fast Fourier Transform
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
