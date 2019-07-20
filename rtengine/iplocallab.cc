@@ -1268,9 +1268,9 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
 
             if (L < mean && lp.expmet == 1 && lp.expcomp > 0.f && !lp.invex) {
                 float Llin = LIM01(L / 32768.f);
-                addcomp = linear * (-kl * Llin + kl);
+                addcomp = linear * (-kl * Llin + kl);//maximum about 1.5 IL
                 exp_scale = pow(2.0, (lp.expcomp + addcomp));
-                shoulder = ((maxran / max(1.0f, (exp_scale + addcomp))) * (lp.hlcompthr / 200.0)) + 0.1;
+                shoulder = ((maxran / max(1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
                 comp = (max(0.0, (lp.expcomp + addcomp)) + 1.0) * lp.hlcomp / 100.0;
                 hlrange = maxran - shoulder;
             }
@@ -1279,7 +1279,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
 
             //highlight
             const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
-            L *= hlfactor * pow(2.0, addcomp);//approximation but pretty good with Laplacian and L < mean
+            L *= hlfactor * pow(2.0, addcomp);//approximation but pretty good with Laplacian and L < mean, hl aren't call 
             //shadow tone curve
             const float shfactor = shtonecurve[2 * L];
             //tonecurve
@@ -3839,6 +3839,7 @@ void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t si
      * @brief laplacian, DFT and Poisson routines
      *
      * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+     * adapted for Rawtherapee - jacques Desmis july 2019
      */
 
     double mean_ref, mean_data, dt_ref, dt_data;
@@ -3872,7 +3873,7 @@ void ImProcFunctions::normalize_mean_dt(float *data, const float *ref, size_t si
     return;
 }
 
-static float *retinex_poisson_dct(float *data, size_t nx, size_t ny, double m)
+static float *rex_poisson_dct(float *data, size_t nx, size_t ny, double m)
 {
     /*
      * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -3882,6 +3883,7 @@ static float *retinex_poisson_dct(float *data, size_t nx, size_t ny, double m)
      * @brief laplacian, DFT and Poisson routines
      *
      * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+     * some adaptations for Rawtherapee
      */
     BENCHFUN
 
@@ -4111,7 +4113,7 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
 
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
-    (void) retinex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
+    (void) rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
 
     if (show == 3) {
         for (int y = 0; y < bfh ; y++) {
@@ -4161,6 +4163,9 @@ void ImProcFunctions::retinex_pde(float *datain, float * dataout, int bfw, int b
 
 
 void ImProcFunctions::exposure_pde(float *dataor, float *datain, float * dataout, int bfw, int bfh, float thresh, float mod)
+/* Jacques Desmis July 2019
+** adapted from Ipol Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
+*/
 {
 
     BENCHFUN
@@ -4180,7 +4185,6 @@ void ImProcFunctions::exposure_pde(float *dataor, float *datain, float * dataout
         abort();
     }
 
-    //first call to laplacian with plein strength
     (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
 
     if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
@@ -4193,7 +4197,6 @@ void ImProcFunctions::exposure_pde(float *dataor, float *datain, float * dataout
         abort();
     }
 
-    //execute first
     dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_fw);
 
@@ -4201,7 +4204,7 @@ void ImProcFunctions::exposure_pde(float *dataor, float *datain, float * dataout
 
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
-    (void) retinex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
+    (void) rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
 
     dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_bw);
@@ -4282,7 +4285,6 @@ void ImProcFunctions::fftw_convol_blur(float *input, float *output, int bfw, int
     /*compute the Fourier transform of the input data*/
 
     p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10,  FFTW_ESTIMATE);//FFT 2 dimensions forward  FFTW_MEASURE FFTW_ESTIMATE
-//   p = fftwf_plan_r2r_2d(bfh, bfw, input, out, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
 
     fftwf_execute(p);
     fftwf_destroy_plan(p);
@@ -7567,7 +7569,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                // printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+              //  printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
                 //optimize with size fftw
                 if (ystart == 0 && yend < original->H) {
                     lp.ly -= (bfh - ftsizeH);
@@ -7852,7 +7854,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     dataor[y * bfwr + x] = bufexpfin->L[y][x];
                                 }
                             }
-
+                            //call PDE equation - with Laplacian threshold
                             ImProcFunctions::exposure_pde(dataor, datain, dataout, bfwr, bfhr, 12.f * lp.laplacexp, lp.balanexp);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
