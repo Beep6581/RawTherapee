@@ -829,6 +829,8 @@ HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Bildschleier entfernen)\nMaske anzeigen
 HISTORY_MSG_DEHAZE_STRENGTH;(Bildschleier entfernen)\nIntensität
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(Sensor—Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
+HISTORY_MSG_FILMNEGATIVE_ENABLED;(Filmnegativ)
+HISTORY_MSG_FILMNEGATIVE_VALUES;(Filmnegativ) - Werte
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbmanagement)\nAusgabeprofil\nVorlagen
 HISTORY_MSG_ICM_OUTPUT_TEMP;(Farbmanagement)\nAusgabeprofil\nIccV4-Illuminant D
@@ -1065,6 +1067,7 @@ PARTIALPASTE_EQUALIZER;Wavelet
 PARTIALPASTE_EVERYTHING;Alle Parameter aktivieren / deaktivieren
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
+PARTIALPASTE_FILMNEGATIVE;Filmnegativ
 PARTIALPASTE_FILMSIMULATION;Filmsimulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild: Automatische Auswahl
 PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
@@ -1718,6 +1721,12 @@ TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Gewichteter Standard
 TP_EXPOS_BLACKPOINT_LABEL;Schwarzpunkt
 TP_EXPOS_WHITEPOINT_LABEL;Weißpunkt
+TP_FILMNEGATIVE_BLUE;Blauverhältnis
+TP_FILMNEGATIVE_GREEN;Bezugsexponent (Kontrast)
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Berechnet die Exponenten durch Auswahl zweier neutraler\nReferenzpunkte im Bild. Weiß (Hellgrau) und Schwarz (Dunkelgrau).\nDie Reihenfolge spielt keine Rolle. Die Exponenten werden aktualisiert,\nnachdem der zweite Punkt ausgewählt wurde.
+TP_FILMNEGATIVE_LABEL;Filmnegativ
+TP_FILMNEGATIVE_PICK;Weißen und schwarzen Bereich auswählen
+TP_FILMNEGATIVE_RED;Rotverhältnis
 TP_FILMSIMULATION_LABEL;Filmsimulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee sucht nach Hald-CLUT-Bildern, die für die Filmsimulation benötigt werden, in einem Ordner, der viel Zeit benötigt.\nGehen Sie zu\n< Einstellungen > Bildbearbeitung > Filmsimulation >\nund prüfen Sie welcher Order benutzt wird. Wählen Sie den Ordner aus, der nur die Hald-CLUT-Bilder beinhaltet, oder einen leeren Ordner, wenn Sie die Filsimulation nicht verwenden möchten.\n\nWeitere Informationen über die Filmsimulation finden Sie auf RawPedia.\n\nMöchten Sie die Suche beenden?
 TP_FILMSIMULATION_STRENGTH;Intensität
@@ -2362,16 +2371,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-HISTORY_MSG_FILMNEGATIVE_ENABLED;(Filmnegativ)
-HISTORY_MSG_FILMNEGATIVE_VALUES;(Filmnegativ) - Werte
-PARTIALPASTE_FILMNEGATIVE;Filmnegativ
-TP_FILMNEGATIVE_BLUE;Blauverhältnis
-TP_FILMNEGATIVE_GREEN;Bezugsexponent (Kontrast)
-TP_FILMNEGATIVE_GUESS_TOOLTIP;Berechnet die Exponenten durch Auswahl zweier neutraler\nReferenzpunkte im Bild. Weiß (Hellgrau) und Schwarz (Dunkelgrau).\nDie Reihenfolge spielt keine Rolle. Die Exponenten werden aktualisiert,\nnachdem der zweite Punkt ausgewählt wurde.
-TP_FILMNEGATIVE_LABEL;Filmnegativ
-TP_FILMNEGATIVE_PICK;Weißen und schwarzen Bereich auswählen
-TP_FILMNEGATIVE_RED;Rotverhältnis
