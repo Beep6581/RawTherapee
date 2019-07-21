@@ -93,9 +93,9 @@ public:
     void refreshQuickThumbnailImage () override;
     void calcThumbnailSize () override;
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea () override;
-    void getIconSize (int& w, int& h) override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea () override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getSpecificityIconsOnImageArea () override;
+    void getIconSize (int& w, int& h) const override;
 
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;

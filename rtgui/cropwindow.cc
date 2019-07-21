@@ -38,6 +38,13 @@
 
 using namespace rtengine;
 
+bool CropWindow::initialized = false;
+
+Glib::ustring CropWindow::zoomOuttt;
+Glib::ustring CropWindow::zoomIntt;
+Glib::ustring CropWindow::zoom100tt;
+Glib::ustring CropWindow::closett;
+
 CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
     : ObjectMOBuffer(parent), state(SNormal), press_x(0), press_y(0), action_x(0), action_y(0), pickedObject(-1), pickModifierKey(0), rot_deg(0), onResizeArea(false), deleted(false),
       fitZoomEnabled(true), fitZoom(false), cursor_type(CSArrow), /*isLowUpdatePriority(isLowUpdatePriority_),*/ hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
@@ -61,11 +68,18 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
 
     titleHeight = ih;
 
-    bZoomOut = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-minus-small.png")), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoomIn  = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-plus-small.png")),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoom100 = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-1to1-small.png")), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
-    //bZoomFit = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-fit.png")), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png")), 4, nullptr, LWButton::Right, LWButton::Center, "Close");
+    if (!initialized) {
+        zoomOuttt = "Zoom Out";
+        zoomIntt = "Zoom In";
+        zoom100tt = "Zoom 100/%";
+        closett = "Close";
+        initialized = true;
+    }
+    bZoomOut = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-minus-small.png")), 0, nullptr, LWButton::Left, LWButton::Center, &zoomOuttt);
+    bZoomIn  = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-plus-small.png")), 1, nullptr, LWButton::Left, LWButton::Center, &zoomIntt);
+    bZoom100 = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-1to1-small.png")), 2, nullptr, LWButton::Left, LWButton::Center, &zoom100tt);
+     //bZoomFit = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-fit.png")), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png")), 4, nullptr, LWButton::Right, LWButton::Center, &closett);
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);

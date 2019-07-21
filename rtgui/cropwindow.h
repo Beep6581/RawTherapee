@@ -47,6 +47,12 @@ public:
 class ImageArea;
 class CropWindow : public LWButtonListener, public CropDisplayHandler, public EditCoordSystem, public ObjectMOBuffer
 {
+    static bool initialized;
+
+    static Glib::ustring zoomOuttt;
+    static Glib::ustring zoomIntt;
+    static Glib::ustring zoom100tt;
+    static Glib::ustring closett;
 
     // state management
     ImgEditState state;                  // current state of user (see enum State)

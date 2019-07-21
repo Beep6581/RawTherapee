@@ -34,6 +34,10 @@ public:
     static Cairo::RefPtr<RTSurface> headIcon;
     static Cairo::RefPtr<RTSurface> tailIcon;
 
+    static Glib::ustring moveHeadToolTip;
+    static Glib::ustring moveEndToolTip;
+    static Glib::ustring cancelJobToolTip;
+
     explicit BatchQueueButtonSet (BatchQueueEntry* myEntry);
 };
 

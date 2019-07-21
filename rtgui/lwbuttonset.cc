@@ -18,7 +18,7 @@
  */
 #include "lwbuttonset.h"
 
-LWButtonSet::LWButtonSet () : aw(0), ah(0), ax(0), ay(0)
+LWButtonSet::LWButtonSet () : aw(0), ah(0), ax(-1), ay(-1)
 {
 }
 
@@ -42,19 +42,20 @@ void LWButtonSet::getMinimalDimensions (int& w, int& h)
     w = 0;
     h = 0;
 
-    for (size_t i = 0; i < buttons.size(); i++) {
+    for (const auto entry : buttons) {
         int bw, bh;
-        buttons[i]->getSize (bw, bh);
+        entry->getSize(bw, bh);
         w += bw;
-
-        if (bh > h) {
-            h = bh;
-        }
+        h = std::max(bh, h);
     }
 }
 
 void LWButtonSet::arrangeButtons (int x, int y, int w, int h)
 {
+
+    if (x == ax && y == ay && w == aw && (h == -1 || h == ah )) {
+        return;
+    }
 
     int mw, mh;
     getMinimalDimensions (mw, mh);
