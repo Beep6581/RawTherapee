@@ -667,7 +667,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     Glib::ustring fname;
     SaveFormat saveFormat;
 
-    if (processing->outFileName == "") { // auto file name
+    if (processing->outFileName.empty()) { // auto file name
         Glib::ustring s = calcAutoFileNameBase (processing->filename, processing->sequence);
         saveFormat = options.saveFormatBatch;
         fname = autoCompleteFileName (s, saveFormat.format);
@@ -686,7 +686,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
 
     //printf ("fname=%s, %s\n", fname.c_str(), removeExtension(fname).c_str());
 
-    if (img && fname != "") {
+    if (img && !fname.empty()) {
         int err = 0;
 
         if (saveFormat.format == "tif") {

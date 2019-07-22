@@ -257,65 +257,18 @@ public:
 
         std::ostringstream af;
 
-        if (aff & 1)
-            if (af.str() == "") {
-                af << "Center";
-            } else {
-                af << ", Center";
-            } else if (aff & 2)
-            if (af.str() == "") {
-                af << "Top";
-            } else {
-                af << ", Top";
-            } else if (aff & 4)
-            if (af.str() == "") {
-                af << "Bottom";
-            } else {
-                af << ", Bottom";
-            } else if (aff & 8)
-            if (af.str() == "") {
-                af << "Left";
-            } else {
-                af << ", Left";
-            } else if (aff & 16)
-            if (af.str() == "") {
-                af << "Right";
-            } else {
-                af << ", Right";
-            } else if (aff & 32)
-            if (af.str() == "") {
-                af << "Upper-left";
-            } else {
-                af << ", Upper-left";
-            } else if (aff & 64)
-            if (af.str() == "") {
-                af << "Upper-right";
-            } else {
-                af << ", Upper-right";
-            } else if (aff & 128)
-            if (af.str() == "") {
-                af << " Lower-left";
-            } else {
-                af << ",  Lower-left";
-            } else if (aff & 256)
-            if (af.str() == "") {
-                af << "Lower-right";
-            } else {
-                af << ", Lower-right";
-            } else if (aff & 512)
-            if (af.str() == "") {
-                af << "Far Left";
-            } else {
-                af << ", Far Left";
-            } else if (aff & 1024) {
-            if (af.str() == "") {
-                af << "Far Right";
-            } else {
-                af << ", Far Right";
+        if (aff) {
+            for (size_t i = 0; i < afpchoices.size(); ++i) {
+                if (aff & (1 << i)) {
+                    if (!af.str().empty()) {
+                        af << ", ";
+                    }
+                    af << afpchoices.at(i);
+                }
             }
         }
 
-        str << "AFPointsInFocus = " << af.str();
+        str << "AFPointsInFocus = " << (af.str().empty() ? "None" : af.str());
         return str.str();
     }
 };
@@ -553,7 +506,7 @@ public:
         std::map<std::string, std::string>::const_iterator r = lenses.find (lid.str());
 
         if (r != lenses.end()) {
-            if (r == lenses.begin() && EffectiveMaxApertureString != "") {      // first entry is for unchipped lenses
+            if (r == lenses.begin() && !EffectiveMaxApertureString.empty()) {      // first entry is for unchipped lenses
                 Tag *FLTag = t->getParent()->getRoot()->findTag ("FocalLength");
                 ld << "Lens = MF ";
 

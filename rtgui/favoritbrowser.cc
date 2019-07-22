@@ -97,7 +97,7 @@ void FavoritBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustr
 void FavoritBrowser::addPressed ()
 {
 
-    if (lastSelectedDir == "") {
+    if (lastSelectedDir.empty()) {
         return;
     }
 
