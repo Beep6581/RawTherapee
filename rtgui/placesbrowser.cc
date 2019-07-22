@@ -309,7 +309,7 @@ void PlacesBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustri
 void PlacesBrowser::addPressed ()
 {
 
-    if (lastSelectedDir == "") {
+    if (lastSelectedDir.empty()) {
         return;
     }
 

@@ -45,6 +45,12 @@ void LWButton::setPosition (int x, int y)
     ypos = y;
 }
 
+void LWButton::addPosition (int x, int y)
+{
+    xpos += x;
+    ypos += y;
+}
+
 void LWButton::getPosition (int& x, int& y) const
 {
 
@@ -219,15 +225,11 @@ void LWButton::getAlignment (Alignment& ha, Alignment& va) const
 
 Glib::ustring LWButton::getToolTip (int x, int y) const
 {
-    if (inside(x, y)) {
-        if (toolTip) {
-            return *toolTip;
-        } else {
-            return "";
-        }
-     } else {
-         return "";
-     }
+    if (inside(x, y) && toolTip) {
+        return *toolTip;
+    } else {
+        return {};
+    }
 }
 
 void LWButton::setToolTip (Glib::ustring* tooltip)

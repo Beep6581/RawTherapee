@@ -57,6 +57,7 @@ public:
     void    getSize             (int& minw, int& minh) const;
     void    getAlignment        (Alignment& ha, Alignment& va) const;
     void    setPosition         (int x, int y);
+    void    addPosition         (int x, int y);
     void    getPosition         (int& x, int& y) const;
     bool    inside              (int x, int y) const;
     void    setIcon             (Cairo::RefPtr<RTSurface> i);

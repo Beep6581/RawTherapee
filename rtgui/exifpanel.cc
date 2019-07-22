@@ -496,7 +496,7 @@ void ExifPanel::addPressed ()
 
     Glib::ustring sel = getSelection (true);
 
-    if (sel == "") {
+    if (sel.empty()) {
         tcombo->set_active_text ("Exif.UserComment");
     } else {
         tcombo->set_active_text (sel);
@@ -658,7 +658,7 @@ Glib::ustring ExifPanel::getSelection (bool onlyeditable)
 void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string prefix)
 {
 
-    if (prefix != "") {
+    if (!prefix.empty()) {
         prefix = prefix + ".";
     }
 

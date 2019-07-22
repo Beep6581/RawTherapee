@@ -401,7 +401,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             // draw date/time label
             int tpos = fnlabh;
 
-            if (options.fbShowDateTime && datetimeline != "") {
+            if (options.fbShowDateTime && !datetimeline.empty()) {
                 fn = w->create_pango_layout (datetimeline);
                 fn->set_width (textw * Pango::SCALE);
                 fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
@@ -412,7 +412,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             }
 
             // draw basic exif info
-            if (options.fbShowBasicExif && exifline != "") {
+            if (options.fbShowBasicExif && !exifline.empty()) {
                 fn = w->create_pango_layout (exifline);
                 fn->set_width (textw * Pango::SCALE);
                 fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);

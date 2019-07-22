@@ -224,7 +224,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
     cmsHPROFILE in = nullptr;
     cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.workingProfile);
 
-    if (cmp.inputProfile == "(embedded)" || cmp.inputProfile == "" || cmp.inputProfile == "(camera)" || cmp.inputProfile == "(cameraICC)") {
+    if (cmp.inputProfile == "(embedded)" || cmp.inputProfile.empty() || cmp.inputProfile == "(camera)" || cmp.inputProfile == "(cameraICC)") {
         if (embedded) {
             in = embedded;
         } else {
