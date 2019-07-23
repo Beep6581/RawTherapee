@@ -51,7 +51,6 @@ public:
     void autoOpenCurve  () override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void enabledChanged  () override;
     void medianChanged  ();
     void chromaChanged (double autchroma, double autred, double autblue) override;

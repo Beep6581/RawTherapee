@@ -39,11 +39,11 @@ namespace
 
 Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
-    if (embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+    if (embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
         return embedded_fname;
     }
 
-    if (prefix != "") {
+    if (!prefix.empty()) {
         if (embedded_fname.length() < prefix.length() || embedded_fname.substr(0, prefix.length()) != prefix) {
             return embedded_fname;
         }
@@ -61,7 +61,7 @@ Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Gl
 
 Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
 {
-    if (fnameAbsolute || embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+    if (fnameAbsolute || embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
         return embedded_fname;
     }
 

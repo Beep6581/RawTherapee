@@ -34,7 +34,7 @@ InspectorBuffer::InspectorBuffer(const Glib::ustring &imagePath) : currTransform
         // generate thumbnail image
         Glib::ustring ext = getExtension (imagePath);
 
-        if (ext == "") {
+        if (ext.empty()) {
             imgPath.clear();
             return;
         }

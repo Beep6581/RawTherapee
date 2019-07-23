@@ -179,7 +179,7 @@ protected:
 
     std::set<Glib::ustring> editedFiles;
 
-    void arrangeFiles ();
+    void arrangeFiles (bool checkfilter = true);
     void zoomChanged (bool zoomIn);
 
 public:
@@ -201,7 +201,7 @@ public:
         return fd;
     }
     void on_style_updated () override;
-    void redraw ();   // arrange files and draw area
+    void redraw (bool checkfilter = true);   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshEditedState (const std::set<Glib::ustring>& efiles);

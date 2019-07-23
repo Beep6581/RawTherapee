@@ -129,10 +129,6 @@ void Vignetting::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Vignetting::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Vignetting::setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd)
 {
 

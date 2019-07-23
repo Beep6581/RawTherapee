@@ -119,38 +119,36 @@ void FileBrowserEntry::calcThumbnailSize ()
     }
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getIconsOnImageArea ()
+std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getIconsOnImageArea ()
 {
-
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
-
     if (!thumbnail) {
-        return ret;
+        return {};
     }
 
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
+
     if (thumbnail->hasProcParams() && editedIcon) {
-        ret.push_back (editedIcon);
+        ret.push_back(editedIcon);
     }
 
     if (thumbnail->isRecentlySaved() && recentlySavedIcon) {
-        ret.push_back (recentlySavedIcon);
+        ret.push_back(recentlySavedIcon);
     }
 
     if (thumbnail->isEnqueued () && enqueuedIcon) {
-        ret.push_back (enqueuedIcon);
+        ret.push_back(enqueuedIcon);
     }
 
     return ret;
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getSpecificityIconsOnImageArea ()
+std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getSpecificityIconsOnImageArea ()
 {
-
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
-
     if (!thumbnail) {
-        return ret;
+        return {};
     }
+
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
 
     if (thumbnail->isHDR() && hdr) {
         ret.push_back (hdr);
@@ -188,7 +186,7 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
     }
 }
 
-void FileBrowserEntry::getIconSize (int& w, int& h)
+void FileBrowserEntry::getIconSize (int& w, int& h) const
 {
 
     w = editedIcon->get_width ();
@@ -286,34 +284,29 @@ void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rten
 bool FileBrowserEntry::motionNotify (int x, int y)
 {
 
-    bool b = ThumbBrowserEntryBase::motionNotify (x, y);
+    const bool b = ThumbBrowserEntryBase::motionNotify(x, y);
 
-    int ix = x - startx - ofsX;
-    int iy = y - starty - ofsY;
+    const int ix = x - startx - ofsX;
+    const int iy = y - starty - ofsY;
 
     Inspector* inspector = parent->getInspector();
 
     if (inspector && inspector->isActive() && !parent->isInTabMode()) {
-        rtengine::Coord2D coord(-1., -1.);
-        getPosInImgSpace(x, y, coord);
+        const rtengine::Coord2D coord(getPosInImgSpace(x, y));
 
         if (coord.x != -1.) {
             if (!wasInside) {
                 inspector->switchImage(filename);
+                wasInside = true;
             }
-
-            wasInside = true;
             inspector->mouseMove(coord, 0);
         } else {
-            if (wasInside) {
-                wasInside = false;
-                rtengine::Coord2D coord(-1, -1);
-            }
+            wasInside = false;
         }
     }
 
-    if (inside (x, y)) {
-        updateCursor (ix, iy);
+    if (inside(x, y)) {
+        updateCursor(ix, iy);
     }
 
     if (state == SRotateSelecting) {

@@ -19,6 +19,8 @@
 #ifndef _FILETHUMBNAILBUTTONSET_
 #define _FILETHUMBNAILBUTTONSET_
 
+#include <array>
+
 #include "lwbuttonset.h"
 #include <gtkmm.h>
 #include "filebrowserentry.h"
@@ -38,12 +40,14 @@ public:
     static Cairo::RefPtr<RTSurface> unTrashIcon;
     static Cairo::RefPtr<RTSurface> processIcon;
 
-    static Cairo::RefPtr<RTSurface> colorLabelIcon_0;
-    static Cairo::RefPtr<RTSurface> colorLabelIcon_1;
-    static Cairo::RefPtr<RTSurface> colorLabelIcon_2;
-    static Cairo::RefPtr<RTSurface> colorLabelIcon_3;
-    static Cairo::RefPtr<RTSurface> colorLabelIcon_4;
-    static Cairo::RefPtr<RTSurface> colorLabelIcon_5;
+    static std::array<Cairo::RefPtr<RTSurface>, 6> colorLabelIcon;
+
+    static Glib::ustring processToolTip;
+    static Glib::ustring unrankToolTip;
+    static Glib::ustring trashToolTip;
+    static Glib::ustring untrashToolTip;
+    static Glib::ustring colorLabelToolTip;
+    static std::array<Glib::ustring, 5> rankToolTip;
 
     explicit FileThumbnailButtonSet (FileBrowserEntry* myEntry);
     void    setRank (int stars);

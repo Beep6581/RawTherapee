@@ -141,7 +141,7 @@ private:
     IdleRegister idle_register;
 
     void addAndOpenFile (const Glib::ustring& fname);
-    void checkAndAddFile (Glib::RefPtr<Gio::File> info);
+    void addFile (const Glib::ustring& fName);
     std::vector<Glib::ustring> getFileList ();
     BrowserFilter getFilter ();
     void trashChanged ();

@@ -3835,7 +3835,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         return false;
     }
 
-    if (inProfile == "(embedded)" && embedded) {
+    if (embedded && inProfile == "(embedded)") {
         in = embedded;
     } else if (inProfile == "(cameraICC)") {
         // DCPs have higher quality, so use them first
@@ -3844,7 +3844,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         if (*dcpProf == nullptr) {
             in = ICCStore::getInstance()->getStdProfile(camName);
         }
-    } else if (inProfile != "(camera)" && inProfile != "") {
+    } else if (inProfile != "(camera)" && !inProfile.empty()) {
         Glib::ustring normalName = inProfile;
 
         if (!inProfile.compare(0, 5, "file:")) {

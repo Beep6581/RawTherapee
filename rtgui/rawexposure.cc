@@ -76,10 +76,6 @@ void RAWExposure::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void RAWExposure::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void RAWExposure::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);

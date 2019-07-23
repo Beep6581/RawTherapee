@@ -134,10 +134,6 @@ void LocalContrast::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void LocalContrast::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void LocalContrast::enabledChanged ()
 {
     if (listener) {

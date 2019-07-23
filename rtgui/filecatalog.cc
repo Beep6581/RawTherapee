@@ -563,44 +563,49 @@ void FileCatalog::closeDir ()
     redrawAll ();
 }
 
-std::vector<Glib::ustring> FileCatalog::getFileList ()
+std::vector<Glib::ustring> FileCatalog::getFileList()
 {
+
     std::vector<Glib::ustring> names;
 
-    std::set<Glib::ustring> extensions;
-    for (const auto& parsedExt : options.parsedExtensions) {
-        extensions.emplace (parsedExt.lowercase ());
-    }
+    const std::set<std::string>& extensions = options.parsedExtensionsSet;
 
     try {
 
-        auto dir = Gio::File::create_for_path (selectedDirectory);
+        const auto dir = Gio::File::create_for_path(selectedDirectory);
 
-        auto enumerator = dir->enumerate_children ("standard::name");
+        auto enumerator = dir->enumerate_children("standard::name,standard::type,standard::is-hidden");
 
         while (true) {
             try {
-                auto file = enumerator->next_file ();
+                const auto file = enumerator->next_file();
                 if (!file) {
                     break;
                 }
 
-                const Glib::ustring fname = file->get_name ();
-
-                auto lastdot = fname.find_last_of ('.');
-                if (lastdot >= fname.length () - 1) {
+                if (file->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
                     continue;
                 }
 
-                const auto fext = fname.substr (lastdot + 1).lowercase ();
-                if (extensions.count (fext) == 0) {
+                if (!options.fbShowHidden && file->is_hidden()) {
                     continue;
                 }
 
-                names.emplace_back (Glib::build_filename (selectedDirectory, fname));
+                const Glib::ustring fname = file->get_name();
+                const auto lastdot = fname.find_last_of('.');
+
+                if (lastdot >= fname.length() - 1) {
+                    continue;
+                }
+
+                if (extensions.find(fname.substr(lastdot + 1).lowercase()) == extensions.end()) {
+                    continue;
+                }
+
+                names.push_back(Glib::build_filename(selectedDirectory, fname));
             } catch (Glib::Exception& exception) {
                 if (options.rtSettings.verbose) {
-                    std::cerr << exception.what () << std::endl;
+                    std::cerr << exception.what() << std::endl;
                 }
             }
         }
@@ -620,13 +625,13 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 {
 
     try {
-        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dirname);
+        const Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path(dirname);
 
         if (!dir) {
             return;
         }
 
-        closeDir ();
+        closeDir();
         previewsToLoad = 0;
         previewsLoaded = 0;
 
@@ -636,16 +641,14 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         }
 
         selectedDirectory = dir->get_parse_name();
-        //printf("FileCatalog::dirSelected  selectedDirectory = %s\n",selectedDirectory.c_str());
-        BrowsePath->set_text (selectedDirectory);
-        buttonBrowsePath->set_image (*iRefreshWhite);
-        fileNameList = getFileList ();
+
+        BrowsePath->set_text(selectedDirectory);
+        buttonBrowsePath->set_image(*iRefreshWhite);
+        fileNameList = getFileList();
 
         for (unsigned int i = 0; i < fileNameList.size(); i++) {
-            Glib::RefPtr<Gio::File> f = Gio::File::create_for_path(fileNameList[i]);
-
-            if (f->get_parse_name() != openfile) { // if we opened a file at the beginning don't add it again
-                checkAndAddFile (f);
+            if (openfile.empty() || fileNameList[i] != openfile) { // if we opened a file at the beginning don't add it again
+                addFile(fileNameList[i]);
             }
         }
 
@@ -696,34 +699,33 @@ void FileCatalog::_refreshProgressBar ()
     // In tab mode, no progress bar at all
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
-    if (!inTabMode) {
+    if (!inTabMode && (!previewsToLoad || std::floor(100.f * previewsLoaded / previewsToLoad) != std::floor(100.f * (previewsLoaded - 1) / previewsToLoad))) {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-
         Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-        Gtk::Grid* grid = Gtk::manage (new Gtk::Grid ());
+        Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
         Gtk::Label *label = nullptr;
 
-        if (!previewsToLoad ) {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("folder-closed.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+        if (!previewsToLoad) {
+            grid->attach_next_to(*Gtk::manage(new RTImage("folder-closed.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
             int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
 
-            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") +
-                                                 (filteredCount != previewsLoaded ? " [" + Glib::ustring::format(filteredCount) + "/" : " (")
-                                                 + Glib::ustring::format(previewsLoaded) +
-                                                 (filteredCount != previewsLoaded ? "]" : ")")));
+            label = Gtk::manage(new Gtk::Label(M("MAIN_FRAME_FILEBROWSER") +
+                                               (filteredCount != previewsLoaded ? " [" + Glib::ustring::format(filteredCount) + "/" : " (")
+                                               + Glib::ustring::format(previewsLoaded) +
+                                               (filteredCount != previewsLoaded ? "]" : ")")));
         } else {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("magnifier.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
+            grid->attach_next_to(*Gtk::manage(new RTImage("magnifier.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+            label = Gtk::manage(new Gtk::Label(M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
             filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
         }
 
-        if( options.mainNBVertical ) {
+        if (options.mainNBVertical) {
             label->set_angle(90);
         }
 
         grid->attach_next_to(*label, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
-        grid->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-        grid->show_all ();
+        grid->set_tooltip_markup(M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+        grid->show_all();
 
         if (nb) {
             nb->set_tab_label(*filepanel, *grid);
@@ -1005,12 +1007,16 @@ void FileCatalog::copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, b
     Gtk::FileChooserDialog fc (getToplevelWindow (this), fc_title, Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
     fc.add_button( M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
     fc.add_button( M("GENERAL_OK"), Gtk::RESPONSE_OK);
-    // open dialog at the 1-st file's path
-    fc.set_filename(tbe[0]->filename);
+    if (!options.lastCopyMovePath.empty() && Glib::file_test(options.lastCopyMovePath, Glib::FILE_TEST_IS_DIR)) {
+        fc.set_current_folder(options.lastCopyMovePath);
+    } else {
+        // open dialog at the 1-st file's path
+        fc.set_current_folder(Glib::path_get_dirname(tbe[0]->filename));
+    }
     //!!! TODO prevent dialog closing on "enter" key press
 
     if( fc.run() == Gtk::RESPONSE_OK ) {
-        Glib::ustring dest_Dir = fc.get_current_folder();
+        options.lastCopyMovePath = fc.get_current_folder();
 
         // iterate through selected files
         for (unsigned int i = 0; i < tbe.size(); i++) {
@@ -1027,10 +1033,10 @@ void FileCatalog::copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, b
             Glib::ustring fname_Ext = getExtension(fname);
 
             // construct  destination File Paths
-            Glib::ustring dest_fPath = Glib::build_filename (dest_Dir, fname);
+            Glib::ustring dest_fPath = Glib::build_filename (options.lastCopyMovePath, fname);
             Glib::ustring dest_fPath_param = dest_fPath + paramFileExtension;
 
-            if (moveRequested && (src_Dir == dest_Dir)) {
+            if (moveRequested && (src_Dir == options.lastCopyMovePath)) {
                 continue;
             }
 
@@ -1085,7 +1091,7 @@ void FileCatalog::copyMoveRequested(const std::vector<FileBrowserEntry*>& tbe, b
                     // adjust destination fname to avoid conflicts (append "_<index>", preserve extension)
                     Glib::ustring dest_fname = Glib::ustring::compose("%1%2%3%4%5", fname_noExt, "_", i_copyindex, ".", fname_Ext);
                     // re-construct  destination File Paths
-                    dest_fPath = Glib::build_filename (dest_Dir, dest_fname);
+                    dest_fPath = Glib::build_filename (options.lastCopyMovePath, dest_fname);
                     dest_fPath_param = dest_fPath + paramFileExtension;
                     i_copyindex++;
                 }
@@ -1677,49 +1683,46 @@ void FileCatalog::reparseDirectory ()
         return;
     }
 
-    if (!Glib::file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
-        closeDir ();
+    if (!Glib::file_test(selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
+        closeDir();
         return;
     }
 
-    std::vector<Glib::ustring> nfileNameList = getFileList ();
-
     // check if a thumbnailed file has been deleted
-    const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries ();
+    const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries();
     std::vector<Glib::ustring> fileNamesToDel;
 
-    for (size_t i = 0; i < t.size(); i++)
-        if (!Glib::file_test (t[i]->filename, Glib::FILE_TEST_EXISTS)) {
-            fileNamesToDel.push_back (t[i]->filename);
+    for (const auto& entry : t) {
+        if (!Glib::file_test(entry->filename, Glib::FILE_TEST_EXISTS)) {
+            fileNamesToDel.push_back(entry->filename);
         }
-
-    for (size_t i = 0; i < fileNamesToDel.size(); i++) {
-        delete fileBrowser->delEntry (fileNamesToDel[i]);
-        cacheMgr->deleteEntry (fileNamesToDel[i]);
-        previewsLoaded--;
     }
 
-    if (!fileNamesToDel.empty ()) {
+    for (const auto& toDelete : fileNamesToDel) {
+        delete fileBrowser->delEntry(toDelete);
+        cacheMgr->deleteEntry(toDelete);
+        --previewsLoaded;
+    }
+
+    if (!fileNamesToDel.empty()) {
         _refreshProgressBar();
     }
 
     // check if a new file has been added
-    for (size_t i = 0; i < nfileNameList.size(); i++) {
-        bool found = false;
+    // build a set of collate-keys for faster search
+    std::set<std::string> oldNames;
+    for (const auto& oldName : fileNameList) {
+        oldNames.insert(oldName.collate_key());
+    }
 
-        for (size_t j = 0; j < fileNameList.size(); j++)
-            if (nfileNameList[i] == fileNameList[j]) {
-                found = true;
-                break;
-            }
-
-        if (!found) {
-            checkAndAddFile (Gio::File::create_for_parse_name (nfileNameList[i]));
-            _refreshProgressBar ();
+    fileNameList = getFileList();
+    for (const auto& newName : fileNameList) {
+        if (oldNames.find(newName.collate_key()) == oldNames.end()) {
+            addFile(newName);
+            _refreshProgressBar();
         }
     }
 
-    fileNameList = nfileNameList;
 }
 
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal)
@@ -1736,85 +1739,55 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
     }
 }
 
-void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
+void FileCatalog::addFile (const Glib::ustring& fName)
 {
-
-    if (!file) {
-        return;
-    }
-
-    try {
-
-        const auto info = file->query_info("standard::*");
-
-        if (!info || info->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
-            return;
-        }
-
-        if (!options.fbShowHidden && info->is_hidden()) {
-            return;
-        }
-
-        Glib::ustring ext;
-
-        const auto lastdot = info->get_name().find_last_of('.');
-
-        if (lastdot != Glib::ustring::npos) {
-            ext = info->get_name().substr(lastdot + 1);
-        }
-
-        if (!options.is_extention_enabled(ext)) {
-            return;
-        }
-
-        previewLoader->add(selectedDirectoryId, file->get_parse_name(), this);
+    if (!fName.empty()) {
+        previewLoader->add(selectedDirectoryId, fName, this);
         previewsToLoad++;
-
-    } catch(Gio::Error&) {}
+    }
 }
 
 void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
 {
-    auto file = Gio::File::create_for_path (fname);
+    auto file = Gio::File::create_for_path(fname);
 
     if (!file ) {
         return;
     }
 
-    if (!file->query_exists ()) {
+    if (!file->query_exists()) {
         return;
     }
 
     try {
 
-        auto info = file->query_info ();
+        const auto info = file->query_info();
 
         if (!info) {
             return;
         }
 
-        Glib::ustring ext;
-
-        auto lastdot = info->get_name().find_last_of ('.');
+        const auto lastdot = info->get_name().find_last_of('.');
         if (lastdot != Glib::ustring::npos) {
-            ext = info->get_name ().substr (lastdot + 1);
-        }
-
-        if (!options.is_extention_enabled(ext)) {
+            if (!options.is_extention_enabled(info->get_name().substr(lastdot + 1))) {
+                return;
+            }
+        } else {
             return;
         }
 
+
         // if supported, load thumbnail first
-        const auto tmb = cacheMgr->getEntry (file->get_parse_name ());
+        const auto tmb = cacheMgr->getEntry(file->get_parse_name());
 
         if (!tmb) {
             return;
         }
 
-        FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name ());
-        previewReady (selectedDirectoryId, entry);
+        FileBrowserEntry* entry = new FileBrowserEntry(tmb, file->get_parse_name());
+        previewReady(selectedDirectoryId, entry);
         // open the file
-        tmb->increaseRef ();
+        tmb->increaseRef();
         idle_register.add(
             [this, tmb]() -> bool
             {
@@ -1829,27 +1802,30 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
 void FileCatalog::emptyTrash ()
 {
 
-    const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
+    const auto& t = fileBrowser->getEntries();
     std::vector<FileBrowserEntry*> toDel;
 
-    for (size_t i = 0; i < t.size(); i++)
-        if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getStage() == 1) {
-            toDel.push_back (static_cast<FileBrowserEntry*>(t[i]));
+    for (const auto entry : t) {
+        if ((static_cast<FileBrowserEntry*>(entry))->thumbnail->getStage() == 1) {
+            toDel.push_back(static_cast<FileBrowserEntry*>(entry));
         }
-
-    deleteRequested (toDel, false, false);
-    trashChanged();
+    }
+    if (toDel.size() > 0) {
+        deleteRequested(toDel, false, false);
+        trashChanged();
+    }
 }
 
 bool FileCatalog::trashIsEmpty ()
 {
-    const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
 
-    for (size_t i = 0; i < t.size(); i++)
-        if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getStage() == 1) {
+    const auto& t = fileBrowser->getEntries();
+
+    for (const auto entry : t) {
+        if ((static_cast<FileBrowserEntry*>(entry))->thumbnail->getStage() == 1) {
             return false;
         }
-
+    }
     return true;
 }
 

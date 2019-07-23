@@ -1372,10 +1372,6 @@ void ColorToning::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void ColorToning::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void ColorToning::setBatchMode (bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);

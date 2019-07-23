@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _THUMBNAILBROWSERENTRYBASE_
-#define _THUMBNAILBROWSERENTRYBASE_
+#pragma once
 
 #include <atomic>
 
@@ -82,8 +81,8 @@ protected:
     Glib::RefPtr<BackBuffer> backBuffer;
     bool bbSelected, bbFramed;
     guint8* bbPreview;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbIcons;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbSpecificityIcons;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> bbIcons;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> bbSpecificityIcons;
     CursorShape cursor_type;
 
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::RGBA& bg, const Gdk::RGBA& fg);
@@ -101,7 +100,6 @@ public:
 
 // thumbnail preview properties:
     Glib::ustring filename;
-    Glib::ustring shortname;
     Glib::ustring exifline;
     Glib::ustring datetimeline;
 
@@ -117,61 +115,61 @@ public:
     bool updatepriority;
     eWithFilename withFilename;
 
-    explicit ThumbBrowserEntryBase   (const Glib::ustring& fname);
-    virtual ~ThumbBrowserEntryBase  ();
+    explicit ThumbBrowserEntryBase (const Glib::ustring& fname);
+    virtual ~ThumbBrowserEntryBase ();
 
     void setParent (ThumbBrowserBase* l)
     {
         parent = l;
     }
 
-    void updateBackBuffer   ();
-    void resize             (int h);
-    virtual void draw       (Cairo::RefPtr<Cairo::Context> cc);
+    void updateBackBuffer ();
+    void resize (int h);
+    virtual void draw (Cairo::RefPtr<Cairo::Context> cc);
 
-    void addButtonSet       (LWButtonSet* bs);
-    int getMinimalHeight    ()
+    void addButtonSet (LWButtonSet* bs);
+    int getMinimalHeight () const
     {
         return height;
     }
-    int getMinimalWidth     ()
+    int getMinimalWidth () const
     {
         return width;
     }
 
-    int getEffectiveWidth   () const
+    int getEffectiveWidth () const
     {
         return exp_width;
     }
-    int getEffectiveHeight  () const
+    int getEffectiveHeight () const
     {
         return exp_height;
     }
-    int getPreviewHeight    () const
+    int getPreviewHeight () const
     {
         return preh;
     }
-    int getStartX           () const
+    int getStartX () const
     {
         return startx;
     }
-    int getStartY           () const
+    int getStartY () const
     {
         return starty;
     }
-    int getX                () const
+    int getX () const
     {
         return ofsX + startx;
     }
-    int getY                () const
+    int getY () const
     {
         return ofsY + starty;
     }
 
-    bool inside             (int x, int y);
-    void getPosInImgSpace   (int x, int y, rtengine::Coord2D &coord);
-    bool insideWindow       (int x, int y, int w, int h);
-    void setPosition        (int x, int y, int w, int h);
+    bool inside (int x, int y) const;
+    rtengine::Coord2D getPosInImgSpace (int x, int y) const;
+    bool insideWindow (int x, int y, int w, int h) const;
+    void setPosition (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
     bool operator <(const ThumbBrowserEntryBase& other) const
@@ -179,33 +177,29 @@ public:
         return collate_name < other.collate_name;
     }
 
-    ThumbBrowserEntryBase* getOriginal () const;
-    void setOriginal (ThumbBrowserEntryBase* original);
-
-    virtual void refreshThumbnailImage () {}
+    virtual void refreshThumbnailImage () = 0;
     virtual void refreshQuickThumbnailImage () {}
-    virtual void calcThumbnailSize () {}
+    virtual void calcThumbnailSize () = 0;
 
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) {}
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea ();
-    virtual void getIconSize (int& w, int& h);
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea ();
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf>> getSpecificityIconsOnImageArea ();
+    virtual void getIconSize (int& w, int& h) const = 0;
 
-    virtual bool    motionNotify  (int x, int y);
-    virtual bool    pressNotify   (int button, int type, int bstate, int x, int y);
-    virtual bool    releaseNotify (int button, int type, int bstate, int x, int y);
-    virtual Glib::ustring getToolTip (int x, int y);
+    virtual bool motionNotify (int x, int y);
+    virtual bool pressNotify (int button, int type, int bstate, int x, int y);
+    virtual bool releaseNotify (int button, int type, int bstate, int x, int y);
+    virtual Glib::ustring getToolTip (int x, int y) const;
+
+    inline ThumbBrowserEntryBase* getOriginal() const
+    {
+        return original;
+    }
+
+    inline void setOriginal(ThumbBrowserEntryBase* original)
+    {
+        this->original = original;
+    }
+
 };
-
-inline ThumbBrowserEntryBase* ThumbBrowserEntryBase::getOriginal() const
-{
-    return original;
-}
-
-inline void ThumbBrowserEntryBase::setOriginal(ThumbBrowserEntryBase* original)
-{
-    this->original = original;
-}
-
-#endif

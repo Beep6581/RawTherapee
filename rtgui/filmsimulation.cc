@@ -115,10 +115,6 @@ void FilmSimulation::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void FilmSimulation::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void FilmSimulation::setBatchMode( bool batchMode )
 {
     ToolPanel::setBatchMode( batchMode );

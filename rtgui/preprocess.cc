@@ -101,10 +101,6 @@ void PreProcess::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void PreProcess::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void PreProcess::hotPixelChanged ()
 {
     if (batchMode) {

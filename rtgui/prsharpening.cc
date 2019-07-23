@@ -350,10 +350,6 @@ void PrSharpening::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
-void PrSharpening::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void PrSharpening::enabledChanged ()
 {
     if (listener) {

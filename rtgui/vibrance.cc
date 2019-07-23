@@ -290,10 +290,6 @@ void Vibrance::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Vibrance::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Vibrance::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
 {
 }

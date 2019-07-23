@@ -110,10 +110,6 @@ void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void XTransRAWExposure::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void XTransRAWExposure::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);

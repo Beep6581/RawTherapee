@@ -563,7 +563,7 @@ void ThumbBrowserBase::configScrollBars ()
     }
 }
 
-void ThumbBrowserBase::arrangeFiles()
+void ThumbBrowserBase::arrangeFiles(bool checkfilter)
 {
     MYREADERLOCK(l, entryRW);
 
@@ -572,17 +572,17 @@ void ThumbBrowserBase::arrangeFiles()
     //GThreadLock lock;
 
     int rowHeight = 0;
-
-    for (unsigned int i = 0; i < fd.size(); i++) {
-        // apply filter
-        fd[i]->filtered = !checkFilter (fd[i]);
+    for (const auto entry : fd) {
+        if (checkfilter) {
+            // apply filter
+            entry->filtered = !checkFilter(entry);
+        }
 
         // compute size of the items
-        if (!fd[i]->filtered && fd[i]->getMinimalHeight() > rowHeight) {
-            rowHeight = fd[i]->getMinimalHeight ();
+        if (!entry->filtered) {
+            rowHeight = std::max(entry->getMinimalHeight(), rowHeight);
         }
     }
-
     if (arrangement == TB_Horizontal) {
         numOfCols = 1;
 
@@ -667,9 +667,9 @@ void ThumbBrowserBase::arrangeFiles()
                 }
 
                 if (ct < fd.size()) {
-                    fd[ct]->setPosition(currx, curry, colWidths[i % numOfCols], rowHeight);
+                    fd[ct]->setPosition(currx, curry, colWidths[i], rowHeight);
                     fd[ct]->drawable = true;
-                    currx += colWidths[i % numOfCols];
+                    currx += colWidths[i];
                 }
             }
 
@@ -748,7 +748,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
             }
     }
 
-    if (ttip != "") {
+    if (!ttip.empty()) {
         tooltip->set_markup (ttip);
         return true;
     } else {
@@ -970,12 +970,12 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
 }
 
 
-void ThumbBrowserBase::redraw ()
+void ThumbBrowserBase::redraw (bool checkfilter)
 {
 
     GThreadLock lock;
-    arrangeFiles ();
-    queue_draw ();
+    arrangeFiles(checkfilter);
+    queue_draw();
 }
 
 void ThumbBrowserBase::zoomChanged (bool zoomIn)
