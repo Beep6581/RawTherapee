@@ -567,10 +567,6 @@ void LCurve::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void LCurve::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 

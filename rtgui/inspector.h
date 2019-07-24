@@ -87,7 +87,7 @@ public:
 
     /** @brief Get the on/off state
      */
-    bool isActive()
+    bool isActive() const
     {
         return active;
     };

@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _LWBUTTONSET_
-#define _LWBUTTONSET_
+#pragma once
 
 #include <gtkmm.h>
 #include "lwbutton.h"
@@ -35,20 +34,18 @@ public:
 
     void add (LWButton* b);
 
-    void    getMinimalDimensions (int& w, int& h);
-    void    getAllocatedDimensions (int& w, int& h);
+    void    getMinimalDimensions (int& w, int& h) const;
+    void    getAllocatedDimensions (int& w, int& h) const;
     void    arrangeButtons (int x, int y, int w, int h);
     void    setColors     (const Gdk::RGBA& bg, const Gdk::RGBA& fg);
     bool    motionNotify  (int x, int y);
     bool    pressNotify   (int x, int y);
     bool    releaseNotify (int x, int y);
     void    move          (int nx, int ny);
-    bool    inside        (int x, int y);
+    bool    inside        (int x, int y) const;
 
-    Glib::ustring getToolTip (int x, int y);
+    Glib::ustring getToolTip (int x, int y) const;
 
     void    setButtonListener   (LWButtonListener* bl);
     void    redraw              (Cairo::RefPtr<Cairo::Context> context);
 };
-
-#endif

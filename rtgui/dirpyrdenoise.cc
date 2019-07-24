@@ -988,10 +988,6 @@ void DirPyrDenoise::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void DirPyrDenoise::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void DirPyrDenoise::enabledChanged ()
 {
 

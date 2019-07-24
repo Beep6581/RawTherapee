@@ -247,7 +247,7 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         (*i)->expose (cr);
     }
 
-    if (options.showInfo && infotext != "") {
+    if (options.showInfo && !infotext.empty()) {
         iBackBuffer.copySurface(cr);
     }
 

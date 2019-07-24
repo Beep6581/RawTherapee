@@ -107,7 +107,6 @@ public:
     void spotPressed ();
     void spotSizeChanged ();
     void adjusterChanged(Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     int  getSize ();
     void setWBProvider (WBProvider* p)
     {

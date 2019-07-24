@@ -105,7 +105,6 @@ protected:
     const std::vector<double> getCurveFromGUI (int type) override;
     void shcChanged () override;
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     bool adjusterEntered (GdkEventCrossing* ev, int ac);
     bool adjusterLeft (GdkEventCrossing* ev, int ac);
     void setSubGroupRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4);

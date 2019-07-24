@@ -159,10 +159,6 @@ void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void EdgePreservingDecompositionUI::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void EdgePreservingDecompositionUI::enabledChanged ()
 {
     if (listener) {

@@ -48,6 +48,5 @@ public:
     void enabledChanged() override;
     void showDepthMapChanged();
     void setAdjusterBehavior(bool strengthAdd);
-    void adjusterAutoToggled(Adjuster* a, bool newval) override {}
 };
 

@@ -1150,10 +1150,6 @@ void BlackWhite::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void BlackWhite::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void BlackWhite::updateRGBLabel ()
 {
     if (!batchMode) {

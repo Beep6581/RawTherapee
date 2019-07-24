@@ -152,8 +152,12 @@ FILEBROWSER_COLORLABEL_TOOLTIP;カラー・ラベル\n\nドロップダウン・
 FILEBROWSER_COPYPROFILE;プロファイルをコピー
 FILEBROWSER_CURRENT_NAME;現在の名前:
 FILEBROWSER_DARKFRAME;ダークフレーム
+FILEBROWSER_DELETEDIALOG_ALL;ゴミ箱の中にある<b>%1</b>枚のファイル全てを<b>完全<b>に削除しますか？
 FILEBROWSER_DELETEDIALOG_HEADER;ファイル削除確認
+FILEBROWSER_DELETEDIALOG_SELECTED;選択した<b>%1</b>枚のファイルを<b>完全<b>に削除しますか？
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;キュー処理に保持されているファイルを<b>含め</b>、選択した<b>%1</b>枚のファイルを<b>完全<b>に削除しますか？
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
+FILEBROWSER_EMPTYTRASHHINT;ゴミ箱の中のファイルを全て<b>完全に</b> 削除します
 FILEBROWSER_EXTPROGMENU;..で開く
 FILEBROWSER_FLATFIELD;フラットフィールド
 FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
@@ -187,6 +191,8 @@ FILEBROWSER_POPUPRANK2;ランク　2 **
 FILEBROWSER_POPUPRANK3;ランク　3 ***
 FILEBROWSER_POPUPRANK4;ランク　4 ****
 FILEBROWSER_POPUPRANK5;ランク　5 *****
+FILEBROWSER_POPUPREMOVE;完全に削除
+FILEBROWSER_POPUPREMOVEINCLPROC;キュー処理に保持されているファイルを含めて完全に削除
 FILEBROWSER_POPUPRENAME;名前変更
 FILEBROWSER_POPUPSELECTALL;全選択
 FILEBROWSER_POPUPTRASH;ゴミ箱へ移動
@@ -213,6 +219,7 @@ FILEBROWSER_SHOWDIRHINT;全ての絞り込みをクリア\nショートカット
 FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF情報を表示\nショートカット: <b>i</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-i</b>
+FILEBROWSER_SHOWNOTTRASHHINT;ゴミ箱の中にある画像だけを表示
 FILEBROWSER_SHOWORIGINALHINT;元画像だけを表示\n\nファイル名は同じだが拡張子が異なる画像がある場合は、環境設定の中のファイルブラウザタブにある拡張子リストの上位に位置する拡張子を持った画像を元画像とする。
 FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>2</b>
@@ -771,6 +778,8 @@ HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;霞除去 - 深度マップの表示
 HISTORY_MSG_DEHAZE_STRENGTH;霞除去 - 強さ
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;デュアルデモザイク - 自動しきい値
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - コントラストのしきい値
+HISTORY_MSG_FILMNEGATIVE_ENABLED;ネガフィルム
+HISTORY_MSG_FILMNEGATIVE_VALUES;ネガフィルムの値
 HISTORY_MSG_HISTMATCHING;トーンカーブの自動調節
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;出力 - プライマリ
 HISTORY_MSG_ICM_OUTPUT_TEMP;出力 - ICC-v4 光源 D
@@ -1007,6 +1016,7 @@ PARTIALPASTE_EQUALIZER;ウェーブレット
 PARTIALPASTE_EVERYTHING;すべて
 PARTIALPASTE_EXIFCHANGES;exifデータを変える
 PARTIALPASTE_EXPOSURE;露光量
+PARTIALPASTE_FILMNEGATIVE;ネガフィルム
 PARTIALPASTE_FILMSIMULATION;フィルムシミュレーション
 PARTIALPASTE_FLATFIELDAUTOSELECT;フラットフィールド 自動選択
 PARTIALPASTE_FLATFIELDBLURRADIUS;フラットフィールド ぼかし半径
@@ -1065,6 +1075,7 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;カラーピッカーのフォント
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;切り抜きのマスクカラー
 PREFERENCES_APPEARANCE_MAINFONT;メインフォント
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;ナビゲーターのガイドカラー
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;擬似HiDPIモード
 PREFERENCES_APPEARANCE_THEME;テーマ
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
@@ -1284,6 +1295,7 @@ QUEUE_FORMAT_TITLE;ファイル形式
 QUEUE_LOCATION_FOLDER;フォルダに保存
 QUEUE_LOCATION_TEMPLATE;テンプレートを使う
 QUEUE_LOCATION_TEMPLATE_TOOLTIP;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_LOCATION_TITLE;出力の場所
 QUEUE_STARTSTOP_TOOLTIP;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;データ形式不明
 SAMPLEFORMAT_1;符号なし8ビット
@@ -1658,6 +1670,12 @@ TP_EXPOSURE_TCMODE_STANDARD;標準
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
 TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
 TP_EXPOS_WHITEPOINT_LABEL;raw ホワイト・ポイント
+TP_FILMNEGATIVE_BLUE;ブルーの比率
+TP_FILMNEGATIVE_GREEN;参考指数(コントラスト)
+TP_FILMNEGATIVE_GUESS_TOOLTIP;画像の中でニュートラルな参考ポイントを2点選んで指数を計算します;白い(明るいグレー)1点と黒い(暗いグレー)1点を選びます。順番は関係ありません。2つ目のポイントが選択されると指数が更新されます。
+TP_FILMNEGATIVE_LABEL;ネガフィルム
+TP_FILMNEGATIVE_PICK;白と黒のポイントをピックアップする
+TP_FILMNEGATIVE_RED;レッドの比率
 TP_FILMSIMULATION_LABEL;フィルムシミュレーション
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapeeはフィルムシミュレーション機能に使う画像をHald CLUTフォルダーの中から探すよう設計されています（プログラムに組み込むにはフォルダーが大き過ぎるため）。\n変更するには、環境設定 > 画像処理 > フィルムシミュレーションと進み\nどのフォルダーが使われているか確認します。機能を利用する場合は、Hald CLUTだけが入っているフォルダーを指定するか、 この機能を使わない場合はそのフォルダーを空にしておきます。\n\n詳しくはRawPediaを参照して下さい。\n\nフィルム画像のスキャンを止めますか？
 TP_FILMSIMULATION_STRENGTH;強さ
@@ -2301,25 +2319,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
-!FILEBROWSER_POPUPREMOVE;Delete permanently
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
-!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
-!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
-!PARTIALPASTE_FILMNEGATIVE;Film Negative
-!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
-!QUEUE_LOCATION_TITLE;Output Location
-!TP_FILMNEGATIVE_BLUE;Blue ratio
-!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
-!TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
-!TP_FILMNEGATIVE_RED;Red ratio

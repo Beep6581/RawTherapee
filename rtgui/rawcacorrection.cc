@@ -144,10 +144,6 @@ void RAWCACorr::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void RAWCACorr::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
     if (c == caAutocorrect) {

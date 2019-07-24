@@ -143,10 +143,6 @@ void BayerPreProcess::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void BayerPreProcess::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void BayerPreProcess::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode(batchMode);

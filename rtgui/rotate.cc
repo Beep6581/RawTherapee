@@ -96,10 +96,6 @@ void Rotate::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Rotate::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Rotate::straighten (double deg)
 {
 

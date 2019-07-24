@@ -49,26 +49,27 @@ private:
     LWButtonListener* listener;
     int actionCode;
     void* actionData;
-    Glib::ustring toolTip;
+    Glib::ustring* toolTip;
 
 public:
-    LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha = Left, Alignment va = Center, Glib::ustring tooltip = "");
+    LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha = Left, Alignment va = Center, Glib::ustring* tooltip = nullptr);
 
-    void    getSize             (int& minw, int& minh);
-    void    getAlignment        (Alignment& ha, Alignment& va);
+    void    getSize             (int& minw, int& minh) const;
+    void    getAlignment        (Alignment& ha, Alignment& va) const;
     void    setPosition         (int x, int y);
-    void    getPosition         (int& x, int& y);
-    bool    inside              (int x, int y);
+    void    addPosition         (int x, int y);
+    void    getPosition         (int& x, int& y) const;
+    bool    inside              (int x, int y) const;
     void    setIcon             (Cairo::RefPtr<RTSurface> i);
-    Cairo::RefPtr<RTSurface> getIcon ();
+    Cairo::RefPtr<RTSurface> getIcon () const;
     void    setColors           (const Gdk::RGBA& bg, const Gdk::RGBA& fg);
-    void    setToolTip          (const Glib::ustring& tooltip);
+    void    setToolTip          (Glib::ustring* tooltip);
 
     bool    motionNotify        (int x, int y);
     bool    pressNotify         (int x, int y);
     bool    releaseNotify       (int x, int y);
 
-    Glib::ustring getToolTip (int x, int y);
+    Glib::ustring getToolTip (int x, int y) const;
 
     void    setButtonListener   (LWButtonListener* bl)
     {

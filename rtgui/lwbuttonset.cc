@@ -18,43 +18,41 @@
  */
 #include "lwbuttonset.h"
 
-LWButtonSet::LWButtonSet () : aw(0), ah(0), ax(0), ay(0)
+LWButtonSet::LWButtonSet () : aw(0), ah(0), ax(-1), ay(-1)
 {
 }
 
 LWButtonSet::~LWButtonSet ()
 {
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        delete buttons[i];
+    for (const auto entry : buttons) {
+        delete entry;
     }
 }
 
 void LWButtonSet::add (LWButton* b)
 {
-
     buttons.push_back (b);
 }
 
-void LWButtonSet::getMinimalDimensions (int& w, int& h)
+void LWButtonSet::getMinimalDimensions (int& w, int& h) const
 {
-
     w = 0;
     h = 0;
 
-    for (size_t i = 0; i < buttons.size(); i++) {
+    for (const auto entry : buttons) {
         int bw, bh;
-        buttons[i]->getSize (bw, bh);
+        entry->getSize(bw, bh);
         w += bw;
-
-        if (bh > h) {
-            h = bh;
-        }
+        h = std::max(bh, h);
     }
 }
 
 void LWButtonSet::arrangeButtons (int x, int y, int w, int h)
 {
+
+    if (x == ax && y == ay && w == aw && (h == -1 || h == ah )) {
+        return;
+    }
 
     int mw, mh;
     getMinimalDimensions (mw, mh);
@@ -103,108 +101,86 @@ void LWButtonSet::arrangeButtons (int x, int y, int w, int h)
 
 void LWButtonSet::move (int nx, int ny)
 {
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        int x, y;
-        buttons[i]->getPosition (x, y);
-        buttons[i]->setPosition (x + nx - ax, y + ny - ay);
+    for (const auto entry : buttons) {
+        entry->addPosition(nx - ax, ny - ay);
     }
-
     ax = nx;
     ay = ny;
 }
 
 void LWButtonSet::redraw (Cairo::RefPtr<Cairo::Context> context)
 {
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        buttons[i]->redraw (context);
+    for (const auto entry : buttons) {
+        entry->redraw(context);
     }
 }
 
 bool LWButtonSet::motionNotify (int x, int y)
 {
-
     bool res = false;
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        bool handled = buttons[i]->motionNotify (x, y);
-        res = res || handled;
+    for (const auto entry : buttons) {
+        res = entry->motionNotify(x, y) || res;
     }
-
     return res;
 }
 
 bool LWButtonSet::pressNotify (int x, int y)
 {
-
     bool res = false;
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        bool handled = buttons[i]->pressNotify (x, y);
-        res = res || handled;
+    for (const auto entry : buttons) {
+        res = entry->pressNotify(x, y) || res;
     }
-
     return res;
 }
 
 bool LWButtonSet::releaseNotify (int x, int y)
 {
-
     bool res = false;
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        bool handled = buttons[i]->releaseNotify (x, y);
-        res = res || handled;
+    for (const auto entry : buttons) {
+        res = entry->releaseNotify(x, y) || res;
     }
-
     return res;
 }
 
-bool LWButtonSet::inside (int x, int y)
+bool LWButtonSet::inside (int x, int y) const
 {
 
-    for (size_t i = 0; i < buttons.size(); i++)
-        if (buttons[i]->inside (x, y)) {
+    for (const auto entry : buttons) {
+        if (entry->inside(x, y)) {
             return true;
         }
-
+    }
     return false;
 }
 
 void LWButtonSet::setButtonListener (LWButtonListener* bl)
 {
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        buttons[i]->setButtonListener (bl);
+    for (const auto entry : buttons) {
+        entry->setButtonListener(bl);
     }
 }
 
-void LWButtonSet::getAllocatedDimensions (int& w, int& h)
+void LWButtonSet::getAllocatedDimensions (int& w, int& h) const
 {
-
     w = aw;
     h = ah;
 }
 
 void LWButtonSet::setColors (const Gdk::RGBA& bg, const Gdk::RGBA& fg)
 {
-
-    for (size_t i = 0; i < buttons.size(); i++) {
-        buttons[i]->setColors (bg, fg);
+    for (const auto entry : buttons) {
+        entry->setColors(bg, fg);
     }
 }
 
-Glib::ustring LWButtonSet::getToolTip (int x, int y)
+Glib::ustring LWButtonSet::getToolTip (int x, int y) const
 {
+    for (const auto entry : buttons) {
+        const auto ttip = entry->getToolTip(x, y);
 
-    for (size_t i = 0; i < buttons.size(); i++) {
-        Glib::ustring ttip = buttons[i]->getToolTip (x, y);
-
-        if (ttip != "") {
+        if (!ttip.empty()) {
             return ttip;
         }
     }
-
-    return "";
+    return {};
 }

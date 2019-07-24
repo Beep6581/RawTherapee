@@ -218,7 +218,3 @@ void SaveFormatPanel::adjusterChanged(Adjuster* a, double newval)
         listener->formatChanged(sf_templates[act].second.format);
     }
 }
-
-void SaveFormatPanel::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
