@@ -172,10 +172,6 @@ void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
     }
 }
 
-void ShadowsHighlights::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void ShadowsHighlights::enabledChanged ()
 {
 

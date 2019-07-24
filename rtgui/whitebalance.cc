@@ -447,10 +447,6 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void WhiteBalance::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void WhiteBalance::optChanged ()
 {
     Gtk::TreeModel::Row row = getActiveMethod();

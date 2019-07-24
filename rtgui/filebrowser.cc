@@ -592,15 +592,16 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
 {
     entry->selected = false;
     entry->drawable = false;
-    entry->framed = editedFiles.find (entry->filename) != editedFiles.end();
+    entry->framed = editedFiles.find(entry->filename) != editedFiles.end();
 
     // add button set to the thumbbrowserentry
-    entry->addButtonSet (new FileThumbnailButtonSet (entry));
-    entry->getThumbButtonSet()->setRank (entry->thumbnail->getRank());
-    entry->getThumbButtonSet()->setColorLabel (entry->thumbnail->getColorLabel());
-    entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage());
-    entry->getThumbButtonSet()->setButtonListener (this);
-    entry->resize (getThumbnailHeight());
+    entry->addButtonSet(new FileThumbnailButtonSet(entry));
+    entry->getThumbButtonSet()->setRank(entry->thumbnail->getRank());
+    entry->getThumbButtonSet()->setColorLabel(entry->thumbnail->getColorLabel());
+    entry->getThumbButtonSet()->setInTrash(entry->thumbnail->getStage());
+    entry->getThumbButtonSet()->setButtonListener(this);
+    entry->resize(getThumbnailHeight());
+    entry->filtered = !checkFilter(entry);
 
     // find place in abc order
     {
@@ -619,9 +620,9 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
             entry
         );
 
-        initEntry (entry);
+        initEntry(entry);
     }
-    redraw ();
+    redraw(false);
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)

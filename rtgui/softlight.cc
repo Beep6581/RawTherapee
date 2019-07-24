@@ -89,12 +89,6 @@ void SoftLight::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-
-void SoftLight::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
-
 void SoftLight::enabledChanged ()
 {
     if (listener) {

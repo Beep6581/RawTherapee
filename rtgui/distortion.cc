@@ -95,10 +95,6 @@ void Distortion::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Distortion::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Distortion::setBatchMode (bool batchMode)
 {
 

@@ -92,7 +92,6 @@ private:
     void illuminantChanged();
     void trcPresetsChanged();
     void adjusterChanged(Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     static std::vector<Glib::ustring> getGamma();
     Glib::ustring getPrimariesPresetName(const Glib::ustring &preset);
     void getPrimaries(const Glib::ustring &preset, double *p, ColorTemp &temp);

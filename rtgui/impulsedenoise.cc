@@ -88,10 +88,6 @@ void ImpulseDenoise::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void ImpulseDenoise::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void ImpulseDenoise::enabledChanged ()
 {
     if (listener) {

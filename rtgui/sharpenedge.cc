@@ -147,10 +147,6 @@ void SharpenEdge::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void SharpenEdge::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void SharpenEdge::setBatchMode(bool batchMode)
 {
     passes->showEditedCB   ();

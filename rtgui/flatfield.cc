@@ -192,7 +192,7 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
         Glib::ustring fname = Glib::path_get_basename(ffp->GetCurrentImageFilePath());
         Glib::ustring filetype;
 
-        if (fname != "") {
+        if (!fname.empty()) {
             // get image filetype, set filter to the same as current image's filetype
             std::string::size_type idx;
             idx = fname.rfind('.');

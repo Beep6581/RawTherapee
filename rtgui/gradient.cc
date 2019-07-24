@@ -269,10 +269,6 @@ void Gradient::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Gradient::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Gradient::enabledChanged ()
 {
 

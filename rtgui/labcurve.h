@@ -77,7 +77,6 @@ public:
 
     void curveChanged (CurveEditor* ce) override;
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void avoidcolorshift_toggled ();
     void lcredsk_toggled();
 

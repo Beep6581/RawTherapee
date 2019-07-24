@@ -373,10 +373,6 @@ void DirPyrEqualizer::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void DirPyrEqualizer::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void DirPyrEqualizer::enabledChanged ()
 {
 

@@ -19,7 +19,7 @@
 #include "lwbutton.h"
 #include "guiutils.h"
 
-LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring tooltip)
+LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring* tooltip)
     : xpos(0), ypos(0), halign(ha), valign(va), icon(i), bgr(0.0), bgg(0.0), bgb(0.0), fgr(0.0), fgg(0.0), fgb(0.0), state(Normal), listener(nullptr), actionCode(aCode), actionData(aData), toolTip(tooltip)
 {
 
@@ -31,7 +31,7 @@ LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignmen
     }
 }
 
-void LWButton::getSize (int& minw, int& minh)
+void LWButton::getSize (int& minw, int& minh) const 
 {
 
     minw = w;
@@ -45,7 +45,13 @@ void LWButton::setPosition (int x, int y)
     ypos = y;
 }
 
-void LWButton::getPosition (int& x, int& y)
+void LWButton::addPosition (int x, int y)
+{
+    xpos += x;
+    ypos += y;
+}
+
+void LWButton::getPosition (int& x, int& y) const
 {
 
     x = xpos;
@@ -65,7 +71,7 @@ void LWButton::setIcon (Cairo::RefPtr<RTSurface> i)
     }
 }
 
-Cairo::RefPtr<RTSurface> LWButton::getIcon ()
+Cairo::RefPtr<RTSurface> LWButton::getIcon () const
 {
 
     return icon;
@@ -82,7 +88,7 @@ void LWButton::setColors (const Gdk::RGBA& bg, const Gdk::RGBA& fg)
     fgb = fg.get_blue ();
 }
 
-bool LWButton::inside (int x, int y)
+bool LWButton::inside (int x, int y) const
 {
 
     return x > xpos && x < xpos + w && y > ypos && y < ypos + h;
@@ -210,24 +216,23 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
     }
 }
 
-void LWButton::getAlignment (Alignment& ha, Alignment& va)
+void LWButton::getAlignment (Alignment& ha, Alignment& va) const
 {
 
     ha = halign;
     va = valign;
 }
 
-Glib::ustring LWButton::getToolTip (int x, int y)
+Glib::ustring LWButton::getToolTip (int x, int y) const
 {
-
-    if (inside (x, y)) {
-        return toolTip;
+    if (inside(x, y) && toolTip) {
+        return *toolTip;
     } else {
-        return "";
+        return {};
     }
 }
 
-void LWButton::setToolTip (const Glib::ustring& tooltip)
+void LWButton::setToolTip (Glib::ustring* tooltip)
 {
 
     toolTip = tooltip;

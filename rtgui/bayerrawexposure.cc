@@ -152,10 +152,6 @@ void BayerRAWExposure::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void BayerRAWExposure::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void BayerRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
     if (c == PextwoGreen) {

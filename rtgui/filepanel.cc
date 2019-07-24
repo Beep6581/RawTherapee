@@ -358,7 +358,7 @@ void FilePanel::saveOptions ()
     options.browserToolPanelWidth = winW - get_position();
     options.browserToolPanelHeight = tpcPaned->get_position ();
 
-    if (options.startupDir == STARTUPDIR_LAST && fileCatalog->lastSelectedDir () != "") {
+    if (options.startupDir == STARTUPDIR_LAST && !fileCatalog->lastSelectedDir().empty()) {
         options.startupPath = fileCatalog->lastSelectedDir ();
     }
 
