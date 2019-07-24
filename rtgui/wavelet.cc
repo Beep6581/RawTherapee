@@ -249,7 +249,6 @@ Wavelet::Wavelet() :
     levdirMainHBox->pack_start(*CLmethod); //same
 
     Lmethod->set_sensitive(false);
-    Lmethod->set_sensitive(false);
     Lmethod->append(M("TP_WAVELET_1"));
     Lmethod->append(M("TP_WAVELET_2"));
     Lmethod->append(M("TP_WAVELET_3"));
@@ -2491,6 +2490,14 @@ void Wavelet::LmethodUpdateUI() {
 void Wavelet::LmethodChanged()
 {
     //LmethodUpdateUI();
+    if(ushamethod->get_active_row_number() == 0 && expclari->getEnabled() == true) {
+        if(Lmethod->get_active_row_number() > 3) Lmethod->set_active(3);
+    }
+
+    if(ushamethod->get_active_row_number() == 1 && expclari->getEnabled() == true) {
+        if(Lmethod->get_active_row_number() < 4) Lmethod->set_active(4);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavLmet, Lmethod->get_active_text());
     }
