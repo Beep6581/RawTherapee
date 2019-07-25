@@ -749,7 +749,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
     }
 
     if (!ttip.empty()) {
-        tooltip->set_markup (ttip);
+        tooltip->set_text(ttip);
         return true;
     } else {
         return false;
