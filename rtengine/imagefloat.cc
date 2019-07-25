@@ -45,7 +45,7 @@ Imagefloat::~Imagefloat ()
 }
 
 // Call this method to handle floating points input values of different size
-void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples)
+void Imagefloat::setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
@@ -58,7 +58,7 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
     switch (sampleFormat) {
     case (IIOSF_FLOAT16): {
         int ix = 0;
-        uint16_t* sbuffer = (uint16_t*) buffer;
+        const uint16_t* sbuffer = (const uint16_t*) buffer;
 
         for (int i = 0; i < width; i++) {
             r(row, i) = 65535.f * DNG_HalfToFloat(sbuffer[ix++]);
@@ -71,7 +71,7 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
     //case (IIOSF_FLOAT24):
     case (IIOSF_FLOAT32): {
         int ix = 0;
-        float* sbuffer = (float*) buffer;
+        const float* sbuffer = (const float*) buffer;
 
         for (int i = 0; i < width; i++) {
             r(row, i) = 65535.f * sbuffer[ix++];
@@ -85,7 +85,7 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, unsigned 
     case (IIOSF_LOGLUV24):
     case (IIOSF_LOGLUV32): {
         int ix = 0;
-        float* sbuffer = (float*) buffer;
+        const float* sbuffer = (const float*) buffer;
         float xyzvalues[3], rgbvalues[3];
 
         for (int i = 0; i < width; i++) {
