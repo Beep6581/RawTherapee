@@ -542,7 +542,7 @@ void ThumbBrowserBase::configScrollBars ()
         vscroll.get_adjustment()->set_upper (inH);
         hscroll.get_adjustment()->set_lower (0);
         vscroll.get_adjustment()->set_lower (0);
-        hscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
+        hscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveWidth() : 0);
         vscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
         hscroll.get_adjustment()->set_page_increment (iw);
         vscroll.get_adjustment()->set_page_increment (ih);
