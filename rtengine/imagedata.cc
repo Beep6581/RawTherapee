@@ -261,9 +261,26 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
         if (find_tag(Exiv2::lensName)) {
             lens = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
-        }
-        if (lens.empty()) {
-            lens = "Unknown";
+        } else if (find_exif_tag("Exif.Photo.LensSpecification") && pos->count() == 4) {
+            const auto round =
+                [](float f) -> float
+                {
+                    return int(f * 10.f + 0.5f) / 10.f;
+                };
+            float fl_lo = round(pos->toFloat(0));
+            float fl_hi = round(pos->toFloat(1));
+            float fn_lo = round(pos->toFloat(2));
+            float fn_hi = round(pos->toFloat(3));
+            std::ostringstream buf;
+            buf << fl_lo;
+            if (fl_lo < fl_hi) {
+                buf << "-" << fl_hi;
+            }
+            buf << "mm F" << fn_lo;
+            if (fn_lo < fn_hi) {
+                buf << "-" << fn_hi;
+            }
+            lens = buf.str();
         }
         if (lens.empty() || lens.find_first_not_of('-') == std::string::npos) {
             lens = "Unknown";
