@@ -661,7 +661,6 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
         }
 
         std::vector<int> colWidths;
-        std::vector<int> oldColWidths;
 
         for (; numOfCols > 0; --numOfCols) {
             // compute column widths
@@ -685,71 +684,69 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
             }
         }
 
-        if (oldNumOfCols == numOfCols) {
-            int oldColsWidth = 0;
-            for (; oldNumOfCols > 0; --oldNumOfCols) {
-                // compute old column widths
-                oldColWidths.assign(oldNumOfCols, 0);
-
-                for (unsigned int i = 0, j = 0; i < fd.size(); ++i) {
-                    if (fd[i] != entry && !fd[i]->filtered && fd[i]->getMinimalWidth() > oldColWidths[j % oldNumOfCols]) {
-                        oldColWidths[j % oldNumOfCols] = fd[i]->getMinimalWidth();
-                    }
-
-                    if (fd[i] != entry && !fd[i]->filtered) {
-                        ++j;
-                    }
-                }
-                // if not wider than the space available, arrange it and we are ready
-                oldColsWidth = std::accumulate(oldColWidths.begin(), oldColWidths.end(), 0);
-
-                if (oldNumOfCols == 1 || oldColsWidth < availWidth) {
-                    break;
-                }
-            }
-        }
-
         bool arrangeAll = true;
-        if (entry && oldNumOfCols == numOfCols && oldColWidths.size() > 0) {
-            arrangeAll = false;
-            for (int i = 0; i < numOfCols; ++i) {
-                if(colWidths[i] != oldColWidths[i]) {
-                    arrangeAll = true;
-                    break;
-                }
-            }
-        }
-
         // arrange files
         int curry = 0;
         size_t ct = 0;
-        if (entry && !arrangeAll) {
-            int i = 0;
-            // Find currently added entry
-            for (; ct < fd.size() && fd[ct] != entry; i += !fd[ct]->filtered, ++ct) {
-            }
-            //Calculate the position of currently added entry
-            const int row = i / numOfCols;
-            const int col = i % numOfCols;
-            curry = row * rowHeight;
-            int currx = 0;
-            for (int c = 0; c < col; ++c) {
-                currx += colWidths[c];
-            }
-            // arrange all entries in the row beginning with the currently added one
-            for (int i = col; ct < fd.size() && i < numOfCols; ++i, ++ct) {
-                for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
-                    fd[ct]->drawable = false;
-                }
-                if (ct < fd.size()) {
-                    fd[ct]->setPosition(currx, curry, colWidths[i], rowHeight);
-                    fd[ct]->drawable = true;
-                    currx += colWidths[i];
+        if (entry) {
+            std::vector<int> oldColWidths;
+            if (oldNumOfCols == numOfCols) {
+                for (; oldNumOfCols > 0; --oldNumOfCols) {
+                    // compute old column widths
+                    oldColWidths.assign(oldNumOfCols, 0);
+
+                    for (unsigned int i = 0, j = 0; i < fd.size(); ++i) {
+                        if (fd[i] != entry && !fd[i]->filtered && fd[i]->getMinimalWidth() > oldColWidths[j % oldNumOfCols]) {
+                            oldColWidths[j % oldNumOfCols] = fd[i]->getMinimalWidth();
+                        }
+
+                        if (fd[i] != entry && !fd[i]->filtered) {
+                            ++j;
+                        }
+                    }
+                    if (oldNumOfCols == 1 || std::accumulate(oldColWidths.begin(), oldColWidths.end(), 0) < availWidth) {
+                        break;
+                    }
                 }
             }
 
-            if (currx > 0) { // there were thumbnails placed in the row
-                curry += rowHeight;
+            if (oldNumOfCols == numOfCols) {
+                arrangeAll = false;
+                for (int i = 0; i < numOfCols; ++i) {
+                    if(colWidths[i] != oldColWidths[i]) {
+                        arrangeAll = true;
+                        break;
+                    }
+                }
+            }
+            if (!arrangeAll) {
+                int i = 0;
+                // Find currently added entry
+                for (; ct < fd.size() && fd[ct] != entry; i += !fd[ct]->filtered, ++ct) {
+                }
+                //Calculate the position of currently added entry
+                const int row = i / numOfCols;
+                const int col = i % numOfCols;
+                curry = row * rowHeight;
+                int currx = 0;
+                for (int c = 0; c < col; ++c) {
+                    currx += colWidths[c];
+                }
+                // arrange all entries in the row beginning with the currently added one
+                for (int i = col; ct < fd.size() && i < numOfCols; ++i, ++ct) {
+                    for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                        fd[ct]->drawable = false;
+                    }
+                    if (ct < fd.size()) {
+                        fd[ct]->setPosition(currx, curry, colWidths[i], rowHeight);
+                        fd[ct]->drawable = true;
+                        currx += colWidths[i];
+                    }
+                }
+
+                if (currx > 0) { // there were thumbnails placed in the row
+                    curry += rowHeight;
+                }
             }
         }
 
