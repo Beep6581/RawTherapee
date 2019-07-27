@@ -178,15 +178,19 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
         ThumbIterator front = std::find(fd.begin(), fd.end(), selected.front());
+        ThumbIterator back;
         ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
 
         if (front > current) {
-            std::swap(front, current);
+            front = current;
+            back = std::find(fd.begin(), fd.end(), selected.back());
+        } else {
+            back = current;
         }
 
         clearSelection(selected);
 
-        for (; front <= current && front != fd.end(); ++front) {
+        for (; front <= back && front != fd.end(); ++front) {
             addToSelection(*front, selected);
         }
     } else {
