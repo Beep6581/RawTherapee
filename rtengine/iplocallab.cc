@@ -386,14 +386,14 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
             } else if (x == 0 || x == bfw - 1) {
                 SUML = 0.f;
             } else {
-                for (int i = -1; i < 2; i++) {
-                    for (int j = -1; j < 2; j += 2) {
+                for (int i = -1; i < 2; i += 2) {
+                    for (int j = -1; j < 2; j += 1) {
                         sumXL += GX[j + 1][i + 1] * tmL[y + i][x + j];
                     }
                 }
 
-                for (int i = -1; i < 2; i += 2) {
-                    for (int j = -1; j < 2; j++) {
+                for (int i = -1; i < 2; i += 1) {
+                    for (int j = -1; j < 2; j += 2) {
                         sumYL += GY[j + 1][i + 1] * tmL[y + i][x + j];
                     }
                 }
@@ -4961,7 +4961,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     guid[ir][jr] /= 32768.f;
                 }
 
-            const float blur = 25 / sk * (10.f + 1.2f * lp.struexp);
+            const float blur = 25 / sk * (10.f + 0.8f * lp.struexp);
 
             rtengine::guidedFilter(guid, ble, ble, blur, 0.001, multiThread);
 
@@ -7653,7 +7653,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp > 0.f) {
                         blend2(bfw, bfh);
-                        ImProcFunctions::blendstruc(bfw, bfh, bufexporig.get(), 3.f / (sk * 1.4f), lp.struexp, blend2, sk, multiThread);
+                        ImProcFunctions::blendstruc(bfw, bfh, bufexporig.get(), 3.f / (sk * 1.4f), 0.5f * lp.struexp, blend2, sk, multiThread);
 
                         if (lp.showmaskexpmet == 4) {
 #ifdef _OPENMP
@@ -8091,7 +8091,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (blend) {
                         blend2(bfw, bfh);
-                        ImProcFunctions::blendstruc(bfw, bfh, bufcolorig.get(), 3.f / (sk * 1.4f), lp.struco, blend2, sk, multiThread);
+                        ImProcFunctions::blendstruc(bfw, bfh, bufcolorig.get(), 3.f / (sk * 1.4f), 0.5f * lp.struco, blend2, sk, multiThread);
 
                         if (lp.showmaskcolmet == 4) {
 #ifdef _OPENMP
