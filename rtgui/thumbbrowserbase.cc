@@ -178,15 +178,19 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
         ThumbIterator front = std::find(fd.begin(), fd.end(), selected.front());
+        ThumbIterator back;
         ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
 
         if (front > current) {
-            std::swap(front, current);
+            front = current;
+            back = std::find(fd.begin(), fd.end(), selected.back());
+        } else {
+            back = current;
         }
 
         clearSelection(selected);
 
-        for (; front <= current && front != fd.end(); ++front) {
+        for (; front <= back && front != fd.end(); ++front) {
             addToSelection(*front, selected);
         }
     } else {
@@ -534,28 +538,33 @@ void ThumbBrowserBase::configScrollBars ()
     GThreadLock tLock; // Acquire the GUI
 
     if (inW > 0 && inH > 0) {
-
-        int iw = internal.get_width ();
-        int ih = internal.get_height ();
-
-        hscroll.get_adjustment()->set_upper (inW);
-        vscroll.get_adjustment()->set_upper (inH);
-        hscroll.get_adjustment()->set_lower (0);
-        vscroll.get_adjustment()->set_lower (0);
-        hscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
-        vscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
-        hscroll.get_adjustment()->set_page_increment (iw);
-        vscroll.get_adjustment()->set_page_increment (ih);
-        hscroll.get_adjustment()->set_page_size (iw);
-        vscroll.get_adjustment()->set_page_size (ih);
-
-        if(iw >= inW) {
-            hscroll.hide();
+        int ih = internal.get_height();
+        if (arrangement == TB_Horizontal) {
+            auto ha = hscroll.get_adjustment();
+            int iw = internal.get_width();
+            ha->set_upper(inW);
+            ha->set_lower(0);
+            ha->set_step_increment(!fd.empty() ? fd[0]->getEffectiveWidth() : 0);
+            ha->set_page_increment(iw);
+            ha->set_page_size(iw);
+            if (iw >= inW) {
+                hscroll.hide();
+            } else {
+                hscroll.show();
+            }
         } else {
-            hscroll.show();
+            hscroll.hide();
         }
 
-        if(ih >= inH) {
+        auto va = vscroll.get_adjustment();
+        va->set_upper(inH);
+        va->set_lower(0);
+        const auto height = !fd.empty() ? fd[0]->getEffectiveHeight() : 0;
+        va->set_step_increment(height);
+        va->set_page_increment(height == 0 ? ih : (ih / height) * height);
+        va->set_page_size(ih);
+
+        if (ih >= inH) {
             vscroll.hide();
         } else {
             vscroll.show();
@@ -749,7 +758,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
     }
 
     if (!ttip.empty()) {
-        tooltip->set_markup (ttip);
+        tooltip->set_text(ttip);
         return true;
     } else {
         return false;
