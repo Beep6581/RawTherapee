@@ -746,7 +746,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
     Glib::ustring ttip;
-    boolean useMarkup = false;
+    bool useMarkup = false;
     {
         MYREADERLOCK(l, parent->entryRW);
 
