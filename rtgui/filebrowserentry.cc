@@ -251,32 +251,32 @@ void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rten
     bool newLandscape = img->getWidth() > img->getHeight();
     bool rotated = false;
 
-    if (preh == img->getHeight ()) {
+    if (preh == img->getHeight()) {
+        const bool resize = !preview || prew != img->getWidth();
         prew = img->getWidth ();
 
         GThreadLock lock;
 
         // Check if image has been rotated since last time
-        rotated = preview != nullptr && newLandscape != landscape;
+        rotated = preview && newLandscape != landscape;
 
-        guint8* temp = preview;
-        preview = nullptr;
-        delete [] temp;
-        temp = new guint8 [prew * preh * 3];
-        memcpy (temp, img->getData(), prew * preh * 3);
-        preview = temp;
+        if (resize) {
+            delete [] preview;
+            preview = new guint8 [prew * preh * 3];
+        }
+        memcpy(preview, img->getData(), prew * preh * 3);
         updateBackBuffer ();
     }
 
     landscape = newLandscape;
 
-    img->free ();
+    img->free();
 
-    if (parent != nullptr) {
+    if (parent) {
         if (rotated) {
             parent->thumbRearrangementNeeded();
         } else if (redrawRequests == 0) {
-            parent->redrawNeeded (this);
+            parent->redrawNeeded(this);
         }
     }
 }

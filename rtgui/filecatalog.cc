@@ -804,28 +804,28 @@ void FileCatalog::previewsFinishedUI ()
 
     {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        redrawAll ();
+        redrawAll();
         previewsToLoad = 0;
 
         if (filterPanel) {
-            filterPanel->set_sensitive (true);
+            filterPanel->set_sensitive(true);
 
-            if ( !hasValidCurrentEFS ) {
-                MyMutex::MyLock lock(dirEFSMutex);
+            if (!hasValidCurrentEFS) {
+                MyMutex::MyLock myLock(dirEFSMutex);
                 currentEFS = dirEFS;
-                filterPanel->setFilter ( dirEFS, true );
+                filterPanel->setFilter(dirEFS, true);
             } else {
-                filterPanel->setFilter ( currentEFS, false );
+                filterPanel->setFilter(currentEFS, false);
             }
         }
 
         if (exportPanel) {
-            exportPanel->set_sensitive (true);
+            exportPanel->set_sensitive(true);
         }
 
         // restart anything that might have been loaded low quality
         fileBrowser->refreshQuickThumbImages();
-        fileBrowser->applyFilter (getFilter());  // refresh total image count
+        fileBrowser->applyFilter(getFilter());  // refresh total image count
         _refreshProgressBar();
     }
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"), 0);
