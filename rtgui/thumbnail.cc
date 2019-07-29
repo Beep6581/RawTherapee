@@ -399,6 +399,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
 
         // and restore rank and inTrash
         setRank(rank);
+        pparamsValid = cfs.rating != rank;
         setColorLabel(colorlabel);
         setStage(inTrash);
 
