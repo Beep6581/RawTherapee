@@ -172,16 +172,18 @@ void ThumbBrowserBase::selectSingle (ThumbBrowserEntryBase* clicked)
 
 void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additional)
 {
-    if (selected.empty() && !anchor) {
-        addToSelection(clicked, selected);
+    if (!anchor) {
         anchor = clicked;
-        return;
+        if (selected.empty()) {
+            addToSelection(clicked, selected);
+            return;
+        }
     }
 
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
         ThumbIterator back = std::find(fd.begin(), fd.end(), clicked);
-        ThumbIterator front = std::find(fd.begin(), fd.end(), anchor);
+        ThumbIterator front = anchor == clicked ? back : std::find(fd.begin(), fd.end(), anchor);
 
         if (front > back) {
             std::swap(front, back);
@@ -195,7 +197,7 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
     } else {
         // Add an additional range w.r.t. the last clicked entry.
         ThumbIterator last = std::find(fd.begin(), fd.end(), lastClicked);
-        ThumbIterator current = std::find (fd.begin(), fd.end(), clicked);
+        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
 
         if (last > current) {
             std::swap(last, current);
@@ -209,12 +211,12 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
 
 void ThumbBrowserBase::selectSet (ThumbBrowserEntryBase* clicked)
 {
-    const ThumbIterator iterator = std::find (selected.begin (), selected.end (), clicked);
+    const ThumbIterator iterator = std::find(selected.begin(), selected.end(), clicked);
 
-    if (iterator != selected.end ()) {
-        removeFromSelection (iterator, selected);
+    if (iterator != selected.end()) {
+        removeFromSelection(iterator, selected);
     } else {
-        addToSelection (clicked, selected);
+        addToSelection(clicked, selected);
     }
     anchor = clicked;
 }
