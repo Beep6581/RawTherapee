@@ -171,6 +171,7 @@ protected:
     std::vector<ThumbBrowserEntryBase*> fd;
     std::vector<ThumbBrowserEntryBase*> selected;
     ThumbBrowserEntryBase* lastClicked;
+    ThumbBrowserEntryBase* anchor;
 
     int previewHeight;
     int numOfCols;

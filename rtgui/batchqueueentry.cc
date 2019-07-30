@@ -168,10 +168,12 @@ void BatchQueueEntry::getIconSize (int& w, int& h) const
 }
 
 
-Glib::ustring BatchQueueEntry::getToolTip (int x, int y) const
+std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip (int x, int y) const
 {
     // get the parent class' tooltip first
-    Glib::ustring tooltip = ThumbBrowserEntryBase::getToolTip(x, y);
+    Glib::ustring tooltip;
+    bool useMarkup;
+    std::tie(tooltip, useMarkup) =  ThumbBrowserEntryBase::getToolTip(x, y);
 
     // add the saving param options
     if (!outFileName.empty()) {
@@ -198,7 +200,7 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y) const
         }
     }
 
-    return tooltip;
+    return std::make_tuple(std::move(tooltip), useMarkup);
 
 }
 

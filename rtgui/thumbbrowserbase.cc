@@ -28,7 +28,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), lastRowHeight(0), arrangement(TB_Horizontal)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(options.thumbSize), numOfCols(1), lastRowHeight(0), arrangement(TB_Horizontal)
 {
     inW = -1;
     inH = -1;
@@ -164,30 +164,31 @@ inline void removeFromSelection (const ThumbIterator& iterator, ThumbVector& sel
 
 void ThumbBrowserBase::selectSingle (ThumbBrowserEntryBase* clicked)
 {
-    clearSelection (selected);
+    clearSelection(selected);
+    anchor = clicked;
 
-    if (clicked)
-        addToSelection (clicked, selected);
+    if (clicked) {
+        addToSelection(clicked, selected);
+    }
 }
 
 void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additional)
 {
-    if (selected.empty()) {
-        addToSelection(clicked, selected);
-        return;
+    if (!anchor) {
+        anchor = clicked;
+        if (selected.empty()) {
+            addToSelection(clicked, selected);
+            return;
+        }
     }
 
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
-        ThumbIterator front = std::find(fd.begin(), fd.end(), selected.front());
-        ThumbIterator back;
-        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator back = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator front = anchor == clicked ? back : std::find(fd.begin(), fd.end(), anchor);
 
-        if (front > current) {
-            front = current;
-            back = std::find(fd.begin(), fd.end(), selected.back());
-        } else {
-            back = current;
+        if (front > back) {
+            std::swap(front, back);
         }
 
         clearSelection(selected);
@@ -198,7 +199,7 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
     } else {
         // Add an additional range w.r.t. the last clicked entry.
         ThumbIterator last = std::find(fd.begin(), fd.end(), lastClicked);
-        ThumbIterator current = std::find (fd.begin(), fd.end(), clicked);
+        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
 
         if (last > current) {
             std::swap(last, current);
@@ -212,13 +213,14 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
 
 void ThumbBrowserBase::selectSet (ThumbBrowserEntryBase* clicked)
 {
-    const ThumbIterator iterator = std::find (selected.begin (), selected.end (), clicked);
+    const ThumbIterator iterator = std::find(selected.begin(), selected.end(), clicked);
 
-    if (iterator != selected.end ()) {
-        removeFromSelection (iterator, selected);
+    if (iterator != selected.end()) {
+        removeFromSelection(iterator, selected);
     } else {
-        addToSelection (clicked, selected);
+        addToSelection(clicked, selected);
     }
+    anchor = clicked;
 }
 
 static void scrollToEntry (double& h, double& v, int iw, int ih, ThumbBrowserEntryBase* entry)
@@ -618,7 +620,6 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
 
         for (unsigned int ct = 0; ct < fd.size(); ++ct) {
             // arrange items in the column
-            int curry = 0;
 
             for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
                 fd[ct]->drawable = false;
@@ -627,10 +628,9 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
             if (ct < fd.size()) {
                 const int maxw = fd[ct]->getMinimalWidth();
 
-                fd[ct]->setPosition(currx, curry, maxw, rowHeight);
+                fd[ct]->setPosition(currx, 0, maxw, rowHeight);
                 fd[ct]->drawable = true;
                 currx += maxw;
-                curry += rowHeight;
             }
         }
 
@@ -684,7 +684,6 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
             }
         }
 
-        bool arrangeAll = true;
         // arrange files
         int curry = 0;
         size_t ct = 0;
@@ -710,6 +709,7 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
                 }
             }
 
+            bool arrangeAll = true;
             if (oldNumOfCols == numOfCols) {
                 arrangeAll = false;
                 for (int i = 0; i < numOfCols; ++i) {
@@ -720,13 +720,13 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
                 }
             }
             if (!arrangeAll) {
-                int i = 0;
+                int j = 0;
                 // Find currently added entry
-                for (; ct < fd.size() && fd[ct] != entry; i += !fd[ct]->filtered, ++ct) {
+                for (; ct < fd.size() && fd[ct] != entry; j += !fd[ct]->filtered, ++ct) {
                 }
                 //Calculate the position of currently added entry
-                const int row = i / numOfCols;
-                const int col = i % numOfCols;
+                const int row = j / numOfCols;
+                const int col = j % numOfCols;
                 curry = row * rowHeight;
                 int currx = 0;
                 for (int c = 0; c < col; ++c) {
@@ -831,20 +831,24 @@ void ThumbBrowserBase::Internal::on_realize()
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
-    Glib::ustring ttip = "";
-
+    Glib::ustring ttip;
+    bool useMarkup = false;
     {
         MYREADERLOCK(l, parent->entryRW);
 
         for (size_t i = 0; i < parent->fd.size(); i++)
             if (parent->fd[i]->drawable && parent->fd[i]->inside (x, y)) {
-                ttip = parent->fd[i]->getToolTip (x, y);
+                std::tie(ttip, useMarkup) = parent->fd[i]->getToolTip (x, y);
                 break;
             }
     }
 
     if (!ttip.empty()) {
-        tooltip->set_text(ttip);
+        if (useMarkup) {
+            tooltip->set_markup(ttip);
+        } else {
+            tooltip->set_text(ttip);
+        }
         return true;
     } else {
         return false;
@@ -859,7 +863,6 @@ void ThumbBrowserBase::on_style_updated ()
 
 ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(nullptr), dirty(true)
 {
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     set_name("FileCatalog");
 }
 
