@@ -251,6 +251,9 @@ protected:
     LocCCmaskretiCurve locccmasretiCurve;
     LocLLmaskretiCurve locllmasretiCurve;
     LocHHmaskretiCurve lochhmasretiCurve;
+    LocCCmasktmCurve locccmastmCurve;
+    LocLLmasktmCurve locllmastmCurve;
+    LocHHmasktmCurve lochhmastmCurve;
 
     bool locallutili;
     bool localcutili;
@@ -270,6 +273,9 @@ protected:
     bool lcmasretiutili;
     bool lhmasretiutili;
     bool llmasretiutili;
+    bool lcmastmutili;
+    bool lhmastmutili;
+    bool llmastmutili;
     bool LHutili;
     bool HHutili;
     LUTf huerefs;

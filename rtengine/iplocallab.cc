@@ -219,6 +219,11 @@ struct local_params {
     float chromacbm;
     float gammacb;
     float slomacb;
+    float radmatm;
+    float blendmatm;
+    float chromatm;
+    float gammatm;
+    float slomatm;
     float struexp;
     float blurexp;
     float blurcol;
@@ -260,6 +265,7 @@ struct local_params {
     int showmaskcbmet;
     int showmaskretimet;
     int showmasksoftmet;
+    int showmasktmmet;
     float laplacexp;
     float balanexp;
     float linear;
@@ -317,6 +323,7 @@ struct local_params {
     bool enacbMask;
     bool enaretiMask;
     bool enaretiMasktmap;
+    bool enatmMask;
     int highlihs;
     int shadowhs;
     int radiushs;
@@ -410,7 +417,7 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
 
 
 
-static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask)
+static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask)
 {
     int w = oW;
     int h = oH;
@@ -487,11 +494,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskcbmet = llcbMask;
     lp.showmaskretimet = llretiMask;
     lp.showmasksoftmet = llsoftMask;
-    //if(locallab.spots.at(sp).enaretiMask) printf("enaritrue\n"); else printf("enaritfalse\n");
-    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0;
-    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0;
-    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0;
+    lp.showmasktmmet = lltmMask;
+  //  printf("lpshmasktm=%i\n",lp.showmasktmmet); 
+    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0;
+    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0;
+    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0;
+    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0;
     // if(lp.enaretiMask) printf("lp.enaretiMasktrue\n"); else printf("lp.enaretiMaskfalse\n");
 
     if (locallab.spots.at(sp).softMethod == "soft") {
@@ -633,6 +642,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float slomaskcb = ((float) locallab.spots.at(sp).slomaskcb);
     bool enaretiMasktm = locallab.spots.at(sp).enaretiMasktmap;
     lp.enaretiMasktmap =  enaretiMasktm;
+    float blendmasktm = ((float) locallab.spots.at(sp).blendmasktm) / 100.f ;
+    float radmasktm = ((float) locallab.spots.at(sp).radmasktm);
+    float chromasktm = ((float) locallab.spots.at(sp).chromasktm);
+    float gammasktm = ((float) locallab.spots.at(sp).gammasktm);
+    float slomasktm = ((float) locallab.spots.at(sp).slomasktm);
+
     lp.scalereti = scaleret;
     lp.cir = circr;
     lp.actsp = acti;
@@ -673,6 +688,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.chromacbm = chromaskcb;
     lp.gammacb = gammaskcb;
     lp.slomacb = slomaskcb;
+    lp.blendmatm = blendmasktm;
+    lp.radmatm = radmasktm;
+    lp.chromatm = chromasktm;
+    lp.gammatm = gammasktm;
+    lp.slomatm = slomasktm;
 
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
@@ -3549,7 +3569,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0);
         int begy = lp.yc - lp.lyT;
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
@@ -4873,7 +4893,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskSHCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskSHCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskSHCurve & lochhmasSHCurve, bool & lhmasSHutili,
                                 const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
                                 const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask)
+                                const LocCCmasktmCurve & locccmastmCurve, bool &lcmastmutili, const  LocLLmasktmCurve & locllmastmCurve, bool &llmastmutili, const  LocHHmasktmCurve & lochhmastmCurve, bool & lhmastmutili,
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask)
 {
     /* comment on processus deltaE
             * the algo uses 3 different ways to manage deltaE according to the type of intervention
@@ -4903,7 +4924,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
 
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llExpMask, llSHMask, llcbMask, llretiMask, llsoftMask);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llExpMask, llSHMask, llcbMask, llretiMask, llsoftMask, lltmMask);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
         int strred = 1;//(lp.strucc - 1);

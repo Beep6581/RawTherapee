@@ -1106,6 +1106,9 @@ private:
             LocCCmaskretiCurve locccmasretiCurve;
             LocLLmaskretiCurve locllmasretiCurve;
             LocHHmaskretiCurve lochhmasretiCurve;
+            LocCCmasktmCurve locccmastmCurve;
+            LocLLmasktmCurve locllmastmCurve;
+            LocHHmasktmCurve lochhmastmCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf hltonecurveloc(65536, 0);
@@ -1145,6 +1148,9 @@ private:
                 bool lcmasretiutili = false;
                 bool lhmasretiutili = false;
                 bool llmasretiutili = false;
+                bool lcmastmutili = false;
+                bool lhmastmutili = false;
+                bool llmastmutili = false;
                 bool lcmasutili = false;
                 bool lhmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
@@ -1165,6 +1171,9 @@ private:
                 locccmasretiCurve.Set(params.locallab.spots.at(sp).CCmaskreticurve, lcmasretiutili);
                 locllmasretiCurve.Set(params.locallab.spots.at(sp).LLmaskreticurve, llmasretiutili);
                 lochhmasretiCurve.Set(params.locallab.spots.at(sp).HHmaskreticurve, lhmasretiutili);
+                locccmastmCurve.Set(params.locallab.spots.at(sp).CCmasktmcurve, lcmastmutili);
+                locllmastmCurve.Set(params.locallab.spots.at(sp).LLmasktmcurve, llmastmutili);
+                lochhmastmCurve.Set(params.locallab.spots.at(sp).HHmasktmcurve, lhmastmutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
@@ -1194,7 +1203,8 @@ private:
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                               locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                               locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
-                              LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0);
+                              locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
+                              LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0, 0);
 
 
                 // Clear local curves
