@@ -745,20 +745,24 @@ void ThumbBrowserBase::Internal::on_realize()
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
-    Glib::ustring ttip = "";
-
+    Glib::ustring ttip;
+    bool useMarkup = false;
     {
         MYREADERLOCK(l, parent->entryRW);
 
         for (size_t i = 0; i < parent->fd.size(); i++)
             if (parent->fd[i]->drawable && parent->fd[i]->inside (x, y)) {
-                ttip = parent->fd[i]->getToolTip (x, y);
+                std::tie(ttip, useMarkup) = parent->fd[i]->getToolTip (x, y);
                 break;
             }
     }
 
     if (!ttip.empty()) {
-        tooltip->set_text(ttip);
+        if (useMarkup) {
+            tooltip->set_markup(ttip);
+        } else {
+            tooltip->set_text(ttip);
+        }
         return true;
     } else {
         return false;
