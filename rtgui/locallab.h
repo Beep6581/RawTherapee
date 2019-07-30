@@ -65,6 +65,7 @@ private:
     MyExpander* const expmasksh;
     MyExpander* const expmaskcb;
     MyExpander* const expmaskreti;
+    MyExpander* const expmasktm;
     sigc::connection enablecolorConn, enableexposeConn, enableshadhighConn, enablevibranceConn, enablesoftConn, enableblurConn, enabletonemapConn, enableretiConn, enablesharpConn, enablecontrastConn, enablecbdlConn, enabledenoiConn;
 
     // Curve widgets
@@ -94,6 +95,11 @@ private:
     // Vibrance
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* skinTonesCurve;
+    // TM
+    CurveEditorGroup* const masktmCurveEditorG;
+    FlatCurveEditor* CCmasktmshape;
+    FlatCurveEditor* LLmasktmshape;
+    FlatCurveEditor* HHmasktmshape;
     // Retinex
     CurveEditorGroup* const LocalcurveEditorgainT;
     CurveEditorGroup* const maskretiCurveEditorG;
@@ -178,6 +184,11 @@ private:
     Adjuster* const softradiustm;
     Adjuster* const amount;
     Adjuster* const satur;
+    Adjuster* const blendmasktm;
+    Adjuster* const radmasktm;
+    Adjuster* const chromasktm;
+    Adjuster* const gammasktm;
+    Adjuster* const slomasktm;
     // Retinex
     Adjuster* const str;
     Adjuster* const chrrt;
@@ -267,6 +278,8 @@ private:
     //Tone mapping
     Gtk::CheckButton* const equiltm;
     sigc::connection equiltmConn;
+    Gtk::CheckButton* const enatmMask;
+    sigc::connection enatmMaskConn;
     // Retinex
     Gtk::CheckButton* const equilret;
     sigc::connection equilretConn;
@@ -313,7 +326,9 @@ private:
     sigc::connection softMethodConn;
     MyComboBoxText* const showmasksoftMethod;
     sigc::connection showmasksoftMethodConn;
-
+    //TM
+    MyComboBoxText* const showmasktmMethod;
+    sigc::connection showmasktmMethodConn;
     // Retinex
     MyComboBoxText* const retinexMethod;
     sigc::connection retinexMethodConn;
@@ -377,6 +392,7 @@ private:
     void activlumChanged();
     //TM
     void equiltmChanged();
+    void enatmMaskChanged();
     // Retinex
     void equilretChanged();
     void inversretChanged();
@@ -404,6 +420,8 @@ private:
     // Soft light
     void softMethodChanged();
     void showmasksoftMethodChanged();
+    //TM
+    void showmasktmMethodChanged();
     // Retinex
     void retinexMethodChanged();
     void showmaskretiMethodChanged();
@@ -446,6 +464,7 @@ public:
         int cbMask;
         int retiMask;
         int softMask;
+        int tmMask;
     };
 
     void resetMaskVisibility();

@@ -1068,6 +1068,15 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).softradiustm = locallab.spots.at(j).softradiustm && pSpot.softradiustm == otherSpot.softradiustm;
                 locallab.spots.at(j).amount = locallab.spots.at(j).amount && pSpot.amount == otherSpot.amount;
                 locallab.spots.at(j).equiltm = locallab.spots.at(j).equiltm && pSpot.equiltm == otherSpot.equiltm;
+                locallab.spots.at(j).CCmasktmcurve = locallab.spots.at(j).CCmasktmcurve && pSpot.CCmasktmcurve == otherSpot.CCmasktmcurve;
+                locallab.spots.at(j).LLmasktmcurve = locallab.spots.at(j).LLmasktmcurve && pSpot.LLmasktmcurve == otherSpot.LLmasktmcurve;
+                locallab.spots.at(j).HHmasktmcurve = locallab.spots.at(j).HHmasktmcurve && pSpot.HHmasktmcurve == otherSpot.HHmasktmcurve;
+                locallab.spots.at(j).enatmMask = locallab.spots.at(j).enatmMask && pSpot.enatmMask == otherSpot.enatmMask;
+                locallab.spots.at(j).blendmasktm = locallab.spots.at(j).blendmasktm && pSpot.blendmasktm == otherSpot.blendmasktm;
+                locallab.spots.at(j).radmasktm = locallab.spots.at(j).radmasktm && pSpot.radmasktm == otherSpot.radmasktm;
+                locallab.spots.at(j).chromasktm = locallab.spots.at(j).chromasktm && pSpot.chromasktm == otherSpot.chromasktm;
+                locallab.spots.at(j).gammasktm = locallab.spots.at(j).gammasktm && pSpot.gammasktm == otherSpot.gammasktm;
+                locallab.spots.at(j).slomasktm = locallab.spots.at(j).slomasktm && pSpot.slomasktm == otherSpot.slomasktm;
                 // Retinex
                 locallab.spots.at(j).expreti = locallab.spots.at(j).expreti && pSpot.expreti == otherSpot.expreti;
                 locallab.spots.at(j).retinexMethod = locallab.spots.at(j).retinexMethod && pSpot.retinexMethod == otherSpot.retinexMethod;
@@ -3104,6 +3113,42 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).amount = mods.locallab.spots.at(i).amount;
         }
 
+        if (locallab.spots.at(i).CCmasktmcurve) {
+            toEdit.locallab.spots.at(i).CCmasktmcurve = mods.locallab.spots.at(i).CCmasktmcurve;
+        }
+
+        if (locallab.spots.at(i).LLmasktmcurve) {
+            toEdit.locallab.spots.at(i).LLmasktmcurve = mods.locallab.spots.at(i).LLmasktmcurve;
+        }
+
+        if (locallab.spots.at(i).HHmasktmcurve) {
+            toEdit.locallab.spots.at(i).HHmasktmcurve = mods.locallab.spots.at(i).HHmasktmcurve;
+        }
+
+        if (locallab.spots.at(i).enatmMask) {
+            toEdit.locallab.spots.at(i).enatmMask = mods.locallab.spots.at(i).enatmMask;
+        }
+
+        if (locallab.spots.at(i).blendmasktm) {
+            toEdit.locallab.spots.at(i).blendmasktm = mods.locallab.spots.at(i).blendmasktm;
+        }
+
+        if (locallab.spots.at(i).radmasktm) {
+            toEdit.locallab.spots.at(i).radmasktm = mods.locallab.spots.at(i).radmasktm;
+        }
+
+        if (locallab.spots.at(i).chromasktm) {
+            toEdit.locallab.spots.at(i).chromasktm = mods.locallab.spots.at(i).chromasktm;
+        }
+
+        if (locallab.spots.at(i).gammasktm) {
+            toEdit.locallab.spots.at(i).gammasktm = mods.locallab.spots.at(i).gammasktm;
+        }
+
+        if (locallab.spots.at(i).slomasktm) {
+            toEdit.locallab.spots.at(i).slomasktm = mods.locallab.spots.at(i).slomasktm;
+        }
+
         // Retinex
         if (locallab.spots.at(i).expreti) {
             toEdit.locallab.spots.at(i).expreti = mods.locallab.spots.at(i).expreti;
@@ -4508,6 +4553,15 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     softradiustm(v),
     amount(v),
     equiltm(v),
+    CCmasktmcurve(v),
+    LLmasktmcurve(v),
+    HHmasktmcurve(v),
+    enatmMask(v),
+    blendmasktm(v),
+    radmasktm(v),
+    chromasktm(v),
+    gammasktm(v),
+    slomasktm(v),
     // Retinex
     expreti(v),
     retinexMethod(v),
@@ -4729,6 +4783,15 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     softradiustm = v;
     amount = v;
     equiltm = v;
+    CCmasktmcurve = v;
+    LLmasktmcurve = v;
+    HHmasktmcurve = v;
+    enatmMask = v;
+    blendmasktm = v;
+    radmasktm = v;
+    chromasktm = v;
+    gammasktm = v;
+    slomasktm = v;
     // Retinex
     expreti = v;
     retinexMethod = v;

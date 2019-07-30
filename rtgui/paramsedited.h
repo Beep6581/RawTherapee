@@ -491,6 +491,15 @@ public:
         bool softradiustm;
         bool amount;
         bool equiltm;
+        bool CCmasktmcurve;
+        bool LLmasktmcurve;
+        bool HHmasktmcurve;
+        bool enatmMask;
+        bool blendmasktm;
+        bool radmasktm;
+        bool chromasktm;
+        bool gammasktm;
+        bool slomasktm;
         // Retinex
         bool expreti;
         bool retinexMethod;

@@ -1075,6 +1075,15 @@ struct LocallabParams {
         double softradiustm;
         double amount;
         bool equiltm;
+        std::vector<double> CCmasktmcurve;
+        std::vector<double> LLmasktmcurve;
+        std::vector<double> HHmasktmcurve;
+        bool enatmMask;
+        int blendmasktm;
+        double radmasktm;
+        double chromasktm;
+        double gammasktm;
+        double slomasktm;
         // Retinex
         bool expreti;
         Glib::ustring retinexMethod;
