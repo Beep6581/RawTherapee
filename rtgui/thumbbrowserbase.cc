@@ -28,7 +28,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), arrangement(TB_Horizontal)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(options.thumbSize), numOfCols(1), arrangement(TB_Horizontal)
 {
     inW = -1;
     inH = -1;
@@ -162,30 +162,29 @@ inline void removeFromSelection (const ThumbIterator& iterator, ThumbVector& sel
 
 void ThumbBrowserBase::selectSingle (ThumbBrowserEntryBase* clicked)
 {
-    clearSelection (selected);
+    clearSelection(selected);
+    anchor = clicked;
 
-    if (clicked)
-        addToSelection (clicked, selected);
+    if (clicked) {
+        addToSelection(clicked, selected);
+    }
 }
 
 void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additional)
 {
-    if (selected.empty()) {
+    if (selected.empty() && !anchor) {
         addToSelection(clicked, selected);
+        anchor = clicked;
         return;
     }
 
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
-        ThumbIterator front = std::find(fd.begin(), fd.end(), selected.front());
-        ThumbIterator back;
-        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator back = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator front = std::find(fd.begin(), fd.end(), anchor);
 
-        if (front > current) {
-            front = current;
-            back = std::find(fd.begin(), fd.end(), selected.back());
-        } else {
-            back = current;
+        if (front > back) {
+            std::swap(front, back);
         }
 
         clearSelection(selected);
@@ -217,6 +216,7 @@ void ThumbBrowserBase::selectSet (ThumbBrowserEntryBase* clicked)
     } else {
         addToSelection (clicked, selected);
     }
+    anchor = clicked;
 }
 
 static void scrollToEntry (double& h, double& v, int iw, int ih, ThumbBrowserEntryBase* entry)

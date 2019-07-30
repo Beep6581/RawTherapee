@@ -667,6 +667,7 @@ void FileBrowser::close ()
         MYWRITERLOCK(l, entryRW);
 
         selected.clear ();
+        anchor = nullptr;
 
         MYWRITERLOCK_RELEASE(l); // notifySelectionListener will need read access!
 
