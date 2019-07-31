@@ -16,10 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <string>
-#include <glibmm/ustring.h>
-#include <map>
+#pragma once
+
 #include <cmath>
+#include <map>
+#include <string>
+
+#include <glibmm/ustring.h>
+
+#include "pixelsmap.h"
 #include "rawimage.h"
 
 namespace rtengine
@@ -77,7 +82,7 @@ protected:
 class DFManager
 {
 public:
-    void init( Glib::ustring pathname );
+    void init(const Glib::ustring &pathname);
     Glib::ustring getPathname()
     {
         return currentPath;

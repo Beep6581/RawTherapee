@@ -504,7 +504,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     if (pp->icm.inputProfile == "(none)") {
         inone->set_active(true);
         updateDCP(pp->icm.dcpIlluminant, "");
-    } else if (pp->icm.inputProfile == "(embedded)" || ((pp->icm.inputProfile == "(camera)" || pp->icm.inputProfile == "") && icamera->get_state() == Gtk::STATE_INSENSITIVE)) {
+    } else if (pp->icm.inputProfile == "(embedded)" || ((pp->icm.inputProfile == "(camera)" || pp->icm.inputProfile.empty()) && icamera->get_state() == Gtk::STATE_INSENSITIVE)) {
         iembedded->set_active(true);
         updateDCP(pp->icm.dcpIlluminant, "");
     } else if ((pp->icm.inputProfile == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_INSENSITIVE) {
@@ -519,7 +519,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         // If neither (camera) nor (cameraICC) are available, as is the case when loading a non-raw, activate (embedded).
         iembedded->set_active(true);
         updateDCP(pp->icm.dcpIlluminant, "(cameraICC)");
-    } else if ((pp->icm.inputProfile == "(camera)" || pp->icm.inputProfile == "") && icamera->get_state() != Gtk::STATE_INSENSITIVE) {
+    } else if ((pp->icm.inputProfile == "(camera)" || pp->icm.inputProfile.empty()) && icamera->get_state() != Gtk::STATE_INSENSITIVE) {
         icamera->set_active(true);
         updateDCP(pp->icm.dcpIlluminant, "");
     } else {
@@ -699,10 +699,6 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
         }
 
     }
-}
-
-void ICMPanel::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void ICMPanel::wpChanged()
@@ -953,7 +949,7 @@ void ICMPanel::setRawMeta(bool raw, const rtengine::FramesData* pMeta)
 void ICMPanel::ipSelectionChanged()
 {
 
-    if (ipDialog->get_filename() == "") {
+    if (ipDialog->get_filename().empty()) {
         return;
     }
 

@@ -30,6 +30,7 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
+    badpixels.cc
     CA_correct_RT.cc
     EdgePreservingDecomposition.cc
     FTblockDN.cc
@@ -61,6 +62,8 @@ set(RTENGINESOURCEFILES
     eahd_demosaic.cc
     fast_demo.cc
     ffmanager.cc
+    filmnegativeproc.cc
+    filmnegativethumb.cc
     flatcurves.cc
     gauss.cc
     green_equil_RT.cc

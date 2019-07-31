@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _RAWIMAGESOURCE_
-#define _RAWIMAGESOURCE_
+#pragma once
 
+#include <array>
 #include <iostream>
 #include <memory>
 
@@ -28,6 +28,7 @@
 #include "dcp.h"
 #include "iimage.h"
 #include "imagesource.h"
+#include "pixelsmap.h"
 
 #define HR_SCALE 2
 
@@ -36,7 +37,6 @@ namespace rtengine
 
 class RawImageSource : public ImageSource
 {
-
 private:
     static DiagonalCurve *phaseOneIccCurve;
     static DiagonalCurve *phaseOneIccCurveInv;
@@ -101,13 +101,12 @@ protected:
     void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
-    unsigned FC(int row, int col)
+    unsigned FC(int row, int col) const
     {
         return ri->FC(row, col);
     }
     inline void getRowStartEnd (int x, int &start, int &end);
     static void getProfilePreprocParams(cmsHPROFILE in, float& gammafac, float& lineFac, float& lineSum);
-
 
 public:
     RawImageSource ();
@@ -116,6 +115,8 @@ public:
     int load(const Glib::ustring &fname) override { return load(fname, false); }
     int load(const Glib::ustring &fname, bool firstFrameOnly);
     void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) override;
+    void        filmNegativeProcess (const procparams::FilmNegativeParams &params) override;
+    bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps) override;
     void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) override;
     void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) override;
     void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) override;
@@ -194,8 +195,6 @@ public:
     }
     static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
-    void boxblur2(float** src, float** dst, float** temp, int H, int W, int box );
-    void boxblur_resamp(float **src, float **dst, float** temp, int H, int W, int box, int samp );
     void MSR(float** luminance, float **originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, const RetinexParams &deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
     void HLRecovery_inpaint (float** red, float** green, float** blue) override;
     static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
@@ -258,11 +257,11 @@ protected:
     );
     void ddct8x8s(int isgn, float a[8][8]);
 
-    int  interpolateBadPixelsBayer( PixelsMap &bitmapBads, array2D<float> &rawData );
-    int  interpolateBadPixelsNColours( PixelsMap &bitmapBads, const int colours );
-    int  interpolateBadPixelsXtrans( PixelsMap &bitmapBads );
-    int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
-
+    int interpolateBadPixelsBayer(const PixelsMap &bitmapBads, array2D<float> &rawData);
+    int interpolateBadPixelsNColours(const PixelsMap &bitmapBads, int colours);
+    int interpolateBadPixelsXtrans(const PixelsMap &bitmapBads);
+    int findHotDeadPixels(PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels) const;
+    int findZeroPixels(PixelsMap &bpMap) const;
     void cfa_linedn (float linenoiselevel, bool horizontal, bool vertical, const CFALineDenoiseRowBlender &rowblender);//Emil's line denoise
 
     void green_equilibrate_global (array2D<float> &rawData);
@@ -308,5 +307,5 @@ protected:
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
 
 };
+
 }
-#endif

@@ -117,9 +117,9 @@ void Thumbnail::_generateThumbnailImage ()
     imgRatio = -1.;
 
     // generate thumbnail image
-    Glib::ustring ext = getExtension (fname);
+    const std::string ext = getExtension(fname).lowercase();
 
-    if (ext == "") {
+    if (ext.empty()) {
         return;
     }
 
@@ -127,20 +127,20 @@ void Thumbnail::_generateThumbnailImage ()
     cfs.exifValid = false;
     cfs.timeValid = false;
 
-    if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg") {
+    if (ext == "jpg" || ext == "jpeg") {
         infoFromImage (fname);
         tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
-    } else if (ext.lowercase() == "png") {
+    } else if (ext == "png") {
         tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Png;
         }
-    } else if (ext.lowercase() == "tif" || ext.lowercase() == "tiff") {
+    } else if (ext == "tif" || ext == "tiff") {
         infoFromImage (fname);
         tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
 
@@ -399,6 +399,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
 
         // and restore rank and inTrash
         setRank(rank);
+        pparamsValid = cfs.rating != rank;
         setColorLabel(colorlabel);
         setStage(inTrash);
 
@@ -716,7 +717,7 @@ void Thumbnail::generateExifDateTimeStrings ()
 
     exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::FramesData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::FramesData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), cfs.focalLen));
 
-    if (options.fbShowExpComp && cfs.expcomp != "0.00" && cfs.expcomp != "") { // don't show exposure compensation if it is 0.00EV;old cache iles do not have ExpComp, so value will not be displayed.
+    if (options.fbShowExpComp && cfs.expcomp != "0.00" && !cfs.expcomp.empty()) { // don't show exposure compensation if it is 0.00EV;old cache files do not have ExpComp, so value will not be displayed.
         exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp);    // append exposure compensation to exifString
     }
 
@@ -813,6 +814,7 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
         cfs.lens         = idata->getLens();
         cfs.camMake      = idata->getMake();
         cfs.camModel     = idata->getModel();
+        cfs.rating       = idata->getRating();
 
         if (idata->getOrientation() == "Rotate 90 CW") {
             deg = 90;
@@ -1005,15 +1007,22 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
 
 int Thumbnail::getRank  () const
 {
-    return pparams->rank;
+    // prefer the user-set rank over the embedded Rating
+    // pparams->rank == -1 means that there is no saved rank yet, so we should
+    // next look for the embedded Rating metadata.
+    if (pparams->rank != -1) {
+        return pparams->rank;
+    } else {
+        return cfs.rating;
+    }
 }
 
 void Thumbnail::setRank  (int rank)
 {
     if (pparams->rank != rank) {
         pparams->rank = rank;
-        pparamsValid = true;
     }
+    pparamsValid = true;
 }
 
 int Thumbnail::getColorLabel  () const

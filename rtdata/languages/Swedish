@@ -8,9 +8,6 @@ ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_LICENSE;Licens
 ABOUT_TAB_RELEASENOTES;Versionsnyheter
 ABOUT_TAB_SPLASH;Splash
-BATCHQUEUE_AUTOSTART;Autostart
-BATCHQUEUE_AUTOSTARTHINT;Starta behandlingen automatiskt när en ny bild kommer in
-BATCHQUEUE_DESTFILENAME;Sökväg och filnamn
 BATCH_PROCESSING;Batchbehandling
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_OUT;O:
@@ -77,7 +74,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Förbigå förbättringssteg för LMMSE (För
 EXPORT_BYPASS_SHARPENEDGE;Förbigå kantskärpning
 EXPORT_BYPASS_SHARPENING;Förbigå skärpning
 EXPORT_BYPASS_SHARPENMICRO;Förbigå mikrokontrast
-EXPORT_BYPASS_SH_HQ;Förbigå skuggor/högdagrar (hög kvalitet)
 EXPORT_FASTEXPORTOPTIONS;<b>Inställningar för snabbexport</b>
 EXPORT_INSTRUCTIONS;Snabbexport erbjuder snabbare konvertering genom att åsidosätta tidskrävande verktyg och framkallningsinställningar. Batchkön körs då med dessa, mindre krävande, inställningar istället så länge det här alternativet är valt. Den här metoden rekommenderas för de konverteringar där användningsområdet tillåter en lägre kvalitet på de färdiga bilderna. Genom att använda det här alternativet görs inga modifieringar i bildens normala framkallningsinställningar.
 EXPORT_MAXHEIGHT;Maximal höjd:
@@ -86,7 +82,6 @@ EXPORT_PUTTOQUEUEFAST; Lägg till i kö för snabbexport
 EXPORT_RAW_DMETHOD;Demosaic-metod
 EXTPROGTARGET_1;Rå
 EXTPROGTARGET_2;köhanterad
-FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
 FILEBROWSER_APPLYPROFILE;Använd profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Applicera profil (partiell)
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
@@ -98,11 +93,8 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Färgetikett\n\nAnvänd menyn eller kortkommandon
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
 FILEBROWSER_DARKFRAME;Svartbild
-FILEBROWSER_DELETEDLGLABEL;Bekräftelse vid borttag
-FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filerna?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Är du säker på att du vill ta bort de valda filerna %1 OCH den behandlade versionen?
+FILEBROWSER_DELETEDIALOG_HEADER;Bekräftelse vid borttag
 FILEBROWSER_EMPTYTRASH;Töm papperskorgen
-FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
 FILEBROWSER_EXTPROGMENU;Öppna med
 FILEBROWSER_FLATFIELD;Plattfält
 FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
@@ -136,8 +128,6 @@ FILEBROWSER_POPUPRANK2;Betyg 2 **
 FILEBROWSER_POPUPRANK3;Betyg 3 ***
 FILEBROWSER_POPUPRANK4;Betyg 4 ****
 FILEBROWSER_POPUPRANK5;Betyg 5 *****
-FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
-FILEBROWSER_POPUPREMOVEINCLPROC;Ta bort från filsystemet inkl. den behandlade
 FILEBROWSER_POPUPRENAME;Byt namn
 FILEBROWSER_POPUPSELECTALL;Markera allt
 FILEBROWSER_POPUPTRASH;Flytta till papperskorgen
@@ -163,7 +153,6 @@ FILEBROWSER_SHOWDIRHINT;Återställ alla sökfilter.\nKortkommando: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder.\nKortkommando: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder.\nKortkommando: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information.\nKortkommando: <b>i</b>\n\nKortkommando i enkelbildsläget: <b>Alt-i</b>
-FILEBROWSER_SHOWNOTTRASHHINT;Visa endast ej borttagna bilder.
 FILEBROWSER_SHOWORIGINALHINT;Visa endast ursprungliga bilder.\n\nNär flera bilder finns med samma filnamn men med olika filändelser så anses den bild vara urpsrungsbilden som har sin ändelse närmst toppen i listan över filändelser i Inställningar > Filbläddrare > Hanterade filändelser
 FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1.\nKortkommando: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2.\nKortkommando: <b>2</b>
@@ -212,7 +201,6 @@ GENERAL_WARNING;Varning
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer\nKlicka på höger musknapp på förhandsvisningen för att frysa
 HISTOGRAM_TOOLTIP_CHRO;Visa/Dölj kromananshistogrammet
-HISTOGRAM_TOOLTIP_FULL;Växla mellan fullt eller skalat histogram
 HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
 HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
 HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
@@ -254,9 +242,9 @@ HISTORY_MSG_30;RLD - Radie
 HISTORY_MSG_31;RLD - Mängd
 HISTORY_MSG_32;RLD - Dämpning
 HISTORY_MSG_33;RLD - Upprepningar
-HISTORY_MSG_34;LCP distorsionskorrigering
-HISTORY_MSG_35;LCP vinjetteringskorrigering
-HISTORY_MSG_36;LCP Kromatiska aberattioner
+HISTORY_MSG_34;Distorsionskorrigering
+HISTORY_MSG_35;Vinjetteringskorrigering
+HISTORY_MSG_36;Kromatiska aberattioner
 HISTORY_MSG_37;Autonivåer
 HISTORY_MSG_38;Vitbalansmetod
 HISTORY_MSG_39;VB - Färgtemperatur
@@ -665,14 +653,14 @@ MAIN_BUTTON_SENDTOEDITOR;Redigera bilden i ett externt program
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram.\nKortkommando: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Visa/dölj alla sidopaneler.\nKortkommando: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärmsläget
-MAIN_FRAME_BATCHQUEUE;Batchkö
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batchkö\nKortkommando: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Redigeringsvy
 MAIN_FRAME_EDITOR_TOOLTIP;Redigeringsvy\nKortkommando: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Filvy
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Filvy\nKortkommando<b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
+MAIN_FRAME_QUEUE;Batchkö
+MAIN_FRAME_QUEUE_TOOLTIP; Batchkö\nKortkommando: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Nyligen använda kataloger
 MAIN_MSG_ALREADYEXISTS;Filen existerar redan.
 MAIN_MSG_CANNOTLOAD;Kan inte ladda bilden
@@ -705,8 +693,6 @@ MAIN_TAB_RAW;Råbild
 MAIN_TAB_RAW_TOOLTIP;Kortkommando: <b>Alt-r</b>
 MAIN_TAB_TRANSFORM;Omvandla
 MAIN_TAB_TRANSFORM_TOOLTIP;Kortkommando: <b>Alt-t</b>
-MAIN_TAB_WAVELET;Wavelet
-MAIN_TAB_WAVELET_TOOLTIP;Kortkommando: <b>Alt-w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg: <b>Temabaserad</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg: <b>Svart</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg: <b>Vit</b>\nKortkommando: <b>9</b>
@@ -801,7 +787,6 @@ PARTIALPASTE_SHARPENING;Skärpa (Oskarp mask/RL)
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 PARTIALPASTE_VIBRANCE;Lyster
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
-PARTIALPASTE_WAVELETGROUP;Wavelet-nivåer
 PARTIALPASTE_WHITEBALANCE;Vitbalans
 PREFERENCES_ADD;Lägg till
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Översiktsvyns guidefärg
@@ -813,7 +798,6 @@ PREFERENCES_BEHADDALLHINT;Sätt alla parametrar till <b>Lägg till</b>-läge.\nF
 PREFERENCES_BEHAVIOR;Uppträdande
 PREFERENCES_BEHSETALL;Sätt allt till 'Ange'
 PREFERENCES_BEHSETALLHINT;Sätt alla parametrar till <b>Ange</b>-läge.\nFörändringar i parametrar i batch-verktyget kommer att vara <b>absoluta</b> och de faktiska värdena kommer att visas.
-PREFERENCES_BLACKBODY;Glödlampa
 PREFERENCES_CACHEMAXENTRIES;Maximalt antal cachefiler
 PREFERENCES_CACHEOPTS;Cacheinställningar
 PREFERENCES_CACHETHUMBHEIGHT;Maximal höjd på miniatyrbilderna
@@ -832,10 +816,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format för nycklar
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Namn
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Exekverbar sökväg
-PREFERENCES_D50;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Hittade
 PREFERENCES_DARKFRAMESHOTS;bilder
 PREFERENCES_DARKFRAMETEMPLATES;mallar
@@ -850,36 +830,19 @@ PREFERENCES_DIRSOFTWARE;Installationskatalog
 PREFERENCES_EDITORLAYOUT;Layout för redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FBROWSEROPTS;Inställningar för filvyn/miniatyrbilderna
-PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FLATFIELDFOUND;Hittade
 PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
 PREFERENCES_FLATFIELDSHOTS;bilder
 PREFERENCES_FLATFIELDTEMPLATES;mallar
-PREFERENCES_FLUOF2;Lysrör F2
-PREFERENCES_FLUOF7;Lysrör F7
-PREFERENCES_FLUOF11;Lysrör F11
 PREFERENCES_FORIMAGE;För bildfiler
 PREFERENCES_FORRAW;För råbilder
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Samma miniatyrbildshöjd mellan redigerings- och filvyn
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Att ha olika miniatyrbildshöjder kräver ytterligare beräkningskraft varje gång du växlar mellan redigerings- och filvyn.
 PREFERENCES_GIMPPATH;Installationskatalog för GIMP
-PREFERENCES_GREY;Utenhetens Yb luminans (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREYSC;Vyns Yb luminans (%)
-PREFERENCES_GREYSC18;Yb=18 CIE L#50
-PREFERENCES_GREYSCA;Automatisk
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogrammet till vänster
-PREFERENCES_HISTOGRAMWORKING;Använd arbetsprofil för huvudhistogram och översiktsvyn.
 PREFERENCES_HISTOGRAM_TOOLTIP;Om påslagen, så används arbetsprofilen för att skapa huvudhistogrammet och översiktsvyn, annars används den gamma-korrigerade profilen istället.
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
 PREFERENCES_ICCDIR;Katalog för färgprofiler
-PREFERENCES_IMG_RELOAD_NEEDED;De här förändringarna kräver att bilden laddas om (eller att en ny bild öppnas) för att effektueras.
 PREFERENCES_IMPROCPARAMS;Standardprofiler
 PREFERENCES_INSPECT_LABEL;Inspektion
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximalt antal cachade bilder
@@ -896,15 +859,9 @@ PREFERENCES_MENUGROUPLABEL;Visa "Etikett"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Visa "Profilaktiviteter"
 PREFERENCES_MENUGROUPRANK;Visa "Betygsättning"
 PREFERENCES_MENUOPTIONS;Menyval för högerklick
-PREFERENCES_METADATA;Metadata
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt, i flerfliksläge
 PREFERENCES_NAVIGATIONFRAME;Navigering
-PREFERENCES_OUTDIR;Utmatningskatalog
-PREFERENCES_OUTDIRFOLDER;Spara till katalog
-PREFERENCES_OUTDIRFOLDERHINT;Spara de behandlade bilderna i den valda katalogen
-PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
-PREFERENCES_OUTDIRTEMPLATEHINT;Du kan använda följande format:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här format hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012\n%d1=2010-09-02\n%d2=bilder\n%p1=/home/tom/bilder/2010-09-02,\n%p2=/home/tom/bilder\n%p3=/home/tom\n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Visa filnamnet över miniatyrbilden i redigeringsvyn
 PREFERENCES_OVERWRITEOUTPUTFILE;Skriv över existerande utfiler
@@ -941,9 +898,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Visa verktygsraden för filmstrip
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
 PREFERENCES_SINGLETAB;Öppna en bild åt gången
 PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
-PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
 PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud.\nI Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.\nPå Linuxbaserade system kan du prova med "complete", "windows-attention" o.s.v.
 PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
+PREFERENCES_SND_QUEUEDONE;Batchkön färdig
 PREFERENCES_SND_THRESHOLDSECS;Ljudet kommer efter så här många sekunder
 PREFERENCES_STARTUPIMDIR;Bildkatalog som visas vid uppstart
 PREFERENCES_TAB_BROWSER;Filbläddrare
@@ -953,9 +910,7 @@ PREFERENCES_TAB_IMPROC;Bildbehandling
 PREFERENCES_TAB_SOUND;Ljud
 PREFERENCES_TP_LABEL;Verktygspanel:
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
-PREFERENCES_TUNNELMETADATA;Kopiera Exif/IPTC/XMP till utfilen oförändrat
 PREFERENCES_USEBUNDLEDPROFILES;Visa förinstallerade profiler
-PREFERENCES_VIEW;Utenhetens vitbalansvärde (datorskärm, TV, bildkanon, etc.)
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_COPYPPASTE;Parametrar att kopiera
 PROFILEPANEL_GLOBALPROFILES;Förinstallerade profiler
@@ -991,11 +946,17 @@ PROGRESSBAR_SNAPSHOT_ADDED;Bokmärke tillagt.
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profilen har ändrats i filhanteraren
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif-information ej tillgänglig.
+QUEUE_AUTOSTART;Autostart
+QUEUE_AUTOSTART_TOOLTIP;Starta behandlingen automatiskt när en ny bild kommer in
+QUEUE_DESTFILENAME;Sökväg och filnamn
+QUEUE_FORMAT_TITLE;Filformat
+QUEUE_LOCATION_FOLDER;Spara till katalog
+QUEUE_LOCATION_TEMPLATE;Använd förinställning
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Du kan använda följande format:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här format hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012\n%d1=2010-09-02\n%d2=bilder\n%p1=/home/tom/bilder/2010-09-02,\n%p2=/home/tom/bilder\n%p3=/home/tom\n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;Lägg automatiskt till en ändelse om filnamnet redan existerar
 SAVEDLG_FILEFORMAT;Filformat
 SAVEDLG_FORCEFORMATOPTS;Kräv att inställningar sparas
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
-SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
 SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
 SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
@@ -1087,7 +1048,6 @@ TP_CHMIXER_BLUE;Blå kanal
 TP_CHMIXER_GREEN;Grön kanal
 TP_CHMIXER_LABEL;Kanalmixer
 TP_CHMIXER_RED;Röd kanal
-TP_CHROMATABERR_LABEL;Kromatiska abberationer
 TP_COARSETRAF_TOOLTIP_HFLIP;Vänd horisontellt
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotera åt vänster.\nKortkommando: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotera åt höger.\nKortkommando: <b>]</b>
@@ -1141,8 +1101,6 @@ TP_COLORAPP_SURROUND_DARK;Mörk
 TP_COLORAPP_SURROUND_DIM;Dunkelt
 TP_COLORAPP_SURROUND_EXDARK;Extremt mörkt
 TP_COLORAPP_SURROUND_TOOLTIP;Ändra toner och färger för att ta i beaktande betraktningsförhållandena för utmatningsenheten\n\n<b>Medel:</b>\nMedelljusa omgivningar (standard)\nBilden kommer ej att ändras\n\n<b>Dunkelt:</b>\nDunkla omgivningar (TV)\nBilden kommer att bli aningen mörkare\n\n<b>Mörk:</b>\nMörka omgivningar (projektor)\nBilden kommer att bli mörkare\n\n<b>Extremt mörkt:</b>\nExtremt mörka omgivningar (cutsheet)\nBilden kommer bli mycket mörk
-TP_COLORAPP_SURSOURCE;Mörk omgivning
-TP_COLORAPP_SURSOURCE_TOOLTIP;Kan användas om källbilden har en mörk kant.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Intensitet
 TP_COLORAPP_TCMODE_CHROMA;Kroma
 TP_COLORAPP_TCMODE_COLORF;Färgmättnad
@@ -1210,7 +1168,6 @@ TP_DEFRINGE_LABEL;Fyll ut överstrålning
 TP_DEFRINGE_RADIUS;Radie
 TP_DEFRINGE_THRESHOLD;Tröskelvärde
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisk global
-TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Försök att utvärdera chroma-bruset\nVar försiktig, den här beräkningen görs på genomsnittet och är tämligen subjektiv!
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Krominans - Blå-Gul
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Krominans-kurva
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Krominans
@@ -1225,8 +1182,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Förhandsgranska brus: Medel=%1  
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Förhandsgranska brus: Medel= -   Hög= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tile-storlek=%1, Center: Tx=%2  Ty=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Krominans - Röd-Grön
-TP_DIRPYRDENOISE_ENH;Förbättrat läge
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Ökar kvaliteten på brusreduceringen till priset av 20 % längre beräkningstid
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminanskontroll
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminans-kurva
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminansdetalj
@@ -1234,7 +1189,6 @@ TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminans
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminans
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Metod
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;Lab
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;Brusreducering
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;För råfiler kan antingen RGB- eller Labmetoder användas.\n\nFör icke-råfiler kommer Labmetoden att användas, oavsett vad som är valt.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
@@ -1247,7 +1201,6 @@ TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Endast luminans
 TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
 TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Viktad L* (litet) + a*b* (normal)
-TP_DIRPYRDENOISE_SLI;Reglage
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 mjuk
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1314,10 +1267,6 @@ TP_FLATFIELD_BT_HORIZONTAL;Horisontell
 TP_FLATFIELD_BT_VERTHORIZ;Vertikal + horisontell
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_LABEL;Plattfält
-TP_GAMMA_CURV;gamma
-TP_GAMMA_FREE;Obunden gamma
-TP_GAMMA_OUTPUT;Utmatningsgamma
-TP_GAMMA_SLOP;Lutning (linjär)
 TP_GENERAL_11SCALE_TOOLTIP;Effekten från det här verktyget eller några av dess underkomponenter syns endast då de visas  i 1:1-skala eller högre
 TP_GRADIENT_CENTER;Centrum
 TP_GRADIENT_CENTER_X;Centrum, X
@@ -1346,8 +1295,6 @@ TP_HSVEQUALIZER_VAL;Värde
 TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Bas-exponering
 TP_ICM_APPLYHUESATMAP;Bas-tabell
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Tillämpa den inbäddade DCP:ns uppslagstabell. Inställningen är bara aktiv om den valda DCP har en sådan.
-TP_ICM_BLENDCMSMATRIX;Mixa högdagrar med matris
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Möjliggör återskapande av utbrända högdagrar när LUT-baserade ICC-profiler används.
 TP_ICM_BPC;Svartpunktskompensation
 TP_ICM_DCPILLUMINANT;Ljuskälla
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolerad ljuskälla
@@ -1443,8 +1390,7 @@ TP_PRSHARPENING_TOOLTIP;Skärper bilden efter att den storleksförändrats. Fung
 TP_RAWCACORR_AUTO;Reducera automatiskt kromatiska abberationer
 TP_RAWCACORR_CABLUE;Blå
 TP_RAWCACORR_CARED;Röd
-TP_RAWCACORR_CASTR;Styrka
-TP_RAWEXPOS_BLACKS;Svartpunktsnivåer
+TP_RAWCACORR_LABEL;Reducera kromatiska abberationer
 TP_RAWEXPOS_BLACK_0;Grön 1 (ledare)
 TP_RAWEXPOS_BLACK_1;Röd
 TP_RAWEXPOS_BLACK_2;Blå
@@ -1555,10 +1501,8 @@ TP_SAVEDIALOG_OK_TIP;Kortkommando: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
 TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
 TP_SHADOWSHLIGHTS_LABEL;Skugg- och högdageråterställning
-TP_SHADOWSHLIGHTS_LOCALCONTR;Lokal kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Radie
 TP_SHADOWSHLIGHTS_SHADOWS;Skuggor
-TP_SHADOWSHLIGHTS_SHARPMASK;Skarp mask
 TP_SHADOWSHLIGHTS_SHTONALW;Tonvidd (Skuggor)
 TP_SHARPENEDGE_AMOUNT;Mängd
 TP_SHARPENEDGE_LABEL;Kanter
@@ -1791,7 +1735,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_CATMULLROM;Flexible
@@ -1820,7 +1763,14 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !GENERAL_CURRENT;Current
 !GENERAL_RESET;Reset
 !GENERAL_SAVE_AS;Save as...
@@ -1913,6 +1863,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 !HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
@@ -2022,6 +1974,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_DEHAZE;Haze removal
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
@@ -2037,6 +1990,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
 !PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
 !PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PREFERENCES_APPEARANCE_THEME;Theme
 !PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_CACHECLEAR;Clear
@@ -2057,11 +2011,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_CROP_GUIDES_FRAME;Frame
 !PREFERENCES_CROP_GUIDES_FULL;Original
 !PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DIRECTORIES;Directories
 !PREFERENCES_EDITORCMDLINE;Custom command line
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LANG;Language
 !PREFERENCES_MONINTENT;Default rendering intent
@@ -2095,6 +2047,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
@@ -2166,6 +2120,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
 !TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
+!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red ratio
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
@@ -2241,15 +2201,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2269,7 +2226,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
 !TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
 !TP_RETINEX_LABEL_MASK;Mask

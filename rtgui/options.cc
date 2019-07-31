@@ -44,7 +44,7 @@
 
 // User's settings directory, including images' profiles if used
 Glib::ustring Options::rtdir;
-// User's cached datas' directory
+// User's cached data directory
 Glib::ustring Options::cacheBaseDir;
 
 Options options;
@@ -345,6 +345,7 @@ void Options::setDefaults()
     fontSize = 10;
     CPFontFamily = "default";
     CPFontSize = 8;
+    pseudoHiDPISupport = false;
     lastScale = 5;
     lastShowAllExif = false;
     panAccelFactor = 5;
@@ -368,6 +369,7 @@ void Options::setDefaults()
     multiUser = true;
     profilePath = "profiles";
     loadSaveProfilePath = "";           // will be corrected in load as otherwise construction fails
+    lastCopyMovePath = "";
     version = "0.0.0.0";                // temporary value; will be correctly set in RTWindow::on_realize
     thumbSize = 160;
     thumbSizeTab = 160;
@@ -411,6 +413,7 @@ void Options::setDefaults()
     favorites.clear();
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
+    parsedExtensionsSet.clear();
     renameUseTemplates = false;
     renameTemplates.clear();
     thumbnailZoomRatios.clear();
@@ -647,10 +650,12 @@ Options* Options::copyFrom(Options* other)
 void Options::filterOutParsedExtensions()
 {
     parsedExtensions.clear();
+    parsedExtensionsSet.clear();
 
     for (unsigned int i = 0; i < parseExtensions.size(); i++)
         if (parseExtensionsEnabled[i]) {
             parsedExtensions.push_back(parseExtensions[i].lowercase());
+            parsedExtensionsSet.emplace(parseExtensions[i].lowercase());
         }
 }
 
@@ -1252,6 +1257,10 @@ void Options::readFromFile(Glib::ustring fname)
                     CPFontSize = keyFile.get_integer("GUI", "CPFontSize");
                 }
 
+                if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
+                	pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
+                }
+
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
                     lastScale = keyFile.get_integer("GUI", "LastPreviewScale");
                 }
@@ -1831,6 +1840,7 @@ void Options::readFromFile(Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
                 safeDirGet(keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
                 safeDirGet(keyFile, "Dialogs", "LastICCProfCreatorDir", lastICCProfCreatorDir);
+                safeDirGet(keyFile, "Dialogs", "LastCopyMovePath", lastCopyMovePath);
 
                 if (keyFile.has_key("Dialogs", "GimpPluginShowInfoDialog")) {
                     gimpPluginShowInfoDialog = keyFile.get_boolean("Dialogs", "GimpPluginShowInfoDialog");
@@ -2062,6 +2072,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FontSize", fontSize);
         keyFile.set_string("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer("GUI", "CPFontSize", CPFontSize);
+        keyFile.set_boolean("GUI", "PseudoHiDPISupport", pseudoHiDPISupport);
         keyFile.set_integer("GUI", "LastPreviewScale", lastScale);
         keyFile.set_boolean("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer("GUI", "PanAccelFactor", panAccelFactor);
@@ -2223,6 +2234,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string("Dialogs", "LastLensProfileDir", lastLensProfileDir);
         keyFile.set_string("Dialogs", "LastICCProfCreatorDir", lastICCProfCreatorDir);
+        keyFile.set_string("Dialogs", "LastCopyMovePath", lastCopyMovePath);
         keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyFile.set_string("Lensfun", "DBDirectory", rtSettings.lensfunDbDirectory);
@@ -2458,36 +2470,17 @@ bool Options::is_parse_extention(Glib::ustring fname)
 /*
  * return true if fname ends with one of the retained image file extensions
  */
-bool Options::has_retained_extention(Glib::ustring fname)
+bool Options::has_retained_extention(const Glib::ustring& fname)
 {
-
-    Glib::ustring ext = getExtension(fname).lowercase();
-
-    if (!ext.empty()) {
-        // there is an extension to the filename
-
-        // look out if it has one of the retained extensions
-        for (unsigned int i = 0; i < parsedExtensions.size(); i++) {
-            if (ext == parsedExtensions[i]) {
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return parsedExtensionsSet.find(getExtension(fname).lowercase()) != parsedExtensionsSet.end();
 }
 
 /*
  * return true if ext is an enabled extension
  */
-bool Options::is_extention_enabled(Glib::ustring ext)
+bool Options::is_extention_enabled(const Glib::ustring& ext)
 {
-    for (int j = 0; j < (int)parseExtensions.size(); j++)
-        if (parseExtensions[j].casefold() == ext.casefold()) {
-            return j >= (int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
-        }
-
-    return false;
+    return parsedExtensionsSet.find(ext.lowercase()) != parsedExtensionsSet.end();
 }
 
 Glib::ustring Options::getUserProfilePath()

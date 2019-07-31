@@ -28,7 +28,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), arrangement(TB_Horizontal)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(options.thumbSize), numOfCols(1), arrangement(TB_Horizontal)
 {
     inW = -1;
     inH = -1;
@@ -162,37 +162,42 @@ inline void removeFromSelection (const ThumbIterator& iterator, ThumbVector& sel
 
 void ThumbBrowserBase::selectSingle (ThumbBrowserEntryBase* clicked)
 {
-    clearSelection (selected);
+    clearSelection(selected);
+    anchor = clicked;
 
-    if (clicked)
-        addToSelection (clicked, selected);
+    if (clicked) {
+        addToSelection(clicked, selected);
+    }
 }
 
 void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additional)
 {
-    if (selected.empty()) {
-        addToSelection(clicked, selected);
-        return;
+    if (!anchor) {
+        anchor = clicked;
+        if (selected.empty()) {
+            addToSelection(clicked, selected);
+            return;
+        }
     }
 
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
-        ThumbIterator front = std::find(fd.begin(), fd.end(), selected.front());
-        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator back = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator front = anchor == clicked ? back : std::find(fd.begin(), fd.end(), anchor);
 
-        if (front > current) {
-            std::swap(front, current);
+        if (front > back) {
+            std::swap(front, back);
         }
 
         clearSelection(selected);
 
-        for (; front <= current && front != fd.end(); ++front) {
+        for (; front <= back && front != fd.end(); ++front) {
             addToSelection(*front, selected);
         }
     } else {
         // Add an additional range w.r.t. the last clicked entry.
         ThumbIterator last = std::find(fd.begin(), fd.end(), lastClicked);
-        ThumbIterator current = std::find (fd.begin(), fd.end(), clicked);
+        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
 
         if (last > current) {
             std::swap(last, current);
@@ -206,13 +211,14 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
 
 void ThumbBrowserBase::selectSet (ThumbBrowserEntryBase* clicked)
 {
-    const ThumbIterator iterator = std::find (selected.begin (), selected.end (), clicked);
+    const ThumbIterator iterator = std::find(selected.begin(), selected.end(), clicked);
 
-    if (iterator != selected.end ()) {
-        removeFromSelection (iterator, selected);
+    if (iterator != selected.end()) {
+        removeFromSelection(iterator, selected);
     } else {
-        addToSelection (clicked, selected);
+        addToSelection(clicked, selected);
     }
+    anchor = clicked;
 }
 
 static void scrollToEntry (double& h, double& v, int iw, int ih, ThumbBrowserEntryBase* entry)
@@ -534,28 +540,33 @@ void ThumbBrowserBase::configScrollBars ()
     GThreadLock tLock; // Acquire the GUI
 
     if (inW > 0 && inH > 0) {
-
-        int iw = internal.get_width ();
-        int ih = internal.get_height ();
-
-        hscroll.get_adjustment()->set_upper (inW);
-        vscroll.get_adjustment()->set_upper (inH);
-        hscroll.get_adjustment()->set_lower (0);
-        vscroll.get_adjustment()->set_lower (0);
-        hscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
-        vscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
-        hscroll.get_adjustment()->set_page_increment (iw);
-        vscroll.get_adjustment()->set_page_increment (ih);
-        hscroll.get_adjustment()->set_page_size (iw);
-        vscroll.get_adjustment()->set_page_size (ih);
-
-        if(iw >= inW) {
-            hscroll.hide();
+        int ih = internal.get_height();
+        if (arrangement == TB_Horizontal) {
+            auto ha = hscroll.get_adjustment();
+            int iw = internal.get_width();
+            ha->set_upper(inW);
+            ha->set_lower(0);
+            ha->set_step_increment(!fd.empty() ? fd[0]->getEffectiveWidth() : 0);
+            ha->set_page_increment(iw);
+            ha->set_page_size(iw);
+            if (iw >= inW) {
+                hscroll.hide();
+            } else {
+                hscroll.show();
+            }
         } else {
-            hscroll.show();
+            hscroll.hide();
         }
 
-        if(ih >= inH) {
+        auto va = vscroll.get_adjustment();
+        va->set_upper(inH);
+        va->set_lower(0);
+        const auto height = !fd.empty() ? fd[0]->getEffectiveHeight() : 0;
+        va->set_step_increment(height);
+        va->set_page_increment(height == 0 ? ih : (ih / height) * height);
+        va->set_page_size(ih);
+
+        if (ih >= inH) {
             vscroll.hide();
         } else {
             vscroll.show();
@@ -563,7 +574,7 @@ void ThumbBrowserBase::configScrollBars ()
     }
 }
 
-void ThumbBrowserBase::arrangeFiles()
+void ThumbBrowserBase::arrangeFiles(bool checkfilter)
 {
     MYREADERLOCK(l, entryRW);
 
@@ -572,17 +583,17 @@ void ThumbBrowserBase::arrangeFiles()
     //GThreadLock lock;
 
     int rowHeight = 0;
-
-    for (unsigned int i = 0; i < fd.size(); i++) {
-        // apply filter
-        fd[i]->filtered = !checkFilter (fd[i]);
+    for (const auto entry : fd) {
+        if (checkfilter) {
+            // apply filter
+            entry->filtered = !checkFilter(entry);
+        }
 
         // compute size of the items
-        if (!fd[i]->filtered && fd[i]->getMinimalHeight() > rowHeight) {
-            rowHeight = fd[i]->getMinimalHeight ();
+        if (!entry->filtered) {
+            rowHeight = std::max(entry->getMinimalHeight(), rowHeight);
         }
     }
-
     if (arrangement == TB_Horizontal) {
         numOfCols = 1;
 
@@ -667,9 +678,9 @@ void ThumbBrowserBase::arrangeFiles()
                 }
 
                 if (ct < fd.size()) {
-                    fd[ct]->setPosition(currx, curry, colWidths[i % numOfCols], rowHeight);
+                    fd[ct]->setPosition(currx, curry, colWidths[i], rowHeight);
                     fd[ct]->drawable = true;
-                    currx += colWidths[i % numOfCols];
+                    currx += colWidths[i];
                 }
             }
 
@@ -736,20 +747,24 @@ void ThumbBrowserBase::Internal::on_realize()
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
-    Glib::ustring ttip = "";
-
+    Glib::ustring ttip;
+    bool useMarkup = false;
     {
         MYREADERLOCK(l, parent->entryRW);
 
         for (size_t i = 0; i < parent->fd.size(); i++)
             if (parent->fd[i]->drawable && parent->fd[i]->inside (x, y)) {
-                ttip = parent->fd[i]->getToolTip (x, y);
+                std::tie(ttip, useMarkup) = parent->fd[i]->getToolTip (x, y);
                 break;
             }
     }
 
-    if (ttip != "") {
-        tooltip->set_markup (ttip);
+    if (!ttip.empty()) {
+        if (useMarkup) {
+            tooltip->set_markup(ttip);
+        } else {
+            tooltip->set_text(ttip);
+        }
         return true;
     } else {
         return false;
@@ -970,12 +985,12 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
 }
 
 
-void ThumbBrowserBase::redraw ()
+void ThumbBrowserBase::redraw (bool checkfilter)
 {
 
     GThreadLock lock;
-    arrangeFiles ();
-    queue_draw ();
+    arrangeFiles(checkfilter);
+    queue_draw();
 }
 
 void ThumbBrowserBase::zoomChanged (bool zoomIn)

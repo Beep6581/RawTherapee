@@ -389,10 +389,6 @@ void ICCProfileCreator::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void ICCProfileCreator::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void ICCProfileCreator::primariesChanged()
 {
     if (primaries->get_active_row_number() > 0) {

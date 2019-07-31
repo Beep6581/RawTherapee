@@ -115,10 +115,6 @@ void FilmSimulation::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void FilmSimulation::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void FilmSimulation::setBatchMode( bool batchMode )
 {
     ToolPanel::setBatchMode( batchMode );
@@ -300,7 +296,7 @@ ClutComboBox::ClutModel::ClutModel(const Glib::ustring &path)
 {
     m_model = Gtk::TreeStore::create (m_columns);
     //set_model (m_model);
-    count = parseDir(path);
+    count = path.empty() ? 0 : parseDir(path);
 }
 
 int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
@@ -364,7 +360,7 @@ int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
     }
 
     // Fill menu structure with CLUT files
-    std::set<Glib::ustring> entries;
+    std::set<std::string> entries;
 
     unsigned long fileCount = 0;
 
@@ -390,10 +386,10 @@ int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
             Glib::ustring name;
             Glib::ustring extension;
             Glib::ustring profileName;
-            HaldCLUT::splitClutFilename (entry, name, extension, profileName);
+            HaldCLUT::splitClutFilename (entry, name, extension, profileName, false);
 
             extension = extension.casefold();
-            if (extension.compare("tif") != 0 && extension.compare("png") != 0) {
+            if (extension != "png" && extension != "tif") {
                 continue;
             }
 

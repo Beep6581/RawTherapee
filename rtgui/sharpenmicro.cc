@@ -156,10 +156,6 @@ void SharpenMicro::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void SharpenMicro::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void SharpenMicro::setBatchMode(bool batchMode)
 {
     amount->showEditedCB     ();

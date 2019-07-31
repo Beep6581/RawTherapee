@@ -76,7 +76,7 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
             //shadow tone curve
             vfloat Yv = cr * rv + cg * gv + cb * bv;
-            vfloat tonefactorv = shtonecurve(Yv);
+            vfloat tonefactorv = shtonecurve[Yv];
             STVF(rtemp[ti * tileSize + tj], rv * tonefactorv);
             STVF(gtemp[ti * tileSize + tj], gv * tonefactorv);
             STVF(btemp[ti * tileSize + tj], bv * tonefactorv);
@@ -314,7 +314,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
         if (softProof) {
             cmsHPROFILE oprof = nullptr;
             RenderingIntent outIntent;
-
+            
             flags = cmsFLAGS_SOFTPROOFING | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
 
             if (!settings->printerProfile.empty()) {
@@ -729,7 +729,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
         const float hue = params->colorappearance.colorh;
         const float rstprotection = 100. - params->colorappearance.rstprotection;
 
-        // extracting datas from 'params' to avoid cache flush (to be confirmed)
+        // extracting data from 'params' to avoid cache flush (to be confirmed)
         const ColorAppearanceParams::TcMode curveMode = params->colorappearance.curveMode;
         const bool hasColCurve1 = bool (customColCurve1);
         const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
@@ -1261,8 +1261,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                             }
 
                             Qpro = Qanc * (Qq / Qold);
-                            //   Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
-                            Jpro = Jpro * SQR (Qq / Qold);
+                            Jpro = SQR ((10.f * Qpro) / wh);
 
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
@@ -1342,11 +1341,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                                 Qold = 0.001f;
                             }
 
-                            //  Qpro = (float) (Qq * (coef) / 327.68f);
                             Qpro = Qanc * (Qq / Qold);
-                            Jpro = Jpro * SQR (Qq / Qold);
-
-                            // Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
+                            Jpro = SQR ((10.f * Qpro) / wh);
 
                             if (t1L) { //to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
                                 coef = 2.f; //adapt Q to J approximation
@@ -1668,7 +1664,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
 
 
 
-//all this treatments reduce artifacts, but can lead to slighty different results
+//all this treatments reduce artifacts, but can lead to slightly different results
 
                 if (params->defringe.enabled)
                     if (execsharp) {
@@ -2231,7 +2227,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     const float shoulder = ((65536.0 / max (1.0f, exp_scale)) * (hlcomprthresh / 200.0)) + 0.1;
     const float hlrange = 65536.0 - shoulder;
     const bool isProPhoto = (params->icm.workingProfile == "ProPhoto");
-    // extracting datas from 'params' to avoid cache flush (to be confirmed)
+    // extracting data from 'params' to avoid cache flush (to be confirmed)
     ToneCurveMode curveMode = params->toneCurve.curveMode;
     ToneCurveMode curveMode2 = params->toneCurve.curveMode2;
     bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
@@ -2478,7 +2474,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 highlightToneCurve(hltonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, exp_scale, comp, hlrange);
-                shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
+                if (params->toneCurve.black != 0.0) {
+                    shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
+                }
 
                 if (dcpProf) {
                     dcpProf->step2ApplyTile (rtemp, gtemp, btemp, tW - jstart, tH - istart, TS, asIn);
@@ -2518,13 +2516,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         }
                     }
                 } else {
-                    float tmpr[4] ALIGNED16;
-                    float tmpg[4] ALIGNED16;
-                    float tmpb[4] ALIGNED16;
-
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         int j = jstart, tj = 0;
 #ifdef __SSE2__
+                        float tmpr[4] ALIGNED16;
+                        float tmpg[4] ALIGNED16;
+                        float tmpb[4] ALIGNED16;
+
                         for (; j < tW - 3; j+=4, tj+=4) {
                             //brightness/contrast
                             STVF(tmpr[0], tonecurve(LVF(rtemp[ti * TS + tj])));
@@ -5655,7 +5653,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
 
 double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size)
 {
-    if (fname != "") {
+    if (!fname.empty()) {
         rtengine::RawMetaDataLocation ri;
         int w_raw = -1, h_raw = thumb_size;
         int w_thumb = -1, h_thumb = thumb_size;

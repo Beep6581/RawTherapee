@@ -98,10 +98,6 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void PerspCorrection::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void PerspCorrection::setAdjusterBehavior (bool badd)
 {
 

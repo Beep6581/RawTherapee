@@ -51,7 +51,6 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void setAdjusterBehavior (bool amountadd, bool passadd);
     void adjusterChanged     (Adjuster* a, double newval) override;
-    void adjusterAutoToggled (Adjuster* a, bool newval) override;
 
     void enabledChanged      () override;
     void chanthree_toggled   ();

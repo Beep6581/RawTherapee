@@ -68,6 +68,8 @@ class Thumbnail
     bool gammaCorrected;
     double colorMatrix[3][3];
 
+    void processFilmNegative(const procparams::ProcParams& params, const Imagefloat* baseImg, int rwidth, int rheight, float &rmi, float &gmi, float &bmi);
+
 public:
 
     bool isRaw;

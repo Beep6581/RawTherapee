@@ -19,66 +19,110 @@
 
 #include <iostream>
 
-#include "options.h"
 #include "rtsurface.h"
+
+#include "options.h"
 
 namespace
 {
 
-std::map<std::string, Cairo::RefPtr<Cairo::ImageSurface>> surfaceCache;
+using SurfaceCache = std::map<std::string, Cairo::RefPtr<Cairo::ImageSurface>>;
+
+SurfaceCache surfaceCache;
 
 }
 
-double RTSurface::dpiBack = 0.;
-int RTSurface::scaleBack = 0;
-
-RTSurface::RTSurface () : RTScalable()
+RTSurface::RTSurface() :
+    surface(new Cairo::ImageSurface(nullptr, false))
 {
-    Cairo::RefPtr<Cairo::ImageSurface> imgSurf(new Cairo::ImageSurface(nullptr, false));
-    surface = imgSurf;
 }
 
-RTSurface::RTSurface(const RTSurface& other) : RTScalable()
+RTSurface::RTSurface(const Glib::ustring& fileName, const Glib::ustring& rtlFileName) :
+    RTSurface()
 {
-    surface = other.surface;
+    setImage(fileName, rtlFileName);
 }
 
-RTSurface::RTSurface (Glib::ustring fileName, Glib::ustring rtlFileName) : RTScalable()
+void RTSurface::setImage(const Glib::ustring& fileName, const Glib::ustring& rtlFileName)
 {
-    Cairo::RefPtr<Cairo::ImageSurface> imgSurf(new Cairo::ImageSurface(nullptr, false));
-    surface = imgSurf;
-    setImage (fileName, rtlFileName);
-}
-
-void RTSurface::setImage (Glib::ustring fileName, Glib::ustring rtlFileName)
-{
-    Glib::ustring imageName;
-
-    if (!rtlFileName.empty() && getDirection() == Gtk::TEXT_DIR_RTL) {
-        imageName = rtlFileName;
-    } else {
-        imageName = fileName;
-    }
+    const Glib::ustring& imageName =
+        !rtlFileName.empty() && getDirection() == Gtk::TEXT_DIR_RTL
+            ? rtlFileName
+            : fileName;
 
     changeImage (imageName);
 }
 
-void RTSurface::setDPInScale (const double newDPI, const int newScale)
+int RTSurface::getWidth() const
 {
-    if (getScale() != newScale || (getScale() == 1 && getDPI() != newDPI)) {
-        RTScalable::setDPInScale(newDPI, newScale);
+    return
+        surface
+            ? surface->get_width()
+            : -1;
+}
+
+int RTSurface::getHeight() const
+{
+    return
+        surface
+            ? surface->get_height()
+            : -1;
+}
+
+bool RTSurface::hasSurface() const
+{
+    return static_cast<bool>(surface);
+}
+
+Cairo::RefPtr<const Cairo::ImageSurface> RTSurface::get() const
+{
+    return surface;
+}
+
+const Cairo::RefPtr<Cairo::ImageSurface>& RTSurface::get()
+{
+    return surface;
+}
+
+void RTSurface::init()
+{
+    dpiBack = getDPI();
+    scaleBack = getScale();
+}
+
+void RTSurface::updateImages()
+{
+    const double tweakedDpi = getTweakedDPI();
+
+    for (auto& entry : surfaceCache) {
+        entry.second = loadImage(entry.first, tweakedDpi);
+    }
+}
+
+void RTSurface::setDPInScale(const double newDPI, const int newScale)
+{
+    if (
+        getScale() != newScale
+        || (
+            getScale() == 1
+            && getDPI() != newDPI
+        )
+    ) {
+        setDPInScale(newDPI, newScale);
         dpiBack = getDPI();
         scaleBack = getScale();
-        //printf("RTSurface::setDPInScale : New scale = %d & new DPI = %.3f (%.3f asked) -> Reloading all RTSurface\n", scaleBack, dpiBack, newDPI);
+
         updateImages();
     }
 }
 
-void RTSurface::changeImage (Glib::ustring imageName)
+void RTSurface::changeImage(const Glib::ustring& imageName)
 {
-    auto iterator = surfaceCache.find (imageName);
+    const SurfaceCache::const_iterator iterator = surfaceCache.find(imageName);
 
-    if (iterator == surfaceCache.end ()) {
+    if (iterator != surfaceCache.end()) {
+        surface = iterator->second;
+    } else {
         surface = loadImage(imageName, getTweakedDPI());
 
         // HOMBRE: As of now, GDK_SCALE is forced to 1, so setting the Cairo::ImageSurface scale is not required
@@ -92,48 +136,10 @@ void RTSurface::changeImage (Glib::ustring imageName)
         }
         */
 
-        iterator = surfaceCache.emplace (imageName, surface).first;
-    }
-
-    surface = iterator->second;
-}
-
-int RTSurface::getWidth() const
-{
-    return surface ? surface->get_width() : -1;
-}
-
-int RTSurface::getHeight() const
-{
-    return surface ? surface->get_height() : -1;
-}
-
-void RTSurface::init()
-{
-    dpiBack = RTScalable::getDPI();
-    scaleBack = RTScalable::getScale();
-}
-
-void RTSurface::updateImages()
-{
-    double res = getTweakedDPI();
-    for (auto entry : surfaceCache) {
-        entry.second = loadImage(entry.first, res);
-        //printf("RTSurface::updateImages : %s\n", entry.first.c_str());
+        surfaceCache.emplace(imageName, surface);
     }
 }
 
-void RTSurface::from(Glib::RefPtr<RTSurface> other)
-{
-    surface = other->surface;
-}
+double RTSurface::dpiBack = 0.;
 
-bool RTSurface::hasSurface() const
-{
-    return surface ? true : false;
-}
-
-const Cairo::RefPtr<Cairo::ImageSurface>& RTSurface::get() const
-{
-    return surface;
-}
+int RTSurface::scaleBack = 0;

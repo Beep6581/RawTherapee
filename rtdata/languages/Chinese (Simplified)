@@ -10,8 +10,6 @@ ABOUT_TAB_CREDITS;感谢
 ABOUT_TAB_LICENSE;授权协议
 ABOUT_TAB_RELEASENOTES;发布说明
 ABOUT_TAB_SPLASH;启动页
-BATCHQUEUE_AUTOSTART;自动开始
-BATCHQUEUE_DESTFILENAME;路径和文件名
 BATCH_PROCESSING;批量处理
 CURVEEDITOR_CURVE;曲线
 CURVEEDITOR_CURVES;曲线
@@ -88,7 +86,6 @@ EXPORT_PUTTOQUEUEFAST;  放入快速导出序列
 EXPORT_RAW_DMETHOD;反拜尔算法
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;队列已处理
-FILEBROWSER_ADDDELTEMPLATE;增加/删除模板...
 FILEBROWSER_APPLYPROFILE;应用配置
 FILEBROWSER_APPLYPROFILE_PARTIAL;应用 - 局部
 FILEBROWSER_AUTODARKFRAME;自动暗场
@@ -98,11 +95,8 @@ FILEBROWSER_CLEARPROFILE;清空配置
 FILEBROWSER_COPYPROFILE;复制配置
 FILEBROWSER_CURRENT_NAME;当前名称：
 FILEBROWSER_DARKFRAME;暗场
-FILEBROWSER_DELETEDLGLABEL;确认删除
-FILEBROWSER_DELETEDLGMSG;确定删除所选的%1个文件？
-FILEBROWSER_DELETEDLGMSGINCLPROC;你确认要删除选择的 <b>%1</b> 文件 <b>包括</b> 一个处理队列中的版本?
+FILEBROWSER_DELETEDIALOG_HEADER;确认删除
 FILEBROWSER_EMPTYTRASH;清空垃圾箱
-FILEBROWSER_EMPTYTRASHHINT;永久清空垃圾箱
 FILEBROWSER_EXTPROGMENU;调用程序...
 FILEBROWSER_FLATFIELD;平场
 FILEBROWSER_MOVETODARKFDIR;移动到暗场路径
@@ -136,8 +130,6 @@ FILEBROWSER_POPUPRANK2;评 2 星
 FILEBROWSER_POPUPRANK3;评 3 星
 FILEBROWSER_POPUPRANK4;评 4 星
 FILEBROWSER_POPUPRANK5;评 5 星
-FILEBROWSER_POPUPREMOVE;从文件系统中移除
-FILEBROWSER_POPUPREMOVEINCLPROC;删除序列输出
 FILEBROWSER_POPUPRENAME;重命名
 FILEBROWSER_POPUPSELECTALL;全部选中
 FILEBROWSER_POPUPTRASH;移动到垃圾箱
@@ -351,14 +343,14 @@ MAIN_BUTTON_SENDTOEDITOR;发送到编辑器
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;使用外部工具编辑当前图像 \n快捷键：<b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;显示/隐藏全部侧边栏\n快捷键: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;退出全屏
-MAIN_FRAME_BATCHQUEUE;批处理队列 
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;处理序列\n快捷键: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;编辑器
 MAIN_FRAME_EDITOR_TOOLTIP;编辑器.\n快捷键: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;文件浏览 
 MAIN_FRAME_FILEBROWSER_TOOLTIP;文件浏览\n快捷键: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;位置 
 MAIN_FRAME_PLACES_ADD;添加
+MAIN_FRAME_QUEUE;批处理队列 
+MAIN_FRAME_QUEUE_TOOLTIP;处理序列\n快捷键: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;最近使用的文件夹 
 MAIN_MSG_ALREADYEXISTS;该文件已存在
 MAIN_MSG_CANNOTLOAD;无法加载图片
@@ -387,8 +379,6 @@ MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;快捷键：<b>Alt-R</b>
 MAIN_TAB_TRANSFORM;变换
 MAIN_TAB_TRANSFORM_TOOLTIP;快捷键：<b>Alt-t</b>
-MAIN_TAB_WAVELET;小波变换
-MAIN_TAB_WAVELET_TOOLTIP;快捷键：<b>Alt-w</b>
 MAIN_TOOLTIP_HIDEHP;显示/隐藏左面板 (包含历史, 快捷键: H)
 MAIN_TOOLTIP_INDCLIPPEDH;高光溢出提示
 MAIN_TOOLTIP_INDCLIPPEDS;阴影不足提示
@@ -479,7 +469,6 @@ PARTIALPASTE_SHARPENING;锐化
 PARTIALPASTE_SHARPENMICRO;微处对比
 PARTIALPASTE_VIBRANCE;鲜艳度
 PARTIALPASTE_VIGNETTING;暗角修正
-PARTIALPASTE_WAVELETGROUP;小波变换等级
 PARTIALPASTE_WHITEBALANCE;白平衡
 PREFERENCES_ADD;添加
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;导航器引导颜色
@@ -489,7 +478,6 @@ PREFERENCES_BATCH_PROCESSING;批处理
 PREFERENCES_BEHADDALL;全 '添加'
 PREFERENCES_BEHAVIOR;行为
 PREFERENCES_BEHSETALL;全 '设定'
-PREFERENCES_BLACKBODY;钨丝灯
 PREFERENCES_CACHEMAXENTRIES;最大缓存数量
 PREFERENCES_CACHEOPTS;缓存选项
 PREFERENCES_CACHETHUMBHEIGHT;最大缩略图高度
@@ -508,11 +496,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;可执行文件路径
-PREFERENCES_D50;5000K
-PREFERENCES_D50_OLD;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;找到
 PREFERENCES_DARKFRAMESHOTS;张
 PREFERENCES_DARKFRAMETEMPLATES;模板
@@ -527,37 +510,19 @@ PREFERENCES_DIRSOFTWARE;软件安装路径
 PREFERENCES_EDITORLAYOUT;编辑器布局
 PREFERENCES_EXTERNALEDITOR;外部编辑器
 PREFERENCES_FBROWSEROPTS;文件浏览选项
-PREFERENCES_FILEFORMAT;文件格式
 PREFERENCES_FLATFIELDFOUND;找到
 PREFERENCES_FLATFIELDSDIR;平场图像路径
 PREFERENCES_FLATFIELDSHOTS;张
 PREFERENCES_FLATFIELDTEMPLATES;模板
-PREFERENCES_FLUOF2;Fluorescent F2
-PREFERENCES_FLUOF7;Fluorescent F7
-PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_FORIMAGE;用于图片文件
 PREFERENCES_FORRAW;用于Raw文件
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 PREFERENCES_GIMPPATH;GIMP安装文件夹
-PREFERENCES_GREY;Output device's Yb luminance (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Settings in main menu
-PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREYSC;Scene Yb luminance (%)
-PREFERENCES_GREYSC18;Yb=18 CIE L#50
-PREFERENCES_GREYSCA;自动
 PREFERENCES_HISTOGRAMPOSITIONLEFT;直方图放置在左面板
-PREFERENCES_HISTOGRAMWORKING;使用工作色彩空间显示直方图和导航器
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
 PREFERENCES_HLTHRESHOLD;高光溢出阈值
 PREFERENCES_ICCDIR;ICC配置路径
-PREFERENCES_IMG_RELOAD_NEEDED;这些改变需要重载图片生效
 PREFERENCES_IMPROCPARAMS;默认图片处理参数
 PREFERENCES_INSPECT_LABEL;检阅
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;最大缓存图片数
@@ -576,7 +541,6 @@ PREFERENCES_MENUGROUPLABEL;Group "Color label"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing profile operations"
 PREFERENCES_MENUGROUPRANK;组 "评价"
 PREFERENCES_MENUOPTIONS;子菜单选项
-PREFERENCES_METADATA;元数据
 PREFERENCES_MONINTENT;默认渲染意图
 PREFERENCES_MONITOR;显示器
 PREFERENCES_MONPROFILE;默认色彩配置文件
@@ -584,11 +548,6 @@ PREFERENCES_MONPROFILE_WARNOSX;受MacOS限制, 仅支持sRGB
 PREFERENCES_MULTITAB;多编辑器标签模式
 PREFERENCES_MULTITABDUALMON;多编辑器标签独立模式
 PREFERENCES_NAVIGATIONFRAME;导航器
-PREFERENCES_OUTDIR;输出路径
-PREFERENCES_OUTDIRFOLDER;保存至文件夹
-PREFERENCES_OUTDIRFOLDERHINT;将已寸图片放至所选文件夹
-PREFERENCES_OUTDIRTEMPLATE;使用模板
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹 \n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开, 控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
@@ -631,9 +590,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;显示图像胶片栏
 PREFERENCES_SHTHRESHOLD;阴影过暗阈值
 PREFERENCES_SINGLETAB;单编辑器栏模式
 PREFERENCES_SINGLETABVERTAB;单编辑器栏模式, 标签栏垂直
-PREFERENCES_SND_BATCHQUEUEDONE;队列处理完成
 PREFERENCES_SND_HELP;输入完整路径来指定声音文件, 或者留空表示无声 \nWindows系统声音可以使用 "SystemDefault",  "SystemAsterisk" 等  Linux则可以使用 "complete", "window-attention" 等 
 PREFERENCES_SND_LNGEDITPROCDONE;编辑器处理完成
+PREFERENCES_SND_QUEUEDONE;队列处理完成
 PREFERENCES_SND_THRESHOLDSECS;几秒之后
 PREFERENCES_STARTUPIMDIR;启动时路径
 PREFERENCES_TAB_BROWSER;文件浏览器
@@ -644,9 +603,7 @@ PREFERENCES_TAB_IMPROC;图片处理
 PREFERENCES_TAB_SOUND;音效
 PREFERENCES_TP_LABEL;工具栏
 PREFERENCES_TP_VSCROLLBAR;隐藏垂直滚动栏
-PREFERENCES_TUNNELMETADATA;无损复制 Exif/IPTC/XMP 到输出文件
 PREFERENCES_USEBUNDLEDPROFILES;启用内置预设
-PREFERENCES_VIEW;输出设备白平衡 (显示器、电视、投影仪等)
 PREFERENCES_WORKFLOW;排版
 PROFILEPANEL_LABEL;处理参数配置
 PROFILEPANEL_LOADDLGLABEL;加载处理参数为...
@@ -672,11 +629,16 @@ PROGRESSBAR_SAVEPNG;PNG文件保存中...
 PROGRESSBAR_SAVETIFF;TIFF文件保存中...
 QINFO_ISO;ISO 
 QINFO_NOEXIF;Exif数据不可用.
+QUEUE_AUTOSTART;自动开始
+QUEUE_DESTFILENAME;路径和文件名
+QUEUE_FORMAT_TITLE;文件格式
+QUEUE_LOCATION_FOLDER;保存至文件夹
+QUEUE_LOCATION_TEMPLATE;使用模板
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹 \n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开, 控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
 SAVEDLG_AUTOSUFFIX;自动加后缀到已经存在的文件
 SAVEDLG_FILEFORMAT;文件格式
 SAVEDLG_FORCEFORMATOPTS;强制保存选项
 SAVEDLG_JPEGQUAL;JPEG质量
-SAVEDLG_PNGCOMPR;PNG压缩
 SAVEDLG_PUTTOQUEUE;放入队列
 SAVEDLG_PUTTOQUEUEHEAD;放在处理序列首位
 SAVEDLG_PUTTOQUEUETAIL;放在处理序列末位
@@ -766,7 +728,6 @@ TP_DEFRINGE_LABEL;去色彩边缘(紫边)
 TP_DEFRINGE_RADIUS;半径
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;明亮度细节
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;光亮度/发光度
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_LABEL;降噪
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYREQUALIZER_ALGO;皮肤色彩范围
 TP_DIRPYREQUALIZER_ARTIF;减少杂色
@@ -813,10 +774,6 @@ TP_FLATFIELD_BT_HORIZONTAL;水平
 TP_FLATFIELD_BT_VERTHORIZ;垂直 + 水平
 TP_FLATFIELD_BT_VERTICAL;垂直
 TP_FLATFIELD_LABEL;平场
-TP_GAMMA_CURV;伽马
-TP_GAMMA_FREE;自定义伽马
-TP_GAMMA_OUTPUT;导出伽马
-TP_GAMMA_SLOP;斜率 (线性)
 TP_GRADIENT_CENTER;中心
 TP_GRADIENT_CENTER_X;中心 X
 TP_GRADIENT_CENTER_Y;中心 Y
@@ -904,10 +861,8 @@ TP_SAVEDIALOG_OK_TIP;快捷键: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;高光
 TP_SHADOWSHLIGHTS_HLTONALW;影调范围
 TP_SHADOWSHLIGHTS_LABEL;阴影/高光
-TP_SHADOWSHLIGHTS_LOCALCONTR;局部对比度
 TP_SHADOWSHLIGHTS_RADIUS;半径
 TP_SHADOWSHLIGHTS_SHADOWS;阴影
-TP_SHADOWSHLIGHTS_SHARPMASK;锐度蒙板
 TP_SHADOWSHLIGHTS_SHTONALW;影调范围
 TP_SHARPENEDGE_AMOUNT;数量
 TP_SHARPENEDGE_LABEL;边缘
@@ -970,8 +925,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!BATCHQUEUE_AUTOSTARTHINT;Start processing automatically when a new job arrives.
-!BATCHQUEUE_STARTSTOPHINT;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
@@ -990,7 +943,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
 !EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
@@ -1001,6 +953,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate the search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nExclude search terms by prefixing them with <i>!=</i>\ne.g.\n<i>!=1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
 !FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
 !FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
@@ -1009,7 +967,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
@@ -1403,6 +1361,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 !HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 !HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
@@ -1527,6 +1487,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
 !PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
 !PARTIALPASTE_DEHAZE;Haze removal
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PARTIALPASTE_LOCALCONTRAST;Local contrast
 !PARTIALPASTE_METADATA;Metadata mode
 !PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
@@ -1538,6 +1499,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
 !PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
 !PREFERENCES_APPEARANCE_MAINFONT;Main font
+!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PREFERENCES_APPEARANCE_THEME;Theme
 !PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
@@ -1593,6 +1555,9 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
 !QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!QUEUE_AUTOSTART_TOOLTIP;Start processing automatically when a new job arrives.
+!QUEUE_LOCATION_TITLE;Output Location
+!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
@@ -1644,7 +1609,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
-!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
@@ -1693,9 +1657,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slighty dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
-!TP_COLORAPP_SURSOURCE;Dark surround
-!TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if image has a dark border.
+!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 !TP_COLORAPP_TCMODE_CHROMA;Chroma
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness
 !TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
@@ -1774,7 +1736,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_DEHAZE_STRENGTH;Strength
 !TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 !TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
-!TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Try to evaluate chroma noise\nBe careful, this calculation is average, and is quite subjective !
 !TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominance - Blue-Yellow
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
 !TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
@@ -1792,8 +1753,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tile size=%1, Center: Tx=%2  Ty=%3
 !TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominance - Red-Green
-!TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase.
 !TP_DIRPYRDENOISE_LABEL;Noise Reduction
 !TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminance control
 !TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve
@@ -1819,7 +1778,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
 !TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TYPE_3X3;3×3
 !TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 soft
 !TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1843,6 +1801,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
 !TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
+!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMSIMULATION_LABEL;Film Simulation
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_FILMSIMULATION_STRENGTH;Strength
@@ -1860,8 +1824,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
-!TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
-!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
@@ -1952,8 +1914,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAWCACORR_AUTOIT;Iterations
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
-!TP_RAWCACORR_CASTR;Strength
-!TP_RAWEXPOS_BLACKS;Black Levels
+!TP_RAWCACORR_LABEL;Chromatic Aberration Correction
 !TP_RAWEXPOS_BLACK_0;Green 1 (lead)
 !TP_RAWEXPOS_BLACK_1;Red
 !TP_RAWEXPOS_BLACK_2;Blue
@@ -2011,15 +1972,12 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 !TP_RAW_PIXELSHIFTMM_AUTO;Automatic
 !TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 !TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
 !TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
@@ -2055,7 +2013,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
 !TP_RETINEX_GAMMA_HIGH;High

@@ -592,15 +592,16 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
 {
     entry->selected = false;
     entry->drawable = false;
-    entry->framed = editedFiles.find (entry->filename) != editedFiles.end();
+    entry->framed = editedFiles.find(entry->filename) != editedFiles.end();
 
     // add button set to the thumbbrowserentry
-    entry->addButtonSet (new FileThumbnailButtonSet (entry));
-    entry->getThumbButtonSet()->setRank (entry->thumbnail->getRank());
-    entry->getThumbButtonSet()->setColorLabel (entry->thumbnail->getColorLabel());
-    entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage());
-    entry->getThumbButtonSet()->setButtonListener (this);
-    entry->resize (getThumbnailHeight());
+    entry->addButtonSet(new FileThumbnailButtonSet(entry));
+    entry->getThumbButtonSet()->setRank(entry->thumbnail->getRank());
+    entry->getThumbButtonSet()->setColorLabel(entry->thumbnail->getColorLabel());
+    entry->getThumbButtonSet()->setInTrash(entry->thumbnail->getStage());
+    entry->getThumbButtonSet()->setButtonListener(this);
+    entry->resize(getThumbnailHeight());
+    entry->filtered = !checkFilter(entry);
 
     // find place in abc order
     {
@@ -619,9 +620,9 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
             entry
         );
 
-        initEntry (entry);
+        initEntry(entry);
     }
-    redraw ();
+    redraw(false);
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
@@ -666,6 +667,7 @@ void FileBrowser::close ()
         MYWRITERLOCK(l, entryRW);
 
         selected.clear ();
+        anchor = nullptr;
 
         MYWRITERLOCK_RELEASE(l); // notifySelectionListener will need read access!
 
@@ -753,9 +755,9 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     if (m == open) {
         openRequested(mselected);
     } else if (m == remove) {
-        tbl->deleteRequested (mselected, false);
+        tbl->deleteRequested (mselected, false, true);
     } else if (m == removeInclProc) {
-        tbl->deleteRequested (mselected, true);
+        tbl->deleteRequested (mselected, true, true);
     } else if (m == trash) {
         toTrashRequested (mselected);
     } else if (m == untrash) {
@@ -781,16 +783,20 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         {
             MYWRITERLOCK(l, entryRW);
 
-            selected.clear ();
+            selected.clear();
 
-            for (size_t i = 0; i < fd.size(); i++)
-                if (checkFilter (fd[i])) {
+            for (size_t i = 0; i < fd.size(); ++i) {
+                if (checkFilter(fd[i])) {
                     fd[i]->selected = true;
-                    selected.push_back (fd[i]);
+                    selected.push_back(fd[i]);
                 }
+            }
+            if (!anchor && !selected.empty()) {
+                anchor = selected[0];
+            }
         }
         queue_draw ();
-        notifySelectionListener ();
+        notifySelectionListener();
     } else if( m == copyTo) {
         tbl->copyMoveRequested (mselected, false);
     }
@@ -1436,12 +1442,12 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
         }
 
         for (size_t i = 0; i < fd.size(); i++) {
-            if (checkFilter (fd[i])) {
+            if (checkFilter(fd[i])) {
                 numFiltered++;
-            } else if (fd[i]->selected ) {
+            } else if (fd[i]->selected) {
                 fd[i]->selected = false;
-                std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
-                selected.erase (j);
+                std::vector<ThumbBrowserEntryBase*>::iterator j = std::find(selected.begin(), selected.end(), fd[i]);
+                selected.erase(j);
 
                 if (lastClicked == fd[i]) {
                     lastClicked = nullptr;
@@ -1449,6 +1455,9 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
 
                 selchanged = true;
             }
+        }
+        if (selected.empty() || (anchor && std::find(selected.begin(), selected.end(), anchor) == selected.end())) {
+            anchor = nullptr;
         }
     }
 
@@ -1779,7 +1788,7 @@ void FileBrowser::openNextImage()
 
                             // scroll only when selected[0] is outside of the displayed bounds
                             // or less than a thumbnail's width from either edge.
-                            if ((x2 > x1 + ww - 2 * tw) || (x2 - tw < x1)) {
+                            if ((x2 > x1 + ww - 1.5 * tw) || (x2 - tw / 2 < x1)) {
                                 setScrollPosition(x2 - (ww - tw) / 2, y2);
                             }
 
@@ -1842,7 +1851,7 @@ void FileBrowser::openPrevImage()
 
                             // scroll only when selected[0] is outside of the displayed bounds
                             // or less than a thumbnail's width from either edge.
-                            if ((x2 > x1 + ww - 2 * tw) || (x2 - tw < x1)) {
+                            if ((x2 > x1 + ww - 1.5 * tw) || (x2 - tw / 2 < x1)) {
                                 setScrollPosition(x2 - (ww - tw) / 2, y2);
                             }
 

@@ -39,10 +39,6 @@ ABOUT_TAB_LICENSE;ライセンス
 ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
 ADJUSTER_RESET_TO_DEFAULT;<b>クリック</b> - デフォルト値にリセット\n<b>Ctrl</b>+<b>クリック</b> - 初期値にリセット
-BATCHQUEUE_AUTOSTART;オートスタート
-BATCHQUEUE_AUTOSTARTHINT;新しいrawファイルが送られて来たら自動的に現像処理を開始します
-BATCHQUEUE_DESTFILENAME;パスとファイル名
-BATCHQUEUE_STARTSTOPHINT;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_AXIS_IN;I:
 CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -130,7 +126,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;[raw] LMMSE 拡張処理を迂回
 EXPORT_BYPASS_SHARPENEDGE;エッジ・シャープニングを迂回
 EXPORT_BYPASS_SHARPENING;シャープニングを迂回
 EXPORT_BYPASS_SHARPENMICRO;マイクロコントラストを迂回
-EXPORT_BYPASS_SH_HQ;シャドウ/ハイライト(高画質)を迂回
 EXPORT_FASTEXPORTOPTIONS;<b>高速書き出しオプション</b>
 EXPORT_INSTRUCTIONS;現像の設定に要する時間と手間を省くために、高速書き出しを優先させるオプションです。処理速度が優先される場合や、既定の現像パラメータを変えずに何枚ものリサイズ画像が要求される場合に奨められる方法で、低解像度画像を迅速に生成します。
 EXPORT_MAXHEIGHT;最大高:
@@ -143,11 +138,11 @@ EXPORT_USE_FAST_PIPELINE_TIP;処理速度を優先すると、処理は速くな
 EXPORT_USE_NORMAL_PIPELINE;標準(リサイズ処理は最後、幾つかの処理を迂回)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;キュー処理
-FILEBROWSER_ADDDELTEMPLATE;テンプレートの追加/削除...
 FILEBROWSER_APPLYPROFILE;プロファイルの適用
 FILEBROWSER_APPLYPROFILE_PARTIAL;プロファイルの適用 (一部)
 FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
+FILEBROWSER_BROWSEPATHBUTTONHINT;クリックして特定パスを開き、フォルダーをリロードし、”探す”というキーワードを適用
 FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-O</b> パスのテキストボックスにフォーカス\n<b>Enter</b> / <b>Ctrl-Enter</b>その場所をブラウズします\n<b>Esc</b> 変更をクリア\n<b>Shift-Esc</b>フォーカスを削除\nパスのショートカット:\n  <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
 FILEBROWSER_CACHE;cache
 FILEBROWSER_CACHECLEARFROMFULL;プロファイルを含めcache内をクリアにする
@@ -157,11 +152,12 @@ FILEBROWSER_COLORLABEL_TOOLTIP;カラー・ラベル\n\nドロップダウン・
 FILEBROWSER_COPYPROFILE;プロファイルをコピー
 FILEBROWSER_CURRENT_NAME;現在の名前:
 FILEBROWSER_DARKFRAME;ダークフレーム
-FILEBROWSER_DELETEDLGLABEL;ファイル削除確認
-FILEBROWSER_DELETEDLGMSG;選択済みのファイル <b>%1</b> を削除してもいいですか?
-FILEBROWSER_DELETEDLGMSGINCLPROC;バッチ処理に<b>組み込まれている</b>選択済みのファイル <b>%1</b> を削除してもいいですか?
+FILEBROWSER_DELETEDIALOG_ALL;ゴミ箱の中にある<b>%1</b>枚のファイル全てを<b>完全<b>に削除しますか？
+FILEBROWSER_DELETEDIALOG_HEADER;ファイル削除確認
+FILEBROWSER_DELETEDIALOG_SELECTED;選択した<b>%1</b>枚のファイルを<b>完全<b>に削除しますか？
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;キュー処理に保持されているファイルを<b>含め</b>、選択した<b>%1</b>枚のファイルを<b>完全<b>に削除しますか？
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
-FILEBROWSER_EMPTYTRASHHINT;ゴミ箱のファイルを完全に削除する
+FILEBROWSER_EMPTYTRASHHINT;ゴミ箱の中のファイルを全て<b>完全に</b> 削除します
 FILEBROWSER_EXTPROGMENU;..で開く
 FILEBROWSER_FLATFIELD;フラットフィールド
 FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
@@ -195,8 +191,8 @@ FILEBROWSER_POPUPRANK2;ランク　2 **
 FILEBROWSER_POPUPRANK3;ランク　3 ***
 FILEBROWSER_POPUPRANK4;ランク　4 ****
 FILEBROWSER_POPUPRANK5;ランク　5 *****
-FILEBROWSER_POPUPREMOVE;ファイルシステムから削除
-FILEBROWSER_POPUPREMOVEINCLPROC;ファイルシステムとバッチの結果から削除
+FILEBROWSER_POPUPREMOVE;完全に削除
+FILEBROWSER_POPUPREMOVEINCLPROC;キュー処理に保持されているファイルを含めて完全に削除
 FILEBROWSER_POPUPRENAME;名前変更
 FILEBROWSER_POPUPSELECTALL;全選択
 FILEBROWSER_POPUPTRASH;ゴミ箱へ移動
@@ -223,7 +219,7 @@ FILEBROWSER_SHOWDIRHINT;全ての絞り込みをクリア\nショートカット
 FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF情報を表示\nショートカット: <b>i</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-i</b>
-FILEBROWSER_SHOWNOTTRASHHINT;削除されていない画像だけ表示
+FILEBROWSER_SHOWNOTTRASHHINT;ゴミ箱の中にある画像だけを表示
 FILEBROWSER_SHOWORIGINALHINT;元画像だけを表示\n\nファイル名は同じだが拡張子が異なる画像がある場合は、環境設定の中のファイルブラウザタブにある拡張子リストの上位に位置する拡張子を持った画像を元画像とする。
 FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>2</b>
@@ -277,7 +273,6 @@ GIMP_PLUGIN_INFO;RawTherapee　GIMPプラグインにようこそ！\n画像編�
 HISTOGRAM_TOOLTIP_B;ブルー・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_BAR;RGBインジケーター・バーの表示/非表示\nプレビュー画像上でマウスの右ボタンクリックで 固定/開放
 HISTOGRAM_TOOLTIP_CHRO;色度・ヒストグラム 表示/非表示
-HISTOGRAM_TOOLTIP_FULL;完全/縮尺調整の表示切り替え
 HISTOGRAM_TOOLTIP_G;グリーン・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_L;CIEL*a*b* 輝度・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_MODE;ヒストグラムの尺度を線形、対数-線形、対数-対数でトグルします
@@ -320,9 +315,9 @@ HISTORY_MSG_30;デコンボリューション 半径
 HISTORY_MSG_31;デコンボリューション 適用量
 HISTORY_MSG_32;デコンボリューション 減衰
 HISTORY_MSG_33;デコンボリューション 繰返し
-HISTORY_MSG_34;LCP 歪曲収差補正
-HISTORY_MSG_35;LCP 周辺光量補正
-HISTORY_MSG_36;LCP 色収差補正
+HISTORY_MSG_34;歪曲収差補正
+HISTORY_MSG_35;周辺光量補正
+HISTORY_MSG_36;色収差補正
 HISTORY_MSG_37;オートレベル
 HISTORY_MSG_38;ホワイトバランス　モード
 HISTORY_MSG_39;色温度
@@ -783,6 +778,8 @@ HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;霞除去 - 深度マップの表示
 HISTORY_MSG_DEHAZE_STRENGTH;霞除去 - 強さ
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;デュアルデモザイク - 自動しきい値
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;AMaZE+VNG4 - コントラストのしきい値
+HISTORY_MSG_FILMNEGATIVE_ENABLED;ネガフィルム
+HISTORY_MSG_FILMNEGATIVE_VALUES;ネガフィルムの値
 HISTORY_MSG_HISTMATCHING;トーンカーブの自動調節
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;出力 - プライマリ
 HISTORY_MSG_ICM_OUTPUT_TEMP;出力 - ICC-v4 光源 D
@@ -911,14 +908,15 @@ MAIN_BUTTON_SENDTOEDITOR;外部エディタで画像を編集
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集\nショートカット: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル\nショートカット: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;フルスクリーン解除
-MAIN_FRAME_BATCHQUEUE;キュー
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;編集
 MAIN_FRAME_EDITOR_TOOLTIP; 編集\nショートカット: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;ファイルブラウザ
 MAIN_FRAME_FILEBROWSER_TOOLTIP; ファイル・ブラウザ\nショートカット: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;場所
 MAIN_FRAME_PLACES_ADD;追加
+MAIN_FRAME_PLACES_DEL;除去
+MAIN_FRAME_QUEUE;キュー
+MAIN_FRAME_QUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;最近開いたフォルダ
 MAIN_MSG_ALREADYEXISTS;ファイルはすでに存在します
 MAIN_MSG_CANNOTLOAD;画像読み込みできません
@@ -1018,6 +1016,7 @@ PARTIALPASTE_EQUALIZER;ウェーブレット
 PARTIALPASTE_EVERYTHING;すべて
 PARTIALPASTE_EXIFCHANGES;exifデータを変える
 PARTIALPASTE_EXPOSURE;露光量
+PARTIALPASTE_FILMNEGATIVE;ネガフィルム
 PARTIALPASTE_FILMSIMULATION;フィルムシミュレーション
 PARTIALPASTE_FLATFIELDAUTOSELECT;フラットフィールド 自動選択
 PARTIALPASTE_FLATFIELDBLURRADIUS;フラットフィールド ぼかし半径
@@ -1076,6 +1075,7 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;カラーピッカーのフォント
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;切り抜きのマスクカラー
 PREFERENCES_APPEARANCE_MAINFONT;メインフォント
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;ナビゲーターのガイドカラー
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;擬似HiDPIモード
 PREFERENCES_APPEARANCE_THEME;テーマ
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
@@ -1086,7 +1086,6 @@ PREFERENCES_BEHADDALLHINT;すべてのパラメータを <b>追加</b>モード�
 PREFERENCES_BEHAVIOR;ビヘイビア
 PREFERENCES_BEHSETALL;すべて '設定'
 PREFERENCES_BEHSETALLHINT;すべてのパラメータを <b>設定</b>モードにします\nバッチツールパネルで設定される調整値が、各画像の既定値に取って代わり<b>同一</b>になります
-PREFERENCES_BLACKBODY;タングステン
 PREFERENCES_CACHECLEAR;クリア
 PREFERENCES_CACHECLEAR_ALL;cacheに入れられたファイルを全てクリア:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;cacheに入れた処理プロファイル以外をクリア:
@@ -1095,6 +1094,12 @@ PREFERENCES_CACHECLEAR_SAFETY;casheに入れたファイルだけをクリア。
 PREFERENCES_CACHEMAXENTRIES;cacheに入れるファイルの最大数
 PREFERENCES_CACHEOPTS;cache オプション
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
+PREFERENCES_CHUNKSIZES;スレッドごとのタイル
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE デモザイク
+PREFERENCES_CHUNKSIZE_RAW_CA;Raw 色収差補正
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD デモザイク
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans デモザイク
+PREFERENCES_CHUNKSIZE_RGB;RGB 処理
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;cacheに入れるHaldCLUTの最大数
@@ -1117,11 +1122,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;キーフォーマット
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;名前
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;タグID
 PREFERENCES_CUSTPROFBUILDPATH;実行ファイルのパス
-PREFERENCES_D50;5000K
-PREFERENCES_D50_OLD;5000k
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;検出
 PREFERENCES_DARKFRAMESHOTS;ショット
 PREFERENCES_DARKFRAMETEMPLATES;テンプレート
@@ -1139,37 +1139,19 @@ PREFERENCES_EDITORLAYOUT;編集 レイアウト
 PREFERENCES_EXTERNALEDITOR;外部エディタ
 PREFERENCES_FBROWSEROPTS;ファイルブラウザ/サムネイルのオプション
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;ファイルブラウザのツールバーを圧縮
-PREFERENCES_FILEFORMAT;ファイル形式
 PREFERENCES_FLATFIELDFOUND;検出
 PREFERENCES_FLATFIELDSDIR;フラットフィールド・ディレクトリ
 PREFERENCES_FLATFIELDSHOTS;ショット
 PREFERENCES_FLATFIELDTEMPLATES;テンプレート
-PREFERENCES_FLUOF2;蛍光灯 F2
-PREFERENCES_FLUOF7;蛍光灯 F7
-PREFERENCES_FLUOF11;蛍光灯 F11
 PREFERENCES_FORIMAGE;rawではない画像
 PREFERENCES_FORRAW;raw画像
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;ファイルブラウザと編集パネルのサムネイルのサイズを同じにする
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;サムネイルのサイズが異なると、編集パネルとファイルブラウザ間の切り替えで、余分な処理時間がかかります
 PREFERENCES_GIMPPATH;GIMP インストール ディレクトリ
-PREFERENCES_GREY;出力デバイスのYb輝度 (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREYSC;撮影時のYb輝度 (%)
-PREFERENCES_GREYSC18;Yb=18 CIE L#50
-PREFERENCES_GREYSCA;Ybを自動で計算
 PREFERENCES_HISTOGRAMPOSITIONLEFT;左パネルにヒストグラム
-PREFERENCES_HISTOGRAMWORKING;ヒストグラムとナビゲーターの表示に作業プロファイルを使う
 PREFERENCES_HISTOGRAM_TOOLTIP;これを有効にすると、ヒストグラムとナビゲーターの表示に、出力プロファイル（ガンマ適用）の代わりに作業プロファイルを使います
 PREFERENCES_HLTHRESHOLD;ハイライト・クリッピング領域のしきい値
 PREFERENCES_ICCDIR;カラープロファイルを含むディレクトリ
-PREFERENCES_IMG_RELOAD_NEEDED;これらの変更を有効にするには画像の再読み込みが必要です（或いは、新しい画像の読み込み）
 PREFERENCES_IMPROCPARAMS;画像処理のデフォルト値
 PREFERENCES_INSPECT_LABEL;カメラ出しJPEG
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;cacheに入れる画像の最大数
@@ -1188,7 +1170,6 @@ PREFERENCES_MENUGROUPLABEL;"カラーラベル"のグループ
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;"処理プロファイル操作"のグループ
 PREFERENCES_MENUGROUPRANK;"ランキング"のグループ
 PREFERENCES_MENUOPTIONS;メニューオプションの状況
-PREFERENCES_METADATA;メタデータ
 PREFERENCES_MONINTENT;デフォルトのモニターインテント
 PREFERENCES_MONITOR;モニター
 PREFERENCES_MONPROFILE;デフォルトのモニタープロファイル
@@ -1196,11 +1177,6 @@ PREFERENCES_MONPROFILE_WARNOSX;MacのOSの制約により、サポート出来�
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_MULTITABDUALMON;独自のウィンドウモードによるマルチ編集タブ
 PREFERENCES_NAVIGATIONFRAME;ナビゲーション
-PREFERENCES_OUTDIR;出力ディレクトリ
-PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
-PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
-PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;ファイル名をサムネイル上に透過表示する
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;ファイル名を編集パネルのサムネイル上に透過表示する
 PREFERENCES_OVERWRITEOUTPUTFILE;既存ファイルを上書き
@@ -1211,6 +1187,8 @@ PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリスト�
 PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
 PREFERENCES_PARSEDEXTDOWNHINT;選択した拡張子をリストの下に移動
 PREFERENCES_PARSEDEXTUPHINT;選択した拡張子をリストの上に移動
+PREFERENCES_PERFORMANCE_MEASURE;測定する
+PREFERENCES_PERFORMANCE_MEASURE_HINT;コンソールに処理時間を記録
 PREFERENCES_PERFORMANCE_THREADS;スレッド
 PREFERENCES_PERFORMANCE_THREADS_LABEL;ノイズ低減とウェーブレットレベルに関するスレッドの最大数(0 = 自動)
 PREFERENCES_PREVDEMO;プレビューのデモザイク方式
@@ -1246,9 +1224,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;画像スライドにツールバーを表示�
 PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SINGLETAB;シングルタブモードモード
 PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
-PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
 PREFERENCES_SND_HELP;ファイルパスを入力 または空欄(無音).\nWindowsはシステムサウンドの "SystemDefault", "SystemAsterisk"など..\nLinuxはシステムサウンドの "complete", "window-attention"などを使用します
 PREFERENCES_SND_LNGEDITPROCDONE;編集処理 終了
+PREFERENCES_SND_QUEUEDONE;キュー処理 終了
 PREFERENCES_SND_THRESHOLDSECS;秒後
 PREFERENCES_STARTUPIMDIR;起動時の画像・ディレクトリ
 PREFERENCES_TAB_BROWSER;ファイルブラウザ
@@ -1264,9 +1242,7 @@ PREFERENCES_THUMBNAIL_INSPECTOR_RAW;ニュートラルなrawレンダリング
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;埋め込まれているJPEGがフルサイズの場合、指定がなければニュートラルなrawレンダリングで表示
 PREFERENCES_TP_LABEL;ツール パネル:
 PREFERENCES_TP_VSCROLLBAR;ツールパネルの垂直スクロールバーを隠す
-PREFERENCES_TUNNELMETADATA;Exif/IPTC/XMPを変更を加えずに出力ファイルにコピー
 PREFERENCES_USEBUNDLEDPROFILES;付属のプロファイルを使用
-PREFERENCES_VIEW;出力デバイスのホワイトバランス設定 (モニター, TV, プロジェクター,観視...)
 PREFERENCES_WORKFLOW;レイアウト
 PROFILEPANEL_COPYPPASTE;コピーするパラメータ
 PROFILEPANEL_GLOBALPROFILES;付属のプロファイル
@@ -1287,6 +1263,11 @@ PROFILEPANEL_TOOLTIPCOPY;クリップボードに現在のプロファイルを�
 PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込みます\nCtrl-クリックで読み込むパラメータを選択します
 PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付けます\nCtrl-クリックで貼り付けるパラメータを選択します
 PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存\nCtrl-クリックで保存するパラメータを選択します
+PROGRESSBAR_DECODING;デコーディング。。。
+PROGRESSBAR_GREENEQUIL;グリーンの平衡化。。。
+PROGRESSBAR_HLREC;ハイライトの復元。。。
+PROGRESSBAR_HOTDEADPIXELFILTER;ホット/デッドピクセルフィルタ。。。
+PROGRESSBAR_LINEDENOISE;ラインノイズフィルタ。。。
 PROGRESSBAR_LOADING;画像読み込み中...
 PROGRESSBAR_LOADINGTHUMBS;サムネイルの読み込み...
 PROGRESSBAR_LOADJPEG;JPEGファイル読み込み中...
@@ -1295,6 +1276,7 @@ PROGRESSBAR_LOADTIFF;TIFFファイル読み込み中...
 PROGRESSBAR_NOIMAGES;画像が見つかりません
 PROGRESSBAR_PROCESSING;画像処理中...
 PROGRESSBAR_PROCESSING_PROFILESAVED;処理プロファイルを保存しました
+PROGRESSBAR_RAWCACORR;Raw 色収差補正
 PROGRESSBAR_READY;準備完了
 PROGRESSBAR_SAVEJPEG;JPEGファイル保存中...
 PROGRESSBAR_SAVEPNG;PNGファイル保存中...
@@ -1306,6 +1288,15 @@ QINFO_HDR;HDR / %2 フレーム
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exifデータがありません
 QINFO_PIXELSHIFT;ピクセルシフト / %2 フレーム
+QUEUE_AUTOSTART;オートスタート
+QUEUE_AUTOSTART_TOOLTIP;新しいrawファイルが送られて来たら自動的に現像処理を開始します
+QUEUE_DESTFILENAME;パスとファイル名
+QUEUE_FORMAT_TITLE;ファイル形式
+QUEUE_LOCATION_FOLDER;フォルダに保存
+QUEUE_LOCATION_TEMPLATE;テンプレートを使う
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_LOCATION_TITLE;出力の場所
+QUEUE_STARTSTOP_TOOLTIP;キューにある画像の現像を始める、或いは中止する\n\nショートカット: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;データ形式不明
 SAMPLEFORMAT_1;符号なし8ビット
 SAMPLEFORMAT_2;符号なし16ビット
@@ -1415,7 +1406,6 @@ TP_CHMIXER_BLUE;ブルー
 TP_CHMIXER_GREEN;グリーン
 TP_CHMIXER_LABEL;チャンネルミキサー
 TP_CHMIXER_RED;レッドチャンネル
-TP_CHROMATABERR_LABEL;色収差
 TP_COARSETRAF_TOOLTIP_HFLIP;左右反転
 TP_COARSETRAF_TOOLTIP_ROTLEFT;90度左回転\nショートカット: <b>[</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;90度右回転\nショートカット: <b>]</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-]</b>
@@ -1475,8 +1465,6 @@ TP_COLORAPP_SURROUND_DARK;暗い
 TP_COLORAPP_SURROUND_DIM;薄暗い
 TP_COLORAPP_SURROUND_EXDARK;非常に暗い (Cutsheet)
 TP_COLORAPP_SURROUND_TOOLTIP;トーンとカラーの変更は、出力デバイスの観視条件を計算に入れます\n\n<b>普通:</b>\n平均的な明るい環境 (標準)\n画像は変更されません\n\n<b>薄暗い:</b>\n薄暗い環境 (TV)\n画像は若干暗くなります\n\n<b>暗い:</b>\n暗い環境 (プロジェクター)\n画像はかなり暗くなります\n\n<b>非常に暗い:</b>\n非常に暗い環境 (Cutsheet)\n画像はとても暗くなります
-TP_COLORAPP_SURSOURCE;暗い周囲環境
-TP_COLORAPP_SURSOURCE_TOOLTIP;ソース画像が暗い周囲環境にある場合使用できます
 TP_COLORAPP_TCMODE_BRIGHTNESS;明るさ
 TP_COLORAPP_TCMODE_CHROMA;色度
 TP_COLORAPP_TCMODE_COLORF;鮮やかさ
@@ -1561,6 +1549,7 @@ TP_CROP_GTTRIANGLE2;三角構図2
 TP_CROP_GUIDETYPE;ガイドタイプ:
 TP_CROP_H;高さ
 TP_CROP_LABEL;切り抜き
+TP_CROP_PPI;PPI
 TP_CROP_RESETCROP;リセット
 TP_CROP_SELECTCROP;セレクト
 TP_CROP_W;W 幅
@@ -1577,7 +1566,6 @@ TP_DEHAZE_SHOW_DEPTH_MAP;深度マップの表示
 TP_DEHAZE_STRENGTH;強さ
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;自動（多分割方式）
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;自動（分割方式）
-TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;色ノイズ低減の効果を確認して下さい\n注意：設定値の計算はあくまで平均的なもので、かなり主観的でです
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;色差 ブルー/イエロー
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;色ノイズ低減のカーブ
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;クロミナンススライダー全ての値を増幅します\n色度をベースにこのカーブで色ノイズ低減の強さを加減します。例えば彩度の低い部分で作用を強める、或いは色度の高い部分で作用を弱めるように使います
@@ -1595,8 +1583,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;プレビュー画像のノイズ
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;プレビュー画像のノイズ: 平均値= -   最大値= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;色差 レッド/グリーン
-TP_DIRPYRDENOISE_ENH;強化モード
-TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効果を髙めますが、代わりに演算時間が約20%増えます。
 TP_DIRPYRDENOISE_LABEL;ノイズ低減
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;輝度ノイズの調整法
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;輝度カーブ
@@ -1625,7 +1611,6 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES;フィルタリングの繰り返し回数
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;計算領域が3x3ピクセルのメディアンフィルタを3回繰り返し適用する方が、計算領域が7x7ピクセルのメディアンフィルタを1回適用するより結果が良くなることがままあります。
 TP_DIRPYRDENOISE_MEDIAN_TYPE;フィルターの種類
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;適用するメディアンフィルタのサイズを決めます。大きくするとその分処理時間が増えます。大きいサイズを使うとそれだけ処理時間が増えます。\n\n3×3 ソフト: 3x3ピクセルの計算領域で5ピクセルを処理します\n3×3:3x3ピクセルの計算領域で9ピクセルを処理します\n5×5 ソフト: 5x5ピクセルの計算領域で13ピクセルを処理します\n5×5: 5x5ピクセルの計算領域で25ピクセルを処理します\n7×7: 7x7ピクセルの計算領域で49ピクセルを処理します\n9×9: 9x9ピクセルの計算領域で81ピクセルを処理します\n\n場合によっては、小さいウィンドウで複数回適用を繰り返す方が、大きいウィンドウを1回適用するより結果が良いことがあります。
-TP_DIRPYRDENOISE_SLI;スライダー
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 ソフト
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1685,6 +1670,12 @@ TP_EXPOSURE_TCMODE_STANDARD;標準
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;加重平均
 TP_EXPOS_BLACKPOINT_LABEL;raw ブラック・ポイント
 TP_EXPOS_WHITEPOINT_LABEL;raw ホワイト・ポイント
+TP_FILMNEGATIVE_BLUE;ブルーの比率
+TP_FILMNEGATIVE_GREEN;参考指数(コントラスト)
+TP_FILMNEGATIVE_GUESS_TOOLTIP;画像の中でニュートラルな参考ポイントを2点選んで指数を計算します;白い(明るいグレー)1点と黒い(暗いグレー)1点を選びます。順番は関係ありません。2つ目のポイントが選択されると指数が更新されます。
+TP_FILMNEGATIVE_LABEL;ネガフィルム
+TP_FILMNEGATIVE_PICK;白と黒のポイントをピックアップする
+TP_FILMNEGATIVE_RED;レッドの比率
 TP_FILMSIMULATION_LABEL;フィルムシミュレーション
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapeeはフィルムシミュレーション機能に使う画像をHald CLUTフォルダーの中から探すよう設計されています（プログラムに組み込むにはフォルダーが大き過ぎるため）。\n変更するには、環境設定 > 画像処理 > フィルムシミュレーションと進み\nどのフォルダーが使われているか確認します。機能を利用する場合は、Hald CLUTだけが入っているフォルダーを指定するか、 この機能を使わない場合はそのフォルダーを空にしておきます。\n\n詳しくはRawPediaを参照して下さい。\n\nフィルム画像のスキャンを止めますか？
 TP_FILMSIMULATION_STRENGTH;強さ
@@ -1730,8 +1721,6 @@ TP_ICM_APPLYHUESATMAP;ベーステーブル
 TP_ICM_APPLYHUESATMAP_TOOLTIP;DCPに埋め込まれているベーステーブル（色相彩度マップ）を用います。但し、適用するDCPにこのタグがある場合に限ります。
 TP_ICM_APPLYLOOKTABLE;ルックテーブル
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;DCPに埋め込まれているルックテーブルを用います。但し、適用するDCPにこのタグがある場合に限ります。
-TP_ICM_BLENDCMSMATRIX;マトリクスとハイライト・ブレンド
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用するときに白トビを修復
 TP_ICM_BPC;ブラックポイント補正
 TP_ICM_DCPILLUMINANT;光源
 TP_ICM_DCPILLUMINANT_INTERPOLATED;補間
@@ -1807,10 +1796,15 @@ TP_LABCURVE_RSTPRO_TOOLTIP;色度スライダーとCCカーブを使用するこ
 TP_LENSGEOM_AUTOCROP;自動的に切り抜き選択
 TP_LENSGEOM_FILL;オートフィル
 TP_LENSGEOM_LABEL;レンズ / ジオメトリ
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;自動で選択
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCPファイル
+TP_LENSPROFILE_CORRECTION_MANUAL;手動で選択
 TP_LENSPROFILE_LABEL;レンズ補正 プロファイル
 TP_LENSPROFILE_LENS_WARNING;注意：レンズプロファイルに使われるクロップファクターはカメラのクロップファクターより大きいので、誤った結果になる可能性があります。
+TP_LENSPROFILE_MODE_HEADER;レンズプロファイル
 TP_LENSPROFILE_USE_CA;色収差
+TP_LENSPROFILE_USE_GEOMETRIC;歪曲補正
+TP_LENSPROFILE_USE_HEADER;補正
 TP_LENSPROFILE_USE_VIGNETTING;周辺光量
 TP_LOCALCONTRAST_AMOUNT;量
 TP_LOCALCONTRAST_DARKNESS;暗い部分のレベル
@@ -1849,7 +1843,6 @@ TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;PDAFの場合は水平方向だ�
 TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;垂直方向
 TP_PREPROCESS_NO_FOUND;未検出
 TP_PREPROCESS_PDAFLINESFILTER;PDAFラインフィルタ
-TP_PREPROCESS_PDAFLINESFILTER_TOOLTIP;Sonyのミラーレスカメラの一部では、PDAFイメージセンサが原因で、ゴーストが出るバックライトの画像でストライプノイズが発生することがあり、これを軽減します。
 TP_PRSHARPENING_LABEL;リサイズ後のシャープニング
 TP_PRSHARPENING_TOOLTIP;リサイズ後の画像をシャープニングします。但し、リサイズの方式がランチョスの場合に限ります。プレビュー画面でこの機能の効果を見ることは出来ません。使用法に関してはRawPediaを参照して下さい。
 TP_RAWCACORR_AUTO;自動補正
@@ -1858,8 +1851,7 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;”自動補正”が有効になっている場合�
 TP_RAWCACORR_AVOIDCOLORSHIFT;色ずれを回避
 TP_RAWCACORR_CABLUE;ブルー
 TP_RAWCACORR_CARED;レッド
-TP_RAWCACORR_CASTR;強さ
-TP_RAWEXPOS_BLACKS;黒レベル
+TP_RAWCACORR_LABEL;色収差補正
 TP_RAWEXPOS_BLACK_0;グリーン1（先頭）
 TP_RAWEXPOS_BLACK_1;レッド
 TP_RAWEXPOS_BLACK_2;ブルー
@@ -1897,6 +1889,7 @@ TP_RAW_HD_TOOLTIP;設定値を低くすると、ホット/デッドピクセル�
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;サブイメージ
+TP_RAW_IMAGENUM_SN;SNモード
 TP_RAW_IMAGENUM_TOOLTIP;rawファイルの中には複数のサブイメージで構成されているものがあります（Pentaxのピクセルシフト、Pentaxの3-in-1 HDR、Canonのデュアルピクセル）。\n\nここでピクセルシフト以外のデモザイク方式を選んだ場合は、どのサブイメージだけをデモザイクに使うか選択します。\n\nピクセルシフトのrawファイルでデモザイク方式にピクセルシフトを選ぶと、全てのサブイメージがデモザイクに使われます、そしてどのサブイメージを振れのあるイメージとして使うか選択します
 TP_RAW_LABEL;デモザイク
 TP_RAW_LMMSE;LMMSE
@@ -1916,15 +1909,12 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;選択した構成画像の明るさを他�
 TP_RAW_PIXELSHIFTGREEN;振れに関するグリーンチャンネルを確認
 TP_RAW_PIXELSHIFTHOLEFILL;振れマスクの穴を埋める
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;振れマスクの穴を埋める
-TP_RAW_PIXELSHIFTLMMSE;振れのある領域にLMMSEを使用
-TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;振れのある領域にはAMaZEの代わりにLMMSEを使います。\nISO値が高い画像の処
 TP_RAW_PIXELSHIFTMEDIAN;振れのある領域にはメディアンを使用
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;振れのある領域に関しては、選択した画像ではなく全ての構成画像にメディアンを使います。\n全ての構成画像で異なる位置にある被写体は除きます。\n動きの遅い被写体（オーバーラッピング）には振れの効果が出ます。
 TP_RAW_PIXELSHIFTMM_AUTO;自動
 TP_RAW_PIXELSHIFTMM_CUSTOM;カスタム
 TP_RAW_PIXELSHIFTMM_OFF;オフ
 TP_RAW_PIXELSHIFTMOTIONMETHOD;振れ補正
-TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0は振れの検知が行われないことを意味します\n1 - 99は振れを検知する強さを意味します。値を増やすと検知率が上がります。\n100に設定するとAMaZEでデモザイクされた画像が使われます
 TP_RAW_PIXELSHIFTNONGREENCROSS;振れに関するレッド／ブルーのチャンネルを確認
 TP_RAW_PIXELSHIFTSHOWMOTION;振れマスクを含めて表示
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;振れマスクだけを表示
@@ -1940,6 +1930,8 @@ TP_RAW_SENSOR_BAYER_LABEL;ベイヤー配列を使ったセンサー
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passが最適です（低ISO画像には奨められます)\n高ISO画像の場合、1-passと3-passの違いは殆どありません、処理速度は前者の方が速いです。
 TP_RAW_SENSOR_XTRANS_LABEL;X-Transマトリクスを使ったセンサー
 TP_RAW_VNG4;VNG4
+TP_RAW_XTRANS;X-Trans
+TP_RAW_XTRANSFAST;高速 X-Trans
 TP_RESIZE_ALLOW_UPSCALING;アップスケーリングを可能にする
 TP_RESIZE_APPLIESTO;適用領域:
 TP_RESIZE_CROPPEDAREA;切り抜き画像
@@ -1971,7 +1963,6 @@ TP_RETINEX_GAIN;ゲイン
 TP_RETINEX_GAINOFFS;ゲインとオフセット(明るさ)
 TP_RETINEX_GAINTRANSMISSION;ゲインの透過
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;目標とする輝度を得るために、透過マップ増幅したり減衰させたりします。\n横軸：左から最小、平均、最大となります。\n縦軸：ゲイン
-TP_RETINEX_GAIN_TOOLTIP;修復画像に作用します\n\nこれは他の設定とは大きく異なります。 ブラックピクセルやホワイトピクセルに対して使う設定で、ヒストグラムのバランスを補正します
 TP_RETINEX_GAMMA;ガンマ
 TP_RETINEX_GAMMA_FREE;フリー
 TP_RETINEX_GAMMA_HIGH;高
@@ -2049,10 +2040,8 @@ TP_SAVEDIALOG_OK_TIP;ショートカット <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;ハイライトを暗く
 TP_SHADOWSHLIGHTS_HLTONALW;ハイライトトーンの幅
 TP_SHADOWSHLIGHTS_LABEL;シャドウ/ハイライト
-TP_SHADOWSHLIGHTS_LOCALCONTR;ローカルコントラスト
 TP_SHADOWSHLIGHTS_RADIUS;半径
 TP_SHADOWSHLIGHTS_SHADOWS;シャドウを明るく
-TP_SHADOWSHLIGHTS_SHARPMASK;シャープマスク
 TP_SHADOWSHLIGHTS_SHTONALW;シャドウトーンの幅
 TP_SHARPENEDGE_AMOUNT;適用量
 TP_SHARPENEDGE_LABEL;エッジ
@@ -2330,32 +2319,3 @@ ZOOMPANEL_ZOOMFITSCREEN;画像全体を画面に合わせる\nショートカッ
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!MAIN_FRAME_PLACES_DEL;Remove
-!PREFERENCES_CHUNKSIZES;Tiles per thread
-!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
-!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
-!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
-!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
-!PREFERENCES_CHUNKSIZE_RGB;RGB processing
-!PREFERENCES_PERFORMANCE_MEASURE;Measure
-!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
-!PROGRESSBAR_DECODING;Decoding...
-!PROGRESSBAR_GREENEQUIL;Green equilibration...
-!PROGRESSBAR_HLREC;Highlight reconstruction...
-!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
-!PROGRESSBAR_LINEDENOISE;Line noise filter...
-!PROGRESSBAR_RAWCACORR;Raw CA correction...
-!TP_CROP_PPI;PPI
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
-!TP_LENSPROFILE_MODE_HEADER;Lens Profile
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
-!TP_LENSPROFILE_USE_HEADER;Correct
-!TP_RAW_IMAGENUM_SN;SN mode
-!TP_RAW_XTRANS;X-Trans
-!TP_RAW_XTRANSFAST;Fast X-Trans

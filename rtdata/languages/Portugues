@@ -7,10 +7,6 @@ ABOUT_TAB_LICENSE;Licença
 ABOUT_TAB_RELEASENOTES;Notas de lançamento
 ABOUT_TAB_SPLASH;Ecrã inicial
 ADJUSTER_RESET_TO_DEFAULT;<b>Clique</b> - repor o valor padrão.\n<b>Ctrl</b>+<b>clique</b> - repor o valor padrão.
-BATCHQUEUE_AUTOSTART;Iniciar automático
-BATCHQUEUE_AUTOSTARTHINT;Começar a processar automaticamente ao receber uma nova tarefa.
-BATCHQUEUE_DESTFILENAME;Caminho e nome do ficheiro
-BATCHQUEUE_STARTSTOPHINT;Iniciar ou parar o processamento das imagens na fila.\n\nAtalho: <b>Ctrl</b>+<b>s</b>
 BATCH_PROCESSING;Processamento em lote
 CURVEEDITOR_AXIS_IN;Entrada:
 CURVEEDITOR_AXIS_LEFT_TAN;TE:
@@ -98,7 +94,6 @@ EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Ignorar etapas de melhoramento LMMSE [raw]
 EXPORT_BYPASS_SHARPENEDGE;Ignorar nitidez das bordas
 EXPORT_BYPASS_SHARPENING;Ignorar nitidez
 EXPORT_BYPASS_SHARPENMICRO;Ignorar microcontraste
-EXPORT_BYPASS_SH_HQ;Ignorar sombras/altas luzes da máscara de nitidez
 EXPORT_FASTEXPORTOPTIONS;<b>Opções de exportação rápida</b>
 EXPORT_INSTRUCTIONS;As opções de exportação rápida fornecem substituições para poupar tempo e recursos consumidos no desenvolvimento de configurações e na execução do processamento de filas utilizando configurações de exportação rápida. Este método é recomendado para gerar rapidamente imagens de baixa resolução, quando a velocidade é uma prioridade ou quando se quer uma saída redimensionada para uma ou mais imagens sem fazer alterações nos parâmetros de desenvolvimento guardados.
 EXPORT_MAXHEIGHT;Altura máxima:
@@ -111,7 +106,6 @@ EXPORT_USE_FAST_PIPELINE_TIP;Usar uma preparação de processamento dedicado par
 EXPORT_USE_NORMAL_PIPELINE;Padrão (ignorar algumas etapas, redimensionar no fim)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;processado na fila
-FILEBROWSER_ADDDELTEMPLATE;Adicionar/eliminar modelos...
 FILEBROWSER_APPLYPROFILE;Aplicar
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplicar - parcial
 FILEBROWSER_AUTODARKFRAME;Fotograma escuro automático
@@ -125,11 +119,8 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Etiqueta de cor.\n\nUse o menu suspenso ou atalho
 FILEBROWSER_COPYPROFILE;Copiar
 FILEBROWSER_CURRENT_NAME;Nome atual:
 FILEBROWSER_DARKFRAME;Fotograma escuro
-FILEBROWSER_DELETEDLGLABEL;Confirmação de eliminação de ficheiro
-FILEBROWSER_DELETEDLGMSG;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados?
-FILEBROWSER_DELETEDLGMSGINCLPROC;Tem a certeza que quer eliminar os <b>%1</b> ficheiros selecionados <b>incluindo</b> uma versão processada na fila?
+FILEBROWSER_DELETEDIALOG_HEADER;Confirmação de eliminação de ficheiro
 FILEBROWSER_EMPTYTRASH;Esvaziar o caixote do lixo
-FILEBROWSER_EMPTYTRASHHINT;Eliminar permanentemente os ficheiros do caixote do lixo.
 FILEBROWSER_EXTPROGMENU;Abrir com
 FILEBROWSER_FLATFIELD;Campo plano
 FILEBROWSER_MOVETODARKFDIR;Mover para a pasta de fotogramas escuros
@@ -163,8 +154,6 @@ FILEBROWSER_POPUPRANK2;Classificação 2 estrelas
 FILEBROWSER_POPUPRANK3;Classificação 3 estrelas
 FILEBROWSER_POPUPRANK4;Classificação 4 estrelas
 FILEBROWSER_POPUPRANK5;Classificação 5 estrelas
-FILEBROWSER_POPUPREMOVE;Eliminar
-FILEBROWSER_POPUPREMOVEINCLPROC;Eliminar com saída da fila
 FILEBROWSER_POPUPRENAME;Renomear
 FILEBROWSER_POPUPSELECTALL;Selecionar tudo
 FILEBROWSER_POPUPTRASH;Mover para o caixote do lixo
@@ -191,7 +180,6 @@ FILEBROWSER_SHOWDIRHINT;Limpar todos os filtros.\nAtalho: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Mostrar imagens editadas.\nAtalho: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imagens não editadas.\nAtalho: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostrar informações Exif.\n\nAtalhos:\n<b>i</b> - Modo de editor em várias abas,\n<b>Alt-i</b> - Modo de editor numa só aba.
-FILEBROWSER_SHOWNOTTRASHHINT;Mostrar apenas imagens não eliminadas.
 FILEBROWSER_SHOWORIGINALHINT;Mostrar apenas imagens originais.\n\nQuando existem várias imagens com o mesmo nome de ficheiro mas com extensões diferentes, a única considerada original é aquela cuja extensão está mais próxima da parte superior da lista de extensões analisadas em Preferências > Navegador de ficheiros > Extensões analisadas.
 FILEBROWSER_SHOWRANK1HINT;Mostrar imagens classificadas com 1 estrela.\nAtalho: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Mostrar imagens classificadas com 2 estrelas.\nAtalho: <b>2</b>
@@ -877,14 +865,14 @@ MAIN_BUTTON_SENDTOEDITOR;Editar imagem no editor externo
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editar a imagem atual no editor externo.\nAtalho: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Ocultar todos os painéis laterais.\nAtalho: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Sair do ecrã total
-MAIN_FRAME_BATCHQUEUE;Fila
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;Fila de processamento.\nAtalho: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nAtalho: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Navegador de ficheiros
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Navegador de ficheiros.\nAtalho: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Locais
 MAIN_FRAME_PLACES_ADD;Adicionar
+MAIN_FRAME_QUEUE;Fila
+MAIN_FRAME_QUEUE_TOOLTIP;Fila de processamento.\nAtalho: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Pastas recentes
 MAIN_MSG_ALREADYEXISTS;O ficheiro já existe.
 MAIN_MSG_CANNOTLOAD;Não é possível carregar a imagem
@@ -1052,7 +1040,6 @@ PREFERENCES_BEHADDALLHINT;Definir todos os parâmetros para o modo <b>adicionar<
 PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BEHSETALL;Tudo para 'aplicar'
 PREFERENCES_BEHSETALLHINT;Definir todos os parâmetros para o modo <b>aplicar</b>.\nOs ajustes dos parâmetros no painel de ferramentas em lote serão <b>absolutos</b>, serão mostrados os valores reais.
-PREFERENCES_BLACKBODY;Tungsténio
 PREFERENCES_CACHECLEAR;Eliminar
 PREFERENCES_CACHECLEAR_ALL;Eliminar todos os ficheiros em cache:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Eliminar todos os ficheiros em cache excepto os perfis de processamento em cache:
@@ -1089,11 +1076,6 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT;Formato das chaves
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nome
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;Identificador da etiqueta
 PREFERENCES_CUSTPROFBUILDPATH;Caminho do executável
-PREFERENCES_D50;Configurações no menu principal
-PREFERENCES_D50_OLD;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Encontrado
 PREFERENCES_DARKFRAMESHOTS;disparos
 PREFERENCES_DARKFRAMETEMPLATES;modelos
@@ -1111,37 +1093,19 @@ PREFERENCES_EDITORLAYOUT;Interface do editor
 PREFERENCES_EXTERNALEDITOR;Editor externo
 PREFERENCES_FBROWSEROPTS;Navegador de ficheiros / opções de miniaturas
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de ferramentas compacta no navegador de ficheiros
-PREFERENCES_FILEFORMAT;Formato de ficheiro
 PREFERENCES_FLATFIELDFOUND;Encontrado
 PREFERENCES_FLATFIELDSDIR;Pasta de campos planos
 PREFERENCES_FLATFIELDSHOTS;disparos
 PREFERENCES_FLATFIELDTEMPLATES;modelos
-PREFERENCES_FLUOF2;Fluorescente F2
-PREFERENCES_FLUOF7;Fluorescente F7
-PREFERENCES_FLUOF11;Fluorescente F11
 PREFERENCES_FORIMAGE;Para fotos não-raw
 PREFERENCES_FORRAW;Para fotos raw
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Usar a mesma altura das miniaturas na película de fotografias e no navegador de ficheiros
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Se os tamanhos das miniaturas forem diferentes levará mais tempo a processá-las todas as vezes que se mudar entre a aba do editor e do navegador de ficheiros.
 PREFERENCES_GIMPPATH;Pasta de instalação do GIMP
-PREFERENCES_GREY;Luminância Yb do dispositivo de saída (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Configurações no menu principal
-PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GREYSC;Luminância Yb da cena (%)
-PREFERENCES_GREYSC18;Yb=18 CIE L#50
-PREFERENCES_GREYSCA;Automático
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histograma no painel esquerdo
-PREFERENCES_HISTOGRAMWORKING;Usar o perfil de trabalho para o histograma principal e o navegador
 PREFERENCES_HISTOGRAM_TOOLTIP;<b>Ativado</b>: é usado o perfil de trabalho para renderizar o painel histograma principal e o painel navegador.\n<b>Desativado</b>: é usado o perfil de saída com gama corrigida.
 PREFERENCES_HLTHRESHOLD;Limite para altas luzes cortadas
 PREFERENCES_ICCDIR;Pasta com os perfis de cores
-PREFERENCES_IMG_RELOAD_NEEDED;Para que estas alterações surtam efeito é necessário recarregar a imagem ou que uma nova imagem seja aberta.
 PREFERENCES_IMPROCPARAMS;Perfil de processamento padrão
 PREFERENCES_INSPECT_LABEL;Inspecionar
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Número máximo de imagens em cache
@@ -1160,7 +1124,6 @@ PREFERENCES_MENUGROUPLABEL;Grupo "Etiqueta de cor"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grupo "Operações de perfil de processamento"
 PREFERENCES_MENUGROUPRANK;Grupo "Classificação"
 PREFERENCES_MENUOPTIONS;Agrupar opções no menu de contexto (necessário reiniciar)
-PREFERENCES_METADATA;Metadados
 PREFERENCES_MONINTENT;Intenção de renderização padrão
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Perfil de cor padrão
@@ -1168,11 +1131,6 @@ PREFERENCES_MONPROFILE_WARNOSX;Devido às limitações do MacOS, apenas é supor
 PREFERENCES_MULTITAB;Modo de editor em várias abas
 PREFERENCES_MULTITABDUALMON;Modo de editor em várias janelas
 PREFERENCES_NAVIGATIONFRAME;Navegação
-PREFERENCES_OUTDIR;Pasta das saídas
-PREFERENCES_OUTDIRFOLDER;Guardar na pasta
-PREFERENCES_OUTDIRFOLDERHINT;Guardar imagens na pasta selecionada.
-PREFERENCES_OUTDIRTEMPLATE;Usar modelo
-PREFERENCES_OUTDIRTEMPLATEHINT;Pode-se usar as seguintes sequências de formatação:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nEstas cadeias de formatação referem-se às diferentes partes do caminho do nome da fotografia, alguns atributos da fotografia ou um índice de sequência arbitrário no processamento em lote.\n\nPor exemplo, se a fotografia que está a ser processada tiver o seguinte caminho:\n<b><i>/inicio/rodrigo/fotos/2010-10-31/dsc0042.nef</i></b>\no significado das cadeias de formatação são:\n<b>%d4</b> = <i>inicio</i>\n<b>%d3</b> = <i>rodrigo</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/inicio/rodrigo/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/inicio/rodrigo/fotos/</i>\n<b>%p3</b> = <i>/inicio/rodrigo/</i>\n<b>%p4</b> = <i>/inicio/</i>\n\n<b>%r</b> será substituído pela classificação da fotografia. Se a fotografia não tiver classificação, %r será substituído por '0'. Se a fotografia estiver no caixote do lixo, %r será substituído por 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. será substituído por um índice de sequência que é preenchido entre 1 e 9 dígitos. O índice da sequência iniciará em 1 sempre que o processamento da fila for iniciado e será incrementado em 1 para cada imagem processada.\n\nSe quiser guardar a imagem de saída no local onde se encontra a original, escreva:\n<b>%p1/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada "<i>convertido</i>" localizada na pasta da imagem aberta, escreva:\n<b>%p1/convertido/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada\n"<i>/inicio/rodrigo/fotos/convertido/2010-10-31</i>", escreva:\n<b>%p2/convertido/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Mostrar nomes de ficheiros em cima das miniaturas no navegador de ficheiros
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Mostrar nomes de ficheiros em cima das miniaturas no painel do editor
 PREFERENCES_OVERWRITEOUTPUTFILE;Substituir ficheiros de saída existentes
@@ -1220,9 +1178,9 @@ PREFERENCES_SHOWFILMSTRIPTOOLBAR;Mostrar barra de ferramentas da película de fo
 PREFERENCES_SHTHRESHOLD;Limite para sombras cortadas
 PREFERENCES_SINGLETAB;Modo de editor numa só aba
 PREFERENCES_SINGLETABVERTAB;Modo de editor numa só aba. Abas verticais
-PREFERENCES_SND_BATCHQUEUEDONE;Processamento da fila concluído
 PREFERENCES_SND_HELP;Introduza um endereço de ficheiro completo para definir um som ou deixe em branco para não ter som.\nPara sons do sistema no Windows, use "SystemDefault", "SystemAsterisk" etc. e no Linux use "complete", "window-attention" etc.
 PREFERENCES_SND_LNGEDITPROCDONE;Processamento do editor concluído
+PREFERENCES_SND_QUEUEDONE;Processamento da fila concluído
 PREFERENCES_SND_THRESHOLDSECS;Após (segundos)
 PREFERENCES_STARTUPIMDIR;Pasta de imagens ao iniciar
 PREFERENCES_TAB_BROWSER;Navegador de ficheiros
@@ -1238,9 +1196,7 @@ PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Renderização raw neutra
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Incorporar JPEG se for no tamanho real, caso contrário usar raw neutro
 PREFERENCES_TP_LABEL;Painel de ferramentas:
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de deslocamento vertical
-PREFERENCES_TUNNELMETADATA;Copiar Exif/IPTC/XMP inalterados para o ficheiro de saída
 PREFERENCES_USEBUNDLEDPROFILES;Usar perfis incluídos
-PREFERENCES_VIEW;Balanço de brancos do dispositivo de saída (monitor, TV, projetor, visualização, etc.)
 PREFERENCES_WORKFLOW;Interface
 PROFILEPANEL_COPYPPASTE;Parâmetros a copiar
 PROFILEPANEL_GLOBALPROFILES;Perfis incluídos
@@ -1280,6 +1236,14 @@ QINFO_HDR;HDR / %2 fotograma(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Dados Exif não disponíveis.
 QINFO_PIXELSHIFT;Mudança de píxel / %2 fotograma(s)
+QUEUE_AUTOSTART;Iniciar automático
+QUEUE_AUTOSTART_TOOLTIP;Começar a processar automaticamente ao receber uma nova tarefa.
+QUEUE_DESTFILENAME;Caminho e nome do ficheiro
+QUEUE_FORMAT_TITLE;Formato de ficheiro
+QUEUE_LOCATION_FOLDER;Guardar na pasta
+QUEUE_LOCATION_TEMPLATE;Usar modelo
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Pode-se usar as seguintes sequências de formatação:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nEstas cadeias de formatação referem-se às diferentes partes do caminho do nome da fotografia, alguns atributos da fotografia ou um índice de sequência arbitrário no processamento em lote.\n\nPor exemplo, se a fotografia que está a ser processada tiver o seguinte caminho:\n<b><i>/inicio/rodrigo/fotos/2010-10-31/dsc0042.nef</i></b>\no significado das cadeias de formatação são:\n<b>%d4</b> = <i>inicio</i>\n<b>%d3</b> = <i>rodrigo</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/inicio/rodrigo/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/inicio/rodrigo/fotos/</i>\n<b>%p3</b> = <i>/inicio/rodrigo/</i>\n<b>%p4</b> = <i>/inicio/</i>\n\n<b>%r</b> será substituído pela classificação da fotografia. Se a fotografia não tiver classificação, %r será substituído por '0'. Se a fotografia estiver no caixote do lixo, %r será substituído por 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. será substituído por um índice de sequência que é preenchido entre 1 e 9 dígitos. O índice da sequência iniciará em 1 sempre que o processamento da fila for iniciado e será incrementado em 1 para cada imagem processada.\n\nSe quiser guardar a imagem de saída no local onde se encontra a original, escreva:\n<b>%p1/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada "<i>convertido</i>" localizada na pasta da imagem aberta, escreva:\n<b>%p1/convertido/%f</b>\n\nSe quiser guardar a imagem de saída numa pasta chamada\n"<i>/inicio/rodrigo/fotos/convertido/2010-10-31</i>", escreva:\n<b>%p2/convertido/%d1/%f</b>
+QUEUE_STARTSTOP_TOOLTIP;Iniciar ou parar o processamento das imagens na fila.\n\nAtalho: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Formato de dados desconhecido
 SAMPLEFORMAT_1;8 bits sem assinatura
 SAMPLEFORMAT_2;16-bits sem assinatura
@@ -1389,7 +1353,6 @@ TP_CHMIXER_BLUE;Canal azul
 TP_CHMIXER_GREEN;Canal verde
 TP_CHMIXER_LABEL;Misturador de canais
 TP_CHMIXER_RED;Canal vermelho
-TP_CHROMATABERR_LABEL;Aberração cromática
 TP_COARSETRAF_TOOLTIP_HFLIP;Espelhar horizontalmente.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rodar para a esquerda.\n\nAtalhos:\n<b>[</b> - Modo de editor em várias abas,\n<b>Alt-[</b> - Modo de editor numa só aba.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rodar para a direita.\n\nAtalhos:\n<b>]</b> - Modo de editor em várias abas,\n<b>Alt-]</b> - Modo de editor numa só aba.
@@ -1449,8 +1412,6 @@ TP_COLORAPP_SURROUND_DARK;Escuro
 TP_COLORAPP_SURROUND_DIM;Sombrio
 TP_COLORAPP_SURROUND_EXDARK;Extremamente escuro (camada de corte)
 TP_COLORAPP_SURROUND_TOOLTIP;Altera os tons e cores de acordo com as condições de visualização do dispositivo de saída.\n\n<b>Médio</b>: ambiente de luz médio (padrão). A imagem não vai mudar.\n\n<b>Sombrio</b>: ambiente sombrio (TV). A imagem ficará ligeiramente escura.\n\n<b>Escuro</b>: ambiente escuro (projetor). A imagem ficará mais escura.\n\n<b>Extremamente escuro</b>: Ambiente extremamente escuro (camada de corte). A imagem ficará muito escura.
-TP_COLORAPP_SURSOURCE;Borda escura
-TP_COLORAPP_SURSOURCE_TOOLTIP;Pode ser usado se a imagem tiver uma borda escura.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Brilho
 TP_COLORAPP_TCMODE_CHROMA;Croma
 TP_COLORAPP_TCMODE_COLORF;Colorido
@@ -1551,7 +1512,6 @@ TP_DEHAZE_SHOW_DEPTH_MAP;Mostrar mapa de profundidade
 TP_DEHAZE_STRENGTH;Intensidade
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Multi-zonas automático
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Global automático
-TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL_TOOLTIP;Tentar avaliar o ruído de crominância\nTenha cuidado, este cálculo é mediano e é bastante subjetivo!
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Crominância - Azul-amarelo
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Curva de crominância
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Aumentar (multiplicar) o valor de todos os controlos deslizantes de crominância.\nEsta curva permite ajustar a intensidade da redução de ruído cromático em função da cromaticidade, por exemplo, para aumentar a ação em áreas de baixa saturação e diminuí-la nas de alta saturação.
@@ -1569,8 +1529,6 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Pré-visualização do ruído: M�
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Pré-visualização do ruído: Médio= -   Alto= -
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Matriz tamanho=%1, Centro: Tx=%2  Ty=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Crominância - Vermelho-verde
-TP_DIRPYRDENOISE_ENH;Modo avançado
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Aumenta a qualidade da redução do ruído mas aumenta em 20% o tempo de processamento.
 TP_DIRPYRDENOISE_LABEL;Redução de ruído
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Controlo da luminância
 TP_DIRPYRDENOISE_LUMINANCE_CURVE;Curva de luminância
@@ -1599,7 +1557,6 @@ TP_DIRPYRDENOISE_MEDIAN_PASSES;Iterações medianas
 TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;A aplicação de três iterações de filtro mediano com o tamanho de janela 3×3 muitas vezes dá resultados melhores do que usar uma iteração de filtro mediano com tamanho de janela 7×7.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Tipo de mediano
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Aplicar um filtro mediano no tamanho da janela desejado. Quanto maior o tamanho da janela, mais tempo demora.\n\n3×3 suave: trata 5 píxeis numa janela de 3×3 píxeis.\n3×3: trata 9 píxeis numa janela de 3×3 píxeis.\n5×5 suave: trata 13 píxeis numa janela de 5×5 píxeis.\n5×5: trata 25 píxeis numa janela de 5×5 píxeis.\n7×7: trata 49 píxeis numa janela de 7×7 píxeis.\n9×9: trata 81 píxeis numa janela de 9×9 píxeis.\n\nÀs vezes é possível obter uma qualidade mais alta executando várias iterações com um tamanho de janela menor do que uma iteração com uma maior.
-TP_DIRPYRDENOISE_SLI;Controlo deslizante
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
 TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 suave
 TP_DIRPYRDENOISE_TYPE_5X5;5×5
@@ -1704,8 +1661,6 @@ TP_ICM_APPLYHUESATMAP;Tabela base
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Usa a tabela base DCP incorporada (HueSatMap). Esta configuração só estará disponível se o DCP selecionado tiver um.
 TP_ICM_APPLYLOOKTABLE;Tabela de valores
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Usa a tabela de valores (lookup table) DCP incorporada. Esta configuração só estará disponível se o DCP selecionado tiver um.
-TP_ICM_BLENDCMSMATRIX;Misturar as altas luzes do ICC com a matriz
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Ativar para recuperar as altas luzes cortadas ao usar perfis ICC baseados em LUT (Look up Table).
 TP_ICM_BPC;Compensação de ponto preto
 TP_ICM_DCPILLUMINANT;Iluminante
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolado
@@ -1831,8 +1786,7 @@ TP_RAWCACORR_AUTOIT_TOOLTIP;Esta funcionalidade está disponível se a opção "
 TP_RAWCACORR_AVOIDCOLORSHIFT;Evitar mudança de cor
 TP_RAWCACORR_CABLUE;Azul
 TP_RAWCACORR_CARED;Vermelho
-TP_RAWCACORR_CASTR;Intensidade
-TP_RAWEXPOS_BLACKS;Níveis de preto
+TP_RAWCACORR_LABEL;Correção de aberração cromática
 TP_RAWEXPOS_BLACK_0;Verde 1 (guia)
 TP_RAWEXPOS_BLACK_1;Vermelho
 TP_RAWEXPOS_BLACK_2;Azul
@@ -1890,15 +1844,12 @@ TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equaliza o brilho dos fotogramas para o bri
 TP_RAW_PIXELSHIFTGREEN;Verificar o canal verde para movimento
 TP_RAW_PIXELSHIFTHOLEFILL;Preencher buracos na máscara de movimento
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Preenche os buracos na máscara de movimento
-TP_RAW_PIXELSHIFTLMMSE;Usar LMMSE para partes móveis
-TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Usa LMMSE em vez de AMaZE para áreas de movimento.\nÚtil para imagens com ISO alto.
 TP_RAW_PIXELSHIFTMEDIAN;Usa mediana para partes móveis
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Usa a mediana de todos os fotogramas em vez do fotograma selecionado para regiões com movimento.\nRemove objetos que estão em lugares diferentes em todos os fotogramas.\nDá um efeito de movimento em objetos de movimento lento (sobreposição).
 TP_RAW_PIXELSHIFTMM_AUTO;Automático
 TP_RAW_PIXELSHIFTMM_CUSTOM;Personalizado
 TP_RAW_PIXELSHIFTMM_OFF;Desligado
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Correção de movimento
-TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 significa que não há deteção de movimento.\n1 - 99 significa que o movimento será detectado de acordo com este valor. Aumentar o valor para aumentar a taxa de deteção.\n100 significa que será usado o fotograma de desmatrização AMaZE.
 TP_RAW_PIXELSHIFTNONGREENCROSS;Verifica os canais vermelho/azul para movimento
 TP_RAW_PIXELSHIFTSHOWMOTION;Mostra máscara de movimento
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Mostra apenas a máscara de movimento
@@ -1945,7 +1896,6 @@ TP_RETINEX_GAIN;Ganho
 TP_RETINEX_GAINOFFS;Ganho e deslocamento (brilho)
 TP_RETINEX_GAINTRANSMISSION;Transmissão de ganho
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplifica ou reduz o mapa de transmissão para alcançar a luminância desejada.\nO eixo do X (vertical) é a transmissão.\nO eixo do Y (horizontal) é o ganho.
-TP_RETINEX_GAIN_TOOLTIP;Atua na imagem restaurada.\n\nIsto é muito diferente das outras configurações. Usado para píxeis pretos ou brancos e para ajudar a equilibrar o histograma.
 TP_RETINEX_GAMMA;Gama
 TP_RETINEX_GAMMA_FREE;Livre
 TP_RETINEX_GAMMA_HIGH;Alta
@@ -2023,10 +1973,8 @@ TP_SAVEDIALOG_OK_TIP;Atalho: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Altas luzes
 TP_SHADOWSHLIGHTS_HLTONALW;Largura tonal das altas luzes
 TP_SHADOWSHLIGHTS_LABEL;Sombras/altas luzes
-TP_SHADOWSHLIGHTS_LOCALCONTR;Contraste local
 TP_SHADOWSHLIGHTS_RADIUS;Raio
 TP_SHADOWSHLIGHTS_SHADOWS;Sombras
-TP_SHADOWSHLIGHTS_SHARPMASK;Máscara de nitidez
 TP_SHADOWSHLIGHTS_SHTONALW;Largura tonal das sombras
 TP_SHARPENEDGE_AMOUNT;Quantidade
 TP_SHARPENEDGE_LABEL;Bordas
@@ -2309,14 +2257,32 @@ ZOOMPANEL_ZOOMOUT;Afastar\nAtalho: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
+!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
+!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
+!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
+!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
+!FILEBROWSER_POPUPREMOVE;Delete permanently
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
+!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 !MAIN_FRAME_PLACES_DEL;Remove
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
+!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PROGRESSBAR_DECODING;Decoding...
 !PROGRESSBAR_GREENEQUIL;Green equilibration...
 !PROGRESSBAR_HLREC;Highlight reconstruction...
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
 !PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
+!QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
+!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red ratio
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_MODE_HEADER;Lens Profile

@@ -356,10 +356,6 @@ void Sharpening::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Sharpening::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Sharpening::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
 {
 }

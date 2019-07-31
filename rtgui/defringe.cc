@@ -164,10 +164,6 @@ void Defringe::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Defringe::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Defringe::enabledChanged ()
 {
 

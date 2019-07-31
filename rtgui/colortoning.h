@@ -33,7 +33,6 @@ public:
     void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void trimValues            (rtengine::procparams::ProcParams* pp) override;
     void adjusterChanged       (Adjuster* a, double newval) override;
-    void adjusterAutoToggled   (Adjuster* a, bool newval) override;
     void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
     void neutral_pressed       ();
     //void neutralCurves_pressed ();

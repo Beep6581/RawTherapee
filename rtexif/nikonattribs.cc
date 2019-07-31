@@ -257,65 +257,18 @@ public:
 
         std::ostringstream af;
 
-        if (aff & 1)
-            if (af.str() == "") {
-                af << "Center";
-            } else {
-                af << ", Center";
-            } else if (aff & 2)
-            if (af.str() == "") {
-                af << "Top";
-            } else {
-                af << ", Top";
-            } else if (aff & 4)
-            if (af.str() == "") {
-                af << "Bottom";
-            } else {
-                af << ", Bottom";
-            } else if (aff & 8)
-            if (af.str() == "") {
-                af << "Left";
-            } else {
-                af << ", Left";
-            } else if (aff & 16)
-            if (af.str() == "") {
-                af << "Right";
-            } else {
-                af << ", Right";
-            } else if (aff & 32)
-            if (af.str() == "") {
-                af << "Upper-left";
-            } else {
-                af << ", Upper-left";
-            } else if (aff & 64)
-            if (af.str() == "") {
-                af << "Upper-right";
-            } else {
-                af << ", Upper-right";
-            } else if (aff & 128)
-            if (af.str() == "") {
-                af << " Lower-left";
-            } else {
-                af << ",  Lower-left";
-            } else if (aff & 256)
-            if (af.str() == "") {
-                af << "Lower-right";
-            } else {
-                af << ", Lower-right";
-            } else if (aff & 512)
-            if (af.str() == "") {
-                af << "Far Left";
-            } else {
-                af << ", Far Left";
-            } else if (aff & 1024) {
-            if (af.str() == "") {
-                af << "Far Right";
-            } else {
-                af << ", Far Right";
+        if (aff) {
+            for (size_t i = 0; i < afpchoices.size(); ++i) {
+                if (aff & (1 << i)) {
+                    if (!af.str().empty()) {
+                        af << ", ";
+                    }
+                    af << afpchoices.at(i);
+                }
             }
         }
 
-        str << "AFPointsInFocus = " << af.str();
+        str << "AFPointsInFocus = " << (af.str().empty() ? "None" : af.str());
         return str.str();
     }
 };
@@ -553,7 +506,7 @@ public:
         std::map<std::string, std::string>::const_iterator r = lenses.find (lid.str());
 
         if (r != lenses.end()) {
-            if (r == lenses.begin() && EffectiveMaxApertureString != "") {      // first entry is for unchipped lenses
+            if (r == lenses.begin() && !EffectiveMaxApertureString.empty()) {      // first entry is for unchipped lenses
                 Tag *FLTag = t->getParent()->getRoot()->findTag ("FocalLength");
                 ld << "Lens = MF ";
 
@@ -1148,7 +1101,26 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"FE 53 5C 80 24 24 84 06", "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)"},
     {"FE 54 5C 80 24 24 DF 0E", "Tamron SP 70-200mm f/2.8 Di VC USD (A009)"},
     {"FE 54 64 64 24 24 DF 0E", "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1 (F004)"},
-    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"}
+    {"FF 40 2D 80 2C 40 4B 06", "Sigma 18-200mm f/3.5-6.3 DC"},
+
+    // There are cases where one lens uses multiple IDs which change based on the focal length or aperture.
+    // These IDs cannot be listed using ExifTool, and so must be entered manually below.
+    // #4135
+
+    {"92 2B 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (210mm)
+    {"92 2C 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (185mm)
+    {"92 2D 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (155mm)
+    {"92 2E 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (130mm)
+    {"92 2F 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (105mm)
+    {"92 30 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (90mm)
+    {"92 32 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (75mm)
+    {"92 33 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (62mm)
+    {"92 35 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (52mm)
+    {"92 37 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (44mm)
+    {"92 39 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (38mm)
+    {"92 3A 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (32mm)
+    {"92 3E 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"}, // (22mm)
+    {"92 40 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM"} // (18mm)
 };
 
 const TagAttrib nikonISOInfoAttribs[] = {

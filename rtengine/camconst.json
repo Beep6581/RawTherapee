@@ -1224,6 +1224,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon PowerShot SX150 IS",
+        "dcraw_matrix": [ 13481, -4867, -1063, -2074, 9960, 2472, -170, 1474, 3894 ], // Adobe DNG Converter 11.1 ColorMatrix1 (there is only one matrix and illuminant, and it's for daylight)
         "raw_crop": [ 26, 10, 4364, 3254 ] // cut 2pix left and right
     },
 
@@ -1242,6 +1243,11 @@ Camera constants:
     { // Quality C
         "make_model": "DJI FC6310",
         "ranges": { "white": 64886 }
+    },
+
+    { // Quality C
+        "make_model": "FUJIFILM GFX 100",
+        "raw_crop": [ 0, 2, 11664, 8734 ]
     },
 
     { // Quality B
@@ -1284,6 +1290,11 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
 
+    { // Quality C
+        "make_model": "FUJIFILM X-A5",
+        "ranges": { "white": 16100 }
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X-A10",
         "dcraw_matrix": [ 11540,-4999,-991,-2949,10963,2278,-382,1049,5605 ], // DNGv9.12 D65
@@ -1296,6 +1307,11 @@ Camera constants:
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
         //"dcraw_matrix": [ 9289,-3279,-632,-3539,11137,2758,-1049,1950,6544 ], // X-RITE D55
         //"raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296 - experimental crop
+        "ranges": { "white": 16100 }
+    },
+
+    { // Quality C
+        "make_model": [ "FUJIFILM X-T100" ],
         "ranges": { "white": 16100 }
     },
 
@@ -1321,7 +1337,7 @@ Camera constants:
     },
 
     { // Quality C, only raw crop
-        "make_model": [ "FUJIFILM X-T3" ],
+        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30" ],
         "raw_crop": [ 0, 5, 6252, 4176]
     },    
     
@@ -1605,9 +1621,9 @@ Camera constants:
         "make_model" : "Nikon Z 6",
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
         "pdaf_pattern" : [0, 12],
-        "pdaf_offset" : 32        
+        "pdaf_offset" : 32
     },
-    
+
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",
         "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // DNG_v8.8 D65
@@ -1656,6 +1672,11 @@ Camera constants:
         "ranges": { "white": 4080 } // nominal 4095-4094, spread with some settings as long exposure
     },
 
+    { // Quality C, only raw crop for highres mode
+        "make_model": "OLYMPUS E-M1X",
+        "raw_crop": [ 0, 0, 10388, 0 ] // Highres mode largest valid, full 80Mp 10400X7792, works also for non highres mode because larger width will be ignored
+    },
+
     { // Quality B, crop correction
         "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10MarkII", "OLYMPUS E-M10 Mark III" ],
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
@@ -1669,6 +1690,11 @@ Camera constants:
         "global_green_equilibration" : true,
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "ranges": { "white": 4040 } // nominal 4056
+    },
+
+    { // Quality C
+        "make_model": [ "OLYMPUS E-PL9" ],
+        "ranges": { "white": 4080 } // nominal 4093
     },
 
     { // Quality B, with long exposure noise reduction White Level gets WL-BL = around 256_12-bit levels less
@@ -2358,6 +2384,11 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 }
     },
 
+    { // Quality C, correction for frame width
+        "make_model": [ "Sony DSC-RX0", "Sony DSC-RX0M2" ],
+        "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
+    },
+
     { // Quality B, correction for frame width, crop modes covered
         "make_model": [ "Sony ILCE-7RM2", "Sony DSC-RX1RM2" ],
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
@@ -2406,6 +2437,11 @@ Camera constants:
         "pdaf_offset" : 31
     },
 
+    { // Quality C,
+        "make_model": "Sony ILCE-7RM4",
+        "raw_crop": [ 0, 0, 9568, 0 ] // full raw frame 9600x6376 - 32 rightmost columns are garbage
+    },
+
     { // Quality B, color matrix copied from a7rm2
         "make_model": "Sony ILCE-9",
         "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // DNG_v9.12 D65
@@ -2426,8 +2462,14 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": [ "Sony DSC-HX99" ],
+        "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
+    },
+
+    { // Quality B
         "make_model": [ "Sony DSC-R1" ],
-        "raw_crop": [ 0, 0, 3924, 2608 ]
+        "raw_crop": [ 0, 0, 3924, 2608 ],
+        "ranges": { "white": 16368 }
     },
 
     { // Quality A
@@ -2553,6 +2595,16 @@ Camera constants:
     { // Quality C
         "make_model": [ "Hasselblad H6D-100cMS" ],
         "raw_crop": [ 64, 108, 11608, 8708 ]
+    },
+
+    {
+        "make_model": [ "HUAWEI DLI-L22" ],
+        "dcraw_matrix": [ 6984, -812, -975, -4792, 13481, 1381, -1056, 2355, 4873 ] // ColorMatrix1 (D65, wrong order) from Adobe DNG Converter 11.2.1
+    },
+
+    {
+        "make_model": [ "samsung SM-N960F" ],
+        "dcraw_matrix": [ 6632, -622, -1104, -5659, 14819, 773, -1846, 4465, 4967 ] // ColorMatrix1 from Adobe DNG Converter 11.1
     },
 
     // Dummy test entry to test the parser and show the format with all entries active

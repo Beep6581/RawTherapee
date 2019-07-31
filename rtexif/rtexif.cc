@@ -3037,6 +3037,12 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
             }
         }
 
+        if (!root->getTag ("Rating")) {
+            Tag *t = new Tag (root, root->getAttrib("Rating"));
+            t->initInt (0, LONG);
+            root->addTag (t);
+        }
+
         // --- detecting image root IFD based on SubFileType, or if not provided, on PhotometricInterpretation
 
         bool frameRootDetected = false;

@@ -28,7 +28,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_CHROMATABERR_LABEL"))
+RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_RAWCACORR_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
     EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");
@@ -142,10 +142,6 @@ void RAWCACorr::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessCABlue,  value );
         }
     }
-}
-
-void RAWCACorr::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)

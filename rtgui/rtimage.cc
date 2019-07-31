@@ -120,6 +120,10 @@ void RTImage::changeImage (const Glib::ustring& imageName)
 {
     clear ();
 
+    if (imageName.empty()) {
+        return;
+    }
+
     if (pixbuf) {
         auto iterator = pixbufCache.find (imageName);
         assert(iterator != pixbufCache.end ());
@@ -169,6 +173,17 @@ void RTImage::init()
     scaleBack = RTScalable::getScale();
 }
 
+void RTImage::cleanup()
+{
+    for (auto& entry : pixbufCache) {
+        entry.second.reset();
+    }
+    for (auto& entry : surfaceCache) {
+        entry.second.clear();
+    }
+    RTScalable::cleanup();
+}
+
 void RTImage::updateImages()
 {
     for (auto& entry : pixbufCache) {
@@ -182,8 +197,7 @@ void RTImage::updateImages()
 Glib::RefPtr<Gdk::Pixbuf> RTImage::createPixbufFromFile (const Glib::ustring& fileName)
 {
     Cairo::RefPtr<Cairo::ImageSurface> imgSurf = createImgSurfFromFile(fileName);
-    Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create(imgSurf, 0, 0, imgSurf->get_width(), imgSurf->get_height());
-    return pixbuf;
+    return Gdk::Pixbuf::create(imgSurf, 0, 0, imgSurf->get_width(), imgSurf->get_height());
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::ustring& fileName)

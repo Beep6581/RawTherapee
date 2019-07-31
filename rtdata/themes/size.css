@@ -297,7 +297,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #MyExpander image {
     min-width: 1.333333333333333333em;
     min-height: 0;
-    margin: -0.083333333333333333em 0.19em;
+    margin: -0.083333333333333333em 0.125em;
 }
 
 #MyExpander .drawingarea:not(.slider) {
@@ -456,7 +456,7 @@ button,
 #BeforeAfterContainer button {
     min-height: 1.666666666666666666em;
     min-width: 1.666666666666666666em;/*x*/
-    margin: 0.19em;
+    margin: 0.125em;
     border-radius: 0.2em;
     border-width: 0.083333333333333333em;
 }
@@ -482,7 +482,7 @@ combobox entry.combo + button.combo {
 }
 #WB-Size-Helper {
     min-width: 3.5em;
-    margin: 0.19em;
+    margin: 0.125em;
 }
 
 combobox arrow {
@@ -570,7 +570,7 @@ colorchooser colorswatch#add-color-button:first-child {
 button.font label{
     min-height: 0;
     min-width: 0;
-    margin: 0 0.19em;
+    margin: 0 0.125em;
 }
 
 /* Save, Cancel, OK ... buttons */
@@ -603,9 +603,9 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #RightNotebook > stack > scrolledwindow:last-child button.image-button, /* Fast Export */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
-    min-height: 2.5em;
-    min-width: 2.5em;
-    margin: 0 0.19em;
+    min-height: 2.333333333333333333em;
+    min-width: 2.333333333333333333em;
+    margin: 0 0.125em;
 }
 #ToolBarPanelFileBrowser > button:first-child,
 #EditorTopPanel > button:first-child,
@@ -625,12 +625,12 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter button */
 #MetaPanelNotebook scrolledwindow + grid > button,
 #MetaPanelNotebook scrolledwindow + grid + grid > button {
-    margin: 0.19em;
+    margin: 0.125em;
 }
 
 #EditorTopPanel button.narrowbutton {
     min-width: 0.833333333333333333em;
-    padding: 0 0.166666666666666666em;
+    padding: 0 0.13em;
 }
 
 /* Image close button */
@@ -647,23 +647,25 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 
 /* Filter buttons*/
 #ToolBarPanelFileBrowser .smallbuttonbox {
-    min-height: 1.333333333333333333em;
+    min-height: 1.166666666666666666em;
     padding: 0;
     margin: 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox:nth-child(2) {
-    margin: 0.083333333333333333em 0 -0.166666666666666666em;
+    margin-top: 0.166666666666666666em;
+    margin-bottom: -0.166666666666666666em;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image {
-    margin: -0.19em;
-    min-width: 1.333333333333333333em;
-    min-height: 1.333333333333333333em;
+    margin: -1em 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
 }
 #ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton {
     min-height: 0;
-    min-width: 1.333333333333333333em;
+    min-width: 1.166666666666666666em;
     padding: 0;
-    margin: 0 0.25em;
+    margin: 0 0.166666666666666666em;
     border: none;
     border-radius: 0;
 }
@@ -686,7 +688,7 @@ messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
 #MyExpander .image-combo button.Left {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    min-width: 2.5em;
+    min-width: 2.333333333333333333em;
     margin-right: 0;
 }
 #MyExpander .image-combo button.Left {
@@ -820,7 +822,7 @@ button.text-button {
 checkbutton,
 radiobutton {
     padding: 0.083333333333333333em 0;
-    margin: 0.19em;
+    margin: 0.125em;
     min-height: 1.666666666666666666em;/*x*/
 }
 
@@ -852,7 +854,7 @@ frame > checkbutton check{
 
 #PartialPaste checkbutton {
     padding: 0;
-    margin: 0.19em 0 0 0.583333333333333333em;
+    margin: 0.125em 0 0 0.583333333333333333em;
 }
 #PartialPaste checkbutton:not(#PartialPasteHeader) {
     margin: 0 0 0 1.166666666666666666em;
@@ -864,7 +866,7 @@ frame > checkbutton check{
 #MyExpander entry,
 entry,
 spinbutton {
-    margin: 0.19em;
+    margin: 0.125em;
     padding: 0 0.333333333333333333em;
     min-height: 1.666666666666666666em;/*x*/
     min-width: 0;
@@ -894,7 +896,7 @@ spinbutton {
 }
 
 #MyExpander spinbutton {
-    margin: 0.19em;
+    margin: 0.125em;
     padding: 0;
     min-height: 1.333333333333333333em;
     min-width: 0;

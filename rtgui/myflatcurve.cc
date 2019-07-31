@@ -16,11 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "myflatcurve.h"
-#include "../rtengine/curves.h"
-#include "editcallbacks.h"
 #include <cstring>
+
 #include <gdkmm/types.h>
+
+#include "myflatcurve.h"
+
+#include "editcallbacks.h"
+
+#include "../rtengine/curves.h"
 
 MyFlatCurve::MyFlatCurve () :
     MyCurve(),
@@ -1621,7 +1625,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag)
     }
 }
 
-// Set datas relative to cursor position
+// Set data relative to cursor position
 void MyFlatCurve::getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey)
 {
     int tx, ty;

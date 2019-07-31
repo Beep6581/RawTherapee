@@ -714,7 +714,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
             int wmax = tmpw;
             int hmax = tmph;
 
-            if (ri->get_maker() == "Sigma" && ri->DNGVERSION()) { // Hack to prevent sigma dng files from crashing
+            if ((ri->get_maker() == "Sigma" || ri->get_maker() == "Pentax" || ri->get_maker() == "Sony") && ri->DNGVERSION()) { // Hack to prevent sigma dng files from crashing
                 wmax = (width - 2 - left_margin) / hskip;
                 hmax = (height - 2 - top_margin) / vskip;
             }
@@ -1166,6 +1166,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
 
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
+
+    if (isRaw && params.filmNegative.enabled) {
+        processFilmNegative(params, baseImg, rwidth, rheight, rmi, gmi, bmi);
+    }
 
     if (params.coarse.rotate) {
         baseImg->rotate (params.coarse.rotate);
