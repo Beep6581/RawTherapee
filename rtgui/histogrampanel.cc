@@ -464,7 +464,6 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
 
     if (surface)  {
         Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
-        Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
         cc->set_source_rgba (0., 0., 0., 0.);
         cc->set_operator (Cairo::OPERATOR_CLEAR);
@@ -616,7 +615,6 @@ void HistogramRGBArea::on_realize ()
 {
 
     Gtk::DrawingArea::on_realize();
-    Glib::RefPtr<Gdk::Window> window = get_window();
     add_events(Gdk::BUTTON_PRESS_MASK);
 }
 
@@ -984,7 +982,6 @@ void HistogramArea::on_realize ()
 {
 
     Gtk::DrawingArea::on_realize();
-    Glib::RefPtr<Gdk::Window> window = get_window();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
@@ -1036,8 +1033,6 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
 
 bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-
-    Glib::RefPtr<Gdk::Window> window = get_window();
 
     if (get_width() != oldwidth || get_height() != oldheight || isDirty ()) {
         updateBackBuffer ();

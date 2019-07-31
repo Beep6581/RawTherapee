@@ -617,8 +617,6 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         } else {
             pp->icm.inputProfile = "";    // just a directory
         }
-
-        Glib::ustring p = Glib::path_get_dirname(ipDialog->get_filename());
     }
 
     pp->icm.workingProfile = wProfNames->get_active_text();
