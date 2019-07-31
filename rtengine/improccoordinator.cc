@@ -525,16 +525,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         progress ("Spot Removal...", 100 * readyphase / numofphases);
 
-        if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty ()) {
-            // First update the image with spot healing
-            ipf.removeSpots (oprevi, params->spot.entries, previewProps);
+        if (params->spot.enabled && !params->spot.entries.empty ()) {
+            if ((todo & M_SPOT)) {
+                // First update the image with spot healing
+                ipf.removeSpots (oprevi, params->spot.entries, previewProps);
 
-            // Then create fork the image to cache the data
-            if (spot_prev == nullptr) {
-                spot_prev = new Imagefloat (pW, pH);
+                // Then fork the image to cache the data
+                if (spot_prev == nullptr) {
+                    spot_prev = new Imagefloat (pW, pH);
+                }
+                oprevi->copyData (spot_prev);
             }
-
-            oprevi->copyData (spot_prev);
+            if (spot_prev) {
+                oprevi = spot_prev;
+            }
         } else {
             if (spot_prev) {
                delete spot_prev;
@@ -1125,7 +1129,7 @@ void ImProcCoordinator::setScale(int prevscale)
         pH = nH;
 
         orig_prev = new Imagefloat(pW, pH);
-        spot_prev = oprevi = orig_prev;
+        oprevi = orig_prev;
         oprevl = new LabImage(pW, pH);
         nprevl = new LabImage(pW, pH);
         //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore
