@@ -535,7 +535,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
     return ret;
 }
 
-ProfileStoreEntry::ProfileStoreEntry() : label (""), type (PSET_FOLDER), parentFolderId (0), folderId (0) {}
+ProfileStoreEntry::ProfileStoreEntry() : type (PSET_FOLDER), parentFolderId (0), folderId (0) {}
 
 ProfileStoreEntry::ProfileStoreEntry (Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder) : label (label), type (type), parentFolderId (parentFolder), folderId (folder) {}
 

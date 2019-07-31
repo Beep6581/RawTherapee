@@ -23,7 +23,7 @@
 #include "curveeditorgroup.h"
 
 Axis::Axis()
-    : label(""), decimal(5), increment(0.001), pageIncrement(0.01), rangeLowerBound(0.), rangeUpperBound(1.)
+    : decimal(5), increment(0.001), pageIncrement(0.01), rangeLowerBound(0.), rangeUpperBound(1.)
 {}
 
 Axis::Axis(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin = 0.0, double valMax = 1.0)
