@@ -631,6 +631,7 @@ Locallab::Locallab():
     expMethod->append(M("TP_LOCALLAB_PDE"));
     expMethod->set_active(0);
     expMethodConn  = expMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::expMethodChanged));
+
     if (showtooltip) {
         expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
     }
@@ -1188,7 +1189,7 @@ Locallab::Locallab():
 //    tmBox->pack_start(*softradiustm);//always bad with TM ??
     tmBox->pack_start(*sensitm);
     tmBox->pack_start(*expmasktm);
-    
+
     exptonemap->add(*tmBox, false);
     exptonemap->setLevel(2);
 
@@ -5323,7 +5324,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabslomasktm, slomasktm->getTextValue());
             }
         }
-        
+
 
     }
 
