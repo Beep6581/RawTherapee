@@ -947,6 +947,16 @@ HISTORY_MSG_701;Local - Exp Shadows
 HISTORY_MSG_703;Local - Exp Laplacian threshold
 HISTORY_MSG_704;Local - Exp PDE balance
 HISTORY_MSG_705;Local - Exp linearity
+HISTORY_MSG_706;Local - TM mask C
+HISTORY_MSG_707;Local - TM mask L
+HISTORY_MSG_708;Local - TM mask CL
+HISTORY_MSG_709;Local - use TM mask
+HISTORY_MSG_710;Local - TM mask Blend
+HISTORY_MSG_711;Local - TM mask radius
+HISTORY_MSG_712;Local - TM mask chroma
+HISTORY_MSG_713;Local - TM mask gamma
+HISTORY_MSG_714;Local - TM mask slope
+
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

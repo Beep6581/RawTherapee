@@ -2677,10 +2677,12 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const bool colshow = ((lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2)  &&  senstype == 0);
         const bool SHshow = ((lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2)  &&  senstype == 9);
         const bool cbshow = ((lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2)  &&  senstype == 6);
+        const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2)  &&  senstype == 8);
         const bool previewcol = ((lp.showmaskcolmet == 5)  &&  senstype == 0);
         const bool previewexp = ((lp.showmaskexpmet == 5)  &&  senstype == 1);
         const bool previewSH = ((lp.showmaskSHmet == 4)  &&  senstype == 9);
         const bool previewcb = ((lp.showmaskcbmet == 4)  &&  senstype == 6);
+        const bool previewtm = ((lp.showmasktmmet == 4)  &&  senstype == 8);
 
         std::unique_ptr<LabImage> origblur(new LabImage(bfw, bfh));
         std::unique_ptr<LabImage> origblurmask;
@@ -2708,7 +2710,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
         const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
         const bool usemaskSH = (lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 4) && senstype == 9;
         const bool usemaskcb = (lp.showmaskcbmet == 2 || lp.enacbMask || lp.showmaskcbmet == 4) && senstype == 6;
-        const bool usemaskall = (usemaskSH || usemaskcol || usemaskexp || usemaskcb);
+        const bool usemasktm = (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 4) && senstype == 8;
+        const bool usemaskall = (usemaskSH || usemaskcol || usemaskexp || usemaskcb  || usemasktm);
 
         if (usemaskall)
         {
@@ -3012,15 +3015,15 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         }
                                     }
 
-                                    if (expshow || colshow || SHshow) {
+                                    if (expshow || colshow || SHshow  ) {
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
-                                    } else if (cbshow) {
+                                    } else if (cbshow || tmshow) {
                                         transformed->L[y][x] = CLIP(12000.f + difL);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
-                                    } else if (previewcol || previewexp || previewSH  || previewcb) {
+                                    } else if (previewcol || previewexp || previewSH  || previewcb  || previewtm) {
                                         transformed->a[y][x] = 0.f;
                                         transformed->b[y][x] = (difb);
                                     }
@@ -3137,11 +3140,11 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage *bufexpor
                                         transformed->L[y][x] = CLIP(12000.f + diflc);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
-                                    } else if (cbshow) {
+                                    } else if (cbshow || tmshow) {
                                         transformed->L[y][x] = CLIP(12000.f + difL);
                                         transformed->a[y][x] = CLIPC(difa);
                                         transformed->b[y][x] = CLIPC(difb);
-                                    } else if (previewcol || previewexp || previewSH || previewcb) {
+                                    } else if (previewcol || previewexp || previewSH || previewcb || previewtm) {
                                         transformed->a[y][x] = 0.f;
                                         transformed->b[y][x] = difb;
                                     }
@@ -6409,7 +6412,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //Tone mapping
 
-        if (lp.strengt != 0.f  && lp.tonemapena  && !params->epd.enabled) {
+        if ((lp.strengt != 0.f || lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4) && lp.tonemapena  && !params->epd.enabled  ) {
             if (call <= 3) { //simpleprocess dcrop improcc
                 const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
                 const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -6423,8 +6426,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     JaggedArray<float> bufchro(bfw, bfh);
                     std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
-                    //    array2D<float> ble(bfw, bfh);
-                    //    array2D<float> guid(bfw, bfh);
+                    std::unique_ptr<LabImage> bufmaskorigtm;
+                    std::unique_ptr<LabImage> bufmaskblurtm;
+                    std::unique_ptr<LabImage> originalmasktm;
+                    if (lp.showmasktmmet == 2  || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4) {
+                        bufmaskorigtm.reset(new LabImage(bfw, bfh));
+                        bufmaskblurtm.reset(new LabImage(bfw, bfh));
+                        originalmasktm.reset(new LabImage(bfw, bfh));
+                    }
+
+                    array2D<float> ble(bfw, bfh);
+                    array2D<float> guid(bfw, bfh);
+                    float meanfab, fab;
+                    mean_fab(xstart, ystart, bfw, bfh, bufgb.get(), original, fab, meanfab, lp.chromatm);
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -6443,6 +6457,117 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (call == 1) {
                         //  itera = 5;
                     }
+
+                    if (lp.showmasktmmet == 2  || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4) {
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                float kmaskLexp = 0;
+                                float kmaskCH = 0;
+
+                                if (locllmastmCurve  && llmastmutili) {
+                                    float ligh = bufgb->L[ir][jr] / 32768.f;
+                                    kmaskLexp = 32768.f * LIM01(1.f - locllmastmCurve[500.f * ligh]);
+                                }
+
+                                if (lp.showmasktmmet != 4) {
+                                    if (locccmastmCurve && lcmastmutili) {
+                                        float chromask = 0.0001f + sqrt(SQR((bufgb->a[ir][jr]) / fab) + SQR((bufgb->b[ir][jr]) / fab));
+                                        kmaskCH = LIM01(1.f - locccmastmCurve[500.f *  chromask]);
+                                    }
+                                }
+
+                                if (lochhmastmCurve && lhmastmutili) {
+                                    float huema = xatan2f(bufgb->b[ir][jr], bufgb->a[ir][jr]);
+                                    float h = Color::huelab_to_huehsv2(huema);
+                                    h += 1.f / 6.f;
+
+                                    if (h > 1.f) {
+                                        h -= 1.f;
+                                    }
+
+                                    float valHH = LIM01(1.f - lochhmastmCurve[500.f *  h]);
+
+                                    if (lp.showmasktmmet != 4) {
+                                        kmaskCH += valHH;
+                                    }
+
+                                    kmaskLexp += 32768.f * valHH;
+                                }
+
+                                bufmaskblurtm->L[ir][jr] = CLIPLOC(kmaskLexp);
+                                bufmaskblurtm->a[ir][jr] = kmaskCH;
+                                bufmaskblurtm->b[ir][jr] = kmaskCH;
+                                ble[ir][jr] = bufmaskblurtm->L[ir][jr] / 32768.f;
+                                guid[ir][jr] = bufgb->L[ir][jr] / 32768.f;
+
+                            }
+                        }
+
+                        if (lp.radmatm > 0.f) {
+                            guidedFilter(guid, ble, ble, lp.radmatm * 10.f / sk, 0.001, multiThread, 4);
+                        }
+
+                        LUTf lutTonemasktm(65536);
+                        calcGammaLut(lp.gammatm, lp.slomatm, lutTonemasktm);
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                float L_;
+                                bufmaskblurtm->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
+                                L_ = 2.f * bufmaskblurtm->L[ir][jr];
+                                bufmaskblurtm->L[ir][jr] = lutTonemasktm[L_];
+                            }
+
+                    }
+
+                    float radiusb = 1.f / sk;
+
+                    if (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4) {
+
+                        //printf("lp.showmasktmmet=%i\n",lp.showmasktmmet); 
+#ifdef _OPENMP
+                        #pragma omp parallel
+#endif
+                        {
+                            gaussianBlur(bufmaskblurtm->L, bufmaskorigtm->L, bfw, bfh, radiusb);
+                            gaussianBlur(bufmaskblurtm->a, bufmaskorigtm->a, bfw, bfh, 1.f + (0.5f * lp.radmatm) / sk);
+                            gaussianBlur(bufmaskblurtm->b, bufmaskorigtm->b, bfw, bfh, 1.f + (0.5f * lp.radmatm) / sk);
+                        }
+
+                        if (lp.showmasktmmet == 0 || lp.showmasktmmet == 1 || lp.showmasktmmet == 2 || lp.showmasktmmet == 4 || lp.enatmMask) {
+                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), original, bufmaskorigtm.get(), originalmasktm.get(), lp.blendmatm);
+
+                        } else if (lp.showmasktmmet == 3) {
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), transformed, bufmaskorigtm.get());
+                            return;
+                        }
+                    }
+
+
+                    if (lp.showmasktmmet == 0 || lp.showmasktmmet == 1  || lp.showmasktmmet == 2 || lp.showmasktmmet == 4 || lp.enatmMask) {
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int y = 0; y < bfh ; y++) {
+                            for (int x = 0; x < bfw; x++) {
+                                bufgb->L[y][x] = original->L[y + ystart][x + xstart];
+                                bufgb->a[y][x] = original->a[y + ystart][x + xstart];
+                                bufgb->b[y][x] = original->b[y + ystart][x + xstart];
+                            }
+                        }
+
+
+
 
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
@@ -6499,7 +6624,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         }
                     */
                     bufgb.reset();
-                    transit_shapedetect(8, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect(8, tmp1.get(), originalmasktm.get(), buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                }
                 }
             }
         }

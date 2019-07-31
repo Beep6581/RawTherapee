@@ -1187,7 +1187,7 @@ Locallab::Locallab():
     tmBox->pack_start(*rewei);
 //    tmBox->pack_start(*softradiustm);//always bad with TM ??
     tmBox->pack_start(*sensitm);
- //   tmBox->pack_start(*expmasktm);
+    tmBox->pack_start(*expmasktm);
     
     exptonemap->add(*tmBox, false);
     exptonemap->setLevel(2);
