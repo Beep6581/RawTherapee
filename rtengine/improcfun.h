@@ -200,7 +200,7 @@ public:
 
     double lumimul[3];
 
-    ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
+    explicit ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions();
     bool needsLuminanceOnly()
