@@ -1109,6 +1109,7 @@ private:
             LocCCmasktmCurve locccmastmCurve;
             LocLLmasktmCurve locllmastmCurve;
             LocHHmasktmCurve lochhmastmCurve;
+            LocwavCurve locwavCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
             LUTf hltonecurveloc(65536, 0);
@@ -1204,6 +1205,7 @@ private:
                               locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                               locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
                               locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
+                              locwavCurve,
                               LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0, 0);
 
 

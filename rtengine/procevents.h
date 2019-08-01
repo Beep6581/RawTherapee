@@ -742,6 +742,10 @@ enum ProcEventCode {
     Evlocallabgammasktm = 712,
     Evlocallabslomasktm = 713,
     EvlocallabshowmasktmMethod = 714,
+    EvlocallablocalcontMethod = 715,
+    EvlocallabwavCurve = 716,
+    Evlocallablevelwav = 717,
+    Evlocallabresidcont = 718,   
     NUMOFEVENTS
 };
 

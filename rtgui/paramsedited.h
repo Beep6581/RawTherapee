@@ -544,8 +544,12 @@ public:
         bool lcamount;
         bool lcdarkness;
         bool lclightness;
+        bool levelwav;
+        bool residcont;
         bool sensilc;
         bool fftwlc;
+        bool localcontMethod;
+        bool locwavcurve;
         // Contrast by detail levels
         bool expcbdl;
         bool mult[6];

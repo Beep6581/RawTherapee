@@ -315,6 +315,7 @@ public:
                   const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
                   const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili,
                   const LocCCmasktmCurve & locccmastmCurve, bool &lcmastmutili, const  LocLLmasktmCurve & locllmastmCurve, bool &llmastmutili, const  LocHHmasktmCurve & lochhmastmCurve, bool & lhmastmutili,
+                  const LocwavCurve & locwavCurve,
                   bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask);
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);

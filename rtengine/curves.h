@@ -1229,6 +1229,36 @@ public:
     }
 };
 
+
+class LocwavCurve
+{
+private:
+    LUTf lutLocwavCurve;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    float sum;
+
+    virtual ~LocwavCurve() {};
+    LocwavCurve();
+    void Reset();
+    void Set(const std::vector<double> &curvePoints);
+    float getSum() const
+    {
+        return sum;
+    }
+
+    float operator[](float index) const
+    {
+        return lutLocwavCurve[index];
+    }
+    operator bool (void) const
+    {
+        return lutLocwavCurve;
+    }
+};
+
+
 class LocretigainCurverab
 {
 private:

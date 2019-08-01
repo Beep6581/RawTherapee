@@ -107,6 +107,10 @@ private:
     FlatCurveEditor* CCmaskretishape;
     FlatCurveEditor* LLmaskretishape;
     FlatCurveEditor* HHmaskretishape;
+    //local contrast
+    CurveEditorGroup* const LocalcurveEditorwav;
+    FlatCurveEditor* wavshape;
+    
     //Cbdl
     CurveEditorGroup* const maskcbCurveEditorG;
     FlatCurveEditor* CCmaskcbshape;
@@ -221,6 +225,8 @@ private:
     Adjuster* const lcamount;
     Adjuster* const lcdarkness;
     Adjuster* const lclightness;
+    Adjuster* const levelwav;
+    Adjuster* const residcont;
     Adjuster* const sensilc;
     // Contrast by detail levels
     Adjuster* multiplier[6];
@@ -334,6 +340,9 @@ private:
     sigc::connection retinexMethodConn;
     MyComboBoxText* const showmaskretiMethod;
     sigc::connection showmaskretiMethodConn;
+    //local contrast
+    MyComboBoxText* const localcontMethod;
+    sigc::connection localcontMethodConn;
     //CBDL
     MyComboBoxText* const showmaskcbMethod;
     sigc::connection showmaskcbMethodConn;
@@ -425,6 +434,8 @@ private:
     // Retinex
     void retinexMethodChanged();
     void showmaskretiMethodChanged();
+    //Local contrast
+    void localcontMethodChanged();
     //CBDL
     void showmaskcbMethodChanged();
     // Other widgets event functions

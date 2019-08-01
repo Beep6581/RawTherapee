@@ -165,6 +165,9 @@ Locallab::Locallab():
     // Retinex
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    //Local contrast
+    LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
+
     //CBDL
     maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
 
@@ -276,6 +279,8 @@ Locallab::Locallab():
     lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
     lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
+    levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 3, 8, 1, 4))),
+    residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Contrast by detail levels
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
@@ -357,6 +362,8 @@ Locallab::Locallab():
     // Retinex
     retinexMethod(Gtk::manage(new MyComboBoxText())),
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
+    //Local contrast
+    localcontMethod(Gtk::manage(new MyComboBoxText())),
     //CBDL
     showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
 
@@ -1434,6 +1441,27 @@ Locallab::Locallab():
     if (showtooltip) {
         fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
     }
+    LocalcurveEditorwav->setCurveListener(this);
+
+    wavshape = static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false));
+    wavshape->setIdentityValue(0.);
+    wavshape->setResetCurve(FlatCurveType(defSpot.locwavcurve.at(0)), defSpot.locwavcurve);
+
+    if (showtooltip) {
+        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
+    }
+
+    LocalcurveEditorwav->curveListComplete();
+
+    localcontMethod->append(M("TP_LOCALLAB_LOCCONT"));
+    localcontMethod->append(M("TP_LOCALLAB_WAVE"));
+    localcontMethod->set_active(0);
+
+    if (showtooltip) {
+    //    localcontMethod->set_tooltip_markup(M("TP_LOCALLAB_LOCMETHOD_TOOLTIP"));
+    }
+
+    localcontMethodConn = localcontMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::localcontMethodChanged));
 
     lcradius->setAdjusterListener(this);
 
@@ -1442,14 +1470,24 @@ Locallab::Locallab():
     lcdarkness->setAdjusterListener(this);
 
     lclightness->setAdjusterListener(this);
+    levelwav->setAdjusterListener(this);
+    if (showtooltip) {
+        levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
+    }
+    
+    residcont->setAdjusterListener(this);
 
     sensilc->setAdjusterListener(this);
 
     ToolParamBlock* const contrastBox = Gtk::manage(new ToolParamBlock());
+    contrastBox->pack_start(*localcontMethod);
     contrastBox->pack_start(*lcradius);
     contrastBox->pack_start(*lcamount);
     contrastBox->pack_start(*lcdarkness);
     contrastBox->pack_start(*lclightness);
+    contrastBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4);
+    contrastBox->pack_start(*levelwav);
+    contrastBox->pack_start(*residcont);
     contrastBox->pack_start(*sensilc);
     contrastBox->pack_start(*fftwlc);
     expcontrast->add(*contrastBox, false);
@@ -1705,6 +1743,7 @@ Locallab::~Locallab()
     delete maskSHCurveEditorG;
     delete curveEditorGG;
     delete LocalcurveEditorgainT;
+    delete LocalcurveEditorwav;
     delete masktmCurveEditorG;
     delete maskretiCurveEditorG;
     delete maskcbCurveEditorG;
@@ -2691,8 +2730,18 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).lcamount = lcamount->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lcdarkness = lcdarkness->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lclightness = lclightness->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).levelwav = levelwav->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).residcont = residcont->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensilc = sensilc->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwlc = fftwlc->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).locwavcurve = wavshape->getCurve();
+                    
+                    if (localcontMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "loc";
+                    } else if (localcontMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "wav";
+                    }
+                    
                     // Contrast by detail levels
                     pp->locallab.spots.at(pp->locallab.selspot).expcbdl = expcbdl->getEnabled();
 
@@ -2926,8 +2975,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).lcamount = pe->locallab.spots.at(pp->locallab.selspot).lcamount || lcamount->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lcdarkness = pe->locallab.spots.at(pp->locallab.selspot).lcdarkness || lcdarkness->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lclightness = pe->locallab.spots.at(pp->locallab.selspot).lclightness || lclightness->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).levelwav = pe->locallab.spots.at(pp->locallab.selspot).levelwav || levelwav->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).residcont = pe->locallab.spots.at(pp->locallab.selspot).residcont || residcont->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensilc = pe->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fftwlc = pe->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).localcontMethod = pe->locallab.spots.at(pp->locallab.selspot).localcontMethod || localcontMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).locwavcurve = pe->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
                         // Contrast by detail levels
                         pe->locallab.spots.at(pp->locallab.selspot).expcbdl = pe->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -3165,8 +3218,11 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).lcamount = pedited->locallab.spots.at(pp->locallab.selspot).lcamount || lcamount->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lcdarkness = pedited->locallab.spots.at(pp->locallab.selspot).lcdarkness || lcdarkness->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lclightness = pedited->locallab.spots.at(pp->locallab.selspot).lclightness || lclightness->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).levelwav = pedited->locallab.spots.at(pp->locallab.selspot).levelwav || levelwav->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).residcont = pedited->locallab.spots.at(pp->locallab.selspot).residcont || residcont->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensilc = pedited->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwlc = pedited->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
                         // Contrast by detail levels
                         pedited->locallab.spots.at(pp->locallab.selspot).expcbdl = pedited->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -3484,7 +3540,48 @@ void Locallab::curveChanged(CurveEditor* ce)
         }
 
     }
+    
+    // Local contrast
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (ce == wavshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurve, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+    }
+    
 }
+
+void Locallab::localcontMethodChanged()
+{
+    if (localcontMethod->get_active_row_number() == 0) {
+        levelwav->hide();
+        residcont->hide();
+        lcradius->show();
+        lcamount->show();
+        lcdarkness->show();
+        lclightness->show();
+        LocalcurveEditorwav->hide();
+        fftwlc->show();
+    } else if (localcontMethod->get_active_row_number() == 1) {
+        levelwav->show();
+        residcont->show();
+        lcradius->hide();
+        lcamount->hide();
+        lcdarkness->hide();
+        lclightness->hide();
+        LocalcurveEditorwav->show();
+        fftwlc->hide();
+    }
+   
+    // printf("localcontMethodChanged\n");
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallablocalcontMethod, localcontMethod->get_active_text());
+        }
+    }
+}
+
 
 void Locallab::retinexMethodChanged()
 {
@@ -4504,6 +4601,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     lcamount->setDefault(defSpot->lcamount);
     lcdarkness->setDefault(defSpot->lcdarkness);
     lclightness->setDefault(defSpot->lclightness);
+    levelwav->setDefault(defSpot->levelwav);
+    residcont->setDefault(defSpot->residcont);
     sensilc->setDefault((double)defSpot->sensilc);
 
     // Contrast by detail levels
@@ -4647,6 +4746,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         lcamount->setDefaultEditedState(Irrelevant);
         lcdarkness->setDefaultEditedState(Irrelevant);
         lclightness->setDefaultEditedState(Irrelevant);
+        levelwav->setDefaultEditedState(Irrelevant);
+        residcont->setDefaultEditedState(Irrelevant);
         sensilc->setDefaultEditedState(Irrelevant);
 
         // Contrast by detail levels
@@ -4794,6 +4895,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         lcamount->setDefaultEditedState(defSpotState->lcamount ? Edited : UnEdited);
         lcdarkness->setDefaultEditedState(defSpotState->lcdarkness ? Edited : UnEdited);
         lclightness->setDefaultEditedState(defSpotState->lclightness ? Edited : UnEdited);
+        levelwav->setDefaultEditedState(defSpotState->levelwav ? Edited : UnEdited);
+        residcont->setDefaultEditedState(defSpotState->residcont ? Edited : UnEdited);
         sensilc->setDefaultEditedState(defSpotState->sensilc ? Edited : UnEdited);
 
         // Contrast by detail levels
@@ -5509,6 +5612,18 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == levelwav) {
+            if (listener) {
+                listener->panelChanged(Evlocallablevelwav, levelwav->getTextValue());
+            }
+        }
+
+        if (a == residcont) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidcont, residcont->getTextValue());
+            }
+        }
+
         if (a == sensilc) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensilc, sensilc->getTextValue());
@@ -5818,6 +5933,8 @@ void Locallab::setBatchMode(bool batchMode)
     lcamount->showEditedCB();
     lcdarkness->showEditedCB();
     lclightness->showEditedCB();
+    levelwav->showEditedCB();
+    residcont->showEditedCB();
     sensilc->showEditedCB();
 
     // Contrast by detail levels
@@ -5864,6 +5981,9 @@ void Locallab::setBatchMode(bool batchMode)
     // Retinex
     retinexMethod->append(M("GENERAL_UNCHANGED"));
 
+    //Local contrast
+    localcontMethod->append(M("GENERAL_UNCHANGED"));
+    
     // In batch mode, being able to change mask visibility is useless
     showmaskcolMethod->hide();
     showmaskexpMethod->hide();
@@ -6057,6 +6177,7 @@ void Locallab::enableListener()
     inversshaConn.block(false);
     // Local Contrast
     enablecontrastConn.block(false);
+    localcontMethodConn.block(false);
     fftwlcConn.block(false);
     // Contrast by detail levels
     enablecbdlConn.block(false);
@@ -6122,6 +6243,7 @@ void Locallab::disableListener()
     inversshaConn.block(true);
     // Local Contrast
     enablecontrastConn.block(true);
+    localcontMethodConn.block(true);
     fftwlcConn.block(true);
     // Contrast by detail levels
     enablecbdlConn.block(true);
@@ -6162,11 +6284,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
 
         if (pp->locallab.spots.at(index).scalereti == 1) {
-            //   limd->hide();
             LocalcurveEditorgainT->hide();
             retinexMethod->hide();
         } else {
-            //   limd->show();
             LocalcurveEditorgainT->show();
             retinexMethod->show();
         }
@@ -6357,8 +6477,16 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         lcamount->setValue(pp->locallab.spots.at(index).lcamount);
         lcdarkness->setValue(pp->locallab.spots.at(index).lcdarkness);
         lclightness->setValue(pp->locallab.spots.at(index).lclightness);
+        levelwav->setValue(pp->locallab.spots.at(index).levelwav);
+        residcont->setValue(pp->locallab.spots.at(index).residcont);
         sensilc->setValue(pp->locallab.spots.at(index).sensilc);
         fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
+        if (pp->locallab.spots.at(index).localcontMethod == "loc") {
+            localcontMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).localcontMethod == "wav") {
+            localcontMethod->set_active(1);
+        }
+        wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
 
         // Contrast by detail levels
         expcbdl->setEnabled(pp->locallab.spots.at(index).expcbdl);
@@ -6633,8 +6761,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 lcamount->setEditedState(spotState->lcamount ? Edited : UnEdited);
                 lcdarkness->setEditedState(spotState->lcdarkness ? Edited : UnEdited);
                 lclightness->setEditedState(spotState->lclightness ? Edited : UnEdited);
+                levelwav->setEditedState(spotState->levelwav ? Edited : UnEdited);
+                residcont->setEditedState(spotState->residcont ? Edited : UnEdited);
                 sensilc->setEditedState(spotState->sensilc ? Edited : UnEdited);
                 fftwlc->set_inconsistent(multiImage && !spotState->fftwlc);
+                wavshape->setUnChanged(!spotState->locwavcurve);
+                if (!spotState->retinexMethod) {
+                    localcontMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
 
                 // Contrast by detail levels
                 expcbdl->set_inconsistent(!spotState->expcbdl);
@@ -6820,6 +6954,26 @@ void Locallab::updateSpecificGUIState()
         showmaskretiMethod->hide();
         sensih->show();
         softradiusret->show();
+    }
+
+    if (localcontMethod->get_active_row_number() == 0) {
+        levelwav->hide();
+        residcont->hide();
+        lcradius->show();
+        lcamount->show();
+        lcdarkness->show();
+        lclightness->show();
+        LocalcurveEditorwav->hide();
+        fftwlc->show();
+    } else if (localcontMethod->get_active_row_number() == 1) {
+        levelwav->show();
+        residcont->show();
+        lcradius->hide();
+        lcamount->hide();
+        lcdarkness->hide();
+        lclightness->hide();
+        LocalcurveEditorwav->show();
+        fftwlc->hide();
     }
 
     // Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)

@@ -254,6 +254,7 @@ protected:
     LocCCmasktmCurve locccmastmCurve;
     LocLLmasktmCurve locllmastmCurve;
     LocHHmasktmCurve lochhmastmCurve;
+    LocwavCurve locwavCurve;
 
     bool locallutili;
     bool localcutili;

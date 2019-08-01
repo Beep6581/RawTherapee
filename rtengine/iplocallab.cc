@@ -272,6 +272,7 @@ struct local_params {
     int expmet;
     int softmet;
     int blurmet;
+    int locmet;
     float noiself;
     float noiself0;
     float noiself2;
@@ -482,6 +483,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.expmet = 0;
     } else if (locallab.spots.at(sp).expMethod == "pde") {
         lp.expmet = 1;
+    }
+
+    if (locallab.spots.at(sp).localcontMethod == "loc") {
+        lp.locmet = 0;
+    } else if (locallab.spots.at(sp).localcontMethod == "wav") {
+        lp.locmet = 1;
     }
 
     lp.laplacexp = locallab.spots.at(sp).laplacexp;
@@ -915,6 +922,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
         }
     }
 }
+
 
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
@@ -4897,6 +4905,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
                                 const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili,
                                 const LocCCmasktmCurve & locccmastmCurve, bool &lcmastmutili, const  LocLLmasktmCurve & locllmastmCurve, bool &llmastmutili, const  LocHHmasktmCurve & lochhmastmCurve, bool & lhmastmutili,
+                                const LocwavCurve & locwavCurve,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask)
 {
     /* comment on processus deltaE
@@ -6997,7 +7006,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
 //local contrast
-        if (lp.lcamount > 0.f && call < 3  && lp.lcena) {
+        bool wavcurve = false;
+        if (lp.locmet == 1) {
+            for (int i = 0; i < 500; i++) {
+                if (locwavCurve[i] != 0.5) {
+                    wavcurve = true;
+                }
+            }
+        }
+        if ((lp.lcamount > 0.f || wavcurve || params->locallab.spots.at(sp).residcont != 0.f) && call < 3  && lp.lcena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -7097,44 +7114,234 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                LocalContrastParams localContrastParams;
-                LocallabParams locallabparams;
-                localContrastParams.enabled = true;
-                localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
-                localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
-                localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
-                localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
-                bool fftwlc = false;
+                if (lp.locmet == 0) {
+                    LocalContrastParams localContrastParams;
+                    LocallabParams locallabparams;
+                    localContrastParams.enabled = true;
+                    localContrastParams.radius = params->locallab.spots.at(sp).lcradius;
+                    localContrastParams.amount = params->locallab.spots.at(sp).lcamount;
+                    localContrastParams.darkness = params->locallab.spots.at(sp).lcdarkness;
+                    localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
+                    bool fftwlc = false;
 
-                if (!lp.ftwlc) {
-                    ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
-                } else {
-                    std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
+                    if (!lp.ftwlc) {
+                        ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
+                    } else {
+                        std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = 0; y < bfhr; y++) {
-                        for (int x = 0; x < bfwr; x++) {
-                            tmpfftw->L[y][x] = tmp1->L[y][x];
-                            tmpfftw->a[y][x] = tmp1->a[y][x];
-                            tmpfftw->b[y][x] = tmp1->b[y][x];
+                        for (int y = 0; y < bfhr; y++) {
+                            for (int x = 0; x < bfwr; x++) {
+                                tmpfftw->L[y][x] = tmp1->L[y][x];
+                                tmpfftw->a[y][x] = tmp1->a[y][x];
+                                tmpfftw->b[y][x] = tmp1->b[y][x];
+                            }
+                        }
+
+                        fftwlc = true;
+                        ImProcFunctions::localContrast(tmpfftw.get(), tmpfftw->L, localContrastParams, fftwlc, sk);
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int y = 0; y < bfhr; y++) {
+                            for (int x = 0; x < bfwr; x++) {
+                                tmp1->L[y][x] = tmpfftw->L[y][x];
+                                tmp1->a[y][x] = tmpfftw->a[y][x];
+                                tmp1->b[y][x] = tmpfftw->b[y][x];
+                            }
+                        }
+
+                    }
+                } else if (lp.locmet == 1) { //wavelet
+                    int wavelet_level = params->locallab.spots.at(sp).levelwav;
+
+                    int minwin = min(bfwr, bfhr);
+                    int maxlevelspot = 8;
+                    // adap maximum level wavelet to size of RT-spot
+
+                    if (minwin * sk < 512) {
+                        maxlevelspot = 8;    //sampling wavelet 256
+                    }
+
+                    if (minwin * sk < 256) {
+                        maxlevelspot = 7;    //sampling 128
+                    }
+
+                    if (minwin * sk < 128) {
+                        maxlevelspot = 6;
+                    }
+
+                    if (minwin * sk < 64) {
+                        maxlevelspot = 5;
+                    }
+
+                    if (minwin * sk < 32) {
+                        maxlevelspot = 4;
+                    }
+
+                    if (minwin * sk < 16) {
+                        maxlevelspot = 3;
+                    }
+
+                    if (minwin * sk < 8) {
+                        maxlevelspot = 2;
+                    }
+
+                    if (minwin * sk < 4) {
+                        maxlevelspot = 1;
+                    }
+
+                    if (minwin * sk < 2) {
+                        maxlevelspot = 0;
+                    }
+
+                    wavelet_level = min(wavelet_level, maxlevelspot);
+
+                    wavelet_decomposition wdspot(tmp1->data, bfw, bfh, wavelet_level, 1, sk);
+
+                    if (wdspot.memoryAllocationFailed) {
+                        return;
+                    }
+
+                    const float contrast = params->locallab.spots.at(sp).residcont;
+                    int maxlvl = wdspot.maxlevel();
+
+                    //    printf("maxlev=%i \n", maxlvl);
+                    if (contrast != 0) {
+                        int W_L = wdspot.level_W(0);
+                        int H_L = wdspot.level_H(0);
+                        float *wl0 = wdspot.coeff0;
+
+                        float maxh = 2.5f; //amplification contrast above mean
+                        float maxl = 2.5f; //reduction contrast under mean
+                        float multL = contrast * (maxl - 1.f) / 100.f + 1.f;
+                        float multH = contrast * (maxh - 1.f) / 100.f + 1.f;
+                        double avedbl = 0.0; // use double precision for large summations
+
+#ifdef _OPENMP
+                        #pragma omp parallel for reduction(+:avedbl) if (multiThread)
+#endif
+
+                        for (int i = 0; i < W_L * H_L; i++) {
+                            avedbl += wl0[i];
+                        }
+
+                        float min0 = wl0[0];
+                        float max0 = min0;
+#ifdef _OPENMP
+                        #pragma omp parallel for reduction(max:max0) reduction(min:min0) schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < W_L * H_L; ir++) {
+                            min0 = rtengine::min(min0, wl0[ir]);
+                            max0 = rtengine::max(max0, wl0[ir]);
+                        }
+
+
+                        max0 /= 327.68f;
+                        min0 /= 327.68f;
+                        float ave = avedbl / double(W_L * H_L);
+                        float av = ave / 327.68f;
+                        float ah = (multH - 1.f) / (av - max0);
+                        float bh = 1.f - max0 * ah;
+                        float al = (multL - 1.f) / (av - min0);
+                        float bl = 1.f - min0 * al;
+
+                        if (max0 > 0.0) {
+#ifdef _OPENMP
+                        #pragma omp parallel for if (multiThread)
+#endif
+
+                            for (int i = 0; i < W_L * H_L; i++) {
+                                if (wl0[i] < 32768.f) {
+                                    float prov;
+
+                                    if (wl0[i] > ave) {
+                                        float kh = ah * (wl0[i] / 327.68f) + bh;
+                                        prov = wl0[i];
+                                        wl0[i] = ave + kh * (wl0[i] - ave);
+                                    } else {
+                                        float kl = al * (wl0[i] / 327.68f) + bl;
+                                        prov = wl0[i];
+                                        wl0[i] = ave - kl * (ave - wl0[i]);
+                                    }
+
+                                    float diflc = wl0[i] - prov;
+                                    wl0[i] =  prov + diflc;
+                                }
+                            }
                         }
                     }
 
-                    fftwlc = true;
-                    ImProcFunctions::localContrast(tmpfftw.get(), tmpfftw->L, localContrastParams, fftwlc, sk);
+
+                    float mean[10];
+                    float meanN[10];
+                    float sigma[10];
+                    float sigmaN[10];
+                    float MaxP[10];
+                    float MaxN[10];
+                    Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+                   // printf("mean=%f sig=%f\n", mean[3], sigma[3]);
+
+                    for (int dir = 1; dir < 4; dir++) {
+                        for (int level = 0; level < maxlvl; ++level) {
+                            int W_L = wdspot.level_W(level);
+                            int H_L = wdspot.level_H(level);
+                            float **wl = wdspot.level_coeffs(level);
+
+                            if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
+                                float insigma = 0.666f; //SD
+                                float logmax = log(MaxP[level]); //log Max
+                                float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+                                float inx = log(insigma);
+                                float iny = log(rapX);
+                                float rap = inx / iny; //koef
+                                float asig = 0.166f / sigma[level];
+                                float bsig = 0.5f - asig * mean[level];
+                                float amean = 0.5f / mean[level];
+
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                                #pragma omp parallel for if (multiThread)
 #endif
 
-                    for (int y = 0; y < bfhr; y++) {
-                        for (int x = 0; x < bfwr; x++) {
-                            tmp1->L[y][x] = tmpfftw->L[y][x];
-                            tmp1->a[y][x] = tmpfftw->a[y][x];
-                            tmp1->b[y][x] = tmpfftw->b[y][x];
+                                for (int i = 0; i < W_L * H_L; i++) {
+                                    float absciss;
+                                    float &val = wl[dir][i];
+
+                                    if (std::isnan(val)) { // ALB -- TODO: this can happen in
+                                        // wavelet_decomposition, find out
+                                        // why
+                                        continue;
+                                    }
+
+                                    if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
+                                        float valcour = xlogf(fabsf(val));
+                                        float valc = valcour - logmax;
+                                        float vald = valc * rap;
+                                        absciss = xexpf(vald);
+                                    } else if (fabsf(val) >= mean[level]) {
+                                        absciss = asig * fabsf(val) + bsig;
+                                    } else {
+                                        absciss = amean * fabsf(val);
+                                    }
+
+                                    float kc = locwavCurve[absciss * 500.f] - 0.5f;
+                                    float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
+
+                                    float kinterm = 1.f + reduceeffect * kc;
+                                    kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+
+                                    val *=  kinterm;
+                                }
+                            }
                         }
                     }
+
+                    wdspot.reconstruct(tmp1->data, 1.f);
+
 
                 }
 

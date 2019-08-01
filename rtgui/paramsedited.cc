@@ -1121,8 +1121,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lcamount = locallab.spots.at(j).lcamount && pSpot.lcamount == otherSpot.lcamount;
                 locallab.spots.at(j).lcdarkness = locallab.spots.at(j).lcdarkness && pSpot.lcdarkness == otherSpot.lcdarkness;
                 locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
+                locallab.spots.at(j).levelwav = locallab.spots.at(j).levelwav && pSpot.levelwav == otherSpot.levelwav;
+                locallab.spots.at(j).residcont = locallab.spots.at(j).residcont && pSpot.residcont == otherSpot.residcont;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
+                locallab.spots.at(j).localcontMethod = locallab.spots.at(j).localcontMethod && pSpot.localcontMethod == otherSpot.localcontMethod;
+                locallab.spots.at(j).locwavcurve = locallab.spots.at(j).locwavcurve && pSpot.locwavcurve == otherSpot.locwavcurve;
                 // Contrast by detail levels
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
 
@@ -3316,12 +3320,28 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lclightness   = mods.locallab.spots.at(i).lclightness;
         }
 
+        if (locallab.spots.at(i).levelwav) {
+            toEdit.locallab.spots.at(i).levelwav   = mods.locallab.spots.at(i).levelwav;
+        }
+
+        if (locallab.spots.at(i).residcont) {
+            toEdit.locallab.spots.at(i).residcont   = mods.locallab.spots.at(i).residcont;
+        }
+
         if (locallab.spots.at(i).sensilc) {
             toEdit.locallab.spots.at(i).sensilc   = mods.locallab.spots.at(i).sensilc;
         }
 
         if (locallab.spots.at(i).fftwlc) {
             toEdit.locallab.spots.at(i).fftwlc = mods.locallab.spots.at(i).fftwlc;
+        }
+
+        if (locallab.spots.at(i).localcontMethod) {
+            toEdit.locallab.spots.at(i).localcontMethod = mods.locallab.spots.at(i).localcontMethod;
+        }
+
+        if (locallab.spots.at(i).locwavcurve) {
+            toEdit.locallab.spots.at(i).locwavcurve = mods.locallab.spots.at(i).locwavcurve;
         }
 
         // Contrast by detail levels
@@ -4606,8 +4626,11 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lcamount(v),
     lcdarkness(v),
     lclightness(v),
+    levelwav(v),
+    residcont(v),
     sensilc(v),
     fftwlc(v),
+    localcontMethod(v),
     // Contrast by detail levels
     expcbdl(v),
     mult{v, v, v, v, v, v},
@@ -4836,8 +4859,13 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lcamount = v;
     lcdarkness = v;
     lclightness = v;
+    levelwav = v;
+    residcont = v;
     sensilc = v;
     fftwlc = v;
+    localcontMethod = v;
+    locwavcurve = v;
+    locwavcurve = v;
     // Contrast by detail levels
     expcbdl = v;
 

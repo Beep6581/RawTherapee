@@ -2527,8 +2527,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lcamount(0.0),
     lcdarkness(1.0),
     lclightness(1.0),
+    levelwav(4),
+    residcont(0.0),
     sensilc(19),
     fftwlc(false),
+    localcontMethod("loc"),
+    locwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     // Contrast by detail levels
     expcbdl(false),
     mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
@@ -2760,8 +2764,12 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lcamount == other.lcamount
         && lcdarkness == other.lcdarkness
         && lclightness == other.lclightness
+        && levelwav == other.levelwav
+        && residcont == other.residcont
         && sensilc == other.sensilc
         && fftwlc == other.fftwlc
+        && localcontMethod == other.localcontMethod
+        && locwavcurve == other.locwavcurve
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
@@ -3971,11 +3979,15 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 // Local Contrast
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcontrast, "Locallab", "Expcontrast_" + std::to_string(i), spot.expcontrast, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lcradius_" + std::to_string(i), spot.lcradius, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lcamount_" + std::to_string(i), spot.lcamount, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lcdarkness_" + std::to_string(i), spot.lcdarkness, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcradius, "Locallab", "Lclightness_" + std::to_string(i), spot.lclightness, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcamount, "Locallab", "Lcamount_" + std::to_string(i), spot.lcamount, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lcdarkness, "Locallab", "Lcdarkness_" + std::to_string(i), spot.lcdarkness, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lclightness, "Locallab", "Lclightness_" + std::to_string(i), spot.lclightness, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).levelwav, "Locallab", "Levelwav_" + std::to_string(i), spot.levelwav, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).residcont, "Locallab", "Residcont_" + std::to_string(i), spot.residcont, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensilc, "Locallab", "Sensilc_" + std::to_string(i), spot.sensilc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwlc, "Locallab", "Fftwlc_" + std::to_string(i), spot.fftwlc, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localcontMethod, "Locallab", "localcontMethod_" + std::to_string(i), spot.localcontMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locwavcurve, "Locallab", "LocwavCurve_" + std::to_string(i), spot.locwavcurve, keyFile);
                 // Contrast by detail levels
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), spot.expcbdl, keyFile);
 
@@ -5310,8 +5322,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + std::to_string(i), pedited, spot.lcamount, spotEdited.lcamount);
                 assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + std::to_string(i), pedited, spot.lcdarkness, spotEdited.lcdarkness);
                 assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + std::to_string(i), pedited, spot.lclightness, spotEdited.lclightness);
+                assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + std::to_string(i), pedited, spot.levelwav, spotEdited.levelwav);
+                assignFromKeyfile(keyFile, "Locallab", "Residcont_" + std::to_string(i), pedited, spot.residcont, spotEdited.residcont);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + std::to_string(i), pedited, spot.sensilc, spotEdited.sensilc);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + std::to_string(i), pedited, spot.fftwlc, spotEdited.fftwlc);
+                assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + std::to_string(i), pedited, spot.localcontMethod, spotEdited.localcontMethod);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + std::to_string(i), pedited, spot.locwavcurve, spotEdited.locwavcurve);
                 // Contrast by detail levels
                 assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, spot.expcbdl, spotEdited.expcbdl);
 

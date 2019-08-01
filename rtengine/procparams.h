@@ -1128,8 +1128,12 @@ struct LocallabParams {
         double lcamount;
         double lcdarkness;
         double lclightness;
+        int levelwav;
+        double residcont;
         int sensilc;
         bool fftwlc;
+        Glib::ustring localcontMethod;
+        std::vector<double> locwavcurve;
         // Contrast by detail levels
         bool expcbdl;
         double mult[6];

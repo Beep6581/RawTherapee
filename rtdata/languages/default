@@ -956,7 +956,10 @@ HISTORY_MSG_711;Local - TM mask radius
 HISTORY_MSG_712;Local - TM mask chroma
 HISTORY_MSG_713;Local - TM mask gamma
 HISTORY_MSG_714;Local - TM mask slope
-
+HISTORY_MSG_716;Local - Local method
+HISTORY_MSG_717;Local - Local contrast
+HISTORY_MSG_718;Local - Local contrast levels
+HISTORY_MSG_719;Local - Local contrast residual
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2073,6 +2076,7 @@ TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
 TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
 TP_LOCALLAB_LABGRID;Color correction grid
+TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 8 size max 512 to level 1 size max = 4
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
@@ -2188,6 +2192,11 @@ TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_SYM;Symmetrical (mouse)
+TP_LOCALLAB_WAVE;Wavelet
+TP_LOCALLAB_LOCCONT;Unsharp Mask
+TP_LOCALLAB_WAV;Levels local contrast
+TP_LOCALLAB_LEVELWAV;Wavelets Levels
+TP_LOCALLAB_RESIDCONT;Residual image contrast
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TRANSIT;Transition Gradient
