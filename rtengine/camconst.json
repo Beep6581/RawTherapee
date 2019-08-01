@@ -809,6 +809,7 @@ Camera constants:
         "make_model": [ "Canon EOS 400D DIGITAL" ],
         "ranges": {
             "white": 4056
+        }
     },
 
     { // Quality B, ISO and aperture WL data by ..... at RawTherapee forums, missing samples safely guessed
