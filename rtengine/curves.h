@@ -31,7 +31,7 @@
 #include "../rtgui/mydiagonalcurve.h"
 #include "color.h"
 #include "pipettebuffer.h"
-
+#include "noncopyable.h"
 #include "LUT.h"
 
 #define CURVES_MIN_POLY_POINTS  1000
@@ -479,7 +479,7 @@ public:
     };
 };
 
-class FlatCurve : public Curve
+class FlatCurve : public Curve, public rtengine::NonCopyable
 {
 
 private:

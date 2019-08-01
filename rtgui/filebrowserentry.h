@@ -34,6 +34,7 @@
 #include "thumbimageupdater.h"
 #include "thumbnail.h"
 #include "thumbnaillistener.h"
+#include "../rtengine/noncopyable.h"
 
 
 class FileBrowserEntry;
@@ -46,7 +47,8 @@ struct FileBrowserEntryIdleHelper {
 class FileThumbnailButtonSet;
 class FileBrowserEntry : public ThumbBrowserEntryBase,
     public ThumbnailListener,
-    public ThumbImageUpdateListener
+    public ThumbImageUpdateListener,
+    public rtengine::NonCopyable
 {
 
     double scale;

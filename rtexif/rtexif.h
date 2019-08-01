@@ -190,7 +190,7 @@ public:
 };
 
 // a table of tags: id are offset from beginning and not identifiers
-class TagDirectoryTable: public TagDirectory
+class TagDirectoryTable: public TagDirectory, public rtengine::NonCopyable
 {
 protected:
     unsigned char *values; // Tags values are saved internally here

@@ -25,6 +25,7 @@
 #include "editcallbacks.h"
 #include "mydiagonalcurve.h"
 #include "myflatcurve.h"
+#include "../rtengine/noncopyable.h"
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
@@ -38,7 +39,7 @@ class CurveEditorSubGroup;
 /** @brief This class is an interface between RT and the curve editor group
  * It handles the methods related to a specific curve. It is created by CurveEditorGroup::addCurve
  */
-class CurveEditor : public EditSubscriber
+class CurveEditor : public EditSubscriber, public rtengine::NonCopyable
 {
 
     friend class CurveEditorGroup;

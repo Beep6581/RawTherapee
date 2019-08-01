@@ -30,6 +30,7 @@
 #include "exportpanel.h"
 #include "extprog.h"
 #include "profilestorecombobox.h"
+#include "../rtengine/noncopyable.h"
 
 class ProfileStoreLabel;
 class FileBrowser;
@@ -56,7 +57,8 @@ public:
 class FileBrowser  : public ThumbBrowserBase,
     public LWButtonListener,
     public ExportPanelListener,
-    public ProfileStoreListener
+    public ProfileStoreListener,
+    public rtengine::NonCopyable
 {
 private:
     typedef sigc::signal<void> type_trash_changed;
