@@ -7162,6 +7162,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int minwin = min(bfwr, bfhr);
                     int maxlevelspot = 9;
                     // adap maximum level wavelet to size of RT-spot
+                    if (minwin * sk < 1024) {
+                        maxlevelspot = 9;    //sampling wavelet 512
+                    }
 
                     if (minwin * sk < 512) {
                         maxlevelspot = 8;    //sampling wavelet 256
