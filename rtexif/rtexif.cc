@@ -673,7 +673,7 @@ int TagDirectory::calculateSize ()
     return size;
 }
 
-TagDirectory* TagDirectory::clone (TagDirectory* parent)
+TagDirectory* TagDirectory::clone (TagDirectory* parent) const
 {
 
     TagDirectory* td = new TagDirectory (parent, attribs, order);
@@ -857,7 +857,7 @@ TagDirectoryTable::TagDirectoryTable (TagDirectory* p, FILE* f, int memsize, int
         }
     }
 }
-TagDirectory* TagDirectoryTable::clone (TagDirectory* parent)
+TagDirectory* TagDirectoryTable::clone (TagDirectory* parent) const
 {
 
     TagDirectory* td = new TagDirectoryTable (parent, values, valuesSize, zeroOffset, defaultType, attribs, order);
@@ -1382,7 +1382,7 @@ bool Tag::parseMakerNote (FILE* f, int base, ByteOrder bom )
     return true;
 }
 
-Tag* Tag::clone (TagDirectory* parent)
+Tag* Tag::clone (TagDirectory* parent) const
 {
 
     Tag* t = new Tag (parent, attrib);
@@ -1397,7 +1397,7 @@ Tag* Tag::clone (TagDirectory* parent)
         t->value = new unsigned char [valuesize];
         memcpy (t->value, value, valuesize);
     } else {
-        value = nullptr;
+        t->value = nullptr;
     }
 
     t->makerNoteKind = makerNoteKind;
