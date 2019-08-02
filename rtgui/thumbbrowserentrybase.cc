@@ -724,7 +724,7 @@ bool ThumbBrowserEntryBase::releaseNotify (int button, int type, int bstate, int
     return buttonSet ? buttonSet->releaseNotify (x, y) : false;
 }
 
-Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y) const
+std::tuple<Glib::ustring, bool> ThumbBrowserEntryBase::getToolTip (int x, int y) const
 {
     Glib::ustring tooltip;
 
@@ -734,6 +734,7 @@ Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y) const
 
     // Always show the filename in the tooltip since the filename in the thumbnail could be truncated.
     // If "Show Exif info" is disabled, also show Exif info in the tooltip.
+    bool useMarkup = !tooltip.empty();
     if (inside(x, y) && tooltip.empty()) {
         tooltip = dispname;
 
@@ -748,7 +749,7 @@ Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y) const
         }
     }
 
-    return tooltip;
+    return std::make_tuple(std::move(tooltip), useMarkup);
 }
 
 

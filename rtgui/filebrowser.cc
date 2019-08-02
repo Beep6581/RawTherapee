@@ -667,6 +667,7 @@ void FileBrowser::close ()
         MYWRITERLOCK(l, entryRW);
 
         selected.clear ();
+        anchor = nullptr;
 
         MYWRITERLOCK_RELEASE(l); // notifySelectionListener will need read access!
 
@@ -782,16 +783,20 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         {
             MYWRITERLOCK(l, entryRW);
 
-            selected.clear ();
+            selected.clear();
 
-            for (size_t i = 0; i < fd.size(); i++)
-                if (checkFilter (fd[i])) {
+            for (size_t i = 0; i < fd.size(); ++i) {
+                if (checkFilter(fd[i])) {
                     fd[i]->selected = true;
-                    selected.push_back (fd[i]);
+                    selected.push_back(fd[i]);
                 }
+            }
+            if (!anchor && !selected.empty()) {
+                anchor = selected[0];
+            }
         }
         queue_draw ();
-        notifySelectionListener ();
+        notifySelectionListener();
     } else if( m == copyTo) {
         tbl->copyMoveRequested (mselected, false);
     }
@@ -1437,12 +1442,12 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
         }
 
         for (size_t i = 0; i < fd.size(); i++) {
-            if (checkFilter (fd[i])) {
+            if (checkFilter(fd[i])) {
                 numFiltered++;
-            } else if (fd[i]->selected ) {
+            } else if (fd[i]->selected) {
                 fd[i]->selected = false;
-                std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
-                selected.erase (j);
+                std::vector<ThumbBrowserEntryBase*>::iterator j = std::find(selected.begin(), selected.end(), fd[i]);
+                selected.erase(j);
 
                 if (lastClicked == fd[i]) {
                     lastClicked = nullptr;
@@ -1450,6 +1455,9 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
 
                 selchanged = true;
             }
+        }
+        if (selected.empty() || (anchor && std::find(selected.begin(), selected.end(), anchor) == selected.end())) {
+            anchor = nullptr;
         }
     }
 

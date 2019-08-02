@@ -805,6 +805,13 @@ Camera constants:
 
 // Canon mid-range DSLRs (Rebels)
 
+    { // Quality C
+        "make_model": [ "Canon EOS 400D DIGITAL" ],
+        "ranges": {
+            "white": 4056
+        }
+    },
+
     { // Quality B, ISO and aperture WL data by ..... at RawTherapee forums, missing samples safely guessed
         "make_model": [ "Canon EOS 550D", "Canon EOS Rebel T2i", "Canon EOS Kiss X4" ],
         "dcraw_matrix": [ 6941,-1164,-857,-3825,11597,2534,-416,1540,6039 ], // dcraw 550d
@@ -1357,6 +1364,11 @@ Camera constants:
         "make_model": "LEICA Q (Typ 116)",
         "dcraw_matrix": [ 10068,-4043,-1068,-5319,14268,1044,-765,1701,6522 ], // DCP D65
         "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
+    },
+
+    { // Quality C
+        "make_model": "LEICA Q2",
+        "raw_crop": [ 0, 0, 8392, 5624 ]
     },
 
     { // Quality B, Matrix from Adobe's dcp D65 instead of the internal in Leica's DNG
