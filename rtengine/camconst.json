@@ -805,6 +805,13 @@ Camera constants:
 
 // Canon mid-range DSLRs (Rebels)
 
+    { // Quality C
+        "make_model": [ "Canon EOS 400D DIGITAL" ],
+        "ranges": {
+            "white": 4056
+        }
+    },
+
     { // Quality B, ISO and aperture WL data by ..... at RawTherapee forums, missing samples safely guessed
         "make_model": [ "Canon EOS 550D", "Canon EOS Rebel T2i", "Canon EOS Kiss X4" ],
         "dcraw_matrix": [ 6941,-1164,-857,-3825,11597,2534,-416,1540,6039 ], // dcraw 550d
