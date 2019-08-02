@@ -7156,10 +7156,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
                 } else if (lp.locmet == 1) { //wavelet
+               
                     int wavelet_level = params->locallab.spots.at(sp).levelwav;
 
                     int minwin = min(bfwr, bfhr);
-                    int maxlevelspot = 8;
+                    int maxlevelspot = 9;
                     // adap maximum level wavelet to size of RT-spot
 
                     if (minwin * sk < 512) {
@@ -7201,7 +7202,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     wavelet_level = min(wavelet_level, maxlevelspot);
 
                     wavelet_decomposition wdspot(tmp1->data, bfw, bfh, wavelet_level, 1, sk);
-
                     if (wdspot.memoryAllocationFailed) {
                         return;
                     }
@@ -7209,16 +7209,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float contrast = params->locallab.spots.at(sp).residcont;
                     int maxlvl = wdspot.maxlevel();
 
-                    //    printf("maxlev=%i \n", maxlvl);
                     if (contrast != 0) {
                         int W_L = wdspot.level_W(0);
                         int H_L = wdspot.level_H(0);
-                        float *wl0 = wdspot.coeff0;
+                        float *wav_L0 = wdspot.coeff0;
 
-                        float maxh = 2.5f; //amplification contrast above mean
-                        float maxl = 2.5f; //reduction contrast under mean
-                        float multL = contrast * (maxl - 1.f) / 100.f + 1.f;
-                        float multH = contrast * (maxh - 1.f) / 100.f + 1.f;
                         double avedbl = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
@@ -7226,54 +7221,31 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                         for (int i = 0; i < W_L * H_L; i++) {
-                            avedbl += wl0[i];
+                            avedbl += wav_L0[i];
                         }
 
-                        float min0 = wl0[0];
-                        float max0 = min0;
-#ifdef _OPENMP
-                        #pragma omp parallel for reduction(max:max0) reduction(min:min0) schedule(dynamic,16)
-#endif
-
-                        for (int ir = 0; ir < W_L * H_L; ir++) {
-                            min0 = rtengine::min(min0, wl0[ir]);
-                            max0 = rtengine::max(max0, wl0[ir]);
-                        }
-
-
-                        max0 /= 327.68f;
-                        min0 /= 327.68f;
                         float ave = avedbl / double(W_L * H_L);
-                        float av = ave / 327.68f;
-                        float ah = (multH - 1.f) / (av - max0);
-                        float bh = 1.f - max0 * ah;
-                        float al = (multL - 1.f) / (av - min0);
-                        float bl = 1.f - min0 * al;
 
-                        if (max0 > 0.0) {
+                        float avg = ave / 32768.f;
+                        avg = LIM01(avg);
+                        double contreal = 0.6 * contrast;
+                        DiagonalCurve resid_contrast({
+                            DCT_NURBS,
+                                0, 0,
+                                avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
+                                avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
+                                1, 1
+                        });
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
-
-                            for (int i = 0; i < W_L * H_L; i++) {
-                                if (wl0[i] < 32768.f) {
-                                    float prov;
-
-                                    if (wl0[i] > ave) {
-                                        float kh = ah * (wl0[i] / 327.68f) + bh;
-                                        prov = wl0[i];
-                                        wl0[i] = ave + kh * (wl0[i] - ave);
-                                    } else {
-                                        float kl = al * (wl0[i] / 327.68f) + bl;
-                                        prov = wl0[i];
-                                        wl0[i] = ave - kl * (ave - wl0[i]);
-                                    }
-
-                                    float diflc = wl0[i] - prov;
-                                    wl0[i] =  prov + diflc;
-                                }
-                            }
+                        for (int i = 0; i < W_L * H_L; i++) {
+                            float buf = LIM01(wav_L0[i] / 32768.f);
+                            buf = resid_contrast.getVal(buf);
+                            buf *= 32768.f;
+                            wav_L0[i] = buf;
                         }
+                        
                     }
 
 
@@ -7290,7 +7262,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         for (int level = 0; level < maxlvl; ++level) {
                             int W_L = wdspot.level_W(level);
                             int H_L = wdspot.level_H(level);
-                            float **wl = wdspot.level_coeffs(level);
+                            float **wav_L = wdspot.level_coeffs(level);
 
                             if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                                 float insigma = 0.666f; //SD
@@ -7309,14 +7281,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 for (int i = 0; i < W_L * H_L; i++) {
                                     float absciss;
-                                    float &val = wl[dir][i];
-
-                                    if (std::isnan(val)) { // ALB -- TODO: this can happen in
-                                        // wavelet_decomposition, find out
-                                        // why
-                                        continue;
-                                    }
-
+                                    float &val = wav_L[dir][i];
                                     if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
                                         float valcour = xlogf(fabsf(val));
                                         float valc = valcour - logmax;

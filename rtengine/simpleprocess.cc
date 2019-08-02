@@ -1175,6 +1175,7 @@ private:
                 locccmastmCurve.Set(params.locallab.spots.at(sp).CCmasktmcurve, lcmastmutili);
                 locllmastmCurve.Set(params.locallab.spots.at(sp).LLmasktmcurve, llmastmutili);
                 lochhmastmCurve.Set(params.locallab.spots.at(sp).HHmasktmcurve, lhmastmutili);
+                locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, 1);

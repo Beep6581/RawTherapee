@@ -279,7 +279,7 @@ Locallab::Locallab():
     lcamount(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0, 1.0, 0.01, 0))),
     lcdarkness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_DARKNESS"), 0, 3.0, 0.01, 1.0))),
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
-    levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 3, 8, 1, 4))),
+    levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 3, 9, 1, 4))),
     residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
     // Contrast by detail levels
