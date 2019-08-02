@@ -1366,6 +1366,11 @@ Camera constants:
         "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
     },
 
+    { // Quality C
+        "make_model": "LEICA Q2",
+        "raw_crop": [ 0, 0, 8392, 5624 ]
+    },
+
     { // Quality B, Matrix from Adobe's dcp D65 instead of the internal in Leica's DNG
         "make_model": "LEICA SL (Typ 601)",
         "dcraw_matrix": [ 11492,-4930,-1188,-5593,14673,873,-609,1474,6343 ], // DNGv9.3 D65
