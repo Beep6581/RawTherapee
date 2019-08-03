@@ -180,7 +180,7 @@ public:
 
     virtual int      calculateSize ();
     virtual int      write         (int start, unsigned char* buffer);
-    virtual TagDirectory* clone    (TagDirectory* parent);
+    virtual TagDirectory* clone    (TagDirectory* parent) const;
     void     applyChange   (const std::string &field, const Glib::ustring &value);
 
     virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
@@ -204,7 +204,7 @@ public:
     ~TagDirectoryTable() override;
     int calculateSize () override;
     int write (int start, unsigned char* buffer) override;
-    TagDirectory* clone (TagDirectory* parent) override;
+    TagDirectory* clone (TagDirectory* parent) const override;
 };
 
 // a class representing a single tag
@@ -310,7 +310,7 @@ public:
     // functions for writing
     int  calculateSize ();
     int  write         (int offs, int dataOffs, unsigned char* buffer);
-    Tag* clone         (TagDirectory* parent);
+    Tag* clone         (TagDirectory* parent) const;
 
     // to control if the tag shall be written
     bool getKeep ()

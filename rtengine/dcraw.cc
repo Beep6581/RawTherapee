@@ -240,7 +240,7 @@ int CLASS fcol (int row, int col)
 
 #ifndef __GLIBC__
 char *my_memmem (char *haystack, size_t haystacklen,
-	      char *needle, size_t needlelen)
+	      const char *needle, size_t needlelen)
 {
   char *c;
   for (c = haystack; c <= haystack + haystacklen - needlelen; c++)
@@ -9233,8 +9233,8 @@ void CLASS identify()
   fseek (ifp, 0, SEEK_SET);
   fread (head, 1, 32, ifp);
   /* RT: changed string constant */
-  if ((cp = (char *) memmem (head, 32, (char*)"MMMM", 4)) ||
-    (cp = (char *) memmem (head, 32, (char*)"IIII", 4))) {
+  if ((cp = (char *) memmem (head, 32, "MMMM", 4)) ||
+    (cp = (char *) memmem (head, 32, "IIII", 4))) {
     parse_phase_one (cp-head);
     if (cp-head && parse_tiff(0)) apply_tiff();
   } else if (order == 0x4949 || order == 0x4d4d) {
