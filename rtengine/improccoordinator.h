@@ -57,7 +57,7 @@ class ImProcCoordinator : public StagedImageProcessor
 protected:
     Imagefloat *orig_prev;
     Imagefloat *oprevi;
-    Imagefloat *spot_prev;
+    Imagefloat *spotprev;
     LabImage *oprevl;
     LabImage *nprevl;
     Imagefloat *fattal_11_dcrop_cache; // global cache for ToneMapFattal02 used in 1:1 detail windows (except when denoise is active)
@@ -72,8 +72,6 @@ protected:
 
     double lastAwbEqual;
     double lastAwbTempBias;
-
-    PreviewProps previewProps;
 
     Glib::ustring monitorProfile;
     RenderingIntent monitorIntent;
@@ -183,6 +181,7 @@ protected:
 
     void progress (Glib::ustring str, int pr);
     void reallocAll ();
+    void allocCache (Imagefloat* &imgfloat);
     void updateLRGBHistograms ();
     void setScale (int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);

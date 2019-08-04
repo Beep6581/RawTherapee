@@ -7,6 +7,8 @@
 #include <iomanip>
 #include "../rtengine/rt_math.h"
 #include "guiutils.h"
+#include "eventmapper.h"
+#include "../rtengine/refreshmap.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -63,6 +65,12 @@ Spot::Spot() : FoldableToolPanel (this, "spot", M ("TP_SPOT_LABEL"), true, true)
     targetFeatherCircle.radiusInImageSpace = true;
     link.datum = Geometry::IMAGE;
     link.setActive (false);
+
+    auto m = ProcEventMapper::getInstance();
+    EvSpotEnabled = m->newEvent(ALLNORAW, "TP_SPOT_LABEL");
+    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "");
+    EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
+    EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
 
     show_all();
 }
@@ -135,7 +143,7 @@ void Spot::resetPressed()
             updateGeometry();
 
             if (listener) {
-                listener->panelChanged (EvSpotEntry, Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0));
+                listener->panelChanged (edit->get_active() ? EvSpotEntryOPA : EvSpotEntry, Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0));
             }
         }
     }
@@ -167,16 +175,15 @@ void Spot::editedToggled ()
     }
 }
 
-
 void Spot::enabledChanged ()
 {
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvSpotEnabled, M ("GENERAL_UNCHANGED"));
+            listener->panelChanged (edit->get_active() ? EvSpotEnabledOPA : EvSpotEnabled, M ("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvSpotEnabled, M ("GENERAL_ENABLED"));
+            listener->panelChanged (edit->get_active() ? EvSpotEnabledOPA : EvSpotEnabled, M ("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvSpotEnabled, M ("GENERAL_DISABLED"));
+            listener->panelChanged (edit->get_active() ? EvSpotEnabledOPA : EvSpotEnabled, M ("GENERAL_DISABLED"));
         }
     }
 }
@@ -188,10 +195,14 @@ void Spot::setEditProvider (EditDataProvider* provider)
 
 void Spot::editToggled ()
 {
-    if (edit->get_active()) {
-        subscribe();
-    } else {
-        unsubscribe();
+    if (listener) {
+        if (edit->get_active()) {
+            listener->refreshPreview(EvSpotEnabledOPA); // reprocess the preview w/o creating History entry
+            subscribe();
+        } else {
+            unsubscribe();
+            listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
+        }
     }
 }
 
@@ -372,7 +383,7 @@ void Spot::addNewEntry()
     // TODO: find a way to disable the active spot's Mouse Over geometry but still displaying its location...
 
     if (listener) {
-        listener->panelChanged (EvSpotEntry, M ("TP_SPOT_ENTRYCHANGED"));
+        listener->panelChanged (EvSpotEntryOPA, M ("TP_SPOT_ENTRYCHANGED"));
     }
 }
 
@@ -690,5 +701,6 @@ void Spot::switchOffEditMode ()
     }
 
     EditSubscriber::switchOffEditMode();  // disconnect
+    listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
 }
 

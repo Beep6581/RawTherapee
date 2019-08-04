@@ -618,6 +618,12 @@ void Crop::update(int todo)
             parent->imgsrc->getImage(parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw);
         }
 
+        if ((todo & M_SPOT) && params.spot.enabled && !params.spot.entries.empty()) {
+            PreviewProps pp(trafx, trafy, trafw * skip, trafh * skip, skip);
+            //parent->imgsrc->getImage(parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw);
+            parent->ipf.removeSpots(origCrop, params.spot.entries, pp);
+        }
+
         DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
 
         if (params.dirpyrDenoise.Lmethod == "CUR") {
@@ -692,6 +698,33 @@ void Crop::update(int todo)
     // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
     createBuffer(cropw, croph);
 
+    if ((todo & M_SPOT_ADJUST) && params.spot.enabled && !params.spot.entries.empty()) {
+        PreviewProps pp(trafx, trafy, trafw * skip, trafh * skip, skip);
+        parent->ipf.removeSpots(origCrop, params.spot.entries, pp);
+    }
+
+    // Apply Spot removal
+    if (todo & (M_SPOT|M_SPOT_ADJUST)) {
+        if (params.spot.enabled && !params.spot.entries.empty()) {
+            if(!spotCrop) {
+                spotCrop = new Imagefloat (cropw, croph);
+            }
+            baseCrop->copyData (spotCrop);
+            PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
+            //parent->imgsrc->getImage(parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw);
+            parent->ipf.removeSpots (spotCrop, params.spot.entries, pp);
+        } else {
+            if (spotCrop) {
+                delete spotCrop;
+                spotCrop = nullptr;
+            }
+        }
+    }
+
+    if (spotCrop) {
+        baseCrop = spotCrop;
+    }
+
     std::unique_ptr<Imagefloat> fattalCrop;
 
     if ((todo & M_HDR) && (params.fattal.enabled || params.dehaze.enabled)) {
@@ -745,29 +778,6 @@ void Crop::update(int todo)
         if (need_fattal) {
             parent->ipf.dehaze(f);
             parent->ipf.ToneMapFattal02(f);
-        }
-
-        // Apply Spot removal
-        if (params.spot.enabled) {
-            if (todo & M_SPOT) {
-                if(!spotCrop) {
-                    spotCrop = new Imagefloat (cropw, croph);
-                }
-                baseCrop->copyData (spotCrop);
-
-                PreviewProps pp (cropx, cropy, cropw, croph, skip);
-                parent->ipf.removeSpots (spotCrop, params.spot.entries, pp);
-            }
-        } else {
-            if (spotCrop) {
-                delete spotCrop;
-            }
-
-            spotCrop = NULL;
-        }
-
-        if (spotCrop) {
-            baseCrop = spotCrop;
         }
 
         // crop back to the size expected by the rest of the pipeline

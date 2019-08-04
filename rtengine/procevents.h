@@ -262,7 +262,7 @@ enum ProcEventCode {
     EvBWAfterCurve = 232,
     EvBWAfterCurveMode = 233,
     EvAutoch = 234,
-    EvSpotEntry = 235,
+//  EvFixedch=235,   -- can be reused --
     EvNeutralBW = 236,
     EvGradientFeather = 237,
     EvGradientStrength = 238,
@@ -451,7 +451,7 @@ enum ProcEventCode {
     EvLgam = 421,
     EvLslope = 422,
     EvLhighl = 423,
-    EvSpotEnabled = 424,
+//    EvLbaselog = 424,   -- can be reused --
     EvRetinexlhcurve = 425,
     EvOIntent = 426,
     EvMonitorTransform = 427,

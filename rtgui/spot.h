@@ -98,6 +98,14 @@ public:
     bool pick2 (const bool picked);
     bool pick3 (const bool picked);
     void switchOffEditMode ();
+
+    rtengine::ProcEvent EvSpotEnabled;
+    rtengine::ProcEvent EvSpotEnabledOPA; // used to toggle-on the Spot 'On Preview Adjustment' mode
+    rtengine::ProcEvent EvSpotEntry;
+    rtengine::ProcEvent EvSpotEntryOPA;
+
+    rtengine::ProcEvent evt;
+
 };
 
 #endif

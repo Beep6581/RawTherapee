@@ -40,7 +40,7 @@ extern const Settings* settings;
 ImProcCoordinator::ImProcCoordinator() :
     orig_prev(nullptr),
     oprevi(nullptr),
-    spot_prev (nullptr),
+    spotprev(nullptr),
     oprevl(nullptr),
     nprevl(nullptr),
     fattal_11_dcrop_cache(nullptr),
@@ -50,7 +50,6 @@ ImProcCoordinator::ImProcCoordinator() :
     imgsrc (nullptr),
     lastAwbEqual (0.),
     lastAwbTempBias (0.0),
-    previewProps(-1, -1, -1, -1, 1),
     monitorIntent (RI_RELATIVE),
     softProof(false),
     gamutCheck(false),
@@ -217,7 +216,7 @@ DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider
 void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 {
 
-    MyMutex::MyLock processingLock (mProcessing);
+    MyMutex::MyLock processingLock(mProcessing);
 
     constexpr int numofphases = 15;
     int readyphase = 0;
@@ -232,6 +231,41 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 break;
             }
         }
+    }
+
+    if (todo & M_SPOT_ADJUST) {
+        // TWEAKING THE PROCPARAMS FOR THE SPOT ADJUSTMENT MODE
+
+        // -> using fast demozaicing method
+        highDetailNeeded = false;
+        //params->raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
+        //params->raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
+
+        // -> disabling all transform
+        //params->coarse = CoarseTransformParams();
+        params->lensProf = LensProfParams();
+        params->cacorrection = CACorrParams();
+        params->distortion = DistortionParams();
+        params->rotate = RotateParams();
+        params->perspective = PerspectiveParams();
+        params->vignetting = VignettingParams();
+
+        // -> disabling standard crop
+        params->crop.enabled = false;
+
+        // -> disabling time consuming and unnecessary tool
+        params->sh.enabled = false;
+        params->blackwhite.enabled = false;
+        params->dehaze.enabled = false;
+        params->wavelet.enabled = false;
+        params->filmSimulation.enabled = false;
+        params->sharpenEdge.enabled = false;
+        params->sharpenMicro.enabled = false;
+        params->sharpening.enabled = false;
+        params->softlight.enabled = false;
+        params->gradient.enabled = false;
+        params->pcvignette.enabled = false;
+        params->colorappearance.enabled = false;
     }
 
     if (((todo & ALL) == ALL) || (todo & M_MONITOR) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
@@ -451,11 +485,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             // Will (re)allocate the preview's buffers
             setScale(scale);
-            previewProps.set(0, 0, fw, fh, scale);
+            PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
 
-            imgsrc->getImage(currWB, tr, orig_prev, previewProps, params->toneCurve, params->raw);
+            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
             denoiseInfoStore.valid = false;
             //ColorTemp::CAT02 (orig_prev, &params) ;
             //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
@@ -507,46 +541,47 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         readyphase++;
 
+        oprevi = orig_prev;
+
+        progress ("Spot Removal...", 100 * readyphase / numofphases);
+
+        if (todo & (M_SPOT|M_SPOT_ADJUST)) {
+            if (params->spot.enabled && !params->spot.entries.empty()) {
+                allocCache(spotprev);
+                orig_prev->copyData (spotprev);
+
+                PreviewProps pp(0, 0, fw, fh, scale);
+                ipf.removeSpots (spotprev, params->spot.entries, pp);
+            } else {
+                if (spotprev) {
+                    delete spotprev;
+                    spotprev = nullptr;
+                }
+            }
+        }
+        if (spotprev) {
+            if (oprevi == orig_prev) {
+                allocCache(oprevi);
+            }
+            spotprev->copyData(oprevi);
+        }
+        
+        readyphase++;
+
         if ((todo & M_HDR) && (params->fattal.enabled || params->dehaze.enabled)) {
             if (fattal_11_dcrop_cache) {
                 delete fattal_11_dcrop_cache;
                 fattal_11_dcrop_cache = nullptr;
             }
 
-            ipf.dehaze(orig_prev);
-            ipf.ToneMapFattal02(orig_prev);
-
-            if (oprevi != orig_prev) {
-                delete oprevi;
+            if (oprevi == orig_prev) {
+                oprevi = new Imagefloat (pW, pH);
+                orig_prev->copyData (oprevi);
             }
+
+            ipf.dehaze(oprevi);
+            ipf.ToneMapFattal02(oprevi);
         }
-
-        oprevi = orig_prev;
-
-        progress ("Spot Removal...", 100 * readyphase / numofphases);
-
-        if (params->spot.enabled && !params->spot.entries.empty ()) {
-            if ((todo & M_SPOT)) {
-                // First update the image with spot healing
-                ipf.removeSpots (oprevi, params->spot.entries, previewProps);
-
-                // Then fork the image to cache the data
-                if (spot_prev == nullptr) {
-                    spot_prev = new Imagefloat (pW, pH);
-                }
-                oprevi->copyData (spot_prev);
-            }
-            if (spot_prev) {
-                oprevi = spot_prev;
-            }
-        } else {
-            if (spot_prev) {
-               delete spot_prev;
-                spot_prev = nullptr;
-            }
-        }
-
-        readyphase++;
 
         progress ("Rotate / Distortion...", 100 * readyphase / numofphases);
         // Remove transformation if unneeded
@@ -1063,16 +1098,16 @@ void ImProcCoordinator::freeAll()
 {
 
     if (allocated) {
-        if (spot_prev && spot_prev != oprevi) {
-            delete spot_prev;
+        if (spotprev && spotprev != oprevi) {
+            delete spotprev;
         }
-        spot_prev = nullptr;
+        spotprev = nullptr;
 
-        if (oprevi && oprevi != orig_prev) {
+        if (orig_prev != oprevi) {
             delete oprevi;
         }
+
         oprevi    = nullptr;
-        
         delete orig_prev;
         orig_prev = nullptr;
         delete oprevl;
@@ -1097,6 +1132,15 @@ void ImProcCoordinator::freeAll()
     }
 
     allocated = false;
+}
+
+void ImProcCoordinator::allocCache (Imagefloat* &imgfloat)
+{
+    if (imgfloat == nullptr) {
+        imgfloat = new Imagefloat(pW, pH);
+    } else {
+        imgfloat->allocate(pW, pH);
+    }
 }
 
 /** @brief Handles image buffer (re)allocation and trigger sizeChanged of SizeListener[s]

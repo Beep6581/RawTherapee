@@ -35,6 +35,10 @@ class ToolPanelListener
 {
 public:
     virtual ~ToolPanelListener() = default;
+
+    /// @brief Ask to refresh the preview not triggered by a parameter change (e.g. 'On Preview' editing).
+    virtual void refreshPreview(const rtengine::ProcEvent& event) = 0;
+    /// @brief Used to notify all listeners that a parameters has been effectively changed
     virtual void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) = 0;
 };
 

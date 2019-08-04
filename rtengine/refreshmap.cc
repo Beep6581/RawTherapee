@@ -262,7 +262,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RGBCURVE,         // EvBWAfterCurve
     RGBCURVE,         // EvBWAfterCurveMode
     RGBCURVE,         // EvAutoch
-    SPOT,             // EvSpotEntry
+    0,                // --unused--
     RGBCURVE,         // EvNeutralBW
     TRANSFORM,        // EvGradientFeather
     TRANSFORM,        // EvGradientStrength
@@ -451,7 +451,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvLgam
     DEMOSAIC,         // EvLslope
     RETINEX,          // EvLhighl
-    SPOT,             // EvSpotEnabled
+    0,                // --unused--
     DEMOSAIC,         // EvRetinexlhcurve
     OUTPUTPROFILE,    // EvOIntent
     MONITORTRANSFORM, // EvMonitorTransform: no history message
@@ -470,7 +470,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvRetinexgaintransmission
     RETINEX,          // EvLskal
     OUTPUTPROFILE,    // EvOBPCompens
-    ALLNORAW,         // EvWBtempBias
+    ALLNORAW,          // EvWBtempBias
     DARKFRAME,        // EvRawImageNum
     0,                // unused
     0,                // unused

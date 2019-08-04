@@ -379,6 +379,19 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
 
 }
 
+void ToolPanelCoordinator::refreshPreview (const rtengine::ProcEvent& event)
+{
+    if (!ipc) {
+        return;
+    }
+
+    ProcParams* params = ipc->beginUpdateParams ();
+    for (auto toolPanel : toolPanels) {
+        toolPanel->write (params);
+    }
+
+    ipc->endUpdateParams (event);   // starts the IPC processing
+}
 
 void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
 {

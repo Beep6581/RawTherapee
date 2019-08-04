@@ -75,6 +75,7 @@ EXIFPANEL_RESET;Reset
 EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values.
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values.
+EXIFPANEL_SHOWALL;Show all
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 EXPORT_BYPASS;Processing steps to bypass
 EXPORT_BYPASS_ALL;Select / Unselect All
@@ -283,9 +284,9 @@ HISTORY_MSG_30;RLD - Radius
 HISTORY_MSG_31;RLD - Amount
 HISTORY_MSG_32;RLD - Damping
 HISTORY_MSG_33;RLD - Iterations
-HISTORY_MSG_34;LCP distortion correction
-HISTORY_MSG_35;LCP vignetting correction
-HISTORY_MSG_36;LCP CA correction
+HISTORY_MSG_34;Lens Correction - Distortion
+HISTORY_MSG_35;Lens Correction - Vignetting
+HISTORY_MSG_36;Lens Correction - CA
 HISTORY_MSG_37;Exposure - Auto levels
 HISTORY_MSG_38;White Balance - Method
 HISTORY_MSG_39;WB - Temperature
@@ -334,7 +335,7 @@ HISTORY_MSG_81;Resize
 HISTORY_MSG_82;Profile changed
 HISTORY_MSG_83;S/H - Sharp mask
 HISTORY_MSG_84;Perspective correction
-HISTORY_MSG_85;LCP
+HISTORY_MSG_85;Lens Correction - LCP file
 HISTORY_MSG_86;RGB Curves - Luminosity mode
 HISTORY_MSG_87;Impulse Noise Reduction
 HISTORY_MSG_88;Impulse NR threshold
@@ -483,7 +484,7 @@ HISTORY_MSG_232;B&amp;W - 'Before' curve type
 HISTORY_MSG_233;B&amp;W - 'After' curve
 HISTORY_MSG_234;B&amp;W - 'After' curve type
 HISTORY_MSG_235;B&amp;W - CM - Auto
-HISTORY_MSG_236;Spot removal - Point modif.
+HISTORY_MSG_236;--unused--
 HISTORY_MSG_237;B&amp;W - CM
 HISTORY_MSG_238;GF - Feather
 HISTORY_MSG_239;GF - Strength
@@ -672,7 +673,7 @@ HISTORY_MSG_421;Retinex - Gamma
 HISTORY_MSG_422;Retinex - Gamma
 HISTORY_MSG_423;Retinex - Gamma slope
 HISTORY_MSG_424;Retinex - HL threshold
-HISTORY_MSG_425;Spot removal
+HISTORY_MSG_425;Retinex - Log base
 HISTORY_MSG_426;Retinex - Hue equalizer
 HISTORY_MSG_427;Output rendering intent
 HISTORY_MSG_428;Monitor rendering intent
@@ -775,6 +776,8 @@ HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
 HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
+HISTORY_MSG_SPOT;Spot removal
+HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
