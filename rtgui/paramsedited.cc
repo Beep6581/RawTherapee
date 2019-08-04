@@ -1056,6 +1056,15 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensibn = locallab.spots.at(j).sensibn && pSpot.sensibn == otherSpot.sensibn;
                 locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
+                locallab.spots.at(j).CCmaskblcurve = locallab.spots.at(j).CCmaskblcurve && pSpot.CCmaskblcurve == otherSpot.CCmaskblcurve;
+                locallab.spots.at(j).LLmaskblcurve = locallab.spots.at(j).LLmaskblcurve && pSpot.LLmaskblcurve == otherSpot.LLmaskblcurve;
+                locallab.spots.at(j).HHmaskblcurve = locallab.spots.at(j).HHmaskblcurve && pSpot.HHmaskblcurve == otherSpot.HHmaskblcurve;
+                locallab.spots.at(j).enablMask = locallab.spots.at(j).enablMask && pSpot.enablMask == otherSpot.enablMask;
+                locallab.spots.at(j).blendmaskbl = locallab.spots.at(j).blendmaskbl && pSpot.blendmaskbl == otherSpot.blendmaskbl;
+                locallab.spots.at(j).radmaskbl = locallab.spots.at(j).radmaskbl && pSpot.radmaskbl == otherSpot.radmaskbl;
+                locallab.spots.at(j).chromaskbl = locallab.spots.at(j).chromaskbl && pSpot.chromaskbl == otherSpot.chromaskbl;
+                locallab.spots.at(j).gammaskbl = locallab.spots.at(j).gammaskbl && pSpot.gammaskbl == otherSpot.gammaskbl;
+                locallab.spots.at(j).slomaskbl = locallab.spots.at(j).slomaskbl && pSpot.slomaskbl == otherSpot.slomaskbl;
                 // Tone Mapping
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
                 locallab.spots.at(j).stren = locallab.spots.at(j).stren && pSpot.stren == otherSpot.stren;
@@ -3072,6 +3081,42 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).activlum = mods.locallab.spots.at(i).activlum;
         }
 
+        if (locallab.spots.at(i).CCmaskblcurve) {
+            toEdit.locallab.spots.at(i).CCmaskblcurve = mods.locallab.spots.at(i).CCmaskblcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskblcurve) {
+            toEdit.locallab.spots.at(i).LLmaskblcurve = mods.locallab.spots.at(i).LLmaskblcurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskblcurve) {
+            toEdit.locallab.spots.at(i).HHmaskblcurve = mods.locallab.spots.at(i).HHmaskblcurve;
+        }
+
+        if (locallab.spots.at(i).enablMask) {
+            toEdit.locallab.spots.at(i).enablMask = mods.locallab.spots.at(i).enablMask;
+        }
+
+        if (locallab.spots.at(i).blendmaskbl) {
+            toEdit.locallab.spots.at(i).blendmaskbl = mods.locallab.spots.at(i).blendmaskbl;
+        }
+
+        if (locallab.spots.at(i).radmaskbl) {
+            toEdit.locallab.spots.at(i).radmaskbl = mods.locallab.spots.at(i).radmaskbl;
+        }
+
+        if (locallab.spots.at(i).chromaskbl) {
+            toEdit.locallab.spots.at(i).chromaskbl = mods.locallab.spots.at(i).chromaskbl;
+        }
+
+        if (locallab.spots.at(i).gammaskbl) {
+            toEdit.locallab.spots.at(i).gammaskbl = mods.locallab.spots.at(i).gammaskbl;
+        }
+
+        if (locallab.spots.at(i).slomaskbl) {
+            toEdit.locallab.spots.at(i).slomaskbl = mods.locallab.spots.at(i).slomaskbl;
+        }
+
         // Tone Mapping
         if (locallab.spots.at(i).exptonemap) {
             toEdit.locallab.spots.at(i).exptonemap = mods.locallab.spots.at(i).exptonemap;
@@ -4561,6 +4606,15 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensibn(v),
     blurMethod(v),
     activlum(v),
+    CCmaskblcurve(v),
+    LLmaskblcurve(v),
+    HHmaskblcurve(v),
+    enablMask(v),
+    blendmaskbl(v),
+    radmaskbl(v),
+    chromaskbl(v),
+    gammaskbl(v),
+    slomaskbl(v),
     // Tone Mapping
     exptonemap(v),
     stren(v),
@@ -4794,6 +4848,15 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensibn = v;
     blurMethod = v;
     activlum = v;
+    CCmaskblcurve = v;
+    LLmaskblcurve = v;
+    HHmaskblcurve = v;
+    enablMask = v;
+    blendmaskbl = v;
+    radmaskbl = v;
+    chromaskbl = v;
+    gammaskbl = v;
+    slomaskbl = v;
     // Tone Mapping
     exptonemap = v;
     stren = v;

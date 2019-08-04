@@ -746,6 +746,16 @@ enum ProcEventCode {
     EvlocallabwavCurve = 716,
     Evlocallablevelwav = 717,
     Evlocallabresidcont = 718,   
+    EvlocallabCCmaskblshape = 719,
+    EvlocallabLLmaskblshape = 720,
+    EvlocallabHHmaskblshape = 721,
+    EvLocallabEnablMask = 722,
+    EvlocallabshowmaskblMethod = 723,
+    Evlocallabblendmaskbl = 724,
+    Evlocallabradmaskbl = 725,
+    Evlocallabchromaskbl = 726,
+    Evlocallabgammaskbl = 727,
+    Evlocallabslomaskbl = 728,
     NUMOFEVENTS
 };
 

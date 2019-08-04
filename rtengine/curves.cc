@@ -1640,6 +1640,142 @@ void LocretigainCurverab::Set(const std::vector<double> &curvePoints)
         Reset();
     }
 }
+LocHHmaskblCurve::LocHHmaskblCurve() : sum(0.f) {};
+
+void LocHHmaskblCurve::Reset()
+{
+    lutLocHHmaskblCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskblCurve[i] < 0.02f) {
+            lutLocHHmaskblCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmaskblCurve::Set(const std::vector<double> &curvePoints, bool & lhmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmaskblCurve::LocLLmaskblCurve() : sum(0.f) {};
+
+void LocLLmaskblCurve::Reset()
+{
+    lutLocLLmaskblCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskblCurve[i] < 0.02f) {
+            lutLocLLmaskblCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & llmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmaskblCurve::LocCCmaskblCurve() : sum(0.f) {};
+
+void LocCCmaskblCurve::Reset()
+{
+    lutLocCCmaskblCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskblCurve[i] < 0.02f) {
+            lutLocCCmaskblCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
 
 
 

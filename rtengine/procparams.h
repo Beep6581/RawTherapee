@@ -1063,6 +1063,15 @@ struct LocallabParams {
         int sensibn;
         Glib::ustring blurMethod;
         bool activlum;
+        std::vector<double> CCmaskblcurve;
+        std::vector<double> LLmaskblcurve;
+        std::vector<double> HHmaskblcurve;
+        bool enablMask;
+        int blendmaskbl;
+        double radmaskbl;
+        double chromaskbl;
+        double gammaskbl;
+        double slomaskbl;
         // Tone Mapping
         bool exptonemap;
         double stren;

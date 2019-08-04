@@ -266,6 +266,7 @@ struct local_params {
     int showmaskretimet;
     int showmasksoftmet;
     int showmasktmmet;
+    int showmaskblmet;
     float laplacexp;
     float balanexp;
     float linear;
@@ -325,6 +326,7 @@ struct local_params {
     bool enaretiMask;
     bool enaretiMasktmap;
     bool enatmMask;
+    bool enablMask;
     int highlihs;
     int shadowhs;
     int radiushs;
@@ -418,7 +420,7 @@ static void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float
 
 
 
-static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask)
+static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask)
 {
     int w = oW;
     int h = oH;
@@ -502,13 +504,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskretimet = llretiMask;
     lp.showmasksoftmet = llsoftMask;
     lp.showmasktmmet = lltmMask;
+    lp.showmaskblmet = llblMask;
     //  printf("lpshmasktm=%i\n",lp.showmasktmmet);
-    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0;
-    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0;
-    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0;
-    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0;
-    // if(lp.enaretiMask) printf("lp.enaretiMasktrue\n"); else printf("lp.enaretiMaskfalse\n");
+    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 ;
+    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0  && llblMask == 0;
+    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0  && llblMask == 0;
+    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0  && llblMask == 0;
+    lp.enablMask = locallab.spots.at(sp).enablMask && llblMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0;
 
     if (locallab.spots.at(sp).softMethod == "soft") {
         lp.softmet = 0;
@@ -3580,7 +3583,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0);
         int begy = lp.yc - lp.lyT;
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
@@ -4905,8 +4908,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskcbCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskcbCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskcbCurve & lochhmascbCurve, bool & lhmascbutili,
                                 const LocCCmaskretiCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskretiCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskretiCurve & lochhmasretiCurve, bool & lhmasretiutili,
                                 const LocCCmasktmCurve & locccmastmCurve, bool &lcmastmutili, const  LocLLmasktmCurve & locllmastmCurve, bool &llmastmutili, const  LocHHmasktmCurve & lochhmastmCurve, bool & lhmastmutili,
+                                const LocCCmaskblCurve & locccmasblCurve, bool &lcmasblutili, const  LocLLmaskblCurve & locllmasblCurve, bool &llmasblutili, const  LocHHmaskblCurve & lochhmasblCurve, bool & lhmasblutili,
                                 const LocwavCurve & locwavCurve,
-                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask)
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, int llColorMask, 
+                                int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask)
 {
     /* comment on processus deltaE
             * the algo uses 3 different ways to manage deltaE according to the type of intervention
@@ -4936,7 +4941,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
 
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llExpMask, llSHMask, llcbMask, llretiMask, llsoftMask, lltmMask);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, llColorMask, llExpMask, llSHMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
         int strred = 1;//(lp.strucc - 1);
@@ -6296,15 +6301,18 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             std::unique_ptr<LabImage> tmp1;
+            const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            const int bfh = yend - ystart;
+            const int bfw = xend - xstart;
+            const int GW = transformed->W;
+            const int GH = transformed->H;
+            int bfwmask = 0;
+            int bfhmask = 0;
 
             if (call <= 3 && lp.blurmet == 0) {
-                const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                const int bfh = yend - ystart;
-                const int bfw = xend - xstart;
-
                 if (bfw > 0 && bfh > 0) {
                     tmp1.reset(new LabImage(bfw, bfh));
 #ifdef _OPENMP
@@ -6319,20 +6327,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-#ifdef _OPENMP
-                    #pragma omp parallel
-#endif
-
-                    {
-                        gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
-                    }
+                    bfwmask = bfw;
+                    bfhmask = bfh;
                 }
             } else {
-                const int GW = transformed->W;
-                const int GH = transformed->H;
                 tmp1.reset(new LabImage(transformed->W, transformed->H));
+                bfwmask = GW;
+                bfhmask = GH;
+            }
+
+//here mask for normal and inverse
+
+
+//end mask
+
+            if (lp.blurmet == 0) {
+#ifdef _OPENMP
+                #pragma omp parallel
+#endif
+
+                {
+                    gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                    gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                    gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                }
+
+            } else {
 
 #ifdef _OPENMP
                 #pragma omp parallel
@@ -7007,6 +7027,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //local contrast
         bool wavcurve = false;
+
         if (lp.locmet == 1) {
             for (int i = 0; i < 500; i++) {
                 if (locwavCurve[i] != 0.5) {
@@ -7014,6 +7035,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
             }
         }
+
         if ((lp.lcamount > 0.f || wavcurve || params->locallab.spots.at(sp).residcont != 0.f) && call < 3  && lp.lcena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -7156,11 +7178,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
                 } else if (lp.locmet == 1) { //wavelet
-               
+
                     int wavelet_level = params->locallab.spots.at(sp).levelwav;
 
                     int minwin = min(bfwr, bfhr);
                     int maxlevelspot = 9;
+
                     // adap maximum level wavelet to size of RT-spot
                     if (minwin * sk < 1024) {
                         maxlevelspot = 9;    //sampling wavelet 512
@@ -7205,6 +7228,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     wavelet_level = min(wavelet_level, maxlevelspot);
 
                     wavelet_decomposition wdspot(tmp1->data, bfw, bfh, wavelet_level, 1, sk);
+
                     if (wdspot.memoryAllocationFailed) {
                         return;
                     }
@@ -7234,21 +7258,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         double contreal = 0.6 * contrast;
                         DiagonalCurve resid_contrast({
                             DCT_NURBS,
-                                0, 0,
-                                avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
-                                avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
-                                1, 1
+                            0, 0,
+                            avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
+                            avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
+                            1, 1
                         });
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
+
                         for (int i = 0; i < W_L * H_L; i++) {
                             float buf = LIM01(wav_L0[i] / 32768.f);
                             buf = resid_contrast.getVal(buf);
                             buf *= 32768.f;
                             wav_L0[i] = buf;
                         }
-                        
+
                     }
 
 
@@ -7259,7 +7284,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float MaxP[10];
                     float MaxN[10];
                     Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-                   // printf("mean=%f sig=%f\n", mean[3], sigma[3]);
+                    // printf("mean=%f sig=%f\n", mean[3], sigma[3]);
 
                     for (int dir = 1; dir < 4; dir++) {
                         for (int level = 0; level < maxlvl; ++level) {
@@ -7285,6 +7310,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 for (int i = 0; i < W_L * H_L; i++) {
                                     float absciss;
                                     float &val = wav_L[dir][i];
+
                                     if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
                                         float valcour = xlogf(fabsf(val));
                                         float valc = valcour - logmax;

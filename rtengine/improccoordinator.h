@@ -254,6 +254,9 @@ protected:
     LocCCmasktmCurve locccmastmCurve;
     LocLLmasktmCurve locllmastmCurve;
     LocHHmasktmCurve lochhmastmCurve;
+    LocCCmaskblCurve locccmasblCurve;
+    LocLLmaskblCurve locllmasblCurve;
+    LocHHmaskblCurve lochhmasblCurve;
     LocwavCurve locwavCurve;
 
     bool locallutili;
@@ -277,6 +280,9 @@ protected:
     bool lcmastmutili;
     bool lhmastmutili;
     bool llmastmutili;
+    bool lcmasblutili;
+    bool lhmasblutili;
+    bool llmasblutili;
     bool LHutili;
     bool HHutili;
     LUTf huerefs;
@@ -297,7 +303,8 @@ protected:
     int locallretiMask;
     int locallsoftMask;
     int localltmMask;
-    
+    int locallblMask;
+
 public:
 
     ImProcCoordinator ();
@@ -366,7 +373,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask) override
+    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) override
     {
         this->locallColorMask = locallColorMask;
         this->locallExpMask = locallExpMask;
@@ -375,6 +382,7 @@ public:
         this->locallretiMask = locallretiMask;
         this->locallsoftMask = locallsoftMask;
         this->localltmMask = localltmMask;
+        this->locallblMask = locallblMask;
     }
 
     void setProgressListener (ProgressListener* pl) override

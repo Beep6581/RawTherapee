@@ -479,6 +479,15 @@ public:
         bool sensibn;
         bool blurMethod;
         bool activlum;
+        bool CCmaskblcurve;
+        bool LLmaskblcurve;
+        bool HHmaskblcurve;
+        bool enablMask;
+        bool blendmaskbl;
+        bool radmaskbl;
+        bool chromaskbl;
+        bool gammaskbl;
+        bool slomaskbl;
         // Tone Mapping
         bool exptonemap;
         bool stren;
