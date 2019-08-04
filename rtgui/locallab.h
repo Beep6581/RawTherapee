@@ -116,7 +116,7 @@ private:
     //local contrast
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* wavshape;
-    
+
     //Cbdl
     CurveEditorGroup* const maskcbCurveEditorG;
     FlatCurveEditor* CCmaskcbshape;

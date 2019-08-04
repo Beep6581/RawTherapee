@@ -163,7 +163,7 @@ Locallab::Locallab():
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     //Blur
     maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    
+
     //TM
     masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     // Retinex
@@ -1526,6 +1526,7 @@ Locallab::Locallab():
     if (showtooltip) {
         fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
     }
+
     LocalcurveEditorwav->setCurveListener(this);
 
     wavshape = static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false));
@@ -1543,7 +1544,7 @@ Locallab::Locallab():
     localcontMethod->set_active(0);
 
     if (showtooltip) {
-    //    localcontMethod->set_tooltip_markup(M("TP_LOCALLAB_LOCMETHOD_TOOLTIP"));
+        //    localcontMethod->set_tooltip_markup(M("TP_LOCALLAB_LOCMETHOD_TOOLTIP"));
     }
 
     localcontMethodConn = localcontMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::localcontMethodChanged));
@@ -1556,10 +1557,11 @@ Locallab::Locallab():
 
     lclightness->setAdjusterListener(this);
     levelwav->setAdjusterListener(this);
+
     if (showtooltip) {
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
     }
-    
+
     residcont->setAdjusterListener(this);
 
     sensilc->setAdjusterListener(this);
@@ -2003,8 +2005,8 @@ void Locallab::refChanged(double huer, double lumar, double chromar)
             CCmaskblshape->updateLocallabBackground(normChromar);
             LLmaskblshape->updateLocallabBackground(normLumar);
             HHmaskblshape->updateLocallabBackground(normHuer);
-            
-            
+
+
             // Update TM mask background
             CCmasktmshape->updateLocallabBackground(normChromar);
             LLmasktmshape->updateLocallabBackground(normLumar);
@@ -2840,13 +2842,13 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).sensilc = sensilc->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwlc = fftwlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).locwavcurve = wavshape->getCurve();
-                    
+
                     if (localcontMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "loc";
                     } else if (localcontMethod->get_active_row_number() == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "wav";
                     }
-                    
+
                     // Contrast by detail levels
                     pp->locallab.spots.at(pp->locallab.selspot).expcbdl = expcbdl->getEnabled();
 
@@ -3686,7 +3688,7 @@ void Locallab::curveChanged(CurveEditor* ce)
         }
 
     }
-    
+
     // Local contrast
     if (getEnabled() && expcontrast->getEnabled()) {
         if (ce == wavshape) {
@@ -3695,7 +3697,7 @@ void Locallab::curveChanged(CurveEditor* ce)
             }
         }
     }
-    
+
 }
 
 void Locallab::localcontMethodChanged()
@@ -3719,7 +3721,7 @@ void Locallab::localcontMethodChanged()
         LocalcurveEditorwav->show();
         fftwlc->hide();
     }
-   
+
     // printf("localcontMethodChanged\n");
     if (getEnabled() && expcontrast->getEnabled()) {
         if (listener) {
@@ -6234,7 +6236,7 @@ void Locallab::setBatchMode(bool batchMode)
 
     //Local contrast
     localcontMethod->append(M("GENERAL_UNCHANGED"));
-    
+
     // In batch mode, being able to change mask visibility is useless
     showmaskcolMethod->hide();
     showmaskexpMethod->hide();
@@ -6746,11 +6748,13 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         residcont->setValue(pp->locallab.spots.at(index).residcont);
         sensilc->setValue(pp->locallab.spots.at(index).sensilc);
         fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
+
         if (pp->locallab.spots.at(index).localcontMethod == "loc") {
             localcontMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).localcontMethod == "wav") {
             localcontMethod->set_active(1);
         }
+
         wavshape->setCurve(pp->locallab.spots.at(index).locwavcurve);
 
         // Contrast by detail levels
@@ -7040,6 +7044,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensilc->setEditedState(spotState->sensilc ? Edited : UnEdited);
                 fftwlc->set_inconsistent(multiImage && !spotState->fftwlc);
                 wavshape->setUnChanged(!spotState->locwavcurve);
+
                 if (!spotState->retinexMethod) {
                     localcontMethod->set_active_text(M("GENERAL_UNCHANGED"));
                 }
