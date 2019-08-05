@@ -3765,9 +3765,9 @@ void Locallab::blurMethodChanged()
 {
     // printf("blurMethodChanged\n");
     if (blurMethod->get_active_row_number() == 0) {
-        expmaskbl->show();
+        //    expmaskbl->show();
     } else if (blurMethod->get_active_row_number() == 1) {
-        expmaskbl->hide();
+        //    expmaskbl->hide();
     }
 
     if (getEnabled() && expblur->getEnabled()) {
@@ -6655,10 +6655,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (pp->locallab.spots.at(index).blurMethod == "norm") {
             blurMethod->set_active(0);
-            expmaskbl->show();
+            //   expmaskbl->show();
         } else if (pp->locallab.spots.at(index).blurMethod == "inv") {
             blurMethod->set_active(1);
-            expmaskbl->hide();
+            //   expmaskbl->hide();
         }
 
         activlum->set_active(pp->locallab.spots.at(index).activlum);

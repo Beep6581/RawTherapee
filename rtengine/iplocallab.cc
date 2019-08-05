@@ -721,7 +721,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.radmabl = radmaskbl;
     lp.chromabl = chromaskbl;
     lp.gammabl = gammaskbl;
-    lp.slomabl = slomasktm;
+    lp.slomabl = slomaskbl;
 
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
@@ -1830,7 +1830,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
 
 
-void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
+void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
     // BENCHFUN
 //inverse local blur and noise
@@ -1839,15 +1839,35 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
     int GH = transformed->H;
     float refa = chromaref * cos(hueref);
     float refb = chromaref * sin(hueref);
+    const bool blshow = (lp.showmaskblmet == 1 || lp.showmaskblmet == 2);
+    const bool previewbl = (lp.showmaskblmet == 4);
 
     //balance deltaE
     float kL = lp.balance;
     float kab = 1.f;
     balancedeltaE(kL, kab);
 
-    LabImage *origblur = new LabImage(GW, GH);
+    std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    std::unique_ptr<LabImage> origblurmask;
+    const bool usemaskbl = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 4);
+    const bool usemaskall = usemaskbl;
 
     float radius = 3.f / sk;
+
+    if (usemaskall) {
+        origblurmask.reset(new LabImage(GW, GH));
+
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            gaussianBlur(originalmask->L, origblurmask->L, GW, GH, radius);
+            gaussianBlur(originalmask->a, origblurmask->a, GW, GH, radius);
+            gaussianBlur(originalmask->b, origblurmask->b, GW, GH, radius);
+        }
+    }
+
+
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -1861,6 +1881,7 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
     #pragma omp parallel if (multiThread)
 #endif
     {
+        const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
         const int limscope = 80;
         const float mindE = 2.f + MINSCOPE * lp.sensbn * lp.thr;
         const float maxdE = 5.f + MAXSCOPE * lp.sensbn * (1 + 0.1f * lp.thr);
@@ -1886,8 +1907,7 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
 
-                float rL = origblur->L[y][x] / 327.68f;
-                float dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
+                float dE = sqrt(kab * SQR(refa - maskptr->a[y][x] / 327.68f) +  kab * SQR(refb - maskptr->b[y][x] / 327.68f) + kL * SQR(lumaref - maskptr->L[y][x] / 327.68f));
                 float reducdE;
                 calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn, reducdE);
 
@@ -1895,10 +1915,21 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
                     case 0: { // outside selection and outside transition zone => full effect, no transition
                         float difL = tmp1->L[y][x] - original->L[y][x];
                         transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
+                        float difa = tmp1->a[y][x] - original->a[y][x];
+                        float difb = tmp1->b[y][x] - original->b[y][x];
 
                         if (!lp.actsp) {
                             transformed->a[y][x] = CLIPC(tmp1->a[y][x]);
                             transformed->b[y][x] = CLIPC(tmp1->b[y][x]);
+                        }
+
+                        if (blshow) {
+                            transformed->L[y][x] = CLIP(12000.f + difL);
+                            transformed->a[y][x] = CLIPC(difa);
+                            transformed->b[y][x] = CLIPC(difb);
+                        } else if (previewbl) {
+                            transformed->a[y][x] = 0.f;
+                            transformed->b[y][x] = (difb);
                         }
 
                         break;
@@ -1922,6 +1953,15 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
                             transformed->b[y][x] = CLIPC(original->b[y][x] + difb);
                         }
 
+                        if (blshow) {
+                            transformed->L[y][x] = CLIP(12000.f + difL);
+                            transformed->a[y][x] = CLIPC(difa);
+                            transformed->b[y][x] = CLIPC(difb);
+                        } else if (previewbl) {
+                            transformed->a[y][x] = 0.f;
+                            transformed->b[y][x] = (difb);
+                        }
+
                         break;
                     }
 
@@ -1938,7 +1978,6 @@ void ImProcFunctions::InverseBlurNoise_Local(const struct local_params & lp,  co
             }
         }
     }
-    delete origblur;
 }
 
 static void calclight(float lum, float koef, float &lumnew, const LUTf &lightCurveloc)
@@ -2031,7 +2070,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 }
 
 
-static void blendmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* original, LabImage* bufmaskor, LabImage* originalmas, float bl)
+static void blendmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* original, LabImage* bufmaskor, LabImage* originalmas, float bl, int inv)
 {
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -2053,39 +2092,80 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
             }
 
-            if (zone > 0) {
-                bufexporig->L[y][x] += (bl * bufmaskor->L[y][x]);
-                bufexporig->a[y][x] *= (1.f + bl * bufmaskor->a[y][x]);
-                bufexporig->b[y][x] *= (1.f + bl * bufmaskor->b[y][x]);
+            if (inv == 0) {
+                if (zone > 0) {
+                    bufexporig->L[y][x] += (bl * bufmaskor->L[y][x]);
+                    bufexporig->a[y][x] *= (1.f + bl * bufmaskor->a[y][x]);
+                    bufexporig->b[y][x] *= (1.f + bl * bufmaskor->b[y][x]);
 
-                bufexporig->L[y][x] = CLIP(bufexporig->L[y][x]);
-                bufexporig->a[y][x] = CLIPC(bufexporig->a[y][x]);
-                bufexporig->b[y][x] = CLIPC(bufexporig->b[y][x]);
+                    bufexporig->L[y][x] = CLIP(bufexporig->L[y][x]);
+                    bufexporig->a[y][x] = CLIPC(bufexporig->a[y][x]);
+                    bufexporig->b[y][x] = CLIPC(bufexporig->b[y][x]);
 
-                originalmas->L[y][x] = CLIP(bufexporig->L[y][x] - bufmaskor->L[y][x]);
-                originalmas->a[y][x] = CLIPC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
-                originalmas->b[y][x] = CLIPC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
+                    originalmas->L[y][x] = CLIP(bufexporig->L[y][x] - bufmaskor->L[y][x]);
+                    originalmas->a[y][x] = CLIPC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
+                    originalmas->b[y][x] = CLIPC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
 
-                switch (zone) {
+                    switch (zone) {
 
-                    case 1: {
-                        original->L[y + ystart][x + xstart] += (bl * localFactor * bufmaskor->L[y][x]);
-                        original->a[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->a[y][x]);
-                        original->b[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->b[y][x]);
-                        original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
-                        original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
-                        original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
-                        break;
+                        case 1: {
+                            original->L[y + ystart][x + xstart] += (bl * localFactor * bufmaskor->L[y][x]);
+                            original->a[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->a[y][x]);
+                            original->b[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->b[y][x]);
+                            original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
+                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
+                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
+                            break;
+                        }
+
+                        case 2: {
+
+                            original->L[y + ystart][x + xstart] = bufexporig->L[y][x];
+                            original->a[y + ystart][x + xstart] = bufexporig->a[y][x];
+                            original->b[y + ystart][x + xstart] = bufexporig->b[y][x];
+
+                        }
                     }
+                }
+            } else if (inv == 1) {
+                localFactor = 1.f - localFactor;
 
-                    case 2: {
+                if (zone < 2) {
+                    bufexporig->L[y][x] += (bl * bufmaskor->L[y][x]);
+                    bufexporig->a[y][x] *= (1.f + bl * bufmaskor->a[y][x]);
+                    bufexporig->b[y][x] *= (1.f + bl * bufmaskor->b[y][x]);
 
-                        original->L[y + ystart][x + xstart] = bufexporig->L[y][x];
-                        original->a[y + ystart][x + xstart] = bufexporig->a[y][x];
-                        original->b[y + ystart][x + xstart] = bufexporig->b[y][x];
+                    bufexporig->L[y][x] = CLIP(bufexporig->L[y][x]);
+                    bufexporig->a[y][x] = CLIPC(bufexporig->a[y][x]);
+                    bufexporig->b[y][x] = CLIPC(bufexporig->b[y][x]);
+
+                    originalmas->L[y][x] = CLIP(bufexporig->L[y][x] - bufmaskor->L[y][x]);
+                    originalmas->a[y][x] = CLIPC(bufexporig->a[y][x] * (1.f - bufmaskor->a[y][x]));
+                    originalmas->b[y][x] = CLIPC(bufexporig->b[y][x] * (1.f - bufmaskor->b[y][x]));
+
+                    switch (zone) {
+                        case 0: {
+                            original->L[y + ystart][x + xstart] += (bl * bufmaskor->L[y][x]);
+                            original->a[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->a[y][x]);
+                            original->b[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->b[y][x]);
+                            original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
+                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
+                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
+                            break;
+                        }
+
+                        case 1: {
+                            original->L[y + ystart][x + xstart] += (bl * localFactor * bufmaskor->L[y][x]);
+                            original->a[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->a[y][x]);
+                            original->b[y + ystart][x + xstart] *= (1.f + bl * localFactor * bufmaskor->b[y][x]);
+                            original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
+                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
+                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
+                        }
 
                     }
                 }
+
             }
         }
     }
@@ -2146,7 +2226,7 @@ static void deltaEforLaplace(float *dE, const local_params& lp, int bfw, int bfh
 }
 
 
-static void showmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* transformed, LabImage* bufmaskorigSH)
+static void showmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* transformed, LabImage* bufmaskorigSH, int inv)
 {
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -2167,10 +2247,18 @@ static void showmask(const local_params& lp, int xstart, int ystart, int cx, int
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
             }
 
-            if (zone > 0) {
-                transformed->L[y + ystart][x + xstart] = 6000.f + CLIPLOC(bufmaskorigSH->L[y][x]);
-                transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
-                transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+            if (inv == 0) {
+                if (zone > 0) {//normal
+                    transformed->L[y + ystart][x + xstart] = 6000.f + CLIPLOC(bufmaskorigSH->L[y][x]);
+                    transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
+                    transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+                }
+            } else if (inv == 1) { //inverse
+                if (zone == 0) {
+                    transformed->L[y + ystart][x + xstart] = 6000.f + CLIPLOC(bufmaskorigSH->L[y][x]);
+                    transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
+                    transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+                }
             }
         }
     }
@@ -6221,10 +6309,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lp.showmaskcbmet == 0 || lp.showmaskcbmet == 1 || lp.showmaskcbmet == 2 || lp.showmaskcbmet == 4 || lp.enacbMask) {
 
-                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), original, bufmaskorigcb.get(), originalmaskcb.get(), lp.blendmacb);
+                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), original, bufmaskorigcb.get(), originalmaskcb.get(), lp.blendmacb, 0);
 
                         } else if (lp.showmaskcbmet == 3) {
-                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get());
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get(), 0);
                             return;
                         }
                     }
@@ -6358,8 +6446,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfw = xend - xstart;
             const int GW = transformed->W;
             const int GH = transformed->H;
-            int bfwmask = 0;
-            int bfhmask = 0;
 
             //here mask is used with plein image for normal and inverse
             std::unique_ptr<LabImage> bufmaskorigbl;
@@ -6463,6 +6549,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float radiusb = 1.f / sk;
 
             if (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
+                int invers = 0;
+
+                if (lp.blurmet == 0) {
+                    invers = 0;
+                } else if (lp.blurmet == 1) {
+                    invers = 1;
+                }
 
                 //printf("lp.showmasktmmet=%i\n",lp.showmasktmmet);
 #ifdef _OPENMP
@@ -6475,77 +6568,75 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 if (lp.showmaskblmet == 0 || lp.showmaskblmet == 1 || lp.showmaskblmet == 2 || lp.showmaskblmet == 4 || lp.enablMask) {
-                    blendmask(lp, 0, 0, cx, cy, GW, GH, bufgb.get(), original, bufmaskorigbl.get(), originalmaskbl.get(), lp.blendmabl);
+                    blendmask(lp, 0, 0, cx, cy, GW, GH, bufgb.get(), original, bufmaskorigbl.get(), originalmaskbl.get(), lp.blendmabl, invers);
 
                 } else if (lp.showmaskblmet == 3) {
-                    showmask(lp, 0, 0, cx, cy, GW, GH, bufgb.get(), transformed, bufmaskorigbl.get());
+                    showmask(lp, 0, 0, cx, cy, GW, GH, bufgb.get(), transformed, bufmaskorigbl.get(), invers);
                     return;
                 }
             }
 
 //end mask
 
+            if (lp.showmaskblmet == 0 || lp.showmaskblmet == 1  || lp.showmaskblmet == 2 || lp.showmaskblmet == 4 || lp.enablMask) {
 
-            if (call <= 3 && lp.blurmet == 0) {
-                if (bfw > 0 && bfh > 0) {
-                    tmp1.reset(new LabImage(bfw, bfh));
+                if (call <= 3 && lp.blurmet == 0) {
+                    if (bfw > 0 && bfh > 0) {
+                        tmp1.reset(new LabImage(bfw, bfh));
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = ystart; y < yend ; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                            tmp1->a[y - ystart][x - xstart] = original->a[y][x];
-                            tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                        for (int y = ystart; y < yend ; y++) {
+                            for (int x = xstart; x < xend; x++) {
+                                tmp1->L[y - ystart][x - xstart] = original->L[y][x];
+                                tmp1->a[y - ystart][x - xstart] = original->a[y][x];
+                                tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                            }
                         }
+
+                    }
+                } else {
+                    tmp1.reset(new LabImage(transformed->W, transformed->H));
+                }
+
+
+                if (lp.blurmet == 0) {
+#ifdef _OPENMP
+                    #pragma omp parallel
+#endif
+
+                    {
+                        gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
                     }
 
-                    bfwmask = bfw;
-                    bfhmask = bfh;
-                }
-            } else {
-                tmp1.reset(new LabImage(transformed->W, transformed->H));
-                bfwmask = GW;
-                bfhmask = GH;
-            }
-
-
-            if (lp.blurmet == 0) {
-#ifdef _OPENMP
-                #pragma omp parallel
-#endif
-
-                {
-                    gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-                    gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                    gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
-                }
-
-            } else {
+                } else {
 
 #ifdef _OPENMP
-                #pragma omp parallel
+                    #pragma omp parallel
 #endif
-                {
-                    gaussianBlur(original->L, tmp1->L, GW, GH, radius);
-                    gaussianBlur(original->a, tmp1->a, GW, GH, radius);
-                    gaussianBlur(original->b, tmp1->b, GW, GH, radius);
+                    {
+                        gaussianBlur(original->L, tmp1->L, GW, GH, radius);
+                        gaussianBlur(original->a, tmp1->a, GW, GH, radius);
+                        gaussianBlur(original->b, tmp1->b, GW, GH, radius);
+                    }
                 }
-            }
 
-            if (tmp1.get() && lp.stren > 0.1f) {
-                float mean = 0.f;//0 best result
-                float variance = lp.stren ;
-                addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
-            }
-
-            if (lp.blurmet == 0) { //blur and noise (center)
-                if (tmp1.get()) {
-                    BlurNoise_Local(tmp1.get(), originalmaskbl.get(), hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                if (tmp1.get() && lp.stren > 0.1f) {
+                    float mean = 0.f;//0 best result
+                    float variance = lp.stren ;
+                    addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
                 }
-            } else {
-                InverseBlurNoise_Local(lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+
+                if (lp.blurmet == 0) { //blur and noise (center)
+                    if (tmp1.get()) {
+                        BlurNoise_Local(tmp1.get(), originalmaskbl.get(), hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                    }
+                } else {
+                    InverseBlurNoise_Local(originalmaskbl.get(), lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                }
             }
         }
 
@@ -6743,10 +6834,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         if (lp.showmasktmmet == 0 || lp.showmasktmmet == 1 || lp.showmasktmmet == 2 || lp.showmasktmmet == 4 || lp.enatmMask) {
-                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), original, bufmaskorigtm.get(), originalmasktm.get(), lp.blendmatm);
+                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), original, bufmaskorigtm.get(), originalmasktm.get(), lp.blendmatm, 0);
 
                         } else if (lp.showmasktmmet == 3) {
-                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), transformed, bufmaskorigtm.get());
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), transformed, bufmaskorigtm.get(), 0);
                             return;
                         }
                     }
@@ -6962,10 +7053,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         if (lp.showmaskSHmet == 0 || lp.showmaskSHmet == 1 || lp.showmaskSHmet == 2 || lp.showmaskSHmet == 4 || lp.enaSHMask) {
-                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), original, bufmaskorigSH.get(), originalmaskSH.get(), lp.blendmaSH);
+                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), original, bufmaskorigSH.get(), originalmaskSH.get(), lp.blendmaSH, 0);
 
                         } else if (lp.showmaskSHmet == 3) {
-                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskorigSH.get());
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskorigSH.get(), 0);
                             return;
                         }
                     }
@@ -8307,10 +8398,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
                         if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1 || lp.showmaskexpmet == 2 /* || lp.showmaskexpmet == 4 */ || lp.showmaskexpmet == 5 || lp.enaExpMask) {
-                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), original, bufmaskblurexp.get(), originalmaskexp.get(), lp.blendmaexp);
+                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), original, bufmaskblurexp.get(), originalmaskexp.get(), lp.blendmaexp, 0);
 
                         } else if (lp.showmaskexpmet == 3) {
-                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get());
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);
                             return;
                         }
                     }
@@ -8755,9 +8846,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (lp.showmaskcolmet == 0 || lp.showmaskcolmet == 1 || lp.showmaskcolmet == 2 || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.enaColorMask) {
                             originalmaskcol->CopyFrom(transformed);
-                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), original, bufmaskblurcol.get(), originalmaskcol.get(), lp.blendmacol);
+                            blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), original, bufmaskblurcol.get(), originalmaskcol.get(), lp.blendmacol, 0);
                         } else if (lp.showmaskcolmet == 3) {
-                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get());
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
 
                             return;
 
