@@ -960,6 +960,15 @@ HISTORY_MSG_716;Local - Local method
 HISTORY_MSG_717;Local - Local contrast
 HISTORY_MSG_718;Local - Local contrast levels
 HISTORY_MSG_719;Local - Local contrast residual
+HISTORY_MSG_720;Local - Blur mask C
+HISTORY_MSG_721;Local - Blur mask L
+HISTORY_MSG_722;Local - Blur mask CL
+HISTORY_MSG_723;Local - use Blur mask
+HISTORY_MSG_725;Local - Blur mask Blend
+HISTORY_MSG_726;Local - Blur mask radius
+HISTORY_MSG_727;Local - Blur mask chroma
+HISTORY_MSG_728;Local - Blur mask gamma
+HISTORY_MSG_729;Local - Blur mask slope
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

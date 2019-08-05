@@ -1137,7 +1137,7 @@ Locallab::Locallab():
     blurrBox->pack_start(*sensibn);
     blurrBox->pack_start(*blurMethod);
     blurrBox->pack_start(*activlum);
-//    blurrBox->pack_start(*expmaskbl);
+    blurrBox->pack_start(*expmaskbl);
     expblur->add(*blurrBox, false);
     expblur->setLevel(2);
 
@@ -3764,7 +3764,11 @@ void Locallab::softMethodChanged()
 void Locallab::blurMethodChanged()
 {
     // printf("blurMethodChanged\n");
-
+    if (blurMethod->get_active_row_number() == 0) {
+        expmaskbl->show();
+    } else if (blurMethod->get_active_row_number() == 1) {
+        expmaskbl->hide();
+    }
 
     if (getEnabled() && expblur->getEnabled()) {
         if (listener) {
@@ -4008,9 +4012,6 @@ Locallab::llMaskVisibility* Locallab::getMaskVisibility()
     maskStruct->softMask = showmasksoftMethod->get_active_row_number();
     maskStruct->tmMask = showmasktmMethod->get_active_row_number();
     maskStruct->blMask = showmaskblMethod->get_active_row_number();
-//   printf("SHmask=%i \n", maskStruct->SHMask);
-//   printf("retimask=%i \n", maskStruct->retiMask);
-
     return maskStruct;
 }
 
@@ -6549,6 +6550,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             retinexMethod->show();
         }
 
+
         llshape->setCurve(pp->locallab.spots.at(index).llcurve);
         ccshape->setCurve(pp->locallab.spots.at(index).cccurve);
         LHshape->setCurve(pp->locallab.spots.at(index).LHcurve);
@@ -6653,8 +6655,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (pp->locallab.spots.at(index).blurMethod == "norm") {
             blurMethod->set_active(0);
+            expmaskbl->show();
         } else if (pp->locallab.spots.at(index).blurMethod == "inv") {
             blurMethod->set_active(1);
+            expmaskbl->hide();
         }
 
         activlum->set_active(pp->locallab.spots.at(index).activlum);
