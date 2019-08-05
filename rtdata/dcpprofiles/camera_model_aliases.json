@@ -16,6 +16,8 @@
     "Canon EOS 1000D": ["Canon EOS Kiss Digital F", "Canon EOS DIGITAL REBEL XS"],
     "Canon EOS 1200D": ["Canon EOS Kiss X70", "Canon EOS REBEL T5"],
     "Canon EOS 1300D": ["Canon EOS Kiss X80", "Canon EOS Rebel T6"],
+    "Canon EOS 2000D": ["Canon EOS 1500D", "Canon EOS Kiss X90", "Canon EOS Rebel T7"],
+    "Canon EOS 4000D": ["Canon EOS 3000D", "Canon EOS Rebel T100"],
 
     "MINOLTA DYNAX 5D": ["Minolta Maxxum 5D", "Minolta Alpha 5D", "Minolta Alpha Sweet"],
     "MINOLTA DYNAX 7D": ["Minolta Maxxum 7D", "Minolta Alpha 7D"],
