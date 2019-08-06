@@ -55,7 +55,7 @@ void Image8::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
     }
 }
 
-void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples)
+void Image8::setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
@@ -74,7 +74,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int 
         break;
 
     case (IIOSF_UNSIGNED_SHORT): {
-        unsigned short* sbuffer = (unsigned short*) buffer;
+        const unsigned short* sbuffer = (const unsigned short*) buffer;
 
         for (int i = 0, ix = row * width * 3; i < width * 3; ++i, ++ix) {
             data[ix] = uint16ToUint8Rounded(sbuffer[i]);

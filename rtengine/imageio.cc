@@ -89,7 +89,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot)
     }
 
     if (eroot) {
-        rtexif::TagDirectory* td = ((rtexif::TagDirectory*)eroot)->clone (nullptr);
+        rtexif::TagDirectory* td = eroot->clone (nullptr);
 
         // make IPTC and XMP pass through
         td->keepTag(0x83bb);  // IPTC
@@ -113,7 +113,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     }
 
     if (eroot) {
-        exifRoot = ((rtexif::TagDirectory*)eroot)->clone (nullptr);
+        exifRoot = eroot->clone (nullptr);
     }
 
     if (iptc != nullptr) {
@@ -140,7 +140,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
-                iptc_dataset_set_data (ds, (unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(64), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (const unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(64), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -150,7 +150,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
-                iptc_dataset_set_data (ds, (unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(32), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (const unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(32), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -162,7 +162,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             if (i->first == strTags[j].field && !(i->second.empty())) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
-                iptc_dataset_set_data (ds, (unsigned char*)i->second.at(0).c_str(), min(strTags[j].size, i->second.at(0).bytes()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (const unsigned char*)i->second.at(0).c_str(), min(strTags[j].size, i->second.at(0).bytes()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -910,12 +910,12 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
         char swapped[line_length];
 
         for ( int row = 0; row < height; ++row ) {
-            ::rtengine::swab(((char*)buffer) + (row * line_length), swapped, line_length);
+            ::rtengine::swab(((const char*)buffer) + (row * line_length), swapped, line_length);
             setScanline(row, (unsigned char*)&swapped[0], bps);
         }
     } else {
         for ( int row = 0; row < height; ++row ) {
-            setScanline(row, ((unsigned char*)buffer) + (row * line_length), bps);
+            setScanline(row, ((const unsigned char*)buffer) + (row * line_length), bps);
         }
     }
 

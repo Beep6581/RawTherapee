@@ -2928,7 +2928,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         keyFile.set_string("Version", "AppVersion", RTVERSION);
         keyFile.set_integer("Version", "Version", PPVERSION);
 
-        saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", std::max(rank, 0), keyFile);
+        saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
         saveToKeyfile(!pedited || pedited->general.colorlabel, "General", "ColorLabel", colorlabel, keyFile);
         saveToKeyfile(!pedited || pedited->general.intrash, "General", "InTrash", inTrash, keyFile);
 

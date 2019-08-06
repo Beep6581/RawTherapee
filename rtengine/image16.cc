@@ -74,7 +74,7 @@ void Image16::getScanline(int row, unsigned char* buffer, int bps, bool isFloat)
     }
 }
 
-void Image16::setScanline(int row, unsigned char* buffer, int bps, unsigned int numSamples)
+void Image16::setScanline(int row, const unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
@@ -101,7 +101,7 @@ void Image16::setScanline(int row, unsigned char* buffer, int bps, unsigned int 
         }
 
         case (IIOSF_UNSIGNED_SHORT): {
-            unsigned short* sbuffer = (unsigned short*) buffer;
+            const unsigned short* sbuffer = (const unsigned short*) buffer;
             int ix = 0;
 
             for (int i = 0; i < width; ++i) {
