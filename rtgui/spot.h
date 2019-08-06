@@ -8,6 +8,7 @@
 #include "toolpanel.h"
 #include "editwidgets.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/tweakoperator.h"
 
 /**
  * @brief Let the user create/edit/delete points for Spot Removal tool
@@ -36,7 +37,7 @@
  * (the point will be deleted on button release).
  */
 
-class Spot : public ToolParamBlock, public FoldableToolPanel, public EditSubscriber
+class Spot : public ToolParamBlock, public FoldableToolPanel, public EditSubscriber, public rtengine::TweakOperator
 {
 
 private:
@@ -98,6 +99,9 @@ public:
     bool pick2 (const bool picked);
     bool pick3 (const bool picked);
     void switchOffEditMode ();
+
+    //TweakOperator interface
+    void tweakParams(rtengine::procparams::ProcParams& pparams) override;
 
     rtengine::ProcEvent EvSpotEnabled;
     rtengine::ProcEvent EvSpotEnabledOPA; // used to toggle-on the Spot 'On Preview Adjustment' mode

@@ -25,6 +25,7 @@
 #include "improcfun.h"
 #include "iccstore.h"
 #include "procparams.h"
+#include "tweakoperator.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -130,6 +131,7 @@ ImProcCoordinator::ImProcCoordinator() :
     hListener(nullptr),
     resultValid(false),
     params(new procparams::ProcParams),
+    tweakOperator(nullptr),
     lastOutputProfile("BADFOOD"),
     lastOutputIntent(RI__COUNT),
     lastOutputBPC(false),
@@ -200,9 +202,32 @@ void ImProcCoordinator::assign(ImageSource* imgsrc)
     this->imgsrc = imgsrc;
 }
 
-void ImProcCoordinator::getParams(procparams::ProcParams* dst)
+void ImProcCoordinator::getParams(procparams::ProcParams* dst, bool tweaked)
 {
-    *dst = *params;
+    if (!tweaked && paramsBackup.operator bool()) {
+        *dst = *paramsBackup;
+    } else {
+        *dst = *params;
+    }
+}
+
+void ImProcCoordinator::backupParams()
+{
+    if (!params) {
+        return;
+    }
+    if (!paramsBackup) {
+        paramsBackup.reset(new ProcParams());
+    }
+    *paramsBackup = *params;
+}
+
+void ImProcCoordinator::restoreParams()
+{
+    if (!paramsBackup || !params) {
+        return;
+    }
+    *params = *paramsBackup;
 }
 
 DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider, bool isDetailWindow)
@@ -231,41 +256,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 break;
             }
         }
-    }
-
-    if (todo & M_SPOT_ADJUST) {
-        // TWEAKING THE PROCPARAMS FOR THE SPOT ADJUSTMENT MODE
-
-        // -> using fast demozaicing method
-        highDetailNeeded = false;
-        //params->raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
-        //params->raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
-
-        // -> disabling all transform
-        //params->coarse = CoarseTransformParams();
-        params->lensProf = LensProfParams();
-        params->cacorrection = CACorrParams();
-        params->distortion = DistortionParams();
-        params->rotate = RotateParams();
-        params->perspective = PerspectiveParams();
-        params->vignetting = VignettingParams();
-
-        // -> disabling standard crop
-        params->crop.enabled = false;
-
-        // -> disabling time consuming and unnecessary tool
-        params->sh.enabled = false;
-        params->blackwhite.enabled = false;
-        params->dehaze.enabled = false;
-        params->wavelet.enabled = false;
-        params->filmSimulation.enabled = false;
-        params->sharpenEdge.enabled = false;
-        params->sharpenMicro.enabled = false;
-        params->sharpening.enabled = false;
-        params->softlight.enabled = false;
-        params->gradient.enabled = false;
-        params->pcvignette.enabled = false;
-        params->colorappearance.enabled = false;
     }
 
     if (((todo & ALL) == ALL) || (todo & M_MONITOR) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
@@ -545,7 +535,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         progress ("Spot Removal...", 100 * readyphase / numofphases);
 
-        if (todo & (M_SPOT|M_SPOT_ADJUST)) {
+        if (todo & M_SPOT) {
             if (params->spot.enabled && !params->spot.entries.empty()) {
                 allocCache(spotprev);
                 orig_prev->copyData (spotprev);
@@ -1089,10 +1079,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         delete oprevi;
         oprevi = nullptr;
     }
-
-
 }
 
+void ImProcCoordinator::setTweakOperator (TweakOperator *tOperator)
+{
+    if (tOperator) {
+        tweakOperator = tOperator;
+    }
+}
+
+void ImProcCoordinator::unsetTweakOperator (TweakOperator *tOperator)
+{
+    if (tOperator && tOperator == tweakOperator) {
+        tweakOperator = nullptr;
+    }
+}
 
 void ImProcCoordinator::freeAll()
 {
@@ -1432,35 +1433,37 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     MyMutex::MyLock lock(mProcessing);
 
     int fW, fH;
+    std::unique_ptr<ProcParams> validParams(new ProcParams());
+    getParams(validParams.get());
 
-    int tr = getCoarseBitMask(params->coarse);
+    int tr = getCoarseBitMask(validParams->coarse);
 
     imgsrc->getFullSize(fW, fH, tr);
     PreviewProps pp(0, 0, fW, fH, 1);
-    ProcParams ppar = *params;
+    ProcParams ppar = *validParams;
     ppar.toneCurve.hrenabled = false;
     ppar.icm.inputProfile = "(none)";
     Imagefloat* im = new Imagefloat(fW, fH);
     imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse);
     double dummy = 0.0;
     imgsrc->demosaic(ppar.raw, false, dummy);
-    ColorTemp currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method);
+    ColorTemp currWB = ColorTemp(validParams->wb.temperature, validParams->wb.green, validParams->wb.equal, validParams->wb.method);
 
-    if (params->wb.method == "Camera") {
+    if (validParams->wb.method == "Camera") {
         currWB = imgsrc->getWB();
-    } else if (params->wb.method == "Auto") {
-        if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias) {
+    } else if (validParams->wb.method == "Auto") {
+        if (lastAwbEqual != validParams->wb.equal || lastAwbTempBias != validParams->wb.tempBias) {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
 
             if (rm != -1.) {
-                autoWB.update(rm, gm, bm, params->wb.equal, params->wb.tempBias);
-                lastAwbEqual = params->wb.equal;
-                lastAwbTempBias = params->wb.tempBias;
+                autoWB.update(rm, gm, bm, validParams->wb.equal, validParams->wb.tempBias);
+                lastAwbEqual = validParams->wb.equal;
+                lastAwbTempBias = validParams->wb.tempBias;
             } else {
                 lastAwbEqual = -1.;
                 lastAwbTempBias = 0.0;
-                autoWB.useDefaults(params->wb.equal);
+                autoWB.useDefaults(validParams->wb.equal);
             }
         }
 
@@ -1482,12 +1485,12 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         im = trImg;
     }
 
-    if (params->crop.enabled) {
-        Imagefloat *tmpim = new Imagefloat(params->crop.w, params->crop.h);
-        int cx = params->crop.x;
-        int cy = params->crop.y;
-        int cw = params->crop.w;
-        int ch = params->crop.h;
+    if (validParams->crop.enabled) {
+        Imagefloat *tmpim = new Imagefloat(validParams->crop.w, validParams->crop.h);
+        int cx = validParams->crop.x;
+        int cy = validParams->crop.y;
+        int cw = validParams->crop.w;
+        int ch = validParams->crop.h;
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -1518,7 +1521,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     }
 
     int imw, imh;
-    double tmpScale = ipf.resizeScale(params.get(), fW, fH, imw, imh);
+    double tmpScale = ipf.resizeScale(validParams.get(), fW, fH, imw, imh);
 
     if (tmpScale != 1.0) {
         Imagefloat* tempImage = new Imagefloat(imw, imh);
@@ -1628,6 +1631,15 @@ void ImProcCoordinator::process()
         *params = *nextParams;
         int change = changeSinceLast;
         changeSinceLast = 0;
+
+        if (tweakOperator) {
+            // TWEAKING THE PROCPARAMS FOR THE SPOT ADJUSTMENT MODE
+            backupParams();
+            tweakOperator->tweakParams(*params);
+        } else if (paramsBackup) {
+            paramsBackup.release();
+        }
+
         paramsUpdateMutex.unlock();
 
         // M_VOID means no update, and is a bit higher that the rest

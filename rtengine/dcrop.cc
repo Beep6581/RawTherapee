@@ -142,6 +142,7 @@ void Crop::update(int todo)
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
     const bool overrideWindow = cropImageListener;
+    bool spotsDone = false;
 
     if (overrideWindow) {
         cropImageListener->getWindow(wx, wy, ww, wh, ws);
@@ -619,6 +620,7 @@ void Crop::update(int todo)
         }
 
         if ((todo & M_SPOT) && params.spot.enabled && !params.spot.entries.empty()) {
+            spotsDone = true;
             PreviewProps pp(trafx, trafy, trafw * skip, trafh * skip, skip);
             //parent->imgsrc->getImage(parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw);
             parent->ipf.removeSpots(origCrop, params.spot.entries, pp);
@@ -698,13 +700,8 @@ void Crop::update(int todo)
     // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
     createBuffer(cropw, croph);
 
-    if ((todo & M_SPOT_ADJUST) && params.spot.enabled && !params.spot.entries.empty()) {
-        PreviewProps pp(trafx, trafy, trafw * skip, trafh * skip, skip);
-        parent->ipf.removeSpots(origCrop, params.spot.entries, pp);
-    }
-
     // Apply Spot removal
-    if (todo & (M_SPOT|M_SPOT_ADJUST)) {
+    if ((todo & M_SPOT) && !spotsDone) {
         if (params.spot.enabled && !params.spot.entries.empty()) {
             if(!spotCrop) {
                 spotCrop = new Imagefloat (cropw, croph);

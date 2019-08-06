@@ -379,6 +379,20 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
 
 }
 
+void ToolPanelCoordinator::setTweakOperator (rtengine::TweakOperator *tOperator)
+{
+    if (ipc && tOperator) {
+        ipc->setTweakOperator(tOperator);
+    }
+}
+
+void ToolPanelCoordinator::unsetTweakOperator (rtengine::TweakOperator *tOperator)
+{
+    if (ipc && tOperator) {
+        ipc->unsetTweakOperator(tOperator);
+    }
+}
+
 void ToolPanelCoordinator::refreshPreview (const rtengine::ProcEvent& event)
 {
     if (!ipc) {

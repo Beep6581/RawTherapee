@@ -197,10 +197,12 @@ void Spot::editToggled ()
 {
     if (listener) {
         if (edit->get_active()) {
+            listener->setTweakOperator(this);
             listener->refreshPreview(EvSpotEnabledOPA); // reprocess the preview w/o creating History entry
             subscribe();
         } else {
             unsubscribe();
+            listener->unsetTweakOperator(this);
             listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
         }
     }
@@ -701,6 +703,38 @@ void Spot::switchOffEditMode ()
     }
 
     EditSubscriber::switchOffEditMode();  // disconnect
+    listener->unsetTweakOperator(this);
     listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
 }
 
+void Spot::tweakParams(procparams::ProcParams& pparams)
+{
+    //params->raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
+    //params->raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
+
+    // -> disabling all transform
+    //params->coarse = CoarseTransformParams();
+    pparams.lensProf = LensProfParams();
+    pparams.cacorrection = CACorrParams();
+    pparams.distortion = DistortionParams();
+    pparams.rotate = RotateParams();
+    pparams.perspective = PerspectiveParams();
+    pparams.vignetting = VignettingParams();
+
+    // -> disabling standard crop
+    pparams.crop.enabled = false;
+
+    // -> disabling time consuming and unnecessary tool
+    pparams.sh.enabled = false;
+    pparams.blackwhite.enabled = false;
+    pparams.dehaze.enabled = false;
+    pparams.wavelet.enabled = false;
+    pparams.filmSimulation.enabled = false;
+    pparams.sharpenEdge.enabled = false;
+    pparams.sharpenMicro.enabled = false;
+    pparams.sharpening.enabled = false;
+    pparams.softlight.enabled = false;
+    pparams.gradient.enabled = false;
+    pparams.pcvignette.enabled = false;
+    pparams.colorappearance.enabled = false;
+}

@@ -22,9 +22,6 @@
 #include <unordered_map>
 #include "procevents.h"
 
-// Use M_SPOT_ADJUST to update the rendering for On Preview Adjustment of the Spot tool
-#define M_SPOT_ADJUST  (1<<19)
-
 // Use M_VOID if you wish to update the proc params without updating the preview at all !
 #define M_VOID       (1<<18)
 // Use M_MINUPDATE if you wish to update the preview without modifying the image (think about it like a "refreshPreview")
@@ -61,7 +58,7 @@
 #define DEMOSAIC                   (M_RAW|M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define ALLNORAW                         (M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define HDR                                     (M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define SPOTADJUST                                                (M_SPOT_ADJUST|M_HDR|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define SPOTADJUST                                                       (M_SPOT|M_HDR|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define TRANSFORM                                                         (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define AUTOEXP                                                                    (M_SPOT|M_HDR|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define RGBCURVE                                                                                          (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)

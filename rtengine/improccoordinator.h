@@ -37,6 +37,7 @@ namespace rtengine
 using namespace procparams;
 
 class Crop;
+class TweakOperator;
 
 /** @brief Manages the image processing, espc. of the preview windows
   *
@@ -180,14 +181,20 @@ protected:
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
     void progress (Glib::ustring str, int pr);
+    void backupParams();
+    void restoreParams();
     void reallocAll ();
     void allocCache (Imagefloat* &imgfloat);
     void updateLRGBHistograms ();
     void setScale (int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
+    void setTweakOperator (TweakOperator *tOperator);
+    void unsetTweakOperator (TweakOperator *tOperator);
 
     MyMutex mProcessing;
-    const std::unique_ptr<ProcParams> params;
+    const std::unique_ptr<ProcParams> params;  // used for the rendering, can be eventually tweaked
+    std::unique_ptr<ProcParams> paramsBackup;  // backup of the untweaked procparams
+    TweakOperator* tweakOperator;
 
     // for optimization purpose, the output profile, output rendering intent and
     // output BPC will trigger a regeneration of the profile on parameter change only
@@ -228,7 +235,7 @@ public:
     ~ImProcCoordinator () override;
     void assign     (ImageSource* imgsrc);
 
-    void        getParams (procparams::ProcParams* dst) override;
+    void        getParams (procparams::ProcParams* dst, bool tweaked=false) override;
 
     void        startProcessing (int changeCode) override;
     ProcParams* beginUpdateParams () override;
