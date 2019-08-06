@@ -329,8 +329,8 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         int tw = target->getWidth(), th = target->getHeight();
         float thumb_ratio = float(std::max(sw, sh)) / float(std::min(sw, sh));
         float target_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
-        int cx = 0, cy = 0;
         if (std::abs(thumb_ratio - target_ratio) > 0.01) {
+            int cx = 0, cy = 0;
             if (thumb_ratio > target_ratio) {
                 // crop the height
                 int ch = th - (tw * float(sh) / float(sw));
