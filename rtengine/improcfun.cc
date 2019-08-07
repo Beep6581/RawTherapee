@@ -1720,7 +1720,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                         float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
                         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                         lab->deleteLab();
-                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
+                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
                     }
 
