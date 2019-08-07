@@ -186,8 +186,8 @@ void ImProcFunctions::Lanczos (const Imagefloat* src, Imagefloat* dst, float sca
 void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, float scale)
 {
     const float delta = 1.0f / scale;
-    const float a = 3.0f;
-    const float sc = min (scale, 1.0f);
+    constexpr float a = 3.0f;
+    const float sc = min(scale, 1.0f);
     const int support = static_cast<int> (2.0f * a / sc) + 1;
 
     // storage for precomputed parameters for horizontal interpolation
@@ -268,66 +268,61 @@ void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, float scale)
             }
 
             // Do vertical interpolation. Store results.
+            int j = 0;
 #ifdef __SSE2__
-            int j;
             __m128 Lv, av, bv, wkv;
 
             for (j = 0; j < src->W - 3; j += 4) {
-                Lv = _mm_setzero_ps();
-                av = _mm_setzero_ps();
-                bv = _mm_setzero_ps();
+                Lv = ZEROV;
+                av = ZEROV;
+                bv = ZEROV;
 
                 for (int ii = ii0; ii < ii1; ii++) {
                     int k = ii - ii0;
-                    wkv = _mm_set1_ps (w[k]);
-                    Lv += wkv * LVFU (src->L[ii][j]);
-                    av += wkv * LVFU (src->a[ii][j]);
-                    bv += wkv * LVFU (src->b[ii][j]);
+                    wkv = F2V(w[k]);
+                    Lv += wkv * LVFU(src->L[ii][j]);
+                    av += wkv * LVFU(src->a[ii][j]);
+                    bv += wkv * LVFU(src->b[ii][j]);
                 }
 
-                STVF (lL[j], Lv);
-                STVF (la[j], av);
-                STVF (lb[j], bv);
+                STVF(lL[j], Lv);
+                STVF(la[j], av);
+                STVF(lb[j], bv);
             }
-
-#else
-            int j = 0;
 #endif
 
-            for (; j < src->W; j++) {
-                float L = 0.0f, a = 0.0f, b = 0.0f;
+            for (; j < src->W; ++j) {
+                float Ll = 0.0f, La = 0.0f, Lb = 0.0f;
 
-                for (int ii = ii0; ii < ii1; ii++) {
+                for (int ii = ii0; ii < ii1; ++ii) {
                     int k = ii - ii0;
 
-                    L += w[k] * src->L[ii][j];
-                    a += w[k] * src->a[ii][j];
-                    b += w[k] * src->b[ii][j];
+                    Ll += w[k] * src->L[ii][j];
+                    La += w[k] * src->a[ii][j];
+                    Lb += w[k] * src->b[ii][j];
                 }
 
-                lL[j] = L;
-                la[j] = a;
-                lb[j] = b;
+                lL[j] = Ll;
+                la[j] = La;
+                lb[j] = Lb;
             }
 
             // Do horizontal interpolation
-            for (int j = 0; j < dst->W; j++) {
+            for (int x = 0; x < dst->W; ++x) {
+                float * wh = wwh + support * x;
+                float Ll = 0.0f, La = 0.0f, Lb = 0.0f;
 
-                float * wh = wwh + support * j;
+                for (int jj = jj0[x]; jj < jj1[x]; ++jj) {
+                    int k = jj - jj0[x];
 
-                float L = 0.0f, a = 0.0f, b = 0.0f;
-
-                for (int jj = jj0[j]; jj < jj1[j]; jj++) {
-                    int k = jj - jj0[j];
-
-                    L += wh[k] * lL[jj];
-                    a += wh[k] * la[jj];
-                    b += wh[k] * lb[jj];
+                    Ll += wh[k] * lL[jj];
+                    La += wh[k] * la[jj];
+                    Lb += wh[k] * lb[jj];
                 }
 
-                dst->L[i][j] = L;
-                dst->a[i][j] = a;
-                dst->b[i][j] = b;
+                dst->L[i][x] = Ll;
+                dst->a[i][x] = La;
+                dst->b[i][x] = Lb;
             }
         }
     }
