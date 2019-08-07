@@ -298,17 +298,14 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         cr->line_to (rectx1, recty1);
         cr->stroke ();
         cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-        std::valarray<double> ds (1);
-        ds[0] = 4;
-        cr->set_dash (ds, 0);
+        cr->set_dash (std::valarray<double>({4}), 0);
         cr->move_to (rectx1, recty1);
         cr->line_to (rectx2, recty1);
         cr->line_to (rectx2, recty2);
         cr->line_to (rectx1, recty2);
         cr->line_to (rectx1, recty1);
         cr->stroke ();
-        ds.resize (0);
-        cr->set_dash (ds, 0);
+        cr->set_dash (std::valarray<double>(), 0);
 
         if (cparams.guide != "Rule of diagonals" && cparams.guide != "Golden Triangle 1" && cparams.guide != "Golden Triangle 2") {
             // draw guide lines
@@ -446,14 +443,11 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             cr->line_to (rectx2, recty2);
             cr->stroke ();
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            std::valarray<double> ds (1);
-            ds[0] = 4;
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>({4}), 0);
             cr->move_to (rectx1, recty1);
             cr->line_to (rectx2, recty2);
             cr->stroke ();
-            ds.resize (0);
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>(), 0);
 
             double height = recty2 - recty1;
             double width = rectx2 - rectx1;
@@ -470,14 +464,11 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            ds.resize (1);
-            ds[0] = 4;
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>({4}), 0);
             cr->move_to (rectx1, recty2);
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
-            ds.resize (0);
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>(), 0);
 
             x = width - (a * b) / height;
             y = (b * (d - a)) / width;
@@ -486,14 +477,11 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            ds.resize (1);
-            ds[0] = 4;
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>({4}), 0);
             cr->move_to (rectx2, recty1);
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
-            ds.resize (0);
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>(), 0);
         }
     }
 
@@ -674,12 +662,6 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     }
 
     statusImage->set_can_focus(false);
-
-    Glib::ustring str("-");
-
-    if (!titleLabel.empty()) {
-        str = titleLabel;
-    }
 
     label = Gtk::manage(new Gtk::Label());
     setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -1604,7 +1586,7 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
 
     x = newX;
     y = newY;
-    if (newH > 0) {
+    if (newW > 0) {
         w = newW;
     }
     if (newH > 0) {
@@ -1637,7 +1619,7 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
 
     x = newX;
     y = newY;
-    if (newH > 0) {
+    if (newW > 0) {
         w = newW;
     }
     if (newH > 0) {

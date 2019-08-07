@@ -457,8 +457,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         hScrollPos[i] = 0;
         vScrollPos[i] = 0;
     }
-
-    selectedDirectory = "";
 }
 
 FileCatalog::~FileCatalog()

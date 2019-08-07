@@ -556,7 +556,7 @@ bool MyFlatCurve::getHandles(int n)
     if (!n) {
         // first point, the left handle is then computed with the last point's right handle
         prevX = curve.x.at(N - 1) - 1.0;
-        nextX = curve.x.at(n + 1);
+        nextX = curve.x.at(1);
     } else if (n == N - 1) {
         // last point, the right handle is then computed with the first point's left handle
         prevX = curve.x.at(n - 1);
@@ -745,7 +745,6 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                             newBoundaries.at(2).maxVal = 1.;
                             newBoundaries.at(3).minVal = 0.;
                             newBoundaries.at(3).maxVal = 1.;
-                            retval = true;
                             editedPos.at(0) = curve.x.at(edited_point);
                             editedPos.at(1) = curve.y.at(edited_point);
                             editedPos.at(2) = curve.leftTangent.at(edited_point);

@@ -132,7 +132,7 @@ Glib::ustring LFModifier::getDisplayString() const
         return "NONE";
     } else {
         Glib::ustring ret;
-        Glib::ustring sep = "";
+        Glib::ustring sep;
         if (flags_ & LF_MODIFY_DISTORTION) {
             ret += "distortion";
             sep = ", ";

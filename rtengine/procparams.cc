@@ -65,7 +65,7 @@ Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool f
         return embedded_fname;
     }
 
-    Glib::ustring prefix = "";
+    Glib::ustring prefix;
 
     if (embedded_fname.length() > 5 && embedded_fname.substr(0, 5) == "file:") {
         embedded_fname = embedded_fname.substr(5);

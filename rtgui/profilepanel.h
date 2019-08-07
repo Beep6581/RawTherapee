@@ -28,8 +28,9 @@
 #include "guiutils.h"
 #include "profilestorecombobox.h"
 #include "rtimage.h"
+#include "../rtengine/noncopyable.h"
 
-class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener
+class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener, public rtengine::NonCopyable
 {
 
 private:

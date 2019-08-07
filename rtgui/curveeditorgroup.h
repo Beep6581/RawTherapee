@@ -70,7 +70,7 @@ public:
      *                 dialogs.
      */
 
-    CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
+    explicit CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
     ~CurveEditorGroup() override;
     void newLine();
     void curveListComplete();

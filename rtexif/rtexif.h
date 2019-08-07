@@ -190,7 +190,7 @@ public:
 };
 
 // a table of tags: id are offset from beginning and not identifiers
-class TagDirectoryTable: public TagDirectory
+class TagDirectoryTable: public TagDirectory, public rtengine::NonCopyable
 {
 protected:
     unsigned char *values; // Tags values are saved internally here
@@ -405,7 +405,6 @@ public:
     // Get the value as a double
     virtual double toDouble (const Tag* t, int ofs = 0)
     {
-        double ud, dd;
 
         switch (t->getType()) {
             case SBYTE:
@@ -428,10 +427,11 @@ public:
                 return (double) ((int)sget4 (t->getValue() + ofs, t->getOrder()));
 
             case SRATIONAL:
-            case RATIONAL:
-                ud = (int)sget4 (t->getValue() + ofs, t->getOrder());
-                dd = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
-                return dd == 0. ? 0. : (double)ud / (double)dd;
+            case RATIONAL: {
+                const double dividend = (int)sget4 (t->getValue() + ofs, t->getOrder());
+                const double divisor = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return divisor == 0. ? 0. : dividend / divisor;
+            }
 
             case FLOAT:
                 return double (sget4 (t->getValue() + ofs, t->getOrder()));

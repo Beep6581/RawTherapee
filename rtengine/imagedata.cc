@@ -258,7 +258,6 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
         tag = exif->getTag("SubjectDistance");
 
         if (tag) {
-            int num, denom;
             tag->toRational(num, denom);
         } else {
             // Second try, XMP data
@@ -524,8 +523,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                             focal_len = flt->toDouble ();
                         }
                     } else if ((flt = mnote->getTagP ("FocalLength"))) {
-                        rtexif::Tag* flt = mnote->getTag ("FocalLength");
-                        focal_len = flt->toDouble ();
+                        focal_len = mnote->getTag("FocalLength")->toDouble ();
                     }
 
                     if (mnote->getTag ("FocalLengthIn35mmFilm")) {

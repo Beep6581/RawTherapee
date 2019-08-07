@@ -31,7 +31,7 @@
 #include "../rtgui/mydiagonalcurve.h"
 #include "color.h"
 #include "pipettebuffer.h"
-
+#include "noncopyable.h"
 #include "LUT.h"
 
 #define CURVES_MIN_POLY_POINTS  1000
@@ -468,7 +468,7 @@ protected:
     void NURBS_set ();
 
 public:
-    DiagonalCurve (const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
+    explicit DiagonalCurve (const std::vector<double>& points, int ppn = CURVES_MIN_POLY_POINTS);
     ~DiagonalCurve () override;
 
     double getVal     (double t) const override;
@@ -479,7 +479,7 @@ public:
     };
 };
 
-class FlatCurve : public Curve
+class FlatCurve : public Curve, public rtengine::NonCopyable
 {
 
 private:
@@ -493,7 +493,7 @@ private:
 
 public:
 
-    FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
+    explicit FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn = CURVES_MIN_POLY_POINTS);
     ~FlatCurve () override;
 
     double getVal     (double t) const override;
