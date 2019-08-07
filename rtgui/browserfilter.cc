@@ -19,11 +19,11 @@
 #include "browserfilter.h"
 
 BrowserFilter::BrowserFilter () : 
-    showTrash (true),
-    showNotTrash (true),
-    showOriginal (false),
-    multiselect (false),
-    exifFilterEnabled (false)
+    showTrash(true),
+    showNotTrash(true),
+    showOriginal(false),
+    exifFilterEnabled(false),
+    matchEqual(true)
 {
     for (int i = 0; i < 6; i++) {
         showRanked[i] = true;
