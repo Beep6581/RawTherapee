@@ -234,8 +234,6 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
     pCurCommon(nullptr),
     aPersModel{}
 {
-    const int BufferSize = 8192;
-    char buf[BufferSize];
 
     XML_Parser parser = XML_ParserCreate(nullptr);
 
@@ -250,6 +248,8 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
     FILE* const pFile = g_fopen(fname.c_str (), "rb");
 
     if (pFile) {
+        constexpr int BufferSize = 8192;
+        char buf[BufferSize];
         bool done;
 
         do {
@@ -362,9 +362,8 @@ void rtengine::LCPProfile::calcParams(
             const float focDist = aPersModel[pm]->focDist;
             const float focDistLog = std::log(focDist) + euler;
 
-            double meanErr = 0.0;
-
             if (aPersModel[pm]->hasModeData(mode)) {
+                double meanErr = 0.0;
                 double lowMeanErr = 0.0;
                 double highMeanErr = 0.0;
 

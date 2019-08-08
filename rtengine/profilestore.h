@@ -185,7 +185,7 @@ public:
 
     bool init (bool loadAll = true);
     void parseProfiles ();
-    int findFolderId (const Glib::ustring &path);
+    int findFolderId (const Glib::ustring &path) const;
     const ProfileStoreEntry*                     findEntryFromFullPath (Glib::ustring path);
     const rtengine::procparams::PartialProfile*  getProfile (Glib::ustring path);
     const rtengine::procparams::PartialProfile*  getProfile (const ProfileStoreEntry* entry);
@@ -193,13 +193,13 @@ public:
     void                                         releaseFileList ();
     const rtengine::procparams::ProcParams*      getDefaultProcParams (bool isRaw);
     const rtengine::procparams::PartialProfile*  getDefaultPartialProfile (bool isRaw);
-    const Glib::ustring                          getPathFromId (int folderId);
-    const ProfileStoreEntry*                     getInternalDefaultPSE()
+    const Glib::ustring                          getPathFromId (int folderId) const;
+    const ProfileStoreEntry*                     getInternalDefaultPSE() const
     {
         return internalDefaultEntry;
     }
 
-    const ProfileStoreEntry*                     getInternalDynamicPSE()
+    const ProfileStoreEntry*                     getInternalDynamicPSE() const
     {
         return internalDynamicEntry;
     }
