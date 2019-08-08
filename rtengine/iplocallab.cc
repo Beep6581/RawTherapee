@@ -6488,7 +6488,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //Blur and noise
 
-        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0.f || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             std::unique_ptr<LabImage> tmp1;
             std::unique_ptr<LabImage> tmp2;
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -6762,7 +6762,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 if (lp.blurmet == 0  && lp.blmet == 2) {
-                    if (lp.guidb > 0.f) {
+                    if (lp.guidb > 1) {
                         lp.actsp = true;
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
@@ -6776,12 +6776,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         double thresM = 0.05 * lp.epsb;
-                        double thresm = 0.001 * lp.epsb;
-                        softproc(bufgb.get(), tmp1.get(), lp.guidb, bfh, bfw, thresM, thresm, 0.0001f, sk, multiThread);
+                        double thresm = 0.01 * lp.epsb;
+                        softproc(bufgb.get(), tmp1.get(), 3.f * lp.guidb, bfh, bfw, thresM, thresm, 0.0001f, sk, multiThread);
                     }
 
                 } else if (lp.blurmet == 1  && lp.blmet == 2) {
-                    if (lp.guidb > 0.f) {
+                    if (lp.guidb > 1) {
                         lp.actsp = true;
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
@@ -6795,8 +6795,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         double thresM = 0.05 * lp.epsb;
-                        double thresm = 0.001 * lp.epsb;
-                        softproc(tmp2.get(), tmp1.get(), lp.guidb, GH, GW, thresM, thresm, 0.0001f, sk, multiThread);
+                        double thresm = 0.01 * lp.epsb;
+                        softproc(tmp2.get(), tmp1.get(), 3.f * lp.guidb, GH, GW, thresM, thresm, 0.0001f, sk, multiThread);
                     }
 
                 }
