@@ -1394,20 +1394,17 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.exptoning = wavelet.exptoning && p.wavelet.exptoning == other.wavelet.exptoning;
         wavelet.expnoise = wavelet.expnoise && p.wavelet.expnoise == other.wavelet.expnoise;
 
-        for (int i = 0; i < 9; i++) {
-            wavelet.c[i] = wavelet.c[i] && p.wavelet.c[i] == other.wavelet.c[i];
-        }
-
-        for (int i = 0; i < 9; i++) {
-            wavelet.ch[i] = wavelet.ch[i] && p.wavelet.ch[i] == other.wavelet.ch[i];
+        for (int level = 0; level < 9; ++level) {
+            wavelet.c[level] = wavelet.c[level] && p.wavelet.c[level] == other.wavelet.c[level];
+            wavelet.ch[level] = wavelet.ch[level] && p.wavelet.ch[level] == other.wavelet.ch[level];
         }
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         dirpyrequalizer.gamutlab = dirpyrequalizer.gamutlab && p.dirpyrequalizer.gamutlab == other.dirpyrequalizer.gamutlab;
         dirpyrequalizer.cbdlMethod = dirpyrequalizer.cbdlMethod && p.dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod;
 
-        for (int i = 0; i < 6; i++) {
-            dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
+        for (int level = 0; level < 6; ++level) {
+            dirpyrequalizer.mult[level] = dirpyrequalizer.mult[level] && p.dirpyrequalizer.mult[level] == other.dirpyrequalizer.mult[level];
         }
 
         dirpyrequalizer.threshold = dirpyrequalizer.threshold && p.dirpyrequalizer.threshold == other.dirpyrequalizer.threshold;

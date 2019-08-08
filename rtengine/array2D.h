@@ -214,6 +214,12 @@ public:
         return ptr;
     }
 
+    // use as pointer to T**
+    operator const T* const *()
+    {
+        return ptr;
+    }
+
     // use as pointer to data
     operator T*()
     {

@@ -632,7 +632,7 @@ Glib::ustring ExifPanel::getSelection (bool onlyeditable)
 
     Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (rows[0]);
 
-    Glib::ustring ret = "";
+    Glib::ustring ret;
     bool first = true;
     bool editable = false;
 

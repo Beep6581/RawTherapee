@@ -1400,24 +1400,19 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2)
         y2 = maxh - 1;
     }
 
-    int X, Y;
     int W;
 
     if (x < x2) {
         W = x2 - x + 1;
-        X = x;
     } else {
         W = x - x2 + 1;
-        X = x2;
     }
 
-    int H;
 
+    int Y;
     if (y < y2) {
-        H = y2 - y + 1;
         Y = y;
     } else {
-        H = y - y2 + 1;
         Y = y2;
     }
 
@@ -1425,6 +1420,7 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2)
         W = maxw;
     }
 
+    int H;
     if (fixr->get_active()) {
         double r = getRatio ();
 
@@ -1457,6 +1453,7 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2)
         }
     }
 
+    int X;
     if (x < x2) {
         W = x2 - x + 1;
         X = x;

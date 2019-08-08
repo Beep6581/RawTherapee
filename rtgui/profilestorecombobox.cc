@@ -334,7 +334,7 @@ Gtk::TreeIter ProfileStoreComboBox::getRowFromLabel (Glib::ustring name)
             const ProfileStoreEntry *pse = currRow[methodColumns.profileStoreEntry];
 
             if (pse->label == name) {
-                return std::move(currRow);
+                return currRow;
             }
         }
     }

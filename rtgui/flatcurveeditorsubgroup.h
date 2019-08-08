@@ -21,10 +21,11 @@
 
 #include <gtkmm.h>
 #include "curveeditorgroup.h"
+#include "../rtengine/noncopyable.h"
 
 class FlatCurveEditor;
 
-class FlatCurveEditorSubGroup: public CurveEditorSubGroup
+class FlatCurveEditorSubGroup: public CurveEditorSubGroup, public rtengine::NonCopyable
 {
 
     friend class FlatCurveEditor;

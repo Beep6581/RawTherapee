@@ -334,8 +334,6 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
     // Search for line pair coordinate is between.
     double last_dt = 0.0;
-    double last_dv = 0.0;
-    double last_du = 0.0;
 
     for (uint32_t index = 1; index <= 30; ++index) {
         // Convert slope to delta-u and delta-v, with length 1.
@@ -371,23 +369,11 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
             // Interpolate the temperature.
             res = 1.0e6 / (temp_table[index - 1].r * f + temp_table[index].r * (1.0 - f));
-
-            // Find delta from black body point to test coordinate.
-            uu = u - (temp_table [index - 1].u * f + temp_table [index].u * (1.0 - f));
-            vv = v - (temp_table [index - 1].v * f + temp_table [index].v * (1.0 - f));
-            // Interpolate vectors along slope.
-            du = du * (1.0 - f) + last_du * f;
-            dv = dv * (1.0 - f) + last_dv * f;
-            len = sqrt (du * du + dv * dv);
-            du /= len;
-            dv /= len;
             break;
         }
 
         // Try next line pair.
         last_dt = dt;
-        last_du = du;
-        last_dv = dv;
     }
 
     return res;

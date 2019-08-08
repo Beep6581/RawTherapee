@@ -1725,7 +1725,13 @@ Camera constants:
     { // Quality B,
         "make_model": "OLYMPUS TG-5",
         "dcraw_matrix": [ 10899,-3833,-1082,-2112,10736,1575,-267,1452,5269 ], // DNG_V9.12 D65
+        "raw_crop": [ 0, 0, -18, 0 ], // 18 pixels at right are garbage
         "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
+    },
+
+    { // Quality C, only raw crop
+        "make_model": "OLYMPUS TG-6",
+        "raw_crop": [ 0, 0, -24, 0 ] // 24 pixels at right are garbage
     },
 
     { // Quality C, only green equilibration

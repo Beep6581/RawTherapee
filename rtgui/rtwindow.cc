@@ -173,8 +173,8 @@ RTWindow::RTWindow ()
         } else {
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
             Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
-            int pt;
             if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
+                int pt;
                 int fontSize = pfd.get_size();
                 bool isPix = pfd.get_size_is_absolute();
                 int resolution = (int)style->get_screen()->get_resolution();
@@ -254,8 +254,6 @@ RTWindow::RTWindow ()
 #if defined(__APPLE__)
     {
         osxApp  = (GtkosxApplication *)g_object_new (GTKOSX_TYPE_APPLICATION, NULL);
-        gboolean falseval = FALSE;
-        gboolean trueval = TRUE;
         RTWindow *rtWin = this;
         g_signal_connect (osxApp, "NSApplicationBlockTermination", G_CALLBACK (osx_should_quit_cb), rtWin);
         g_signal_connect (osxApp, "NSApplicationWillTerminate",  G_CALLBACK (osx_will_quit_cb), rtWin);

@@ -457,8 +457,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         hScrollPos[i] = 0;
         vScrollPos[i] = 0;
     }
-
-    selectedDirectory = "";
 }
 
 FileCatalog::~FileCatalog()
@@ -804,28 +802,28 @@ void FileCatalog::previewsFinishedUI ()
 
     {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        redrawAll ();
+        redrawAll();
         previewsToLoad = 0;
 
         if (filterPanel) {
-            filterPanel->set_sensitive (true);
+            filterPanel->set_sensitive(true);
 
-            if ( !hasValidCurrentEFS ) {
-                MyMutex::MyLock lock(dirEFSMutex);
+            if (!hasValidCurrentEFS) {
+                MyMutex::MyLock myLock(dirEFSMutex);
                 currentEFS = dirEFS;
-                filterPanel->setFilter ( dirEFS, true );
+                filterPanel->setFilter(dirEFS, true);
             } else {
-                filterPanel->setFilter ( currentEFS, false );
+                filterPanel->setFilter(currentEFS, false);
             }
         }
 
         if (exportPanel) {
-            exportPanel->set_sensitive (true);
+            exportPanel->set_sensitive(true);
         }
 
         // restart anything that might have been loaded low quality
         fileBrowser->refreshQuickThumbImages();
-        fileBrowser->applyFilter (getFilter());  // refresh total image count
+        fileBrowser->applyFilter(getFilter());  // refresh total image count
         _refreshProgressBar();
     }
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"), 0);
@@ -1603,7 +1601,6 @@ BrowserFilter FileCatalog::getFilter ()
                                       anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive;
     }
 
-    filter.multiselect = false;
 
     /*
      * Step 2
@@ -1619,7 +1616,6 @@ BrowserFilter FileCatalog::getFilter ()
             (anyEditedFilterActive && anyRecentlySavedFilterActive) ||
             (anySupplementaryActive && (anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive))) {
 
-        filter.multiselect = true;
         filter.showRanked[0] = anyRankFilterActive ? bUnRanked->get_active () : true;
         filter.showCLabeled[0] = anyCLabelFilterActive ? bUnCLabeled->get_active () : true;
 
@@ -1656,14 +1652,28 @@ BrowserFilter FileCatalog::getFilter ()
     //TODO could use date:<value>;iso:<value>  etc
     // default will be filename
 
-    /* // this is for safe execution if getFilter is called before Query object is instantiated
-    Glib::ustring tempQuery;
-    tempQuery="";
-    if (Query) tempQuery = Query->get_text();
-    */
-    filter.queryString = Query->get_text(); // full query string from Query Entry
-    filter.queryFileName = Query->get_text(); // for now Query is only by file name
+    Glib::ustring decodedQueryFileName = Query->get_text(); // for now Query is only by file name
 
+    // Determine the match mode - check if the first 2 characters are equal to "!="
+    if (decodedQueryFileName.find("!=") == 0) {
+        decodedQueryFileName = decodedQueryFileName.substr(2);
+        filter.matchEqual = false;
+    } else {
+        filter.matchEqual = true;
+    }
+
+    // Consider that queryFileName consist of comma separated values (FilterString)
+    // Evaluate if ANY of these FilterString are contained in the filename
+    // This will construct OR filter within the queryFileName
+    filter.vFilterStrings.clear();
+    const std::vector<Glib::ustring> filterStrings = Glib::Regex::split_simple(",", decodedQueryFileName.uppercase());
+    for (const auto& entry : filterStrings) {
+        // ignore empty filterStrings. Otherwise filter will always return true if
+        // e.g. queryFileName ends on "," and will stop being a filter
+        if (!entry.empty()) {
+            filter.vFilterStrings.push_back(entry);
+        }
+    }
     return filter;
 }
 

@@ -674,8 +674,6 @@ void ICCProfileCreator::savePressed()
     //necessary for V2 profile
 
     if (!v2except) {
-        std::string is_RTv4 = "";
-
         //used partially for v4, and in case of if we want to back to old manner for v2
         if (primariesPreset == "ACES-AP0"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.ACESp0)) {
             sNewProfile = options.rtSettings.ACESp0;
@@ -687,11 +685,9 @@ void ICCProfileCreator::savePressed()
             sNewProfile = options.rtSettings.adobe;
             sPrimariesPreset = "Medium";
         } else if (primariesPreset == "ProPhoto"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.prophoto)) {
-            is_RTv4 = options.rtSettings.prophoto.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.prophoto.substr(0, 4) == "RTv4") {
                 options.rtSettings.prophoto = "RTv2_Large";
-            };
+            }
 
             sNewProfile = options.rtSettings.prophoto;
 
@@ -703,32 +699,26 @@ void ICCProfileCreator::savePressed()
             sNewProfile = options.rtSettings.srgb;
             sPrimariesPreset = "sRGB";
         } else if (primariesPreset == "Widegamut"  && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.widegamut)) {
-            is_RTv4 = options.rtSettings.widegamut.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.widegamut.substr(0, 4) == "RTv4") {
                 options.rtSettings.widegamut = "RTv2_Wide";
-            };
+            }
 
             sNewProfile = options.rtSettings.widegamut;
 
             sPrimariesPreset = "Wide";
         } else if (primariesPreset == "BestRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
-            is_RTv4 = options.rtSettings.best.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.best.substr(0, 4) == "RTv4") {
                 options.rtSettings.best = "RTv2_Best";
-            };
+            }
 
             sNewProfile = options.rtSettings.best;
 
             sPrimariesPreset = "Best";
         } else if (primariesPreset == "BetaRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
             sNewProfile = options.rtSettings.beta;
-            is_RTv4 = options.rtSettings.beta.substr(0, 4);
-
-            if (is_RTv4 == "RTv4") {
+            if (options.rtSettings.beta.substr(0, 4) == "RTv4") {
                 options.rtSettings.widegamut = "RTv2_Beta";
-            };
+            }
 
             sPrimariesPreset = "Beta";
         } else if (primariesPreset == "BruceRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {

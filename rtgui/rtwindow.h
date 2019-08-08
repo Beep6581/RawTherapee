@@ -29,8 +29,9 @@
 #if defined(__APPLE__)
 #include <gtkosxapplication.h>
 #endif
+#include "../rtengine/noncopyable.h"
 
-class RTWindow : public Gtk::Window, public rtengine::ProgressListener
+class RTWindow : public Gtk::Window, public rtengine::ProgressListener, public rtengine::NonCopyable
 {
 
 private:

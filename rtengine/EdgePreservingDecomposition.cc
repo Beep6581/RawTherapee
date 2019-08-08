@@ -401,13 +401,10 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 
     //How many diagonals in the decomposition?
     MaxFillAbove++; //Conceptually, now "fill" includes an existing diagonal. Simpler in the math that follows.
-    int j, mic, fp;
-    mic = 1;
-    fp = 1;
+    int mic = 1;
 
     for(int ii = 1; ii < m; ii++) {
-        fp = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);    //Guaranteed positive since StartRows must be created in increasing order.
-        mic = mic + fp;
+        mic += rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);    //Guaranteed positive since StartRows must be created in increasing order.
     }
 
     //Initialize the decomposition - setup memory, start rows, etc.
@@ -421,7 +418,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 
     for(int ii = 1; ii < m; ii++) {
         //Set j to the number of diagonals to be created corresponding to a diagonal on this source matrix...
-        j = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);
+        int j = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);
 
         //...and create those diagonals. I want to take a moment to tell you about how much I love minimalistic loops: very much.
         while(j-- != 0)
@@ -491,7 +488,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
         findmap[j] = FindIndex( icStartRows[j]);
     }
 
-    for(j = 0; j < n; j++) {
+    for(int j = 0; j < n; j++) {
         //Calculate d for this column.
         d[j] = Diagonals[0][j];
 
@@ -557,12 +554,11 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
     float* RESTRICT  *d = IncompleteCholeskyFactorization->Diagonals;
     int* RESTRICT s = IncompleteCholeskyFactorization->StartRows;
     int M = IncompleteCholeskyFactorization->m, N = IncompleteCholeskyFactorization->n;
-    int i, j;
 
     if(M != DIAGONALSP1) {                  // can happen in theory
-        for(j = 0; j < N; j++) {
+        for(int j = 0; j < N; j++) {
             float sub = b[j];                   // using local var to reduce memory writes, gave a big speedup
-            i = 1;
+            int i = 1;
             int c = j - s[i];
 
             while(c >= 0) {
@@ -574,9 +570,9 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
             x[j] = sub;                         // only one memory-write per j
         }
     } else {                               // that's the case almost every time
-        for(j = 0; j <= s[M - 1]; j++) {
+        for(int j = 0; j <= s[M - 1]; j++) {
             float sub = b[j];                   // using local var to reduce memory writes, gave a big speedup
-            i = 1;
+            int i = 1;
             int c = j - s[1];
 
             while(c >= 0) {
@@ -588,7 +584,7 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
             x[j] = sub;                         // only one memory-write per j
         }
 
-        for(j = s[M - 1] + 1; j < N; j++) {
+        for(int j = s[M - 1] + 1; j < N; j++) {
             float sub = b[j];                   // using local var to reduce memory writes, gave a big speedup
 
             for(int i = DIAGONALSP1 - 1; i > 0; i--) { // using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)
@@ -605,14 +601,15 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
     #pragma omp parallel for
 #endif
 
-    for(j = 0; j < N; j++) {
+    for(int j = 0; j < N; j++) {
         x[j] = x[j] / d[0][j];
     }
 
     if(M != DIAGONALSP1) {                  // can happen in theory
+        int j = N;
         while(j-- > 0) {
             float sub = x[j];                   // using local var to reduce memory writes, gave a big speedup
-            i = 1;
+            int i = 1;
             int c = j + s[1];
 
             while(c < N) {
@@ -624,9 +621,9 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
             x[j] = sub;                         // only one memory-write per j
         }
     } else {                                // that's the case almost every time
-        for(j = N - 1; j >= (N - 1) - s[M - 1]; j--) {
+        for(int j = N - 1; j >= (N - 1) - s[M - 1]; j--) {
             float sub = x[j];                   // using local var to reduce memory writes, gave a big speedup
-            i = 1;
+            int i = 1;
             int c = j + s[1];
 
             while(c < N) {
@@ -638,7 +635,7 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
             x[j] = sub;                         // only one memory-write per j
         }
 
-        for(j = (N - 2) - s[M - 1]; j >= 0; j--) {
+        for(int j = (N - 2) - s[M - 1]; j >= 0; j--) {
             float sub = x[j];                   // using local var to reduce memory writes, gave a big speedup
 
             for(int i = DIAGONALSP1 - 1; i > 0; i--) { // using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)

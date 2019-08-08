@@ -33,13 +33,11 @@ public:
     bool showOriginal;
     bool showEdited[2];
     bool showRecentlySaved[2];
-    bool multiselect;
-
-    Glib::ustring queryString;
-    Glib::ustring queryFileName;
 
     bool exifFilterEnabled;
+    bool matchEqual;
     ExifFilterSettings exifFilter;
+    std::vector<std::string> vFilterStrings;
 
     BrowserFilter ();
 };

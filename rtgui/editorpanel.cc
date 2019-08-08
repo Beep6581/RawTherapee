@@ -1377,7 +1377,7 @@ void EditorPanel::info_toggled ()
         infoString = M ("QINFO_NOEXIF");
     }
 
-    iareapanel->imageArea->setInfoText (infoString);
+    iareapanel->imageArea->setInfoText (std::move(infoString));
     iareapanel->imageArea->infoEnabled (info->get_active ());
 }
 

@@ -256,7 +256,7 @@ int processLineParams ( int argc, char **argv )
 {
     rtengine::procparams::PartialProfile *rawParams = nullptr, *imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
-    Glib::ustring outputPath = "";
+    Glib::ustring outputPath;
     std::vector<rtengine::procparams::PartialProfile*> processingParams;
     bool outputDirectory = false;
     bool leaveUntouched = false;
@@ -271,7 +271,7 @@ int processLineParams ( int argc, char **argv )
     int subsampling = 3;
     int bits = -1;
     bool isFloat = false;
-    std::string outputType = "";
+    std::string outputType;
     unsigned errors = 0;
 
     for ( int iArg = 1; iArg < argc; iArg++) {

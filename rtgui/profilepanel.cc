@@ -42,7 +42,7 @@ void ProfilePanel::cleanup ()
     delete partialProfileDlg;
 }
 
-ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), imagePath(""), lastSavedPSE(nullptr), customPSE(nullptr)
+ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastSavedPSE(nullptr), customPSE(nullptr)
 {
 
     tpc = nullptr;

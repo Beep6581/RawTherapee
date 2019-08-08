@@ -400,7 +400,7 @@ protected:
     void set_none();
 
 public:
-    MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+    explicit MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
 
     sigc::signal<void> &signal_selection_changed();
     sigc::signal<void> &signal_file_set();

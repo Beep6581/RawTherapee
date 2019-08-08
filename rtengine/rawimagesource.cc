@@ -429,6 +429,7 @@ RawImageSource::RawImageSource()
     , plistener(nullptr)
     , scale_mul{}
     , c_black{}
+    , c_white{}
     , cblacksom{}
     , ref_pre_mul{}
     , refwb_red(0.0)

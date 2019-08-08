@@ -27,15 +27,13 @@ extern Glib::ustring creditsPath;
 extern Glib::ustring licensePath;
 extern Glib::ustring versionString;
 
-SplashImage::SplashImage ()
+SplashImage::SplashImage () : surface(RTImage::createImgSurfFromFile("splash.png"))
 {
-    surface = RTImage::createImgSurfFromFile ("splash.png");
 }
 
 bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
-    Glib::RefPtr<Gdk::Window> window = get_window();
     cr->set_source(surface, 0., 0.);
     cr->rectangle(0, 0, surface->get_width(), surface->get_height());
     cr->fill();
