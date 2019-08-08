@@ -49,11 +49,11 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
         stop.reset(new StopWatch("amaze demosaic"));
     }
 
-    volatile double progress = 0.0;
+    double progress = 0.0;
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AMAZE")));
-        plistener->setProgress (0.0);
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AMAZE")));
+        plistener->setProgress(progress);
     }
 
     const int width = winw, height = winh;
