@@ -1088,11 +1088,11 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     //};
     gmul /= green;
     //printf("rmul=%f gmul=%f bmul=%f\n",rmul, gmul, bmul);
-    double max = rtengine::max(rmul, gmul, bmul);
+    double maxRGB = rtengine::max(rmul, gmul, bmul);
 
-    rmul /= max;
-    gmul /= max;
-    bmul /= max;
+    rmul /= maxRGB;
+    gmul /= maxRGB;
+    bmul /= maxRGB;
 
 
     if(settings->CRI_color != 0) { //activate if CRi_color !=0
@@ -1104,7 +1104,6 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         // and calcul with : blackbody at equivalent temp of lamp
         // CRI_color-1 = display Lab values of color CRI_color -1
         const double whiteD50[3] = {0.9646019585, 1.0, 0.8244507152}; //calculate with this tool : spect 5nm
-        double CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22; //for CIECAT02
         double Xchk[50], Ychk[50], Zchk[50]; //50 : I think it's a good limit for number of color : for CRI and Palette
         double Xcam02[50], Ycam02[50], Zcam02[50];
 
@@ -1113,9 +1112,6 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         const double epsilon = 0.008856; //Lab
 
         double xr[50], yr[50], zr[50];
-        double fx[50], fy[50], fz[50];
-        double x, y, z;
-        double Ywb = 1.0;
 
         int illum;
         int numero_color = settings->CRI_color - 1;
@@ -1223,6 +1219,9 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         }
 
         if (CRI_type) {
+            double x, y, z;
+            double Ywb = 1.0;
+
             const double* spect_illum[] = {
                 Daylight5300_spect, Cloudy6200_spect, Shade7600_spect, A2856_spect, FluoF1_spect, FluoF2_spect, FluoF3_spect,
                 FluoF4_spect, FluoF5_spect, FluoF6_spect, FluoF7_spect, FluoF8_spect, FluoF9_spect, FluoF10_spect, FluoF11_spect,
@@ -1281,6 +1280,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 
             //calculate Matrix CAM02 : better than Von Kries and Bradford==> for Lamp
             double  adap = 1.0;
+            double CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22; //for CIECAT02
             cieCAT02(Xwb, Ywb, Zwb, CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22, adap);
 
             //here new value of X,Y,Z for lamp with chromatic CAM02 adaptation
@@ -1306,6 +1306,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 
             //now conversion to Lab
             // Lamp
+            double fx[50], fy[50], fz[50];
 
             for(int i = 0; i < N_c; i++) {
                 xr[i] = Xcam02Lamp[i] / whiteD50[0];
