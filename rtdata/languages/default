@@ -969,6 +969,11 @@ HISTORY_MSG_726;Local - Blur mask radius
 HISTORY_MSG_727;Local - Blur mask chroma
 HISTORY_MSG_728;Local - Blur mask gamma
 HISTORY_MSG_729;Local - Blur mask slope
+HISTORY_MSG_730;Local - Blur method
+HISTORY_MSG_731;Local - median method
+HISTORY_MSG_732;Local - median iterations
+HISTORY_MSG_733;Local - soft radius
+HISTORY_MSG_734;Local - threshold
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2023,7 +2028,7 @@ TP_LENSPROFILE_USE_CA;Chromatic aberration
 TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
 TP_LENSPROFILE_USE_HEADER;Correct
 TP_LENSPROFILE_USE_VIGNETTING;Vignetting
-TP_LOCALLAB_ACTIV;Blur luminance only
+TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ADJ;Equalizer blue-red
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
@@ -2032,9 +2037,14 @@ TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance deltaE ab-L
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLENDMASKCOL;Blend
+TP_LOCALLAB_BLUR;Gaussian Blur and Noise
+TP_LOCALLAB_BLMED;Median
+TP_LOCALLAB_BLGUID;Guided Filter Luminance
+TP_LOCALLAB_GUIDBL;Soft radius
+TP_LOCALLAB_EPSBL;Threshold
 TP_LOCALLAB_SCALERETI;Scale
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
-TP_LOCALLAB_BLUFR;Blur & Noise
+TP_LOCALLAB_BLUFR;Smooth - Blur & Noise 
 TP_LOCALLAB_BLURDE;Blur Shape detection
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLINV;Inverse

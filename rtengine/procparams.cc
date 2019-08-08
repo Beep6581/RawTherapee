@@ -2460,7 +2460,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     radius(1.0),
     strength(0),
     sensibn(40),
+    itera(1),
+    guidbl(0),
+    epsbl(1),
+    blMethod("blur"),
     blurMethod("norm"),
+    medMethod("33"),
     activlum(false),
     CCmaskblcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
     LLmaskblcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
@@ -2706,7 +2711,12 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && radius == other.radius
         && strength == other.strength
         && sensibn == other.sensibn
+        && itera == other.itera
+        && guidbl == other.guidbl
+        && epsbl == other.epsbl
+        && blMethod == other.blMethod
         && blurMethod == other.blurMethod
+        && medMethod == other.medMethod
         && activlum == other.activlum
         && CCmaskblcurve == other.CCmaskblcurve
         && LLmaskblcurve == other.LLmaskblcurve
@@ -3933,7 +3943,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).radius, "Locallab", "Radius_" + std::to_string(i), spot.radius, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).strength, "Locallab", "Strength_" + std::to_string(i), spot.strength, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensibn, "Locallab", "Sensibn_" + std::to_string(i), spot.sensibn, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).itera, "Locallab", "Iteramed_" + std::to_string(i), spot.itera, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).guidbl, "Locallab", "Guidbl_" + std::to_string(i), spot.guidbl, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).epsbl, "Locallab", "Epsbl_" + std::to_string(i), spot.epsbl, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blMethod, "Locallab", "BlMethod_" + std::to_string(i), spot.blMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).blurMethod, "Locallab", "BlurMethod_" + std::to_string(i), spot.blurMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).medMethod, "Locallab", "MedMethod_" + std::to_string(i), spot.medMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).activlum, "Locallab", "activlum_" + std::to_string(i), spot.activlum, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskblcurve, "Locallab", "CCmaskblCurve_" + std::to_string(i), spot.CCmaskblcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskblcurve, "Locallab", "LLmaskblCurve_" + std::to_string(i), spot.LLmaskblcurve, keyFile);
@@ -5282,7 +5297,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, spot.radius, spotEdited.radius);
                 assignFromKeyfile(keyFile, "Locallab", "Strength_" + std::to_string(i), pedited, spot.strength, spotEdited.strength);
                 assignFromKeyfile(keyFile, "Locallab", "Sensibn_" + std::to_string(i), pedited, spot.sensibn, spotEdited.sensibn);
+                assignFromKeyfile(keyFile, "Locallab", "Iteramed_" + std::to_string(i), pedited, spot.itera, spotEdited.itera);
+                assignFromKeyfile(keyFile, "Locallab", "Guidbl_" + std::to_string(i), pedited, spot.guidbl, spotEdited.guidbl);
+                assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + std::to_string(i), pedited, spot.epsbl, spotEdited.epsbl);
+                assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + std::to_string(i), pedited, spot.blMethod, spotEdited.blMethod);
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + std::to_string(i), pedited, spot.blurMethod, spotEdited.blurMethod);
+                assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + std::to_string(i), pedited, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + std::to_string(i), pedited, spot.activlum, spotEdited.activlum);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskblCurve_" + std::to_string(i), pedited, spot.CCmaskblcurve, spotEdited.CCmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurve_" + std::to_string(i), pedited, spot.LLmaskblcurve, spotEdited.LLmaskblcurve);

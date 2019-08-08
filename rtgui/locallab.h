@@ -183,6 +183,9 @@ private:
     // Blur & Noise
     Adjuster* const radius;
     Adjuster* const strength;
+    Adjuster* const itera;
+    Adjuster* const guidbl;
+    Adjuster* const epsbl;
     Adjuster* const sensibn;
     Adjuster* const blendmaskbl;
     Adjuster* const radmaskbl;
@@ -346,6 +349,10 @@ private:
     MyComboBoxText* const showmasksoftMethod;
     sigc::connection showmasksoftMethodConn;
     //Blur and noise
+    MyComboBoxText* const blMethod;
+    sigc::connection blMethodConn;
+    MyComboBoxText* const medMethod;
+    sigc::connection medMethodConn;
     MyComboBoxText* const showmaskblMethod;
     sigc::connection showmaskblMethodConn;
     //TM
@@ -442,12 +449,14 @@ private:
     //Shadows Highlight
     void showmaskSHMethodChanged();
     // Blur & Noise
-    void blurMethodChanged();
+    void blMethodChanged();
+    void medMethodChanged();
     // Soft light
     void softMethodChanged();
     void showmasksoftMethodChanged();
     //Blur
     void showmaskblMethodChanged();
+    void blurMethodChanged();
     //TM
     void showmasktmMethodChanged();
     // Retinex

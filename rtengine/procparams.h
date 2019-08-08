@@ -1061,7 +1061,12 @@ struct LocallabParams {
         double radius;
         int strength;
         int sensibn;
+        int itera;
+        int guidbl;
+        int epsbl;
+        Glib::ustring blMethod;
         Glib::ustring blurMethod;
+        Glib::ustring medMethod;
         bool activlum;
         std::vector<double> CCmaskblcurve;
         std::vector<double> LLmaskblcurve;

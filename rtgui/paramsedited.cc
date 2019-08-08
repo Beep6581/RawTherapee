@@ -1054,7 +1054,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).radius = locallab.spots.at(j).radius && pSpot.radius == otherSpot.radius;
                 locallab.spots.at(j).strength = locallab.spots.at(j).strength && pSpot.strength == otherSpot.strength;
                 locallab.spots.at(j).sensibn = locallab.spots.at(j).sensibn && pSpot.sensibn == otherSpot.sensibn;
+                locallab.spots.at(j).itera = locallab.spots.at(j).itera && pSpot.itera == otherSpot.itera;
+                locallab.spots.at(j).guidbl = locallab.spots.at(j).guidbl && pSpot.guidbl == otherSpot.guidbl;
+                locallab.spots.at(j).epsbl = locallab.spots.at(j).epsbl && pSpot.epsbl == otherSpot.epsbl;
+                locallab.spots.at(j).blMethod = locallab.spots.at(j).blMethod && pSpot.blMethod == otherSpot.blMethod;
                 locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
+                locallab.spots.at(j).medMethod = locallab.spots.at(j).medMethod && pSpot.medMethod == otherSpot.medMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
                 locallab.spots.at(j).CCmaskblcurve = locallab.spots.at(j).CCmaskblcurve && pSpot.CCmaskblcurve == otherSpot.CCmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurve = locallab.spots.at(j).LLmaskblcurve && pSpot.LLmaskblcurve == otherSpot.LLmaskblcurve;
@@ -3073,8 +3078,28 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensibn = mods.locallab.spots.at(i).sensibn;
         }
 
+        if (locallab.spots.at(i).itera) {
+            toEdit.locallab.spots.at(i).itera = mods.locallab.spots.at(i).itera;
+        }
+
+        if (locallab.spots.at(i).guidbl) {
+            toEdit.locallab.spots.at(i).guidbl = mods.locallab.spots.at(i).guidbl;
+        }
+
+        if (locallab.spots.at(i).epsbl) {
+            toEdit.locallab.spots.at(i).epsbl = mods.locallab.spots.at(i).epsbl;
+        }
+
+        if (locallab.spots.at(i).blMethod) {
+            toEdit.locallab.spots.at(i).blMethod = mods.locallab.spots.at(i).blMethod;
+        }
+
         if (locallab.spots.at(i).blurMethod) {
             toEdit.locallab.spots.at(i).blurMethod = mods.locallab.spots.at(i).blurMethod;
+        }
+
+        if (locallab.spots.at(i).medMethod) {
+            toEdit.locallab.spots.at(i).medMethod = mods.locallab.spots.at(i).medMethod;
         }
 
         if (locallab.spots.at(i).activlum) {
@@ -4604,7 +4629,12 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     radius(v),
     strength(v),
     sensibn(v),
+    itera(v),
+    guidbl(v),
+    epsbl(v),
+    blMethod(v),
     blurMethod(v),
+    medMethod(v),
     activlum(v),
     CCmaskblcurve(v),
     LLmaskblcurve(v),
@@ -4846,7 +4876,12 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     radius = v;
     strength = v;
     sensibn = v;
+    itera = v;
+    guidbl = v;
+    epsbl = v;
+    blMethod = v;
     blurMethod = v;
+    medMethod = v;
     activlum = v;
     CCmaskblcurve = v;
     LLmaskblcurve = v;

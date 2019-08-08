@@ -477,7 +477,12 @@ public:
         bool radius;
         bool strength;
         bool sensibn;
+        bool itera;
+        bool guidbl;
+        bool epsbl;
+        bool blMethod;
         bool blurMethod;
+        bool medMethod;
         bool activlum;
         bool CCmaskblcurve;
         bool LLmaskblcurve;
