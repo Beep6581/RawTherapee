@@ -3785,11 +3785,12 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
 
     {
         const float corr = 20000.f * RedLow * kl * rlo;
+
         if (RedLow > 0.f) {
+            r += corr;
+        } else {
             g -= corr;
             b -= corr;
-        } else {
-            r += corr;
         }
 
         // r = CLIP(r);
@@ -3799,27 +3800,28 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
 
     {
         const float corr = 20000.f * GreenLow * kl * rlo;
+
         if (GreenLow > 0.f) {
+            g += corr;
+        } else {
             r -= corr;
             b -= corr;
-        } else {
-            g += corr;
         }
 
         // r = CLIP(r);
-        // b = CLIP(b);
         // g = CLIP(g);
+        // b = CLIP(b);
     }
 
 
     {
-        const float corr = 20000.f * BlueLow * kl * rlob;
+        const float corr = 20000.f * BlueLow * kl * rlo;
 
         if (BlueLow > 0.f) {
+            b += corr;
+        } else {
             r -= corr;
             g -= corr;
-        } else {
-            b += corr;
         }
 
         // r = CLIP(r);
