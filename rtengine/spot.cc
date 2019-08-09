@@ -20,6 +20,7 @@
 #include "improcfun.h"
 #include "alpha.h"
 #include "procparams.h"
+#include "imagesource.h"
 
 namespace rtengine
 {
@@ -49,31 +50,305 @@ namespace rtengine
  * T. Georgiev, "Photoshop Healing Brush: a Tool for Seamless Cloning
  * http://www.tgeorgiev.net/Photoshop_Healing.pdf
  */
-void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry> &entries, const PreviewProps &pp)
+
+#if 1
+
+class SpotBox {
+
+public:
+    enum class Type {
+        SOURCE,
+        TARGET
+    };
+
+private:
+    Type type;
+
+public:
+    int topLeftX;
+    int topLeftY;
+    int bottomRightX;
+    int bottomRightY;
+    Imagefloat* img;
+
+    SpotBox (int tl_x, int tl_y, int br_x, int br_y, Type type) :
+       type(type),
+       topLeftX(tl_x),
+       topLeftY(tl_y),
+       bottomRightX(br_x),
+       bottomRightY(br_y),
+       img(nullptr)
+    {}
+
+    SpotBox (int tl_x, int tl_y, Imagefloat* image, Type type) :
+       type(type),
+       topLeftX(tl_x),
+       topLeftY(tl_y),
+       bottomRightX(image ? tl_x + image->getWidth() - 1 : 0),
+       bottomRightY(image ? tl_y + image->getHeight() - 1 : 0),
+       img(image)
+    {}
+
+    SpotBox (SpotEntry &spot, Type type) :
+        type(type),
+        img(nullptr)
+    {
+        float featherRadius = spot.radius * (1.f + spot.feather);
+        topLeftX = int ((type == Type::SOURCE ? spot.sourcePos.x : spot.targetPos.x) - featherRadius);
+        bottomRightX = int ((type == Type::SOURCE ? spot.sourcePos.x : spot.targetPos.x) + featherRadius);
+        topLeftY = int ((type == Type::SOURCE ? spot.sourcePos.y : spot.targetPos.y) - featherRadius);
+        bottomRightY = int ((type == Type::SOURCE ? spot.sourcePos.y : spot.targetPos.y) + featherRadius);
+    }
+
+    void translate(int dx, int dy) {
+        topLeftX += dx;
+        topLeftY += dy;
+        bottomRightX += dx;
+        bottomRightY += dy;
+    }
+
+    void operator /(float v) {
+        topLeftX = int(topLeftX / v + 0.5f);
+        topLeftY = int(topLeftY / v + 0.5f);
+        bottomRightX = int(bottomRightX / v + 0.5f);
+        bottomRightY = int(bottomRightY / v + 0.5f);
+    }
+
+    void operator *(float v) {
+        topLeftX *= v;
+        topLeftY *= v;
+        bottomRightX *= v;
+        bottomRightY *= v;
+    }
+
+    bool intersects(const SpotBox &other) const {
+        return (other.topLeftX <= bottomRightX && other.bottomRightX >= topLeftX)
+            && (other.topLeftY <= bottomRightY && other.bottomRightY >= topLeftY);
+    }
+
+    int getWidth() {
+        return bottomRightX - topLeftX + 1;
+    }
+
+    int getHeight() {
+        return bottomRightY - topLeftY + 1;
+    }
+};
+
+
+void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const std::vector<SpotEntry> &entries, const PreviewProps &pp, const ColorTemp &currWB, int tr)
 {
+    // ---------- Get the image areas (src & dst) from the source image
+
+    printf("\n=======================================================================\n\n");
+
+    std::vector< std::shared_ptr<SpotBox> > srcSpotBoxs;
+    std::vector< std::shared_ptr<SpotBox> > dstSpotBoxs;
+    for (auto entry : params->spot.entries) {
+        Coord origin;
+        int size = int(entry.getFeatherRadius() * 2.f + 0.5f);
+        int scaledSize = int(entry.getFeatherRadius() * 2.f / float(pp.getSkip()) + 0.5f);
+        //printf("size: %d - skip: %d  -> scaledSize: %d", size, pp.getSkip(), scaledSize);
+
+        // ------ Source area
+        Imagefloat *currSrcSpot = new Imagefloat(scaledSize, scaledSize);
+        for (int y = 0; y < currSrcSpot->getHeight(); ++y) {
+            for (int x = 0; x < currSrcSpot->getWidth(); ++x) {
+                currSrcSpot->r(y,x) = 0.f;
+                currSrcSpot->g(y,x) = 0.f;
+                currSrcSpot->b(y,x) = 0.f;
+            }
+        }
+        entry.sourcePos.get(origin.x, origin.y);
+        origin.x -= entry.getFeatherRadius();
+        origin.y -= entry.getFeatherRadius();
+        PreviewProps spp(origin.x, origin.y, size, size, pp.getSkip());
+        imgsrc->getImage(currWB, tr, currSrcSpot, spp, params->toneCurve, params->raw);
+        //printf("  /  src size: %d,%d", currSrcSpot->getWidth(), currSrcSpot->getHeight());
+
+        std::shared_ptr<SpotBox> srcSpotBox(new SpotBox(origin.x / pp.getSkip(), origin.y / pp.getSkip(), currSrcSpot,  SpotBox::Type::SOURCE));
+        srcSpotBoxs.push_back(srcSpotBox);
+
+        // ------ Destination area
+        Imagefloat *currDstSpot = new Imagefloat(scaledSize, scaledSize);
+        for (int y = 0; y < currDstSpot->getHeight(); ++y) {
+            for (int x = 0; x < currDstSpot->getWidth(); ++x) {
+                currDstSpot->r(y,x) = 0.f;
+                currDstSpot->g(y,x) = 0.f;
+                currDstSpot->b(y,x) = 0.f;
+            }
+        }
+        entry.targetPos.get(origin.x, origin.y);
+        origin.x -= entry.getFeatherRadius();
+        origin.y -= entry.getFeatherRadius();
+        spp.set(origin.x, origin.y, size, size, pp.getSkip());
+        imgsrc->getImage(currWB, tr, currDstSpot, spp, params->toneCurve, params->raw);
+        //printf("  /  dst size: %d,%d\n", currDstSpot->getWidth(), currDstSpot->getHeight());
+
+        std::shared_ptr<SpotBox> dstSpotBox(new SpotBox(origin.x / pp.getSkip(), origin.y / pp.getSkip(), currDstSpot,  SpotBox::Type::TARGET));
+
+        dstSpotBoxs.push_back(dstSpotBox);
+    }
+
+    // Filter out out of preview Spots
+
+    /*
+    for (size_t i = entries.size(); i >= 0; ++i) {
+        float featherRadius = entries.at(i).radius * (1.f + entries.at(i).feather);
+
+        SpotBox srcBox(entries.at(i), SpotBox::Type::SOURCE);
+        srcBox.translate(-pp.getX(), -pp.getY());
+        srcBox /= float (pp.getSkip());
+
+        SpotBox dstBox(entries.at(i), SpotBox::Type::TARGET);
+        dstBox.translate(-pp.getX(), -pp.getY());
+        dstBox /= float (pp.getSkip());
+
+    }
+    */
+
+
+
+    // ---------- Copy spots from src to dst
+
+    for (int i = entries.size() - 1; i >= 0; --i) {
+        // 1. copy src to dst
+        std::shared_ptr<SpotBox> srcSpotBox = srcSpotBoxs.at(i);
+        std::shared_ptr<SpotBox> dstSpotBox = dstSpotBoxs.at(i);
+        float scaledRadius = float(entries.at(i).radius) / float(pp.getSkip());
+        float scaledFeatherRadius = entries.at(i).getFeatherRadius() / float(pp.getSkip());
+        Imagefloat *srcImg = srcSpotBox->img;
+        Imagefloat *dstImg = dstSpotBox->img;
+
+        //printf("#%d: srcSpotBox @ %p - img @ %p  /  dstSpotBox @ %p - img @ %p\n", i,
+        //        srcSpotBox.get(), srcSpotBox->img, dstSpotBox.get(), dstSpotBox->img );
+
+        //printf("#%d: srcSpotBox(%d,%d) srcImg(%d,%d)  /  dstSpotBox(%d,%d) dstImg(%d,%d)\n", i,
+        //        srcSpotBox->getWidth(), srcSpotBox->getHeight(), srcImg->getWidth(), srcImg->getHeight(),
+        //        dstSpotBox->getWidth(), dstSpotBox->getHeight(), dstImg->getWidth(), dstImg->getHeight()
+        //        );
+
+        for (int y = 0; y < srcSpotBox->getHeight(); ++y) {
+            float  dy = float(y - float(srcSpotBox->getHeight()) / 2.f);
+            for (int x = 0; x < srcSpotBox->getWidth(); ++x) {
+                float dx = float(x - float(srcSpotBox->getWidth()) / 2.f);
+                float r = sqrt(dx * dx + dy * dy);
+                if (r >= scaledFeatherRadius) {
+                    continue;
+                }
+                if (r <= scaledRadius) {
+                    dstImg->r(y, x) = srcImg->r(y, x);
+                    dstImg->g(y, x) = srcImg->g(y, x);
+                    dstImg->b(y, x) = srcImg->b(y, x);
+                } else {
+                    float opacity = (scaledFeatherRadius - r) / (scaledFeatherRadius - scaledRadius);
+                    dstImg->r(y, x) = (srcImg->r(y, x) - dstImg->r(y, x)) * opacity + dstImg->r(y,x);
+                    dstImg->g(y, x) = (srcImg->g(y, x) - dstImg->g(y, x)) * opacity + dstImg->g(y,x);
+                    dstImg->b(y, x) = (srcImg->b(y, x) - dstImg->b(y, x)) * opacity + dstImg->b(y,x);
+                }
+            }
+        }
+        //printf("\n\n");
+
+        // 2. copy dst to later src and dst
+
+    }
+
+    // 3. copy all dst to the finale image
+
+    // Putting the dest image in a SpotBox
+    SpotBox imgSpotBox(pp.getX() / pp.getSkip(), pp.getY() / pp.getSkip(), img, SpotBox::Type::TARGET);
+    /*
+    printf("#--: spotBox(X1:%d, Y1:%d, X2:%d, Y2:%d, W:%d, H:%d)  img(W:%d, H:%d)\n\n",
+            imgSpotBox.topLeftX, imgSpotBox.topLeftY, imgSpotBox.bottomRightX, imgSpotBox.bottomRightY,
+            imgSpotBox.getWidth(), imgSpotBox.getHeight(),
+            imgSpotBox.img->getWidth(), imgSpotBox.img->getHeight()
+            );
+    */
+
+    for (size_t i = 0; i < entries.size(); ++i) {
+        // 1. copy src to dst
+        std::shared_ptr<SpotBox> dstSpotBox = dstSpotBoxs.at(i);
+        Imagefloat *dstImg = dstSpotBox->img;
+
+        /*
+        printf("#%llu: spotBox(X1:%d, Y1:%d, X2:%d, Y2:%d, W:%d, H:%d)  img(W:%d, H:%d)\n", i,
+                dstSpotBox->topLeftX, dstSpotBox->topLeftY, dstSpotBox->bottomRightX, dstSpotBox->bottomRightY,
+                dstSpotBox->getWidth(), dstSpotBox->getHeight(),
+                dstImg->getWidth(), dstImg->getHeight()
+                );
+        */
+
+        if (dstSpotBox->intersects(imgSpotBox)) {
+            int beginX = rtengine::max(dstSpotBox->topLeftX, imgSpotBox.topLeftX);
+            int endX = rtengine::min(dstSpotBox->bottomRightX, imgSpotBox.bottomRightX);
+            int beginY = rtengine::max(dstSpotBox->topLeftY, imgSpotBox.topLeftY);
+            int endY = rtengine::min(dstSpotBox->bottomRightY, imgSpotBox.bottomRightY);
+
+            //printf("--- Intersection:  X1:%d, Y1:%d -> X2:%d, Y2:%d\n", beginX, beginY, endX, endY);
+
+            int dstSpotOffsetY = beginY - dstSpotBox->topLeftY;
+            int imgOffsetY = beginY - imgSpotBox.topLeftY;
+
+            for (int y = beginY; y <= endY; ++y) {
+                int dstSpotOffsetX = beginX - dstSpotBox->topLeftX;
+                int imgOffsetX = beginX - imgSpotBox.topLeftX;
+
+                for (int x = beginX; x <= endX; ++x) {
+                    /*
+                    if (y == beginY && x == beginX) {
+                        printf("--- dstSpotOffsetX = beginX - dstSpotBox->topLeftX = %d - %d = %d\n", beginX, dstSpotBox->topLeftX, dstSpotOffsetX);
+                        printf("--- dstSpotOffsetY = beginY - dstSpotBox->topLeftY = %d - %d = %d\n", beginY, dstSpotBox->topLeftY, dstSpotOffsetY);
+                        printf("--- imgOffsetX = beginX - imgSpotBox.topLeftX = %d - %d = %d\n", beginX, imgSpotBox.topLeftX, imgOffsetX);
+                        printf("--- imgOffsetX = beginY - imgSpotBox.topLeftY = %d - %d = %d\n", beginY, imgSpotBox.topLeftY, imgOffsetY);
+                    }
+                    */
+                    img->r(imgOffsetY, imgOffsetX) = dstImg->r(dstSpotOffsetY, dstSpotOffsetX);
+                    img->g(imgOffsetY, imgOffsetX) = dstImg->g(dstSpotOffsetY, dstSpotOffsetX);
+                    img->b(imgOffsetY, imgOffsetX) = dstImg->b(dstSpotOffsetY, dstSpotOffsetX);
+                    ++imgOffsetX;
+                    ++dstSpotOffsetX;
+                }
+                ++imgOffsetY;
+                ++dstSpotOffsetY;
+            }
+        //} else {
+        //    printf("#%llu: No intersection !\n", i);
+        }
+    }
+
+    for (auto srcSpotBox : srcSpotBoxs) {
+        delete srcSpotBox->img;
+    }
+    for (auto dstSpotBox : dstSpotBoxs) {
+        delete dstSpotBox->img;
+    }
+}
+
+#endif
+
+
+
+
+
+#if 0
+void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const std::vector<SpotEntry> &entries, const PreviewProps &pp, const ColorTemp &currWB, int tr)
+{
+
     Alpha mask;
 
-    //printf("img(%04d, %04d)\n", img->width, img->height);
 
     for (const auto entry : entries) {
-        float srcX = float (entry.sourcePos.x);
-        float srcY = float (entry.sourcePos.y);
-        float dstX = float (entry.targetPos.x);
-        float dstY = float (entry.targetPos.y);
-        //float radius = float (entry.radius) + 0.5f;
-
-        float featherRadius = entry.radius * (1.f + entry.feather);
+        float featherRadius = entry.getFeatherRadius();
         int scaledFeatherRadius = featherRadius / pp.getSkip ();
 
-        int src_XMin = int ((srcX - featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
-        int src_XMax = int ((srcX + featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
-        int src_YMin = int ((srcY - featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
-        int src_YMax = int ((srcY + featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
+        SpotBox srcBox(entry, SpotBox::Type::SOURCE);
+        srcBox.translate(-pp.getX(), -pp.getY());
+        srcBox /= float (pp.getSkip());
 
-        int dst_XMin = int ((dstX - featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
-        int dst_XMax = int ((dstX + featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
-        int dst_YMin = int ((dstY - featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
-        int dst_YMax = int ((dstY + featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
+        SpotBox dstBox(entry, SpotBox::Type::TARGET);
+        dstBox.translate(-pp.getX(), -pp.getY());
+        dstBox /= float (pp.getSkip());
 
         //printf("  -> X: %04d > %04d\n  -> Y: %04d > %04d\n", dst_XMin, dst_XMax, dst_YMin, dst_YMax);
 
@@ -101,7 +376,7 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
 #endif
         }
 
-        // skipping entries where the source circle isn't completely inside the image bounds
+        // skipping entries where the source circle isn't inside the image bounds, even partially
         if (src_XMin < 0 || src_XMax >= img->getWidth() || src_YMin < 0 || src_YMax >= img->getHeight()) {
 #ifndef NDEBUG
 
@@ -116,6 +391,7 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         }
 
         // skipping entries where the dest circle is completely outside the image bounds
+        /*
         if (dst_XMin >= img->getWidth() || dst_XMax <= 0 || dst_YMin >= img->getHeight() || dst_YMax <= 0) {
 #ifndef NDEBUG
 
@@ -128,6 +404,7 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
 #endif
             continue;
         }
+        */
 
         // ----------------- Core function -----------------
 
@@ -347,6 +624,9 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         printf ("\n");
 #endif
 
+
+
+
         // add solution to original image and store in tempPR
         for     (int i = 0, i2 = dst_YMin; i2 < dst_YMax - 1; ++i, ++i2) {
             if (i2 < 0 || i2 >= img->getHeight()) {
@@ -376,6 +656,7 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
 
     }
 }
+#endif
 
 }
 

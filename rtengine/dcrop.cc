@@ -623,7 +623,7 @@ void Crop::update(int todo)
             spotsDone = true;
             PreviewProps pp(trafx, trafy, trafw * skip, trafh * skip, skip);
             //parent->imgsrc->getImage(parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw);
-            parent->ipf.removeSpots(origCrop, params.spot.entries, pp);
+            parent->ipf.removeSpots(origCrop, parent->imgsrc, params.spot.entries, pp, parent->currWB, tr);
         }
 
         DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;
@@ -708,8 +708,8 @@ void Crop::update(int todo)
             }
             baseCrop->copyData (spotCrop);
             PreviewProps pp (trafx, trafy, trafw * skip, trafh * skip, skip);
-            //parent->imgsrc->getImage(parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw);
-            parent->ipf.removeSpots (spotCrop, params.spot.entries, pp);
+            int tr = getCoarseBitMask(params.coarse);
+            parent->ipf.removeSpots (spotCrop, parent->imgsrc, params.spot.entries, pp, parent->currWB, tr);
         } else {
             if (spotCrop) {
                 delete spotCrop;

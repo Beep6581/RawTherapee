@@ -927,7 +927,7 @@ private:
         // Spot Removal
 
         if (params.spot.enabled && !params.spot.entries.empty ()) {
-            ipf.removeSpots (baseImg, params.spot.entries, pp);
+            ipf.removeSpots (baseImg, imgsrc, params.spot.entries, pp, currWB, tr);
         }
 
         // RGB processing

@@ -1551,6 +1551,11 @@ SpotEntry::SpotEntry() :
 {
 }
 
+float SpotEntry::getFeatherRadius() const
+{
+    return radius * (1.f + feather);
+}
+
 bool SpotEntry::operator ==(const SpotEntry& other) const
 {
     return other.sourcePos == sourcePos && other.targetPos == targetPos &&

@@ -538,10 +538,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (todo & M_SPOT) {
             if (params->spot.enabled && !params->spot.entries.empty()) {
                 allocCache(spotprev);
-                orig_prev->copyData (spotprev);
-
+                orig_prev->copyData(spotprev);
                 PreviewProps pp(0, 0, fw, fh, scale);
-                ipf.removeSpots (spotprev, params->spot.entries, pp);
+                ipf.removeSpots(spotprev, imgsrc, params->spot.entries, pp, currWB, tr);
             } else {
                 if (spotprev) {
                     delete spotprev;
@@ -551,7 +550,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
         if (spotprev) {
             if (oprevi == orig_prev) {
-                allocCache(oprevi);
+                oprevi = new Imagefloat(pW, pH);
             }
             spotprev->copyData(oprevi);
         }

@@ -1039,6 +1039,7 @@ struct SpotEntry {
     float opacity;
 
     SpotEntry();
+    float getFeatherRadius() const;
 
     bool operator ==(const SpotEntry& other) const;
     bool operator !=(const SpotEntry& other) const;
