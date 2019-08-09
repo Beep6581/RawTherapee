@@ -39,8 +39,6 @@ RTImage::RTImage () {}
 
 RTImage::RTImage (RTImage &other) : surface(other.surface), pixbuf(other.pixbuf)
 {
-    dpiBack = other.dpiBack;
-    scaleBack = other.scaleBack;
     if (pixbuf) {
         set(pixbuf);
     } else if (surface) {
