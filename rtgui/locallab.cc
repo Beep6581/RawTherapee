@@ -361,6 +361,7 @@ Locallab::Locallab():
     qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
     gridMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
+    showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
     //Exposure
     showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
     expMethod(Gtk::manage(new MyComboBoxText())),
@@ -556,6 +557,18 @@ Locallab::Locallab():
 
     showmaskcolMethodConn  = showmaskcolMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskcolMethodChanged));
 
+    showmaskcolMethodinv->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmaskcolMethodinv->append(M("TP_LOCALLAB_SHOWMASK"));
+
+    showmaskcolMethodinv->set_active(0);
+
+    if (showtooltip) {
+        showmaskcolMethodinv->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+    }
+
+    showmaskcolMethodConninv  = showmaskcolMethodinv->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskcolMethodChangedinv));
+
+
     enaColorMaskConn = enaColorMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaColorMaskChanged));
 
     maskCurveEditorG->setCurveListener(this);
@@ -629,6 +642,7 @@ Locallab::Locallab():
     colorBox->pack_start(*invers);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
+    maskcolBox->pack_start(*showmaskcolMethodinv, Gtk::PACK_SHRINK, 4);
     maskcolBox->pack_start(*enaColorMask, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*maskCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
@@ -1053,7 +1067,7 @@ Locallab::Locallab():
 
     BLTitleHBox->pack_end(*BLImage, Gtk::PACK_SHRINK, 0);
     expblur->setLabel(BLTitleHBox);
-    
+
     expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
     enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
 
@@ -3949,12 +3963,35 @@ void Locallab::showmaskcolMethodChanged()
     }
 }
 
+void Locallab::showmaskcolMethodChangedinv()
+{
+    // printf("showmaskcolMethodChanged\n");
+
+    // When one mask state is changed, other masks are deactivated
+    disableListener();
+    showmaskcolMethod->set_active(0);
+    showmaskexpMethod->set_active(0);
+    showmaskSHMethod->set_active(0);
+    showmaskcbMethod->set_active(0);
+    showmaskretiMethod->set_active(0);
+    showmasksoftMethod->set_active(0);
+    showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
+    enableListener();
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskcolMethodinv, "");
+    }
+}
+
+
 void Locallab::showmaskexpMethodChanged()
 {
     // printf("showmaskexpMethodChanged\n");
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskSHMethod->set_active(0);
@@ -4002,6 +4039,7 @@ void Locallab::showmaskSHMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskcbMethod->set_active(0);
@@ -4022,6 +4060,7 @@ void Locallab::showmaskcbMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
     showmaskexpMethod->set_active(0);
@@ -4042,6 +4081,7 @@ void Locallab::showmaskblMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
     showmaskexpMethod->set_active(0);
@@ -4064,6 +4104,7 @@ void Locallab::showmasktmMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
     showmaskexpMethod->set_active(0);
@@ -4084,6 +4125,7 @@ void Locallab::showmaskretiMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
     showmaskexpMethod->set_active(0);
@@ -4103,6 +4145,7 @@ void Locallab::showmasksoftMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskSHMethod->set_active(0);
@@ -4121,6 +4164,7 @@ void Locallab::resetMaskVisibility()
     // printf("resetMaskVisibility\n");
 
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskSHMethod->set_active(0);
@@ -4134,6 +4178,7 @@ void Locallab::resetMaskVisibility()
 Locallab::llMaskVisibility* Locallab::getMaskVisibility()
 {
     llMaskVisibility* maskStruct = new llMaskVisibility();
+    maskStruct->colorMaskinv = showmaskcolMethodinv->get_active_row_number();
     maskStruct->colorMask = showmaskcolMethod->get_active_row_number();
     maskStruct->expMask = showmaskexpMethod->get_active_row_number();
     maskStruct->SHMask = showmaskSHMethod->get_active_row_number();
@@ -4366,8 +4411,9 @@ void Locallab::inversChanged()
         strengthgrid->hide();
         blurcolde->show();
         softradiuscol->show();
-        showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+        showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
         gridFrame->hide();
+        showmaskcolMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (invers->get_active()) {
         sensi->show();
         llCurveEditorG->show();
@@ -4375,13 +4421,14 @@ void Locallab::inversChanged()
         curvactiv->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
-        expmaskcol->hide();
+        expmaskcol->show();
         structcol->hide();
         blurcolde->show();
         gridFrame->hide();
         strengthgrid->hide();
         softradiuscol->hide();
-
+        showmaskcolMethod->hide();
+        showmaskcolMethodinv->show();
     } else {
         sensi->show();
         llCurveEditorG->show();
@@ -4394,9 +4441,12 @@ void Locallab::inversChanged()
         blurcolde->show();
         gridFrame->show();
         softradiuscol->show();
+        showmaskcolMethodinv->hide();
+        showmaskcolMethod->show();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+            showmaskcolMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }
     }
 
@@ -6402,6 +6452,7 @@ void Locallab::setBatchMode(bool batchMode)
 
     // In batch mode, being able to change mask visibility is useless
     showmaskcolMethod->hide();
+    showmaskcolMethodinv->hide();
     showmaskexpMethod->hide();
     showmaskSHMethod->hide();
     showmaskcbMethod->hide();
@@ -6550,6 +6601,7 @@ void Locallab::enableListener()
     gridMethodConn.block(false);
     inversConn.block(false);
     showmaskcolMethodConn.block(false);
+    showmaskcolMethodConninv.block(false);
     enaColorMaskConn.block(false);
     // Exposure
     enableexposeConn.block(false);
@@ -6620,6 +6672,7 @@ void Locallab::disableListener()
     gridMethodConn.block(true);
     inversConn.block(true);
     showmaskcolMethodConn.block(true);
+    showmaskcolMethodConninv.block(true);
     enaColorMaskConn.block(true);
     // Exposure
     enableexposeConn.block(true);
@@ -7309,16 +7362,19 @@ void Locallab::updateSpecificGUIState()
         expmaskcol->show();
         structcol->show();
         softradiuscol->show();
-        showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+        showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
+        showmaskcolMethodinv->hide();
         gridFrame->hide();
     } else if (invers->get_active()) {
         HCurveEditorG->hide();
         qualitycurveMethod->hide();
         labqualcurv->hide();
-        expmaskcol->hide();
+        expmaskcol->show();
         softradiuscol->hide();
         structcol->hide();
         gridFrame->hide();
+        showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+        showmaskcolMethodinv->show();
     } else {
         HCurveEditorG->show();
         qualitycurveMethod->show();
@@ -7327,9 +7383,12 @@ void Locallab::updateSpecificGUIState()
         structcol->show();
         gridFrame->show();
         softradiuscol->show();
+        showmaskcolMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
+        showmaskcolMethodinv->hide();
 
         if (batchMode) {
             showmaskcolMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+            showmaskcolMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }
     }
 

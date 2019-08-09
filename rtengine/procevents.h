@@ -761,6 +761,7 @@ enum ProcEventCode {
     Evlocallabitera = 731,
     Evlocallabguidbl = 732,
     Evlocallabepsbl = 733,
+    EvlocallabshowmaskcolMethodinv = 734,
     NUMOFEVENTS
 };
 

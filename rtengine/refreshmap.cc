@@ -760,7 +760,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,          // EvlocallabmedMethod
     LUMINANCECURVE,           // Evlocallabitera
     LUMINANCECURVE,           // Evlocallabguidbl
-    LUMINANCECURVE           // Evlocallabepsbl
+    LUMINANCECURVE,           // Evlocallabepsbl
+    LUMINANCECURVE          // EvlocallabshowmaskcolMethodinv
 };
 
 

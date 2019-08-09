@@ -297,6 +297,7 @@ protected:
     float avg;
     bool lastspotdup;
     int locallColorMask;
+    int locallColorMaskinv;
     int locallExpMask;
     int locallSHMask;
     int locallcbMask;
@@ -373,9 +374,10 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility (int locallColorMask, int locallExpMask, int locallSHMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) override
+    void setLocallabMaskVisibility (int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallSHMask, int locallcbMask, int locallretiMask, int locallsoftMask, int localltmMask, int locallblMask) override
     {
         this->locallColorMask = locallColorMask;
+        this->locallColorMaskinv = locallColorMaskinv;
         this->locallExpMask = locallExpMask;
         this->locallSHMask = locallSHMask;
         this->locallcbMask = locallcbMask;

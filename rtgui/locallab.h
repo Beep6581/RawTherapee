@@ -332,6 +332,8 @@ private:
     sigc::connection gridMethodConn;
     MyComboBoxText* const showmaskcolMethod;
     sigc::connection showmaskcolMethodConn;
+    MyComboBoxText* const showmaskcolMethodinv;
+    sigc::connection showmaskcolMethodConninv;
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
     sigc::connection showmaskexpMethodConn;
@@ -443,6 +445,7 @@ private:
     void qualitycurveMethodChanged();
     void gridMethodChanged();
     void showmaskcolMethodChanged();
+    void showmaskcolMethodChangedinv();
     //Exposure
     void showmaskexpMethodChanged();
     void expMethodChanged();
@@ -498,6 +501,7 @@ public:
     // Mask visibility management functions
     struct llMaskVisibility {
         int colorMask;
+        int colorMaskinv;
         int expMask;
         int SHMask;
         int cbMask;
