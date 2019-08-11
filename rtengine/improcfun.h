@@ -318,8 +318,8 @@ public:
                   const LocCCmaskCurve & locccmastmCurve, bool &lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool &llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
                   const LocCCmaskCurve & locccmasblCurve, bool &lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool &llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
                   const LocwavCurve & locwavCurve,
-                  bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int llColorMask, int llColorMaskinv,
-                  int llExpMask, int llSHMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask);
+                  bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref,
+                  int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask);
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
     void InverseBlurNoise_Local(LabImage * originalmask, float **bufchro, const struct local_params& lp, const float hueref, const float chromaref,  const float lumaref, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy, int sk);

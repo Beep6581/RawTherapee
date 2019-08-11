@@ -337,11 +337,15 @@ private:
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
     sigc::connection showmaskexpMethodConn;
+    MyComboBoxText* const showmaskexpMethodinv;
+    sigc::connection showmaskexpMethodConninv;
     MyComboBoxText* const expMethod;
     sigc::connection expMethodConn;
     //Shadows Highlight
     MyComboBoxText* const showmaskSHMethod;
     sigc::connection showmaskSHMethodConn;
+    MyComboBoxText* const showmaskSHMethodinv;
+    sigc::connection showmaskSHMethodConninv;
     // Blur & Noise
     MyComboBoxText* const blurMethod;
     sigc::connection blurMethodConn;
@@ -448,9 +452,11 @@ private:
     void showmaskcolMethodChangedinv();
     //Exposure
     void showmaskexpMethodChanged();
+    void showmaskexpMethodChangedinv();
     void expMethodChanged();
     //Shadows Highlight
     void showmaskSHMethodChanged();
+    void showmaskSHMethodChangedinv();
     // Blur & Noise
     void blMethodChanged();
     void medMethodChanged();
@@ -503,7 +509,9 @@ public:
         int colorMask;
         int colorMaskinv;
         int expMask;
+        int expMaskinv;
         int SHMask;
+        int SHMaskinv;
         int cbMask;
         int retiMask;
         int softMask;

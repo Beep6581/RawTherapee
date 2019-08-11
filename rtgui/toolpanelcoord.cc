@@ -474,10 +474,11 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
     }
 
     // Manage Locallab mask visibility
-    if (event == rtengine::EvlocallabshowmaskcolMethod || event == rtengine::EvlocallabshowmaskcolMethodinv ||event == rtengine::EvlocallabshowmaskexpMethod || event == rtengine::EvlocallabshowmaskSHMethod || event == rtengine::EvlocallabshowmasksoftMethod 
+    if (event == rtengine::EvlocallabshowmaskcolMethod || event == rtengine::EvlocallabshowmaskcolMethodinv ||event == rtengine::EvlocallabshowmaskexpMethod ||event == rtengine::EvlocallabshowmaskexpMethodinv 
+        || event == rtengine::EvlocallabshowmaskSHMethod || event == rtengine::EvlocallabshowmaskSHMethodinv || event == rtengine::EvlocallabshowmasksoftMethod 
         || event == rtengine::EvlocallabshowmaskcbMethod || event == rtengine::EvlocallabshowmaskretiMethod || event == rtengine::EvlocallabshowmasktmMethod || event == rtengine::EvlocallabshowmaskblMethod) {
         Locallab::llMaskVisibility* maskStruc = locallab->getMaskVisibility();
-        ipc->setLocallabMaskVisibility(maskStruc->colorMask, maskStruc->colorMaskinv, maskStruc->expMask, maskStruc->SHMask,  maskStruc->cbMask, maskStruc->retiMask, maskStruc->softMask, maskStruc->tmMask, maskStruc->blMask);
+        ipc->setLocallabMaskVisibility(maskStruc->colorMask, maskStruc->colorMaskinv, maskStruc->expMask, maskStruc->expMaskinv, maskStruc->SHMask,  maskStruc->SHMaskinv, maskStruc->cbMask, maskStruc->retiMask, maskStruc->softMask, maskStruc->tmMask, maskStruc->blMask);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -585,7 +586,7 @@ void ToolPanelCoordinator::profileChange(
     // Reset Locallab mask visibility when a picture is loaded
     if (event == rtengine::EvPhotoLoaded) {
         locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     // start the IPC processing

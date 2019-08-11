@@ -134,7 +134,6 @@ Locallab::Locallab():
     expshadhigh(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_SHADHIGH")))),
     expvibrance(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_VIBRANCE")))),
     expsoft(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_SOFT")))),
-//    expblur(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_BLUFR")))),
     expblur(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     exptonemap(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expreti(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
@@ -364,9 +363,11 @@ Locallab::Locallab():
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
     //Exposure
     showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
+    showmaskexpMethodinv(Gtk::manage(new MyComboBoxText())),
     expMethod(Gtk::manage(new MyComboBoxText())),
     //Shadows Highlight
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
+    showmaskSHMethodinv(Gtk::manage(new MyComboBoxText())),
     // Blur & Noise
     blurMethod(Gtk::manage(new MyComboBoxText())),
     //soft Method
@@ -752,6 +753,17 @@ Locallab::Locallab():
 
     showmaskexpMethodConn  = showmaskexpMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskexpMethodChanged));
 
+    showmaskexpMethodinv->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmaskexpMethodinv->append(M("TP_LOCALLAB_SHOWMASK"));
+
+    showmaskexpMethodinv->set_active(0);
+
+    if (showtooltip) {
+        showmaskexpMethodinv->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+    }
+
+    showmaskexpMethodConninv  = showmaskexpMethodinv->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskexpMethodChangedinv));
+
     maskexpCurveEditorG->setCurveListener(this);
 
     CCmaskexpshape = static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
@@ -816,6 +828,7 @@ Locallab::Locallab():
     exposeBox->pack_start(*inversex);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
+    maskexpBox->pack_start(*showmaskexpMethodinv, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*enaExpMask, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskexpBox->pack_start(*blendmaskexp, Gtk::PACK_SHRINK, 0);
@@ -877,6 +890,17 @@ Locallab::Locallab():
 
     showmaskSHMethodConn  = showmaskSHMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskSHMethodChanged));
 
+    showmaskSHMethodinv->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmaskSHMethodinv->append(M("TP_LOCALLAB_SHOWMASK"));
+
+    showmaskSHMethodinv->set_active(0);
+
+    if (showtooltip) {
+        showmaskSHMethodinv->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+    }
+
+    showmaskSHMethodConninv  = showmaskSHMethodinv->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskSHMethodChangedinv));
+
     maskSHCurveEditorG->setCurveListener(this);
 
     CCmaskSHshape = static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
@@ -925,6 +949,7 @@ Locallab::Locallab():
 
     ToolParamBlock* const maskSHBox = Gtk::manage(new ToolParamBlock());
     maskSHBox->pack_start(*showmaskSHMethod, Gtk::PACK_SHRINK, 4);
+    maskSHBox->pack_start(*showmaskSHMethodinv, Gtk::PACK_SHRINK, 4);
     maskSHBox->pack_start(*enaSHMask, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*maskSHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskSHBox->pack_start(*blendmaskSH, Gtk::PACK_SHRINK, 0);
@@ -3949,8 +3974,11 @@ void Locallab::showmaskcolMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskcolMethodinv->set_active(0);
     showmaskexpMethod->set_active(0);
+    showmaskexpMethodinv->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
@@ -3971,7 +3999,9 @@ void Locallab::showmaskcolMethodChangedinv()
     disableListener();
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
+    showmaskexpMethodinv->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
@@ -3984,6 +4014,28 @@ void Locallab::showmaskcolMethodChangedinv()
     }
 }
 
+void Locallab::showmaskexpMethodChangedinv()
+{
+    // printf("showmaskcolMethodChanged\n");
+
+    // When one mask state is changed, other masks are deactivated
+    disableListener();
+    showmaskcolMethodinv->set_active(0);
+    showmaskcolMethod->set_active(0);
+    showmaskexpMethod->set_active(0);
+    showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
+    showmaskcbMethod->set_active(0);
+    showmaskretiMethod->set_active(0);
+    showmasksoftMethod->set_active(0);
+    showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
+    enableListener();
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskexpMethodinv, "");
+    }
+}
 
 void Locallab::showmaskexpMethodChanged()
 {
@@ -3991,10 +4043,12 @@ void Locallab::showmaskexpMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
     showmasktmMethod->set_active(0);
@@ -4039,9 +4093,11 @@ void Locallab::showmaskSHMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
@@ -4054,15 +4110,39 @@ void Locallab::showmaskSHMethodChanged()
     }
 }
 
+void Locallab::showmaskSHMethodChangedinv()
+{
+    // printf("showmaskSHMethodChanged\n");
+
+    // When one mask state is changed, other masks are deactivated
+    disableListener();
+    showmaskexpMethodinv->set_active(0);
+    showmaskcolMethodinv->set_active(0);
+    showmaskcolMethod->set_active(0);
+    showmaskexpMethod->set_active(0);
+    showmaskcbMethod->set_active(0);
+    showmaskretiMethod->set_active(0);
+    showmasksoftMethod->set_active(0);
+    showmasktmMethod->set_active(0);
+    showmaskblMethod->set_active(0);
+    enableListener();
+
+    if (listener) {
+        listener->panelChanged(EvlocallabshowmaskSHMethodinv, "");
+    }
+}
+
 void Locallab::showmaskcbMethodChanged()
 {
     // printf("showmaskSHMethodChanged\n");
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
@@ -4081,9 +4161,11 @@ void Locallab::showmaskblMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
@@ -4104,9 +4186,11 @@ void Locallab::showmasktmMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
@@ -4125,9 +4209,11 @@ void Locallab::showmaskretiMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskcbMethod->set_active(0);
     showmasksoftMethod->set_active(0);
@@ -4145,10 +4231,12 @@ void Locallab::showmasksoftMethodChanged()
 
     // When one mask state is changed, other masks are deactivated
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasktmMethod->set_active(0);
@@ -4164,10 +4252,12 @@ void Locallab::resetMaskVisibility()
     // printf("resetMaskVisibility\n");
 
     disableListener();
+    showmaskexpMethodinv->set_active(0);
     showmaskcolMethodinv->set_active(0);
     showmaskcolMethod->set_active(0);
     showmaskexpMethod->set_active(0);
     showmaskSHMethod->set_active(0);
+    showmaskSHMethodinv->set_active(0);
     showmaskcbMethod->set_active(0);
     showmaskretiMethod->set_active(0);
     showmasksoftMethod->set_active(0);
@@ -4181,7 +4271,9 @@ Locallab::llMaskVisibility* Locallab::getMaskVisibility()
     maskStruct->colorMaskinv = showmaskcolMethodinv->get_active_row_number();
     maskStruct->colorMask = showmaskcolMethod->get_active_row_number();
     maskStruct->expMask = showmaskexpMethod->get_active_row_number();
+    maskStruct->expMaskinv = showmaskexpMethodinv->get_active_row_number();
     maskStruct->SHMask = showmaskSHMethod->get_active_row_number();
+    maskStruct->SHMaskinv = showmaskSHMethodinv->get_active_row_number();
     maskStruct->cbMask = showmaskcbMethod->get_active_row_number();
     maskStruct->retiMask = showmaskretiMethod->get_active_row_number();
     maskStruct->softMask = showmasksoftMethod->get_active_row_number();
@@ -4491,17 +4583,21 @@ void Locallab::inversexChanged()
             pdeFrame->show();
         }
 
+        showmaskexpMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+
         softradiusexp->show();
-        showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+        showmaskexpMethod->show(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
         sensiex->show();
         curveEditorG->show();
-        expmaskexp->hide();
+        expmaskexp->show();
         structexp->hide();
         shadex->hide();
         blurexpde->show();
         softradiusexp->hide();
         expMethod->hide();
+        showmaskexpMethod->hide();
+        showmaskexpMethodinv->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -4525,9 +4621,12 @@ void Locallab::inversexChanged()
             pdeFrame->show();
         }
 
+        showmaskexpMethodinv->show();
+        showmaskexpMethod->hide();
 
         if (batchMode) {
             showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+            showmaskexpMethodinv->hide();
         }
     }
 
@@ -4561,20 +4660,29 @@ void Locallab::inversshChanged()
         sensihs->show();
         blurSHde->show();
         expmasksh->show();
+        showmaskSHMethod->show();
+        showmaskSHMethodinv->hide();
 
         showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inverssh->get_active()) {
-        sensihs->show();
-        expmasksh->hide();
-        blurSHde->show();
-
-    } else {
+        //  printf("Inv SH\n");
         sensihs->show();
         expmasksh->show();
         blurSHde->show();
+        showmaskSHMethod->hide();
+        showmaskSHMethodinv->show();
+
+    } else {
+        //   printf("Pas Inv SH\n");
+        sensihs->show();
+        expmasksh->show();
+        blurSHde->show();
+        showmaskSHMethod->show();
+        showmaskSHMethodinv->hide();
 
         if (batchMode) {
             showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+            showmaskSHMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
         }
     }
 
@@ -6454,7 +6562,9 @@ void Locallab::setBatchMode(bool batchMode)
     showmaskcolMethod->hide();
     showmaskcolMethodinv->hide();
     showmaskexpMethod->hide();
+    showmaskexpMethodinv->hide();
     showmaskSHMethod->hide();
+    showmaskSHMethodinv->hide();
     showmaskcbMethod->hide();
     showmaskretiMethod->hide();
     showmasktmMethod->hide();
@@ -6607,11 +6717,13 @@ void Locallab::enableListener()
     enableexposeConn.block(false);
     inversexConn.block(false);
     showmaskexpMethodConn.block(false);
+    showmaskexpMethodConninv.block(false);
     expMethodConn.block(false);
     enaExpMaskConn.block(false);
     // Shadow highlight
     enableshadhighConn.block(false);
     showmaskSHMethodConn.block(false);
+    showmaskSHMethodConninv.block(false);
     enaSHMaskConn.block(false);
     inversshConn.block(false);
     // Vibrance
@@ -6678,11 +6790,13 @@ void Locallab::disableListener()
     enableexposeConn.block(true);
     inversexConn.block(true);
     showmaskexpMethodConn.block(true);
+    showmaskexpMethodConninv.block(true);
     expMethodConn.block(true);
     enaExpMaskConn.block(true);
     // Shadow highlight
     enableshadhighConn.block(true);
     showmaskSHMethodConn.block(true);
+    showmaskSHMethodConninv.block(true);
     enaSHMaskConn.block(true);
     inversshConn.block(true);
     // Vibrance
@@ -7402,6 +7516,7 @@ void Locallab::updateSpecificGUIState()
         softradiusexp->show();
         shadex->show();
         expMethod->show();
+        expmaskexp->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -7409,6 +7524,7 @@ void Locallab::updateSpecificGUIState()
             pdeFrame->show();
         }
 
+        showmaskexpMethodinv->hide();
         showmaskexpMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
     } else if (inversex->get_active()) {
         structexp->hide();
@@ -7416,6 +7532,9 @@ void Locallab::updateSpecificGUIState()
         shadex->hide();
         expMethod->hide();
         pdeFrame->hide();
+        expmaskexp->show();
+        showmaskexpMethodinv->show();
+        showmaskexpMethod->hide();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -7427,6 +7546,9 @@ void Locallab::updateSpecificGUIState()
         softradiusexp->show();
         shadex->show();
         expMethod->show();
+        expmaskexp->show();
+        showmaskexpMethodinv->hide();
+        showmaskexpMethod->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -7443,12 +7565,26 @@ void Locallab::updateSpecificGUIState()
     sensihs->show();
     blurSHde->show();
 
-    if (multiImage && inversex->get_inconsistent()) {
+    if (multiImage && inverssh->get_inconsistent()) {
+        expmasksh->show();
         showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
-    } else if (batchMode && !inverssh->get_active()) {
-        showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
-    }
+    } else if (inverssh->get_active()) {
+        // printf("GUI inv SH\n");
+        expmasksh->show();
+        showmaskSHMethodinv->show();
+        showmaskSHMethod->hide();
 
+    } else {
+        //  printf("GUI NON inv SH\n");
+        expmasksh->show();
+        showmaskSHMethodinv->hide();
+        showmaskSHMethod->show();
+
+        if (batchMode) {
+            showmaskSHMethod->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
+            showmaskSHMethodinv->hide();
+        }
+    }
 
     if (multiImage && black->getEditedState() != Edited) {
         shcompr->set_sensitive(true);
