@@ -2191,7 +2191,7 @@ TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_ENABLE_MASK;Enable mask
 TP_LOCALLAB_SHOW;Mask and modifications
-TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR).\nYou must put 'Display modification' to 'none' or 'Usemask' to enabled the other show.\n\nUse Mask is before algorihtm shape detection  
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None
 TP_LOCALLAB_SHOWMODIF;Show modifications whithout mask
 TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask

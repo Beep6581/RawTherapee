@@ -3674,7 +3674,8 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct
     std::unique_ptr<LabImage> origblurmask;
     const bool usemaskcol = (lp.enaColorMaskinv) && senstype == 0;
     const bool usemaskexp = (lp.enaExpMaskinv) && senstype == 1;
-    const bool usemaskall = (usemaskcol || usemaskexp);
+    const bool usemasksh = (lp.enaSHMaskinv) && senstype == 2;
+    const bool usemaskall = (usemaskcol || usemaskexp || usemasksh);
 
     float radius = 3.f / sk;
 
@@ -7332,7 +7333,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
         } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f) && call < 3  && lp.hsena) {
             std::unique_ptr<LabImage> bufmaskblurcol;
-            std::unique_ptr<LabImage> originalmaskcol;
+            std::unique_ptr<LabImage> originalmaskSH;
             std::unique_ptr<LabImage> bufcolorig;
             int GW = transformed->W;
             int GH = transformed->H;
@@ -7340,7 +7341,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (lp.enaSHMaskinv || lp.showmaskSHmetinv == 1) {
                 bufmaskblurcol.reset(new LabImage(GW, GH, true));
-                originalmaskcol.reset(new LabImage(GW, GH));
+                originalmaskSH.reset(new LabImage(GW, GH));
             }
 
 #ifdef _OPENMP
@@ -7380,7 +7381,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float slope = lp.slomaSH;
             float blendm = lp.blendmaSH;
 
-            maskcalccol(GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, transformed, inv, lp,
+            maskcalccol(GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, transformed, inv, lp,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
 
@@ -7392,7 +7393,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             float adjustr = 2.f;
-            InverseColorLight_Local(sp, 2, lp, nullptr, lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+            InverseColorLight_Local(sp, 2, lp, originalmaskSH.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 
