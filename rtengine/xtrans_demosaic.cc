@@ -704,7 +704,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                                 // which appears less good with specular highlights
                                 vfloat redv, greenv, bluev;
                                 vconvertrgbrgbrgbrgb2rrrrggggbbbb(rgb[d][row][col], redv, greenv, bluev);
-                                vfloat yv = zd2627v * redv + zd6780v * bluev + zd0593v * greenv;
+                                vfloat yv = zd2627v * redv + zd6780v * greenv + zd0593v * bluev;
                                 STVFU(yuv[0][row - 4][col - 4], yv);
                                 STVFU(yuv[1][row - 4][col - 4], (bluev - yv) * zd56433v);
                                 STVFU(yuv[2][row - 4][col - 4], (redv - yv) * zd67815v);
