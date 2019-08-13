@@ -139,7 +139,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AUTO")));
     raw_caredblue       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CAREDBLUE")));
     raw_ca_avoid_colourshift = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT")));
-
+    //...
+    filmNegative        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FILMNEGATIVE")) );
     Gtk::VBox* vboxes[9];
     Gtk::HSeparator* hseps[9];
 
@@ -237,6 +238,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_lmmse_iterations, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_hotpix_filt, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_deadpix_filt, Gtk::PACK_SHRINK, 2);
