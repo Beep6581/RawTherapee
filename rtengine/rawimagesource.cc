@@ -37,6 +37,9 @@
 #include "pdaflinesfilter.h"
 #include "camconst.h"
 #include "procparams.h"
+#include "color.h"
+#define BENCHMARK
+#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -4949,6 +4952,36 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
     }
 }
 
+void RawImageSource::captureSharpening(const procparams::SharpeningParams &sharpeningParams) {
+BENCHFUN
+
+    array2D<float> Y(W,H);
+    array2D<float> Cb(W,H);
+    array2D<float> Cr(W,H);
+    const float gamma = sharpeningParams.gamma;
+    StopWatch Stop1("rgb2Y");
+    #pragma omp parallel for
+    for (int i = 0; i < H; ++i) {
+        for (int j = 0; j < W ; ++j) {
+            Color::RGB2YCbCr(std::max(red[i][j], 0.f), std::max(green[i][j], 0.f), std::max(blue[i][j], 0.f), Y[i][j], Cb[i][j], Cr[i][j]);
+            Y[i][j] = pow_F(Y[i][j], 1.f / gamma);
+        }
+    }
+    Stop1.stop();
+    array2D<float> tmp(W, H);
+    ProcParams dummy;
+    ImProcFunctions ipf(&dummy);
+    ipf.deconvsharpening(Y, tmp, W, H, sharpeningParams, 1.0);
+    StopWatch Stop2("Y2RGB");
+    #pragma omp parallel for
+    for (int i = 0; i < H; ++i) {
+        for (int j = 0; j < W ; ++j) {
+            Y[i][j] = pow_F(Y[i][j], gamma);
+            Color::YCbCr2RGB(Y[i][j], Cb[i][j], Cr[i][j], red[i][j], green[i][j], blue[i][j]);
+        }
+    }
+    Stop2.stop();
+}
 void RawImageSource::cleanup ()
 {
     delete phaseOneIccCurve;

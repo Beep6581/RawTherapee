@@ -494,6 +494,7 @@ struct SharpeningParams {
     bool           enabled;
     double         contrast;
     double         blurradius;
+    double         gamma;
     double         radius;
     int            amount;
     Threshold<int> threshold;
@@ -1526,6 +1527,7 @@ public:
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters
     SharpeningParams        prsharpening;    ///< Sharpening parameters for post resize sharpening
+    SharpeningParams        pdsharpening;    ///< Sharpening parameters for post demosaic sharpening
     SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
     SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
     VibranceParams          vibrance;        ///< Vibrance parameters

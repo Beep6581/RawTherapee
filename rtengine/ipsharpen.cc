@@ -158,7 +158,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, int H, const SharpeningParams &sharpenParam)
+void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, int H, const SharpeningParams &sharpenParam, double Scale)
 {
     if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25f) {
         return;
@@ -201,7 +201,7 @@ BENCHFUN
     }
     const float damping = sharpenParam.deconvdamping / 5.0;
     const bool needdamp = sharpenParam.deconvdamping > 0;
-    const double sigma = sharpenParam.deconvradius / scale;
+    const double sigma = sharpenParam.deconvradius / Scale;
     const float amount = sharpenParam.deconvamount / 100.f;
 
 #ifdef _OPENMP
@@ -274,7 +274,7 @@ void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpen
     JaggedArray<float> b2(W, H);
 
     if (sharpenParam.method == "rld") {
-        deconvsharpening (lab->L, b2, lab->W, lab->H, sharpenParam);
+        deconvsharpening (lab->L, b2, lab->W, lab->H, sharpenParam, scale);
         return;
     }
 BENCHFUN
@@ -905,7 +905,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
 
 
     if (params->sharpening.method == "rld") {
-        deconvsharpening (ncie->sh_p, b2, ncie->W, ncie->H, params->sharpening);
+        deconvsharpening (ncie->sh_p, b2, ncie->W, ncie->H, params->sharpening, scale);
         return;
     }
 

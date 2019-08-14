@@ -1080,6 +1080,7 @@ SharpeningParams::SharpeningParams() :
     enabled(false),
     contrast(20.0),
     blurradius(0.2),
+    gamma(1.0),
     radius(0.5),
     amount(200),
     threshold(20, 80, 2000, 1200, false),
@@ -1102,6 +1103,7 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
         enabled == other.enabled
         && contrast == other.contrast
         && blurradius == other.blurradius
+        && gamma == other.gamma
         && radius == other.radius
         && amount == other.amount
         && threshold == other.threshold
@@ -2787,6 +2789,13 @@ void ProcParams::setDefaults()
     prsharpening.deconviter = 100;
     prsharpening.deconvdamping = 0;
 
+    pdsharpening = {};
+    pdsharpening.contrast = 0.0;
+    prsharpening.method = "rld";
+    pdsharpening.gamma = 1.0;
+    pdsharpening.deconvradius = 0.75;
+    pdsharpening.deconviter = 30;
+
     vibrance = {};
 
     wb = {};
@@ -3295,6 +3304,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
         saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
+
+// Post demosaic sharpening
+        saveToKeyfile(!pedited || pedited->pdsharpening.enabled, "PostDemosaicSharpening", "Enabled", pdsharpening.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.contrast, "PostDemosaicSharpening", "Contrast", pdsharpening.contrast, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.gamma, "PostDemosaicSharpening", "DeconvGamma", pdsharpening.gamma, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.deconvradius, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.deconviter, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, keyFile);
 
 // Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
@@ -4374,6 +4390,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->resize.allowUpscaling = true;
                 }
             }
+        }
+
+        if (keyFile.has_group("PostDemosaicSharpening")) {
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Enabled", pedited, pdsharpening.enabled, pedited->pdsharpening.enabled);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Contrast", pedited, pdsharpening.contrast, pedited->pdsharpening.contrast);
+
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvGamma", pedited, pdsharpening.gamma, pedited->pdsharpening.gamma);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pedited, pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pedited, pdsharpening.deconviter, pedited->pdsharpening.deconviter);
         }
 
         if (keyFile.has_group("PostResizeSharpening")) {

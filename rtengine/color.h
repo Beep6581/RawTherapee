@@ -1804,6 +1804,18 @@ public:
         return (hr);
     }
 
+    static inline void RGB2YCbCr(float R, float G, float B, float &Y, float &Cb, float &Cr) {
+        Y = 0.2627f * R + 0.6780f * G + 0.0593f * B;
+        Cb = -0.2627f * R - 0.6780f * G + (1.f - 0.0593f) * B;
+        Cr = (1.f - 0.2627f) * R - 0.6780f * G - 0.0593f * B;
+
+    }
+
+    static inline void YCbCr2RGB(float Y, float Cb, float Cr, float &R, float &G, float &B) {
+        R = std::max(Y + Cr, 0.f);
+        G = std::max(Y - (0.0593f / 0.6780f) * Cb - (0.2627f / 0.6780f) * Cr, 0.f);
+        B = std::max(Y + Cb, 0.f);
+    }
 };
 
 }

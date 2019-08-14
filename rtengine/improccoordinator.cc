@@ -332,6 +332,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicContrast : params->raw.xtranssensor.dualDemosaicContrast;
             imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
 
+            if (params->pdsharpening.enabled) {
+                imgsrc->captureSharpening(params->pdsharpening);
+            }
             if (imgsrc->getSensorType() == ST_BAYER && bayerAutoContrastListener && autoContrast) {
                 bayerAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
             }
@@ -1546,7 +1549,8 @@ void ImProcCoordinator::process()
             || params->retinex != nextParams->retinex
             || params->wavelet != nextParams->wavelet
             || params->dirpyrequalizer != nextParams->dirpyrequalizer
-            || params->dehaze != nextParams->dehaze;
+            || params->dehaze != nextParams->dehaze
+            || params->pdsharpening != nextParams->pdsharpening;
 
         *params = *nextParams;
         int change = changeSinceLast;

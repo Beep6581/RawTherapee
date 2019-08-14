@@ -180,6 +180,7 @@ struct SharpeningParamsEdited {
     bool enabled;
     bool contrast;
     bool blurradius;
+    bool gamma;
     bool radius;
     bool amount;
     bool threshold;
@@ -194,6 +195,7 @@ struct SharpeningParamsEdited {
     bool deconvradius;
     bool deconviter;
     bool deconvdamping;
+    bool isUnchanged() const;
 };
 
 struct VibranceParamsEdited {
@@ -684,6 +686,7 @@ struct ParamsEdited {
     ColorToningEdited colorToning;
     RetinexParamsEdited retinex;
     SharpeningParamsEdited sharpening;
+    SharpeningParamsEdited pdsharpening;
     SharpeningParamsEdited prsharpening;
     SharpenEdgeParamsEdited sharpenEdge;
     SharpenMicroParamsEdited sharpenMicro;

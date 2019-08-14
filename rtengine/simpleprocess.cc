@@ -221,6 +221,9 @@ private:
         double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
 
         imgsrc->demosaic (params.raw, autoContrast, contrastThreshold);
+        if (params.pdsharpening.enabled) {
+            imgsrc->captureSharpening(params.pdsharpening);
+        }
 
 
         if (pl) {

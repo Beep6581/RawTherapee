@@ -77,6 +77,7 @@
 #include "colortoning.h"
 #include "filmsimulation.h"
 #include "prsharpening.h"
+#include "pdsharpening.h"
 #include "fattaltonemap.h"
 #include "localcontrast.h"
 #include "softlight.h"
@@ -157,7 +158,7 @@ protected:
     FattalToneMapping *fattal;
     MetaDataPanel* metadata;
     FilmNegative* filmNegative;
-
+    PdSharpening* pdSharpening;
     std::vector<PParamsChangeListener*> paramcListeners;
 
     rtengine::StagedImageProcessor* ipc;
