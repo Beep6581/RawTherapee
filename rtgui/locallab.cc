@@ -3742,7 +3742,7 @@ void Locallab::curveChanged(CurveEditor* ce)
     }
 
     //Blur
-    if (getEnabled() && expblur->getEnabled()) {
+    if (getEnabled() && (expblur->getEnabled() || expdenoi->getEnabled())) {
 
         if (ce == CCmaskblshape) {
             if (listener) {
@@ -4358,7 +4358,7 @@ void Locallab::enaSHMaskChanged()
 
 void Locallab::enablMaskChanged()
 {
-    printf("enablmaskChanged\n");
+    // printf("enablmaskChanged\n");
 
     if (multiImage) {
         if (enablMask->get_inconsistent()) {
@@ -4369,7 +4369,7 @@ void Locallab::enablMaskChanged()
         }
     }
 
-    if (getEnabled() && expblur->getEnabled()) {
+    if (getEnabled() && (expblur->getEnabled() || expdenoi->getEnabled())) {
         if (listener) {
             if (enablMask->get_active()) {
                 listener->panelChanged(EvLocallabEnablMask, M("GENERAL_ENABLED"));
@@ -5839,7 +5839,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
 
 
     // Blur & Noise
-    if (getEnabled() && expblur->getEnabled()) {
+    if (getEnabled() && (expblur->getEnabled())) {
         if (a == radius) {
             if (listener) {
                 listener->panelChanged(Evlocallabradius, radius->getTextValue());
@@ -5875,7 +5875,9 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabepsbl, epsbl->getTextValue());
             }
         }
+    }
 
+    if (getEnabled() && (expblur->getEnabled() || expdenoi->getEnabled())) {
         if (a == blendmaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskbl, blendmaskbl->getTextValue());
