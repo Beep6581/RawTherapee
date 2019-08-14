@@ -1759,6 +1759,15 @@ Camera constants:
         }
     },
 
+    { // Quality C, only color matrix
+        "make_model" : "Panasonic DC-GF10",
+        "dcraw_matrix": [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ], // ColorMatrix2 from Adobe DNG Converter 11.3
+        "raw_crop": [ 0, 0, 4600, 0 ], // SensorWidth=4816 SensorHeight=3464. Width=4600 to match DNG.
+        "ranges": {
+            "black": 15
+        }
+    },
+
     { // Quality B, CameraPhone, some samples are missing but has the same sensor as FZ1000 ..
         "make_model": [ "Panasonic DMC-CM1", "Panasonic DMC-CM10" ],
         "dcraw_matrix": [ 8770,-3194,-820,-2871,11281,1803,-513,1552,4434 ], // dcp_v8.7 d65
