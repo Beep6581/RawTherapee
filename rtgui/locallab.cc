@@ -147,7 +147,7 @@ Locallab::Locallab():
     expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
     expmaskreti(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
     expmasktm(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
-    expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
+    expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
 
     // CurveEditorGroup widgets
     // Color & Light
@@ -1077,165 +1077,6 @@ Locallab::Locallab():
 
     panel->pack_start(*expsoft, false, false);
 
-
-    // Blur & Noise
-    Gtk::HBox* const BLTitleHBox = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* const BLLabel = Gtk::manage(new Gtk::Label());
-    BLLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_BLUFR")) + Glib::ustring("</b>"));
-    BLLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    BLTitleHBox->pack_start(*BLLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    RTImage *BLImage = Gtk::manage(new RTImage("one-to-one-small.png"));
-
-    if (showtooltip) {
-        BLImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
-    }
-
-    BLTitleHBox->pack_end(*BLImage, Gtk::PACK_SHRINK, 0);
-    expblur->setLabel(BLTitleHBox);
-
-    expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
-    enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
-
-    blMethod->append(M("TP_LOCALLAB_BLUR"));
-    blMethod->append(M("TP_LOCALLAB_BLMED"));
-    blMethod->append(M("TP_LOCALLAB_BLGUID"));
-    blMethod->set_active(0);
-
-    if (showtooltip) {
-//        blMethod->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
-    }
-
-    blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blMethodChanged));
-
-
-    radius->setAdjusterListener(this);
-
-    strength->setAdjusterListener(this);
-
-    if (showtooltip) {
-        sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
-    }
-
-    sensibn->setAdjusterListener(this);
-
-    itera->setAdjusterListener(this);
-    guidbl->setAdjusterListener(this);
-    epsbl->setAdjusterListener(this);
-
-    setExpandAlignProperties(expmaskbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    expmaskbl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskbl));
-    expmaskbl->setLevel(2);
-
-    maskblCurveEditorG->setCurveListener(this);
-
-    CCmaskblshape = static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
-    CCmaskblshape->setIdentityValue(0.);
-    CCmaskblshape->setResetCurve(FlatCurveType(defSpot.CCmaskblcurve.at(0)), defSpot.CCmaskblcurve);
-
-    if (showtooltip) {
-        CCmaskblshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
-    CCmaskblshape->setBottomBarColorProvider(this, 7);
-
-    LLmaskblshape = static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
-    LLmaskblshape->setIdentityValue(0.);
-    LLmaskblshape->setResetCurve(FlatCurveType(defSpot.LLmaskblcurve.at(0)), defSpot.LLmaskblcurve);
-
-    if (showtooltip) {
-        LLmaskblshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
-    LLmaskblshape->setBottomBarBgGradient(mllshape);
-
-    HHmaskblshape = static_cast<FlatCurveEditor *>(maskblCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
-    HHmaskblshape->setIdentityValue(0.);
-    HHmaskblshape->setResetCurve(FlatCurveType(defSpot.HHmaskblcurve.at(0)), defSpot.HHmaskblcurve);
-
-    if (showtooltip) {
-        HHmaskblshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
-    }
-
-    HHmaskblshape->setCurveColorProvider(this, 6);
-    HHmaskblshape->setBottomBarColorProvider(this, 6);
-
-    maskblCurveEditorG->curveListComplete();
-    enablMaskConn = enablMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enablMaskChanged));
-
-    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
-    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
-    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
-    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskblMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
-
-
-    showmaskblMethod->set_active(0);
-
-    if (showtooltip) {
-        showmaskblMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
-    }
-
-    showmaskblMethodConn  = showmaskblMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskblMethodChanged));
-
-    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
-    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_5X5"));
-    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_7X7"));
-    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_9X9"));
-
-    medMethod->set_active(0);
-
-    if (showtooltip) {
-//        medMethod->set_tooltip_markup(M("TP_LOCALLAB_MEDMETHOD_TOOLTIP"));
-    }
-
-    medMethodConn = medMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::medMethodChanged));
-
-
-    blurMethod->append(M("TP_LOCALLAB_BLNORM"));
-    blurMethod->append(M("TP_LOCALLAB_BLINV"));
-    blurMethod->set_active(0);
-
-    if (showtooltip) {
-        blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
-    }
-
-    blurMethodConn = blurMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blurMethodChanged));
-
-    activlumConn  = activlum->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::activlumChanged));
-    blendmaskbl->setAdjusterListener(this);
-    radmaskbl->setAdjusterListener(this);
-    chromaskbl->setAdjusterListener(this);
-    gammaskbl->setAdjusterListener(this);
-    slomaskbl->setAdjusterListener(this);
-
-    ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
-    maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
-    maskblBox->pack_start(*enablMask, Gtk::PACK_SHRINK, 0);
-    maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
-    maskblBox->pack_start(*radmaskbl, Gtk::PACK_SHRINK, 0);
-    maskblBox->pack_start(*chromaskbl, Gtk::PACK_SHRINK, 0);
-    maskblBox->pack_start(*gammaskbl, Gtk::PACK_SHRINK, 0);
-    maskblBox->pack_start(*slomaskbl, Gtk::PACK_SHRINK, 0);
-    expmaskbl->add(*maskblBox, false);
-
-    ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
-    blurrBox->pack_start(*blMethod);
-    blurrBox->pack_start(*radius);
-    blurrBox->pack_start(*strength);
-    blurrBox->pack_start(*medMethod);
-    blurrBox->pack_start(*itera);
-    blurrBox->pack_start(*guidbl);
-    blurrBox->pack_start(*epsbl);
-    blurrBox->pack_start(*sensibn);
-    blurrBox->pack_start(*blurMethod);
-    blurrBox->pack_start(*activlum);
-    blurrBox->pack_start(*expmaskbl);
-    expblur->add(*blurrBox, false);
-    expblur->setLevel(2);
-
-    panel->pack_start(*expblur, false, false);
-
     // Tone Mapping
     Gtk::HBox* const TMTitleHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const TMLabel = Gtk::manage(new Gtk::Label());
@@ -1834,6 +1675,167 @@ Locallab::Locallab():
     expcbdl->setLevel(2);
 
     panel->pack_start(*expcbdl, false, false);
+
+    // Blur & Noise
+    Gtk::HBox* const BLTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const BLLabel = Gtk::manage(new Gtk::Label());
+    BLLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_BLUFR")) + Glib::ustring("</b>"));
+    BLLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    BLTitleHBox->pack_start(*BLLabel, Gtk::PACK_EXPAND_WIDGET, 0);
+    RTImage *BLImage = Gtk::manage(new RTImage("one-to-one-small.png"));
+
+    if (showtooltip) {
+        BLImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+    }
+
+    BLTitleHBox->pack_end(*BLImage, Gtk::PACK_SHRINK, 0);
+    expblur->setLabel(BLTitleHBox);
+
+    expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
+    enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
+
+    blMethod->append(M("TP_LOCALLAB_BLUR"));
+    blMethod->append(M("TP_LOCALLAB_BLMED"));
+    blMethod->append(M("TP_LOCALLAB_BLGUID"));
+    blMethod->set_active(0);
+
+    if (showtooltip) {
+//        blMethod->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
+    }
+
+    blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blMethodChanged));
+
+
+    radius->setAdjusterListener(this);
+
+    strength->setAdjusterListener(this);
+
+    if (showtooltip) {
+        sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+    }
+
+    sensibn->setAdjusterListener(this);
+
+    itera->setAdjusterListener(this);
+    guidbl->setAdjusterListener(this);
+    epsbl->setAdjusterListener(this);
+
+    setExpandAlignProperties(expmaskbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expmaskbl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskbl));
+    expmaskbl->setLevel(2);
+
+    maskblCurveEditorG->setCurveListener(this);
+
+    CCmaskblshape = static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false));
+    CCmaskblshape->setIdentityValue(0.);
+    CCmaskblshape->setResetCurve(FlatCurveType(defSpot.CCmaskblcurve.at(0)), defSpot.CCmaskblcurve);
+
+    if (showtooltip) {
+        CCmaskblshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    }
+
+    CCmaskblshape->setBottomBarColorProvider(this, 7);
+
+    LLmaskblshape = static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false));
+    LLmaskblshape->setIdentityValue(0.);
+    LLmaskblshape->setResetCurve(FlatCurveType(defSpot.LLmaskblcurve.at(0)), defSpot.LLmaskblcurve);
+
+    if (showtooltip) {
+        LLmaskblshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    }
+
+    LLmaskblshape->setBottomBarBgGradient(mllshape);
+
+    HHmaskblshape = static_cast<FlatCurveEditor *>(maskblCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true));
+    HHmaskblshape->setIdentityValue(0.);
+    HHmaskblshape->setResetCurve(FlatCurveType(defSpot.HHmaskblcurve.at(0)), defSpot.HHmaskblcurve);
+
+    if (showtooltip) {
+        HHmaskblshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    }
+
+    HHmaskblshape->setCurveColorProvider(this, 6);
+    HHmaskblshape->setBottomBarColorProvider(this, 6);
+
+    maskblCurveEditorG->curveListComplete();
+    enablMaskConn = enablMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enablMaskChanged));
+
+    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+    showmaskblMethod->append(M("TP_LOCALLAB_SHOWMASK"));
+    showmaskblMethod->append(M("TP_LOCALLAB_PREVIEWSEL"));
+
+
+    showmaskblMethod->set_active(0);
+
+    if (showtooltip) {
+        showmaskblMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+    }
+
+    showmaskblMethodConn  = showmaskblMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskblMethodChanged));
+
+    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
+    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_5X5"));
+    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_7X7"));
+    medMethod->append(M("TP_DIRPYRDENOISE_TYPE_9X9"));
+
+    medMethod->set_active(0);
+
+    if (showtooltip) {
+//        medMethod->set_tooltip_markup(M("TP_LOCALLAB_MEDMETHOD_TOOLTIP"));
+    }
+
+    medMethodConn = medMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::medMethodChanged));
+
+
+    blurMethod->append(M("TP_LOCALLAB_BLNORM"));
+    blurMethod->append(M("TP_LOCALLAB_BLINV"));
+    blurMethod->set_active(0);
+
+    if (showtooltip) {
+        blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
+    }
+
+    blurMethodConn = blurMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blurMethodChanged));
+
+    activlumConn  = activlum->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::activlumChanged));
+    blendmaskbl->setAdjusterListener(this);
+    radmaskbl->setAdjusterListener(this);
+    chromaskbl->setAdjusterListener(this);
+    gammaskbl->setAdjusterListener(this);
+    slomaskbl->setAdjusterListener(this);
+
+    ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
+    maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
+    maskblBox->pack_start(*enablMask, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*radmaskbl, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*chromaskbl, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*gammaskbl, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*slomaskbl, Gtk::PACK_SHRINK, 0);
+    expmaskbl->add(*maskblBox, false);
+    panel->pack_start(*expmaskbl);
+
+    ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
+    blurrBox->pack_start(*blMethod);
+    blurrBox->pack_start(*radius);
+    blurrBox->pack_start(*strength);
+    blurrBox->pack_start(*medMethod);
+    blurrBox->pack_start(*itera);
+    blurrBox->pack_start(*guidbl);
+    blurrBox->pack_start(*epsbl);
+    blurrBox->pack_start(*sensibn);
+    blurrBox->pack_start(*blurMethod);
+    blurrBox->pack_start(*activlum);
+//    blurrBox->pack_start(*expmaskbl);
+    expblur->add(*blurrBox, false);
+    expblur->setLevel(2);
+
+    panel->pack_start(*expblur, false, false);
+
+
 
     // Denoise
     Gtk::HBox* const denoiTitleHBox = Gtk::manage(new Gtk::HBox());
