@@ -103,7 +103,7 @@ public:
     void setBatchMode (bool batchMode) override;
 
     // EditSubscriber interface
-    CursorShape getCursor (int objectID) const;
+    CursorShape getCursor (int objectID) const override;
     bool mouseOver (int modifierKey) override;
     bool button1Pressed (int modifierKey) override;
     bool button1Released () override;
