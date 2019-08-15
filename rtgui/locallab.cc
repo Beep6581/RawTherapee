@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include "../rtengine/improcfun.h"
 #include "labgrid.h"
+#include "locallabtools.h"
 
 #define MINCHRO 0.
 #define MAXCHRO 150
@@ -391,6 +392,10 @@ Locallab::Locallab():
     float R, G, B;
 
     LocallabParams::LocallabSpot defSpot;
+
+    // Test
+    LocallabDenoise* const test = new LocallabDenoise();
+    panel->pack_start(*test->getExpander(), false, false);
 
     // Settings
     expsettings->getExpander()->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsettings->getExpander()));

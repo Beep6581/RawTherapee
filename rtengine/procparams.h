@@ -1178,6 +1178,12 @@ struct LocallabParams {
     static const double LABGRIDL_CORR_MAX;
     static const double LABGRIDL_CORR_SCALE;
     static const double LABGRIDL_DIRECT_SCALE;
+    static const std::vector<double> DEF_MASK_CURVE;
+    static const std::vector<double> DEF_COLOR_LCURVE;
+    static const std::vector<double> DEF_COLOR_HCURVE;
+    static const std::vector<double> DEF_EXP_CURVE;
+    static const std::vector<double> DEF_RET_CURVE;
+    static const std::vector<double> DEF_LC_CURVE;
     int nbspot;
     int selspot;
     std::vector<LocallabSpot> spots;
