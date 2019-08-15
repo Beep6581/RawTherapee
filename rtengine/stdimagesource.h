@@ -102,7 +102,7 @@ public:
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override { R = G = B = 0;}
 
     void        flushRGB          () override;
-    void captureSharpening(const procparams::SharpeningParams &sharpeningParams) override {};
+    void captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask) override {};
 };
 }
 #endif

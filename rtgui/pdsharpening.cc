@@ -19,6 +19,7 @@
 #include <cmath>
 #include "eventmapper.h"
 #include "pdsharpening.h"
+#include "options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -27,7 +28,6 @@ PdSharpening::PdSharpening () : FoldableToolPanel(this, "pdsharpening", M("TP_PD
 {
 
     auto m = ProcEventMapper::getInstance();
-    EvPdShrEnabled = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_ENABLED");
     EvPdShrContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_CONTRAST");
     EvPdSharpenGamma = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_GAMMA");
     EvPdShrDRadius = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_RADIUS");
@@ -35,7 +35,7 @@ PdSharpening::PdSharpening () : FoldableToolPanel(this, "pdsharpening", M("TP_PD
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
-    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 15));
+    contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 10));
     contrast->setAdjusterListener (this);
     pack_start(*contrast);
     contrast->show();
@@ -43,7 +43,7 @@ PdSharpening::PdSharpening () : FoldableToolPanel(this, "pdsharpening", M("TP_PD
     pack_start (*hb);
 
     rld = new Gtk::VBox ();
-    gamma = Gtk::manage (new Adjuster (M("TP_SHARPENING_GAMMA"), 0.5, 3.0, 0.05, 1.0));
+    gamma = Gtk::manage (new Adjuster (M("TP_SHARPENING_GAMMA"), 0.5, 3.0, 0.05, 1.35));
     dradius = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75));
     diter = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_ITERATIONS"), 5, 100, 1, 30));
     rld->pack_start (*gamma);
@@ -58,6 +58,19 @@ PdSharpening::PdSharpening () : FoldableToolPanel(this, "pdsharpening", M("TP_PD
     dradius->setAdjusterListener (this);
     gamma->setAdjusterListener (this);
     diter->setAdjusterListener (this);
+
+    if (contrast->delay < options.adjusterMaxDelay) {
+        contrast->delay = options.adjusterMaxDelay;
+    }
+    if (dradius->delay < options.adjusterMaxDelay) {
+        dradius->delay = options.adjusterMaxDelay;
+    }
+    if (gamma->delay < options.adjusterMaxDelay) {
+        gamma->delay = options.adjusterMaxDelay;
+    }
+    if (diter->delay < options.adjusterMaxDelay) {
+        diter->delay = options.adjusterMaxDelay;
+    }
 
     rld->reference();
 }

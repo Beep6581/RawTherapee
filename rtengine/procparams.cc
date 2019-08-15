@@ -2790,9 +2790,9 @@ void ProcParams::setDefaults()
     prsharpening.deconvdamping = 0;
 
     pdsharpening = {};
-    pdsharpening.contrast = 0.0;
+    pdsharpening.contrast = 10.0;
     prsharpening.method = "rld";
-    pdsharpening.gamma = 1.0;
+    pdsharpening.gamma = 1.35;
     pdsharpening.deconvradius = 0.75;
     pdsharpening.deconviter = 30;
 

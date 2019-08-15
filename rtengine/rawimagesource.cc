@@ -38,6 +38,7 @@
 #include "camconst.h"
 #include "procparams.h"
 #include "color.h"
+#include "rt_algo.h"
 #define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
@@ -4952,26 +4953,65 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
     }
 }
 
-void RawImageSource::captureSharpening(const procparams::SharpeningParams &sharpeningParams) {
+void RawImageSource::captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask) {
 BENCHFUN
 
-    array2D<float> Y(W,H);
-    array2D<float> Cb(W,H);
-    array2D<float> Cr(W,H);
+    const float xyz_rgb[3][3] = {          // XYZ from RGB
+                                    { 0.412453, 0.357580, 0.180423 },
+                                    { 0.212671, 0.715160, 0.072169 },
+                                    { 0.019334, 0.119193, 0.950227 }
+                                };
+
+    float contrast = sharpeningParams.contrast / 100.f;
+
+    if (showMask) {
+        StopWatch Stop1("Show mask");
+        array2D<float>& L = blue; // blue will be overridden anyway => we can use its buffer to store L
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int i = 0; i < H; ++i) {
+            Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
+        }
+        array2D<float>& blend = red; // red will be overridden anyway => we can use its buffer to store the blend mask
+        buildBlendMask(L, blend, W, H, contrast, 1.f);
+
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                red[i][j] = green[i][j] = blue[i][j] = blend[i][j] * 16384.f;
+            }
+        }
+        return;
+    }
+
+    array2D<float> L(W,H);
+    array2D<float>& Y = red; // red will be overridden anyway => we can use its buffer to store Y
+    array2D<float>& Cb = green; // green will be overridden anyway => we can use its buffer to store Cb
+    array2D<float>& Cr = blue; // blue will be overridden anyway => we can use its buffer to store Cr
     const float gamma = sharpeningParams.gamma;
+
     StopWatch Stop1("rgb2Y");
     #pragma omp parallel for
     for (int i = 0; i < H; ++i) {
-        for (int j = 0; j < W ; ++j) {
+        Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
+        for (int j = 0; j < W; ++j) {
             Color::RGB2YCbCr(std::max(red[i][j], 0.f), std::max(green[i][j], 0.f), std::max(blue[i][j], 0.f), Y[i][j], Cb[i][j], Cr[i][j]);
             Y[i][j] = pow_F(Y[i][j], 1.f / gamma);
         }
     }
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+    JaggedArray<float> blend(W, H);
+    buildBlendMask(L, blend, W, H, contrast, 1.f);
+
     Stop1.stop();
-    array2D<float> tmp(W, H);
+    array2D<float>& tmp = L; // L is not used anymore now => we can use its buffer as the needed temporary buffer
     ProcParams dummy;
     ImProcFunctions ipf(&dummy);
-    ipf.deconvsharpening(Y, tmp, W, H, sharpeningParams, 1.0);
+    ipf.deconvsharpening(Y, tmp, blend, W, H, sharpeningParams, 1.0);
     StopWatch Stop2("Y2RGB");
     #pragma omp parallel for
     for (int i = 0; i < H; ++i) {
@@ -4982,6 +5022,7 @@ BENCHFUN
     }
     Stop2.stop();
 }
+
 void RawImageSource::cleanup ()
 {
     delete phaseOneIccCurve;

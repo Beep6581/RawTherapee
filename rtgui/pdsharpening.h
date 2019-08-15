@@ -33,7 +33,6 @@ protected:
     Adjuster* diter;
     Gtk::VBox* rld;
 
-    rtengine::ProcEvent EvPdShrEnabled;
     rtengine::ProcEvent EvPdShrContrast;
     rtengine::ProcEvent EvPdShrDRadius;
     rtengine::ProcEvent EvPdSharpenGamma;

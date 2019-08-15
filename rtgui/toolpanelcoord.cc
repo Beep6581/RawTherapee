@@ -695,8 +695,7 @@ void ToolPanelCoordinator::sharpMaskSelected(bool sharpMask)
         return;
     }
     ipc->beginUpdateParams ();
-    ipc->setSharpMask(sharpMask);
-    ipc->endUpdateParams (rtengine::EvShrEnabled);
+    ipc->endUpdateParams (ipc->setSharpMask(sharpMask));
 }
 
 int ToolPanelCoordinator::getSpotWBRectSize() const

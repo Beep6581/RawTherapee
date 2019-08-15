@@ -53,6 +53,7 @@ ImProcCoordinator::ImProcCoordinator() :
     softProof(false),
     gamutCheck(false),
     sharpMask(false),
+    sharpMaskChanged(false),
     scale(10),
     highDetailPreprocessComputed(false),
     highDetailRawComputed(false),
@@ -333,7 +334,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
 
             if (params->pdsharpening.enabled) {
-                imgsrc->captureSharpening(params->pdsharpening);
+                imgsrc->captureSharpening(params->pdsharpening, sharpMask);
             }
             if (imgsrc->getSensorType() == ST_BAYER && bayerAutoContrastListener && autoContrast) {
                 bayerAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
@@ -1347,9 +1348,16 @@ void ImProcCoordinator::getSoftProofing(bool &softProof, bool &gamutCheck)
     gamutCheck = this->gamutCheck;
 }
 
-void ImProcCoordinator::setSharpMask (bool sharpMask)
+ProcEvent ImProcCoordinator::setSharpMask (bool sharpMask)
 {
-    this->sharpMask = sharpMask;
+    if (this->sharpMask != sharpMask) {
+        sharpMaskChanged = true;
+        this->sharpMask = sharpMask;
+        return params->pdsharpening.enabled ? rtengine::EvPdShrEnabled : rtengine::EvShrEnabled;
+    } else {
+        sharpMaskChanged = false;
+        return rtengine::EvShrEnabled;
+    }
 }
 
 void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool apply_wb)
@@ -1550,8 +1558,10 @@ void ImProcCoordinator::process()
             || params->wavelet != nextParams->wavelet
             || params->dirpyrequalizer != nextParams->dirpyrequalizer
             || params->dehaze != nextParams->dehaze
-            || params->pdsharpening != nextParams->pdsharpening;
+            || params->pdsharpening != nextParams->pdsharpening
+            || sharpMaskChanged;
 
+        sharpMaskChanged = false;
         *params = *nextParams;
         int change = changeSinceLast;
         changeSinceLast = 0;

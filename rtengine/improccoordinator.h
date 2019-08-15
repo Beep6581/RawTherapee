@@ -77,7 +77,7 @@ protected:
     bool softProof;
     bool gamutCheck;
     bool sharpMask;
-
+    bool sharpMaskChanged;
     int scale;
     bool highDetailPreprocessComputed;
     bool highDetailRawComputed;
@@ -277,7 +277,7 @@ public:
     void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const override;
     void setSoftProofing   (bool softProof, bool gamutCheck) override;
     void getSoftProofing   (bool &softProof, bool &gamutCheck) override;
-    void setSharpMask      (bool sharpMask) override;
+    ProcEvent setSharpMask (bool sharpMask) override;
     bool updateTryLock () override
     {
         return updaterThreadStart.trylock();
