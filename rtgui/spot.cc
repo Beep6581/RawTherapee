@@ -117,6 +117,8 @@ void Spot::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     setEnabled (pp->spot.enabled);
     lastEnabled = pp->spot.enabled;
+    activeSpot = -1;
+    lastObject = -1;
 
     if (spots.size() != oldSize) {
         createGeometry();
@@ -430,12 +432,12 @@ void Spot::deleteSelectedEntry()
 }
 
 // TODO
-CursorShape Spot::getCursor (const int objectID)
+CursorShape Spot::getCursor (int objectID)
 {
     return CSHandOpen;
 }
 
-bool Spot::mouseOver (const int modifierKey)
+bool Spot::mouseOver (int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
@@ -485,7 +487,7 @@ bool Spot::mouseOver (const int modifierKey)
 }
 
 // Create a new Target and Source point or start the drag of a Target point under the cursor
-bool Spot::button1Pressed (const int modifierKey)
+bool Spot::button1Pressed (int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
@@ -521,7 +523,7 @@ bool Spot::button1Released()
 }
 
 // Delete a point
-bool Spot::button2Pressed (const int modifierKey)
+bool Spot::button2Pressed (int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
@@ -537,7 +539,7 @@ bool Spot::button2Pressed (const int modifierKey)
 }
 
 // Create a new Target and Source point or start the drag of a Target point under the cursor
-bool Spot::button3Pressed (const int modifierKey)
+bool Spot::button3Pressed (int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
@@ -575,7 +577,7 @@ bool Spot::button3Released()
     return false;
 }
 
-bool Spot::drag1 (const int modifierKey)
+bool Spot::drag1 (int modifierKey)
 {
     EditDataProvider *editProvider = getEditProvider();
     int imW, imH;
@@ -656,7 +658,7 @@ bool Spot::drag1 (const int modifierKey)
     return modified;
 }
 
-bool Spot::drag3 (const int modifierKey)
+bool Spot::drag3 (int modifierKey)
 {
     EditDataProvider *editProvider = getEditProvider();
     int imW, imH;
@@ -683,12 +685,12 @@ bool Spot::drag3 (const int modifierKey)
     return modified;
 }
 
-bool Spot::pick2 (const bool picked)
+bool Spot::pick2 (bool picked)
 {
     return pick3 (picked);
 }
 
-bool Spot::pick3 (const bool picked)
+bool Spot::pick3 (bool picked)
 {
     EditDataProvider* editProvider = getEditProvider();
 

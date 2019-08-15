@@ -188,8 +188,6 @@ protected:
     void updateLRGBHistograms ();
     void setScale (int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
-    void setTweakOperator (TweakOperator *tOperator);
-    void unsetTweakOperator (TweakOperator *tOperator);
 
     MyMutex mProcessing;
     const std::unique_ptr<ProcParams> params;  // used for the rendering, can be eventually tweaked
@@ -275,6 +273,8 @@ public:
 
     DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) override;
 
+    void setTweakOperator (TweakOperator *tOperator) override;
+    void unsetTweakOperator (TweakOperator *tOperator) override;
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;

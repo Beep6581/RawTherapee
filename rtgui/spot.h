@@ -53,7 +53,7 @@
  * (the point will be deleted on button release).
  */
 
-class Spot : public ToolParamBlock, public FoldableToolPanel, public EditSubscriber, public rtengine::TweakOperator
+class Spot : public ToolParamBlock, public FoldableToolPanel, public rtengine::TweakOperator, public EditSubscriber
 {
 
 private:
@@ -93,31 +93,31 @@ public:
     Spot ();
     ~Spot ();
 
-    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
 
-    void enabledChanged ();
+    void enabledChanged () override;
 
-    void setEditProvider (EditDataProvider* provider);
+    void setEditProvider (EditDataProvider* provider) override;
 
-    void setBatchMode (bool batchMode);
+    void setBatchMode (bool batchMode) override;
 
     // EditSubscriber interface
-    CursorShape getCursor (const int objectID);
-    bool mouseOver (const int modifierKey);
-    bool button1Pressed (const int modifierKey);
-    bool button1Released ();
-    bool button2Pressed (const int modifierKey);
-    bool button3Pressed (const int modifierKey);
-    bool button3Released ();
-    bool drag1 (const int modifierKey);
-    bool drag3 (const int modifierKey);
-    bool pick2 (const bool picked);
-    bool pick3 (const bool picked);
-    void switchOffEditMode ();
+    CursorShape getCursor (int objectID);
+    bool mouseOver (int modifierKey) override;
+    bool button1Pressed (int modifierKey) override;
+    bool button1Released () override;
+    bool button2Pressed (int modifierKey) override;
+    bool button3Pressed (int modifierKey) override;
+    bool button3Released () override;
+    bool drag1 (int modifierKey) override;
+    bool drag3 (int modifierKey) override;
+    bool pick2 (bool picked) override;
+    bool pick3 (bool picked) override;
+    void switchOffEditMode () override;
 
     //TweakOperator interface
-    void tweakParams(rtengine::procparams::ProcParams& pparams) override;
+    void tweakParams(rtengine::procparams::ProcParams& pparams);
 
     rtengine::ProcEvent EvSpotEnabled;
     rtengine::ProcEvent EvSpotEnabledOPA; // used to toggle-on the Spot 'On Preview Adjustment' mode

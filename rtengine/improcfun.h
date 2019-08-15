@@ -42,8 +42,8 @@ namespace procparams
 {
 
 class ProcParams;
-class SpotEntry;
 
+struct SpotEntry;
 struct DirPyrDenoiseParams;
 struct SharpeningParams;
 struct VignettingParams;
