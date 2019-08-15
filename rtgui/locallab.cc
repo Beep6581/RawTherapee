@@ -7623,6 +7623,15 @@ void Locallab::updateSpecificGUIState()
         pdeFrame->show();
     }
 
+    if (softMethod->get_active_row_number() == 0) {
+        laplace->hide();
+        ctboxsoftmethod->hide();
+    } else if (softMethod->get_active_row_number() == 1) {
+        laplace->show();
+        ctboxsoftmethod->show();
+    }
+
+
     if (blMethod->get_active_row_number() == 0) {
         radius->show();
         strength->show();
@@ -7649,7 +7658,7 @@ void Locallab::updateSpecificGUIState()
         activlum->hide();
     }
 
-    // Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
+// Update Retinex GUI according to inversret button state (to be compliant with inversretChanged function)
     if (multiImage && inversret->get_inconsistent()) {
         sensih->show();
         softradiusret->show();
@@ -7682,7 +7691,7 @@ void Locallab::updateSpecificGUIState()
         fftwlc->hide();
     }
 
-    // Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)
+// Update Sharpening GUI according to inverssha button state (to be compliant with inversshaChanged function)
     sensisha->show();
 }
 
