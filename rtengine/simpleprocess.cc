@@ -785,7 +785,7 @@ private:
 
         // Spot Removal
         if (params.spot.enabled && !params.spot.entries.empty ()) {
-            ipf.removeSpots (baseImg, imgsrc, params.spot.entries, pp, currWB, tr);
+            ipf.removeSpots (baseImg, imgsrc, params.spot.entries, pp, currWB, nullptr, tr);
         }
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
