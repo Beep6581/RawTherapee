@@ -4998,10 +4998,7 @@ BENCHFUN
     #pragma omp parallel for
     for (int i = 0; i < H; ++i) {
         Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
-        for (int j = 0; j < W; ++j) {
-            Color::RGB2YCbCr(std::max(red[i][j], 0.f), std::max(green[i][j], 0.f), std::max(blue[i][j], 0.f), Y[i][j], Cb[i][j], Cr[i][j]);
-            Y[i][j] = pow_F(Y[i][j], 1.f / gamma);
-        }
+        Color::RGB2YCbCr(red[i], green[i], blue[i], Y[i], Cb[i], Cr[i], gamma, W);
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
@@ -5015,10 +5012,7 @@ BENCHFUN
     StopWatch Stop2("Y2RGB");
     #pragma omp parallel for
     for (int i = 0; i < H; ++i) {
-        for (int j = 0; j < W ; ++j) {
-            Y[i][j] = pow_F(Y[i][j], gamma);
-            Color::YCbCr2RGB(Y[i][j], Cb[i][j], Cr[i][j], red[i][j], green[i][j], blue[i][j]);
-        }
+        Color::YCbCr2RGB(Y[i], Cb[i], Cr[i], red[i], green[i], blue[i], gamma, W);
     }
     Stop2.stop();
 }
