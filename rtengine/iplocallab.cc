@@ -5584,248 +5584,251 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
-            // const int GW = transformed->W;
-            //const int GH = transformed->H;
-            JaggedArray<float> bufchroi(GW, GH);
-            std::unique_ptr<LabImage> bufgbi(new LabImage(GW, GH));
-            JaggedArray<float> bufchro(bfw, bfh);
 
-            //here mask is used with plein image for normal and inverse
-            //if it is possible to optimze with maskcalccol(), I don't to preserv lisibility
-            if (lp.showmaskblmet == 0 || lp.showmaskblmet == 1  || lp.showmaskblmet == 2 || lp.showmaskblmet == 4 || lp.enablMask) {
+            if (bfw > 1 && bfh > 1) {
 
-                if (lp.blurmet == 0) {
-                    if (bfw > 0 && bfh > 0) {
-                        tmp1.reset(new LabImage(bfw, bfh));
+                // const int GW = transformed->W;
+                //const int GH = transformed->H;
+                JaggedArray<float> bufchroi(GW, GH);
+                std::unique_ptr<LabImage> bufgbi(new LabImage(GW, GH));
+                JaggedArray<float> bufchro(bfw, bfh);
+
+                //printf("bfw=%i  bfh=%i\n", bfw, bfh);
+                //here mask is used with plein image for normal and inverse
+                //if it is possible to optimze with maskcalccol(), I don't to preserv lisibility
+                if (lp.showmaskblmet == 0 || lp.showmaskblmet == 1  || lp.showmaskblmet == 2 || lp.showmaskblmet == 4 || lp.enablMask) {
+
+                    if (lp.blurmet == 0) {
+                        if (bfw > 0 && bfh > 0) {
+                            tmp1.reset(new LabImage(bfw, bfh));
 #ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                        for (int y = ystart; y < yend ; y++) {
-                            for (int x = xstart; x < xend; x++) {
-                                tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                                tmp1->a[y - ystart][x - xstart] = original->a[y][x];
-                                tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                            for (int y = ystart; y < yend ; y++) {
+                                for (int x = xstart; x < xend; x++) {
+                                    tmp1->L[y - ystart][x - xstart] = original->L[y][x];
+                                    tmp1->a[y - ystart][x - xstart] = original->a[y][x];
+                                    tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                                }
                             }
                         }
-
-                    }
-                } else if (lp.blurmet == 1) {
-                    tmp1.reset(new LabImage(transformed->W, transformed->H));
-                    tmp2.reset(new LabImage(transformed->W, transformed->H));
-
-                    for (int y = 0; y < GH ; y++) {
-                        for (int x = 0; x < GW; x++) {
-                            tmp2->L[y][x] = original->L[y][x];
-                            tmp2->a[y][x] = original->a[y][x];
-                            tmp2->b[y][x] = original->b[y][x];
-                            bufgbi->L[y][x] = original->L[y][x];
-                            bufgbi->a[y][x] = original->a[y][x];
-                            bufgbi->b[y][x] = original->b[y][x];
-                        }
-                    }
-
-                }
-
-
-                if (lp.blurmet == 0  && lp.blmet == 0) {
-#ifdef _OPENMP
-                    #pragma omp parallel
-#endif
-
-                    {
-                        gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-                        gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                        gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
-                    }
-
-                } else if (lp.blurmet == 1  && lp.blmet == 0) {
-
-#ifdef _OPENMP
-                    #pragma omp parallel
-#endif
-                    {
-                        gaussianBlur(original->L, tmp1->L, GW, GH, radius);
-                        gaussianBlur(original->a, tmp1->a, GW, GH, radius);
-                        gaussianBlur(original->b, tmp1->b, GW, GH, radius);
-                    }
-                }
-
-
-
-                if (tmp1.get() && lp.stren > 0.1f  && lp.blmet == 0) {
-                    float mean = 0.f;//0 best result
-                    float variance = lp.stren ;
-                    addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
-                }
-
-                Median medianTypeL = Median::TYPE_3X3_STRONG;
-                Median medianTypeAB = Median::TYPE_3X3_STRONG;
-
-                if (lp.medmet == 0) {
-                    medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
-                } else if (lp.medmet == 1) {
-                    medianTypeL = medianTypeAB = Median::TYPE_5X5_STRONG;
-                } else if (lp.medmet == 2) {
-                    medianTypeL = medianTypeAB = Median::TYPE_7X7;
-                } else if (lp.medmet == 3) {
-                    medianTypeL = medianTypeAB = Median::TYPE_9X9;
-                }
-
-                if (lp.blurmet == 0  && lp.blmet == 1) {
-                    float** tmL;
-                    int wid = bfw;
-                    int hei = bfh;
-                    tmL = new float*[hei];
-
-                    for (int i = 0; i < hei; ++i) {
-                        tmL[i] = new float[wid];
-                    }
-
-                    Median_Denoise(tmp1->L, tmp1->L, bfw, bfh, medianTypeL, lp.it, multiThread, tmL);
-
-                    if (!lp.actsp) {
-                        Median_Denoise(tmp1->a, tmp1->a, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
-                        Median_Denoise(tmp1->b, tmp1->b, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
-                    }
-
-                    for (int i = 0; i < hei; ++i) {
-                        delete[] tmL[i];
-                    }
-
-                    delete[] tmL;
-
-                } else if (lp.blurmet == 1  && lp.blmet == 1) {
-                    float** tmL;
-                    int wid = GW;
-                    int hei = GH;
-                    tmL = new float*[hei];
-
-                    for (int i = 0; i < hei; ++i) {
-                        tmL[i] = new float[wid];
-                    }
-
-                    Median_Denoise(tmp2->L, tmp1->L, GW, GH, medianTypeL, lp.it, multiThread, tmL);
-
-                    if (!lp.actsp) {
-                        Median_Denoise(tmp2->a, tmp1->a, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
-                        Median_Denoise(tmp2->b, tmp1->b, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
-                    }
-
-                    for (int i = 0; i < hei; ++i) {
-                        delete[] tmL[i];
-                    }
-
-                    delete[] tmL;
-                }
-
-                if (lp.blurmet == 0  && lp.blmet == 2) {
-                    if (lp.guidb > 1) {
-                        lp.actsp = true;
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int y = ystart; y < yend ; y++) {
-                            for (int x = xstart; x < xend; x++) {
-                                tmp1->L[y - ystart][x - xstart] = original->L[y][x];
-                                bufgb->L[y - ystart][x - xstart] = original->L[y][x];
-                            }
-                        }
-
-                        double thresM = 0.05 * lp.epsb;
-                        double thresm = 0.01 * lp.epsb;
-                        softproc(bufgb.get(), tmp1.get(), 3.f * lp.guidb, bfh, bfw, thresM, thresm, 0.0001f, sk, multiThread);
-                    }
-
-                } else if (lp.blurmet == 1  && lp.blmet == 2) {
-                    if (lp.guidb > 1) {
-                        lp.actsp = true;
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
+                    } else if (lp.blurmet == 1) {
+                        tmp1.reset(new LabImage(transformed->W, transformed->H));
+                        tmp2.reset(new LabImage(transformed->W, transformed->H));
 
                         for (int y = 0; y < GH ; y++) {
-                            for (int x = 0; x < GH; x++) {
-                                tmp1->L[y][x] = original->L[y][x];
+                            for (int x = 0; x < GW; x++) {
                                 tmp2->L[y][x] = original->L[y][x];
+                                tmp2->a[y][x] = original->a[y][x];
+                                tmp2->b[y][x] = original->b[y][x];
+                                bufgbi->L[y][x] = original->L[y][x];
+                                bufgbi->a[y][x] = original->a[y][x];
+                                bufgbi->b[y][x] = original->b[y][x];
                             }
                         }
 
-                        double thresM = 0.05 * lp.epsb;
-                        double thresm = 0.01 * lp.epsb;
-                        softproc(tmp2.get(), tmp1.get(), 3.f * lp.guidb, GH, GW, thresM, thresm, 0.0001f, sk, multiThread);
                     }
 
-                }
 
-                if (lp.blurmet == 0) {
-                    float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
-                    float maxC = minC;
+                    if (lp.blurmet == 0  && lp.blmet == 0) {
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
+                        #pragma omp parallel
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
-                            minC = rtengine::min(minC, bufchro[ir][jr]);
-                            maxC = rtengine::max(maxC, bufchro[ir][jr]);
+                        {
+                            gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                            gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                            gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                        }
+
+                    } else if (lp.blurmet == 1  && lp.blmet == 0) {
+
+#ifdef _OPENMP
+                        #pragma omp parallel
+#endif
+                        {
+                            gaussianBlur(original->L, tmp1->L, GW, GH, radius);
+                            gaussianBlur(original->a, tmp1->a, GW, GH, radius);
+                            gaussianBlur(original->b, tmp1->b, GW, GH, radius);
                         }
                     }
 
-                    float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+
+
+                    if (tmp1.get() && lp.stren > 0.1f  && lp.blmet == 0) {
+                        float mean = 0.f;//0 best result
+                        float variance = lp.stren ;
+                        addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
+                    }
+
+                    Median medianTypeL = Median::TYPE_3X3_STRONG;
+                    Median medianTypeAB = Median::TYPE_3X3_STRONG;
+
+                    if (lp.medmet == 0) {
+                        medianTypeL = medianTypeAB = Median::TYPE_3X3_STRONG;
+                    } else if (lp.medmet == 1) {
+                        medianTypeL = medianTypeAB = Median::TYPE_5X5_STRONG;
+                    } else if (lp.medmet == 2) {
+                        medianTypeL = medianTypeAB = Median::TYPE_7X7;
+                    } else if (lp.medmet == 3) {
+                        medianTypeL = medianTypeAB = Median::TYPE_9X9;
+                    }
+
+                    if (lp.blurmet == 0  && lp.blmet == 1) {
+                        float** tmL;
+                        int wid = bfw;
+                        int hei = bfh;
+                        tmL = new float*[hei];
+
+                        for (int i = 0; i < hei; ++i) {
+                            tmL[i] = new float[wid];
+                        }
+
+                        Median_Denoise(tmp1->L, tmp1->L, bfw, bfh, medianTypeL, lp.it, multiThread, tmL);
+
+                        if (!lp.actsp) {
+                            Median_Denoise(tmp1->a, tmp1->a, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
+                            Median_Denoise(tmp1->b, tmp1->b, bfw, bfh, medianTypeAB, lp.it, multiThread, tmL);
+                        }
+
+                        for (int i = 0; i < hei; ++i) {
+                            delete[] tmL[i];
+                        }
+
+                        delete[] tmL;
+
+                    } else if (lp.blurmet == 1  && lp.blmet == 1) {
+                        float** tmL;
+                        int wid = GW;
+                        int hei = GH;
+                        tmL = new float*[hei];
+
+                        for (int i = 0; i < hei; ++i) {
+                            tmL[i] = new float[wid];
+                        }
+
+                        Median_Denoise(tmp2->L, tmp1->L, GW, GH, medianTypeL, lp.it, multiThread, tmL);
+
+                        if (!lp.actsp) {
+                            Median_Denoise(tmp2->a, tmp1->a, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
+                            Median_Denoise(tmp2->b, tmp1->b, GW, GH, medianTypeAB, lp.it, multiThread, tmL);
+                        }
+
+                        for (int i = 0; i < hei; ++i) {
+                            delete[] tmL[i];
+                        }
+
+                        delete[] tmL;
+                    }
+
+                    if (lp.blurmet == 0  && lp.blmet == 2) {
+                        if (lp.guidb > 1) {
+                            lp.actsp = true;
 #ifdef _OPENMP
-                    #pragma omp parallel for
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = 0; y < bfh; y++) {
-                        for (int x = 0; x < bfw; x++) {
-                            bufchro[y][x] /= coefC;
-                        }
-                    }
+                            for (int y = ystart; y < yend ; y++) {
+                                for (int x = xstart; x < xend; x++) {
+                                    tmp1->L[y - ystart][x - xstart] = original->L[y][x];
+                                    bufgb->L[y - ystart][x - xstart] = original->L[y][x];
+                                }
+                            }
 
-                } else if (lp.blurmet == 1) {
-                    float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgbi->a[0][0]) + SQR(bufgbi->b[0][0]));
-                    float maxC = minC;
+                            double thresM = 0.05 * lp.epsb;
+                            double thresm = 0.01 * lp.epsb;
+                            softproc(bufgb.get(), tmp1.get(), 3.f * lp.guidb, bfh, bfw, thresM, thresm, 0.0001f, sk, multiThread);
+                        }
+
+                    } else if (lp.blurmet == 1  && lp.blmet == 2) {
+                        if (lp.guidb > 1) {
+                            lp.actsp = true;
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
+                            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < GH; ir++) {
-                        for (int jr = 0; jr < GW; jr++) {
-                            bufchroi[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgbi->a[ir][jr]) + SQR(bufgbi->b[ir][jr]));
-                            minC = rtengine::min(minC, bufchroi[ir][jr]);
-                            maxC = rtengine::max(maxC, bufchroi[ir][jr]);
+                            for (int y = 0; y < GH ; y++) {
+                                for (int x = 0; x < GH; x++) {
+                                    tmp1->L[y][x] = original->L[y][x];
+                                    tmp2->L[y][x] = original->L[y][x];
+                                }
+                            }
+
+                            double thresM = 0.05 * lp.epsb;
+                            double thresm = 0.01 * lp.epsb;
+                            softproc(tmp2.get(), tmp1.get(), 3.f * lp.guidb, GH, GW, thresM, thresm, 0.0001f, sk, multiThread);
                         }
+
                     }
 
-                    float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+                    if (lp.blurmet == 0) {
+                        float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
+                        float maxC = minC;
 #ifdef _OPENMP
-                    #pragma omp parallel for
+                        #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
 #endif
 
-                    for (int y = 0; y < GH; y++) {
-                        for (int x = 0; x < GW; x++) {
-                            bufchroi[y][x] /= coefC;
+                        for (int ir = 0; ir < bfh; ir++) {
+                            for (int jr = 0; jr < bfw; jr++) {
+                                bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
+                                minC = rtengine::min(minC, bufchro[ir][jr]);
+                                maxC = rtengine::max(maxC, bufchro[ir][jr]);
+                            }
                         }
+
+                        float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int y = 0; y < bfh; y++) {
+                            for (int x = 0; x < bfw; x++) {
+                                bufchro[y][x] /= coefC;
+                            }
+                        }
+
+                    } else if (lp.blurmet == 1) {
+                        float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgbi->a[0][0]) + SQR(bufgbi->b[0][0]));
+                        float maxC = minC;
+#ifdef _OPENMP
+                        #pragma omp parallel for reduction(max:maxC) reduction(min:minC) schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < GH; ir++) {
+                            for (int jr = 0; jr < GW; jr++) {
+                                bufchroi[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgbi->a[ir][jr]) + SQR(bufgbi->b[ir][jr]));
+                                minC = rtengine::min(minC, bufchroi[ir][jr]);
+                                maxC = rtengine::max(maxC, bufchroi[ir][jr]);
+                            }
+                        }
+
+                        float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int y = 0; y < GH; y++) {
+                            for (int x = 0; x < GW; x++) {
+                                bufchroi[y][x] /= coefC;
+                            }
+                        }
+
                     }
 
-                }
+                    if (lp.blurmet == 0) { //blur and noise (center)
 
-                if (lp.blurmet == 0) { //blur and noise (center)
-
-                    if (tmp1.get()) {
-                        BlurNoise_Local(tmp1.get(), originalmaskbl.get(), bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-                    }
-                } else if (lp.blurmet == 1) {
-                    if (tmp1.get()) {
-                        InverseBlurNoise_Local(originalmaskbl.get(), bufchroi, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                        if (tmp1.get()) {
+                            BlurNoise_Local(tmp1.get(), originalmaskbl.get(), bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                        }
+                    } else if (lp.blurmet == 1) {
+                        if (tmp1.get()) {
+                            InverseBlurNoise_Local(originalmaskbl.get(), bufchroi, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                        }
                     }
                 }
             }
         }
-
 
         //local impulse
         if ((lp.bilat > 0.f) && lp.denoiena) {
