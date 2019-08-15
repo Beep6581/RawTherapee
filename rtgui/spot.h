@@ -103,7 +103,7 @@ public:
     void setBatchMode (bool batchMode) override;
 
     // EditSubscriber interface
-    CursorShape getCursor (int objectID);
+    CursorShape getCursor (int objectID) const;
     bool mouseOver (int modifierKey) override;
     bool button1Pressed (int modifierKey) override;
     bool button1Released () override;
@@ -117,7 +117,7 @@ public:
     void switchOffEditMode () override;
 
     //TweakOperator interface
-    void tweakParams(rtengine::procparams::ProcParams& pparams);
+    void tweakParams(rtengine::procparams::ProcParams& pparams) override;
 
     rtengine::ProcEvent EvSpotEnabled;
     rtengine::ProcEvent EvSpotEnabledOPA; // used to toggle-on the Spot 'On Preview Adjustment' mode

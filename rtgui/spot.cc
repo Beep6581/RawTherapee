@@ -432,7 +432,7 @@ void Spot::deleteSelectedEntry()
 }
 
 // TODO
-CursorShape Spot::getCursor (int objectID)
+CursorShape Spot::getCursor (int objectID) const
 {
     return CSHandOpen;
 }

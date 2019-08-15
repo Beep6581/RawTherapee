@@ -106,17 +106,8 @@ public:
                 return *this;
             }
 
-            /*
-            float fv = float(v);
-            x1 = int(float(x1) / fv + 0.5f);
-            y1 = int(float(y1) / fv + 0.5f);
-            x2 = int(float(x2) / fv + 0.5f);
-            y2 = int(float(y2) / fv + 0.5f);
-            */
-
-            // Aletrnate rounding possibility
             int w = x2 - x1 + 1;
-            int h = x2 - x1 + 1;
+            int h = y2 - y1 + 1;
             w = w / v + (w % v > 0);
             h = h / v + (h % v > 0);
             x1 /= v;
@@ -188,7 +179,7 @@ public:
         }
         spotArea /= v;
         imgArea /= v;
-        radius = radius / float(v);
+        radius /= float(v);
         featherRadius = getWidth() / 2.f;
         // intersectionArea doesn't need resize, because it's set after resizing
         return *this;
