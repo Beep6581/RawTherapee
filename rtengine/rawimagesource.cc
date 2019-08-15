@@ -4931,9 +4931,7 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     } else if (rotate == 270) {
         std::swap(xnew,ynew);
-        ynew = H - 1 - ynew;
         xnew = W - 1 - xnew;
-        ynew = H - 1 - ynew;
     }
 
     xnew = LIM(xnew, 0, W - 1);
