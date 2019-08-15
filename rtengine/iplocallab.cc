@@ -7476,93 +7476,95 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
-            //   printf("n_fftw=%i yst=%i yen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i \n", N_fftwsize,  ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, original->H);
-            //   printf("xst= %i xen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
-            if (lp.softmet == 1) {
-                /*
-                                for (int n=0; n< 17; n++){
-                                    for(int m=0; m < 11; m++) {
-                                        for(int l=0; l < 8; l++) {
-                                            for(int p=0; p < 6; p++) {
-                                                for (int r=0; r < 2; r++){
-                                                    int bon = pow(2, n) * pow(3, m) * pow(5, l) * pow(7, p) * pow(13, r);
-                                                    if(bon >= 18000  && bon < 18200) printf("b=%i", bon);
+            if (bfw > 0 && bfh > 0) {
+
+                //   printf("n_fftw=%i yst=%i yen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i \n", N_fftwsize,  ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, original->H);
+                //   printf("xst= %i xen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
+                if (lp.softmet == 1) {
+                    /*
+                                    for (int n=0; n< 17; n++){
+                                        for(int m=0; m < 11; m++) {
+                                            for(int l=0; l < 8; l++) {
+                                                for(int p=0; p < 6; p++) {
+                                                    for (int r=0; r < 2; r++){
+                                                        int bon = pow(2, n) * pow(3, m) * pow(5, l) * pow(7, p) * pow(13, r);
+                                                        if(bon >= 18000  && bon < 18200) printf("b=%i", bon);
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-                                }
-                */
-                int ftsizeH = 1;
-                int ftsizeW = 1;
+                    */
+                    int ftsizeH = 1;
+                    int ftsizeW = 1;
 
-                for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
-                    if (fftw_size[ft] <= bfh) {
-                        ftsizeH = fftw_size[ft];
-                        break;
+                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
+                        if (fftw_size[ft] <= bfh) {
+                            ftsizeH = fftw_size[ft];
+                            break;
+                        }
                     }
-                }
 
-                for (int ft = 0; ft < N_fftwsize; ft++) {
-                    if (fftw_size[ft] <= bfw) {
-                        ftsizeW = fftw_size[ft];
-                        break;
+                    for (int ft = 0; ft < N_fftwsize; ft++) {
+                        if (fftw_size[ft] <= bfw) {
+                            ftsizeW = fftw_size[ft];
+                            break;
+                        }
                     }
-                }
 
-                // printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
-                //optimize with size fftw
-                if (ystart == 0 && yend < original->H) {
-                    lp.ly -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend == original->H) {
-                    lp.lyT -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend != original->H) {
-                    if (lp.ly <= lp.lyT) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else {
+                    // printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+                    //optimize with size fftw
+                    if (ystart == 0 && yend < original->H) {
                         lp.ly -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend == original->H) {
+                        lp.lyT -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend != original->H) {
+                        if (lp.ly <= lp.lyT) {
+                            lp.lyT -= (bfh - ftsizeH);
+                        } else {
+                            lp.ly -= (bfh - ftsizeH);
+                        }
+                    } else if (ystart == 0 && yend == original->H) {
+                        bfhr = ftsizeH;
+                        reduH = true;
                     }
-                } else if (ystart == 0 && yend == original->H) {
-                    bfhr = ftsizeH;
-                    reduH = true;
-                }
 
-                if (xstart == 0 && xend < original->W) {
-                    lp.lx -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend == original->W) {
-                    lp.lxL -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend != original->W) {
-                    if (lp.lx <= lp.lxL) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else {
+                    if (xstart == 0 && xend < original->W) {
                         lp.lx -= (bfw - ftsizeW);
+                    } else if (xstart != 0 && xend == original->W) {
+                        lp.lxL -= (bfw - ftsizeW);
+                    } else if (xstart != 0 && xend != original->W) {
+                        if (lp.lx <= lp.lxL) {
+                            lp.lxL -= (bfw - ftsizeW);
+                        } else {
+                            lp.lx -= (bfw - ftsizeW);
+                        }
+                    } else if (xstart == 0 && xend == original->W) {
+                        bfwr = ftsizeW;
+                        reduW = true;
                     }
-                } else if (xstart == 0 && xend == original->W) {
-                    bfwr = ftsizeW;
-                    reduW = true;
+
+                    //new values optimized
+                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                    bfh = bfhr = yend - ystart;
+                    bfw = bfwr = xend - xstart;
+
+                    if (reduH) {
+                        bfhr = ftsizeH;
+                    }
+
+                    if (reduW) {
+                        bfwr = ftsizeW;
+                    }
                 }
 
-                //new values optimized
-                ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                bfh = bfhr = yend - ystart;
-                bfw = bfwr = xend - xstart;
+                //    printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i maxH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfhr, original->H, maxH);
+                //    printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
 
-                if (reduH) {
-                    bfhr = ftsizeH;
-                }
-
-                if (reduW) {
-                    bfwr = ftsizeW;
-                }
-            }
-
-            //    printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i maxH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfhr, original->H, maxH);
-            //    printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
-
-            if (bfw > 0 && bfh > 0) {
+//            if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 //    std::unique_ptr<LabImage> temp(new LabImage(bfw, bfh)); //buffer for data in zone limit
@@ -7665,74 +7667,76 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
-            if (lp.ftwlc) {
-                int ftsizeH = 1;
-                int ftsizeW = 1;
-
-                for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
-                    if (fftw_size[ft] <= bfh) {
-                        ftsizeH = fftw_size[ft];
-                        break;
-                    }
-                }
-
-                for (int ft = 0; ft < N_fftwsize; ft++) {
-                    if (fftw_size[ft] <= bfw) {
-                        ftsizeW = fftw_size[ft];
-                        break;
-                    }
-                }
-
-                //printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
-                //optimize with size fftw
-                if (ystart == 0 && yend < original->H) {
-                    lp.ly -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend == original->H) {
-                    lp.lyT -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend != original->H) {
-                    if (lp.ly <= lp.lyT) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else {
-                        lp.ly -= (bfh - ftsizeH);
-                    }
-                } else if (ystart == 0 && yend == original->H) {
-                    bfhr = ftsizeH;
-                    reduH = true;
-                }
-
-                if (xstart == 0 && xend < original->W) {
-                    lp.lx -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend == original->W) {
-                    lp.lxL -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend != original->W) {
-                    if (lp.lx <= lp.lxL) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else {
-                        lp.lx -= (bfw - ftsizeW);
-                    }
-                } else if (xstart == 0 && xend == original->W) {
-                    bfwr = ftsizeW;
-                    reduW = true;
-                }
-
-                //new values optimized
-                ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                bfh = bfhr = yend - ystart;
-                bfw = bfwr = xend - xstart;
-
-                if (reduH) {
-                    bfhr = ftsizeH;
-                }
-
-                if (reduW) {
-                    bfwr = ftsizeW;
-                }
-            }
-
             if (bfw > 0 && bfh > 0) {
+
+                if (lp.ftwlc) {
+                    int ftsizeH = 1;
+                    int ftsizeW = 1;
+
+                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
+                        if (fftw_size[ft] <= bfh) {
+                            ftsizeH = fftw_size[ft];
+                            break;
+                        }
+                    }
+
+                    for (int ft = 0; ft < N_fftwsize; ft++) {
+                        if (fftw_size[ft] <= bfw) {
+                            ftsizeW = fftw_size[ft];
+                            break;
+                        }
+                    }
+
+                    //printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+                    //optimize with size fftw
+                    if (ystart == 0 && yend < original->H) {
+                        lp.ly -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend == original->H) {
+                        lp.lyT -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend != original->H) {
+                        if (lp.ly <= lp.lyT) {
+                            lp.lyT -= (bfh - ftsizeH);
+                        } else {
+                            lp.ly -= (bfh - ftsizeH);
+                        }
+                    } else if (ystart == 0 && yend == original->H) {
+                        bfhr = ftsizeH;
+                        reduH = true;
+                    }
+
+                    if (xstart == 0 && xend < original->W) {
+                        lp.lx -= (bfw - ftsizeW);
+                    } else if (xstart != 0 && xend == original->W) {
+                        lp.lxL -= (bfw - ftsizeW);
+                    } else if (xstart != 0 && xend != original->W) {
+                        if (lp.lx <= lp.lxL) {
+                            lp.lxL -= (bfw - ftsizeW);
+                        } else {
+                            lp.lx -= (bfw - ftsizeW);
+                        }
+                    } else if (xstart == 0 && xend == original->W) {
+                        bfwr = ftsizeW;
+                        reduW = true;
+                    }
+
+                    //new values optimized
+                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                    bfh = bfhr = yend - ystart;
+                    bfw = bfwr = xend - xstart;
+
+                    if (reduH) {
+                        bfhr = ftsizeH;
+                    }
+
+                    if (reduW) {
+                        bfwr = ftsizeW;
+                    }
+                }
+
+//            if (bfw > 0 && bfh > 0) {
                 array2D<float> buflight(bfw, bfh);
                 JaggedArray<float> bufchro(bfw, bfh);
                 std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
@@ -8041,6 +8045,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         if (lp.str > 0.f  && lp.retiena) {
             int GW = transformed->W;
             int GH = transformed->H;
+            int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            int bfhz = yend - ystart;
+            int bfwz = xend - xstart;
 
             LabImage *bufreti = nullptr;
             LabImage *bufmask = nullptr;
@@ -8048,308 +8058,166 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             LabImage *buforigmas = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            //  printf("before bfh=%i bfw=%i\n", bfh, bfw);
+            printf("before bfh=%i bfw=%i bfhz=%i bfwz=%i\n", bfh, bfw, bfhz, bfwz);
 
-            if (lp.ftwreti) {
-                int ftsizeH = 1;
-                int ftsizeW = 1;
+            if (bfwz > 2 && bfhz > 2) {
 
-                for (int ft = 0; ft < N_fftwsize; ft++) { //find best values for FFTW
-                    if (fftw_size[ft] <= bfh) {
-                        ftsizeH = fftw_size[ft];
-                        break;
+                if (lp.ftwreti) {
+                    int ftsizeH = 1;
+                    int ftsizeW = 1;
+
+                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values for FFTW
+                        if (fftw_size[ft] <= bfh) {
+                            ftsizeH = fftw_size[ft];
+                            break;
+                        }
                     }
-                }
 
-                for (int ft = 0; ft < N_fftwsize; ft++) {
-                    if (fftw_size[ft] <= bfw) {
-                        ftsizeW = fftw_size[ft];
-                        break;
+                    for (int ft = 0; ft < N_fftwsize; ft++) {
+                        if (fftw_size[ft] <= bfw) {
+                            ftsizeW = fftw_size[ft];
+                            break;
+                        }
                     }
-                }
 
-                int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                    int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                    int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                    int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                    int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
-                if (ystart == 0 && yend < original->H) {
-                    lp.ly -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend == original->H) {
-                    lp.lyT -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend != original->H) {
-                    if (lp.ly <= lp.lyT) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else {
+                    if (ystart == 0 && yend < original->H) {
                         lp.ly -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend == original->H) {
+                        lp.lyT -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend != original->H) {
+                        if (lp.ly <= lp.lyT) {
+                            lp.lyT -= (bfh - ftsizeH);
+                        } else {
+                            lp.ly -= (bfh - ftsizeH);
+                        }
                     }
-                }
 
-                if (xstart == 0 && xend < original->W) {
-                    lp.lx -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend == original->W) {
-                    lp.lxL -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend != original->W) {
-                    if (lp.lx <= lp.lxL) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else {
+                    if (xstart == 0 && xend < original->W) {
                         lp.lx -= (bfw - ftsizeW);
-                    }
-                }
-
-                //new size bfw, bfh not optimized if spot H > high or spot W > width ==> TODO
-                bfh = int (lp.ly + lp.lyT) + del;
-                bfw = int (lp.lx + lp.lxL) + del;
-                //printf("after bfh=%i bfw=%i  fftwH=%i fftww=%i\n", bfh, bfw, ftsizeH, ftsizeW);
-
-            }
-
-            array2D<float> buflight(bfw, bfh);
-            JaggedArray<float> bufchro(bfw, bfh);
-
-            int Hd, Wd;
-            Hd = GH;
-            Wd = GW;
-
-            if (!lp.invret && call <= 3) {
-
-                Hd = bfh;
-                Wd = bfw;
-                bufreti = new LabImage(bfw, bfh);
-                bufmask = new LabImage(bfw, bfh);
-
-                if (!lp.enaretiMasktmap && lp.enaretiMask) {
-                    buforig = new LabImage(bfw, bfh);
-                    buforigmas = new LabImage(bfw, bfh);
-                }
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufreti->L[ir][jr] = 0.f;
-                        bufreti->a[ir][jr] = 0.f;
-                        bufreti->b[ir][jr] = 0.f;
-                        buflight[ir][jr] = 0.f;
-                        bufchro[ir][jr] = 0.f;
-                    }
-
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
-                int yEn = lp.yc + lp.ly;
-                int xEn = lp.xc + lp.lx;
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-
-                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                            bufreti->L[loy - begy][lox - begx] = original->L[y][x];
-                            bufreti->a[loy - begy][lox - begx] = original->a[y][x];
-                            bufreti->b[loy - begy][lox - begx] = original->b[y][x];
-                            bufmask->L[loy - begy][lox - begx] = original->L[y][x];
-                            bufmask->a[loy - begy][lox - begx] = original->a[y][x];
-                            bufmask->b[loy - begy][lox - begx] = original->b[y][x];
-
-                            if (!lp.enaretiMasktmap && lp.enaretiMask) {
-                                buforig->L[loy - begy][lox - begx] = original->L[y][x];
-                                buforig->a[loy - begy][lox - begx] = original->a[y][x];
-                                buforig->b[loy - begy][lox - begx] = original->b[y][x];
-                            }
+                    } else if (xstart != 0 && xend == original->W) {
+                        lp.lxL -= (bfw - ftsizeW);
+                    } else if (xstart != 0 && xend != original->W) {
+                        if (lp.lx <= lp.lxL) {
+                            lp.lxL -= (bfw - ftsizeW);
+                        } else {
+                            lp.lx -= (bfw - ftsizeW);
                         }
                     }
 
-                //calc dehaze
-                Imagefloat *tmpImage = nullptr;
+                    //new size bfw, bfh not optimized if spot H > high or spot W > width ==> TODO
+                    bfh = int (lp.ly + lp.lyT) + del;
+                    bfw = int (lp.lx + lp.lxL) + del;
+                    //printf("after bfh=%i bfw=%i  fftwH=%i fftww=%i\n", bfh, bfw, ftsizeH, ftsizeW);
 
-                if (lp.dehaze > 0) {
-                    const float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
-                    DehazeParams dehazeParams;
-                    dehazeParams.enabled = true;
-                    dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
-                    dehazeParams.showDepthMap = false;
-                    dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
-
-                    tmpImage = new Imagefloat(bfw, bfh);
-                    lab2rgb(*bufreti, *tmpImage, params->icm.workingProfile);
-                    dehaze(tmpImage, dehazeParams);
-                    rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
-
-                    delete tmpImage;
-                }
-            }
-
-            float *orig[Hd] ALIGNED16;
-            float *origBuffer = new float[Hd * Wd];
-
-            for (int i = 0; i < Hd; i++) {
-                orig[i] = &origBuffer[i * Wd];
-            }
-
-            float *orig1[Hd] ALIGNED16;
-            float *origBuffer1 = new float[Hd * Wd];
-
-            for (int i = 0; i < Hd; i++) {
-                orig1[i] = &origBuffer1[i * Wd];
-            }
-
-
-
-            LabImage *tmpl = nullptr;
-
-            if (!lp.invret && call <= 3) {
-
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int ir = 0; ir < Hd; ir += 1)
-                    for (int jr = 0; jr < Wd; jr += 1) {
-                        orig[ir][jr] = bufreti->L[ir][jr];
-                        orig1[ir][jr] = bufreti->L[ir][jr];
-                    }
-
-                tmpl = new LabImage(Wd, Hd);
-
-            }  else {
-
-                Imagefloat *tmpImage = nullptr;
-                bufreti = new LabImage(Wd, Hd);
-
-                if (lp.dehaze > 0) {
-                    const float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
-                    DehazeParams dehazeParams;
-                    dehazeParams.enabled = true;
-                    dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
-                    dehazeParams.showDepthMap = false;
-                    dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
-
-                    tmpImage = new Imagefloat(Wd, Hd);
-                    lab2rgb(*original, *tmpImage, params->icm.workingProfile);
-                    dehaze(tmpImage, dehazeParams);
-                    rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
-
-                    delete tmpImage;
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int ir = 0; ir < Hd; ir += 1) {
-                        for (int jr = 0; jr < Wd; jr += 1) {
-                            orig[ir][jr] = original->L[ir][jr];
-                            orig1[ir][jr] = bufreti->L[ir][jr];
-                        }
-                    }
-
-                    delete bufreti;
-                    bufreti = nullptr;
-                } else {
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int ir = 0; ir < Hd; ir += 1) {
-                        for (int jr = 0; jr < Wd; jr += 1) {
-                            orig[ir][jr] = original->L[ir][jr];
-                            orig1[ir][jr] = transformed->L[ir][jr];
-                        }
-                    }
                 }
 
-                tmpl = new LabImage(transformed->W, transformed->H);
-            }
+                array2D<float> buflight(bfw, bfh);
+                JaggedArray<float> bufchro(bfw, bfh);
 
-            float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-            bool fftw = lp.ftwreti;
-            //for Retinex Mask are incorporated in MSR
-            ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                                      locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
-
-
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int ir = 0; ir < Hd; ir += 1)
-                for (int jr = 0; jr < Wd; jr += 1) {
-                    tmpl->L[ir][jr] = orig[ir][jr];
-                }
-
-            if (lp.equret) { //equilibrate luminance before / after MSR
-                float *datain = new float[Hd * Wd];
-                float *data = new float[Hd * Wd];
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < Hd; ir += 1)
-                    for (int jr = 0; jr < Wd; jr += 1) {
-                        datain[ir * Wd + jr] = orig1[ir][jr];
-                        data[ir * Wd + jr] = orig[ir][jr];
-                    }
-
-                normalize_mean_dt(data, datain, Hd * Wd, 1.f);
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int ir = 0; ir < Hd; ir += 1)
-                    for (int jr = 0; jr < Wd; jr += 1) {
-                        tmpl->L[ir][jr] = data[ir * Wd + jr];
-                    }
-
-                delete [] datain;
-                delete [] data;
-            }
-
-            if (!lp.invret) {
-                float minL = tmpl->L[0][0] - bufreti->L[0][0];
-                float maxL = minL;
-#ifdef _OPENMP
-                #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16)
-#endif
-
-                for (int ir = 0; ir < Hd; ir++) {
-                    for (int jr = 0; jr < Wd; jr++) {
-                        buflight[ir][jr] = tmpl->L[ir][jr] - bufreti->L[ir][jr];
-                        minL = rtengine::min(minL, buflight[ir][jr]);
-                        maxL = rtengine::max(maxL, buflight[ir][jr]);
-                    }
-                }
-
-                float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
-
-
-                for (int ir = 0; ir < Hd; ir++) {
-                    for (int jr = 0; jr < Wd; jr++) {
-                        buflight[ir][jr] /= coef;
-                    }
-                }
-
-                /*
-                                if (lp.softradiusret > 0.f && lp.scalereti != 1) {
-                                //    softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, 0.01, 0.001, 0.0001f, multiThread);
-                                   //softproc(bufreti, tmpl, lp.softradiusret, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
-                                }
-                */
-                transit_shapedetect_retinex(4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-
-            } else {
-                InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
-            }
-
-            if (params->locallab.spots.at(sp).chrrt > 0) {
+                int Hd, Wd;
+                Hd = GH;
+                Wd = GW;
 
                 if (!lp.invret && call <= 3) {
+
+                    Hd = bfh;
+                    Wd = bfw;
+                    bufreti = new LabImage(bfw, bfh);
+                    bufmask = new LabImage(bfw, bfh);
+
+                    if (!lp.enaretiMasktmap && lp.enaretiMask) {
+                        buforig = new LabImage(bfw, bfh);
+                        buforigmas = new LabImage(bfw, bfh);
+                    }
+
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++) //fill with 0
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufreti->L[ir][jr] = 0.f;
+                            bufreti->a[ir][jr] = 0.f;
+                            bufreti->b[ir][jr] = 0.f;
+                            buflight[ir][jr] = 0.f;
+                            bufchro[ir][jr] = 0.f;
+                        }
+
+                    int begy = lp.yc - lp.lyT;
+                    int begx = lp.xc - lp.lxL;
+                    int yEn = lp.yc + lp.ly;
+                    int xEn = lp.xc + lp.lx;
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < transformed->H ; y++) //{
+                        for (int x = 0; x < transformed->W; x++) {
+                            int lox = cx + x;
+                            int loy = cy + y;
+
+                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                                bufreti->L[loy - begy][lox - begx] = original->L[y][x];
+                                bufreti->a[loy - begy][lox - begx] = original->a[y][x];
+                                bufreti->b[loy - begy][lox - begx] = original->b[y][x];
+                                bufmask->L[loy - begy][lox - begx] = original->L[y][x];
+                                bufmask->a[loy - begy][lox - begx] = original->a[y][x];
+                                bufmask->b[loy - begy][lox - begx] = original->b[y][x];
+
+                                if (!lp.enaretiMasktmap && lp.enaretiMask) {
+                                    buforig->L[loy - begy][lox - begx] = original->L[y][x];
+                                    buforig->a[loy - begy][lox - begx] = original->a[y][x];
+                                    buforig->b[loy - begy][lox - begx] = original->b[y][x];
+                                }
+                            }
+                        }
+
+                    //calc dehaze
+                    Imagefloat *tmpImage = nullptr;
+
+                    if (lp.dehaze > 0) {
+                        const float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
+                        DehazeParams dehazeParams;
+                        dehazeParams.enabled = true;
+                        dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
+                        dehazeParams.showDepthMap = false;
+                        dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
+
+                        tmpImage = new Imagefloat(bfw, bfh);
+                        lab2rgb(*bufreti, *tmpImage, params->icm.workingProfile);
+                        dehaze(tmpImage, dehazeParams);
+                        rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
+
+                        delete tmpImage;
+                    }
+                }
+
+                float *orig[Hd] ALIGNED16;
+                float *origBuffer = new float[Hd * Wd];
+
+                for (int i = 0; i < Hd; i++) {
+                    orig[i] = &origBuffer[i * Wd];
+                }
+
+                float *orig1[Hd] ALIGNED16;
+                float *origBuffer1 = new float[Hd * Wd];
+
+                for (int i = 0; i < Hd; i++) {
+                    orig1[i] = &origBuffer1[i * Wd];
+                }
+
+
+
+                LabImage *tmpl = nullptr;
+
+                if (!lp.invret && call <= 3) {
+
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -8357,150 +8225,297 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
-
-                            orig[ir][jr] = sqrt(SQR(bufreti->a[ir][jr]) + SQR(bufreti->b[ir][jr]));
-                            orig1[ir][jr] = sqrt(SQR(bufreti->a[ir][jr]) + SQR(bufreti->b[ir][jr]));
+                            orig[ir][jr] = bufreti->L[ir][jr];
+                            orig1[ir][jr] = bufreti->L[ir][jr];
                         }
+
+                    tmpl = new LabImage(Wd, Hd);
 
                 }  else {
 
+                    Imagefloat *tmpImage = nullptr;
+                    bufreti = new LabImage(Wd, Hd);
+
+                    if (lp.dehaze > 0) {
+                        const float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
+                        DehazeParams dehazeParams;
+                        dehazeParams.enabled = true;
+                        dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
+                        dehazeParams.showDepthMap = false;
+                        dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
+
+                        tmpImage = new Imagefloat(Wd, Hd);
+                        lab2rgb(*original, *tmpImage, params->icm.workingProfile);
+                        dehaze(tmpImage, dehazeParams);
+                        rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
+
+                        delete tmpImage;
 #ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < GH; ir += 1)
-                        for (int jr = 0; jr < GW; jr += 1) {
-                            orig[ir][jr] = sqrt(SQR(original->a[ir][jr]) + SQR(original->b[ir][jr]));
-                            orig1[ir][jr] = sqrt(SQR(transformed->a[ir][jr]) + SQR(transformed->b[ir][jr]));
+                        for (int ir = 0; ir < Hd; ir += 1) {
+                            for (int jr = 0; jr < Wd; jr += 1) {
+                                orig[ir][jr] = original->L[ir][jr];
+                                orig1[ir][jr] = bufreti->L[ir][jr];
+                            }
                         }
-                }
 
-                float maxChro = orig1[0][0];
+                        delete bufreti;
+                        bufreti = nullptr;
+                    } else {
+
 #ifdef _OPENMP
-                #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16)
+                        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int ir = 0; ir < Hd; ir++) {
-                    for (int jr = 0; jr < Wd; jr++) {
-                        maxChro = rtengine::max(maxChro, orig1[ir][jr]);
+                        for (int ir = 0; ir < Hd; ir += 1) {
+                            for (int jr = 0; jr < Wd; jr += 1) {
+                                orig[ir][jr] = original->L[ir][jr];
+                                orig1[ir][jr] = transformed->L[ir][jr];
+                            }
+                        }
                     }
+
+                    tmpl = new LabImage(transformed->W, transformed->H);
                 }
 
-                float divchro = maxChro;
+                float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+                bool fftw = lp.ftwreti;
+                //for Retinex Mask are incorporated in MSR
+                ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                                          locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 
-                //first step change saturation whithout Retinex ==> gain of time and memory
-                float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
 
-                if (params->locallab.spots.at(sp).chrrt <= 0.2f) {
-                    satreal /= 10.f;
-                }
+                for (int ir = 0; ir < Hd; ir += 1)
+                    for (int jr = 0; jr < Wd; jr += 1) {
+                        tmpl->L[ir][jr] = orig[ir][jr];
+                    }
 
-                DiagonalCurve reti_satur({
-                    DCT_NURBS,
-                    0, 0,
-                    0.2, 0.2 + satreal / 250.0,
-                    0.6,  min(1.0, 0.6 + satreal / 250.0),
-                    1, 1
-                });
-                bool fftw = false;
-
-                if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
-                    ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                                              locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
-                }
-
-                if (!lp.invret && call <= 3) {
-
+                if (lp.equret) { //equilibrate luminance before / after MSR
+                    float *datain = new float[Hd * Wd];
+                    float *data = new float[Hd * Wd];
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
-                            const float Chprov = orig1[ir][jr];
-                            float2 sincosval;
-                            sincosval.y = Chprov == 0.0f ? 1.f : bufreti->a[ir][jr] / Chprov;
-                            sincosval.x = Chprov == 0.0f ? 0.f : bufreti->b[ir][jr] / Chprov;
-
-                            if (params->locallab.spots.at(sp).chrrt <= 40.f) { //first step
-                                float buf = LIM01(orig[ir][jr] / divchro);
-                                buf = reti_satur.getVal(buf);
-                                buf *= divchro;
-                                orig[ir][jr] = buf;
-                            }
-
-                            tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
-                            tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
+                            datain[ir * Wd + jr] = orig1[ir][jr];
+                            data[ir * Wd + jr] = orig[ir][jr];
                         }
 
-                    float minC = sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0])) - orig1[0][0];
-                    float maxC = minC;
+                    normalize_mean_dt(data, datain, Hd * Wd, 1.f);
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
-#endif
-
-                    for (int ir = 0; ir < Hd; ir++) {
-                        for (int jr = 0; jr < Wd; jr++) {
-                            bufchro[ir][jr] = sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - orig1[ir][jr];
-                            minC = rtengine::min(minC, bufchro[ir][jr]);
-                            maxC = rtengine::max(maxC, bufchro[ir][jr]);
-                        }
-                    }
-
-                    const float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-
-                    for (int ir = 0; ir < Hd; ir++) {
-                        for (int jr = 0; jr < Wd; jr++) {
-                            bufchro[ir][jr] /= coefC;
-                        }
-                    }
-                } else {
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for
 #endif
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
-                            float Chprov = orig1[ir][jr];
-                            float2 sincosval;
-                            sincosval.y = Chprov == 0.0f ? 1.f : transformed->a[ir][jr] / Chprov;
-                            sincosval.x = Chprov == 0.0f ? 0.f : transformed->b[ir][jr] / Chprov;
-                            tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
-                            tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
-
+                            tmpl->L[ir][jr] = data[ir * Wd + jr];
                         }
+
+                    delete [] datain;
+                    delete [] data;
                 }
 
 
                 if (!lp.invret) {
-                    transit_shapedetect_retinex(5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                    float minL = tmpl->L[0][0] - bufreti->L[0][0];
+                    float maxL = minL;
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction(min:minL) reduction(max:maxL) schedule(dynamic,16)
+#endif
+
+                    for (int ir = 0; ir < Hd; ir++) {
+                        for (int jr = 0; jr < Wd; jr++) {
+                            buflight[ir][jr] = tmpl->L[ir][jr] - bufreti->L[ir][jr];
+                            minL = rtengine::min(minL, buflight[ir][jr]);
+                            maxL = rtengine::max(maxL, buflight[ir][jr]);
+                        }
+                    }
+
+                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+
+
+                    for (int ir = 0; ir < Hd; ir++) {
+                        for (int jr = 0; jr < Wd; jr++) {
+                            buflight[ir][jr] /= coef;
+                        }
+                    }
+
+                    printf("OK 7\n");
+
+                    /*
+                                    if (lp.softradiusret > 0.f && lp.scalereti != 1) {
+                                    //    softprocess(bufreti, buflight, lp.softradiusret, Hd, Wd, sk, 0.01, 0.001, 0.0001f, multiThread);
+                                       //softproc(bufreti, tmpl, lp.softradiusret, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                                    }
+                    */
+                    transit_shapedetect_retinex(4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+
                 } else {
-                    InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
+                    InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
                 }
 
-            }
+                if (params->locallab.spots.at(sp).chrrt > 0) {
 
-            delete tmpl;
-            delete [] origBuffer;
-            delete [] origBuffer1;
+                    if (!lp.invret && call <= 3) {
 
-            if (bufmask) {
-                delete bufmask;
-            }
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
 
-            if (!lp.enaretiMasktmap && lp.enaretiMask) {
-                if (buforig) {
-                    delete buforig;
+                        for (int ir = 0; ir < Hd; ir += 1)
+                            for (int jr = 0; jr < Wd; jr += 1) {
+
+                                orig[ir][jr] = sqrt(SQR(bufreti->a[ir][jr]) + SQR(bufreti->b[ir][jr]));
+                                orig1[ir][jr] = sqrt(SQR(bufreti->a[ir][jr]) + SQR(bufreti->b[ir][jr]));
+                            }
+
+                    }  else {
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < GH; ir += 1)
+                            for (int jr = 0; jr < GW; jr += 1) {
+                                orig[ir][jr] = sqrt(SQR(original->a[ir][jr]) + SQR(original->b[ir][jr]));
+                                orig1[ir][jr] = sqrt(SQR(transformed->a[ir][jr]) + SQR(transformed->b[ir][jr]));
+                            }
+                    }
+
+                    float maxChro = orig1[0][0];
+#ifdef _OPENMP
+                    #pragma omp parallel for reduction(max:maxChro) schedule(dynamic,16)
+#endif
+
+                    for (int ir = 0; ir < Hd; ir++) {
+                        for (int jr = 0; jr < Wd; jr++) {
+                            maxChro = rtengine::max(maxChro, orig1[ir][jr]);
+                        }
+                    }
+
+                    float divchro = maxChro;
+
+                    //first step change saturation whithout Retinex ==> gain of time and memory
+                    float satreal = lp.str * params->locallab.spots.at(sp).chrrt / 100.f;
+
+                    if (params->locallab.spots.at(sp).chrrt <= 0.2f) {
+                        satreal /= 10.f;
+                    }
+
+                    DiagonalCurve reti_satur({
+                        DCT_NURBS,
+                        0, 0,
+                        0.2, 0.2 + satreal / 250.0,
+                        0.6,  min(1.0, 0.6 + satreal / 250.0),
+                        1, 1
+                    });
+                    bool fftw = false;
+
+                    if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
+                        ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                                                  locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
+                    }
+
+                    if (!lp.invret && call <= 3) {
+
+#ifdef _OPENMP
+                        #pragma omp parallel for
+#endif
+
+                        for (int ir = 0; ir < Hd; ir += 1)
+                            for (int jr = 0; jr < Wd; jr += 1) {
+                                const float Chprov = orig1[ir][jr];
+                                float2 sincosval;
+                                sincosval.y = Chprov == 0.0f ? 1.f : bufreti->a[ir][jr] / Chprov;
+                                sincosval.x = Chprov == 0.0f ? 0.f : bufreti->b[ir][jr] / Chprov;
+
+                                if (params->locallab.spots.at(sp).chrrt <= 40.f) { //first step
+                                    float buf = LIM01(orig[ir][jr] / divchro);
+                                    buf = reti_satur.getVal(buf);
+                                    buf *= divchro;
+                                    orig[ir][jr] = buf;
+                                }
+
+                                tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
+                                tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
+                            }
+
+                        float minC = sqrt(SQR(tmpl->a[0][0]) + SQR(tmpl->b[0][0])) - orig1[0][0];
+                        float maxC = minC;
+#ifdef _OPENMP
+                        #pragma omp parallel for reduction(min:minC) reduction(max:maxC) schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < Hd; ir++) {
+                            for (int jr = 0; jr < Wd; jr++) {
+                                bufchro[ir][jr] = sqrt(SQR(tmpl->a[ir][jr]) + SQR(tmpl->b[ir][jr])) - orig1[ir][jr];
+                                minC = rtengine::min(minC, bufchro[ir][jr]);
+                                maxC = rtengine::max(maxC, bufchro[ir][jr]);
+                            }
+                        }
+
+                        const float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+
+                        for (int ir = 0; ir < Hd; ir++) {
+                            for (int jr = 0; jr < Wd; jr++) {
+                                bufchro[ir][jr] /= coefC;
+                            }
+                        }
+                    } else {
+
+#ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                        for (int ir = 0; ir < Hd; ir += 1)
+                            for (int jr = 0; jr < Wd; jr += 1) {
+                                float Chprov = orig1[ir][jr];
+                                float2 sincosval;
+                                sincosval.y = Chprov == 0.0f ? 1.f : transformed->a[ir][jr] / Chprov;
+                                sincosval.x = Chprov == 0.0f ? 0.f : transformed->b[ir][jr] / Chprov;
+                                tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
+                                tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
+
+                            }
+                    }
+
+
+                    if (!lp.invret) {
+                        transit_shapedetect_retinex(5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                    } else {
+                        InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
+                    }
+
                 }
 
-                if (buforigmas) {
-                    delete buforigmas;
-                }
-            }
+                delete tmpl;
+                delete [] origBuffer;
+                delete [] origBuffer1;
 
-            if (bufreti) {
-                delete  bufreti;
+                if (bufmask) {
+                    delete bufmask;
+                }
+
+                if (!lp.enaretiMasktmap && lp.enaretiMask) {
+                    if (buforig) {
+                        delete buforig;
+                    }
+
+                    if (buforigmas) {
+                        delete buforigmas;
+                    }
+                }
+
+                if (bufreti) {
+                    delete  bufreti;
+                }
             }
         }
 
@@ -8517,75 +8532,79 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfwr = bfw;
             bool reduH = false;
             bool reduW = false;
-
-            if (lp.expmet == 1) {
-                int ftsizeH = 1;
-                int ftsizeW = 1;
-
-                for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
-                    if (fftw_size[ft] <= bfh) {
-                        ftsizeH = fftw_size[ft];
-                        break;
-                    }
-                }
-
-                for (int ft = 0; ft < N_fftwsize; ft++) {
-                    if (fftw_size[ft] <= bfw) {
-                        ftsizeW = fftw_size[ft];
-                        break;
-                    }
-                }
-
-                //  printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
-                //optimize with size fftw
-                if (ystart == 0 && yend < original->H) {
-                    lp.ly -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend == original->H) {
-                    lp.lyT -= (bfh - ftsizeH);
-                } else if (ystart != 0 && yend != original->H) {
-                    if (lp.ly <= lp.lyT) {
-                        lp.lyT -= (bfh - ftsizeH);
-                    } else {
-                        lp.ly -= (bfh - ftsizeH);
-                    }
-                } else if (ystart == 0 && yend == original->H) {
-                    bfhr = ftsizeH;
-                    reduH = true;
-                }
-
-                if (xstart == 0 && xend < original->W) {
-                    lp.lx -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend == original->W) {
-                    lp.lxL -= (bfw - ftsizeW);
-                } else if (xstart != 0 && xend != original->W) {
-                    if (lp.lx <= lp.lxL) {
-                        lp.lxL -= (bfw - ftsizeW);
-                    } else {
-                        lp.lx -= (bfw - ftsizeW);
-                    }
-                } else if (xstart == 0 && xend == original->W) {
-                    bfwr = ftsizeW;
-                    reduW = true;
-                }
-
-                //new values optimized
-                ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-                bfh = bfhr = yend - ystart;
-                bfw = bfwr = xend - xstart;
-
-                if (reduH) {
-                    bfhr = ftsizeH;
-                }
-
-                if (reduW) {
-                    bfwr = ftsizeW;
-                }
-            }
+            printf("OK 0\n");
 
             if (bfw > 0 && bfh > 0) {
+
+                if (lp.expmet == 1) {
+                    int ftsizeH = 1;
+                    int ftsizeW = 1;
+
+                    for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
+                        if (fftw_size[ft] <= bfh) {
+                            ftsizeH = fftw_size[ft];
+                            break;
+                        }
+                    }
+
+                    for (int ft = 0; ft < N_fftwsize; ft++) {
+                        if (fftw_size[ft] <= bfw) {
+                            ftsizeW = fftw_size[ft];
+                            break;
+                        }
+                    }
+
+                    //  printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
+                    //optimize with size fftw
+                    if (ystart == 0 && yend < original->H) {
+                        lp.ly -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend == original->H) {
+                        lp.lyT -= (bfh - ftsizeH);
+                    } else if (ystart != 0 && yend != original->H) {
+                        if (lp.ly <= lp.lyT) {
+                            lp.lyT -= (bfh - ftsizeH);
+                        } else {
+                            lp.ly -= (bfh - ftsizeH);
+                        }
+                    } else if (ystart == 0 && yend == original->H) {
+                        bfhr = ftsizeH;
+                        reduH = true;
+                    }
+
+                    if (xstart == 0 && xend < original->W) {
+                        lp.lx -= (bfw - ftsizeW);
+                    } else if (xstart != 0 && xend == original->W) {
+                        lp.lxL -= (bfw - ftsizeW);
+                    } else if (xstart != 0 && xend != original->W) {
+                        if (lp.lx <= lp.lxL) {
+                            lp.lxL -= (bfw - ftsizeW);
+                        } else {
+                            lp.lx -= (bfw - ftsizeW);
+                        }
+                    } else if (xstart == 0 && xend == original->W) {
+                        bfwr = ftsizeW;
+                        reduW = true;
+                    }
+
+                    //new values optimized
+                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                    bfh = bfhr = yend - ystart;
+                    bfw = bfwr = xend - xstart;
+
+                    if (reduH) {
+                        bfhr = ftsizeH;
+                    }
+
+                    if (reduW) {
+                        bfwr = ftsizeW;
+                    }
+                }
+
+                printf("OK 1\n");
+//           if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskblurexp;
