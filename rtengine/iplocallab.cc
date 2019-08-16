@@ -7736,7 +7736,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-//            if (bfw > 0 && bfh > 0) {
                 array2D<float> buflight(bfw, bfh);
                 JaggedArray<float> bufchro(bfw, bfh);
                 std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
@@ -8058,7 +8057,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             LabImage *buforigmas = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            printf("before bfh=%i bfw=%i bfhz=%i bfwz=%i\n", bfh, bfw, bfhz, bfwz);
+        //    printf("before bfh=%i bfw=%i bfhz=%i bfwz=%i\n", bfh, bfw, bfhz, bfwz);
 
             if (bfwz > 2 && bfhz > 2) {
 
@@ -8347,7 +8346,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    printf("OK 7\n");
 
                     /*
                                     if (lp.softradiusret > 0.f && lp.scalereti != 1) {
@@ -8532,7 +8530,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int bfwr = bfw;
             bool reduH = false;
             bool reduW = false;
-            printf("OK 0\n");
 
             if (bfw > 0 && bfh > 0) {
 
@@ -8603,8 +8600,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                printf("OK 1\n");
-//           if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskblurexp;

@@ -2054,7 +2054,7 @@ TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CBDL;Contrast by detail levels - Big defects : grease..
 TP_LOCALLAB_CLARITYML;Clarity
-TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) put the selection spot on a pronounced default (adapting its size if necessary); b) choose a wide selection area to cover most of the area affected by the defects; c) Select a fairly large transition value; d) act on levels 2, 3, 4 and 5 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary.\n\nYou can also use Gaussian blur (Smooth Blur and noise)
+TP_LOCALLAB_EXPCBDL_TOOLTIP;In the case of contaminated sensor (type "grease"), and when the area is important or for a series of small defects.\n\na) Put the selection spot on a pronounced default (adapting its size if necessary), use a large spot enough to allow wavelet; b) choose a wide selection area to cover most of the area affected by the defects; c) Select a transition value (low) and transition weakening (high value); d) act on levels 2, 3, 4 or 5 or lower by reducing the contrast (values below 100) and by acting on the chroma slider if necessary. e)possibly act on "scope" to reduce the extent of the action.\n\nYou can also complete with Blur levels and Gaussian blur (Smooth Blur and noise)
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_GAMMASKCOL;Gamma mask
@@ -2062,7 +2062,7 @@ TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_COFR;Color & Light - Small defects : red eyes, dust
-TP_LOCALLAB_EXPCOLOR_TOOLTIP;In the case of small defects.\n\nRed-eyes : red-centered circular selector, spot delimiters close to the eye, weak scope, "lightness" -100, "chrominance" -100.\n\nSpotIR :Circular selector centered on the defect, spot delimiters close to the default - reduce "chrominance", possibly act on "scope" to reduce the extent of the action.\n\nDust - grease (small) :Circular selector centered on the defect (adapt the size of the spot), spot delimiters not too close to the defect to allow an inconspicuous transition. a) "Transition" and "Transition weak"; b) act on "lightness" and possibly on "chrominance" or "Color correction grid - direct" to approach the rendering of the polluted zone to that of the healthy zone; c) act moderately on "scope" to modulate the desired action.\n\nYou can also use Gaussian blur (Smooth Blur and noise)
+TP_LOCALLAB_EXPCOLOR_TOOLTIP;In the case of small defects.\n\nRed-eyes : red-centered circular selector, spot delimiters close to the eye, weak scope, "lightness" -100, "chrominance" -100.\n\nSpotIR :Circular selector centered on the defect, spot delimiters close to the default - reduce "chrominance", possibly act on "scope" to reduce the extent of the action.\n\nDust - grease (small) :Circular selector centered on the defect (adapt the size of the spot), spot delimiters not too close to the defect to allow an inconspicuous transition. a) "Transition" (low values) and "Transition weak" (high values); b) act on "lightness" and possibly on "chrominance" or "Color correction grid - direct" to approach the rendering of the polluted zone to that of the healthy zone; c) act moderately on "scope" to modulate the desired action.\n\nYou can also complete with Gaussian blur (Smooth Blur and noise)
 TP_LOCALLAB_CONTRAST;Contrast
 TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"
 TP_LOCALLAB_CURVNONE;Disable curves
@@ -2225,7 +2225,7 @@ TP_LOCALLAB_TRANSITVALUE;Transition value
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 
 TP_LOCALLAB_TRANSITWEAK;Transition weakening
-TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic
+TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust weakening : change smoothness process - 1 linear - 2 parabolic - 3 cubic - 10 ^10
 TP_LOCALLAB_TONEMAP_TOOLTIP;Tone Mapping - main menu must be disabled
 TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;Increase Edge stopping - or Reweighting iterates, increase processing time - but increases the effects 
 TP_LOCALLAB_VIBRANCE;Vibrance
