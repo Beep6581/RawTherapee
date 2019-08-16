@@ -40,6 +40,7 @@ Spot::Spot() : FoldableToolPanel (this, "spot", M ("TP_SPOT_LABEL"), true, true)
     edit = Gtk::manage (new Gtk::ToggleButton());
     edit->add (*Gtk::manage (new RTImage ("edit-point.png")));
     editConn = edit->signal_toggled().connect ( sigc::mem_fun (*this, &Spot::editToggled) );
+    edit->set_tooltip_text(M("TP_SPOT_HINT"));
 
     reset = Gtk::manage (new Gtk::Button ());
     reset->add (*Gtk::manage (new RTImage ("undo-small.png")));
