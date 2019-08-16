@@ -240,20 +240,20 @@ public:
     static inline void rgb2slfloat(float r, float g, float b, float &s, float &l)
     {
 
-        float m = min(r, g, b);
-        float M = max(r, g, b);
-        float C = M - m;
+        float minVal = min(r, g, b);
+        float maxVal = max(r, g, b);
+        float C = maxVal - minVal;
 
-        l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
+        l = (maxVal + minVal) * 7.6295109e-6f; // (0.5f / 65535.f)
 
         if (C < 0.65535f) { // 0.00001f * 65535.f
             s = 0.f;
         } else {
 
             if (l <= 0.5f) {
-                s = C / (M + m);
+                s = C / (maxVal + minVal);
             } else {
-                s = C / (131070.f - (M + m)); // 131070.f = 2.f * 65535.f
+                s = C / (131070.f - (maxVal + minVal)); // 131070.f = 2.f * 65535.f
             }
         }
     }
@@ -261,11 +261,11 @@ public:
     static inline void rgb2hslfloat(float r, float g, float b, float &h, float &s, float &l)
     {
 
-        float m = min(r, g, b);
-        float M = max(r, g, b);
-        float C = M - m;
+        float minVal = min(r, g, b);
+        float maxVal = max(r, g, b);
+        float C = maxVal - minVal;
 
-        l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
+        l = (maxVal + minVal) * 7.6295109e-6f; // (0.5f / 65535.f)
 
         if (C < 0.65535f) { // 0.00001f * 65535.f
             h = 0.f;
@@ -273,14 +273,14 @@ public:
         } else {
 
             if (l <= 0.5f) {
-                s = C / (M + m);
+                s = C / (maxVal + minVal);
             } else {
-                s = C / (131070.f - (M + m)); // 131070.f = 2.f * 65535.f
+                s = C / (131070.f - (maxVal + minVal)); // 131070.f = 2.f * 65535.f
             }
 
-            if ( r == M ) {
+            if ( r == maxVal ) {
                 h = (g - b);
-            } else if ( g == M ) {
+            } else if ( g == maxVal ) {
                 h = (2.f * C) + (b - r);
             } else {
                 h = (4.f * C) + (r - g);
@@ -684,32 +684,6 @@ public:
     * @param v 'v' channel [unknown range!] (return value)
     */
     static void Lch2Luv(float c, float h, float &u, float &v);
-
-
-    /**
-    * @brief Convert the XYZ values to Luv values
-    * Warning: this method has never been used/tested so far
-    * @param x X coordinate [0 ; 65535] ; can be negative or superior to 65535
-    * @param y Y coordinate [0 ; 65535] ; can be negative or superior to 65535
-    * @param z Z coordinate [0 ; 65535] ; can be negative or superior to 65535
-    * @param L 'L' channel [0 ; 32768] (return value)
-    * @param u 'u' channel [-42000 ; 42000] ; can be more than 42000 (return value)
-    * @param v 'v' channel [-42000 ; 42000] ; can be more than 42000 (return value)
-    */
-    static void XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v);
-
-
-    /**
-    * @brief Convert the Luv values to XYZ values
-    * Warning: this method has never been used/tested so far
-    * @param L 'L' channel [0 ; 32768]
-    * @param u 'u' channel [-42000 ; 42000] ; can be more than 42000
-    * @param v 'v' channel [-42000 ; 42000] ; can be more than 42000
-    * @param x X coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
-    * @param y Y coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
-    * @param z Z coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
-    */
-    static void Luv2XYZ (float L, float u, float v, float &X, float &Y, float &Z);
 
 
     /**

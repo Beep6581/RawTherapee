@@ -30,7 +30,7 @@
 ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
                                      double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
                                      ThresholdCurveProvider* curveProvider)
-    : coloredBar(RTO_Left2Right)
+    : separatedLabelBottom(std::move(labelBottom)), separatedLabelTop(std::move(labelTop)), coloredBar(RTO_Left2Right)
 {
     positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
     positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
@@ -40,8 +40,6 @@ ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBotto
     this->precisionBottom = precisionBottom;
     doubleThresh = false;
 
-    separatedLabelBottom = labelBottom;
-    separatedLabelTop = labelTop;
 
     bgCurveProvider = curveProvider;
     separatedSliders = true;
@@ -65,9 +63,6 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
     this->precisionTop = precision;
     this->precisionBottom = precision;
     doubleThresh = false;
-
-    separatedLabelBottom = "";
-    separatedLabelTop = "";
 
 #ifndef NDEBUG
 
@@ -105,9 +100,6 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
     this->precisionTop = precision;
     this->precisionBottom = precision;
     doubleThresh = true;
-
-    separatedLabelBottom = "";
-    separatedLabelTop = "";
 
 #ifndef NDEBUG
 
@@ -329,14 +321,13 @@ void ThresholdSelector::updateBackBuffer()
 
         if (pts.size() >= 4) {
             std::vector<double>::iterator i = pts.begin();
-            double x = *i;
             ++i;
             double y = *i;
             ++i;
             cr->move_to (xStart, ih*y + yStart);
 
             for (; i < pts.end(); ) {
-                x = *i;
+                double x = *i;
                 ++i;
                 y = *i;
                 ++i;

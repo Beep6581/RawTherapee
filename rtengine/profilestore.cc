@@ -261,12 +261,12 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
     return fileFound;
 }
 
-int ProfileStore::findFolderId (const Glib::ustring &path)
+int ProfileStore::findFolderId (const Glib::ustring &path) const
 {
     // initialization must have been done when calling this
-    for (std::vector<Glib::ustring>::iterator i = folders.begin(); i != folders.end(); ++i) {
-        if (*i == path) {
-            return i - folders.begin();
+    for (size_t i = 0; i < folders.size(); ++i) {
+        if (folders[i] == path) {
+            return i;
         }
     }
 
@@ -454,7 +454,7 @@ const PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw)
     return pProf;
 }
 
-const Glib::ustring ProfileStore::getPathFromId (int folderId)
+const Glib::ustring ProfileStore::getPathFromId (int folderId) const
 {
     // initialization must have been done when calling this
     return folders.at (folderId);
@@ -535,7 +535,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
     return ret;
 }
 
-ProfileStoreEntry::ProfileStoreEntry() : label (""), type (PSET_FOLDER), parentFolderId (0), folderId (0) {}
+ProfileStoreEntry::ProfileStoreEntry() : type (PSET_FOLDER), parentFolderId (0), folderId (0) {}
 
 ProfileStoreEntry::ProfileStoreEntry (Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder) : label (label), type (type), parentFolderId (parentFolder), folderId (folder) {}
 

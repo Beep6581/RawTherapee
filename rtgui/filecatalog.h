@@ -32,6 +32,7 @@
 #include "previewloader.h"
 #include "multilangmgr.h"
 #include "threadutils.h"
+#include "../rtengine/noncopyable.h"
 
 class FilePanel;
 /*
@@ -44,7 +45,8 @@ class FileCatalog : public Gtk::VBox,
     public PreviewLoaderListener,
     public FilterPanelListener,
     public FileBrowserListener,
-    public ExportPanelListener
+    public ExportPanelListener,
+    public rtengine::NonCopyable
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;

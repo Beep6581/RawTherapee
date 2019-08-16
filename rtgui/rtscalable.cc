@@ -220,7 +220,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadImage(const Glib::ustring &fn
     GError **error = nullptr;
     RsvgHandle *handle = rsvg_handle_new_from_data((unsigned const char*)updatedSVG.c_str(), updatedSVG.length(), error);
 
-    if (handle == nullptr) {
+    if (error && !handle) {
         std::cerr << "ERROR: Can't use the provided data for \"" << fname << "\" to create a RsvgHandle:" << std::endl
                   << Glib::ustring((*error)->message) << std::endl;
         Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, 10, 10);

@@ -47,7 +47,7 @@ public:
     type_signal_item_selected signal_item_selected();
     Gtk::Grid* buttonGroup;    // this is the widget to be packed
 
-    PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
+    explicit PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
     bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label);
     int getEntryCount () const;

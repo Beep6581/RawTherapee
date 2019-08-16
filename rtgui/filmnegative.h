@@ -28,8 +28,6 @@
 #include "toolpanel.h"
 #include "wbprovider.h"
 
-#include "../rtengine/noncopyable.h"
-
 class FilmNegProvider
 {
 public:
@@ -39,7 +37,6 @@ public:
 };
 
 class FilmNegative :
-    public rtengine::NonCopyable,
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel,

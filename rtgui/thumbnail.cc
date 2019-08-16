@@ -232,8 +232,6 @@ const ProcParams& Thumbnail::getProcParamsU ()
 rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool force, bool flaggingMode)
 {
 
-    static int index = 0; // Will act as unique identifier during the session
-
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = nullptr;
 
@@ -285,6 +283,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
         }
 
+        static int index = 0; // Will act as unique identifier during the session
         Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
 
         const rtexif::TagDirectory* exifDir = nullptr;
@@ -1020,9 +1019,7 @@ int Thumbnail::getRank  () const
 
 void Thumbnail::setRank  (int rank)
 {
-    if (pparams->rank != rank) {
-        pparams->rank = rank;
-    }
+    pparams->rank = rank;
     pparamsValid = true;
 }
 

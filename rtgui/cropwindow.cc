@@ -2198,8 +2198,6 @@ void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
     }
 
     rtengine::Coord cropPos;
-    float r=0.f, g=0.f, b=0.f;
-    float rpreview=0.f, gpreview=0.f, bpreview=0.f;
     if (imgPos) {
         imageCoordToCropImage(imgPos->x, imgPos->y, cropPos.x, cropPos.y);
         hoveredPicker->setPosition (*imgPos);
@@ -2215,6 +2213,8 @@ void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
         MyMutex::MyLock lock(cropHandler.cimg);
 
         if (validity == LockableColorPicker::Validity::INSIDE) {
+            float r=0.f, g=0.f, b=0.f;
+            float rpreview=0.f, gpreview=0.f, bpreview=0.f;
             cropHandler.colorPick(cropPos, r, g, b, rpreview, gpreview, bpreview, hoveredPicker->getSize());
             hoveredPicker->setRGB (r, g, b, rpreview, gpreview, bpreview);
         }

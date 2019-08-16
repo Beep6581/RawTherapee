@@ -228,12 +228,12 @@ void ImProcFunctions::dehaze(Imagefloat *img)
     array2D<float> dark(W, H);
 
     int patchsize = max(int(5 / scale), 2);
-    int npatches = 0;
     float ambient[3];
     array2D<float> &t_tilde = dark;
     float max_t = 0.f;
 
     {
+        int npatches = 0;
         array2D<float> R(W, H);
         array2D<float> G(W, H);
         array2D<float> B(W, H);

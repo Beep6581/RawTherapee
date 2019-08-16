@@ -84,6 +84,7 @@
 #include "dehaze.h"
 #include "guiutils.h"
 #include "filmnegative.h"
+#include "../rtengine/noncopyable.h"
 
 class ImageEditorCoordinator;
 
@@ -100,7 +101,8 @@ class ToolPanelCoordinator :
     public ICMPanelListener,
     public ImageAreaToolListener,
     public rtengine::ImageTypeListener,
-    public FilmNegProvider
+    public FilmNegProvider,
+    public rtengine::NonCopyable
 {
 protected:
     WhiteBalance* whitebalance;

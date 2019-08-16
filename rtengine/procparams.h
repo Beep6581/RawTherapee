@@ -1671,8 +1671,8 @@ class PartialProfile :
 {
 public:
     PartialProfile(bool createInstance = false, bool paramsEditedValue = false);
-    PartialProfile(ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
-    PartialProfile(const ProcParams* pp, const ParamsEdited* pe = nullptr);
+    explicit PartialProfile(ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
+    explicit PartialProfile(const ProcParams* pp, const ParamsEdited* pe = nullptr);
     void deleteInstance();
     void clearGeneral();
     int  load(const Glib::ustring& fName);

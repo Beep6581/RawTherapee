@@ -435,12 +435,7 @@ static void calcGradientParams (int oW, int oH, const GradientParams& gradient, 
 
     if (gp.transpose) {
         gp.bright_top = !gp.bright_top;
-    }
-
-    if (gp.transpose) {
-        int tmp = w;
-        w = h;
-        h = tmp;
+        std::swap(w, h);
     }
 
     gp.scale = 1.0 / pow (2, gradient_stops);

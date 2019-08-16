@@ -26,6 +26,7 @@
 #include "thumbbrowserentrybase.h"
 #include "thumbnail.h"
 #include "bqentryupdater.h"
+#include "../rtengine/noncopyable.h"
 
 class BatchQueueEntry;
 struct BatchQueueEntryIdleHelper {
@@ -34,7 +35,7 @@ struct BatchQueueEntryIdleHelper {
     int pending;
 };
 
-class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener
+class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener, public rtengine::NonCopyable
 {
 
     guint8* opreview;
