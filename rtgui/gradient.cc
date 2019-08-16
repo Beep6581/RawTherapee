@@ -422,9 +422,7 @@ bool Gradient::button1Pressed(int modifierKey)
             double diagonal = sqrt(double(imW) * double(imW) + double(imH) * double(imH));
 
             // trick to get the correct angle (clockwise/counter-clockwise)
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
+            std::swap(centerPos.y, currPos.y);
 
             draggedPoint = currPos - centerPos;
             // compute the projected value of the dragged point
