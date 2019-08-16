@@ -147,7 +147,7 @@ void ProfileStoreComboBox::updateProfileList ()
 Gtk::TreeIter ProfileStoreComboBox::findRowFromEntry_ (Gtk::TreeModel::Children childs, const ProfileStoreEntry *pse) const
 {
 
-    for (const auto iter : childs) {
+    for (const auto& iter : childs) {
         const Gtk::TreeModel::Row row = *iter;
         // Hombre: is there a smarter way of knowing if this row has childs?
         const ProfileStoreEntry *pse_ = row[methodColumns.profileStoreEntry];
