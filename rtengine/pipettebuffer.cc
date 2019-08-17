@@ -176,9 +176,11 @@ void PipetteBuffer::getPipetteData(int x, int y, const int squareSize)
         }
     }
 
-    dataProvider->setPipetteVal1(-1.f);
-    dataProvider->setPipetteVal2(-1.f);
-    dataProvider->setPipetteVal3(-1.f);
+    if (dataProvider) {
+        dataProvider->setPipetteVal1(-1.f);
+        dataProvider->setPipetteVal2(-1.f);
+        dataProvider->setPipetteVal3(-1.f);
+    }
 }
 
 }

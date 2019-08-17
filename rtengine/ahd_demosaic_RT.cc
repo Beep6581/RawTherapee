@@ -40,7 +40,7 @@ void RawImageSource::ahd_demosaic()
 {
     BENCHFUN
 
-    constexpr int dir[4] = { -1, 1, -TS, TS };
+    constexpr int dirs[4] = { -1, 1, -TS, TS };
     float xyz_cam[3][3];
     LUTf cbrt(65536);
 
@@ -55,9 +55,10 @@ void RawImageSource::ahd_demosaic()
     constexpr float d65_white[3] = { 0.950456, 1, 1.088754 };
 
     double progress = 0.0;
+
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AHD")));
-        plistener->setProgress (0.0);
+        plistener->setProgress (progress);
     }
 
     for (int i = 0; i < 65536; i++) {
@@ -65,15 +66,16 @@ void RawImageSource::ahd_demosaic()
         cbrt[i] = r > 0.008856 ? std::cbrt(r) : 7.787 * r + 16 / 116.0;
     }
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++) {
         for (unsigned int j = 0; j < 3; j++) {
             xyz_cam[i][j] = 0;
             for (int k = 0; k < 3; k++) {
                 xyz_cam[i][j] += xyz_rgb[i][k] * imatrices.rgb_cam[k][j] / d65_white[i];
             }
         }
-
+    }
     border_interpolate2(W, H, 5, rawData, red, green, blue);
+
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -153,9 +155,9 @@ void RawImageSource::ahd_demosaic()
                         auto lix = &lab[d][tr][tc];
 
                         for (int i = 0; i < 4; i++) {
-                            ldiff[d][i] = std::fabs(lix[0][0] - lix[dir[i]][0]);
-                            abdiff[d][i] = SQR(lix[0][1] - lix[dir[i]][1])
-                                           + SQR(lix[0][2] - lix[dir[i]][2]);
+                            ldiff[d][i] = std::fabs(lix[0][0] - lix[dirs[i]][0]);
+                            abdiff[d][i] = SQR(lix[0][1] - lix[dirs[i]][1])
+                                           + SQR(lix[0][2] - lix[dirs[i]][2]);
                         }
                     }
 

@@ -54,15 +54,15 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
 
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+    double progress = 0.0;
     if (plistener) {
-        plistener->setProgressStr ("PROGRESSBAR_LINEDENOISE");
-        plistener->setProgress (0.0);
+        plistener->setProgressStr("PROGRESSBAR_LINEDENOISE");
+        plistener->setProgress(progress);
     }
 
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     float noisevar = SQR(3 * noise * 65535); // _noise_ (as a fraction of saturation) is input to the algorithm
     float noisevarm4 = 4.0f * noisevar;
-    volatile double progress = 0.0;
     float* RawDataTmp = (float*)malloc( width * height * sizeof(float));
 #ifdef _OPENMP
     #pragma omp parallel
