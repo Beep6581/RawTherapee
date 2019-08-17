@@ -20,7 +20,7 @@
 #include "multilangmgr.h"
 #include "rtimage.h"
 
-FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("")
+FavoritBrowser::FavoritBrowser () : listener (NULL)
 {
 
     scrollw = Gtk::manage (new Gtk::ScrolledWindow ());

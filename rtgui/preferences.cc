@@ -56,6 +56,7 @@ Glib::RefPtr<Gtk::CssProvider> fontcss;
 
 Preferences::Preferences (RTWindow *rtwindow)
     : Gtk::Dialog (M ("MAIN_BUTTON_PREFERENCES"), *rtwindow, true)
+    , regex(Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS))
     , splash (nullptr)
     , rprofiles (nullptr)
     , iprofiles (nullptr)
@@ -63,7 +64,6 @@ Preferences::Preferences (RTWindow *rtwindow)
     , newFont (false)
     , newCPFont (false)
 {
-    regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
 
     moptions.copyFrom (&options);
 

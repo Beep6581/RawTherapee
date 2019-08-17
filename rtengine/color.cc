@@ -2016,45 +2016,6 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
     v = c * sincosval.y;
 }
 
-// NOT TESTED
-void Color::XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v)
-{
-
-    X /= 65535.f;
-    Y /= 65535.f;
-    Z /= 65535.f;
-
-    if (Y > float(eps)) {
-        L = 116.f * std::cbrt(Y) - 16.f;
-    } else {
-        L = float(kappa) * Y;
-    }
-
-    u = 13.f * L * float(u0);
-    v = 13.f * L * float(v0);
-}
-
-// NOT TESTED
-void Color::Luv2XYZ (float L, float u, float v, float &X, float &Y, float &Z)
-{
-    if (L > float(epskap)) {
-        float t = (L + 16.f) / 116.f;
-        Y = t * t * t;
-    } else {
-        Y = L / float(kappa);
-    }
-
-    float a = ((52.f * L) / (u + 13.f * L * float(u0)) - 1.f) / 3.f;
-    float d = Y * (((39 * L) / (v + 13 * float(v0))) - 5.f);
-    float b = -5.f * Y;
-    X = (d - b) / (a + 1.f / 3.f);
-
-    Z = X * a + b;
-
-    X *= 65535.f;
-    Y *= 65535.f;
-    Z *= 65535.f;
-}
 
 /*
  * Gamut mapping algorithm

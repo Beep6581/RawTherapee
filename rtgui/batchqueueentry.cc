@@ -40,7 +40,6 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
     job(pjob),
     params(new rtengine::procparams::ProcParams(pparams)),
     progress(0),
-    outFileName(""),
     sequence(0),
     forceFormatOpts(false),
     fast_pipeline(job->fastPipeline()),

@@ -298,17 +298,14 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         cr->line_to (rectx1, recty1);
         cr->stroke ();
         cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-        std::valarray<double> ds (1);
-        ds[0] = 4;
-        cr->set_dash (ds, 0);
+        cr->set_dash (std::valarray<double>({4}), 0);
         cr->move_to (rectx1, recty1);
         cr->line_to (rectx2, recty1);
         cr->line_to (rectx2, recty2);
         cr->line_to (rectx1, recty2);
         cr->line_to (rectx1, recty1);
         cr->stroke ();
-        ds.resize (0);
-        cr->set_dash (ds, 0);
+        cr->set_dash (std::valarray<double>(), 0);
 
         if (cparams.guide != "Rule of diagonals" && cparams.guide != "Golden Triangle 1" && cparams.guide != "Golden Triangle 2") {
             // draw guide lines
@@ -446,14 +443,11 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             cr->line_to (rectx2, recty2);
             cr->stroke ();
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            std::valarray<double> ds (1);
-            ds[0] = 4;
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>({4}), 0);
             cr->move_to (rectx1, recty1);
             cr->line_to (rectx2, recty2);
             cr->stroke ();
-            ds.resize (0);
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>(), 0);
 
             double height = recty2 - recty1;
             double width = rectx2 - rectx1;
@@ -470,14 +464,11 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            ds.resize (1);
-            ds[0] = 4;
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>({4}), 0);
             cr->move_to (rectx1, recty2);
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
-            ds.resize (0);
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>(), 0);
 
             x = width - (a * b) / height;
             y = (b * (d - a)) / width;
@@ -486,14 +477,11 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
             cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            ds.resize (1);
-            ds[0] = 4;
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>({4}), 0);
             cr->move_to (rectx2, recty1);
             cr->line_to (rectx1 + x, recty1 + y);
             cr->stroke ();
-            ds.resize (0);
-            cr->set_dash (ds, 0);
+            cr->set_dash (std::valarray<double>(), 0);
         }
     }
 
@@ -674,12 +662,6 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     }
 
     statusImage->set_can_focus(false);
-
-    Glib::ustring str("-");
-
-    if (!titleLabel.empty()) {
-        str = titleLabel;
-    }
 
     label = Gtk::manage(new Gtk::Label());
     setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -970,38 +952,27 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
     Gtk::Scrollbar *scroll = get_vscrollbar();
 
     if (adjust && scroll) {
-        double upper = adjust->get_upper();
-        double lower = adjust->get_lower();
+        const double upperBound = adjust->get_upper();
+        const double lowerBound = adjust->get_lower();
         double value = adjust->get_value();
         double step  = adjust->get_step_increment();
         double value2 = 0.;
 
-//        printf("MyScrolledwindow::on_scroll_event / delta_x=%.5f, delta_y=%.5f, direction=%d, type=%d, send_event=%d\n",
-//                event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
-
         if (event->direction == GDK_SCROLL_DOWN) {
-            value2 = value + step;
-
-            if (value2 > upper) {
-                value2 = upper;
-            }
+            value2 = rtengine::min<double>(value + step, upperBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_UP) {
-            value2 = value - step;
-
-            if (value2 < lower) {
-                value2 = lower;
-            }
+            value2 = rtengine::max<double>(value - step, lowerBound);
 
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
             if (abs(event->delta_y) > 0.1) {
-                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? step : -step), lower, upper);
+                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? step : -step), lowerBound, upperBound);
             }
             if (value2 != value) {
                 scroll->set_value(value2);
@@ -1050,8 +1021,8 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
     Gtk::Scrollbar *scroll = get_hscrollbar();
 
     if (adjust && scroll) {
-        double upper = adjust->get_upper();
-        double lower = adjust->get_lower();
+        const double upperBound = adjust->get_upper();
+        const double lowerBound = adjust->get_lower();
         double value = adjust->get_value();
         double step  = adjust->get_step_increment() * 2;
         double value2 = 0.;
@@ -1060,20 +1031,20 @@ bool MyScrolledToolbar::on_scroll_event (GdkEventScroll* event)
 //                event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
 
         if (event->direction == GDK_SCROLL_DOWN) {
-            value2 = rtengine::min<double>(value + step, upper);
+            value2 = rtengine::min<double>(value + step, upperBound);
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_UP) {
-            value2 = rtengine::max<double>(value - step, lower);
+            value2 = rtengine::max<double>(value - step, lowerBound);
             if (value2 != value) {
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
             if (event->delta_x) {  // if the user use a pad, it can scroll horizontally
-                value2 = rtengine::LIM<double>(value + (event->delta_x > 0 ? 30 : -30), lower, upper);
+                value2 = rtengine::LIM<double>(value + (event->delta_x > 0 ? 30 : -30), lowerBound, upperBound);
             } else if (event->delta_y) {
-                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? 30 : -30), lower, upper);
+                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? 30 : -30), lowerBound, upperBound);
             }
             if (value2 != value) {
                 scroll->set_value(value2);
@@ -1604,7 +1575,7 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
 
     x = newX;
     y = newY;
-    if (newH > 0) {
+    if (newW > 0) {
         w = newW;
     }
     if (newH > 0) {
@@ -1637,7 +1608,7 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
 
     x = newX;
     y = newY;
-    if (newH > 0) {
+    if (newW > 0) {
         w = newW;
     }
     if (newH > 0) {

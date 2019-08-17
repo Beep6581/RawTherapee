@@ -45,7 +45,6 @@ private:
     static const int maxlevels = 10;//should be greater than any conceivable order of decimation
 
     int lvltot, subsamp;
-    int numThreads;
     int m_w, m_h;//dimensions
 
     int wavfilt_len, wavfilt_offset;
@@ -97,7 +96,7 @@ public:
 
 template<typename E>
 wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop, int numThreads, int Daub4Len)
-    : coeff0(nullptr), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), numThreads(numThreads), m_w(width), m_h(height)
+    : coeff0(nullptr), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), m_w(width), m_h(height)
 {
 
     //initialize wavelet filters

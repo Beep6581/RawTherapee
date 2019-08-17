@@ -34,6 +34,7 @@
 #include "navigator.h"
 #include "progressconnector.h"
 #include "filepanel.h"
+#include "../rtengine/noncopyable.h"
 
 class EditorPanel;
 class MyProgressBar;
@@ -52,7 +53,8 @@ class EditorPanel final :
     public rtengine::ProgressListener,
     public ThumbnailListener,
     public HistoryBeforeLineListener,
-    public rtengine::HistogramListener
+    public rtengine::HistogramListener,
+    public rtengine::NonCopyable
 {
 public:
     explicit EditorPanel (FilePanel* filePanel = nullptr);

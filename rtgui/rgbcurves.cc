@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RGBCurves::RGBCurves () : FoldableToolPanel(this, "rgbcurves", M("TP_RGBCURVES_LABEL"), false, true)
+RGBCurves::RGBCurves () : FoldableToolPanel(this, "rgbcurves", M("TP_RGBCURVES_LABEL"), false, true), lastLumamode(false)
 {
 
     lumamode = Gtk::manage (new Gtk::CheckButton (M("TP_RGBCURVES_LUMAMODE")));

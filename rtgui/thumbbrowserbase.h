@@ -175,12 +175,13 @@ protected:
 
     int previewHeight;
     int numOfCols;
+    int lastRowHeight;
 
     Arrangement arrangement;
 
     std::set<Glib::ustring> editedFiles;
 
-    void arrangeFiles (bool checkfilter = true);
+    void arrangeFiles (ThumbBrowserEntryBase* entry = nullptr);
     void zoomChanged (bool zoomIn);
 
 public:
@@ -202,7 +203,7 @@ public:
         return fd;
     }
     void on_style_updated () override;
-    void redraw (bool checkfilter = true);   // arrange files and draw area
+    void redraw (ThumbBrowserEntryBase* entry = nullptr);   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
@@ -215,7 +216,7 @@ public:
     void setArrangement (Arrangement a);
     void enableTabMode(bool enable);  // set both thumb sizes and arrangements
 
-    virtual bool checkFilter (ThumbBrowserEntryBase* entry)
+    virtual bool checkFilter (ThumbBrowserEntryBase* entry) const
     {
         return true;
     }

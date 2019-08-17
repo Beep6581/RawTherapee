@@ -356,24 +356,19 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
-    double dx = Color::D50x;
-    double dz = Color::D50z;
-    {
-        dx = dz = 1.0;
-    }
     const float toxyz[3][3] = {
         {
-            static_cast<float>(wprof[0][0] / (dx * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
-            static_cast<float>(wprof[0][1] / (dx * (normalizeIn ? 65535.0 : 1.0))),
-            static_cast<float>(wprof[0][2] / (dx * (normalizeIn ? 65535.0 : 1.0)))
+            static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
+            static_cast<float>(wprof[0][1] / ((normalizeIn ? 65535.0 : 1.0))),
+            static_cast<float>(wprof[0][2] / ((normalizeIn ? 65535.0 : 1.0)))
         }, {
             static_cast<float>(wprof[1][0] / (normalizeIn ? 65535.0 : 1.0)),
             static_cast<float>(wprof[1][1] / (normalizeIn ? 65535.0 : 1.0)),
             static_cast<float>(wprof[1][2] / (normalizeIn ? 65535.0 : 1.0))
         }, {
-            static_cast<float>(wprof[2][0] / (dz * (normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50z
-            static_cast<float>(wprof[2][1] / (dz * (normalizeIn ? 65535.0 : 1.0))),
-            static_cast<float>(wprof[2][2] / (dz * (normalizeIn ? 65535.0 : 1.0)))
+            static_cast<float>(wprof[2][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50z
+            static_cast<float>(wprof[2][1] / ((normalizeIn ? 65535.0 : 1.0))),
+            static_cast<float>(wprof[2][2] / ((normalizeIn ? 65535.0 : 1.0)))
         }
     };
 

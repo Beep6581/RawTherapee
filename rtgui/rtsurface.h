@@ -30,7 +30,7 @@ class RTSurface :
 {
 public:
     RTSurface();
-    RTSurface(const Glib::ustring& fileName, const Glib::ustring& rtlFileName = {});
+    explicit RTSurface(const Glib::ustring& fileName, const Glib::ustring& rtlFileName = {});
 
     void setImage(const Glib::ustring& fileName, const Glib::ustring& rtlFileName = {});
 

@@ -39,9 +39,9 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 void RawImageSource::cielab (const float (*rgb)[3], float* l, float* a, float *b, const int width, const int height, const int labWidth, const float xyz_cam[3][3])
 {
     static LUTf cbrt(0x14000);
-    static bool cbrtinit = false;
 
     if (!rgb) {
+        static bool cbrtinit = false;
         if(!cbrtinit) {
         #pragma omp parallel for
             for (int i = 0; i < 0x14000; i++) {
@@ -291,8 +291,6 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
 #endif
     {
         int progressCounter = 0;
-        int c;
-        float color[3][6];
 
         float *buffer = (float *) malloc ((ts * ts * (ndir * 4 + 3) + 128) * sizeof(float));
         float (*rgb)[ts][ts][3] = (float(*)[ts][ts][3]) buffer;
@@ -521,6 +519,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
 
                     /* Interpolate red and blue values for solitary green pixels:   */
                     int sgstartcol = (left - sgcol + 4) / 3 * 3 + sgcol;
+                    float color[3][6];
 
                     for (int row = (top - sgrow + 4) / 3 * 3 + sgrow; row < mrow - 2; row += 3) {
                         for (int col = sgstartcol, h = fcol(row, col + 1); col < mcol - 2; col += 3, h ^= 2) {
@@ -564,7 +563,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                             }
 
                         int coloffset = (RightShift[row % 3] == 1 ? 3 : 1);
-                        c = (row - sgrow) % 3 ? ts : 1;
+                        int c = ((row - sgrow) % 3) ? ts : 1;
                         int h = 3 * (c ^ ts ^ 1);
 
                         if(coloffset == 3) {
@@ -629,13 +628,13 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                                     if (hex[d] + hex[d + 1]) {
                                         float g = 3 * rix[0][1] - 2 * rix[hex[d]][1] - rix[hex[d + 1]][1];
 
-                                        for (c = 0; c < 4; c += 2) {
+                                        for (int c = 0; c < 4; c += 2) {
                                             rix[0][c] = CLIP((g + 2 * rix[hex[d]][c] + rix[hex[d + 1]][c]) * 0.33333333f);
                                         }
                                     } else {
                                         float g = 2 * rix[0][1] - rix[hex[d]][1] - rix[hex[d + 1]][1];
 
-                                        for (c = 0; c < 4; c += 2) {
+                                        for (int c = 0; c < 4; c += 2) {
                                             rix[0][c] = CLIP((g + rix[hex[d]][c] + rix[hex[d + 1]][c]) * 0.5f);
                                         }
                                     }
@@ -656,10 +655,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                     // (presumably coming from original AHD) and converts taking
                     // camera matrix into account.  We use this in RT.
                     for (int d = 0; d < ndir; d++) {
-                        float *l = &lab[0][0][0];
-                        float *a = &lab[1][0][0];
-                        float *b = &lab[2][0][0];
-                        cielab(&rgb[d][4][4], l, a, b, ts, mrow - 8, ts - 8, xyz_cam);
+                        cielab(&rgb[d][4][4], &lab[0][0][0], &lab[1][0][0], &lab[2][0][0], ts, mrow - 8, ts - 8, xyz_cam);
                         int f = dir[d & 3];
                         f = f == 1 ? 1 : f - 8;
 
@@ -704,7 +700,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
                                 // which appears less good with specular highlights
                                 vfloat redv, greenv, bluev;
                                 vconvertrgbrgbrgbrgb2rrrrggggbbbb(rgb[d][row][col], redv, greenv, bluev);
-                                vfloat yv = zd2627v * redv + zd6780v * bluev + zd0593v * greenv;
+                                vfloat yv = zd2627v * redv + zd6780v * greenv + zd0593v * bluev;
                                 STVFU(yuv[0][row - 4][col - 4], yv);
                                 STVFU(yuv[1][row - 4][col - 4], (bluev - yv) * zd56433v);
                                 STVFU(yuv[2][row - 4][col - 4], (redv - yv) * zd67815v);

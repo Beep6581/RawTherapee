@@ -26,6 +26,7 @@
 #include "guiutils.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
+#include "../rtengine/noncopyable.h"
 
 class ToolPanel;
 class FoldableToolPanel;
@@ -51,7 +52,7 @@ public:
     ToolParamBlock();
 };
 
-class ToolPanel
+class ToolPanel : public rtengine::NonCopyable
 {
 
 protected:

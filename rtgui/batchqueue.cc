@@ -811,7 +811,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
             break;
         }
 
-        Glib::ustring tok = "";
+        Glib::ustring tok;
 
         while ((i < origFileName.size()) && !(origFileName[i] == '\\' || origFileName[i] == '/')) {
             tok = tok + origFileName[i++];
@@ -857,7 +857,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     // constructing full output path
 //    printf ("path=|%s|\n", options.savePath.c_str());
 
-    Glib::ustring path = "";
+    Glib::ustring path;
 
     if (options.saveUsePathTemplate) {
         unsigned int ix = 0;
