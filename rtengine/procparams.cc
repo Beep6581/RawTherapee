@@ -1079,6 +1079,7 @@ void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurv
 SharpeningParams::SharpeningParams() :
     enabled(false),
     contrast(20.0),
+    autoContrast(false),
     blurradius(0.2),
     gamma(1.0),
     radius(0.5),
@@ -1107,6 +1108,7 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
         && radius == other.radius
         && amount == other.amount
         && threshold == other.threshold
+        && autoContrast == other.autoContrast
         && edgesonly == other.edgesonly
         && edges_radius == other.edges_radius
         && edges_tolerance == other.edges_tolerance
@@ -2791,6 +2793,7 @@ void ProcParams::setDefaults()
 
     pdsharpening = {};
     pdsharpening.contrast = 10.0;
+    pdsharpening.autoContrast = true;
     prsharpening.method = "rld";
     pdsharpening.gamma = 1.35;
     pdsharpening.deconvradius = 0.75;
@@ -3308,6 +3311,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Post demosaic sharpening
         saveToKeyfile(!pedited || pedited->pdsharpening.enabled, "PostDemosaicSharpening", "Enabled", pdsharpening.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.contrast, "PostDemosaicSharpening", "Contrast", pdsharpening.contrast, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.autoContrast, "PostDemosaicSharpening", "AutoContrast", pdsharpening.autoContrast, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.gamma, "PostDemosaicSharpening", "DeconvGamma", pdsharpening.gamma, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvradius, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconviter, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, keyFile);
@@ -4395,6 +4399,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("PostDemosaicSharpening")) {
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Enabled", pedited, pdsharpening.enabled, pedited->pdsharpening.enabled);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Contrast", pedited, pdsharpening.contrast, pedited->pdsharpening.contrast);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoContrast", pedited, pdsharpening.autoContrast, pedited->pdsharpening.autoContrast);
 
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvGamma", pedited, pdsharpening.gamma, pedited->pdsharpening.gamma);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pedited, pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);

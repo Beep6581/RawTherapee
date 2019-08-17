@@ -4953,7 +4953,7 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
     }
 }
 
-void RawImageSource::captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask) {
+void RawImageSource::captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold) {
 BENCHFUN
 
     const float xyz_rgb[3][3] = {          // XYZ from RGB
@@ -4962,7 +4962,7 @@ BENCHFUN
                                     { 0.019334, 0.119193, 0.950227 }
                                 };
 
-    float contrast = sharpeningParams.contrast / 100.f;
+    float contrast = conrastThreshold / 100.f;
 
     if (showMask) {
         StopWatch Stop1("Show mask");
@@ -4975,8 +4975,8 @@ BENCHFUN
             Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
         }
         array2D<float>& blend = red; // red will be overridden anyway => we can use its buffer to store the blend mask
-        buildBlendMask(L, blend, W, H, contrast, 1.f);
-
+        buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast);
+        conrastThreshold = contrast * 100.f;
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -5002,7 +5002,8 @@ BENCHFUN
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    buildBlendMask(L, blend, W, H, contrast, 1.f);
+    buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast);
+    conrastThreshold = contrast * 100.f;
 
     Stop1.stop();
     array2D<float>& tmp = L; // L is not used anymore now => we can use its buffer as the needed temporary buffer

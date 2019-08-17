@@ -161,6 +161,7 @@ protected:
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
     AutoContrastListener *bayerAutoContrastListener;
     AutoContrastListener *xtransAutoContrastListener;
+    AutoContrastListener *pdSharpenAutoContrastListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -361,6 +362,11 @@ public:
     void setXtransAutoContrastListener  (AutoContrastListener* acl) override
     {
         xtransAutoContrastListener = acl;
+    }
+
+    void setpdSharpenAutoContrastListener  (AutoContrastListener* acl) override
+    {
+        pdSharpenAutoContrastListener = acl;
     }
 
     void setImageTypeListener  (ImageTypeListener* itl) override

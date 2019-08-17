@@ -523,6 +523,7 @@ public:
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setBayerAutoContrastListener (AutoContrastListener* l) = 0;
     virtual void        setXtransAutoContrastListener (AutoContrastListener* l) = 0;
+    virtual void        setpdSharpenAutoContrastListener (AutoContrastListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;

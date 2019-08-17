@@ -493,6 +493,7 @@ struct ColorToningParams {
 struct SharpeningParams {
     bool           enabled;
     double         contrast;
+    bool           autoContrast;
     double         blurradius;
     double         gamma;
     double         radius;

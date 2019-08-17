@@ -20,10 +20,9 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
-#include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class PdSharpening : public ToolParamBlock, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel
+class PdSharpening : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoContrastListener
 {
 
 protected:
@@ -32,11 +31,14 @@ protected:
     Adjuster* dradius;
     Adjuster* diter;
     Gtk::VBox* rld;
-
+    bool lastAutoContrast;
     rtengine::ProcEvent EvPdShrContrast;
     rtengine::ProcEvent EvPdShrDRadius;
     rtengine::ProcEvent EvPdSharpenGamma;
     rtengine::ProcEvent EvPdShrDIterations;
+    rtengine::ProcEvent EvPdShrAutoContrast;
+    IdleRegister idle_register;
+
 public:
 
     PdSharpening ();
@@ -47,14 +49,11 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void setBatchMode   (bool batchMode) override;
 
+    void adjusterAutoToggled (Adjuster* a, bool newval) override;
     void adjusterChanged (Adjuster* a, double newval) override;
     void enabledChanged  () override;
 
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override;
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override;
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override;
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+    void autoContrastChanged (double autoContrast) override;
 
     void setAdjusterBehavior (bool contrastadd, bool gammaadd, bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;

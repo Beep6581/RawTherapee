@@ -20,6 +20,7 @@
 #include "eventmapper.h"
 #include "pdsharpening.h"
 #include "options.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -32,11 +33,15 @@ PdSharpening::PdSharpening () : FoldableToolPanel(this, "pdsharpening", M("TP_PD
     EvPdSharpenGamma = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_GAMMA");
     EvPdShrDRadius = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_RADIUS");
     EvPdShrDIterations = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
+    EvPdShrAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
     contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 10));
     contrast->setAdjusterListener (this);
+    contrast->addAutoButton(M("TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP"));
+    contrast->setAutoValue(true);
+
     pack_start(*contrast);
     contrast->show();
 
@@ -77,7 +82,7 @@ PdSharpening::PdSharpening () : FoldableToolPanel(this, "pdsharpening", M("TP_PD
 
 PdSharpening::~PdSharpening ()
 {
-
+    idle_register.destroy();
     delete rld;
 }
 
@@ -89,6 +94,7 @@ void PdSharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         contrast->setEditedState    (pedited->pdsharpening.contrast ? Edited : UnEdited);
+        contrast->setAutoInconsistent   (multiImage && !pedited->pdsharpening.autoContrast);
         gamma->setEditedState       (pedited->pdsharpening.gamma ? Edited : UnEdited);
         dradius->setEditedState     (pedited->pdsharpening.deconvradius ? Edited : UnEdited);
         diter->setEditedState       (pedited->pdsharpening.deconviter ? Edited : UnEdited);
@@ -99,9 +105,11 @@ void PdSharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
     setEnabled(pp->pdsharpening.enabled);
 
     contrast->setValue      (pp->pdsharpening.contrast);
+    contrast->setAutoValue  (pp->pdsharpening.autoContrast);
     gamma->setValue         (pp->pdsharpening.gamma);
     dradius->setValue       (pp->pdsharpening.deconvradius);
     diter->setValue         (pp->pdsharpening.deconviter);
+    lastAutoContrast = pp->pdsharpening.autoContrast;
 
     enableListener ();
 }
@@ -110,6 +118,7 @@ void PdSharpening::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
     pp->pdsharpening.contrast         = contrast->getValue ();
+    pp->pdsharpening.autoContrast = contrast->getAutoValue();
     pp->pdsharpening.enabled          = getEnabled ();
     pp->pdsharpening.gamma     = gamma->getValue ();
     pp->pdsharpening.deconvradius     = dradius->getValue ();
@@ -117,6 +126,7 @@ void PdSharpening::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->pdsharpening.contrast           = contrast->getEditedState ();
+        pedited->pdsharpening.autoContrast = !contrast->getAutoInconsistent ();
         pedited->pdsharpening.gamma       = gamma->getEditedState ();
         pedited->pdsharpening.deconvradius       = dradius->getEditedState ();
         pedited->pdsharpening.deconviter         = diter->getEditedState ();
@@ -182,26 +192,6 @@ void PdSharpening::enabledChanged ()
     }
 }
 
-void PdSharpening::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
-{
-}
-
-void PdSharpening::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
-{
-}
-
-void PdSharpening::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
-{
-}
-
-void PdSharpening::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
-{
-}
-
-void PdSharpening::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
-{
-}
-
 void PdSharpening::setBatchMode (bool batchMode)
 {
 
@@ -231,4 +221,44 @@ void PdSharpening::trimValues (rtengine::procparams::ProcParams* pp)
     gamma->trimValue(pp->pdsharpening.gamma);
     dradius->trimValue(pp->pdsharpening.deconvradius);
     diter->trimValue(pp->pdsharpening.deconviter);
+}
+
+void PdSharpening::autoContrastChanged (double autoContrast)
+{
+    idle_register.add(
+        [this, autoContrast]() -> bool
+        {
+            disableListener();
+            contrast->setValue(autoContrast);
+            enableListener();
+            return false;
+        }
+    );
+}
+
+void PdSharpening::adjusterAutoToggled(Adjuster* a, bool newval)
+{
+    if (multiImage) {
+        if (contrast->getAutoInconsistent()) {
+            contrast->setAutoInconsistent (false);
+            contrast->setAutoValue (false);
+        } else if (lastAutoContrast) {
+            contrast->setAutoInconsistent (true);
+        }
+
+        lastAutoContrast = contrast->getAutoValue();
+    }
+
+    if (listener) {
+
+        if (a == contrast) {
+            if (contrast->getAutoInconsistent()) {
+                listener->panelChanged (EvPdShrAutoContrast, M ("GENERAL_UNCHANGED"));
+            } else if (contrast->getAutoValue()) {
+                listener->panelChanged (EvPdShrAutoContrast, M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvPdShrAutoContrast, M ("GENERAL_DISABLED"));
+            }
+        }
+    }
 }

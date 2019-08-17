@@ -222,7 +222,7 @@ private:
 
         imgsrc->demosaic (params.raw, autoContrast, contrastThreshold);
         if (params.pdsharpening.enabled) {
-            imgsrc->captureSharpening(params.pdsharpening, false);
+            imgsrc->captureSharpening(params.pdsharpening, false, params.pdsharpening.contrast);
         }
 
 

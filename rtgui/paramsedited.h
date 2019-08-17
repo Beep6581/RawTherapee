@@ -179,6 +179,7 @@ struct SharpenMicroParamsEdited {
 struct SharpeningParamsEdited {
     bool enabled;
     bool contrast;
+    bool autoContrast;
     bool blurradius;
     bool gamma;
     bool radius;

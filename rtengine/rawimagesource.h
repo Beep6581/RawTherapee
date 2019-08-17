@@ -305,7 +305,7 @@ protected:
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
-    void captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask) override;
+    void captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold) override;
 };
 
 }

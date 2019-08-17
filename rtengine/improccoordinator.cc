@@ -121,6 +121,7 @@ ImProcCoordinator::ImProcCoordinator() :
     flatFieldAutoClipListener(nullptr),
     bayerAutoContrastListener(nullptr),
     xtransAutoContrastListener(nullptr),
+    pdSharpenAutoContrastListener(nullptr),
     frameCountListener(nullptr),
     imageTypeListener(nullptr),
     actListener(nullptr),
@@ -333,15 +334,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicContrast : params->raw.xtranssensor.dualDemosaicContrast;
             imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
 
-            if (params->pdsharpening.enabled) {
-                imgsrc->captureSharpening(params->pdsharpening, sharpMask);
-            }
             if (imgsrc->getSensorType() == ST_BAYER && bayerAutoContrastListener && autoContrast) {
-                bayerAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
-            }
-            if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
+                bayerAutoContrastListener->autoContrastChanged(contrastThreshold);
+            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
                 xtransAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
             }
+
+            if (params->pdsharpening.enabled) {
+                double pdSharpencontrastThreshold = params->pdsharpening.contrast;
+                imgsrc->captureSharpening(params->pdsharpening, sharpMask, pdSharpencontrastThreshold);
+                if (pdSharpenAutoContrastListener && params->pdsharpening.autoContrast) {
+                    pdSharpenAutoContrastListener->autoContrastChanged(pdSharpencontrastThreshold);
+                }
+            }
+
 
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
             todo |= M_INIT;

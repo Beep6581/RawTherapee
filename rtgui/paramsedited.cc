@@ -167,6 +167,7 @@ void ParamsEdited::set(bool v)
     sharpening.deconvdamping  = v;
     pdsharpening.enabled            = v;
     pdsharpening.contrast           = v;
+    pdsharpening.autoContrast           = v;
     pdsharpening.gamma   = v;
     pdsharpening.deconvamount   = v;
     pdsharpening.deconvradius   = v;
@@ -751,6 +752,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.deconvdamping = sharpening.deconvdamping && p.sharpening.deconvdamping == other.sharpening.deconvdamping;
         pdsharpening.enabled = pdsharpening.enabled && p.pdsharpening.enabled == other.pdsharpening.enabled;
         pdsharpening.contrast = pdsharpening.contrast && p.pdsharpening.contrast == other.pdsharpening.contrast;
+        pdsharpening.autoContrast = pdsharpening.autoContrast && p.pdsharpening.autoContrast == other.pdsharpening.autoContrast;
         pdsharpening.gamma = pdsharpening.gamma && p.pdsharpening.gamma == other.pdsharpening.gamma;
         pdsharpening.deconvradius = pdsharpening.deconvradius && p.pdsharpening.deconvradius == other.pdsharpening.deconvradius;
         pdsharpening.deconviter = pdsharpening.deconviter && p.pdsharpening.deconviter == other.pdsharpening.deconviter;
@@ -1725,6 +1727,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (pdsharpening.contrast) {
         toEdit.pdsharpening.contrast = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.pdsharpening.contrast + mods.pdsharpening.contrast : mods.pdsharpening.contrast;
+    }
+
+    if (pdsharpening.autoContrast) {
+        toEdit.pdsharpening.autoContrast = mods.pdsharpening.autoContrast;
     }
 
     if (pdsharpening.deconvamount) {
@@ -3288,5 +3294,5 @@ bool FilmNegativeParamsEdited::isUnchanged() const
 
 bool SharpeningParamsEdited::isUnchanged() const
 {
-    return enabled && contrast && gamma && deconvradius && deconviter;
+    return enabled && contrast && autoContrast && gamma && deconvradius && deconviter;
 }
