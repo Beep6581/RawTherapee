@@ -359,10 +359,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
-            bool autowb0 = false;
+        //    bool autowb0 = false;
        //     autowb0 = (params->wb.method == "autold" || params->wb.method == "aut"  || params->wb.method == "autosdw" || params->wb.method == "autedgsdw" || params->wb.method == "autitcgreen" || params->wb.method == "autedgrob" || params->wb.method == "autedg" || params->wb.method == "autorobust");
-            autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");//in some cases autowb0 does not work ....params->wb.method still at "camera" instead of auto !!! 
-            printf("autowb0=%s \n", params->wb.method.c_str());
+       //     autowb0 = (params->wb.method == "autold" || params->wb.method == "autitcgreen");//in some cases autowb0 does not work ....params->wb.method still at "camera" instead of auto !!! 
+       //     printf("autowb0=%s \n", params->wb.method.c_str());
 
 
 
