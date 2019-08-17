@@ -106,10 +106,10 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                     #pragma omp parallel for if (multiThread)
 #endif
                     for (int l = 0; l < 32768; ++l) {
-                        auto base = pow_F(l / 32768.f, gamma);
+                        auto val = pow_F(l / 32768.f, gamma);
                         // get a bit more contrast in the shadows
-                        base = sh_contrast.getVal(base);
-                        f[l] = base * 32768.f;
+                        val = sh_contrast.getVal(val);
+                        f[l] = val * 32768.f;
                     }
                 } else {
 #ifdef _OPENMP
@@ -119,10 +119,10 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                         float l, a, b;
                         float R = c, G = c, B = c;
                         rgb2lab(R, G, B, l, a, b);
-                        auto base = pow_F(l / 32768.f, gamma);
+                        auto val = pow_F(l / 32768.f, gamma);
                         // get a bit more contrast in the shadows
-                        base = sh_contrast.getVal(base);
-                        l = base * 32768.f;
+                        val = sh_contrast.getVal(val);
+                        l = val * 32768.f;
                         lab2rgb(l, a, b, R, G, B);
                         f[c] = G;
                     }
@@ -133,8 +133,8 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                     #pragma omp parallel for if (multiThread)
 #endif
                     for (int l = 0; l < 32768; ++l) {
-                        auto base = pow_F(l / 32768.f, gamma);
-                        f[l] = base * 32768.f;
+                        auto val = pow_F(l / 32768.f, gamma);
+                        f[l] = val * 32768.f;
                     }
                 } else {
 #ifdef _OPENMP
@@ -144,8 +144,8 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
                         float l, a, b;
                         float R = c, G = c, B = c;
                         rgb2lab(R, G, B, l, a, b);
-                        auto base = pow_F(l / 32768.f, gamma);
-                        l = base * 32768.f;
+                        auto val = pow_F(l / 32768.f, gamma);
+                        l = val * 32768.f;
                         lab2rgb(l, a, b, R, G, B);
                         f[c] = G;
                     }

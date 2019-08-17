@@ -397,7 +397,7 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce)
     }
 }
 
-CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename(""), valLinear(0), valUnchanged(0), parent(nullptr)
+CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), valLinear(0), valUnchanged(0), parent(nullptr)
 {
     leftBar = nullptr;
     bottomBar = nullptr;

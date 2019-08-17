@@ -380,7 +380,7 @@ public:
             }
         }
 
-        std::string EffectiveMaxApertureString = "";
+        std::string EffectiveMaxApertureString;
 
         if (!d100) {
             int  EffectiveMaxApertureValue;

@@ -48,7 +48,7 @@ Examples:
         // For new models that are still not supported by the dcraw version used in current RT, we have to fill all the
         // alternate names or else RT will not recognize the alternate model names.
         // For models supported by dcraw, filling the alternate names is simply desired (for better user info).
-        // The format of multiple naming is to write all names in brackets i.e instead of 
+        // The format of multiple naming is to write all names in brackets i.e instead of
         // "make_model": "Canon EOS 550D",
         // type
         // "make_model": [ "Canon EOS 550D", "Canon EOS Rebel T2i", "Canon EOS Kiss X4" ],
@@ -115,9 +115,9 @@ How to Measure White Levels:
     dcraw provides the default values used by RawTherapee, but often provides too high white levels, and only provides a
     single value regardless of color channel, ISO or aperture. If you open an image with a large clipped area and that
     is rendered in a pink/magenta color rather than white it usually means that the white level constant is too high. You can
-    fix this by adjusting the"Raw White Point" in the raw tab inside RawTherapee, or permanently fix it by measuring and
+    fix this by adjusting white-point correction in the Raw tab > Raw White Points, or permanently fix it by measuring and
     providing a more exact white level in camconst.json so RawTherapee gets to know from start where the camera actually
-    clips.  Providing a complete and detailed white-level profile can be a quite large and complicated effort. As an
+    clips. Providing a complete and detailed white-level profile can be a quite large and complicated effort. As an
     alternative you can provide a simpler profile.We suggest one of the following alternatives in rising difficulty
     (and generally diminishing return):
     A) Provide a single white-level value measured on the native ISO (base ISO). For many cameras this will actually be
@@ -159,7 +159,7 @@ How to Measure White Levels:
     histogram. While it's common to with very little variation, say only +/-2 units, some can have +/-500 or more (some may
     have different variation depending on ISO). There can also be camera-to-camera variation.
 
-    If the white level is set too high RawTherapee will not think the pixels are clipped and you can get discoloured
+    If the white level is set too high RawTherapee will not think the pixels are clipped and you can get discolored
     highlights (usually pink), this is what we want to avoid. If white level is set too low RawTherapee will clip early, ie
     you lose a little highlight detail, but the color is rendered correctly and highlight reconstruction can work properly,
     so this is not as bad. This is why we want conservative values.
@@ -167,21 +167,21 @@ How to Measure White Levels:
     By conservative values we mean that if you see a white level of most often 15760 and occasionally 15759 (i.e. very small
     variation of white level which is a common case), you set the white level around 50-100 14-bit units below or
     10-20 12-bit units. Say at 15700 in this example, or 4080 instead of 4095 for 12-bit raws. This way we get a little margin
-    from noise and camera variation.  Since sensor raw values are linear, you lose, for example,
+    from noise and camera variation. Since sensor raw values are linear, you lose, for example,
     log2(1-50/15760) = -0.005 stops of detail, i.e. irrelevant. Thus it is better to provide RawTherapee with knowledge
     where the image clips rather than keeping that last 0.005 stop of highlight information and risking that clipping will
     not be detected properly.
 
     It is very usual for white level to be a bell distribution instead of a candle when the camera applies long exposure
     noise reduction (LENR) by subtracting a black frame and/or when the system is destabilized due to temperature. Some models have
-    always a bell distribution at WL.  If you have a fuzzy white level look at the linear histogram; you will probably see a
+    always a bell distribution at WL. If you have a fuzzy white level look at the linear histogram; you will probably see a
     normal/Gaussian distribution (bell shape) noise peak at clipping and probably also a peak at a hard raw data clip level
     usually at or close to a power of two - 1, such as 4095 or 16383. Then you pick a value just before the bell shape
     rises, i.e. to the left of the bell meaning that you cut away the whole fuzzy noise peak. If a little of the starting edge
-    of the noise will be included it's not harmful, but 99% of it should be above.  This would mean that it's better to
+    of the noise will be included it's not harmful, but 99% of it should be above. This would mean that it's better to
     measure white level on long exposure/high temp raws but since this if difficult and time consuming we choose to measure
-    on normal raws and cover the abnormalities with the conservative WL values.  A more detailed approach when we only have
-    non-LENR measures is to subtract a value according to per ISO read noise.  We can find data regarding read noise (stdev
+    on normal raws and cover the abnormalities with the conservative WL values. A more detailed approach when we only have
+    non-LENR measures is to subtract a value according to per ISO read noise. We can find data regarding read noise (stdev
     of Gaussian distribution) at http://www.photonstophotos.net/Charts/RN_ADU.htm . We find the per ISO tead_noise and
     subtract from the measured value 6*read_noise. This gives confidence that 99.5% of the bell is clipped out.
 
@@ -201,7 +201,7 @@ How to Measure White Levels:
     need a margin on white_max as it clips there as a result of an in-camera math operation.
 
     Note that aperture scaling can be quite small, for the 5D mark II it's only 0.2 stop down to f/1.2 and then it can be
-    discussed if it's worthwhile to care.  The "worst" cameras scale about 0.6 stops though, and then it's more valuable to
+    discussed if it's worthwhile to care. The "worst" cameras scale about 0.6 stops though, and then it's more valuable to
     compensate. If you skip aperture scaling RawTherapee will clip the files a little bit too early and you miss that last
     fraction of highlight detail, but you get no processing problems. Setting un-conservative scale factors can on the other
     hand cause a too high white level and break highlight processing, so be careful.
@@ -209,7 +209,7 @@ How to Measure White Levels:
     Scaling can vary slightly depending on ISO (if white levels vary) so make sure to provide conservative scalings so
     regardless of ISO you don't get a too high white level. We recommend to keep a small margin here also white levels,
     i.e. 0.5% lower or so. For example if base (not conservative!) white level is 15750 and the scaled is 16221 we have a
-    scaling factor of 16221/15750=1.0299 i.e. +2.9% we set the factor to 1.025 to keep a margin.  The abnormal cases are
+    scaling factor of 16221/15750=1.0299 i.e. +2.9% we set the factor to 1.025 to keep a margin. The abnormal cases are
     already covered by setting conservative per ISO White levels.
 
     The scale factor you provide here is applied on the white level before black level subtraction (if any), i.e. directly on
@@ -239,10 +239,10 @@ How to Measure White Levels:
 
     You can use RawTherapee for analysis too, it's safer as you are using it's own raw decoder but it's not as
     user-friendly: enable verbose mode in options so you get output on the console. When you load a file you will see a
-    message of current black and white levels and if they came from dcraw or camconst.json.  If you're adjusting an existing
+    message of current black and white levels and if they came from dcraw or camconst.json. If you're adjusting an existing
     camconst.json value you can just read what it is in the file and not need to enable verbose output.
 
-    Reset exposure sliders to neutral, and zoom in on a large clipped highlight.  Move around the mouse pointer within, it
+    Reset exposure sliders to neutral, and zoom in on a large clipped highlight. Move around the mouse pointer within, it
     should show stable 100% on R G B. If so, the white level is not too high, it could however be too low. To test that, go
     to the raw tab and adjust the "white point linear correction factor", reduce it until one of the channels is no longer
     100%, and then increase in steps of 0.01 until all are 100 again. Usually you play around in the range 0.90 to 0.99, i.e.
@@ -438,7 +438,7 @@ Camera constants:
                 { "iso": [ 160 ], "levels": 13000 }, // nominal f8-13105
                 { "iso": [ 320, 640, 1250, 2500 ], "levels": 13300 }, // G1,G2 F4.0-13422-F2.8-13562-13616
                 { "iso": [ 5000, 10000, 20000 ], "levels": 13200 }, // G1,G2 F4.0-13422-F2.8-13562-13616
-                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000 ], "levels": 16100 }, // nominal 16383, 
+                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000 ], "levels": 16100 }, // nominal 16383,
                 { "iso": [ 6400, 8000, 12800, 16000, 25600, 32000 ], "levels": 16000 }, // R,G1,G2 16383, LENR?
                 { "iso": [ 40000, 51200, 102400 ], "levels": 15800 } // 16383, LENR?
             ],
@@ -462,7 +462,7 @@ Camera constants:
         "make_model": [ "Canon EOS 5DS R", "Canon EOS 5DS" ],
         //"dcraw_matrix": [ 6848,-1661,-221,-3904,10931,3434,-470,1251,6039 ], // DNG_V9.0 A
         "dcraw_matrix": [ 6250,-711,-808,-5153,12794,2636,-1249,2198,5610 ], // DNG_V9.0 D65
-        "raw_crop": [ 192, 96, 8696, 5800 ], //  800, 300, 7500, 4700 - 160,64,8730x5800 - sensor 8896x5920 top64, left160, official crop left196, top100, right 8883, bottom 5891, 8688X5792
+        "raw_crop": [ 192, 96, 8696, 5800 ], // 800, 300, 7500, 4700 - 160,64,8730x5800 - sensor 8896x5920 top64, left160, official crop left196, top100, right 8883, bottom 5891, 8688X5792
         "masked_areas": [ 100, 40, 5892, 158 ], // left out 40 first columns from calculations because possibly the BL is still imbalanced there
         "ranges": {
             "white": [
@@ -497,7 +497,7 @@ Camera constants:
                 { "iso": [ 160, 320, 640, 1250, 2500 ], "levels": 13100 }, // typical 13225
                 { "iso": [ 5000, 10000 ], "levels": 13000 }, // typical 13225
                 { "iso": [ 20000 ], "levels": 12800 }, // typical 13225
-                { "iso": [ 51200, 102400  ], "levels": 15900 } // typical 16383
+                { "iso": [ 51200, 102400 ], "levels": 15900 } // typical 16383
             ],
             "white_max": 16383,
             "aperture_scaling": [
@@ -522,7 +522,7 @@ Camera constants:
         "dcraw_matrix": [ 6875,-970,-932,-4691,12459,2501,-874,1953,5809 ], // DNG v_9.12 D65
         "raw_crop": [ 120, 44, 6264, 4180 ], // fullraw size 6384x4224 useful 120,44,6264x4180
         // "raw_crop": [ 128, 52, 6248, 4168 ], // official jpeg crop 120+12,44+12,6240x4160
-        "masked_areas": [ 44, 4, 4220, 116 ], 
+        "masked_areas": [ 44, 4, 4220, 116 ],
         "ranges": {
             "white": [
                 { "iso": [ 50, 100, 125, 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200 ], "levels": 16300 }, // typical 16383
@@ -532,7 +532,7 @@ Camera constants:
                 { "iso": [ 320, 640, 1250, 2500 ], "levels": 13250 }, // typical 13337
                 { "iso": [ 5000, 10000 ], "levels": 13100 }, // typical 13367
                 { "iso": [ 20000, 40000 ], "levels": 12900 }, // typical 13367
-                { "iso": [ 51200, 102400  ], "levels": 15900 } // typical 16383
+                { "iso": [ 51200, 102400 ], "levels": 15900 } // typical 16383
             ],
             "white_max": 16383,
             "aperture_scaling": [
@@ -588,8 +588,8 @@ Camera constants:
                 { "iso": [ 100, 125 ], "levels": 13500 }, // typical 13583 - LENR 13550
                 { "iso": [ 160, 320, 640, 1250, 2500, 5000 ], "levels": 12500 }, // typical 12559
                 { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000 ], "levels": 15200 }, // typical 15303 - LENR 15270,15260,15240,15220,
-                { "iso": [ 6400, 8000, 10000, 12800, 16000, 20000, 25600 ], "levels": 15100 }, // typical G1,G2 15303, R,B = 15430  LENR 15200 .. 15100
-                { "iso": 51200, "levels": 16300 } // typical 16383  red 16371
+                { "iso": [ 6400, 8000, 10000, 12800, 16000, 20000, 25600 ], "levels": 15100 }, // typical G1,G2 15303, R,B = 15430 LENR 15200 .. 15100
+                { "iso": 51200, "levels": 16300 } // typical 16383 red 16371
             ],
             "white_max": 16383,
             "aperture_scaling": [
@@ -620,7 +620,7 @@ Camera constants:
                 { "iso": [ 200, 400 ], "levels": 16100 }, // typical 16224
                 { "iso": 800, "levels": 15900 }, // gaussian histogram 15900-16224
                 { "iso": 1600, "levels": 14900 }, // gaussian histogram 14900-15750
-                { "iso": 1250, "levels": 11900 } //  gaussian histogram 11900-12500
+                { "iso": 1250, "levels": 11900 } // gaussian histogram 11900-12500
             ],
             "white_max": 16383,
             "aperture_scaling": [
@@ -1082,9 +1082,9 @@ Camera constants:
         "masked_areas": [ 40, 16, 4000, 54 ],
         "ranges": {
             "white": [
-                { "iso": [ 100, 125, 160 ], "levels": 16300 }, //  16383
-                { "iso": [ 320, 640, 1250, 2500, 5000, 10000 ], "levels": 12600 }, //  12632..14500
-                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000 ], "levels": 15000 }, //  15095, 15488
+                { "iso": [ 100, 125, 160 ], "levels": 16300 }, // 16383
+                { "iso": [ 320, 640, 1250, 2500, 5000, 10000 ], "levels": 12600 }, // 12632..14500
+                { "iso": [ 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200, 4000 ], "levels": 15000 }, // 15095, 15488
                 { "iso": [ 6400, 8000, 12800, 25600 ], "levels": 16200 } // 16383
             ],
             "white_max": 16383,
@@ -1104,10 +1104,10 @@ Camera constants:
     },
 
     { // Quality C, White Levels not properly indicated, aperture scaling..missing factors are guessed
-        "make_model": [ "Canon EOS M5","Canon EOS M6" ], 
+        "make_model": [ "Canon EOS M5","Canon EOS M6" ],
         "dcraw_matrix": [ 8532,-701,-1167,-4095,11879,2508,-797,2424,7010 ], // DNG_V9.8 D65
         "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056,
-        //"raw_crop": [ 272, 44, 6008, 4008 ], //  matched to official crop 276,48,6275,4047 - official jpeg 6000X4000
+        //"raw_crop": [ 272, 44, 6008, 4008 ], // matched to official crop 276,48,6275,4047 - official jpeg 6000X4000
         "masked_areas": [ 40, 96, 4000, 260 ],
         "ranges": {
             "white": [
@@ -1116,9 +1116,9 @@ Camera constants:
                 { "iso": [ 320 ], "levels": 13100 }, // nominal green 13200, 13528-14466-14380-14368 - blue13262-14186,
                 { "iso": [ 640, 1250 ], "levels": 13200 }, // iso 640 G1,G2 13260-13450 - blue13230-13430 -iso 1250 13430
                 { "iso": [ 2500, 5000, 10000 ], "levels": 13000 }, //
-                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400 ], "levels": 16100 }, // 16383 
-                //  { "iso": [ 1600 ], "levels": 15000 }, // one sample of m6 = 15100 !!
-                //  { "iso": [ 6400 ], "levels": 15500 }, // one sample of m6 = 15600 !!
+                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400 ], "levels": 16100 }, // 16383
+                // { "iso": [ 1600 ], "levels": 15000 }, // one sample of m6 = 15100 !!
+                // { "iso": [ 6400 ], "levels": 15500 }, // one sample of m6 = 15600 !!
                 { "iso": [ 8000, 12800, 16000, 25600 ], "levels": 16000 } // R,G1,G2 16383, B 16243
             ],
             "white_max": 16383,
@@ -1176,7 +1176,7 @@ Camera constants:
         "dcraw_matrix": [ 7378,-1255,-1043,-4088,12251,2048,-876,1946,5805 ], // D65 matrix from adobe dcp
         //"raw_crop": [ 80, 50, 4400, 3316 ], // full frame 4480x3366 borders 80,50 - much shade in corners, no/wrong auto distortion
         //"raw_crop": [ 104, 144, 4360, 3128 ], // Mixed best average frame, width is 4352 from 3/2, height 3120 from 4/3 - auto distortion does not work correctly
-        //"raw_crop": [ 200, 144, 4168, 3128 ], // Optional official 4/3 frame 4160x3120, 4pix  borders, Left Border 204-4, Top Border 148-4
+        //"raw_crop": [ 200, 144, 4168, 3128 ], // Optional official 4/3 frame 4160x3120, 4pix borders, Left Border 204-4, Top Border 148-4
         "raw_crop": [ 104, 252, 4360, 2912 ], // Default official 3/2 frame 4352x2904, 4pix borders, Left Border 108-4, Top border 256-4
         "masked_areas": [ 148, 2, 3340, 78 ],
         "ranges": { "white": 16300 }
@@ -1346,8 +1346,8 @@ Camera constants:
     { // Quality C, only raw crop
         "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30" ],
         "raw_crop": [ 0, 5, 6252, 4176]
-    },    
-    
+    },
+
     { // Quality B
         "make_model": "FUJIFILM X30",
         "dcraw_matrix": [ 12328,-5256,-1144,-4469,12927,1675,-87,1291,4351 ], // DNG_v8.7 D65
@@ -1622,14 +1622,14 @@ Camera constants:
         "ranges": { "white": 3980 } // 12-bit files.
     },
 
-    { // Quality C, only colour matrix and PDAF lines info
+    { // Quality C, only color matrix and PDAF lines info
         "make_model" : "Nikon Z 7",
         "dcraw_matrix" : [10405,-3755,-1270,-5461,13787,1793,-1040,2015,6785], // Adobe DNG Converter 11.0 ColorMatrix2
         "pdaf_pattern" : [0, 12],
         "pdaf_offset" : 29
     },
 
-    { // Quality C, only colour matrix and PDAF lines info
+    { // Quality C, only color matrix and PDAF lines info
         "make_model" : "Nikon Z 6",
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
         "pdaf_pattern" : [0, 12],
@@ -1725,7 +1725,13 @@ Camera constants:
     { // Quality B,
         "make_model": "OLYMPUS TG-5",
         "dcraw_matrix": [ 10899,-3833,-1082,-2112,10736,1575,-267,1452,5269 ], // DNG_V9.12 D65
+        "raw_crop": [ 0, 0, -18, 0 ], // 18 pixels at right are garbage
         "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
+    },
+
+    { // Quality C, only raw crop
+        "make_model": "OLYMPUS TG-6",
+        "raw_crop": [ 0, 0, -24, 0 ] // 24 pixels at right are garbage
     },
 
     { // Quality C, only green equilibration
@@ -1750,6 +1756,15 @@ Camera constants:
                 { "iso": 125, "levels": 3500 }, // guessed
                 { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
             ]
+        }
+    },
+
+    { // Quality C, only color matrix
+        "make_model" : "Panasonic DC-GF10",
+        "dcraw_matrix": [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ], // ColorMatrix2 from Adobe DNG Converter 11.3
+        "raw_crop": [ 0, 0, 4600, 0 ], // SensorWidth=4816 SensorHeight=3464. Width=4600 to match DNG.
+        "ranges": {
+            "black": 15
         }
     },
 
@@ -1800,7 +1815,7 @@ Camera constants:
 
     { // Quality B,
         "make_model": [ "Panasonic DMC-FZ2500", "Panasonic DMC-FZ2000", "Panasonic DMC-FZH1" ],
-        "dcraw_matrix": [ 7386,-2443,-743,-3437,11864,1757,-608,1660,4766  ], // dcp_v9.8 d65
+        "dcraw_matrix": [ 7386,-2443,-743,-3437,11864,1757,-608,1660,4766 ], // dcp_v9.8 d65
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -1891,7 +1906,8 @@ Camera constants:
         "dcraw_matrix": [ 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 ], // RT
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
-            "white": 4060 } // Exif:4095 normal distribution 4080-4095, 4070-4095 on long exposure NR
+            "white": 4060 // Exif:4095 normal distribution 4080-4095, 4070-4095 on long exposure NR
+        }
     },
 
     { // Quality A, Replicated from rawimage.cc
@@ -1911,7 +1927,8 @@ Camera constants:
         "dcraw_matrix": [ 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
-            "white": 4050 } // Exif:4095 normal distribution 4080-4095, 4050-4095 on long exposure NR
+            "white": 4050 // Exif:4095 normal distribution 4080-4095, 4050-4095 on long exposure NR
+        }
     },
 
     { // Quality A, Replicated from rawimage.cc
@@ -1919,7 +1936,8 @@ Camera constants:
         "dcraw_matrix": [ 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 ], // Colin Walker
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
-            "white": 4050 } // Exif:4095 normal distribution 4080-4095, 4050-4095 on long exposure NR
+            "white": 4050 // Exif:4095 normal distribution 4080-4095, 4050-4095 on long exposure NR
+        }
     },
 
     { // Quality A, Replicated from rawimage.cc
@@ -2232,7 +2250,7 @@ Camera constants:
         }
     },
 
-    { // Quality B,  corrections for raw crop vs dcraw9.21, matched to Samsung's default
+    { // Quality B, corrections for raw crop vs dcraw9.21, matched to Samsung's default
         "make_model": "Samsung NX mini",
         "dcraw_matrix": [ 5222,-1196,-550,-6540,14649,2009,-1666,2819,5657 ], // dng 8.6 d65
         "raw_crop": [ 128, 36, 5480, 3656 ], // jpeg 5472x3648 - full raw: 5664 x 3710 - Samsung's official crop: 132, 40, 5604, 3688
@@ -2255,8 +2273,8 @@ Camera constants:
               { "iso": 100, "levels": 16000 }, // 16000 typical 16084, LE 16120 and 16383, LENR 16280
               { "iso": [ 200, 400, 800, 1600, 3200, 6400, 12800 ], "levels": 16300 }, // 16383
               { "iso": [ 25600, 51200 ], "levels": 16300 } // 16383
-                    ]
-                  }
+            ]
+        }
     },
 
     { // Quality C, corrections for frame size, black and white levels not declared properly
@@ -2295,7 +2313,7 @@ Camera constants:
         //"dcraw_matrix": [ 5666,139,-892,3780,5428,270,1366,9757,4526 ], // experimental inverted icc sunny8161
         //"dcraw_matrix": [ 10288,-2449,-1718,8976,1868,-1608,7011,5039,-249 ], // experimental inverted icc tungsten8130 wp11
         //"dcraw_matrix": [ 5864,679,-1491,2963,7635,-919,-640,13738,2790 ], // experimental inverted icc sunny8160
-        //"dcraw_matrix": [ 14032,-2231,-1016,-5263,14816,170,-112,183,9113 ], //  hardcoded
+        //"dcraw_matrix": [ 14032,-2231,-1016,-5263,14816,170,-112,183,9113 ], // hardcoded
         "ranges": { "black": 16, "white": 4070 }, // BL is 16 or 31, should be measured at the horizontal black stripe at the top
         "raw_crop": [ 12, 52, -110, -8 ] // for small size all numbers/2
     },
@@ -2379,7 +2397,7 @@ Camera constants:
         "ranges": { "black": 512, "white": 16300 },
         // contributed by Horshak from https://www.dpreview.com/forums/post/60873077
         "pdaf_pattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
-        "pdaf_offset" : 3        
+        "pdaf_offset" : 3
     },
 
     { // Quality A, correction for frame width
@@ -2414,8 +2432,8 @@ Camera constants:
     { // Quality C, color matrix copied from ILCE-9, LongExposures 2-3sec only
         "make_model": "Sony ILCE-7M3",
         "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // ILCE-9, DNG_v9.12 D65
-        //  "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
-        //  "ranges": { "black": 512, "white": 16300 }
+        // "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
+        // "ranges": { "black": 512, "white": 16300 }
         "ranges": {
             "black": 512,
             "white": [

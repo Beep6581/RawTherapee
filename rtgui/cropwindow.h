@@ -31,6 +31,7 @@
 #include "cursormanager.h"
 #include "editbuffer.h"
 #include "editcoordsys.h"
+#include "../rtengine/noncopyable.h"
 
 class CropWindow;
 
@@ -45,7 +46,7 @@ public:
 };
 
 class ImageArea;
-class CropWindow : public LWButtonListener, public CropDisplayHandler, public EditCoordSystem, public ObjectMOBuffer
+class CropWindow : public LWButtonListener, public CropDisplayHandler, public EditCoordSystem, public ObjectMOBuffer, public rtengine::NonCopyable
 {
     static bool initialized;
 

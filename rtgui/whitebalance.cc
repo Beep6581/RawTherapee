@@ -395,7 +395,6 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
         return;
     }
 
-    Glib::ustring colLabel = row[methodColumns.colLabel];
     const std::pair<bool, const WBEntry&> ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
     const std::pair<bool, const WBEntry&> wbCustom = findWBEntry ("Custom", WBLT_PP);
 

@@ -23,6 +23,7 @@
 #include "adjuster.h"
 #include "guiutils.h"
 #include "options.h"
+#include "../rtengine/noncopyable.h"
 
 class FormatChangeListener
 {
@@ -31,7 +32,7 @@ public:
     virtual void formatChanged(const Glib::ustring& format) = 0;
 };
 
-class SaveFormatPanel : public Gtk::Grid, public AdjusterListener
+class SaveFormatPanel : public Gtk::Grid, public AdjusterListener, public rtengine::NonCopyable
 {
 
 protected:

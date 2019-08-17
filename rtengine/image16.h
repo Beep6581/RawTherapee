@@ -56,7 +56,7 @@ public:
     }
 
     void getScanline(int row, unsigned char* buffer, int bps, bool isFloat = false) const override;
-    void setScanline(int row, unsigned char* buffer, int bps, unsigned int numSamples) override;
+    void setScanline(int row, const unsigned char* buffer, int bps, unsigned int numSamples) override;
 
     // functions inherited from IImage16:
     MyMutex& getMutex() override

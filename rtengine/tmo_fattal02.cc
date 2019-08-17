@@ -476,14 +476,14 @@ void tmo_fattal02 (size_t width,
 
     Array2Df* H = new Array2Df (width, height);
     float temp = 100.f / maxLum;
-    float eps = 1e-4f;
 #ifdef _OPENMP
     #pragma omp parallel if(multithread)
 #endif
     {
+        const float eps = 1e-4f;
 #ifdef __SSE2__
-        vfloat epsv = F2V (eps);
-        vfloat tempv = F2V (temp);
+        const vfloat epsv = F2V(eps);
+        const vfloat tempv = F2V(temp);
 #endif
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
@@ -926,13 +926,13 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
     // a solution which has no positive values: U_new(x,y)=U(x,y)-max
     // (not really needed but good for numerics as we later take exp(U))
     //DEBUG_STR << "solve_pde_fft: removing constant from solution" << std::endl;
-    float max = 0.f;
+    float maxVal = 0.f;
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(max:max) if(multithread)
+    #pragma omp parallel for reduction(max:maxVal) if(multithread)
 #endif
 
     for (int i = 0; i < width * height; i++) {
-        max = std::max (max, (*U) (i));
+        maxVal = std::max(maxVal, (*U)(i));
     }
 
 #ifdef _OPENMP
@@ -940,7 +940,7 @@ void solve_pde_fft (Array2Df *F, Array2Df *U, Array2Df *buf, bool multithread)/*
 #endif
 
     for (int i = 0; i < width * height; i++) {
-        (*U) (i) -= max;
+        (*U) (i) -= maxVal;
     }
 }
 

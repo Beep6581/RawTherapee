@@ -637,12 +637,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                         setDirty(true);
                         draw (lit_point);
                         new_type = CSArrow;
-                        retval = true;
                     }
-                }
-
-                if (buttonPressed) {
-                    retval = true;
                 }
             } else { // if (edited_point > -1)
                 if (event->button.button == 3) {
@@ -679,7 +674,6 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
 
                                     newBoundaries.at(1).minVal = 0.;
                                     newBoundaries.at(1).maxVal = 1.;
-                                    retval = true;
                                     editedPos.at(0) = curve.x.at(edited_point);
                                     editedPos.at(1) = curve.y.at(edited_point);
                                     coordinateAdjuster->switchAdjustedPoint(editedPos, newBoundaries);
@@ -691,12 +685,9 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                                 stopNumericalAdjustment();
                             }
                         }
-
-                        retval = true;
                     }
                 }
             }
-
             retval = true;
         }
 

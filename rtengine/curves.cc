@@ -641,15 +641,15 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     }
     // gamma correction
 
-    float val = Color::gammatab_srgb1[0];
+    float val0 = Color::gammatab_srgb1[0];
 
     // apply brightness curve
     if (brightcurve) {
-        val = brightcurve->getVal(val);    // TODO: getVal(double) is very slow! Optimize with a LUTf
+        val0 = brightcurve->getVal(val0);    // TODO: getVal(double) is very slow! Optimize with a LUTf
     }
 
     // store result in a temporary array
-    dcurve[0] = LIM01<float>(val);
+    dcurve[0] = LIM01<float>(val0);
 
     for (int i = 1; i < 0x10000; i++) {
 
@@ -1508,10 +1508,10 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
                 Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
 #endif
                 L1 = Lr * 327.68f;
-                float a, b, X, Y, Z;
+                float La, Lb, X, Y, Z;
                 // converting back to rgb
-                Color::Lch2Lab(c1, h1, a, b);
-                Color::Lab2XYZ(L1, a, b, X, Y, Z);
+                Color::Lch2Lab(c1, h1, La, Lb);
+                Color::Lab2XYZ(L1, La, Lb, X, Y, Z);
                 lut1[i] = X;
                 lut2[i] = Y;
                 lut3[i] = Z;
@@ -1822,12 +1822,12 @@ float PerceptualToneCurve::calculateToneCurveContrastValue() const
     {
         // look at midtone slope
         const float xd = 0.07;
-        const float tx[] = { 0.30, 0.35, 0.40, 0.45 }; // we only look in the midtone range
+        const float tx0[] = { 0.30, 0.35, 0.40, 0.45 }; // we only look in the midtone range
 
-        for (size_t i = 0; i < sizeof(tx) / sizeof(tx[0]); i++) {
-            float x0 = tx[i] - xd;
+        for (size_t i = 0; i < sizeof(tx0) / sizeof(tx0[0]); i++) {
+            float x0 = tx0[i] - xd;
             float y0 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x0) * 65535.f] / 65535.f) - k * x0;
-            float x1 = tx[i] + xd;
+            float x1 = tx0[i] + xd;
             float y1 = CurveFactory::gamma2(lutToneCurve[CurveFactory::igamma2(x1) * 65535.f] / 65535.f) - k * x1;
             float slope = 1.0 + (y1 - y0) / (x1 - x0);
 
@@ -1967,15 +1967,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 saturated_scale_factor = 1.f;
             } else if (C < hilim) {
                 // S-curve transition between low and high limit
-                float x = (C - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+                float cx = (C - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1.f - cx);
                 }
 
-                saturated_scale_factor = (1.f - x) + saturated_scale_factor * x;
+                saturated_scale_factor = (1.f - cx) + saturated_scale_factor * cx;
             } else {
                 // do nothing, high saturation color, keep scale factor
             }
@@ -1995,15 +1995,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 // do nothing, keep scale factor
             } else if (nL < hilim) {
                 // S-curve transition
-                float x = (nL - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+                float cx = (nL - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1 - cx);
                 }
 
-                dark_scale_factor = dark_scale_factor * (1.0f - x) + x;
+                dark_scale_factor = dark_scale_factor * (1.0f - cx) + cx;
             } else {
                 dark_scale_factor = 1.f;
             }
@@ -2021,15 +2021,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 // do nothing, keep scale factor
             } else if (J < hilim) {
                 // S-curve transition
-                float x = (J - lolim) / (hilim - lolim);
+                float cx = (J - lolim) / (hilim - lolim);
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1 - cx);
                 }
 
-                dark_scale_factor = dark_scale_factor * (1.f - x) + x;
+                dark_scale_factor = dark_scale_factor * (1.f - cx) + cx;
             } else {
                 dark_scale_factor = 1.f;
             }
@@ -2089,15 +2089,15 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 keep = 1.f;
             } else if (sat_scale < hilim) {
                 // S-curve transition
-                float x = (sat_scale - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
+                float cx = (sat_scale - lolim) / (hilim - lolim); // x = [0..1], 0 at lolim, 1 at hilim
 
-                if (x < 0.5f) {
-                    x = 2.f * SQR(x);
+                if (cx < 0.5f) {
+                    cx = 2.f * SQR(cx);
                 } else {
-                    x = 1.f - 2.f * SQR(1 - x);
+                    cx = 1.f - 2.f * SQR(1 - cx);
                 }
 
-                keep = (1.f - x) + keep * x;
+                keep = (1.f - cx) + keep * cx;
             } else {
                 // do nothing, very high increase, keep minimum amount
             }

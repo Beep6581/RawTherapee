@@ -34,7 +34,7 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr), lastRefFilename(""), camName("")
+ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr)
 {
     auto m = ProcEventMapper::getInstance();
     EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_PRIMARIES");
@@ -303,8 +303,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 #ifdef WIN32
     ipDialog->set_show_hidden(true);  // ProgramData is hidden on Windows
 #endif
-
-    oldip = "";
 
     wprofnamesconn = wProfNames->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wpChanged));
     oprofnamesconn = oProfNames->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::opChanged));
@@ -617,8 +615,6 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         } else {
             pp->icm.inputProfile = "";    // just a directory
         }
-
-        Glib::ustring p = Glib::path_get_dirname(ipDialog->get_filename());
     }
 
     pp->icm.workingProfile = wProfNames->get_active_text();

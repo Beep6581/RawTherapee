@@ -30,6 +30,7 @@
 #include "exportpanel.h"
 #include "extprog.h"
 #include "profilestorecombobox.h"
+#include "../rtengine/noncopyable.h"
 
 class ProfileStoreLabel;
 class FileBrowser;
@@ -56,7 +57,8 @@ public:
 class FileBrowser  : public ThumbBrowserBase,
     public LWButtonListener,
     public ExportPanelListener,
-    public ProfileStoreListener
+    public ProfileStoreListener,
+    public rtengine::NonCopyable
 {
 private:
     typedef sigc::signal<void> type_trash_changed;
@@ -168,7 +170,7 @@ public:
 
     void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
     void redrawNeeded  (LWButton* button) override;
-    bool checkFilter (ThumbBrowserEntryBase* entry) override;
+    bool checkFilter (ThumbBrowserEntryBase* entry) const override;
     void rightClicked (ThumbBrowserEntryBase* entry) override;
     void doubleClicked (ThumbBrowserEntryBase* entry) override;
     bool keyPressed (GdkEventKey* event) override;

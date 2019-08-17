@@ -31,12 +31,14 @@
 #include "filterpanel.h"
 #include "exportpanel.h"
 #include "progressconnector.h"
+#include "../rtengine/noncopyable.h"
 
 class RTWindow;
 
 class FilePanel final :
     public Gtk::HPaned,
-    public FileSelectionListener
+    public FileSelectionListener,
+    public rtengine::NonCopyable
 {
 public:
     FilePanel ();

@@ -1720,7 +1720,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                         float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
                         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                         lab->deleteLab();
-                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
+                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -2255,7 +2255,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
     //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
-    float strProtect = (float (params->colorToning.strength) / 100.f);
+    float strProtect = pow_F((float (params->colorToning.strength) / 100.f), 0.4f);
 
     /*
     // Debug output - Color LUTf points
@@ -2793,7 +2793,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         const float krh = rh / (rh + gh + bh);
                         const float kgh = gh / (rh + gh + bh);
                         const float kbh = bh / (rh + gh + bh);
-                        strProtect = pow_F(strProtect, 0.4f);
                         constexpr int mode = 0;
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -2806,7 +2805,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     else if (params->colorToning.method == "Splitco") {
                         constexpr float reducac = 0.3f;
                         constexpr int mode = 0;
-                        strProtect = pow_F(strProtect, 0.4f);
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const float r = rtemp[ti * TS + tj];
@@ -3483,7 +3481,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 const float krh = rh / (rh + gh + bh);
                 const float kgh = gh / (rh + gh + bh);
                 const float kbh = bh / (rh + gh + bh);
-                strProtect = pow_F(strProtect, 0.4f);
                 constexpr int mode = 1;
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic, 5)
@@ -3788,11 +3785,12 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
 
     {
         const float corr = 20000.f * RedLow * kl * rlo;
+
         if (RedLow > 0.f) {
+            r += corr;
+        } else {
             g -= corr;
             b -= corr;
-        } else {
-            r += corr;
         }
 
         // r = CLIP(r);
@@ -3802,27 +3800,28 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
 
     {
         const float corr = 20000.f * GreenLow * kl * rlo;
+
         if (GreenLow > 0.f) {
+            g += corr;
+        } else {
             r -= corr;
             b -= corr;
-        } else {
-            g += corr;
         }
 
         // r = CLIP(r);
-        // b = CLIP(b);
         // g = CLIP(g);
+        // b = CLIP(b);
     }
 
 
     {
-        const float corr = 20000.f * BlueLow * kl * rlob;
+        const float corr = 20000.f * BlueLow * kl * rlo;
 
         if (BlueLow > 0.f) {
+            b += corr;
+        } else {
             r -= corr;
             g -= corr;
-        } else {
-            b += corr;
         }
 
         // r = CLIP(r);
