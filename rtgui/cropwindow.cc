@@ -404,6 +404,26 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             action_y = 0;
                             needRedraw = true;
                         }
+                    } else if (iarea->getToolMode () == TMHand
+                               && editSubscriber
+                               && cropgl
+                               && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y)
+                               && editSubscriber->getEditingType() == ET_OBJECTS
+                               && iarea->getObject() >= 0
+                              )
+                    {
+                            needRedraw = editSubscriber->button1Pressed(bstate);
+                            if (editSubscriber->isDragging()) {
+                                state = SEditDrag1;
+                            } else if (editSubscriber->isPicking()) {
+                                state = SEditPick1;
+                                pickedObject = iarea->getObject();
+                                pickModifierKey = bstate;
+                            }
+                            press_x = x;
+                            press_y = y;
+                            action_x = 0;
+                            action_y = 0;
                     } else if (onArea (CropTopLeft, x, y)) {
                         state = SResizeTL;
                         press_x = x;
@@ -477,7 +497,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         cropgl->cropInit (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h);
                     } else if (iarea->getToolMode () == TMHand) {
                         if (editSubscriber) {
-                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) || editSubscriber->getEditingType() == ET_OBJECTS) {
+                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) {
                                 needRedraw = editSubscriber->button1Pressed(bstate);
                                 if (editSubscriber->isDragging()) {
                                     state = SEditDrag1;
@@ -492,7 +512,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                 action_y = 0;
                             }
                         }
-                        if (state != SEditDrag1) {
+                        if (state != SEditDrag1 && state != SEditPick1) {
                             state = SCropImgMove;
                             press_x = x;
                             press_y = y;
