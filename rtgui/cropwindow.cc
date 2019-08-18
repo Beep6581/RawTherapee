@@ -1845,11 +1845,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
             if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS && bufferCreated()) {
 
-                if (this != iarea->mainCropWindow) {
-                    cr->set_line_width (0.);
-                    cr->rectangle (x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
-                    cr->clip();
-                }
+                cr->set_line_width (0.);
+                cr->rectangle (x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
+                cr->clip();
 
                 // drawing Subscriber's visible geometry
                 const std::vector<Geometry*> visibleGeom = editSubscriber->getVisibleGeometry();
