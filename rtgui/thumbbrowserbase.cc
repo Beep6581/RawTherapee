@@ -225,21 +225,21 @@ void ThumbBrowserBase::selectSet (ThumbBrowserEntryBase* clicked)
 
 static void scrollToEntry (double& h, double& v, int iw, int ih, ThumbBrowserEntryBase* entry)
 {
-    const int hmin = entry->getX ();
-    const int hmax = hmin + entry->getEffectiveWidth () - iw;
-    const int vmin = entry->getY ();
-    const int vmax = vmin + entry->getEffectiveHeight () - ih;
+    const int hMin = entry->getX();
+    const int hMax = hMin + entry->getEffectiveWidth() - iw;
+    const int vMin = entry->getY();
+    const int vMax = vMin + entry->getEffectiveHeight() - ih;
 
-    if (hmin < 0) {
-        h += hmin;
-    } else if (hmax > 0) {
-        h += hmax;
+    if (hMin < 0) {
+        h += hMin;
+    } else if (hMax > 0) {
+        h += hMax;
     }
 
-    if(vmin < 0) {
-        v += vmin;
-    } else if (vmax > 0) {
-        v += vmax;
+    if (vMin < 0) {
+        v += vMin;
+    } else if (vMax > 0) {
+        v += vMax;
     }
 }
 

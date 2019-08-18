@@ -685,12 +685,9 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                                 stopNumericalAdjustment();
                             }
                         }
-
-                        retval = true;
                     }
                 }
             }
-
             retval = true;
         }
 

@@ -49,11 +49,11 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
         stop.reset(new StopWatch("amaze demosaic"));
     }
 
-    volatile double progress = 0.0;
+    double progress = 0.0;
 
     if (plistener) {
-        plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AMAZE")));
-        plistener->setProgress (0.0);
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_AMAZE")));
+        plistener->setProgress(progress);
     }
 
     const int width = winw, height = winh;
@@ -768,7 +768,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
 
                         //if both agree on interpolation direction, choose the one with strongest directional discrimination;
                         //otherwise, choose the u/d and l/r difference fluctuation weights
-                        if ((0.5 - varwt) * (0.5 - diffwt) > 0 && fabsf(0.5 - diffwt) < fabsf(0.5 - varwt)) {
+                        if ((0.5f - varwt) * (0.5f - diffwt) > 0.f && fabsf(0.5f - diffwt) < fabsf(0.5f - varwt)) {
                             hvwt[indx >> 1] = varwt;
                         } else {
                             hvwt[indx >> 1] = diffwt;
@@ -1236,7 +1236,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
                         //first ask if one gets more directional discrimination from nearby B/R sites
                         float pmwtalt = xdivf(pmwt[(indx - m1) >> 1] + pmwt[(indx + p1) >> 1] + pmwt[(indx - p1) >> 1] + pmwt[(indx + m1) >> 1], 2);
 
-                        if (fabsf(0.5 - pmwt[indx1]) < fabsf(0.5 - pmwtalt)) {
+                        if (fabsf(0.5f - pmwt[indx1]) < fabsf(0.5f - pmwtalt)) {
                             pmwt[indx1] = pmwtalt;   //a better result was obtained from the neighbours
                         }
 
@@ -1304,7 +1304,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
 
                     for (int cc = 12 + (FC(rr, 2) & 1), indx = rr * ts + cc, indx1 = indx >> 1; cc < cc1 - 12; cc += 2, indx += 2, indx1++) {
 
-                        if (fabsf(0.5 - pmwt[indx >> 1]) < fabsf(0.5 - hvwt[indx >> 1]) ) {
+                        if (fabsf(0.5f - pmwt[indx >> 1]) < fabsf(0.5f - hvwt[indx >> 1]) ) {
                             continue;
                         }
 
