@@ -23,6 +23,7 @@
 #include "options.h"
 #include "multilangmgr.h"
 #include "../rtengine/procparams.h"
+#include "locallab.h"
 
 using namespace rtengine;
 using namespace procparams;
@@ -66,6 +67,7 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     }
 
     exp = Gtk::manage(new MyExpander(true, titleBox));
+    exp->signal_button_release_event().connect_notify(sigc::mem_fun(this, &LocallabTool::foldThemAll));
     enaExpConn = exp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &LocallabTool::enabledChanged));
 
     ToolParamBlock* const totalBox = Gtk::manage(new ToolParamBlock());
@@ -207,37 +209,39 @@ void LocallabTool::resetMaskView()
 
 void LocallabTool::refChanged(double huer, double lumar, double chromar)
 {
-    // Hue reference normalization (between 0 and 1)
-    double normHuer = huer;
-    float h = Color::huelab_to_huehsv2(normHuer);
-    h += 1.f / 6.f;
+    if (useMask) {
+        // Hue reference normalization (between 0 and 1)
+        double normHuer = huer;
+        float h = Color::huelab_to_huehsv2(normHuer);
+        h += 1.f / 6.f;
 
-    if (h > 1.f) {
-        h -= 1.f;
+        if (h > 1.f) {
+            h -= 1.f;
+        }
+
+        normHuer = h;
+
+        // Luma reference normalization (between 0 and 1)
+        const double normLumar = lumar / 100.f;
+
+        // Chroma reference normalization (between 0 and 1)
+        const double normChromar = chromar / 137.4f;
+
+        // printf("nh=%f nl=%f nc=%f\n", normHuer, normLumar, normChromar);
+
+        idle_register.add(
+        [this, normHuer, normLumar, normChromar]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update mask background
+            CCMaskShape->updateLocallabBackground(normChromar);
+            LLMaskShape->updateLocallabBackground(normLumar);
+            HHMaskShape->updateLocallabBackground(normHuer);
+
+            return false;
+        }
+        );
     }
-
-    normHuer = h;
-
-    // Luma reference normalization (between 0 and 1)
-    const double normLumar = lumar / 100.f;
-
-    // Chroma reference normalization (between 0 and 1)
-    const double normChromar = chromar / 137.4f;
-
-    // printf("nh=%f nl=%f nc=%f\n", normHuer, normLumar, normChromar);
-
-    idle_register.add(
-    [this, normHuer, normLumar, normChromar]() -> bool {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-
-        // Update mask background
-        CCMaskShape->updateLocallabBackground(normChromar);
-        LLMaskShape->updateLocallabBackground(normLumar);
-        HHMaskShape->updateLocallabBackground(normHuer);
-
-        return false;
-    }
-    );
 }
 
 void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
@@ -258,7 +262,6 @@ void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::Ele
                 break;
 
             case 2: // HHmaskshape
-                // TODO
                 float x = valX - 1.f / 6.f;
 
                 if (x < 0.f) {
@@ -266,7 +269,6 @@ void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::Ele
                 }
 
                 x = log2lin(x, 3.f);
-                // float x = valX;
                 Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         }
 
@@ -317,6 +319,15 @@ bool LocallabTool::on_remove_change(GdkEventButton* event)
     }
 
     return true; // No event propagation further (to avoid closing expander when mouse clicking on remove image)
+}
+
+void LocallabTool::foldThemAll(GdkEventButton* event)
+{
+    if (event->button == GDK_BUTTON_SECONDARY) {
+        if (locToolListener) {
+            (static_cast<Locallab*>(locToolListener))->foldAllButOne(this);
+        }
+    }
 }
 
 /* ==== LocallabColor ==== */
@@ -519,7 +530,7 @@ void LocallabColor::colorForValue(double valX, double valY, enum ColorCaller::El
 
 void LocallabColor::setListener(ToolPanelListener* tpl)
 {
-    LocallabTool::setListener(tpl); //TODO Check if working
+    LocallabTool::setListener(tpl);
 
     labgrid->setListener(tpl);
 }
@@ -667,7 +678,32 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
 void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default value for adjuster and labgrid widgets
+        lightness->setDefault((double)defSpot.lightness);
+        contrast->setDefault((double)defSpot.contrast);
+        chroma->setDefault((double)defSpot.chroma);
+        labgrid->setDefault(defSpot.labgridALow / LocallabParams::LABGRIDL_CORR_MAX,
+                            defSpot.labgridBLow / LocallabParams::LABGRIDL_CORR_MAX,
+                            defSpot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
+                            defSpot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX);
+        strengthgrid->setDefault((double) defSpot.strengthgrid);
+        sensi->setDefault((double)defSpot.sensi);
+        structcol->setDefault((double)defSpot.structcol);
+        blurcolde->setDefault((double)defSpot.blurcolde);
+        softradiuscol->setDefault(defSpot.softradiuscol);
+        blendMask->setDefault((double)defSpot.blendmaskcol);
+        radMask->setDefault(defSpot.radmaskcol);
+        chroMask->setDefault(defSpot.chromaskcol);
+        gamMask->setDefault(defSpot.gammaskcol);
+        sloMask->setDefault(defSpot.slomaskcol);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabColor::adjusterChanged(Adjuster* a, double newval)
@@ -1197,7 +1233,35 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
 void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        laplacexp->setDefault(defSpot.laplacexp);
+        linear->setDefault(defSpot.linear);
+        balanexp->setDefault(defSpot.balanexp);
+        expcomp->setDefault(defSpot.expcomp);
+        hlcompr->setDefault((double)defSpot.hlcompr);
+        hlcomprthresh->setDefault((double)defSpot.hlcomprthresh);
+        black->setDefault((double)defSpot.black);
+        shadex->setDefault((double)defSpot.shadex);
+        shcompr->setDefault((double)defSpot.shcompr);
+        expchroma->setDefault((double)defSpot.expchroma);
+        warm->setDefault((double)defSpot.warm);
+        sensiex->setDefault((double)defSpot.sensiex);
+        structexp->setDefault((double)defSpot.structexp);
+        blurexpde->setDefault((double)defSpot.blurexpde);
+        softradiusexp->setDefault(defSpot.softradiusexp);
+        blendMask->setDefault((double)defSpot.blendmaskexp);
+        radMask->setDefault(defSpot.radmaskexp);
+        chroMask->setDefault(defSpot.chromaskexp);
+        gamMask->setDefault(defSpot.gammaskexp);
+        sloMask->setDefault(defSpot.slomaskexp);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
@@ -1632,7 +1696,27 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
 
 void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        highlights->setDefault((double)defSpot.highlights);
+        h_tonalwidth->setDefault((double)defSpot.h_tonalwidth);
+        shadows->setDefault((double)defSpot.shadows);
+        s_tonalwidth->setDefault((double)defSpot.s_tonalwidth);
+        sh_radius->setDefault((double)defSpot.sh_radius);
+        sensihs->setDefault((double)defSpot.sensihs);
+        blurSHde->setDefault((double)defSpot.blurSHde);
+        blendMask->setDefault((double)defSpot.blendmaskSH);
+        radMask->setDefault(defSpot.radmaskSH);
+        chroMask->setDefault(defSpot.chromaskSH);
+        gamMask->setDefault(defSpot.gammaskSH);
+        sloMask->setDefault(defSpot.slomaskSH);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
@@ -1965,7 +2049,19 @@ void LocallabVibrance::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
 void LocallabVibrance::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster and threshold adjuster widgets
+        saturated->setDefault((double)defSpot.saturated);
+        pastels->setDefault((double)defSpot.pastels);
+        psThreshold->setDefault<int>(defSpot.psthreshold);
+        sensiv->setDefault((double)defSpot.sensiv);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabVibrance::adjusterChanged(Adjuster* a, double newval)
@@ -2272,7 +2368,18 @@ void LocallabSoft::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
 void LocallabSoft::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default value for adjuster widgets
+        streng->setDefault((double)defSpot.streng);
+        laplace->setDefault(defSpot.laplace);
+        sensisf->setDefault((double)defSpot.sensisf);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabSoft::adjusterChanged(Adjuster* a, double newval)
@@ -2299,6 +2406,13 @@ void LocallabSoft::adjusterChanged(Adjuster* a, double newval)
             }
         }
     }
+}
+
+void LocallabSoft::resetMaskView()
+{
+    showmasksoftMethodConn.block(true);
+    showmasksoftMethod->set_active(0);
+    showmasksoftMethodConn.block(false);
 }
 
 void LocallabSoft::enabledChanged()
@@ -2469,7 +2583,18 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
 void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default value for adjuster widgets
+        radius->setDefault(defSpot.radius);
+        strength->setDefault((double)defSpot.strength);
+        sensibn->setDefault((double)defSpot.sensibn);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabBlur::adjusterChanged(Adjuster* a, double newval)

@@ -95,6 +95,17 @@ public:
         return exp;
     }
 
+    // Getter/setter for Locallab tool expanded status
+    void setExpanded(bool expanded)
+    {
+        exp->set_expanded(expanded);
+    }
+
+    bool getExpanded()
+    {
+        return exp->get_expanded();
+    }
+
     // Setter for Locallab activation indicator
     void isLocallabActivated(bool cond)
     {
@@ -148,6 +159,9 @@ protected:
 private:
     // Remove button event function
     bool on_remove_change(GdkEventButton* event);
+
+    // Tool expander event function
+    void foldThemAll(GdkEventButton* event);
 
     // To be implemented
     virtual void enabledChanged() {};
@@ -375,6 +389,8 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged(Adjuster* a, double newval);
+
+    void resetMaskView();
 
 private:
     void enabledChanged();

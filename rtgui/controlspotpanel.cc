@@ -24,8 +24,11 @@
 #include <iomanip>
 #include "editwidgets.h"
 #include "options.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
+using namespace procparams;
+
 extern Options options;
 
 //-----------------------------------------------------------------------------
@@ -804,25 +807,6 @@ void ControlSpotPanel::updateParamVisibility()
     } else { // Excluding case
         excluFrame->show();
     }
-}
-
-void ControlSpotPanel::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
-{
-}
-void ControlSpotPanel::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
-{
-}
-void ControlSpotPanel::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
-{
 }
 
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
@@ -2070,85 +2054,33 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     disableParamlistener(false);
 }
 
-void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited, int id)
+void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited)
 {
-    // Find vector index of given spot id (index = -1 if not found)
-    int index = -1;
+    const int index = defParams->locallab.selspot;
 
-    for (int i = 0; i < (int)defParams->locallab.spots.size(); i++) {
-        if (defParams->locallab.spots.at(i).id == id) {
-            index = i;
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
 
-            break;
-        }
+        // Set default values for adjuster widgets
+        sensiexclu_->setDefault((double)defSpot.sensiexclu);
+        structexclu_->setDefault((double)defSpot.structexclu);
+        struc_->setDefault(defSpot.struc);
+        locX_->setDefault((double)defSpot.locX);
+        locXL_->setDefault((double)defSpot.locXL);
+        locY_->setDefault((double)defSpot.locY);
+        locYT_->setDefault((double)defSpot.locYT);
+        centerX_->setDefault((double)defSpot.centerX);
+        centerY_->setDefault((double)defSpot.centerY);
+        circrad_->setDefault((double)defSpot.circrad);
+        transit_->setDefault((double)defSpot.transit);
+        thresh_->setDefault(defSpot.thresh);
+        iter_->setDefault(defSpot.iter);
+        balan_->setDefault(defSpot.balan);
+        transitweak_->setDefault(defSpot.transitweak);
+        transitgrad_->setDefault(defSpot.transitgrad);
     }
 
-    // Set default values for adjusters
-    const rtengine::procparams::LocallabParams::LocallabSpot* defSpot = new rtengine::procparams::LocallabParams::LocallabSpot();
-
-    if (index != -1 && index < (int)defParams->locallab.spots.size()) {
-        defSpot = &defParams->locallab.spots.at(index);
-    }
-
-    sensiexclu_->setDefault((double)defSpot->sensiexclu);
-    structexclu_->setDefault((double)defSpot->structexclu);
-    struc_->setDefault(defSpot->struc);
-    locX_->setDefault((double)defSpot->locX);
-    locXL_->setDefault((double)defSpot->locXL);
-    locY_->setDefault((double)defSpot->locY);
-    locYT_->setDefault((double)defSpot->locYT);
-    centerX_->setDefault((double)defSpot->centerX);
-    centerY_->setDefault((double)defSpot->centerY);
-    circrad_->setDefault((double)defSpot->circrad);
-    transit_->setDefault((double)defSpot->transit);
-    thresh_->setDefault(defSpot->thresh);
-    iter_->setDefault(defSpot->iter);
-    balan_->setDefault(defSpot->balan);
-    transitweak_->setDefault(defSpot->transitweak);
-    transitgrad_->setDefault(defSpot->transitgrad);
-
-    // Set default edited states for adjusters
-    if (!pedited) {
-        sensiexclu_->setDefaultEditedState(Irrelevant);
-        structexclu_->setDefaultEditedState(Irrelevant);
-        struc_->setDefaultEditedState(Irrelevant);
-        locX_->setDefaultEditedState(Irrelevant);
-        locXL_->setDefaultEditedState(Irrelevant);
-        locY_->setDefaultEditedState(Irrelevant);
-        locYT_->setDefaultEditedState(Irrelevant);
-        centerX_->setDefaultEditedState(Irrelevant);
-        centerY_->setDefaultEditedState(Irrelevant);
-        circrad_->setDefaultEditedState(Irrelevant);
-        transit_->setDefaultEditedState(Irrelevant);
-        thresh_->setDefaultEditedState(Irrelevant);
-        iter_->setDefaultEditedState(Irrelevant);
-        balan_->setDefaultEditedState(Irrelevant);
-        transitweak_->setDefaultEditedState(Irrelevant);
-        transitgrad_->setDefaultEditedState(Irrelevant);
-    } else {
-        const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
-
-        if (index != 1 && index < (int)pedited->locallab.spots.size()) {
-            defSpotState = &pedited->locallab.spots.at(index);
-        }
-
-        sensiexclu_->setDefaultEditedState(defSpotState->sensiexclu ? Edited : UnEdited);
-        structexclu_->setDefaultEditedState(defSpotState->structexclu ? Edited : UnEdited);
-        struc_->setDefaultEditedState(defSpotState->struc ? Edited : UnEdited);
-        locX_->setDefaultEditedState(defSpotState->locX ? Edited : UnEdited);
-        locXL_->setDefaultEditedState(defSpotState->locXL ? Edited : UnEdited);
-        locY_->setDefaultEditedState(defSpotState->locY ? Edited : UnEdited);
-        locYT_->setDefaultEditedState(defSpotState->locYT ? Edited : UnEdited);
-        centerX_->setDefaultEditedState(defSpotState->centerX ? Edited : UnEdited);
-        centerY_->setDefaultEditedState(defSpotState->centerY ? Edited : UnEdited);
-        circrad_->setDefaultEditedState(defSpotState->circrad ? Edited : UnEdited);
-        transit_->setDefaultEditedState(defSpotState->transit ? Edited : UnEdited);
-        thresh_->setDefaultEditedState(defSpotState->thresh ? Edited : UnEdited);
-        iter_->setDefaultEditedState(defSpotState->iter ? Edited : UnEdited);
-        balan_->setDefaultEditedState(defSpotState->balan ? Edited : UnEdited);
-        transitweak_->setDefaultEditedState(defSpotState->transitweak ? Edited : UnEdited);
-        transitgrad_->setDefaultEditedState(defSpotState->transitgrad ? Edited : UnEdited);
-    }
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void ControlSpotPanel::setBatchMode(bool batchMode)

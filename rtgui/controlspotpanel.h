@@ -29,7 +29,6 @@
 #include "toolpanel.h"
 #include <gtkmm.h>
 #include <string>
-#include "thresholdadjuster.h"
 
 class ControlSpotPanel:
     public ToolParamBlock,
@@ -206,10 +205,9 @@ public:
      * Implementation of setDefaults function of toolpanel.h
      *
      * @param defParams ProcParams containing default values to set to the adjusters
-     * @param pedited   ParamsEdited containing default state values to set to the adjusters
-     * @param id Spot id to consider to update adjusters default values and default state values
+     * @param pedited ParamsEdited containing default state values to set to the adjusters (not used because batch mode is deactivated for Locallab)
      */
-    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr, int id = 0);
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     /**
      * Variant of setDefaults function which only update adjuster default states
      *
@@ -256,12 +254,6 @@ private:
     void qualityMethodChanged();
     void updateParamVisibility();
     void adjusterChanged(Adjuster* a, double newval);
-    void adjusterAutoToggled(Adjuster* a, bool newval);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop);
-    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop);
-    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
-    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
     void avoidChanged();
 
     void disableParamlistener(bool cond);

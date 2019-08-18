@@ -718,13 +718,8 @@ void ToolPanelCoordinator::updateToolState()
             temp.push_back(options.tpOpen.at(i + expList.size()));
         }
 
-        locallab->updateToolState(temp);
-        locallab->setExpanded(true);
-
         wavelet->updateToolState(temp);
         retinex->updateToolState(temp);
-
-
     }
 }
 
@@ -753,7 +748,6 @@ void ToolPanelCoordinator::writeToolExpandedStatus(std::vector<int> &tpOpen)
         tpOpen.push_back(expList.at(i)->get_expanded());
     }
 
-    locallab->writeOptions(tpOpen);
     wavelet->writeOptions(tpOpen);
     retinex->writeOptions(tpOpen);
 

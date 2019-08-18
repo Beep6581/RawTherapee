@@ -266,7 +266,29 @@ void LocallabTone::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
 void LocallabTone::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        amount->setDefault(defSpot.amount);
+        stren->setDefault(defSpot.stren);
+        gamma->setDefault(defSpot.gamma);
+        satur->setDefault(defSpot.satur);
+        estop->setDefault(defSpot.estop);
+        scaltm->setDefault(defSpot.scaltm);
+        rewei->setDefault((double)defSpot.rewei);
+        softradiustm->setDefault(defSpot.softradiustm);
+        sensitm->setDefault((double)defSpot.sensitm);
+        blendMask->setDefault((double)defSpot.blendmasktm);
+        radMask->setDefault(defSpot.radmasktm);
+        chroMask->setDefault(defSpot.chromasktm);
+        gamMask->setDefault(defSpot.gammasktm);
+        sloMask->setDefault(defSpot.slomasktm);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabTone::adjusterChanged(Adjuster* a, double newval)
@@ -702,7 +724,31 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
 
 void LocallabRetinex::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        str->setDefault(defSpot.str);
+        chrrt->setDefault(defSpot.chrrt);
+        neigh->setDefault(defSpot.neigh);
+        vart->setDefault(defSpot.vart);
+        scalereti->setDefault(defSpot.scalereti);
+        limd->setDefault(defSpot.limd);
+        darkness->setDefault(defSpot.darkness);
+        lightnessreti->setDefault(defSpot.lightnessreti);
+        dehaz->setDefault((double)defSpot.dehaz);
+        softradiusret->setDefault(defSpot.softradiusret);
+        sensih->setDefault((double)defSpot.sensih);
+        blendMask->setDefault((double)defSpot.blendmaskreti);
+        radMask->setDefault(defSpot.radmaskreti);
+        chroMask->setDefault(defSpot.chromaskreti);
+        gamMask->setDefault(defSpot.gammaskreti);
+        sloMask->setDefault(defSpot.slomaskreti);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabRetinex::adjusterChanged(Adjuster* a, double newval)
@@ -1108,7 +1154,22 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
 void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        sharcontrast->setDefault((double)defSpot.sharcontrast);
+        sharradius->setDefault(defSpot.sharradius);
+        sharamount->setDefault((double)defSpot.sharamount);
+        shardamping->setDefault((double)defSpot.shardamping);
+        shariter->setDefault((double)defSpot.shariter);
+        sharblur->setDefault(defSpot.sharblur);
+        sensisha->setDefault((double)defSpot.sensisha);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
@@ -1360,7 +1421,22 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
 void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        lcradius->setDefault((double)defSpot.lcradius);
+        lcamount->setDefault(defSpot.lcamount);
+        lcdarkness->setDefault(defSpot.lcdarkness);
+        lclightness->setDefault(defSpot.lclightness);
+        levelwav->setDefault(defSpot.levelwav);
+        residcont->setDefault(defSpot.residcont);
+        sensilc->setDefault((double)defSpot.sensilc);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
@@ -1680,7 +1756,31 @@ void LocallabCBDL::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
 void LocallabCBDL::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        for (int i = 0; i < 6; i++) {
+            multiplier[i]->setDefault(defSpot.mult[i]);
+        }
+
+        chromacbdl->setDefault(defSpot.chromacbdl);
+        threshold->setDefault(defSpot.threshold);
+        blurcbdl->setDefault(defSpot.blurcbdl);
+        clarityml->setDefault(defSpot.clarityml);
+        contresid->setDefault((double)defSpot.contresid);
+        softradiuscb->setDefault(defSpot.softradiuscb);
+        sensicb->setDefault((double)defSpot.sensicb);
+        blendMask->setDefault((double)defSpot.blendmaskcb);
+        radMask->setDefault(defSpot.radmaskcb);
+        chroMask->setDefault(defSpot.chromaskcb);
+        gamMask->setDefault(defSpot.gammaskcb);
+        sloMask->setDefault(defSpot.slomaskcb);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabCBDL::adjusterChanged(Adjuster* a, double newval)
@@ -2013,7 +2113,27 @@ void LocallabDenoise::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
 
 void LocallabDenoise::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-    // TODO
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot defSpot = defParams->locallab.spots.at(index);
+
+        // Set default values for adjuster widgets
+        noiselumf0->setDefault((double)defSpot.noiselumf0);
+        noiselumf->setDefault((double)defSpot.noiselumf);
+        noiselumf2->setDefault((double)defSpot.noiselumf2);
+        noiselumc->setDefault((double)defSpot.noiselumc);
+        noiselumdetail->setDefault((double)defSpot.noiselumdetail);
+        noiselequal->setDefault((double)defSpot.noiselequal);
+        noisechrof->setDefault((double)defSpot.noisechrof);
+        noisechroc->setDefault((double)defSpot.noisechroc);
+        noisechrodetail->setDefault((double)defSpot.noisechrodetail);
+        adjblur->setDefault((double)defSpot.adjblur);
+        bilateral->setDefault((double)defSpot.bilateral);
+        sensiden->setDefault((double)defSpot.sensiden);
+    }
+
+    // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
 void LocallabDenoise::adjusterChanged(Adjuster* a, double newval)
