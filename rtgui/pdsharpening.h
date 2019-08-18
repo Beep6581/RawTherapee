@@ -15,14 +15,13 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 #pragma once
 
-#include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PdSharpening : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoContrastListener
+class PdSharpening final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoContrastListener
 {
 
 protected:
@@ -30,7 +29,7 @@ protected:
     Adjuster* gamma;
     Adjuster* dradius;
     Adjuster* diter;
-    Gtk::VBox* rld;
+
     bool lastAutoContrast;
     rtengine::ProcEvent EvPdShrContrast;
     rtengine::ProcEvent EvPdShrDRadius;
@@ -44,17 +43,17 @@ public:
     PdSharpening ();
     ~PdSharpening () override;
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void setBatchMode   (bool batchMode) override;
+    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void setBatchMode (bool batchMode) override;
 
     void adjusterAutoToggled (Adjuster* a, bool newval) override;
     void adjusterChanged (Adjuster* a, double newval) override;
-    void enabledChanged  () override;
+    void enabledChanged () override;
 
     void autoContrastChanged (double autoContrast) override;
 
-    void setAdjusterBehavior (bool contrastadd, bool gammaadd, bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
-    void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void setAdjusterBehavior (bool contrastadd, bool gammaadd, bool radiusadd, bool iteradds);
+    void trimValues (rtengine::procparams::ProcParams* pp) override;
 };

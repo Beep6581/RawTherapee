@@ -4992,13 +4992,14 @@ BENCHFUN
     array2D<float>& Y = red; // red will be overridden anyway => we can use its buffer to store Y
     array2D<float>& Cb = green; // green will be overridden anyway => we can use its buffer to store Cb
     array2D<float>& Cr = blue; // blue will be overridden anyway => we can use its buffer to store Cr
-    const float gamma = sharpeningParams.gamma;
 
     StopWatch Stop1("rgb2Y");
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for (int i = 0; i < H; ++i) {
         Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
-        Color::RGB2YCbCr(red[i], green[i], blue[i], Y[i], Cb[i], Cr[i], gamma, W);
+        Color::RGB2YCbCr(red[i], green[i], blue[i], Y[i], Cb[i], Cr[i], sharpeningParams.gamma, W);
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
@@ -5011,9 +5012,11 @@ BENCHFUN
     ImProcFunctions ipf(&dummy);
     ipf.deconvsharpening(Y, tmp, blend, W, H, sharpeningParams, 1.0);
     StopWatch Stop2("Y2RGB");
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for (int i = 0; i < H; ++i) {
-        Color::YCbCr2RGB(Y[i], Cb[i], Cr[i], red[i], green[i], blue[i], gamma, W);
+        Color::YCbCr2RGB(Y[i], Cb[i], Cr[i], red[i], green[i], blue[i], sharpeningParams.gamma, W);
     }
     Stop2.stop();
 }
