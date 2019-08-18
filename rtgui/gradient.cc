@@ -93,7 +93,7 @@ Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL
     centerCircle = new Circle();
     centerCircle->datum = Geometry::IMAGE;
     centerCircle->radiusInImageSpace = false;
-    centerCircle->radius = 30;
+    centerCircle->radius = 12;
     centerCircle->filled = true;
 
     EditSubscriber::mouseOverGeometry.push_back( hLine );
