@@ -1276,6 +1276,8 @@ void CropWindow::updateCursor (int x, int y)
             newType = CSArrow;
         } else if (onArea (CropToolBar, x, y)) {
             newType = CSMove;
+        } else if (iarea->getObject() > -1 && editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
+            newType = editSubscriber->getCursor(iarea->getObject());
         } else if (onArea (CropResize, x, y)) {
             newType = CSResizeDiagonal;
         } else if (tm == TMColorPicker && hoveredPicker) {
