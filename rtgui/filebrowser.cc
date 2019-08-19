@@ -1502,8 +1502,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) const   // true ->
         std::transform(FileName.begin(), FileName.end(), FileName.begin(), ::toupper);
         int iFilenameMatch = 0;
 
-        for (const auto& filter : filter.vFilterStrings) {
-            if (FileName.find(filter) != std::string::npos) {
+        for (const auto& filterString : filter.vFilterStrings) {
+            if (FileName.find(filterString) != std::string::npos) {
                 ++iFilenameMatch;
                 break;
             }
