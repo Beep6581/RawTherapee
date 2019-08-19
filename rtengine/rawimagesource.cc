@@ -4987,17 +4987,22 @@ BENCHFUN
     }
 
     array2D<float> L(W,H);
-    array2D<float>& Y = red; // red will be overridden anyway => we can use its buffer to store Y
-    array2D<float>& Cb = green; // green will be overridden anyway => we can use its buffer to store Cb
-    array2D<float>& Cr = blue; // blue will be overridden anyway => we can use its buffer to store Cr
+    array2D<float> YOld(W,H);
+    array2D<float> YNew(W,H);
+//    array2D<float>& Y = red; // red will be overridden anyway => we can use its buffer to store Y
+//    array2D<float>& Cb = green; // green will be overridden anyway => we can use its buffer to store Cb
+//    array2D<float>& Cr = blue; // blue will be overridden anyway => we can use its buffer to store Cr
 
     StopWatch Stop1("rgb2Y");
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < H; ++i) {
         Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
-        Color::RGB2YCbCr(red[i], green[i], blue[i], Y[i], Cb[i], Cr[i], sharpeningParams.gamma, W);
+        Color::RGB2Y(red[i], green[i], blue[i], YOld[i], sharpeningParams.gamma, W);
+        for (int j = 0; j < W; ++j) {
+            YNew[i][j] = YOld[i][j];
+        }
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
@@ -5008,13 +5013,19 @@ BENCHFUN
     array2D<float>& tmp = L; // L is not used anymore now => we can use its buffer as the needed temporary buffer
     ProcParams dummy;
     ImProcFunctions ipf(&dummy);
-    ipf.deconvsharpening(Y, tmp, blend, W, H, sharpeningParams, 1.0);
+    ipf.deconvsharpening(YNew, tmp, blend, W, H, sharpeningParams, 1.0);
     StopWatch Stop2("Y2RGB");
+    const float gamma = sharpeningParams.gamma;
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
     for (int i = 0; i < H; ++i) {
-        Color::YCbCr2RGB(Y[i], Cb[i], Cr[i], red[i], green[i], blue[i], sharpeningParams.gamma, W);
+        for (int j = 0; j < W; ++j) {
+            const float factor = pow_F(YNew[i][j] / (YOld[i][j] == 0.f ? 0.00001f : YOld[i][j]), gamma);
+            red[i][j] *= factor;
+            green[i][j] *= factor;
+            blue[i][j] *= factor;
+        }
     }
     Stop2.stop();
 }

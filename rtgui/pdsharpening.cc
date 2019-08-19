@@ -49,7 +49,7 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
     pack_start(*hb);
 
     Gtk::VBox* rld = Gtk::manage(new Gtk::VBox());
-    gamma = Gtk::manage(new Adjuster(M("TP_SHARPENING_GAMMA"), 0.5, 3.0, 0.05, 1.35));
+    gamma = Gtk::manage(new Adjuster(M("TP_SHARPENING_GAMMA"), 0.5, 6.0, 0.05, 1.35));
     dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.75));
     diter = Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 5, 100, 1, 30));
     rld->pack_start(*gamma);

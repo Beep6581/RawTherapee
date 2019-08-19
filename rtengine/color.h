@@ -1804,12 +1804,6 @@ public:
         return (hr);
     }
 
-    static inline void RGB2YCbCr(float R, float G, float B, float &Y, float &Cb, float &Cr) {
-        Y = 0.2627f * R + 0.6780f * G + 0.0593f * B;
-        Cb = (1.f - 0.0593f) * B - (0.2627f * R + 0.6780f * G);
-        Cr = (1.f - 0.2627f) * R - (0.6780f * G + 0.0593f * B);
-    }
-
     static inline void RGB2YCbCr(float* R, float* G, float* B, float* Y, float* Cb, float *Cr, float gamma, int W) {
         gamma = 1.f / gamma;
         int i = 0;
@@ -1839,12 +1833,6 @@ public:
         }
     }
 
-    static inline void YCbCr2RGB(float Y, float Cb, float Cr, float &R, float &G, float &B) {
-        R = std::max(Y + Cr, 0.f);
-        G = std::max(Y - (0.0593f / 0.6780f) * Cb - (0.2627f / 0.6780f) * Cr, 0.f);
-        B = std::max(Y + Cb, 0.f);
-    }
-
     static inline void YCbCr2RGB(float* Y, float* Cb, float* Cr, float* R, float* G, float* B, float gamma, int W) {
         int i = 0;
 #ifdef __SSE2__
@@ -1870,6 +1858,30 @@ public:
             B[i] = std::max(y + cb, 0.f);
         }
     }
+
+    static inline void RGB2Y(float* R, float* G, float* B, float* Y, float gamma, int W) {
+        gamma = 1.f / gamma;
+        int i = 0;
+#ifdef __SSE2__
+        const vfloat gammav = F2V(gamma);
+        const vfloat c1v = F2V(0.2627f);
+        const vfloat c2v = F2V(0.6780f);
+        const vfloat c3v = F2V(0.0593f);
+        for (; i < W - 3; i += 4) {
+            const vfloat Rv = vmaxf(LVFU(R[i]), ZEROV);
+            const vfloat Gv = vmaxf(LVFU(G[i]), ZEROV);
+            const vfloat Bv = vmaxf(LVFU(B[i]), ZEROV);
+            STVFU(Y[i], pow_F(c1v * Rv + c2v * Gv + c3v * Bv, gammav));
+        }
+#endif
+        for (; i < W; ++i) {
+            const float r = std::max(R[i], 0.f);
+            const float g = std::max(G[i], 0.f);
+            const float b = std::max(B[i], 0.f);
+            Y[i] = pow_F(0.2627f * r + 0.6780f * g + 0.0593f * b, gamma);
+        }
+    }
+
 };
 
 }
