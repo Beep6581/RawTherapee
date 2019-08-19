@@ -1090,8 +1090,8 @@ void EditorPanel::close ()
         if (iareapanel) {
             iareapanel->imageArea->setPreviewHandler (nullptr);
             iareapanel->imageArea->setImProcCoordinator (nullptr);
+            tpc->editModeSwitchedOff();
         }
-        tpc->editModeSwitchedOff();
 
         rtengine::StagedImageProcessor::destroy (ipc);
         ipc = nullptr;
