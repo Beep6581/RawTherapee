@@ -91,13 +91,12 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     sbox->pack_start (*hbox);
 
     sizeBox->pack_start (*sbox, Gtk::PACK_SHRINK, 0);
-
-    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
-    sizeBox->pack_start(*allowUpscaling);
-    allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
-
     sizeBox->show_all ();
     sizeBox->reference ();
+
+    allowUpscaling = Gtk::manage(new Gtk::CheckButton(M("TP_RESIZE_ALLOW_UPSCALING")));
+    pack_start(*allowUpscaling);
+    allowUpscaling->signal_toggled().connect(sigc::mem_fun(*this, &Resize::allowUpscalingChanged));
 
     w->set_digits (0);
     w->set_increments (1, 100);
@@ -572,11 +571,13 @@ void Resize::updateGUI ()
     case (0):
         // Scale mode
         pack_start (*scale, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
         break;
 
     case (1):
         // Width mode
         pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (false);
         break;
@@ -584,6 +585,7 @@ void Resize::updateGUI ()
     case (2):
         // Height mode
         pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
         w->set_sensitive (false);
         h->set_sensitive (true);
         break;
@@ -591,6 +593,7 @@ void Resize::updateGUI ()
     case (3):
         // Bounding box mode
         pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (true);
         break;
