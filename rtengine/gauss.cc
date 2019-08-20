@@ -17,13 +17,47 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "gauss.h"
+#include "rt_math.h"
 #include <cmath>
 #include <cstdlib>
 #include "opthelper.h"
 #include "boxblur.h"
-
 namespace
 {
+
+void compute7x7kernel(float sigma, float kernel[7][7]) {
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -3; i <= 3; ++i) {
+        for (int j = -3; j <= 3; ++j) {
+            kernel[i + 3][j + 3] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+            sum += kernel[i + 3][j + 3];
+        }
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute5x5kernel(float sigma, float kernel[5][5]) {
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
+            kernel[i + 2][j + 2] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+            sum += kernel[i + 2][j + 2];
+        }
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
 
 template<class T> void calculateYvVFactors( const T sigma, T &b1, T &b2, T &b3, T &B, T M[3][3])
 {
@@ -207,6 +241,219 @@ template<class T> void gauss3x3div (T** RESTRICT src, T** RESTRICT dst, T** REST
     }
 }
 
+template<class T> void gauss7x7div (T** RESTRICT src, T** RESTRICT dst, T** RESTRICT divBuffer, const int W, const int H, float sigma)
+{
+
+    float kernel[7][7];
+    compute7x7kernel(sigma, kernel);
+
+#ifdef __SSE2__
+    vfloat kernelv[7][7] ALIGNED16;
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            kernelv[i][j] = F2V(kernel[i][j]);
+        }
+    }
+    const vfloat onev = F2V(1.f);
+#endif
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16) nowait
+#endif
+
+    for (int i = 3; i < H - 3; ++i) {
+        dst[i][0] = dst[i][1] = dst[i][2] = 1.f;
+        int j = 3;
+#ifdef __SSE2__
+        for (; j < W - 6; j += 4) {
+            vfloat valv = ZEROV;
+            for (int k = -3; k <= 3; ++k) {
+                for (int l = -3; l <= 3; ++l) {
+                    valv += LVFU(src[i + k][j + l]) * LVF(kernelv[k + 3][l + 3]);
+                }
+            }
+            STVFU(dst[i][j], vmaxf(LVFU(divBuffer[i][j]) / (vself(vmaskf_gt(valv, ZEROV), valv, onev)), ZEROV));
+        }
+#endif
+        for (; j < W - 3; ++j) {
+            float val = 0;
+            for (int k = -3; k <= 3; ++k) {
+                for (int l = -3; l <= 3; ++l) {
+                    val += src[i + k][j + l] * kernel[k + 3][l + 3];
+                }
+            }
+            dst[i][j] = rtengine::max(divBuffer[i][j] / (val > 0.f ? val : 1.f), 0.f);
+        }
+        dst[i][W - 3] = dst[i][W - 2] = dst[i][W - 1] = 1.f;
+    }
+
+    // first and last rows
+#ifdef _OPENMP
+    #pragma omp single
+#endif
+    {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+        for (int i = H - 3 ; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+    }
+}
+
+template<class T> void gauss5x5div (T** RESTRICT src, T** RESTRICT dst, T** RESTRICT divBuffer, const int W, const int H, float sigma)
+{
+
+    float kernel[5][5];
+    compute5x5kernel(sigma, kernel);
+
+#ifdef __SSE2__
+    vfloat kernelv[5][5] ALIGNED16;
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            kernelv[i][j] = F2V(kernel[i][j]);
+        }
+    }
+    const vfloat onev = F2V(1.f);
+#endif
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16) nowait
+#endif
+
+    for (int i = 2; i < H - 2; ++i) {
+        dst[i][0] = dst[i][1] = 1.f;
+        int j = 2;
+#ifdef __SSE2__
+        for (; j < W - 5; j += 4) {
+            vfloat valv = ZEROV;
+            for (int k = -2; k <= 2; ++k) {
+                for (int l = -2; l <= 2; ++l) {
+                    valv += LVFU(src[i + k][j + l]) * LVF(kernelv[k + 2][l + 2]);
+                }
+            }
+            STVFU(dst[i][j], vmaxf(LVFU(divBuffer[i][j]) / (vself(vmaskf_gt(valv, ZEROV), valv, onev)), ZEROV));
+        }
+#endif
+        for (; j < W - 2; ++j) {
+            float val = 0;
+            for (int k = -2; k <= 2; ++k) {
+                for (int l = -2; l <= 2; ++l) {
+                    val += src[i + k][j + l] * kernel[k + 2][l + 2];
+                }
+            }
+            dst[i][j] = rtengine::max(divBuffer[i][j] / (val > 0.f ? val : 1.f), 0.f);
+        }
+        dst[i][W - 2] = dst[i][W - 1] = 1.f;
+    }
+
+    // first and last rows
+#ifdef _OPENMP
+    #pragma omp single
+#endif
+    {
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+        for (int i = H - 2 ; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+    }
+}
+
+template<class T> void gauss7x7mult (T** RESTRICT src, T** RESTRICT dst, const int W, const int H, float sigma)
+{
+
+    float kernel[7][7];
+    compute7x7kernel(sigma, kernel);
+#ifdef __SSE2__
+    vfloat kernelv[7][7] ALIGNED16;
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            kernelv[i][j] = F2V(kernel[i][j]);
+        }
+    }
+#endif
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16)
+#endif
+
+    for (int i = 3; i < H - 3; ++i) {
+        int j = 3;
+#ifdef __SSE2__
+        for (; j < W - 6; j += 4) {
+            vfloat valv = ZEROV;
+            for (int k = -3; k <= 3; ++k) {
+                for (int l = -3; l <= 3; ++l) {
+                    valv += LVFU(src[i + k][j + l]) * LVF(kernelv[k + 3][l + 3]);
+                }
+            }
+            STVFU(dst[i][j], LVFU(dst[i][j]) * valv);
+        }
+#endif
+        for (; j < W - 3; ++j) {
+            float val = 0;
+            for (int k = -3; k <= 3; ++k) {
+                for (int l = -3; l <= 3; ++l) {
+                    val += src[i + k][j + l] * kernel[k + 3][l + 3];
+                }
+            }
+            dst[i][j] *= val;
+        }
+    }
+}
+
+template<class T> void gauss5x5mult (T** RESTRICT src, T** RESTRICT dst, const int W, const int H, float sigma)
+{
+
+    float kernel[5][5];
+    compute5x5kernel(sigma, kernel);
+#ifdef __SSE2__
+    vfloat kernelv[5][5] ALIGNED16;
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            kernelv[i][j] = F2V(kernel[i][j]);
+        }
+    }
+#endif
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16)
+#endif
+
+    for (int i = 2; i < H - 2; ++i) {
+        int j = 2;
+#ifdef __SSE2__
+        for (; j < W - 5; j += 4) {
+            vfloat valv = ZEROV;
+            for (int k = -2; k <= 2; ++k) {
+                for (int l = -2; l <= 2; ++l) {
+                    valv += LVFU(src[i + k][j + l]) * LVF(kernelv[k + 2][l + 2]);
+                }
+            }
+            STVFU(dst[i][j], LVFU(dst[i][j]) * valv);
+        }
+#endif
+        for (; j < W - 2; ++j) {
+            float val = 0;
+            for (int k = -2; k <= 2; ++k) {
+                for (int l = -2; l <= 2; ++l) {
+                    val += src[i + k][j + l] * kernel[k + 2][l + 2];
+                }
+            }
+            dst[i][j] *= val;
+        }
+    }
+}
 
 // use separated filter if the support window is small and src == dst
 template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const float c0, const float c1)
@@ -1241,14 +1488,26 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
             if (sigma < GAUSS_DOUBLE) {
                 switch (gausstype) {
                 case GAUSS_MULT : {
-                    gaussHorizontalSse<T> (src, src, W, H, sigma);
-                    gaussVerticalSsemult<T> (src, dst, W, H, sigma);
+                    if (sigma < 0.84 && src != dst) {
+                        gauss5x5mult(src, dst, W, H, sigma);
+                    } else if (sigma < 1.15f && src != dst) {
+                        gauss7x7mult(src, dst, W, H, sigma);
+                    } else {
+                        gaussHorizontalSse<T> (src, src, W, H, sigma);
+                        gaussVerticalSsemult<T> (src, dst, W, H, sigma);
+                    }
                     break;
                 }
 
                 case GAUSS_DIV : {
-                    gaussHorizontalSse<T> (src, dst, W, H, sigma);
-                    gaussVerticalSsediv<T> (dst, dst, buffer2, W, H, sigma);
+                    if (sigma < 0.84f && src != dst) {
+                        gauss5x5div (src, dst, buffer2, W, H, sigma);
+                    } else if (sigma < 1.15f && src != dst) {
+                        gauss7x7div (src, dst, buffer2, W, H, sigma);
+                    } else {
+                        gaussHorizontalSse<T> (src, dst, W, H, sigma);
+                        gaussVerticalSsediv<T> (dst, dst, buffer2, W, H, sigma);
+                    }
                     break;
                 }
 

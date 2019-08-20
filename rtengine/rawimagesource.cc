@@ -4989,20 +4989,14 @@ BENCHFUN
     array2D<float> L(W,H);
     array2D<float> YOld(W,H);
     array2D<float> YNew(W,H);
-//    array2D<float>& Y = red; // red will be overridden anyway => we can use its buffer to store Y
-//    array2D<float>& Cb = green; // green will be overridden anyway => we can use its buffer to store Cb
-//    array2D<float>& Cr = blue; // blue will be overridden anyway => we can use its buffer to store Cr
 
-    StopWatch Stop1("rgb2Y");
+    StopWatch Stop1("rgb2YL");
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < H; ++i) {
         Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
-        Color::RGB2Y(red[i], green[i], blue[i], YOld[i], sharpeningParams.gamma, W);
-        for (int j = 0; j < W; ++j) {
-            YNew[i][j] = YOld[i][j];
-        }
+        Color::RGB2Y(red[i], green[i], blue[i], YOld[i], YNew[i], sharpeningParams.gamma, W);
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
@@ -5017,11 +5011,22 @@ BENCHFUN
     StopWatch Stop2("Y2RGB");
     const float gamma = sharpeningParams.gamma;
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < H; ++i) {
-        for (int j = 0; j < W; ++j) {
-            const float factor = pow_F(YNew[i][j] / (YOld[i][j] == 0.f ? 0.00001f : YOld[i][j]), gamma);
+        int j = 0;
+#ifdef __SSE2__
+        const vfloat gammav = F2V(gamma);
+        for (; j < W - 3; j += 4) {
+            const vfloat factor = pow_F(LVFU(YNew[i][j]) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f)), gammav);
+            STVFU(red[i][j], LVFU(red[i][j]) * factor);
+            STVFU(green[i][j], LVFU(green[i][j]) * factor);
+            STVFU(blue[i][j], LVFU(blue[i][j]) * factor);
+        }
+
+#endif
+        for (; j < W; ++j) {
+            const float factor = pow_F(YNew[i][j] / std::max(YOld[i][j], 0.00001f), gamma);
             red[i][j] *= factor;
             green[i][j] *= factor;
             blue[i][j] *= factor;
