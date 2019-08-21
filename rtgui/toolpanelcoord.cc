@@ -473,10 +473,19 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         resize->write(params);
     }
 
-    // Manage Locallab mask visibility
-    if (event == rtengine::EvlocallabshowmaskcolMethod || event == rtengine::EvlocallabshowmaskexpMethod || event == rtengine::EvlocallabshowmaskSHMethod || event == rtengine::EvlocallabshowmasksoftMethod || event == rtengine::EvlocallabshowmaskcbMethod || event == rtengine::EvlocallabshowmaskretiMethod || event == rtengine::EvlocallabshowmasktmMethod) {
-        Locallab::llMaskVisibility* maskStruc = locallab->getMaskVisibility();
-        ipc->setLocallabMaskVisibility(maskStruc->colorMask, maskStruc->expMask, maskStruc->SHMask,  maskStruc->cbMask, maskStruc->retiMask, maskStruc->softMask, maskStruc->tmMask);
+    /*
+     * Manage Locallab mask visibility:
+     * - Mask preview is updated when choosing a mask preview method
+     * - Mask preview is stopped when creating, deleting or selecting a spot
+     */
+    if (event == rtengine::EvlocallabshowmaskMethod) {
+        const Locallab::llMaskVisibility maskStruc = locallab->getMaskVisibility();
+        ipc->setLocallabMaskVisibility(maskStruc.colorMask, maskStruc.expMask,
+                maskStruc.SHMask,  maskStruc.cbMask, maskStruc.retiMask,
+                maskStruc.softMask, maskStruc.tmMask);
+    } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask || event == rtengine::EvLocallabSpotDeleted) {
+        locallab->resetMaskVisibility();
+        ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -581,11 +590,9 @@ void ToolPanelCoordinator::profileChange(
         gradient->updateGeometry(params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
     }
 
-    // Reset Locallab mask visibility when a picture is loaded
-    if (event == rtengine::EvPhotoLoaded) {
-        locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0);
-    }
+    // Reset Locallab mask visibility
+    locallab->resetMaskVisibility();
+    ipc->setLocallabMaskVisibility(0, 0, 0, 0, 0, 0, 0);
 
     // start the IPC processing
     if (filterRawRefresh) {

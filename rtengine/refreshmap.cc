@@ -523,7 +523,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // unused
     LUMINANCECURVE,   // EvLocallabSpotCreated
     LUMINANCECURVE,   // EvLocallabSpotDeleted
-    LUMINANCECURVE,   // EvLocallabSpotSelected
+    M_VOID,           // EvLocallabSpotSelected
     M_VOID,           // EvLocallabSpotName
     M_VOID,           // EvLocallabSpotVisibility
     LUMINANCECURVE,   // EvLocallabSpotShape
@@ -631,8 +631,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLocallabsensisf
     LUMINANCECURVE,   // Evlocallabsharblur
     LUMINANCECURVE,   // EvLocenalabregion
-    LUMINANCECURVE,   // EvlocallabshowmaskcolMethod
-    LUMINANCECURVE,   // EvlocallabshowmaskexpMethod
+    LUMINANCECURVE,   // EvlocallabshowmaskMethod
+    LUMINANCECURVE,   // EvLocallabSpotSelectedWithMask
     LUMINANCECURVE,   // EvlocallabCCmaskshape
     LUMINANCECURVE,   // EvlocallabLLmaskshape
     LUMINANCECURVE,   // EvlocallabCCmaskexpshape

@@ -24,9 +24,6 @@
 
 #include "controlspotpanel.h"
 #include "locallabtools.h"
-#include "toolpanel.h"
-#include "editcallbacks.h"
-
 
 class Locallab :
     public ToolParamBlock,
@@ -54,6 +51,9 @@ private:
 
     std::vector<LocallabTool*> locallabTools;
 
+    // Locallab tools mask background management data
+    std::vector<locallabRef> maskBackRef;
+
 public:
     Locallab();
 
@@ -64,7 +64,7 @@ public:
     void setListener(ToolPanelListener* tpl);
 
     // Locallab tools mask background management function
-    void refChanged(double huer, double lumar, double chromar);
+    void refChanged(const std::vector<locallabRef> &ref, int selspot);
 
     // Mask visibility management functions
     struct llMaskVisibility {
@@ -78,7 +78,7 @@ public:
     };
 
     void resetMaskVisibility();
-    llMaskVisibility* getMaskVisibility();
+    llMaskVisibility getMaskVisibility() const;
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider);

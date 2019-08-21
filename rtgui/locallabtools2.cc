@@ -21,7 +21,6 @@
 #include "locallabtools.h"
 
 #include "options.h"
-#include "multilangmgr.h"
 #include "../rtengine/procparams.h"
 
 #define MINCHRO 0.
@@ -179,6 +178,11 @@ LocallabTone::LocallabTone():
     pack_start(*rewei);
     // pack_start(*softradiustm); // Always bad with TM ??
     pack_start(*sensitm);
+}
+
+void LocallabTone::getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask)
+{
+    tmMask = showMaskMethod->get_active_row_number();
 }
 
 void LocallabTone::disableListener()
@@ -458,7 +462,7 @@ void LocallabTone::showMaskMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvLocallabEnatmMask, ""); // TODO Use generic event for mask preview
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 
@@ -593,6 +597,11 @@ LocallabRetinex::LocallabRetinex():
 LocallabRetinex::~LocallabRetinex()
 {
     delete LocalcurveEditorgainT;
+}
+
+void LocallabRetinex::getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask)
+{
+    retiMask = showMaskMethod->get_active_row_number();
 }
 
 void LocallabRetinex::disableListener()
@@ -959,7 +968,7 @@ void LocallabRetinex::showMaskMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvlocallabshowmaskretiMethod, ""); // TODO Use generic event for mask preview
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 
@@ -1663,6 +1672,11 @@ LocallabCBDL::LocallabCBDL():
     pack_start(*sensicb);
 }
 
+void LocallabCBDL::getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask)
+{
+    cbMask = showMaskMethod->get_active_row_number();
+}
+
 void LocallabCBDL::disableListener()
 {
     LocallabTool::disableListener();
@@ -1950,7 +1964,7 @@ void LocallabCBDL::showMaskMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvlocallabshowmaskcbMethod, ""); // TODO Use generic event for mask preview
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 

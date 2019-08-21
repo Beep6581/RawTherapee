@@ -21,10 +21,8 @@
 #ifndef _LOCALLABTOOLS_H_
 #define _LOCALLABTOOLS_H_
 
-#include "toolpanel.h"
 #include "curveeditorgroup.h"
 #include "curveeditor.h"
-#include "../rtengine/rtengine.h"
 #include "labgrid.h"
 #include "thresholdadjuster.h"
 
@@ -45,8 +43,7 @@ class LocallabTool:
     public ToolPanel,
     public CurveListener,
     public ColorProvider,
-    public AdjusterListener,
-    public rtengine::LocallabListener
+    public AdjusterListener
 {
 protected:
     // Enumeration to manage mask type
@@ -129,10 +126,11 @@ public:
     bool isLocallabToolAdded();
 
     // Mask background management function
-    void refChanged(double huer, double lumar, double chromar);
+    void refChanged(const double huer, const double lumar, const double chromar);
 
-    // Mask preview reset function
+    // Mask preview functions
     void resetMaskView();
+    virtual void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask) {};
 
     /* To be completed
     Notes:
@@ -203,6 +201,8 @@ public:
 
     void setListener(ToolPanelListener* tpl);
 
+    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+
     void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
     void disableListener();
@@ -259,6 +259,8 @@ public:
     LocallabExposure();
     ~LocallabExposure();
 
+    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -299,6 +301,8 @@ private:
 
 public:
     LocallabShadow();
+
+    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -383,6 +387,8 @@ private:
 public:
     LocallabSoft();
 
+    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -452,6 +458,8 @@ private:
 public:
     LocallabTone();
 
+    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
+
     void disableListener();
     void enableListener();
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
@@ -497,6 +505,8 @@ private:
 public:
     LocallabRetinex();
     ~LocallabRetinex();
+
+    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
 
     void disableListener();
     void enableListener();
@@ -616,6 +626,8 @@ private:
 
 public:
     LocallabCBDL();
+
+    void getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask);
 
     void disableListener();
     void enableListener();

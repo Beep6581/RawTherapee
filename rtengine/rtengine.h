@@ -370,8 +370,14 @@ public:
 class LocallabListener
 {
 public:
+    struct locallabRef {
+        double huer;
+        double lumar;
+        double chromar;
+    };
+
     virtual ~LocallabListener() = default;
-    virtual void refChanged (double huer, double lumar, double chromar) = 0;
+    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
 };
 
 class AutoColorTonListener

@@ -19,13 +19,13 @@
  *  2017 Jacques Desmis <jdesmis@gmail.com>
  *  2019 Pierre Cabrera <pierre.cab@gmail.com>
  */
-
 #include "locallab.h"
-#include "../rtengine/rt_math.h"
+
 #include "options.h"
-#include "../rtengine/improcfun.h"
+#include "../rtengine/procparams.h"
 
 using namespace rtengine;
+using namespace procparams;
 
 extern Options options;
 
@@ -83,7 +83,7 @@ Locallab::Locallab():
     setParamEditable(false);
 }
 
-void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
+void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     // printf("Locallab read\n");
 
@@ -192,7 +192,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
 
-void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
+void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     // Update Locallab activation state
     pp->locallab.enabled = getEnabled();
@@ -392,6 +392,17 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             }
 
             enableListener();
+
+            // Update locallab tools mask background
+            if (pp->locallab.selspot < (int)maskBackRef.size()) {
+                const double huer = maskBackRef.at(pp->locallab.selspot).huer;
+                const double lumar = maskBackRef.at(pp->locallab.selspot).lumar;
+                const double chromar = maskBackRef.at(pp->locallab.selspot).chromar;
+
+                for (auto tool : locallabTools) {
+                    tool->refChanged(huer, lumar, chromar);
+                }
+            }
 
             // Update default values according to selected spot
             setDefaults(pp, pedited);
@@ -602,8 +613,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
 /*
  * Note:
- * By default, this function is called when a new image is loaded (after read function). In this case, if there is
- * at least one spot, default values are set to selected spot ones.
+ * By default, this function is called when a new image/profile is loaded (after read function). In this case,
+ * if there is at least one spot, default values are set to selected spot ones.
  * To keep having default values according to selected spot, this function shall also be called in the following
  * situations (after having called write function for controlspotpanel):
  * - After spot creation
@@ -611,7 +622,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
  * - After spot selection
  * - After spot duplication
  */
-void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pedited)
+void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
     // Set default values in spot panel control
     expsettings->setDefaults(defParams, pedited);
@@ -635,47 +646,49 @@ void Locallab::setListener(ToolPanelListener* tpl)
     }
 }
 
-void Locallab::refChanged(double huer, double lumar, double chromar)
+void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
 {
+    // Saving transmitted mask background data
+    maskBackRef = ref;
+
     // Update locallab tools mask background
-    for (auto tool : locallabTools) {
-        tool->refChanged(huer, lumar, chromar);
+    if (selspot < (int)maskBackRef.size()) {
+        const double huer = maskBackRef.at(selspot).huer;
+        const double lumar = maskBackRef.at(selspot).lumar;
+        const double chromar = maskBackRef.at(selspot).chromar;
+
+        for (auto tool : locallabTools) {
+            tool->refChanged(huer, lumar, chromar);
+        }
     }
 }
 
-void Locallab::resetMaskVisibility() // TODO To keep ??
+void Locallab::resetMaskVisibility()
 {
-    // printf("resetMaskVisibility\n");
+    // Indicate to spot control panel that no more mask preview is active
+    expsettings->setMaskPrevActive(false);
 
-    /*
-    disableListener();
-    showmaskcolMethod->set_active(0);
-    showmaskexpMethod->set_active(0);
-    showmaskSHMethod->set_active(0);
-    showmaskcbMethod->set_active(0);
-    showmaskretiMethod->set_active(0);
-    showmasksoftMethod->set_active(0);
-    showmasktmMethod->set_active(0);
-    enableListener();
-    */
+    // Reset mask preview for all Locallab tools
+    for (auto tool : locallabTools) {
+        tool->resetMaskView();
+    }
 }
 
-Locallab::llMaskVisibility* Locallab::getMaskVisibility() // TODO To keep ??
+Locallab::llMaskVisibility Locallab::getMaskVisibility() const
 {
-    llMaskVisibility* maskStruct = new llMaskVisibility();
-    /*
-    maskStruct->colorMask = showmaskcolMethod->get_active_row_number();
-    maskStruct->expMask = showmaskexpMethod->get_active_row_number();
-    maskStruct->SHMask = showmaskSHMethod->get_active_row_number();
-    maskStruct->cbMask = showmaskcbMethod->get_active_row_number();
-    maskStruct->retiMask = showmaskretiMethod->get_active_row_number();
-    maskStruct->softMask = showmasksoftMethod->get_active_row_number();
-    maskStruct->tmMask = showmasktmMethod->get_active_row_number();
-    //   printf("SHmask=%i \n", maskStruct->SHMask);
-    //   printf("retimask=%i \n", maskStruct->retiMask);
-     */
+    // Get mask preview from Locallab tools
+    int colorMask, expMask, SHMask, softMask, tmMask, retiMask, cbMask;
 
-    return maskStruct;
+    for (auto tool : locallabTools) {
+        tool->getMaskView(colorMask, expMask, SHMask, softMask, tmMask, retiMask, cbMask);
+    }
+
+    // Indicate to spot control panel if one mask preview is active
+    const bool isMaskActive = (colorMask == 0) || (expMask == 0) || (SHMask == 0) ||
+                              (softMask == 0) || (tmMask == 0) || (retiMask == 0) || (cbMask == 0);
+    expsettings->setMaskPrevActive(isMaskActive);
+
+    return {colorMask, expMask, SHMask, softMask, tmMask, retiMask, cbMask};
 }
 
 void Locallab::setEditProvider(EditDataProvider * provider)

@@ -157,6 +157,15 @@ public:
      * @return True if a spot corresponding to the id has been selected
      */
     bool setSelectedSpot(const int id);
+    /**
+     * Setter for mask preview active indicator
+     *
+     * @param ind True is mask preview is active
+     */
+    void setMaskPrevActive(bool ind)
+    {
+        maskPrevActive = ind;
+    }
 
     // Control spot creation functions
     /**
@@ -208,13 +217,6 @@ public:
      * @param pedited ParamsEdited containing default state values to set to the adjusters (not used because batch mode is deactivated for Locallab)
      */
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    /**
-     * Variant of setDefaults function which only update adjuster default states
-     *
-     * @param pedited ParamsEdited containing default states to set to the adjusters
-     * @param id Spot id to consider to update adjusters default states
-     */
-    // void updateDefaultsStates(const ParamsEdited* pedited, int id = 0);
     /**
      * Enable or disable the interactions with panel widgets
      *
@@ -378,6 +380,7 @@ private:
     bool visibilityChanged_;
     int eventType; // 0 = No event, 1 = Spot creation event, 2 = Spot deletion event, 3 = Spot selection event, 4 = Spot duplication event
     Gtk::Frame* const excluFrame;
+    bool maskPrevActive;
 
     // Row background color
     Gdk::RGBA colorMouseover, colorNominal, colorMouseovertext;

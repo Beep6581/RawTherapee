@@ -21,7 +21,6 @@
 #include "locallabtools.h"
 
 #include "options.h"
-#include "multilangmgr.h"
 #include "../rtengine/procparams.h"
 #include "locallab.h"
 
@@ -207,7 +206,7 @@ void LocallabTool::resetMaskView()
     }
 }
 
-void LocallabTool::refChanged(double huer, double lumar, double chromar)
+void LocallabTool::refChanged(const double huer, const double lumar, const double chromar)
 {
     if (useMask) {
         // Hue reference normalization (between 0 and 1)
@@ -507,6 +506,18 @@ LocallabColor::~LocallabColor()
     delete HCurveEditorG;
 }
 
+void LocallabColor::setListener(ToolPanelListener* tpl)
+{
+    LocallabTool::setListener(tpl);
+
+    labgrid->setListener(tpl);
+}
+
+void LocallabColor::getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask)
+{
+    colorMask = showMaskMethod->get_active_row_number();
+}
+
 void LocallabColor::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
 {
     LocallabTool::colorForValue(valX, valY, elemType, callerId, caller); // Mask curves
@@ -526,13 +537,6 @@ void LocallabColor::colorForValue(double valX, double valY, enum ColorCaller::El
         caller->ccGreen = double (G);
         caller->ccBlue = double (B);
     }
-}
-
-void LocallabColor::setListener(ToolPanelListener* tpl)
-{
-    LocallabTool::setListener(tpl);
-
-    labgrid->setListener(tpl);
 }
 
 void LocallabColor::disableListener()
@@ -895,7 +899,7 @@ void LocallabColor::showMaskMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvlocallabshowmaskcolMethod, ""); // TODO Use generic event for mask preview
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 
@@ -1107,6 +1111,11 @@ LocallabExposure::LocallabExposure():
 LocallabExposure::~LocallabExposure()
 {
     delete curveEditorG;
+}
+
+void LocallabExposure::getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask)
+{
+    expMask = showMaskMethod->get_active_row_number();
 }
 
 void LocallabExposure::disableListener()
@@ -1485,7 +1494,7 @@ void LocallabExposure::showMaskMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvlocallabshowmaskexpMethod, ""); // TODO Use generic event for mask preview
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 
@@ -1610,6 +1619,11 @@ LocallabShadow::LocallabShadow():
     pack_start(*sensihs);
     pack_start(*blurSHde);
     pack_start(*inverssh);
+}
+
+void LocallabShadow::getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask)
+{
+    shMask = showMaskMethod->get_active_row_number();
 }
 
 void LocallabShadow::disableListener()
@@ -1872,7 +1886,7 @@ void LocallabShadow::showMaskMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvlocallabshowmaskSHMethod, ""); // TODO Use generic event for mask preview
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 
@@ -2296,6 +2310,11 @@ LocallabSoft::LocallabSoft():
     pack_start(*sensisf);
 }
 
+void LocallabSoft::getMaskView(int &colorMask, int &expMask, int &shMask, int &softMask, int &tmMask, int &retiMask, int &cbMask)
+{
+    softMask = showmasksoftMethod->get_active_row_number();
+}
+
 void LocallabSoft::disableListener()
 {
     LocallabTool::disableListener();
@@ -2451,7 +2470,7 @@ void LocallabSoft::showmasksoftMethodChanged()
     }
 
     if (listener) {
-        listener->panelChanged(EvlocallabshowmasksoftMethod, ""); // TODO Use generic event for mask preview
+        listener->panelChanged(EvlocallabshowmaskMethod, "");
     }
 }
 

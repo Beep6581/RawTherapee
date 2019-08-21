@@ -851,8 +851,8 @@ HISTORY_MSG_600;Local - Soft Light enable
 HISTORY_MSG_601;Local - Soft Light strength
 HISTORY_MSG_602;Local - Soft Light scope
 HISTORY_MSG_603;Local - Sh Blur radius
-HISTORY_MSG_605;Local - Color Modifications
-HISTORY_MSG_606;Local - Exp Modifications
+HISTORY_MSG_605;Local - Mask preview choice
+HISTORY_MSG_606;Local Spot selected
 HISTORY_MSG_607;Local - Color Mask C
 HISTORY_MSG_608;Local - Color Mask L
 HISTORY_MSG_609;Local - Exp Mask C
