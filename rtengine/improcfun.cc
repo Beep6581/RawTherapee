@@ -4247,11 +4247,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     if (params->labCurve.chromaticity > -100) {
         chCurve = new FlatCurve (params->labCurve.chcurve);
 
-        if (!chCurve || chCurve->isIdentity()) {
-            if (chCurve) {
-                delete chCurve;
-                chCurve = nullptr;
-            }
+        if (chCurve->isIdentity()) {
+            delete chCurve;
+            chCurve = nullptr;
         }//do not use "Munsell" if Chcurve not used
         else {
             chutili = true;
@@ -4264,11 +4262,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     if (params->labCurve.chromaticity > -100) {
         lhCurve = new FlatCurve (params->labCurve.lhcurve);
 
-        if (!lhCurve || lhCurve->isIdentity()) {
-            if (lhCurve) {
-                delete lhCurve;
-                lhCurve = nullptr;
-            }
+        if (lhCurve->isIdentity()) {
+            delete lhCurve;
+            lhCurve = nullptr;
         }//do not use "Munsell" if Chcurve not used
         else {
             lhutili = true;
@@ -4281,11 +4277,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     if (params->labCurve.chromaticity > -100) {
         hhCurve = new FlatCurve (params->labCurve.hhcurve);
 
-        if (!hhCurve || hhCurve->isIdentity()) {
-            if (hhCurve) {
-                delete hhCurve;
-                hhCurve = nullptr;
-            }
+        if (hhCurve->isIdentity()) {
+            delete hhCurve;
+            hhCurve = nullptr;
         }//do not use "Munsell" if Chcurve not used
         else {
             hhutili = true;
