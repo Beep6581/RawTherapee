@@ -103,7 +103,6 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     milestones.push_back( GradientMilestone(1., 1., 0., 1.) );
     ashape->setBottomBarBgGradient(milestones);
     ashape->setLeftBarBgGradient(milestones);
-    milestones.clear();
 
     bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "b*"));
     bshape->setRangeLabels(
