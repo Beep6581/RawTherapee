@@ -629,13 +629,8 @@ void ThresholdSelector::findBoundaries(double &min, double &max)
     switch (movedCursor) {
     case (TS_BOTTOMLEFT):
         if (separatedSliders) {
-            if (movedCursor == TS_BOTTOMLEFT) {
-                min = minValBottom;
-                max = maxValBottom;
-            } else if (movedCursor == TS_TOPLEFT) {
-                min = minValTop;
-                max = maxValTop;
-            }
+            min = minValBottom;
+            max = maxValBottom;
         } else if (initalEq1) {
             min = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_TOPLEFT] : minValTop + (positions[TS_BOTTOMLEFT] - positions[TS_TOPLEFT]);
             max = positions[TS_BOTTOMRIGHT];
@@ -648,13 +643,8 @@ void ThresholdSelector::findBoundaries(double &min, double &max)
 
     case (TS_TOPLEFT):
         if (separatedSliders) {
-            if (movedCursor == TS_BOTTOMLEFT) {
-                min = minValBottom;
-                max = maxValBottom;
-            } else if (movedCursor == TS_TOPLEFT) {
-                min = minValTop;
-                max = maxValTop;
-            }
+            min = minValTop;
+            max = maxValTop;
         } else if (initalEq1) {
             min = minValTop;
             max = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_BOTTOMLEFT] : positions[TS_BOTTOMRIGHT] - (positions[TS_BOTTOMLEFT] - positions[TS_TOPLEFT]);

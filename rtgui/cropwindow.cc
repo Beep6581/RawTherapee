@@ -404,6 +404,26 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             action_y = 0;
                             needRedraw = true;
                         }
+                    } else if (iarea->getToolMode () == TMHand
+                               && editSubscriber
+                               && cropgl
+                               && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y)
+                               && editSubscriber->getEditingType() == ET_OBJECTS
+                               && iarea->getObject() >= 0
+                              )
+                    {
+                            needRedraw = editSubscriber->button1Pressed(bstate);
+                            if (editSubscriber->isDragging()) {
+                                state = SEditDrag1;
+                            } else if (editSubscriber->isPicking()) {
+                                state = SEditPick1;
+                                pickedObject = iarea->getObject();
+                                pickModifierKey = bstate;
+                            }
+                            press_x = x;
+                            press_y = y;
+                            action_x = 0;
+                            action_y = 0;
                     } else if (onArea (CropTopLeft, x, y)) {
                         state = SResizeTL;
                         press_x = x;
@@ -477,7 +497,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         cropgl->cropInit (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h);
                     } else if (iarea->getToolMode () == TMHand) {
                         if (editSubscriber) {
-                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) || editSubscriber->getEditingType() == ET_OBJECTS) {
+                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) {
                                 needRedraw = editSubscriber->button1Pressed(bstate);
                                 if (editSubscriber->isDragging()) {
                                     state = SEditDrag1;
@@ -492,7 +512,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                 action_y = 0;
                             }
                         }
-                        if (state != SEditDrag1) {
+                        if (state != SEditDrag1 && state != SEditPick1) {
                             state = SCropImgMove;
                             press_x = x;
                             press_y = y;
@@ -1256,6 +1276,8 @@ void CropWindow::updateCursor (int x, int y)
             newType = CSArrow;
         } else if (onArea (CropToolBar, x, y)) {
             newType = CSMove;
+        } else if (iarea->getObject() > -1 && editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
+            newType = editSubscriber->getCursor(iarea->getObject());
         } else if (onArea (CropResize, x, y)) {
             newType = CSResizeDiagonal;
         } else if (tm == TMColorPicker && hoveredPicker) {
@@ -1845,11 +1867,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
             if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS && bufferCreated()) {
 
-                if (this != iarea->mainCropWindow) {
-                    cr->set_line_width (0.);
-                    cr->rectangle (x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
-                    cr->clip();
-                }
+                cr->set_line_width (0.);
+                cr->rectangle (x + imgAreaX, y + imgAreaY, imgAreaW, imgAreaH);
+                cr->clip();
 
                 // drawing Subscriber's visible geometry
                 const std::vector<Geometry*> visibleGeom = editSubscriber->getVisibleGeometry();
