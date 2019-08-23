@@ -29,9 +29,6 @@ using namespace rtengine::procparams;
 
 LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"), false, true)
 {
-
-    std::vector<GradientMilestone> milestones;
-
     brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
     contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100., 100., 1., 0.));
     chromaticity   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CHROMATICITY"), -100., 100., 1., 0.));
@@ -98,12 +95,12 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
         M("TP_LABCURVE_CURVEEDITOR_A_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE4")
     );
     //from green to magenta
-    milestones.clear();
-    milestones.push_back( GradientMilestone(0., 0., 1., 0.) );
-    milestones.push_back( GradientMilestone(1., 1., 0., 1.) );
+    std::vector<GradientMilestone> milestones = {
+        GradientMilestone(0., 0., 1., 0.),
+        GradientMilestone(1., 1., 0., 1.)
+    };
     ashape->setBottomBarBgGradient(milestones);
     ashape->setLeftBarBgGradient(milestones);
-    milestones.clear();
 
     bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "b*"));
     bshape->setRangeLabels(
@@ -113,12 +110,12 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     bshape->setEditID(EUID_Lab_bCurve, BT_SINGLEPLANE_FLOAT);
 
     //from blue to yellow
-    milestones.clear();
-    milestones.push_back( GradientMilestone(0., 0., 0., 1.) );
-    milestones.push_back( GradientMilestone(1., 1., 1., 0.) );
+    milestones = {
+        GradientMilestone(0., 0., 0., 1.),
+        GradientMilestone(1., 1., 1., 0.)
+    };
     bshape->setBottomBarBgGradient(milestones);
     bshape->setLeftBarBgGradient(milestones);
-    milestones.clear();
 
     curveEditorG->newLine();  //  ------------------------------------------------ second line
 
@@ -171,21 +168,23 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
 
     clshape->setLeftBarColorProvider(this, 7);
     clshape->setRangeDefaultMilestones(0.25, 0.5, 0.75);
-    milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
-    milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
 
+    milestones = {
+        GradientMilestone(0., 0., 0., 0.),
+        GradientMilestone(1., 1., 1., 1.)
+    };
     clshape->setBottomBarBgGradient(milestones);
 
 
     // Setting the gradient milestones
 
     // from black to white
-    milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
-    milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+    milestones.emplace_back(0., 0., 0., 0.);
+    milestones.emplace_back(1., 1., 1., 1.);
     lshape->setBottomBarBgGradient(milestones);
     lshape->setLeftBarBgGradient(milestones);
-    milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
-    milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+    milestones.emplace_back(0., 0., 0., 0.);
+    milestones.emplace_back(1., 1., 1., 1.);
     lcshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
     lcshape->setBottomBarBgGradient(milestones);
@@ -201,7 +200,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
         float R, G, B;
         float x = float(i) * (1.0f / 6.0);
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-        milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+        milestones.emplace_back(x, R, G, B);
     }
 
     chshape->setBottomBarBgGradient(milestones);
