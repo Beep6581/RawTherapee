@@ -272,52 +272,16 @@ template<class T> void gauss7x7div (T** RESTRICT src, T** RESTRICT dst, T** REST
         dst[i][0] = dst[i][1] = dst[i][2] = 1.f;
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 3; j < W - 3; ++j) {
-            float val = src[i - 3][j - 1] * c31;
-            val += src[i - 3][j - 0] * c30;
-            val += src[i - 3][j + 1] * c31;
+            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
 
-            val += src[i - 2][j - 2] * c22;
-            val += src[i - 2][j - 1] * c21;
-            val += src[i - 2][j - 0] * c20;
-            val += src[i - 2][j + 1] * c21;
-            val += src[i - 2][j + 2] * c22;
-
-            val += src[i - 1][j - 3] * c31;
-            val += src[i - 1][j - 2] * c21;
-            val += src[i - 1][j - 1] * c11;
-            val += src[i - 1][j - 0] * c10;
-            val += src[i - 1][j + 1] * c11;
-            val += src[i - 1][j + 2] * c21;
-            val += src[i - 1][j + 3] * c31;
-
-            val += src[i][j - 3] * c30;
-            val += src[i][j - 2] * c20;
-            val += src[i][j - 1] * c10;
-            val += src[i][j - 0] * c00;
-            val += src[i][j + 1] * c10;
-            val += src[i][j + 2] * c20;
-            val += src[i][j + 3] * c30;
-
-            val += src[i + 1][j - 3] * c31;
-            val += src[i + 1][j - 2] * c21;
-            val += src[i + 1][j - 1] * c11;
-            val += src[i + 1][j - 0] * c10;
-            val += src[i + 1][j + 1] * c11;
-            val += src[i + 1][j + 2] * c21;
-            val += src[i + 1][j + 3] * c31;
-
-            val += src[i + 2][j - 2] * c22;
-            val += src[i + 2][j - 1] * c21;
-            val += src[i + 2][j - 0] * c20;
-            val += src[i + 2][j + 1] * c21;
-            val += src[i + 2][j + 2] * c22;
-
-            val += src[i + 3][j - 1] * c31;
-            val += src[i + 3][j - 0] * c30;
-            val += src[i + 3][j + 1] * c31;
-
-            val = val > 0.f ? val : 1.f;
-            dst[i][j] = std::max(divBuffer[i][j] / val, 0.f);
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
         }
         dst[i][W - 3] = dst[i][W - 2] = dst[i][W - 1] = 1.f;
     }
@@ -360,34 +324,13 @@ template<class T> void gauss5x5div (T** RESTRICT src, T** RESTRICT dst, T** REST
         dst[i][0] = dst[i][1] = 1.f;
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 2; j < W - 2; ++j) {
-            float val = src[i - 2][j - 1] * c21;
-            val += src[i - 2][j - 0] * c20;
-            val += src[i - 2][j + 1] * c21;
+            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
 
-            val += src[i - 1][j - 2] * c21;
-            val += src[i - 1][j - 1] * c11;
-            val += src[i - 1][j - 0] * c10;
-            val += src[i - 1][j + 1] * c11;
-            val += src[i - 1][j + 2] * c21;
-
-            val += src[i - 0][j - 2] * c20;
-            val += src[i - 0][j - 1] * c10;
-            val += src[i - 0][j - 0] * c00;
-            val += src[i - 0][j + 1] * c10;
-            val += src[i - 0][j + 2] * c20;
-
-            val += src[i + 1][j - 2] * c21;
-            val += src[i + 1][j - 1] * c11;
-            val += src[i + 1][j - 0] * c10;
-            val += src[i + 1][j + 1] * c11;
-            val += src[i + 1][j + 2] * c21;
-
-            val += src[i + 2][j - 1] * c21;
-            val += src[i + 2][j - 0] * c20;
-            val += src[i + 2][j + 1] * c21;
-
-            val = val > 0.f ? val : 1.f;
-            dst[i][j] = std::max(divBuffer[i][j] / val, 0.f);
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
         }
         dst[i][W - 2] = dst[i][W - 1] = 1.f;
     }
@@ -431,49 +374,14 @@ template<class T> void gauss7x7mult (T** RESTRICT src, T** RESTRICT dst, const i
     for (int i = 3; i < H - 3; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 3; j < W - 3; ++j) {
-            float val = src[i - 3][j - 1] * c31;
-            val += src[i - 3][j - 0] * c30;
-            val += src[i - 3][j + 1] * c31;
-
-            val += src[i - 2][j - 2] * c22;
-            val += src[i - 2][j - 1] * c21;
-            val += src[i - 2][j - 0] * c20;
-            val += src[i - 2][j + 1] * c21;
-            val += src[i - 2][j + 2] * c22;
-
-            val += src[i - 1][j - 3] * c31;
-            val += src[i - 1][j - 2] * c21;
-            val += src[i - 1][j - 1] * c11;
-            val += src[i - 1][j - 0] * c10;
-            val += src[i - 1][j + 1] * c11;
-            val += src[i - 1][j + 2] * c21;
-            val += src[i - 1][j + 3] * c31;
-
-            val += src[i][j - 3] * c30;
-            val += src[i][j - 2] * c20;
-            val += src[i][j - 1] * c10;
-            val += src[i][j - 0] * c00;
-            val += src[i][j + 1] * c10;
-            val += src[i][j + 2] * c20;
-            val += src[i][j + 3] * c30;
-
-            val += src[i + 1][j - 3] * c31;
-            val += src[i + 1][j - 2] * c21;
-            val += src[i + 1][j - 1] * c11;
-            val += src[i + 1][j - 0] * c10;
-            val += src[i + 1][j + 1] * c11;
-            val += src[i + 1][j + 2] * c21;
-            val += src[i + 1][j + 3] * c31;
-
-            val += src[i + 2][j - 2] * c22;
-            val += src[i + 2][j - 1] * c21;
-            val += src[i + 2][j - 0] * c20;
-            val += src[i + 2][j + 1] * c21;
-            val += src[i + 2][j + 2] * c22;
-
-            val += src[i + 3][j - 1] * c31;
-            val += src[i + 3][j - 0] * c30;
-            val += src[i + 3][j + 1] * c31;
+            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
 
             dst[i][j] *= val;
         }
@@ -499,31 +407,11 @@ template<class T> void gauss5x5mult (T** RESTRICT src, T** RESTRICT dst, const i
     for (int i = 2; i < H - 2; ++i) {
         // I tried hand written SSE code but gcc vectorizes better
         for (int j = 2; j < W - 2; ++j) {
-            float val = src[i - 2][j - 1] * c21;
-            val += src[i - 2][j - 0] * c20;
-            val += src[i - 2][j + 1] * c21;
-
-            val += src[i - 1][j - 2] * c21;
-            val += src[i - 1][j - 1] * c11;
-            val += src[i - 1][j - 0] * c10;
-            val += src[i - 1][j + 1] * c11;
-            val += src[i - 1][j + 2] * c21;
-
-            val += src[i - 0][j - 2] * c20;
-            val += src[i - 0][j - 1] * c10;
-            val += src[i - 0][j - 0] * c00;
-            val += src[i - 0][j + 1] * c10;
-            val += src[i - 0][j + 2] * c20;
-
-            val += src[i + 1][j - 2] * c21;
-            val += src[i + 1][j - 1] * c11;
-            val += src[i + 1][j - 0] * c10;
-            val += src[i + 1][j + 1] * c11;
-            val += src[i + 1][j + 2] * c21;
-
-            val += src[i + 2][j - 1] * c21;
-            val += src[i + 2][j - 0] * c20;
-            val += src[i + 2][j + 1] * c21;
+            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
 
             dst[i][j] *= val;
         }
