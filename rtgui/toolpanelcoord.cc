@@ -344,7 +344,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::hide();
-                    pdSharpening->FoldableToolPanel::hide();
+                    pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
