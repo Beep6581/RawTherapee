@@ -9177,7 +9177,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 chprosl = CLIPCHRO(ampli * ch - ampli);
                             }
                         }
-
+//printf("bfw=%i bfh=%i\n", bfw, bfh);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -9231,7 +9231,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 }
 
-                                if (ctoning) {
+                                if (ctoning  &&  bfw > 10 && bfh > 10) {
                                     if (lp.gridmet == 0) {
                                         bufcolcalca += bufcolcalcL * a_scale + a_base;
                                         bufcolcalcb += bufcolcalcL * b_scale + b_base;
@@ -9251,7 +9251,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
 
                             }
-
                         if (lp.softradiuscol > 0.f) {
                             softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
                             //  softprocess(bufcolorig.get(), buflight, lp.softradiuscol, bfh, bfw, sk, multiThread);
@@ -9274,7 +9273,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         temp = blend2;
                     }
 
-                    transit_shapedetect(0, bufcolorig.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
+                    bool execut = true;
+
+                    if (ctoning  &&  (bfw < 10 || bfh < 10)){
+                        execut = false;
+                    }
+
+                    if(execut) {
+                        transit_shapedetect(0, bufcolorig.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
+                    }
 
                 }
             }
