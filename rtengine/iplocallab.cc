@@ -9231,7 +9231,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 }
 
-                                if (ctoning  &&  bfw > 10 && bfh > 10) {
+                                if (ctoning  &&  bfw >= 6 && bfh >= 6) {
                                     if (lp.gridmet == 0) {
                                         bufcolcalca += bufcolcalcL * a_scale + a_base;
                                         bufcolcalcb += bufcolcalcL * b_scale + b_base;
@@ -9275,7 +9275,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     bool execut = true;
 
-                    if (ctoning  &&  (bfw < 10 || bfh < 10)){
+                    if (ctoning  &&  (bfw < 6 || bfh < 6)){
                         execut = false;
                     }
 
