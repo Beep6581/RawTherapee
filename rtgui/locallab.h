@@ -241,6 +241,8 @@ private:
     Adjuster* const lclightness;
     Adjuster* const levelwav;
     Adjuster* const residcont;
+    Adjuster* const clarilres;
+    Adjuster* const claricres;
     Adjuster* const sensilc;
     // Contrast by detail levels
     Adjuster* multiplier[6];
@@ -388,6 +390,7 @@ private:
     Gtk::Frame* gridFrame;
     Gtk::Frame* pdeFrame;
     Gtk::Frame* residFrame;
+    Gtk::Frame* clariFrame;
     LabGrid *labgrid;
     // Others
     Gtk::HBox* ctboxsoftmethod;

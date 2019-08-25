@@ -1144,6 +1144,8 @@ struct LocallabParams {
         double lclightness;
         int levelwav;
         double residcont;
+        double clarilres;
+        double claricres;
         int sensilc;
         bool fftwlc;
         Glib::ustring localcontMethod;

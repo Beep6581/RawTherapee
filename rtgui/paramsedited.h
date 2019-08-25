@@ -560,6 +560,8 @@ public:
         bool lclightness;
         bool levelwav;
         bool residcont;
+        bool clarilres;
+        bool claricres;
         bool sensilc;
         bool fftwlc;
         bool localcontMethod;
