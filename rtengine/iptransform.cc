@@ -88,9 +88,34 @@ float normn (float a, float b, int n)
     }
 }
 
+#ifdef __SSE2__
 inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys, float Dx, float Dy, float &r, float &g, float &b, float mul)
 {
-    // I tried hand written SSE code but gcc vectorizes better
+    constexpr float A = -0.85f;
+
+    // Vertical
+    const float t1Vert = A * (Dy - Dy * Dy);
+    const float t2Vert = (3.f - 2.f * Dy) * Dy * Dy;
+    const vfloat w3Vert = F2V(t1Vert * Dy);
+    const vfloat w2Vert = F2V(t1Vert * Dy - t1Vert + t2Vert);
+    const vfloat w1Vert = F2V(1.f - (t1Vert * Dy) - t2Vert);
+    const vfloat w0Vert = F2V(t1Vert - (t1Vert * Dy));
+
+    const vfloat rv = (w0Vert * LVFU(src->r(ys, xs)) + w1Vert * LVFU(src->r(ys + 1, xs))) + (w2Vert * LVFU(src->r(ys + 2, xs)) + w3Vert * LVFU(src->r(ys + 3, xs)));
+    const vfloat gv = (w0Vert * LVFU(src->g(ys, xs)) + w1Vert * LVFU(src->g(ys + 1, xs))) + (w2Vert * LVFU(src->g(ys + 2, xs)) + w3Vert * LVFU(src->g(ys + 3, xs)));
+    const vfloat bv = (w0Vert * LVFU(src->b(ys, xs)) + w1Vert * LVFU(src->b(ys + 1, xs))) + (w2Vert * LVFU(src->b(ys + 2, xs)) + w3Vert * LVFU(src->b(ys + 3, xs)));
+
+    // Horizontal
+    const float t1Hor = A * (Dx - Dx * Dx);
+    const float t2Hor = (3.f - 2.f * Dx) * Dx * Dx;
+    const vfloat weight = _mm_set_ps(t1Hor * Dx, t1Hor * Dx - t1Hor + t2Hor, 1.f - (t1Hor * Dx) - t2Hor, t1Hor - (t1Hor * Dx)) * F2V(mul);
+    r = vhadd(weight * rv);
+    g = vhadd(weight * gv);
+    b = vhadd(weight * bv);
+}
+#else
+inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys, float Dx, float Dy, float &r, float &g, float &b, float mul)
+{
     constexpr float A = -0.85f;
 
     // Vertical
@@ -120,10 +145,31 @@ inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys,
     g = mul * (gv[0] * w0Hor + gv[1] * w1Hor + gv[2] * w2Hor + gv[3] * w3Hor);
     b = mul * (bv[0] * w0Hor + bv[1] * w1Hor + bv[2] * w2Hor + bv[3] * w3Hor);
 }
-
+#endif
+#ifdef __SSE2__
 inline void interpolateTransformChannelsCubic(const float* const * src, int xs, int ys, float Dx, float Dy, float &dest, float mul)
 {
-    // I tried hand written SSE code but gcc vectorizes better
+    constexpr float A = -0.85f;
+
+    // Vertical
+    const float t1Vert = A * (Dy - Dy * Dy);
+    const float t2Vert = (3.f - 2.f * Dy) * Dy * Dy;
+    const vfloat w3Vert = F2V(t1Vert * Dy);
+    const vfloat w2Vert = F2V(t1Vert * Dy - t1Vert + t2Vert);
+    const vfloat w1Vert = F2V(1.f - (t1Vert * Dy) - t2Vert);
+    const vfloat w0Vert = F2V(t1Vert - (t1Vert * Dy));
+
+    const vfloat cv = (w0Vert * LVFU(src[ys][xs]) + w1Vert * LVFU(src[ys + 1][xs])) + (w2Vert * LVFU(src[ys + 2][xs]) + w3Vert * LVFU(src[ys + 3][xs]));
+
+    // Horizontal
+    const float t1Hor = A * (Dx - Dx * Dx);
+    const float t2Hor = (3.f - 2.f * Dx) * Dx * Dx;
+    const vfloat weight = _mm_set_ps(t1Hor * Dx, t1Hor * Dx - t1Hor + t2Hor, 1.f - (t1Hor * Dx) - t2Hor, t1Hor - (t1Hor * Dx));
+    dest = mul * vhadd(weight * cv);
+}
+#else
+inline void interpolateTransformChannelsCubic(const float* const * src, int xs, int ys, float Dx, float Dy, float &dest, float mul)
+{
     constexpr float A = -0.85f;
 
     // Vertical
@@ -149,7 +195,7 @@ inline void interpolateTransformChannelsCubic(const float* const * src, int xs, 
 
     dest = mul * (cv[0] * w0Hor + cv[1] * w1Hor + cv[2] * w2Hor + cv[3] * w3Hor);
 }
-
+#endif
 
 }
 
@@ -817,69 +863,54 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double h2 = (double) oH  / 2.0 - 0.5;
 
     double vig_w2, vig_h2, maxRadius, v, b, mul;
-    calcVignettingParams (oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+    calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
     struct grad_params gp;
 
     if (enableGradient) {
-        calcGradientParams (oW, oH, params->gradient, gp);
+        calcGradientParams(oW, oH, params->gradient, gp);
     }
 
     struct pcv_params pcv;
 
     if (enablePCVignetting) {
-        calcPCVignetteParams (fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
+        calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
-    float** chOrig[3];
-    chOrig[0] = original->r.ptrs;
-    chOrig[1] = original->g.ptrs;
-    chOrig[2] = original->b.ptrs;
-
-    float** chTrans[3];
-    chTrans[0] = transformed->r.ptrs;
-    chTrans[1] = transformed->g.ptrs;
-    chTrans[2] = transformed->b.ptrs;
+    float** chOrig[3] = {original->r.ptrs, original->g.ptrs, original->b.ptrs};
+    float** chTrans[3] = {transformed->r.ptrs, transformed->g.ptrs, transformed->b.ptrs};
 
     // auxiliary variables for c/a correction
-    double chDist[3];
-    chDist[0] = enableCA ? params->cacorrection.red : 0.0;
-    chDist[1] = 0.0;
-    chDist[2] = enableCA ? params->cacorrection.blue : 0.0;
+    const double chDist[3] = {enableCA ? params->cacorrection.red : 0.0, 0.0, enableCA ? params->cacorrection.blue : 0.0};
 
     // auxiliary variables for distortion correction
     const double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    const double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
-    const double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
+    const double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
+    const double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
-    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
-    double vpteta  = fabs (vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt ((-SQR (oW * tan (vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
-                     oW * tan (vpalpha) * sqrt (SQR (4 * maxRadius) + SQR (oW * tan (vpalpha)))) / (SQR (maxRadius) * 8)));
-    double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
+    const double vpdeg = params->perspective.vertical / 100.0 * 45.0;
+    const double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
+    const double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
+                           oW * tan(vpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oW * tan(vpalpha)))) / (SQR(maxRadius) * 8)));
+    const double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos(vpteta), vptanpt = tan(vpteta);
 
     // auxiliary variables for horizontal perspective correction
-    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
-    double hpteta  = fabs (hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt ((-SQR (oH * tan (hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
-                     oH * tan (hpalpha) * sqrt (SQR (4 * maxRadius) + SQR (oH * tan (hpalpha)))) / (SQR (maxRadius) * 8)));
-    double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
+    const double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
+    const double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
+    const double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
+                           oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
+    const double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos(hpteta), hptanpt = tan(hpteta);
 
-    double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
+    const double ascale = params->commonTrans.autofill ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
 
-#if defined( __GNUC__ ) && __GNUC__ >= 7// silence warning
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#endif
-#if defined( __GNUC__ ) && __GNUC__ >= 7
-#pragma GCC diagnostic pop
-#endif
-    // main cycle
     const bool darkening = (params->vignetting.amount <= 0.0);
+    const double centerFactorx = cx - w2;
+    const double centerFactory = cy - h2;
 
+    // main cycle
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
 #endif
@@ -895,8 +926,8 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                 y_d *= ascale;
             }
 
-            x_d += ascale * (cx - w2);     // centering x coord & scale
-            y_d += ascale * (cy - h2);     // centering y coord & scale
+            x_d += ascale * centerFactorx; // centering x coord & scale
+            y_d += ascale * centerFactory; // centering y coord & scale
 
             if (enablePerspective) {
                 // horizontal perspective transformation
@@ -909,15 +940,15 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             }
 
             // rotate
-            double Dxc = x_d * cost - y_d * sint;
-            double Dyc = x_d * sint + y_d * cost;
+            const double Dxc = x_d * cost - y_d * sint;
+            const double Dyc = x_d * sint + y_d * cost;
 
             // distortion correction
             double s = 1;
 
             if (enableDistortion) {
-                double r = sqrt (Dxc * Dxc + Dyc * Dyc) / maxRadius; // sqrt is slow
-                s = 1.0 - distAmount + distAmount * r ;
+                double r = sqrt(Dxc * Dxc + Dyc * Dyc) / maxRadius;
+                s = 1.0 - distAmount + distAmount * r;
             }
 
             for (int c = 0; c < (enableCA ? 3 : 1); c++) {
@@ -947,46 +978,46 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                         const double vig_y_d = ascale * (y + cy - vig_h2);       // centering y coord & scale
                         const double vig_Dx = vig_x_d * cost - vig_y_d * sint;
                         const double vig_Dy = vig_x_d * sint + vig_y_d * cost;
-                        const double r2 = sqrt (vig_Dx * vig_Dx + vig_Dy * vig_Dy);
+                        const double r2 = sqrt(vig_Dx * vig_Dx + vig_Dy * vig_Dy);
                         if (darkening) {
-                            vignmul /= std::max (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
+                            vignmul /= std::max(v + mul * tanh(b * (maxRadius - s * r2) / maxRadius), 0.001);
                         } else {
-                            vignmul *= (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius));
+                            vignmul *= (v + mul * tanh(b * (maxRadius - s * r2) / maxRadius));
                         }
                     }
 
                     if (enableGradient) {
-                        vignmul *= calcGradientFactor (gp, cx + x, cy + y);
+                        vignmul *= calcGradientFactor(gp, cx + x, cy + y);
                     }
 
                     if (enablePCVignetting) {
-                        vignmul *= calcPCVignetteFactor (pcv, cx + x, cy + y);
+                        vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
                     }
 
                     if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
                         // all interpolation pixels inside image
                         if (enableCA) {
-                            interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], vignmul);
+                            interpolateTransformChannelsCubic(chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], vignmul);
                         } else if (!highQuality) {
-                            transformed->r (y, x) = vignmul * (original->r (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r (yc, xc + 1) * Dx * (1.0 - Dy) + original->r (yc + 1, xc) * (1.0 - Dx) * Dy + original->r (yc + 1, xc + 1) * Dx * Dy);
-                            transformed->g (y, x) = vignmul * (original->g (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g (yc, xc + 1) * Dx * (1.0 - Dy) + original->g (yc + 1, xc) * (1.0 - Dx) * Dy + original->g (yc + 1, xc + 1) * Dx * Dy);
-                            transformed->b (y, x) = vignmul * (original->b (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b (yc, xc + 1) * Dx * (1.0 - Dy) + original->b (yc + 1, xc) * (1.0 - Dx) * Dy + original->b (yc + 1, xc + 1) * Dx * Dy);
+                            transformed->r(y, x) = vignmul * (original->r(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r(yc, xc + 1) * Dx * (1.0 - Dy) + original->r(yc + 1, xc) * (1.0 - Dx) * Dy + original->r(yc + 1, xc + 1) * Dx * Dy);
+                            transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
+                            transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
                         } else {
-                            interpolateTransformCubic (original, xc - 1, yc - 1, Dx, Dy, transformed->r (y, x), transformed->g (y, x), transformed->b (y, x), vignmul);
+                            interpolateTransformCubic(original, xc - 1, yc - 1, Dx, Dy, transformed->r(y, x), transformed->g(y, x), transformed->b(y, x), vignmul);
                         }
                     } else {
                         // edge pixels
-                        int y1 = LIM (yc,   0, original->getHeight() - 1);
-                        int y2 = LIM (yc + 1, 0, original->getHeight() - 1);
-                        int x1 = LIM (xc,   0, original->getWidth() - 1);
-                        int x2 = LIM (xc + 1, 0, original->getWidth() - 1);
+                        int y1 = LIM(yc,   0, original->getHeight() - 1);
+                        int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
+                        int x1 = LIM(xc,   0, original->getWidth() - 1);
+                        int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
 
                         if (enableCA) {
                             chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
                         } else {
-                            transformed->r (y, x) = vignmul * (original->r (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r (y1, x2) * Dx * (1.0 - Dy) + original->r (y2, x1) * (1.0 - Dx) * Dy + original->r (y2, x2) * Dx * Dy);
-                            transformed->g (y, x) = vignmul * (original->g (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g (y1, x2) * Dx * (1.0 - Dy) + original->g (y2, x1) * (1.0 - Dx) * Dy + original->g (y2, x2) * Dx * Dy);
-                            transformed->b (y, x) = vignmul * (original->b (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b (y1, x2) * Dx * (1.0 - Dy) + original->b (y2, x1) * (1.0 - Dx) * Dy + original->b (y2, x2) * Dx * Dy);
+                            transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
+                            transformed->g(y, x) = vignmul * (original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
+                            transformed->b(y, x) = vignmul * (original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
                         }
                     }
                 } else {
@@ -994,9 +1025,9 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                         // not valid (source pixel x,y not inside source image, etc.)
                         chTrans[c][y][x] = 0;
                     } else {
-                        transformed->r (y, x) = 0;
-                        transformed->g (y, x) = 0;
-                        transformed->b (y, x) = 0;
+                        transformed->r(y, x) = 0;
+                        transformed->g(y, x) = 0;
+                        transformed->b(y, x) = 0;
                     }
                 }
             }
