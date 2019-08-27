@@ -1329,7 +1329,6 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     float blur = 1.f / sk * (thres + 0.8f * rad);
     guidedFilter(guidsoft, buflight, buflight, blur, epsil,  multiThread, 4);
 
-    //  guidedFilter(guidsoft, buflight, buflight, rad * 100.f / sk, 0.001, multiThread, 4);
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -2158,16 +2157,15 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 
     for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
-                float X, Y, Z;
-                float L = bufcolorig->L[ir][jr];
-                float a = bufcolorig->a[ir][jr];
-                float b = bufcolorig->b[ir][jr];
-                Color::Lab2XYZ(L, a, b, X, Y, Z);
+            float X, Y, Z;
+            float L = bufcolorig->L[ir][jr];
+            float a = bufcolorig->a[ir][jr];
+            float b = bufcolorig->b[ir][jr];
+            Color::Lab2XYZ(L, a, b, X, Y, Z);
 
-                guid[ir][jr] = Y / 32768.f;
-            
+            guid[ir][jr] = Y / 32768.f;
+
             blend2[ir][jr] /= 32768.f;
-          //  guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
         }
     }
 
@@ -2481,8 +2479,7 @@ void maskcalccol(int bfw, int bfh, int xstart, int ystart, int sk, int cx, int c
                     Color::Lab2XYZ(L, a, b, X, Y, Z);
 
                     guid[ir][jr] = Y / 32768.f;
-                    
-                  //  guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
+
                 }
             }
         }
@@ -5543,8 +5540,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         Color::Lab2XYZ(L, a, b, X, Y, Z);
 
                         guid[ir][jr] = Y / 32768.f;
-                        
-                      //  guid[ir][jr] = bufgb->L[ir][jr] / 32768.f;
+
 
                     }
                 }
@@ -8063,7 +8059,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         for (int y = 0; y < bfw; y++) {
                             tmp1->L[x][y] = (1.f + mL0) * (tmp1->L[x][y]) - mL * tmpresid->L[x][y];
                         }
-                            
+
                     if (softr > 0.f) {
                         softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
                     }
