@@ -26,7 +26,8 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "rtlensfun.h"
-
+#define BENCHMARK
+#include "StopWatch.h"
 
 using namespace std;
 
@@ -85,6 +86,66 @@ float normn (float a, float b, int n)
         default:
             return pow_F (pown (a, n) + pown (b, n), 1.f / n);
     }
+}
+
+inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys, float Dx, float Dy, float &r, float &g, float &b, float mul)
+{
+    constexpr float A = -0.85f;
+
+    // Vertical
+    const float t1Vert = A * (Dy - Dy * Dy);
+    const float t2Vert = (3.f - 2.f * Dy) * Dy * Dy;
+    const float w3Vert = t1Vert * Dy;
+    const float w2Vert = t1Vert * Dy - t1Vert + t2Vert;
+    const float w1Vert = 1.f - (t1Vert * Dy) - t2Vert;
+    const float w0Vert = t1Vert - (t1Vert * Dy);
+
+    float rv[4], gv[4], bv[4];
+    for (int i = 0; i < 4; ++i) {
+        rv[i] = w0Vert * src->r(ys, xs + i) + w1Vert * src->r(ys + 1, xs + i) + w2Vert * src->r(ys + 2, xs + i) + w3Vert * src->r(ys + 3, xs + i);
+        gv[i] = w0Vert * src->g(ys, xs + i) + w1Vert * src->g(ys + 1, xs + i) + w2Vert * src->g(ys + 2, xs + i) + w3Vert * src->g(ys + 3, xs + i);
+        bv[i] = w0Vert * src->b(ys, xs + i) + w1Vert * src->b(ys + 1, xs + i) + w2Vert * src->b(ys + 2, xs + i) + w3Vert * src->b(ys + 3, xs + i);
+    }
+
+    // Horizontal
+    const float t1Hor = A * (Dx - Dx * Dx);
+    const float t2Hor = (3.f - 2.f * Dx) * Dx * Dx;
+    const float w3Hor = t1Hor * Dx;
+    const float w2Hor = t1Hor * Dx - t1Hor + t2Hor;
+    const float w1Hor = 1.f - (t1Hor * Dx) - t2Hor;
+    const float w0Hor = t1Hor - (t1Hor * Dx);
+
+    r = mul * (rv[0] * w0Hor + rv[1] * w1Hor + rv[2] * w2Hor + rv[3] * w3Hor);
+    g = mul * (gv[0] * w0Hor + gv[1] * w1Hor + gv[2] * w2Hor + gv[3] * w3Hor);
+    b = mul * (bv[0] * w0Hor + bv[1] * w1Hor + bv[2] * w2Hor + bv[3] * w3Hor);
+}
+
+inline void interpolateTransformChannelsCubic(const float* const * src, int xs, int ys, float Dx, float Dy, float &dest, float mul)
+{
+    constexpr float A = -0.85f;
+
+    // Vertical
+    const float t1Vert = A * (Dy - Dy * Dy);
+    const float t2Vert = (3.f - 2.f * Dy) * Dy * Dy;
+    const float w3Vert = t1Vert * Dy;
+    const float w2Vert = t1Vert * Dy - t1Vert + t2Vert;
+    const float w1Vert = 1.f - (t1Vert * Dy) - t2Vert;
+    const float w0Vert = t1Vert - (t1Vert * Dy);
+
+    float cv[4];
+    for (int i = 0; i < 4; ++i) {
+        cv[i] = w0Vert * src[ys][xs + i] + w1Vert * src[ys + 1][xs + i] + w2Vert * src[ys + 2][xs + i] + w3Vert * src[ys + 3][xs + i];
+    }
+
+    // Horizontal
+    const float t1Hor = A * (Dx - Dx * Dx);
+    const float t2Hor = (3.f - 2.f * Dx) * Dx * Dx;
+    const float w3Hor = t1Hor * Dx;
+    const float w2Hor = t1Hor * Dx - t1Hor + t2Hor;
+    const float w1Hor = 1.f - (t1Hor * Dx) - t2Hor;
+    const float w0Hor = t1Hor - (t1Hor * Dx);
+
+    dest = mul * (cv[0] * w0Hor + cv[1] * w1Hor + cv[2] * w2Hor + cv[3] * w3Hor);
 }
 
 
@@ -740,17 +801,18 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 
 void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
 {
+    BENCHFUN
     // set up stuff, depending on the mode we are
-    bool enableLCPDist = pLCPMap && params->lensProf.useDist;
-    bool enableCA = highQuality && needsCA();
-    bool enableGradient = needsGradient();
-    bool enablePCVignetting = needsPCVignetting();
-    bool enableVignetting = needsVignetting();
-    bool enablePerspective = needsPerspective();
-    bool enableDistortion = needsDistortion();
+    const bool enableLCPDist = pLCPMap && params->lensProf.useDist;
+    const bool enableCA = highQuality && needsCA();
+    const bool enableGradient = needsGradient();
+    const bool enablePCVignetting = needsPCVignetting();
+    const bool enableVignetting = needsVignetting();
+    const bool enablePerspective = needsPerspective();
+    const bool enableDistortion = needsDistortion();
 
-    double w2 = (double) oW  / 2.0 - 0.5;
-    double h2 = (double) oH  / 2.0 - 0.5;
+    const double w2 = (double) oW  / 2.0 - 0.5;
+    const double h2 = (double) oH  / 2.0 - 0.5;
 
     double vig_w2, vig_h2, maxRadius, v, b, mul;
     calcVignettingParams (oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
@@ -784,11 +846,11 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     chDist[2] = enableCA ? params->cacorrection.blue : 0.0;
 
     // auxiliary variables for distortion correction
-    double distAmount = params->distortion.amount;
+    const double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
-    double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
+    const double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
+    const double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
@@ -814,9 +876,10 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 #pragma GCC diagnostic pop
 #endif
     // main cycle
-    bool darkening = (params->vignetting.amount <= 0.0);
+    const bool darkening = (params->vignetting.amount <= 0.0);
+
 #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
 #endif
 
     for (int y = 0; y < transformed->getHeight(); y++) {
@@ -832,13 +895,6 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 
             x_d += ascale * (cx - w2);     // centering x coord & scale
             y_d += ascale * (cy - h2);     // centering y coord & scale
-
-            double vig_x_d = 0., vig_y_d = 0.;
-
-            if (enableVignetting) {
-                vig_x_d = ascale * (x + cx - vig_w2);       // centering x coord & scale
-                vig_y_d = ascale * (y + cy - vig_h2);       // centering y coord & scale
-            }
 
             if (enablePerspective) {
                 // horizontal perspective transformation
@@ -860,14 +916,6 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             if (enableDistortion) {
                 double r = sqrt (Dxc * Dxc + Dyc * Dyc) / maxRadius; // sqrt is slow
                 s = 1.0 - distAmount + distAmount * r ;
-            }
-
-            double r2 = 0.;
-
-            if (enableVignetting) {
-                double vig_Dx = vig_x_d * cost - vig_y_d * sint;
-                double vig_Dy = vig_x_d * sint + vig_y_d * cost;
-                r2 = sqrt (vig_Dx * vig_Dx + vig_Dy * vig_Dy);
             }
 
             for (int c = 0; c < (enableCA ? 3 : 1); c++) {
@@ -893,6 +941,11 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     double vignmul = 1.0;
 
                     if (enableVignetting) {
+                        const double vig_x_d = ascale * (x + cx - vig_w2);       // centering x coord & scale
+                        const double vig_y_d = ascale * (y + cy - vig_h2);       // centering y coord & scale
+                        const double vig_Dx = vig_x_d * cost - vig_y_d * sint;
+                        const double vig_Dy = vig_x_d * sint + vig_y_d * cost;
+                        const double r2 = sqrt (vig_Dx * vig_Dx + vig_Dy * vig_Dy);
                         if (darkening) {
                             vignmul /= std::max (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                         } else {
@@ -911,13 +964,13 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
                         // all interpolation pixels inside image
                         if (enableCA) {
-                            interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, & (chTrans[c][y][x]), vignmul);
+                            interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], vignmul);
                         } else if (!highQuality) {
                             transformed->r (y, x) = vignmul * (original->r (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r (yc, xc + 1) * Dx * (1.0 - Dy) + original->r (yc + 1, xc) * (1.0 - Dx) * Dy + original->r (yc + 1, xc + 1) * Dx * Dy);
                             transformed->g (y, x) = vignmul * (original->g (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g (yc, xc + 1) * Dx * (1.0 - Dy) + original->g (yc + 1, xc) * (1.0 - Dx) * Dy + original->g (yc + 1, xc + 1) * Dx * Dy);
                             transformed->b (y, x) = vignmul * (original->b (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b (yc, xc + 1) * Dx * (1.0 - Dy) + original->b (yc + 1, xc) * (1.0 - Dx) * Dy + original->b (yc + 1, xc + 1) * Dx * Dy);
                         } else {
-                            interpolateTransformCubic (original, xc - 1, yc - 1, Dx, Dy, & (transformed->r (y, x)), & (transformed->g (y, x)), & (transformed->b (y, x)), vignmul);
+                            interpolateTransformCubic (original, xc - 1, yc - 1, Dx, Dy, transformed->r (y, x), transformed->g (y, x), transformed->b (y, x), vignmul);
                         }
                     } else {
                         // edge pixels
@@ -988,7 +1041,7 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
                     // multiplier for vignetting correction
                     if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
                         // all interpolation pixels inside image
-                        interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, & (chTrans[c][y][x]), 1.0);
+                        interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], 1.0);
                     } else {
                         // edge pixels
                         int y1 = LIM (yc,   0, original->getHeight() - 1);
