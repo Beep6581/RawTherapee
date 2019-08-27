@@ -90,6 +90,7 @@ float normn (float a, float b, int n)
 
 inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys, float Dx, float Dy, float &r, float &g, float &b, float mul)
 {
+    // I tried hand written SSE code but gcc vectorizes better
     constexpr float A = -0.85f;
 
     // Vertical
@@ -122,6 +123,7 @@ inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys,
 
 inline void interpolateTransformChannelsCubic(const float* const * src, int xs, int ys, float Dx, float Dy, float &dest, float mul)
 {
+    // I tried hand written SSE code but gcc vectorizes better
     constexpr float A = -0.85f;
 
     // Vertical
