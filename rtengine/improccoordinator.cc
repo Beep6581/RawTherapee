@@ -934,8 +934,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                         for (int ir = 0; ir < pH; ir++)
                             for (int jr = 0; jr < pW; jr++) {
+                                float X, Y, Z;
+                                float L = provradius->L[ir][jr];
+                                float a = provradius->a[ir][jr];
+                                float b = provradius->b[ir][jr];
+                                Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                                guid[ir][jr] = Y / 32768.f;
+                                
                                 ble[ir][jr] = (nprevl->L[ir][jr]) / 32768.f;
-                                guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
                             }
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;

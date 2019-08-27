@@ -1285,7 +1285,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         for (int ir = 0; ir < lab->H; ir++)
             for (int jr = 0; jr < lab->W; jr++) {
                 ble[ir][jr] = dst->L[ir][jr] / 32768.f;
-                guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
+                float X, Y, Z;
+                float L = provradius->L[ir][jr];
+                float a = provradius->a[ir][jr];
+                float b = provradius->b[ir][jr];
+                Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                guid[ir][jr] = Y / 32768.f;
+                
+//                guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
             }
 
         double epsilmax = 0.001;
