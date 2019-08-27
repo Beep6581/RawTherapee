@@ -338,7 +338,10 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
             if (
                 !isHDR
-                && find_exif_tag("Exif.Pentax.Quality")
+                && (
+                    find_exif_tag("Exif.Pentax.Quality")
+                    || find_exif_tag("Exif.PentaxDng.Quality")
+                )
                 && (
                     pos->toLong() == 7
                     || pos->toLong() == 8
