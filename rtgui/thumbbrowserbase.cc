@@ -79,10 +79,19 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
         delta = deltaY;
     }
     if (direction == GDK_SCROLL_SMOOTH && delta == 0.0) {
-        // sometimes this case happens. To avoid scrolling the wrong direction in this case, we just do nothing    
+        // sometimes this case happens. To avoid scrolling the wrong direction in this case, we just do nothing
+        // This is probably no longer necessary now that coef is no longer quantized to +/-1.0 but why waste CPU cycles?
         return;
     }
-    double coef = direction == GDK_SCROLL_DOWN || (direction == GDK_SCROLL_SMOOTH && delta > 0.0) ? +1.0 : -1.0;
+    //GDK_SCROLL_SMOOTH can come in as many events with small deltas, don't quantize these to +/-1.0 so trackpads work well
+    double coef;
+    if(direction == GDK_SCROLL_SMOOTH) {
+        coef = delta;
+    } else if (direction == GDK_SCROLL_DOWN) {
+        coef = +1.0;
+    } else {
+        coef = -1.0;
+    }
 
     // GUI already acquired when here
     if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN || direction == GDK_SCROLL_SMOOTH) {
