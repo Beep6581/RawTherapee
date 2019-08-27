@@ -975,7 +975,7 @@ HISTORY_MSG_732;Local - median iterations
 HISTORY_MSG_733;Local - soft radius
 HISTORY_MSG_734;Local - threshold
 HISTORY_MSG_738;Local - Local contrast Merge L
-HISTORY_MSG_739;Local - Local contrast Merge C
+HISTORY_MSG_739;Local - Local contrast Soft radius
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2066,9 +2066,9 @@ TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_COFR;Color & Light - Small defects : red eyes, dust
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;In the case of small defects.\n\nRed-eyes : red-centered circular selector, spot delimiters close to the eye, weak scope, "lightness" -100, "chrominance" -100.\n\nSpotIR :Circular selector centered on the defect, spot delimiters close to the default - reduce "chrominance", possibly act on "scope" to reduce the extent of the action.\n\nDust - grease (small) :Circular selector centered on the defect (adapt the size of the spot), spot delimiters not too close to the defect to allow an inconspicuous transition. a) "Transition" (low values) and "Transition weak" (high values); b) act on "lightness" and possibly on "chrominance" or "Color correction grid - direct" to approach the rendering of the polluted zone to that of the healthy zone; c) act moderately on "scope" to modulate the desired action.\n\nYou can also complete with Gaussian blur (Smooth Blur and noise)
 TP_LOCALLAB_CLARILRES;Merge Luma
-TP_LOCALLAB_CLARICRES;Merge Chroma
+TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARIFRA;Sharp mask and Clarity
-TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4 Sharp mask is used.\nAbove level wavelet 5 Clarity is used.
+TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.
 TP_LOCALLAB_CONTRAST;Contrast
 TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"
 TP_LOCALLAB_CURVNONE;Disable curves
@@ -2101,7 +2101,7 @@ TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
 TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
 TP_LOCALLAB_LABGRID;Color correction grid
-TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 8 size max 512 to level 1 size max = 4
+TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope

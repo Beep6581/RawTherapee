@@ -242,7 +242,7 @@ private:
     Adjuster* const levelwav;
     Adjuster* const residcont;
     Adjuster* const clarilres;
-    Adjuster* const claricres;
+    Adjuster* const clarisoft;
     Adjuster* const sensilc;
     // Contrast by detail levels
     Adjuster* multiplier[6];

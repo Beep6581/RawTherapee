@@ -1138,7 +1138,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).levelwav = locallab.spots.at(j).levelwav && pSpot.levelwav == otherSpot.levelwav;
                 locallab.spots.at(j).residcont = locallab.spots.at(j).residcont && pSpot.residcont == otherSpot.residcont;
                 locallab.spots.at(j).clarilres = locallab.spots.at(j).clarilres && pSpot.clarilres == otherSpot.clarilres;
-                locallab.spots.at(j).claricres = locallab.spots.at(j).claricres && pSpot.claricres == otherSpot.claricres;
+                locallab.spots.at(j).clarisoft = locallab.spots.at(j).clarisoft && pSpot.clarisoft == otherSpot.clarisoft;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
                 locallab.spots.at(j).localcontMethod = locallab.spots.at(j).localcontMethod && pSpot.localcontMethod == otherSpot.localcontMethod;
@@ -3401,8 +3401,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).clarilres   = mods.locallab.spots.at(i).clarilres;
         }
 
-        if (locallab.spots.at(i).claricres) {
-            toEdit.locallab.spots.at(i).claricres   = mods.locallab.spots.at(i).claricres;
+        if (locallab.spots.at(i).clarisoft) {
+            toEdit.locallab.spots.at(i).clarisoft   = mods.locallab.spots.at(i).clarisoft;
         }
 
         if (locallab.spots.at(i).sensilc) {
@@ -4720,7 +4720,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     levelwav(v),
     residcont(v),
     clarilres(v),
-    claricres(v),
+    clarisoft(v),
     sensilc(v),
     fftwlc(v),
     localcontMethod(v),
@@ -4969,7 +4969,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     levelwav = v;
     residcont = v;
     clarilres = v;
-    claricres = v;
+    clarisoft = v;
     sensilc = v;
     fftwlc = v;
     localcontMethod = v;

@@ -561,7 +561,7 @@ public:
         bool levelwav;
         bool residcont;
         bool clarilres;
-        bool claricres;
+        bool clarisoft;
         bool sensilc;
         bool fftwlc;
         bool localcontMethod;
