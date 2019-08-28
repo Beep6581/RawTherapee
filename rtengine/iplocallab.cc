@@ -5765,7 +5765,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             double thresM = 0.05 * lp.epsb;
                             double thresm = 0.01 * lp.epsb;
-                            softproc(bufgb.get(), tmp1.get(), 3.f * lp.guidb, bfh, bfw, thresM, thresm, 0.0001f, sk, multiThread);
+                            softproc(bufgb.get(), tmp1.get(), 3.f * lp.guidb, bfh, bfw, thresM, thresm, 0.1f, sk, multiThread);
                         }
 
                     } else if (lp.blurmet == 1  && lp.blmet == 2) {
@@ -5784,7 +5784,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             double thresM = 0.05 * lp.epsb;
                             double thresm = 0.01 * lp.epsb;
-                            softproc(tmp2.get(), tmp1.get(), 3.f * lp.guidb, GH, GW, thresM, thresm, 0.0001f, sk, multiThread);
+                            softproc(tmp2.get(), tmp1.get(), 3.f * lp.guidb, GH, GW, thresM, thresm, 0.1f, sk, multiThread);
                         }
 
                     }
@@ -6989,7 +6989,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
                         if (lp.softradiuscb > 0.f) {
-                            softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                            softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread);
                         }
 
                     }
@@ -7897,42 +7897,44 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     wavelet_level = min(wavelet_level, maxlevelspot);
 
-                    wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+                    if (mL != 0.f) {
 
-                    if (wdspotresid->memoryAllocationFailed) {
-                        return;
-                    }
+                        wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+
+                        if (wdspotresid->memoryAllocationFailed) {
+                            return;
+                        }
 
 
-                    int maxlvlresid = wdspotresid->maxlevel();
+                        int maxlvlresid = wdspotresid->maxlevel();
 
-                    //  printf("maxlvlresid=%i maxlevelspot=%i\n", maxlvlresid, maxlevelspot);
-                    if (maxlvlresid > 4) {//Clarity
-                        for (int dir = 1; dir < 4; dir++) {
-                            for (int level = 0; level < maxlvlresid; ++level) {
-                                int W_L = wdspotresid->level_W(level);
-                                int H_L = wdspotresid->level_H(level);
-                                float **wav_Lresid = wdspotresid->level_coeffs(level);
+                        //  printf("maxlvlresid=%i maxlevelspot=%i\n", maxlvlresid, maxlevelspot);
+                        if (maxlvlresid > 4) {//Clarity
+                            for (int dir = 1; dir < 4; dir++) {
+                                for (int level = 0; level < maxlvlresid; ++level) {
+                                    int W_L = wdspotresid->level_W(level);
+                                    int H_L = wdspotresid->level_H(level);
+                                    float **wav_Lresid = wdspotresid->level_coeffs(level);
 
-                                for (int i = 0; i < W_L * H_L; i++) {
-                                    wav_Lresid[dir][i] = 0.f;
+                                    for (int i = 0; i < W_L * H_L; i++) {
+                                        wav_Lresid[dir][i] = 0.f;
+                                    }
                                 }
                             }
-                        }
-                    } else {//Sharp
-                        float *wav_L0resid = wdspotresid->coeff0;
-                        int W_L = wdspotresid->level_W(0);
-                        int H_L = wdspotresid->level_H(0);
+                        } else {//Sharp
+                            float *wav_L0resid = wdspotresid->coeff0;
+                            int W_L = wdspotresid->level_W(0);
+                            int H_L = wdspotresid->level_H(0);
 
-                        for (int i = 0; i < W_L * H_L; i++) {
-                            wav_L0resid[i] = 0.f;
+                            for (int i = 0; i < W_L * H_L; i++) {
+                                wav_L0resid[i] = 0.f;
+                            }
                         }
+
+
+                        wdspotresid->reconstruct(tmpresid->L[0], 1.f);
+                        delete wdspotresid;
                     }
-
-
-                    wdspotresid->reconstruct(tmpresid->L[0], 1.f);
-                    delete wdspotresid;
-
 
                     wavelet_decomposition wdspot(tmp1->data, bfw, bfh, wavelet_level, 1, sk, numThreads, 6);
 
@@ -8042,6 +8044,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     wdspot.reconstruct(tmp1->data, 1.f);
+                    float thr = 0.001f;
 
                     if (maxlvl <= 4) {
                         mL0 = 0.f;
@@ -8049,19 +8052,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     } else {
                         mL0 = mL;
+                        thr = 1.f;
                     }
 
+                    if (mL != 0.f) {
 #ifdef _OPENMP
-                    #pragma omp parallel for
+                        #pragma omp parallel for
 #endif
 
-                    for (int x = 0; x < bfh; x++)
-                        for (int y = 0; y < bfw; y++) {
-                            tmp1->L[x][y] = (1.f + mL0) * (tmp1->L[x][y]) - mL * tmpresid->L[x][y];
-                        }
+                        for (int x = 0; x < bfh; x++)
+                            for (int y = 0; y < bfw; y++) {
+                                tmp1->L[x][y] = (1.f + mL0) * (tmp1->L[x][y]) - mL * tmpresid->L[x][y];
+                            }
 
-                    if (softr > 0.f) {
-                        softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                        if (softr > 0.f) {
+                            softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread);
+                        }
                     }
                 }
 
@@ -8938,7 +8944,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         if (lp.softradiusexp > 0.f) {
-                            softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                            softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread);
                             //     softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
                         }
 
@@ -9360,7 +9366,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                         if (lp.softradiuscol > 0.f) {
-                            softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.0001f, sk, multiThread);
+                            softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread);
                             //  softprocess(bufcolorig.get(), buflight, lp.softradiuscol, bfh, bfw, sk, multiThread);
                         }
 
