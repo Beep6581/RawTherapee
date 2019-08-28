@@ -220,7 +220,7 @@ private:
         bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
         double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
 
-        imgsrc->demosaic (params.raw, autoContrast, contrastThreshold);
+        imgsrc->demosaic (params.raw, autoContrast, contrastThreshold, params.pdsharpening.enabled && pl);
         if (params.pdsharpening.enabled) {
             imgsrc->captureSharpening(params.pdsharpening, false, params.pdsharpening.contrast);
         }

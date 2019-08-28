@@ -45,6 +45,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
+#include "../rtgui/multilangmgr.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
@@ -457,6 +458,9 @@ RawImageSource::RawImageSource ()
     , green(0, 0)
     , red(0, 0)
     , blue(0, 0)
+    , greenCache(nullptr)
+    , redCache(nullptr)
+    , blueCache(nullptr)
     , rawDirty(true)
     , histMatchingParams(new procparams::ColorManagementParams)
 {
@@ -474,6 +478,9 @@ RawImageSource::~RawImageSource ()
 {
 
     delete idata;
+    delete redCache;
+    delete greenCache;
+    delete blueCache;
 
     for(size_t i = 0; i < numFrames; ++i) {
         delete riFrames[i];
@@ -1524,7 +1531,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold)
+void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache)
 {
     MyTime t1, t2;
     t1.set();
@@ -1595,7 +1602,49 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 
     rgbSourceModified = false;
 
-
+    if (cache) {
+        if (!redCache) {
+            redCache = new array2D<float>(W, H);
+            greenCache = new array2D<float>(W, H);
+            blueCache = new array2D<float>(W, H);
+        }
+#ifdef _OPENMP
+        #pragma omp parallel sections
+#endif
+        {
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*redCache)[i][j] = red[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*greenCache)[i][j] = green[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*blueCache)[i][j] = blue[i][j];
+                }
+            }
+        }
+    } else {
+        delete redCache;
+        redCache = nullptr;
+        delete greenCache;
+        greenCache = nullptr;
+        delete blueCache;
+        blueCache = nullptr;
+    }
     if( settings->verbose ) {
         if (getSensorType() == ST_BAYER) {
             printf("Demosaicing Bayer data: %s - %d usec\n", raw.bayersensor.method.c_str(), t2.etime(t1));
@@ -4954,6 +5003,12 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
 void RawImageSource::captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold) {
 BENCHFUN
 
+
+    if (plistener) {
+        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+        plistener->setProgress(0.0);
+    }
+
     const float xyz_rgb[3][3] = {          // XYZ from RGB
                                     { 0.412453, 0.357580, 0.180423 },
                                     { 0.212671, 0.715160, 0.072169 },
@@ -4961,6 +5016,10 @@ BENCHFUN
                                 };
 
     float contrast = conrastThreshold / 100.f;
+
+    array2D<float>& redVals = redCache ? *redCache : red;
+    array2D<float>& greenVals = greenCache ? *greenCache : green;
+    array2D<float>& blueVals = blueCache ? *blueCache : blue;
 
     if (showMask) {
         StopWatch Stop1("Show mask");
@@ -4970,10 +5029,18 @@ BENCHFUN
 #endif
 
         for (int i = 0; i < H; ++i) {
-            Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
+            Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, W);
+        }
+        if (plistener) {
+            plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+            plistener->setProgress(0.1);
         }
         array2D<float>& blend = red; // red will be overridden anyway => we can use its buffer to store the blend mask
         buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast);
+        if (plistener) {
+            plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+            plistener->setProgress(0.2);
+        }
         conrastThreshold = contrast * 100.f;
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -4982,6 +5049,10 @@ BENCHFUN
             for (int j = 0; j < W; ++j) {
                 red[i][j] = green[i][j] = blue[i][j] = blend[i][j] * 16384.f;
             }
+        }
+        if (plistener) {
+            plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+            plistener->setProgress(1.0);
         }
         return;
     }
@@ -4995,12 +5066,20 @@ BENCHFUN
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < H; ++i) {
-        Color::RGB2L(red[i], green[i], blue[i], L[i], xyz_rgb, W);
-        Color::RGB2Y(red[i], green[i], blue[i], YOld[i], YNew[i], sharpeningParams.gamma, W);
+        Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, W);
+        Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], sharpeningParams.gamma, W);
+    }
+    if (plistener) {
+        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+        plistener->setProgress(0.1);
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
     buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast);
+    if (plistener) {
+        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+        plistener->setProgress(0.2);
+    }
     conrastThreshold = contrast * 100.f;
 
     Stop1.stop();
@@ -5008,6 +5087,10 @@ BENCHFUN
     ProcParams dummy;
     ImProcFunctions ipf(&dummy);
     ipf.deconvsharpening(YNew, tmp, blend, W, H, sharpeningParams, 1.0);
+    if (plistener) {
+        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+        plistener->setProgress(0.9);
+    }
     StopWatch Stop2("Y2RGB");
     const float gamma = sharpeningParams.gamma;
 #ifdef _OPENMP
@@ -5019,20 +5102,24 @@ BENCHFUN
         const vfloat gammav = F2V(gamma);
         for (; j < W - 3; j += 4) {
             const vfloat factor = pow_F(LVFU(YNew[i][j]) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f)), gammav);
-            STVFU(red[i][j], LVFU(red[i][j]) * factor);
-            STVFU(green[i][j], LVFU(green[i][j]) * factor);
-            STVFU(blue[i][j], LVFU(blue[i][j]) * factor);
+            STVFU(red[i][j], LVFU(redVals[i][j]) * factor);
+            STVFU(green[i][j], LVFU(greenVals[i][j]) * factor);
+            STVFU(blue[i][j], LVFU(blueVals[i][j]) * factor);
         }
 
 #endif
         for (; j < W; ++j) {
             const float factor = pow_F(YNew[i][j] / std::max(YOld[i][j], 0.00001f), gamma);
-            red[i][j] *= factor;
-            green[i][j] *= factor;
-            blue[i][j] *= factor;
+            red[i][j] = redVals[i][j] * factor;
+            green[i][j] = greenVals[i][j] * factor;
+            blue[i][j] = blueVals[i][j] * factor;
         }
     }
     Stop2.stop();
+    if (plistener) {
+        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
+        plistener->setProgress(1.0);
+    }
 }
 
 void RawImageSource::cleanup ()

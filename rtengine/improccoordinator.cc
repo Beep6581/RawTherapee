@@ -332,26 +332,31 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
             bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicAutoContrast : params->raw.xtranssensor.dualDemosaicAutoContrast;
             double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicContrast : params->raw.xtranssensor.dualDemosaicContrast;
-            imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
+            imgsrc->demosaic(rp, autoContrast, contrastThreshold, params->pdsharpening.enabled);
 
             if (imgsrc->getSensorType() == ST_BAYER && bayerAutoContrastListener && autoContrast) {
                 bayerAutoContrastListener->autoContrastChanged(contrastThreshold);
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
                 xtransAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
             }
-
-            if (params->pdsharpening.enabled) {
-                double pdSharpencontrastThreshold = params->pdsharpening.contrast;
-                imgsrc->captureSharpening(params->pdsharpening, sharpMask, pdSharpencontrastThreshold);
-                if (pdSharpenAutoContrastListener && params->pdsharpening.autoContrast) {
-                    pdSharpenAutoContrastListener->autoContrastChanged(pdSharpencontrastThreshold);
-                }
-            }
-
-
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
             todo |= M_INIT;
 
+        }
+
+        if ((todo & M_INIT) && params->pdsharpening.enabled) {
+            double pdSharpencontrastThreshold = params->pdsharpening.contrast;
+            imgsrc->captureSharpening(params->pdsharpening, sharpMask, pdSharpencontrastThreshold);
+            if (pdSharpenAutoContrastListener && params->pdsharpening.autoContrast) {
+                pdSharpenAutoContrastListener->autoContrastChanged(pdSharpencontrastThreshold);
+            }
+        }
+
+
+        if ((todo & M_RAW)
+                || (!highDetailRawComputed && highDetailNeeded)
+                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
