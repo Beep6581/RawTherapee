@@ -8049,6 +8049,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (maxlvl <= 4) {
                         mL0 = 0.f;
                         mL = -mL;
+                        thr = 0.01f;
 
                     } else {
                         mL0 = mL;
