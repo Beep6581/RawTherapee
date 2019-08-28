@@ -1364,7 +1364,7 @@ ProcEvent ImProcCoordinator::setSharpMask (bool sharpMask)
     if (this->sharpMask != sharpMask) {
         sharpMaskChanged = true;
         this->sharpMask = sharpMask;
-        return params->pdsharpening.enabled ? rtengine::EvPdShrEnabled : rtengine::EvShrEnabled;
+        return params->pdsharpening.enabled ? rtengine::EvPdShrMaskToggled : rtengine::EvShrEnabled;
     } else {
         sharpMaskChanged = false;
         return rtengine::EvShrEnabled;

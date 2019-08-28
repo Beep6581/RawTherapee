@@ -521,6 +521,7 @@ enum ProcEventCode {
     EvRGBEnabled = 491,
     EvLEnabled = 492,
     EvPdShrEnabled = 493,
+    EvPdShrMaskToggled = 494,
 
     NUMOFEVENTS
 

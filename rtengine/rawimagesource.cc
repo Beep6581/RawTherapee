@@ -5032,13 +5032,11 @@ BENCHFUN
             Color::RGB2L(redVals[i], greenVals[i], blueVals[i], L[i], xyz_rgb, W);
         }
         if (plistener) {
-            plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
             plistener->setProgress(0.1);
         }
         array2D<float>& blend = red; // red will be overridden anyway => we can use its buffer to store the blend mask
         buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast);
         if (plistener) {
-            plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
             plistener->setProgress(0.2);
         }
         conrastThreshold = contrast * 100.f;
@@ -5051,7 +5049,6 @@ BENCHFUN
             }
         }
         if (plistener) {
-            plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
             plistener->setProgress(1.0);
         }
         return;
@@ -5070,14 +5067,12 @@ BENCHFUN
         Color::RGB2Y(redVals[i], greenVals[i], blueVals[i], YOld[i], YNew[i], sharpeningParams.gamma, W);
     }
     if (plistener) {
-        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
         plistener->setProgress(0.1);
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
     buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast);
     if (plistener) {
-        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
         plistener->setProgress(0.2);
     }
     conrastThreshold = contrast * 100.f;
@@ -5088,7 +5083,6 @@ BENCHFUN
     ImProcFunctions ipf(&dummy);
     ipf.deconvsharpening(YNew, tmp, blend, W, H, sharpeningParams, 1.0);
     if (plistener) {
-        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
         plistener->setProgress(0.9);
     }
     StopWatch Stop2("Y2RGB");
@@ -5117,7 +5111,6 @@ BENCHFUN
     }
     Stop2.stop();
     if (plistener) {
-        plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
         plistener->setProgress(1.0);
     }
 }
