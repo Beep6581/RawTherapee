@@ -5054,9 +5054,23 @@ BENCHFUN
         return;
     }
 
-    array2D<float> L(W,H);
-    array2D<float> YOld(W,H);
-    array2D<float> YNew(W,H);
+    array2D<float>* Lbuffer = nullptr;
+    if (!redCache) {
+        Lbuffer = new array2D<float>(W, H);
+    }
+
+    array2D<float>* YOldbuffer = nullptr;
+    if (!greenCache) {
+        YOldbuffer = new array2D<float>(W, H);
+    }
+
+    array2D<float>* YNewbuffer = nullptr;
+    if (!blueCache) {
+        YNewbuffer = new array2D<float>(W, H);
+    }
+    array2D<float>& L = Lbuffer ? *Lbuffer : red;
+    array2D<float>& YOld = YOldbuffer ? * YOldbuffer : green;
+    array2D<float>& YNew = YNewbuffer ? * YNewbuffer : blue;
 
     StopWatch Stop1("rgb2YL");
 #ifdef _OPENMP
@@ -5110,6 +5124,9 @@ BENCHFUN
         }
     }
     Stop2.stop();
+    delete Lbuffer;
+    delete YOldbuffer;
+    delete YNewbuffer;
     if (plistener) {
         plistener->setProgress(1.0);
     }
