@@ -1514,7 +1514,7 @@ void ImProcCoordinator::process()
 
     while (changeSinceLast) {
         const bool panningRelatedChange =
-               params->toneCurve != nextParams->toneCurve
+               params->toneCurve.isPanningRelatedChange(nextParams->toneCurve)
             || params->labCurve != nextParams->labCurve
             || params->localContrast != nextParams->localContrast
             || params->rgbCurves != nextParams->rgbCurves

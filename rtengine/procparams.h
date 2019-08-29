@@ -284,6 +284,7 @@ struct ToneCurveParams {
 
     ToneCurveParams();
 
+    bool isPanningRelatedChange(const ToneCurveParams& other) const;
     bool operator ==(const ToneCurveParams& other) const;
     bool operator !=(const ToneCurveParams& other) const;
 
