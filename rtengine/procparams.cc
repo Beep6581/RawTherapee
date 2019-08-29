@@ -1233,6 +1233,21 @@ WBParams::WBParams() :
 {
 }
 
+bool WBParams::isPanningRelatedChange(const WBParams& other) const
+{
+    return !
+        (enabled == other.enabled
+        && ((method == "Camera" && other.method == "Camera")
+        ||
+        (method == other.method
+        && temperature == other.temperature
+        && green == other.green
+        && equal == other.equal
+        && tempBias == other.tempBias)
+        )
+        );
+}
+
 bool WBParams::operator ==(const WBParams& other) const
 {
     return
