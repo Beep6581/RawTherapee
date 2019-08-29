@@ -140,6 +140,7 @@ Wavelet::Wavelet() :
     chanMixerHLFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_HIGHLIGHT")))),
     chanMixerMidFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_MIDTONES")))),
     chanMixerShadowsFrame(Gtk::manage(new Gtk::Frame(M("TP_COLORTONING_SHADOWS")))),
+    chromaFrame(Gtk::manage(new Gtk::Frame(M("TP_WAVELET_CHROMAFRAME")))),
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
@@ -687,8 +688,14 @@ Wavelet::Wavelet() :
     resBox->pack_start(*contrast);  //keep the possibility to reinstall
 
     reschro->setAdjusterListener(this);
-    resBox->pack_start(*reschro);
+//    resBox->pack_start(*reschro);
 
+    chromaFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const chromaBox = Gtk::manage(new ToolParamBlock());
+    chromaBox->pack_start(*reschro);
+    chromaBox->pack_start(*hueskin2);
+    chromaBox->pack_start(*sky);
+    chromaFrame->add(*chromaBox);
 
     Gtk::Label* const labmTM = Gtk::manage(new Gtk::Label(M("TP_WAVELET_TMTYPE") + ":"));
     Gtk::HBox* const ctboxTM = Gtk::manage(new Gtk::HBox());
@@ -727,18 +734,19 @@ Wavelet::Wavelet() :
 
     hueskin2->set_tooltip_markup(M("TP_WAVELET_HUESKY_TOOLTIP"));
     hueskin2->setBgGradient(milestones);
-    resBox->pack_start(*hueskin2);
+//    resBox->pack_start(*hueskin2);
     hueskin2->setAdjusterListener(this);
 
     sky->set_tooltip_text(M("TP_WAVELET_SKY_TOOLTIP"));
     sky->setAdjusterListener(this);
 
-    resBox->pack_start(*sky);
+//    resBox->pack_start(*sky);
 
     // whole hue range
     const std::vector<GradientMilestone> milestones3 = makeWholeHueRange();
 
     curveEditorRES->setCurveListener(this);
+    resBox->pack_start(*chromaFrame);
 
     hhshape = static_cast<FlatCurveEditor*>(curveEditorRES->addCurve(CT_Flat, M("TP_WAVELET_CURVEEDITOR_HH")));
     hhshape->setTooltip(M("TP_WAVELET_CURVEEDITOR_HH_TOOLTIP"));

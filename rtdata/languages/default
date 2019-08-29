@@ -2109,6 +2109,7 @@ TP_WAVELET_CH3;Link contrast levels
 TP_WAVELET_CHCU;Curve
 TP_WAVELET_CHR;Chroma-contrast link strength
 TP_WAVELET_CHRO;Saturated/pastel threshold
+TP_WAVELET_CHROMAFRAME;Chroma
 TP_WAVELET_CHRO_TOOLTIP;Sets the wavelet level which will be the threshold between saturated and pastel colors.\n1-x: saturated\nx-9: pastel\n\nIf the value exceeds the amount of wavelet levels you are using then it will be ignored.
 TP_WAVELET_CHR_TOOLTIP;Adjusts chroma as a function of "contrast levels" and "chroma-contrast link strength"
 TP_WAVELET_CHSL;Sliders
@@ -2216,7 +2217,7 @@ TP_WAVELET_RADIUS;Radius Shadows - Highlight
 TP_WAVELET_RE1;Reinforced
 TP_WAVELET_RE2;Unchanged
 TP_WAVELET_RE3;Reduced
-TP_WAVELET_RESCHRO;Chroma
+TP_WAVELET_RESCHRO;Intensity
 TP_WAVELET_RESCON;Shadows
 TP_WAVELET_RESCONH;Highlights
 TP_WAVELET_RESID;Residual Image

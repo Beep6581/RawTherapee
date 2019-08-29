@@ -253,6 +253,7 @@ private:
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
     Gtk::Frame* const chanMixerShadowsFrame;
+    Gtk::Frame* const chromaFrame;
 
     Gtk::Label* const wavLabels;
     Gtk::Label* const labmC;
