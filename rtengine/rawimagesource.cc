@@ -461,6 +461,7 @@ RawImageSource::RawImageSource ()
     , greenCache(nullptr)
     , redCache(nullptr)
     , blueCache(nullptr)
+    , captureSharpeningAutoContrast(false)
     , rawDirty(true)
     , histMatchingParams(new procparams::ColorManagementParams)
 {
@@ -5003,7 +5004,11 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
 void RawImageSource::captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold) {
 BENCHFUN
 
-
+    if (!sharpeningParams.autoContrast && captureSharpeningAutoContrast) {
+        captureSharpeningAutoContrast = false;
+        return;
+    }
+    captureSharpeningAutoContrast = sharpeningParams.autoContrast;
     if (plistener) {
         plistener->setProgressStr(M("TP_PDSHARPENING_LABEL"));
         plistener->setProgress(0.0);

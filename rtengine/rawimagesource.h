@@ -94,6 +94,7 @@ protected:
     array2D<float>* redCache;
     // the interpolated blue plane:
     array2D<float>* blueCache;
+    bool captureSharpeningAutoContrast;
     bool rawDirty;
     float psRedBrightness[4];
     float psGreenBrightness[4];
