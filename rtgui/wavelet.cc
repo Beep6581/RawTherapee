@@ -918,6 +918,10 @@ Wavelet::Wavelet() :
     expchroma->setLevel(2);
     pack_start(*expchroma);
 
+    expgamut->add(*conBox, false);
+    expgamut->setLevel(2);
+    pack_start(*expgamut);
+
     exptoning->add(*tonBox, false);
     exptoning->setLevel(2);
     pack_start(*exptoning);
@@ -934,9 +938,6 @@ Wavelet::Wavelet() :
     expclari->setLevel(2);
     pack_start(*expclari);
 
-    expgamut->add(*conBox, false);
-    expgamut->setLevel(2);
-    pack_start(*expgamut);
 
     expresid->add(*resBox, false);
     expresid->setLevel(2);
