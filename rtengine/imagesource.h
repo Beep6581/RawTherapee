@@ -46,7 +46,7 @@ struct LensProfParams;
 struct RAWParams;
 struct RetinexParams;
 struct ToneCurveParams;
-struct SharpeningParams;
+struct CaptureSharpeningParams;
 }
 
 class ImageMatrices
@@ -182,7 +182,7 @@ public:
         return this;
     }
     virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
-    virtual void captureSharpening(const procparams::SharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold) = 0;
+    virtual void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold) = 0;
 };
 
 }

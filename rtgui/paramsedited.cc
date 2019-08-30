@@ -169,7 +169,6 @@ void ParamsEdited::set(bool v)
     pdsharpening.contrast           = v;
     pdsharpening.autoContrast           = v;
     pdsharpening.gamma   = v;
-    pdsharpening.deconvamount   = v;
     pdsharpening.deconvradius   = v;
     pdsharpening.deconviter     = v;
     prsharpening.enabled            = v;
@@ -1733,10 +1732,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.pdsharpening.autoContrast = mods.pdsharpening.autoContrast;
     }
 
-    if (pdsharpening.deconvamount) {
-        toEdit.pdsharpening.deconvamount = dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.pdsharpening.deconvamount + mods.pdsharpening.deconvamount : mods.pdsharpening.deconvamount;
-    }
-
     if (pdsharpening.gamma) {
         toEdit.pdsharpening.gamma = dontforceSet && options.baBehav[ADDSET_SHARP_GAMMA] ? toEdit.pdsharpening.gamma + mods.pdsharpening.gamma : mods.pdsharpening.gamma;
     }
@@ -3292,7 +3287,7 @@ bool FilmNegativeParamsEdited::isUnchanged() const
     return enabled && redRatio && greenExp && blueRatio;
 }
 
-bool SharpeningParamsEdited::isUnchanged() const
+bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
     return enabled && contrast && autoContrast && gamma && deconvradius && deconviter;
 }

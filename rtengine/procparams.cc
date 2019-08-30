@@ -1149,6 +1149,32 @@ bool SharpeningParams::operator !=(const SharpeningParams& other) const
     return !(*this == other);
 }
 
+CaptureSharpeningParams::CaptureSharpeningParams() :
+    enabled(false),
+    autoContrast(true),
+    contrast(10.0),
+    gamma(1.35),
+    deconvradius(0.75),
+    deconviter(30)
+{
+}
+
+bool CaptureSharpeningParams::operator ==(const CaptureSharpeningParams& other) const
+{
+    return
+        enabled == other.enabled
+        && contrast == other.contrast
+        && gamma == other.gamma
+        && autoContrast == other.autoContrast
+        && deconvradius == other.deconvradius
+        && deconviter == other.deconviter;
+}
+
+bool CaptureSharpeningParams::operator !=(const CaptureSharpeningParams& other) const
+{
+    return !(*this == other);
+}
+
 SharpenEdgeParams::SharpenEdgeParams() :
     enabled(false),
     passes(2),
@@ -2830,12 +2856,6 @@ void ProcParams::setDefaults()
     prsharpening.deconvdamping = 0;
 
     pdsharpening = {};
-    pdsharpening.contrast = 10.0;
-    pdsharpening.autoContrast = true;
-    prsharpening.method = "rld";
-    pdsharpening.gamma = 1.35;
-    pdsharpening.deconvradius = 0.75;
-    pdsharpening.deconviter = 30;
 
     vibrance = {};
 
