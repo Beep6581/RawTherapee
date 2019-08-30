@@ -1719,13 +1719,13 @@ void ImProcCoordinator::process()
 
     while (changeSinceLast) {
         const bool panningRelatedChange =
-            params->toneCurve != nextParams->toneCurve
+               params->toneCurve.isPanningRelatedChange(nextParams->toneCurve)
             || params->labCurve != nextParams->labCurve
             || params->localContrast != nextParams->localContrast
             || params->rgbCurves != nextParams->rgbCurves
             || params->colorToning != nextParams->colorToning
             || params->vibrance != nextParams->vibrance
-            || params->wb != nextParams->wb
+            || params->wb.isPanningRelatedChange(nextParams->wb)
             || params->colorappearance != nextParams->colorappearance
             || params->epd != nextParams->epd
             || params->fattal != nextParams->fattal
