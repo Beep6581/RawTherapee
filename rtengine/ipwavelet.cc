@@ -17,7 +17,7 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// *  2014 Jacques Desmis <jdesmis@gmail.com>
+// *  2014 - 2019 Jacques Desmis <jdesmis@gmail.com>
 // *  2014 Ingo Weyrich <heckflosse@i-weyrich.de>
 
 //
@@ -1269,6 +1269,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     if (waparams.softradend > 0.f  && cp.finena) {
         array2D<float> ble(lab->W, lab->H);
         array2D<float> guid(lab->W, lab->H);
+        Imagefloat *tmpImage = nullptr;
+        tmpImage = new Imagefloat(lab->W, lab->H);
 
         bool multiTh = false;
 
@@ -1284,7 +1286,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
         for (int ir = 0; ir < lab->H; ir++)
             for (int jr = 0; jr < lab->W; jr++) {
-                ble[ir][jr] = dst->L[ir][jr] / 32768.f;
                 float X, Y, Z;
                 float L = provradius->L[ir][jr];
                 float a = provradius->a[ir][jr];
@@ -1292,8 +1293,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 Color::Lab2XYZ(L, a, b, X, Y, Z);
 
                 guid[ir][jr] = Y / 32768.f;
+                float La = dst->L[ir][jr];
+                float aa = dst->a[ir][jr];
+                float ba = dst->b[ir][jr];
+                Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                tmpImage->r(ir, jr) = X;
+                tmpImage->g(ir, jr) = Y;
+                tmpImage->b(ir, jr) = Z;
+                ble[ir][jr] = Y / 32768.f;
                 
-//                guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
             }
 
         double epsilmax = 0.001;
@@ -1314,8 +1322,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
         for (int ir = 0; ir < lab->H; ir++)
             for (int jr = 0; jr < lab->W; jr++) {
-                dst->L[ir][jr] = 32768.f * ble[ir][jr];
+                float X = tmpImage->r(ir, jr);
+                float Y = 32768.f * ble[ir][jr];
+                float Z = tmpImage->b(ir, jr);
+                float L, a, b;
+                Color::XYZ2Lab(X, Y, Z, L, a, b);
+                
+                dst->L[ir][jr] = L;
             }
+        delete tmpImage;
     }
 
     if (waparams.softradend > 0.f && cp.finena) {

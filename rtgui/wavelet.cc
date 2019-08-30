@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  2014 Jacques Desmis <jdesmis@gmail.com>
+ *  2014 - 2019Jacques Desmis <jdesmis@gmail.com>
  */
 
 #include "wavelet.h"
@@ -688,7 +688,6 @@ Wavelet::Wavelet() :
     resBox->pack_start(*contrast);  //keep the possibility to reinstall
 
     reschro->setAdjusterListener(this);
-//    resBox->pack_start(*reschro);
 
     chromaFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const chromaBox = Gtk::manage(new ToolParamBlock());
@@ -734,13 +733,11 @@ Wavelet::Wavelet() :
 
     hueskin2->set_tooltip_markup(M("TP_WAVELET_HUESKY_TOOLTIP"));
     hueskin2->setBgGradient(milestones);
-//    resBox->pack_start(*hueskin2);
     hueskin2->setAdjusterListener(this);
 
     sky->set_tooltip_text(M("TP_WAVELET_SKY_TOOLTIP"));
     sky->setAdjusterListener(this);
 
-//    resBox->pack_start(*sky);
 
     // whole hue range
     const std::vector<GradientMilestone> milestones3 = makeWholeHueRange();

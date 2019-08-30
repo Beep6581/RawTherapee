@@ -928,6 +928,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (WaveParams.softrad > 0.f) {
                         array2D<float> ble(pW, pH);
                         array2D<float> guid(pW, pH);
+                        Imagefloat *tmpImage = nullptr;
+                        tmpImage = new Imagefloat(pW, pH);
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -941,8 +943,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 Color::Lab2XYZ(L, a, b, X, Y, Z);
 
                                 guid[ir][jr] = Y / 32768.f;
-                                
-                                ble[ir][jr] = (nprevl->L[ir][jr]) / 32768.f;
+                                float La = nprevl->L[ir][jr];
+                                float aa = nprevl->a[ir][jr];
+                                float ba = nprevl->b[ir][jr];
+                                Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                                tmpImage->r(ir, jr) = X;
+                                tmpImage->g(ir, jr) = Y;
+                                tmpImage->b(ir, jr) = Z;
+                                ble[ir][jr] = Y / 32768.f;
                             }
                         double epsilmax = 0.0001;
                         double epsilmin = 0.00001;
@@ -962,8 +970,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                         for (int ir = 0; ir < pH; ir++)
                             for (int jr = 0; jr < pW; jr++) {
-                                nprevl->L[ir][jr] =  32768.f * ble[ir][jr];
+                                float X = tmpImage->r(ir, jr);
+                                float Y = 32768.f * ble[ir][jr];
+                                float Z = tmpImage->b(ir, jr);
+                                float L, a, b;
+                                Color::XYZ2Lab(X, Y, Z, L, a, b);
+                                nprevl->L[ir][jr] =  L;
                             }
+                    delete tmpImage;
+
                     }
                     
                 }
