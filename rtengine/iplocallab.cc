@@ -8100,7 +8100,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int flag = 0;
                     if (maxlvl <= 4) {
                         mL0 = 0.f;
-                        mL = -mL;
+                        mL = -1.5f * mL;//increase only for sharpen
                         thr = 1.f;
                         flag = 0;
 
