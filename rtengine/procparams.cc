@@ -330,6 +330,29 @@ ToneCurveParams::ToneCurveParams() :
 {
 }
 
+bool ToneCurveParams::isPanningRelatedChange(const ToneCurveParams& other) const
+{
+    return !
+        (autoexp == other.autoexp
+        && clip == other.clip
+        && hrenabled == other.hrenabled
+        && method == other.method
+        && expcomp == other.expcomp
+        && curve == other.curve
+        && curve2 == other.curve2
+        && curveMode == other.curveMode
+        && curveMode2 == other.curveMode2
+        && brightness == other.brightness
+        && black == other.black
+        && contrast == other.contrast
+        && saturation == other.saturation
+        && shcompr == other.shcompr
+        && hlcompr == other.hlcompr
+        && hlcomprthresh == other.hlcomprthresh
+        && histmatching == other.histmatching
+        && clampOOG == other.clampOOG);
+}
+
 bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
 {
     return
@@ -1208,6 +1231,21 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0)
 {
+}
+
+bool WBParams::isPanningRelatedChange(const WBParams& other) const
+{
+    return !
+        (enabled == other.enabled
+        && ((method == "Camera" && other.method == "Camera")
+        ||
+        (method == other.method
+        && temperature == other.temperature
+        && green == other.green
+        && equal == other.equal
+        && tempBias == other.tempBias)
+        )
+        );
 }
 
 bool WBParams::operator ==(const WBParams& other) const
