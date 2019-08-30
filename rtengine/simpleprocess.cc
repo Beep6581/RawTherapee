@@ -1187,25 +1187,29 @@ private:
                 if (WaveParams.softrad > 0.f) {
                     array2D<float> ble(fw, fh);
                     array2D<float> guid(fw, fh);
-                    /*
-                    #ifdef _OPENMP
-                                            const int numThreads = omp_get_max_threads();
-                    #endif
-
-                                            bool multiTh = false;
-
-                                            if (numThreads > 1) {
-                                                multiTh = true;
-                                            }
-                    */
+                    Imagefloat *tmpImage = nullptr;
+                    tmpImage = new Imagefloat(fw, fh);
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
 
                     for (int ir = 0; ir < fh; ir++)
                         for (int jr = 0; jr < fw; jr++) {
-                            ble[ir][jr] = (labView->L[ir][jr]) / 32768.f;
-                            guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
+                            float X, Y, Z;
+                            float L = provradius->L[ir][jr];
+                            float a = provradius->a[ir][jr];
+                            float b = provradius->b[ir][jr];
+                            Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                            guid[ir][jr] = Y / 32768.f;
+                            float La = labView->L[ir][jr];
+                            float aa = labView->a[ir][jr];
+                            float ba = labView->b[ir][jr];
+                            Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                            tmpImage->r(ir, jr) = X;
+                            tmpImage->g(ir, jr) = Y;
+                            tmpImage->b(ir, jr) = Z;
+                            ble[ir][jr] = Y / 32768.f;
                         }
                     double epsilmax = 0.0001;
                     double epsilmin = 0.00001;
@@ -1225,8 +1229,14 @@ private:
 
                     for (int ir = 0; ir < fh; ir++)
                         for (int jr = 0; jr < fw; jr++) {
-                            labView->L[ir][jr] = 32768.f * ble[ir][jr];
+                            float X = tmpImage->r(ir, jr);
+                            float Y = 32768.f * ble[ir][jr];
+                            float Z = tmpImage->b(ir, jr);
+                            float L, a, b;
+                            Color::XYZ2Lab(X, Y, Z, L, a, b);
+                            labView->L[ir][jr] = L;
                         }
+                delete tmpImage;
                 }
                 
             }
