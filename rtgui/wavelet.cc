@@ -489,7 +489,7 @@ Wavelet::Wavelet() :
     showmaskConn = showmask->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::showmaskToggled));
 
     ToolParamBlock* const clariBox = Gtk::manage(new ToolParamBlock());
-  //  ushamethod->append(M("TP_WAVELET_USH"));
+    //  ushamethod->append(M("TP_WAVELET_USH"));
     ushamethod->append(M("TP_WAVELET_SHA"));
     ushamethod->append(M("TP_WAVELET_CLA"));
     ushamethodconn = ushamethod->signal_changed().connect(sigc::mem_fun(*this, &Wavelet::ushamethodChanged));
@@ -1064,7 +1064,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     //ushamethod
 //    if (pp->wavelet.ushamethod == "none") {
 //        ushamethod->set_active(0);
- //   } else 
+//   } else
     if (pp->wavelet.ushamethod == "sharp") {
         ushamethod->set_active(0);
     } else if (pp->wavelet.ushamethod == "clari") {
@@ -1758,9 +1758,9 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
         pp->wavelet.Medgreinf = "less";
     }
 
- //   if (ushamethod->get_active_row_number() == 0) {
- //       pp->wavelet.ushamethod = "none";
- //   } else 
+//   if (ushamethod->get_active_row_number() == 0) {
+//       pp->wavelet.ushamethod = "none";
+//   } else
     if (ushamethod->get_active_row_number() == 0) {
         pp->wavelet.ushamethod = "sharp";
     } else if (ushamethod->get_active_row_number() == 1) {
@@ -2319,14 +2319,14 @@ void Wavelet::TMmethodUpdateUI()
         }
     }
     */
-            if(TMmethod->get_active_row_number() == 1) {
-               edgs->show();
-               scale->show();
-            } else if (TMmethod->get_active_row_number() == 0) {
-               edgs->hide();
-               scale->hide();
-            }
-   
+    if (TMmethod->get_active_row_number() == 1) {
+        edgs->show();
+        scale->show();
+    } else if (TMmethod->get_active_row_number() == 0) {
+        edgs->hide();
+        scale->hide();
+    }
+
 }
 
 void Wavelet::TMmethodChanged()
@@ -2413,14 +2413,14 @@ void Wavelet::ushamethodChanged()
         Dirmethod->set_sensitive(true);
         CLmethod->set_sensitive(false);
         Backmethod->set_sensitive(false);
-  /*  }  else if (ushamethod->get_active_row_number() == 0 || expclari->getEnabled() == false) {
-        Backmethod->set_active(1);
-        CLmethod->set_active(3);
-        Lmethod->set_active(3);
-        Dirmethod->set_active(3);
-        Lmethod->set_sensitive(false);
-        Dirmethod->set_sensitive(false);
-        */
+        /*  }  else if (ushamethod->get_active_row_number() == 0 || expclari->getEnabled() == false) {
+              Backmethod->set_active(1);
+              CLmethod->set_active(3);
+              Lmethod->set_active(3);
+              Dirmethod->set_active(3);
+              Lmethod->set_sensitive(false);
+              Dirmethod->set_sensitive(false);
+              */
     }  else if (expclari->getEnabled() == false) {
         Backmethod->set_active(1);
         CLmethod->set_active(3);
@@ -2496,12 +2496,16 @@ void Wavelet::LmethodUpdateUI() {
 void Wavelet::LmethodChanged()
 {
     //LmethodUpdateUI();
-    if(ushamethod->get_active_row_number() == 0 && expclari->getEnabled() == true) {
-        if(Lmethod->get_active_row_number() > 3) Lmethod->set_active(3);
+    if (ushamethod->get_active_row_number() == 0 && expclari->getEnabled() == true) {
+        if (Lmethod->get_active_row_number() > 3) {
+            Lmethod->set_active(3);
+        }
     }
 
-    if(ushamethod->get_active_row_number() == 1 && expclari->getEnabled() == true) {
-        if(Lmethod->get_active_row_number() < 4) Lmethod->set_active(4);
+    if (ushamethod->get_active_row_number() == 1 && expclari->getEnabled() == true) {
+        if (Lmethod->get_active_row_number() < 4) {
+            Lmethod->set_active(4);
+        }
     }
 
     if (listener && (multiImage || getEnabled())) {
@@ -2588,23 +2592,23 @@ void Wavelet::setBatchMode(bool batchMode)
 
 void Wavelet::adjusterUpdateUI(Adjuster* a)
 {
- /*   
-        if (!batchMode) {
-            if (a == tmrs ) {
-                float tm;
-                tm=tmrs->getValue();
-                if(tm==0.f) tmr->hide();
-                else tmr->show();
-            }
-            else if (a == gamma ) {
-                float tm;
-                tm=tmrs->getValue();
-                if(tm==0.f) tmr->hide();
-                else tmr->show();
-                
-            }
-        }
- */  
+    /*
+           if (!batchMode) {
+               if (a == tmrs ) {
+                   float tm;
+                   tm=tmrs->getValue();
+                   if(tm==0.f) tmr->hide();
+                   else tmr->show();
+               }
+               else if (a == gamma ) {
+                   float tm;
+                   tm=tmrs->getValue();
+                   if(tm==0.f) tmr->hide();
+                   else tmr->show();
+
+               }
+           }
+    */
 }
 
 void Wavelet::adjusterChanged(Adjuster* a, double newval)
@@ -2618,15 +2622,16 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvWavresconH, resconH->getTextValue());
         } else if (a == reschro) {
             listener->panelChanged(EvWavreschro, reschro->getTextValue());
-        } else if (a == tmrs) {            
+        } else if (a == tmrs) {
             adjusterUpdateUI(a);
             listener->panelChanged(EvWavtmrs, tmrs->getTextValue());
-            if(tmrs->getValue() != 0 && TMmethod->get_active_row_number() == 1) {
-               edgs->show();
-               scale->show();
+
+            if (tmrs->getValue() != 0 && TMmethod->get_active_row_number() == 1) {
+                edgs->show();
+                scale->show();
             } else if (TMmethod->get_active_row_number() == 0) {
-               edgs->hide();
-               scale->hide();
+                edgs->hide();
+                scale->hide();
             }
         } else if (a == gamma) {
             adjusterUpdateUI(a);
@@ -3305,6 +3310,7 @@ void Wavelet::enableToggled(MyExpander *expander)
                     Backmethod->set_sensitive(false);
                 }
             }
+
             event = EvWavenaclari;
         } else
             // unknown expander, returning !

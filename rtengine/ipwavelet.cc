@@ -3,7 +3,7 @@
 //
 //
 //
-//  code dated: December , 2014
+//  code dated: 9 , 2019
 //
 //  Ipwaveletcc is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -1275,9 +1275,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         bool multiTh = false;
 
 #ifdef _OPENMP
+
         if (numthreads > 1) {
             multiTh = true;
         }
+
 #endif
 
 #ifdef _OPENMP
@@ -1301,7 +1303,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 tmpImage->g(ir, jr) = Y;
                 tmpImage->b(ir, jr) = Z;
                 ble[ir][jr] = Y / 32768.f;
-                
+
             }
 
         double epsilmax = 0.001;
@@ -1327,9 +1329,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 float Z = tmpImage->b(ir, jr);
                 float L, a, b;
                 Color::XYZ2Lab(X, Y, Z, L, a, b);
-                
+
                 dst->L[ir][jr] = L;
             }
+
         delete tmpImage;
     }
 
@@ -1781,11 +1784,11 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     double contreal = 0.6 * contrast;
     DiagonalCurve resid_contrast({
         DCT_NURBS,
-            0, 0,
-            avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
-            avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
-            1, 1
-        });
+        0, 0,
+        avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
+        avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
+        1, 1
+    });
 
 
 #ifdef _OPENMP
@@ -1796,17 +1799,18 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
             {
 
 #ifdef _OPENMP
-            #pragma omp for
+                #pragma omp for
 #endif
+
                 for (int i = 0; i < W_L * H_L; i++) {
-                    float buf = LIM01( WavCoeffs_L0[i] / 32768.f);
+                    float buf = LIM01(WavCoeffs_L0[i] / 32768.f);
                     buf = resid_contrast.getVal(buf);
                     buf *= 32768.f;
                     WavCoeffs_L0[i] = buf;
                 }
             }
         }
-        
+
 
         if (cp.tonemap && cp.contmet == 1  && cp.resena) {
             float maxp = max0 * 256.f;
@@ -1818,32 +1822,36 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
     }
 
-        if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
-            LabImage *temp = nullptr;
-            temp = new LabImage(W_L, H_L);
+    if ((cp.conres != 0.f || cp.conresH != 0.f) && cp.resena) { // cp.conres = 0.f and cp.comresH = 0.f means that all will be multiplied by 1.f, so we can skip this step
+        LabImage *temp = nullptr;
+        temp = new LabImage(W_L, H_L);
 #ifdef _OPENMP
-            #pragma omp for
+        #pragma omp for
 #endif
-                for (int i = 0; i < H_L; i++) {
-                    for (int j = 0; j < W_L; j++) {
-                        temp->L[i][j] = WavCoeffs_L0[i * W_L + j];
-                    }
-                }
-    {
-        ImProcFunctions::shadowsHighlights(temp, true, 1, cp.conresH, cp.conres, cp.radius, skip, cp.thH, cp.th);
-    }
-#ifdef _OPENMP
-            #pragma omp for
-#endif
-                for (int i = 0; i < H_L; i++) {
-                    for (int j = 0; j < W_L; j++) {
-                        WavCoeffs_L0[i * W_L + j] = temp->L[i][j];
-                    }
-                }
 
-            delete temp;
-
+        for (int i = 0; i < H_L; i++) {
+            for (int j = 0; j < W_L; j++) {
+                temp->L[i][j] = WavCoeffs_L0[i * W_L + j];
+            }
         }
+
+        {
+            ImProcFunctions::shadowsHighlights(temp, true, 1, cp.conresH, cp.conres, cp.radius, skip, cp.thH, cp.th);
+        }
+
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int i = 0; i < H_L; i++) {
+            for (int j = 0; j < W_L; j++) {
+                WavCoeffs_L0[i * W_L + j] = temp->L[i][j];
+            }
+        }
+
+        delete temp;
+
+    }
 
 
 #ifdef _OPENMP
