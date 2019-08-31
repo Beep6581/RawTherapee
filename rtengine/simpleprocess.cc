@@ -1249,7 +1249,7 @@ private:
 
                 if ((WaveParams.CLmethod == "one" || WaveParams.CLmethod == "inf")  && WaveParams.Backmethod == "black") {
                     mL0 = mC0 = 0.f;
-                    mL = -mL;
+                    mL = -1.5f * mL;
                     mC = -mC;
                 } else if (WaveParams.CLmethod == "sup" && WaveParams.Backmethod == "resid") {
                     mL0 = mL;

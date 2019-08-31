@@ -1043,6 +1043,8 @@ void Crop::update(int todo)
                 if (WaveParams.softrad > 0.f) {
                     array2D<float> ble(labnCrop->W, labnCrop->H);
                     array2D<float> guid(labnCrop->W, labnCrop->H);
+                    Imagefloat *tmpImage = nullptr;
+                    tmpImage = new Imagefloat(labnCrop->W, labnCrop->W);
 
 #ifdef _OPENMP
                     #pragma omp parallel for
@@ -1050,8 +1052,21 @@ void Crop::update(int todo)
 
                     for (int ir = 0; ir < labnCrop->H ; ir++)
                         for (int jr = 0; jr < labnCrop->W; jr++) {
-                            ble[ir][jr] = (labnCrop->L[ir][jr]) / 32768.f;
-                            guid[ir][jr] = provradius->L[ir][jr] / 32768.f;
+                            float X, Y, Z;
+                            float L = provradius->L[ir][jr];
+                            float a = provradius->a[ir][jr];
+                            float b = provradius->b[ir][jr];
+                            Color::Lab2XYZ(L, a, b, X, Y, Z);
+
+                            guid[ir][jr] = Y / 32768.f;
+                            float La = labnCrop->L[ir][jr];
+                            float aa = labnCrop->a[ir][jr];
+                            float ba = labnCrop->b[ir][jr];
+                            Color::Lab2XYZ(La, aa, ba, X, Y, Z);
+                            tmpImage->r(ir, jr) = X;
+                            tmpImage->g(ir, jr) = Y;
+                            tmpImage->b(ir, jr) = Z;
+                            ble[ir][jr] = Y / 32768.f;
                         }
                     double epsilmax = 0.0001;
                     double epsilmin = 0.00001;
@@ -1070,8 +1085,14 @@ void Crop::update(int todo)
 
                     for (int ir = 0; ir < labnCrop->H; ir++)
                         for (int jr = 0; jr < labnCrop->W; jr++) {
-                            labnCrop->L[ir][jr] = 32768.f * ble[ir][jr];
+                            float X = tmpImage->r(ir, jr);
+                            float Y = 32768.f * ble[ir][jr];
+                            float Z = tmpImage->b(ir, jr);
+                            float L, a, b;
+                            Color::XYZ2Lab(X, Y, Z, L, a, b);
+                            labnCrop->L[ir][jr] = L;
                         }
+                    delete tmpImage;
                 }
                 
             }
@@ -1083,16 +1104,24 @@ void Crop::update(int todo)
                 float mC = (float)(WaveParams.mergeC / 100.f);
                 float mL0;
                 float mC0;
+                float background = 0.f;
+                int show = 0; 
 
                 if ((WaveParams.CLmethod == "one" || WaveParams.CLmethod == "inf")  && WaveParams.Backmethod == "black") {
                     mL0 = mC0 = 0.f;
-                    mL = -mL;
+                    mL = -1.5f * mL;
                     mC = -mC;
+                    background = 12000.f;
+                    show = 0;
                 } else if (WaveParams.CLmethod == "sup" && WaveParams.Backmethod == "resid") {
                     mL0 = mL;
                     mC0 = mC;
+                    background = 0.f;
+                    show = 0;
                 } else {
                     mL0 = mL = mC0 = mC = 0.f;
+                    background = 0.f;
+                    show = 0;
                 }
 
                 float indic = 1.f;
@@ -1101,6 +1130,7 @@ void Crop::update(int todo)
                     indic = -1.f;
                     mL = fabs(mL);
                     mC = fabs(mC);
+                    show = 1;
                 }
 
 
@@ -1110,7 +1140,7 @@ void Crop::update(int todo)
 
                 for (int x = 0; x < labnCrop->H; x++)
                     for (int y = 0; y < labnCrop->W; y++) {
-                        labnCrop->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) - mL * indic * labnCrop->L[x][y];
+                        labnCrop->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * labnCrop->L[x][y];
                         labnCrop->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * labnCrop->a[x][y];
                         labnCrop->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * labnCrop->b[x][y];
                     }

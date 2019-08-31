@@ -988,18 +988,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float mC = (float)(WaveParams.mergeC / 100.f);
                     float mL0;
                     float mC0;
+                    float background = 0.f;
+                    int show = 0; 
 
 
 
                     if ((WaveParams.CLmethod == "one" || WaveParams.CLmethod == "inf")  && WaveParams.Backmethod == "black") {
                         mL0 = mC0 = 0.f;
-                        mL = -mL;
+                        mL = - 1.5f * mL;
                         mC = -mC;
+                        background = 12000.f;
+                        show = 0;
                     } else if (WaveParams.CLmethod == "sup" && WaveParams.Backmethod == "resid") {
                         mL0 = mL;
                         mC0 = mC;
+                        background = 0.f;
+                        show = 0;
                     } else {
                         mL0 = mL = mC0 = mC = 0.f;
+                        background = 0.f;
+                        show = 0;
                     }
                 float indic = 1.f;
 
@@ -1008,6 +1016,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     indic = -1.f;
                     mL = fabs(mL);
                     mC = fabs(mC);
+                    show = 1;
                 }
 #ifdef _OPENMP
                     #pragma omp parallel for
@@ -1015,7 +1024,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     for (int x = 0; x < pH; x++)
                         for (int y = 0; y < pW; y++) {
-                            nprevl->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) - mL * indic * nprevl->L[x][y];
+                            nprevl->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * nprevl->L[x][y];
                             nprevl->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * nprevl->a[x][y];
                             nprevl->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * nprevl->b[x][y];
                         }
