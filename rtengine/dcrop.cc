@@ -1133,14 +1133,13 @@ void Crop::update(int todo)
                     show = 1;
                 }
 
-
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
 
                 for (int x = 0; x < labnCrop->H; x++)
                     for (int y = 0; y < labnCrop->W; y++) {
-                        labnCrop->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * labnCrop->L[x][y];
+                        labnCrop->L[x][y] = LIM((1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * labnCrop->L[x][y], 0.f, 32768.f);
                         labnCrop->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * labnCrop->a[x][y];
                         labnCrop->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * labnCrop->b[x][y];
                     }

@@ -1024,7 +1024,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     for (int x = 0; x < pH; x++)
                         for (int y = 0; y < pW; y++) {
-                            nprevl->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * nprevl->L[x][y];
+                            nprevl->L[x][y] = LIM((1.f + mL0) * (unshar->L[x][y]) + show * background - mL * indic * nprevl->L[x][y], 0.f, 32768.f);
                             nprevl->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * indic * nprevl->a[x][y];
                             nprevl->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * indic * nprevl->b[x][y];
                         }

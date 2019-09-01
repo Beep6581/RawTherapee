@@ -1265,7 +1265,7 @@ private:
 
                 for (int x = 0; x < fh; x++)
                     for (int y = 0; y < fw; y++) {
-                        labView->L[x][y] = (1.f + mL0) * (unshar->L[x][y]) - mL * labView->L[x][y];
+                        labView->L[x][y] = LIM((1.f + mL0) * (unshar->L[x][y]) - mL * labView->L[x][y], 0.f, 32768.f);
                         labView->a[x][y] = (1.f + mC0) * (unshar->a[x][y]) - mC * labView->a[x][y];
                         labView->b[x][y] = (1.f + mC0) * (unshar->b[x][y]) - mC * labView->b[x][y];
                     }
