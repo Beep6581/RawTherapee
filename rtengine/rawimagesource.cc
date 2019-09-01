@@ -1020,12 +1020,12 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
         } else {
             numFrames = 6;
         }
-#ifdef _OPENMP99
+#ifdef _OPENMP
         #pragma omp parallel
 #endif
         {
             int errCodeThr = 0;
-#ifdef _OPENMP99
+#ifdef _OPENMP
             #pragma omp for nowait
 #endif
             for(unsigned int i = 0; i < numFrames; ++i) {
@@ -1037,7 +1037,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
                     errCodeThr = riFrames[i]->loadRaw (true, i + 1);
                 }
             }
-#ifdef _OPENMP99
+#ifdef _OPENMP
             #pragma omp critical
 #endif
             {
