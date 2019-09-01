@@ -8117,7 +8117,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         for (int x = 0; x < bfh; x++)
                             for (int y = 0; y < bfw; y++) {
-                                tmp1->L[x][y] = (1.f + mL0) * (tmp1->L[x][y]) - mL * tmpresid->L[x][y];
+                                tmp1->L[x][y] = CLIPLOC((1.f + mL0) * (tmp1->L[x][y]) - mL * tmpresid->L[x][y]);
                             }
 
                         if (softr > 0.f) {
