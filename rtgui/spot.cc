@@ -32,8 +32,14 @@ using namespace rtengine::procparams;
 #define STATIC_VISIBLE_OBJ_NBR 6
 #define STATIC_MO_OBJ_NBR 6
 
-Spot::Spot() : FoldableToolPanel (this, "spot", M ("TP_SPOT_LABEL"), true, true), EditSubscriber (ET_OBJECTS), lastObject (-1), activeSpot (-1),
-    sourceIcon ("spot-normal.png", "spot-active.png", "spot-active.png", "spot-prelight.png", "", Geometry::DP_CENTERCENTER), editedCheckBox (nullptr)
+Spot::Spot() :
+    FoldableToolPanel(this, "spot", M ("TP_SPOT_LABEL"), true, true),
+    EditSubscriber(ET_OBJECTS),
+    draggedSide(DraggedSide::NONE),
+    lastObject(-1),
+    activeSpot(-1),
+    sourceIcon("spot-normal.png", "spot-active.png", "spot-prelight.png", "", "", Geometry::DP_CENTERCENTER),
+    editedCheckBox(nullptr)
 {
     countLabel = Gtk::manage (new Gtk::Label (Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0)));
 
@@ -61,6 +67,7 @@ Spot::Spot() : FoldableToolPanel (this, "spot", M ("TP_SPOT_LABEL"), true, true)
     sourceCircle.datum = Geometry::IMAGE;
     sourceCircle.setActive (false);
     sourceCircle.radiusInImageSpace = true;
+    sourceCircle.setDashed(true);
     sourceMODisc.datum = Geometry::IMAGE;
     sourceMODisc.setActive (false);
     sourceMODisc.radiusInImageSpace = true;
@@ -77,9 +84,12 @@ Spot::Spot() : FoldableToolPanel (this, "spot", M ("TP_SPOT_LABEL"), true, true)
     sourceFeatherCircle.datum = Geometry::IMAGE;
     sourceFeatherCircle.setActive (false);
     sourceFeatherCircle.radiusInImageSpace = true;
+    sourceFeatherCircle.setDashed(true);
+    sourceFeatherCircle.innerLineWidth = 0.7;
     targetFeatherCircle.datum = Geometry::IMAGE;
     targetFeatherCircle.setActive (false);
     targetFeatherCircle.radiusInImageSpace = true;
+    targetFeatherCircle.innerLineWidth = 0.7;
     link.datum = Geometry::IMAGE;
     link.setActive (false);
 
@@ -241,6 +251,10 @@ Geometry* Spot::getVisibleGeometryFromMO (int MOID)
         return &sourceIcon;
     }
 
+    if (MOID > STATIC_MO_OBJ_NBR) {
+        return EditSubscriber::visibleGeometry.at(MOID - STATIC_MO_OBJ_NBR);
+    }
+
     return EditSubscriber::mouseOverGeometry.at (MOID);
 }
 
@@ -259,10 +273,12 @@ void Spot::createGeometry ()
             delete EditSubscriber::visibleGeometry.at (i);
         }
 
-    size_t i = 0, j = 0;
+    // mouse over geometry starts with the static geometry, then the spot's icon geometry
     EditSubscriber::mouseOverGeometry.resize (STATIC_MO_OBJ_NBR + nbrEntry);
+    // visible geometry starts with the spot's icon geometry, then the static geometry
     EditSubscriber::visibleGeometry.resize (nbrEntry + STATIC_VISIBLE_OBJ_NBR);
 
+    size_t i = 0, j = 0;
     EditSubscriber::mouseOverGeometry.at (i++) = &targetMODisc;        // STATIC_MO_OBJ_NBR + 0
     EditSubscriber::mouseOverGeometry.at (i++) = &sourceMODisc;        // STATIC_MO_OBJ_NBR + 1
     EditSubscriber::mouseOverGeometry.at (i++) = &targetCircle;        // STATIC_MO_OBJ_NBR + 2
@@ -351,6 +367,10 @@ void Spot::updateGeometry()
             } else {
                 link.setActive (false);
             }
+
+            sourceCircle.setVisible(draggedSide != DraggedSide::SOURCE);
+            targetCircle.setVisible(draggedSide != DraggedSide::TARGET);
+            link.setVisible(draggedSide == DraggedSide::NONE);
         } else {
             targetCircle.setActive (false);
             targetMODisc.setActive (false);
@@ -432,10 +452,37 @@ void Spot::deleteSelectedEntry()
     }
 }
 
-// TODO
-CursorShape Spot::getCursor (int objectID) const
+CursorShape Spot::getCursor (int objectID, int xPos, int yPos) const
 {
-    return CSHandOpen;
+    const EditDataProvider* editProvider = getEditProvider();
+    if (editProvider) {
+        if (draggedSide != DraggedSide::NONE) {
+            return CSEmpty;
+        }
+
+        int object = editProvider->getObject();
+        if (object == 0 || object == 1) {
+            return CSMove2D;
+        }
+        if (object >= 2 || object <= 5) {
+            Coord delta(Coord(xPos, yPos) - ((object == 3 || object == 5) ? spots.at(activeSpot).sourcePos : spots.at(activeSpot).targetPos));
+            PolarCoord polarPos(delta);
+            if (polarPos.angle < 0.) {
+                polarPos.angle += 180.;
+            }
+            if (polarPos.angle < 22.5 || polarPos.angle >= 157.5) {
+                return CSMove1DH;
+            }
+            if (polarPos.angle < 67.5) {
+                return CSResizeBottomRight;
+            }
+            if (polarPos.angle < 112.5) {
+                return CSMove1DV;
+            }
+            return CSResizeBottomLeft;
+        }
+    }
+    return CSCrosshair;
 }
 
 bool Spot::mouseOver (int modifierKey)
@@ -494,10 +541,12 @@ bool Spot::button1Pressed (int modifierKey)
 
     if (editProvider) {
         if (lastObject == -1 && (modifierKey & GDK_CONTROL_MASK)) {
+            draggedSide = DraggedSide::SOURCE;
             addNewEntry();
             EditSubscriber::action = EditSubscriber::Action::DRAGGING;
             return true;
         } else if (lastObject > -1) {
+            draggedSide = lastObject == 0 ? DraggedSide::TARGET : lastObject == 1 ? DraggedSide::SOURCE : DraggedSide::NONE;
             getVisibleGeometryFromMO (lastObject)->state = Geometry::DRAGGED;
             EditSubscriber::action = EditSubscriber::Action::DRAGGING;
             return true;
@@ -519,6 +568,7 @@ bool Spot::button1Released()
 
     loGeom->state = Geometry::PRELIGHT;
     EditSubscriber::action = EditSubscriber::Action::NONE;
+    draggedSide = DraggedSide::NONE;
     updateGeometry();
     return true;
 }
@@ -552,6 +602,7 @@ bool Spot::button3Pressed (int modifierKey)
         lastObject = 1;  // sourceMODisc
         sourceIcon.state = Geometry::DRAGGED;
         EditSubscriber::action = EditSubscriber::Action::DRAGGING;
+        draggedSide = DraggedSide::SOURCE;
         return true;
     } else if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
         EditSubscriber::action = EditSubscriber::Action::PICKING;
@@ -571,6 +622,7 @@ bool Spot::button3Released()
 
     lastObject = -1;
     sourceIcon.state = Geometry::ACTIVE;
+    draggedSide = DraggedSide::NONE;
     updateGeometry();
     EditSubscriber::action = EditSubscriber::Action::NONE;
     return true;

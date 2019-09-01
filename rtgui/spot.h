@@ -57,6 +57,13 @@ class Spot : public ToolParamBlock, public FoldableToolPanel, public rtengine::T
 {
 
 private:
+    enum class DraggedSide {
+        NONE,
+        SOURCE,
+        TARGET
+    };
+
+    DraggedSide draggedSide;       // tells which of source or target is being dragged
     int lastObject;                // current object that is hovered
     int activeSpot;                // currently active spot, being edited
     std::vector<rtengine::procparams::SpotEntry> spots; // list of edited spots
@@ -103,7 +110,7 @@ public:
     void setBatchMode (bool batchMode) override;
 
     // EditSubscriber interface
-    CursorShape getCursor (int objectID) const override;
+    CursorShape getCursor (int objectID, int xPos, int yPos) const override;
     bool mouseOver (int modifierKey) override;
     bool button1Pressed (int modifierKey) override;
     bool button1Released () override;

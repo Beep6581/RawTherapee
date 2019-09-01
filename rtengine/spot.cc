@@ -23,18 +23,6 @@
 #include "imagesource.h"
 #include <iostream>
 
-namespace
-{
-
-// "ceil" rounding
-template<typename T>
-constexpr T skips(T a, T b)
-{
-    return a / b + static_cast<bool>(a % b);
-}
-
-}
-
 namespace rtengine
 {
 
@@ -48,14 +36,12 @@ public:
     };
 
     struct Rectangle {
-    public:
         int x1;
         int y1;
         int x2;
         int y2;
 
-        Rectangle() : x1(0), y1(0), x2(0), y2(0) {}
-        Rectangle(const Rectangle &other) : x1(other.x1), y1(other.y1), x2(other.x2), y2(other.y2) {}
+        Rectangle() : Rectangle(0, 0, 0, 0) {}
         Rectangle(int X1, int Y1, int X2, int Y2) : x1(X1), y1(Y1), x2(X2), y2(Y2) {}
 
         bool intersects(const Rectangle &other) const {
@@ -65,21 +51,24 @@ public:
 
         bool getIntersection(const Rectangle &other, std::unique_ptr<Rectangle> &intersection) const {
             if (intersects(other)) {
-                if (!intersection) {
-                    intersection.reset(new Rectangle());
-                }
-                intersection->x1 = rtengine::max(x1, other.x1);
-                intersection->x2 = rtengine::min(x2, other.x2);
-                intersection->y1 = rtengine::max(y1, other.y1);
-                intersection->y2 = rtengine::min(y2, other.y2);
+                std::unique_ptr<Rectangle> intsec(
+                    new Rectangle(
+                        rtengine::max(x1, other.x1),
+                        rtengine::max(y1, other.y1),
+                        rtengine::min(x2, other.x2),
+                        rtengine::min(y2, other.y2)
+                    )
+                );
 
-                if (intersection->x1 > intersection->x2 || intersection->y1 > intersection->y2) {
-                    intersection.release();
+                if (intsec->x1 > intsec->x2 || intsec->y1 > intsec->y2) {
                     return false;
                 }
+
+                intersection = std::move(intsec);
                 return true;
             }
             if (intersection) {
+                // There's no intersection, we delete the Rectangle structure
                 intersection.release();
             }
             return false;
@@ -101,15 +90,15 @@ public:
             return *this;
         }
 
-        Rectangle& operator/=(const int &v) {
+        Rectangle& operator/=(int v) {
             if (v == 1) {
                 return *this;
             }
 
             int w = x2 - x1 + 1;
             int h = y2 - y1 + 1;
-            w = w / v + (w % v > 0);
-            h = h / v + (h % v > 0);
+            w = w / v + static_cast<bool>(w % v);
+            h = h / v + static_cast<bool>(h % v);
             x1 /= v;
             y1 /= v;
             x2 = x1 + w - 1;
@@ -117,7 +106,7 @@ public:
 
             return *this;
         }
-};
+    };
 
 private:
     Type type;
@@ -173,7 +162,7 @@ public:
         }
     }
 
-    SpotBox& operator /=(const int& v) {
+    SpotBox& operator /=(int v) {
         if (v == 1) {
             return *this;
         }

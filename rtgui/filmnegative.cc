@@ -225,7 +225,7 @@ void FilmNegative::setEditProvider(EditDataProvider* provider)
     EditSubscriber::setEditProvider(provider);
 }
 
-CursorShape FilmNegative::getCursor(int objectID) const
+CursorShape FilmNegative::getCursor(int objectID, int xPos, int yPos) const
 {
    return CSSpotWB;
 }
