@@ -999,11 +999,43 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     if (errCode) {
         return errCode;
     }
-    numFrames = firstFrameOnly ? 1 : ri->getFrameCount();
+    numFrames = firstFrameOnly ? (numFrames < 7 ? 1 : ri->getFrameCount()) : ri->getFrameCount();
 
     errCode = 0;
 
-    if(numFrames > 1) {
+    if(numFrames >= 7) {
+        // special case to avoid crash when loading Hasselblad H6D-100cMS pixelshift files
+        // limit to 6 frames and skip first frame, as first frame is not bayer
+        if (firstFrameOnly) {
+            numFrames = 1;
+        } else {
+            numFrames = 6;
+        }
+#ifdef _OPENMP99
+        #pragma omp parallel
+#endif
+        {
+            int errCodeThr = 0;
+#ifdef _OPENMP99
+            #pragma omp for nowait
+#endif
+            for(unsigned int i = 0; i < numFrames; ++i) {
+                if(i == 0) {
+                    riFrames[i] = ri;
+                    errCodeThr = riFrames[i]->loadRaw (true, i + 1, true, plistener, 0.8);
+                } else {
+                    riFrames[i] = new RawImage(fname);
+                    errCodeThr = riFrames[i]->loadRaw (true, i + 1);
+                }
+            }
+#ifdef _OPENMP99
+            #pragma omp critical
+#endif
+            {
+                errCode = errCodeThr ? errCodeThr : errCode;
+            }
+        }
+    } else if(numFrames > 1) {
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
