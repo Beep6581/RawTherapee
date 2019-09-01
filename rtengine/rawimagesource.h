@@ -74,13 +74,13 @@ protected:
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
-    RawImage* riFrames[4] = {nullptr};
+    RawImage* riFrames[6] = {nullptr};
     unsigned int currFrame = 0;
     unsigned int numFrames = 0;
     int flatFieldAutoClipValue = 0;
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
-    array2D<float> *rawDataFrames[4] = {nullptr};
-    array2D<float> *rawDataBuffer[3] = {nullptr};
+    array2D<float> *rawDataFrames[6] = {nullptr};
+    array2D<float> *rawDataBuffer[5] = {nullptr};
 
     // the interpolated green plane:
     array2D<float> green;
