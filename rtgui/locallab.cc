@@ -1530,7 +1530,7 @@ Locallab::Locallab():
     contrastBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4);
     contrastBox->pack_start(*levelwav);
     contrastBox->pack_start(*residcont);
-//    contrastBox->pack_start(*residchro);
+    contrastBox->pack_start(*residchro);
     contrastBox->pack_start(*clariFrame);
     contrastBox->pack_start(*sensilc);
     contrastBox->pack_start(*fftwlc);

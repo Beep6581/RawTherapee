@@ -8182,6 +8182,58 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     wdspot->reconstruct(tmp1->L[0], 1.f);
                     delete wdspot;
 
+                    const float satur = params->locallab.spots.at(sp).residchro;
+
+                    if (satur != 0.f) {
+
+                        wavelet_decomposition *wdspota = new wavelet_decomposition(tmp1->a[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
+
+                        if (wdspota->memoryAllocationFailed) {
+                            return;
+                        }
+
+                        float *wav_ab0a = wdspota->coeff0;
+                        //      int maxlvla = wdspota->maxlevel();
+                        int W_La = wdspota->level_W(0);
+                        int H_La = wdspota->level_H(0);
+
+#ifdef _OPENMP
+                        #pragma omp for nowait
+#endif
+
+                        for (int i = 0; i < W_La * H_La; i++) {
+                            wav_ab0a[i] *= (1.f + satur / 100.f);
+                            wav_ab0a[i] = CLIPC(wav_ab0a[i]);
+                        }
+
+                        wdspota->reconstruct(tmp1->a[0], 1.f);
+                        delete wdspota;
+
+                        wavelet_decomposition *wdspotb = new wavelet_decomposition(tmp1->b[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
+
+                        if (wdspotb->memoryAllocationFailed) {
+                            return;
+                        }
+
+                        float *wav_ab0b = wdspotb->coeff0;
+                        //      int maxlvlb = wdspotb->maxlevel();
+                        int W_Lb = wdspotb->level_W(0);
+                        int H_Lb = wdspotb->level_H(0);
+
+#ifdef _OPENMP
+                        #pragma omp for nowait
+#endif
+
+                        for (int i = 0; i < W_Lb * H_Lb; i++) {
+                            wav_ab0b[i] *= (1.f + satur / 100.f);
+                            wav_ab0b[i] = CLIPC(wav_ab0b[i]);
+                        }
+
+                        wdspotb->reconstruct(tmp1->b[0], 1.f);
+                        delete wdspotb;
+
+                    }
+
 
                     float thr = 0.001f;
                     int flag = 0;
