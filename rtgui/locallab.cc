@@ -2944,7 +2944,6 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).inversret = inversret->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiusret = softradiusret->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).equilret = equilret->get_active();
-
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve = LLmaskretishape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve = CCmaskretishape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskreticurve = HHmaskretishape->getCurve();

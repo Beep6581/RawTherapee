@@ -1038,6 +1038,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locllmasblCurve.Reset();
                 locccmasblCurve.Reset();
                 lochhmasblCurve.Reset();
+                locwavCurve.Reset();
 
             }
         }

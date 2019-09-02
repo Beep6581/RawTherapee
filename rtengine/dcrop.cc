@@ -1059,6 +1059,7 @@ void Crop::update(int todo)
                 locllmasblCurve.Reset();
                 locccmasblCurve.Reset();
                 lochhmasblCurve.Reset();
+                locwavCurve.Reset();
 
                 if (skip <= 2) {
                     usleep(settings->cropsleep);    //wait to avoid crash when crop 100% and move window

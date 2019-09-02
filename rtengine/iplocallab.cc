@@ -7733,7 +7733,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
             }
         }
-
+if(wavcurve) printf("wav true\n");
+else printf("wav false\n");
 //params->locallab.spots.at(sp).clarilres != 0.f)
         if ((lp.lcamount > 0.f || wavcurve || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call < 3  && lp.lcena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -8076,20 +8077,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         delete wdspotresidb;
                     }
 
-                    wavelet_decomposition wdspot(tmp1->L[0], bfw, bfh, wavelet_level, 1, sk, numThreads, 6);
-//                        wavelet_decomposition *wdspot = new wavelet_decomposition(tmp1->L[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
+                    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp1->L[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
 
-                    if (wdspot.memoryAllocationFailed) {
+                    if (wdspot->memoryAllocationFailed) {
                         return;
                     }
 
                     const float contrast = params->locallab.spots.at(sp).residcont;
-                    int maxlvl = wdspot.maxlevel();
+                    int maxlvl = wdspot->maxlevel();
 
                     if (contrast != 0) {
-                        int W_L = wdspot.level_W(0);
-                        int H_L = wdspot.level_H(0);
-                        float *wav_L0 = wdspot.coeff0;
+                        int W_L = wdspot->level_W(0);
+                        int H_L = wdspot->level_H(0);
+                        float *wav_L0 = wdspot->coeff0;
 
                         double avedbl = 0.0; // use double precision for large summations
 
@@ -8133,14 +8133,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float sigmaN[10];
                     float MaxP[10];
                     float MaxN[10];
-                    Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+                    Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
                     // printf("mean=%f sig=%f\n", mean[3], sigma[3]);
 
                     for (int dir = 1; dir < 4; dir++) {
                         for (int level = 0; level < maxlvl; ++level) {
-                            int W_L = wdspot.level_W(level);
-                            int H_L = wdspot.level_H(level);
-                            float **wav_L = wdspot.level_coeffs(level);
+                            int W_L = wdspot->level_W(level);
+                            int H_L = wdspot->level_H(level);
+                            float **wav_L = wdspot->level_coeffs(level);
 
                             if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                                 float insigma = 0.666f; //SD
@@ -8184,7 +8184,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    wdspot.reconstruct(tmp1->L[0], 1.f);
+                    wdspot->reconstruct(tmp1->L[0], 1.f);
+                    delete wdspot;
+
+
                     float thr = 0.001f;
                     int flag = 0;
                     
@@ -8245,6 +8248,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
                 float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+                if(coefC == 0.f) {//prevent bad behavior
+                    coefC = 1.f;
+                }
                 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)

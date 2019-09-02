@@ -4736,6 +4736,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensilc(v),
     fftwlc(v),
     localcontMethod(v),
+    locwavcurve(v),
     // Contrast by detail levels
     expcbdl(v),
     mult{v, v, v, v, v, v},
@@ -4987,7 +4988,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sensilc = v;
     fftwlc = v;
     localcontMethod = v;
-    locwavcurve = v;
     locwavcurve = v;
     // Contrast by detail levels
     expcbdl = v;
