@@ -1137,7 +1137,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lclightness = locallab.spots.at(j).lclightness && pSpot.lclightness == otherSpot.lclightness;
                 locallab.spots.at(j).levelwav = locallab.spots.at(j).levelwav && pSpot.levelwav == otherSpot.levelwav;
                 locallab.spots.at(j).residcont = locallab.spots.at(j).residcont && pSpot.residcont == otherSpot.residcont;
+                locallab.spots.at(j).residchro = locallab.spots.at(j).residchro && pSpot.residchro == otherSpot.residchro;
                 locallab.spots.at(j).clarilres = locallab.spots.at(j).clarilres && pSpot.clarilres == otherSpot.clarilres;
+                locallab.spots.at(j).claricres = locallab.spots.at(j).claricres && pSpot.claricres == otherSpot.claricres;
                 locallab.spots.at(j).clarisoft = locallab.spots.at(j).clarisoft && pSpot.clarisoft == otherSpot.clarisoft;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
@@ -3397,8 +3399,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).residcont   = mods.locallab.spots.at(i).residcont;
         }
 
+        if (locallab.spots.at(i).residchro) {
+            toEdit.locallab.spots.at(i).residchro   = mods.locallab.spots.at(i).residchro;
+        }
+
         if (locallab.spots.at(i).clarilres) {
             toEdit.locallab.spots.at(i).clarilres   = mods.locallab.spots.at(i).clarilres;
+        }
+
+        if (locallab.spots.at(i).claricres) {
+            toEdit.locallab.spots.at(i).claricres   = mods.locallab.spots.at(i).claricres;
         }
 
         if (locallab.spots.at(i).clarisoft) {
@@ -4719,7 +4729,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lclightness(v),
     levelwav(v),
     residcont(v),
+    residchro(v),
     clarilres(v),
+    claricres(v),
     clarisoft(v),
     sensilc(v),
     fftwlc(v),
@@ -4968,7 +4980,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lclightness = v;
     levelwav = v;
     residcont = v;
+    residchro = v;
     clarilres = v;
+    claricres = v;
     clarisoft = v;
     sensilc = v;
     fftwlc = v;

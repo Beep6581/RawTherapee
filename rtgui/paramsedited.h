@@ -560,7 +560,9 @@ public:
         bool lclightness;
         bool levelwav;
         bool residcont;
+        bool residchro;
         bool clarilres;
+        bool claricres;
         bool clarisoft;
         bool sensilc;
         bool fftwlc;

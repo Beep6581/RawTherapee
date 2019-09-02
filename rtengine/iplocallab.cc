@@ -7735,7 +7735,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 
 //params->locallab.spots.at(sp).clarilres != 0.f)
-        if ((lp.lcamount > 0.f || wavcurve || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f) && call < 3  && lp.lcena) {
+        if ((lp.lcamount > 0.f || wavcurve || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call < 3  && lp.lcena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -7820,8 +7820,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 JaggedArray<float> bufchro(bfw, bfh);
                 std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
-                //     int GW = original->W;
-                //     int GH = original->H;
 
                 std::unique_ptr<LabImage> tmpresid(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> tmpres(new LabImage(bfw, bfh));
@@ -7892,8 +7890,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     int wavelet_level = params->locallab.spots.at(sp).levelwav;
                     float mL = (float)(params->locallab.spots.at(sp).clarilres / 100.f);
+                    float mC = (float)(params->locallab.spots.at(sp).claricres / 100.f);
+                    printf("mCCCC=%f\n", mC);
                     float softr = (float)(params->locallab.spots.at(sp).clarisoft);
                     float mL0;
+                    float mC0;
 #ifdef _OPENMP
                     const int numThreads = omp_get_max_threads();
 #else
@@ -7949,6 +7950,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     wavelet_level = min(wavelet_level, maxlevelspot);
 
+                    bool exec = false;
+
+                    if(mL != 0.f && mC == 0.f) {
+                        mC = 0.0001f;
+                        exec = true;
+                    }
+
+                    if(mC != 0.f && mL == 0.f) {
+                        mL = 0.0001f;
+                        exec = true;
+                    }
+
+                    if(mL != 0.f && mC != 0.f) {
+                        exec = true;
+                    }
+
                     if (mL != 0.f) {
 
                         wavelet_decomposition *wdspotresid = new wavelet_decomposition(tmpresid->L[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
@@ -7957,10 +7974,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             return;
                         }
 
-
                         int maxlvlresid = wdspotresid->maxlevel();
 
-                        //  printf("maxlvlresid=%i maxlevelspot=%i\n", maxlvlresid, maxlevelspot);
                         if (maxlvlresid > 4) {//Clarity
                             for (int dir = 1; dir < 4; dir++) {
                                 for (int level = 0; level < maxlvlresid; ++level) {
@@ -7983,12 +7998,85 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-
                         wdspotresid->reconstruct(tmpresid->L[0], 1.f);
                         delete wdspotresid;
                     }
 
-                    wavelet_decomposition wdspot(tmp1->data, bfw, bfh, wavelet_level, 1, sk, numThreads, 6);
+
+                    if (mC != 0.f) {
+
+                        wavelet_decomposition *wdspotresida = new wavelet_decomposition(tmpresid->a[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+
+                        if (wdspotresida->memoryAllocationFailed) {
+                            return;
+                        }
+
+                        int maxlvlresid = wdspotresida->maxlevel();
+
+                        if (maxlvlresid > 4) {//Clarity
+                            for (int dir = 1; dir < 4; dir++) {
+                                for (int level = 0; level < maxlvlresid; ++level) {
+                                    int W_L = wdspotresida->level_W(level);
+                                    int H_L = wdspotresida->level_H(level);
+                                    float **wav_Lresida = wdspotresida->level_coeffs(level);
+
+                                    for (int i = 0; i < W_L * H_L; i++) {
+                                        wav_Lresida[dir][i] = 0.f;
+                                    }
+                                }
+                            }
+                        } else {//Sharp
+                            float *wav_L0resida = wdspotresida->coeff0;
+                            int W_L = wdspotresida->level_W(0);
+                            int H_L = wdspotresida->level_H(0);
+
+                            for (int i = 0; i < W_L * H_L; i++) {
+                                wav_L0resida[i] = 0.f;
+                            }
+                        }
+
+                        wdspotresida->reconstruct(tmpresid->a[0], 1.f);
+                        delete wdspotresida;
+                    }
+
+
+                    if (mC != 0.f) {
+
+                        wavelet_decomposition *wdspotresidb = new wavelet_decomposition(tmpresid->b[0], tmpresid->W, tmpresid->H, wavelet_level, 1, sk, numThreads, 6);
+
+                        if (wdspotresidb->memoryAllocationFailed) {
+                            return;
+                        }
+
+                        int maxlvlresid = wdspotresidb->maxlevel();
+
+                        if (maxlvlresid > 4) {//Clarity
+                            for (int dir = 1; dir < 4; dir++) {
+                                for (int level = 0; level < maxlvlresid; ++level) {
+                                    int W_L = wdspotresidb->level_W(level);
+                                    int H_L = wdspotresidb->level_H(level);
+                                    float **wav_Lresidb = wdspotresidb->level_coeffs(level);
+
+                                    for (int i = 0; i < W_L * H_L; i++) {
+                                        wav_Lresidb[dir][i] = 0.f;
+                                    }
+                                }
+                            }
+                        } else {//Sharp
+                            float *wav_L0residb = wdspotresidb->coeff0;
+                            int W_L = wdspotresidb->level_W(0);
+                            int H_L = wdspotresidb->level_H(0);
+
+                            for (int i = 0; i < W_L * H_L; i++) {
+                                wav_L0residb[i] = 0.f;
+                            }
+                        }
+
+                        wdspotresidb->reconstruct(tmpresid->b[0], 1.f);
+                        delete wdspotresidb;
+                    }
+
+                    wavelet_decomposition wdspot(tmp1->L[0], bfw, bfh, wavelet_level, 1, sk, numThreads, 6);
 
                     if (wdspot.memoryAllocationFailed) {
                         return;
@@ -8095,32 +8183,40 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    wdspot.reconstruct(tmp1->data, 1.f);
+                    wdspot.reconstruct(tmp1->L[0], 1.f);
                     float thr = 0.001f;
                     int flag = 0;
+                    
                     if (maxlvl <= 4) {
                         mL0 = 0.f;
+                        mC0 = 0.f;
                         mL = -1.5f * mL;//increase only for sharpen
+                        mC = -mC;
                         thr = 1.f;
                         flag = 0;
 
-                    } else {
+                    } else if (maxlvl > 4) {
                         mL0 = mL;
+                        mC0 = mC;
                         thr = 1.f;
                         flag = 0;
+                    } else {
+                        mL0 = mL = mC0 = mC = 0.f;
                     }
 
-                    if (mL != 0.f) {
+                    if (exec) {
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
 
                         for (int x = 0; x < bfh; x++)
                             for (int y = 0; y < bfw; y++) {
-                                tmp1->L[x][y] = CLIPLOC((1.f + mL0) * (tmp1->L[x][y]) - mL * tmpresid->L[x][y]);
+                                tmp1->L[x][y] = CLIPLOC((1.f + mL0) * tmp1->L[x][y] - mL * tmpresid->L[x][y]);
+                                tmp1->a[x][y] = CLIPC((1.f + mC0) * tmp1->a[x][y] - mC * tmpresid->a[x][y]);
+                                tmp1->b[x][y] = CLIPC((1.f + mC0) * tmp1->b[x][y] - mC * tmpresid->b[x][y]);
                             }
 
-                        if (softr > 0.f) {
+                        if (softr > 0.f && fabs(mL > 1.f)) {
                             softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
                         }
                     }
@@ -8128,6 +8224,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float minL =  tmp1->L[0][0] - bufgb->L[0][0];
                 float maxL = minL;
+                float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
+                float maxC = minC;
+                
 #ifdef _OPENMP
                 #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
 #endif
@@ -8138,10 +8237,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufchro[ir][jr] = sqrt(SQR(tmp1->a[ir][jr]) + SQR(tmp1->b[ir][jr])) - sqrt(SQR(bufgb->a[ir][jr]) + SQR(bufgb->b[ir][jr]));
                         minL = rtengine::min(minL, buflight[ir][jr]);
                         maxL = rtengine::max(maxL, buflight[ir][jr]);
+                        minC = rtengine::min(minC, bufchro[ir][jr]);
+                        maxC = rtengine::max(maxC, bufchro[ir][jr]);
                     }
                 }
 
                 float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+                float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+                
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -8149,6 +8252,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 for (int y = 0; y < bfhr; y++) {
                     for (int x = 0; x < bfwr; x++) {
                         buflight[y][x] /= coef;
+                        bufchro[y][x] /= coefC;
                     }
                 }
 

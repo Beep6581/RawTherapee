@@ -243,7 +243,9 @@ private:
     Adjuster* const residcont;
     Adjuster* const clarilres;
     Adjuster* const clarisoft;
+    Adjuster* const claricres;
     Adjuster* const sensilc;
+    Adjuster* const residchro;
     // Contrast by detail levels
     Adjuster* multiplier[6];
     Adjuster* const chromacbdl;

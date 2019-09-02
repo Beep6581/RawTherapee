@@ -766,6 +766,8 @@ enum ProcEventCode {
     EvlocallabshowmaskSHMethodinv = 736,
     Evlocallabclarilres = 737,
     Evlocallabclarisoft = 738,
+    Evlocallabclaricres = 739,
+    Evlocallabresidchro = 740,
     NUMOFEVENTS
 };
 
