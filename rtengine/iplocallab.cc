@@ -7733,9 +7733,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
             }
         }
-if(wavcurve) printf("wav true\n");
-else printf("wav false\n");
-//params->locallab.spots.at(sp).clarilres != 0.f)
+
         if ((lp.lcamount > 0.f || wavcurve || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call < 3  && lp.lcena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -7892,7 +7890,6 @@ else printf("wav false\n");
                     int wavelet_level = params->locallab.spots.at(sp).levelwav;
                     float mL = (float)(params->locallab.spots.at(sp).clarilres / 100.f);
                     float mC = (float)(params->locallab.spots.at(sp).claricres / 100.f);
-                    printf("mCCCC=%f\n", mC);
                     float softr = (float)(params->locallab.spots.at(sp).clarisoft);
                     float mL0;
                     float mC0;
@@ -7947,23 +7944,22 @@ else printf("wav false\n");
                         maxlevelspot = 0;
                     }
 
-                    //    int datalen = tmpresid->W * tmpresid->H;
 
                     wavelet_level = min(wavelet_level, maxlevelspot);
 
                     bool exec = false;
 
-                    if(mL != 0.f && mC == 0.f) {
+                    if (mL != 0.f && mC == 0.f) {
                         mC = 0.0001f;
                         exec = true;
                     }
 
-                    if(mC != 0.f && mL == 0.f) {
+                    if (mC != 0.f && mL == 0.f) {
                         mL = 0.0001f;
                         exec = true;
                     }
 
-                    if(mL != 0.f && mC != 0.f) {
+                    if (mL != 0.f && mC != 0.f) {
                         exec = true;
                     }
 
@@ -8134,7 +8130,6 @@ else printf("wav false\n");
                     float MaxP[10];
                     float MaxN[10];
                     Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-                    // printf("mean=%f sig=%f\n", mean[3], sigma[3]);
 
                     for (int dir = 1; dir < 4; dir++) {
                         for (int level = 0; level < maxlvl; ++level) {
@@ -8190,7 +8185,7 @@ else printf("wav false\n");
 
                     float thr = 0.001f;
                     int flag = 0;
-                    
+
                     if (maxlvl <= 4) {
                         mL0 = 0.f;
                         mC0 = 0.f;
@@ -8220,7 +8215,7 @@ else printf("wav false\n");
                                 tmp1->b[x][y] = CLIPC((1.f + mC0) * tmp1->b[x][y] - mC * tmpresid->b[x][y]);
                             }
 
-                        if (softr > 0.f && fabs(mL > 1.f)) {
+                        if (softr > 0.f && fabs(mL) > 0.001f) {
                             softproc(tmpres.get(), tmp1.get(), softr, bfh, bfw, 0.0001, 0.00001, thr, sk, multiThread, flag);
                         }
                     }
@@ -8230,7 +8225,7 @@ else printf("wav false\n");
                 float maxL = minL;
                 float minC = sqrt(SQR(tmp1->a[0][0]) + SQR(tmp1->b[0][0])) - sqrt(SQR(bufgb->a[0][0]) + SQR(bufgb->b[0][0]));
                 float maxC = minC;
-                
+
 #ifdef _OPENMP
                 #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
 #endif
@@ -8247,11 +8242,17 @@ else printf("wav false\n");
                 }
 
                 float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+
+                if (coef == 0.f) { //prevent bad behavior
+                    coef = 1.f;
+                }
+
                 float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-                if(coefC == 0.f) {//prevent bad behavior
+
+                if (coefC == 0.f) { //prevent bad behavior
                     coefC = 1.f;
                 }
-                
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
