@@ -8077,6 +8077,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     wavelet_decomposition wdspot(tmp1->L[0], bfw, bfh, wavelet_level, 1, sk, numThreads, 6);
+//                        wavelet_decomposition *wdspot = new wavelet_decomposition(tmp1->L[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
 
                     if (wdspot.memoryAllocationFailed) {
                         return;

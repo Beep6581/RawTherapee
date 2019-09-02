@@ -729,7 +729,7 @@ void BayerProcess::FrameCountChanged(int n, int frameNum)
 
             imageNumber->remove_all();
             imageNumber->append("1");
-            for (int i = 2; i <= std::min(n, 4); ++i) {
+            for (int i = 2; i <= std::min(n, 6); ++i) {
                 std::ostringstream entry;
                 entry << i;
                 imageNumber->append(entry.str());

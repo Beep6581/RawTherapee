@@ -547,6 +547,17 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         return nullptr;
     }
 
+    if (ri->getFrameCount() == 7) {
+        // special case for Hasselblad H6D-100cMS pixelshift files
+        // first frame is not bayer, load second frame
+        int r = ri->loadRaw (1, 1, 0);
+
+        if ( r ) {
+            delete ri;
+            sensorType = ST_NONE;
+            return nullptr;
+        }
+    }
     sensorType = ri->getSensorType();
 
     int width = ri->get_width();
