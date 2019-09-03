@@ -773,7 +773,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.dehaze = local_dehaze;
     lp.senscb = local_sensicb;
     lp.clarityml = local_clarityml;
-    //printf("lpclari=%f \n", lp.clarityml);
     lp.contresid = local_contresid;
     lp.blurcbdl = local_blurcbdl;
     lp.cont = local_contrast;
@@ -5629,7 +5628,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     invers = 1;
                 }
 
-                //printf("lp.showmasktmmet=%i\n",lp.showmasktmmet);
 #ifdef _OPENMP
                 #pragma omp parallel
 #endif
@@ -5672,7 +5670,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 std::unique_ptr<LabImage> bufgbi(new LabImage(GW, GH));
                 JaggedArray<float> bufchro(bfw, bfh);
 
-                //printf("bfw=%i  bfh=%i\n", bfw, bfh);
                 //here mask is used with plein image for normal and inverse
                 //if it is possible to optimze with maskcalccol(), I don't to preserv lisibility
                 if (lp.showmaskblmet == 0 || lp.showmaskblmet == 1  || lp.showmaskblmet == 2 || lp.showmaskblmet == 4 || lp.enablMask) {
@@ -7033,11 +7030,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             lp.mulloc[5] = 1.001f;
                         }
 
-                        /*
-                            for (int lv = 0; lv < 6; lv++) {
-                               printf("mulloc=%f lv=%i\n",  lp.mulloc[lv], lv);
-                            }
-                        */
                         ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, lp.blurcbdl, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
                         if (lp.softradiuscb > 0.f) {
@@ -7075,7 +7067,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         for (int lv = 0; lv < 6; lv++) {
                             multc[lv] = rtengine::max((lp.chromacb * ((float) lp.mulloc[lv] - 1.f)) + 1.f, 0.01f);
-                            //   printf("multc=%f lev=%i\n", multc[lv], lv);
                         }
 
                         choice = 1;
@@ -7503,7 +7494,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool zero = false;
             bool modif = false;
 
-            //  printf("showmaskcolmetinv=%i\n", lp.showmaskcolmetinv);
             if (lp.showmaskSHmetinv == 1) {
                 showmaske = true;
             }
@@ -7557,8 +7547,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (bfw > 0 && bfh > 0) {
 
-                //   printf("n_fftw=%i yst=%i yen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i \n", N_fftwsize,  ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, original->H);
-                //   printf("xst= %i xen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
                 if (lp.softmet == 1) {
                     /*
                                     for (int n=0; n< 17; n++){
@@ -7643,10 +7631,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 //    printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i origH=%i maxH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfhr, original->H, maxH);
                 //    printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i origW=%i", xstart, xend, lp.xc, lp.lxL, lp.lx, bfwr, original->W);
 
-//            if (bfw > 0 && bfh > 0) {
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
-                //    std::unique_ptr<LabImage> temp(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 JaggedArray<float> buflight(bfw, bfh);
                 JaggedArray<float> bufl_ab(bfw, bfh);
 
@@ -7725,7 +7711,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //local contrast
         bool wavcurve = false;
-        if(locwavCurve && locwavutili) {
+
+        if (locwavCurve && locwavutili) {
             if (lp.locmet == 1) {
                 for (int i = 0; i < 500; i++) {
                     if (locwavCurve[i] != 0.5) {
@@ -8130,56 +8117,57 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float MaxP[10];
                     float MaxN[10];
                     Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-                    if(locwavCurve && locwavutili) {
-                    for (int dir = 1; dir < 4; dir++) {
-                        for (int level = 0; level < maxlvl; ++level) {
-                            int W_L = wdspot->level_W(level);
-                            int H_L = wdspot->level_H(level);
-                            float **wav_L = wdspot->level_coeffs(level);
 
-                            if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
-                                float insigma = 0.666f; //SD
-                                float logmax = log(MaxP[level]); //log Max
-                                float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
-                                float inx = log(insigma);
-                                float iny = log(rapX);
-                                float rap = inx / iny; //koef
-                                float asig = 0.166f / sigma[level];
-                                float bsig = 0.5f - asig * mean[level];
-                                float amean = 0.5f / mean[level];
+                    if (locwavCurve && locwavutili) {
+                        for (int dir = 1; dir < 4; dir++) {
+                            for (int level = 0; level < maxlvl; ++level) {
+                                int W_L = wdspot->level_W(level);
+                                int H_L = wdspot->level_H(level);
+                                float **wav_L = wdspot->level_coeffs(level);
+
+                                if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
+                                    float insigma = 0.666f; //SD
+                                    float logmax = log(MaxP[level]); //log Max
+                                    float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+                                    float inx = log(insigma);
+                                    float iny = log(rapX);
+                                    float rap = inx / iny; //koef
+                                    float asig = 0.166f / sigma[level];
+                                    float bsig = 0.5f - asig * mean[level];
+                                    float amean = 0.5f / mean[level];
 
 #ifdef _OPENMP
-                                #pragma omp parallel for if (multiThread)
+                                    #pragma omp parallel for if (multiThread)
 #endif
 
-                                for (int i = 0; i < W_L * H_L; i++) {
-                                   if (locwavCurve && locwavutili) {
-                                    float absciss;
-                                    float &val = wav_L[dir][i];
+                                    for (int i = 0; i < W_L * H_L; i++) {
+                                        if (locwavCurve && locwavutili) {
+                                            float absciss;
+                                            float &val = wav_L[dir][i];
 
-                                    if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
-                                        float valcour = xlogf(fabsf(val));
-                                        float valc = valcour - logmax;
-                                        float vald = valc * rap;
-                                        absciss = xexpf(vald);
-                                    } else if (fabsf(val) >= mean[level]) {
-                                        absciss = asig * fabsf(val) + bsig;
-                                    } else {
-                                        absciss = amean * fabsf(val);
+                                            if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
+                                                float valcour = xlogf(fabsf(val));
+                                                float valc = valcour - logmax;
+                                                float vald = valc * rap;
+                                                absciss = xexpf(vald);
+                                            } else if (fabsf(val) >= mean[level]) {
+                                                absciss = asig * fabsf(val) + bsig;
+                                            } else {
+                                                absciss = amean * fabsf(val);
+                                            }
+
+                                            float kc = locwavCurve[absciss * 500.f] - 0.5f;
+                                            float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
+
+                                            float kinterm = 1.f + reduceeffect * kc;
+                                            kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+
+                                            val *=  kinterm;
+                                        }
                                     }
-
-                                    float kc = locwavCurve[absciss * 500.f] - 0.5f;
-                                    float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
-
-                                    float kinterm = 1.f + reduceeffect * kc;
-                                    kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                                    val *=  kinterm;
-                                 }
                                 }
                             }
                         }
-                    }
                     }
 
                     wdspot->reconstruct(tmp1->L[0], 1.f);
@@ -8199,7 +8187,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         //      int maxlvla = wdspota->maxlevel();
                         int W_La = wdspota->level_W(0);
                         int H_La = wdspota->level_H(0);
-                        
+
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
@@ -8391,7 +8379,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             LabImage *buforigmas = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            //    printf("before bfh=%i bfw=%i bfhz=%i bfwz=%i\n", bfh, bfw, bfhz, bfwz);
 
             if (bfwz > 2 && bfhz > 2) {
 
@@ -8445,7 +8432,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     //new size bfw, bfh not optimized if spot H > high or spot W > width ==> TODO
                     bfh = int (lp.ly + lp.lyT) + del;
                     bfw = int (lp.lx + lp.lxL) + del;
-                    //printf("after bfh=%i bfw=%i  fftwH=%i fftww=%i\n", bfh, bfw, ftsizeH, ftsizeW);
 
                 }
 
@@ -8885,7 +8871,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    //  printf("FTsizeH =%i FTsizeW=%i \n", ftsizeH, ftsizeW);
                     //optimize with size fftw
                     if (ystart == 0 && yend < original->H) {
                         lp.ly -= (bfh - ftsizeH);
@@ -9227,7 +9212,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool zero = false;
             bool modif = false;
 
-            //  printf("showmaskcolmetinv=%i\n", lp.showmaskcolmetinv);
             if (lp.showmaskexpmetinv == 1) {
                 showmaske = true;
             }
@@ -9512,7 +9496,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-//printf("bfw=%i bfh=%i\n", bfw, bfh);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -9674,7 +9657,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool zero = false;
             bool modif = false;
 
-            //  printf("showmaskcolmetinv=%i\n", lp.showmaskcolmetinv);
             if (lp.showmaskcolmetinv == 1) {
                 showmaske = true;
             }
