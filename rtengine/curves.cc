@@ -2765,12 +2765,13 @@ void LocwavCurve::Set(const Curve &pCurve)
 
     //lutLocCurve.dump("wav");
 }
-void LocwavCurve::Set(const std::vector<double> &curvePoints)
+void LocwavCurve::Set(const std::vector<double> &curvePoints, bool & lcwavutili)
 {
 
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue(0.);
+        lcwavutili = true;
         Set(tcurve);
     } else {
         Reset();

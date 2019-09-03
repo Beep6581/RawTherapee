@@ -283,6 +283,7 @@ protected:
     bool lcmasblutili;
     bool lhmasblutili;
     bool llmasblutili;
+    bool locwavutili;
     bool LHutili;
     bool HHutili;
     LUTf huerefs;

@@ -1329,7 +1329,7 @@ public:
     virtual ~LocwavCurve() {};
     LocwavCurve();
     void Reset();
-    void Set(const std::vector<double> &curvePoints);
+    void Set(const std::vector<double> &curvePoints, bool &lcwavutili);
     float getSum() const
     {
         return sum;

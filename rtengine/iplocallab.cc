@@ -5373,7 +5373,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskCurve & locccmasretiCurve, bool & lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool & llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
                                 const LocCCmaskCurve & locccmastmCurve, bool & lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool & llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
                                 const LocCCmaskCurve & locccmasblCurve, bool & lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool & llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
-                                const LocwavCurve & locwavCurve,
+                                const LocwavCurve & locwavCurve, bool & locwavutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref,
                                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask)
 {
@@ -7725,11 +7725,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //local contrast
         bool wavcurve = false;
-
-        if (lp.locmet == 1) {
-            for (int i = 0; i < 500; i++) {
-                if (locwavCurve[i] != 0.5) {
-                    wavcurve = true;
+        if(locwavCurve && locwavutili) {
+            if (lp.locmet == 1) {
+                for (int i = 0; i < 500; i++) {
+                    if (locwavCurve[i] != 0.5) {
+                        wavcurve = true;
+                    }
                 }
             }
         }
@@ -7886,7 +7887,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
                 } else if (lp.locmet == 1) { //wavelet
-
                     int wavelet_level = params->locallab.spots.at(sp).levelwav;
                     float mL = (float)(params->locallab.spots.at(sp).clarilres / 100.f);
                     float mC = (float)(params->locallab.spots.at(sp).claricres / 100.f);
@@ -8130,7 +8130,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float MaxP[10];
                     float MaxN[10];
                     Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-
+                    if(locwavCurve && locwavutili) {
                     for (int dir = 1; dir < 4; dir++) {
                         for (int level = 0; level < maxlvl; ++level) {
                             int W_L = wdspot->level_W(level);
@@ -8153,6 +8153,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                                 for (int i = 0; i < W_L * H_L; i++) {
+                                   if (locwavCurve && locwavutili) {
                                     float absciss;
                                     float &val = wav_L[dir][i];
 
@@ -8174,9 +8175,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
 
                                     val *=  kinterm;
+                                 }
                                 }
                             }
                         }
+                    }
                     }
 
                     wdspot->reconstruct(tmp1->L[0], 1.f);

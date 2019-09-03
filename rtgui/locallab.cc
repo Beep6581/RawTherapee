@@ -1473,7 +1473,7 @@ Locallab::Locallab():
     wavshape->setResetCurve(FlatCurveType(defSpot.locwavcurve.at(0)), defSpot.locwavcurve);
 
     if (showtooltip) {
-        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
+//        wavshape->setTooltip(M("TP_RETINEX_WAV_TOOLTIP"));
     }
 
     LocalcurveEditorwav->curveListComplete();
