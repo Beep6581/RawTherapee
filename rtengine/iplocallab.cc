@@ -8196,9 +8196,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         //      int maxlvla = wdspota->maxlevel();
                         int W_La = wdspota->level_W(0);
                         int H_La = wdspota->level_H(0);
-
+                        
 #ifdef _OPENMP
-                        #pragma omp for nowait
+                        #pragma omp parallel for if (multiThread)
 #endif
 
                         for (int i = 0; i < W_La * H_La; i++) {
@@ -8221,7 +8221,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         int H_Lb = wdspotb->level_H(0);
 
 #ifdef _OPENMP
-                        #pragma omp for nowait
+                        #pragma omp parallel for if (multiThread)
 #endif
 
                         for (int i = 0; i < W_Lb * H_Lb; i++) {
@@ -8279,7 +8279,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float maxC = minC;
 
 #ifdef _OPENMP
-                #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
+                #pragma omp parallel for reduction(max:maxL) reduction(min:minL) reduction(min:minC) reduction(max:maxC)schedule(dynamic,16)
 #endif
 
                 for (int ir = 0; ir < bfhr; ir++) {
