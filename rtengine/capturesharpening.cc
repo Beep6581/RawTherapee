@@ -192,7 +192,7 @@ BENCHFUN
 #ifdef __SSE2__
         const vfloat gammav = F2V(gamma);
         for (; j < W - 3; j += 4) {
-            const vfloat factor = pow_F(LVFU(YNew[i][j]) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f)), gammav);
+            const vfloat factor = pow_F(vmaxf(LVFU(YNew[i][j]), ZEROV) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f)), gammav);
             STVFU(red[i][j], LVFU(redVals[i][j]) * factor);
             STVFU(green[i][j], LVFU(greenVals[i][j]) * factor);
             STVFU(blue[i][j], LVFU(blueVals[i][j]) * factor);
@@ -200,7 +200,7 @@ BENCHFUN
 
 #endif
         for (; j < W; ++j) {
-            const float factor = pow_F(YNew[i][j] / std::max(YOld[i][j], 0.00001f), gamma);
+            const float factor = pow_F(std::max(YNew[i][j], 0.f) / std::max(YOld[i][j], 0.00001f), gamma);
             red[i][j] = redVals[i][j] * factor;
             green[i][j] = greenVals[i][j] * factor;
             blue[i][j] = blueVals[i][j] * factor;
