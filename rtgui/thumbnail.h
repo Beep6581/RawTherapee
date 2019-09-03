@@ -49,17 +49,17 @@ class Thumbnail
     rtengine::Thumbnail* tpp;
     int             tw, th;             // dimensions of timgdata (it stores tpp->width and tpp->height in processed mode for simplicity)
     float           imgRatio;           // hack to avoid rounding error
-//        double          scale;            // portion of the sizes of the processed thumbnail image and the full scale image
+//  double          scale;              // portion of the sizes of the processed thumbnail image and the full scale image
 
     const std::unique_ptr<rtengine::procparams::ProcParams>      pparams;
     bool            pparamsValid;
     bool            imageLoading;
 
     // these are the data of the result image of the last getthumbnailimage  call (for caching purposes)
-    unsigned char*  lastImg;
-    int             lastW;
-    int             lastH;
-    double          lastScale;
+    unsigned char*  lastImg;            // pointer to the processed and scaled base ImageIO image
+    int             lastW;              // non rotated width of the cached ImageIO image
+    int             lastH;              // non rotated height of the cached ImageIO image
+    double          lastScale;          // scale of the cached ImageIO image
 
     // exif & date/time strings
     Glib::ustring   exifString;
