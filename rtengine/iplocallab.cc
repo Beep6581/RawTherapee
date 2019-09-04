@@ -8193,7 +8193,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                         for (int i = 0; i < W_La * H_La; i++) {
-                            wav_ab0a[i] *= (1.f + satur / 100.f);
+                            wav_ab0a[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));//more progressive than linear
                             wav_ab0a[i] = CLIPC(wav_ab0a[i]);
                         }
 
@@ -8216,7 +8216,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                         for (int i = 0; i < W_Lb * H_Lb; i++) {
-                            wav_ab0b[i] *= (1.f + satur / 100.f);
+                            wav_ab0b[i] *= (1.f + sin(rtengine::RT_PI * (satur / 200.f)));
                             wav_ab0b[i] = CLIPC(wav_ab0b[i]);
                         }
 
