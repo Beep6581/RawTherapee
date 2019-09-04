@@ -151,6 +151,8 @@ HistogramPanel::HistogramPanel ()
     else
         showMode->set_image(*mode2Image);
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
+    
+    raw_toggled(); // Make sure the luma/chroma toggles are enabled or disabled
 
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
