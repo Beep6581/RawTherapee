@@ -52,7 +52,7 @@ public:
 
 
     static void init();
-    static void cleanup();
+    static void cleanup(bool all = false);
     static void updateImages ();
     static void setDPInScale (const double newDPI, const int newScale);
     static void setScale (const int newScale);

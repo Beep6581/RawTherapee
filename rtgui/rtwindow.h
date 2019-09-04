@@ -53,7 +53,6 @@ private:
     {
         return !options.tabbedUI && ! (options.multiDisplayMode > 0);
     };
-    void findVerNumbers (int* numbers, Glib::ustring versionStr);
 
     bool on_expose_event_epanel (GdkEventExpose* event);
     bool on_expose_event_fpanel (GdkEventExpose* event);
