@@ -142,7 +142,7 @@ HistogramPanel::HistogramPanel ()
     showGreen->set_image (showGreen->get_active() ? *greenImage : *greenImage_g);
     showBlue->set_image  (showBlue->get_active()  ? *blueImage  : *blueImage_g);
     showValue->set_image (showValue->get_active() ? *valueImage : *valueImage_g);
-    showChro->set_image  (showChro->get_active()   ? *chroImage : *chroImage_g);
+    showChro->set_image  (showChro->get_active()  ? *chroImage  : *chroImage_g);
     showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
     if (options.histogramDrawMode == 0)
         showMode->set_image(*mode0Image);
@@ -504,7 +504,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
 
             if (needBlue) {
                 // Blue
-                cc->set_source_rgb(0.0, 0.0, 1.0);
+                cc->set_source_rgb(0.0, 0.4, 1.0);
                 if (options.histogramDrawMode < 2) {
                     cc->move_to(b * (winw - 1.) / 255.0 + 0.5*s, 0);
                     cc->line_to(b * (winw - 1.) / 255.0 + 0.5*s, winh - 0);
@@ -964,7 +964,7 @@ void HistogramArea::updateBackBuffer ()
 
         if (needBlue) {
             drawCurve(cr, bhchanged, realhistheight, w, h);
-            cr->set_source_rgb (0.0, 0.0, 1.0);
+            cr->set_source_rgb (0.0, 0.4, 1.0);
             cr->stroke ();
             drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
