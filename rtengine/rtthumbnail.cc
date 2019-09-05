@@ -547,6 +547,17 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         return nullptr;
     }
 
+    if (ri->getFrameCount() == 7) {
+        // special case for Hasselblad H6D-100cMS pixelshift files
+        // first frame is not bayer, load second frame
+        int r = ri->loadRaw (1, 1, 0);
+
+        if ( r ) {
+            delete ri;
+            sensorType = ST_NONE;
+            return nullptr;
+        }
+    }
     sensorType = ri->getSensorType();
 
     int width = ri->get_width();
@@ -1472,6 +1483,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     delete labView;
     delete baseImg;
 
+    /*
     // calculate scale
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
         myscale = scale * thumbImg->getWidth() / fh;
@@ -1480,19 +1492,20 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     }
 
     myscale = 1.0 / myscale;
-    /*    // apply crop
-        if (params.crop.enabled) {
-            int ix = 0;
-            for (int i=0; i<fh; i++)
-                for (int j=0; j<fw; j++)
-                    if (i<params.crop.y/myscale || i>(params.crop.y+params.crop.h)/myscale || j<params.crop.x/myscale || j>(params.crop.x+params.crop.w)/myscale) {
-                        readyImg->data[ix++] /= 3;
-                        readyImg->data[ix++] /= 3;
-                        readyImg->data[ix++] /= 3;
-                    }
-                    else
-                        ix += 3;
-        }*/
+    // apply crop
+    if (params.crop.enabled) {
+        int ix = 0;
+        for (int i=0; i<fh; i++)
+            for (int j=0; j<fw; j++)
+                if (i<params.crop.y/myscale || i>(params.crop.y+params.crop.h)/myscale || j<params.crop.x/myscale || j>(params.crop.x+params.crop.w)/myscale) {
+                    readyImg->data[ix++] /= 3;
+                    readyImg->data[ix++] /= 3;
+                    readyImg->data[ix++] /= 3;
+                }
+                else
+                    ix += 3;
+    }
+    */
 
     return readyImg;
 }

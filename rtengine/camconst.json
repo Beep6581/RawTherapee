@@ -2250,6 +2250,11 @@ Camera constants:
         }
     },
 
+    { // Quality C, only raw crop
+        "make_model": "Samsung EX2F",
+        "raw_crop": [ 16, 7, -4, -4 ]
+    },
+
     { // Quality B, corrections for raw crop vs dcraw9.21, matched to Samsung's default
         "make_model": "Samsung NX mini",
         "dcraw_matrix": [ 5222,-1196,-550,-6540,14649,2009,-1666,2819,5657 ], // dng 8.6 d65
