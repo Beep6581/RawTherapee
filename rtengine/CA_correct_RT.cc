@@ -106,6 +106,10 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 //end of linear equation solver
 }
 
+namespace rtengine {
+    extern const Settings* settings;
+}
+
 using namespace std;
 using namespace rtengine;
 
@@ -701,7 +705,9 @@ float* RawImageSource::CA_correct_RT(
                                 blockvar[dir][c] = blocksqave[dir][c] / blockdenom[dir][c] - SQR(blockave[dir][c] / blockdenom[dir][c]);
                             } else {
                                 processpasstwo = false;
-                                std::cout << "blockdenom vanishes" << std::endl;
+                                if (settings->verbose) {
+                                    std::cout << "blockdenom vanishes" << std::endl;
+                                }
                                 break;
                             }
                         }
@@ -801,7 +807,9 @@ float* RawImageSource::CA_correct_RT(
                             numpar = 4;
 
                             if (numblox[1] < 10) {
-                                std::cout << "numblox = " << numblox[1] << std::endl;
+                                if (settings->verbose) {
+                                    std::cout << "numblox = " << numblox[1] << std::endl;
+                                }
                                 processpasstwo = false;
                             }
                         }
