@@ -494,6 +494,7 @@ void ThumbBrowserEntryBase::resize (int h)
 
     height = h;
     int old_preh = preh;
+    int old_prew = prew;
 
     // dimensions of the button set
     int bsw = 0, bsh = 0;
@@ -555,9 +556,11 @@ void ThumbBrowserEntryBase::resize (int h)
         width = bsw + 2 * sideMargin + 2 * borderWidth;
     }
 
-    if (preh != old_preh) {
-        delete [] preview;
-        preview = nullptr;
+    if (preh != old_preh || prew != old_prew) { // if new thumbnail height or new orientation
+        if (preview) {
+            delete [] preview;
+            preview = nullptr;
+        }
         refreshThumbnailImage ();
     } else if (backBuffer) {
         backBuffer->setDirty(true);    // This will force a backBuffer update on queue_draw

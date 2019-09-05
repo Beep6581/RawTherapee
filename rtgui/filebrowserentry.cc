@@ -255,17 +255,20 @@ void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rten
         const bool resize = !preview || prew != img->getWidth();
         prew = img->getWidth ();
 
-        GThreadLock lock;
-
         // Check if image has been rotated since last time
         rotated = preview && newLandscape != landscape;
 
         if (resize) {
-            delete [] preview;
+            if (preview) {
+                delete [] preview;
+            }
             preview = new guint8 [prew * preh * 3];
         }
         memcpy(preview, img->getData(), prew * preh * 3);
+        {
+        GThreadLock lock;
         updateBackBuffer ();
+        }
     }
 
     landscape = newLandscape;
@@ -318,24 +321,36 @@ bool FileBrowserEntry::motionNotify (int x, int y)
         cropParams->y = action_y + (y - press_y) / scale;
         cropParams->h += oy - cropParams->y;
         cropgl->cropHeight1Resized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SResizeH2 && cropgl) {
         cropParams->h = action_y + (y - press_y) / scale;
         cropgl->cropHeight2Resized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SResizeW1 && cropgl) {
         int ox = cropParams->x;
         cropParams->x = action_x + (x - press_x) / scale;
         cropParams->w += ox - cropParams->x;
         cropgl->cropWidth1Resized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SResizeW2 && cropgl) {
         cropParams->w = action_x + (x - press_x) / scale;
         cropgl->cropWidth2Resized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SResizeTL && cropgl) {
         int ox = cropParams->x;
@@ -345,7 +360,10 @@ bool FileBrowserEntry::motionNotify (int x, int y)
         cropParams->y = action_y + (y - press_y) / scale;
         cropParams->h += oy - cropParams->y;
         cropgl->cropTopLeftResized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SResizeTR && cropgl) {
         cropParams->w = action_x + (x - press_x) / scale;
@@ -353,7 +371,10 @@ bool FileBrowserEntry::motionNotify (int x, int y)
         cropParams->y = action_y + (y - press_y) / scale;
         cropParams->h += oy - cropParams->y;
         cropgl->cropTopRightResized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SResizeBL && cropgl) {
         int ox = cropParams->x;
@@ -361,19 +382,28 @@ bool FileBrowserEntry::motionNotify (int x, int y)
         cropParams->w += ox - cropParams->x;
         cropParams->h = action_y + (y - press_y) / scale;
         cropgl->cropBottomLeftResized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SResizeBR && cropgl) {
         cropParams->w = action_x + (x - press_x) / scale;
         cropParams->h = action_y + (y - press_y) / scale;
         cropgl->cropBottomRightResized (cropParams->x, cropParams->y, cropParams->w, cropParams->h, crop_custom_ratio);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SCropMove && cropgl) {
         cropParams->x = action_x + (x - press_x) / scale;
         cropParams->y = action_y + (y - press_y) / scale;
         cropgl->cropMoved (cropParams->x, cropParams->y, cropParams->w, cropParams->h);
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     } else if (state == SCropSelecting && cropgl) {
         int cx1 = press_x, cy1 = press_y;
@@ -396,7 +426,10 @@ bool FileBrowserEntry::motionNotify (int x, int y)
             cropParams->h = cy1 - cy2 + 1;
         }
 
+        {
+        MYREADERLOCK(l, lockRW);
         updateBackBuffer ();
+        }
         parent->redrawNeeded (this);
     }
 
@@ -564,6 +597,7 @@ bool FileBrowserEntry::releaseNotify (int button, int type, int bstate, int x, i
 bool FileBrowserEntry::onArea (CursorArea a, int x, int y)
 {
 
+    MYREADERLOCK(l, lockRW);
     if (!drawable || !preview) {
         return false;
     }
@@ -764,6 +798,8 @@ void FileBrowserEntry::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     int y2 = action_y;
     int x2 = action_x;
 
+    {
+    MYREADERLOCK(l, lockRW);
     if (x2 < prex + ofsX + startx) {
         y2 = y1 - (double)(y1 - y2) * (x1 - (prex + ofsX + startx)) / (x1 - x2);
         x2 = prex + ofsX + startx;
@@ -778,6 +814,7 @@ void FileBrowserEntry::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     } else if (y2 >= preh + prey + ofsY + starty) {
         x2 = x1 - (double)(x1 - x2) * (y1 - (preh + prey + ofsY + starty - 1)) / (y1 - y2);
         y2 = preh + prey + ofsY + starty - 1;
+    }
     }
 
     cr->set_line_width (1.5);
