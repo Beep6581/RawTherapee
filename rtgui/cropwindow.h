@@ -102,6 +102,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     PointerMotionListener* pmlistener;
     PointerMotionListener* pmhlistener;
     std::list<CropWindowListener*> listeners;
+    double scrollAccum;
 
     CropWindow* observedCropWin;  // Pointer to the currently active detail CropWindow
 
