@@ -2475,6 +2475,18 @@ bool Options::has_retained_extention(const Glib::ustring& fname)
     return parsedExtensionsSet.find(getExtension(fname).lowercase()) != parsedExtensionsSet.end();
 }
 
+// Pattern matches "5.1" from "5.1-23-g12345678", when comparing option.version to RTVERSION
+bool Options::is_new_version() {
+    const std::string vs[] = {versionString, version};
+    std::vector<std::string> vMajor;
+
+    for (const auto& v : vs) {
+        vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
+    }
+
+    return vMajor.size() == 2 && vMajor[0] != vMajor[1];
+}
+
 /*
  * return true if ext is an enabled extension
  */
