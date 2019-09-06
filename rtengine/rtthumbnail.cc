@@ -1483,7 +1483,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     delete labView;
     delete baseImg;
 
-    /*
     // calculate scale
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
         myscale = scale * thumbImg->getWidth() / fh;
@@ -1495,17 +1494,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     // apply crop
     if (params.crop.enabled) {
         int ix = 0;
-        for (int i=0; i<fh; i++)
-            for (int j=0; j<fw; j++)
-                if (i<params.crop.y/myscale || i>(params.crop.y+params.crop.h)/myscale || j<params.crop.x/myscale || j>(params.crop.x+params.crop.w)/myscale) {
+        for (int i = 0; i < fh; ++i) {
+            for (int j = 0; j < fw; ++j) {
+                if (i < params.crop.y * myscale || i > (params.crop.y + params.crop.h) * myscale || j < params.crop.x * myscale || j > (params.crop.x + params.crop.w) * myscale) {
                     readyImg->data[ix++] /= 3;
                     readyImg->data[ix++] /= 3;
                     readyImg->data[ix++] /= 3;
-                }
-                else
+                } else {
                     ix += 3;
+                }
+            }
+        }
     }
-    */
+
 
     return readyImg;
 }
