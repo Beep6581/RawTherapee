@@ -1468,7 +1468,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_ADVANCED;Advanced
-!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt-w</b>
+!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt</b>-<b>a</b>
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>theme-based</b>\nShortcut: <b>9</b>

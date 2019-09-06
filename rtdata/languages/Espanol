@@ -954,7 +954,7 @@ MAIN_MSG_SETPATHFIRST;Para poder usar esta función, primero tiene que establece
 MAIN_MSG_TOOMANYOPENEDITORS;Demasiados editores abiertos.\n<b>Por favor cierre un editor para continuar.</b>
 MAIN_MSG_WRITEFAILED;Falla al escribir\n\n<b>"%1"</b>\n\nAsegurese de que el folder exista y que usted tenga permiso de escritura sobre él.
 MAIN_TAB_ADVANCED;Avanzado
-MAIN_TAB_ADVANCED_TOOLTIP;Tecla de Atajo: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Tecla de Atajo: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Tecla de Atajo: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Detalle

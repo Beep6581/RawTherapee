@@ -933,7 +933,7 @@ MAIN_MSG_SETPATHFIRST;この関数を使用するには、最初に環境設定�
 MAIN_MSG_TOOMANYOPENEDITORS;編集画面が多すぎます\n操作を続けるには何れかの画面を閉じてください
 MAIN_MSG_WRITEFAILED;書き込みに失敗しました\n\n<b>"%1"</b>\n\nフォルダが在るか書き込み権限を持っているか確認してください
 MAIN_TAB_ADVANCED;高度な機能
-MAIN_TAB_ADVANCED_TOOLTIP;ショートカット: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;ショートカット: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;カラー
 MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-c</b>
 MAIN_TAB_DETAIL;CbDL

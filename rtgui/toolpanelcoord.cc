@@ -922,7 +922,7 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event)
                 toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*rawPanelSW));
                 return true;
 
-            case GDK_KEY_w:
+            case GDK_KEY_a:
                 toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*advancedPanelSW));
                 return true;
 
