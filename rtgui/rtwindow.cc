@@ -95,6 +95,9 @@ RTWindow::RTWindow ()
     , fpanel (nullptr)
 {
 
+    if (options.is_new_version()) {
+        RTImage::cleanup(true);
+    }
     cacheMgr->init ();
     ProfilePanel::init (this);
 
@@ -475,16 +478,8 @@ void RTWindow::on_realize ()
     mainWindowCursorManager.init (get_window());
 
     // Display release notes only if new major version.
-    // Pattern matches "5.1" from "5.1-23-g12345678"
-    const std::string vs[] = {versionString, options.version};
-    std::vector<std::string> vMajor;
-
-    for (const auto& v : vs) {
-        vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
-    }
-
     bool waitForSplash = false;
-    if (vMajor.size() == 2 && vMajor[0] != vMajor[1]) {
+    if (options.is_new_version()) {
         // Update the version parameter with the right value
         options.version = versionString;
 

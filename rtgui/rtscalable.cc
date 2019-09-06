@@ -119,7 +119,7 @@ void RTScalable::deleteDir(const Glib::ustring& path)
     }
 }
 
-void RTScalable::cleanup()
+void RTScalable::cleanup(bool all)
 {
     Glib::ustring imagesCacheFolder = Glib::build_filename (options.cacheBaseDir, "svg2png");
     Glib::ustring sDPI = Glib::ustring::compose("%1", (int)getTweakedDPI());
@@ -134,7 +134,7 @@ void RTScalable::cleanup()
                 continue;
             }
 
-            if (fileName != sDPI) {
+            if (all || fileName != sDPI) {
                 deleteDir(filePath);
             }
         }

@@ -169,7 +169,7 @@ void RTImage::init()
     scaleBack = RTScalable::getScale();
 }
 
-void RTImage::cleanup()
+void RTImage::cleanup(bool all)
 {
     for (auto& entry : pixbufCache) {
         entry.second.reset();
@@ -177,7 +177,7 @@ void RTImage::cleanup()
     for (auto& entry : surfaceCache) {
         entry.second.clear();
     }
-    RTScalable::cleanup();
+    RTScalable::cleanup(all);
 }
 
 void RTImage::updateImages()
