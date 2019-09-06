@@ -50,7 +50,7 @@ public:
 #endif
 
     static void init(Gtk::Window *window);
-    static void cleanup();
+    static void cleanup(bool all = false);
     static double getDPI ();
     static double getTweakedDPI ();   // The returned value is tweaked DPI to adapt to main the font size. Maybe not an ideal solution.
     static int getScale ();
