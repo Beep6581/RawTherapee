@@ -1153,9 +1153,9 @@ CaptureSharpeningParams::CaptureSharpeningParams() :
     enabled(false),
     autoContrast(true),
     contrast(10.0),
-    gamma(1.35),
+    gamma(1.00),
     deconvradius(0.75),
-    deconviter(30)
+    deconviter(20)
 {
 }
 
