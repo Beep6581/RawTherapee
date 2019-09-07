@@ -889,7 +889,7 @@ MAIN_MSG_SETPATHFIRST;Vous devez d'abord choisir un dossier cible dans Préfére
 MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 MAIN_MSG_WRITEFAILED;Échec de l'enregistrement du fichier\n\n<b>"%1"</b>\n\nAssurez-vous que le dossier existe et qu'il est permis d'y écrire.
 MAIN_TAB_ADVANCED;Avancé
-MAIN_TAB_ADVANCED_TOOLTIP;Raccourci: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Raccourci: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;Couleur
 MAIN_TAB_COLOR_TOOLTIP;Raccourci:<b>Alt-c</b>
 MAIN_TAB_DETAIL;Détail
