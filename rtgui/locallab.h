@@ -159,6 +159,7 @@ private:
     Adjuster* const laplacexp;
     Adjuster* const balanexp;
     Adjuster* const linear;
+    Adjuster* const gamm;
     //Shadow highlight
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;

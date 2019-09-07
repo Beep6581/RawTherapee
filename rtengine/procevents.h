@@ -768,6 +768,7 @@ enum ProcEventCode {
     Evlocallabclarisoft = 738,
     Evlocallabclaricres = 739,
     Evlocallabresidchro = 740,
+    Evlocallabgamm = 741,
     NUMOFEVENTS
 };
 

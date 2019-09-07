@@ -9089,15 +9089,31 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             float *datain = new float[bfwr * bfhr];
                             float *dataout = new float[bfwr * bfhr];
                             float *dataor = new float[bfwr * bfhr];
-
+                            Imagefloat *tmpImage = nullptr;
+                            tmpImage = new Imagefloat(bfwr, bfhr);
+                            float gam = params->locallab.spots.at(sp).gamm;
+                            float igam = 1.f / gam;
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
-                                    datain[y * bfwr + x] = bufexpfin->L[y][x];
-                                    dataor[y * bfwr + x] = bufexpfin->L[y][x];
+                                    float LogL = 1.f;
+                                    float X, Y, Z;
+                                    float L = bufexpfin->L[y][x] / 32768.f;
+/*                                    float a = bufexpfin->a[y][x];
+                                    float b = bufexpfin->b[y][x];
+                                    Color::Lab2XYZ(L, a, b, X, Y, Z);
+                                    tmpImage->r(y, x) = X;
+                                    tmpImage->g(y, x) = Y;
+                                    tmpImage->b(y, x) = Z;
+*/
+                                    L = pow(L, gam);
+                                    L *= 32768.f;
+
+                                    datain[y * bfwr + x] = L;
+                                    dataor[y * bfwr + x] = L;
                                 }
                             }
 
@@ -9109,9 +9125,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
-                                    bufexpfin->L[y][x] = dataout[y * bfwr + x] ;
+                                  //  float X = tmpImage->r(y, x);
+                                    float Y = dataout[y * bfwr + x] / 32768.f;
+                                  //  float Z = tmpImage->b(y, x);
+                                  //  float L, a , b;
+                                  //  Color::XYZ2Lab(X, Y, Z, L, a, b);
+                                    Y = pow(Y, igam);
+                                    Y *= 32768.f;
+                                    bufexpfin->L[y][x] = Y; //dataout[y * bfwr + x] ;
                                 }
                             }
+                            delete tmpImage;
 
                             delete [] datain;
                             delete [] dataout;

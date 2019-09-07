@@ -1023,6 +1023,7 @@ struct LocallabParams {
         double laplacexp;
         double balanexp;
         double linear;
+        double gamm;
         // Shadow highlight
         bool expshadhigh;
         int highlights;

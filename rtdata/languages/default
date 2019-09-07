@@ -978,6 +978,7 @@ HISTORY_MSG_738;Local - Local contrast Merge L
 HISTORY_MSG_739;Local - Local contrast Soft radius
 HISTORY_MSG_740;Local - Local contrast Merge C
 HISTORY_MSG_741;Local - Local contrast Residual C
+HISTORY_MSG_742;Local - Exp Laplacian gamma
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2122,6 +2123,7 @@ TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - reduce if
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
 TP_LOCALLAB_LAPLACEXP;Laplacian threshold
 TP_LOCALLAB_BALANEXP;PDE balance
+TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
 TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)

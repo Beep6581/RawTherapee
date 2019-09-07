@@ -437,6 +437,7 @@ public:
         bool laplacexp;
         bool balanexp;
         bool linear;
+        bool gamm;
         // Shadow highlight
         bool expshadhigh;
         bool highlights;

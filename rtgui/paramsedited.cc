@@ -1014,6 +1014,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).laplacexp = locallab.spots.at(j).laplacexp && pSpot.laplacexp == otherSpot.laplacexp;
                 locallab.spots.at(j).balanexp = locallab.spots.at(j).balanexp && pSpot.balanexp == otherSpot.balanexp;
                 locallab.spots.at(j).linear = locallab.spots.at(j).linear && pSpot.linear == otherSpot.linear;
+                locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
                 // Shadow highlight
                 locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
                 locallab.spots.at(j).highlights = locallab.spots.at(j).highlights && pSpot.highlights == otherSpot.highlights;
@@ -2931,6 +2932,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).linear = mods.locallab.spots.at(i).linear;
         }
 
+        if (locallab.spots.at(i).gamm) {
+            toEdit.locallab.spots.at(i).gamm = mods.locallab.spots.at(i).gamm;
+        }
+
         // Shadow highlight
         if (locallab.spots.at(i).expshadhigh) {
             toEdit.locallab.spots.at(i).expshadhigh = mods.locallab.spots.at(i).expshadhigh;
@@ -4606,6 +4611,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     laplacexp(v),
     balanexp(v),
     linear(v),
+    gamm(v),
     // Shadow highlight
     expshadhigh(v),
     highlights(v),
@@ -4858,6 +4864,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     laplacexp = v;
     balanexp = v;
     linear = v;
+    gamm = v;
     // Shadow highlight
     expshadhigh = v;
     highlights = v;
