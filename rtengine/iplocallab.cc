@@ -1392,7 +1392,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     }
 }
 
-void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, float mean)
+void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, float mean)
 {
     BENCHFUN
     //exposure local
@@ -1405,6 +1405,12 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
     float linear = lp.linear;
     float kl = 1.5f;
     float addcomp = 0.f;
+    if(lp.linear > 0.f) {
+        if(lp.expcomp == 0.f) {
+            lp.expcomp = 0.01f;
+        }
+    }
+        
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -1413,7 +1419,7 @@ void ImProcFunctions::exlabLocal(const local_params& lp, int bfh, int bfw, LabIm
         for (int jr = 0; jr < bfw; jr++) {
             float L = bufexporig->L[ir][jr];
 
-            if (L < mean && lp.expmet == 1 && lp.expcomp > 0.f && !lp.invex) {
+            if (L < mean && lp.expmet == 1 && lp.linear > 0.f && !lp.invex) {
                 float Llin = LIM01(L / 32768.f);
                 addcomp = linear * (-kl * Llin + kl);//maximum about 1.5 IL
                 exp_scale = pow(2.0, (lp.expcomp + addcomp));
@@ -3613,7 +3619,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     }
 }
 
-void ImProcFunctions::InverseColorLight_Local(int sp, int senstype, const struct local_params & lp, LabImage * originalmask, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & exlocalcurve, LUTf & cclocalcurve, float adjustr, bool localcutili, LUTf & lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
+void ImProcFunctions::InverseColorLight_Local(int sp, int senstype,  struct local_params & lp, LabImage * originalmask, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & exlocalcurve, LUTf & cclocalcurve, float adjustr, bool localcutili, LUTf & lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
