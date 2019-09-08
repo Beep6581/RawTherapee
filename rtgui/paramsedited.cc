@@ -1015,6 +1015,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).balanexp = locallab.spots.at(j).balanexp && pSpot.balanexp == otherSpot.balanexp;
                 locallab.spots.at(j).linear = locallab.spots.at(j).linear && pSpot.linear == otherSpot.linear;
                 locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
+                locallab.spots.at(j).fatamount = locallab.spots.at(j).linear && pSpot.fatamount == otherSpot.fatamount;
+                locallab.spots.at(j).fatdetail = locallab.spots.at(j).linear && pSpot.fatdetail == otherSpot.fatdetail;
+                locallab.spots.at(j).fatanchor = locallab.spots.at(j).linear && pSpot.fatanchor == otherSpot.fatanchor;
                 // Shadow highlight
                 locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
                 locallab.spots.at(j).highlights = locallab.spots.at(j).highlights && pSpot.highlights == otherSpot.highlights;
@@ -2936,6 +2939,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).gamm = mods.locallab.spots.at(i).gamm;
         }
 
+        if (locallab.spots.at(i).fatamount) {
+            toEdit.locallab.spots.at(i).fatamount = mods.locallab.spots.at(i).fatamount;
+        }
+
+        if (locallab.spots.at(i).fatdetail) {
+            toEdit.locallab.spots.at(i).fatdetail = mods.locallab.spots.at(i).fatdetail;
+        }
+
+        if (locallab.spots.at(i).fatanchor) {
+            toEdit.locallab.spots.at(i).fatanchor = mods.locallab.spots.at(i).fatanchor;
+        }
+
         // Shadow highlight
         if (locallab.spots.at(i).expshadhigh) {
             toEdit.locallab.spots.at(i).expshadhigh = mods.locallab.spots.at(i).expshadhigh;
@@ -4612,6 +4627,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     balanexp(v),
     linear(v),
     gamm(v),
+    fatamount(v),
+    fatdetail(v),
+    fatanchor(v),
     // Shadow highlight
     expshadhigh(v),
     highlights(v),
@@ -4865,6 +4883,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     balanexp = v;
     linear = v;
     gamm = v;
+    fatamount = v;
+    fatdetail = v;
+    fatanchor = v;
     // Shadow highlight
     expshadhigh = v;
     highlights = v;

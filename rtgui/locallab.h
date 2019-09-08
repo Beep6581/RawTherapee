@@ -160,6 +160,9 @@ private:
     Adjuster* const balanexp;
     Adjuster* const linear;
     Adjuster* const gamm;
+    Adjuster* const fatamount;
+    Adjuster* const fatdetail;
+    Adjuster* const fatanchor;
     //Shadow highlight
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;
@@ -392,6 +395,7 @@ private:
     sigc::connection lumacontrastMinusPressedConn, lumaneutralPressedConn, lumacontrastPlusPressedConn;
     Gtk::Frame* gridFrame;
     Gtk::Frame* pdeFrame;
+    Gtk::Frame* fatFrame;
     Gtk::Frame* residFrame;
     Gtk::Frame* clariFrame;
     LabGrid *labgrid;

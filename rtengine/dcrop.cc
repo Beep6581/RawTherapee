@@ -751,7 +751,7 @@ void Crop::update(int todo)
 
         if (need_fattal) {
             parent->ipf.dehaze(f, params.dehaze);
-            parent->ipf.ToneMapFattal02(f);
+            parent->ipf.ToneMapFattal02(f, params.fattal);
         }
 
         // crop back to the size expected by the rest of the pipeline

@@ -45,6 +45,7 @@ namespace procparams
 class ProcParams;
 
 struct DehazeParams;
+struct FattalToneMappingParams;
 struct DirPyrDenoiseParams;
 struct LocalContrastParams;
 struct LocallabParams;
@@ -415,7 +416,7 @@ public:
     void BadpixelsLab(LabImage * lab, double radius, int thresh, float chrom);
 
     void dehaze(Imagefloat *rgb, const DehazeParams &dehazeParams);
-    void ToneMapFattal02(Imagefloat *rgb);
+    void ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams);
     void localContrast(LabImage *lab, float **destination, const LocalContrastParams &localContrastParams, bool fftwlc, double scale);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
    // void shadowsHighlights(LabImage *lab);

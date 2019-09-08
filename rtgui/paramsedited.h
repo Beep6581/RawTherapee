@@ -438,6 +438,9 @@ public:
         bool balanexp;
         bool linear;
         bool gamm;
+        bool fatamount;
+        bool fatdetail;
+        bool fatanchor;
         // Shadow highlight
         bool expshadhigh;
         bool highlights;

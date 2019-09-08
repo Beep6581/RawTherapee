@@ -1047,24 +1047,23 @@ inline int find_fast_dim (int dim)
 } // namespace
 
 
-void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
+void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb, const FattalToneMappingParams &fatParams)
 {
-    if (!params->fattal.enabled) {
+    if (!fatParams.enabled) {
         return;
     }
-    
     BENCHFUN
     const int detail_level = 3;
 
     float alpha = 1.f;
 
-    if (params->fattal.threshold < 0) {
-        alpha += (params->fattal.threshold * 0.9f) / 100.f;
-    } else if (params->fattal.threshold > 0) {
-        alpha += params->fattal.threshold / 100.f;
+    if (fatParams.threshold < 0) {
+        alpha += (fatParams.threshold * 0.9f) / 100.f;
+    } else if (fatParams.threshold > 0) {
+        alpha += fatParams.threshold / 100.f;
     }
 
-    float beta = 1.f - (params->fattal.amount * 0.3f) / 100.f;
+    float beta = 1.f - (fatParams.amount * 0.3f) / 100.f;
 
     // sanity check
     if (alpha <= 0 || beta <= 0) {
@@ -1092,7 +1091,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
     }
 
     float oldMedian;
-    const float percentile = float(LIM(params->fattal.anchor, 1, 100)) / 100.f;
+    const float percentile = float(LIM(fatParams.anchor, 1, 100)) / 100.f;
     findMinMaxPercentile (Yr.data(), Yr.getRows() * Yr.getCols(), percentile, oldMedian, percentile, oldMedian, multiThread);
     // median filter on the deep shadows, to avoid boosting noise
     // because w2 >= w and h2 >= h, we can use the L buffer as temporary buffer for Median_Denoise()
@@ -1127,8 +1126,8 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
         std::cout << "ToneMapFattal02: alpha = " << alpha << ", beta = " << beta
                   << ", detail_level = " << detail_level << std::endl;
     }
-
     rescale_nearest (Yr, L, multiThread);
+    
     tmo_fattal02 (w2, h2, L, L, alpha, beta, noise, detail_level, multiThread);
 
     const float hr = float(h2) / float(h);
@@ -1158,6 +1157,7 @@ void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb)
             assert(std::isfinite(rgb->b(y, x)));
         }
     }
+   
 }
 
 

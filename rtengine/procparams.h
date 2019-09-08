@@ -1024,6 +1024,9 @@ struct LocallabParams {
         double balanexp;
         double linear;
         double gamm;
+        double fatamount;
+        double fatdetail;
+        double fatanchor;
         // Shadow highlight
         bool expshadhigh;
         int highlights;

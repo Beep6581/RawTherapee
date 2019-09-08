@@ -194,7 +194,7 @@ Locallab::Locallab():
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 4.0, 0.05, 0.0))),
     hlcompr(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0))),
     hlcomprthresh(Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0))),
-    black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 10, -6000))),
+    black(Gtk::manage(new Adjuster(M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 10, 0))),
     shadex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHADEX"), 0, 100, 1, 20))),
     shcompr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHADEXCOMP"), 0, 100, 1, 50))),
     expchroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EXPCHROMA"), -50, 100, 1, 30))),
@@ -208,10 +208,13 @@ Locallab::Locallab():
     gammaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 40.))),
+    laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 0.))),
     balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.2, 1.2, 0.01, 0.75))),
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0., 1., 0.01, 0.3))),
     gamm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMM"), 0.2, 1.3, 0.01, 0.4))),
+    fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
+    fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
+    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     //Shadow hightlights
     highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
     h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
@@ -403,6 +406,7 @@ Locallab::Locallab():
     lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")))),
     gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
     pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
+    fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
     residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
 
@@ -725,6 +729,9 @@ Locallab::Locallab():
     balanexp->setAdjusterListener(this);
     linear->setAdjusterListener(this);
     gamm->setAdjusterListener(this);
+    fatamount->setAdjusterListener(this);
+    fatdetail->setAdjusterListener(this);
+    fatanchor->setAdjusterListener(this);
 
     curveEditorG->setCurveListener(this);
 
@@ -814,11 +821,19 @@ Locallab::Locallab():
     pdeBox->pack_start(*balanexp);
     pdeBox->pack_start(*gamm);
 
+    fatFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
+    fatBox->pack_start(*fatamount);
+    fatBox->pack_start(*fatdetail);
+    fatBox->pack_start(*fatanchor);
+
     pdeFrame->add(*pdeBox);
+    fatFrame->add(*fatBox);
 
     ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
     exposeBox->pack_start(*expMethod);
     exposeBox->pack_start(*pdeFrame);
+    exposeBox->pack_start(*fatFrame);
 
     exposeBox->pack_start(*expcomp);
     exposeBox->pack_start(*hlcompr);
@@ -2819,6 +2834,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).balanexp = balanexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).linear = linear->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gamm = gamm->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fatamount = fatamount->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fatdetail = fatdetail->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fatanchor = fatanchor->getValue();
 
                     // Shadow highlight
                     pp->locallab.spots.at(pp->locallab.selspot).expshadhigh = expshadhigh->getEnabled();
@@ -3122,6 +3140,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).balanexp = pe->locallab.spots.at(pp->locallab.selspot).balanexp || balanexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).linear = pe->locallab.spots.at(pp->locallab.selspot).linear || linear->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gamm = pe->locallab.spots.at(pp->locallab.selspot).gamm || gamm->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fatamount = pe->locallab.spots.at(pp->locallab.selspot).fatamount || fatamount->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fatdetail = pe->locallab.spots.at(pp->locallab.selspot).fatdetail || fatdetail->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fatanchor = pe->locallab.spots.at(pp->locallab.selspot).fatanchor || fatanchor->getEditedState();
                         // Shadow highlight
                         pe->locallab.spots.at(pp->locallab.selspot).expshadhigh = pe->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).highlights = pe->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
@@ -3382,6 +3403,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).balanexp = pedited->locallab.spots.at(pp->locallab.selspot).balanexp || balanexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).linear = pedited->locallab.spots.at(pp->locallab.selspot).linear || linear->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gamm = pedited->locallab.spots.at(pp->locallab.selspot).gamm || gamm->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fatamount = pedited->locallab.spots.at(pp->locallab.selspot).fatamount || fatamount->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fatdetail = pedited->locallab.spots.at(pp->locallab.selspot).fatdetail || fatdetail->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fatanchor = pedited->locallab.spots.at(pp->locallab.selspot).fatanchor || fatanchor->getEditedState();
                         // Shadow highlight
                         pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh = pedited->locallab.spots.at(pp->locallab.selspot).expshadhigh || !expshadhigh->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).highlights = pedited->locallab.spots.at(pp->locallab.selspot).highlights || highlights->getEditedState();
@@ -4119,16 +4143,24 @@ void Locallab::expMethodChanged()
 
     if (expMethod->get_active_row_number() == 0) {
         pdeFrame->set_sensitive(false);
+        fatFrame->set_sensitive(false);
         laplacexp->set_sensitive(false);
         balanexp->set_sensitive(false);
         linear->set_sensitive(false);
         gamm->set_sensitive(false);
+        fatamount->set_sensitive(false);
+        fatdetail->set_sensitive(false);
+        fatanchor->set_sensitive(false);
     } else if (expMethod->get_active_row_number() == 1) {
         laplacexp->set_sensitive(true);
         balanexp->set_sensitive(true);
         linear->set_sensitive(true);
         pdeFrame->set_sensitive(true);
+        fatFrame->set_sensitive(true);
         gamm->set_sensitive(true);
+        fatamount->set_sensitive(true);
+        fatdetail->set_sensitive(true);
+        fatanchor->set_sensitive(true);
     }
 
     enableListener();
@@ -4633,8 +4665,10 @@ void Locallab::inversexChanged()
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
+            fatFrame->hide();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
+            fatFrame->show();
         }
 
         showmaskexpMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -4655,8 +4689,10 @@ void Locallab::inversexChanged()
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
+            fatFrame->hide();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->hide();
+            fatFrame->hide();
         }
 
     } else {
@@ -4671,8 +4707,10 @@ void Locallab::inversexChanged()
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
+            fatFrame->hide();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
+            fatFrame->show();
         }
 
         showmaskexpMethodinv->show();
@@ -5076,6 +5114,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     balanexp->setDefault(defSpot->balanexp);
     linear->setDefault(defSpot->linear);
     gamm->setDefault(defSpot->gamm);
+    fatamount->setDefault(defSpot->fatamount);
+    fatdetail->setDefault(defSpot->fatdetail);
+    fatanchor->setDefault(defSpot->fatanchor);
     // Shadow highlight
     highlights->setDefault((double)defSpot->highlights);
     h_tonalwidth->setDefault((double)defSpot->h_tonalwidth);
@@ -5234,6 +5275,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         balanexp->setDefaultEditedState(Irrelevant);
         linear->setDefaultEditedState(Irrelevant);
         gamm->setDefaultEditedState(Irrelevant);
+        fatamount->setDefaultEditedState(Irrelevant);
+        fatdetail->setDefaultEditedState(Irrelevant);
+        fatanchor->setDefaultEditedState(Irrelevant);
         // Shadow highlight
         highlights->setDefaultEditedState(Irrelevant);
         h_tonalwidth->setDefaultEditedState(Irrelevant);
@@ -5396,6 +5440,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         balanexp->setDefaultEditedState(defSpotState->balanexp ? Edited : UnEdited);
         linear->setDefaultEditedState(defSpotState->linear ? Edited : UnEdited);
         gamm->setDefaultEditedState(defSpotState->gamm ? Edited : UnEdited);
+        fatamount->setDefaultEditedState(defSpotState->fatamount ? Edited : UnEdited);
+        fatdetail->setDefaultEditedState(defSpotState->fatdetail ? Edited : UnEdited);
+        fatanchor->setDefaultEditedState(defSpotState->fatanchor ? Edited : UnEdited);
         // Shadow highlight
         highlights->setDefaultEditedState(defSpotState->highlights ? Edited : UnEdited);
         h_tonalwidth->setDefaultEditedState(defSpotState->h_tonalwidth ? Edited : UnEdited);
@@ -5782,6 +5829,24 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == gamm) {
             if (listener) {
                 listener->panelChanged(Evlocallabgamm, gamm->getTextValue());
+            }
+        }
+
+        if (a == fatamount) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfatamount, fatamount->getTextValue());
+            }
+        }
+
+        if (a == fatdetail) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfatdetail, fatdetail->getTextValue());
+            }
+        }
+
+        if (a == fatanchor) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfatanchor, fatanchor->getTextValue());
             }
         }
 
@@ -6529,6 +6594,9 @@ void Locallab::setBatchMode(bool batchMode)
     balanexp->showEditedCB();
     linear->showEditedCB();
     gamm->showEditedCB();
+    fatamount->showEditedCB();
+    fatdetail->showEditedCB();
+    fatanchor->showEditedCB();
     //Shadow Highlight
     highlights->showEditedCB();
     h_tonalwidth->showEditedCB();
@@ -7042,6 +7110,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         laplacexp->setValue(pp->locallab.spots.at(index).laplacexp);
         balanexp->setValue(pp->locallab.spots.at(index).balanexp);
         linear->setValue(pp->locallab.spots.at(index).linear);
+        gamm->setValue(pp->locallab.spots.at(index).gamm);
+        fatamount->setValue(pp->locallab.spots.at(index).fatamount);
+        fatdetail->setValue(pp->locallab.spots.at(index).fatdetail);
+        fatanchor->setValue(pp->locallab.spots.at(index).fatanchor);
 
         // Shadow highlight
         expshadhigh->setEnabled(pp->locallab.spots.at(index).expshadhigh);
@@ -7372,6 +7444,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 laplacexp->setEditedState(spotState->laplacexp ? Edited : UnEdited);
                 balanexp->setEditedState(spotState->balanexp ? Edited : UnEdited);
                 linear->setEditedState(spotState->linear ? Edited : UnEdited);
+                gamm->setEditedState(spotState->gamm ? Edited : UnEdited);
+                fatamount->setEditedState(spotState->fatamount ? Edited : UnEdited);
+                fatdetail->setEditedState(spotState->fatdetail ? Edited : UnEdited);
+                fatanchor->setEditedState(spotState->fatanchor ? Edited : UnEdited);
 
                 // Shadow highlight
                 expshadhigh->set_inconsistent(!spotState->expshadhigh);
@@ -7634,8 +7710,10 @@ void Locallab::updateSpecificGUIState()
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
+            fatFrame->hide();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
+            fatFrame->show();
         }
 
         showmaskexpMethodinv->hide();
@@ -7646,14 +7724,17 @@ void Locallab::updateSpecificGUIState()
         shadex->hide();
         expMethod->hide();
         pdeFrame->hide();
+        fatFrame->hide();
         expmaskexp->show();
         showmaskexpMethodinv->show();
         showmaskexpMethod->hide();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
+            fatFrame->hide();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->hide();
+            fatFrame->hide();
         }
     } else {
         structexp->show();
@@ -7666,8 +7747,10 @@ void Locallab::updateSpecificGUIState()
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
+            fatFrame->hide();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
+            fatFrame->show();
         }
 
         if (batchMode) {
@@ -7729,8 +7812,10 @@ void Locallab::updateSpecificGUIState()
 
     if (expMethod->get_active_row_number() == 0) {
         pdeFrame->hide();
+        fatFrame->hide();
     } else if (expMethod->get_active_row_number() == 1) {
         pdeFrame->show();
+        fatFrame->show();
     }
 
     if (softMethod->get_active_row_number() == 0) {

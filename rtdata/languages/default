@@ -979,6 +979,9 @@ HISTORY_MSG_739;Local - Local contrast Soft radius
 HISTORY_MSG_740;Local - Local contrast Merge C
 HISTORY_MSG_741;Local - Local contrast Residual C
 HISTORY_MSG_742;Local - Exp Laplacian gamma
+HISTORY_MSG_743;Local - Exp Fattal Amount
+HISTORY_MSG_744;Local - Exp Fattal Detail
+HISTORY_MSG_745;Local - Exp Fattal Anchor
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2136,7 +2139,11 @@ TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail (DCT)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=2
 TP_LOCALLAB_PREVIEWSEL;Preview selection deltaE
-TP_LOCALLAB_PDEFRA;PDE
+TP_LOCALLAB_PDEFRA;PDE Ipol
+TP_LOCALLAB_FATFRA;PDE Fattal
+TP_LOCALLAB_FATAMOUNT;Amount
+TP_LOCALLAB_FATDETAIL;Detail
+TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_GAM;Gamma

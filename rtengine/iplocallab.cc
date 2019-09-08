@@ -8838,7 +8838,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 
 
-        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
+        if (!lp.invex  && (lp.exposena && (lp.expcomp != 0.f || lp.war != 0 || lp.laplacexp > 0.1f || params->locallab.spots.at(sp).fatamount > 1.f || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5 || (exlocalcurve  && localexutili)))) { //interior ellipse renforced lightness and chroma  //locallutili
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -9085,44 +9085,68 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 //exposure_pde
                         if (lp.expmet == 1) {
-                            MyMutex::MyLock lock(*fftwMutex);
-                            float *datain = new float[bfwr * bfhr];
-                            float *dataout = new float[bfwr * bfhr];
-                            float *dataor = new float[bfwr * bfhr];
-                            float gam = params->locallab.spots.at(sp).gamm;
-                            float igam = 1.f / gam;
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
-#endif
 
-                            for (int y = 0; y < bfhr; y++) {
-                                for (int x = 0; x < bfwr; x++) {
-                                    float L = LIM01(bufexpfin->L[y][x] / 32768.f);//change gamma for Laplacian
-                                    L = pow(L, gam);
-                                    L *= 32768.f;
-                                    datain[y * bfwr + x] = L;
-                                    dataor[y * bfwr + x] = L;
-                                }
+                            float enablefat = false;
+                            Imagefloat *tmpImagefat = nullptr;
+
+                            if (params->locallab.spots.at(sp).fatamount > 1.f) {
+                                enablefat = true;
                             }
 
-                            //call PDE equation - with Laplacian threshold
-                            ImProcFunctions::exposure_pde(dataor, datain, dataout, bfwr, bfhr, 12.f * lp.laplacexp, lp.balanexp);
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                            for (int y = 0; y < bfhr; y++) {
-                                for (int x = 0; x < bfwr; x++) {
-                                    float Y = dataout[y * bfwr + x] / 32768.f;//inverse Laplacian gamma
-                                    Y = pow(Y, igam);
-                                    Y *= 32768.f;
-                                    bufexpfin->L[y][x] = Y;
-                                }
+                            if (enablefat) {
+                                FattalToneMappingParams fatParams;
+                                fatParams.enabled = true;
+                                fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
+                                fatParams.amount = params->locallab.spots.at(sp).fatamount;
+                                fatParams.anchor = params->locallab.spots.at(sp).fatanchor;
+                                tmpImagefat = new Imagefloat(bfwr, bfhr);
+                                lab2rgb(*bufexpfin, *tmpImagefat, params->icm.workingProfile);
+                                ToneMapFattal02(tmpImagefat, fatParams);
+                                rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
+                                delete tmpImagefat;
                             }
 
-                            delete [] datain;
-                            delete [] dataout;
-                            delete [] dataor;
+
+                            if (lp.laplacexp > 0.1f) {
+                                MyMutex::MyLock lock(*fftwMutex);
+                                float *datain = new float[bfwr * bfhr];
+                                float *dataout = new float[bfwr * bfhr];
+                                float *dataor = new float[bfwr * bfhr];
+                                float gam = params->locallab.spots.at(sp).gamm;
+                                float igam = 1.f / gam;
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfhr; y++) {
+                                    for (int x = 0; x < bfwr; x++) {
+                                        float L = LIM01(bufexpfin->L[y][x] / 32768.f);//change gamma for Laplacian
+                                        L = pow(L, gam);
+                                        L *= 32768.f;
+                                        datain[y * bfwr + x] = L;
+                                        dataor[y * bfwr + x] = L;
+                                    }
+                                }
+
+                                //call PDE equation - with Laplacian threshold
+                                ImProcFunctions::exposure_pde(dataor, datain, dataout, bfwr, bfhr, 12.f * lp.laplacexp, lp.balanexp);
+#ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                                for (int y = 0; y < bfhr; y++) {
+                                    for (int x = 0; x < bfwr; x++) {
+                                        float Y = dataout[y * bfwr + x] / 32768.f;//inverse Laplacian gamma
+                                        Y = pow(Y, igam);
+                                        Y *= 32768.f;
+                                        bufexpfin->L[y][x] = Y;
+                                    }
+                                }
+
+                                delete [] datain;
+                                delete [] dataout;
+                                delete [] dataor;
+                            }
                         }
 
                         //shadows with ipshadowshighlight
