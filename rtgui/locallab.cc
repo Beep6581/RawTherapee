@@ -815,6 +815,9 @@ Locallab::Locallab():
 
 
     pdeFrame->set_label_align(0.025, 0.5);
+    if (showtooltip) {
+        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+    }
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -822,6 +825,9 @@ Locallab::Locallab():
     pdeBox->pack_start(*gamm);
 
     fatFrame->set_label_align(0.025, 0.5);
+    if (showtooltip) {
+        fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
+    }
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
@@ -833,12 +839,11 @@ Locallab::Locallab():
     ToolParamBlock* const exposeBox = Gtk::manage(new ToolParamBlock());
     exposeBox->pack_start(*expMethod);
     exposeBox->pack_start(*pdeFrame);
+    exposeBox->pack_start(*black);
     exposeBox->pack_start(*fatFrame);
-
     exposeBox->pack_start(*expcomp);
     exposeBox->pack_start(*hlcompr);
     exposeBox->pack_start(*hlcomprthresh);
-    exposeBox->pack_start(*black);
     exposeBox->pack_start(*shadex);
     exposeBox->pack_start(*shcompr);
     exposeBox->pack_start(*expchroma);
