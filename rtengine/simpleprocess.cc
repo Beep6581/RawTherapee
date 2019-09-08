@@ -1197,6 +1197,9 @@ private:
                 double shcompr = params.locallab.spots.at(sp).shcompr;
                 double br = params.locallab.spots.at(sp).lightness;
                 double cont = params.locallab.spots.at(sp).contrast;
+                if(black < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
+                    black *= 1.5;
+                }
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;

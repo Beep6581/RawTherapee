@@ -9097,7 +9097,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
-                                    float L = LIM01(bufexpfin->L[y][x] / 32768.f);//chnage gamma for Laplacian
+                                    float L = LIM01(bufexpfin->L[y][x] / 32768.f);//change gamma for Laplacian
                                     L = pow(L, gam);
                                     L *= 32768.f;
                                     datain[y * bfwr + x] = L;

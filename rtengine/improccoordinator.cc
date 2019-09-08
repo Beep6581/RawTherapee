@@ -948,8 +948,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double shcompr = params->locallab.spots.at(sp).shcompr;
                 double br = params->locallab.spots.at(sp).lightness;
                 double cont = params->locallab.spots.at(sp).contrast;
-
-                // Reference parameters computation
+                if(black < 0. && params->locallab.spots.at(sp).expMethod == "pde" ) {
+                    black *= 1.5;
+                }
+                // Reference parameters  computation
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv, reserv, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
                 } else {
