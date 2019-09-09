@@ -29,48 +29,174 @@ using namespace procparams;
 
 extern Options options;
 
+/* ==== LocallabToolList ==== */
+LocallabToolList::LocallabToolList():
+    // Tool list GUI elements
+    list(Gtk::manage(new MyComboBox())),
+    listTreeModel(Gtk::ListStore::create(toolRow)),
+
+    // Tool list listener
+    listListener(nullptr)
+{
+    list->set_model(listTreeModel);
+    list->pack_start(toolRow.name);
+    listConn = list->signal_changed().connect(sigc::mem_fun(*this, &LocallabToolList::toolRowSelected));
+
+    // Append title row to list
+    // Important: Title row shall always be the first one
+    const auto titleRow = *(listTreeModel->append());
+    titleRow[toolRow.id] = 0;
+    titleRow[toolRow.name] = M("TP_LOCALLAB_LIST_NAME");
+    listConn.block(true);
+    list->set_active(titleRow);
+    listConn.block(false);
+
+    // Add ComboBox to LocallabToolList widget
+    add(*list);
+}
+
+void LocallabToolList::addToolRow(const Glib::ustring &toolname, const int id)
+{
+    // Disable event management
+    listConn.block(true);
+
+    // Add tool name according to id
+    Gtk::TreeIter insertAfter;
+
+    for (auto &r : listTreeModel->children()) {
+        if (r[toolRow.id] < id) {
+            insertAfter = *r; // Tool name shall be added at least after this row
+        } else {
+            break; // Tool name shall be added before this row
+        }
+    }
+
+    // Note: There is always at list one row (i.e. title one)
+
+    const auto newRow = *(listTreeModel->insert_after(insertAfter));
+    newRow[toolRow.id] = id;
+    newRow[toolRow.name] = toolname;
+
+    // Select title row (i.e. always first row)
+    list->set_active(0);
+
+    // Enable event management
+    listConn.block(false);
+}
+
+void LocallabToolList::removeToolRow(const Glib::ustring &toolname)
+{
+    // Disable event management
+    listConn.block(true);
+
+    // Remove tool name row
+    for (auto &r : listTreeModel->children()) {
+        if (r[toolRow.name] == toolname) {
+            listTreeModel->erase(*r);
+            break;
+        }
+    }
+
+    // Select title row (i.e. always first row)
+    list->set_active(0);
+
+    // Enable event management
+    listConn.block(false);
+}
+
+void LocallabToolList::removeAllTool()
+{
+    // Disable event management
+    listConn.block(true);
+
+    // Remove all tools
+    listTreeModel->clear();
+
+    // Add title row again
+    const auto titleRow = *(listTreeModel->append());
+    titleRow[toolRow.id] = 0;
+    titleRow[toolRow.name] = M("TP_LOCALLAB_LIST_NAME");
+
+    // Select title row (i.e. always first row)
+    list->set_active(0);
+
+    // Enable event management
+    listConn.block(false);
+}
+
+void LocallabToolList::toolRowSelected()
+{
+    // Get selected tool name
+    const auto selRow = *(list->get_active());
+    const Glib::ustring toolname = selRow[toolRow.name];
+
+    // Remove selected tool name for ComboBox
+    removeToolRow(toolname);
+
+    // Warm tool list listener
+    if (listListener) {
+        listListener->locallabToolToAdd(toolname);
+    }
+}
+
+/* ==== Locallab ==== */
 Locallab::Locallab():
     FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), false, true),
 
     // Spot control panel widget
-    expsettings(Gtk::manage(new ControlSpotPanel()))
+    expsettings(Gtk::manage(new ControlSpotPanel())),
+
+    // Tool list widget
+    toollist(Gtk::manage(new LocallabToolList())),
+
+    // Create Locallab tools
+    expcolor(Gtk::manage(new LocallabColor())),
+    expexpose(Gtk::manage(new LocallabExposure())),
+    expshadhigh(Gtk::manage(new LocallabShadow())),
+    expvibrance(Gtk::manage(new LocallabVibrance())),
+    expsoft(Gtk::manage(new LocallabSoft())),
+    expblur(Gtk::manage(new LocallabBlur())),
+    exptonemap(Gtk::manage(new LocallabTone())),
+    expreti(Gtk::manage(new LocallabRetinex())),
+    expsharp(Gtk::manage(new LocallabSharp())),
+    expcontrast(Gtk::manage(new LocallabContrast())),
+    expcbdl(Gtk::manage(new LocallabCBDL())),
+    expdenoi(Gtk::manage(new LocallabDenoise()))
 {
     const bool showtooltip = options.showtooltip;
 
     // Create panel widget to receive Locallab GUI elements
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
+    panel->set_spacing(2);
 
     // Add spot control panel to panel widget
-    expsettings->setLevel(2); // TODO Move this to controlspotpanel.cc
+    expsettings->setLevel(2);
     panel->pack_start(*expsettings->getExpander(), false, false);
 
-    // Create Locallab tools
-    expcolor = Gtk::manage(new LocallabColor());
-    expexpose = Gtk::manage(new LocallabExposure());
-    expshadhigh = Gtk::manage(new LocallabShadow());
-    expvibrance = Gtk::manage(new LocallabVibrance());
-    expsoft = Gtk::manage(new LocallabSoft());
-    expblur = Gtk::manage(new LocallabBlur());
-    exptonemap = Gtk::manage(new LocallabTone());
-    expreti = Gtk::manage(new LocallabRetinex());
-    expsharp = Gtk::manage(new LocallabSharp());
-    expcontrast = Gtk::manage(new LocallabContrast());
-    expcbdl = Gtk::manage(new LocallabCBDL());
-    expdenoi = Gtk::manage(new LocallabDenoise());
+    // Add separator
+    Gtk::HSeparator* const separator = Gtk::manage(new Gtk::HSeparator());
+    panel->pack_start(*separator, false, false);
+
+    // Add tool list widget
+    toollist->setLocallabToolListListener(this);
+    panel->pack_start(*toollist, false, false);
 
     // Add Locallab tools to panel widget
-    addTool(panel, expcolor);
-    addTool(panel, expexpose);
-    addTool(panel, expshadhigh);
-    addTool(panel, expvibrance);
-    addTool(panel, expsoft);
-    addTool(panel, expblur);
-    addTool(panel, exptonemap);
-    addTool(panel, expreti);
-    addTool(panel, expsharp);
-    addTool(panel, expcontrast);
-    addTool(panel, expcbdl);
-    addTool(panel, expdenoi);
+    ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
+    toolpanel->set_name("LocallabToolPanel");
+    addTool(toolpanel, expcolor);
+    addTool(toolpanel, expexpose);
+    addTool(toolpanel, expshadhigh);
+    addTool(toolpanel, expvibrance);
+    addTool(toolpanel, expsoft);
+    addTool(toolpanel, expblur);
+    addTool(toolpanel, exptonemap);
+    addTool(toolpanel, expreti);
+    addTool(toolpanel, expsharp);
+    addTool(toolpanel, expcontrast);
+    addTool(toolpanel, expcbdl);
+    addTool(toolpanel, expdenoi);
+    panel->pack_start(*toolpanel, false, false);
 
     // Add panel widget to Locallab GUI
     pack_start(*panel);
@@ -176,6 +302,18 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         tool->read(pp, pedited);
     }
 
+    // Update tool list widget
+    int toolNb = 0;
+    toollist->removeAllTool(); // Reset Locallab list firstly
+
+    for (auto tool : locallabTools) {
+        toolNb++;
+
+        if (!tool->isLocallabToolAdded()) {
+            toollist->addToolRow(tool->getToolName(), toolNb);
+        }
+    }
+
     // Specific case: if there is no spot, GUI isn't anymore editable (i.e. Locallab tool cannot be managed)
     if (pp->locallab.nbspot > 0) {
         setParamEditable(true);
@@ -211,6 +349,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
     int prW, prH; // Size of preview area
     int prX, prY; // Coord of preview area center
     EditDataProvider* const provider = expsettings->getEditProvider();
+
+    int toolNb;
 
     switch (spotPanelEvent) {
         case (ControlSpotPanel::SpotCreation): // Spot creation event
@@ -307,6 +447,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             enableListener();
 
+            // Update tool list widget
+            toolNb = 0;
+            toollist->removeAllTool(); // Reset Locallab list firstly
+
+            for (auto tool : locallabTools) {
+                toolNb++;
+
+                if (!tool->isLocallabToolAdded()) {
+                    toollist->addToolRow(tool->getToolName(), toolNb);
+                }
+            }
+
             if (pp->locallab.nbspot == 1) {
                 setParamEditable(true);
             }
@@ -355,6 +507,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                     enableListener();
 
+                    // Update tool list widget
+                    int toolNb = 0;
+                    toollist->removeAllTool(); // Reset Locallab list firstly
+
+                    for (auto tool : locallabTools) {
+                        toolNb++;
+
+                        if (!tool->isLocallabToolAdded()) {
+                            toollist->addToolRow(tool->getToolName(), toolNb);
+                        }
+                    }
+
                     if (pp->locallab.nbspot == 0) {
                         setParamEditable(false);
                     }
@@ -392,6 +556,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             }
 
             enableListener();
+
+            // Update tool list widget
+            toolNb = 0;
+            toollist->removeAllTool(); // Reset Locallab list firstly
+
+            for (auto tool : locallabTools) {
+                toolNb++;
+
+                if (!tool->isLocallabToolAdded()) {
+                    toollist->addToolRow(tool->getToolName(), toolNb);
+                }
+            }
 
             // Update locallab tools mask background
             if (pp->locallab.selspot < (int)maskBackRef.size()) {
@@ -520,6 +696,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             }
 
             enableListener();
+
+            // Update tool list widget
+            toolNb = 0;
+            toollist->removeAllTool(); // Reset Locallab list firstly
+
+            for (auto tool : locallabTools) {
+                toolNb++;
+
+                if (!tool->isLocallabToolAdded()) {
+                    toollist->addToolRow(tool->getToolName(), toolNb);
+                }
+            }
 
             // Update default values according to selected spot
             setDefaults(pp, pedited);
@@ -739,6 +927,7 @@ void Locallab::foldAllButOne(LocallabTool* except)
 
 void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
 {
+    tool->getExpander()->setLevel(3);
     where->pack_start(*tool->getExpander(), false, false);
     locallabTools.push_back(tool);
     tool->setLocallabToolListener(this);
@@ -757,17 +946,14 @@ void Locallab::setParamEditable(bool cond)
     expsettings->setParamEditable(cond); // TODO Move this code to controlspotpanel.cc when there is zero spot
 
     // Enable/disable possibility to add Locallab tool
-    // TODO To implement
+    toollist->set_sensitive(cond);
 
-    // Remove all Locallab tool only if cond is false
-    // TODO To be managed in locallabtools first
-    /*
+    // Remove all Locallab tool (without raising event) only if cond is false
     if (!cond) {
         for (auto tool : locallabTools) {
-            tool->addLocallabTool(false);
+            tool->removeLocallabTool(false);
         }
     }
-    */
 }
 
 void Locallab::resetOtherMaskView(LocallabTool* current)
@@ -776,6 +962,29 @@ void Locallab::resetOtherMaskView(LocallabTool* current)
     for (auto tool : locallabTools) {
         if (tool != current) {
             tool->resetMaskView();
+        }
+    }
+}
+
+void Locallab::toolRemoved(LocallabTool* current)
+{
+    // Update tool list widget according to removed tool
+    int toolNb = 0;
+
+    for (auto tool : locallabTools) {
+        toolNb++;
+
+        if (tool == current) {
+            toollist->addToolRow(tool->getToolName(), toolNb);
+        }
+    }
+}
+
+void Locallab::locallabToolToAdd(const Glib::ustring &toolname)
+{
+    for (auto tool : locallabTools) {
+        if (tool->getToolName() == toolname) {
+            tool->addLocallabTool(true);
         }
     }
 }

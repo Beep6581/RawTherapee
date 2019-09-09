@@ -645,107 +645,107 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // Evlocallabblendmaskexp
     LUMINANCECURVE,   // Evlocallabblurexpde
     LUMINANCECURVE,   // EvLocallabEnaColorMask
-    LUMINANCECURVE,    // EvLocallabEnaExpMask
+    LUMINANCECURVE,   // EvLocallabEnaExpMask
     LUMINANCECURVE,   // Evlocallabblurcolde
     LUMINANCECURVE,   // Evlocallabinversex
     LUMINANCECURVE,   // Evlocallabstructexclu
     LUMINANCECURVE,   // Evlocallabexpchroma
-    LUMINANCECURVE,   //EvLocallabLabGridValue
-    LUMINANCECURVE,   //EvLocallabLabstrengthgrid
-    LUMINANCECURVE,   //EvLocallabgridMethod
-    LUMINANCECURVE,   //EvLocenashadhigh
-    LUMINANCECURVE,   //EvLocallabhighlights
-    LUMINANCECURVE,   //EvLocallabh_tonalwidth
-    LUMINANCECURVE,   //EvLocallabshadows
-    LUMINANCECURVE,   //EvLocallabs_tonalwidth
-    LUMINANCECURVE,   //EvLocallabsh_radius
-    LUMINANCECURVE,   //EvLocallabsensihs
-    LUMINANCECURVE,   //Evlocallabradmaskcol
-    LUMINANCECURVE,   //Evlocallabradmaskexp
-    LUMINANCECURVE,     //EvlocallabshowmaskSHMethod
-    LUMINANCECURVE,     //EvlocallabCCmaskSHshape
-    LUMINANCECURVE,     //EvlocallabLLmaskSHshape
-    LUMINANCECURVE,     //EvlocallabHHmaskSHshape
-    LUMINANCECURVE,     //EvlocallabblendmaskSH
-    LUMINANCECURVE,     //EvLocallabEnaSHMask
-    LUMINANCECURVE,     //EvlocallabradmaskSH
-    LUMINANCECURVE,      //EvlocallabblurSHde
-    LUMINANCECURVE,      //Evlocallabinverssh
-    LUMINANCECURVE,      //EvLocallabSpotbalan
-    LUMINANCECURVE,      //EvLocallabchromaskexp
-    LUMINANCECURVE,      //EvLocallabgammaskexp
-    LUMINANCECURVE,      //EvLocallabslomaskexp
-    LUMINANCECURVE,      //EvLocallabsoftradiusexp
-    LUMINANCECURVE,      //EvLocallabchromaskcol
-    LUMINANCECURVE,      //EvLocallabgammaskcol
-    LUMINANCECURVE,      //EvLocallabslomaskcol
-    LUMINANCECURVE,      //EvLocallabchromaskSH
-    LUMINANCECURVE,      //EvLocallabgammaskSH
-    LUMINANCECURVE,      //EvLocallabslomaskSH
-    LUMINANCECURVE,      //EvLocallabsoftradiuscol
-    LUMINANCECURVE,      //EvLocallabsoftradiusret
-    LUMINANCECURVE,      //EvLocallabsoftradiuscb
-    LUMINANCECURVE,     // EvLocallabSpotTransitweak
-    LUMINANCECURVE,      // EvLocallabclarityml
-    LUMINANCECURVE,      // EvLocallabcontresid
-    LUMINANCECURVE,      //Evlocallabnoiselumf0 
-    LUMINANCECURVE,      //Evlocallabnoiselumf2 
-    LUMINANCECURVE,      //Evlocallabblurcbdl
-    LUMINANCECURVE,      //Evlocallabblendmaskcb
-    LUMINANCECURVE,      // Evlocallabradmaskcb
-    LUMINANCECURVE,      //Evlocallabchromaskcb
-    LUMINANCECURVE,      //Evlocallabgammaskcb
-    LUMINANCECURVE,      //Evlocallabslomaskcb
-    LUMINANCECURVE,     //EvlocallabCCmaskcbshape
-    LUMINANCECURVE,     //EvlocallabLLmaskcbshape
-    LUMINANCECURVE,     //EvlocallabHHmaskcbshape
-    LUMINANCECURVE,     //EvLocallabEnacbMask
-    LUMINANCECURVE,     //EvlocallabshowmaskcbMethod
-    LUMINANCECURVE,     //Evlocallabsoftradiustm
-    LUMINANCECURVE,     // EvLocallabSpotTransitgrad
-    LUMINANCECURVE,      // Evlocallabamount
-    LUMINANCECURVE,       // Evlocallabsatur
-    LUMINANCECURVE,     //EvlocallabCCmaskretishape
-    LUMINANCECURVE,     //EvlocallabLLmaskretishape
-    LUMINANCECURVE,     //EvlocallabHHmaskretishape
-    LUMINANCECURVE,     //EvLocallabEnaretiMask
-    LUMINANCECURVE,      //Evlocallabblendmaskreti
-    LUMINANCECURVE,      // Evlocallabradmaskreti
-    LUMINANCECURVE,      //Evlocallabchromaskreti
-    LUMINANCECURVE,      //Evlocallabgammaskreti
-    LUMINANCECURVE,      //Evlocallabslomaskreti
-    LUMINANCECURVE,     //EvlocallabshowmaskretiMethod
-    LUMINANCECURVE,     //EvLocallabEnaretiMasktmap
-    LUMINANCECURVE,      //Evlocallabscalereti
-    LUMINANCECURVE,      //Evlocallabdarkness
-    LUMINANCECURVE,      //Evlocallablightnessreti
-    LUMINANCECURVE,      //Evlocallablimd
-    LUMINANCECURVE,      //Evlocallablaplace
-    LUMINANCECURVE,      //EvlocallabsoftMethod
-    LUMINANCECURVE,       // Evlocallabequilret
-    LUMINANCECURVE,       // Evlocallabequiltm
-    LUMINANCECURVE,       // Evlocallabfftwlc
-    LUMINANCECURVE,       // Evlocallabfftwreti
-    LUMINANCECURVE,       //EvlocallabshowmasksoftMethod
-    LUMINANCECURVE,       //Evlocallabshadex
-    LUMINANCECURVE,       // EvlocallabexpMethod
-    LUMINANCECURVE,       //EvLocallablaplacexp
-    LUMINANCECURVE,        //EvLocallabbalanexp
-    LUMINANCECURVE,        //EvLocallablinear
-    LUMINANCECURVE,         // EvlocallabCCmasktmshape
-    LUMINANCECURVE,         //EvlocallabLLmasktmshape
-    LUMINANCECURVE,         //EvlocallabHHmasktmshape
-    LUMINANCECURVE,         //EvLocallabEnatmMask
-    LUMINANCECURVE,         //Evlocallabblendmasktm
-    LUMINANCECURVE,         //Evlocallabradmasktm
-    LUMINANCECURVE,         //Evlocallabchromasktm
-    LUMINANCECURVE,         //Evlocallabgammasktm
-    LUMINANCECURVE,         //Evlocallabslomasktm
-    LUMINANCECURVE,         //EvlocallabshowmasktmMethod
-    LUMINANCECURVE,         //EvlocallablocalcontMethod
-    LUMINANCECURVE,         //Evlocallabwavcurve
-    LUMINANCECURVE,          //Evlocallablevelwav
-    LUMINANCECURVE          //Evlocallabresidcont
+    LUMINANCECURVE,   // EvLocallabLabGridValue
+    LUMINANCECURVE,   // EvLocallabLabstrengthgrid
+    LUMINANCECURVE,   // EvLocallabgridMethod
+    LUMINANCECURVE,   // EvLocenashadhigh
+    LUMINANCECURVE,   // EvLocallabhighlights
+    LUMINANCECURVE,   // EvLocallabh_tonalwidth
+    LUMINANCECURVE,   // EvLocallabshadows
+    LUMINANCECURVE,   // EvLocallabs_tonalwidth
+    LUMINANCECURVE,   // EvLocallabsh_radius
+    LUMINANCECURVE,   // EvLocallabsensihs
+    LUMINANCECURVE,   // Evlocallabradmaskcol
+    LUMINANCECURVE,   // Evlocallabradmaskexp
+    M_VOID,           // EvlocallabToolAdded
+    LUMINANCECURVE,   // EvlocallabCCmaskSHshape
+    LUMINANCECURVE,   // EvlocallabLLmaskSHshape
+    LUMINANCECURVE,   // EvlocallabHHmaskSHshape
+    LUMINANCECURVE,   // EvlocallabblendmaskSH
+    LUMINANCECURVE,   // EvLocallabEnaSHMask
+    LUMINANCECURVE,   // EvlocallabradmaskSH
+    LUMINANCECURVE,   // EvlocallabblurSHde
+    LUMINANCECURVE,   // Evlocallabinverssh
+    LUMINANCECURVE,   // EvLocallabSpotbalan
+    LUMINANCECURVE,   // EvLocallabchromaskexp
+    LUMINANCECURVE,   // EvLocallabgammaskexp
+    LUMINANCECURVE,   // EvLocallabslomaskexp
+    LUMINANCECURVE,   // EvLocallabsoftradiusexp
+    LUMINANCECURVE,   // EvLocallabchromaskcol
+    LUMINANCECURVE,   // EvLocallabgammaskcol
+    LUMINANCECURVE,   // EvLocallabslomaskcol
+    LUMINANCECURVE,   // EvLocallabchromaskSH
+    LUMINANCECURVE,   // EvLocallabgammaskSH
+    LUMINANCECURVE,   // EvLocallabslomaskSH
+    LUMINANCECURVE,   // EvLocallabsoftradiuscol
+    LUMINANCECURVE,   // EvLocallabsoftradiusret
+    LUMINANCECURVE,   // EvLocallabsoftradiuscb
+    LUMINANCECURVE,   // EvLocallabSpotTransitweak
+    LUMINANCECURVE,   // EvLocallabclarityml
+    LUMINANCECURVE,   // EvLocallabcontresid
+    LUMINANCECURVE,   // Evlocallabnoiselumf0
+    LUMINANCECURVE,   // Evlocallabnoiselumf2
+    LUMINANCECURVE,   // Evlocallabblurcbdl
+    LUMINANCECURVE,   // Evlocallabblendmaskcb
+    LUMINANCECURVE,   // Evlocallabradmaskcb
+    LUMINANCECURVE,   // Evlocallabchromaskcb
+    LUMINANCECURVE,   // Evlocallabgammaskcb
+    LUMINANCECURVE,   // Evlocallabslomaskcb
+    LUMINANCECURVE,   // EvlocallabCCmaskcbshape
+    LUMINANCECURVE,   // EvlocallabLLmaskcbshape
+    LUMINANCECURVE,   // EvlocallabHHmaskcbshape
+    LUMINANCECURVE,   // EvLocallabEnacbMask
+    M_VOID,           // EvlocallabToolRemovedWithoutRefresh
+    LUMINANCECURVE,   // Evlocallabsoftradiustm
+    LUMINANCECURVE,   // EvLocallabSpotTransitgrad
+    LUMINANCECURVE,   // Evlocallabamount
+    LUMINANCECURVE,   // Evlocallabsatur
+    LUMINANCECURVE,   // EvlocallabCCmaskretishape
+    LUMINANCECURVE,   // EvlocallabLLmaskretishape
+    LUMINANCECURVE,   // EvlocallabHHmaskretishape
+    LUMINANCECURVE,   // EvLocallabEnaretiMask
+    LUMINANCECURVE,   // Evlocallabblendmaskreti
+    LUMINANCECURVE,   // Evlocallabradmaskreti
+    LUMINANCECURVE,   // Evlocallabchromaskreti
+    LUMINANCECURVE,   // Evlocallabgammaskreti
+    LUMINANCECURVE,   // Evlocallabslomaskreti
+    LUMINANCECURVE,   // EvlocallabToolRemovedWithRefresh
+    LUMINANCECURVE,   // EvLocallabEnaretiMasktmap
+    LUMINANCECURVE,   // Evlocallabscalereti
+    LUMINANCECURVE,   // Evlocallabdarkness
+    LUMINANCECURVE,   // Evlocallablightnessreti
+    LUMINANCECURVE,   // Evlocallablimd
+    LUMINANCECURVE,   // Evlocallablaplace
+    LUMINANCECURVE,   // EvlocallabsoftMethod
+    LUMINANCECURVE,   // Evlocallabequilret
+    LUMINANCECURVE,   // Evlocallabequiltm
+    LUMINANCECURVE,   // Evlocallabfftwlc
+    LUMINANCECURVE,   // Evlocallabfftwreti
+    LUMINANCECURVE,   // EvlocallabshowmasksoftMethod
+    LUMINANCECURVE,   // Evlocallabshadex
+    LUMINANCECURVE,   // EvlocallabexpMethod
+    LUMINANCECURVE,   // EvLocallablaplacexp
+    LUMINANCECURVE,   // EvLocallabbalanexp
+    LUMINANCECURVE,   // EvLocallablinear
+    LUMINANCECURVE,   // EvlocallabCCmasktmshape
+    LUMINANCECURVE,   // EvlocallabLLmasktmshape
+    LUMINANCECURVE,   // EvlocallabHHmasktmshape
+    LUMINANCECURVE,   // EvLocallabEnatmMask
+    LUMINANCECURVE,   // Evlocallabblendmasktm
+    LUMINANCECURVE,   // Evlocallabradmasktm
+    LUMINANCECURVE,   // Evlocallabchromasktm
+    LUMINANCECURVE,   // Evlocallabgammasktm
+    LUMINANCECURVE,   // Evlocallabslomasktm
+    LUMINANCECURVE,   // EvlocallabshowmasktmMethod
+    LUMINANCECURVE,   // EvlocallablocalcontMethod
+    LUMINANCECURVE,   // Evlocallabwavcurve
+    LUMINANCECURVE,   // Evlocallablevelwav
+    LUMINANCECURVE    // Evlocallabresidcont
     
 };
 

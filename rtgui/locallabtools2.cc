@@ -116,7 +116,7 @@ static double retiNeigh2Slider(double neigh)
 
 /* ==== LocallabTone ==== */
 LocallabTone::LocallabTone():
-    LocallabTool(this, "Locallab Tone Mapping", M("TP_LOCALLAB_TM"), true, MaskNormal),
+    LocallabTool(this, M("TP_LOCALLAB_TONE_TOOLNAME"), M("TP_LOCALLAB_TM"), true, MaskNormal),
 
     // Tone mapping specific widgets
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
@@ -210,6 +210,8 @@ void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const Params
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visitonemap);
+
         exp->setEnabled(pp->locallab.spots.at(index).exptonemap);
         amount->setValue(pp->locallab.spots.at(index).amount);
         stren->setValue(pp->locallab.spots.at(index).stren);
@@ -244,6 +246,9 @@ void LocallabTone::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).exptonemap = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visitonemap = exp->get_visible();
+
         pp->locallab.spots.at(index).amount = amount->getValue();
         pp->locallab.spots.at(index).stren = stren->getValue();
         pp->locallab.spots.at(index).equiltm = equiltm->get_active();
@@ -483,7 +488,7 @@ void LocallabTone::equiltmChanged()
 
 /* ==== LocallabRetinex ==== */
 LocallabRetinex::LocallabRetinex():
-    LocallabTool(this, "Locallab Retinex", M("TP_LOCALLAB_RETI"), true, MaskWithTrMap),
+    LocallabTool(this, M("TP_LOCALLAB_RET_TOOLNAME"), M("TP_LOCALLAB_RETI"), true, MaskWithTrMap),
 
     // Retinex specific widgets
     retinexMethod(Gtk::manage(new MyComboBoxText())),
@@ -635,6 +640,8 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visireti);
+
         exp->setEnabled(pp->locallab.spots.at(index).expreti);
 
         if (pp->locallab.spots.at(index).retinexMethod == "low") {
@@ -689,9 +696,9 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
     const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
-        pp->locallab.spots.at(index).expsoft = exp->getEnabled();
-
         pp->locallab.spots.at(index).expreti = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visireti = exp->get_visible();
 
         if (retinexMethod->get_active_row_number() == 0) {
             pp->locallab.spots.at(index).retinexMethod = "low";
@@ -1056,7 +1063,7 @@ void LocallabRetinex::updateRetinexGUI2()
 
 /* ==== LocallabSharp ==== */
 LocallabSharp::LocallabSharp():
-    LocallabTool(this, "Locallab Sharpening", M("TP_LOCALLAB_SHARP"), true, MaskNone),
+    LocallabTool(this, M("TP_LOCALLAB_SHARP_TOOLNAME"), M("TP_LOCALLAB_SHARP"), true, MaskNone),
 
     // Sharpening specific widgets
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
@@ -1125,6 +1132,8 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visisharp);
+
         exp->setEnabled(pp->locallab.spots.at(index).expsharp);
         sharcontrast->setValue(pp->locallab.spots.at(index).sharcontrast);
         sharradius->setValue(pp->locallab.spots.at(index).sharradius);
@@ -1148,6 +1157,9 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expsharp = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visisharp = exp->get_visible();
+
         pp->locallab.spots.at(index).sharcontrast = sharcontrast->getIntValue();
         pp->locallab.spots.at(index).sharradius = sharradius->getValue();
         pp->locallab.spots.at(index).sharamount = sharamount->getIntValue();
@@ -1267,7 +1279,7 @@ void LocallabSharp::inversshaChanged()
 
 /* ==== LocallabContrast ==== */
 LocallabContrast::LocallabContrast():
-    LocallabTool(this, "Locallab Local Constrast", M("TP_LOCALLAB_LOC_CONTRAST"), false, MaskNone),
+    LocallabTool(this, M("TP_LOCALLAB_LC_TOOLNAME"), M("TP_LOCALLAB_LOC_CONTRAST"), false, MaskNone),
 
     // Local constrast specific widgets
     localcontMethod(Gtk::manage(new MyComboBoxText())),
@@ -1373,6 +1385,8 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visicontrast);
+
         exp->setEnabled(pp->locallab.spots.at(index).expcontrast);
 
         if (pp->locallab.spots.at(index).localcontMethod == "loc") {
@@ -1407,6 +1421,8 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expcontrast = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visicontrast = exp->get_visible();
 
         if (localcontMethod->get_active_row_number() == 0) {
             pp->locallab.spots.at(index).localcontMethod = "loc";
@@ -1583,7 +1599,7 @@ void LocallabContrast::updateContrastGUI()
 
 /* ==== LocallabCBDL ==== */
 LocallabCBDL::LocallabCBDL():
-    LocallabTool(this, "Locallab CBDL", M("TP_LOCALLAB_CBDL"), true, MaskNormal),
+    LocallabTool(this, M("TP_LOCALLAB_CBDL_TOOLNAME"), M("TP_LOCALLAB_CBDL"), true, MaskNormal),
 
     // CBDL specific widgets
     chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
@@ -1706,6 +1722,8 @@ void LocallabCBDL::read(const rtengine::procparams::ProcParams* pp, const Params
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visicbdl);
+
         exp->setEnabled(pp->locallab.spots.at(index).expcbdl);
 
         for (int i = 0; i < 6; i++) {
@@ -1742,6 +1760,8 @@ void LocallabCBDL::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expcbdl = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visicbdl = exp->get_visible();
 
         for (int i = 0; i < 6; i++) {
             pp->locallab.spots.at(index).mult[i] = multiplier[i]->getValue();
@@ -2002,7 +2022,7 @@ void LocallabCBDL::lumacontrastPlusPressed()
 
 /* ==== LocallabDenoise ==== */
 LocallabDenoise::LocallabDenoise():
-    LocallabTool(this, "Locallab Denoise", M("TP_LOCALLAB_DENOIS"), true, MaskNone),
+    LocallabTool(this, M("TP_LOCALLAB_DEN_TOOLNAME"), M("TP_LOCALLAB_DENOIS"), true, MaskNone),
 
     // Denoise specific widgets
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 1, 0))),
@@ -2081,6 +2101,8 @@ void LocallabDenoise::read(const rtengine::procparams::ProcParams* pp, const Par
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visidenoi);
+
         exp->setEnabled(pp->locallab.spots.at(index).expdenoi);
         noiselumf0->setValue(pp->locallab.spots.at(index).noiselumf0);
         noiselumf->setValue(pp->locallab.spots.at(index).noiselumf);
@@ -2108,6 +2130,9 @@ void LocallabDenoise::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expdenoi = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visidenoi = exp->get_visible();
+
         pp->locallab.spots.at(index).noiselumf0 = noiselumf0->getIntValue();
         pp->locallab.spots.at(index).noiselumf = noiselumf->getIntValue();
         pp->locallab.spots.at(index).noiselumf2 = noiselumf2->getIntValue();

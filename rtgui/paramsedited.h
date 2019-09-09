@@ -378,6 +378,7 @@ public:
         bool transitgrad;
         bool avoid;
         // Color & Light
+        bool visicolor;
         bool expcolor;
         bool curvactiv;
         bool lightness;
@@ -409,6 +410,7 @@ public:
         bool HHmaskcurve;
         bool softradiuscol;
         // Exposure
+        bool visiexpose;
         bool expexpose;
         bool expcomp;
         bool hlcompr;
@@ -438,6 +440,7 @@ public:
         bool balanexp;
         bool linear;
         // Shadow highlight
+        bool visishadhigh;
         bool expshadhigh;
         bool highlights;
         bool h_tonalwidth;
@@ -457,6 +460,7 @@ public:
         bool gammaskSH;
         bool slomaskSH;
         // Vibrance
+        bool visivibrance;
         bool expvibrance;
         bool saturated;
         bool pastels;
@@ -467,12 +471,14 @@ public:
         bool sensiv;
         bool skintonescurve;
         // Soft Light
+        bool visisoft;
         bool expsoft;
         bool streng;
         bool sensisf;
         bool laplace;
         bool softMethod;
         // Blur & Noise
+        bool visiblur;
         bool expblur;
         bool radius;
         bool strength;
@@ -480,6 +486,7 @@ public:
         bool blurMethod;
         bool activlum;
         // Tone Mapping
+        bool visitonemap;
         bool exptonemap;
         bool stren;
         bool gamma;
@@ -501,6 +508,7 @@ public:
         bool gammasktm;
         bool slomasktm;
         // Retinex
+        bool visireti;
         bool expreti;
         bool retinexMethod;
         bool str;
@@ -529,6 +537,7 @@ public:
         bool limd;
         bool fftwreti;
         // Sharpening
+        bool visisharp;
         bool expsharp;
         bool sharcontrast;
         bool sharradius;
@@ -539,6 +548,7 @@ public:
         bool sensisha;
         bool inverssha;
         // Local Contrast
+        bool visicontrast;
         bool expcontrast;
         bool lcradius;
         bool lcamount;
@@ -551,6 +561,7 @@ public:
         bool localcontMethod;
         bool locwavcurve;
         // Contrast by detail levels
+        bool visicbdl;
         bool expcbdl;
         bool mult[6];
         bool chromacbdl;
@@ -569,8 +580,8 @@ public:
         bool CCmaskcbcurve;
         bool LLmaskcbcurve;
         bool HHmaskcbcurve;
-
         // Denoise
+        bool visidenoi;
         bool expdenoi;
         bool noiselumf;
         bool noiselumf0;

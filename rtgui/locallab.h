@@ -25,29 +25,93 @@
 #include "controlspotpanel.h"
 #include "locallabtools.h"
 
+/* ==== LocallabToolListListener ==== */
+class LocallabToolList;
+class LocallabToolListListener
+{
+public:
+    LocallabToolListListener() {};
+    virtual ~LocallabToolListListener() {};
+
+    virtual void locallabToolToAdd(const Glib::ustring &toolname) = 0;
+};
+
+/* ==== LocallabToolList ==== */
+class LocallabToolList:
+    public Gtk::VBox
+{
+private:
+    // Tree model to manage ComboBox rows
+    class ToolRow:
+        public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        Gtk::TreeModelColumn<int> id;
+        Gtk::TreeModelColumn<Glib::ustring> name;
+
+        ToolRow()
+        {
+            add(id);
+            add(name);
+        }
+    };
+
+    // Tool list GUI widgets
+    MyComboBox* const list;
+    sigc::connection listConn;
+    ToolRow toolRow;
+    Glib::RefPtr<Gtk::ListStore> listTreeModel;
+
+    // Tool list listener
+    LocallabToolListListener* listListener;
+
+public:
+    LocallabToolList();
+
+    // Setter for tool list listener
+    void setLocallabToolListListener(LocallabToolListListener* ltll)
+    {
+        listListener = ltll;
+    }
+
+    // Tool list management function
+    void addToolRow(const Glib::ustring &toolname, const int id);
+    void removeToolRow(const Glib::ustring &toolname);
+    void removeAllTool();
+
+private:
+    // Tool list event management function
+    void toolRowSelected();
+};
+
+/* ==== Locallab ==== */
 class Locallab :
     public ToolParamBlock,
     public FoldableToolPanel,
     public rtengine::LocallabListener,
-    public LocallabToolListener
+    public LocallabToolListener,
+    public LocallabToolListListener
 {
 private:
     // Spot control panel widget
     ControlSpotPanel* const expsettings;
 
+    // Tool list widget
+    LocallabToolList* const toollist;
+
     // Locallab tool widgets
-    LocallabColor* expcolor;
-    LocallabExposure* expexpose;
-    LocallabShadow* expshadhigh;
-    LocallabVibrance* expvibrance;
-    LocallabSoft* expsoft;
-    LocallabBlur* expblur;
-    LocallabTone* exptonemap;
-    LocallabRetinex* expreti;
-    LocallabSharp* expsharp;
-    LocallabContrast* expcontrast;
-    LocallabCBDL* expcbdl;
-    LocallabDenoise* expdenoi;
+    LocallabColor* const expcolor;
+    LocallabExposure* const expexpose;
+    LocallabShadow* const expshadhigh;
+    LocallabVibrance* const expvibrance;
+    LocallabSoft* const expsoft;
+    LocallabBlur* const expblur;
+    LocallabTone* const exptonemap;
+    LocallabRetinex* const expreti;
+    LocallabSharp* const expsharp;
+    LocallabContrast* const expcontrast;
+    LocallabCBDL* const expcbdl;
+    LocallabDenoise* const expdenoi;
 
     std::vector<LocallabTool*> locallabTools;
 
@@ -106,6 +170,10 @@ private:
 
     // LocallabToolListener function
     void resetOtherMaskView(LocallabTool* current);
+    void toolRemoved(LocallabTool* current);
+
+    // LocallabToolListListener function
+    void locallabToolToAdd(const Glib::ustring &toolname);
 };
 
 #endif

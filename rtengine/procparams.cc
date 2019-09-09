@@ -2361,6 +2361,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitgrad(0.0),
     avoid(false),
     // Color & Light
+    visicolor(false),
     expcolor(false),
     curvactiv(false),
     lightness(0),
@@ -2392,6 +2393,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     HHmaskcurve(DEF_MASK_CURVE),
     softradiuscol(0.0),
     // Exposure
+    visiexpose(false),
     expexpose(false),
     expcomp(0.0),
     hlcompr(0),
@@ -2421,6 +2423,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     balanexp(0.8),
     linear(0.0),
     // Shadow highlight
+    visishadhigh(false),
     expshadhigh(false),
     highlights(0),
     h_tonalwidth(70),
@@ -2440,6 +2443,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gammaskSH(1.0),
     slomaskSH(0.0),
     // Vibrance
+    visivibrance(false),
     expvibrance(false),
     saturated(0),
     pastels(0),
@@ -2450,12 +2454,14 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensiv(15),
     skintonescurve{(double)DCT_Linear},
     // Soft Light
+    visisoft(false),
     expsoft(false),
     streng(0),
     sensisf(15),
     laplace(25.),
     softMethod("soft"),
     // Blur & Noise
+    visiblur(false),
     expblur(false),
     radius(1.0),
     strength(0),
@@ -2463,6 +2469,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blurMethod("norm"),
     activlum(false),
     // Tone Mapping
+    visitonemap(false),
     exptonemap(false),
     stren(0.5),
     gamma(1.0),
@@ -2484,6 +2491,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gammasktm(1.0),
     slomasktm(0.0),
     // Retinex
+    visireti(false),
     expreti(false),
     retinexMethod("high"),
     str(0.0),
@@ -2512,6 +2520,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     limd(8.0),
     fftwreti(false),
     // Sharpening
+    visisharp(false),
     expsharp(false),
     sharcontrast(20),
     sharradius(0.75),
@@ -2522,6 +2531,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensisha(19),
     inverssha(false),
     // Local Contrast
+    visicontrast(false),
     expcontrast(false),
     lcradius(80),
     lcamount(0.0),
@@ -2534,6 +2544,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     localcontMethod("loc"),
     locwavcurve(DEF_LC_CURVE),
     // Contrast by detail levels
+    visicbdl(false),
     expcbdl(false),
     mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
     chromacbdl(0.),
@@ -2553,6 +2564,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gammaskcb(1.0),
     slomaskcb(0.0),
     // Denoise
+    visidenoi(false),
     expdenoi(false),
     noiselumf(0),
     noiselumf0(0),
@@ -2598,6 +2610,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && transitgrad == other.transitgrad
         && avoid == other.avoid
         // Color & Light
+        && visicolor == other.visicolor
         && expcolor == other.expcolor
         && curvactiv == other.curvactiv
         && lightness == other.lightness
@@ -2629,6 +2642,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurcolde == other.blurcolde
         && softradiuscol == other.softradiuscol
         // Exposure
+        && visiexpose == other.visiexpose
         && expexpose == other.expexpose
         && expcomp == other.expcomp
         && hlcompr == other.hlcompr
@@ -2658,6 +2672,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && balanexp == other.balanexp
         && linear == other.linear
         // Shadow highlight
+        && visishadhigh == other.visishadhigh
         && expshadhigh == other.expshadhigh
         && highlights == other.highlights
         && h_tonalwidth == other.h_tonalwidth
@@ -2677,6 +2692,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gammaskSH == other.gammaskSH
         && slomaskSH == other.slomaskSH
         // Vibrance
+        && visivibrance == other.visivibrance
         && expvibrance == other.expvibrance
         && saturated == other.saturated
         && pastels == other.pastels
@@ -2687,12 +2703,14 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensiv == other.sensiv
         && skintonescurve == other.skintonescurve
         // Soft Light
+        && visisoft == other.visisoft
         && expsoft == other.expsoft
         && streng == other.streng
         && sensisf == other.sensisf
         && laplace == other.laplace
         && softMethod == other.softMethod
         // Blur & Noise
+        && visiblur == other.visiblur
         && expblur == other.expblur
         && radius == other.radius
         && strength == other.strength
@@ -2700,6 +2718,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurMethod == other.blurMethod
         && activlum == other.activlum
         // Tone Mapping
+        && visitonemap == other.visitonemap
         && exptonemap == other.exptonemap
         && stren == other.stren
         && gamma == other.gamma
@@ -2721,6 +2740,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gammasktm == other.gammasktm
         && slomasktm == other.slomasktm
         // Retinex
+        && visireti == other.visireti
         && expreti == other.expreti
         && retinexMethod == other.retinexMethod
         && str == other.str
@@ -2749,6 +2769,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && limd == other.limd
         && fftwreti == other.fftwreti
         // Sharpening
+        && visisharp == other.visisharp
         && expsharp == other.expsharp
         && sharcontrast == other.sharcontrast
         && sharradius == other.sharradius
@@ -2759,6 +2780,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensisha == other.sensisha
         && inverssha == other.inverssha
         // Local contrast
+        && visicontrast == other.visicontrast
         && expcontrast == other.expcontrast
         && lcradius == other.lcradius
         && lcamount == other.lcamount
@@ -2771,6 +2793,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && localcontMethod == other.localcontMethod
         && locwavcurve == other.locwavcurve
         // Constrast by detail levels
+        && visicbdl == other.visicbdl
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
             for (int i = 0; i < 6; i++)
@@ -2799,6 +2822,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gammaskcb == other.gammaskcb
         && slomaskcb == other.slomaskcb
         // Denoise
+        && visidenoi == other.visidenoi
         && expdenoi == other.expdenoi
         && noiselumf == other.noiselumf
         && noiselumf0 == other.noiselumf0
@@ -5150,7 +5174,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + std::to_string(i), pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
                 // Color & Light
-                assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, spot.expcolor, spotEdited.expcolor);
+                spot.visicolor = assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, spot.expcolor, spotEdited.expcolor);
+
+                if (spot.visicolor) {
+                    spotEdited.visicolor = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + std::to_string(i), pedited, spot.curvactiv, spotEdited.curvactiv);
                 assignFromKeyfile(keyFile, "Locallab", "Lightness_" + std::to_string(i), pedited, spot.lightness, spotEdited.lightness);
                 assignFromKeyfile(keyFile, "Locallab", "Contrast_" + std::to_string(i), pedited, spot.contrast, spotEdited.contrast);
@@ -5181,7 +5210,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + std::to_string(i), pedited, spot.HHmaskcurve, spotEdited.HHmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscol_" + std::to_string(i), pedited, spot.softradiuscol, spotEdited.softradiuscol);
                 // Exposure
-                assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + std::to_string(i), pedited, spot.expexpose, spotEdited.expexpose);
+                spot.visiexpose = assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + std::to_string(i), pedited, spot.expexpose, spotEdited.expexpose);
+
+                if (spot.visiexpose) {
+                    spotEdited.visiexpose = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + std::to_string(i), pedited, spot.expcomp, spotEdited.expcomp);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + std::to_string(i), pedited, spot.hlcompr, spotEdited.hlcompr);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + std::to_string(i), pedited, spot.hlcomprthresh, spotEdited.hlcomprthresh);
@@ -5210,7 +5244,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Balanexp_" + std::to_string(i), pedited, spot.balanexp, spotEdited.balanexp);
                 assignFromKeyfile(keyFile, "Locallab", "Linearexp_" + std::to_string(i), pedited, spot.linear, spotEdited.linear);
                 // Shadow highlight
-                assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + std::to_string(i), pedited, spot.expshadhigh, spotEdited.expshadhigh);
+                spot.visishadhigh = assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + std::to_string(i), pedited, spot.expshadhigh, spotEdited.expshadhigh);
+
+                if (spot.visishadhigh) {
+                    spotEdited.visishadhigh = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "highlights_" + std::to_string(i), pedited, spot.highlights, spotEdited.highlights);
                 assignFromKeyfile(keyFile, "Locallab", "h_tonalwidth_" + std::to_string(i), pedited, spot.h_tonalwidth, spotEdited.h_tonalwidth);
                 assignFromKeyfile(keyFile, "Locallab", "shadows_" + std::to_string(i), pedited, spot.shadows, spotEdited.shadows);
@@ -5229,7 +5268,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "GammaskSH_" + std::to_string(i), pedited, spot.gammaskSH, spotEdited.gammaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + std::to_string(i), pedited, spot.slomaskSH, spotEdited.slomaskSH);
                 // Vibrance
-                assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
+                spot.visivibrance = assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
+
+                if (spot.visivibrance) {
+                    spotEdited.visivibrance = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, spot.saturated, spotEdited.saturated);
                 assignFromKeyfile(keyFile, "Locallab", "Pastels_" + std::to_string(i), pedited, spot.pastels, spotEdited.pastels);
 
@@ -5251,20 +5295,35 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + std::to_string(i), pedited, spot.sensiv, spotEdited.sensiv);
                 assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + std::to_string(i), pedited, spot.skintonescurve, spotEdited.skintonescurve);
                 // Soft Light
-                assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, spot.expsoft, spotEdited.expsoft);
+                spot.visisoft = assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + std::to_string(i), pedited, spot.expsoft, spotEdited.expsoft);
+
+                if (spot.visisoft) {
+                    spotEdited.visisoft = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Streng_" + std::to_string(i), pedited, spot.streng, spotEdited.streng);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisf_" + std::to_string(i), pedited, spot.sensisf, spotEdited.sensisf);
                 assignFromKeyfile(keyFile, "Locallab", "Laplace_" + std::to_string(i), pedited, spot.laplace, spotEdited.laplace);
                 assignFromKeyfile(keyFile, "Locallab", "SoftMethod_" + std::to_string(i), pedited, spot.softMethod, spotEdited.softMethod);
                 // Blur & Noise
-                assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, spot.expblur, spotEdited.expblur);
+                spot.visiblur = assignFromKeyfile(keyFile, "Locallab", "Expblur_" + std::to_string(i), pedited, spot.expblur, spotEdited.expblur);
+
+                if (spot.visiblur) {
+                    spotEdited.visiblur = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Radius_" + std::to_string(i), pedited, spot.radius, spotEdited.radius);
                 assignFromKeyfile(keyFile, "Locallab", "Strength_" + std::to_string(i), pedited, spot.strength, spotEdited.strength);
                 assignFromKeyfile(keyFile, "Locallab", "Sensibn_" + std::to_string(i), pedited, spot.sensibn, spotEdited.sensibn);
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + std::to_string(i), pedited, spot.blurMethod, spotEdited.blurMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + std::to_string(i), pedited, spot.activlum, spotEdited.activlum);
                 // Tone Mapping
-                assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + std::to_string(i), pedited, spot.exptonemap, spotEdited.exptonemap);
+                spot.visitonemap = assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + std::to_string(i), pedited, spot.exptonemap, spotEdited.exptonemap);
+
+                if (spot.visitonemap) {
+                    spotEdited.visitonemap = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Stren_" + std::to_string(i), pedited, spot.stren, spotEdited.stren);
                 assignFromKeyfile(keyFile, "Locallab", "Gamma_" + std::to_string(i), pedited, spot.gamma, spotEdited.gamma);
                 assignFromKeyfile(keyFile, "Locallab", "Estop_" + std::to_string(i), pedited, spot.estop, spotEdited.estop);
@@ -5285,7 +5344,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gammasktm_" + std::to_string(i), pedited, spot.gammasktm, spotEdited.gammasktm);
                 assignFromKeyfile(keyFile, "Locallab", "Slomasktm_" + std::to_string(i), pedited, spot.slomasktm, spotEdited.slomasktm);
                 // Retinex
-                assignFromKeyfile(keyFile, "Locallab", "Expreti_" + std::to_string(i), pedited, spot.expreti, spotEdited.expreti);
+                spot.visireti = assignFromKeyfile(keyFile, "Locallab", "Expreti_" + std::to_string(i), pedited, spot.expreti, spotEdited.expreti);
+
+                if (spot.visireti) {
+                    spotEdited.visireti = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "retinexMethod_" + std::to_string(i), pedited, spot.retinexMethod, spotEdited.retinexMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Str_" + std::to_string(i), pedited, spot.str, spotEdited.str);
                 assignFromKeyfile(keyFile, "Locallab", "Chrrt_" + std::to_string(i), pedited, spot.chrrt, spotEdited.chrrt);
@@ -5313,7 +5377,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Limd_" + std::to_string(i), pedited, spot.limd, spotEdited.limd);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwreti_" + std::to_string(i), pedited, spot.fftwreti, spotEdited.fftwreti);
                 // Sharpening
-                assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, spot.expsharp, spotEdited.expsharp);
+                spot.visisharp = assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, spot.expsharp, spotEdited.expsharp);
+
+                if (spot.visisharp) {
+                    spotEdited.visisharp = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + std::to_string(i), pedited, spot.sharcontrast, spotEdited.sharcontrast);
                 assignFromKeyfile(keyFile, "Locallab", "Sharradius_" + std::to_string(i), pedited, spot.sharradius, spotEdited.sharradius);
                 assignFromKeyfile(keyFile, "Locallab", "Sharamount_" + std::to_string(i), pedited, spot.sharamount, spotEdited.sharamount);
@@ -5323,7 +5392,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + std::to_string(i), pedited, spot.sensisha, spotEdited.sensisha);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + std::to_string(i), pedited, spot.inverssha, spotEdited.inverssha);
                 // Local Contrast
-                assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + std::to_string(i), pedited, spot.expcontrast, spotEdited.expcontrast);
+                spot.visicontrast = assignFromKeyfile(keyFile, "Locallab", "Expcontrast_" + std::to_string(i), pedited, spot.expcontrast, spotEdited.expcontrast);
+
+                if (spot.visicontrast) {
+                    spotEdited.visicontrast = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Lcradius_" + std::to_string(i), pedited, spot.lcradius, spotEdited.lcradius);
                 assignFromKeyfile(keyFile, "Locallab", "Lcamount_" + std::to_string(i), pedited, spot.lcamount, spotEdited.lcamount);
                 assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + std::to_string(i), pedited, spot.lcdarkness, spotEdited.lcdarkness);
@@ -5335,7 +5409,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + std::to_string(i), pedited, spot.localcontMethod, spotEdited.localcontMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + std::to_string(i), pedited, spot.locwavcurve, spotEdited.locwavcurve);
                 // Contrast by detail levels
-                assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, spot.expcbdl, spotEdited.expcbdl);
+                spot.visicbdl = assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, spot.expcbdl, spotEdited.expcbdl);
+
+                if (spot.visicbdl) {
+                    spotEdited.visicbdl = true;
+                }
 
                 for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Mult" + std::to_string(j) + "_" + std::to_string(i), pedited, spot.mult[j], spotEdited.mult[j]);
@@ -5358,7 +5436,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskcb_" + std::to_string(i), pedited, spot.gammaskcb, spotEdited.gammaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskcb_" + std::to_string(i), pedited, spot.slomaskcb, spotEdited.slomaskcb);
                 // Denoise
-                assignFromKeyfile(keyFile, "Locallab", "Expdenoi_" + std::to_string(i), pedited, spot.expdenoi, spotEdited.expdenoi);
+                spot.visidenoi = assignFromKeyfile(keyFile, "Locallab", "Expdenoi_" + std::to_string(i), pedited, spot.expdenoi, spotEdited.expdenoi);
+
+                if (spot.visidenoi) {
+                    spotEdited.visidenoi = true;
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + std::to_string(i), pedited, spot.noiselumf, spotEdited.noiselumf);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf0_" + std::to_string(i), pedited, spot.noiselumf0, spotEdited.noiselumf0);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf2_" + std::to_string(i), pedited, spot.noiselumf2, spotEdited.noiselumf2);

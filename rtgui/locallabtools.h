@@ -34,7 +34,8 @@ public:
     LocallabToolListener() {};
     virtual ~LocallabToolListener() {};
 
-    virtual void resetOtherMaskView(LocallabTool* current) {};
+    virtual void resetOtherMaskView(LocallabTool* current) = 0;
+    virtual void toolRemoved(LocallabTool* current) = 0;
 };
 
 
@@ -122,7 +123,8 @@ public:
     }
 
     // Management functions to add/remove Locallab tool
-    void addLocallabTool(bool cond);
+    void addLocallabTool(bool raiseEvent);
+    void removeLocallabTool(bool raiseEvent);
     bool isLocallabToolAdded();
 
     // Mask background management function

@@ -175,7 +175,6 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     }
 
     exp->add(*totalBox, false);
-    exp->setLevel(2);
 }
 
 LocallabTool::~LocallabTool()
@@ -187,9 +186,46 @@ LocallabTool::~LocallabTool()
     }
 }
 
-void LocallabTool::addLocallabTool(bool cond)
+void LocallabTool::addLocallabTool(bool raiseEvent)
 {
-    exp->set_visible(cond);
+    exp->set_visible(true);
+
+    // Raise event if required
+    if (raiseEvent) {
+        if (listener) {
+            listener->panelChanged(EvlocallabToolAdded,
+                                   toolName + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
+void LocallabTool::removeLocallabTool(bool raiseEvent)
+{
+    exp->set_visible(false);
+
+    // Inform LocallabToolListener to update Locallab tools list
+    if (locToolListener) {
+        locToolListener->toolRemoved(this);
+    }
+
+    if (exp->getEnabled()) {
+        // Disable tool while removing it
+        disableListener();
+        exp->setEnabled(false);
+        enableListener();
+
+        // Raise event if required refreshing image
+        if (raiseEvent && listener) {
+            listener->panelChanged(EvlocallabToolRemovedWithRefresh,
+                                   toolName + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    } else {
+        // Raise event if required without refreshing image
+        if (raiseEvent && listener) {
+            listener->panelChanged(EvlocallabToolRemovedWithoutRefresh,
+                                   toolName + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
 }
 
 bool LocallabTool::isLocallabToolAdded()
@@ -313,8 +349,8 @@ void LocallabTool::enableListener()
 bool LocallabTool::on_remove_change(GdkEventButton* event)
 {
     if (event->button == GDK_BUTTON_PRIMARY) {
-        printf("Remove icon pressed\n");
-        // exp->set_visible(false);
+        // Remove Locallab tool raising an event
+        removeLocallabTool(true);
     }
 
     return true; // No event propagation further (to avoid closing expander when mouse clicking on remove image)
@@ -331,7 +367,7 @@ void LocallabTool::foldThemAll(GdkEventButton* event)
 
 /* ==== LocallabColor ==== */
 LocallabColor::LocallabColor():
-    LocallabTool(this, "Locallab Color&Light", M("TP_LOCALLAB_COFR"), false, MaskNormal),
+    LocallabTool(this, M("TP_LOCALLAB_COLOR_TOOLNAME"), M("TP_LOCALLAB_COFR"), false, MaskNormal),
 
     // Color & Light specific widgets
     curvactiv(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CURV")))),
@@ -570,6 +606,8 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visicolor);
+
         exp->setEnabled(pp->locallab.spots.at(index).expcolor);
         curvactiv->set_active(pp->locallab.spots.at(index).curvactiv);
         lightness->setValue(pp->locallab.spots.at(index).lightness);
@@ -630,6 +668,9 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expcolor = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visicolor = exp->get_visible();
+
         pp->locallab.spots.at(index).curvactiv = curvactiv->get_active();
         pp->locallab.spots.at(index).lightness = lightness->getIntValue();
         pp->locallab.spots.at(index).contrast = contrast->getIntValue();
@@ -988,7 +1029,7 @@ void LocallabColor::updateColorGUI()
 
 /* ==== LocallabExposure ==== */
 LocallabExposure::LocallabExposure():
-    LocallabTool(this, "Locallab Exposure", M("TP_LOCALLAB_EXPOSE"), false, MaskNormal),
+    LocallabTool(this, M("TP_LOCALLAB_EXP_TOOLNAME"), M("TP_LOCALLAB_EXPOSE"), false, MaskNormal),
 
     // Exposure specific widgets
     expMethod(Gtk::manage(new MyComboBoxText())),
@@ -1145,6 +1186,8 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visiexpose);
+
         exp->setEnabled(pp->locallab.spots.at(index).expexpose);
 
         if (pp->locallab.spots.at(index).expMethod == "std") {
@@ -1202,6 +1245,8 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expexpose = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visiexpose = exp->get_visible();
 
         if (expMethod->get_active_row_number() == 0) {
             pp->locallab.spots.at(index).expMethod = "std";
@@ -1577,7 +1622,7 @@ void LocallabExposure::updateExposureGUI3()
 
 /* ==== LocallabShadow ==== */
 LocallabShadow::LocallabShadow():
-    LocallabTool(this, "Locallab Shadows Highlight", M("TP_LOCALLAB_SHADHIGH"), false, MaskNormal),
+    LocallabTool(this, M("TP_LOCALLAB_SH_TOOLNAME"), M("TP_LOCALLAB_SHADHIGH"), false, MaskNormal),
 
     // Shadow highlight specific widgets
     highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
@@ -1651,6 +1696,8 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visishadhigh);
+
         exp->setEnabled(pp->locallab.spots.at(index).expshadhigh);
         highlights->setValue(pp->locallab.spots.at(index).highlights);
         h_tonalwidth->setValue(pp->locallab.spots.at(index).h_tonalwidth);
@@ -1686,6 +1733,9 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expshadhigh = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visishadhigh = exp->get_visible();
+
         pp->locallab.spots.at(index).highlights = highlights->getIntValue();
         pp->locallab.spots.at(index).h_tonalwidth = h_tonalwidth->getIntValue();
         pp->locallab.spots.at(index).shadows = shadows->getIntValue();
@@ -1920,7 +1970,7 @@ void LocallabShadow::updateShadowGUI()
 
 /* ==== LocallabVibrance ==== */
 LocallabVibrance::LocallabVibrance():
-    LocallabTool(this, "Locallab Vibrance", M("TP_LOCALLAB_VIBRANCE"), false, MaskNone),
+    LocallabTool(this, M("TP_LOCALLAB_VIB_TOOLNAME"), M("TP_LOCALLAB_VIBRANCE"), false, MaskNone),
 
     // Vibrance specific widgets
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
@@ -2022,6 +2072,8 @@ void LocallabVibrance::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visivibrance);
+
         exp->setEnabled(pp->locallab.spots.at(index).expvibrance);
         saturated->setValue(pp->locallab.spots.at(index).saturated);
         pastels->setValue(pp->locallab.spots.at(index).pastels);
@@ -2048,6 +2100,9 @@ void LocallabVibrance::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expvibrance = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visivibrance = exp->get_visible();
+
         pp->locallab.spots.at(index).saturated = saturated->getIntValue();
         pp->locallab.spots.at(index).pastels = pastels->getIntValue();
         pp->locallab.spots.at(index).psthreshold = psThreshold->getValue<int>();
@@ -2259,7 +2314,7 @@ void LocallabVibrance::updateVibranceGUI()
 
 /* ==== LocallabSoft ==== */
 LocallabSoft::LocallabSoft():
-    LocallabTool(this, "Locallab Soft Light", M("TP_LOCALLAB_SOFT"), false, MaskNone),
+    LocallabTool(this, M("TP_LOCALLAB_SOFT_TOOLNAME"), M("TP_LOCALLAB_SOFT"), false, MaskNone),
 
     // Soft light specific widgets
     softMethod(Gtk::manage(new MyComboBoxText())),
@@ -2342,6 +2397,8 @@ void LocallabSoft::read(const rtengine::procparams::ProcParams* pp, const Params
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visisoft);
+
         exp->setEnabled(pp->locallab.spots.at(index).expsoft);
 
         if (pp->locallab.spots.at(index).softMethod == "soft") {
@@ -2370,6 +2427,8 @@ void LocallabSoft::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expsoft = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visisoft = exp->get_visible();
 
         if (softMethod->get_active_row_number() == 0) {
             pp->locallab.spots.at(index).softMethod = "soft";
@@ -2488,7 +2547,7 @@ void LocallabSoft::updateSoftGUI()
 
 /* ==== LocallabBlur ==== */
 LocallabBlur::LocallabBlur():
-    LocallabTool(this, "Locallab Blur & Noise", M("TP_LOCALLAB_BLUFR"), false, MaskNone),
+    LocallabTool(this, M("TP_LOCALLAB_BLUR_TOOLNAME"), M("TP_LOCALLAB_BLUFR"), false, MaskNone),
 
     // Blur & Noise specific widgets
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.0, 100.0, 0.1, 1.0))),
@@ -2555,6 +2614,8 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
     if (index < (int)pp->locallab.spots.size()) {
         spotName = pp->locallab.spots.at(index).name; // Update spot name according to selected spot
 
+        exp->set_visible(pp->locallab.spots.at(index).visiblur);
+
         exp->setEnabled(pp->locallab.spots.at(index).expblur);
         radius->setValue(pp->locallab.spots.at(index).radius);
         strength->setValue(pp->locallab.spots.at(index).strength);
@@ -2581,6 +2642,8 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     if (index < (int)pp->locallab.spots.size()) {
         pp->locallab.spots.at(index).expsoft = exp->getEnabled();
+
+        pp->locallab.spots.at(index).visisoft = exp->get_visible();
 
         pp->locallab.spots.at(index).expblur = exp->getEnabled();
         pp->locallab.spots.at(index).radius = radius->getValue();

@@ -882,6 +882,7 @@ HISTORY_MSG_632;Local - SH radius
 HISTORY_MSG_633;Local - SH Scope
 HISTORY_MSG_634;Local - radius color
 HISTORY_MSG_635;Local - radius Exp
+HISTORY_MSG_636;Local - Tool added
 HISTORY_MSG_637;Local - SH Mask C
 HISTORY_MSG_638;Local - SH Mask L
 HISTORY_MSG_639;Local - SH Mask H
@@ -919,6 +920,7 @@ HISTORY_MSG_670;Local - cbdl mask C
 HISTORY_MSG_671;Local - cbdl mask L
 HISTORY_MSG_672;Local - cbdl mask CL
 HISTORY_MSG_673;Local - Use cbdl mask
+HISTORY_MSG_674;Local - Tool removed
 HISTORY_MSG_675;Local - TM soft radius
 HISTORY_MSG_676;Local Spot transition-differentiation
 HISTORY_MSG_677;Local - TM amount
@@ -932,6 +934,7 @@ HISTORY_MSG_684;Local - Retinex mask radius
 HISTORY_MSG_685;Local - Retinex mask chroma
 HISTORY_MSG_686;Local - Retinex mask gamma
 HISTORY_MSG_687;Local - Retinex mask slope
+HISTORY_MSG_688;Local - Tool removed
 HISTORY_MSG_689;Local - Retinex mask transmission map
 HISTORY_MSG_690;Local - Retinex scale
 HISTORY_MSG_691;Local - Retinex darkness
@@ -2230,6 +2233,19 @@ TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_EV_DUPL;Copy of
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
+TP_LOCALLAB_LIST_NAME;Add tool to current spot...
+TP_LOCALLAB_COLOR_TOOLNAME;Locallab Color&Light
+TP_LOCALLAB_EXP_TOOLNAME;Locallab Exposure
+TP_LOCALLAB_SH_TOOLNAME;Locallab Shadows Highlight
+TP_LOCALLAB_VIB_TOOLNAME;Locallab Vibrance
+TP_LOCALLAB_SOFT_TOOLNAME;Locallab Soft Light
+TP_LOCALLAB_BLUR_TOOLNAME;Locallab Blur & Noise
+TP_LOCALLAB_TONE_TOOLNAME;Locallab Tone Mapping
+TP_LOCALLAB_RET_TOOLNAME;Locallab Retinex
+TP_LOCALLAB_SHARP_TOOLNAME;Locallab Sharpening
+TP_LOCALLAB_LC_TOOLNAME;Locallab Local Constrast
+TP_LOCALLAB_CBDL_TOOLNAME;Locallab CBDL
+TP_LOCALLAB_DEN_TOOLNAME;Locallab Denoise
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right

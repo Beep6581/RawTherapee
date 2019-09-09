@@ -960,6 +960,7 @@ struct LocallabParams {
         double transitgrad;
         bool avoid;
         // Color & Light
+        bool visicolor;
         bool expcolor;
         bool curvactiv;
         int lightness;
@@ -991,13 +992,13 @@ struct LocallabParams {
         std::vector<double> HHmaskcurve;
         double softradiuscol;
         // Exposure
+        bool visiexpose;
         bool expexpose;
         //   int expcomp;
         double expcomp;
         int hlcompr;
         int hlcomprthresh;
         int black;
-
         int shadex;
         int shcompr;
         int expchroma;
@@ -1022,6 +1023,7 @@ struct LocallabParams {
         double balanexp;
         double linear;
         // Shadow highlight
+        bool visishadhigh;
         bool expshadhigh;
         int highlights;
         int h_tonalwidth;
@@ -1041,6 +1043,7 @@ struct LocallabParams {
         double gammaskSH;
         double slomaskSH;
         // Vibrance
+        bool visivibrance;
         bool expvibrance;
         int saturated;
         int pastels;
@@ -1051,12 +1054,14 @@ struct LocallabParams {
         int sensiv;
         std::vector<double> skintonescurve;
         // Soft Light
+        bool visisoft;
         bool expsoft;
         int streng;
         int sensisf;
         double laplace;
         Glib::ustring softMethod;
         // Blur & Noise
+        bool visiblur;
         bool expblur;
         double radius;
         int strength;
@@ -1064,6 +1069,7 @@ struct LocallabParams {
         Glib::ustring blurMethod;
         bool activlum;
         // Tone Mapping
+        bool visitonemap;
         bool exptonemap;
         double stren;
         double gamma;
@@ -1085,6 +1091,7 @@ struct LocallabParams {
         double gammasktm;
         double slomasktm;
         // Retinex
+        bool visireti;
         bool expreti;
         Glib::ustring retinexMethod;
         double str;
@@ -1113,6 +1120,7 @@ struct LocallabParams {
         double limd;
         bool fftwreti;
         // Sharpening
+        bool visisharp;
         bool expsharp;
         int sharcontrast;
         double sharradius;
@@ -1123,6 +1131,7 @@ struct LocallabParams {
         int sensisha;
         bool inverssha;
         // Local Contrast
+        bool visicontrast;
         bool expcontrast;
         int lcradius;
         double lcamount;
@@ -1135,6 +1144,7 @@ struct LocallabParams {
         Glib::ustring localcontMethod;
         std::vector<double> locwavcurve;
         // Contrast by detail levels
+        bool visicbdl;
         bool expcbdl;
         double mult[6];
         double chromacbdl;
@@ -1154,6 +1164,7 @@ struct LocallabParams {
         double gammaskcb;
         double slomaskcb;
         // Denoise
+        bool visidenoi;
         bool expdenoi;
         int noiselumf;
         int noiselumf0;
