@@ -30,11 +30,11 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
 {
 
     auto m = ProcEventMapper::getInstance();
-    EvPdShrContrast = m->newEvent(ALLNORAW, "HISTORY_MSG_PDSHARPEN_CONTRAST");
-    EvPdSharpenGamma = m->newEvent(ALLNORAW, "HISTORY_MSG_PDSHARPEN_GAMMA");
-    EvPdShrDRadius = m->newEvent(ALLNORAW, "HISTORY_MSG_PDSHARPEN_RADIUS");
-    EvPdShrDIterations = m->newEvent(ALLNORAW, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
-    EvPdShrAutoContrast = m->newEvent(ALLNORAW, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
+    EvPdShrContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_CONTRAST");
+    EvPdSharpenGamma = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_GAMMA");
+    EvPdShrDRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS");
+    EvPdShrDIterations = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
+    EvPdShrAutoContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
 
     Gtk::HBox* hb = Gtk::manage(new Gtk::HBox());
     hb->show();

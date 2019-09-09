@@ -340,11 +340,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 xtransAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
             }
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
-            todo |= M_INIT;
+            todo |= (M_INIT | M_CSHARP);
 
         }
 
-        if ((todo & M_INIT) && params->pdsharpening.enabled) {
+        if ((todo & (M_RAW | M_CSHARP)) && params->pdsharpening.enabled) {
             double pdSharpencontrastThreshold = params->pdsharpening.contrast;
             imgsrc->captureSharpening(params->pdsharpening, sharpMask, pdSharpencontrastThreshold);
             if (pdSharpenAutoContrastListener && params->pdsharpening.autoContrast) {
