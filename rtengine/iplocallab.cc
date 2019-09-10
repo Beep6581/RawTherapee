@@ -6478,24 +6478,23 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //Prepare mask for Blur and noise and Denoise
         bool denoiz = false;
 
-        if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f))) {
+        if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f)  && lp.denoiena)) {
             denoiz = true;
         }
 
         bool blurz = false;
 
-        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4)) {
+        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
             blurz = true;
         }
 
         const int GW = transformed->W;
         const int GH = transformed->H;
-        
+
         LabImage * originalmaskbl = nullptr;
         std::unique_ptr<LabImage> bufmaskorigbl;
         std::unique_ptr<LabImage> bufmaskblurbl;
-        //  std::unique_ptr<LabImage> originalmaskbl;
-        std::unique_ptr<LabImage> bufgb; //(new LabImage(GW, GH));
+        std::unique_ptr<LabImage> bufgb;
 
         if (denoiz || blurz || lp.denoiena || lp.blurena) {
             bufgb.reset(new LabImage(GW, GH));
@@ -6503,7 +6502,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
                 bufmaskorigbl.reset(new LabImage(GW, GH));
                 bufmaskblurbl.reset(new LabImage(GW, GH));
-                // originalmaskbl.reset(new LabImage(GW, GH));
                 originalmaskbl = new LabImage(GW, GH);
             }
 
@@ -6630,11 +6628,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
             }
-
-//            if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
-
-            //     delete originalmaskbl;
-//            }
 
 //end mask
 
