@@ -479,9 +479,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.93979686"
-     inkscape:cx="-57.792073"
-     inkscape:cy="126.17957"
+     inkscape:zoom="0.90075514"
+     inkscape:cx="-60.984253"
+     inkscape:cy="136.82017"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -574,7 +574,7 @@
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <dc:title>RawTherapee splash screen</dc:title>
-        <dc:date></dc:date>
+        <dc:date />
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
