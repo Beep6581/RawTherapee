@@ -54,7 +54,7 @@ void Alpha::setSize (int width, int height)
     }
 }
 
-int Alpha::getWidth()
+int Alpha::getWidth() const
 {
     if (surface) {
         return surface->get_width();
@@ -63,7 +63,7 @@ int Alpha::getWidth()
     return -1;
 }
 
-int Alpha::getHeight()
+int Alpha::getHeight() const
 {
     if (surface) {
         return surface->get_height();
@@ -73,7 +73,7 @@ int Alpha::getHeight()
 }
 
 
-Cairo::RefPtr<Cairo::ImageSurface> Alpha::getSurface ()
+Cairo::RefPtr<Cairo::ImageSurface> Alpha::getSurface () const
 {
     return surface; // to be used in bitmap edition
 }

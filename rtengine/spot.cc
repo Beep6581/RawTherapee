@@ -44,6 +44,14 @@ public:
         Rectangle() : Rectangle(0, 0, 0, 0) {}
         Rectangle(int X1, int Y1, int X2, int Y2) : x1(X1), y1(Y1), x2(X2), y2(Y2) {}
 
+        int getWidth() {
+            return x2 - x1 + 1;
+        }
+
+        int getHeight() {
+            return y2 - y1 + 1;
+        }
+
         bool intersects(const Rectangle &other) const {
             return (other.x1 <= x2 && other.x2 >= x1)
                 && (other.y1 <= y2 && other.y2 >= y1);
@@ -175,27 +183,27 @@ public:
     }
 
     int getWidth() {
-        return spotArea.x2 - spotArea.x1 + 1;
+        return spotArea.getWidth();
     }
 
     int getHeight() {
-        return spotArea.y2 - spotArea.y1 + 1;
+        return spotArea.getHeight();
     }
 
     int getImageWidth() {
-        return imgArea.x2 - imgArea.x1 + 1;
+        return imgArea.getWidth();
     }
 
     int getImageHeight() {
-        return imgArea.y2 - imgArea.y1 + 1;
+        return imgArea.getHeight();
     }
 
     int getIntersectionWidth() {
-        return intersectionArea.x2 - intersectionArea.x1 + 1;
+        return intersectionArea.getWidth();
     }
 
     int getIntersectionHeight() {
-        return intersectionArea.y2 - intersectionArea.y1 + 1;
+        return intersectionArea.getHeight();
     }
 
     bool checkImageSize() {
@@ -281,9 +289,6 @@ public:
         return true;
     }
 
-#define ALGO 1
-
-#if ALGO==1
     bool processIntersectionWith(SpotBox &destBox) {
         Imagefloat *dstImg = destBox.image;
 
@@ -327,270 +332,6 @@ public:
 
         return true;
     }
-#endif
-
-#if ALGO==2
-    bool processIntersectionWith(SpotBox &destBox) {
-        /* The following disabled code has been taken from Gimp 2.8.10 and converted
-         * for RawTherapee by Jean-Christophe FRISCH (aka Hombre) on 02.19.2014.
-         * It has not been tested, at all, an can (does) contain bugs. Feel free to
-         * replace the actual working code by this one, if results are better.
-         */
-
-
-        /* ORIGINAL NOTES
-         *
-         *     The method used here is similar to the lighting invariant correction
-         *     method but slightly different: we do not divide the RGB components,
-         *     but substract them I2 = I0 - I1, where I0 is the sample image to be
-         *     corrected, I1 is the reference pattern. Then we solve DeltaI=0
-         *     (Laplace) with I2 Dirichlet conditions at the borders of the
-         *     mask. The solver is a unoptimized red/black checker Gauss-Siedel
-         *     with an over-relaxation factor of 1.8. It can benefit from a
-         *     multi-grid evaluation of an initial solution before the main
-         *     iteration loop.
-         *
-         *     I reduced the convergence criteria to 0.1% (0.001) as we are
-         *     dealing here with RGB integer components, more is overkill.
-         *
-         *     Jean-Yves Couleaud cjyves@free.fr
-         */
-
-
-        /* Original Algorithm Design:
-         *
-         * T. Georgiev, "Photoshop Healing Brush: a Tool for Seamless Cloning
-         * http://www.tgeorgiev.net/Photoshop_Healing.pdf
-         */
-
-        // ----------------- Core function -----------------
-
-        int scaledPPX = pp.getX() / pp.skip;
-        int scaledPPY = pp.getY() / pp.skip;
-        int scaledPPW = pp.getWidth() / pp.skip + (pp.getWidth() % pp.getSkip() > 0);
-        int scaledPPH = pp.getHeight() / pp.skip + (pp.getHeight() % pp.skip > 0);
-
-        int sizeX = dst_XMax - dst_XMin + 1;
-        int sizeY = dst_YMax - dst_YMin + 1;
-
-        Imagefloat matrix (sizeX, sizeY);
-        Imagefloat solution (sizeX, sizeY);
-
-        // allocate the mask and draw it
-        mask.setSize (sizeX, sizeY);
-        {
-            Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create (mask.getSurface());
-
-            // clear the bitmap
-            cr->set_source_rgba (0., 0., 0., 0.);
-            cr->rectangle (0., 0., sizeX, sizeY);
-            cr->set_line_width (0.);
-            cr->fill();
-
-            // draw the mask
-            cr->set_antialias (Cairo::ANTIALIAS_GRAY);
-            cr->set_line_width (featherRadius);
-            double gradientCenterX = double (sizeX) / 2.;
-            double gradientCenterY = double (sizeY) / 2.;
-            {
-                Cairo::RefPtr<Cairo::RadialGradient> radialGradient = Cairo::RadialGradient::create (
-                            gradientCenterX, gradientCenterY, radius,
-                            gradientCenterX, gradientCenterY, featherRadius
-                        );
-                radialGradient->add_color_stop_rgb (0., 0., 0., 1.);
-                radialGradient->add_color_stop_rgb (1., 0., 0., 0.);
-                cr->set_source_rgba (0., 0., 0., 1.);
-                cr->mask (radialGradient);
-                cr->rectangle (0., 0., sizeX, sizeY);
-                cr->fill();
-            }
-        }
-
-        // copy the src part to a temporary buffer to avoid possible self modified source
-        Imagefloat *srcBuff = img->copySubRegion (srcX, srcY, sizeX, sizeY);
-
-
-        // subtract pattern to image and store the result as a double in matrix
-        for (int i = 0, i2 = dst_YMin;     i2 < sizeY - 1;     ++i, ++i2) {
-            for (int j = 0, j2 = dst_XMin;     i2 < sizeX - 1;     ++j, ++j2) {
-                matrix.r (i, j) = img->r (i2, j2) - srcBuff->r (i, j);
-                matrix.g (i, j) = img->g (i2, j2) - srcBuff->g (i, j);
-                matrix.b (i, j) = img->b (i2, j2) - srcBuff->b (i, j);
-            }
-        }
-
-
-        // FIXME: is a faster implementation needed?
-#define EPSILON   0.001
-#define MAX_ITER  500
-
-        // repeat until convergence or max iterations
-        for (int n = 0; n < MAX_ITER; ++n) {
-
-            // ----------------------------------------------------------------
-
-            /* Perform one iteration of the Laplace solver for matrix.  Store the
-             * result in solution and get the square of the cumulative error
-             * of the solution.
-             */
-            int i, j;
-            double tmp, diff;
-            double sqr_err_r = 0.0;
-            double sqr_err_g = 0.0;
-            double sqr_err_b = 0.0;
-            const double w = 1.80 * 0.25; /* Over-relaxation = 1.8 */
-
-            // we use a red/black checker model of the discretization grid
-
-            // do reds
-            for (i = 0; i < matrix.getHeight(); ++i) {
-                for (j = i % 2; j < matrix.getWidth(); j += 2) {
-                    if ((0 == mask (i, j)) || (i == 0) || (i == (matrix.getHeight() - 1)) || (j == 0) || (j == (matrix.getWidth() - 1))) {
-                        // do nothing at the boundary or outside mask
-                        solution.r (i, j) = matrix.r (i, j);
-                        solution.g (i, j) = matrix.g (i, j);
-                        solution.b (i, j) = matrix.b (i, j);
-                    } else {
-                        // Use Gauss Siedel to get the correction factor then over-relax it
-                        tmp = solution.r (i, j);
-                        solution.r (i, j) = (matrix.r (i, j) + w *
-                                             (
-                                                 matrix.r (i,  j - 1) +  // west
-                                                 matrix.r (i,  j + 1) +  // east
-                                                 matrix.r (i - 1,  j) +  // north
-                                                 matrix.r (i + 1,  j) - 4.0 * matrix.r (i, j) // south
-                                             )
-                                            );
-
-                        diff = solution.r (i, j) - tmp;
-                        sqr_err_r += diff * diff;
-
-
-                        tmp = solution.g (i, j);
-                        solution.g (i, j) = (matrix.g (i, j) + w *
-                                             (
-                                                 matrix.g (i,  j - 1) +  // west
-                                                 matrix.g (i,  j + 1) +  // east
-                                                 matrix.g (i - 1,  j) +  // north
-                                                 matrix.g (i + 1,  j) - 4.0 * matrix.g (i, j) // south
-                                             )
-                                            );
-
-                        diff = solution.g (i, j) - tmp;
-                        sqr_err_g += diff * diff;
-
-
-
-                        tmp = solution.b (i, j);
-                        solution.b (i, j) = (matrix.b (i, j) + w *
-                                             (
-                                                 matrix.b (i,  j - 1) +  // west
-                                                 matrix.b (i,  j + 1) +  // east
-                                                 matrix.b (i - 1,  j) +  // north
-                                                 matrix.b (i + 1,  j) - 4.0 * matrix.b (i, j) // south
-                                             )
-                                            );
-
-                        diff = solution.b (i, j) - tmp;
-                        sqr_err_b += diff * diff;
-
-                    }
-                }
-            }
-
-
-            /* Do blacks
-            *
-            * As we've done the reds earlier, we can use them right now to
-            * accelerate the convergence. So we have "solution" in the solver
-            * instead of "matrix" above
-            */
-            for (i = 0; i < matrix.getHeight(); i++) {
-                for (j = (i % 2) ? 0 : 1; j < matrix.getWidth(); j += 2) {
-                    if ((0 == mask (i, j)) || (i == 0) || (i == (matrix.getHeight() - 1)) || (j == 0) || (j == (matrix.getWidth() - 1))) {
-                        // do nothing at the boundary or outside mask
-                        solution.r (i, j) = matrix.r (i, j);
-                        solution.g (i, j) = matrix.g (i, j);
-                        solution.b (i, j) = matrix.b (i, j);
-                    } else {
-                        // Use Gauss Siedel to get the correction factor then over-relax it
-                        tmp = solution.r (i, j);
-                        solution.r (i, j) = (matrix.r (i, j) + w *
-                                             (
-                                                 matrix.r (i,  j - 1) +  // west
-                                                 matrix.r (i,  j + 1) +  // east
-                                                 matrix.r (i - 1,  j) +  // north
-                                                 matrix.r (i + 1,  j) - 4.0 * matrix.r (i, j) // south
-                                             )
-                                            );
-
-                        diff = solution.r (i, j) - tmp;
-                        sqr_err_r += diff * diff;
-
-
-
-                        tmp = solution.g (i, j);
-                        solution.g (i, j) = (matrix.g (i, j) + w *
-                                             (
-                                                 matrix.g (i,  j - 1) +  // west
-                                                 matrix.g (i,  j + 1) +  // east
-                                                 matrix.g (i - 1,  j) +  // north
-                                                 matrix.g (i + 1,  j) - 4.0 * matrix.g (i, j) // south
-                                             )
-                                            );
-
-                        diff = solution.g (i, j) - tmp;
-                        sqr_err_g += diff * diff;
-
-
-
-                        tmp = solution.b (i, j);
-                        solution.b (i, j) = (matrix.b (i, j) + w *
-                                             (
-                                                 matrix.b (i,  j - 1) +  // west
-                                                 matrix.b (i,  j + 1) +  // east
-                                                 matrix.b (i - 1,  j) +  // north
-                                                 matrix.b (i + 1,  j) - 4.0 * matrix.b (i, j) // south
-                                             )
-                                            );
-
-                        diff = solution.b (i, j) - tmp;
-                        sqr_err_b += diff * diff;
-                    }
-                }
-            }
-
-            // ----------------------------------------------------------------
-
-            // copy solution to matrix
-            solution.copyData (&matrix);
-
-            if (sqr_err_r < EPSILON && sqr_err_g < EPSILON && sqr_err_b < EPSILON) {
-                break;
-            }
-        }
-
-        // add solution to original image and store in tempPR
-        for     (int i = 0, i2 = dst_YMin; i2 < dst_YMax - 1; ++i, ++i2) {
-            if (i2 < 0 || i2 >= img->getHeight()) {
-                continue;
-            }
-
-            for (int j = 0, j2 = dst_XMin; j2 < dst_XMax - 1; ++j, ++j2) {
-                if (j2 < 0 || j2 >= img->getWidth()) {
-                    continue;
-                }
-
-                float c2 = float (mask (i, j)) / 255.f;
-                float c1 = 1.f - c2;
-                resultPR->r(i,j) = (unsigned char) CLAMP0255 ( ROUND( double(first->r(i,j)) + double(secondPR->r(i,j)) ) );
-                img->r(i2,j2) = img->r(i2,j2)*c1 + (solution.r(i,j) + srcBuff->r(i,j))*c2;
-                img->g(i2,j2) = img->g(i2,j2)*c1 + (solution.g(i,j) + srcBuff->g(i,j))*c2;
-                img->b(i2,j2) = img->b(i2,j2)*c1 + (solution.b(i,j) + srcBuff->b(i,j))*c2;
-            }
-        }
-    }
-#endif
 
     // Copy the intersecting part
     bool copyImgTo(SpotBox &destBox) {

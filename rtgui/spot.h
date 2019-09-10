@@ -130,9 +130,6 @@ public:
     rtengine::ProcEvent EvSpotEnabledOPA; // used to toggle-on the Spot 'On Preview Adjustment' mode
     rtengine::ProcEvent EvSpotEntry;
     rtengine::ProcEvent EvSpotEntryOPA;
-
-    rtengine::ProcEvent evt;
-
 };
 
 #endif

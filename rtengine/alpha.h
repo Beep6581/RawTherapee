@@ -39,10 +39,10 @@ public:
     //~Alpha ();
 
     void setSize (int width, int height);
-    int getWidth();
-    int getHeight();
+    int getWidth() const;
+    int getHeight() const;
 
-    Cairo::RefPtr<Cairo::ImageSurface> getSurface ();
+    Cairo::RefPtr<Cairo::ImageSurface> getSurface () const;
 
     // TODO: to make the editing faster, we should add an iterator class
 
