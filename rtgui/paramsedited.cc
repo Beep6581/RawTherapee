@@ -152,6 +152,7 @@ void ParamsEdited::set(bool v)
     sharpening.contrast           = v;
     sharpening.radius             = v;
     sharpening.blurradius         = v;
+    sharpening.gamma         = v;
     sharpening.amount             = v;
     sharpening.threshold          = v;
     sharpening.edgesonly          = v;
@@ -164,6 +165,12 @@ void ParamsEdited::set(bool v)
     sharpening.deconvradius   = v;
     sharpening.deconviter     = v;
     sharpening.deconvdamping  = v;
+    pdsharpening.enabled            = v;
+    pdsharpening.contrast           = v;
+    pdsharpening.autoContrast           = v;
+    pdsharpening.gamma   = v;
+    pdsharpening.deconvradius   = v;
+    pdsharpening.deconviter     = v;
     prsharpening.enabled            = v;
     prsharpening.contrast           = v;
     prsharpening.radius             = v;
@@ -729,6 +736,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.contrast = sharpening.contrast && p.sharpening.contrast == other.sharpening.contrast;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
         sharpening.blurradius = sharpening.blurradius && p.sharpening.blurradius == other.sharpening.blurradius;
+        sharpening.gamma = sharpening.gamma && p.sharpening.gamma == other.sharpening.gamma;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
         sharpening.threshold = sharpening.threshold && p.sharpening.threshold == other.sharpening.threshold;
         sharpening.edgesonly = sharpening.edgesonly && p.sharpening.edgesonly == other.sharpening.edgesonly;
@@ -741,6 +749,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         sharpening.deconvradius = sharpening.deconvradius && p.sharpening.deconvradius == other.sharpening.deconvradius;
         sharpening.deconviter = sharpening.deconviter && p.sharpening.deconviter == other.sharpening.deconviter;
         sharpening.deconvdamping = sharpening.deconvdamping && p.sharpening.deconvdamping == other.sharpening.deconvdamping;
+        pdsharpening.enabled = pdsharpening.enabled && p.pdsharpening.enabled == other.pdsharpening.enabled;
+        pdsharpening.contrast = pdsharpening.contrast && p.pdsharpening.contrast == other.pdsharpening.contrast;
+        pdsharpening.autoContrast = pdsharpening.autoContrast && p.pdsharpening.autoContrast == other.pdsharpening.autoContrast;
+        pdsharpening.gamma = pdsharpening.gamma && p.pdsharpening.gamma == other.pdsharpening.gamma;
+        pdsharpening.deconvradius = pdsharpening.deconvradius && p.pdsharpening.deconvradius == other.pdsharpening.deconvradius;
+        pdsharpening.deconviter = pdsharpening.deconviter && p.pdsharpening.deconviter == other.pdsharpening.deconviter;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
         prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
         prsharpening.radius = prsharpening.radius && p.prsharpening.radius == other.prsharpening.radius;
@@ -1654,6 +1668,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.sharpening.blurradius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.blurradius + mods.sharpening.blurradius : mods.sharpening.blurradius;
     }
 
+    if (sharpening.gamma) {
+        toEdit.sharpening.gamma = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.gamma + mods.sharpening.gamma : mods.sharpening.gamma;
+    }
+
     if (sharpening.amount) {
         toEdit.sharpening.amount = dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;
     }
@@ -1700,6 +1718,30 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sharpening.deconvdamping) {
         toEdit.sharpening.deconvdamping = dontforceSet && options.baBehav[ADDSET_SHARP_DAMPING] ? toEdit.sharpening.deconvdamping + mods.sharpening.deconvdamping : mods.sharpening.deconvdamping;
+    }
+
+    if (pdsharpening.enabled) {
+        toEdit.pdsharpening.enabled = mods.pdsharpening.enabled;
+    }
+
+    if (pdsharpening.contrast) {
+        toEdit.pdsharpening.contrast = dontforceSet && options.baBehav[ADDSET_SHARP_CONTRAST] ? toEdit.pdsharpening.contrast + mods.pdsharpening.contrast : mods.pdsharpening.contrast;
+    }
+
+    if (pdsharpening.autoContrast) {
+        toEdit.pdsharpening.autoContrast = mods.pdsharpening.autoContrast;
+    }
+
+    if (pdsharpening.gamma) {
+        toEdit.pdsharpening.gamma = dontforceSet && options.baBehav[ADDSET_SHARP_GAMMA] ? toEdit.pdsharpening.gamma + mods.pdsharpening.gamma : mods.pdsharpening.gamma;
+    }
+
+    if (pdsharpening.deconvradius) {
+        toEdit.pdsharpening.deconvradius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.pdsharpening.deconvradius + mods.pdsharpening.deconvradius : mods.pdsharpening.deconvradius;
+    }
+
+    if (pdsharpening.deconviter) {
+        toEdit.pdsharpening.deconviter = dontforceSet && options.baBehav[ADDSET_SHARP_ITER] ? toEdit.pdsharpening.deconviter + mods.pdsharpening.deconviter : mods.pdsharpening.deconviter;
     }
 
     if (prsharpening.enabled) {
@@ -3243,4 +3285,9 @@ bool RetinexParamsEdited::isUnchanged() const
 bool FilmNegativeParamsEdited::isUnchanged() const
 {
     return enabled && redRatio && greenExp && blueRatio;
+}
+
+bool CaptureSharpeningParamsEdited::isUnchanged() const
+{
+    return enabled && contrast && autoContrast && gamma && deconvradius && deconviter;
 }

@@ -248,7 +248,7 @@ public:
     void Lanczos(const LabImage* src, LabImage* dst, float scale);
     void Lanczos(const Imagefloat* src, Imagefloat* dst, float scale);
 
-    void deconvsharpening(float** luminance, float** buffer, int W, int H, const procparams::SharpeningParams &sharpenParam);
+    void deconvsharpening(float** luminance, float** buffer, const float* const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale);
     void MLsharpen(LabImage* lab); // Manuel's clarity / sharpening
     void MLmicrocontrast(float** luminance, int W, int H);   //Manuel's microcontrast
     void MLmicrocontrast(LabImage* lab);   //Manuel's microcontrast

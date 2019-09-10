@@ -520,7 +520,8 @@ enum ProcEventCode {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
-//    EvPixelShiftOneGreen = 493,   can be reused
+    EvPdShrEnabled = 493,
+    EvPdShrMaskToggled = 494,
 
     NUMOFEVENTS
 
