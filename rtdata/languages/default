@@ -982,6 +982,7 @@ HISTORY_MSG_742;Local - Exp Laplacian gamma
 HISTORY_MSG_743;Local - Exp Fattal Amount
 HISTORY_MSG_744;Local - Exp Fattal Detail
 HISTORY_MSG_745;Local - Exp Fattal Anchor
+HISTORY_MSG_746;Local - Exp Fattal levels
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2146,6 +2147,7 @@ TP_LOCALLAB_FATFRA;PDE Fattal - Dynamic Range Compression
 TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATANCHOR;Anchor
+TP_LOCALLAB_FATLEVEL;Detail levels
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_QUALCURV_METHOD;Curves type
 TP_LOCALLAB_GAM;Gamma

@@ -2462,6 +2462,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fatamount(1.0),
     fatdetail(40.0),
     fatanchor(50.0),
+    fatlevel(2),
     // Shadow highlight
     expshadhigh(false),
     highlights(0),
@@ -2721,6 +2722,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && fatamount == other.fatamount
         && fatdetail == other.fatdetail
         && fatanchor == other.fatanchor
+        && fatlevel == other.fatlevel
         // Shadow highlight
         && expshadhigh == other.expshadhigh
         && highlights == other.highlights
@@ -3961,6 +3963,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatamount, "Locallab", "Fatamount_" + std::to_string(i), spot.fatamount, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatdetail, "Locallab", "Fatdetail_" + std::to_string(i), spot.fatdetail, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatanchor, "Locallab", "Fatanchor_" + std::to_string(i), spot.fatanchor, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatlevel, "Locallab", "Fatlevel_" + std::to_string(i), spot.fatlevel, keyFile);
                 // Shadow highlight
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expshadhigh, "Locallab", "Expshadhigh_" + std::to_string(i), spot.expshadhigh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).highlights, "Locallab", "highlights_" + std::to_string(i), spot.highlights, keyFile);
@@ -5311,6 +5314,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Fatamount_" + std::to_string(i), pedited, spot.fatamount, spotEdited.fatamount);
                 assignFromKeyfile(keyFile, "Locallab", "Fatdetail_" + std::to_string(i), pedited, spot.fatdetail, spotEdited.fatdetail);
                 assignFromKeyfile(keyFile, "Locallab", "Fatanchor_" + std::to_string(i), pedited, spot.fatanchor, spotEdited.fatanchor);
+                assignFromKeyfile(keyFile, "Locallab", "Fatlevel_" + std::to_string(i), pedited, spot.fatlevel, spotEdited.fatlevel);
                 // Shadow highlight
                 assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + std::to_string(i), pedited, spot.expshadhigh, spotEdited.expshadhigh);
                 assignFromKeyfile(keyFile, "Locallab", "highlights_" + std::to_string(i), pedited, spot.highlights, spotEdited.highlights);

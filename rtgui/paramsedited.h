@@ -441,6 +441,7 @@ public:
         bool fatamount;
         bool fatdetail;
         bool fatanchor;
+        bool fatlevel;
         // Shadow highlight
         bool expshadhigh;
         bool highlights;

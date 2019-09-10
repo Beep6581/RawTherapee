@@ -878,7 +878,7 @@ private:
         ipf.firstAnalysis(baseImg, params, hist16);
 
         ipf.dehaze(baseImg, params.dehaze);
-        ipf.ToneMapFattal02(baseImg, params.fattal);
+        ipf.ToneMapFattal02(baseImg, params.fattal, 3);
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {

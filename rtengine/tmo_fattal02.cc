@@ -1047,13 +1047,13 @@ inline int find_fast_dim (int dim)
 } // namespace
 
 
-void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb, const FattalToneMappingParams &fatParams)
+void ImProcFunctions::ToneMapFattal02 (Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level)
 {
     if (!fatParams.enabled) {
         return;
     }
     BENCHFUN
-    const int detail_level = 3;
+//    const int detail_level = 3;
 
     float alpha = 1.f;
 

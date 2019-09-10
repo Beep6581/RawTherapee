@@ -1015,9 +1015,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).balanexp = locallab.spots.at(j).balanexp && pSpot.balanexp == otherSpot.balanexp;
                 locallab.spots.at(j).linear = locallab.spots.at(j).linear && pSpot.linear == otherSpot.linear;
                 locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
-                locallab.spots.at(j).fatamount = locallab.spots.at(j).linear && pSpot.fatamount == otherSpot.fatamount;
-                locallab.spots.at(j).fatdetail = locallab.spots.at(j).linear && pSpot.fatdetail == otherSpot.fatdetail;
-                locallab.spots.at(j).fatanchor = locallab.spots.at(j).linear && pSpot.fatanchor == otherSpot.fatanchor;
+                locallab.spots.at(j).fatamount = locallab.spots.at(j).fatamount && pSpot.fatamount == otherSpot.fatamount;
+                locallab.spots.at(j).fatdetail = locallab.spots.at(j).fatdetail && pSpot.fatdetail == otherSpot.fatdetail;
+                locallab.spots.at(j).fatanchor = locallab.spots.at(j).fatanchor && pSpot.fatanchor == otherSpot.fatanchor;
+                locallab.spots.at(j).fatlevel = locallab.spots.at(j).fatlevel && pSpot.fatlevel == otherSpot.fatlevel;
                 // Shadow highlight
                 locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
                 locallab.spots.at(j).highlights = locallab.spots.at(j).highlights && pSpot.highlights == otherSpot.highlights;
@@ -2951,6 +2952,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).fatanchor = mods.locallab.spots.at(i).fatanchor;
         }
 
+        if (locallab.spots.at(i).fatlevel) {
+            toEdit.locallab.spots.at(i).fatlevel = mods.locallab.spots.at(i).fatlevel;
+        }
+
         // Shadow highlight
         if (locallab.spots.at(i).expshadhigh) {
             toEdit.locallab.spots.at(i).expshadhigh = mods.locallab.spots.at(i).expshadhigh;
@@ -4630,6 +4635,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fatamount(v),
     fatdetail(v),
     fatanchor(v),
+    fatlevel(v),
     // Shadow highlight
     expshadhigh(v),
     highlights(v),
@@ -4886,6 +4892,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     fatamount = v;
     fatdetail = v;
     fatanchor = v;
+    fatlevel = v;
     // Shadow highlight
     expshadhigh = v;
     highlights = v;

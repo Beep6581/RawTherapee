@@ -163,6 +163,7 @@ private:
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
     Adjuster* const fatanchor;
+    Adjuster* const fatlevel;
     //Shadow highlight
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;

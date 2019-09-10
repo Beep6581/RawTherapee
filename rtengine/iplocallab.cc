@@ -9105,9 +9105,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
                                 fatParams.amount = params->locallab.spots.at(sp).fatamount;
                                 fatParams.anchor = params->locallab.spots.at(sp).fatanchor;
+                                int nlev = params->locallab.spots.at(sp).fatlevel;
                                 tmpImagefat = new Imagefloat(bfwr, bfhr);
                                 lab2rgb(*bufexpfin, *tmpImagefat, params->icm.workingProfile);
-                                ToneMapFattal02(tmpImagefat, fatParams);
+                                ToneMapFattal02(tmpImagefat, fatParams, nlev);
                                 rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
                                 delete tmpImagefat;
                             }
@@ -9120,6 +9121,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float *dataor = new float[bfwr * bfhr];
                                 float gam = params->locallab.spots.at(sp).gamm;
                                 float igam = 1.f / gam;
+                                
+                                if(lp.blac < -1000.f) {
+                                    Median med;
+                                    //soft denoise, user must use Local Denoise to best result
+                                    if (lp.blac < - 10000.f) {
+                                        med = Median::TYPE_5X5_SOFT;
+                                    } else if (lp.blac < - 5000.f) {
+                                        med = Median::TYPE_3X3_STRONG;
+                                    } else {
+                                        med = Median:: TYPE_3X3_SOFT;
+                                    }
+
+                                    Median_Denoise(bufexpfin->L, bufexpfin->L, bfwr, bfhr, med, 1, multiThread);
+      
+                                }
 #ifdef _OPENMP
                                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -9127,6 +9143,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 for (int y = 0; y < bfhr; y++) {
                                     for (int x = 0; x < bfwr; x++) {
                                         float L = LIM01(bufexpfin->L[y][x] / 32768.f);//change gamma for Laplacian
+                                        
                                         L = pow(L, gam);
                                         L *= 32768.f;
                                         datain[y * bfwr + x] = L;
