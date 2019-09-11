@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "refreshmap.h"
 #include "procevents.h"
@@ -520,8 +520,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvWBEnabled
     RGBCURVE,         // EvRGBEnabled
     LUMINANCECURVE,   // EvLEnabled
-    0,                // unused
-    LUMINANCECURVE,   // EvLocallabSpotCreated
+    DEMOSAIC,         // EvPdShrEnabled
+    ALLNORAW,          // EvPdShrMaskToggled
     LUMINANCECURVE,   // EvLocallabSpotDeleted
     LUMINANCECURVE,   // EvLocallabSpotSelected
     M_VOID,           // EvLocallabSpotName
@@ -772,7 +772,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,          //Evlocallabfatamount
     LUMINANCECURVE,          //Evlocallabfatdetail
     LUMINANCECURVE,          //Evlocallabfatanchor
-    LUMINANCECURVE          //Evlocallabfatlevel
+    LUMINANCECURVE,          //Evlocallabfatlevel
+    LUMINANCECURVE          //EvlocallabSpotCreated
 };
 
 

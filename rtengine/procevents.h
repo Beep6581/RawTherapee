@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef __PROCEVENT__
 #define __PROCEVENT__
@@ -520,8 +520,8 @@ enum ProcEventCode {
     EvWBEnabled = 490,
     EvRGBEnabled = 491,
     EvLEnabled = 492,
-//    EvPixelShiftOneGreen = 493,   can be reused
-    EvLocallabSpotCreated = 494,
+    EvPdShrEnabled = 493,
+    EvPdShrMaskToggled = 494,
     EvLocallabSpotDeleted = 495,
     EvLocallabSpotSelected = 496,
     EvLocallabSpotName = 497,
@@ -773,6 +773,7 @@ enum ProcEventCode {
     Evlocallabfatdetail = 743,
     Evlocallabfatanchor = 744,
     Evlocallabfatlevel = 745,
+    EvLocallabSpotCreated = 746,
     NUMOFEVENTS
 };
 

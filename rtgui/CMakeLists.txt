@@ -108,6 +108,7 @@ set(NONCLISOURCEFILES
     partialpastedlg.cc
     pathutils.cc
     pcvignette.cc
+    pdsharpening.cc
     perspective.cc
     placesbrowser.cc
     popupbutton.cc
