@@ -889,7 +889,7 @@ MAIN_MSG_SETPATHFIRST;Para usar esta função, primeiro tem de configurar um cam
 MAIN_MSG_TOOMANYOPENEDITORS;Existem demasiados editores abertos.\nPor favor, feche um editor para continuar.
 MAIN_MSG_WRITEFAILED;Falha ao gravar\n<b>"%1"</b>\n\nVerifique se a pasta existe e se tem permissão para gravar nela.
 MAIN_TAB_ADVANCED;Avançado
-MAIN_TAB_ADVANCED_TOOLTIP;Atalho: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Atalho: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;Cor
 MAIN_TAB_COLOR_TOOLTIP;Atalho: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detalhe
