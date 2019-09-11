@@ -16,16 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "rtengine.h"
-#include "improcfun.h"
-#include "procparams.h"
+#include <array>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include "improcfun.h"
+
 #include "mytime.h"
+#include "procparams.h"
 #include "rt_math.h"
-#include "sleef.c"
+#include "rtengine.h"
 #include "rtlensfun.h"
+#include "sleef.c"
+
 #define BENCHMARK
 #include "StopWatch.h"
 
@@ -147,7 +152,7 @@ inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys,
 }
 #endif
 #ifdef __SSE2__
-inline void interpolateTransformChannelsCubic(const float* const * src, int xs, int ys, float Dx, float Dy, float &dest, float mul)
+inline void interpolateTransformChannelsCubic(const float* const* src, int xs, int ys, float Dx, float Dy, float& dest, float mul)
 {
     constexpr float A = -0.85f;
 
@@ -168,7 +173,7 @@ inline void interpolateTransformChannelsCubic(const float* const * src, int xs, 
     dest = mul * vhadd(weight * cv);
 }
 #else
-inline void interpolateTransformChannelsCubic(const float* const * src, int xs, int ys, float Dx, float Dy, float &dest, float mul)
+inline void interpolateTransformChannelsCubic(const float* const* src, int xs, int ys, float Dx, float Dy, float& dest, float mul)
 {
     constexpr float A = -0.85f;
 
@@ -859,29 +864,45 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const bool enablePerspective = needsPerspective();
     const bool enableDistortion = needsDistortion();
 
-    const double w2 = (double) oW  / 2.0 - 0.5;
-    const double h2 = (double) oH  / 2.0 - 0.5;
+    const double w2 = static_cast<double>(oW)  / 2.0 - 0.5;
+    const double h2 = static_cast<double>(oH)  / 2.0 - 0.5;
 
     double vig_w2, vig_h2, maxRadius, v, b, mul;
     calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
-    struct grad_params gp;
+    grad_params gp;
 
     if (enableGradient) {
         calcGradientParams(oW, oH, params->gradient, gp);
     }
 
-    struct pcv_params pcv;
+    pcv_params pcv;
 
     if (enablePCVignetting) {
         calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
-    float** chOrig[3] = {original->r.ptrs, original->g.ptrs, original->b.ptrs};
-    float** chTrans[3] = {transformed->r.ptrs, transformed->g.ptrs, transformed->b.ptrs};
+    const std::array<const float* const*, 3> chOrig = {
+        original->r.ptrs,
+        original->g.ptrs,
+        original->b.ptrs
+    };
+    const std::array<float* const*, 3> chTrans = {
+        transformed->r.ptrs,
+        transformed->g.ptrs,
+        transformed->b.ptrs
+    };
 
     // auxiliary variables for c/a correction
-    const double chDist[3] = {enableCA ? params->cacorrection.red : 0.0, 0.0, enableCA ? params->cacorrection.blue : 0.0};
+    const std::array<double, 3> chDist = {
+        enableCA
+            ? params->cacorrection.red
+            : 0.0,
+        0.0,
+        enableCA
+            ? params->cacorrection.blue
+            : 0.0
+    };
 
     // auxiliary variables for distortion correction
     const double distAmount = params->distortion.amount;
@@ -893,16 +914,18 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     // auxiliary variables for vertical perspective correction
     const double vpdeg = params->perspective.vertical / 100.0 * 45.0;
     const double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
-    const double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
-                           oW * tan(vpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oW * tan(vpalpha)))) / (SQR(maxRadius) * 8)));
-    const double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos(vpteta), vptanpt = tan(vpteta);
+    const double vpteta = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
+                          oW * tan(vpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oW * tan(vpalpha)))) / (SQR(maxRadius) * 8)));
+    const double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos(vpteta);
+    const double vptanpt = tan(vpteta);
 
     // auxiliary variables for horizontal perspective correction
     const double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
     const double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
-    const double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
-                           oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
-    const double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos(hpteta), hptanpt = tan(hpteta);
+    const double hpteta = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
+                          oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
+    const double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos(hpteta);
+    const double hptanpt = tan(hpteta);
 
     const double ascale = params->commonTrans.autofill ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
 
@@ -915,9 +938,10 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     #pragma omp parallel for schedule(dynamic, 16) if(multiThread)
 #endif
 
-    for (int y = 0; y < transformed->getHeight(); y++) {
-        for (int x = 0; x < transformed->getWidth(); x++) {
-            double x_d = x, y_d = y;
+    for (int y = 0; y < transformed->getHeight(); ++y) {
+        for (int x = 0; x < transformed->getWidth(); ++x) {
+            double x_d = x;
+            double y_d = y;
 
             if (enableLCPDist) {
                 pLCPMap->correctDistortion(x_d, y_d, cx, cy, ascale); // must be first transform
@@ -944,14 +968,14 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             const double Dyc = x_d * sint + y_d * cost;
 
             // distortion correction
-            double s = 1;
+            double s = 1.0;
 
             if (enableDistortion) {
-                double r = sqrt(Dxc * Dxc + Dyc * Dyc) / maxRadius;
+                const double r = sqrt(Dxc * Dxc + Dyc * Dyc) / maxRadius;
                 s = 1.0 - distAmount + distAmount * r;
             }
 
-            for (int c = 0; c < (enableCA ? 3 : 1); c++) {
+            for (int c = 0; c < (enableCA ? 3 : 1); ++c) {
                 double Dx = Dxc * (s + chDist[c]);
                 double Dy = Dyc * (s + chDist[c]);
 
@@ -960,22 +984,21 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                 Dy += h2;
 
                 // Extract integer and fractions of source screen coordinates
-                int xc = (int)Dx;
-                Dx -= (double)xc;
+                int xc = Dx;
+                Dx -= xc;
                 xc -= sx;
-                int yc = (int)Dy;
-                Dy -= (double)yc;
+                int yc = Dy;
+                Dy -= yc;
                 yc -= sy;
 
                 // Convert only valid pixels
                 if (yc >= 0 && yc < original->getHeight() && xc >= 0 && xc < original->getWidth()) {
-
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
 
                     if (enableVignetting) {
-                        const double vig_x_d = ascale * (x + cx - vig_w2);       // centering x coord & scale
-                        const double vig_y_d = ascale * (y + cy - vig_h2);       // centering y coord & scale
+                        const double vig_x_d = ascale * (x + cx - vig_w2); // centering x coord & scale
+                        const double vig_y_d = ascale * (y + cy - vig_h2); // centering y coord & scale
                         const double vig_Dx = vig_x_d * cost - vig_y_d * sint;
                         const double vig_Dy = vig_x_d * sint + vig_y_d * cost;
                         const double r2 = sqrt(vig_Dx * vig_Dx + vig_Dy * vig_Dy);
@@ -1007,10 +1030,10 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                         }
                     } else {
                         // edge pixels
-                        int y1 = LIM(yc,   0, original->getHeight() - 1);
-                        int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
-                        int x1 = LIM(xc,   0, original->getWidth() - 1);
-                        int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
+                        const int y1 = LIM(yc, 0, original->getHeight() - 1);
+                        const int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
+                        const int x1 = LIM(xc, 0, original->getWidth() - 1);
+                        const int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
 
                         if (enableCA) {
                             chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
