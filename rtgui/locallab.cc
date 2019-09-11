@@ -4163,6 +4163,7 @@ void Locallab::expMethodChanged()
         fatdetail->set_sensitive(false);
         fatanchor->set_sensitive(false);
         fatlevel->set_sensitive(false);
+        softradiusexp->set_sensitive(true);
     } else if (expMethod->get_active_row_number() == 1) {
         laplacexp->set_sensitive(true);
         balanexp->set_sensitive(true);
@@ -4174,6 +4175,7 @@ void Locallab::expMethodChanged()
         fatdetail->set_sensitive(true);
         fatanchor->set_sensitive(true);
         fatlevel->set_sensitive(true);
+        softradiusexp->set_sensitive(false);
     }
 
     enableListener();
@@ -4678,10 +4680,12 @@ void Locallab::inversexChanged()
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
+            softradiusexp->show();
             fatFrame->hide();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
             fatFrame->show();
+            softradiusexp->hide();
         }
 
         showmaskexpMethodinv->hide(); // Being able to change Color & Light mask visibility is useless in batch mode
@@ -4703,9 +4707,11 @@ void Locallab::inversexChanged()
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
+            softradiusexp->show();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->hide();
             fatFrame->hide();
+            softradiusexp->hide();
         }
 
     } else {
@@ -4721,9 +4727,11 @@ void Locallab::inversexChanged()
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
+            softradiusexp->show();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
             fatFrame->show();
+            softradiusexp->hide();
         }
 
         showmaskexpMethodinv->show();
@@ -7736,9 +7744,11 @@ void Locallab::updateSpecificGUIState()
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
+            softradiusexp->show();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
             fatFrame->show();
+            softradiusexp->hide();
         }
 
         showmaskexpMethodinv->hide();
@@ -7753,13 +7763,16 @@ void Locallab::updateSpecificGUIState()
         expmaskexp->show();
         showmaskexpMethodinv->show();
         showmaskexpMethod->hide();
+        softradiusexp->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
+            softradiusexp->show();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->hide();
             fatFrame->hide();
+            softradiusexp->hide();
         }
     } else {
         structexp->show();
@@ -7773,9 +7786,11 @@ void Locallab::updateSpecificGUIState()
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
+            softradiusexp->show();
         } else if (expMethod->get_active_row_number() == 1) {
             pdeFrame->show();
             fatFrame->show();
+            softradiusexp->hide();
         }
 
         if (batchMode) {
@@ -7838,9 +7853,11 @@ void Locallab::updateSpecificGUIState()
     if (expMethod->get_active_row_number() == 0) {
         pdeFrame->hide();
         fatFrame->hide();
+        softradiusexp->show();
     } else if (expMethod->get_active_row_number() == 1) {
         pdeFrame->show();
         fatFrame->show();
+        softradiusexp->hide();
     }
 
     if (softMethod->get_active_row_number() == 0) {

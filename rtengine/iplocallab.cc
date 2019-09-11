@@ -9137,7 +9137,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float *dataor = new float[bfwr * bfhr];
                                 float gam = params->locallab.spots.at(sp).gamm;
                                 float igam = 1.f / gam;
-
+/*
+                                if (lp.softradiusexp > 0.f) {
+                                    softproc(bufexpfin.get(), bufexpfin.get(), lp.softradiusexp, bfhr, bfwr, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
+                                }
+*/
                                 if (lp.blac < -1000.f) {
                                     Median med;
 
@@ -9222,7 +9226,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                        if (lp.softradiusexp > 0.f) {
+                        if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                             softproc(bufexporig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
                             //     softprocess(bufexporig.get(), buflight, lp.softradiusexp, bfh, bfw, sk, multiThread);
                         }
