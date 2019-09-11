@@ -35,6 +35,7 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
     EvPdShrDRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS");
     EvPdShrDIterations = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
     EvPdShrAutoContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
+    EvPdShrAutoRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
 
     Gtk::HBox* hb = Gtk::manage(new Gtk::HBox());
     hb->show();
@@ -51,6 +52,8 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
     Gtk::VBox* rld = Gtk::manage(new Gtk::VBox());
     gamma = Gtk::manage(new Adjuster(M("TP_SHARPENING_GAMMA"), 0.5, 6.0, 0.05, 1.00));
     dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_EDRADIUS"), 0.4, 1.15, 0.01, 0.75));
+    dradius->addAutoButton(M("TP_PDSHARPENING_AUTORADIUS_TOOLTIP"));
+    dradius->setAutoValue(true);
     diter = Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 1, 100, 1, 20));
     rld->pack_start(*gamma);
     rld->pack_start(*dradius);
@@ -85,6 +88,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     if (pedited) {
         contrast->setEditedState(pedited->pdsharpening.contrast ? Edited : UnEdited);
         contrast->setAutoInconsistent(multiImage && !pedited->pdsharpening.autoContrast);
+        dradius->setAutoInconsistent(multiImage && !pedited->pdsharpening.autoRadius);
         gamma->setEditedState(pedited->pdsharpening.gamma ? Edited : UnEdited);
         dradius->setEditedState(pedited->pdsharpening.deconvradius ? Edited : UnEdited);
         diter->setEditedState(pedited->pdsharpening.deconviter ? Edited : UnEdited);
@@ -98,8 +102,10 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     contrast->setAutoValue(pp->pdsharpening.autoContrast);
     gamma->setValue(pp->pdsharpening.gamma);
     dradius->setValue(pp->pdsharpening.deconvradius);
+    dradius->setAutoValue(pp->pdsharpening.autoRadius);
     diter->setValue(pp->pdsharpening.deconviter);
     lastAutoContrast = pp->pdsharpening.autoContrast;
+    lastAutoRadius = pp->pdsharpening.autoRadius;
 
     enableListener();
 }
@@ -112,6 +118,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
     pp->pdsharpening.enabled = getEnabled();
     pp->pdsharpening.gamma = gamma->getValue();
     pp->pdsharpening.deconvradius = dradius->getValue();
+    pp->pdsharpening.autoRadius = dradius->getAutoValue();
     pp->pdsharpening.deconviter =(int)diter->getValue();
 
     if (pedited) {
@@ -119,6 +126,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->pdsharpening.autoContrast = !contrast->getAutoInconsistent();
         pedited->pdsharpening.gamma = gamma->getEditedState();
         pedited->pdsharpening.deconvradius = dradius->getEditedState();
+        pedited->pdsharpening.autoRadius = !dradius->getAutoInconsistent();
         pedited->pdsharpening.deconviter = diter->getEditedState();
         pedited->pdsharpening.enabled = !get_inconsistent();
     }
@@ -224,26 +232,62 @@ void PdSharpening::autoContrastChanged(double autoContrast)
     );
 }
 
+void PdSharpening::autoRadiusChanged(double autoRadius)
+{
+    idle_register.add(
+        [this, autoRadius]() -> bool
+        {
+            disableListener();
+            dradius->setValue(autoRadius);
+            enableListener();
+            return false;
+        }
+    );
+}
+
 void PdSharpening::adjusterAutoToggled(Adjuster* a, bool newval)
 {
-    if (multiImage) {
-        if (contrast->getAutoInconsistent()) {
-            contrast->setAutoInconsistent(false);
-            contrast->setAutoValue(false);
-        } else if (lastAutoContrast) {
-            contrast->setAutoInconsistent(true);
+    if (a == contrast) {
+        if (multiImage) {
+            if (contrast->getAutoInconsistent()) {
+                contrast->setAutoInconsistent(false);
+                contrast->setAutoValue(false);
+            } else if (lastAutoContrast) {
+                contrast->setAutoInconsistent(true);
+            }
+
+            lastAutoContrast = contrast->getAutoValue();
         }
 
-        lastAutoContrast = contrast->getAutoValue();
-    }
+        if (listener) {
+            if (contrast->getAutoInconsistent()) {
+                listener->panelChanged(EvPdShrAutoContrast, M("GENERAL_UNCHANGED"));
+            } else if (contrast->getAutoValue()) {
+                listener->panelChanged(EvPdShrAutoContrast, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvPdShrAutoContrast, M("GENERAL_DISABLED"));
+            }
+        }
+    } else { // must be dradius
+        if (multiImage) {
+            if (dradius->getAutoInconsistent()) {
+                dradius->setAutoInconsistent(false);
+                dradius->setAutoValue(false);
+            } else if (lastAutoRadius) {
+                dradius->setAutoInconsistent(true);
+            }
 
-    if (listener) {
-        if (contrast->getAutoInconsistent()) {
-            listener->panelChanged(EvPdShrAutoContrast, M("GENERAL_UNCHANGED"));
-        } else if (contrast->getAutoValue()) {
-            listener->panelChanged(EvPdShrAutoContrast, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvPdShrAutoContrast, M("GENERAL_DISABLED"));
+            lastAutoRadius = dradius->getAutoValue();
+        }
+
+        if (listener) {
+            if (dradius->getAutoInconsistent()) {
+                listener->panelChanged(EvPdShrAutoRadius, M("GENERAL_UNCHANGED"));
+            } else if (dradius->getAutoValue()) {
+                listener->panelChanged(EvPdShrAutoRadius, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvPdShrAutoRadius, M("GENERAL_DISABLED"));
+            }
         }
     }
 }
