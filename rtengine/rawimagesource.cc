@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <iostream>
@@ -37,6 +37,9 @@
 #include "pdaflinesfilter.h"
 #include "camconst.h"
 #include "procparams.h"
+#include "color.h"
+//#define BENCHMARK
+//#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -453,6 +456,9 @@ RawImageSource::RawImageSource ()
     , green(0, 0)
     , red(0, 0)
     , blue(0, 0)
+    , greenCache(nullptr)
+    , redCache(nullptr)
+    , blueCache(nullptr)
     , rawDirty(true)
     , histMatchingParams(new procparams::ColorManagementParams)
 {
@@ -470,6 +476,9 @@ RawImageSource::~RawImageSource ()
 {
 
     delete idata;
+    delete redCache;
+    delete greenCache;
+    delete blueCache;
 
     for(size_t i = 0; i < numFrames; ++i) {
         delete riFrames[i];
@@ -1552,7 +1561,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold)
+void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache)
 {
     MyTime t1, t2;
     t1.set();
@@ -1623,7 +1632,49 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 
     rgbSourceModified = false;
 
-
+    if (cache) {
+        if (!redCache) {
+            redCache = new array2D<float>(W, H);
+            greenCache = new array2D<float>(W, H);
+            blueCache = new array2D<float>(W, H);
+        }
+#ifdef _OPENMP
+        #pragma omp parallel sections
+#endif
+        {
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*redCache)[i][j] = red[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*greenCache)[i][j] = green[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*blueCache)[i][j] = blue[i][j];
+                }
+            }
+        }
+    } else {
+        delete redCache;
+        redCache = nullptr;
+        delete greenCache;
+        greenCache = nullptr;
+        delete blueCache;
+        blueCache = nullptr;
+    }
     if( settings->verbose ) {
         if (getSensorType() == ST_BAYER) {
             printf("Demosaicing Bayer data: %s - %d usec\n", raw.bayersensor.method.c_str(), t2.etime(t1));

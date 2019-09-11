@@ -984,7 +984,7 @@ MAIN_MSG_SETPATHFIRST;Um diese Funktion zu nutzen, müssen Sie zuerst in den Ein
 MAIN_MSG_TOOMANYOPENEDITORS;Zu viele geöffnete Editorfenster.\nUm fortzufahren, schließen sie bitte ein Editorfenster.
 MAIN_MSG_WRITEFAILED;Fehler beim Schreiben von\n\n<b>"%1"</b>\n\nStellen Sie sicher, dass das Verzeichnis existiert und dass Sie Schreibrechte besitzen.
 MAIN_TAB_ADVANCED;Erweitert
-MAIN_TAB_ADVANCED_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Taste: <b>Alt</b> + <b>a</b>
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_COLOR_TOOLTIP;Taste: <b>Alt</b> + <b>c</b>
 MAIN_TAB_DETAIL;Details

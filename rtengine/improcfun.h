@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
@@ -248,7 +248,7 @@ public:
     void Lanczos(const LabImage* src, LabImage* dst, float scale);
     void Lanczos(const Imagefloat* src, Imagefloat* dst, float scale);
 
-    void deconvsharpening(float** luminance, float** buffer, int W, int H, const procparams::SharpeningParams &sharpenParam);
+    void deconvsharpening(float** luminance, float** buffer, const float* const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale);
     void MLsharpen(LabImage* lab); // Manuel's clarity / sharpening
     void MLmicrocontrast(float** luminance, int W, int H);   //Manuel's microcontrast
     void MLmicrocontrast(LabImage* lab);   //Manuel's microcontrast

@@ -32,6 +32,7 @@ set(CAMCONSTSFILE "camconst.json")
 set(RTENGINESOURCEFILES
     badpixels.cc
     CA_correct_RT.cc
+    capturesharpening.cc
     EdgePreservingDecomposition.cc
     FTblockDN.cc
     PF_correct_RT.cc

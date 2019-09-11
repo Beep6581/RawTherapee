@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <algorithm>
@@ -52,7 +52,7 @@ vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
 }
 #endif
 
-float tileAverage(float **data, size_t tileY, size_t tileX, size_t tilesize) {
+float tileAverage(const float * const *data, size_t tileY, size_t tileX, size_t tilesize) {
 
     float avg = 0.f;
 #ifdef __SSE2__
@@ -75,7 +75,7 @@ float tileAverage(float **data, size_t tileY, size_t tileX, size_t tilesize) {
     return avg / rtengine::SQR(tilesize);
 }
 
-float tileVariance(float **data, size_t tileY, size_t tileX, size_t tilesize, float avg) {
+float tileVariance(const float * const *data, size_t tileY, size_t tileX, size_t tilesize, float avg) {
 
     float var = 0.f;
 #ifdef __SSE2__
@@ -99,7 +99,7 @@ float tileVariance(float **data, size_t tileY, size_t tileX, size_t tilesize, fl
     return var / (rtengine::SQR(tilesize) * avg);
 }
 
-float calcContrastThreshold(float** luminance, int tileY, int tileX, int tilesize) {
+float calcContrastThreshold(const float* const * luminance, int tileY, int tileX, int tilesize) {
 
     constexpr float scale = 0.0625f / 327.68f;
     std::vector<std::vector<float>> blend(tilesize - 4, std::vector<float>(tilesize - 4));
@@ -299,7 +299,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut = rtengine::LIM(maxOut, minVal, maxVal);
 }
 
-void buildBlendMask(float** luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {
+void buildBlendMask(const float* const * luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {
 
     if (autoContrast) {
         constexpr float minLuminance = 2000.f;

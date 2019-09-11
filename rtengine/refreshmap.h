@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef __REFRESHMAP__
 #define __REFRESHMAP__
@@ -32,6 +32,7 @@
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
+#define M_CSHARP      (1<<18)
 #define M_MONITOR     (1<<14)
 #define M_RETINEX     (1<<13)
 #define M_CROP        (1<<12)
@@ -56,6 +57,7 @@
 #define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define DEMOSAIC                   (M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define ALLNORAW                         (M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define CAPTURESHARPEN                   (M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_CSHARP)
 #define HDR                                     (M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define TRANSFORM                                                  (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define AUTOEXP                                                                    (M_HDR|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)

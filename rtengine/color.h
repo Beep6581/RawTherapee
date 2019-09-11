@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
@@ -1802,6 +1802,31 @@ public:
         }
 
         return (hr);
+    }
+
+    static inline void RGB2Y(const float* R, const float* G, const float* B, float* Y1, float * Y2, float gamma, int W) {
+        gamma = 1.f / gamma;
+        int i = 0;
+#ifdef __SSE2__
+        const vfloat gammav = F2V(gamma);
+        const vfloat c1v = F2V(0.2627f);
+        const vfloat c2v = F2V(0.6780f);
+        const vfloat c3v = F2V(0.0593f);
+        for (; i < W - 3; i += 4) {
+            const vfloat Rv = vmaxf(LVFU(R[i]), ZEROV);
+            const vfloat Gv = vmaxf(LVFU(G[i]), ZEROV);
+            const vfloat Bv = vmaxf(LVFU(B[i]), ZEROV);
+            vfloat yv = pow_F(c1v * Rv + c2v * Gv + c3v * Bv, gammav);
+            STVFU(Y1[i], yv);
+            STVFU(Y2[i], yv);
+        }
+#endif
+        for (; i < W; ++i) {
+            const float r = std::max(R[i], 0.f);
+            const float g = std::max(G[i], 0.f);
+            const float b = std::max(B[i], 0.f);
+            Y1[i] = Y2[i] = pow_F(0.2627f * r + 0.6780f * g + 0.0593f * b, gamma);
+        }
     }
 
 };

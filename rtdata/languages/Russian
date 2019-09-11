@@ -589,7 +589,7 @@ MAIN_MSG_QOVERWRITE;Вы хотите перезаписать его?
 MAIN_MSG_SETPATHFIRST;Прежде необходимо установить целевой каталог в настройках\nчтоб использовать эту функцию!
 MAIN_MSG_WRITEFAILED;Не удалось записать\n\n<b>"%1"</b>.\n\nУбедитесь, что каталог существует и у вас есть права на запись в него.
 MAIN_TAB_ADVANCED;Дополнительные
-MAIN_TAB_ADVANCED_TOOLTIP;Горячая клавиша: <b>Alt-W</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Горячая клавиша: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;Цвет
 MAIN_TAB_COLOR_TOOLTIP;Горячая клавиша: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Детализация

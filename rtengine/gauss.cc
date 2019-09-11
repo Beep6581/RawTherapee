@@ -14,16 +14,58 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "gauss.h"
+#include "rt_math.h"
 #include <cmath>
 #include <cstdlib>
 #include "opthelper.h"
 #include "boxblur.h"
-
 namespace
 {
+
+void compute7x7kernel(float sigma, float kernel[7][7]) {
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -3; i <= 3; ++i) {
+        for (int j = -3; j <= 3; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 1.15)) {
+                kernel[i + 3][j + 3] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 3][j + 3];
+            } else {
+                kernel[i + 3][j + 3] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
+
+void compute5x5kernel(float sigma, float kernel[5][5]) {
+    const double temp = -2.f * rtengine::SQR(sigma);
+    float sum = 0.f;
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
+            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
+                kernel[i + 2][j + 2] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+                sum += kernel[i + 2][j + 2];
+            } else {
+                kernel[i + 2][j + 2] = 0.f;
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            kernel[i][j] /= sum;
+        }
+    }
+}
 
 template<class T> void calculateYvVFactors( const T sigma, T &b1, T &b2, T &b3, T &B, T M[3][3])
 {
@@ -207,6 +249,174 @@ template<class T> void gauss3x3div (T** RESTRICT src, T** RESTRICT dst, T** REST
     }
 }
 
+template<class T> void gauss7x7div (T** RESTRICT src, T** RESTRICT dst, T** RESTRICT divBuffer, const int W, const int H, float sigma)
+{
+
+    float kernel[7][7];
+    compute7x7kernel(sigma, kernel);
+
+    const float c31 = kernel[0][2];
+    const float c30 = kernel[0][3];
+    const float c22 = kernel[1][1];
+    const float c21 = kernel[1][2];
+    const float c20 = kernel[1][3];
+    const float c11 = kernel[2][2];
+    const float c10 = kernel[2][3];
+    const float c00 = kernel[3][3];
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16) nowait
+#endif
+
+    for (int i = 3; i < H - 3; ++i) {
+        dst[i][0] = dst[i][1] = dst[i][2] = 1.f;
+        // I tried hand written SSE code but gcc vectorizes better
+        for (int j = 3; j < W - 3; ++j) {
+            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
+        }
+        dst[i][W - 3] = dst[i][W - 2] = dst[i][W - 1] = 1.f;
+    }
+
+    // first and last rows
+#ifdef _OPENMP
+    #pragma omp single
+#endif
+    {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+        for (int i = H - 3 ; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+    }
+}
+
+template<class T> void gauss5x5div (T** RESTRICT src, T** RESTRICT dst, T** RESTRICT divBuffer, const int W, const int H, float sigma)
+{
+
+    float kernel[5][5];
+    compute5x5kernel(sigma, kernel);
+
+    const float c21 = kernel[0][1];
+    const float c20 = kernel[0][2];
+    const float c11 = kernel[1][1];
+    const float c10 = kernel[1][2];
+    const float c00 = kernel[2][2];
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16) nowait
+#endif
+
+    for (int i = 2; i < H - 2; ++i) {
+        dst[i][0] = dst[i][1] = 1.f;
+        // I tried hand written SSE code but gcc vectorizes better
+        for (int j = 2; j < W - 2; ++j) {
+            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] = divBuffer[i][j] / std::max(val, 0.00001f);
+        }
+        dst[i][W - 2] = dst[i][W - 1] = 1.f;
+    }
+
+    // first and last rows
+#ifdef _OPENMP
+    #pragma omp single
+#endif
+    {
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+        for (int i = H - 2 ; i < H; ++i) {
+            for (int j = 0; j < W; ++j) {
+                dst[i][j] = 1.f;
+            }
+        }
+    }
+}
+
+template<class T> void gauss7x7mult (T** RESTRICT src, T** RESTRICT dst, const int W, const int H, float sigma)
+{
+
+    float kernel[7][7];
+    compute7x7kernel(sigma, kernel);
+    const float c31 = kernel[0][2];
+    const float c30 = kernel[0][3];
+    const float c22 = kernel[1][1];
+    const float c21 = kernel[1][2];
+    const float c20 = kernel[1][3];
+    const float c11 = kernel[2][2];
+    const float c10 = kernel[2][3];
+    const float c00 = kernel[3][3];
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16)
+#endif
+
+    for (int i = 3; i < H - 3; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+        for (int j = 3; j < W - 3; ++j) {
+            const float val = c31 * (src[i - 3][j - 1] + src[i - 3][j + 1] + src[i - 1][j - 3] + src[i - 1][j + 3] + src[i + 1][j - 3] + src[i + 1][j + 3] + src[i + 3][j - 1] + src[i + 3][j + 1]) +
+                              c30 * (src[i - 3][j] + src[i][j - 3] + src[i][j + 3] + src[i + 3][j]) +
+                              c22 * (src[i - 2][j - 2] + src[i - 2][j + 2] + src[i + 2][j - 2] + src[i + 2][j + 2]) +
+                              c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] * c21 + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] *= val;
+        }
+    }
+}
+
+template<class T> void gauss5x5mult (T** RESTRICT src, T** RESTRICT dst, const int W, const int H, float sigma)
+{
+
+    float kernel[5][5];
+    compute5x5kernel(sigma, kernel);
+
+    const float c21 = kernel[0][1];
+    const float c20 = kernel[0][2];
+    const float c11 = kernel[1][1];
+    const float c10 = kernel[1][2];
+    const float c00 = kernel[2][2];
+
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic, 16)
+#endif
+
+    for (int i = 2; i < H - 2; ++i) {
+        // I tried hand written SSE code but gcc vectorizes better
+        for (int j = 2; j < W - 2; ++j) {
+            const float val = c21 * (src[i - 2][j - 1] + src[i - 2][j + 1] + src[i - 1][j - 2] + src[i - 1][j + 2] + src[i + 1][j - 2] + src[i + 1][j + 2] + src[i + 2][j - 1] + src[i + 2][j + 1]) +
+                              c20 * (src[i - 2][j] + src[i][j - 2] + src[i][j + 2] + src[i + 2][j]) +
+                              c11 * (src[i - 1][j - 1] + src[i - 1][j + 1] + src[i + 1][j - 1] + src[i + 1][j + 1]) +
+                              c10 * (src[i - 1][j] + src[i][j - 1] + src[i][j + 1] + src[i + 1][j]) +
+                              c00 * src[i][j];
+
+            dst[i][j] *= val;
+        }
+    }
+}
 
 // use separated filter if the support window is small and src == dst
 template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const float c0, const float c1)
@@ -1143,6 +1353,8 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
 {
     static constexpr auto GAUSS_SKIP = 0.25;
     static constexpr auto GAUSS_3X3_LIMIT = 0.6;
+    static constexpr auto GAUSS_5X5_LIMIT = 0.84;
+    static constexpr auto GAUSS_7X7_LIMIT = 1.15;
     static constexpr auto GAUSS_DOUBLE = 25.0;
 
     if(buffer) {
@@ -1241,14 +1453,26 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
             if (sigma < GAUSS_DOUBLE) {
                 switch (gausstype) {
                 case GAUSS_MULT : {
-                    gaussHorizontalSse<T> (src, src, W, H, sigma);
-                    gaussVerticalSsemult<T> (src, dst, W, H, sigma);
+                    if (sigma <= GAUSS_5X5_LIMIT && src != dst) {
+                        gauss5x5mult(src, dst, W, H, sigma);
+                    } else if (sigma <= GAUSS_7X7_LIMIT && src != dst) {
+                        gauss7x7mult(src, dst, W, H, sigma);
+                    } else {
+                        gaussHorizontalSse<T> (src, src, W, H, sigma);
+                        gaussVerticalSsemult<T> (src, dst, W, H, sigma);
+                    }
                     break;
                 }
 
                 case GAUSS_DIV : {
-                    gaussHorizontalSse<T> (src, dst, W, H, sigma);
-                    gaussVerticalSsediv<T> (dst, dst, buffer2, W, H, sigma);
+                    if (sigma <= GAUSS_5X5_LIMIT && src != dst) {
+                        gauss5x5div (src, dst, buffer2, W, H, sigma);
+                    } else if (sigma <= GAUSS_7X7_LIMIT && src != dst) {
+                        gauss7x7div (src, dst, buffer2, W, H, sigma);
+                    } else {
+                        gaussHorizontalSse<T> (src, dst, W, H, sigma);
+                        gaussVerticalSsediv<T> (dst, dst, buffer2, W, H, sigma);
+                    }
                     break;
                 }
 
@@ -1268,14 +1492,26 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
             if (sigma < GAUSS_DOUBLE) {
                 switch (gausstype) {
                 case GAUSS_MULT : {
-                    gaussHorizontal<T> (src, src, W, H, sigma);
-                    gaussVerticalmult<T> (src, dst, W, H, sigma);
+                    if (sigma <= GAUSS_5X5_LIMIT && src != dst) {
+                        gauss5x5mult(src, dst, W, H, sigma);
+                    } else if (sigma <= GAUSS_7X7_LIMIT && src != dst) {
+                        gauss7x7mult(src, dst, W, H, sigma);
+                    } else {
+                        gaussHorizontal<T> (src, src, W, H, sigma);
+                        gaussVerticalmult<T> (src, dst, W, H, sigma);
+                    }
                     break;
                 }
 
                 case GAUSS_DIV : {
-                    gaussHorizontal<T> (src, dst, W, H, sigma);
-                    gaussVerticaldiv<T> (dst, dst, buffer2, W, H, sigma);
+                    if (sigma <= GAUSS_5X5_LIMIT && src != dst) {
+                        gauss5x5div (src, dst, buffer2, W, H, sigma);
+                    } else if (sigma <= GAUSS_7X7_LIMIT && src != dst) {
+                        gauss7x7div (src, dst, buffer2, W, H, sigma);
+                    } else {
+                        gaussHorizontal<T> (src, dst, W, H, sigma);
+                        gaussVerticaldiv<T> (dst, dst, buffer2, W, H, sigma);
+                    }
                     break;
                 }
 

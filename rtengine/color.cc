@@ -14,7 +14,7 @@
 *  GNU General Public License for more details.
 *
 *  You should have received a copy of the GNU General Public License
-*  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "rtengine.h"
@@ -1835,21 +1835,21 @@ void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], 
 {
 
 #ifdef __SSE2__
-    vfloat minvalfv = F2V(0.f);
-    vfloat maxvalfv = F2V(MAXVALF);
+    const vfloat maxvalfv = F2V(MAXVALF);
+    const vfloat rmv = F2V(wp[1][0]);
+    const vfloat gmv = F2V(wp[1][1]);
+    const vfloat bmv = F2V(wp[1][2]);
 #endif
     int i = 0;
     
 #ifdef __SSE2__
-    for(;i < width - 3; i+=4) {
+    for(; i < width - 3; i+=4) {
         const vfloat rv = LVFU(R[i]);
         const vfloat gv = LVFU(G[i]);
         const vfloat bv = LVFU(B[i]);
-        const vfloat yv = F2V(wp[1][0]) * rv + F2V(wp[1][1]) * gv + F2V(wp[1][2]) * bv;
+        const vfloat yv = rmv * rv + gmv * gv + bmv * bv;
 
-        vmask maxMask = vmaskf_gt(yv, maxvalfv);
-        vmask minMask = vmaskf_lt(yv, minvalfv);
-        if (_mm_movemask_ps((vfloat)vorm(maxMask, minMask))) {
+        if (_mm_movemask_ps((vfloat)vorm(vmaskf_gt(yv, maxvalfv), vmaskf_lt(yv, ZEROV)))) {
             // take slower code path for all 4 pixels if one of the values is > MAXVALF. Still faster than non SSE2 version
             for(int k = 0; k < 4; ++k) {
                 float y = yv[k];
@@ -1860,7 +1860,7 @@ void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], 
         }
     }
 #endif
-    for(;i < width; ++i) {
+    for(; i < width; ++i) {
         const float rv = R[i];
         const float gv = G[i];
         const float bv = B[i];

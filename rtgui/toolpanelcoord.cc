@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "multilangmgr.h"
 #include "toolpanelcoord.h"
@@ -93,7 +93,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     xtransrawexposure   = Gtk::manage (new XTransRAWExposure ());
     fattal              = Gtk::manage (new FattalToneMapping ());
     filmNegative        = Gtk::manage (new FilmNegative ());
-
+    pdSharpening        = Gtk::manage (new PdSharpening());
     // So Demosaic, Line noise filter, Green Equilibration, Ca-Correction (garder le nom de section identique!) and Black-Level will be moved in a "Bayer sensor" tool,
     // and a separate Demosaic and Black Level tool will be created in an "X-Trans sensor" tool
 
@@ -156,6 +156,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (rawPanel, darkframe);
     addfavoritePanel (rawPanel, flatfield);
     addfavoritePanel (rawPanel, filmNegative);
+    addfavoritePanel (rawPanel, pdSharpening);
 
     int favoriteCount = 0;
     for(auto it = favorites.begin(); it != favorites.end(); ++it) {
@@ -309,6 +310,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::show();
+                    pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -325,6 +327,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::show();
+                    pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -341,6 +344,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::hide();
+                    pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -356,6 +360,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::hide();
                     filmNegative->FoldableToolPanel::hide();
+                    pdSharpening->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
 
                     return false;
@@ -368,6 +373,7 @@ void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXt
             {
                 rawPanelSW->set_sensitive(false);
                 filmNegative->FoldableToolPanel::hide();
+                pdSharpening->FoldableToolPanel::hide();
                 retinex->FoldableToolPanel::setGrayedOut(true);
 
                 return false;
@@ -484,7 +490,7 @@ void ToolPanelCoordinator::profileChange(
         lParams[1] = *mergedParams;
         pe.initFrom (lParams);
 
-        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged() && pe.filmNegative.isUnchanged();
+        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged() && pe.filmNegative.isUnchanged() && pe.pdsharpening.isUnchanged();
     }
 
     *params = *mergedParams;
@@ -566,6 +572,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setFlatFieldAutoClipListener (flatfield);
         ipc->setBayerAutoContrastListener (bayerprocess);
         ipc->setXtransAutoContrastListener (xtransprocess);
+        ipc->setpdSharpenAutoContrastListener (pdSharpening);
         ipc->setAutoWBListener (whitebalance);
         ipc->setAutoColorTonListener (colortoning);
         ipc->setAutoChromaListener (dirpyrdenoise);
@@ -689,8 +696,7 @@ void ToolPanelCoordinator::sharpMaskSelected(bool sharpMask)
         return;
     }
     ipc->beginUpdateParams ();
-    ipc->setSharpMask(sharpMask);
-    ipc->endUpdateParams (rtengine::EvShrEnabled);
+    ipc->endUpdateParams (ipc->setSharpMask(sharpMask));
 }
 
 int ToolPanelCoordinator::getSpotWBRectSize() const
@@ -922,7 +928,7 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event)
                 toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*rawPanelSW));
                 return true;
 
-            case GDK_KEY_w:
+            case GDK_KEY_a:
                 toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*advancedPanelSW));
                 return true;
 

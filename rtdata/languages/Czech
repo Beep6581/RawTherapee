@@ -934,7 +934,7 @@ MAIN_MSG_SETPATHFIRST;K použití této funkce musíte nejprve zadat cílovou ce
 MAIN_MSG_TOOMANYOPENEDITORS;Příliš mnoho otevřených editorů.\nPro pokračování nejprve některý ukončete.
 MAIN_MSG_WRITEFAILED;Chyba zápisu\n<b>"%1"</b>\n\nUjistěte se, že složka existuje a máte práva do ní zapisovat.
 MAIN_TAB_ADVANCED;Pokročilé
-MAIN_TAB_ADVANCED_TOOLTIP;Zkratka: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Zkratka: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;Barvy
 MAIN_TAB_COLOR_TOOLTIP;Zkratka: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detaily
