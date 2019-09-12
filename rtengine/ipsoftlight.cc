@@ -20,17 +20,17 @@
  */
 
 #include "improcfun.h"
+
 #include "procparams.h"
 #define BENCHMARK
 #include "StopWatch.h"
-namespace rtengine {
 
 namespace {
 
 inline float sl(float blend, float x)
 {
-    if (!OOG(x)) {
-        float v = Color::gamma_srgb(x) / MAXVALF;
+    if (!rtengine::OOG(x)) {
+        float v = rtengine::Color::gamma_srgb(x) / rtengine::MAXVALF;
         // using Pegtop's formula from
         // https://en.wikipedia.org/wiki/Blend_modes#Soft_Light
         // const float orig = 1.f - blend;
@@ -40,7 +40,7 @@ inline float sl(float blend, float x)
         // return blend * Color::igamma_srgb(v * MAXVALF) + orig * x;
 
         // using optimized formula (heckflosse67@gmx.de)
-        return intp(blend, Color::igamma_srgb(v * v * (3.f - 2.f * v) * MAXVALF), x);
+        return rtengine::intp(blend, rtengine::Color::igamma_srgb(v * v * (3.f - 2.f * v) * rtengine::MAXVALF), x);
     }
     return x;
 }
@@ -48,51 +48,46 @@ inline float sl(float blend, float x)
 #ifdef __SSE2__
 inline vfloat sl(vfloat blend, vfloat x)
 {
-    const vfloat v = Color::gammatab_srgb[x] / F2V(MAXVALF);
-    return vself(vmaskf_gt(x, F2V(MAXVALF)), x, vself(vmaskf_lt(x, ZEROV), x, vintpf(blend, Color::igammatab_srgb[v * v * (F2V(3.f) - (v + v)) * MAXVALF], x)));
+    const vfloat v = rtengine::Color::gammatab_srgb[x] / F2V(rtengine::MAXVALF);
+    return vself(vmaskf_gt(x, F2V(rtengine::MAXVALF)), x, vself(vmaskf_lt(x, ZEROV), x, vintpf(blend, rtengine::Color::igammatab_srgb[v * v * (F2V(3.f) - (v + v)) * rtengine::MAXVALF], x)));
 }
 #endif
 
 } // namespace
 
-
-void ImProcFunctions::softLight(LabImage *lab)
+void rtengine::ImProcFunctions::softLight(LabImage *lab)
 {
     if (!params->softlight.enabled || !params->softlight.strength) {
         return;
     }
     BENCHFUN
 
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
     const float wp[3][3] = {
-        {static_cast<float> (wprof[0][0]), static_cast<float> (wprof[0][1]), static_cast<float> (wprof[0][2])},
-        {static_cast<float> (wprof[1][0]), static_cast<float> (wprof[1][1]), static_cast<float> (wprof[1][2])},
-        {static_cast<float> (wprof[2][0]), static_cast<float> (wprof[2][1]), static_cast<float> (wprof[2][2])}
+        {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+        {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+        {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
     };
 
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+    const TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const float wip[3][3] = {
-        {static_cast<float> (wiprof[0][0]), static_cast<float> (wiprof[0][1]), static_cast<float> (wiprof[0][2])},
-        {static_cast<float> (wiprof[1][0]), static_cast<float> (wiprof[1][1]), static_cast<float> (wiprof[1][2])},
-        {static_cast<float> (wiprof[2][0]), static_cast<float> (wiprof[2][1]), static_cast<float> (wiprof[2][2])}
+        {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
+        {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
+        {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
     };
 
 #ifdef __SSE2__
-    vfloat wipv[3][3];
+    const vfloat wpv[3][3] = {
+        {F2V(wprof[0][0]), F2V(wprof[0][1]), F2V(wprof[0][2])},
+        {F2V(wprof[1][0]), F2V(wprof[1][1]), F2V(wprof[1][2])},
+        {F2V(wprof[2][0]), F2V(wprof[2][1]), F2V(wprof[2][2])}
+    };
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            wipv[i][j] = F2V(wiprof[i][j]);
-        }
-    }
-
-    vfloat wpv[3][3];
-
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            wpv[i][j] = F2V(wprof[i][j]);
-        }
-    }
+    const vfloat wipv[3][3] = {
+        {F2V(wiprof[0][0]), F2V(wiprof[0][1]), F2V(wiprof[0][2])},
+        {F2V(wiprof[1][0]), F2V(wiprof[1][1]), F2V(wiprof[1][2])},
+        {F2V(wiprof[2][0]), F2V(wiprof[2][1]), F2V(wiprof[2][2])}
+    };
 #endif
 
 #ifdef _OPENMP
@@ -137,5 +132,3 @@ void ImProcFunctions::softLight(LabImage *lab)
         }
     }
 }
-
-} // namespace rtengine
