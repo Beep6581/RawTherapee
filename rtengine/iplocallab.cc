@@ -51,6 +51,7 @@
 #define epsilon 0.001f/(TS*TS) //tolerance
 #define MAXSCOPE 1.25f
 #define MINSCOPE 0.025f
+#define mSP 5  //minimum size Spot
 
 #define CLIPC(a) LIM(a, -42000.f, 42000.f)  // limit a and b  to 130 probably enough ?
 #define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
@@ -6645,7 +6646,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
-            if (bfw > 1 && bfh > 1) {
+            if (bfw >= mSP && bfh >= mSP) {
 
                 // const int GW = transformed->W;
                 //const int GH = transformed->H;
@@ -7144,7 +7145,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int bfh = yend - ystart;
                 const int bfw = xend - xstart;
 
-                if (bfw > 0 && bfh > 0) {
+                if (bfw >= mSP && bfh >= mSP) {
                     JaggedArray<float> buflight(bfw, bfh);
                     JaggedArray<float> bufl_ab(bfw, bfh);
                     std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -7204,7 +7205,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const int bfh = yend - ystart;
                 const int bfw = xend - xstart;
 
-                if (bfw > 0 && bfh > 0) {
+                if (bfw >= mSP && bfh >= mSP) {
                     array2D<float> buflight(bfw, bfh);
                     JaggedArray<float> bufchro(bfw, bfh);
                     std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
@@ -7376,7 +7377,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
-            if (bfw > 0 && bfh > 0) {
+            if (bfw >= mSP && bfh >= mSP) {
 
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
@@ -7567,7 +7568,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
-            if (bfw > 0 && bfh > 0) {
+            if (bfw >= mSP && bfh >= mSP) {
 
                 if (lp.softmet == 1) {
                     /*
@@ -7756,7 +7757,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
-            if (bfw > 0 && bfh > 0) {
+            if (bfw >= mSP && bfh >= mSP) {
 
                 if (lp.ftwlc) {
                     int ftsizeH = 1;
@@ -8873,7 +8874,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             bool reduH = false;
             bool reduW = false;
 
-            if (bfw > 0 && bfh > 0) {
+            if (bfw >= mSP && bfh >= mSP) {
 
                 if (lp.expmet == 1) {
                     int ftsizeH = 1;
@@ -9137,11 +9138,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float *dataor = new float[bfwr * bfhr];
                                 float gam = params->locallab.spots.at(sp).gamm;
                                 float igam = 1.f / gam;
-/*
-                                if (lp.softradiusexp > 0.f) {
-                                    softproc(bufexpfin.get(), bufexpfin.get(), lp.softradiusexp, bfhr, bfwr, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
-                                }
-*/
+
+                                /*
+                                                                if (lp.softradiusexp > 0.f) {
+                                                                    softproc(bufexpfin.get(), bufexpfin.get(), lp.softradiusexp, bfhr, bfwr, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
+                                                                }
+                                */
                                 if (lp.blac < -1000.f) {
                                     Median med;
 
@@ -9413,7 +9415,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
-            if (bfw > 0 && bfh > 0) {
+            if (bfw >= mSP && bfh >= mSP) {
                 std::unique_ptr<LabImage> bufcolorig;
                 std::unique_ptr<LabImage> bufcolfin;
                 std::unique_ptr<LabImage> bufmaskblurcol;
@@ -9625,7 +9627,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 }
 
-                                if (ctoning  &&  bfw >= 6 && bfh >= 6) {
+                                if (ctoning) {
                                     if (lp.gridmet == 0) {
                                         bufcolcalca += bufcolcalcL * a_scale + a_base;
                                         bufcolcalcb += bufcolcalcL * b_scale + b_base;
@@ -9644,6 +9646,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 buf_b[ir][jr] = CLIPRET((bufcolcalcb - bufcolorig->b[ir][jr]) / 328.f);;
                                 bufcolfin->L[ir][jr] = bufcolcalcL;
 
+                                //      }
                             }
 
                         if (lp.softradiuscol > 0.f) {
@@ -9668,15 +9671,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         temp = blend2;
                     }
 
-                    bool execut = true;
-
-                    if (ctoning  && (bfw < 6 || bfh < 6)) {
-                        execut = false;
-                    }
-
-                    if (execut) {
-                        transit_shapedetect(0, bufcolorig.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
-                    }
+                    transit_shapedetect(0, bufcolorig.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
 
                 }
             }
