@@ -21,7 +21,7 @@
 #include "adjuster.h"
 #include "toolpanel.h"
 
-class PdSharpening final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoContrastListener
+class PdSharpening final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoContrastListener, public rtengine::AutoRadiusListener
 {
 
 protected:
@@ -31,11 +31,13 @@ protected:
     Adjuster* diter;
 
     bool lastAutoContrast;
+    bool lastAutoRadius;
     rtengine::ProcEvent EvPdShrContrast;
     rtengine::ProcEvent EvPdShrDRadius;
     rtengine::ProcEvent EvPdSharpenGamma;
     rtengine::ProcEvent EvPdShrDIterations;
     rtengine::ProcEvent EvPdShrAutoContrast;
+    rtengine::ProcEvent EvPdShrAutoRadius;
     IdleRegister idle_register;
 
 public:
@@ -53,6 +55,7 @@ public:
     void enabledChanged () override;
 
     void autoContrastChanged (double autoContrast) override;
+    void autoRadiusChanged (double autoRadius) override;
 
     void setAdjusterBehavior (bool contrastadd, bool gammaadd, bool radiusadd, bool iteradds);
     void trimValues (rtengine::procparams::ProcParams* pp) override;

@@ -202,6 +202,7 @@ struct CaptureSharpeningParamsEdited {
     bool enabled;
     bool contrast;
     bool autoContrast;
+    bool autoRadius;
     bool gamma;
     bool deconvradius;
     bool deconviter;

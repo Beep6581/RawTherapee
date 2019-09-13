@@ -564,6 +564,7 @@ struct SharpenMicroParams {
 struct CaptureSharpeningParams {
     bool           enabled;
     bool           autoContrast;
+    bool           autoRadius;
     double         contrast;
     double         gamma;
     double         deconvradius;

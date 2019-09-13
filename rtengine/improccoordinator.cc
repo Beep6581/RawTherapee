@@ -128,6 +128,7 @@ ImProcCoordinator::ImProcCoordinator() :
     bayerAutoContrastListener(nullptr),
     xtransAutoContrastListener(nullptr),
     pdSharpenAutoContrastListener(nullptr),
+    pdSharpenAutoRadiusListener(nullptr),
     frameCountListener(nullptr),
     imageTypeListener(nullptr),
     actListener(nullptr),
@@ -410,9 +411,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if ((todo & (M_RAW | M_CSHARP)) && params->pdsharpening.enabled) {
             double pdSharpencontrastThreshold = params->pdsharpening.contrast;
-            imgsrc->captureSharpening(params->pdsharpening, sharpMask, pdSharpencontrastThreshold);
+            double pdSharpenRadius = params->pdsharpening.deconvradius;
+            imgsrc->captureSharpening(params->pdsharpening, sharpMask, pdSharpencontrastThreshold, pdSharpenRadius);
             if (pdSharpenAutoContrastListener && params->pdsharpening.autoContrast) {
                 pdSharpenAutoContrastListener->autoContrastChanged(pdSharpencontrastThreshold);
+            }
+            if (pdSharpenAutoRadiusListener && params->pdsharpening.autoRadius) {
+                pdSharpenAutoRadiusListener->autoRadiusChanged(pdSharpenRadius);
             }
         }
 
