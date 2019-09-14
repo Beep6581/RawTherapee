@@ -19,7 +19,6 @@
 #include <cmath>
 #include <iostream>
 
-#include "jaggedarray.h"
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
@@ -121,18 +120,12 @@ inline void gauss3x3div (float** RESTRICT src, float** RESTRICT dst, float** RES
         }
         dst[i][W - 1] = 1.f;
     }
-    // first and last rows
-    {
-        for (int i = 0; i < 1; ++i) {
-            for (int j = 0; j < W; ++j) {
-                dst[i][j] = 1.f;
-            }
-        }
-        for (int i = H - 1 ; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                dst[i][j] = 1.f;
-            }
-        }
+    // first and last row
+    for (int j = 0; j < W; ++j) {
+        dst[0][j] = 1.f;
+    }
+    for (int j = 0; j < W; ++j) {
+        dst[H - 1][j] = 1.f;
     }
 }
 
@@ -161,16 +154,14 @@ inline void gauss5x5div (float** RESTRICT src, float** RESTRICT dst, float** RES
     }
 
     // first and last rows
-    {
-        for (int i = 0; i < 2; ++i) {
-            for (int j = 0; j < W; ++j) {
-                dst[i][j] = 1.f;
-            }
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < W; ++j) {
+            dst[i][j] = 1.f;
         }
-        for (int i = H - 2 ; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                dst[i][j] = 1.f;
-            }
+    }
+    for (int i = H - 2 ; i < H; ++i) {
+        for (int j = 0; j < W; ++j) {
+            dst[i][j] = 1.f;
         }
     }
 }
@@ -206,16 +197,14 @@ inline void gauss7x7div(float** RESTRICT src, float** RESTRICT dst, float** REST
     }
 
     // first and last rows
-    {
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < W; ++j) {
-                dst[i][j] = 1.f;
-            }
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < W; ++j) {
+            dst[i][j] = 1.f;
         }
-        for (int i = H - 3 ; i < H; ++i) {
-            for (int j = 0; j < W; ++j) {
-                dst[i][j] = 1.f;
-            }
+    }
+    for (int i = H - 3 ; i < H; ++i) {
+        for (int j = 0; j < W; ++j) {
+            dst[i][j] = 1.f;
         }
     }
 }
@@ -300,7 +289,6 @@ void buildClipMaskBayer(const float * const *rawData, int W, int H, float** clip
             clipMask[row][col] = 1.f;
         }
     }
-
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
@@ -552,9 +540,9 @@ BENCHFUN
 #endif
     {
         int progresscounter = 0;
-        rtengine::JaggedArray<float> tmpIThr(fullTileSize, fullTileSize);
-        rtengine::JaggedArray<float> tmpThr(fullTileSize, fullTileSize);
-        rtengine::JaggedArray<float> lumThr(fullTileSize, fullTileSize);
+        array2D<float> tmpIThr(fullTileSize, fullTileSize);
+        array2D<float> tmpThr(fullTileSize, fullTileSize);
+        array2D<float> lumThr(fullTileSize, fullTileSize);
 #pragma omp for schedule(dynamic,2) collapse(2)
         for (int i = border; i < H - border; i+= tileSize) {
             for(int j = border; j < W - border; j+= tileSize) {
