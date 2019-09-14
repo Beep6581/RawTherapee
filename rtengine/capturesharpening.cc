@@ -765,7 +765,7 @@ BENCHFUN
         plistener->setProgress(0.1);
     }
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
-    JaggedArray<float> blend(W, H);
+    array2D<float>& blend = clipMask; // we can share blend and clipMask buffer here
     buildBlendMask(L, blend, W, H, contrast, 1.f, sharpeningParams.autoContrast, clipMask);
     if (plistener) {
         plistener->setProgress(0.2);
