@@ -460,12 +460,11 @@ CursorShape Spot::getCursor (int objectID, int xPos, int yPos) const
             return CSEmpty;
         }
 
-        int object = editProvider->getObject();
-        if (object == 0 || object == 1) {
+        if (objectID == 0 || objectID == 1) {
             return CSMove2D;
         }
-        if (object >= 2 || object <= 5) {
-            Coord delta(Coord(xPos, yPos) - ((object == 3 || object == 5) ? spots.at(activeSpot).sourcePos : spots.at(activeSpot).targetPos));
+        if (objectID >= 2 && objectID <= 5) {
+            Coord delta(Coord(xPos, yPos) - ((objectID == 3 || objectID == 5) ? spots.at(activeSpot).sourcePos : spots.at(activeSpot).targetPos));
             PolarCoord polarPos(delta);
             if (polarPos.angle < 0.) {
                 polarPos.angle += 180.;
