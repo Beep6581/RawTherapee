@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "rtscalable.h"
@@ -119,7 +119,7 @@ void RTScalable::deleteDir(const Glib::ustring& path)
     }
 }
 
-void RTScalable::cleanup()
+void RTScalable::cleanup(bool all)
 {
     Glib::ustring imagesCacheFolder = Glib::build_filename (options.cacheBaseDir, "svg2png");
     Glib::ustring sDPI = Glib::ustring::compose("%1", (int)getTweakedDPI());
@@ -134,7 +134,7 @@ void RTScalable::cleanup()
                 continue;
             }
 
-            if (fileName != sDPI) {
+            if (all || fileName != sDPI) {
                 deleteDir(filePath);
             }
         }

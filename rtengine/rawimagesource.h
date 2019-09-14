@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -74,13 +74,13 @@ protected:
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
-    RawImage* riFrames[4] = {nullptr};
+    RawImage* riFrames[6] = {nullptr};
     unsigned int currFrame = 0;
     unsigned int numFrames = 0;
     int flatFieldAutoClipValue = 0;
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
-    array2D<float> *rawDataFrames[4] = {nullptr};
-    array2D<float> *rawDataBuffer[3] = {nullptr};
+    array2D<float> *rawDataFrames[6] = {nullptr};
+    array2D<float> *rawDataBuffer[5] = {nullptr};
 
     // the interpolated green plane:
     array2D<float> green;
@@ -88,6 +88,12 @@ protected:
     array2D<float> red;
     // the interpolated blue plane:
     array2D<float> blue;
+    // the interpolated green plane:
+    array2D<float>* greenCache;
+    // the interpolated red plane:
+    array2D<float>* redCache;
+    // the interpolated blue plane:
+    array2D<float>* blueCache;
     bool rawDirty;
     float psRedBrightness[4];
     float psGreenBrightness[4];
@@ -117,7 +123,7 @@ public:
     void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) override;
     void        filmNegativeProcess (const procparams::FilmNegativeParams &params) override;
     bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps) override;
-    void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) override;
+    void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache = false) override;
     void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) override;
     void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) override;
     void        retinexPrepareBuffers      (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) override;
@@ -305,7 +311,7 @@ protected:
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
-
+    void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override;
 };
 
 }

@@ -31,11 +31,12 @@
     <project_license>GPL-3.0+</project_license>
     <url type="bugtracker">https://github.com/Beep6581/RawTherapee/issues/new</url>
     <url type="donation">https://www.paypal.me/rawtherapee</url>
-    <url type="help">http://rawpedia.rawtherapee.com/</url>
-    <url type="homepage">http://rawtherapee.com/</url>
+    <url type="help">https://rawpedia.rawtherapee.com/</url>
+    <url type="homepage">https://www.rawtherapee.com/</url>
     <url type="translate">https://discuss.pixls.us/t/localization-how-to-translate-rawtherapee-and-rawpedia/2594</url>
     <launchable type="desktop-id">rawtherapee.desktop</launchable>
     <releases>
+        <release version="5.7" date="2019-09-10" type="stable"></release>
         <release version="5.6" date="2019-04-20" type="stable"></release>
         <release version="5.6~rc2" date="2019-04-17" type="development"></release>
         <release version="5.6~rc1" date="2019-04-10" type="development"></release>
@@ -47,16 +48,20 @@
     </provides>
     <screenshots>
         <screenshot type="default">
+            <caption>Color-correcting a drosera rotundifolia in RawTherapee 5.7.</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt570_1.jpg</image>
+        </screenshot>
+        <screenshot>
             <caption>HDR DNG of a misty morning in the countryside</caption>
-            <image width="1920" height="1080">http://rawtherapee.com/images/screenshots/rt540_1.jpg</image>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt540_1.jpg</image>
         </screenshot>
         <screenshot>
             <caption>Straight-out-of-camera vs RawTherapee</caption>
-            <image width="1920" height="1080">http://rawtherapee.com/images/screenshots/rt540_2.jpg</image>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt540_2.jpg</image>
         </screenshot>
         <screenshot>
             <caption>RawTherapee using the Auto-Matched Tone Curve tool</caption>
-            <image width="1920" height="1080">http://rawtherapee.com/images/screenshots/rt540_3.jpg</image>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt540_3.jpg</image>
         </screenshot>
     </screenshots>
     <update_contact>contactus@rawtherapee.com</update_contact>

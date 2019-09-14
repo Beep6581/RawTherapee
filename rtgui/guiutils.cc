@@ -13,7 +13,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cairomm/cairomm.h>
 #include "../rtengine/rt_math.h"
@@ -971,9 +971,8 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
                 scroll->set_value(value2);
             }
         } else if (event->direction == GDK_SCROLL_SMOOTH) {
-            if (abs(event->delta_y) > 0.1) {
-                value2 = rtengine::LIM<double>(value + (event->delta_y > 0 ? step : -step), lowerBound, upperBound);
-            }
+            value2 = rtengine::LIM<double>(value + event->delta_y * step, lowerBound, upperBound);
+
             if (value2 != value) {
                 scroll->set_value(value2);
             }

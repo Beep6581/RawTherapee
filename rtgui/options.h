@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _OPTIONS_
 #define _OPTIONS_
@@ -426,6 +426,7 @@ public:
     Glib::ustring findProfilePath (Glib::ustring &profName);
     bool is_parse_extention (Glib::ustring fname);
     bool has_retained_extention (const Glib::ustring& fname);
+    bool is_new_version();
     bool is_extention_enabled (const Glib::ustring& ext);
     bool is_defProfRawMissing();
     bool is_bundledDefProfRawMissing();

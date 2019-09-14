@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -416,6 +416,13 @@ public :
     virtual void autoContrastChanged (double autoContrast) = 0;
 };
 
+class AutoRadiusListener
+{
+public :
+    virtual ~AutoRadiusListener() = default;
+    virtual void autoRadiusChanged (double autoRadius) = 0;
+};
+
 class WaveletListener
 {
 public:
@@ -535,6 +542,8 @@ public:
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setBayerAutoContrastListener (AutoContrastListener* l) = 0;
     virtual void        setXtransAutoContrastListener (AutoContrastListener* l) = 0;
+    virtual void        setpdSharpenAutoContrastListener (AutoContrastListener* l) = 0;
+    virtual void        setpdSharpenAutoRadiusListener (AutoRadiusListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
@@ -547,7 +556,7 @@ public:
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
     virtual void        setSoftProofing         (bool softProof, bool gamutCheck) = 0;
     virtual void        getSoftProofing         (bool &softProof, bool &gamutCheck) = 0;
-    virtual void        setSharpMask            (bool sharpMask) = 0;
+    virtual ProcEvent   setSharpMask            (bool sharpMask) = 0;
 
     virtual ~StagedImageProcessor () {}
 

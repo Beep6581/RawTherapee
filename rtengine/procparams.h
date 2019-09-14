@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -285,6 +285,7 @@ struct ToneCurveParams {
 
     ToneCurveParams();
 
+    bool isPanningRelatedChange(const ToneCurveParams& other) const;
     bool operator ==(const ToneCurveParams& other) const;
     bool operator !=(const ToneCurveParams& other) const;
 
@@ -494,7 +495,9 @@ struct ColorToningParams {
 struct SharpeningParams {
     bool           enabled;
     double         contrast;
+    bool           autoContrast;
     double         blurradius;
+    double         gamma;
     double         radius;
     int            amount;
     Threshold<int> threshold;
@@ -538,6 +541,21 @@ struct SharpenMicroParams {
 
     bool operator ==(const SharpenMicroParams& other) const;
     bool operator !=(const SharpenMicroParams& other) const;
+};
+
+struct CaptureSharpeningParams {
+    bool           enabled;
+    bool           autoContrast;
+    bool           autoRadius;
+    double         contrast;
+    double         gamma;
+    double         deconvradius;
+    int            deconviter;
+
+    CaptureSharpeningParams();
+
+    bool operator ==(const CaptureSharpeningParams& other) const;
+    bool operator !=(const CaptureSharpeningParams& other) const;
 };
 
 /**
@@ -598,6 +616,7 @@ struct WBParams {
 
     WBParams();
 
+    bool isPanningRelatedChange(const WBParams& other) const;
     bool operator ==(const WBParams& other) const;
     bool operator !=(const WBParams& other) const;
 
@@ -1562,6 +1581,7 @@ public:
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters
     SharpeningParams        prsharpening;    ///< Sharpening parameters for post resize sharpening
+    CaptureSharpeningParams pdsharpening;    ///< Sharpening parameters for post demosaic sharpening
     SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
     SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
     VibranceParams          vibrance;        ///< Vibrance parameters

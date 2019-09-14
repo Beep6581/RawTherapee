@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "improccoordinator.h"
 #include "curves.h"
@@ -55,6 +55,7 @@ ImProcCoordinator::ImProcCoordinator() :
     softProof(false),
     gamutCheck(false),
     sharpMask(false),
+    sharpMaskChanged(false),
     scale(10),
     highDetailPreprocessComputed(false),
     highDetailRawComputed(false),
@@ -122,6 +123,8 @@ ImProcCoordinator::ImProcCoordinator() :
     flatFieldAutoClipListener(nullptr),
     bayerAutoContrastListener(nullptr),
     xtransAutoContrastListener(nullptr),
+    pdSharpenAutoContrastListener(nullptr),
+    pdSharpenAutoRadiusListener(nullptr),
     frameCountListener(nullptr),
     imageTypeListener(nullptr),
     actListener(nullptr),
@@ -356,18 +359,35 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
             bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicAutoContrast : params->raw.xtranssensor.dualDemosaicAutoContrast;
             double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params->raw.bayersensor.dualDemosaicContrast : params->raw.xtranssensor.dualDemosaicContrast;
-            imgsrc->demosaic(rp, autoContrast, contrastThreshold); //enabled demosaic
+            imgsrc->demosaic(rp, autoContrast, contrastThreshold, params->pdsharpening.enabled);
 
             if (imgsrc->getSensorType() == ST_BAYER && bayerAutoContrastListener && autoContrast) {
-                bayerAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
-            }
-            if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
+                bayerAutoContrastListener->autoContrastChanged(contrastThreshold);
+            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS && xtransAutoContrastListener && autoContrast) {
                 xtransAutoContrastListener->autoContrastChanged(autoContrast ? contrastThreshold : -1.0);
             }
-
             // if a demosaic happened we should also call getimage later, so we need to set the M_INIT flag
-            todo |= M_INIT;
+            todo |= (M_INIT | M_CSHARP);
 
+        }
+
+        if ((todo & (M_RAW | M_CSHARP)) && params->pdsharpening.enabled) {
+            double pdSharpencontrastThreshold = params->pdsharpening.contrast;
+            double pdSharpenRadius = params->pdsharpening.deconvradius;
+            imgsrc->captureSharpening(params->pdsharpening, sharpMask, pdSharpencontrastThreshold, pdSharpenRadius);
+            if (pdSharpenAutoContrastListener && params->pdsharpening.autoContrast) {
+                pdSharpenAutoContrastListener->autoContrastChanged(pdSharpencontrastThreshold);
+            }
+            if (pdSharpenAutoRadiusListener && params->pdsharpening.autoRadius) {
+                pdSharpenAutoRadiusListener->autoRadiusChanged(pdSharpenRadius);
+            }
+        }
+
+
+        if ((todo & M_RAW)
+                || (!highDetailRawComputed && highDetailNeeded)
+                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
@@ -1421,9 +1441,16 @@ void ImProcCoordinator::getSoftProofing(bool &softProof, bool &gamutCheck)
     gamutCheck = this->gamutCheck;
 }
 
-void ImProcCoordinator::setSharpMask (bool sharpMask)
+ProcEvent ImProcCoordinator::setSharpMask (bool sharpMask)
 {
-    this->sharpMask = sharpMask;
+    if (this->sharpMask != sharpMask) {
+        sharpMaskChanged = true;
+        this->sharpMask = sharpMask;
+        return params->pdsharpening.enabled ? rtengine::EvPdShrMaskToggled : rtengine::EvShrEnabled;
+    } else {
+        sharpMaskChanged = false;
+        return rtengine::EvShrEnabled;
+    }
 }
 
 void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool apply_wb)
@@ -1593,13 +1620,13 @@ void ImProcCoordinator::process()
 
     while (changeSinceLast) {
         const bool panningRelatedChange =
-               params->toneCurve != nextParams->toneCurve
+               params->toneCurve.isPanningRelatedChange(nextParams->toneCurve)
             || params->labCurve != nextParams->labCurve
             || params->localContrast != nextParams->localContrast
             || params->rgbCurves != nextParams->rgbCurves
             || params->colorToning != nextParams->colorToning
             || params->vibrance != nextParams->vibrance
-            || params->wb != nextParams->wb
+            || params->wb.isPanningRelatedChange(nextParams->wb)
             || params->colorappearance != nextParams->colorappearance
             || params->epd != nextParams->epd
             || params->fattal != nextParams->fattal
@@ -1625,8 +1652,11 @@ void ImProcCoordinator::process()
             || params->retinex != nextParams->retinex
             || params->wavelet != nextParams->wavelet
             || params->dirpyrequalizer != nextParams->dirpyrequalizer
-            || params->dehaze != nextParams->dehaze;
+            || params->dehaze != nextParams->dehaze
+            || params->pdsharpening != nextParams->pdsharpening
+            || sharpMaskChanged;
 
+        sharpMaskChanged = false;
         *params = *nextParams;
         int change = changeSinceLast;
         changeSinceLast = 0;
