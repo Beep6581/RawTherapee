@@ -2024,7 +2024,8 @@ void RawImageSource::refinement(int PassCount)
 
 // Refinement based on EECI demozaicing algorithm by L. Chang and Y.P. Tan
 // from "Lassus" : Luis Sanz Rodriguez, adapted by Jacques Desmis - JDC - and Oliver Duis for RawTherapee
-// increases the signal to noise ratio (PSNR) # +1 to +2 dB : tested with Dcraw : eg: Lighthouse + AMaZE : whitout refinement:39.96dB, with refinement:41.86 dB
+// increases the signal to noise ratio (PSNR) # +1 to +2 dB : tested with Dcraw : 
+// eg: Lighthouse + AMaZE : without refinement:39.96 dB, with refinement:41.86 dB
 // reduce color artifacts, improves the interpolation
 // but it's relatively slow
 //
