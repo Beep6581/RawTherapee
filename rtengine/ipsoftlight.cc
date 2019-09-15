@@ -22,8 +22,6 @@
 #include "improcfun.h"
 
 #include "procparams.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 namespace {
 
@@ -60,7 +58,6 @@ void rtengine::ImProcFunctions::softLight(LabImage *lab)
     if (!params->softlight.enabled || !params->softlight.strength) {
         return;
     }
-    BENCHFUN
 
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
     const float wp[3][3] = {
