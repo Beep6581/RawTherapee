@@ -530,7 +530,7 @@ BENCHFUN
     }
 
     constexpr int tileSize = 194;
-    constexpr int border = 3;
+    constexpr int border = 5;
     constexpr int fullTileSize = tileSize + 2 * border;
 
     double progress = startVal;
