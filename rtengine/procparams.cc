@@ -2487,6 +2487,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     slomaskexp(0.0),
     softradiusexp(0.0),
     expMethod("std"),
+    exnoiseMethod("none"),
     laplacexp(0.0),
     balanexp(0.75),
     linear(0.3),
@@ -2747,6 +2748,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskexp == other.slomaskexp
         && softradiusexp == other.softradiusexp
         && expMethod == other.expMethod
+        && exnoiseMethod == other.exnoiseMethod
         && laplacexp == other.laplacexp
         && balanexp == other.balanexp
         && linear == other.linear
@@ -3990,6 +3992,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskexp, "Locallab", "Slomaskexp_" + std::to_string(i), spot.slomaskexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiusexp, "Locallab", "Softradiusexp_" + std::to_string(i), spot.softradiusexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expMethod, "Locallab", "ExpMethod_" + std::to_string(i), spot.expMethod, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).exnoiseMethod, "Locallab", "ExnoiseMethod_" + std::to_string(i), spot.exnoiseMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).laplacexp, "Locallab", "Laplacexp_" + std::to_string(i), spot.laplacexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).balanexp, "Locallab", "Balanexp_" + std::to_string(i), spot.balanexp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).linear, "Locallab", "Linearexp_" + std::to_string(i), spot.linear, keyFile);
@@ -5350,6 +5353,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskexp_" + std::to_string(i), pedited, spot.slomaskexp, spotEdited.slomaskexp);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiusexp_" + std::to_string(i), pedited, spot.softradiusexp, spotEdited.softradiusexp);
                 assignFromKeyfile(keyFile, "Locallab", "ExpMethod_" + std::to_string(i), pedited, spot.expMethod, spotEdited.expMethod);
+                assignFromKeyfile(keyFile, "Locallab", "ExnoiseMethod_" + std::to_string(i), pedited, spot.exnoiseMethod, spotEdited.exnoiseMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + std::to_string(i), pedited, spot.laplacexp, spotEdited.laplacexp);
                 assignFromKeyfile(keyFile, "Locallab", "Balanexp_" + std::to_string(i), pedited, spot.balanexp, spotEdited.balanexp);
                 assignFromKeyfile(keyFile, "Locallab", "Linearexp_" + std::to_string(i), pedited, spot.linear, spotEdited.linear);

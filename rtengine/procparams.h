@@ -1037,6 +1037,7 @@ struct LocallabParams {
         double slomaskexp;
         double softradiusexp;
         Glib::ustring expMethod;
+        Glib::ustring exnoiseMethod;
         double laplacexp;
         double balanexp;
         double linear;

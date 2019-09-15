@@ -374,6 +374,7 @@ Locallab::Locallab():
     showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
     showmaskexpMethodinv(Gtk::manage(new MyComboBoxText())),
     expMethod(Gtk::manage(new MyComboBoxText())),
+    exnoiseMethod(Gtk::manage(new MyComboBoxText())),
     //Shadows Highlight
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
     showmaskSHMethodinv(Gtk::manage(new MyComboBoxText())),
@@ -687,6 +688,23 @@ Locallab::Locallab():
         expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
     }
 
+    ctboxexpmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
+    ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
+
+    exnoiseMethod->append(M("TP_LOCALLAB_NONENOISE"));
+    exnoiseMethod->append(M("TP_LOCALLAB_MEDIAN"));
+    exnoiseMethod->append(M("TP_LOCALLAB_WAVLOW"));
+    exnoiseMethod->append(M("TP_LOCALLAB_WAVMED"));
+    exnoiseMethod->append(M("TP_LOCALLAB_WAVHIGH"));
+    exnoiseMethod->set_active(0);
+    exnoiseMethodConn  = exnoiseMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::exnoiseMethodChanged));
+
+    if (showtooltip) {
+        exnoiseMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
+    }
+    ctboxexpmethod->pack_start(*exnoiseMethod);
+
     setExpandAlignProperties(expmaskexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskexp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskexp));
     expmaskexp->setLevel(2);
@@ -825,6 +843,7 @@ Locallab::Locallab():
     pdeBox->pack_start(*linear);
     pdeBox->pack_start(*balanexp);
     pdeBox->pack_start(*gamm);
+    pdeBox->pack_start(*ctboxexpmethod);
 
     fatFrame->set_label_align(0.025, 0.5);
     if (showtooltip) {
@@ -2838,6 +2857,18 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).expMethod = "pde";
                     }
 
+                    if (exnoiseMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "none";
+                    } else if (exnoiseMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "med";
+                    } else if (exnoiseMethod->get_active_row_number() == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavlo";
+                    } else if (exnoiseMethod->get_active_row_number() == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavme";
+                    } else if (exnoiseMethod->get_active_row_number() == 4) {
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavhi";
+                    }
+
                     pp->locallab.spots.at(pp->locallab.selspot).laplacexp = laplacexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).balanexp = balanexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).linear = linear->getValue();
@@ -3145,6 +3176,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskexp = pe->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiusexp = pe->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).expMethod = pe->locallab.spots.at(pp->locallab.selspot).expMethod || expMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pe->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = pe->locallab.spots.at(pp->locallab.selspot).exnoiseMethod || exnoiseMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).laplacexp = pe->locallab.spots.at(pp->locallab.selspot).laplacexp || laplacexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).balanexp = pe->locallab.spots.at(pp->locallab.selspot).balanexp || balanexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).linear = pe->locallab.spots.at(pp->locallab.selspot).linear || linear->getEditedState();
@@ -3409,6 +3441,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp = pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp = pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).expMethod = pedited->locallab.spots.at(pp->locallab.selspot).expMethod || expMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        pedited->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = pedited->locallab.spots.at(pp->locallab.selspot).exnoiseMethod || exnoiseMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).laplacexp = pedited->locallab.spots.at(pp->locallab.selspot).laplacexp || laplacexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).balanexp = pedited->locallab.spots.at(pp->locallab.selspot).balanexp || balanexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).linear = pedited->locallab.spots.at(pp->locallab.selspot).linear || linear->getEditedState();
@@ -4182,7 +4215,18 @@ void Locallab::expMethodChanged()
 
     if (getEnabled() && expexpose->getEnabled()) {
         if (listener) {
-            listener->panelChanged(EvlocallabexpMethod, "");
+            listener->panelChanged(EvlocallabexpMethod, expMethod->get_active_text());
+        }
+    }
+}
+
+
+void Locallab::exnoiseMethodChanged()
+{
+
+    if (getEnabled() && expexpose->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabexnoiseMethod, exnoiseMethod->get_active_text() );
         }
     }
 }
@@ -4677,6 +4721,7 @@ void Locallab::inversexChanged()
         blurexpde->show();
         shadex->show();
         expMethod->show();
+        exnoiseMethod->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -4701,6 +4746,7 @@ void Locallab::inversexChanged()
         blurexpde->show();
         softradiusexp->hide();
         expMethod->hide();
+        exnoiseMethod->hide();
         showmaskexpMethod->hide();
         showmaskexpMethodinv->show();
 
@@ -4723,6 +4769,7 @@ void Locallab::inversexChanged()
         softradiusexp->show();
         shadex->show();
         expMethod->show();
+        exnoiseMethod->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -6751,6 +6798,7 @@ void Locallab::setBatchMode(bool batchMode)
     gridMethod->append(M("GENERAL_UNCHANGED"));
     //exposure
     expMethod->append(M("GENERAL_UNCHANGED"));
+    exnoiseMethod->append(M("GENERAL_UNCHANGED"));
     // softlight
     softMethod->append(M("GENERAL_UNCHANGED"));
     // Blur & Noise
@@ -6924,6 +6972,7 @@ void Locallab::enableListener()
     showmaskexpMethodConn.block(false);
     showmaskexpMethodConninv.block(false);
     expMethodConn.block(false);
+    exnoiseMethodConn.block(false);
     enaExpMaskConn.block(false);
     // Shadow highlight
     enableshadhighConn.block(false);
@@ -6997,6 +7046,7 @@ void Locallab::disableListener()
     showmaskexpMethodConn.block(true);
     showmaskexpMethodConninv.block(true);
     expMethodConn.block(true);
+    exnoiseMethodConn.block(true);
     enaExpMaskConn.block(true);
     // Shadow highlight
     enableshadhighConn.block(true);
@@ -7136,6 +7186,18 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             expMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).expMethod == "pde") {
             expMethod->set_active(1);
+        }
+
+        if (pp->locallab.spots.at(index).exnoiseMethod == "one") {
+            exnoiseMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "med") {
+            exnoiseMethod->set_active(1);
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavlo") {
+            exnoiseMethod->set_active(2);
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavme") {
+            exnoiseMethod->set_active(3);
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavhi") {
+            exnoiseMethod->set_active(4);
         }
 
         laplacexp->setValue(pp->locallab.spots.at(index).laplacexp);
@@ -7473,6 +7535,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                     expMethod->set_active_text(M("GENERAL_UNCHANGED"));
                 }
 
+                if (!spotState->exnoiseMethod) {
+                    exnoiseMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+
                 laplacexp->setEditedState(spotState->laplacexp ? Edited : UnEdited);
                 balanexp->setEditedState(spotState->balanexp ? Edited : UnEdited);
                 linear->setEditedState(spotState->linear ? Edited : UnEdited);
@@ -7740,6 +7806,7 @@ void Locallab::updateSpecificGUIState()
         shadex->show();
         expMethod->show();
         expmaskexp->show();
+        exnoiseMethod->show();
 
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
@@ -7758,6 +7825,7 @@ void Locallab::updateSpecificGUIState()
         softradiusexp->hide();
         shadex->hide();
         expMethod->hide();
+        exnoiseMethod->hide();
         pdeFrame->hide();
         fatFrame->hide();
         expmaskexp->show();
@@ -7779,6 +7847,7 @@ void Locallab::updateSpecificGUIState()
         softradiusexp->show();
         shadex->show();
         expMethod->show();
+        exnoiseMethod->show();
         expmaskexp->show();
         showmaskexpMethodinv->hide();
         showmaskexpMethod->show();

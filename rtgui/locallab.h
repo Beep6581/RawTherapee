@@ -350,6 +350,8 @@ private:
     sigc::connection showmaskexpMethodConninv;
     MyComboBoxText* const expMethod;
     sigc::connection expMethodConn;
+    MyComboBoxText* const exnoiseMethod;
+    sigc::connection exnoiseMethodConn;
     //Shadows Highlight
     MyComboBoxText* const showmaskSHMethod;
     sigc::connection showmaskSHMethodConn;
@@ -402,6 +404,7 @@ private:
     LabGrid *labgrid;
     // Others
     Gtk::HBox* ctboxsoftmethod;
+    Gtk::HBox* ctboxexpmethod;
     /**
      * Used to store the default ProcParams when setDefaults function is called
      * When an other spot is selected, this default ProcParams is used to update adjusters default values
@@ -465,6 +468,7 @@ private:
     void showmaskexpMethodChanged();
     void showmaskexpMethodChangedinv();
     void expMethodChanged();
+    void exnoiseMethodChanged();
     //Shadows Highlight
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();

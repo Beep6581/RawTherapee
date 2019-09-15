@@ -447,6 +447,7 @@ public:
         bool slomaskexp;
         bool softradiusexp;
         bool expMethod;
+        bool exnoiseMethod;
         bool laplacexp;
         bool balanexp;
         bool linear;

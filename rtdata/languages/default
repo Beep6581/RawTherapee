@@ -944,6 +944,7 @@ HISTORY_MSG_697;Local - TM Normalize
 HISTORY_MSG_698;Local - Local contrast Fast Fourier
 HISTORY_MSG_699;Local - Retinex Fast Fourier
 HISTORY_MSG_701;Local - Exp Shadows
+HISTORY_MSG_702;Local - Exp Method
 HISTORY_MSG_703;Local - Exp Laplacian threshold
 HISTORY_MSG_704;Local - Exp PDE balance
 HISTORY_MSG_705;Local - Exp linearity
@@ -984,6 +985,7 @@ HISTORY_MSG_744;Local - Exp Fattal Detail
 HISTORY_MSG_745;Local - Exp Fattal Anchor
 HISTORY_MSG_746;Local - Exp Fattal levels
 HISTORY_MSG_747;Local Spot created
+HISTORY_MSG_748;Local - Exp Denoise
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2139,6 +2141,12 @@ TP_LOCALLAB_LAPLACEXP;Laplacian threshold
 TP_LOCALLAB_BALANEXP;PDE balance
 TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
+TP_LOCALLAB_NOISEMETH;Denoise
+TP_LOCALLAB_NONENOISE;None
+TP_LOCALLAB_MEDIAN;Median
+TP_LOCALLAB_WAVLOW;Wavelet low
+TP_LOCALLAB_WAVMED;Wavelet normal
+TP_LOCALLAB_WAVHIGH;Wavelet high
 TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
 TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
 TP_LOCALLAB_NOISELUMFINETWO;Luminance fine 2 (Wav)

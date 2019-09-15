@@ -774,6 +774,7 @@ enum ProcEventCode {
     Evlocallabfatanchor = 744,
     Evlocallabfatlevel = 745,
     EvLocallabSpotCreated = 746,
+    EvlocallabexnoiseMethod = 747,
     NUMOFEVENTS
 };
 
