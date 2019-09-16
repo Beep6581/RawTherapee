@@ -513,11 +513,11 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
     }
     return std::sqrt((1.f / (std::log(1.f / maxRatio))) / -2.f);
 }
-void CaptureDeconvSharpening (float** luminance, float** oldLuminance, const float * const * blend, int W, int H, double sigma, int iterations, rtengine::ProgressListener* plistener, double startVal, double endVal)
+void CaptureDeconvSharpening (float** luminance, float** oldLuminance, const float * const * blend, int W, int H, double sigma, double sigmaCornerOffset, int iterations, rtengine::ProgressListener* plistener, double startVal, double endVal)
 {
 BENCHFUN
-    const bool is5x5 = (sigma <= 0.84);
-    const bool is3x3 = (sigma < 0.6);
+    const bool is5x5 = (sigma <= 0.84 && sigmaCornerOffset == 0.0);
+    const bool is3x3 = (sigma < 0.6 && sigmaCornerOffset == 0.0);
     float kernel7[7][7];
     float kernel5[5][5];
     float kernel3[3][3];
@@ -532,6 +532,9 @@ BENCHFUN
     constexpr int tileSize = 194;
     constexpr int border = 5;
     constexpr int fullTileSize = tileSize + 2 * border;
+    const float maxRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
+    const float maxDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
+    const float distanceFactor = (maxRadius - sigma) / maxDistance;
 
     double progress = startVal;
     const double progressStep = (endVal - startVal) * rtengine::SQR(tileSize) / (W * H);
@@ -578,10 +581,21 @@ BENCHFUN
                         gauss5x5mult(tmpThr, tmpIThr, fullTileSize, fullTileSize, kernel5);
                     }
                 } else {
-                    for (int k = 0; k < iterations; ++k) {
-                        // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
-                        gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, fullTileSize, kernel7);
-                        gauss7x7mult(tmpThr, tmpIThr, fullTileSize, fullTileSize, kernel7);
+                    if (sigmaCornerOffset > 0.0) {
+                        float lkernel7[7][7];
+                        const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
+                        compute7x7kernel(sigma + distanceFactor * distance, lkernel7);
+                        for (int k = 0; k < iterations - 1; ++k) {
+                            // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                            gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, fullTileSize, lkernel7);
+                            gauss7x7mult(tmpThr, tmpIThr, fullTileSize, fullTileSize, lkernel7);
+                        }
+                    } else {
+                        for (int k = 0; k < iterations; ++k) {
+                            // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                            gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, fullTileSize, kernel7);
+                            gauss7x7mult(tmpThr, tmpIThr, fullTileSize, fullTileSize, kernel7);
+                        }
                     }
                 }
                 if (endOfRow || endOfCol) {
@@ -760,7 +774,7 @@ BENCHFUN
     }
     conrastThreshold = contrast * 100.f;
 
-    CaptureDeconvSharpening(YNew, YOld, blend, W, H, radius, sharpeningParams.deconviter, plistener, 0.2, 0.9);
+    CaptureDeconvSharpening(YNew, YOld, blend, W, H, radius, sharpeningParams.deconvradiusOffset, sharpeningParams.deconviter, plistener, 0.2, 0.9);
     if (plistener) {
         plistener->setProgress(0.9);
     }
