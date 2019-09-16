@@ -2441,9 +2441,9 @@ void CLASS hasselblad_load_raw()
         for (int col = 0; col < raw_width; col += 2) {
             for (int s = 0; s < tiff_samples * 2; s += 2) {
                 int len[2];
-	            for (int c = 0; c < 2; ++c) {
-	                len[c] = ph1_huff(jh.huff[0]);
-	            }
+                for (int c = 0; c < 2; ++c) {
+                    len[c] = ph1_huff(jh.huff[0]);
+                }
                 for (int c = 0; c < 2; ++c) {
                     diff[s + c] = hb_bits(len[c]);
                     if ((diff[s + c] & (1 << (len[c] - 1))) == 0) {
@@ -2455,15 +2455,15 @@ void CLASS hasselblad_load_raw()
                 }
             }
             for (int s = col; s < col + 2; ++s) {
-	            int pred;
-	            if (col) {
+                int pred;
+                if (col) {
                     pred = back[2][s - 2];
                     if (row > 1 && jh.psv == 11) {
                         pred += back[0][s] / 2 - back[0][s - 2] / 2;
                     }
-	            } else {
-	                 pred = 0x8000 + load_flags;
-	            }
+                } else {
+                     pred = 0x8000 + load_flags;
+                }
                 for (int c = 0; c < tiff_samples; ++c) {
                     pred += diff[(s & 1) * tiff_samples + c];
                     const unsigned upix = pred >> sh & 0xffff;
