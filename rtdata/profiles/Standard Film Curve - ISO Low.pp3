@@ -23,3 +23,6 @@ DCPIlluminant=0
 
 [RAW]
 CA=true
+
+[PostDemosaicSharpening]
+Enabled=true
