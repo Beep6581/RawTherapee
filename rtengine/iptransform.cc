@@ -31,9 +31,6 @@
 #include "rtlensfun.h"
 #include "sleef.c"
 
-#define BENCHMARK
-#include "StopWatch.h"
-
 using namespace std;
 
 namespace
@@ -854,7 +851,6 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 
 void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
 {
-    BENCHFUN
     // set up stuff, depending on the mode we are
     const bool enableLCPDist = pLCPMap && params->lensProf.useDist;
     const bool enableCA = highQuality && needsCA();
