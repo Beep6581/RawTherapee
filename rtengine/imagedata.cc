@@ -256,7 +256,23 @@ FramesData::FramesData(const Glib::ustring &fname) :
         }
 
         if (find_tag(Exiv2::orientation)) {
-            orientation = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            static const std::vector<std::string> ormap = {
+                "Unknown",
+                "Horizontal (normal)",
+                "Mirror horizontal",
+                "Rotate 180",
+                "Mirror vertical",
+                "Mirror horizontal and rotate 270 CW",
+                "Rotate 90 CW",
+                "Mirror horizontal and rotate 90 CW",
+                "Rotate 270 CW",
+                "Unknown"
+            };
+            auto idx = pos->toLong();
+            if (idx >= 0 && idx < long(ormap.size())) {
+                orientation = ormap[idx];
+            }
+            //orientation = pos->print(&exif);
         }
 
         if (find_tag(Exiv2::lensName)) {
