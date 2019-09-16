@@ -694,9 +694,9 @@ Locallab::Locallab():
 
     exnoiseMethod->append(M("TP_LOCALLAB_NONENOISE"));
     exnoiseMethod->append(M("TP_LOCALLAB_MEDIAN"));
-    exnoiseMethod->append(M("TP_LOCALLAB_WAVLOW"));
-    exnoiseMethod->append(M("TP_LOCALLAB_WAVMED"));
-    exnoiseMethod->append(M("TP_LOCALLAB_WAVHIGH"));
+//    exnoiseMethod->append(M("TP_LOCALLAB_WAVLOW"));
+//    exnoiseMethod->append(M("TP_LOCALLAB_WAVMED"));
+ //   exnoiseMethod->append(M("TP_LOCALLAB_WAVHIGH"));
     exnoiseMethod->set_active(0);
     exnoiseMethodConn  = exnoiseMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::exnoiseMethodChanged));
 
