@@ -207,9 +207,6 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     apply(SUBMUL, b, a, meanI, meanp);
     DEBUG_DUMP(b);
 
-    meanI.free(); // frees w * h * 4 byte
-    meanp.free(); // frees w * h * 4 byte
-
     array2D<float> &meana = a;
     f_mean(meana, a, r1);
     DEBUG_DUMP(meana);
@@ -218,18 +215,25 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     f_mean(meanb, b, r1);
     DEBUG_DUMP(meanb);
 
-    blur_buf.resize(0); // frees w * h * 4 byte
+    const int Ws = meana.width();
+    const int Hs = meana.height();
+    const int Wd = q.width();
+    const int Hd = q.height();
 
-    array2D<float> meanA(W, H);
-    f_upsample(meanA, meana);
-    DEBUG_DUMP(meanA);
+    float col_scale = float (Ws) / float (Wd);
+    float row_scale = float (Hs) / float (Hd);
 
-    array2D<float> &meanB = q;
-    f_upsample(meanB, meanb);
-    DEBUG_DUMP(meanB);
+#ifdef _OPENMP
+    #pragma omp parallel for if (multithread)
+#endif
 
-    apply(ADDMUL, q, meanA, I, meanB);
-    DEBUG_DUMP(q);
+    for (int y = 0; y < Hd; ++y) {
+        float ymrs = y * row_scale;
+
+        for (int x = 0; x < Wd; ++x) {
+            q[y][x] = getBilinearValue(meana, x * col_scale, ymrs) * I[y][x] + getBilinearValue(meanb, x * col_scale, ymrs);
+        }
+    }
 }
 
 } // namespace rtengine
