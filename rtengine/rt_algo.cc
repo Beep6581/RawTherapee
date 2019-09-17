@@ -156,7 +156,7 @@ float calcContrastThreshold(const float* const * luminance, int tileY, int tileX
         }
     }
 
-    return c / 100.f;
+    return (c + 1) / 100.f;
 }
 }
 
@@ -299,7 +299,7 @@ void findMinMaxPercentile(const float* data, size_t size, float minPrct, float& 
     maxOut = rtengine::LIM(maxOut, minVal, maxVal);
 }
 
-void buildBlendMask(const float* const * luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast) {
+void buildBlendMask(const float* const * luminance, float **blend, int W, int H, float &contrastThreshold, float amount, bool autoContrast, float ** clipMask) {
 
     if (autoContrast) {
         constexpr float minLuminance = 2000.f;
@@ -394,7 +394,7 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
                         }
                     }
 
-                    contrastThreshold = minvar <= 4.f ? calcContrastThreshold(luminance, topLeftYStart + minI, topLeftXStart + minJ, tilesize) : 0.f;
+                    contrastThreshold = minvar <= 8.f ? calcContrastThreshold(luminance, topLeftYStart + minI, topLeftXStart + minJ, tilesize) : 0.f;
                 }
             }
         }
@@ -424,11 +424,20 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
             for(int j = 2; j < H - 2; ++j) {
                 int i = 2;
 #ifdef __SSE2__
-                for(; i < W - 5; i += 4) {
-                    vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
-                                              SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+                if (clipMask) {
+                    for(; i < W - 5; i += 4) {
+                        vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                                  SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
 
-                    STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                        STVFU(blend[j][i], LVFU(clipMask[j][i]) * amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                    }
+                } else {
+                    for(; i < W - 5; i += 4) {
+                        vfloat contrastv = vsqrtf(SQRV(LVFU(luminance[j][i+1]) - LVFU(luminance[j][i-1])) + SQRV(LVFU(luminance[j+1][i]) - LVFU(luminance[j-1][i])) +
+                                                  SQRV(LVFU(luminance[j][i+2]) - LVFU(luminance[j][i-2])) + SQRV(LVFU(luminance[j+2][i]) - LVFU(luminance[j-2][i]))) * scalev;
+
+                        STVFU(blend[j][i], amountv * calcBlendFactor(contrastv, contrastThresholdv));
+                    }
                 }
 #endif
                 for(; i < W - 2; ++i) {
@@ -436,7 +445,7 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
                     float contrast = sqrtf(rtengine::SQR(luminance[j][i+1] - luminance[j][i-1]) + rtengine::SQR(luminance[j+1][i] - luminance[j-1][i]) + 
                                            rtengine::SQR(luminance[j][i+2] - luminance[j][i-2]) + rtengine::SQR(luminance[j+2][i] - luminance[j-2][i])) * scale;
 
-                    blend[j][i] = amount * calcBlendFactor(contrast, contrastThreshold);
+                    blend[j][i] = (clipMask ? clipMask[j][i] : 1.f) * amount * calcBlendFactor(contrast, contrastThreshold);
                 }
             }
 

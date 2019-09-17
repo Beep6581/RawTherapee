@@ -166,6 +166,7 @@ protected:
     AutoContrastListener *bayerAutoContrastListener;
     AutoContrastListener *xtransAutoContrastListener;
     AutoContrastListener *pdSharpenAutoContrastListener;
+    AutoRadiusListener *pdSharpenAutoRadiusListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -366,6 +367,11 @@ public:
     void setXtransAutoContrastListener  (AutoContrastListener* acl) override
     {
         xtransAutoContrastListener = acl;
+    }
+
+    void setpdSharpenAutoRadiusListener  (AutoRadiusListener* acl) override
+    {
+        pdSharpenAutoRadiusListener = acl;
     }
 
     void setpdSharpenAutoContrastListener  (AutoContrastListener* acl) override
