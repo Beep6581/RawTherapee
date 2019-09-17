@@ -2868,7 +2868,6 @@ void ImProcFunctions::ShrinkAllAB(wavelet_decomposition & WaveletCoeffs_L, wavel
             madab = SQR(MadRgb(WavCoeffs_ab[dir], W_ab * H_ab));
         }
     }
-
     float noisevarfc;
 
     float *nvc = nullptr;
@@ -2876,7 +2875,6 @@ void ImProcFunctions::ShrinkAllAB(wavelet_decomposition & WaveletCoeffs_L, wavel
 
     if ((local == 2 || local == 3) && variC  && useNoiseCCurve) {
         noisevarfc = variC[level];
-
         for (int p = 0; p < H_ab * W_ab; p++) {
             nvc[p] = 10.f * sqrt(variC[level]) * SQR(1.f + 4.f * noisevarchrom[p]);
         }
@@ -2890,7 +2888,7 @@ void ImProcFunctions::ShrinkAllAB(wavelet_decomposition & WaveletCoeffs_L, wavel
 
     }
 
-//  printf("varfc=%f nvc0=%f nvc1=%f nvc2=%f\n",  noisevarfc, nvc[10], nvc[H_ab * W_ab /3], nvc[H_ab * W_ab /2]);
+ // printf("varfc=%f nvc0=%f nvc1=%f nvc2=%f\n",  noisevarfc, nvc[10], nvc[H_ab * W_ab /3], nvc[H_ab * W_ab /2]);
     if (noisevarfc > 0.001f) {//noisevar_ab
         //madab = useNoiseCCurve ? madab : madab * noisevar_ab;
         madab = useNoiseCCurve ? madab : madab * noisevarfc;

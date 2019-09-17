@@ -694,9 +694,12 @@ Locallab::Locallab():
 
     exnoiseMethod->append(M("TP_LOCALLAB_NONENOISE"));
     exnoiseMethod->append(M("TP_LOCALLAB_MEDIAN"));
-//    exnoiseMethod->append(M("TP_LOCALLAB_WAVLOW"));
-//    exnoiseMethod->append(M("TP_LOCALLAB_WAVMED"));
- //   exnoiseMethod->append(M("TP_LOCALLAB_WAVHIGH"));
+    exnoiseMethod->append(M("TP_LOCALLAB_WEDIANHI"));
+    /*
+    exnoiseMethod->append(M("TP_LOCALLAB_WAVLOW"));
+    exnoiseMethod->append(M("TP_LOCALLAB_WAVMED"));
+    exnoiseMethod->append(M("TP_LOCALLAB_WAVHIGH"));
+    */
     exnoiseMethod->set_active(0);
     exnoiseMethodConn  = exnoiseMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::exnoiseMethodChanged));
 
@@ -2862,13 +2865,17 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     } else if (exnoiseMethod->get_active_row_number() == 1) {
                         pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "med";
                     } else if (exnoiseMethod->get_active_row_number() == 2) {
-                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavlo";
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "medhi";
+                    } 
+                    /*
                     } else if (exnoiseMethod->get_active_row_number() == 3) {
-                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavme";
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavlo";
                     } else if (exnoiseMethod->get_active_row_number() == 4) {
+                        pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavme";
+                    } else if (exnoiseMethod->get_active_row_number() == 5) {
                         pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavhi";
                     }
-
+                    */
                     pp->locallab.spots.at(pp->locallab.selspot).laplacexp = laplacexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).balanexp = balanexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).linear = linear->getValue();
@@ -7192,14 +7199,18 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
             exnoiseMethod->set_active(0);
         } else if (pp->locallab.spots.at(index).exnoiseMethod == "med") {
             exnoiseMethod->set_active(1);
-        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavlo") {
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "medhi") {
             exnoiseMethod->set_active(2);
-        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavme") {
-            exnoiseMethod->set_active(3);
-        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavhi") {
-            exnoiseMethod->set_active(4);
         }
-
+        /*
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavlo") {
+            exnoiseMethod->set_active(3);
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavme") {
+            exnoiseMethod->set_active(4);
+        } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavhi") {
+            exnoiseMethod->set_active(5);
+        }
+        */
         laplacexp->setValue(pp->locallab.spots.at(index).laplacexp);
         balanexp->setValue(pp->locallab.spots.at(index).balanexp);
         linear->setValue(pp->locallab.spots.at(index).linear);
