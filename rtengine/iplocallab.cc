@@ -5309,7 +5309,8 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                 noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
             } else if (chrom == 1) {
                 params_Ldetail = min(float(lp.noisechrodetail), 99.9f);
-                noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
+             //   noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
+                noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
             }
 
             //   float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
@@ -5923,7 +5924,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             }
 
             if (!Ldecomp.memoryAllocationFailed && aut == 0 && lp.laplacexp < 0.1f) {
-                if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f)  && levred == 7) {
+                if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f)  && levred == 7  && lp.noiseldetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
@@ -5946,15 +5947,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (!adecomp.memoryAllocationFailed) {
-                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)) {
-           //         if (lp.noisechrodetail > 1000) { //to avoid all utilisation
+                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
-           //         }
                 }
-
-
-
-
             }
 
 
@@ -5977,12 +5972,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (!bdecomp.memoryAllocationFailed) {
-            //    if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)) {
-                    if (lp.noisechrodetail > 1000) {//to avoid all utilisation
-
+                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
                     }
-          //      }
 
             }
 
@@ -5995,8 +5987,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             LabImage bufwv(bfw, bfh);
             bufwv.clear(true);
             array2D<float> *Lin = nullptr;
-            //  array2D<float> *Ain = nullptr;
-            //  array2D<float> *Bin = nullptr;
+            array2D<float> *Ain = nullptr;
+            array2D<float> *Bin = nullptr;
 
             int max_numblox_W = ceil((static_cast<float>(bfw)) / (offset)) + 2 * blkrad;
             // calculate min size of numblox_W.
@@ -6501,20 +6493,58 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             if (!Ldecomp.memoryAllocationFailed && aut == 0 && lp.laplacexp < 0.1f) {
 
 
-                if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f) && levred == 7) {
+                if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f) && levred == 7 && lp.noiseldetail != 100.f) {
                     fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
                 }
             }
 
 
             if (!adecomp.memoryAllocationFailed) {
+                Ain = new array2D<float>(bfw, bfh);
+#ifdef _OPENMP
+                #pragma omp parallel for
+
+#endif
+
+                for (int i = 0; i < bfh; ++i) {
+                    for (int j = 0; j < bfw; ++j) {
+                        (*Ain)[i][j] = bufwv.a[i][j];
+                    }
+                }
+                
                 adecomp.reconstruct(bufwv.a[0]);
+            }
+
+            if (!adecomp.memoryAllocationFailed) {
+                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
+                        fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
+                }
             }
 
 
             if (!bdecomp.memoryAllocationFailed) {
+                Bin = new array2D<float>(bfw, bfh);
+#ifdef _OPENMP
+                #pragma omp parallel for
+
+#endif
+
+                for (int i = 0; i < bfh; ++i) {
+                    for (int j = 0; j < bfw; ++j) {
+                        (*Bin)[i][j] = bufwv.b[i][j];
+                    }
+                }
+                
                 bdecomp.reconstruct(bufwv.b[0]);
             }
+
+            if (!bdecomp.memoryAllocationFailed) {
+                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
+                        fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
+                    }
+
+            }
+
 
             DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
         }
