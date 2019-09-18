@@ -2656,7 +2656,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     noiselequal(7),
     noisechrof(0),
     noisechroc(0),
-    noisechrodetail(0),
+    noisechrodetail(90),
     adjblur(0),
     bilateral(0),
     sensiden(20)

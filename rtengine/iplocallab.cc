@@ -5947,9 +5947,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
             if (!adecomp.memoryAllocationFailed) {
                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)) {
-                    if (lp.noisechrodetail > 1000) { //to avoid all utilisation
+           //         if (lp.noisechrodetail > 1000) { //to avoid all utilisation
                         fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
-                    }
+           //         }
                 }
 
 
@@ -5977,12 +5977,12 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (!bdecomp.memoryAllocationFailed) {
-                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)) {
+            //    if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)) {
                     if (lp.noisechrodetail > 1000) {//to avoid all utilisation
 
                         fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
                     }
-                }
+          //      }
 
             }
 
