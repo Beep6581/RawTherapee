@@ -2652,7 +2652,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     noiselumf0(0),
     noiselumf2(0),
     noiselumc(0),
-    noiselumdetail(0),
+    noiselumdetail(80),
     noiselequal(7),
     noisechrof(0),
     noisechroc(0),
