@@ -162,7 +162,8 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic) reduction(+:rr,gg,bb,n)
 #endif
-    for (const auto &p : patches) {
+    for (size_t i = 0; i < patches.size(); ++i) {
+        const auto &p = patches[i];
         const int pW = min(p.first + patchsize, W);
         const int pH = min(p.second + patchsize, H);
             
