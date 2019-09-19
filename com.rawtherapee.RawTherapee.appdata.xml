@@ -33,10 +33,6 @@
         <binary>rawtherapee-cli</binary>
     </provides>
     <screenshots>
-        <screenshot type="default">
-            <caption>Color-correcting a drosera rotundifolia</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt570_1.jpg</image>
-        </screenshot>
         <screenshot>
             <caption>HDR DNG of a misty morning in the countryside</caption>
             <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt540_1.jpg</image>
