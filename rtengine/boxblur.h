@@ -26,6 +26,7 @@
 #include "alignedbuffer.h"
 #include "rt_math.h"
 #include "opthelper.h"
+#include "StopWatch.h"
 
 
 namespace rtengine
@@ -485,41 +486,42 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
 #endif
         {
             const int remaining = W % numCols;
+
             if (remaining > 0) {
                 float (* const rowBuffer)[8] = (float(*)[8]) buffer;
                 const int col = W - remaining;
 
                 float len = radius + 1;
-                for(int k = 0; k < remaining; k++) {
+                for(int k = 0; k < remaining; ++k) {
                     rowBuffer[0][k] = dst[0][col + k];
                 }
-                for (int i = 1; i <= radius; i++) {
-                    for(int k = 0; k < remaining; k++) {
-                        dst[0][col + k] += dst[i][col + k];
+                for (int row = 1; row <= radius; ++row) {
+                    for(int k = 0; k < remaining; ++k) {
+                        dst[0][col + k] += dst[row][col + k];
                     }
                 }
-                for(int k = 0; k < remaining; k++) {
+                for(int k = 0; k < remaining; ++k) {
                     dst[0][col + k] /= len;
                 }
-                for (int row = 1; row <= radius; row++) {
-                    for(int k = 0; k < remaining; k++) {
+                for (int row = 1; row <= radius; ++row) {
+                    for(int k = 0; k < remaining; ++k) {
                         rowBuffer[row][k] = dst[row][col + k];
-                        dst[row][col + k] = (dst[(row - 1)][col + k] * len + dst[row + radius][col + k]) / (len + 1);
-                        len ++;
+                        dst[row][col + k] = (dst[row - 1][col + k] * len + dst[row + radius][col + k]) / (len + 1);
                     }
+                    len ++;
                 }
                 const float rlen = 1.f / len;
-                for (int row = radius + 1; row < H - radius; row++) {
-                    for(int k = 0; k < remaining; k++) {
+                for (int row = radius + 1; row < H - radius; ++row) {
+                    for(int k = 0; k < remaining; ++k) {
                         rowBuffer[row][k] = dst[row][col + k];
-                        dst[row][col + k] = dst[(row - 1)][col + k] + (dst[row + radius][col + k] - rowBuffer[row - radius - 1][k]) * rlen;
+                        dst[row][col + k] = dst[row - 1][col + k] + (dst[row + radius][col + k] - rowBuffer[row - radius - 1][k]) * rlen;
                     }
                 }
-                for (int row = H - radius; row < H; row++) {
-                    for(int k = 0; k < remaining; k++) {
+                for (int row = H - radius; row < H; ++row) {
+                    for(int k = 0; k < remaining; ++k) {
                         dst[row][col + k] = (dst[(row - 1)][col + k] * len - rowBuffer[row - radius - 1][k]) / (len - 1);
-                        len --;
                     }
+                    len --;
                 }
             }
         }
