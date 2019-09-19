@@ -5923,7 +5923,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 Ldecomp.reconstruct(tmp1.L[0]);
             }
 
-            if (!Ldecomp.memoryAllocationFailed && aut == 0 && lp.laplacexp < 0.1f) {
+            if (!Ldecomp.memoryAllocationFailed && aut == 0) {
                 if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f)  && levred == 7  && lp.noiseldetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
@@ -5946,8 +5946,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             }
 
 
-            if (!adecomp.memoryAllocationFailed) {
-                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && lp.noisechrodetail != 100.f) {
+            if (!adecomp.memoryAllocationFailed && aut == 0) {
+                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
                 }
             }
@@ -5971,8 +5971,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             }
 
 
-            if (!bdecomp.memoryAllocationFailed) {
-                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && lp.noisechrodetail != 100.f) {
+            if (!bdecomp.memoryAllocationFailed && aut == 0) {
+                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
                     }
 
@@ -5980,7 +5980,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
             DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
 
-        } else if (call == 2 /* || call == 1 || call == 3 */) { //simpleprocess
+        } else if (call == 2) { //simpleprocess
 
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
@@ -6479,7 +6479,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 #pragma omp parallel for
 
 #endif
-
                 for (int i = 0; i < bfh; ++i) {
                     for (int j = 0; j < bfw; ++j) {
                         (*Lin)[i][j] = bufwv.L[i][j];
@@ -6490,7 +6489,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             }
 
 
-            if (!Ldecomp.memoryAllocationFailed && aut == 0 && lp.laplacexp < 0.1f) {
+            if (!Ldecomp.memoryAllocationFailed && aut == 0) {
 
 
                 if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f) && levred == 7 && lp.noiseldetail != 100.f) {
@@ -6505,7 +6504,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 #pragma omp parallel for
 
 #endif
-
                 for (int i = 0; i < bfh; ++i) {
                     for (int j = 0; j < bfw; ++j) {
                         (*Ain)[i][j] = bufwv.a[i][j];
@@ -6515,7 +6513,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 adecomp.reconstruct(bufwv.a[0]);
             }
 
-            if (!adecomp.memoryAllocationFailed) {
+            if (!adecomp.memoryAllocationFailed && aut == 0) {
                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
                 }
@@ -6528,7 +6526,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 #pragma omp parallel for
 
 #endif
-
                 for (int i = 0; i < bfh; ++i) {
                     for (int j = 0; j < bfw; ++j) {
                         (*Bin)[i][j] = bufwv.b[i][j];
@@ -6538,11 +6535,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 bdecomp.reconstruct(bufwv.b[0]);
             }
 
-            if (!bdecomp.memoryAllocationFailed) {
+            if (!bdecomp.memoryAllocationFailed && aut == 0) {
                  if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
                     }
-
             }
 
 
@@ -9354,179 +9350,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 float igam = 1.f / gam;
 
 
-/*
-#ifdef _OPENMP
-                                const int numThreads = omp_get_max_threads();
-#else
-                                const int numThreads = 1;
-
-#endif
-
-                                LabImage tmp0(bfwr, bfhr);
-
-                                for (int ir = 0; ir < bfhr; ir++)
-                                    for (int jr = 0; jr < bfwr; jr++) {
-                                        tmp0.L[ir][jr] = bufexpfin->L[ir][jr];
-                                        tmp0.a[ir][jr] = bufexpfin->a[ir][jr];
-                                        tmp0.b[ir][jr] = bufexpfin->b[ir][jr];
-                                    }
-
-                                int DaubLen = 6;
-
-                                int levwavL = 8;
-                                //     int skip = 1;
-                                float kwav = 0.02f;
-
-                                if (params->locallab.spots.at(sp).exnoiseMethod == "wavlo") {
-                                    kwav = 0.7f * kwav;
-                                }
-
-                                if (params->locallab.spots.at(sp).exnoiseMethod == "wavhi") {
-                                    kwav = 2.f * kwav;
-                                }
-
-                                wavelet_decomposition Ldecomp(tmp0.L[0], tmp0.W, tmp0.H, levwavL, 1, sk, numThreads, DaubLen);
-
-                                float madL[8][3];
-                                float madLL[7] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-                                float madAA[7] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-                                float madBB[7] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-                                float maxmadL = 0.f;
-                                float maxmadA = 0.f;
-                                float maxmadB = 0.f;
-                                //     printf("SK=%i \n", sk);
-
-                                if (!Ldecomp.memoryAllocationFailed) {
-                                    #pragma omp parallel for reduction(+:madLL) collapse(2) schedule(dynamic,1)
-
-                                    for (int lvl = 0; lvl < levred; lvl++) {
-                                        for (int dir = 1; dir < 4; dir++) {
-                                            int Wlvl_L = Ldecomp.level_W(lvl);
-                                            int Hlvl_L = Ldecomp.level_H(lvl);
-
-                                            float ** WavCoeffs_L = Ldecomp.level_coeffs(lvl);
-
-                                            madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
-                                            madLL[lvl] += madL[lvl][dir - 1];
-                                        }
-                                    }
-
-                                    for (int lvl = 0; lvl < levred; lvl++) {
-                                        madLL[lvl] = (madLL[lvl] / 3);
-                                        madLL[lvl] =  kwav * sqrt(madLL[lvl]);
-                                        printf("lev=%i madLL=%f", lvl, madLL[lvl]);
-                                        maxmadL += madLL[lvl];
-                                    }
-
-                                    maxmadL /= levred;
-                                }
-
-                                printf("N\n");
-                                wavelet_decomposition adecomp(tmp0.a[0], tmp0.W, tmp0.H, levwavL, 1, sk, numThreads, DaubLen);
-
-                                float mada[8][3];
-
-                                if (!adecomp.memoryAllocationFailed) {
-                                    #pragma omp parallel for reduction(+:madAA) collapse(2) schedule(dynamic,1)
-
-                                    for (int lvl = 0; lvl < levred; lvl++) {
-                                        for (int dir = 1; dir < 4; dir++) {
-                                            int Wlvl_a = adecomp.level_W(lvl);
-                                            int Hlvl_a = adecomp.level_H(lvl);
-
-                                            float ** WavCoeffs_a = adecomp.level_coeffs(lvl);
-
-                                            mada[lvl][dir - 1] = SQR(Mad(WavCoeffs_a[dir], Wlvl_a * Hlvl_a));
-                                            madAA[lvl] += mada[lvl][dir - 1];
-                                        }
-                                    }
-
-                                    for (int lvl = 0; lvl < levred; lvl++) {
-                                        madAA[lvl] =   madAA[lvl] / 3;
-                                        madAA[lvl] =  5.f * kwav * sqrt(madAA[lvl]);
-                                        printf("lev=%i madAA=%f", lvl, madAA[lvl]);
-                                        maxmadA += madAA[lvl];
-                                    }
-
-                                    maxmadA /= levred;
-
-                                }
-
-                                wavelet_decomposition bdecomp(tmp0.b[0], tmp0.W, tmp0.H, levwavL, 1, sk, numThreads, DaubLen);
-
-                                float madb[8][3];
-
-                                if (!bdecomp.memoryAllocationFailed) {
-                                    #pragma omp parallel for reduction(+:madBB) collapse(2) schedule(dynamic,1)
-
-                                    for (int lvl = 0; lvl < levred; lvl++) {
-                                        for (int dir = 1; dir < 4; dir++) {
-                                            int Wlvl_b = bdecomp.level_W(lvl);
-                                            int Hlvl_b = bdecomp.level_H(lvl);
-
-                                            float ** WavCoeffs_b = bdecomp.level_coeffs(lvl);
-
-                                            madb[lvl][dir - 1] = SQR(Mad(WavCoeffs_b[dir], Wlvl_b * Hlvl_b));
-                                            madBB[lvl] += madb[lvl][dir - 1];
-                                        }
-                                    }
-
-                                    for (int lvl = 0; lvl < levred; lvl++) {
-                                        madBB[lvl] = madBB[lvl] / 3;
-                                        madBB[lvl] =  5.f * kwav * sqrt(madBB[lvl]);
-                                        printf("lev=%i madBB=%f", lvl, madBB[lvl]);
-                                        maxmadB += madBB[lvl];
-
-                                    }
-
-                                    maxmadB /= levred;
-
-                                }
-
-                                Ldecomp.reconstruct(tmp0.L[0]);
-                                adecomp.reconstruct(tmp0.a[0]);
-                                bdecomp.reconstruct(tmp0.b[0]);
-
-                                float no1 = lp.noiself;
-                                float no0 = lp.noiself0;
-                                float no2 = lp.noiself2;
-                                float nolc = lp.noiselc;
-                                float nocf = lp.noisecf;
-                                float nocc = lp.noisecc;
-                                lp.noiself = 0.f;
-                                lp.noiself0 = 0.f ;
-                                lp.noiself2 = 0.f ;
-                                lp.noiselc = 0.f;
-                                lp.noisecf = 0.f ;
-                                lp.noisecc = 0.f;
-                                int provsens = lp.sensden;
-                                bool deno = lp.denoiena;
-                                bool maske = lp.enablMask;
-                                int lequ = lp.noiselequal;
-                                float cequ = lp.adjch;
-                                lp.sensden = 100;
-                                lp.denoiena = true;
-                                lp.enablMask = false;
-                                lp.noiselequal = 7;
-                                lp.adjch = 0;
-
-                                if (params->locallab.spots.at(sp).exnoiseMethod == "wavlo" || params->locallab.spots.at(sp).exnoiseMethod == "wavme" || params->locallab.spots.at(sp).exnoiseMethod == "wavhi") {
-                                    //    printf("WAV denoise\n");
-                                    DeNoise(call, 3, madLL, madAA, madBB, 2, false, lp, original, 7, hueref, lumaref, chromaref, original, transformed, cx, cy, sk);
-                                }
-
-                                lp.sensden = provsens;
-                                lp.denoiena = deno;
-                                lp.enablMask = maske;
-                                lp.noiselequal = lequ;
-                                lp.adjch = cequ;
-                                lp.noiself = no1;
-                                lp.noiself0 = no0 ;
-                                lp.noiself2 = no2;
-                                lp.noiselc = nolc;
-                                lp.noisecf = nocf ;
-                                lp.noisecc = nocc;
-*/
                                 if (params->locallab.spots.at(sp).exnoiseMethod == "med" || params->locallab.spots.at(sp).exnoiseMethod == "medhi") {
 
 
@@ -9535,15 +9358,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                         float evnoise = lp.blac - lp.linear * 2000.f;
 
                                         if (params->locallab.spots.at(sp).exnoiseMethod == "med") {
-                                            evnoise *= 0.5f;
+                                            evnoise *= 0.4f;
                                         }
 
                                         //soft denoise, user must use Local Denoise to best result
-                                        if (evnoise < - 16000.f) {
+                                        if (evnoise < - 18000.f) {
                                             med = Median::TYPE_5X5_STRONG;
-                                        } else if (evnoise < - 14000.f) {
+                                        } else if (evnoise < - 15000.f) {
                                             med = Median::TYPE_5X5_SOFT;
-                                        } else if (evnoise < - 9000.f) {
+                                        } else if (evnoise < - 10000.f) {
                                             med = Median::TYPE_3X3_STRONG;
                                         } else {
                                             med = Median:: TYPE_3X3_SOFT;
@@ -9555,32 +9378,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                     }
 
-                                    /*
-                                                                        if (maxmadL > 0.2f) {
-                                                                            //     printf("median denoise\n");
-                                                                            Median medL = Median::TYPE_3X3_SOFT;
-
-                                                                            //soft denoise with median
-                                                                            if (maxmadL > 40.f) {
-                                                                                medL = Median::TYPE_7X7;
-                                                                            } else if (maxmadL > 10.f) {
-                                                                                medL = Median::TYPE_5X5_STRONG;
-                                                                            } else if (maxmadL > 5.f) {
-                                                                                medL = Median::TYPE_5X5_SOFT;
-                                                                            } else if (maxmadL > 1.5f) {
-                                                                                medL = Median::TYPE_3X3_STRONG;
-                                                                            } else if (maxmadL > 0.5f) {
-                                                                                medL = Median::TYPE_3X3_SOFT;
-                                                                            }
-
-                                                                            Median_Denoise(bufexpfin->L, bufexpfin->L, bfwr, bfhr, medL, 1, multiThread);
-
-                                                                            if (maxmadB > 0.1f || maxmadA > 0.1f) {
-                                                                                Median_Denoise(bufexpfin->a, bufexpfin->a, bfwr, bfhr, Median::TYPE_3X3_SOFT, 1, multiThread);
-                                                                                Median_Denoise(bufexpfin->b, bufexpfin->b, bfwr, bfhr, Median::TYPE_3X3_SOFT, 1, multiThread);
-                                                                            }
-                                                                        }
-                                    */
                                 }
 
 #ifdef _OPENMP

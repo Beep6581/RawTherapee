@@ -1936,6 +1936,10 @@ Locallab::Locallab():
     noiselumc->setAdjusterListener(this);
 
     noiselumdetail->setAdjusterListener(this);
+    
+    if (showtooltip) {
+        noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_NOISEDETAIL_TOOLTIP"));
+    }
 
     noiselequal->setAdjusterListener(this);
 
@@ -1948,6 +1952,10 @@ Locallab::Locallab():
     noisechroc->setAdjusterListener(this);
 
     noisechrodetail->setAdjusterListener(this);
+
+    if (showtooltip) {
+        noisechrodetail->set_tooltip_text(M("TP_LOCALLAB_NOISEDETAIL_TOOLTIP"));
+    }
 
     adjblur->setAdjusterListener(this);
 
