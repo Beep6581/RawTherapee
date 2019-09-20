@@ -986,6 +986,7 @@ HISTORY_MSG_745;Local - Exp Fattal Anchor
 HISTORY_MSG_746;Local - Exp Fattal levels
 HISTORY_MSG_747;Local Spot created
 HISTORY_MSG_748;Local - Exp Denoise
+HISTORY_MSG_749;Local - Reti Depth
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2099,7 +2100,8 @@ TP_LOCALLAB_DARKRETI;Darkness
 TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_DENOIS;Denoise
-TP_LOCALLAB_DEHAZ;Dehaze
+TP_LOCALLAB_DEHAZ;Strength Dehaze
+TP_LOCALLAB_DEPTH;Dehaze depth
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE Ipol, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE Ipol - personal algorithm adapted from Ipol to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.\nUseful to increase Luminance for a Second spot near the current and using mask
@@ -2190,7 +2192,7 @@ TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADMASKCOL;Radius
 TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_CONTRESID;Contrast
-TP_LOCALLAB_RETI;Retinex - Strong local contrast
+TP_LOCALLAB_RETI;Dehaze - Retinex Strong local contrast
 TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if misty images and depending on whether you want to act on the front or the background
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.
 TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization is not possible if the 2 delimiters of the Spot (vertical or horizontal) are outside the image
@@ -2206,7 +2208,7 @@ TP_LOCALLAB_SHOWDCT;Show process Fourier
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stages of the process.\nLaplace - builds the second derivative according to the threshold (first step).\nFourier -shows the transformed Laplacian with DCT.\nPoisson - show solution of Poisson DCE.\nNormalize - show result whithout normalization luminance.
 TP_LOCALLAB_SHOWNORMAL;Normalize luminance (no)
 TP_LOCALLAB_TM;Tone Mapping
-TP_LOCALLAB_STR;Strength
+TP_LOCALLAB_STR;Strength Retinex
 TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_VART;Contrast (variance)
 TP_LOCALLAB_SENSI;Scope

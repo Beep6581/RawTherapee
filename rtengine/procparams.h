@@ -1131,6 +1131,7 @@ struct LocallabParams {
         double neigh;
         double vart;
         int dehaz;
+        int depth;
         int sensih;
         std::vector<double> localTgaincurve;
         bool inversret;

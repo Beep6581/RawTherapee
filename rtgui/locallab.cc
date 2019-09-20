@@ -36,7 +36,7 @@
 #define MINCHRO 0.
 #define MAXCHRO 150
 #define MAXCHROCC 100
-#define MINNEIGH 4
+#define MINNEIGH 0.1
 #define MAXNEIGH 5000
 #define CENTERNEIGH 200
 
@@ -267,11 +267,10 @@ Locallab::Locallab():
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
-    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, CENTERNEIGH, nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
-
-    // neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), 4., 4000., 0.5, 50.))),
-    vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 4.0, 500., 0.1, 70.))),
+    neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, 0.1, nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
+    vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 0.1, 500., 0.1, 0.1))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
+    depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
     softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDFILTER"), 0.0, 100.0, 0.5, 0.))),
     blendmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
@@ -279,7 +278,7 @@ Locallab::Locallab():
     chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    scalereti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALERETI"), 1.0, 10.0, 1., 3.))),
+    scalereti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALERETI"), 1.0, 10.0, 1., 1.))),
     darkness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DARKRETI"), 0.01, 3.0, 0.01, 1.))),
     lightnessreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTRETI"), 0.01, 3.0, 0.01, 1.))),
     limd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESRETI"), 1.2, 100.0, 0.1, 8.))),
@@ -411,7 +410,9 @@ Locallab::Locallab():
     fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
     residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
-
+//    retiBox(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
+    retiBox(Gtk::manage(new ToolParamBlock())),
+    maskretiBox(Gtk::manage(new ToolParamBlock())),
     // Others
     defparams(nullptr),
     defpedited(nullptr),
@@ -706,6 +707,7 @@ Locallab::Locallab():
     if (showtooltip) {
         exnoiseMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
     }
+
     ctboxexpmethod->pack_start(*exnoiseMethod);
 
     setExpandAlignProperties(expmaskexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -838,9 +840,11 @@ Locallab::Locallab():
 
 
     pdeFrame->set_label_align(0.025, 0.5);
+
     if (showtooltip) {
         pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
     }
+
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -849,9 +853,11 @@ Locallab::Locallab():
     pdeBox->pack_start(*ctboxexpmethod);
 
     fatFrame->set_label_align(0.025, 0.5);
+
     if (showtooltip) {
         fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
     }
+
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
@@ -1326,6 +1332,7 @@ Locallab::Locallab():
     }
 
     dehaz->setAdjusterListener(this);
+    depth->setAdjusterListener(this);
 
     chrrt->setAdjusterListener(this);
 
@@ -1419,7 +1426,7 @@ Locallab::Locallab():
     lightnessreti->setAdjusterListener(this);
     limd->setAdjusterListener(this);
 
-    ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
+//    ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
     maskretiBox->pack_start(*showmaskretiMethod, Gtk::PACK_SHRINK, 4);
     maskretiBox->pack_start(*enaretiMask, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*enaretiMasktmap, Gtk::PACK_SHRINK, 0);
@@ -1431,11 +1438,22 @@ Locallab::Locallab():
     maskretiBox->pack_start(*slomaskreti, Gtk::PACK_SHRINK, 0);
     expmaskreti->add(*maskretiBox, false);
 
-    ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const dehaBox = Gtk::manage(new ToolParamBlock());
+    dehaBox->pack_start(*dehaz);
+    dehaBox->pack_start(*depth);
+    dehaBox->pack_start(*str);
+    expreti->add(*dehaBox, false);
+
+    ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
+    scopeBox->pack_start(*sensih);
+    expreti->add(*scopeBox, false);
+
+//   ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
-    retiBox->pack_start(*str);
+//    retiBox->pack_start(*str);
+//    retiBox->pack_start(*dehaz);
     retiBox->pack_start(*chrrt);
     retiBox->pack_start(*neigh);
     retiBox->pack_start(*vart);
@@ -1443,9 +1461,8 @@ Locallab::Locallab():
     retiBox->pack_start(*limd);
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
-    retiBox->pack_start(*dehaz);
     retiBox->pack_start(*softradiusret);
-    retiBox->pack_start(*sensih);
+//    retiBox->pack_start(*sensih);
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*expmaskreti);
     retiBox->pack_start(*inversret);
@@ -1936,7 +1953,7 @@ Locallab::Locallab():
     noiselumc->setAdjusterListener(this);
 
     noiselumdetail->setAdjusterListener(this);
-    
+
     if (showtooltip) {
         noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_NOISEDETAIL_TOOLTIP"));
     }
@@ -2874,7 +2891,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "med";
                     } else if (exnoiseMethod->get_active_row_number() == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "medhi";
-                    } 
+                    }
+
                     /*
                     } else if (exnoiseMethod->get_active_row_number() == 3) {
                         pp->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = "wavlo";
@@ -3016,6 +3034,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).neigh = neigh->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).vart = vart->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).dehaz = dehaz->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).depth = depth->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensih = sensih->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).localTgaincurve = cTgainshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).inversret = inversret->get_active();
@@ -3285,6 +3304,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).neigh = pe->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).vart = pe->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).dehaz = pe->locallab.spots.at(pp->locallab.selspot).dehaz || dehaz->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).depth = pe->locallab.spots.at(pp->locallab.selspot).depth || depth->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensih = pe->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).inversret = pe->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
@@ -3552,6 +3572,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).neigh = pedited->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).vart = pedited->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).dehaz = pedited->locallab.spots.at(pp->locallab.selspot).dehaz || dehaz->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).depth = pedited->locallab.spots.at(pp->locallab.selspot).depth || depth->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensih = pedited->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).inversret = pedited->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
@@ -4241,7 +4262,7 @@ void Locallab::exnoiseMethodChanged()
 
     if (getEnabled() && expexpose->getEnabled()) {
         if (listener) {
-            listener->panelChanged(EvlocallabexnoiseMethod, exnoiseMethod->get_active_text() );
+            listener->panelChanged(EvlocallabexnoiseMethod, exnoiseMethod->get_active_text());
         }
     }
 }
@@ -5071,11 +5092,13 @@ void Locallab::inversretChanged()
     } else if (inversret->get_active()) {
         sensih->show();
         dehaz->show();
+        depth->show();
         softradiuscol->show();
         expmaskreti->hide();
     } else {
         sensih->show();
         dehaz->show();
+        depth->show();
         softradiusret->show();
         expmaskreti->show();
     }
@@ -5256,6 +5279,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     neigh->setDefault(defSpot->neigh);
     vart->setDefault(defSpot->vart);
     dehaz->setDefault((double)defSpot->dehaz);
+    depth->setDefault((double)defSpot->depth);
     sensih->setDefault((double)defSpot->sensih);
     softradiusret->setDefault(defSpot->softradiusret);
     blendmaskreti->setDefault((double)defSpot->blendmaskreti);
@@ -5418,6 +5442,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         neigh->setDefaultEditedState(Irrelevant);
         vart->setDefaultEditedState(Irrelevant);
         dehaz->setDefaultEditedState(Irrelevant);
+        depth->setDefaultEditedState(Irrelevant);
         sensih->setDefaultEditedState(Irrelevant);
         softradiusret->setDefaultEditedState(Irrelevant);
         blendmaskreti->setDefaultEditedState(Irrelevant);
@@ -5584,6 +5609,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         neigh->setDefaultEditedState(defSpotState->neigh ? Edited : UnEdited);
         vart->setDefaultEditedState(defSpotState->vart ? Edited : UnEdited);
         dehaz->setDefaultEditedState(defSpotState->dehaz ? Edited : UnEdited);
+        depth->setDefaultEditedState(defSpotState->depth ? Edited : UnEdited);
         sensih->setDefaultEditedState(defSpotState->sensih ? Edited : UnEdited);
         softradiusret->setDefaultEditedState(defSpotState->softradiusret ? Edited : UnEdited);
         blendmaskreti->setDefaultEditedState(defSpotState->blendmaskreti ? Edited : UnEdited);
@@ -6232,6 +6258,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     // Retinex
     if (getEnabled() && expreti->getEnabled()) {
         if (a == str) {
+            if (str->getValue() >= 0.1f) {
+                retiBox->show();
+            } else {
+                retiBox->hide();
+            }
+
             if (listener) {
                 listener->panelChanged(Evlocallabstr, str->getTextValue());
             }
@@ -6258,6 +6290,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == dehaz) {
             if (listener) {
                 listener->panelChanged(Evlocallabdehaz, dehaz->getTextValue());
+            }
+        }
+
+        if (a == depth) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdepth, depth->getTextValue());
             }
         }
 
@@ -6746,6 +6784,7 @@ void Locallab::setBatchMode(bool batchMode)
     neigh->showEditedCB();
     vart->showEditedCB();
     dehaz->showEditedCB();
+    depth->showEditedCB();
     sensih->showEditedCB();
     softradiusret->showEditedCB();
     blendmaskreti->showEditedCB();
@@ -7210,6 +7249,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         } else if (pp->locallab.spots.at(index).exnoiseMethod == "medhi") {
             exnoiseMethod->set_active(2);
         }
+
         /*
         } else if (pp->locallab.spots.at(index).exnoiseMethod == "wavlo") {
             exnoiseMethod->set_active(3);
@@ -7355,6 +7395,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         neigh->setValue(pp->locallab.spots.at(index).neigh);
         vart->setValue(pp->locallab.spots.at(index).vart);
         dehaz->setValue(pp->locallab.spots.at(index).dehaz);
+        depth->setValue(pp->locallab.spots.at(index).depth);
         sensih->setValue(pp->locallab.spots.at(index).sensih);
         cTgainshape->setCurve(pp->locallab.spots.at(index).localTgaincurve);
         inversret->set_active(pp->locallab.spots.at(index).inversret);
@@ -7674,6 +7715,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 neigh->setEditedState(spotState->neigh ? Edited : UnEdited);
                 vart->setEditedState(spotState->vart ? Edited : UnEdited);
                 dehaz->setEditedState(spotState->dehaz ? Edited : UnEdited);
+                depth->setEditedState(spotState->depth ? Edited : UnEdited);
                 sensih->setEditedState(spotState->sensih ? Edited : UnEdited);
                 cTgainshape->setUnChanged(!spotState->localTgaincurve);
                 inversret->set_inconsistent(multiImage && !spotState->inversret);
@@ -7995,6 +8037,13 @@ void Locallab::updateSpecificGUIState()
         sensih->show();
         softradiusret->show();
     }
+
+    if (str->getValue() >= 0.1f) {
+        retiBox->show();
+    } else {
+        retiBox->hide();
+    }
+
 
     if (localcontMethod->get_active_row_number() == 0) {
         levelwav->hide();

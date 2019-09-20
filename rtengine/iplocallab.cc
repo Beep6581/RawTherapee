@@ -255,6 +255,7 @@ struct local_params {
     float transweak;
     float transgrad;
     int dehaze;
+    int depth;
     bool inv;
     bool invex;
     bool invsh;
@@ -613,6 +614,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_warm = locallab.spots.at(sp).warm;
     int local_sensih = locallab.spots.at(sp).sensih;
     int local_dehaze = locallab.spots.at(sp).dehaz;
+    int local_depth = locallab.spots.at(sp).depth;
     int local_sensicb = locallab.spots.at(sp).sensicb;
     float local_clarityml = (float) locallab.spots.at(sp).clarityml;
     float local_contresid = (float) locallab.spots.at(sp).contresid;
@@ -772,6 +774,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sens = local_sensi;
     lp.sensh = local_sensih;
     lp.dehaze = local_dehaze;
+    lp.depth = local_depth;
     lp.senscb = local_sensicb;
     lp.clarityml = local_clarityml;
     lp.contresid = local_contresid;
@@ -3108,6 +3111,9 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
         } else if (senstype == 3)   //soft light
         {
             varsens =  lp.senssf;
+        } else if (senstype == 30)   //dehaze
+        {
+            varsens =  lp.sensh;
         } else if (senstype == 6 || senstype == 7)   //cbdl
         {
             varsens =  lp.senscb;
@@ -3384,7 +3390,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else if (senstype == 6 || senstype == 8 || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3 || senstype == 30) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -3420,7 +3426,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
+                                    if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
 
                                         flia = flib = ((100.f + realstrchdE) / 100.f);
                                     } else if (senstype == 1) {
@@ -3508,7 +3514,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 } else if (senstype == 6 || senstype == 8  || senstype == 10) {
                                     difL = (bufexporig->L[y - ystart][x - xstart] - original->L[y][x]) * reducdE;
                                     transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3) {
+                                } else if (senstype == 1 || senstype == 0 || senstype == 9 || senstype == 3 || senstype == 30) {
                                     if (HHutili) {
                                         const float hhro = bufhh[y - ystart][x - xstart];
 
@@ -3544,7 +3550,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                     const float chra = bufexporig->a[y - ystart][x - xstart];
                                     const float chrb = bufexporig->b[y - ystart][x - xstart];
 
-                                    if (senstype == 2 || senstype == 3 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
+                                    if (senstype == 2 || senstype == 3 || senstype == 30 || senstype == 8 || senstype == 9 || senstype == 6 || senstype == 10) {
                                         flia = flib = (100.f + realstrchdE) / 100.f;
                                     } else if (senstype == 1) {
                                         flia = (100.f + realstradE + 100.f * realstrchdE) / 100.f;
@@ -5309,7 +5315,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
                 noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f);
             } else if (chrom == 1) {
                 params_Ldetail = min(float(lp.noisechrodetail), 99.9f);
-             //   noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
+                //   noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail) + 50.*(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
                 noisevar_Ldetail = 100.f * pow((static_cast<float>(SQR(100. - params_Ldetail)) * TS * 0.5f), 2);//to test ???
             }
 
@@ -5463,7 +5469,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                 float vari[levred];
                 float mxsl = 0.f;
-          //      float mxsfl = 0.f;
+                //      float mxsfl = 0.f;
 
                 if (aut == 0) {
                     if (levred == 7) {
@@ -5489,8 +5495,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     vari[0] = SQR(slidL[0]);
                     vari[1] = SQR(slidL[1]);
                     vari[2] = SQR(slidL[2]);
-             //       float maxf01 = max(slidL[0], slidL[1]);
-             //       mxsfl = max(maxf01, slidL[2]);
+                    //       float maxf01 = max(slidL[0], slidL[1]);
+                    //       mxsfl = max(maxf01, slidL[2]);
 
                     vari[3] = SQR(slidL[3]);
                     vari[4] = SQR(slidL[4]);
@@ -5948,7 +5954,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
             if (!adecomp.memoryAllocationFailed && aut == 0) {
                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && levred == 7  && lp.noisechrodetail != 100.f) {
-                        fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
+                    fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
                 }
             }
 
@@ -5972,9 +5978,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (!bdecomp.memoryAllocationFailed && aut == 0) {
-                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && levred == 7  && lp.noisechrodetail != 100.f) {
-                        fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
-                    }
+                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && levred == 7  && lp.noisechrodetail != 100.f) {
+                    fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
+                }
 
             }
 
@@ -6045,7 +6051,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                 float vari[levred];
                 float mxsl = 0.f;
-           //     float mxsfl = 0.f;
+                //     float mxsfl = 0.f;
 
                 if (aut == 0) {
                     if (levred == 7) {
@@ -6071,8 +6077,8 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     vari[0] = SQR(slidL[0]);
                     vari[1] = SQR(slidL[1]);
                     vari[2] = SQR(slidL[2]);
-                //    float maxf01 = max(slidL[0], slidL[1]);
-               //     mxsfl = max(maxf01, slidL[2]);
+                    //    float maxf01 = max(slidL[0], slidL[1]);
+                    //     mxsfl = max(maxf01, slidL[2]);
 
                     vari[3] = SQR(slidL[3]);
                     vari[4] = SQR(slidL[4]);
@@ -6479,6 +6485,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 #pragma omp parallel for
 
 #endif
+
                 for (int i = 0; i < bfh; ++i) {
                     for (int j = 0; j < bfw; ++j) {
                         (*Lin)[i][j] = bufwv.L[i][j];
@@ -6504,18 +6511,19 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 #pragma omp parallel for
 
 #endif
+
                 for (int i = 0; i < bfh; ++i) {
                     for (int j = 0; j < bfw; ++j) {
                         (*Ain)[i][j] = bufwv.a[i][j];
                     }
                 }
-                
+
                 adecomp.reconstruct(bufwv.a[0]);
             }
 
             if (!adecomp.memoryAllocationFailed && aut == 0) {
                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
-                        fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
+                    fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
                 }
             }
 
@@ -6526,19 +6534,20 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 #pragma omp parallel for
 
 #endif
+
                 for (int i = 0; i < bfh; ++i) {
                     for (int j = 0; j < bfw; ++j) {
                         (*Bin)[i][j] = bufwv.b[i][j];
                     }
                 }
-                
+
                 bdecomp.reconstruct(bufwv.b[0]);
             }
 
             if (!bdecomp.memoryAllocationFailed && aut == 0) {
-                 if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
-                        fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
-                    }
+                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
+                    fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
+                }
             }
 
 
@@ -8596,6 +8605,65 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         //      }
 //&& lp.retiena
+
+        if (lp.dehaze > 0 && lp.str == 0.f  && lp.retiena) {
+            int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            int bfh = yend - ystart;
+            int bfw = xend - xstart;
+            std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            JaggedArray<float> buflight(bfw, bfh);
+            JaggedArray<float> bufl_ab(bfw, bfh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = ystart; y < yend; y++) {
+                for (int x = xstart; x < xend; x++) {
+                    bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                    bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
+                    bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                }
+            }
+
+            bufexpfin->CopyFrom(bufexporig.get());
+            //calc dehaze
+            Imagefloat *tmpImage = nullptr;
+
+            if (lp.dehaze > 0) {
+                DehazeParams dehazeParams;
+                dehazeParams.enabled = true;
+                dehazeParams.strength = lp.dehaze;
+                dehazeParams.showDepthMap = false;
+                dehazeParams.depth = lp.depth;
+                tmpImage = new Imagefloat(bfw, bfh);
+                lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                dehaze(tmpImage, dehazeParams);
+                rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
+
+                delete tmpImage;
+            }
+
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < bfh; y++) {
+                for (int x = 0; x < bfw; x++) {
+                    buflight[y][x] = CLIPRET((bufexpfin->L[y][x] - bufexporig->L[y][x]) / 328.f);
+                    bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))) / 250.f);
+                }
+            }
+
+            bufexpfin.reset();
+            transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+        }
+
         if (lp.str > 0.f  && lp.retiena) {
             int GW = transformed->W;
             int GH = transformed->H;
@@ -8734,7 +8802,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     Imagefloat *tmpImage = nullptr;
 
                     if (lp.dehaze > 0) {
-                        const float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
+                        const float depthcombi = 0.5f * lp.depth + 0.5f * (0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart));
                         DehazeParams dehazeParams;
                         dehazeParams.enabled = true;
                         dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
@@ -8789,7 +8857,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufreti = new LabImage(Wd, Hd);
 
                     if (lp.dehaze > 0) {
-                        const float depthcombi = 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart);
+                        const float depthcombi = 0.5f * lp.depth + 0.5f * ( 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart));
                         DehazeParams dehazeParams;
                         dehazeParams.enabled = true;
                         dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;

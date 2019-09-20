@@ -541,6 +541,7 @@ public:
         bool neigh;
         bool vart;
         bool dehaz;
+        bool depth;
         bool sensih;
         bool localTgaincurve;
         bool inversret;

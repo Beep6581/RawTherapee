@@ -2578,9 +2578,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     retinexMethod("high"),
     str(0.0),
     chrrt(0.0),
-    neigh(200.),
-    vart(70.),
+    neigh(0.1),
+    vart(0.1),
     dehaz(0),
+    depth(25),
     sensih(30),
     localTgaincurve{(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35},
     inversret(false),
@@ -2596,7 +2597,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromaskreti(0.0),
     gammaskreti(1.0),
     slomaskreti(0.0),
-    scalereti(3.0),
+    scalereti(1.0),
     darkness(1.0),
     lightnessreti(1.0),
     limd(8.0),
@@ -2842,6 +2843,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && neigh == other.neigh
         && vart == other.vart
         && dehaz == other.dehaz
+        && depth == other.depth
         && sensih == other.sensih
         && localTgaincurve == other.localTgaincurve
         && inversret == other.inversret
@@ -4086,6 +4088,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).neigh, "Locallab", "Neigh_" + std::to_string(i), spot.neigh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).vart, "Locallab", "Vart_" + std::to_string(i), spot.vart, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).dehaz, "Locallab", "Dehaz_" + std::to_string(i), spot.dehaz, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).depth, "Locallab", "Depth_" + std::to_string(i), spot.depth, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensih, "Locallab", "Sensih_" + std::to_string(i), spot.sensih, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localTgaincurve, "Locallab", "TgainCurve_" + std::to_string(i), spot.localTgaincurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inversret, "Locallab", "Inversret_" + std::to_string(i), spot.inversret, keyFile);
@@ -5459,6 +5462,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Neigh_" + std::to_string(i), pedited, spot.neigh, spotEdited.neigh);
                 assignFromKeyfile(keyFile, "Locallab", "Vart_" + std::to_string(i), pedited, spot.vart, spotEdited.vart);
                 assignFromKeyfile(keyFile, "Locallab", "Dehaz_" + std::to_string(i), pedited, spot.dehaz, spotEdited.dehaz);
+                assignFromKeyfile(keyFile, "Locallab", "Depth_" + std::to_string(i), pedited, spot.depth, spotEdited.depth);
                 assignFromKeyfile(keyFile, "Locallab", "Sensih_" + std::to_string(i), pedited, spot.sensih, spotEdited.sensih);
                 assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + std::to_string(i), pedited, spot.localTgaincurve, spotEdited.localTgaincurve);
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + std::to_string(i), pedited, spot.inversret, spotEdited.inversret);

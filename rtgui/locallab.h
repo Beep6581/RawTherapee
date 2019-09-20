@@ -218,6 +218,7 @@ private:
     Adjuster* const neigh;
     Adjuster* const vart;
     Adjuster* const dehaz;
+    Adjuster* const depth;
     Adjuster* const sensih;
     Adjuster* const softradiusret;
 
@@ -401,6 +402,8 @@ private:
     Gtk::Frame* fatFrame;
     Gtk::Frame* residFrame;
     Gtk::Frame* clariFrame;
+    ToolParamBlock * retiBox;
+    ToolParamBlock * maskretiBox;
     LabGrid *labgrid;
     // Others
     Gtk::HBox* ctboxsoftmethod;
