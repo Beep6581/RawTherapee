@@ -587,6 +587,7 @@ void ParamsEdited::set(bool v)
     dehaze.strength = v;
     dehaze.showDepthMap = v;
     dehaze.depth = v;
+    dehaze.luminance = v;
     metadata.mode = v;
     filmNegative.enabled = v;
     filmNegative.redRatio = v;
@@ -1158,6 +1159,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.strength = dehaze.strength && p.dehaze.strength == other.dehaze.strength;
         dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
+        dehaze.luminance = dehaze.luminance && p.dehaze.luminance == other.dehaze.luminance;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
         filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
@@ -3222,6 +3224,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (dehaze.showDepthMap) {
         toEdit.dehaze.showDepthMap = mods.dehaze.showDepthMap;
+    }
+
+    if (dehaze.luminance) {
+        toEdit.dehaze.luminance = mods.dehaze.luminance;
     }
 
     if (metadata.mode) {

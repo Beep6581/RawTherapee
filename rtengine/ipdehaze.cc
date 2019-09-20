@@ -276,6 +276,13 @@ BENCHFUN
     const float depth = -float(params->dehaze.depth) / 100.f;
     const float t0 = max(1e-3f, std::exp(depth * max_t));
     const float teps = 1e-3f;
+
+    const bool luminance = params->dehaze.luminance;
+    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+#ifdef __SSE2__
+    const vfloat wsv[3] = {F2V(ws[1][0]), F2V(ws[1][1]),F2V(ws[1][2])};
+#endif
+    const float ambientY = Color::rgbLuminance(ambient[0], ambient[1], ambient[2], ws);
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
@@ -286,6 +293,8 @@ BENCHFUN
         const vfloat ambient0v = F2V(ambient[0]);
         const vfloat ambient1v = F2V(ambient[1]);
         const vfloat ambient2v = F2V(ambient[2]);
+        const vfloat ambientYv = F2V(ambientY);
+        const vfloat epsYv = F2V(1e-5f);
         const vfloat t0v = F2V(t0);
         const vfloat tepsv = F2V(teps);
         const vfloat c65535v = F2V(65535.f);
@@ -297,14 +306,14 @@ BENCHFUN
             // ... t >= tl to avoid negative values
             const vfloat tlv = onev - vminf(r / ambient0v, vminf(g / ambient1v, b / ambient2v));
             // ... t >= tu to avoid values > 1
-            r -= ambient0v;
-            g -= ambient1v;
-            b -= ambient2v;
+//            r -= ambient0v;
+//            g -= ambient1v;
+//            b -= ambient2v;
 
             vfloat tuv = t0v - tepsv;
-            tuv = vself(vmaskf_lt(ambient0v, onev), vmaxf(tuv, r / (onev - ambient0v)), tuv);
-            tuv = vself(vmaskf_lt(ambient1v, onev), vmaxf(tuv, g / (onev - ambient1v)), tuv);
-            tuv = vself(vmaskf_lt(ambient2v, onev), vmaxf(tuv, b / (onev - ambient2v)), tuv);
+            tuv = vself(vmaskf_lt(ambient0v, onev), vmaxf(tuv, (r - ambient0v) / (onev - ambient0v)), tuv);
+            tuv = vself(vmaskf_lt(ambient1v, onev), vmaxf(tuv, (g - ambient1v) / (onev - ambient1v)), tuv);
+            tuv = vself(vmaskf_lt(ambient2v, onev), vmaxf(tuv, (b - ambient2v) / (onev - ambient2v)), tuv);
 
             const vfloat mtv = vmaxf(LVFU(dark[y][x]), vmaxf(tlv, tuv) + tepsv);
             if (params->dehaze.showDepthMap) {
@@ -312,10 +321,17 @@ BENCHFUN
                 STVFU(img->r(y, x), valv);
                 STVFU(img->g(y, x), valv);
                 STVFU(img->b(y, x), valv);
+            } else if (luminance) {
+                const vfloat Yv = Color::rgbLuminance(r, g, b, wsv);
+                const vfloat YYv = (Yv - ambientYv) / mtv + ambientYv;
+                const vfloat fv = vself(vmaskf_gt(Yv, epsYv), c65535v * YYv / Yv, c65535v);
+                STVFU(img->r(y, x), r * fv);
+                STVFU(img->g(y, x), g * fv);
+                STVFU(img->b(y, x), b * fv);
             } else {
-                STVFU(img->r(y, x), (r / mtv + ambient0v) * c65535v);
-                STVFU(img->g(y, x), (g / mtv + ambient1v) * c65535v);
-                STVFU(img->b(y, x), (b / mtv + ambient2v) * c65535v);
+                STVFU(img->r(y, x), ((r - ambient0v) / mtv + ambient0v) * c65535v);
+                STVFU(img->g(y, x), ((g - ambient1v) / mtv + ambient1v) * c65535v);
+                STVFU(img->b(y, x), ((b - ambient2v) / mtv + ambient2v) * c65535v);
             }
         }
 #endif
@@ -339,6 +355,15 @@ BENCHFUN
             const float mt = max(dark[y][x], tl + teps, tu + teps);
             if (params->dehaze.showDepthMap) {
                 img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * 65535.f;
+            } else if (luminance) {
+                const float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
+                const float YY = (Y - ambientY) / mt + ambientY;
+                if (Y > 1e-5f) {
+                    const float f = 65535.f * YY / Y;
+                    img->r(y, x) *= f;
+                    img->g(y, x) *= f;
+                    img->b(y, x) *= f;
+                }
             } else {
                 img->r(y, x) = (r / mt + ambient[0]) * 65535.f;
                 img->g(y, x) = (g / mt + ambient[1]) * 65535.f;

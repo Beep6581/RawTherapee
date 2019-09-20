@@ -28,12 +28,14 @@ class Dehaze: public ToolParamBlock, public AdjusterListener, public FoldableToo
 private:
     Adjuster *strength;
     Adjuster *depth;
-    Gtk::CheckButton *showDepthMap;    
+    Gtk::CheckButton *showDepthMap;
+    Gtk::CheckButton *luminance;
 
     rtengine::ProcEvent EvDehazeEnabled;
     rtengine::ProcEvent EvDehazeStrength;
     rtengine::ProcEvent EvDehazeDepth;
     rtengine::ProcEvent EvDehazeShowDepthMap;
+    rtengine::ProcEvent EvDehazeLuminance;
     
 public:
 
@@ -47,6 +49,7 @@ public:
     void adjusterChanged(Adjuster *a, double newval) override;
     void enabledChanged() override;
     void showDepthMapChanged();
+    void luminanceChanged();
     void setAdjusterBehavior(bool strengthAdd);
 };
 
