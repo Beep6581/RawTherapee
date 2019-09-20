@@ -264,10 +264,8 @@ BENCHFUN
     const int radius = patchsize * 4;
     constexpr float epsilon = 1e-5f;
 
-    {
-        array2D<float> guideB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
-        guidedFilter(guideB, dark, dark, radius, epsilon, multiThread);
-    }
+    array2D<float> guideB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
+    guidedFilter(guideB, dark, dark, radius, epsilon, multiThread);
         
     if (options.rtSettings.verbose) {
         std::cout << "dehaze: max distance is " << max_t << std::endl;
@@ -300,22 +298,12 @@ BENCHFUN
         const vfloat c65535v = F2V(65535.f);
         for (; x < W - 3; x += 4) {
             // ensure that the transmission is such that to avoid clipping...
-            vfloat r = LVFU(img->r(y, x));
-            vfloat g = LVFU(img->g(y, x));
-            vfloat b = LVFU(img->b(y, x));
+            const vfloat r = LVFU(img->r(y, x));
+            const vfloat g = LVFU(img->g(y, x));
+            const vfloat b = LVFU(img->b(y, x));
             // ... t >= tl to avoid negative values
             const vfloat tlv = onev - vminf(r / ambient0v, vminf(g / ambient1v, b / ambient2v));
-            // ... t >= tu to avoid values > 1
-//            r -= ambient0v;
-//            g -= ambient1v;
-//            b -= ambient2v;
-
-            vfloat tuv = t0v - tepsv;
-            tuv = vself(vmaskf_lt(ambient0v, onev), vmaxf(tuv, (r - ambient0v) / (onev - ambient0v)), tuv);
-            tuv = vself(vmaskf_lt(ambient1v, onev), vmaxf(tuv, (g - ambient1v) / (onev - ambient1v)), tuv);
-            tuv = vself(vmaskf_lt(ambient2v, onev), vmaxf(tuv, (b - ambient2v) / (onev - ambient2v)), tuv);
-
-            const vfloat mtv = vmaxf(LVFU(dark[y][x]), vmaxf(tlv, tuv) + tepsv);
+            const vfloat mtv = vmaxf(LVFU(dark[y][x]), vmaxf(tlv + tepsv, t0v));
             if (params->dehaze.showDepthMap) {
                 const vfloat valv = vclampf(onev - mtv, ZEROV, onev) * c65535v;
                 STVFU(img->r(y, x), valv);
@@ -337,37 +325,27 @@ BENCHFUN
 #endif
         for (; x < W; ++x) {
             // ensure that the transmission is such that to avoid clipping...
-            float r = img->r(y, x);
-            float g = img->g(y, x);
-            float b = img->b(y, x);
+            const float r = img->r(y, x);
+            const float g = img->g(y, x);
+            const float b = img->b(y, x);
             // ... t >= tl to avoid negative values
             const float tl = 1.f - min(r / ambient[0], g / ambient[1], b / ambient[2]);
-            // ... t >= tu to avoid values > 1
-            r -= ambient[0];
-            g -= ambient[1];
-            b -= ambient[2];
-
-            float tu = t0 - teps;
-            tu = ambient[0] < 1.f ? max(tu, r / (1.f - ambient[0])) : tu;
-            tu = ambient[1] < 1.f ? max(tu, g / (1.f - ambient[1])) : tu;
-            tu = ambient[2] < 1.f ? max(tu, b / (1.f - ambient[2])) : tu;
-
-            const float mt = max(dark[y][x], tl + teps, tu + teps);
+            const float mt = max(dark[y][x], t0, tl + teps);
             if (params->dehaze.showDepthMap) {
                 img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * 65535.f;
             } else if (luminance) {
                 const float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
-                const float YY = (Y - ambientY) / mt + ambientY;
                 if (Y > 1e-5f) {
+                    const float YY = (Y - ambientY) / mt + ambientY;
                     const float f = 65535.f * YY / Y;
                     img->r(y, x) *= f;
                     img->g(y, x) *= f;
                     img->b(y, x) *= f;
                 }
             } else {
-                img->r(y, x) = (r / mt + ambient[0]) * 65535.f;
-                img->g(y, x) = (g / mt + ambient[1]) * 65535.f;
-                img->b(y, x) = (b / mt + ambient[2]) * 65535.f;
+                img->r(y, x) = ((r - ambient[0]) / mt + ambient[0]) * 65535.f;
+                img->g(y, x) = ((g - ambient[1]) / mt + ambient[1]) * 65535.f;
+                img->b(y, x) = ((b - ambient[2]) / mt + ambient[2]) * 65535.f;
             }
         }
     }
