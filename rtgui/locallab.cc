@@ -6258,7 +6258,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     // Retinex
     if (getEnabled() && expreti->getEnabled()) {
         if (a == str) {
-            if (str->getValue() >= 0.1f) {
+            if (str->getValue() >= 0.2f) {
                 retiBox->show();
             } else {
                 retiBox->hide();
@@ -8038,7 +8038,7 @@ void Locallab::updateSpecificGUIState()
         softradiusret->show();
     }
 
-    if (str->getValue() >= 0.1f) {
+    if (str->getValue() >= 0.2f) {
         retiBox->show();
     } else {
         retiBox->hide();

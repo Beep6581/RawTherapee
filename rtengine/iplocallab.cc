@@ -8606,7 +8606,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         //      }
 //&& lp.retiena
 
-        if (lp.dehaze > 0 && lp.str == 0.f  && lp.retiena) {
+        if (lp.dehaze > 0 && lp.str < 0.2f  && lp.retiena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -8659,42 +8659,47 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufl_ab[y][x] = CLIPRET((sqrt(SQR(bufexpfin->a[y][x]) + SQR(bufexpfin->b[y][x])) - sqrt(SQR(bufexporig->a[y][x]) + SQR(bufexporig->b[y][x]))));
                 }
             }
-                    float minL = bufexpfin->L[0][0] - bufexporig->L[0][0];
-                    float maxL = minL;
-                    float minC = sqrt(SQR(bufexpfin->a[0][0]) + SQR(bufexpfin->b[0][0])) - sqrt(SQR(bufexporig->a[0][0]) + SQR(bufexporig->b[0][0]));
-                    float maxC = minC;
-                    
+
+            float minL = bufexpfin->L[0][0] - bufexporig->L[0][0];
+            float maxL = minL;
+            float minC = sqrt(SQR(bufexpfin->a[0][0]) + SQR(bufexpfin->b[0][0])) - sqrt(SQR(bufexporig->a[0][0]) + SQR(bufexporig->b[0][0]));
+            float maxC = minC;
+
 #ifdef _OPENMP
-                    #pragma omp parallel for reduction(min:minL) reduction(min:minC) reduction(max:maxL) reduction(max:maxC) schedule(dynamic,16)
+            #pragma omp parallel for reduction(min:minL) reduction(min:minC) reduction(max:maxL) reduction(max:maxC) schedule(dynamic,16)
 #endif
 
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            buflight[ir][jr] = bufexpfin->L[ir][jr] - bufexporig->L[ir][jr];
-                            bufl_ab[ir][jr]= sqrt(SQR(bufexpfin->a[0][0]) + SQR(bufexpfin->b[0][0])) - sqrt(SQR(bufexporig->a[0][0]) + SQR(bufexporig->b[0][0]));
-                            minL = rtengine::min(minL, buflight[ir][jr]);
-                            maxL = rtengine::max(maxL, buflight[ir][jr]);
-                            minC = rtengine::min(minC, bufl_ab[ir][jr]);
-                            maxC = rtengine::max(maxC, bufl_ab[ir][jr]);
-                        }
+            for (int ir = 0; ir < bfh; ir++) {
+                for (int jr = 0; jr < bfw; jr++) {
+                    buflight[ir][jr] = bufexpfin->L[ir][jr] - bufexporig->L[ir][jr];
+                    bufl_ab[ir][jr] = sqrt(SQR(bufexpfin->a[ir][jr]) + SQR(bufexpfin->b[ir][jr])) - sqrt(SQR(bufexporig->a[ir][jr]) + SQR(bufexporig->b[ir][jr]));
+                    minL = rtengine::min(minL, buflight[ir][jr]);
+                    maxL = rtengine::max(maxL, buflight[ir][jr]);
+                    minC = rtengine::min(minC, bufl_ab[ir][jr]);
+                    maxC = rtengine::max(maxC, bufl_ab[ir][jr]);
+                }
+            }
+
+            float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
+            float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+
+
+            for (int ir = 0; ir < bfh; ir++) {
+                for (int jr = 0; jr < bfw; jr++) {
+                    buflight[ir][jr] /= coef;
+                    bufl_ab[ir][jr] /= coefC;
+
+                    if (lp.str == 0.1f) {
+                        bufl_ab[ir][jr] = 0.f;
                     }
-
-                    float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
-                    float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-
-
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            buflight[ir][jr] /= coef;
-                            bufl_ab[ir][jr] /= coefC;
-                        }
-                    }
+                }
+            }
 
             bufexpfin.reset();
             transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
         }
 
-        if (lp.str > 0.f  && lp.retiena) {
+        if (lp.str >= 0.2f  && lp.retiena) {
             int GW = transformed->W;
             int GH = transformed->H;
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -8887,7 +8892,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufreti = new LabImage(Wd, Hd);
 
                     if (lp.dehaze > 0) {
-                        const float depthcombi = 0.5f * lp.depth + 0.5f * ( 0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart));
+                        const float depthcombi = 0.5f * lp.depth + 0.5f * (0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart));
                         DehazeParams dehazeParams;
                         dehazeParams.enabled = true;
                         dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
