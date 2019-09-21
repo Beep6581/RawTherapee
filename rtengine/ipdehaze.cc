@@ -39,7 +39,7 @@
 #include "rt_math.h"
 #define BENCHMARK
 #include "StopWatch.h"
-
+#include "rescale.h"
 extern Options options;
 
 namespace rtengine {
@@ -83,23 +83,23 @@ int get_dark_channel_downsized(const array2D<float> &R, const array2D<float> &G,
     #pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < H; y += patchsize) {
-        int yy = y / patchsize;
         const int pH = min(y + patchsize, H);
-        for (int x = 0, xx = 0; x < W; x += patchsize, ++xx) {
+        for (int x = 0; x < W; x += patchsize) {
             float val = RT_INFINITY_F;
             const int pW = min(x + patchsize, W);
-            for (int xp = x; xp < pW; ++xp) {
-                for (int yp = y; yp < pH; ++yp) {
-                    val = min(val, R[yp][xp], G[yp][xp], B[yp][xp]);
+            for (int xx = x; xx < pW; ++xx) {
+                for (int yy = y; yy < pH; ++yy) {
+                    val = min(val, R[yy][xx], G[yy][xx], B[yy][xx]);
                 }
             }
-            dst[yy][xx] = val;
+            for (int yy = y; yy < pH; ++yy) {
+                std::fill(dst[yy] + x, dst[yy] + pW, val);
+            }
         }
     }
 
     return (W / patchsize + ((W % patchsize) > 0)) *  (H / patchsize + ((H % patchsize) > 0));
 }
-
 
 float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, const array2D<float> &dark, int patchsize, int npatches, float ambient[3])
 {
@@ -109,10 +109,10 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
     float darklim = RT_INFINITY_F;
     {
         std::vector<float> p;
-        for (int y = 0, yy = 0; y < H; y += patchsize, ++yy) {
-            for (int x = 0, xx = 0; x < W; x += patchsize, ++xx) {
-                if (!OOG(dark[yy][xx], 1.f - 1e-5f)) {
-                    p.push_back(dark[yy][xx]);
+        for (int y = 0; y < H; y += patchsize) {
+            for (int x = 0; x < W; x += patchsize) {
+                if (!OOG(dark[y][x], 1.f - 1e-5f)) {
+                    p.push_back(dark[y][x]);
                 }
             }
         }
@@ -124,9 +124,9 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
     std::vector<std::pair<int, int>> patches;
     patches.reserve(npatches);
 
-    for (int y = 0, yy = 0; y < H; y += patchsize, ++yy) {
-        for (int x = 0, xx = 0; x < W; x += patchsize, ++xx) {
-            if (dark[yy][xx] >= darklim && !OOG(dark[yy][xx], 1.f)) {
+    for (int y = 0; y < H; y += patchsize) {
+        for (int x = 0; x < W; x += patchsize) {
+            if (dark[y][x] >= darklim && !OOG(dark[y][x], 1.f)) {
                 patches.push_back(std::make_pair(x, y));
             }
         }
@@ -142,9 +142,9 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
         std::vector<float> l;
         l.reserve(patches.size() * patchsize * patchsize);
         
-        for (const auto &p : patches) {
-            const int pW = min(p.first + patchsize, W);
-            const int pH = min(p.second + patchsize, H);
+        for (auto &p : patches) {
+            const int pW = min(p.first+patchsize, W);
+            const int pH = min(p.second+patchsize, H);
             
             for (int y = p.second; y < pH; ++y) {
                 for (int x = p.first; x < pW; ++x) {
@@ -159,19 +159,15 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
 
     double rr = 0, gg = 0, bb = 0;
     int n = 0;
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic) reduction(+:rr,gg,bb,n)
-#endif
-    for (size_t i = 0; i < patches.size(); ++i) {
-        const auto &p = patches[i];
-        const int pW = min(p.first + patchsize, W);
-        const int pH = min(p.second + patchsize, H);
+    for (auto &p : patches) {
+        const int pW = min(p.first+patchsize, W);
+        const int pH = min(p.second+patchsize, H);
             
         for (int y = p.second; y < pH; ++y) {
             for (int x = p.first; x < pW; ++x) {
-                const float r = R[y][x];
-                const float g = G[y][x];
-                const float b = B[y][x];
+                float r = R[y][x];
+                float g = G[y][x];
+                float b = B[y][x];
                 if (r + g + b >= bright_lim) {
                     rr += r;
                     gg += g;
@@ -181,7 +177,6 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
             }
         }
     }
-
     n = std::max(n, 1);
     ambient[0] = rr / n;
     ambient[1] = gg / n;
@@ -190,7 +185,6 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
     // taken from darktable
     return darklim > 0 ? -1.125f * std::log(darklim) : std::log(std::numeric_limits<float>::max()) / 2;
 }
-
 
 void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, array2D<float> &b, int radius, float epsilon, bool multithread)
 {
@@ -238,24 +232,37 @@ BENCHFUN
         array2D<float> B(W, H);
         extract_channels(img, R, G, B, patchsize, 1e-1, multiThread);
 
-        patchsize = max(max(W, H) / 600, 2);
-        array2D<float> darkDownsized(W / patchsize + 1, H / patchsize + 1);
-        const int npatches = get_dark_channel_downsized(R, G, B, darkDownsized, patchsize, multiThread);
+        {
+            constexpr int sizecap = 200;
+            float r = float(W)/float(H);
+            const int hh = r >= 1.f ? sizecap : sizecap / r;
+            const int ww = r >= 1.f ? sizecap * r : sizecap;
 
-        max_t = estimate_ambient_light(R, G, B, darkDownsized, patchsize, npatches, ambient);
+            if (W <= ww && H <= hh) {
+                // don't rescale small thumbs
+                array2D<float> D(W, H);
+                int npatches = get_dark_channel_downsized(R, G, B, D, 2, multiThread);
+                max_t = estimate_ambient_light(R, G, B, D, patchsize, npatches, ambient);
+            } else {
+                array2D<float> RR(ww, hh);
+                array2D<float> GG(ww, hh);
+                array2D<float> BB(ww, hh);
+                rescaleNearest(R, RR, multiThread);
+                rescaleNearest(G, GG, multiThread);
+                rescaleNearest(B, BB, multiThread);
+                array2D<float> D(ww, hh);
+
+                int npatches = get_dark_channel_downsized(RR, GG, BB, D, 2, multiThread);
+                max_t = estimate_ambient_light(RR, GG, BB, D, patchsize, npatches, ambient);
+            }
+        }
+
+        patchsize = max(max(W, H) / 600, 2);
 
         if (options.rtSettings.verbose) {
             std::cout << "dehaze: ambient light is "
                       << ambient[0] << ", " << ambient[1] << ", " << ambient[2]
                       << std::endl;
-        }
-
-        if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
-            if (options.rtSettings.verbose) {
-                std::cout << "dehaze: no haze detected" << std::endl;
-            }
-            img->normalizeFloatTo65535();
-            return; // probably no haze at all
         }
 
         get_dark_channel(R, G, B, dark, patchsize, ambient, true, multiThread, strength);
