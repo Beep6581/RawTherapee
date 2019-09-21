@@ -1136,6 +1136,7 @@ struct LocallabParams {
         std::vector<double> localTgaincurve;
         bool inversret;
         bool equilret;
+        bool loglin;
         double softradiusret;
         std::vector<double> CCmaskreticurve;
         std::vector<double> LLmaskreticurve;

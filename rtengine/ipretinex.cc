@@ -868,14 +868,14 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         const float lig = loc.spots.at(sp).lightnessreti;
         float value = pow(strength, 0.4f);
         float value_1 = pow(strength, 0.3f);
-
+        float logli = loc.spots.at(sp).loglin;
         float limD = loc.spots.at(sp).limd;//10.f
         limD = pow(limD, 1.7f);  //about 2500 enough
         float ilimD = 1.f / limD;
         float threslum = loc.spots.at(sp).limd;
         const float elogt = 2.71828f;
 
-        if (scal < 3) {
+        if(!logli) {
             useHslLin = true;
         }
 
@@ -1247,7 +1247,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 
 #ifdef __SSE2__
 
-                if (useHslLin) { //keep in case of ??
+                if (useHslLin) {
                     for (; j < W_L - 3; j += 4) {
                         _mm_storeu_ps(&luminance[i][j], LVFU(luminance[i][j]) + pondv * (vclampf(LVFU(src[i][j]) / LVFU(out[i][j]), limMinv, limMaxv)));
                     }
@@ -1376,7 +1376,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             avg /= ng;
             avg /= 32768.f;
             avg = LIM01(avg);
-            float contreal = 20.f * vart;
+            float contreal = 2.f * vart;
             DiagonalCurve reti_contrast({
                 DCT_NURBS,
                 0, 0,
@@ -1401,7 +1401,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         if (scal == 1) {
             float mintran = luminance[0][0];
             float maxtran = mintran;
-
+/*
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
 #endif
@@ -1412,7 +1412,9 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                     maxtran = rtengine::max(luminance[ir][jr], maxtran);
                 }
             }
-
+*/
+            mintran = 0.f;
+            maxtran = 1.f;
             float deltatran = maxtran - mintran;
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);

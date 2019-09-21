@@ -546,6 +546,7 @@ public:
         bool localTgaincurve;
         bool inversret;
         bool equilret;
+        bool loglin;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;

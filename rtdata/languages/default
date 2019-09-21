@@ -987,6 +987,7 @@ HISTORY_MSG_746;Local - Exp Fattal levels
 HISTORY_MSG_747;Local Spot created
 HISTORY_MSG_748;Local - Exp Denoise
 HISTORY_MSG_749;Local - Reti Depth
+HISTORY_MSG_750;Local - Reti Mode log - lin
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2209,8 +2210,10 @@ TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stag
 TP_LOCALLAB_SHOWNORMAL;Normalize luminance (no)
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_STR;Strength Retinex
+TP_LOCALLAB_LOGLIN;Logarithm mode
+TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\nif Strength Retinex >= 0.1 Dehaze is in luminance mode.
 TP_LOCALLAB_NEIGH;Radius
-TP_LOCALLAB_VART;Contrast (variance)
+TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_SENSI;Scope
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSIH;Scope
