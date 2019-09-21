@@ -136,6 +136,9 @@ option(TRACE_MYRWMUTEX "Trace custom R/W Mutex (Debug builds only); redirecting 
 option(AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI thread; set it ON if you experience X Server warning/errors" OFF)
 #option(TARGET32BIT "Build for 32-bit architecture when ON, otherwise 64-bit. Default is OFF" OFF)
 
+option(ENABLE_TCMALLOC "Use the tcmalloc library if available" OFF)
+set(TCMALLOC_LIB_DIR "" CACHE PATH "Custom path for the tcmalloc library")
+
 # Set installation directories:
 if(WIN32 OR APPLE)
     if(BUILD_BUNDLE)
@@ -563,6 +566,23 @@ int main()
     bool b = db->LoadDirectory(0);
     return 0;
 }" LENSFUN_HAS_LOAD_DIRECTORY)
+
+set(TCMALLOC_LIB_DIR)
+if(ENABLE_TCMALLOC)
+    if(TCMALLOC_LIB_DIR)
+        find_library(TCMALLOC_LIBRARIES tcmalloc PATHS ${TCMALLOC_LIB_DIR} NO_DEFAULT_PATH)
+    else()
+        find_library(TCMALLOC_LIBRARIES tcmalloc)
+    endif()
+    if(TCMALLOC_LIBRARIES)
+        message(STATUS "using tcmalloc library in ${TCMALLOC_LIBRARIES}")
+    else()
+        set(TCMALLOC_LIBRARIES "" CACHE INTERNAL "" FORCE)
+        message(STATUS "tcmalloc not found")
+    endif()
+else()
+    set(TCMALLOC_LIBRARIES "" CACHE INTERNAL "" FORCE)
+endif()
 
 
 add_subdirectory(rtexif)
