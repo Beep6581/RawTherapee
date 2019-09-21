@@ -925,10 +925,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 
         const int H_L = height;
         const int W_L = width;
-        
- //           array2D<float> src(W_L, H_L);
- //           array2D<float> out(W_L, H_L);
-        
+
         float *src[H_L] ALIGNED16;
         float *srcBuffer = new float[H_L * W_L];
 
@@ -1376,7 +1373,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             avg /= ng;
             avg /= 32768.f;
             avg = LIM01(avg);
-            float contreal = 2.f * vart;
+            float contreal = 0.5f * vart;
             DiagonalCurve reti_contrast({
                 DCT_NURBS,
                 0, 0,
