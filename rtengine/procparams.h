@@ -549,6 +549,7 @@ struct CaptureSharpeningParams {
     double         contrast;
     double         gamma;
     double         deconvradius;
+    double         deconvradiusOffset;
     int            deconviter;
 
     CaptureSharpeningParams();

@@ -205,6 +205,7 @@ struct CaptureSharpeningParamsEdited {
     bool autoRadius;
     bool gamma;
     bool deconvradius;
+    bool deconvradiusOffset;
     bool deconviter;
     bool isUnchanged() const;
 };
