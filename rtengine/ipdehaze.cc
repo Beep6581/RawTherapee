@@ -28,23 +28,68 @@
  *
  */  
 
+#include <algorithm>
 #include <iostream>
-#include <queue>
+#include <vector>
 
 #include "guidedfilter.h"
 #include "improcfun.h"
 #include "procparams.h"
-#include "rt_algo.h"
-#include "rt_algo.h"
+#include "rescale.h"
 #include "rt_math.h"
 #define BENCHMARK
 #include "StopWatch.h"
-#include "rescale.h"
+
 extern Options options;
 
 namespace rtengine {
 
 namespace {
+
+float normalize(Imagefloat *rgb, bool multithread)
+{
+    float maxval = 0.f;
+    const int W = rgb->getWidth();
+    const int H = rgb->getHeight();
+#ifdef _OPENMP
+#   pragma omp parallel for reduction(max:maxval) if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            maxval = max(maxval, rgb->r(y, x), rgb->g(y, x), rgb->b(y, x));
+        }
+    }
+    maxval = max(maxval * 2.f, 65535.f);
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            rgb->r(y, x) /= maxval;
+            rgb->g(y, x) /= maxval;
+            rgb->b(y, x) /= maxval;
+        }
+    }
+    return maxval;
+}
+
+void restore(Imagefloat *rgb, float maxval, bool multithread)
+{
+    const int W = rgb->getWidth();
+    const int H = rgb->getHeight();
+    if (maxval > 0.f && maxval != 1.f) {
+#ifdef _OPENMP
+#       pragma omp parallel for if (multithread)
+#endif
+        for (int y = 0; y < H; ++y) {
+            for (int x = 0; x < W; ++x) {
+                rgb->r(y, x) *= maxval;
+                rgb->g(y, x) *= maxval;
+                rgb->b(y, x) *= maxval;
+            }
+        }
+    }
+}
 
 int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, const float ambient[3], bool clip, bool multithread, float strength)
 {
@@ -210,7 +255,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
         return;
     }
 BENCHFUN
-    img->normalizeFloatTo1();
+    const float maxChannel = normalize(img, multiThread);
 
     const int W = img->getWidth();
     const int H = img->getHeight();
@@ -261,7 +306,7 @@ BENCHFUN
             if (options.rtSettings.verbose) {
                 std::cout << "dehaze: no haze detected" << std::endl;
             }
-            img->normalizeFloatTo65535();
+            restore(img, maxChannel, multiThread);
             return; // probably no haze at all
         }
         patchsize = max(max(W, H) / 600, 2);
@@ -309,7 +354,7 @@ BENCHFUN
         const vfloat epsYv = F2V(1e-5f);
         const vfloat t0v = F2V(t0);
         const vfloat tepsv = F2V(teps);
-        const vfloat c65535v = F2V(65535.f);
+        const vfloat cmaxChannelv = F2V(maxChannel);
         for (; x < W - 3; x += 4) {
             // ensure that the transmission is such that to avoid clipping...
             const vfloat r = LVFU(img->r(y, x));
@@ -319,21 +364,21 @@ BENCHFUN
             const vfloat tlv = onev - vminf(r / ambient0v, vminf(g / ambient1v, b / ambient2v));
             const vfloat mtv = vmaxf(LVFU(dark[y][x]), vmaxf(tlv + tepsv, t0v));
             if (params->dehaze.showDepthMap) {
-                const vfloat valv = vclampf(onev - mtv, ZEROV, onev) * c65535v;
+                const vfloat valv = vclampf(onev - mtv, ZEROV, onev) * cmaxChannelv;
                 STVFU(img->r(y, x), valv);
                 STVFU(img->g(y, x), valv);
                 STVFU(img->b(y, x), valv);
             } else if (luminance) {
                 const vfloat Yv = Color::rgbLuminance(r, g, b, wsv);
                 const vfloat YYv = (Yv - ambientYv) / mtv + ambientYv;
-                const vfloat fv = vself(vmaskf_gt(Yv, epsYv), c65535v * YYv / Yv, c65535v);
+                const vfloat fv = vself(vmaskf_gt(Yv, epsYv), cmaxChannelv * YYv / Yv, cmaxChannelv);
                 STVFU(img->r(y, x), r * fv);
                 STVFU(img->g(y, x), g * fv);
                 STVFU(img->b(y, x), b * fv);
             } else {
-                STVFU(img->r(y, x), ((r - ambient0v) / mtv + ambient0v) * c65535v);
-                STVFU(img->g(y, x), ((g - ambient1v) / mtv + ambient1v) * c65535v);
-                STVFU(img->b(y, x), ((b - ambient2v) / mtv + ambient2v) * c65535v);
+                STVFU(img->r(y, x), ((r - ambient0v) / mtv + ambient0v) * cmaxChannelv);
+                STVFU(img->g(y, x), ((g - ambient1v) / mtv + ambient1v) * cmaxChannelv);
+                STVFU(img->b(y, x), ((b - ambient2v) / mtv + ambient2v) * cmaxChannelv);
             }
         }
 #endif
@@ -346,18 +391,18 @@ BENCHFUN
             const float tl = 1.f - min(r / ambient[0], g / ambient[1], b / ambient[2]);
             const float mt = max(dark[y][x], t0, tl + teps);
             if (params->dehaze.showDepthMap) {
-                img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * 65535.f;
+                img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * maxChannel;
             } else if (luminance) {
                 const float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
                 const float YY = (Y - ambientY) / mt + ambientY;
-                const float f = Y > 1e-5f ? 65535.f * YY / Y : 65535.f;
+                const float f = Y > 1e-5f ? maxChannel * YY / Y : maxChannel;
                 img->r(y, x) *= f;
                 img->g(y, x) *= f;
                 img->b(y, x) *= f;
             } else {
-                img->r(y, x) = ((r - ambient[0]) / mt + ambient[0]) * 65535.f;
-                img->g(y, x) = ((g - ambient[1]) / mt + ambient[1]) * 65535.f;
-                img->b(y, x) = ((b - ambient[2]) / mt + ambient[2]) * 65535.f;
+                img->r(y, x) = ((r - ambient[0]) / mt + ambient[0]) * maxChannel;
+                img->g(y, x) = ((g - ambient[1]) / mt + ambient[1]) * maxChannel;
+                img->b(y, x) = ((b - ambient[2]) / mt + ambient[2]) * maxChannel;
             }
         }
     }
