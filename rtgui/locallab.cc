@@ -1432,7 +1432,6 @@ Locallab::Locallab():
     lightnessreti->setAdjusterListener(this);
     limd->setAdjusterListener(this);
 
-//    ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
     maskretiBox->pack_start(*showmaskretiMethod, Gtk::PACK_SHRINK, 4);
     maskretiBox->pack_start(*enaretiMask, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*enaretiMasktmap, Gtk::PACK_SHRINK, 0);
@@ -1454,13 +1453,10 @@ Locallab::Locallab():
     scopeBox->pack_start(*sensih);
     expreti->add(*scopeBox, false);
 
-//   ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
     retiBox->pack_start(*loglin);
-//    retiBox->pack_start(*str);
-//    retiBox->pack_start(*dehaz);
     retiBox->pack_start(*chrrt);
     retiBox->pack_start(*neigh);
     retiBox->pack_start(*vart);
@@ -1469,7 +1465,6 @@ Locallab::Locallab():
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
 //    retiBox->pack_start(*softradiusret);
-//    retiBox->pack_start(*sensih);
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*expmaskreti);
     retiBox->pack_start(*inversret);
@@ -5029,7 +5024,6 @@ void Locallab::inversshaChanged()
 
 void Locallab::equiltmChanged()
 {
-    // printf("inversretChanged\n");
 
     if (multiImage) {
         if (equiltm->get_inconsistent()) {
@@ -5056,7 +5050,6 @@ void Locallab::equiltmChanged()
 
 void Locallab::equilretChanged()
 {
-    // printf("inversretChanged\n");
 
     if (multiImage) {
         if (equilret->get_inconsistent()) {
@@ -5081,7 +5074,6 @@ void Locallab::equilretChanged()
 
 void Locallab::loglinChanged()
 {
-    // printf("inversretChanged\n");
 
     if (multiImage) {
         if (loglin->get_inconsistent()) {

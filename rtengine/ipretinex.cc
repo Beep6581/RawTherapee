@@ -868,7 +868,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         const float lig = loc.spots.at(sp).lightnessreti;
         float value = pow(strength, 0.4f);
         float value_1 = pow(strength, 0.3f);
-        float logli = loc.spots.at(sp).loglin;
+        bool logli = loc.spots.at(sp).loglin;
         float limD = loc.spots.at(sp).limd;//10.f
         limD = pow(limD, 1.7f);  //about 2500 enough
         float ilimD = 1.f / limD;
@@ -909,10 +909,8 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             moderetinex = 0;
         } else if (loc.spots.at(sp).retinexMethod == "low") {
             moderetinex = 1;
-        } else {
-            if (loc.spots.at(sp).retinexMethod == "high") {
+        } else if (loc.spots.at(sp).retinexMethod == "high") {
                 moderetinex = 2;
-            }
         }
 
         const float high = 0.f; // Dummy to pass to retinex_scales(...)
@@ -1027,7 +1025,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             if (scale == 1) { //equalize last scale with darkness and lightness
 
                 if (dar != 1.f || lig != 1.f) {
-//                    float value = pow(strength, 0.4f);
  
 #ifdef _OPENMP
                     #pragma omp parallel for
@@ -1110,7 +1107,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                             kmaskLexp += 32768.f * valHH;
                         }
 
-                        // printf("km=%f ",kmaskLexp);
                         bufmaskblurreti->L[ir][jr] = kmaskLexp;
                         bufmaskblurreti->a[ir][jr] = kmaskCH;
                         bufmaskblurreti->b[ir][jr] = kmaskCH;
@@ -1327,7 +1323,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         }
 
 
-        if (scal == 1) { //use only local contrast
+        if (scal == 1) {
             float kval = 1.f;
 #ifdef _OPENMP
             #pragma omp parallel for
