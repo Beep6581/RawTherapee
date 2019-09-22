@@ -8606,7 +8606,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         //      }
 //&& lp.retiena
 
-      //  if (lp.dehaze > 0 && lp.str < 0.2f  && lp.retiena) {
+        //  if (lp.dehaze > 0 && lp.str < 0.2f  && lp.retiena) {
         if (lp.dehaze > 0 && lp.retiena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);

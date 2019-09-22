@@ -58,7 +58,7 @@
 
 namespace
 {
-    
+
 void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
 {
     double pwr = 1.0 / gamma;
@@ -855,8 +855,8 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
     bool py = true;
 
     if (py) {//enabled
-        float         mean, stddv, maxtr, mintr;
-        float         delta;
+        float mean, stddv, maxtr, mintr;
+        float delta;
         constexpr float eps = 2.f;
         bool useHslLin = false;
         const float offse = 0.f; //loc.offs;
@@ -875,17 +875,14 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         float threslum = loc.spots.at(sp).limd;
         const float elogt = 2.71828f;
 
-        if(!logli) {
+        if (!logli) {
             useHslLin = true;
-            printf("logar\n");
-        } else {
-            printf("linear\n");
         }
 
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
         int nei = (int)(krad * loc.spots.at(sp).neigh);
-       // printf("neigh=%i\n", nei);
+        // printf("neigh=%i\n", nei);
         //several test to find good values ???!!!
         //very difficult to do because 4 factor are correlate with skip and cannot been solved easily
         // size of spots
@@ -894,11 +891,14 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         // variance vart
         //not too bad proposition
         float divsca = 1.f;
-        if(scal >=3) divsca = sqrt(scal / 3.f); 
+
+        if (scal >= 3) {
+            divsca = sqrt(scal / 3.f);
+        }
 
         if (skip >= 4) {
             //nei = (int)(0.1f * nei + 2.f);     //not too bad
-            nei = (int)(nei / (1.5f * skip))/ divsca; 
+            nei = (int)(nei / (1.5f * skip)) / divsca;
             vart *= sqrt(skip);
         } else if (skip > 1 && skip < 4) {
             //nei = (int)(0.3f * nei + 2.f);
@@ -913,7 +913,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         } else if (loc.spots.at(sp).retinexMethod == "low") {
             moderetinex = 1;
         } else if (loc.spots.at(sp).retinexMethod == "high") {
-                moderetinex = 2;
+            moderetinex = 2;
         }
 
         const float high = 0.f; // Dummy to pass to retinex_scales(...)
@@ -962,73 +962,80 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         float *buffer = new float[W_L * H_L];
         float kr = 1.f;//on FFTW
         float kg = 1.f;//on Gaussianblur
+
         for (int scale = scal - 1; scale >= 0; scale--) {
             //    printf("retscale=%f scale=%i \n", mulradiusfftw * RetinexScales[scale], scale);
             //emprical adjustement between FFTW radius and Gaussainblur
             //under 50 ==> 10.f
             // 400 ==> 1.f
             float sigm = 1.f;
-            if(settings->fftwsigma == false) {//empirical formula
+
+            if (settings->fftwsigma == false) { //empirical formula
                 sigm = RetinexScales[scale];
                 float ak = -9.f / 350.f;
                 float bk = 10.f - 50.f * ak;
                 kr = ak * sigm + bk;
-                if(sigm < 50.f) kr = 10.f;
+
+                if (sigm < 50.f) {
+                    kr = 10.f;
+                }
+
                 //above 400 at 5000 ==> 20.f
-                if(sigm > 400.f) {//increase ==> 5000
+                if (sigm > 400.f) { //increase ==> 5000
                     float ka = 19.f / 4600.f;
                     float kb = 1.f - 400 * ka;
                     kr = ka * sigm + kb;
                     float kga = -0.14f / 4600.f;//decrease
                     float kgb = 1.f - 400.f * kga;
                     kg = kga * sigm + kgb;
-                    if(sigm > 5000.f) {
+
+                    if (sigm > 5000.f) {
                         kr = ka * 5000.f + kb;
                         kg = kga * 5000.f + kgb;
                     }
-                
+
                 }
             } else {//sigma *= sigma
-                    kg = 1.f;
-                    kr = sigm;
+                kg = 1.f;
+                kr = sigm;
             }
-        if(!fftw) {
-#ifdef _OPENMP
-            #pragma omp parallel  //disabled with FFTW
-#endif
-            {
 
-                if (scale == scal - 1)
+            if (!fftw) {
+#ifdef _OPENMP
+                #pragma omp parallel  //disabled with FFTW
+#endif
                 {
-                    gaussianBlur(src, out, W_L, H_L, kg * RetinexScales[scale], buffer);
-                } else   // reuse result of last iteration
-                {
+
+                    if (scale == scal - 1)
+                    {
+                        gaussianBlur(src, out, W_L, H_L, kg * RetinexScales[scale], buffer);
+                    } else   // reuse result of last iteration
+                    {
+                        // out was modified in last iteration => restore it
+                        gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(kg * RetinexScales[scale]) - SQR(kg * RetinexScales[scale + 1])), buffer);
+                    }
+                }
+            } else {
+                if (scale == scal - 1) {
+                    if (settings->fftwsigma == false) { //empirical formula
+                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (kr * RetinexScales[scale]), 0, 0);
+                    } else {
+                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (SQR(RetinexScales[scale])), 0, 0);
+                    }
+                } else { // reuse result of last iteration
                     // out was modified in last iteration => restore it
-                    gaussianBlur(out, out, W_L, H_L, sqrtf(SQR(kg * RetinexScales[scale]) - SQR(kg * RetinexScales[scale + 1])), buffer);
+                    if (settings->fftwsigma == false) { //empirical formula
+                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L, sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
+                    } else {
+                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L, (SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), 0, 0);
+                    }
                 }
             }
-        } else {
-                if (scale == scal - 1)
-                {
-                    if(settings->fftwsigma == false) {//empirical formula
-                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (kr * RetinexScales[scale]), 0, 0); 
-                    } else {
-                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (SQR(RetinexScales[scale])), 0, 0); 
-                    }
-                } else   // reuse result of last iteration
-                {
-                    // out was modified in last iteration => restore it
-                    if(settings->fftwsigma == false) {//empirical formula
-                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
-                    } else {
-                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L,(SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), 0, 0);
-                    }
-                }
-        }
+
             if (scale == 1) { //equalize last scale with darkness and lightness
 
                 if (dar != 1.f || lig != 1.f) {
- 
+
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
@@ -1227,8 +1234,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
             }
 
-if(useHslLin) printf("Lineaiare!!!\n");
-else printf("LOG\n");
 
 #ifdef __SSE2__
             vfloat pondv = F2V(pond);
@@ -1266,7 +1271,7 @@ else printf("LOG\n");
                     }
                 }
             }
-   
+
         }
 
         if (scal != 1) {
@@ -1322,8 +1327,9 @@ else printf("LOG\n");
                 for (int j = 0; j < W_L; j++) {
                     luminance[i][j] = ble[i][j] * deltatran + mintran;
                 }
-            ble(0,0);
-            guid(0,0);
+
+            ble(0, 0);
+            guid(0, 0);
         }
 
 
@@ -1398,18 +1404,18 @@ else printf("LOG\n");
         if (scal == 1) {
             float mintran = luminance[0][0];
             float maxtran = mintran;
-/*
-#ifdef _OPENMP
-            #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
-#endif
+            /*
+            #ifdef _OPENMP
+                        #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
+            #endif
 
-            for (int ir = 0; ir < H_L; ir++) {
-                for (int jr = 0; jr < W_L; jr++) {
-                    mintran = rtengine::min(luminance[ir][jr], mintran);
-                    maxtran = rtengine::max(luminance[ir][jr], maxtran);
-                }
-            }
-*/
+                        for (int ir = 0; ir < H_L; ir++) {
+                            for (int jr = 0; jr < W_L; jr++) {
+                                mintran = rtengine::min(luminance[ir][jr], mintran);
+                                maxtran = rtengine::max(luminance[ir][jr], maxtran);
+                            }
+                        }
+            */
             mintran = 0.f;
             maxtran = 1.f;
             float deltatran = maxtran - mintran;
@@ -1447,10 +1453,12 @@ else printf("LOG\n");
                 for (int j = 0; j < W_L; j++) {
                     luminance[i][j] = ble[i][j] * deltatran + mintran;
                 }
-            ble(0,0);
-            guid(0,0);
+
+            ble(0, 0);
+            guid(0, 0);
 
         }
+
         delete [] buffer;
 //        src(0,0);
 //        out(0,0);
@@ -1458,7 +1466,7 @@ else printf("LOG\n");
         outBuffer = nullptr;
         delete [] srcBuffer;
         srcBuffer = nullptr;
-      
+
         float str = strength * (chrome == 0 ? 1.f : 0.8f * (chrT - 0.4f));
         const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
 
@@ -1467,7 +1475,7 @@ else printf("LOG\n");
             stddv = 0.f;
 
             mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-          // printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+            // printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
 
             float epsil = 0.1f;
 
@@ -1484,7 +1492,7 @@ else printf("LOG\n");
             }
 
             delta = maxi - mini;
-          //   printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
+            //   printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
             if (!delta) {
                 delta = 1.0f;
@@ -1528,7 +1536,7 @@ else printf("LOG\n");
                 bmin *= 500.f;
                 cdfactor *= 2.f;
             }
-            
+
 
 #ifdef _OPENMP
             #pragma omp parallel
@@ -1544,7 +1552,7 @@ else printf("LOG\n");
 
                 for (int i = 0; i < H_L; i ++)
                     for (int j = 0; j < W_L; j++) {
-                        
+
                         if (hasRetGainCurve) {
                             float absciss;
 
@@ -1558,7 +1566,7 @@ else printf("LOG\n");
 
                             gan = locRETgainCcurve[absciss]; //new gain function transmission
                         }
-                        
+
                         float cd = gan * cdfactor * luminance[i][j] + offse;
 
                         cdmax = cd > cdmax ? cd : cdmax;
