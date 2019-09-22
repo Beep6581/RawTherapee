@@ -257,6 +257,13 @@ BENCHFUN
             }
         }
 
+        if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
+            if (options.rtSettings.verbose) {
+                std::cout << "dehaze: no haze detected" << std::endl;
+            }
+            img->normalizeFloatTo65535();
+            return; // probably no haze at all
+        }
         patchsize = max(max(W, H) / 600, 2);
 
         if (options.rtSettings.verbose) {
