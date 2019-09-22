@@ -26,6 +26,8 @@
 #include "rtimage.h"
 #include "whitebalance.h"
 
+#include "../rtengine/MyTime.h"
+
 float fontScale = 1.f;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
@@ -95,11 +97,19 @@ RTWindow::RTWindow ()
     , fpanel (nullptr)
 {
 
+    MyTime timer_start,timer_stop;
+    timer_start.set();
+
     if (options.is_new_version()) {
         RTImage::cleanup(true);
     }
     cacheMgr->init ();
     ProfilePanel::init (this);
+    
+printf("Done first steps - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
     // ------- loading theme files
 
@@ -223,6 +233,11 @@ RTWindow::RTWindow ()
             }
         }
     }
+    
+printf("Done loading theme - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
 #ifndef NDEBUG
     else if (!screen) {
@@ -322,6 +337,11 @@ RTWindow::RTWindow ()
         mainNB->set_name ("MainNotebook");
         mainNB->set_scrollable (true);
         mainNB->signal_switch_page().connect_notify ( sigc::mem_fun (*this, &RTWindow::on_mainNB_switch_page) );
+        
+printf("Done rest until init mainNB - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         // Editor panel
         fpanel =  new FilePanel () ;
@@ -348,6 +368,10 @@ RTWindow::RTWindow ()
         fpanelLabelGrid->show_all ();
         mainNB->append_page (*fpanel, *fpanelLabelGrid);
 
+printf("Done mainNB->append_page (*fpanel, *fpanelLabelGrid); - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         // Batch Queue panel
         bpanel = Gtk::manage ( new BatchQueuePanel (fpanel->fileCatalog) );
@@ -360,7 +384,11 @@ RTWindow::RTWindow ()
         }
 
         mainNB->append_page (*bpanel, *lbq);
-
+        
+printf("Done mainNB->append_page (*bpanel, *lbq); - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         if (isSingleTabMode()) {
             createSetmEditor();
@@ -370,6 +398,11 @@ RTWindow::RTWindow ()
 
         //Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
         //mainBox->pack_start (*mainNB);
+        
+printf("Done mainNB->set_current_page (mainNB->page_num (*fpanel)); - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         // filling bottom box
         iFullscreen = new RTImage ("fullscreen-enter.png");
@@ -427,13 +460,39 @@ RTWindow::RTWindow ()
         }
 
         actionGrid->show_all();
+        
+printf("Done even more steps !simpleEditor - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         pldBridge = new PLDBridge (static_cast<rtengine::ProgressListener*> (this));
+        
+printf("Done pldBridge = new PLDBridge - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         add (*mainNB);
+        
+printf("Done add (*mainNB); - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
+        
         show_all ();
+        
+printf("Done show_all (); - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         bpanel->init (this);
+        
+printf("Done bpanel->init - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
 
         if (!argv1.empty() && !remote) {
             Thumbnail* thm = cacheMgr->getEntry (argv1);
@@ -443,6 +502,7 @@ RTWindow::RTWindow ()
             }
         }
     }
+
 }
 
 RTWindow::~RTWindow()

@@ -40,6 +40,8 @@
 #include "extprog.h"
 #include "../rtengine/dynamicprofile.h"
 
+#include "../rtengine/MyTime.h"
+
 #ifndef WIN32
 #include <glibmm/fileutils.h>
 #include <glib.h>
@@ -244,13 +246,16 @@ void cleanup_rt()
 
 
 RTWindow *create_rt_window()
-{
+{    
     Glib::ustring icon_path = Glib::build_filename (argv0, "images");
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
     defaultIconTheme->append_search_path (icon_path);
 
     //gdk_threads_enter ();
+    printf("Start making RTWindow\n");
     RTWindow *rtWindow = new RTWindow();
+    printf("Done making RTWindow\n");
+    
     return rtWindow;
 }
 
@@ -362,6 +367,11 @@ void show_gimp_plugin_info_dialog(Gtk::Window *parent)
 
 int main (int argc, char **argv)
 {
+    
+MyTime timer_start,timer_stop;
+    
+timer_start.set();
+    
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
 
@@ -504,6 +514,11 @@ int main (int argc, char **argv)
 
 #endif
 
+printf("Done everything before loading options - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
+timer_start.set();
+
     Glib::ustring fatalError;
 
     try {
@@ -511,6 +526,10 @@ int main (int argc, char **argv)
     } catch (Options::Error &e) {
         fatalError = e.get_msg();
     }
+    
+printf("Done loading options - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
 
     if (gimpPlugin) {
         if (!Glib::file_test (argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
@@ -538,9 +557,15 @@ int main (int argc, char **argv)
 		g_setenv("GDK_SCALE", "1", true);
     }
 
+timer_start.set();
+
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
     gdk_threads_init();
     gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
+
+printf("Done gtk_init - ");
+timer_stop.set();
+printf("%f\n",(float)timer_stop.etime(timer_start) / 1000.0f);
 
     if (fatalError.empty() && remote) {
         char *app_argv[2] = { const_cast<char *> (argv0.c_str()) };
@@ -558,9 +583,11 @@ int main (int argc, char **argv)
             Gtk::Main m (&argc, &argv);
             gdk_threads_enter();
             const std::unique_ptr<RTWindow> rtWindow (create_rt_window());
+            
             if (gimpPlugin) {
                 show_gimp_plugin_info_dialog(rtWindow.get());
             }
+            
             m.run (*rtWindow);
             gdk_threads_leave();
 
