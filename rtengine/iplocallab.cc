@@ -8606,7 +8606,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         //      }
 //&& lp.retiena
 
-        if (lp.dehaze > 0 && lp.str < 0.2f  && lp.retiena) {
+      //  if (lp.dehaze > 0 && lp.str < 0.2f  && lp.retiena) {
+        if (lp.dehaze > 0 && lp.retiena) {
             int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -8689,7 +8690,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     buflight[ir][jr] /= coef;
                     bufl_ab[ir][jr] /= coefC;
 
-                    if (lp.str == 0.1f) {
+                    if (lp.str >= 0.1f) {
                         bufl_ab[ir][jr] = 0.f;
                     }
                 }
@@ -8832,25 +8833,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                             }
                         }
-
-                    //calc dehaze
-                    Imagefloat *tmpImage = nullptr;
-
-                    if (lp.dehaze > 0) {
-                        const float depthcombi = 0.5f * lp.depth + 0.5f * (0.3f * params->locallab.spots.at(sp).neigh + 0.15f * (500.f - params->locallab.spots.at(sp).vart));
-                        DehazeParams dehazeParams;
-                        dehazeParams.enabled = true;
-                        dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
-                        dehazeParams.showDepthMap = false;
-                        dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
-
-                        tmpImage = new Imagefloat(bfw, bfh);
-                        lab2rgb(*bufreti, *tmpImage, params->icm.workingProfile);
-                        dehaze(tmpImage, dehazeParams);
-                        rgb2lab(*tmpImage, *bufreti, params->icm.workingProfile);
-
-                        delete tmpImage;
-                    }
                 }
 
                 float *orig[Hd] ALIGNED16;

@@ -877,6 +877,9 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 
         if(!logli) {
             useHslLin = true;
+            printf("logar\n");
+        } else {
+            printf("linear\n");
         }
 
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
@@ -1224,7 +1227,8 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
             }
 
-
+if(useHslLin) printf("Lineaiare!!!\n");
+else printf("LOG\n");
 
 #ifdef __SSE2__
             vfloat pondv = F2V(pond);
