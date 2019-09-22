@@ -319,6 +319,8 @@ private:
     sigc::connection inversretConn;
     Gtk::CheckButton* const loglin;
     sigc::connection loglinConn;
+    Gtk::CheckButton* const lumonly;
+    sigc::connection lumonlyConn;
     Gtk::CheckButton* const enaretiMask;
     sigc::connection enaretiMaskConn;
     Gtk::CheckButton* const enaretiMasktmap;
@@ -454,6 +456,7 @@ private:
     // Retinex
     void equilretChanged();
     void loglinChanged();
+    void lumonlyChanged();
     void inversretChanged();
     void enaretiMaskChanged();
     void enaretiMasktmapChanged();

@@ -548,6 +548,7 @@ public:
         bool inversret;
         bool equilret;
         bool loglin;
+        bool lumonly;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;

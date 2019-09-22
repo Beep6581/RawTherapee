@@ -2589,6 +2589,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     inversret(false),
     equilret(true),
     loglin(false),
+    lumonly(false),
     softradiusret(0.0),
     CCmaskreticurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35 },
     LLmaskreticurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
@@ -2852,6 +2853,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && inversret == other.inversret
         && equilret == other.equilret
         && loglin == other.loglin
+        && lumonly == other.lumonly
         && softradiusret == other.softradiusret
         && CCmaskreticurve == other.CCmaskreticurve
         && LLmaskreticurve == other.LLmaskreticurve
@@ -4098,6 +4100,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inversret, "Locallab", "Inversret_" + std::to_string(i), spot.inversret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).equilret, "Locallab", "Equilret_" + std::to_string(i), spot.equilret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loglin, "Locallab", "Loglin_" + std::to_string(i), spot.loglin, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lumonly, "Locallab", "Lumonly_" + std::to_string(i), spot.lumonly, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiusret, "Locallab", "Softradiusret_" + std::to_string(i), spot.softradiusret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).CCmaskreticurve, "Locallab", "CCmaskretiCurve_" + std::to_string(i), spot.CCmaskreticurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskreticurve, "Locallab", "LLmaskretiCurve_" + std::to_string(i), spot.LLmaskreticurve, keyFile);
@@ -5474,6 +5477,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + std::to_string(i), pedited, spot.inversret, spotEdited.inversret);
                 assignFromKeyfile(keyFile, "Locallab", "Equilret_" + std::to_string(i), pedited, spot.equilret, spotEdited.equilret);
                 assignFromKeyfile(keyFile, "Locallab", "Loglin_" + std::to_string(i), pedited, spot.loglin, spotEdited.loglin);
+                assignFromKeyfile(keyFile, "Locallab", "Lumonly_" + std::to_string(i), pedited, spot.lumonly, spotEdited.lumonly);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiusret_" + std::to_string(i), pedited, spot.softradiusret, spotEdited.softradiusret);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskretiCurve_" + std::to_string(i), pedited, spot.CCmaskreticurve, spotEdited.CCmaskreticurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + std::to_string(i), pedited, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);

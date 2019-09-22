@@ -354,6 +354,7 @@ Locallab::Locallab():
     equilret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
+    lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
     fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
@@ -1320,9 +1321,9 @@ Locallab::Locallab():
 
     str->setAdjusterListener(this);
 
-    if (showtooltip) {
-        str->set_tooltip_text(M("TP_LOCALLAB_STRRETI_TOOLTIP"));
-    }
+//    if (showtooltip) {
+//        str->set_tooltip_text(M("TP_LOCALLAB_STRRETI_TOOLTIP"));
+//    }
 
     neigh->setAdjusterListener(this);
 
@@ -1367,6 +1368,7 @@ Locallab::Locallab():
     inversretConn  = inversret->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::inversretChanged));
     equilretConn  = equilret->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::equilretChanged));
     loglinConn  = loglin->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::loglinChanged));
+    lumonlyConn  = lumonly->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::lumonlyChanged));
 
     maskretiCurveEditorG->setCurveListener(this);
 
@@ -1446,6 +1448,7 @@ Locallab::Locallab():
     ToolParamBlock* const dehaBox = Gtk::manage(new ToolParamBlock());
     dehaBox->pack_start(*dehaz);
     dehaBox->pack_start(*depth);
+    dehaBox->pack_start(*lumonly);
     dehaBox->pack_start(*str);
     expreti->add(*dehaBox, false);
 
@@ -3043,6 +3046,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).softradiusret = softradiusret->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).equilret = equilret->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).loglin = loglin->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).lumonly = lumonly->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve = LLmaskretishape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve = CCmaskretishape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskreticurve = HHmaskretishape->getCurve();
@@ -3313,6 +3317,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).inversret = pe->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).equilret = pe->locallab.spots.at(pp->locallab.selspot).equilret || !equilret->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).loglin = pe->locallab.spots.at(pp->locallab.selspot).loglin || !loglin->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).lumonly = pe->locallab.spots.at(pp->locallab.selspot).lumonly || !lumonly->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiusret = pe->locallab.spots.at(pp->locallab.selspot).softradiusret || softradiusret->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve || !CCmaskretishape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve || !LLmaskretishape->isUnChanged();
@@ -3582,6 +3587,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).inversret = pedited->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).equilret = pedited->locallab.spots.at(pp->locallab.selspot).equilret || !equilret->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).loglin = pedited->locallab.spots.at(pp->locallab.selspot).loglin || !loglin->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lumonly = pedited->locallab.spots.at(pp->locallab.selspot).lumonly || !lumonly->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiusret = pedited->locallab.spots.at(pp->locallab.selspot).softradiusret || softradiusret->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskreticurve || !CCmaskretishape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskreticurve || !LLmaskretishape->isUnChanged();
@@ -5096,6 +5102,30 @@ void Locallab::loglinChanged()
     }
 }
 
+void Locallab::lumonlyChanged()
+{
+
+    if (multiImage) {
+        if (lumonly->get_inconsistent()) {
+            lumonly->set_inconsistent(false);
+            lumonlyConn.block(true);
+            lumonly->set_active(false);
+            lumonlyConn.block(false);
+        }
+    }
+
+
+    if (getEnabled() && expreti->getEnabled()) {
+        if (listener) {
+            if (lumonly->get_active()) {
+                listener->panelChanged(Evlocallablumonly, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallablumonly, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
 
 void Locallab::inversretChanged()
 {
@@ -6284,7 +6314,7 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     // Retinex
     if (getEnabled() && expreti->getEnabled()) {
         if (a == str) {
-            if (str->getValue() >= 0.2f) {
+            if (str->getValue() >= 0.1f) {
                 retiBox->show();
             } else {
                 retiBox->hide();
@@ -7086,6 +7116,7 @@ void Locallab::enableListener()
     inversretConn.block(false);
     equilretConn.block(false);
     loglinConn.block(false);
+    lumonlyConn.block(false);
     enaretiMaskConn.block(false);
     enaretiMasktmapConn.block(false);
     showmaskretiMethodConn.block(false);
@@ -7161,6 +7192,7 @@ void Locallab::disableListener()
     inversretConn.block(true);
     equilretConn.block(true);
     loglinConn.block(true);
+    lumonlyConn.block(true);
     enaretiMaskConn.block(true);
     enaretiMasktmapConn.block(true);
     showmaskretiMethodConn.block(true);
@@ -7427,6 +7459,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         inversret->set_active(pp->locallab.spots.at(index).inversret);
         equilret->set_active(pp->locallab.spots.at(index).equilret);
         loglin->set_active(pp->locallab.spots.at(index).loglin);
+        lumonly->set_active(pp->locallab.spots.at(index).lumonly);
         softradiusret->setValue(pp->locallab.spots.at(index).softradiusret);
         CCmaskretishape->setCurve(pp->locallab.spots.at(index).CCmaskreticurve);
         LLmaskretishape->setCurve(pp->locallab.spots.at(index).LLmaskreticurve);
@@ -7748,6 +7781,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 inversret->set_inconsistent(multiImage && !spotState->inversret);
                 equilret->set_inconsistent(multiImage && !spotState->equilret);
                 loglin->set_inconsistent(multiImage && !spotState->loglin);
+                lumonly->set_inconsistent(multiImage && !spotState->lumonly);
                 softradiusret->setEditedState(spotState->softradiusret ? Edited : UnEdited);
                 CCmaskretishape->setUnChanged(!spotState->CCmaskreticurve);
                 LLmaskretishape->setUnChanged(!spotState->LLmaskreticurve);

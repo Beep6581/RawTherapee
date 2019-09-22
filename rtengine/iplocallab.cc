@@ -8726,8 +8726,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 for (int jr = 0; jr < bfw; jr++) {
                     buflight[ir][jr] /= coef;
                     bufl_ab[ir][jr] /= coefC;
-
-                    if (lp.str >= 0.1f) {
+                    if(params->locallab.spots.at(sp).lumonly) {
+                  //  if (lp.str >= 0.1f) {
                         bufl_ab[ir][jr] = 0.f;
                     }
                 }

@@ -1138,6 +1138,7 @@ struct LocallabParams {
         bool inversret;
         bool equilret;
         bool loglin;
+        bool lumonly;
         double softradiusret;
         std::vector<double> CCmaskreticurve;
         std::vector<double> LLmaskreticurve;
