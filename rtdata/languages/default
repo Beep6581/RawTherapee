@@ -2106,7 +2106,7 @@ TP_LOCALLAB_DEPTH;Dehaze depth
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE Ipol, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE Ipol - personal algorithm adapted from Ipol to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.\nUseful to increase Luminance for a Second spot near the current and using mask
-TP_LOCALLAB_FFTW;Use Fast Fourier Transform
+TP_LOCALLAB_FFTW;Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
 TP_LOCALLAB_LUM;Curves LC
