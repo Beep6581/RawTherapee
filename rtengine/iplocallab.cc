@@ -8756,7 +8756,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 //           int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
 //            int bfw = int (lp.lx + lp.lxL) + del;
 
-            //     if (bfwz > 2 && bfhz > 2)
+            if (GW > 2 && GH > 2)
 
             {
                 /*
@@ -9028,7 +9028,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    printf("OK mask 3\n");
                     transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 } else {
