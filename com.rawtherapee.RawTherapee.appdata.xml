@@ -33,17 +33,21 @@
         <binary>rawtherapee-cli</binary>
     </provides>
     <screenshots>
-        <screenshot>
-            <caption>HDR DNG of a misty morning in the countryside</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt540_1.jpg</image>
+        <screenshot type="default">
+            <caption>Color correction</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_drosera_rotundifolia.png</image>
         </screenshot>
         <screenshot>
-            <caption>Straight-out-of-camera vs RawTherapee</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt540_2.jpg</image>
+            <caption>File browser</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_file_browser.png</image>
         </screenshot>
-        <screenshot>
-            <caption>RawTherapee using the Auto-Matched Tone Curve tool</caption>
-            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt540_3.jpg</image>
+        <screenshot type="default">
+            <caption>High dynamic range compression</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_field_sunset.png</image>
+        </screenshot>
+        <screenshot type="default">
+            <caption>Developing a film negative</caption>
+            <image width="1920" height="1080">https://rawtherapee.com/images/screenshots/rt57_film_negative.png</image>
         </screenshot>
     </screenshots>
     <update_contact>contactus@rawtherapee.com</update_contact>
