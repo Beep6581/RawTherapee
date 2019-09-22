@@ -283,7 +283,7 @@ BENCHFUN
     const float teps = 1e-3f;
 
     const bool luminance = params->dehaze.luminance;
-    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    const TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 #ifdef __SSE2__
     const vfloat wsv[3] = {F2V(ws[1][0]), F2V(ws[1][1]),F2V(ws[1][2])};
 #endif
@@ -342,13 +342,11 @@ BENCHFUN
                 img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * 65535.f;
             } else if (luminance) {
                 const float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
-                if (Y > 1e-5f) {
-                    const float YY = (Y - ambientY) / mt + ambientY;
-                    const float f = 65535.f * YY / Y;
-                    img->r(y, x) *= f;
-                    img->g(y, x) *= f;
-                    img->b(y, x) *= f;
-                }
+                const float YY = (Y - ambientY) / mt + ambientY;
+                const float f = Y > 1e-5f ? 65535.f * YY / Y : 65535.f;
+                img->r(y, x) *= f;
+                img->g(y, x) *= f;
+                img->b(y, x) *= f;
             } else {
                 img->r(y, x) = ((r - ambient[0]) / mt + ambient[0]) * 65535.f;
                 img->g(y, x) = ((g - ambient[1]) / mt + ambient[1]) * 65535.f;
