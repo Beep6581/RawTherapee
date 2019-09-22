@@ -3005,7 +3005,11 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     if (!usemaskreti) {
                         dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                     } else {
-                        dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
+                        if (call == 2) {
+                            dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
+                        } else {
+                            dE = sqrt(kab * SQR(refa - buforigmas->a[y][x] / 327.68f) + kab * SQR(refb - buforigmas->b[y][x] / 327.68f) + kL * SQR(lumaref - buforigmas->L[y][x] / 327.68f));
+                        }
                     }
 
                     float cli, clc;
@@ -3049,7 +3053,12 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                             if (!showmas) {
                                 transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
                             } else {
-                                transformed->L[y][x] =  bufmask->L[loy - begy][lox - begx];
+                                if (call == 2) {
+
+                                    transformed->L[y][x] =  bufmask->L[loy - begy][lox - begx];
+                                } else {
+                                    transformed->L[y][x] =  bufmask->L[y][x];
+                                }
                             } ; //bufexporig->L[loy - begy][lox - begx];
 
                             if (retishow) {
@@ -3061,7 +3070,6 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                         float chra, chrb;
 
                         if (call == 2) {
-
                             chra = bufexporig->a[loy - begy][lox - begx];
                             chrb = bufexporig->b[loy - begy][lox - begx];
                         } else {
@@ -9020,7 +9028,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-
+                    printf("OK mask 3\n");
                     transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 } else {
