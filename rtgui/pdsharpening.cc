@@ -33,6 +33,7 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
     EvPdShrContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_CONTRAST");
     EvPdSharpenGamma = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_GAMMA");
     EvPdShrDRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS");
+    EvPdShrDRadiusOffset = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS_OFFSET");
     EvPdShrDIterations = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
     EvPdShrAutoContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
     EvPdShrAutoRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
@@ -51,25 +52,30 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
 
     Gtk::VBox* rld = Gtk::manage(new Gtk::VBox());
     gamma = Gtk::manage(new Adjuster(M("TP_SHARPENING_GAMMA"), 0.5, 6.0, 0.05, 1.00));
-    dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_EDRADIUS"), 0.4, 1.15, 0.01, 0.75));
+    dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 1.15, 0.01, 0.75));
     dradius->addAutoButton(M("TP_PDSHARPENING_AUTORADIUS_TOOLTIP"));
     dradius->setAutoValue(true);
+    dradiusOffset = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_OFFSET"), 0.0, 0.5, 0.01, 0.0));
     diter = Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 1, 100, 1, 20));
     rld->pack_start(*gamma);
     rld->pack_start(*dradius);
+    rld->pack_start(*dradiusOffset);
     rld->pack_start(*diter);
     gamma->show();
     dradius->show();
+    dradiusOffset->show();
     diter->show();
     rld->show();
     pack_start(*rld);
 
     dradius->setAdjusterListener(this);
+    dradiusOffset->setAdjusterListener(this);
     gamma->setAdjusterListener(this);
     diter->setAdjusterListener(this);
 
     contrast->delay = std::max(contrast->delay, options.adjusterMaxDelay);
     dradius->delay = std::max(dradius->delay, options.adjusterMaxDelay);
+    dradiusOffset->delay = std::max(dradiusOffset->delay, options.adjusterMaxDelay);
     gamma->delay = std::max(gamma->delay, options.adjusterMaxDelay);
     diter->delay = std::max(diter->delay, options.adjusterMaxDelay);
 }
@@ -91,6 +97,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
         dradius->setAutoInconsistent(multiImage && !pedited->pdsharpening.autoRadius);
         gamma->setEditedState(pedited->pdsharpening.gamma ? Edited : UnEdited);
         dradius->setEditedState(pedited->pdsharpening.deconvradius ? Edited : UnEdited);
+        dradiusOffset->setEditedState(pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
         diter->setEditedState(pedited->pdsharpening.deconviter ? Edited : UnEdited);
 
         set_inconsistent(multiImage && !pedited->pdsharpening.enabled);
@@ -103,6 +110,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
     gamma->setValue(pp->pdsharpening.gamma);
     dradius->setValue(pp->pdsharpening.deconvradius);
     dradius->setAutoValue(pp->pdsharpening.autoRadius);
+    dradiusOffset->setValue(pp->pdsharpening.deconvradiusOffset);
     diter->setValue(pp->pdsharpening.deconviter);
     lastAutoContrast = pp->pdsharpening.autoContrast;
     lastAutoRadius = pp->pdsharpening.autoRadius;
@@ -119,6 +127,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
     pp->pdsharpening.gamma = gamma->getValue();
     pp->pdsharpening.deconvradius = dradius->getValue();
     pp->pdsharpening.autoRadius = dradius->getAutoValue();
+    pp->pdsharpening.deconvradiusOffset = dradiusOffset->getValue();
     pp->pdsharpening.deconviter =(int)diter->getValue();
 
     if (pedited) {
@@ -127,6 +136,7 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->pdsharpening.gamma = gamma->getEditedState();
         pedited->pdsharpening.deconvradius = dradius->getEditedState();
         pedited->pdsharpening.autoRadius = !dradius->getAutoInconsistent();
+        pedited->pdsharpening.deconvradiusOffset = dradiusOffset->getEditedState();
         pedited->pdsharpening.deconviter = diter->getEditedState();
         pedited->pdsharpening.enabled = !get_inconsistent();
     }
@@ -138,17 +148,20 @@ void PdSharpening::setDefaults(const ProcParams* defParams, const ParamsEdited* 
     contrast->setDefault(defParams->pdsharpening.contrast);
     gamma->setDefault(defParams->pdsharpening.gamma);
     dradius->setDefault(defParams->pdsharpening.deconvradius);
+    dradiusOffset->setDefault(defParams->pdsharpening.deconvradiusOffset);
     diter->setDefault(defParams->pdsharpening.deconviter);
 
     if (pedited) {
         contrast->setDefaultEditedState(pedited->pdsharpening.contrast ? Edited : UnEdited);
         gamma->setDefaultEditedState(pedited->pdsharpening.gamma ? Edited : UnEdited);
         dradius->setDefaultEditedState(pedited->pdsharpening.deconvradius ? Edited : UnEdited);
+        dradiusOffset->setDefaultEditedState(pedited->pdsharpening.deconvradiusOffset ? Edited : UnEdited);
         diter->setDefaultEditedState(pedited->pdsharpening.deconviter ? Edited : UnEdited);
     } else {
         contrast->setDefaultEditedState(Irrelevant);
         gamma->setDefaultEditedState(Irrelevant);
         dradius->setDefaultEditedState(Irrelevant);
+        dradiusOffset->setDefaultEditedState(Irrelevant);
         diter->setDefaultEditedState(Irrelevant);
     }
 }
@@ -159,7 +172,7 @@ void PdSharpening::adjusterChanged(Adjuster* a, double newval)
 
         Glib::ustring costr;
 
-        if (a == gamma || a == dradius) {
+        if (a == gamma || a == dradius || a == dradiusOffset) {
             costr = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), a->getValue());
         } else {
             costr = Glib::ustring::format((int)a->getValue());
@@ -171,6 +184,8 @@ void PdSharpening::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvPdSharpenGamma, costr);
         } else if (a == dradius) {
             listener->panelChanged(EvPdShrDRadius, costr);
+        } else if (a == dradiusOffset) {
+            listener->panelChanged(EvPdShrDRadiusOffset, costr);
         } else if (a == diter) {
             listener->panelChanged(EvPdShrDIterations, costr);
         }
@@ -198,6 +213,7 @@ void PdSharpening::setBatchMode(bool batchMode)
     contrast->showEditedCB();
     gamma->showEditedCB();
     dradius->showEditedCB();
+    dradiusOffset->showEditedCB();
     diter->showEditedCB();
 }
 
@@ -207,6 +223,7 @@ void PdSharpening::setAdjusterBehavior(bool contrastadd, bool gammaadd, bool rad
     contrast->setAddMode(contrastadd);
     gamma->setAddMode(gammaadd);
     dradius->setAddMode(radiusadd);
+    dradiusOffset->setAddMode(radiusadd);
     diter->setAddMode(iteradd);
 }
 
@@ -216,6 +233,7 @@ void PdSharpening::trimValues(rtengine::procparams::ProcParams* pp)
     contrast->trimValue(pp->pdsharpening.contrast);
     gamma->trimValue(pp->pdsharpening.gamma);
     dradius->trimValue(pp->pdsharpening.deconvradius);
+    dradiusOffset->trimValue(pp->pdsharpening.deconvradiusOffset);
     diter->trimValue(pp->pdsharpening.deconviter);
 }
 

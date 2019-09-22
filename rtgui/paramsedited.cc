@@ -171,6 +171,7 @@ void ParamsEdited::set(bool v)
     pdsharpening.autoRadius           = v;
     pdsharpening.gamma   = v;
     pdsharpening.deconvradius   = v;
+    pdsharpening.deconvradiusOffset   = v;
     pdsharpening.deconviter     = v;
     prsharpening.enabled            = v;
     prsharpening.contrast           = v;
@@ -770,6 +771,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         pdsharpening.autoRadius = pdsharpening.autoRadius && p.pdsharpening.autoRadius == other.pdsharpening.autoRadius;
         pdsharpening.gamma = pdsharpening.gamma && p.pdsharpening.gamma == other.pdsharpening.gamma;
         pdsharpening.deconvradius = pdsharpening.deconvradius && p.pdsharpening.deconvradius == other.pdsharpening.deconvradius;
+        pdsharpening.deconvradiusOffset = pdsharpening.deconvradiusOffset && p.pdsharpening.deconvradiusOffset == other.pdsharpening.deconvradiusOffset;
         pdsharpening.deconviter = pdsharpening.deconviter && p.pdsharpening.deconviter == other.pdsharpening.deconviter;
         prsharpening.enabled = prsharpening.enabled && p.prsharpening.enabled == other.prsharpening.enabled;
         prsharpening.contrast = prsharpening.contrast && p.prsharpening.contrast == other.prsharpening.contrast;
@@ -2038,6 +2040,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (pdsharpening.deconvradius) {
         toEdit.pdsharpening.deconvradius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.pdsharpening.deconvradius + mods.pdsharpening.deconvradius : mods.pdsharpening.deconvradius;
+    }
+
+    if (pdsharpening.deconvradiusOffset) {
+        toEdit.pdsharpening.deconvradiusOffset = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.pdsharpening.deconvradiusOffset + mods.pdsharpening.deconvradiusOffset : mods.pdsharpening.deconvradiusOffset;
     }
 
     if (pdsharpening.deconviter) {
@@ -5134,5 +5140,5 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const
 {
-    return enabled && contrast && autoContrast && autoRadius && gamma && deconvradius && deconviter;
+    return enabled && contrast && autoContrast && autoRadius && gamma && deconvradius && deconvradiusOffset && deconviter;
 }
