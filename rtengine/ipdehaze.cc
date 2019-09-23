@@ -91,7 +91,7 @@ void restore(Imagefloat *rgb, float maxval, bool multithread)
     }
 }
 
-int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, const float ambient[3], bool clip, bool multithread, float strength)
+int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, const array2D<float> &dst, int patchsize, const float ambient[3], bool clip, bool multithread, float strength)
 {
     const int W = R.width();
     const int H = R.height();
@@ -142,7 +142,7 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
     return (W / patchsize + ((W % patchsize) > 0)) *  (H / patchsize + ((H % patchsize) > 0));
 }
 
-int get_dark_channel_downsized(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, bool multithread)
+int get_dark_channel_downsized(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, const array2D<float> &dst, int patchsize, bool multithread)
 {
     const int W = R.width();
     const int H = R.height();
