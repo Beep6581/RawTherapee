@@ -2440,10 +2440,10 @@ void CLASS hasselblad_load_raw()
         }
         for (int col = 0; col < raw_width; col += 2) {
             for (int s = 0; s < tiff_samples * 2; s += 2) {
-                int len[2];
-                for (int c = 0; c < 2; ++c) {
-                    len[c] = ph1_huff(jh.huff[0]);
-                }
+                const int len[2]= {
+                    ph1_huff(jh.huff[0]),
+                    ph1_huff(jh.huff[0])
+                };
                 for (int c = 0; c < 2; ++c) {
                     diff[s + c] = hb_bits(len[c]);
                     if ((diff[s + c] & (1 << (len[c] - 1))) == 0) {
