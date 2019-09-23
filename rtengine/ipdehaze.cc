@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 
 /*
  * Haze removal using the algorithm described in the paper:
@@ -26,7 +26,7 @@
  *
  * using a guided filter for the "soft matting" of the transmission map
  *
- */  
+*/
 
 #include <algorithm>
 #include <iostream>
@@ -52,7 +52,7 @@ float normalize(Imagefloat *rgb, bool multithread)
     const int W = rgb->getWidth();
     const int H = rgb->getHeight();
 #ifdef _OPENMP
-#   pragma omp parallel for reduction(max:maxval) if (multithread)
+    #pragma omp parallel for reduction(max:maxval) schedule(dynamic, 16) if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
@@ -61,7 +61,7 @@ float normalize(Imagefloat *rgb, bool multithread)
     }
     maxval = max(maxval * 2.f, 65535.f);
 #ifdef _OPENMP
-#   pragma omp parallel for if (multithread)
+    #pragma omp parallel for schedule(dynamic, 16) if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
@@ -102,13 +102,36 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
     for (int y = 0; y < H; y += patchsize) {
         const int pH = min(y + patchsize, H);
         for (int x = 0; x < W; x += patchsize) {
-            float val = RT_INFINITY_F;
+            float minR = RT_INFINITY_F;
+            float minG = RT_INFINITY_F;
+            float minB = RT_INFINITY_F;
+#ifdef __SSE2__
+            vfloat minRv = F2V(minR);
+            vfloat minGv = F2V(minG);
+            vfloat minBv = F2V(minB);
+#endif
             const int pW = min(x + patchsize, W);
-            for (int xx = x; xx < pW; ++xx) {
-                for (int yy = y; yy < pH; ++yy) {
-                    val = min(val, R[yy][xx] / ambient[0], G[yy][xx] / ambient[1], B[yy][xx] / ambient[2]);
+            for (int yy = y; yy < pH; ++yy) {
+                int xx = x;
+#ifdef __SSE2__
+                for (; xx < pW - 3; xx += 4) {
+                    minRv = vminf(minRv, LVFU(R[yy][xx]));
+                    minGv = vminf(minGv, LVFU(G[yy][xx]));
+                    minBv = vminf(minBv, LVFU(B[yy][xx]));
+                }
+#endif
+                for (; xx < pW; ++xx) {
+                    minR = min(minR, R[yy][xx]);
+                    minG = min(minG, G[yy][xx]);
+                    minB = min(minB, B[yy][xx]);
                 }
             }
+#ifdef __SSE2__
+            minR = min(minR, vhmin(minRv));
+            minG = min(minG, vhmin(minGv));
+            minB = min(minB, vhmin(minBv));
+#endif
+            float val = min(minR / ambient[0], minG / ambient[1], minB / ambient[2]);
             val = 1.f - strength * LIM01(val);
             for (int yy = y; yy < pH; ++yy) {
                 std::fill(dst[yy] + x, dst[yy] + pW, val);
@@ -269,25 +292,25 @@ BENCHFUN
 
     int patchsize = max(int(5 / scale), 2);
     float ambient[3];
-    float max_t = 0.f;
+    float maxDistance = 0.f;
 
     {
-        array2D<float> R(W, H);
+        array2D<float>& R = dark; // R and dark can safely use the same buffer, which is faster and reduces memory allocations/deallocations
         array2D<float> G(W, H);
         array2D<float> B(W, H);
         extract_channels(img, R, G, B, patchsize, 1e-1, multiThread);
 
         {
             constexpr int sizecap = 200;
-            float r = float(W)/float(H);
+            const float r = static_cast<float>(W) / static_cast<float>(H);
             const int hh = r >= 1.f ? sizecap : sizecap / r;
             const int ww = r >= 1.f ? sizecap * r : sizecap;
 
             if (W <= ww && H <= hh) {
                 // don't rescale small thumbs
                 array2D<float> D(W, H);
-                int npatches = get_dark_channel_downsized(R, G, B, D, 2, multiThread);
-                max_t = estimate_ambient_light(R, G, B, D, patchsize, npatches, ambient);
+                const int npatches = get_dark_channel_downsized(R, G, B, D, 2, multiThread);
+                maxDistance = estimate_ambient_light(R, G, B, D, patchsize, npatches, ambient);
             } else {
                 array2D<float> RR(ww, hh);
                 array2D<float> GG(ww, hh);
@@ -297,8 +320,8 @@ BENCHFUN
                 rescaleNearest(B, BB, multiThread);
                 array2D<float> D(ww, hh);
 
-                int npatches = get_dark_channel_downsized(RR, GG, BB, D, 2, multiThread);
-                max_t = estimate_ambient_light(RR, GG, BB, D, patchsize, npatches, ambient);
+                const int npatches = get_dark_channel_downsized(RR, GG, BB, D, 2, multiThread);
+                maxDistance = estimate_ambient_light(RR, GG, BB, D, patchsize, npatches, ambient);
             }
         }
 
@@ -327,11 +350,11 @@ BENCHFUN
     guidedFilter(guideB, dark, dark, radius, epsilon, multiThread);
         
     if (options.rtSettings.verbose) {
-        std::cout << "dehaze: max distance is " << max_t << std::endl;
+        std::cout << "dehaze: max distance is " << maxDistance << std::endl;
     }
 
     const float depth = -float(params->dehaze.depth) / 100.f;
-    const float t0 = max(1e-3f, std::exp(depth * max_t));
+    const float t0 = max(1e-3f, std::exp(depth * maxDistance));
     const float teps = 1e-3f;
 
     const bool luminance = params->dehaze.luminance;
