@@ -20,6 +20,7 @@
 #define _BOXBLUR_H_
 
 #include <assert.h>
+#include <memory>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -337,9 +338,10 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
     #pragma omp parallel if (multiThread)
 #endif
     {
-        float* const buffer = new float[std::max(W, 8 * H)];
+        std::unique_ptr<float> buffer(new float[std::max(W, 8 * H)]);
+
         //horizontal blur
-        float* const lineBuffer = buffer;
+        float* const lineBuffer = buffer.get();
 #ifdef _OPENMP
         #pragma omp for
 #endif
@@ -356,8 +358,9 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
 
             for (int col = 1; col <= radius; col++) {
                 lineBuffer[col] = src[row][col];
-                dst[row][col] = tempval = (tempval * len + src[row][col + radius]) / (len + 1);
-                len ++;
+                tempval = (tempval * len + src[row][col + radius]) / (len + 1);
+                dst[row][col] = tempval;
+                ++len;
             }
 
             for (int col = radius + 1; col < W - radius; col++) {
@@ -367,15 +370,15 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
 
             for (int col = W - radius; col < W; col++) {
                 dst[row][col] = tempval = (tempval * len - lineBuffer[col - radius - 1]) / (len - 1);
-                len --;
+                --len;
             }
         }
 
         //vertical blur
 #ifdef __SSE2__
-        vfloat (* const rowBuffer)[2] = (vfloat(*)[2]) buffer;
-        vfloat leninitv = F2V(radius + 1);
-        vfloat onev = F2V(1.f);
+        vfloat (* const rowBuffer)[2] = (vfloat(*)[2]) buffer.get();
+        const vfloat leninitv = F2V(radius + 1);
+        const vfloat onev = F2V(1.f);
         vfloat tempv, temp1v, lenv, lenp1v, lenm1v, rlenv;
 
 #ifdef _OPENMP
@@ -432,7 +435,7 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
         }
 
 #else
-        float (* const rowBuffer)[8] = (float(*)[8]) buffer;
+        float (* const rowBuffer)[8] = (float(*)[8]) buffer.get();
 #ifdef _OPENMP
         #pragma omp for nowait
 #endif
@@ -440,12 +443,12 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
         for (int col = 0; col < W - numCols + 1; col += 8) {
             float len = radius + 1;
 
-            for(int k = 0; k < numCols; k++) {
+            for (int k = 0; k < numCols; k++) {
                 rowBuffer[0][k] = dst[0][col + k];
             }
 
             for (int i = 1; i <= radius; i++) {
-                for(int k = 0; k < numCols; k++) {
+                for (int k = 0; k < numCols; k++) {
                     dst[0][col + k] += dst[i][col + k];
                 }
             }
@@ -488,7 +491,7 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
             const int remaining = W % numCols;
 
             if (remaining > 0) {
-                float (* const rowBuffer)[8] = (float(*)[8]) buffer;
+                float (* const rowBuffer)[8] = (float(*)[8]) buffer.get();
                 const int col = W - remaining;
 
                 float len = radius + 1;
@@ -525,7 +528,6 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
                 }
             }
         }
-        delete [] buffer;
     }
 }
 
