@@ -37,7 +37,7 @@
 #define MAXCHRO 150
 #define MAXCHROCC 100
 #define MINNEIGH 0.1
-#define MAXNEIGH 5000
+#define MAXNEIGH 1500
 #define CENTERNEIGH 200
 
 using namespace rtengine;
@@ -357,7 +357,7 @@ Locallab::Locallab():
     lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
-    fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
+    fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
     // Sharpening
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     // Local contrast
