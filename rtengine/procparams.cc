@@ -1156,6 +1156,7 @@ CaptureSharpeningParams::CaptureSharpeningParams() :
     contrast(10.0),
     gamma(1.00),
     deconvradius(0.75),
+    deconvradiusOffset(0.0),
     deconviter(20)
 {
 }
@@ -1169,6 +1170,7 @@ bool CaptureSharpeningParams::operator ==(const CaptureSharpeningParams& other) 
         && autoContrast == other.autoContrast
         && autoRadius == other.autoRadius
         && deconvradius == other.deconvradius
+        && deconvradiusOffset == other.deconvradiusOffset
         && deconviter == other.deconviter;
 }
 
@@ -3383,6 +3385,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->pdsharpening.autoRadius, "PostDemosaicSharpening", "AutoRadius", pdsharpening.autoRadius, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.gamma, "PostDemosaicSharpening", "DeconvGamma", pdsharpening.gamma, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconvradius, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.deconvradiusOffset, "PostDemosaicSharpening", "DeconvRadiusOffset", pdsharpening.deconvradiusOffset, keyFile);
         saveToKeyfile(!pedited || pedited->pdsharpening.deconviter, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, keyFile);
 
 // Post resize sharpening
@@ -4473,6 +4476,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvGamma", pedited, pdsharpening.gamma, pedited->pdsharpening.gamma);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pedited, pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadiusOffset", pedited, pdsharpening.deconvradiusOffset, pedited->pdsharpening.deconvradiusOffset);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pedited, pdsharpening.deconviter, pedited->pdsharpening.deconviter);
         }
 
