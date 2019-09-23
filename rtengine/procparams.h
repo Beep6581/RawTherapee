@@ -1344,6 +1344,7 @@ struct DehazeParams {
     bool showDepthMap;
     int depth;
     bool luminance;
+
     DehazeParams();
 
     bool operator==(const DehazeParams &other) const;
