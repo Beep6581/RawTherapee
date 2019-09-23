@@ -37,8 +37,6 @@
 #include "procparams.h"
 #include "rescale.h"
 #include "rt_math.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 extern Options options;
 
@@ -277,7 +275,7 @@ void ImProcFunctions::dehaze(Imagefloat *img)
     if (!params->dehaze.enabled || params->dehaze.strength == 0.0) {
         return;
     }
-BENCHFUN
+
     const float maxChannel = normalize(img, multiThread);
 
     const int W = img->getWidth();
