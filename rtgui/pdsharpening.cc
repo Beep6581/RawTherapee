@@ -55,7 +55,7 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "capturesharpening", M("T
     dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 1.15, 0.01, 0.75));
     dradius->addAutoButton();
     dradius->setAutoValue(true);
-    dradiusOffset = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), 0.0, 0.5, 0.01, 0.0));
+    dradiusOffset = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.5, 0.5, 0.01, 0.0));
     diter = Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 1, 100, 1, 20));
     rld->pack_start(*gamma);
     rld->pack_start(*dradius);
