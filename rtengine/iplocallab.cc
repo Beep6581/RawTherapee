@@ -8678,6 +8678,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 dehazeParams.strength = lp.dehaze;
                 dehazeParams.showDepthMap = false;
                 dehazeParams.depth = lp.depth;
+                dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
                 tmpImage = new Imagefloat(bfw, bfh);
                 lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                 dehaze(tmpImage, dehazeParams);
@@ -8726,10 +8727,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 for (int jr = 0; jr < bfw; jr++) {
                     buflight[ir][jr] /= coef;
                     bufl_ab[ir][jr] /= coefC;
-                    if(params->locallab.spots.at(sp).lumonly) {
+//                    if(params->locallab.spots.at(sp).lumonly) {
                   //  if (lp.str >= 0.1f) {
-                        bufl_ab[ir][jr] = 0.f;
-                    }
+//                        bufl_ab[ir][jr] = 0.f;
+//                    }
                 }
             }
 
@@ -8923,6 +8924,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
                         dehazeParams.showDepthMap = false;
                         dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
+                        dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
 
                         tmpImage = new Imagefloat(Wd, Hd);
                         lab2rgb(*original, *tmpImage, params->icm.workingProfile);
@@ -8962,7 +8964,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
                 bool fftw = lp.ftwreti;
-                fftw = false;
+               // fftw = false;
                 //for Retinex Mask are incorporated in MSR
                 ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
@@ -9375,6 +9377,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         dehazeParams.strength = 0.9f * lp.dehaze + 0.3f * lp.str;
                         dehazeParams.showDepthMap = false;
                         dehazeParams.depth = LIM(depthcombi, 0.f, 100.f);
+                        dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
 
                         tmpImage = new Imagefloat(Wd, Hd);
                         lab2rgb(*original, *tmpImage, params->icm.workingProfile);

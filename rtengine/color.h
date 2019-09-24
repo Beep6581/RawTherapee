@@ -213,6 +213,11 @@ public:
         return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
     }
 
+    static vfloat rgbLuminance(vfloat r, vfloat g, vfloat b, const vfloat workingspace[3])
+    {
+        return r * workingspace[0] + g * workingspace[1] + b * workingspace[2];
+    }
+
     /**
     * @brief Convert red/green/blue to L*a*b
     * @brief Convert red/green/blue to hue/saturation/luminance
