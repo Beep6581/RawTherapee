@@ -532,9 +532,9 @@ BENCHFUN
     constexpr int tileSize = 194;
     constexpr int border = 5;
     constexpr int fullTileSize = tileSize + 2 * border;
-    const float maxRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
-    const float maxDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
-    const float distanceFactor = (maxRadius - sigma) / maxDistance;
+    const float cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
+    const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
+    const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
 
     double progress = startVal;
     const double progressStep = (endVal - startVal) * rtengine::SQR(tileSize) / (W * H);
