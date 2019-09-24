@@ -6971,7 +6971,7 @@ std::vector<double> Locallab::getCurvePoints(ThresholdSelector* tAdjuster) const
         chromaMean = (1.0 - chromaMean) * transitionWeighting + chromaMean;
     } else if (transitionWeighting < 0.0) {
         // negative values -> give more weight to Pastels
-        chromaMean =      chromaMean  * transitionWeighting + chromaMean;
+        chromaMean = chromaMean  * transitionWeighting + chromaMean;
     }
 
     // point at the location of the Top cursor, at the end of the first linear transition and the beginning of the second one

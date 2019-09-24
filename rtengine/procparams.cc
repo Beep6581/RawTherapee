@@ -2425,7 +2425,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     centerY(0),
     circrad(18),
     qualityMethod("enh"),
-    transit(60),
+    transit(60.),
     thresh(2.0),
     iter(2.0),
     balan(1.0),

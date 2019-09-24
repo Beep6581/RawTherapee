@@ -972,7 +972,7 @@ struct LocallabParams {
         int centerY;
         int circrad;
         Glib::ustring qualityMethod; // none, std, enh, enhsup, contr, sob2
-        int transit;
+        double transit;
         double thresh;
         double iter;
         double balan;

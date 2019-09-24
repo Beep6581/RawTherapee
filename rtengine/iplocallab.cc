@@ -251,7 +251,7 @@ struct local_params {
     int it;
     int guidb;
     float epsb;
-    int trans;
+    float trans;
     float transweak;
     float transgrad;
     int dehaze;
@@ -652,7 +652,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurexpo = (float) locallab.spots.at(sp).blurexpde;
     float blurcolor = (float) locallab.spots.at(sp).blurcolde;
     float blurSH = (float) locallab.spots.at(sp).blurSHde;
-    int local_transit = locallab.spots.at(sp).transit;
+    float local_transit = locallab.spots.at(sp).transit;
     float local_transitweak = (float)locallab.spots.at(sp).transitweak;
     float local_transitgrad = (float)locallab.spots.at(sp).transitgrad;
     float radius = (float) locallab.spots.at(sp).radius;
