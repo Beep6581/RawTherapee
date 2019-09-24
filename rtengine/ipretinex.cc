@@ -48,6 +48,8 @@
 #include "procparams.h"
 #include "rawimagesource.h"
 #include "rtengine.h"
+
+#define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
 
@@ -848,7 +850,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
     }
 }
 
-void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
+void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, int bfwr, int bfhr, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                                const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, LabImage * transformed, bool retiMasktmap, bool retiMask)
 {
     BENCHFUN
@@ -1018,16 +1020,16 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             } else {
                 if (scale == scal - 1) {
                     if (settings->fftwsigma == false) { //empirical formula
-                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (kr * RetinexScales[scale]), 0, 0);
+                        ImProcFunctions::fftw_convol_blur2(src, out, bfwr, bfhr, (kr * RetinexScales[scale]), 0, 0);
                     } else {
-                        ImProcFunctions::fftw_convol_blur2(src, out, W_L, H_L, (SQR(RetinexScales[scale])), 0, 0);
+                        ImProcFunctions::fftw_convol_blur2(src, out, bfwr, bfhr, (SQR(RetinexScales[scale])), 0, 0);
                     }
                 } else { // reuse result of last iteration
                     // out was modified in last iteration => restore it
                     if (settings->fftwsigma == false) { //empirical formula
-                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L, sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
+                        ImProcFunctions::fftw_convol_blur2(out, out, bfwr, bfhr, sqrtf(SQR(kr * RetinexScales[scale]) - SQR(kr * RetinexScales[scale + 1])), 0, 0);
                     } else {
-                        ImProcFunctions::fftw_convol_blur2(out, out, W_L, H_L, (SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), 0, 0);
+                        ImProcFunctions::fftw_convol_blur2(out, out, bfwr, bfhr, (SQR(RetinexScales[scale]) - SQR(RetinexScales[scale + 1])), 0, 0);
                     }
                 }
             }

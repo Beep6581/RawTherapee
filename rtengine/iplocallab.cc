@@ -2916,6 +2916,14 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 {
 
     BENCHFUN {
+        const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+        const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+        const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+        const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+        const int bfw = xend - xstart;
+        const int bfh = yend - ystart;
+
+
         const float ach = (float)lp.trans / 100.f;
         const float varsens = lp.sensh;
 
@@ -2971,20 +2979,21 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
             #pragma omp for schedule(dynamic,16)
 #endif
 
-            for (int y = 0; y < transformed->H; y++)
+            for (int y = ystart; y < yend; y++)
             {
                 const int loy = cy + y;
-                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
-                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                    continue;
-                }
+                /*                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
-                for (int x = 0; x < transformed->W; x++) {
+                                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                                    continue;
+                                }
+                */
+                for (int x = xstart; x < xend; x++) {
                     const int lox = cx + x;
-                    const int begx = int (lp.xc - lp.lxL);
-                    const int begy = int (lp.yc - lp.lyT);
-
+                    /*                    const int begx = int (lp.xc - lp.lxL);
+                                        const int begy = int (lp.yc - lp.lyT);
+                    */
                     int zone = 0;
                     float localFactor = 1.f;
 
@@ -3006,7 +3015,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                         dE = sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                     } else {
                         if (call == 2) {
-                            dE = sqrt(kab * SQR(refa - buforigmas->a[loy - begy][lox - begx] / 327.68f) + kab * SQR(refb - buforigmas->b[loy - begy][lox - begx] / 327.68f) + kL * SQR(lumaref - buforigmas->L[loy - begy][lox - begx] / 327.68f));
+                            dE = sqrt(kab * SQR(refa - buforigmas->a[y - ystart][x - xstart] / 327.68f) + kab * SQR(refb - buforigmas->b[y - ystart][x - xstart] / 327.68f) + kL * SQR(lumaref - buforigmas->L[y - ystart][x - xstart] / 327.68f));
                         } else {
                             dE = sqrt(kab * SQR(refa - buforigmas->a[y][x] / 327.68f) + kab * SQR(refb - buforigmas->b[y][x] / 327.68f) + kL * SQR(lumaref - buforigmas->L[y][x] / 327.68f));
                         }
@@ -3015,8 +3024,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     float cli, clc;
 
                     if (call == 2) {
-                        cli = buflight[loy - begy][lox - begx];
-                        clc = previewreti ? settings->previewselection * 100.f : bufchro[loy - begy][lox - begx];
+                        cli = buflight[y - ystart][x - xstart];
+                        clc = previewreti ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
                     } else {
                         cli = buflight[y][x];
                         clc = previewreti ? settings->previewselection * 100.f : bufchro[y][x];
@@ -3039,7 +3048,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                             float lightc;
 
                             if (call == 2) {
-                                lightc = bufexporig->L[loy - begy][lox - begx];
+                                lightc = bufexporig->L[y - ystart][x - xstart];
                             } else {
                                 lightc = bufexporig->L[y][x];
                             }
@@ -3055,7 +3064,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                             } else {
                                 if (call == 2) {
 
-                                    transformed->L[y][x] =  bufmask->L[loy - begy][lox - begx];
+                                    transformed->L[y][x] =  bufmask->L[y - ystart][x - xstart];
                                 } else {
                                     transformed->L[y][x] =  bufmask->L[y][x];
                                 }
@@ -3070,8 +3079,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                         float chra, chrb;
 
                         if (call == 2) {
-                            chra = bufexporig->a[loy - begy][lox - begx];
-                            chrb = bufexporig->b[loy - begy][lox - begx];
+                            chra = bufexporig->a[y - ystart][x - xstart];
+                            chrb = bufexporig->b[y - ystart][x - xstart];
                         } else {
                             chra = bufexporig->a[y][x];
                             chrb = bufexporig->b[y][x];
@@ -3090,8 +3099,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 
                         if (showmas) {
                             if (call == 2) {
-                                transformed->a[y][x] = bufmask->a[loy - begy][lox - begx];
-                                transformed->b[y][x] = bufmask->b[loy - begy][lox - begx];
+                                transformed->a[y][x] = bufmask->a[y - ystart][x - xstart];
+                                transformed->b[y][x] = bufmask->b[y - ystart][x - xstart];
                             } else {
                                 transformed->a[y][x] = bufmask->a[y][x];
                                 transformed->b[y][x] = bufmask->b[y][x];
@@ -8728,7 +8737,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     buflight[ir][jr] /= coef;
                     bufl_ab[ir][jr] /= coefC;
 //                    if(params->locallab.spots.at(sp).lumonly) {
-                  //  if (lp.str >= 0.1f) {
+                    //  if (lp.str >= 0.1f) {
 //                        bufl_ab[ir][jr] = 0.f;
 //                    }
                 }
@@ -8964,9 +8973,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
                 bool fftw = lp.ftwreti;
-               // fftw = false;
+                // fftw = false;
                 //for Retinex Mask are incorporated in MSR
-                ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 
 #ifdef _OPENMP
@@ -9095,7 +9104,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool fftw = false;
 
                     if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
-                        ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
                     }
 
@@ -9204,17 +9213,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
             int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-            int bfhz = yend - ystart;
-            int bfwz = xend - xstart;
+            int bfh = yend - ystart;
+            int bfw = xend - xstart;
 
             LabImage *bufreti = nullptr;
             LabImage *bufmask = nullptr;
             LabImage *buforig = nullptr;
             LabImage *buforigmas = nullptr;
-            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-            int bfw = int (lp.lx + lp.lxL) + del;
+            int bfhr = bfh;
+            int bfwr = bfw;
+            bool reduH = false;
+            bool reduW = false;
 
-            if (bfwz > 2 && bfhz > 2) {
+            if (bfw > 2 && bfh > 2) {
 
                 if (lp.ftwreti) {
                     int ftsizeH = 1;
@@ -9234,10 +9245,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-                    int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-                    int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-                    int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
 
                     if (ystart == 0 && yend < original->H) {
                         lp.ly -= (bfh - ftsizeH);
@@ -9249,6 +9256,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         } else {
                             lp.ly -= (bfh - ftsizeH);
                         }
+                    } else if (ystart == 0 && yend == original->H) {
+                        bfhr = ftsizeH;
+                        reduH = true;
                     }
 
                     if (xstart == 0 && xend < original->W) {
@@ -9261,13 +9271,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         } else {
                             lp.lx -= (bfw - ftsizeW);
                         }
+                    } else if (xstart == 0 && xend == original->W) {
+                        bfwr = ftsizeW;
+                        reduW = true;
                     }
 
-                    //new size bfw, bfh not optimized if spot H > high or spot W > width ==> TODO
-                    bfh = int (lp.ly + lp.lyT) + del;
-                    bfw = int (lp.lx + lp.lxL) + del;
+
+                    //new values optimized
+                    ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+                    yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+                    xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+                    xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+                    bfh = bfhr = yend - ystart;
+                    bfw = bfwr = xend - xstart;
+
+                    if (reduH) {
+                        bfhr = ftsizeH;
+                    }
+
+                    if (reduW) {
+                        bfwr = ftsizeW;
+                    }
+
+            //        printf("bfh1=%i bfw1=%i bfhr=%i bfwr=%i ftsiH=%i ftsiW=%i\n", bfh, bfw, bfhr, bfwr, ftsizeH, ftsizeW);
 
                 }
+
 
                 array2D<float> buflight(bfw, bfh);
                 JaggedArray<float> bufchro(bfw, bfh);
@@ -9306,31 +9335,32 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     int yEn = lp.yc + lp.ly;
                     int xEn = lp.xc + lp.lx;
 
+
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int y = 0; y < transformed->H ; y++) //{
-                        for (int x = 0; x < transformed->W; x++) {
-                            int lox = cx + x;
-                            int loy = cy + y;
+                    for (int y = ystart; y < yend; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            bufreti->L[y - ystart][x - xstart] = original->L[y][x];
+                            bufreti->a[y - ystart][x - xstart] = original->a[y][x];
+                            bufreti->b[y - ystart][x - xstart] = original->b[y][x];
+                            bufmask->L[y - ystart][x - xstart] = original->L[y][x];
+                            bufmask->a[y - ystart][x - xstart] = original->a[y][x];
+                            bufmask->b[y - ystart][x - xstart] = original->b[y][x];
 
-                            if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                bufreti->L[loy - begy][lox - begx] = original->L[y][x];
-                                bufreti->a[loy - begy][lox - begx] = original->a[y][x];
-                                bufreti->b[loy - begy][lox - begx] = original->b[y][x];
-                                bufmask->L[loy - begy][lox - begx] = original->L[y][x];
-                                bufmask->a[loy - begy][lox - begx] = original->a[y][x];
-                                bufmask->b[loy - begy][lox - begx] = original->b[y][x];
+                            if (!lp.enaretiMasktmap && lp.enaretiMask) {
+                                buforig->L[y - ystart][x - xstart] = original->L[y][x];
+                                buforig->a[y - ystart][x - xstart] = original->a[y][x];
+                                buforig->b[y - ystart][x - xstart] = original->b[y][x];
 
-                                if (!lp.enaretiMasktmap && lp.enaretiMask) {
-                                    buforig->L[loy - begy][lox - begx] = original->L[y][x];
-                                    buforig->a[loy - begy][lox - begx] = original->a[y][x];
-                                    buforig->b[loy - begy][lox - begx] = original->b[y][x];
-                                }
                             }
+
                         }
+                    }
+
                 }
+
 
                 float *orig[Hd] ALIGNED16;
                 float *origBuffer = new float[Hd * Wd];
@@ -9418,7 +9448,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
                 bool fftw = lp.ftwreti;
                 //for Retinex Mask are incorporated in MSR
-                ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+
+                ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, bfwr, bfhr, params->locallab, sk, locRETgainCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 
 #ifdef _OPENMP
@@ -9429,6 +9460,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int jr = 0; jr < Wd; jr += 1) {
                         tmpl->L[ir][jr] = orig[ir][jr];
                     }
+
 
                 if (lp.equret) { //equilibrate luminance before / after MSR
                     float *datain = new float[Hd * Wd];
@@ -9458,6 +9490,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
 
+
                 if (!lp.invret) {
                     float minL = tmpl->L[0][0] - bufreti->L[0][0];
                     float maxL = minL;
@@ -9481,6 +9514,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             buflight[ir][jr] /= coef;
                         }
                     }
+
 
 
                     /*
@@ -9553,7 +9587,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool fftw = false;
 
                     if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
-                        ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
                     }
 
