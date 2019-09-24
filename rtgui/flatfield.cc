@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <sstream>
 
@@ -86,7 +86,6 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     flatFieldFileReset->signal_clicked().connect( sigc::mem_fun(*this, &FlatField::flatFieldFile_Reset), true );
     flatFieldAutoSelectconn = flatFieldAutoSelect->signal_toggled().connect ( sigc::mem_fun(*this, &FlatField::flatFieldAutoSelectChanged), true);
     flatFieldBlurTypeconn = flatFieldBlurType->signal_changed().connect( sigc::mem_fun(*this, &FlatField::flatFieldBlurTypeChanged) );
-    lastShortcutPath = "";
 
     // Set filename filters
     b_filter_asCurrent = false;
@@ -192,7 +191,7 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
         Glib::ustring fname = Glib::path_get_basename(ffp->GetCurrentImageFilePath());
         Glib::ustring filetype;
 
-        if (fname != "") {
+        if (!fname.empty()) {
             // get image filetype, set filter to the same as current image's filetype
             std::string::size_type idx;
             idx = fname.rfind('.');

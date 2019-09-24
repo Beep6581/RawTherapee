@@ -14,7 +14,7 @@
 *  GNU General Public License for more details.
 *
 *  You should have received a copy of the GNU General Public License
-*  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <iostream>
@@ -333,8 +333,6 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
     // Search for line pair coordinate is between.
     double last_dt = 0.0;
-    double last_dv = 0.0;
-    double last_du = 0.0;
 
     for (uint32_t index = 1; index <= 30; ++index) {
         // Convert slope to delta-u and delta-v, with length 1.
@@ -370,23 +368,11 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
             // Interpolate the temperature.
             res = 1.0e6 / (temp_table[index - 1].r * f + temp_table[index].r * (1.0 - f));
-
-            // Find delta from black body point to test coordinate.
-            uu = u - (temp_table [index - 1].u * f + temp_table [index].u * (1.0 - f));
-            vv = v - (temp_table [index - 1].v * f + temp_table [index].v * (1.0 - f));
-            // Interpolate vectors along slope.
-            du = du * (1.0 - f) + last_du * f;
-            dv = dv * (1.0 - f) + last_dv * f;
-            len = sqrt (du * du + dv * dv);
-            du /= len;
-            dv /= len;
             break;
         }
 
         // Try next line pair.
         last_dt = dt;
-        last_du = du;
-        last_dv = dv;
     }
 
     return res;
@@ -2179,8 +2165,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
                     && lastdot <= sname.size() - 4
                     && !sname.casefold().compare(lastdot, 4, ".dcp")
                     ) {
-                    const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
-                    file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
+                    file_std_profiles[sname.substr(0, lastdot).casefold_collate_key()] = fname; // They will be loaded and cached on demand
                 }
             } else {
                 // Directory
@@ -2191,11 +2176,10 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
         for (const auto& alias : getAliases(rt_profile_dir)) {
             const Glib::ustring alias_name = Glib::ustring(alias.first).uppercase();
-            const Glib::ustring real_name = Glib::ustring(alias.second).uppercase();
-            const std::map<Glib::ustring, Glib::ustring>::const_iterator real = file_std_profiles.find(real_name);
+            const std::map<std::string, Glib::ustring>::const_iterator real = file_std_profiles.find(Glib::ustring(alias.second).casefold_collate_key());
 
             if (real != file_std_profiles.end()) {
-                file_std_profiles[alias_name] = real->second;
+                file_std_profiles[alias_name.casefold_collate_key()] = real->second;
         }
     }
 }
@@ -2217,19 +2201,19 @@ bool DCPStore::isValidDCPFileName(const Glib::ustring& filename) const
 
 DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 {
+    const auto key = filename.casefold_collate_key();
     MyMutex::MyLock lock(mutex);
+    const std::map<std::string, DCPProfile*>::const_iterator iter = profile_cache.find(key);
 
-    const std::map<Glib::ustring, DCPProfile*>::iterator r = profile_cache.find(filename);
-
-    if (r != profile_cache.end()) {
-        return r->second;
+    if (iter != profile_cache.end()) {
+        return iter->second;
     }
 
     DCPProfile* const res = new DCPProfile(filename);
 
     if (res->isValid()) {
         // Add profile
-        profile_cache[filename] = res;
+        profile_cache[key] = res;
         if (options.rtSettings.verbose) {
             printf("DCP profile '%s' loaded from disk\n", filename.c_str());
         }
@@ -2242,13 +2226,9 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 
 DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_name) const
 {
-    const Glib::ustring name = requested_cam_short_name.uppercase();
-
-    // Warning: do NOT use map.find(), since it does not seem to work reliably here
-    for (const auto& file_std_profile : file_std_profiles) {
-        if (file_std_profile.first == name) {
-            return getProfile(file_std_profile.second);
-        }
+    const std::map<std::string, Glib::ustring>::const_iterator iter = file_std_profiles.find(requested_cam_short_name.casefold_collate_key());
+    if (iter != file_std_profiles.end()) {
+        return getProfile(iter->second);
     }
 
     // profile not found, looking if we're in loadAll=false mode

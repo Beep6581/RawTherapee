@@ -68,8 +68,8 @@ FramesData::FramesData(const Glib::ustring &fname) :
     ok_(false),
     fname_(fname),
     dcrawFrameCount(0),
-    time(),
-    timeStamp(),
+    time{},
+    timeStamp{},
     iso_speed(0),
     aperture(0.),
     focal_len(0.),
@@ -80,20 +80,12 @@ FramesData::FramesData(const Glib::ustring &fname) :
     make("Unknown"),
     model("Unknown"),
     orientation("Unknown"),
+    rating(0), // FIXME: Implement
     lens("Unknown"),
     sampleFormat(IIOSF_UNKNOWN),
     isPixelShift(false),
     isHDR(false)
 {
-    memset(&time, 0, sizeof(time));
-    timeStamp = 0;
-    iso_speed = 0;
-    aperture = 0.0;
-    focal_len = 0.0;
-    focal_len35mm = 0.0;
-    focus_dist = 0.0f;
-    shutter = 0.0;
-    expcomp = 0.0;
     make.clear();
     model.clear();
     serial.clear();
@@ -564,6 +556,12 @@ std::string FramesData::getSerialNumber() const
 std::string FramesData::getOrientation() const
 {
     return orientation;
+}
+
+
+int FramesData::getRating() const
+{
+    return rating;
 }
 
 

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "profilepanel.h"
 
@@ -42,7 +42,7 @@ void ProfilePanel::cleanup ()
     delete partialProfileDlg;
 }
 
-ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), imagePath(""), lastSavedPSE(nullptr), customPSE(nullptr)
+ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastSavedPSE(nullptr), customPSE(nullptr)
 {
 
     tpc = nullptr;

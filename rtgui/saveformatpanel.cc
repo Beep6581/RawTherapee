@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <array>
 #include <utility>
@@ -217,8 +217,4 @@ void SaveFormatPanel::adjusterChanged(Adjuster* a, double newval)
     if (listener) {
         listener->formatChanged(sf_templates[act].second.format);
     }
-}
-
-void SaveFormatPanel::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }

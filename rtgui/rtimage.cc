@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "rtimage.h"
@@ -37,12 +37,8 @@ int RTImage::scaleBack = 0;
 
 RTImage::RTImage () {}
 
-RTImage::RTImage (RTImage &other)
+RTImage::RTImage (RTImage &other) : surface(other.surface), pixbuf(other.pixbuf)
 {
-    dpiBack = other.dpiBack;
-    scaleBack = other.scaleBack;
-    pixbuf = other.pixbuf;
-    surface = other.surface;
     if (pixbuf) {
         set(pixbuf);
     } else if (surface) {
@@ -173,7 +169,7 @@ void RTImage::init()
     scaleBack = RTScalable::getScale();
 }
 
-void RTImage::cleanup()
+void RTImage::cleanup(bool all)
 {
     for (auto& entry : pixbufCache) {
         entry.second.reset();
@@ -181,7 +177,7 @@ void RTImage::cleanup()
     for (auto& entry : surfaceCache) {
         entry.second.clear();
     }
-    RTScalable::cleanup();
+    RTScalable::cleanup(all);
 }
 
 void RTImage::updateImages()
@@ -197,8 +193,7 @@ void RTImage::updateImages()
 Glib::RefPtr<Gdk::Pixbuf> RTImage::createPixbufFromFile (const Glib::ustring& fileName)
 {
     Cairo::RefPtr<Cairo::ImageSurface> imgSurf = createImgSurfFromFile(fileName);
-    Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create(imgSurf, 0, 0, imgSurf->get_width(), imgSurf->get_height());
-    return pixbuf;
+    return Gdk::Pixbuf::create(imgSurf, 0, 0, imgSurf->get_width(), imgSurf->get_height());
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::ustring& fileName)

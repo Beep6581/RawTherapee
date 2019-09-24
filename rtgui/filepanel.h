@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _FILEPANEL_
 #define _FILEPANEL_
@@ -31,12 +31,14 @@
 #include "filterpanel.h"
 #include "exportpanel.h"
 #include "progressconnector.h"
+#include "../rtengine/noncopyable.h"
 
 class RTWindow;
 
 class FilePanel final :
     public Gtk::HPaned,
-    public FileSelectionListener
+    public FileSelectionListener,
+    public rtengine::NonCopyable
 {
 public:
     FilePanel ();

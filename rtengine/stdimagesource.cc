@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "stdimagesource.h"
 
@@ -224,7 +224,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
     cmsHPROFILE in = nullptr;
     cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.workingProfile);
 
-    if (cmp.inputProfile == "(embedded)" || cmp.inputProfile == "" || cmp.inputProfile == "(camera)" || cmp.inputProfile == "(cameraICC)") {
+    if (cmp.inputProfile == "(embedded)" || cmp.inputProfile.empty() || cmp.inputProfile == "(camera)" || cmp.inputProfile == "(cameraICC)") {
         if (embedded) {
             in = embedded;
         } else {

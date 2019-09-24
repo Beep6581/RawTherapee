@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <iomanip>
@@ -86,10 +86,6 @@ void ImpulseDenoise::adjusterChanged(Adjuster* a, double newval)
     if (listener && getEnabled()) {
         listener->panelChanged (EvIDNThresh, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
     }
-}
-
-void ImpulseDenoise::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void ImpulseDenoise::enabledChanged ()

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
 
@@ -99,10 +99,6 @@ void CACorrection::adjusterChanged (Adjuster* a, double newval)
     if (listener) {
         listener->panelChanged (EvCACorr, Glib::ustring::compose ("%1=%3\n%2=%4", M("TP_CACORRECTION_RED"), M("TP_CACORRECTION_BLUE"), Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(4), red->getValue()), Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(4), blue->getValue())));
     }
-}
-
-void CACorrection::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void CACorrection::setAdjusterBehavior (bool badd)

@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <png.h>
 #include <glib/gstdio.h>
@@ -837,12 +837,12 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
         char swapped[line_length];
 
         for ( int row = 0; row < height; ++row ) {
-            ::rtengine::swab(((char*)buffer) + (row * line_length), swapped, line_length);
+            ::rtengine::swab(((const char*)buffer) + (row * line_length), swapped, line_length);
             setScanline(row, (unsigned char*)&swapped[0], bps);
         }
     } else {
         for ( int row = 0; row < height; ++row ) {
-            setScanline(row, ((unsigned char*)buffer) + (row * line_length), bps);
+            setScanline(row, ((const unsigned char*)buffer) + (row * line_length), bps);
         }
     }
 

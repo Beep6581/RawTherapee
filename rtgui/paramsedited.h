@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -179,7 +179,9 @@ struct SharpenMicroParamsEdited {
 struct SharpeningParamsEdited {
     bool enabled;
     bool contrast;
+    bool autoContrast;
     bool blurradius;
+    bool gamma;
     bool radius;
     bool amount;
     bool threshold;
@@ -194,6 +196,18 @@ struct SharpeningParamsEdited {
     bool deconvradius;
     bool deconviter;
     bool deconvdamping;
+};
+
+struct CaptureSharpeningParamsEdited {
+    bool enabled;
+    bool contrast;
+    bool autoContrast;
+    bool autoRadius;
+    bool gamma;
+    bool deconvradius;
+    bool deconvradiusOffset;
+    bool deconviter;
+    bool isUnchanged() const;
 };
 
 struct VibranceParamsEdited {
@@ -583,6 +597,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
+    bool luminance;
 };
 
 struct RAWParamsEdited {
@@ -666,6 +681,15 @@ struct MetaDataParamsEdited {
     bool mode;
 };
 
+struct FilmNegativeParamsEdited {
+    bool enabled;
+    bool redRatio;
+    bool greenExp;
+    bool blueRatio;
+
+    bool isUnchanged() const;
+};
+
 struct ParamsEdited {
     GeneralParamsEdited general;
     ToneCurveParamsEdited toneCurve;
@@ -675,6 +699,7 @@ struct ParamsEdited {
     ColorToningEdited colorToning;
     RetinexParamsEdited retinex;
     SharpeningParamsEdited sharpening;
+    CaptureSharpeningParamsEdited pdsharpening;
     SharpeningParamsEdited prsharpening;
     SharpenEdgeParamsEdited sharpenEdge;
     SharpenMicroParamsEdited sharpenMicro;
@@ -710,6 +735,7 @@ struct ParamsEdited {
     SoftLightParamsEdited softlight;
     DehazeParamsEdited dehaze;
     MetaDataParamsEdited metadata;
+    FilmNegativeParamsEdited filmNegative;
     bool exif;
     bool iptc;
 

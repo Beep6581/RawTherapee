@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef __SAVEFORMATPANEL_H__
 #define __SAVEFORMATPANEL_H__
@@ -23,6 +23,7 @@
 #include "adjuster.h"
 #include "guiutils.h"
 #include "options.h"
+#include "../rtengine/noncopyable.h"
 
 class FormatChangeListener
 {
@@ -31,7 +32,7 @@ public:
     virtual void formatChanged(const Glib::ustring& format) = 0;
 };
 
-class SaveFormatPanel : public Gtk::Grid, public AdjusterListener
+class SaveFormatPanel : public Gtk::Grid, public AdjusterListener, public rtengine::NonCopyable
 {
 
 protected:
@@ -60,7 +61,6 @@ public:
 
     void        formatChanged   ();
     void        adjusterChanged (Adjuster* a, double newval) override;
-    void        adjusterAutoToggled(Adjuster* a, bool newval) override;
 };
 
 #endif

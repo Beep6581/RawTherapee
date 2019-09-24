@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifdef __GNUC__
@@ -256,7 +256,7 @@ int processLineParams ( int argc, char **argv )
 {
     rtengine::procparams::PartialProfile *rawParams = nullptr, *imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
-    Glib::ustring outputPath = "";
+    Glib::ustring outputPath;
     std::vector<rtengine::procparams::PartialProfile*> processingParams;
     bool outputDirectory = false;
     bool leaveUntouched = false;
@@ -271,7 +271,7 @@ int processLineParams ( int argc, char **argv )
     int subsampling = 3;
     int bits = -1;
     bool isFloat = false;
-    std::string outputType = "";
+    std::string outputType;
     unsigned errors = 0;
 
     for ( int iArg = 1; iArg < argc; iArg++) {

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef __TOOLPANELCCORD__
 #define __TOOLPANELCCORD__
@@ -77,11 +77,14 @@
 #include "colortoning.h"
 #include "filmsimulation.h"
 #include "prsharpening.h"
+#include "pdsharpening.h"
 #include "fattaltonemap.h"
 #include "localcontrast.h"
 #include "softlight.h"
 #include "dehaze.h"
 #include "guiutils.h"
+#include "filmnegative.h"
+#include "../rtengine/noncopyable.h"
 
 class ImageEditorCoordinator;
 
@@ -97,7 +100,9 @@ class ToolPanelCoordinator :
     public CropPanelListener,
     public ICMPanelListener,
     public ImageAreaToolListener,
-    public rtengine::ImageTypeListener
+    public rtengine::ImageTypeListener,
+    public FilmNegProvider,
+    public rtengine::NonCopyable
 {
 protected:
     WhiteBalance* whitebalance;
@@ -152,7 +157,8 @@ protected:
     XTransRAWExposure* xtransrawexposure;
     FattalToneMapping *fattal;
     MetaDataPanel* metadata;
-
+    FilmNegative* filmNegative;
+    PdSharpening* pdSharpening;
     std::vector<PParamsChangeListener*> paramcListeners;
 
     rtengine::StagedImageProcessor* ipc;
@@ -236,7 +242,6 @@ public:
 
     void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false) override;
 
-//    void autoContrastChanged (double autoContrast);
     // profilechangelistener interface
     void profileChange(
         const rtengine::procparams::PartialProfile* nparams,
@@ -287,6 +292,9 @@ public:
     //FFProvider interface
     rtengine::RawImage* getFF() override;
     Glib::ustring GetCurrentImageFilePath() override;
+
+    // FilmNegProvider interface
+    bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) override;
 
     // rotatelistener interface
     void straightenRequested () override;

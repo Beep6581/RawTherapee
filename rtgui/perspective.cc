@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "perspective.h"
 
@@ -96,10 +96,6 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
     if (listener) {
         listener->panelChanged (EvPerspCorr, Glib::ustring::compose ("%1=%3\n%2=%4", M("TP_PERSPECTIVE_HORIZONTAL"), M("TP_PERSPECTIVE_VERTICAL"), horiz->getValue(), vert->getValue()));
     }
-}
-
-void PerspCorrection::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void PerspCorrection::setAdjusterBehavior (bool badd)

@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  (C) 2010 Emil Martinec <ejmartin@uchicago.edu>
  */
@@ -65,7 +65,6 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void cbdlMethodChanged();
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void enabledChanged() override;
     void gamutlabToggled ();
     void lumaneutralPressed ();

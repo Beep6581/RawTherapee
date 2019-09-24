@@ -13,7 +13,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _RTWINDOW_
 #define _RTWINDOW_
@@ -29,8 +29,9 @@
 #if defined(__APPLE__)
 #include <gtkosxapplication.h>
 #endif
+#include "../rtengine/noncopyable.h"
 
-class RTWindow : public Gtk::Window, public rtengine::ProgressListener
+class RTWindow : public Gtk::Window, public rtengine::ProgressListener, public rtengine::NonCopyable
 {
 
 private:
@@ -52,7 +53,6 @@ private:
     {
         return !options.tabbedUI && ! (options.multiDisplayMode > 0);
     };
-    void findVerNumbers (int* numbers, Glib::ustring versionStr);
 
     bool on_expose_event_epanel (GdkEventExpose* event);
     bool on_expose_event_fpanel (GdkEventExpose* event);

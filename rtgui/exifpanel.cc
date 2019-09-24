@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <unordered_set>
 
@@ -139,11 +139,9 @@ ExifPanel::ExifPanel() :
     show_all ();
 }
 
-
 ExifPanel::~ExifPanel ()
 {
 }
-
 
 void ExifPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -162,20 +160,17 @@ void ExifPanel::write (ProcParams* pp, ParamsEdited* pedited)
     pp->exif = *changeList;
 }
 
-
 void ExifPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
 
     *defChangeList = defParams->exif;
 }
 
-
 void ExifPanel::setImageData (const FramesMetaData* id)
 {
 
     idata = id;
 }
-
 
 Gtk::TreeModel::Children ExifPanel::addTag(const std::string &key, const Glib::ustring &label, const Glib::ustring &value, bool editable, bool edited)
 {
@@ -200,7 +195,6 @@ Gtk::TreeModel::Children ExifPanel::addTag(const std::string &key, const Glib::u
 
     return row.children();
 }
-
 
 void ExifPanel::refreshTags()
 {
@@ -265,7 +259,6 @@ void ExifPanel::refreshTags()
     }
 }
 
-
 void ExifPanel::exifSelectionChanged ()
 {
 
@@ -285,7 +278,6 @@ void ExifPanel::exifSelectionChanged ()
     }
 }
 
-
 void ExifPanel::resetIt(const Gtk::TreeModel::const_iterator& iter)
 {
     if (!iter) {
@@ -295,7 +287,6 @@ void ExifPanel::resetIt(const Gtk::TreeModel::const_iterator& iter)
     const auto key = iter->get_value(exifColumns.key);
     changeList->erase(key);
 }
-
 
 void ExifPanel::resetPressed ()
 {
@@ -310,7 +301,6 @@ void ExifPanel::resetPressed ()
     notifyListener();
 }
 
-
 void ExifPanel::resetAllPressed ()
 {
     setImageData(idata);
@@ -318,7 +308,6 @@ void ExifPanel::resetAllPressed ()
     refreshTags();
     notifyListener ();
 }
-
 
 void ExifPanel::addPressed ()
 {
@@ -399,7 +388,6 @@ void ExifPanel::addPressed ()
     delete hb1;
     delete hb2;
 }
-
 
 void ExifPanel::notifyListener ()
 {

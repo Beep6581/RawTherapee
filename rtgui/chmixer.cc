@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "chmixer.h"
 
@@ -180,10 +180,6 @@ void ChMixer::adjusterChanged(Adjuster* a, double newval)
                               blue[0]->getValue(), blue[1]->getValue(), blue[2]->getValue());
         listener->panelChanged (EvChMixer, descr);
     }
-}
-
-void ChMixer::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void ChMixer::enabledChanged()

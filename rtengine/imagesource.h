@@ -14,22 +14,24 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _IMAGESOURCE_
-#define _IMAGESOURCE_
+#pragma once
+
+#include <array>
+#include <vector>
 
 #include <glibmm.h>
-#include <vector>
-#include "rtengine.h"
+
 #include "colortemp.h"
 #include "coord2d.h"
 #include "dcp.h"
-#include "LUT.h"
-#include "imagedata.h"
-#include "image8.h"
 #include "image16.h"
+#include "image8.h"
+#include "imagedata.h"
 #include "imagefloat.h"
+#include "LUT.h"
+#include "rtengine.h"
 
 namespace rtengine
 {
@@ -39,11 +41,12 @@ namespace procparams
 
 struct CoarseTransformParams;
 struct ColorManagementParams;
+struct FilmNegativeParams;
 struct LensProfParams;
 struct RAWParams;
 struct RetinexParams;
 struct ToneCurveParams;
-
+struct CaptureSharpeningParams;
 }
 
 class ImageMatrices
@@ -56,6 +59,7 @@ public:
     double cam_xyz[3][3] = {};
 };
 
+// TODO: Move implementation to .cc (Flössie)
 class ImageSource : public InitialImage
 {
 
@@ -77,7 +81,9 @@ public:
     ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
     virtual void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) {};
-    virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold) {};
+    virtual void        filmNegativeProcess (const procparams::FilmNegativeParams &params) {};
+    virtual bool        getFilmNegativeExponents (Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams& currentParams, std::array<float, 3>& newExps) { return false; };
+    virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache = false) {};
     virtual void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
     virtual void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
     virtual void        retinexPrepareBuffers      (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
@@ -176,6 +182,7 @@ public:
         return this;
     }
     virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
+    virtual void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) = 0;
 };
+
 }
-#endif

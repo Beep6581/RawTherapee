@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <map>
@@ -39,11 +39,11 @@ namespace
 
 Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
-    if (embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+    if (embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
         return embedded_fname;
     }
 
-    if (prefix != "") {
+    if (!prefix.empty()) {
         if (embedded_fname.length() < prefix.length() || embedded_fname.substr(0, prefix.length()) != prefix) {
             return embedded_fname;
         }
@@ -61,11 +61,11 @@ Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Gl
 
 Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
 {
-    if (fnameAbsolute || embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+    if (fnameAbsolute || embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
         return embedded_fname;
     }
 
-    Glib::ustring prefix = "";
+    Glib::ustring prefix;
 
     if (embedded_fname.length() > 5 && embedded_fname.substr(0, 5) == "file:") {
         embedded_fname = embedded_fname.substr(5);
@@ -356,6 +356,29 @@ ToneCurveParams::ToneCurveParams() :
     fromHistMatching(false),
     clampOOG(true)
 {
+}
+
+bool ToneCurveParams::isPanningRelatedChange(const ToneCurveParams& other) const
+{
+    return !
+        (autoexp == other.autoexp
+        && clip == other.clip
+        && hrenabled == other.hrenabled
+        && method == other.method
+        && expcomp == other.expcomp
+        && curve == other.curve
+        && curve2 == other.curve2
+        && curveMode == other.curveMode
+        && curveMode2 == other.curveMode2
+        && brightness == other.brightness
+        && black == other.black
+        && contrast == other.contrast
+        && saturation == other.saturation
+        && shcompr == other.shcompr
+        && hlcompr == other.hlcompr
+        && hlcomprthresh == other.hlcomprthresh
+        && histmatching == other.histmatching
+        && clampOOG == other.clampOOG);
 }
 
 bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
@@ -1107,7 +1130,9 @@ void ColorToningParams::getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurv
 SharpeningParams::SharpeningParams() :
     enabled(false),
     contrast(20.0),
+    autoContrast(false),
     blurradius(0.2),
+    gamma(1.0),
     radius(0.5),
     amount(200),
     threshold(20, 80, 2000, 1200, false),
@@ -1130,9 +1155,11 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
         enabled == other.enabled
         && contrast == other.contrast
         && blurradius == other.blurradius
+        && gamma == other.gamma
         && radius == other.radius
         && amount == other.amount
         && threshold == other.threshold
+        && autoContrast == other.autoContrast
         && edgesonly == other.edgesonly
         && edges_radius == other.edges_radius
         && edges_tolerance == other.edges_tolerance
@@ -1146,6 +1173,36 @@ bool SharpeningParams::operator ==(const SharpeningParams& other) const
 }
 
 bool SharpeningParams::operator !=(const SharpeningParams& other) const
+{
+    return !(*this == other);
+}
+
+CaptureSharpeningParams::CaptureSharpeningParams() :
+    enabled(false),
+    autoContrast(true),
+    autoRadius(true),
+    contrast(10.0),
+    gamma(1.00),
+    deconvradius(0.75),
+    deconvradiusOffset(0.0),
+    deconviter(20)
+{
+}
+
+bool CaptureSharpeningParams::operator ==(const CaptureSharpeningParams& other) const
+{
+    return
+        enabled == other.enabled
+        && contrast == other.contrast
+        && gamma == other.gamma
+        && autoContrast == other.autoContrast
+        && autoRadius == other.autoRadius
+        && deconvradius == other.deconvradius
+        && deconvradiusOffset == other.deconvradiusOffset
+        && deconviter == other.deconviter;
+}
+
+bool CaptureSharpeningParams::operator !=(const CaptureSharpeningParams& other) const
 {
     return !(*this == other);
 }
@@ -1236,6 +1293,21 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0)
 {
+}
+
+bool WBParams::isPanningRelatedChange(const WBParams& other) const
+{
+    return !
+        (enabled == other.enabled
+        && ((method == "Camera" && other.method == "Camera")
+        ||
+        (method == other.method
+        && temperature == other.temperature
+        && green == other.green
+        && equal == other.equal
+        && tempBias == other.tempBias)
+        )
+        );
 }
 
 bool WBParams::operator ==(const WBParams& other) const
@@ -2475,7 +2547,8 @@ DehazeParams::DehazeParams() :
     enabled(false),
     strength(50),
     showDepthMap(false),
-    depth(25)
+    depth(25),
+    luminance(false)
 {
 }
 
@@ -2485,7 +2558,8 @@ bool DehazeParams::operator ==(const DehazeParams& other) const
         enabled == other.enabled
         && strength == other.strength
         && showDepthMap == other.showDepthMap
-        && depth == other.depth;
+        && depth == other.depth
+        && luminance == other.luminance;
 }
 
 bool DehazeParams::operator !=(const DehazeParams& other) const
@@ -2762,6 +2836,27 @@ bool MetaDataParams::operator!=(const MetaDataParams &other) const
     return !(*this == other);
 }
 
+FilmNegativeParams::FilmNegativeParams() :
+    enabled(false),
+    redRatio(1.36),
+    greenExp(1.5),
+    blueRatio(0.86)
+{
+}
+
+bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
+{
+    return
+        enabled == other.enabled
+        && redRatio   == other.redRatio
+        && greenExp == other.greenExp
+        && blueRatio  == other.blueRatio;
+}
+
+bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
+{
+    return !(*this == other);
+}
 
 ProcParams::ProcParams()
 {
@@ -2793,6 +2888,8 @@ void ProcParams::setDefaults()
     prsharpening.deconvradius = 0.45;
     prsharpening.deconviter = 100;
     prsharpening.deconvdamping = 0;
+
+    pdsharpening = {};
 
     vibrance = {};
 
@@ -2860,7 +2957,10 @@ void ProcParams::setDefaults()
     exif.clear();
     iptc.clear();
 
-    rank = 0;
+    // -1 means that there's no pp3 data with rank yet. In this case, the
+    // embedded Rating metadata should take precedence. -1 should never be
+    // written to pp3 on disk.
+    rank = -1;
     colorlabel = 0;
     inTrash = false;
 
@@ -3170,6 +3270,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Luminance", dehaze.luminance, keyFile);
 
 // Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
@@ -3299,6 +3400,16 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
         saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
+
+// Post demosaic sharpening
+        saveToKeyfile(!pedited || pedited->pdsharpening.enabled, "PostDemosaicSharpening", "Enabled", pdsharpening.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.contrast, "PostDemosaicSharpening", "Contrast", pdsharpening.contrast, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.autoContrast, "PostDemosaicSharpening", "AutoContrast", pdsharpening.autoContrast, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.autoRadius, "PostDemosaicSharpening", "AutoRadius", pdsharpening.autoRadius, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.gamma, "PostDemosaicSharpening", "DeconvGamma", pdsharpening.gamma, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.deconvradius, "PostDemosaicSharpening", "DeconvRadius", pdsharpening.deconvradius, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.deconvradiusOffset, "PostDemosaicSharpening", "DeconvRadiusOffset", pdsharpening.deconvradiusOffset, keyFile);
+        saveToKeyfile(!pedited || pedited->pdsharpening.deconviter, "PostDemosaicSharpening", "DeconvIterations", pdsharpening.deconviter, keyFile);
 
 // Post resize sharpening
         saveToKeyfile(!pedited || pedited->prsharpening.enabled, "PostResizeSharpening", "Enabled", prsharpening.enabled, keyFile);
@@ -3593,6 +3704,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
+
+// Film negative
+        saveToKeyfile(!pedited || pedited->filmNegative.enabled, "Film Negative", "Enabled", filmNegative.enabled, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.redRatio, "Film Negative", "RedRatio", filmNegative.redRatio, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -4388,6 +4505,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group("PostDemosaicSharpening")) {
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Enabled", pedited, pdsharpening.enabled, pedited->pdsharpening.enabled);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Contrast", pedited, pdsharpening.contrast, pedited->pdsharpening.contrast);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoContrast", pedited, pdsharpening.autoContrast, pedited->pdsharpening.autoContrast);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "AutoRadius", pedited, pdsharpening.autoRadius, pedited->pdsharpening.autoRadius);
+
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvGamma", pedited, pdsharpening.gamma, pedited->pdsharpening.gamma);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadius", pedited, pdsharpening.deconvradius, pedited->pdsharpening.deconvradius);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvRadiusOffset", pedited, pdsharpening.deconvradiusOffset, pedited->pdsharpening.deconvradiusOffset);
+            assignFromKeyfile(keyFile, "PostDemosaicSharpening", "DeconvIterations", pedited, pdsharpening.deconviter, pedited->pdsharpening.deconviter);
+        }
+
         if (keyFile.has_group("PostResizeSharpening")) {
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Enabled", pedited, prsharpening.enabled, pedited->prsharpening.enabled);
             assignFromKeyfile(keyFile, "PostResizeSharpening", "Contrast", pedited, prsharpening.contrast, pedited->prsharpening.contrast);
@@ -4798,6 +4927,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
             assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
             assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
+            assignFromKeyfile(keyFile, "Dehaze", "Luminance", pedited, dehaze.luminance, pedited->dehaze.luminance);
         }
 
         if (keyFile.has_group("Film Simulation")) {
@@ -5151,6 +5281,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", pedited, raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
         }
 
+        if (keyFile.has_group("Film Negative")) {
+            assignFromKeyfile(keyFile, "Film Negative", "Enabled", pedited, filmNegative.enabled, pedited->filmNegative.enabled);
+            assignFromKeyfile(keyFile, "Film Negative", "RedRatio", pedited, filmNegative.redRatio, pedited->filmNegative.redRatio);
+            assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
+            assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", pedited, filmNegative.blueRatio, pedited->filmNegative.blueRatio);
+        }
+
         if (keyFile.has_group("MetaData")) {
             int mode = int(MetaDataParams::TUNNEL);
             assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
@@ -5282,7 +5419,8 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && metadata == other.metadata
         && exif == other.exif
         && iptc == other.iptc
-        && dehaze == other.dehaze;
+        && dehaze == other.dehaze
+        && filmNegative == other.filmNegative;
 }
 
 bool ProcParams::operator !=(const ProcParams& other) const

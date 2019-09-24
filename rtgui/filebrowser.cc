@@ -16,8 +16,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <algorithm>
 #include <map>
 
 #include <glibmm.h>
@@ -592,15 +593,16 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
 {
     entry->selected = false;
     entry->drawable = false;
-    entry->framed = editedFiles.find (entry->filename) != editedFiles.end();
+    entry->framed = editedFiles.find(entry->filename) != editedFiles.end();
 
     // add button set to the thumbbrowserentry
-    entry->addButtonSet (new FileThumbnailButtonSet (entry));
-    entry->getThumbButtonSet()->setRank (entry->thumbnail->getRank());
-    entry->getThumbButtonSet()->setColorLabel (entry->thumbnail->getColorLabel());
-    entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage());
-    entry->getThumbButtonSet()->setButtonListener (this);
-    entry->resize (getThumbnailHeight());
+    entry->addButtonSet(new FileThumbnailButtonSet(entry));
+    entry->getThumbButtonSet()->setRank(entry->thumbnail->getRank());
+    entry->getThumbButtonSet()->setColorLabel(entry->thumbnail->getColorLabel());
+    entry->getThumbButtonSet()->setInTrash(entry->thumbnail->getStage());
+    entry->getThumbButtonSet()->setButtonListener(this);
+    entry->resize(getThumbnailHeight());
+    entry->filtered = !checkFilter(entry);
 
     // find place in abc order
     {
@@ -619,9 +621,9 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
             entry
         );
 
-        initEntry (entry);
+        initEntry(entry);
     }
-    redraw ();
+    redraw(entry);
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
@@ -666,6 +668,7 @@ void FileBrowser::close ()
         MYWRITERLOCK(l, entryRW);
 
         selected.clear ();
+        anchor = nullptr;
 
         MYWRITERLOCK_RELEASE(l); // notifySelectionListener will need read access!
 
@@ -781,16 +784,20 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         {
             MYWRITERLOCK(l, entryRW);
 
-            selected.clear ();
+            selected.clear();
 
-            for (size_t i = 0; i < fd.size(); i++)
-                if (checkFilter (fd[i])) {
+            for (size_t i = 0; i < fd.size(); ++i) {
+                if (checkFilter(fd[i])) {
                     fd[i]->selected = true;
-                    selected.push_back (fd[i]);
+                    selected.push_back(fd[i]);
                 }
+            }
+            if (!anchor && !selected.empty()) {
+                anchor = selected[0];
+            }
         }
         queue_draw ();
-        notifySelectionListener ();
+        notifySelectionListener();
     } else if( m == copyTo) {
         tbl->copyMoveRequested (mselected, false);
     }
@@ -833,10 +840,10 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 }
 
                 for (size_t i = 0; i < mselected.size(); i++) {
-                    rtengine::procparams::ProcParams pp = mselected[i]->thumbnail->getProcParams();
-                    pp.raw.dark_frame = fc.get_filename();
-                    pp.raw.df_autoselect = false;
-                    mselected[i]->thumbnail->setProcParams(pp, nullptr, FILEBROWSER, false);
+                    rtengine::procparams::ProcParams lpp = mselected[i]->thumbnail->getProcParams();
+                    lpp.raw.dark_frame = fc.get_filename();
+                    lpp.raw.df_autoselect = false;
+                    mselected[i]->thumbnail->setProcParams(lpp, nullptr, FILEBROWSER, false);
                 }
 
                 if (bppcl) {
@@ -909,10 +916,10 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 }
 
                 for (size_t i = 0; i < mselected.size(); i++) {
-                    rtengine::procparams::ProcParams pp = mselected[i]->thumbnail->getProcParams();
-                    pp.raw.ff_file = fc.get_filename();
-                    pp.raw.ff_AutoSelect = false;
-                    mselected[i]->thumbnail->setProcParams(pp, nullptr, FILEBROWSER, false);
+                    rtengine::procparams::ProcParams lpp = mselected[i]->thumbnail->getProcParams();
+                    lpp.raw.ff_file = fc.get_filename();
+                    lpp.raw.ff_AutoSelect = false;
+                    mselected[i]->thumbnail->setProcParams(lpp, nullptr, FILEBROWSER, false);
                 }
 
                 if (bppcl) {
@@ -1072,17 +1079,17 @@ void FileBrowser::partPasteProfile ()
                 bppcl->beginBatchPParamsChange(mselected.size());
             }
 
-            for (unsigned int i = 0; i < mselected.size(); i++) {
+            for (auto entry : mselected) {
                 // copying read only clipboard PartialProfile to a temporary one, initialized to the thumb's ProcParams
-                mselected[i]->thumbnail->createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
+                entry->thumbnail->createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
                 const rtengine::procparams::PartialProfile& cbPartProf = clipboard.getPartialProfile();
-                rtengine::procparams::PartialProfile pastedPartProf(&mselected[i]->thumbnail->getProcParams (), nullptr);
+                rtengine::procparams::PartialProfile pastedPartProf(&entry->thumbnail->getProcParams (), nullptr);
 
                 // pushing the selected values of the clipboard PartialProfile to the temporary PartialProfile
                 partialPasteDlg.applyPaste (pastedPartProf.pparams, pastedPartProf.pedited, cbPartProf.pparams, cbPartProf.pedited);
 
                 // applying the temporary PartialProfile to the thumb's ProcParams
-                mselected[i]->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
+                entry->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
                 pastedPartProf.deleteInstance();
             }
 
@@ -1436,12 +1443,12 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
         }
 
         for (size_t i = 0; i < fd.size(); i++) {
-            if (checkFilter (fd[i])) {
+            if (checkFilter(fd[i])) {
                 numFiltered++;
-            } else if (fd[i]->selected ) {
+            } else if (fd[i]->selected) {
                 fd[i]->selected = false;
-                std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
-                selected.erase (j);
+                std::vector<ThumbBrowserEntryBase*>::iterator j = std::find(selected.begin(), selected.end(), fd[i]);
+                selected.erase(j);
 
                 if (lastClicked == fd[i]) {
                     lastClicked = nullptr;
@@ -1449,6 +1456,9 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
 
                 selchanged = true;
             }
+        }
+        if (selected.empty() || (anchor && std::find(selected.begin(), selected.end(), anchor) == selected.end())) {
+            anchor = nullptr;
         }
     }
 
@@ -1460,12 +1470,12 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
     redraw ();
 }
 
-bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry complies filter
+bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) const   // true -> entry complies filter
 {
 
     FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(entryb);
 
-    if (filter.showOriginal && entry->getOriginal() != nullptr) {
+    if (filter.showOriginal && entry->getOriginal()) {
         return false;
     }
 
@@ -1484,44 +1494,22 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
         return false;
     }
 
-    // return false is query is not satisfied
-    if (!filter.queryFileName.empty()) {
+    // return false if query is not satisfied
+    if (!filter.vFilterStrings.empty()) {
         // check if image's FileName contains queryFileName (case insensitive)
         // TODO should we provide case-sensitive search option via preferences?
-        Glib::ustring FileName;
-        FileName = Glib::path_get_basename (entry->thumbnail->getFileName());
-        FileName = FileName.uppercase();
-        //printf("FileBrowser::checkFilter FileName = '%s'; find() result= %i \n",FileName.c_str(), FileName.find(filter.queryFileName.uppercase()));
-
-        Glib::ustring decodedQueryFileName;
-        bool MatchEqual;
-
-        // Determine the match mode - check if the first 2 characters are equal to "!="
-        if (filter.queryFileName.find("!=") == 0) {
-            decodedQueryFileName = filter.queryFileName.substr (2, filter.queryFileName.length() - 2);
-            MatchEqual = false;
-        } else {
-            decodedQueryFileName = filter.queryFileName;
-            MatchEqual = true;
-        }
-
-        // Consider that queryFileName consist of comma separated values (FilterString)
-        // Evaluate if ANY of these FilterString are contained in the filename
-        // This will construct OR filter within the filter.queryFileName
+        std::string FileName = Glib::path_get_basename(entry->thumbnail->getFileName());
+        std::transform(FileName.begin(), FileName.end(), FileName.begin(), ::toupper);
         int iFilenameMatch = 0;
-        std::vector<Glib::ustring> vFilterStrings = Glib::Regex::split_simple(",", decodedQueryFileName.uppercase());
 
-        for(size_t i = 0; i < vFilterStrings.size(); i++) {
-            // ignore empty vFilterStrings. Otherwise filter will always return true if
-            // e.g. filter.queryFileName ends on "," and will stop being a filter
-            if (!vFilterStrings.at(i).empty()) {
-                if (FileName.find(vFilterStrings.at(i)) != Glib::ustring::npos) {
-                    iFilenameMatch++;
-                }
+        for (const auto& filterString : filter.vFilterStrings) {
+            if (FileName.find(filterString) != std::string::npos) {
+                ++iFilenameMatch;
+                break;
             }
         }
 
-        if (MatchEqual) {
+        if (filter.matchEqual) {
             if (iFilenameMatch == 0) { //none of the vFilterStrings found in FileName
                 return false;
             }
@@ -1530,10 +1518,10 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
                 return false;
             }
         }
+    }
 
-        /*experimental Regex support, this is unlikely to be useful to photographers*/
-        //bool matchfound=Glib::Regex::match_simple(filter.queryFileName.uppercase(),FileName);
-        //if (!matchfound) return false;
+    if (!filter.exifFilterEnabled) {
+        return true;
     }
 
     // check exif filter
@@ -1541,17 +1529,12 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
     double tol = 0.01;
     double tol2 = 1e-8;
 
-    if (!filter.exifFilterEnabled) {
-        return true;
-    }
-
-    Glib::ustring camera(cfs->getCamera());
-
-    if (!cfs->exifValid)
-        return (!filter.exifFilter.filterCamera || filter.exifFilter.cameras.count(camera) > 0)
+    if (!cfs->exifValid) {
+        return (!filter.exifFilter.filterCamera || filter.exifFilter.cameras.count(cfs->getCamera()) > 0)
                && (!filter.exifFilter.filterLens || filter.exifFilter.lenses.count(cfs->lens) > 0)
                && (!filter.exifFilter.filterFiletype || filter.exifFilter.filetypes.count(cfs->filetype) > 0)
                && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp) > 0);
+    }
 
     return
         (!filter.exifFilter.filterShutter || (rtengine::FramesMetaData::shutterFromString(rtengine::FramesMetaData::shutterToString(cfs->shutter)) >= filter.exifFilter.shutterFrom - tol2 && rtengine::FramesMetaData::shutterFromString(rtengine::FramesMetaData::shutterToString(cfs->shutter)) <= filter.exifFilter.shutterTo + tol2))
@@ -1559,7 +1542,7 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
         && (!filter.exifFilter.filterFocalLen || (cfs->focalLen >= filter.exifFilter.focalFrom - tol && cfs->focalLen <= filter.exifFilter.focalTo + tol))
         && (!filter.exifFilter.filterISO     || (cfs->iso >= filter.exifFilter.isoFrom && cfs->iso <= filter.exifFilter.isoTo))
         && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp) > 0)
-        && (!filter.exifFilter.filterCamera  || filter.exifFilter.cameras.count(camera) > 0)
+        && (!filter.exifFilter.filterCamera  || filter.exifFilter.cameras.count(cfs->getCamera()) > 0)
         && (!filter.exifFilter.filterLens    || filter.exifFilter.lenses.count(cfs->lens) > 0)
         && (!filter.exifFilter.filterFiletype  || filter.exifFilter.filetypes.count(cfs->filetype) > 0);
 }

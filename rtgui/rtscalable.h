@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
@@ -50,7 +50,7 @@ public:
 #endif
 
     static void init(Gtk::Window *window);
-    static void cleanup();
+    static void cleanup(bool all = false);
     static double getDPI ();
     static double getTweakedDPI ();   // The returned value is tweaked DPI to adapt to main the font size. Maybe not an ideal solution.
     static int getScale ();

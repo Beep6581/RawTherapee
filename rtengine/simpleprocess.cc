@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "rtengine.h"
 #include "colortemp.h"
@@ -209,13 +209,21 @@ private:
         imgsrc->setCurrentFrame (params.raw.bayersensor.imageNum);
         imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
+        // After preprocess, run film negative processing if enabled
+        if ((imgsrc->getSensorType() == ST_BAYER || (imgsrc->getSensorType() == ST_FUJI_XTRANS)) && params.filmNegative.enabled) {
+            imgsrc->filmNegativeProcess (params.filmNegative);
+        }
+
         if (pl) {
             pl->setProgress (0.20);
         }
         bool autoContrast = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicAutoContrast : params.raw.xtranssensor.dualDemosaicAutoContrast;
         double contrastThreshold = imgsrc->getSensorType() == ST_BAYER ? params.raw.bayersensor.dualDemosaicContrast : params.raw.xtranssensor.dualDemosaicContrast;
 
-        imgsrc->demosaic (params.raw, autoContrast, contrastThreshold);
+        imgsrc->demosaic (params.raw, autoContrast, contrastThreshold, params.pdsharpening.enabled && pl);
+        if (params.pdsharpening.enabled) {
+            imgsrc->captureSharpening(params.pdsharpening, false, params.pdsharpening.contrast, params.pdsharpening.deconvradius);
+        }
 
 
         if (pl) {
@@ -1320,7 +1328,7 @@ private:
         } else {
             // use the selected output profile if present, otherwise use LCMS2 profile generate by lab2rgb16 w/ gamma
 
-            if (params.icm.outputProfile != "" && params.icm.outputProfile != ColorManagementParams::NoICMString) {
+            if (!params.icm.outputProfile.empty() && params.icm.outputProfile != ColorManagementParams::NoICMString) {
 
                 // if ICCStore::getInstance()->getProfile send back an object, then ICCStore::getInstance()->getContent will do too
                 cmsHPROFILE jprof = ICCStore::getInstance()->getProfile (params.icm.outputProfile); //get outProfile

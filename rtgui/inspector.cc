@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "inspector.h"
 #include "guiutils.h"
@@ -34,7 +34,7 @@ InspectorBuffer::InspectorBuffer(const Glib::ustring &imagePath) : currTransform
         // generate thumbnail image
         Glib::ustring ext = getExtension (imagePath);
 
-        if (ext == "") {
+        if (ext.empty()) {
             imgPath.clear();
             return;
         }
@@ -83,7 +83,6 @@ InspectorBuffer::~InspectorBuffer() {
 
 Inspector::Inspector () : currImage(nullptr), zoom(0.0), active(false)
 {
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     set_name("Inspector");
 }
 
@@ -115,7 +114,6 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         // compute the displayed area
         rtengine::Coord availableSize;
         rtengine::Coord topLeft;
-        rtengine::Coord displayedSize;
         rtengine::Coord dest(0, 0);
         availableSize.x = win->get_width();
         availableSize.y = win->get_height();
@@ -125,7 +123,6 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         if (imW < availableSize.x) {
             // center the image in the available space along X
             topLeft.x = 0;
-            displayedSize.x = availableSize.x;
             dest.x = (availableSize.x - imW) / 2;
         } else {
             // partial image display
@@ -139,7 +136,6 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         if (imH < availableSize.y) {
             // center the image in the available space along Y
             topLeft.y = 0;
-            displayedSize.y = availableSize.y;
             dest.y = (availableSize.y - imH) / 2;
         } else {
             // partial image display

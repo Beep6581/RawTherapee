@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _CURVEEDITOR_
 #define _CURVEEDITOR_
@@ -25,6 +25,7 @@
 #include "editcallbacks.h"
 #include "mydiagonalcurve.h"
 #include "myflatcurve.h"
+#include "../rtengine/noncopyable.h"
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
@@ -38,7 +39,7 @@ class CurveEditorSubGroup;
 /** @brief This class is an interface between RT and the curve editor group
  * It handles the methods related to a specific curve. It is created by CurveEditorGroup::addCurve
  */
-class CurveEditor : public EditSubscriber
+class CurveEditor : public EditSubscriber, public rtengine::NonCopyable
 {
 
     friend class CurveEditorGroup;

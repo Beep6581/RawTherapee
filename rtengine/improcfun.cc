@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <glib.h>
@@ -1720,7 +1720,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                         float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
                         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                         lab->deleteLab();
-                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
+                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -2255,7 +2255,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
     //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
-    float strProtect = (float (params->colorToning.strength) / 100.f);
+    float strProtect = pow_F((float (params->colorToning.strength) / 100.f), 0.4f);
 
     /*
     // Debug output - Color LUTf points
@@ -2793,7 +2793,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         const float krh = rh / (rh + gh + bh);
                         const float kgh = gh / (rh + gh + bh);
                         const float kbh = bh / (rh + gh + bh);
-                        strProtect = pow_F(strProtect, 0.4f);
                         constexpr int mode = 0;
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -2806,7 +2805,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     else if (params->colorToning.method == "Splitco") {
                         constexpr float reducac = 0.3f;
                         constexpr int mode = 0;
-                        strProtect = pow_F(strProtect, 0.4f);
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const float r = rtemp[ti * TS + tj];
@@ -3483,7 +3481,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 const float krh = rh / (rh + gh + bh);
                 const float kgh = gh / (rh + gh + bh);
                 const float kbh = bh / (rh + gh + bh);
-                strProtect = pow_F(strProtect, 0.4f);
                 constexpr int mode = 1;
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic, 5)
@@ -3788,11 +3785,12 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
 
     {
         const float corr = 20000.f * RedLow * kl * rlo;
+
         if (RedLow > 0.f) {
+            r += corr;
+        } else {
             g -= corr;
             b -= corr;
-        } else {
-            r += corr;
         }
 
         // r = CLIP(r);
@@ -3802,27 +3800,28 @@ void ImProcFunctions::toningsmh(float r, float g, float b, float &ro, float &go,
 
     {
         const float corr = 20000.f * GreenLow * kl * rlo;
+
         if (GreenLow > 0.f) {
+            g += corr;
+        } else {
             r -= corr;
             b -= corr;
-        } else {
-            g += corr;
         }
 
         // r = CLIP(r);
-        // b = CLIP(b);
         // g = CLIP(g);
+        // b = CLIP(b);
     }
 
 
     {
-        const float corr = 20000.f * BlueLow * kl * rlob;
+        const float corr = 20000.f * BlueLow * kl * rlo;
 
         if (BlueLow > 0.f) {
+            b += corr;
+        } else {
             r -= corr;
             g -= corr;
-        } else {
-            b += corr;
         }
 
         // r = CLIP(r);
@@ -4248,11 +4247,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     if (params->labCurve.chromaticity > -100) {
         chCurve = new FlatCurve (params->labCurve.chcurve);
 
-        if (!chCurve || chCurve->isIdentity()) {
-            if (chCurve) {
-                delete chCurve;
-                chCurve = nullptr;
-            }
+        if (chCurve->isIdentity()) {
+            delete chCurve;
+            chCurve = nullptr;
         }//do not use "Munsell" if Chcurve not used
         else {
             chutili = true;
@@ -4265,11 +4262,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     if (params->labCurve.chromaticity > -100) {
         lhCurve = new FlatCurve (params->labCurve.lhcurve);
 
-        if (!lhCurve || lhCurve->isIdentity()) {
-            if (lhCurve) {
-                delete lhCurve;
-                lhCurve = nullptr;
-            }
+        if (lhCurve->isIdentity()) {
+            delete lhCurve;
+            lhCurve = nullptr;
         }//do not use "Munsell" if Chcurve not used
         else {
             lhutili = true;
@@ -4282,11 +4277,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     if (params->labCurve.chromaticity > -100) {
         hhCurve = new FlatCurve (params->labCurve.hhcurve);
 
-        if (!hhCurve || hhCurve->isIdentity()) {
-            if (hhCurve) {
-                delete hhCurve;
-                hhCurve = nullptr;
-            }
+        if (hhCurve->isIdentity()) {
+            delete hhCurve;
+            hhCurve = nullptr;
         }//do not use "Munsell" if Chcurve not used
         else {
             hhutili = true;
@@ -5653,7 +5646,7 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
 
 double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size)
 {
-    if (fname != "") {
+    if (!fname.empty()) {
     	// TODO: std::unique_ptr<> to the rescue
         int w_raw = -1, h_raw = thumb_size;
         int w_thumb = -1, h_thumb = thumb_size;
@@ -5816,7 +5809,7 @@ void ImProcFunctions::lab2rgb (const LabImage &src, Imagefloat &dst, const Glib:
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with darktable.  If not, see <http://www.gnu.org/licenses/>.
+    along with darktable.  If not, see <https://www.gnu.org/licenses/>.
 */
 void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread)
 {

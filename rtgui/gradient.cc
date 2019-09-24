@@ -93,7 +93,7 @@ Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL
     centerCircle = new Circle();
     centerCircle->datum = Geometry::IMAGE;
     centerCircle->radiusInImageSpace = false;
-    centerCircle->radius = 30;
+    centerCircle->radius = 12;
     centerCircle->filled = true;
 
     EditSubscriber::mouseOverGeometry.push_back( hLine );
@@ -269,10 +269,6 @@ void Gradient::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void Gradient::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 void Gradient::enabledChanged ()
 {
 
@@ -426,9 +422,7 @@ bool Gradient::button1Pressed(int modifierKey)
             double diagonal = sqrt(double(imW) * double(imW) + double(imH) * double(imH));
 
             // trick to get the correct angle (clockwise/counter-clockwise)
-            int p = centerPos.y;
-            centerPos.y = currPos.y;
-            currPos.y = p;
+            std::swap(centerPos.y, currPos.y);
 
             draggedPoint = currPos - centerPos;
             // compute the projected value of the dragged point

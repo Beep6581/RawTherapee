@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _FILEBROWSERENTRY_
 #define _FILEBROWSERENTRY_
@@ -34,6 +34,7 @@
 #include "thumbimageupdater.h"
 #include "thumbnail.h"
 #include "thumbnaillistener.h"
+#include "../rtengine/noncopyable.h"
 
 
 class FileBrowserEntry;
@@ -46,7 +47,8 @@ struct FileBrowserEntryIdleHelper {
 class FileThumbnailButtonSet;
 class FileBrowserEntry : public ThumbBrowserEntryBase,
     public ThumbnailListener,
-    public ThumbImageUpdateListener
+    public ThumbImageUpdateListener,
+    public rtengine::NonCopyable
 {
 
     double scale;
@@ -93,9 +95,9 @@ public:
     void refreshQuickThumbnailImage () override;
     void calcThumbnailSize () override;
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea () override;
-    void getIconSize (int& w, int& h) override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea () override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getSpecificityIconsOnImageArea () override;
+    void getIconSize (int& w, int& h) const override;
 
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;

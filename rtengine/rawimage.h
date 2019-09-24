@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef __RAWIMAGE_H
 #define __RAWIMAGE_H
@@ -113,7 +113,7 @@ public:
         return float_raw_image;
     }
 
-    eSensorType getSensorType();
+    eSensorType getSensorType() const;
 
     void getRgbCam (float rgbcam[3][4]);
     void getXtransMatrix ( int xtransMatrix[6][6]);

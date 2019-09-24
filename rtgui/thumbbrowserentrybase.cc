@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "thumbbrowserentrybase.h"
 
@@ -157,9 +157,6 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
     collate_name(getPaddedName(dispname).casefold_collate_key()),
     thumbnail(nullptr),
     filename(fname),
-    shortname(dispname),
-    exifline(""),
-    datetimeline(""),
     selected(false),
     drawable(false),
     filtered(false),
@@ -404,7 +401,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             // draw date/time label
             int tpos = fnlabh;
 
-            if (options.fbShowDateTime && datetimeline != "") {
+            if (options.fbShowDateTime && !datetimeline.empty()) {
                 fn = w->create_pango_layout (datetimeline);
                 fn->set_width (textw * Pango::SCALE);
                 fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
@@ -415,7 +412,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             }
 
             // draw basic exif info
-            if (options.fbShowBasicExif && exifline != "") {
+            if (options.fbShowBasicExif && !exifline.empty()) {
                 fn = w->create_pango_layout (exifline);
                 fn->set_width (textw * Pango::SCALE);
                 fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
@@ -439,7 +436,6 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
     Gtk::Widget* w = parent->getDrawingArea ();
 
     // calculate dimensions of the text based fields
-    dispname = shortname;
 
     Glib::RefPtr<Pango::Context> context = w->get_pango_context () ;
     context->set_font_description (w->get_style_context()->get_font());
@@ -449,7 +445,7 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
     context->set_font_description (fontd);
-    Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout(shortname);
+    Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout(dispname);
     fn->get_pixel_size (fnlabw, fnlabh);
 
     // calculate cummulated height of all info fields
@@ -498,6 +494,7 @@ void ThumbBrowserEntryBase::resize (int h)
 
     height = h;
     int old_preh = preh;
+    int old_prew = prew;
 
     // dimensions of the button set
     int bsw = 0, bsh = 0;
@@ -559,9 +556,11 @@ void ThumbBrowserEntryBase::resize (int h)
         width = bsw + 2 * sideMargin + 2 * borderWidth;
     }
 
-    if (preh != old_preh) {
-        delete [] preview;
-        preview = nullptr;
+    if (preh != old_preh || prew != old_prew) { // if new thumbnail height or new orientation
+        if (preview) {
+            delete [] preview;
+            preview = nullptr;
+        }
         refreshThumbnailImage ();
     } else if (backBuffer) {
         backBuffer->setDirty(true);    // This will force a backBuffer update on queue_draw
@@ -672,16 +671,15 @@ void ThumbBrowserEntryBase::setOffset (int x, int y)
     }
 }
 
-bool ThumbBrowserEntryBase::inside (int x, int y)
+bool ThumbBrowserEntryBase::inside (int x, int y) const
 {
 
     return x > ofsX + startx && x < ofsX + startx + exp_width && y > ofsY + starty && y < ofsY + starty + exp_height;
 }
 
-void ThumbBrowserEntryBase::getPosInImgSpace (int x, int y, rtengine::Coord2D &coord)
+rtengine::Coord2D ThumbBrowserEntryBase::getPosInImgSpace (int x, int y) const
 {
-
-    coord.x = coord.y = -1.;
+    rtengine::Coord2D coord(-1., -1.);
 
     if (preview) {
         x -= ofsX + startx;
@@ -692,15 +690,16 @@ void ThumbBrowserEntryBase::getPosInImgSpace (int x, int y, rtengine::Coord2D &c
             coord.y = double(y - prey) / double(preh);
         }
     }
+    return coord;
 }
 
-bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h)
+bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h) const
 {
 
     return !(ofsX + startx > x + w || ofsX + startx + exp_width < x || ofsY + starty > y + h || ofsY + starty + exp_height < y);
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getIconsOnImageArea()
+std::vector<Glib::RefPtr<Gdk::Pixbuf>> ThumbBrowserEntryBase::getIconsOnImageArea()
 {
     return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
 }
@@ -708,12 +707,6 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getIconsOnImageAr
 std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getSpecificityIconsOnImageArea()
 {
     return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
-}
-
-void ThumbBrowserEntryBase::getIconSize(int& w, int& h)
-{
-    w = 0;
-    h = 0;
 }
 
 bool ThumbBrowserEntryBase::motionNotify  (int x, int y)
@@ -734,31 +727,32 @@ bool ThumbBrowserEntryBase::releaseNotify (int button, int type, int bstate, int
     return buttonSet ? buttonSet->releaseNotify (x, y) : false;
 }
 
-Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y)
+std::tuple<Glib::ustring, bool> ThumbBrowserEntryBase::getToolTip (int x, int y) const
 {
-    Glib::ustring tooltip = "";
+    Glib::ustring tooltip;
 
     if (buttonSet) {
-        tooltip = buttonSet->getToolTip (x, y);
+        tooltip = buttonSet->getToolTip(x, y);
     }
 
     // Always show the filename in the tooltip since the filename in the thumbnail could be truncated.
     // If "Show Exif info" is disabled, also show Exif info in the tooltip.
+    bool useMarkup = !tooltip.empty();
     if (inside(x, y) && tooltip.empty()) {
         tooltip = dispname;
 
         if (withFilename < WFNAME_FULL) {
-            if (options.fbShowDateTime && datetimeline != "") {
+            if (options.fbShowDateTime && !datetimeline.empty()) {
                 tooltip += Glib::ustring("\n") + datetimeline;
             }
 
-            if (options.fbShowBasicExif && exifline != "") {
+            if (options.fbShowBasicExif && !exifline.empty()) {
                 tooltip += Glib::ustring("\n") + exifline;
             }
         }
     }
 
-    return tooltip;
+    return std::make_tuple(std::move(tooltip), useMarkup);
 }
 
 

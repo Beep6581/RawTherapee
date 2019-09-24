@@ -954,7 +954,7 @@ MAIN_MSG_SETPATHFIRST;Para poder usar esta función, primero tiene que establece
 MAIN_MSG_TOOMANYOPENEDITORS;Demasiados editores abiertos.\n<b>Por favor cierre un editor para continuar.</b>
 MAIN_MSG_WRITEFAILED;Falla al escribir\n\n<b>"%1"</b>\n\nAsegurese de que el folder exista y que usted tenga permiso de escritura sobre él.
 MAIN_TAB_ADVANCED;Avanzado
-MAIN_TAB_ADVANCED_TOOLTIP;Tecla de Atajo: <b>Alt-w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Tecla de Atajo: <b>Alt</b>-<b>a</b>
 MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Tecla de Atajo: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Detalle
@@ -2321,10 +2321,13 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !FILEBROWSER_POPUPREMOVE;Delete permanently
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
+!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 !MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
+!PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PREFERENCES_CHUNKSIZES;Tiles per thread
 !PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
@@ -2342,6 +2345,12 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
 !QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
+!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_LABEL;Film Negative
+!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_RED;Red ratio
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 !TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_MODE_HEADER;Lens Profile

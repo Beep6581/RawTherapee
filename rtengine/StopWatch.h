@@ -14,14 +14,14 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  Author: reine
  */
+#pragma once
 
-#ifndef STOPWATCH_H
-#define STOPWATCH_H
 #include <iostream>
+#include <string>
 #include "mytime.h"
 
 #ifdef BENCHMARK
@@ -36,45 +36,34 @@ class StopWatch
 {
 public:
 
-    explicit StopWatch( const char* msg, bool microseconds = false ) : microseconds(microseconds)
+    explicit StopWatch(const char* msg, bool microSeconds = false) : message(msg), unit(microSeconds ? " us" : " ms"), divisor(microSeconds ? 1 : 1000)
     {
-        message = msg;
         start();
         stopped = false;
     }
     ~StopWatch()
     {
-        if(!stopped) {
+        if (!stopped) {
             stop();
         }
     }
     void start()
     {
         startTime.set();
-    };
+    }
     void stop()
     {
         stopTime.set();
-        if(!microseconds) {
-            long elapsedTime = stopTime.etime(startTime) / 1000;
-            std::cout << message << " took " << elapsedTime << " ms" << std::endl;
-        } else {
-            long elapsedTime = stopTime.etime(startTime);
-            std::cout << message << " took " << elapsedTime << " us" << std::endl;
-        }
+        const long elapsedTime = stopTime.etime(startTime) / divisor;
+        std::cout << message << " took " << elapsedTime << unit << std::endl;
         stopped = true;
     }
-    void stop(const char *msg)
-    {
-        message = msg;
-        stop();
-    };
+
 private:
-    bool microseconds;
     MyTime startTime;
     MyTime stopTime;
-    const char *message;
+    const std::string message;
+    const std::string unit;
+    const int divisor;
     bool stopped;
 };
-
-#endif  /* STOPWATCH_H */

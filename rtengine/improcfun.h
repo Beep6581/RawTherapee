@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
@@ -77,116 +77,6 @@ class ImProcFunctions
     bool needsLensfun();
 //   static cmsUInt8Number* Mempro = NULL;
 
-    inline void interpolateTransformCubic(Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul)
-    {
-        const double A = -0.85;
-
-        double w[4];
-
-        {
-            double t1, t2;
-            t1 = -A * (Dx - 1.0) * Dx;
-            t2 = (3.0 - 2.0 * Dx) * Dx * Dx;
-            w[3] = t1 * Dx;
-            w[2] = t1 * (Dx - 1.0) + t2;
-            w[1] = -t1 * Dx + 1.0 - t2;
-            w[0] = -t1 * (Dx - 1.0);
-        }
-
-        double rd, gd, bd;
-        double yr[4] = {0.0}, yg[4] = {0.0}, yb[4] = {0.0};
-
-        for (int k = ys, kx = 0; k < ys + 4; k++, kx++) {
-            rd = gd = bd = 0.0;
-
-            for (int i = xs, ix = 0; i < xs + 4; i++, ix++) {
-                rd += src->r(k, i) * w[ix];
-                gd += src->g(k, i) * w[ix];
-                bd += src->b(k, i) * w[ix];
-            }
-
-            yr[kx] = rd;
-            yg[kx] = gd;
-            yb[kx] = bd;
-        }
-
-
-        {
-            double t1, t2;
-
-            t1 = -A * (Dy - 1.0) * Dy;
-            t2 = (3.0 - 2.0 * Dy) * Dy * Dy;
-            w[3] = t1 * Dy;
-            w[2] = t1 * (Dy - 1.0) + t2;
-            w[1] = -t1 * Dy + 1.0 - t2;
-            w[0] = -t1 * (Dy - 1.0);
-        }
-
-        rd = gd = bd = 0.0;
-
-        for (int i = 0; i < 4; i++) {
-            rd += yr[i] * w[i];
-            gd += yg[i] * w[i];
-            bd += yb[i] * w[i];
-        }
-
-        *r = rd * mul;
-        *g = gd * mul;
-        *b = bd * mul;
-
-        //  if (xs==100 && ys==100)
-        //    printf ("r=%g, g=%g\n", *r, *g);
-    }
-
-    inline void interpolateTransformChannelsCubic(float** src, int xs, int ys, double Dx, double Dy, float *r, double mul)
-    {
-        const double A = -0.85;
-
-        double w[4];
-
-        {
-            double t1, t2;
-            t1 = -A * (Dx - 1.0) * Dx;
-            t2 = (3.0 - 2.0 * Dx) * Dx * Dx;
-            w[3] = t1 * Dx;
-            w[2] = t1 * (Dx - 1.0) + t2;
-            w[1] = -t1 * Dx + 1.0 - t2;
-            w[0] = -t1 * (Dx - 1.0);
-        }
-
-        double rd;
-        double yr[4] = {0.0};
-
-        for (int k = ys, kx = 0; k < ys + 4; k++, kx++) {
-            rd = 0.0;
-
-            for (int i = xs, ix = 0; i < xs + 4; i++, ix++) {
-                rd += src[k][i] * w[ix];
-            }
-
-            yr[kx] = rd;
-        }
-
-
-        {
-            double t1, t2;
-            t1 = -A * (Dy - 1.0) * Dy;
-            t2 = (3.0 - 2.0 * Dy) * Dy * Dy;
-            w[3] = t1 * Dy;
-            w[2] = t1 * (Dy - 1.0) + t2;
-            w[1] = -t1 * Dy + 1.0 - t2;
-            w[0] = -t1 * (Dy - 1.0);
-        }
-
-        rd = 0.0;
-
-        for (int i = 0; i < 4; i++) {
-            rd += yr[i] * w[i];
-        }
-
-        *r = rd * mul;
-    }
-
 
 public:
     enum class Median {
@@ -200,7 +90,7 @@ public:
 
     double lumimul[3];
 
-    ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
+    explicit ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions();
     bool needsLuminanceOnly()
@@ -248,7 +138,7 @@ public:
     void Lanczos(const LabImage* src, LabImage* dst, float scale);
     void Lanczos(const Imagefloat* src, Imagefloat* dst, float scale);
 
-    void deconvsharpening(float** luminance, float** buffer, int W, int H, const procparams::SharpeningParams &sharpenParam);
+    void deconvsharpening(float** luminance, float** buffer, const float* const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale);
     void MLsharpen(LabImage* lab); // Manuel's clarity / sharpening
     void MLmicrocontrast(float** luminance, int W, int H);   //Manuel's microcontrast
     void MLmicrocontrast(LabImage* lab);   //Manuel's microcontrast
@@ -332,11 +222,8 @@ public:
     float MadRgb(const float * DataList, int datalen);
 
     // pyramid wavelet
-    void dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, float ** l_a, float ** l_b, const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
-    void dirpyr_equalizercam(CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, float ** h_p, float ** C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, bool execdir, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
-    void dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale);
-    void idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[6], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r);
-    void idirpyr_eq_channelcam(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[6], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r);
+    void dirpyr_equalizer(const float * const * src, float ** dst, int srcwidth, int srcheight, const float * const * l_a, const float * const * l_b, const double * mult, double dirpyrThreshold, double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
+    void dirpyr_equalizercam(const CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, const float * const * h_p, const float * const * C_p,  const double * mult, const double dirpyrThreshold, const double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
     void defringe(LabImage* lab);
     void defringecam(CieImage* ncie);
     void badpixcam(CieImage* ncie, double rad, int thr, int mode, float chrom, bool hotbad);

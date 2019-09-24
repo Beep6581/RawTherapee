@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 
@@ -49,11 +49,11 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
         stop.reset(new StopWatch("rcd demosaic"));
     }
 
-    volatile double progress = 0.0;
+    double progress = 0.0;
 
     if (plistener) {
         plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_RCD")));
-        plistener->setProgress(0);
+        plistener->setProgress(progress);
     }
     
     constexpr int rcdBorder = 9;

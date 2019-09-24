@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _TONECURVE_H_
 #define _TONECURVE_H_
@@ -104,7 +104,6 @@ public:
     float blendPipetteValues (CurveEditor *ce, float chan1, float chan2, float chan3) override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void neutral_pressed ();
     void autolevels_toggled ();
     void clip_changed ();

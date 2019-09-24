@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
 
@@ -643,10 +643,6 @@ void ToneCurve::adjusterChanged(Adjuster* a, double newval)
     } else if (a == shcompr) {
         listener->panelChanged (EvSHCompr, costr);
     }
-}
-
-void ToneCurve::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void ToneCurve::neutral_pressed ()

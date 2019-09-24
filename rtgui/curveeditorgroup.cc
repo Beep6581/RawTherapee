@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
@@ -397,7 +397,7 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce)
     }
 }
 
-CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename(""), valLinear(0), valUnchanged(0), parent(nullptr)
+CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), valLinear(0), valUnchanged(0), parent(nullptr)
 {
     leftBar = nullptr;
     bottomBar = nullptr;

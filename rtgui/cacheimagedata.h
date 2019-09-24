@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _CACHEIMAGEDATA_
 #define _CACHEIMAGEDATA_
@@ -54,6 +54,7 @@ public:
     double focalLen, focalLen35mm;
     float focusDist;
     unsigned iso;
+    int rating;
     bool isHDR;
     bool isPixelShift;
     int sensortype;
@@ -103,6 +104,7 @@ public:
     std::string getLens() const override { return lens; }
     std::string getOrientation() const override { return ""; } // TODO
     Glib::ustring getFileName() const override { return ""; }
+    int getRating () const override { return rating; } // FIXME-piotr : missing rating
     bool getPixelShift () const override { return isPixelShift; }
     bool getHDR() const override { return isHDR; }
     std::string getImageType() const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }

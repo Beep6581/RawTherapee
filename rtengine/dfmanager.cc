@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "dfmanager.h"
 #include "../rtgui/options.h"
@@ -328,8 +328,8 @@ void DFManager::init(const Glib::ustring& pathname)
             } else {
                 printf( "%s: MEAN of \n    ", i.key().c_str());
 
-                for( std::list<Glib::ustring>::iterator iter = i.pathNames.begin(); iter != i.pathNames.end(); ++iter  ) {
-                    printf( "%s, ", iter->c_str() );
+                for(std::list<Glib::ustring>::iterator path = i.pathNames.begin(); path != i.pathNames.end(); ++path) {
+                    printf("%s, ", path->c_str());
                 }
 
                 printf("\n");

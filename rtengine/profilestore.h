@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _PROFILESTORE_
 #define _PROFILESTORE_
@@ -185,7 +185,7 @@ public:
 
     bool init (bool loadAll = true);
     void parseProfiles ();
-    int findFolderId (const Glib::ustring &path);
+    int findFolderId (const Glib::ustring &path) const;
     const ProfileStoreEntry*                     findEntryFromFullPath (Glib::ustring path);
     const rtengine::procparams::PartialProfile*  getProfile (Glib::ustring path);
     const rtengine::procparams::PartialProfile*  getProfile (const ProfileStoreEntry* entry);
@@ -193,13 +193,13 @@ public:
     void                                         releaseFileList ();
     const rtengine::procparams::ProcParams*      getDefaultProcParams (bool isRaw);
     const rtengine::procparams::PartialProfile*  getDefaultPartialProfile (bool isRaw);
-    const Glib::ustring                          getPathFromId (int folderId);
-    const ProfileStoreEntry*                     getInternalDefaultPSE()
+    const Glib::ustring                          getPathFromId (int folderId) const;
+    const ProfileStoreEntry*                     getInternalDefaultPSE() const
     {
         return internalDefaultEntry;
     }
 
-    const ProfileStoreEntry*                     getInternalDynamicPSE()
+    const ProfileStoreEntry*                     getInternalDynamicPSE() const
     {
         return internalDynamicEntry;
     }

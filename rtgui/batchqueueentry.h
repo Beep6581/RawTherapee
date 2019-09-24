@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _BATCHQUEUEENTRY_
 #define _BATCHQUEUEENTRY_
@@ -26,6 +26,7 @@
 #include "thumbbrowserentrybase.h"
 #include "thumbnail.h"
 #include "bqentryupdater.h"
+#include "../rtengine/noncopyable.h"
 
 class BatchQueueEntry;
 struct BatchQueueEntryIdleHelper {
@@ -34,7 +35,7 @@ struct BatchQueueEntryIdleHelper {
     int pending;
 };
 
-class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener
+class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener, public rtengine::NonCopyable
 {
 
     guint8* opreview;
@@ -68,9 +69,9 @@ public:
 
     void removeButtonSet ();
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea () override;
-    void getIconSize (int& w, int& h) override;
-    Glib::ustring getToolTip (int x, int y) override;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea () override;
+    void getIconSize (int& w, int& h) const override;
+    std::tuple<Glib::ustring, bool> getToolTip (int x, int y) const override;
 
     // bqentryupdatelistener interface
     void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) override;

@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <iomanip>
@@ -88,12 +88,6 @@ void SoftLight::adjusterChanged(Adjuster* a, double newval)
         listener->panelChanged(EvSoftLightStrength, a->getTextValue());
     }
 }
-
-
-void SoftLight::adjusterAutoToggled(Adjuster* a, bool newval)
-{
-}
-
 
 void SoftLight::enabledChanged ()
 {

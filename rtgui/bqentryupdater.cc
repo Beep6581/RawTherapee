@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "bqentryupdater.h"
 #include <gtkmm.h>
@@ -100,13 +100,12 @@ void BatchQueueEntryUpdater::processThread ()
             break;
         }
 
-        rtengine::IImage8* img = nullptr;
         bool newBuffer = false;
 
         if (current.thumbnail && current.pparams) {
             // the thumbnail and the pparams are provided, it means that we have to build the original preview image
             double tmpscale;
-            img = current.thumbnail->processThumbImage (*current.pparams, current.oh, tmpscale);
+            rtengine::IImage8* img = current.thumbnail->processThumbImage (*current.pparams, current.oh, tmpscale);
 
             //current.thumbnail->decreaseRef (); // WARNING: decreasing refcount (and maybe deleting) thumbnail, with or without processed image
             if (img) {

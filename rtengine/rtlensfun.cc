@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "rtlensfun.h"
@@ -132,7 +132,7 @@ Glib::ustring LFModifier::getDisplayString() const
         return "NONE";
     } else {
         Glib::ustring ret;
-        Glib::ustring sep = "";
+        Glib::ustring sep;
         if (flags_ & LF_MODIFY_DISTORTION) {
             ret += "distortion";
             sep = ", ";

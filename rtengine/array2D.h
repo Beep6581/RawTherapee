@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -210,6 +210,12 @@ public:
 
     // use as pointer to T**
     operator T**()
+    {
+        return ptr;
+    }
+
+    // use as pointer to T**
+    operator const T* const *()
     {
         return ptr;
     }

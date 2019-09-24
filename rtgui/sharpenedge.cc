@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <sstream>
@@ -145,10 +145,6 @@ void SharpenEdge::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvSharpenEdgeAmount, value );
         }
     }
-}
-
-void SharpenEdge::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void SharpenEdge::setBatchMode(bool batchMode)

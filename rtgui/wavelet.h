@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  2014 Jacques Desmis <jdesmis@gmail.com>
  */
@@ -46,7 +46,6 @@ public:
 
     bool wavComputed_ ();
     void adjusterChanged(Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void autoOpenCurve () override;
     void curveChanged (CurveEditor* ce) override;
     void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;

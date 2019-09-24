@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _PROFILEPANEL_
 #define _PROFILEPANEL_
@@ -28,8 +28,9 @@
 #include "guiutils.h"
 #include "profilestorecombobox.h"
 #include "rtimage.h"
+#include "../rtengine/noncopyable.h"
 
-class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener
+class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener, public rtengine::NonCopyable
 {
 
 private:

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
 #include <iostream>
@@ -37,6 +37,9 @@
 #include "pdaflinesfilter.h"
 #include "camconst.h"
 #include "procparams.h"
+#include "color.h"
+//#define BENCHMARK
+//#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -429,6 +432,7 @@ RawImageSource::RawImageSource ()
     , plistener(nullptr)
     , scale_mul{}
     , c_black{}
+    , c_white{}
     , cblacksom{}
     , ref_pre_mul{}
     , refwb_red(0.0)
@@ -452,6 +456,9 @@ RawImageSource::RawImageSource ()
     , green(0, 0)
     , red(0, 0)
     , blue(0, 0)
+    , greenCache(nullptr)
+    , redCache(nullptr)
+    , blueCache(nullptr)
     , rawDirty(true)
     , histMatchingParams(new procparams::ColorManagementParams)
 {
@@ -469,6 +476,9 @@ RawImageSource::~RawImageSource ()
 {
 
     delete idata;
+    delete redCache;
+    delete greenCache;
+    delete blueCache;
 
     for(size_t i = 0; i < numFrames; ++i) {
         delete riFrames[i];
@@ -998,11 +1008,43 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     if (errCode) {
         return errCode;
     }
-    numFrames = firstFrameOnly ? 1 : ri->getFrameCount();
+    numFrames = firstFrameOnly ? (numFrames < 7 ? 1 : ri->getFrameCount()) : ri->getFrameCount();
 
     errCode = 0;
 
-    if(numFrames > 1) {
+    if(numFrames >= 7) {
+        // special case to avoid crash when loading Hasselblad H6D-100cMS pixelshift files
+        // limit to 6 frames and skip first frame, as first frame is not bayer
+        if (firstFrameOnly) {
+            numFrames = 1;
+        } else {
+            numFrames = 6;
+        }
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            int errCodeThr = 0;
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+            for(unsigned int i = 0; i < numFrames; ++i) {
+                if(i == 0) {
+                    riFrames[i] = ri;
+                    errCodeThr = riFrames[i]->loadRaw (true, i + 1, true, plistener, 0.8);
+                } else {
+                    riFrames[i] = new RawImage(fname);
+                    errCodeThr = riFrames[i]->loadRaw (true, i + 1);
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                errCode = errCodeThr ? errCodeThr : errCode;
+            }
+        }
+    } else if(numFrames > 1) {
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -1518,7 +1560,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold)
+void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache)
 {
     MyTime t1, t2;
     t1.set();
@@ -1589,7 +1631,49 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 
     rgbSourceModified = false;
 
-
+    if (cache) {
+        if (!redCache) {
+            redCache = new array2D<float>(W, H);
+            greenCache = new array2D<float>(W, H);
+            blueCache = new array2D<float>(W, H);
+        }
+#ifdef _OPENMP
+        #pragma omp parallel sections
+#endif
+        {
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*redCache)[i][j] = red[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*greenCache)[i][j] = green[i][j];
+                }
+            }
+#ifdef _OPENMP
+            #pragma omp section
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    (*blueCache)[i][j] = blue[i][j];
+                }
+            }
+        }
+    } else {
+        delete redCache;
+        redCache = nullptr;
+        delete greenCache;
+        greenCache = nullptr;
+        delete blueCache;
+        blueCache = nullptr;
+    }
     if( settings->verbose ) {
         if (getSensorType() == ST_BAYER) {
             printf("Demosaicing Bayer data: %s - %d usec\n", raw.bayersensor.method.c_str(), t2.etime(t1));
@@ -3823,7 +3907,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         return false;
     }
 
-    if (inProfile == "(embedded)" && embedded) {
+    if (embedded && inProfile == "(embedded)") {
         in = embedded;
     } else if (inProfile == "(cameraICC)") {
         // DCPs have higher quality, so use them first
@@ -3832,7 +3916,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         if (*dcpProf == nullptr) {
             in = ICCStore::getInstance()->getStdProfile(camName);
         }
-    } else if (inProfile != "(camera)" && inProfile != "") {
+    } else if (inProfile != "(camera)" && !inProfile.empty()) {
         Glib::ustring normalName = inProfile;
 
         if (!inProfile.compare (0, 5, "file:")) {
@@ -4929,9 +5013,7 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     } else if (rotate == 270) {
         std::swap(xnew,ynew);
-        ynew = H - 1 - ynew;
         xnew = W - 1 - xnew;
-        ynew = H - 1 - ynew;
     }
 
     xnew = LIM(xnew, 0, W - 1);

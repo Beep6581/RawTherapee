@@ -13,7 +13,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _BATCHQUEUE_
 #define _BATCHQUEUE_
@@ -29,6 +29,7 @@
 #include "options.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
+#include "../rtengine/noncopyable.h"
 
 class BatchQueueListener
 {
@@ -44,7 +45,8 @@ class FileCatalog;
 class BatchQueue final :
     public ThumbBrowserBase,
     public rtengine::BatchProcessingListener,
-    public LWButtonListener
+    public LWButtonListener,
+    public rtengine::NonCopyable
 {
 public:
     explicit BatchQueue (FileCatalog* aFileCatalog);

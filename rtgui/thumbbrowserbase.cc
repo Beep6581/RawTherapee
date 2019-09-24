@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <numeric>
 
@@ -28,7 +28,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), arrangement(TB_Horizontal)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), anchor(nullptr), previewHeight(options.thumbSize), numOfCols(1), lastRowHeight(0), arrangement(TB_Horizontal)
 {
     inW = -1;
     inH = -1;
@@ -44,6 +44,8 @@ ThumbBrowserBase::ThumbBrowserBase ()
 
     show_all ();
 
+    vscroll.get_adjustment()->set_lower(0);
+    hscroll.get_adjustment()->set_lower(0);
     vscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
     hscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
 
@@ -77,10 +79,19 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
         delta = deltaY;
     }
     if (direction == GDK_SCROLL_SMOOTH && delta == 0.0) {
-        // sometimes this case happens. To avoid scrolling the wrong direction in this case, we just do nothing    
+        // sometimes this case happens. To avoid scrolling the wrong direction in this case, we just do nothing
+        // This is probably no longer necessary now that coef is no longer quantized to +/-1.0 but why waste CPU cycles?
         return;
     }
-    double coef = direction == GDK_SCROLL_DOWN || (direction == GDK_SCROLL_SMOOTH && delta > 0.0) ? +1.0 : -1.0;
+    //GDK_SCROLL_SMOOTH can come in as many events with small deltas, don't quantize these to +/-1.0 so trackpads work well
+    double coef;
+    if(direction == GDK_SCROLL_SMOOTH) {
+        coef = delta;
+    } else if (direction == GDK_SCROLL_DOWN) {
+        coef = +1.0;
+    } else {
+        coef = -1.0;
+    }
 
     // GUI already acquired when here
     if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN || direction == GDK_SCROLL_SMOOTH) {
@@ -162,37 +173,42 @@ inline void removeFromSelection (const ThumbIterator& iterator, ThumbVector& sel
 
 void ThumbBrowserBase::selectSingle (ThumbBrowserEntryBase* clicked)
 {
-    clearSelection (selected);
+    clearSelection(selected);
+    anchor = clicked;
 
-    if (clicked)
-        addToSelection (clicked, selected);
+    if (clicked) {
+        addToSelection(clicked, selected);
+    }
 }
 
 void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additional)
 {
-    if (selected.empty()) {
-        addToSelection(clicked, selected);
-        return;
+    if (!anchor) {
+        anchor = clicked;
+        if (selected.empty()) {
+            addToSelection(clicked, selected);
+            return;
+        }
     }
 
     if (!additional || !lastClicked) {
         // Extend the current range w.r.t to first selected entry.
-        ThumbIterator front = std::find(fd.begin(), fd.end(), selected.front());
-        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator back = std::find(fd.begin(), fd.end(), clicked);
+        ThumbIterator front = anchor == clicked ? back : std::find(fd.begin(), fd.end(), anchor);
 
-        if (front > current) {
-            std::swap(front, current);
+        if (front > back) {
+            std::swap(front, back);
         }
 
         clearSelection(selected);
 
-        for (; front <= current && front != fd.end(); ++front) {
+        for (; front <= back && front != fd.end(); ++front) {
             addToSelection(*front, selected);
         }
     } else {
         // Add an additional range w.r.t. the last clicked entry.
         ThumbIterator last = std::find(fd.begin(), fd.end(), lastClicked);
-        ThumbIterator current = std::find (fd.begin(), fd.end(), clicked);
+        ThumbIterator current = std::find(fd.begin(), fd.end(), clicked);
 
         if (last > current) {
             std::swap(last, current);
@@ -206,32 +222,33 @@ void ThumbBrowserBase::selectRange (ThumbBrowserEntryBase* clicked, bool additio
 
 void ThumbBrowserBase::selectSet (ThumbBrowserEntryBase* clicked)
 {
-    const ThumbIterator iterator = std::find (selected.begin (), selected.end (), clicked);
+    const ThumbIterator iterator = std::find(selected.begin(), selected.end(), clicked);
 
-    if (iterator != selected.end ()) {
-        removeFromSelection (iterator, selected);
+    if (iterator != selected.end()) {
+        removeFromSelection(iterator, selected);
     } else {
-        addToSelection (clicked, selected);
+        addToSelection(clicked, selected);
     }
+    anchor = clicked;
 }
 
 static void scrollToEntry (double& h, double& v, int iw, int ih, ThumbBrowserEntryBase* entry)
 {
-    const int hmin = entry->getX ();
-    const int hmax = hmin + entry->getEffectiveWidth () - iw;
-    const int vmin = entry->getY ();
-    const int vmax = vmin + entry->getEffectiveHeight () - ih;
+    const int hMin = entry->getX();
+    const int hMax = hMin + entry->getEffectiveWidth() - iw;
+    const int vMin = entry->getY();
+    const int vMax = vMin + entry->getEffectiveHeight() - ih;
 
-    if (hmin < 0) {
-        h += hmin;
-    } else if (hmax > 0) {
-        h += hmax;
+    if (hMin < 0) {
+        h += hMin;
+    } else if (hMax > 0) {
+        h += hMax;
     }
 
-    if(vmin < 0) {
-        v += vmin;
-    } else if (vmax > 0) {
-        v += vmax;
+    if (vMin < 0) {
+        v += vMin;
+    } else if (vMax > 0) {
+        v += vMax;
     }
 }
 
@@ -534,28 +551,31 @@ void ThumbBrowserBase::configScrollBars ()
     GThreadLock tLock; // Acquire the GUI
 
     if (inW > 0 && inH > 0) {
-
-        int iw = internal.get_width ();
-        int ih = internal.get_height ();
-
-        hscroll.get_adjustment()->set_upper (inW);
-        vscroll.get_adjustment()->set_upper (inH);
-        hscroll.get_adjustment()->set_lower (0);
-        vscroll.get_adjustment()->set_lower (0);
-        hscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
-        vscroll.get_adjustment()->set_step_increment (!fd.empty() ? fd[0]->getEffectiveHeight() : 0);
-        hscroll.get_adjustment()->set_page_increment (iw);
-        vscroll.get_adjustment()->set_page_increment (ih);
-        hscroll.get_adjustment()->set_page_size (iw);
-        vscroll.get_adjustment()->set_page_size (ih);
-
-        if(iw >= inW) {
-            hscroll.hide();
+        int ih = internal.get_height();
+        if (arrangement == TB_Horizontal) {
+            auto ha = hscroll.get_adjustment();
+            int iw = internal.get_width();
+            ha->set_upper(inW);
+            ha->set_step_increment(!fd.empty() ? fd[0]->getEffectiveWidth() : 0);
+            ha->set_page_increment(iw);
+            ha->set_page_size(iw);
+            if (iw >= inW) {
+                hscroll.hide();
+            } else {
+                hscroll.show();
+            }
         } else {
-            hscroll.show();
+            hscroll.hide();
         }
 
-        if(ih >= inH) {
+        auto va = vscroll.get_adjustment();
+        va->set_upper(inH);
+        const auto height = !fd.empty() ? fd[0]->getEffectiveHeight() : 0;
+        va->set_step_increment(height);
+        va->set_page_increment(height == 0 ? ih : (ih / height) * height);
+        va->set_page_size(ih);
+
+        if (ih >= inH) {
             vscroll.hide();
         } else {
             vscroll.show();
@@ -563,8 +583,22 @@ void ThumbBrowserBase::configScrollBars ()
     }
 }
 
-void ThumbBrowserBase::arrangeFiles()
+void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
 {
+
+    if (fd.empty()) {
+        // nothing to arrange
+        resizeThumbnailArea(0, 0);
+        return;
+    }
+    if(entry && entry->filtered) {
+        // a filtered entry was added, nothing to arrange, but has to be marked not drawable
+        MYREADERLOCK(l, entryRW);
+        entry->drawable = false;
+        MYREADERLOCK_RELEASE(l);
+        return;
+    }
+
     MYREADERLOCK(l, entryRW);
 
     // GUI already locked by ::redraw, the only caller of this method for now.
@@ -572,14 +606,19 @@ void ThumbBrowserBase::arrangeFiles()
     //GThreadLock lock;
 
     int rowHeight = 0;
+    if (entry) {
+        // we got the reference to the added entry, makes calculation of rowHeight O(1)
+        lastRowHeight = rowHeight = std::max(lastRowHeight, entry->getMinimalHeight());
+    } else {
 
-    for (unsigned int i = 0; i < fd.size(); i++) {
-        // apply filter
-        fd[i]->filtered = !checkFilter (fd[i]);
-
-        // compute size of the items
-        if (!fd[i]->filtered && fd[i]->getMinimalHeight() > rowHeight) {
-            rowHeight = fd[i]->getMinimalHeight ();
+        lastRowHeight = 0;
+        for (const auto thumb : fd) {
+            // apply filter
+            thumb->filtered = !checkFilter(thumb);
+            // compute max rowHeight
+            if (!thumb->filtered) {
+                rowHeight = std::max(thumb->getMinimalHeight(), rowHeight);
+            }
         }
     }
 
@@ -590,7 +629,6 @@ void ThumbBrowserBase::arrangeFiles()
 
         for (unsigned int ct = 0; ct < fd.size(); ++ct) {
             // arrange items in the column
-            int curry = 0;
 
             for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
                 fd[ct]->drawable = false;
@@ -599,10 +637,9 @@ void ThumbBrowserBase::arrangeFiles()
             if (ct < fd.size()) {
                 const int maxw = fd[ct]->getMinimalWidth();
 
-                fd[ct]->setPosition(currx, curry, maxw, rowHeight);
+                fd[ct]->setPosition(currx, 0, maxw, rowHeight);
                 fd[ct]->drawable = true;
                 currx += maxw;
-                curry += rowHeight;
             }
         }
 
@@ -613,14 +650,16 @@ void ThumbBrowserBase::arrangeFiles()
         const int availWidth = internal.get_width();
 
         // initial number of columns
+        int oldNumOfCols = numOfCols;
         numOfCols = 0;
         int colsWidth = 0;
 
         for (unsigned int i = 0; i < fd.size(); ++i) {
             if (!fd[i]->filtered && colsWidth + fd[i]->getMinimalWidth() <= availWidth) {
-                colsWidth += fd[numOfCols]->getMinimalWidth();
+                colsWidth += fd[i]->getMinimalWidth();
                 ++numOfCols;
                 if(colsWidth > availWidth) {
+                    --numOfCols;
                     break;
                 }
             }
@@ -656,8 +695,73 @@ void ThumbBrowserBase::arrangeFiles()
 
         // arrange files
         int curry = 0;
+        size_t ct = 0;
+        if (entry) {
+            std::vector<int> oldColWidths;
+            if (oldNumOfCols == numOfCols) {
+                for (; oldNumOfCols > 0; --oldNumOfCols) {
+                    // compute old column widths
+                    oldColWidths.assign(oldNumOfCols, 0);
 
-        for (unsigned int ct = 0; ct < fd.size();) {
+                    for (unsigned int i = 0, j = 0; i < fd.size(); ++i) {
+                        if (fd[i] != entry && !fd[i]->filtered && fd[i]->getMinimalWidth() > oldColWidths[j % oldNumOfCols]) {
+                            oldColWidths[j % oldNumOfCols] = fd[i]->getMinimalWidth();
+                        }
+
+                        if (fd[i] != entry && !fd[i]->filtered) {
+                            ++j;
+                        }
+                    }
+                    if (oldNumOfCols == 1 || std::accumulate(oldColWidths.begin(), oldColWidths.end(), 0) < availWidth) {
+                        break;
+                    }
+                }
+            }
+
+            bool arrangeAll = true;
+            if (oldNumOfCols == numOfCols) {
+                arrangeAll = false;
+                for (int i = 0; i < numOfCols; ++i) {
+                    if(colWidths[i] != oldColWidths[i]) {
+                        arrangeAll = true;
+                        break;
+                    }
+                }
+            }
+            if (!arrangeAll) {
+                int j = 0;
+                // Find currently added entry
+                for (; ct < fd.size() && fd[ct] != entry; j += !fd[ct]->filtered, ++ct) {
+                }
+                //Calculate the position of currently added entry
+                const int row = j / numOfCols;
+                const int col = j % numOfCols;
+                curry = row * rowHeight;
+                int currx = 0;
+                for (int c = 0; c < col; ++c) {
+                    currx += colWidths[c];
+                }
+                // arrange all entries in the row beginning with the currently added one
+                for (int i = col; ct < fd.size() && i < numOfCols; ++i, ++ct) {
+                    for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                        fd[ct]->drawable = false;
+                    }
+                    if (ct < fd.size()) {
+                        fd[ct]->setPosition(currx, curry, colWidths[i], rowHeight);
+                        fd[ct]->drawable = true;
+                        currx += colWidths[i];
+                    }
+                }
+
+                if (currx > 0) { // there were thumbnails placed in the row
+                    curry += rowHeight;
+                }
+            }
+        }
+
+        // arrange remaining entries, if any, that's the most expensive part
+        for (; ct < fd.size();) {
+
             // arrange items in the row
             int currx = 0;
 
@@ -667,9 +771,9 @@ void ThumbBrowserBase::arrangeFiles()
                 }
 
                 if (ct < fd.size()) {
-                    fd[ct]->setPosition(currx, curry, colWidths[i % numOfCols], rowHeight);
+                    fd[ct]->setPosition(currx, curry, colWidths[i], rowHeight);
                     fd[ct]->drawable = true;
-                    currx += colWidths[i % numOfCols];
+                    currx += colWidths[i];
                 }
             }
 
@@ -680,7 +784,7 @@ void ThumbBrowserBase::arrangeFiles()
 
         MYREADERLOCK_RELEASE(l);
         // This will require a Writer access
-        resizeThumbnailArea (colsWidth, curry);
+        resizeThumbnailArea(colsWidth, curry);
     }
 }
 
@@ -736,20 +840,24 @@ void ThumbBrowserBase::Internal::on_realize()
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
-    Glib::ustring ttip = "";
-
+    Glib::ustring ttip;
+    bool useMarkup = false;
     {
         MYREADERLOCK(l, parent->entryRW);
 
         for (size_t i = 0; i < parent->fd.size(); i++)
             if (parent->fd[i]->drawable && parent->fd[i]->inside (x, y)) {
-                ttip = parent->fd[i]->getToolTip (x, y);
+                std::tie(ttip, useMarkup) = parent->fd[i]->getToolTip (x, y);
                 break;
             }
     }
 
-    if (ttip != "") {
-        tooltip->set_markup (ttip);
+    if (!ttip.empty()) {
+        if (useMarkup) {
+            tooltip->set_markup(ttip);
+        } else {
+            tooltip->set_text(ttip);
+        }
         return true;
     } else {
         return false;
@@ -764,7 +872,6 @@ void ThumbBrowserBase::on_style_updated ()
 
 ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(nullptr), dirty(true)
 {
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     set_name("FileCatalog");
 }
 
@@ -970,12 +1077,12 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
 }
 
 
-void ThumbBrowserBase::redraw ()
+void ThumbBrowserBase::redraw (ThumbBrowserEntryBase* entry)
 {
 
     GThreadLock lock;
-    arrangeFiles ();
-    queue_draw ();
+    arrangeFiles(entry);
+    queue_draw();
 }
 
 void ThumbBrowserBase::zoomChanged (bool zoomIn)

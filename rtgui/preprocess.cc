@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <sstream>
 
@@ -99,10 +99,6 @@ void PreProcess::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvPreProcessHotDeadThresh, a->getTextValue() );
         }
     }
-}
-
-void PreProcess::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void PreProcess::hotPixelChanged ()

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -52,6 +52,7 @@ private:
     double expcomp;
     std::string make, model, serial;
     std::string orientation;
+    int rating;
     std::string lens;
     IIOSampleFormat sampleFormat;
     bool isPixelShift;
@@ -81,6 +82,7 @@ public:
     std::string getLens() const override;
     std::string getSerialNumber() const;
     std::string getOrientation() const override;
+    int getRating() const override;
     Glib::ustring getFileName() const override;
 };
 

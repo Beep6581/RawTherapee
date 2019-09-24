@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "batchqueueentry.h"
 
@@ -40,7 +40,6 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
     job(pjob),
     params(new rtengine::procparams::ProcParams(pparams)),
     progress(0),
-    outFileName(""),
     sequence(0),
     forceFormatOpts(false),
     fast_pipeline(job->fastPipeline()),
@@ -148,7 +147,7 @@ void BatchQueueEntry::removeButtonSet ()
     buttonSet = nullptr;
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > BatchQueueEntry::getIconsOnImageArea ()
+std::vector<Glib::RefPtr<Gdk::Pixbuf>> BatchQueueEntry::getIconsOnImageArea ()
 {
 
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
@@ -160,7 +159,7 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > BatchQueueEntry::getIconsOnImageArea ()
     return ret;
 }
 
-void BatchQueueEntry::getIconSize (int& w, int& h)
+void BatchQueueEntry::getIconSize (int& w, int& h) const
 {
 
     w = savedAsIcon->get_width ();
@@ -168,10 +167,12 @@ void BatchQueueEntry::getIconSize (int& w, int& h)
 }
 
 
-Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
+std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip (int x, int y) const
 {
     // get the parent class' tooltip first
-    Glib::ustring tooltip = ThumbBrowserEntryBase::getToolTip(x, y);
+    Glib::ustring tooltip;
+    bool useMarkup;
+    std::tie(tooltip, useMarkup) =  ThumbBrowserEntryBase::getToolTip(x, y);
 
     // add the saving param options
     if (!outFileName.empty()) {
@@ -198,7 +199,7 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y)
         }
     }
 
-    return tooltip;
+    return std::make_tuple(std::move(tooltip), useMarkup);
 
 }
 

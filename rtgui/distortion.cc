@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
 
@@ -93,10 +93,6 @@ void Distortion::adjusterChanged(Adjuster* a, double newval)
     if (listener) {
         listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
     }
-}
-
-void Distortion::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void Distortion::setBatchMode (bool batchMode)

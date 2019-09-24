@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _CURVEEDITORGROUP_
 #define _CURVEEDITORGROUP_
@@ -70,7 +70,7 @@ public:
      *                 dialogs.
      */
 
-    CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
+    explicit CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
     ~CurveEditorGroup() override;
     void newLine();
     void curveListComplete();

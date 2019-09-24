@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <glibmm.h>
 #include <glib/gstdio.h>
@@ -667,7 +667,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     Glib::ustring fname;
     SaveFormat saveFormat;
 
-    if (processing->outFileName == "") { // auto file name
+    if (processing->outFileName.empty()) { // auto file name
         Glib::ustring s = calcAutoFileNameBase (processing->filename, processing->sequence);
         saveFormat = options.saveFormatBatch;
         fname = autoCompleteFileName (s, saveFormat.format);
@@ -686,7 +686,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
 
     //printf ("fname=%s, %s\n", fname.c_str(), removeExtension(fname).c_str());
 
-    if (img && fname != "") {
+    if (img && !fname.empty()) {
         int err = 0;
 
         if (saveFormat.format == "tif") {
@@ -811,7 +811,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
             break;
         }
 
-        Glib::ustring tok = "";
+        Glib::ustring tok;
 
         while ((i < origFileName.size()) && !(origFileName[i] == '\\' || origFileName[i] == '/')) {
             tok = tok + origFileName[i++];
@@ -857,7 +857,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     // constructing full output path
 //    printf ("path=|%s|\n", options.savePath.c_str());
 
-    Glib::ustring path = "";
+    Glib::ustring path;
 
     if (options.saveUsePathTemplate) {
         unsigned int ix = 0;

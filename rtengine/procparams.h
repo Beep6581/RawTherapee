@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -284,6 +284,7 @@ struct ToneCurveParams {
 
     ToneCurveParams();
 
+    bool isPanningRelatedChange(const ToneCurveParams& other) const;
     bool operator ==(const ToneCurveParams& other) const;
     bool operator !=(const ToneCurveParams& other) const;
 
@@ -493,7 +494,9 @@ struct ColorToningParams {
 struct SharpeningParams {
     bool           enabled;
     double         contrast;
+    bool           autoContrast;
     double         blurradius;
+    double         gamma;
     double         radius;
     int            amount;
     Threshold<int> threshold;
@@ -537,6 +540,22 @@ struct SharpenMicroParams {
 
     bool operator ==(const SharpenMicroParams& other) const;
     bool operator !=(const SharpenMicroParams& other) const;
+};
+
+struct CaptureSharpeningParams {
+    bool           enabled;
+    bool           autoContrast;
+    bool           autoRadius;
+    double         contrast;
+    double         gamma;
+    double         deconvradius;
+    double         deconvradiusOffset;
+    int            deconviter;
+
+    CaptureSharpeningParams();
+
+    bool operator ==(const CaptureSharpeningParams& other) const;
+    bool operator !=(const CaptureSharpeningParams& other) const;
 };
 
 /**
@@ -597,6 +616,7 @@ struct WBParams {
 
     WBParams();
 
+    bool isPanningRelatedChange(const WBParams& other) const;
     bool operator ==(const WBParams& other) const;
     bool operator !=(const WBParams& other) const;
 
@@ -728,7 +748,6 @@ struct DirPyrDenoiseParams {
     bool operator !=(const DirPyrDenoiseParams& other) const;
 
     void getCurves(NoiseCurve& lCurve, NoiseCurve& cCurve) const;
-
 };
 
 // EPD related parameters.
@@ -1056,7 +1075,6 @@ struct ColorManagementParams {
     bool operator !=(const ColorManagementParams& other) const;
 };
 
-
 /**
   * Parameters for metadata handling
   */
@@ -1309,7 +1327,6 @@ struct HSVEqualizerParams {
     bool operator !=(const HSVEqualizerParams& other) const;
 };
 
-
 /**
  *  Film simualtion params
  */
@@ -1323,7 +1340,6 @@ struct FilmSimulationParams {
     bool operator ==(const FilmSimulationParams& other) const;
     bool operator !=(const FilmSimulationParams& other) const;
 };
-
 
 struct SoftLightParams {
     bool enabled;
@@ -1341,13 +1357,13 @@ struct DehazeParams {
     int strength;
     bool showDepthMap;
     int depth;
+    bool luminance;
 
     DehazeParams();
 
     bool operator==(const DehazeParams &other) const;
     bool operator!=(const DehazeParams &other) const;
 };
-
 
 /**
   * Parameters for RAW demosaicing, common to all sensor type
@@ -1516,6 +1532,21 @@ struct RAWParams {
 };
 
 /**
+  * Parameters of film negative
+  */
+struct FilmNegativeParams {
+    bool enabled;
+    double redRatio;
+    double greenExp;
+    double blueRatio;
+
+    FilmNegativeParams();
+
+    bool operator ==(const FilmNegativeParams& other) const;
+    bool operator !=(const FilmNegativeParams& other) const;
+};
+
+/**
   * This class holds all the processing parameters applied on the images
   */
 class ProcParams
@@ -1530,6 +1561,7 @@ public:
     ColorToningParams       colorToning;     ///< Color Toning parameters
     SharpeningParams        sharpening;      ///< Sharpening parameters
     SharpeningParams        prsharpening;    ///< Sharpening parameters for post resize sharpening
+    CaptureSharpeningParams pdsharpening;    ///< Sharpening parameters for post demosaic sharpening
     SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
     SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
     VibranceParams          vibrance;        ///< Vibrance parameters
@@ -1563,6 +1595,7 @@ public:
     FilmSimulationParams    filmSimulation;  ///< film simulation parameters
     SoftLightParams         softlight;       ///< softlight parameters
     DehazeParams            dehaze;          ///< dehaze parameters
+    FilmNegativeParams      filmNegative;    ///< Film negative parameters
     int                     rank;            ///< Custom image quality ranking
     int                     colorlabel;      ///< Custom color label
     bool                    inTrash;         ///< Marks deleted image
@@ -1637,8 +1670,8 @@ class PartialProfile :
 {
 public:
     PartialProfile(bool createInstance = false, bool paramsEditedValue = false);
-    PartialProfile(ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
-    PartialProfile(const ProcParams* pp, const ParamsEdited* pe = nullptr);
+    explicit PartialProfile(ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
+    explicit PartialProfile(const ProcParams* pp, const ParamsEdited* pe = nullptr);
     void deleteInstance();
     void clearGeneral();
     int  load(const Glib::ustring& fName);

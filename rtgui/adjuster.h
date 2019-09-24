@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _ADJUSTER_H_
 #define _ADJUSTER_H_
@@ -30,7 +30,7 @@ class AdjusterListener
 public:
     virtual ~AdjusterListener() = default;
     virtual void adjusterChanged (Adjuster* a, double newval) = 0;
-    virtual void adjusterAutoToggled (Adjuster* a, bool newval) = 0;
+    virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
 };
 
 typedef double(*double2double_fun)(double val);

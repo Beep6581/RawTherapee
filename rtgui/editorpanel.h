@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _EDITORPANEL_
 #define _EDITORPANEL_
@@ -34,6 +34,7 @@
 #include "navigator.h"
 #include "progressconnector.h"
 #include "filepanel.h"
+#include "../rtengine/noncopyable.h"
 
 class EditorPanel;
 class MyProgressBar;
@@ -52,7 +53,8 @@ class EditorPanel final :
     public rtengine::ProgressListener,
     public ThumbnailListener,
     public HistoryBeforeLineListener,
-    public rtengine::HistogramListener
+    public rtengine::HistogramListener,
+    public rtengine::NonCopyable
 {
 public:
     explicit EditorPanel (FilePanel* filePanel = nullptr);

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
@@ -210,6 +210,11 @@ public:
         return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
     }
 
+    static vfloat rgbLuminance(vfloat r, vfloat g, vfloat b, const vfloat workingspace[3])
+    {
+        return r * workingspace[0] + g * workingspace[1] + b * workingspace[2];
+    }
+
     /**
     * @brief Convert red/green/blue to L*a*b
     * @brief Convert red/green/blue to hue/saturation/luminance
@@ -240,20 +245,20 @@ public:
     static inline void rgb2slfloat(float r, float g, float b, float &s, float &l)
     {
 
-        float m = min(r, g, b);
-        float M = max(r, g, b);
-        float C = M - m;
+        float minVal = min(r, g, b);
+        float maxVal = max(r, g, b);
+        float C = maxVal - minVal;
 
-        l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
+        l = (maxVal + minVal) * 7.6295109e-6f; // (0.5f / 65535.f)
 
         if (C < 0.65535f) { // 0.00001f * 65535.f
             s = 0.f;
         } else {
 
             if (l <= 0.5f) {
-                s = C / (M + m);
+                s = C / (maxVal + minVal);
             } else {
-                s = C / (131070.f - (M + m)); // 131070.f = 2.f * 65535.f
+                s = C / (131070.f - (maxVal + minVal)); // 131070.f = 2.f * 65535.f
             }
         }
     }
@@ -261,11 +266,11 @@ public:
     static inline void rgb2hslfloat(float r, float g, float b, float &h, float &s, float &l)
     {
 
-        float m = min(r, g, b);
-        float M = max(r, g, b);
-        float C = M - m;
+        float minVal = min(r, g, b);
+        float maxVal = max(r, g, b);
+        float C = maxVal - minVal;
 
-        l = (M + m) * 7.6295109e-6f; // (0.5f / 65535.f)
+        l = (maxVal + minVal) * 7.6295109e-6f; // (0.5f / 65535.f)
 
         if (C < 0.65535f) { // 0.00001f * 65535.f
             h = 0.f;
@@ -273,14 +278,14 @@ public:
         } else {
 
             if (l <= 0.5f) {
-                s = C / (M + m);
+                s = C / (maxVal + minVal);
             } else {
-                s = C / (131070.f - (M + m)); // 131070.f = 2.f * 65535.f
+                s = C / (131070.f - (maxVal + minVal)); // 131070.f = 2.f * 65535.f
             }
 
-            if ( r == M ) {
+            if ( r == maxVal ) {
                 h = (g - b);
-            } else if ( g == M ) {
+            } else if ( g == maxVal ) {
                 h = (2.f * C) + (b - r);
             } else {
                 h = (4.f * C) + (r - g);
@@ -684,32 +689,6 @@ public:
     * @param v 'v' channel [unknown range!] (return value)
     */
     static void Lch2Luv(float c, float h, float &u, float &v);
-
-
-    /**
-    * @brief Convert the XYZ values to Luv values
-    * Warning: this method has never been used/tested so far
-    * @param x X coordinate [0 ; 65535] ; can be negative or superior to 65535
-    * @param y Y coordinate [0 ; 65535] ; can be negative or superior to 65535
-    * @param z Z coordinate [0 ; 65535] ; can be negative or superior to 65535
-    * @param L 'L' channel [0 ; 32768] (return value)
-    * @param u 'u' channel [-42000 ; 42000] ; can be more than 42000 (return value)
-    * @param v 'v' channel [-42000 ; 42000] ; can be more than 42000 (return value)
-    */
-    static void XYZ2Luv (float X, float Y, float Z, float &L, float &u, float &v);
-
-
-    /**
-    * @brief Convert the Luv values to XYZ values
-    * Warning: this method has never been used/tested so far
-    * @param L 'L' channel [0 ; 32768]
-    * @param u 'u' channel [-42000 ; 42000] ; can be more than 42000
-    * @param v 'v' channel [-42000 ; 42000] ; can be more than 42000
-    * @param x X coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
-    * @param y Y coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
-    * @param z Z coordinate [0 ; 65535] ; can be negative or superior to 65535 (return value)
-    */
-    static void Luv2XYZ (float L, float u, float v, float &X, float &Y, float &Z);
 
 
     /**
@@ -1828,6 +1807,31 @@ public:
         }
 
         return (hr);
+    }
+
+    static inline void RGB2Y(const float* R, const float* G, const float* B, float* Y1, float * Y2, float gamma, int W) {
+        gamma = 1.f / gamma;
+        int i = 0;
+#ifdef __SSE2__
+        const vfloat gammav = F2V(gamma);
+        const vfloat c1v = F2V(0.2627f);
+        const vfloat c2v = F2V(0.6780f);
+        const vfloat c3v = F2V(0.0593f);
+        for (; i < W - 3; i += 4) {
+            const vfloat Rv = vmaxf(LVFU(R[i]), ZEROV);
+            const vfloat Gv = vmaxf(LVFU(G[i]), ZEROV);
+            const vfloat Bv = vmaxf(LVFU(B[i]), ZEROV);
+            vfloat yv = pow_F(c1v * Rv + c2v * Gv + c3v * Bv, gammav);
+            STVFU(Y1[i], yv);
+            STVFU(Y2[i], yv);
+        }
+#endif
+        for (; i < W; ++i) {
+            const float r = std::max(R[i], 0.f);
+            const float g = std::max(G[i], 0.f);
+            const float b = std::max(B[i], 0.f);
+            Y1[i] = Y2[i] = pow_F(0.2627f * r + 0.6780f * g + 0.0593f * b, gamma);
+        }
     }
 
 };

@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _IMPROCCOORDINATOR_H_
 #define _IMPROCCOORDINATOR_H_
@@ -77,7 +77,7 @@ protected:
     bool softProof;
     bool gamutCheck;
     bool sharpMask;
-
+    bool sharpMaskChanged;
     int scale;
     bool highDetailPreprocessComputed;
     bool highDetailRawComputed;
@@ -161,6 +161,8 @@ protected:
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
     AutoContrastListener *bayerAutoContrastListener;
     AutoContrastListener *xtransAutoContrastListener;
+    AutoContrastListener *pdSharpenAutoContrastListener;
+    AutoRadiusListener *pdSharpenAutoRadiusListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
 
@@ -269,6 +271,7 @@ public:
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
+    bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
     bool getHighQualComputed() override;
     void setHighQualComputed() override;
@@ -276,7 +279,7 @@ public:
     void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const override;
     void setSoftProofing   (bool softProof, bool gamutCheck) override;
     void getSoftProofing   (bool &softProof, bool &gamutCheck) override;
-    void setSharpMask      (bool sharpMask) override;
+    ProcEvent setSharpMask (bool sharpMask) override;
     bool updateTryLock () override
     {
         return updaterThreadStart.trylock();
@@ -360,6 +363,16 @@ public:
     void setXtransAutoContrastListener  (AutoContrastListener* acl) override
     {
         xtransAutoContrastListener = acl;
+    }
+
+    void setpdSharpenAutoRadiusListener  (AutoRadiusListener* acl) override
+    {
+        pdSharpenAutoRadiusListener = acl;
+    }
+
+    void setpdSharpenAutoContrastListener  (AutoContrastListener* acl) override
+    {
+        pdSharpenAutoContrastListener = acl;
     }
 
     void setImageTypeListener  (ImageTypeListener* itl) override

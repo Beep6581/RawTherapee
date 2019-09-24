@@ -12,7 +12,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  2014 Jacques Desmis <jdesmis@gmail.com>
  */
@@ -2511,10 +2511,6 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
                                    );
         }
     }
-}
-
-void Wavelet::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void Wavelet::enabledUpdateUI ()

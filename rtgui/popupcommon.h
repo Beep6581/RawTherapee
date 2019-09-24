@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
@@ -47,7 +47,7 @@ public:
     type_signal_item_selected signal_item_selected();
     Gtk::Grid* buttonGroup;    // this is the widget to be packed
 
-    PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
+    explicit PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
     bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label);
     int getEntryCount () const;

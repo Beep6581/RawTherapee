@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cstring>
 #include <cstdio>
@@ -55,7 +55,7 @@ void Image8::getScanline (int row, unsigned char* buffer, int bps, bool isFloat)
     }
 }
 
-void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples)
+void Image8::setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples)
 {
 
     if (data == nullptr) {
@@ -74,7 +74,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, unsigned int 
         break;
 
     case (IIOSF_UNSIGNED_SHORT): {
-        unsigned short* sbuffer = (unsigned short*) buffer;
+        const unsigned short* sbuffer = (const unsigned short*) buffer;
 
         for (int i = 0, ix = row * width * 3; i < width * 3; ++i, ++ix) {
             data[ix] = uint16ToUint8Rounded(sbuffer[i]);

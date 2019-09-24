@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _BATCHQUEUEBUTTONSET_
 #define _BATCHQUEUEBUTTONSET_
@@ -33,6 +33,10 @@ public:
     static Cairo::RefPtr<RTSurface> cancelIcon;
     static Cairo::RefPtr<RTSurface> headIcon;
     static Cairo::RefPtr<RTSurface> tailIcon;
+
+    static Glib::ustring moveHeadToolTip;
+    static Glib::ustring moveEndToolTip;
+    static Glib::ustring cancelJobToolTip;
 
     explicit BatchQueueButtonSet (BatchQueueEntry* myEntry);
 };

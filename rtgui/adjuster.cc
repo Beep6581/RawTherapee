@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "adjuster.h"
 #include <sigc++/slot.h>
@@ -631,21 +631,21 @@ void Adjuster::setSliderValue(double val)
             if (val >= logPivot) {
                 double range = vMax - logPivot;
                 double x = (val - logPivot) / range;
-                val = (vMin + mid) + std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * mid;
+                val = (vMin + mid) + std::log1p(x * (logBase - 1.0)) / std::log(logBase) * mid;
             } else {
                 double range = logPivot - vMin;
                 double x = (logPivot - val) / range;
-                val = (vMin + mid) - std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * mid;
+                val = (vMin + mid) - std::log1p(x * (logBase - 1.0)) / std::log(logBase) * mid;
             }
         } else {
             if (val >= logPivot) {
                 double range = vMax - logPivot;
                 double x = (val - logPivot) / range;
-                val = logPivot + std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * range;
+                val = logPivot + std::log1p(x * (logBase - 1.0)) / std::log(logBase) * range;
             } else {
                 double range = logPivot - vMin;
                 double x = (logPivot - val) / range;
-                val = logPivot - std::log(x * (logBase - 1.0) + 1.0) / std::log(logBase) * range;
+                val = logPivot - std::log1p(x * (logBase - 1.0)) / std::log(logBase) * range;
             }
         }
     }

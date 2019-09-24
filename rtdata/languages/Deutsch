@@ -82,6 +82,7 @@
 #81 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
 #82 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
 #83 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
+#84 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -241,6 +242,8 @@ FILEBROWSER_POPUPRANK2;Bewertung 2 **
 FILEBROWSER_POPUPRANK3;Bewertung 3 ***
 FILEBROWSER_POPUPRANK4;Bewertung 4 ****
 FILEBROWSER_POPUPRANK5;Bewertung 5 *****
+FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
+FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
 FILEBROWSER_POPUPRENAME;Umbenennen
 FILEBROWSER_POPUPSELECTALL;Alle auswählen
 FILEBROWSER_POPUPTRASH;In den Papierkorb verschieben
@@ -267,6 +270,7 @@ FILEBROWSER_SHOWDIRHINT;Alle Filter zurücksetzen.\nTaste: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen.\nTaste: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen.\nTaste: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden.\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste:  <b>Alt</b> + <b>i</b>
+FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.
 FILEBROWSER_SHOWORIGINALHINT;Zeige nur das Originalbild.\n\nWenn mehrere Bilder mit dem gleichen Dateinamen und unterschiedlichen Dateitypen existieren, ist das Originalbild das Bild, welches in der Liste "Dateitypen anzeigen" unter Einstellungen > Dateiverwaltung als erstes gefunden wird.
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen.\nTaste: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen.\nTaste: <b>2</b>
@@ -825,6 +829,8 @@ HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Bildschleier entfernen)\nMaske anzeigen
 HISTORY_MSG_DEHAZE_STRENGTH;(Bildschleier entfernen)\nIntensität
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(Sensor—Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
+HISTORY_MSG_FILMNEGATIVE_ENABLED;(Filmnegativ)
+HISTORY_MSG_FILMNEGATIVE_VALUES;(Filmnegativ) - Werte
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbmanagement)\nAusgabeprofil\nVorlagen
 HISTORY_MSG_ICM_OUTPUT_TEMP;(Farbmanagement)\nAusgabeprofil\nIccV4-Illuminant D
@@ -978,7 +984,7 @@ MAIN_MSG_SETPATHFIRST;Um diese Funktion zu nutzen, müssen Sie zuerst in den Ein
 MAIN_MSG_TOOMANYOPENEDITORS;Zu viele geöffnete Editorfenster.\nUm fortzufahren, schließen sie bitte ein Editorfenster.
 MAIN_MSG_WRITEFAILED;Fehler beim Schreiben von\n\n<b>"%1"</b>\n\nStellen Sie sicher, dass das Verzeichnis existiert und dass Sie Schreibrechte besitzen.
 MAIN_TAB_ADVANCED;Erweitert
-MAIN_TAB_ADVANCED_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
+MAIN_TAB_ADVANCED_TOOLTIP;Taste: <b>Alt</b> + <b>a</b>
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_COLOR_TOOLTIP;Taste: <b>Alt</b> + <b>c</b>
 MAIN_TAB_DETAIL;Details
@@ -1061,6 +1067,7 @@ PARTIALPASTE_EQUALIZER;Wavelet
 PARTIALPASTE_EVERYTHING;Alle Parameter aktivieren / deaktivieren
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
+PARTIALPASTE_FILMNEGATIVE;Filmnegativ
 PARTIALPASTE_FILMSIMULATION;Filmsimulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild: Automatische Auswahl
 PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
@@ -1714,6 +1721,12 @@ TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Gewichteter Standard
 TP_EXPOS_BLACKPOINT_LABEL;Schwarzpunkt
 TP_EXPOS_WHITEPOINT_LABEL;Weißpunkt
+TP_FILMNEGATIVE_BLUE;Blauverhältnis
+TP_FILMNEGATIVE_GREEN;Bezugsexponent (Kontrast)
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Berechnet die Exponenten durch Auswahl zweier neutraler\nReferenzpunkte im Bild. Weiß (Hellgrau) und Schwarz (Dunkelgrau).\nDie Reihenfolge spielt keine Rolle. Die Exponenten werden aktualisiert,\nnachdem der zweite Punkt ausgewählt wurde.
+TP_FILMNEGATIVE_LABEL;Filmnegativ
+TP_FILMNEGATIVE_PICK;Weißen und schwarzen Bereich auswählen
+TP_FILMNEGATIVE_RED;Rotverhältnis
 TP_FILMSIMULATION_LABEL;Filmsimulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee sucht nach Hald-CLUT-Bildern, die für die Filmsimulation benötigt werden, in einem Ordner, der viel Zeit benötigt.\nGehen Sie zu\n< Einstellungen > Bildbearbeitung > Filmsimulation >\nund prüfen Sie welcher Order benutzt wird. Wählen Sie den Ordner aus, der nur die Hald-CLUT-Bilder beinhaltet, oder einen leeren Ordner, wenn Sie die Filsimulation nicht verwenden möchten.\n\nWeitere Informationen über die Filmsimulation finden Sie auf RawPedia.\n\nMöchten Sie die Suche beenden?
 TP_FILMSIMULATION_STRENGTH;Intensität
@@ -2358,10 +2371,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
-FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stabelverarbeitung)
-FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.

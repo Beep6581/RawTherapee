@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _THUMBNAILBROWSERBASE_
 #define _THUMBNAILBROWSERBASE_
@@ -171,15 +171,17 @@ protected:
     std::vector<ThumbBrowserEntryBase*> fd;
     std::vector<ThumbBrowserEntryBase*> selected;
     ThumbBrowserEntryBase* lastClicked;
+    ThumbBrowserEntryBase* anchor;
 
     int previewHeight;
     int numOfCols;
+    int lastRowHeight;
 
     Arrangement arrangement;
 
     std::set<Glib::ustring> editedFiles;
 
-    void arrangeFiles ();
+    void arrangeFiles (ThumbBrowserEntryBase* entry = nullptr);
     void zoomChanged (bool zoomIn);
 
 public:
@@ -201,7 +203,7 @@ public:
         return fd;
     }
     void on_style_updated () override;
-    void redraw ();   // arrange files and draw area
+    void redraw (ThumbBrowserEntryBase* entry = nullptr);   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
@@ -214,7 +216,7 @@ public:
     void setArrangement (Arrangement a);
     void enableTabMode(bool enable);  // set both thumb sizes and arrangements
 
-    virtual bool checkFilter (ThumbBrowserEntryBase* entry)
+    virtual bool checkFilter (ThumbBrowserEntryBase* entry) const
     {
         return true;
     }

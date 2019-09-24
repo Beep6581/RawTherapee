@@ -18,7 +18,7 @@
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
 
@@ -54,15 +54,15 @@ void RawImageSource::CLASS cfa_linedn(float noise, bool horizontal, bool vertica
 
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+    double progress = 0.0;
     if (plistener) {
-        plistener->setProgressStr ("PROGRESSBAR_LINEDENOISE");
-        plistener->setProgress (0.0);
+        plistener->setProgressStr("PROGRESSBAR_LINEDENOISE");
+        plistener->setProgress(progress);
     }
 
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     float noisevar = SQR(3 * noise * 65535); // _noise_ (as a fraction of saturation) is input to the algorithm
     float noisevarm4 = 4.0f * noisevar;
-    volatile double progress = 0.0;
     float* RawDataTmp = (float*)malloc( width * height * sizeof(float));
 #ifdef _OPENMP
     #pragma omp parallel

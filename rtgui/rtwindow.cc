@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <gtkmm.h>
@@ -95,6 +95,9 @@ RTWindow::RTWindow ()
     , fpanel (nullptr)
 {
 
+    if (options.is_new_version()) {
+        RTImage::cleanup(true);
+    }
     cacheMgr->init ();
     ProfilePanel::init (this);
 
@@ -173,8 +176,8 @@ RTWindow::RTWindow ()
         } else {
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
             Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
-            int pt;
             if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
+                int pt;
                 int fontSize = pfd.get_size();
                 bool isPix = pfd.get_size_is_absolute();
                 int resolution = (int)style->get_screen()->get_resolution();
@@ -254,8 +257,6 @@ RTWindow::RTWindow ()
 #if defined(__APPLE__)
     {
         osxApp  = (GtkosxApplication *)g_object_new (GTKOSX_TYPE_APPLICATION, NULL);
-        gboolean falseval = FALSE;
-        gboolean trueval = TRUE;
         RTWindow *rtWin = this;
         g_signal_connect (osxApp, "NSApplicationBlockTermination", G_CALLBACK (osx_should_quit_cb), rtWin);
         g_signal_connect (osxApp, "NSApplicationWillTerminate",  G_CALLBACK (osx_will_quit_cb), rtWin);
@@ -477,16 +478,8 @@ void RTWindow::on_realize ()
     mainWindowCursorManager.init (get_window());
 
     // Display release notes only if new major version.
-    // Pattern matches "5.1" from "5.1-23-g12345678"
-    const std::string vs[] = {versionString, options.version};
-    std::vector<std::string> vMajor;
-
-    for (const auto& v : vs) {
-        vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
-    }
-
     bool waitForSplash = false;
-    if (vMajor.size() == 2 && vMajor[0] != vMajor[1]) {
+    if (options.is_new_version()) {
         // Update the version parameter with the right value
         options.version = versionString;
 

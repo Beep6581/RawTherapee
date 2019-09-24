@@ -15,7 +15,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #pragma once
 
@@ -38,11 +38,11 @@ protected:
 public:
     RTImage ();
     RTImage (RTImage &other);
-    RTImage (Glib::RefPtr<Gdk::Pixbuf> &pixbuf);
-    RTImage (Cairo::RefPtr<Cairo::ImageSurface> &surf);
-    RTImage(Cairo::RefPtr<Cairo::ImageSurface> other);
-    RTImage (Glib::RefPtr<RTImage> &other);
-    RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
+    explicit RTImage (Glib::RefPtr<Gdk::Pixbuf> &pixbuf);
+    explicit RTImage (Cairo::RefPtr<Cairo::ImageSurface> &surf);
+    explicit RTImage(Cairo::RefPtr<Cairo::ImageSurface> other);
+    explicit RTImage (Glib::RefPtr<RTImage> &other);
+    explicit RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
 
     void setImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
     void changeImage (const Glib::ustring& imageName);
@@ -52,7 +52,7 @@ public:
 
 
     static void init();
-    static void cleanup();
+    static void cleanup(bool all = false);
     static void updateImages ();
     static void setDPInScale (const double newDPI, const int newScale);
     static void setScale (const int newScale);

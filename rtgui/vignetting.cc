@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "vignetting.h"
 
@@ -127,10 +127,6 @@ void Vignetting::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvVignettingCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
         }
     }
-}
-
-void Vignetting::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void Vignetting::setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd)

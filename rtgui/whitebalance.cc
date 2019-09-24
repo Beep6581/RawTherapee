@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "whitebalance.h"
 
@@ -382,7 +382,6 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
         return;
     }
 
-    Glib::ustring colLabel = row[methodColumns.colLabel];
     const std::pair<bool, const WBEntry&> ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
     const std::pair<bool, const WBEntry&> wbCustom = findWBEntry ("Custom", WBLT_PP);
 
@@ -432,10 +431,6 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvWBtempBias, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
         }
     }
-}
-
-void WhiteBalance::adjusterAutoToggled(Adjuster* a, bool newval)
-{
 }
 
 void WhiteBalance::optChanged ()

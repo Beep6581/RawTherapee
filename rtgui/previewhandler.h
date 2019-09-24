@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _PREVIEWHANDLER_
 #define _PREVIEWHANDLER_
@@ -28,6 +28,7 @@
 #include "guiutils.h"
 
 #include "../rtengine/rtengine.h"
+#include "../rtengine/noncopyable.h"
 
 class PreviewListener
 {
@@ -44,7 +45,7 @@ struct PreviewHandlerIdleHelper {
     int pending;
 };
 
-class PreviewHandler : public rtengine::PreviewImageListener
+class PreviewHandler : public rtengine::PreviewImageListener, public rtengine::NonCopyable
 {
 private:
     friend int setImageUI   (void* data);

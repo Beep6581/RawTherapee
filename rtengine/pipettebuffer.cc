@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "pipettebuffer.h"
@@ -176,9 +176,11 @@ void PipetteBuffer::getPipetteData(int x, int y, const int squareSize)
         }
     }
 
-    dataProvider->setPipetteVal1(-1.f);
-    dataProvider->setPipetteVal2(-1.f);
-    dataProvider->setPipetteVal3(-1.f);
+    if (dataProvider) {
+        dataProvider->setPipetteVal1(-1.f);
+        dataProvider->setPipetteVal2(-1.f);
+        dataProvider->setPipetteVal3(-1.f);
+    }
 }
 
 }

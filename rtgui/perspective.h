@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _PERSPECTIVE_PANEL_H_
 #define _PERSPECTIVE_PANEL_H_
@@ -40,7 +40,6 @@ public:
     void setBatchMode   (bool batchMode) override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     void setAdjusterBehavior (bool badd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };

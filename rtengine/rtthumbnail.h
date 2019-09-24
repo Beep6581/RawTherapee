@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _THUMBPROCESSINGPARAMETERS_
 #define _THUMBPROCESSINGPARAMETERS_
@@ -66,6 +66,8 @@ class Thumbnail
     int scaleForSave;
     bool gammaCorrected;
     double colorMatrix[3][3];
+
+    void processFilmNegative(const procparams::ProcParams& params, const Imagefloat* baseImg, int rwidth, int rheight, float &rmi, float &gmi, float &bmi);
 
 public:
 

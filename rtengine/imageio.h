@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _IMAGEIO_
 #define _IMAGEIO_
@@ -103,7 +103,7 @@ public:
     virtual void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const = 0;
     virtual int getBPS () const = 0;
     virtual void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const = 0;
-    virtual void setScanline (int row, unsigned char* buffer, int bps, unsigned int numSamples = 3) = 0;
+    virtual void setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples = 3) = 0;
     virtual const char* getType () const = 0;
 
     int load (const Glib::ustring &fname);

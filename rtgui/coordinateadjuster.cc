@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "coordinateadjuster.h"
@@ -23,7 +23,7 @@
 #include "curveeditorgroup.h"
 
 Axis::Axis()
-    : label(""), decimal(5), increment(0.001), pageIncrement(0.01), rangeLowerBound(0.), rangeUpperBound(1.)
+    : decimal(5), increment(0.001), pageIncrement(0.01), rangeLowerBound(0.), rangeUpperBound(1.)
 {}
 
 Axis::Axis(Glib::ustring label, unsigned int decimal, double increment, double pageIncrement, double valMin = 0.0, double valMax = 1.0)

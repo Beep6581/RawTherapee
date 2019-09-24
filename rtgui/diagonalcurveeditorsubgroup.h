@@ -14,17 +14,18 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #ifndef _DIAGONALCURVEEDITORSUBGROUP_
 #define _DIAGONALCURVEEDITORSUBGROUP_
 
 #include <gtkmm.h>
 #include "curveeditorgroup.h"
+#include "../rtengine/noncopyable.h"
 
 class DiagonalCurveEditor;
 
-class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListener, public AdjusterListener
+class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListener, public AdjusterListener, public rtengine::NonCopyable
 {
 
     friend class DiagonalCurveEditor;
@@ -105,7 +106,6 @@ protected:
     const std::vector<double> getCurveFromGUI (int type) override;
     void shcChanged () override;
     void adjusterChanged (Adjuster* a, double newval) override;
-    void adjusterAutoToggled(Adjuster* a, bool newval) override;
     bool adjusterEntered (GdkEventCrossing* ev, int ac);
     bool adjusterLeft (GdkEventCrossing* ev, int ac);
     void setSubGroupRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4);
