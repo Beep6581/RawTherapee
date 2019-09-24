@@ -18,17 +18,23 @@
 */
 
 #include <cmath>
-#include "eventmapper.h"
+#include <iomanip>
+
 #include "pdsharpening.h"
+
+#include "eventmapper.h"
 #include "options.h"
+
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PdSharpening::PdSharpening() : FoldableToolPanel(this, "capturesharpening", M("TP_PDSHARPENING_LABEL"), false, true)
+PdSharpening::PdSharpening() :
+    FoldableToolPanel(this, "capturesharpening", M("TP_PDSHARPENING_LABEL"), false, true),
+    lastAutoContrast(true),
+    lastAutoRadius(true)
 {
-
     auto m = ProcEventMapper::getInstance();
     EvPdShrContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_CONTRAST");
     EvPdSharpenGamma = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_GAMMA");
