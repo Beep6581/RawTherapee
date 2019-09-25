@@ -1449,6 +1449,7 @@ Locallab::Locallab():
     maskretiBox->pack_start(*gammaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*slomaskreti, Gtk::PACK_SHRINK, 0);
     expmaskreti->add(*maskretiBox, false);
+    ToolParamBlock* const auxBox = Gtk::manage(new ToolParamBlock());
 
     ToolParamBlock* const dehaBox = Gtk::manage(new ToolParamBlock());
     dehaBox->pack_start(*dehaz);
@@ -1461,13 +1462,13 @@ Locallab::Locallab():
     deharetiBox->pack_start(*loglin);
     retiFrame->add(*deharetiBox);
     
-    expreti->add(*dehaFrame, false);
-    expreti->add(*retiFrame, false);
+    auxBox->add(*dehaFrame);
+    auxBox->add(*retiFrame);
 
     ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
     scopeBox->pack_start(*sensih);
-    expreti->add(*scopeBox, false);
-
+    auxBox->add(*scopeBox);
+    retiBox->pack_start(*auxBox);
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
