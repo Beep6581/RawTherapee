@@ -532,9 +532,9 @@ BENCHFUN
     constexpr int tileSize = 194;
     constexpr int border = 5;
     constexpr int fullTileSize = tileSize + 2 * border;
-    const float maxRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
-    const float maxDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
-    const float distanceFactor = (maxRadius - sigma) / maxDistance;
+    const float cornerRadius = std::min<float>(1.15f, sigma + sigmaCornerOffset);
+    const float cornerDistance = sqrt(rtengine::SQR(W * 0.5f) + rtengine::SQR(H * 0.5f));
+    const float distanceFactor = (cornerRadius - sigma) / cornerDistance;
 
     double progress = startVal;
     const double progressStep = (endVal - startVal) * rtengine::SQR(tileSize) / (W * H);
@@ -581,14 +581,17 @@ BENCHFUN
                         gauss5x5mult(tmpThr, tmpIThr, fullTileSize, fullTileSize, kernel5);
                     }
                 } else {
-                    if (sigmaCornerOffset > 0.0) {
-                        float lkernel7[7][7];
+                    if (sigmaCornerOffset != 0.0) {
                         const float distance = sqrt(rtengine::SQR(i + tileSize / 2 - H / 2) + rtengine::SQR(j + tileSize / 2 - W / 2));
-                        compute7x7kernel(sigma + distanceFactor * distance, lkernel7);
-                        for (int k = 0; k < iterations - 1; ++k) {
-                            // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
-                            gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, fullTileSize, lkernel7);
-                            gauss7x7mult(tmpThr, tmpIThr, fullTileSize, fullTileSize, lkernel7);
+                        const float sigmaTile = sigma + distanceFactor * distance;
+                        if (sigmaTile >= 0.4f) {
+                            float lkernel7[7][7];
+                            compute7x7kernel(sigma + distanceFactor * distance, lkernel7);
+                            for (int k = 0; k < iterations - 1; ++k) {
+                                // apply 7x7 gaussian blur and divide luminance by result of gaussian blur
+                                gauss7x7div(tmpIThr, tmpThr, lumThr, fullTileSize, fullTileSize, lkernel7);
+                                gauss7x7mult(tmpThr, tmpIThr, fullTileSize, fullTileSize, lkernel7);
+                            }
                         }
                     } else {
                         for (int k = 0; k < iterations; ++k) {

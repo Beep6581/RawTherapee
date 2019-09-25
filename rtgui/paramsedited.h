@@ -607,6 +607,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
+    bool luminance;
 };
 
 struct RAWParamsEdited {

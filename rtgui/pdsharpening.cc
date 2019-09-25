@@ -18,22 +18,28 @@
 */
 
 #include <cmath>
-#include "eventmapper.h"
+#include <iomanip>
+
 #include "pdsharpening.h"
+
+#include "eventmapper.h"
 #include "options.h"
+
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDSHARPENING_LABEL"), false, true)
+PdSharpening::PdSharpening() :
+    FoldableToolPanel(this, "capturesharpening", M("TP_PDSHARPENING_LABEL"), false, true),
+    lastAutoContrast(true),
+    lastAutoRadius(true)
 {
-
     auto m = ProcEventMapper::getInstance();
     EvPdShrContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_CONTRAST");
     EvPdSharpenGamma = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_GAMMA");
     EvPdShrDRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS");
-    EvPdShrDRadiusOffset = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS_OFFSET");
+    EvPdShrDRadiusOffset = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_RADIUS_BOOST");
     EvPdShrDIterations = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_ITERATIONS");
     EvPdShrAutoContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
     EvPdShrAutoRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
@@ -42,7 +48,7 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
     hb->show();
     contrast = Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 10));
     contrast->setAdjusterListener(this);
-    contrast->addAutoButton(M("TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP"));
+    contrast->addAutoButton();
     contrast->setAutoValue(true);
 
     pack_start(*contrast);
@@ -53,9 +59,9 @@ PdSharpening::PdSharpening() : FoldableToolPanel(this, "pdsharpening", M("TP_PDS
     Gtk::VBox* rld = Gtk::manage(new Gtk::VBox());
     gamma = Gtk::manage(new Adjuster(M("TP_SHARPENING_GAMMA"), 0.5, 6.0, 0.05, 1.00));
     dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 1.15, 0.01, 0.75));
-    dradius->addAutoButton(M("TP_PDSHARPENING_AUTORADIUS_TOOLTIP"));
+    dradius->addAutoButton();
     dradius->setAutoValue(true);
-    dradiusOffset = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_OFFSET"), 0.0, 0.5, 0.01, 0.0));
+    dradiusOffset = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS_BOOST"), -0.5, 0.5, 0.01, 0.0));
     diter = Gtk::manage(new Adjuster(M("TP_SHARPENING_RLD_ITERATIONS"), 1, 100, 1, 20));
     rld->pack_start(*gamma);
     rld->pack_start(*dradius);

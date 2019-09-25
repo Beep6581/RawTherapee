@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 
 /*
  * Haze removal using the algorithm described in the paper:
@@ -26,15 +26,16 @@
  *
  * using a guided filter for the "soft matting" of the transmission map
  *
- */  
+*/
 
+#include <algorithm>
 #include <iostream>
-#include <queue>
+#include <vector>
 
 #include "guidedfilter.h"
 #include "improcfun.h"
 #include "procparams.h"
-#include "rt_algo.h"
+#include "rescale.h"
 #include "rt_math.h"
 
 extern Options options;
@@ -43,24 +44,103 @@ namespace rtengine {
 
 namespace {
 
-#if 0
-#  define DEBUG_DUMP(arr)                                                 \
-    do {                                                                \
-        Imagefloat im(arr.width(), arr.height());                      \
-        const char *out = "/tmp/" #arr ".tif";                     \
-        for (int y = 0; y < im.getHeight(); ++y) {                      \
-            for (int x = 0; x < im.getWidth(); ++x) {                   \
-                im.r(y, x) = im.g(y, x) = im.b(y, x) = arr[y][x] * 65535.f; \
-            }                                                           \
-        }                                                               \
-        im.saveTIFF(out, 16);                                           \
-    } while (false)
-#else
-#  define DEBUG_DUMP(arr)
+float normalize(Imagefloat *rgb, bool multithread)
+{
+    float maxval = 0.f;
+    const int W = rgb->getWidth();
+    const int H = rgb->getHeight();
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(max:maxval) schedule(dynamic, 16) if (multithread)
 #endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            maxval = max(maxval, rgb->r(y, x), rgb->g(y, x), rgb->b(y, x));
+        }
+    }
+    maxval = max(maxval * 2.f, 65535.f);
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16) if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            rgb->r(y, x) /= maxval;
+            rgb->g(y, x) /= maxval;
+            rgb->b(y, x) /= maxval;
+        }
+    }
+    return maxval;
+}
 
+void restore(Imagefloat *rgb, float maxval, bool multithread)
+{
+    const int W = rgb->getWidth();
+    const int H = rgb->getHeight();
+    if (maxval > 0.f && maxval != 1.f) {
+#ifdef _OPENMP
+#       pragma omp parallel for if (multithread)
+#endif
+        for (int y = 0; y < H; ++y) {
+            for (int x = 0; x < W; ++x) {
+                rgb->r(y, x) *= maxval;
+                rgb->g(y, x) *= maxval;
+                rgb->b(y, x) *= maxval;
+            }
+        }
+    }
+}
 
-int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, array2D<float> &dst, int patchsize, const float ambient[3], bool clip, bool multithread)
+int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, const array2D<float> &dst, int patchsize, const float ambient[3], bool clip, bool multithread, float strength)
+{
+    const int W = R.width();
+    const int H = R.height();
+
+#ifdef _OPENMP
+    #pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; y += patchsize) {
+        const int pH = min(y + patchsize, H);
+        for (int x = 0; x < W; x += patchsize) {
+            float minR = RT_INFINITY_F;
+            float minG = RT_INFINITY_F;
+            float minB = RT_INFINITY_F;
+#ifdef __SSE2__
+            vfloat minRv = F2V(minR);
+            vfloat minGv = F2V(minG);
+            vfloat minBv = F2V(minB);
+#endif
+            const int pW = min(x + patchsize, W);
+            for (int yy = y; yy < pH; ++yy) {
+                int xx = x;
+#ifdef __SSE2__
+                for (; xx < pW - 3; xx += 4) {
+                    minRv = vminf(minRv, LVFU(R[yy][xx]));
+                    minGv = vminf(minGv, LVFU(G[yy][xx]));
+                    minBv = vminf(minBv, LVFU(B[yy][xx]));
+                }
+#endif
+                for (; xx < pW; ++xx) {
+                    minR = min(minR, R[yy][xx]);
+                    minG = min(minG, G[yy][xx]);
+                    minB = min(minB, B[yy][xx]);
+                }
+            }
+#ifdef __SSE2__
+            minR = min(minR, vhmin(minRv));
+            minG = min(minG, vhmin(minGv));
+            minB = min(minB, vhmin(minBv));
+#endif
+            float val = min(minR / ambient[0], minG / ambient[1], minB / ambient[2]);
+            val = 1.f - strength * LIM01(val);
+            for (int yy = y; yy < pH; ++yy) {
+                std::fill(dst[yy] + x, dst[yy] + pW, val);
+            }
+        }
+    }
+
+    return (W / patchsize + ((W % patchsize) > 0)) *  (H / patchsize + ((H % patchsize) > 0));
+}
+
+int get_dark_channel_downsized(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, const array2D<float> &dst, int patchsize, bool multithread)
 {
     const int W = R.width();
     const int H = R.height();
@@ -73,21 +153,10 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
         for (int x = 0; x < W; x += patchsize) {
             float val = RT_INFINITY_F;
             const int pW = min(x + patchsize, W);
-            for (int yy = y; yy < pH; ++yy) {
-                for (int xx = x; xx < pW; ++xx) {
-                    float r = R[yy][xx];
-                    float g = G[yy][xx];
-                    float b = B[yy][xx];
-                    if (ambient) {
-                        r /= ambient[0];
-                        g /= ambient[1];
-                        b /= ambient[2];
-                    }
-                    val = min(val, r, g, b);
+            for (int xx = x; xx < pW; ++xx) {
+                for (int yy = y; yy < pH; ++yy) {
+                    val = min(val, R[yy][xx], G[yy][xx], B[yy][xx]);
                 }
-            }
-            if (clip) {
-                val = LIM01(val);
             }
             for (int yy = y; yy < pH; ++yy) {
                 std::fill(dst[yy] + x, dst[yy] + pW, val);
@@ -98,33 +167,24 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
     return (W / patchsize + ((W % patchsize) > 0)) *  (H / patchsize + ((H % patchsize) > 0));
 }
 
-
 float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, const array2D<float> &B, const array2D<float> &dark, int patchsize, int npatches, float ambient[3])
 {
     const int W = R.width();
     const int H = R.height();
 
-    const auto get_percentile =
-        [](std::priority_queue<float> &q, float prcnt) -> float
-        {
-            size_t n = LIM<size_t>(q.size() * prcnt, 1, q.size());
-            while (q.size() > n) {
-                q.pop();
-            }
-            return q.top();
-        };
-    
     float darklim = RT_INFINITY_F;
     {
-        std::priority_queue<float> p;
+        std::vector<float> p;
         for (int y = 0; y < H; y += patchsize) {
             for (int x = 0; x < W; x += patchsize) {
                 if (!OOG(dark[y][x], 1.f - 1e-5f)) {
-                    p.push(dark[y][x]);
+                    p.push_back(dark[y][x]);
                 }
             }
         }
-        darklim = get_percentile(p, 0.95);
+        const int pos = p.size() * 0.95;
+        std::nth_element(p.begin(), p.begin() + pos, p.end());
+        darklim = p[pos];
     }
 
     std::vector<std::pair<int, int>> patches;
@@ -145,7 +205,8 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
 
     float bright_lim = RT_INFINITY_F;
     {
-        std::priority_queue<float> l;
+        std::vector<float> l;
+        l.reserve(patches.size() * patchsize * patchsize);
         
         for (auto &p : patches) {
             const int pW = min(p.first+patchsize, W);
@@ -153,12 +214,13 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
             
             for (int y = p.second; y < pH; ++y) {
                 for (int x = p.first; x < pW; ++x) {
-                    l.push(R[y][x] + G[y][x] + B[y][x]);
+                    l.push_back(R[y][x] + G[y][x] + B[y][x]);
                 }
             }
         }
-
-        bright_lim = get_percentile(l, 0.95);
+        const int pos = l.size() * 0.95;
+        std::nth_element(l.begin(), l.begin() + pos, l.end());
+        bright_lim = l[pos];
     }
 
     double rr = 0, gg = 0, bb = 0;
@@ -190,7 +252,6 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
     return darklim > 0 ? -1.125f * std::log(darklim) : std::log(std::numeric_limits<float>::max()) / 2;
 }
 
-
 void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, array2D<float> &b, int radius, float epsilon, bool multithread)
 {
     const int W = img->getWidth();
@@ -211,12 +272,12 @@ void extract_channels(Imagefloat *img, array2D<float> &r, array2D<float> &g, arr
 
 void ImProcFunctions::dehaze(Imagefloat *img)
 {
-    if (!params->dehaze.enabled) {
+    if (!params->dehaze.enabled || params->dehaze.strength == 0.0) {
         return;
     }
 
-    img->normalizeFloatTo1();
-    
+    const float maxChannel = normalize(img, multiThread);
+
     const int W = img->getWidth();
     const int H = img->getHeight();
     const float strength = LIM01(float(params->dehaze.strength) / 100.f * 0.9f);
@@ -229,21 +290,47 @@ void ImProcFunctions::dehaze(Imagefloat *img)
 
     int patchsize = max(int(5 / scale), 2);
     float ambient[3];
-    array2D<float> &t_tilde = dark;
-    float max_t = 0.f;
+    float maxDistance = 0.f;
 
     {
-        int npatches = 0;
-        array2D<float> R(W, H);
+        array2D<float>& R = dark; // R and dark can safely use the same buffer, which is faster and reduces memory allocations/deallocations
         array2D<float> G(W, H);
         array2D<float> B(W, H);
         extract_channels(img, R, G, B, patchsize, 1e-1, multiThread);
-    
-        patchsize = max(max(W, H) / 600, 2);
-        npatches = get_dark_channel(R, G, B, dark, patchsize, nullptr, false, multiThread);
-        DEBUG_DUMP(dark);
 
-        max_t = estimate_ambient_light(R, G, B, dark, patchsize, npatches, ambient);
+        {
+            constexpr int sizecap = 200;
+            const float r = static_cast<float>(W) / static_cast<float>(H);
+            const int hh = r >= 1.f ? sizecap : sizecap / r;
+            const int ww = r >= 1.f ? sizecap * r : sizecap;
+
+            if (W <= ww && H <= hh) {
+                // don't rescale small thumbs
+                array2D<float> D(W, H);
+                const int npatches = get_dark_channel_downsized(R, G, B, D, 2, multiThread);
+                maxDistance = estimate_ambient_light(R, G, B, D, patchsize, npatches, ambient);
+            } else {
+                array2D<float> RR(ww, hh);
+                array2D<float> GG(ww, hh);
+                array2D<float> BB(ww, hh);
+                rescaleNearest(R, RR, multiThread);
+                rescaleNearest(G, GG, multiThread);
+                rescaleNearest(B, BB, multiThread);
+                array2D<float> D(ww, hh);
+
+                const int npatches = get_dark_channel_downsized(RR, GG, BB, D, 2, multiThread);
+                maxDistance = estimate_ambient_light(RR, GG, BB, D, patchsize, npatches, ambient);
+            }
+        }
+
+        if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
+            if (options.rtSettings.verbose) {
+                std::cout << "dehaze: no haze detected" << std::endl;
+            }
+            restore(img, maxChannel, multiThread);
+            return; // probably no haze at all
+        }
+        patchsize = max(max(W, H) / 600, 2);
 
         if (options.rtSettings.verbose) {
             std::cout << "dehaze: ambient light is "
@@ -251,78 +338,95 @@ void ImProcFunctions::dehaze(Imagefloat *img)
                       << std::endl;
         }
 
-        get_dark_channel(R, G, B, dark, patchsize, ambient, true, multiThread);
-    }
-
-    if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
-        if (options.rtSettings.verbose) {
-            std::cout << "dehaze: no haze detected" << std::endl;
-        }
-        img->normalizeFloatTo65535();
-        return; // probably no haze at all
-    }
-
-    DEBUG_DUMP(t_tilde);
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
-#endif
-    for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
-            dark[y][x] = 1.f - strength * dark[y][x];
-        }
+        get_dark_channel(R, G, B, dark, patchsize, ambient, true, multiThread, strength);
     }
 
     const int radius = patchsize * 4;
-    const float epsilon = 1e-5;
-    array2D<float> &t = t_tilde;
+    constexpr float epsilon = 1e-5f;
 
-    {
-        array2D<float> guideB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
-        guidedFilter(guideB, t_tilde, t, radius, epsilon, multiThread);
-    }
+    array2D<float> guideB(W, H, img->b.ptrs, ARRAY2D_BYREFERENCE);
+    guidedFilter(guideB, dark, dark, radius, epsilon, multiThread);
         
-    DEBUG_DUMP(t);
-
     if (options.rtSettings.verbose) {
-        std::cout << "dehaze: max distance is " << max_t << std::endl;
+        std::cout << "dehaze: max distance is " << maxDistance << std::endl;
     }
 
-    float depth = -float(params->dehaze.depth) / 100.f;
-    const float t0 = max(1e-3f, std::exp(depth * max_t));
+    const float depth = -float(params->dehaze.depth) / 100.f;
+    const float t0 = max(1e-3f, std::exp(depth * maxDistance));
     const float teps = 1e-3f;
+
+    const bool luminance = params->dehaze.luminance;
+    const TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+#ifdef __SSE2__
+    const vfloat wsv[3] = {F2V(ws[1][0]), F2V(ws[1][1]),F2V(ws[1][2])};
+#endif
+    const float ambientY = Color::rgbLuminance(ambient[0], ambient[1], ambient[2], ws);
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
     for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
+        int x = 0;
+#ifdef __SSE2__
+        const vfloat onev = F2V(1.f);
+        const vfloat ambient0v = F2V(ambient[0]);
+        const vfloat ambient1v = F2V(ambient[1]);
+        const vfloat ambient2v = F2V(ambient[2]);
+        const vfloat ambientYv = F2V(ambientY);
+        const vfloat epsYv = F2V(1e-5f);
+        const vfloat t0v = F2V(t0);
+        const vfloat tepsv = F2V(teps);
+        const vfloat cmaxChannelv = F2V(maxChannel);
+        for (; x < W - 3; x += 4) {
             // ensure that the transmission is such that to avoid clipping...
-            float rgb[3] = { img->r(y, x), img->g(y, x), img->b(y, x) };
+            const vfloat r = LVFU(img->r(y, x));
+            const vfloat g = LVFU(img->g(y, x));
+            const vfloat b = LVFU(img->b(y, x));
             // ... t >= tl to avoid negative values
-            float tl = 1.f - min(rgb[0]/ambient[0], rgb[1]/ambient[1], rgb[2]/ambient[2]);
-            // ... t >= tu to avoid values > 1
-            float tu = t0 - teps;
-            for (int c = 0; c < 3; ++c) {
-                if (ambient[c] < 1) {
-                    tu = max(tu, (rgb[c] - ambient[c])/(1.f - ambient[c]));
-                }
-            }
-            float mt = max(t[y][x], t0, tl + teps, tu + teps);
+            const vfloat tlv = onev - vminf(r / ambient0v, vminf(g / ambient1v, b / ambient2v));
+            const vfloat mtv = vmaxf(LVFU(dark[y][x]), vmaxf(tlv + tepsv, t0v));
             if (params->dehaze.showDepthMap) {
-                img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt);
+                const vfloat valv = vclampf(onev - mtv, ZEROV, onev) * cmaxChannelv;
+                STVFU(img->r(y, x), valv);
+                STVFU(img->g(y, x), valv);
+                STVFU(img->b(y, x), valv);
+            } else if (luminance) {
+                const vfloat Yv = Color::rgbLuminance(r, g, b, wsv);
+                const vfloat YYv = (Yv - ambientYv) / mtv + ambientYv;
+                const vfloat fv = vself(vmaskf_gt(Yv, epsYv), cmaxChannelv * YYv / Yv, cmaxChannelv);
+                STVFU(img->r(y, x), r * fv);
+                STVFU(img->g(y, x), g * fv);
+                STVFU(img->b(y, x), b * fv);
             } else {
-                float r = (rgb[0] - ambient[0]) / mt + ambient[0];
-                float g = (rgb[1] - ambient[1]) / mt + ambient[1];
-                float b = (rgb[2] - ambient[2]) / mt + ambient[2];
-
-                img->r(y, x) = r;
-                img->g(y, x) = g;
-                img->b(y, x) = b;
+                STVFU(img->r(y, x), ((r - ambient0v) / mtv + ambient0v) * cmaxChannelv);
+                STVFU(img->g(y, x), ((g - ambient1v) / mtv + ambient1v) * cmaxChannelv);
+                STVFU(img->b(y, x), ((b - ambient2v) / mtv + ambient2v) * cmaxChannelv);
+            }
+        }
+#endif
+        for (; x < W; ++x) {
+            // ensure that the transmission is such that to avoid clipping...
+            const float r = img->r(y, x);
+            const float g = img->g(y, x);
+            const float b = img->b(y, x);
+            // ... t >= tl to avoid negative values
+            const float tl = 1.f - min(r / ambient[0], g / ambient[1], b / ambient[2]);
+            const float mt = max(dark[y][x], t0, tl + teps);
+            if (params->dehaze.showDepthMap) {
+                img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * maxChannel;
+            } else if (luminance) {
+                const float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
+                const float YY = (Y - ambientY) / mt + ambientY;
+                const float f = Y > 1e-5f ? maxChannel * YY / Y : maxChannel;
+                img->r(y, x) *= f;
+                img->g(y, x) *= f;
+                img->b(y, x) *= f;
+            } else {
+                img->r(y, x) = ((r - ambient[0]) / mt + ambient[0]) * maxChannel;
+                img->g(y, x) = ((g - ambient[1]) / mt + ambient[1]) * maxChannel;
+                img->b(y, x) = ((b - ambient[2]) / mt + ambient[2]) * maxChannel;
             }
         }
     }
-
-    img->normalizeFloatTo65535();
 }
 
 
