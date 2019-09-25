@@ -159,7 +159,7 @@ Locallab::Locallab():
     maskexpCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     //Shadows Highlight
     maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    // Vibrance
+    // Vibranceretinex
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     //Blur
     maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
@@ -265,7 +265,7 @@ Locallab::Locallab():
     gammasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     // Retinex
-    str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.0))),
+    str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.2))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
     neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, 50., nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 0.1, 500., 0.1, 150.))),
@@ -412,6 +412,7 @@ Locallab::Locallab():
     fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
     dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
+    retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
     residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
 //    retiBox(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
@@ -1323,6 +1324,7 @@ Locallab::Locallab():
 
     dehaFrame->set_label_align(0.025, 0.5);
     retiFrame->set_label_align(0.025, 0.5);
+    retitoolFrame->set_label_align(0.025, 0.5);
 
     str->setAdjusterListener(this);
 
@@ -1468,7 +1470,11 @@ Locallab::Locallab():
     ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
     scopeBox->pack_start(*sensih);
     auxBox->add(*scopeBox);
-    retiBox->pack_start(*auxBox);
+    
+    ToolParamBlock* const genBox = Gtk::manage(new ToolParamBlock());
+    genBox->pack_start(*auxBox);
+    
+    
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
@@ -1483,7 +1489,9 @@ Locallab::Locallab():
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*expmaskreti);
     retiBox->pack_start(*inversret);
-    expreti->add(*retiBox, false);
+    retitoolFrame->add(*retiBox);
+    genBox->pack_start(*retitoolFrame);    
+    expreti->add(*genBox, false);
     expreti->setLevel(2);
 
     panel->pack_start(*expreti, false, false);
@@ -6327,9 +6335,9 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
     if (getEnabled() && expreti->getEnabled()) {
         if (a == str) {
             if (str->getValue() >= 0.1f) {
-                retiBox->show();
+                retitoolFrame->show();
             } else {
-                retiBox->hide();
+                retitoolFrame->hide();
             }
 
             if (listener) {
@@ -8113,9 +8121,9 @@ void Locallab::updateSpecificGUIState()
     }
 
     if (str->getValue() >= 0.2f) {
-        retiBox->show();
+        retitoolFrame->show();
     } else {
-        retiBox->hide();
+        retitoolFrame->hide();
     }
 
 

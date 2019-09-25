@@ -22,7 +22,7 @@ CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click 
 CURVEEDITOR_HIGHLIGHTS;Highlights
 CURVEEDITOR_LIGHTS;Lights
 CURVEEDITOR_LINEAR;Linear
-CURVEEDITOR_LOADDLGLABEL;Load curve...
+CURVEEDITOR_LOADDLGLABEL;Load curve
 CURVEEDITOR_MINMAXCPOINTS;Equalizer
 CURVEEDITOR_NURBS;Control cage
 CURVEEDITOR_PARAMETRIC;Parametric
@@ -2108,8 +2108,8 @@ TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DEHAZ;Strength
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_LUMONLY;Luminance only 
-TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE Ipol, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
-TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE Ipol - personal algorithm adapted from Ipol to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
+TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nLaplacian & PDE : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nPDE IPOL, PDE Fattal and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nPDE reduce artifacts and noise.
+TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure.\n
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.\nAnchor allows selection according to the images over or under exposed.\nUseful to increase Luminance for a Second spot near the current and using mask
 TP_LOCALLAB_FFTW;Use Fast Fourier Transform
 TP_LOCALLAB_FFTW2;Use Fast Fourier Transform (TIF, JPG,..)
@@ -2169,7 +2169,7 @@ TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail (DCT)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=2
 TP_LOCALLAB_PREVIEWSEL;Preview selection deltaE
-TP_LOCALLAB_PDEFRA;PDE Ipol - Contrast attenuator
+TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator
 TP_LOCALLAB_FATFRA;PDE Fattal - Dynamic Range Compression
 TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATDETAIL;Detail
@@ -2201,10 +2201,11 @@ TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_DEHAFRA;Dehaze
 TP_LOCALLAB_RETIFRA;Retinex
+TP_LOCALLAB_RETITOOLFRA;Retinex Tools
 TP_LOCALLAB_RETI;Dehaze - Retinex Strong local contrast
 TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if misty images and depending on whether you want to act on the front or the background
-TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 2 to 10.
-TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 2 to 10.
+TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 2 to 10.\nIf you select all image, 1 horizontal delimiter and 1 one vertical delimiter must be inside the image.
+TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 2 to 10.\nIf you select all image, 1 horizontal delimiter and 1 one vertical delimiter must be inside the image.
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRGRID;Strength

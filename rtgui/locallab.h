@@ -406,6 +406,7 @@ private:
     Gtk::Frame* fatFrame;
     Gtk::Frame* dehaFrame;
     Gtk::Frame* retiFrame;
+    Gtk::Frame* retitoolFrame;
     Gtk::Frame* residFrame;
     Gtk::Frame* clariFrame;
     ToolParamBlock * retiBox;
