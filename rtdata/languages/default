@@ -2204,8 +2204,8 @@ TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Tools
 TP_LOCALLAB_RETI;Dehaze - Retinex Strong local contrast
 TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if misty images and depending on whether you want to act on the front or the background
-TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 2 to 10.\nIf you select all image, 1 horizontal delimiter and 1 one vertical delimiter must be inside the image.
-TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 2 to 10.\nIf you select all image, 1 horizontal delimiter and 1 one vertical delimiter must be inside the image.
+TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\n
+TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\nNot used in Preview
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRGRID;Strength
