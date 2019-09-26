@@ -31,6 +31,7 @@ set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
     badpixels.cc
+    boxblur.cc
     CA_correct_RT.cc
     capturesharpening.cc
     EdgePreservingDecomposition.cc
