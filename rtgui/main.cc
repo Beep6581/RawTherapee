@@ -40,7 +40,7 @@
 #include "extprog.h"
 #include "../rtengine/dynamicprofile.h"
 
-#include "../rtengine/MyTime.h"
+#include "../rtengine/mytime.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
