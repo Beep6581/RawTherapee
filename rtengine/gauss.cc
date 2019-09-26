@@ -16,12 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "gauss.h"
-#include "rt_math.h"
 #include <cmath>
 #include <cstdlib>
-#include "opthelper.h"
+#include <cstring>
+
+#include "gauss.h"
+
 #include "boxblur.h"
+#include "opthelper.h"
+#include "rt_math.h"
+
 namespace
 {
 
