@@ -990,6 +990,7 @@ HISTORY_MSG_749;Local - Reti Depth
 HISTORY_MSG_750;Local - Reti Mode log - lin
 HISTORY_MSG_751;Local - Reti Dehaze luminance
 HISTORY_MSG_752;Local - Reti Offset
+HISTORY_MSG_753;Local - Transmission map
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2209,6 +2210,7 @@ TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if 
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\n
 TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\nNot used in Preview
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
+TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_SHADEX;Shadows

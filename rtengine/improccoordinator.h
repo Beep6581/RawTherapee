@@ -235,6 +235,7 @@ protected:
     LUTf lightCurveloc;
 //    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
+    LocretitransCurve locRETtransCurve;
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;

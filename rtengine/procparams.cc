@@ -2587,6 +2587,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     depth(25),
     sensih(30),
     localTgaincurve{(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35},
+    localTtranscurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.60, 0.75, 0.35, 0.35, 1.00, 0.50, 0.35, 0.35},
     inversret(false),
     equilret(true),
     loglin(false),
@@ -2852,6 +2853,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && depth == other.depth
         && sensih == other.sensih
         && localTgaincurve == other.localTgaincurve
+        && localTtranscurve == other.localTtranscurve
         && inversret == other.inversret
         && equilret == other.equilret
         && loglin == other.loglin
@@ -4103,6 +4105,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).depth, "Locallab", "Depth_" + std::to_string(i), spot.depth, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensih, "Locallab", "Sensih_" + std::to_string(i), spot.sensih, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localTgaincurve, "Locallab", "TgainCurve_" + std::to_string(i), spot.localTgaincurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localTtranscurve, "Locallab", "TtransCurve_" + std::to_string(i), spot.localTtranscurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).inversret, "Locallab", "Inversret_" + std::to_string(i), spot.inversret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).equilret, "Locallab", "Equilret_" + std::to_string(i), spot.equilret, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).loglin, "Locallab", "Loglin_" + std::to_string(i), spot.loglin, keyFile);
@@ -5481,6 +5484,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Depth_" + std::to_string(i), pedited, spot.depth, spotEdited.depth);
                 assignFromKeyfile(keyFile, "Locallab", "Sensih_" + std::to_string(i), pedited, spot.sensih, spotEdited.sensih);
                 assignFromKeyfile(keyFile, "Locallab", "TgainCurve_" + std::to_string(i), pedited, spot.localTgaincurve, spotEdited.localTgaincurve);
+                assignFromKeyfile(keyFile, "Locallab", "TtransCurve_" + std::to_string(i), pedited, spot.localTtranscurve, spotEdited.localTtranscurve);
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + std::to_string(i), pedited, spot.inversret, spotEdited.inversret);
                 assignFromKeyfile(keyFile, "Locallab", "Equilret_" + std::to_string(i), pedited, spot.equilret, spotEdited.equilret);
                 assignFromKeyfile(keyFile, "Locallab", "Loglin_" + std::to_string(i), pedited, spot.loglin, spotEdited.loglin);

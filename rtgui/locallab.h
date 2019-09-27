@@ -107,8 +107,10 @@ private:
     FlatCurveEditor* LLmasktmshape;
     FlatCurveEditor* HHmasktmshape;
     // Retinex
+    CurveEditorGroup* const LocalcurveEditortransT;
     CurveEditorGroup* const LocalcurveEditorgainT;
     CurveEditorGroup* const maskretiCurveEditorG;
+    FlatCurveEditor* cTtransshape;
     FlatCurveEditor* cTgainshape;
     FlatCurveEditor* CCmaskretishape;
     FlatCurveEditor* LLmaskretishape;

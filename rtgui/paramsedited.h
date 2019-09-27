@@ -546,6 +546,7 @@ public:
         bool depth;
         bool sensih;
         bool localTgaincurve;
+        bool localTtranscurve;
         bool inversret;
         bool equilret;
         bool loglin;

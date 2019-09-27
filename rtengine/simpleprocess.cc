@@ -1092,6 +1092,7 @@ private:
             LUTi centerx(500, -10000);
             LUTi centery(500, -10000);
             LocretigainCurve locRETgainCurve;
+            LocretitransCurve locRETtransCurve;
             LocLHCurve loclhCurve;
             LocHHCurve lochhCurve;
             LocCCmaskCurve locccmasCurve;
@@ -1165,6 +1166,7 @@ private:
                 bool lcmasutili = false;
                 bool lhmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
+                locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
                 locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmasutili);
@@ -1217,7 +1219,7 @@ private:
                                                 1);
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                               locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                               locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,

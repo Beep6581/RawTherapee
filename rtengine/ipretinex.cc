@@ -850,7 +850,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
     }
 }
 
-void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, int bfwr, int bfhr, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
+void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, int bfwr, int bfhr, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                                const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, LabImage * transformed, bool retiMasktmap, bool retiMask)
 {
     BENCHFUN
@@ -1478,6 +1478,47 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 
             mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
             // printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+
+            if (locRETtransCcurve && mean != 0.f && stddv != 0.f) { //if curve
+                float asig = 0.166666f / stddv;
+                float bsig = 0.5f - asig * mean;
+                float amax = 0.333333f / (maxtr - mean - stddv);
+                float bmax = 1.f - amax * maxtr;
+                float amin = 0.333333f / (mean - stddv - mintr);
+                float bmin = -amin * mintr;
+
+                asig *= 500.f;
+                bsig *= 500.f;
+                amax *= 500.f;
+                bmax *= 500.f;
+                amin *= 500.f;
+                bmin *= 500.f;
+
+#ifdef _OPENMP
+                #pragma omp parallel
+#endif
+                {
+                    float absciss;
+#ifdef _OPENMP
+                    #pragma omp for schedule(dynamic,16)
+#endif
+
+                    for (int i = 0; i < H_L; i++)
+                        for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
+                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
+                                absciss = asig * luminance[i][j] + bsig;
+                            } else if (luminance[i][j] >= mean) {
+                                absciss = amax * luminance[i][j] + bmax;
+                            } else { /*if(luminance[i][j] <= mean - stddv)*/
+                                absciss = amin * luminance[i][j] + bmin;
+                            }
+
+                            //TODO : move multiplication by 4.f and subtraction of 1.f inside the curve
+                            luminance[i][j] *= (-1.f + 4.f * locRETtransCcurve[absciss]); //new transmission
+
+                        }
+                }
+            }
 
             float epsil = 0.1f;
 

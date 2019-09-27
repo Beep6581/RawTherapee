@@ -919,6 +919,7 @@ void Crop::update(int todo)
         LUTu dummy;
         bool needslocal = params.locallab.enabled;
         LocretigainCurve locRETgainCurve;
+        LocretitransCurve locRETtransCurve;
         LocLHCurve loclhCurve;
         LocHHCurve lochhCurve;
         LocCCmaskCurve locccmasCurve;
@@ -954,6 +955,7 @@ void Crop::update(int todo)
         if (needslocal) {
             for (int sp = 0; sp < params.locallab.nbspot && sp < (int)params.locallab.spots.size(); sp++) {
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
+                locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
                 lochhCurve.Set(params.locallab.spots.at(sp).HHcurve, HHutili);
                 locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve, lcmasutili);
@@ -1011,7 +1013,7 @@ void Crop::update(int todo)
                                                 sca);
                 // Locallab mask are only shown for selected spot
                 if (sp == params.locallab.selspot) {
-                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,locallutili,
+                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, lllocalcurve2,locallutili,
                                       loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                       locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1022,7 +1024,7 @@ void Crop::update(int todo)
                                       LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 
                                       parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask);
                 } else {
-                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, lllocalcurve2,locallutili,
+                    parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, lllocalcurve2,locallutili,
                                       loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                       locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1040,6 +1042,7 @@ void Crop::update(int todo)
                 shtonecurveloc2.clear();
                 tonecurveloc2.clear();
                 locRETgainCurve.Reset();
+                locRETtransCurve.Reset();
                 loclhCurve.Reset();
                 lochhCurve.Reset();
                 locccmasCurve.Reset();

@@ -167,6 +167,7 @@ Locallab::Locallab():
     //TM
     masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     // Retinex
+    LocalcurveEditortransT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONMAP"))),
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     //Local contrast
@@ -1363,6 +1364,16 @@ Locallab::Locallab():
         softradiusret->set_tooltip_text(M("TP_LOCALLAB_GUIDFILTER_TOOLTIP"));
     }
 
+    LocalcurveEditortransT->setCurveListener(this);
+    cTtransshape = static_cast<FlatCurveEditor*>(LocalcurveEditortransT->addCurve(CT_Flat, "", nullptr, false, false));
+    cTtransshape->setIdentityValue(0.);
+    cTtransshape->setResetCurve(FlatCurveType(defSpot.localTtranscurve.at(0)), defSpot.localTtranscurve);
+
+    if (showtooltip) {
+        cTtransshape->setTooltip(M("TP_RETINEX_TRANSMISSION_TOOLTIP"));
+    }
+    LocalcurveEditortransT->curveListComplete();
+    
     LocalcurveEditorgainT->setCurveListener(this);
 
     cTgainshape = static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false));
@@ -1490,6 +1501,7 @@ Locallab::Locallab():
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
 //    retiBox->pack_start(*softradiusret);
+    retiBox->pack_start(*LocalcurveEditortransT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*expmaskreti);
     retiBox->pack_start(*inversret);
@@ -2049,6 +2061,7 @@ Locallab::~Locallab()
     delete maskexpCurveEditorG;
     delete maskSHCurveEditorG;
     delete curveEditorGG;
+    delete LocalcurveEditortransT;
     delete LocalcurveEditorgainT;
     delete LocalcurveEditorwav;
     delete masktmCurveEditorG;
@@ -3067,6 +3080,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).depth = depth->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensih = sensih->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).localTgaincurve = cTgainshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).localTtranscurve = cTtransshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).inversret = inversret->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiusret = softradiusret->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).equilret = equilret->get_active();
@@ -3340,6 +3354,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).depth = pe->locallab.spots.at(pp->locallab.selspot).depth || depth->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensih = pe->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pe->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).localTtranscurve = pe->locallab.spots.at(pp->locallab.selspot).localTtranscurve || !cTtransshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).inversret = pe->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).equilret = pe->locallab.spots.at(pp->locallab.selspot).equilret || !equilret->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).loglin = pe->locallab.spots.at(pp->locallab.selspot).loglin || !loglin->get_inconsistent();
@@ -3611,6 +3626,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).depth = pedited->locallab.spots.at(pp->locallab.selspot).depth || depth->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensih = pedited->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve = pedited->locallab.spots.at(pp->locallab.selspot).localTgaincurve || !cTgainshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).localTtranscurve = pedited->locallab.spots.at(pp->locallab.selspot).localTtranscurve || !cTtransshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).inversret = pedited->locallab.spots.at(pp->locallab.selspot).inversret || !inversret->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).equilret = pedited->locallab.spots.at(pp->locallab.selspot).equilret || !equilret->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).loglin = pedited->locallab.spots.at(pp->locallab.selspot).loglin || !loglin->get_inconsistent();
@@ -3974,6 +3990,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == cTgainshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCTgainCurve, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == cTtransshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCTtransCurve, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -6436,9 +6458,11 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == scalereti) {
             if (scalereti->getValue() == 1) {
                 LocalcurveEditorgainT->hide();
+                LocalcurveEditortransT->hide();
                 retinexMethod->hide();
             } else {
                 LocalcurveEditorgainT->show();
+                LocalcurveEditortransT->show();
                 retinexMethod->show();
             }
 
@@ -7281,9 +7305,11 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
 
         if (pp->locallab.spots.at(index).scalereti == 1) {
             LocalcurveEditorgainT->hide();
+            LocalcurveEditortransT->hide();
             retinexMethod->hide();
         } else {
             LocalcurveEditorgainT->show();
+            LocalcurveEditortransT->show();
             retinexMethod->show();
         }
 
@@ -7494,6 +7520,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         depth->setValue(pp->locallab.spots.at(index).depth);
         sensih->setValue(pp->locallab.spots.at(index).sensih);
         cTgainshape->setCurve(pp->locallab.spots.at(index).localTgaincurve);
+        cTtransshape->setCurve(pp->locallab.spots.at(index).localTtranscurve);
         inversret->set_active(pp->locallab.spots.at(index).inversret);
         equilret->set_active(pp->locallab.spots.at(index).equilret);
         loglin->set_active(pp->locallab.spots.at(index).loglin);
@@ -7817,6 +7844,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 depth->setEditedState(spotState->depth ? Edited : UnEdited);
                 sensih->setEditedState(spotState->sensih ? Edited : UnEdited);
                 cTgainshape->setUnChanged(!spotState->localTgaincurve);
+                cTtransshape->setUnChanged(!spotState->localTtranscurve);
                 inversret->set_inconsistent(multiImage && !spotState->inversret);
                 equilret->set_inconsistent(multiImage && !spotState->equilret);
                 loglin->set_inconsistent(multiImage && !spotState->loglin);
