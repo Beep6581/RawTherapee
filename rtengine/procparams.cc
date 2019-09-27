@@ -2582,6 +2582,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chrrt(0.0),
     neigh(50.0),
     vart(150.0),
+    offs(0.0),
     dehaz(0),
     depth(25),
     sensih(30),
@@ -2846,6 +2847,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chrrt == other.chrrt
         && neigh == other.neigh
         && vart == other.vart
+        && offs == other.offs
         && dehaz == other.dehaz
         && depth == other.depth
         && sensih == other.sensih
@@ -4096,6 +4098,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chrrt, "Locallab", "Chrrt_" + std::to_string(i), spot.chrrt, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).neigh, "Locallab", "Neigh_" + std::to_string(i), spot.neigh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).vart, "Locallab", "Vart_" + std::to_string(i), spot.vart, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).offs, "Locallab", "Offs_" + std::to_string(i), spot.offs, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).dehaz, "Locallab", "Dehaz_" + std::to_string(i), spot.dehaz, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).depth, "Locallab", "Depth_" + std::to_string(i), spot.depth, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensih, "Locallab", "Sensih_" + std::to_string(i), spot.sensih, keyFile);
@@ -5473,6 +5476,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chrrt_" + std::to_string(i), pedited, spot.chrrt, spotEdited.chrrt);
                 assignFromKeyfile(keyFile, "Locallab", "Neigh_" + std::to_string(i), pedited, spot.neigh, spotEdited.neigh);
                 assignFromKeyfile(keyFile, "Locallab", "Vart_" + std::to_string(i), pedited, spot.vart, spotEdited.vart);
+                assignFromKeyfile(keyFile, "Locallab", "Offs_" + std::to_string(i), pedited, spot.offs, spotEdited.offs);
                 assignFromKeyfile(keyFile, "Locallab", "Dehaz_" + std::to_string(i), pedited, spot.dehaz, spotEdited.dehaz);
                 assignFromKeyfile(keyFile, "Locallab", "Depth_" + std::to_string(i), pedited, spot.depth, spotEdited.depth);
                 assignFromKeyfile(keyFile, "Locallab", "Sensih_" + std::to_string(i), pedited, spot.sensih, spotEdited.sensih);

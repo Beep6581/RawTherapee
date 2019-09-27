@@ -541,6 +541,7 @@ public:
         bool chrrt;
         bool neigh;
         bool vart;
+        bool offs;
         bool dehaz;
         bool depth;
         bool sensih;

@@ -861,7 +861,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         float delta;
         constexpr float eps = 2.f;
         bool useHslLin = false;
-        const float offse = 0.f; //loc.offs;
+        const float offse = loc.spots.at(sp).offs;
         const float chrT = (float)(loc.spots.at(sp).chrrt) / 100.f;
         const int scal = (loc.spots.at(sp).scalereti);
         float vart = loc.spots.at(sp).vart / 100.f;//variance
@@ -1573,7 +1573,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 
                         cdmax = cd > cdmax ? cd : cdmax;
                         cdmin = cd < cdmin ? cd : cdmin;
-                        luminance[i][j] = CLIPMAX(LIM(cd, 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j]);
+                        luminance[i][j] = intp(str, clipretinex(cd, 0.f, maxclip), originalLuminance[i][j]);
                     }
 
 

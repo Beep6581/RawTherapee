@@ -269,6 +269,7 @@ Locallab::Locallab():
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
     neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, 50., nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 0.1, 500., 0.1, 150.))),
+    offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -4000., 10000., 1., 0.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
@@ -1344,6 +1345,8 @@ Locallab::Locallab():
         vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
     }
 
+    offs->setAdjusterListener(this);
+
     dehaz->setAdjusterListener(this);
     depth->setAdjusterListener(this);
 
@@ -1483,6 +1486,7 @@ Locallab::Locallab():
     retiBox->pack_start(*vart);
     retiBox->pack_start(*scalereti);
     retiBox->pack_start(*limd);
+    retiBox->pack_start(*offs);
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
 //    retiBox->pack_start(*softradiusret);
@@ -3058,6 +3062,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chrrt = chrrt->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).neigh = neigh->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).vart = vart->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).offs = offs->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).dehaz = dehaz->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).depth = depth->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensih = sensih->getIntValue();
@@ -3330,6 +3335,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chrrt = pe->locallab.spots.at(pp->locallab.selspot).chrrt || chrrt->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).neigh = pe->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).vart = pe->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).offs = pe->locallab.spots.at(pp->locallab.selspot).offs || offs->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).dehaz = pe->locallab.spots.at(pp->locallab.selspot).dehaz || dehaz->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).depth = pe->locallab.spots.at(pp->locallab.selspot).depth || depth->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensih = pe->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
@@ -3600,6 +3606,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chrrt = pedited->locallab.spots.at(pp->locallab.selspot).chrrt || chrrt->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).neigh = pedited->locallab.spots.at(pp->locallab.selspot).neigh || neigh->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).vart = pedited->locallab.spots.at(pp->locallab.selspot).vart || vart->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).offs = pedited->locallab.spots.at(pp->locallab.selspot).offs || offs->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).dehaz = pedited->locallab.spots.at(pp->locallab.selspot).dehaz || dehaz->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).depth = pedited->locallab.spots.at(pp->locallab.selspot).depth || depth->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensih = pedited->locallab.spots.at(pp->locallab.selspot).sensih || sensih->getEditedState();
@@ -5354,6 +5361,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chrrt->setDefault(defSpot->chrrt);
     neigh->setDefault(defSpot->neigh);
     vart->setDefault(defSpot->vart);
+    offs->setDefault(defSpot->offs);
     dehaz->setDefault((double)defSpot->dehaz);
     depth->setDefault((double)defSpot->depth);
     sensih->setDefault((double)defSpot->sensih);
@@ -5517,6 +5525,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chrrt->setDefaultEditedState(Irrelevant);
         neigh->setDefaultEditedState(Irrelevant);
         vart->setDefaultEditedState(Irrelevant);
+        offs->setDefaultEditedState(Irrelevant);
         dehaz->setDefaultEditedState(Irrelevant);
         depth->setDefaultEditedState(Irrelevant);
         sensih->setDefaultEditedState(Irrelevant);
@@ -5684,6 +5693,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chrrt->setDefaultEditedState(defSpotState->chrrt ? Edited : UnEdited);
         neigh->setDefaultEditedState(defSpotState->neigh ? Edited : UnEdited);
         vart->setDefaultEditedState(defSpotState->vart ? Edited : UnEdited);
+        offs->setDefaultEditedState(defSpotState->offs ? Edited : UnEdited);
         dehaz->setDefaultEditedState(defSpotState->dehaz ? Edited : UnEdited);
         depth->setDefaultEditedState(defSpotState->depth ? Edited : UnEdited);
         sensih->setDefaultEditedState(defSpotState->sensih ? Edited : UnEdited);
@@ -6363,6 +6373,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == offs) {
+            if (listener) {
+                listener->panelChanged(Evlocallaboffs, offs->getTextValue());
+            }
+        }
+
         if (a == dehaz) {
             if (listener) {
                 listener->panelChanged(Evlocallabdehaz, dehaz->getTextValue());
@@ -6857,6 +6873,7 @@ void Locallab::setBatchMode(bool batchMode)
     chrrt->showEditedCB();
     neigh->showEditedCB();
     vart->showEditedCB();
+    offs->showEditedCB();
     dehaz->showEditedCB();
     depth->showEditedCB();
     sensih->showEditedCB();
@@ -7472,6 +7489,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chrrt->setValue(pp->locallab.spots.at(index).chrrt);
         neigh->setValue(pp->locallab.spots.at(index).neigh);
         vart->setValue(pp->locallab.spots.at(index).vart);
+        offs->setValue(pp->locallab.spots.at(index).offs);
         dehaz->setValue(pp->locallab.spots.at(index).dehaz);
         depth->setValue(pp->locallab.spots.at(index).depth);
         sensih->setValue(pp->locallab.spots.at(index).sensih);
@@ -7794,6 +7812,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chrrt->setEditedState(spotState->chrrt ? Edited : UnEdited);
                 neigh->setEditedState(spotState->neigh ? Edited : UnEdited);
                 vart->setEditedState(spotState->vart ? Edited : UnEdited);
+                offs->setEditedState(spotState->offs ? Edited : UnEdited);
                 dehaz->setEditedState(spotState->dehaz ? Edited : UnEdited);
                 depth->setEditedState(spotState->depth ? Edited : UnEdited);
                 sensih->setEditedState(spotState->sensih ? Edited : UnEdited);

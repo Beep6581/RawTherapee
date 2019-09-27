@@ -217,6 +217,7 @@ private:
     Adjuster* const chrrt;
     Adjuster* const neigh;
     Adjuster* const vart;
+    Adjuster* const offs;
     Adjuster* const dehaz;
     Adjuster* const depth;
     Adjuster* const sensih;

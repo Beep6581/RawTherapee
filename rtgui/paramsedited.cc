@@ -1123,6 +1123,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chrrt = locallab.spots.at(j).chrrt && pSpot.chrrt == otherSpot.chrrt;
                 locallab.spots.at(j).neigh = locallab.spots.at(j).neigh && pSpot.neigh == otherSpot.neigh;
                 locallab.spots.at(j).vart = locallab.spots.at(j).vart && pSpot.vart == otherSpot.vart;
+                locallab.spots.at(j).offs = locallab.spots.at(j).offs && pSpot.vart == otherSpot.offs;
                 locallab.spots.at(j).dehaz = locallab.spots.at(j).dehaz && pSpot.dehaz == otherSpot.dehaz;
                 locallab.spots.at(j).depth = locallab.spots.at(j).depth && pSpot.depth == otherSpot.depth;
                 locallab.spots.at(j).sensih = locallab.spots.at(j).sensih && pSpot.sensih == otherSpot.sensih;
@@ -3338,6 +3339,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).vart = mods.locallab.spots.at(i).vart;
         }
 
+        if (locallab.spots.at(i).offs) {
+            toEdit.locallab.spots.at(i).offs = mods.locallab.spots.at(i).offs;
+        }
+
         if (locallab.spots.at(i).dehaz) {
             toEdit.locallab.spots.at(i).dehaz = mods.locallab.spots.at(i).dehaz;
         }
@@ -4801,6 +4806,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chrrt(v),
     neigh(v),
     vart(v),
+    offs(v),
     dehaz(v),
     depth(v),
     sensih(v),
@@ -5062,6 +5068,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chrrt = v;
     neigh = v;
     vart = v;
+    offs = v;
     dehaz = v;
     depth = v;
     sensih = v;

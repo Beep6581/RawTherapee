@@ -1131,6 +1131,7 @@ struct LocallabParams {
         double chrrt;
         double neigh;
         double vart;
+        double offs;
         int dehaz;
         int depth;
         int sensih;
