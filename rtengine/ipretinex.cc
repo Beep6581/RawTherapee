@@ -1428,10 +1428,10 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
                     guid[i][j] = src[i][j] / 32768.f;
-                    ble[i][j] = (luminance[i][j] + mintran) / deltatran;
+                    ble[i][j] = (luminance[i][j] - mintran) / deltatran;
                 }
 
-            double epsilmax = 1e-2;
+            double epsilmax = 0.9;
             double epsilmin = 1e-4;
             float radi = loc.spots.at(sp).softradiusret;
 
@@ -1440,7 +1440,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 double bepsil = epsilmax - 100.f * aepsil;
                 double epsil = aepsil * radi + bepsil;
 
-                float blur = 10.f / skip * (0.001f + 0.1f * radi);
+                float blur = 10.f / skip * (0.001f + 0.2f * radi);
                 rtengine::guidedFilter(guid, ble, ble, blur, epsil,  multiThread, 4);
 
             }
@@ -1460,8 +1460,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         }
 
         delete [] buffer;
-//        src(0,0);
-//        out(0,0);
         delete [] outBuffer;
         outBuffer = nullptr;
         delete [] srcBuffer;
