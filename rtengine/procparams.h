@@ -1156,6 +1156,7 @@ struct LocallabParams {
         double darkness;
         double lightnessreti;
         double limd;
+        double cliptm;
         bool fftwreti;
         // Sharpening
         bool expsharp;

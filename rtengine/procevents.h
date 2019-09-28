@@ -780,6 +780,7 @@ enum ProcEventCode {
     Evlocallablumonly = 750,
     Evlocallaboffs = 751,
     EvlocallabCTtransCurve = 752,
+    Evlocallabcliptm = 753,
     NUMOFEVENTS
 };
 

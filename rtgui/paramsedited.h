@@ -566,6 +566,7 @@ public:
         bool darkness;
         bool lightnessreti;
         bool limd;
+        bool cliptm;
         bool fftwreti;
         // Sharpening
         bool expsharp;

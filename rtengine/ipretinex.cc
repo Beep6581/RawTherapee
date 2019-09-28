@@ -880,7 +880,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         if (!logli) {
             useHslLin = true;
         }
-
+//printf("ok 1\n");
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
         int nei = (int)(krad * loc.spots.at(sp).neigh);
@@ -960,6 +960,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         if (!useHslLin) {
             pond /= log(elogt);
         }
+//printf("ok 2\n");
 
         float *buffer = new float[W_L * H_L];
         float kr = 1.f;//on FFTW
@@ -1033,6 +1034,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                     }
                 }
             }
+//printf("ok 3\n");
 
             if (scale == 1) { //equalize last scale with darkness and lightness
 
@@ -1236,6 +1238,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
             }
 
+//printf("ok 4\n");
 
 #ifdef __SSE2__
             vfloat pondv = F2V(pond);
@@ -1275,6 +1278,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             }
 
         }
+//printf("ok 5\n");
 
         if (scal != 1) {
             float mintran = luminance[0][0];
@@ -1297,6 +1301,8 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 //here add GuidFilter for transmission map
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);
+            float clipt = loc.spots.at(sp).cliptm;
+            
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -1304,14 +1310,14 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
                     guid[i][j] = src[i][j] / 32768.f;
-                    ble[i][j] = (luminance[i][j] + mintran) / deltatran;
+                    ble[i][j] = LIM((luminance[i][j] + mintran) / deltatran, 0.002f * clipt, 1.f - 0.002f * clipt);
                 }
 
-            double epsilmax = 1e-5;
-            double epsilmin = 1e-6;
+            double epsilmax = 0.9;
+            double epsilmin = 1e-5;
             float radi = loc.spots.at(sp).softradiusret;
 
-            if (loc.spots.at(sp).softradiusret > 0.f) {
+            if (radi > 0.f) {
                 double aepsil = (epsilmax - epsilmin) / 90.f;
                 double bepsil = epsilmax - 100.f * aepsil;
                 double epsil = aepsil * radi + bepsil;
@@ -1333,6 +1339,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             ble(0, 0);
             guid(0, 0);
         }
+//printf("ok 6\n");
 
 
         if (scal == 1) {
@@ -1403,7 +1410,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
         }
 
-        if (scal != 1) {
+        if (scal == 1) {
             float mintran = luminance[0][0];
             float maxtran = mintran;
             
@@ -1515,6 +1522,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                         }
                 }
             }
+//printf("ok 7\n");
 
             float epsil = 0.1f;
 
@@ -1613,6 +1621,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                         luminance[i][j] = intp(str, clipretinex(cd, 0.f, maxclip), originalLuminance[i][j]);
                     }
 
+//printf("ok 8\n");
 
 
 #ifdef _OPENMP

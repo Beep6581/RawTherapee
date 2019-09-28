@@ -234,6 +234,7 @@ private:
     Adjuster* const darkness;
     Adjuster* const lightnessreti;
     Adjuster* const limd;
+    Adjuster* const cliptm;
 
     // Sharpening
     Adjuster* const sharcontrast;

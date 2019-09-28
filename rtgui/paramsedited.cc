@@ -1148,6 +1148,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).darkness = locallab.spots.at(j).darkness && pSpot.darkness == otherSpot.darkness;
                 locallab.spots.at(j).lightnessreti = locallab.spots.at(j).lightnessreti && pSpot.lightnessreti == otherSpot.lightnessreti;
                 locallab.spots.at(j).limd = locallab.spots.at(j).limd && pSpot.limd == otherSpot.limd;
+                locallab.spots.at(j).cliptm = locallab.spots.at(j).cliptm && pSpot.cliptm == otherSpot.cliptm;
                 locallab.spots.at(j).fftwreti = locallab.spots.at(j).fftwreti && pSpot.fftwreti == otherSpot.fftwreti;
                 // Sharpening
                 locallab.spots.at(j).expsharp = locallab.spots.at(j).expsharp && pSpot.expsharp == otherSpot.expsharp;
@@ -3440,6 +3441,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).limd = mods.locallab.spots.at(i).limd;
         }
 
+        if (locallab.spots.at(i).cliptm) {
+            toEdit.locallab.spots.at(i).cliptm = mods.locallab.spots.at(i).cliptm;
+        }
+
         if (locallab.spots.at(i).fftwreti) {
             toEdit.locallab.spots.at(i).fftwreti = mods.locallab.spots.at(i).fftwreti;
         }
@@ -4836,6 +4841,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     darkness(v),
     lightnessreti(v),
     limd(v),
+    cliptm(v),
     fftwreti(v),
     // Sharpening
     expsharp(v),
@@ -5099,6 +5105,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     darkness = v;
     lightnessreti = v;
     limd = v;
+    cliptm = v;
     fftwreti = v;
     // Sharpening
     expsharp = v;
