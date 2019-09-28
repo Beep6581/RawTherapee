@@ -2505,7 +2505,7 @@ TP_RETINEX_MAP_NONE;None
 TP_RETINEX_MEDIAN;Transmission median filter
 TP_RETINEX_METHOD;Method
 TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\nHighlights = Remove magenta in highlights.
-TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
+TP_RETINEX_MLABEL;Restored data Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Reset
@@ -2519,11 +2519,11 @@ TP_RETINEX_SLOPE;Free gamma slope
 TP_RETINEX_STRENGTH;Strength
 TP_RETINEX_THRESHOLD;Threshold
 TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
-TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
-TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
+TP_RETINEX_TLABEL;TM Datas Min=%1 Max=%2 Mean=%3 Sigma=%4
+TP_RETINEX_TLABEL2;TM Effective Tm=%1 TM=%2
+TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.
 TP_RETINEX_TRANF;Transmission
-TP_RETINEX_TRANSMISSION;Transmission map
+TP_RETINEX_TRANSMISSION;Transmission map 
 TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 TP_RETINEX_UNIFORM;Uniform
 TP_RETINEX_VARIANCE;Contrast

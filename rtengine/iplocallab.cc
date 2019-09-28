@@ -6600,7 +6600,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskCurve & locccmasblCurve, bool & lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool & llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
                                 const LocwavCurve & locwavCurve, bool & locwavutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref,
-                                int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask)
+                                int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
+                                float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     /* comment on processus deltaE
             * the algo uses 3 different ways to manage deltaE according to the type of intervention
@@ -7899,6 +7900,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (reduW) {
                         bfwr = ftsizeW;
                     }
+
                     if (settings->verbose) {
                         printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i bfhr=%i origH=%i ftsizeH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, bfhr, original->H, ftsizeH);
                         printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i bfwr=%i origW=%i ftsizeW=%i\n", xstart, xend, lp.xc, lp.lxL, lp.lx, bfw, bfwr, original->W, ftsizeW);
@@ -8729,7 +8731,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
         }
 
-        if (lp.str >= 0.2f  && lp.retiena && call == 1) {
+        if (lp.str >= 0.2f  && lp.retiena && call != 2) {
             int GW = transformed->W;
             int GH = transformed->H;
             LabImage *bufreti = nullptr;
@@ -8741,7 +8743,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (GW > 2 && GH > 2)
 
             {
-                
+
                 array2D<float> buflight(GW, GH);
                 JaggedArray<float> bufchro(GW, GH);
 
@@ -8749,7 +8751,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 Hd = GH;
                 Wd = GW;
 
-                if (!lp.invret && call == 1) {
+                if (!lp.invret && call != 2) {
 
                     Hd = GH;
                     Wd = GW;
@@ -8814,7 +8816,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 LabImage *tmpl = nullptr;
 
-                if (!lp.invret && call == 1) {
+                if (!lp.invret && call != 2) {
 
 
 #ifdef _OPENMP
@@ -8879,12 +8881,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     tmpl = new LabImage(transformed->W, transformed->H);
                 }
 
-                float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+                //    float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
                 bool fftw = lp.ftwreti;
                 //for Retinex Mask are incorporated in MSR
                 ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
-
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
@@ -9108,6 +9109,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if (bufreti) {
                     delete  bufreti;
                 }
+
             }
         }
 
@@ -9343,7 +9345,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     tmpl = new LabImage(transformed->W, transformed->H);
                 }
 
-                float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
+                //   float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
                 bool fftw = lp.ftwreti;
                 //for Retinex Mask are incorporated in MSR
 

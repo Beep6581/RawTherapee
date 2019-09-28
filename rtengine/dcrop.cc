@@ -1008,6 +1008,14 @@ void Crop::update(int todo)
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
                 avge = parent->avgs[sp];
+                float minCD;
+                float maxCD;
+                float mini;
+                float maxi;
+                float Tmean;
+                float Tsigma;
+                float Tmin;
+                float Tmax;
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
                                                 hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avge,
                                                 sca);
@@ -1022,7 +1030,13 @@ void Crop::update(int todo)
                                       locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                                       locwavCurve, locwavutili,
                                       LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 
-                                      parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask);
+                                      parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
+                                      minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                                                    printf("Tmean=%f\n", Tmean);
+//                    if (locallListener) {
+//                        locallListener->minmaxChanged(maxCD, minCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+//                    }
+                                      
                 } else {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, lllocalcurve2,locallutili,
                                       loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
@@ -1032,7 +1046,8 @@ void Crop::update(int todo)
                                       locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                                       locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                                       locwavCurve, locwavutili,
-                                      LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                                      LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 }
                 lllocalcurve2.clear();
                 lightCurveloc2.clear();

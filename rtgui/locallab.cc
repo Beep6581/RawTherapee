@@ -429,6 +429,14 @@ Locallab::Locallab():
     bool showtooltip = options.showtooltip;
     CurveListener::setMulti(true);
     float R, G, B;
+    nextmin = 0.;
+    nextmax = 0.;
+    nextminiT = 0.;
+    nextmaxiT = 0.;
+    nextmeanT = 0.;
+    nextsigma = 0.;
+    nextminT = 0.;
+    nextmaxT = 0.;
 
     LocallabParams::LocallabSpot defSpot;
 
@@ -1364,6 +1372,23 @@ Locallab::Locallab():
         softradiusret->set_tooltip_text(M("TP_LOCALLAB_GUIDFILTER_TOOLTIP"));
     }
 
+    mMLabels = Gtk::manage(new Gtk::Label("---"));
+    setExpandAlignProperties(mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    mMLabels->set_tooltip_markup(M("TP_RETINEX_MLABEL_TOOLTIP"));
+    //  settingsGrid->attach (*mMLabels, 0, 0, 1, 1);
+//   mMLabels->show ();
+
+    transLabels = Gtk::manage(new Gtk::Label("---"));
+    setExpandAlignProperties(transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    transLabels->set_tooltip_markup(M("TP_RETINEX_TLABEL_TOOLTIP"));
+    // settingsGrid->attach (*transLabels, 0, 1, 1, 1);
+//   transLabels->show ();
+
+    transLabels2 = Gtk::manage(new Gtk::Label("---"));
+    setExpandAlignProperties(transLabels2, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+//    settingsGrid->attach (*transLabels2, 0, 2, 1, 1);
+//    transLabels2->show ();
+
     LocalcurveEditortransT->setCurveListener(this);
     cTtransshape = static_cast<FlatCurveEditor*>(LocalcurveEditortransT->addCurve(CT_Flat, "", nullptr, false, false));
     cTtransshape->setIdentityValue(0.);
@@ -1372,8 +1397,9 @@ Locallab::Locallab():
     if (showtooltip) {
         cTtransshape->setTooltip(M("TP_RETINEX_TRANSMISSION_TOOLTIP"));
     }
+
     LocalcurveEditortransT->curveListComplete();
-    
+
     LocalcurveEditorgainT->setCurveListener(this);
 
     cTgainshape = static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false));
@@ -1472,23 +1498,23 @@ Locallab::Locallab():
     dehaBox->pack_start(*depth);
     dehaBox->pack_start(*lumonly);
     dehaFrame->add(*dehaBox);
-    
+
     ToolParamBlock* const deharetiBox = Gtk::manage(new ToolParamBlock());
     deharetiBox->pack_start(*str);
     deharetiBox->pack_start(*loglin);
     retiFrame->add(*deharetiBox);
-    
+
     auxBox->add(*dehaFrame);
     auxBox->add(*retiFrame);
 
     ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
     scopeBox->pack_start(*sensih);
     auxBox->add(*scopeBox);
-    
+
     ToolParamBlock* const genBox = Gtk::manage(new ToolParamBlock());
     genBox->pack_start(*auxBox);
-    
-    
+
+
     retiBox->pack_start(*retinexMethod);
     retiBox->pack_start(*fftwreti);
     retiBox->pack_start(*equilret);
@@ -1501,12 +1527,15 @@ Locallab::Locallab():
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
 //    retiBox->pack_start(*softradiusret);
+    retiBox->pack_start(*mMLabels);
+    retiBox->pack_start(*transLabels);
+    retiBox->pack_start(*transLabels2);
     retiBox->pack_start(*LocalcurveEditortransT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*expmaskreti);
     retiBox->pack_start(*inversret);
     retitoolFrame->add(*retiBox);
-    genBox->pack_start(*retitoolFrame);    
+    genBox->pack_start(*retitoolFrame);
     expreti->add(*genBox, false);
     expreti->setLevel(2);
 
@@ -2187,6 +2216,78 @@ void Locallab::writeOptions(std::vector<int> &tpOpen)
     tpOpen.push_back(expmaskbl->get_expanded());
 
 }
+
+void Locallab::minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax)
+{
+    nextmin = cdmin;
+    nextmax = cdma;
+    nextminiT = mini;
+    nextmaxiT = maxi;
+    nextmeanT = Tmean;
+    nextsigma = Tsigma;
+    nextminT = Tmin;
+    nextmaxT = Tmax;
+
+    idle_register.add(
+    [this]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+        // FIXME: The above can't be true?!
+        disableListener();
+        enableListener();
+        updateLabel();
+        updateTrans();
+        return false;
+    }
+    );
+}
+
+void Locallab::updateLabel()
+{
+    if (!batchMode) {
+        float nX, nY;
+        nX = nextmin;
+        nY = nextmax;
+        {
+            mMLabels->set_text(
+                Glib::ustring::compose(M("TP_RETINEX_MLABEL"),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), nX),
+                                       Glib::ustring::format(std::fixed, std::setprecision(0), nY))
+            );
+        }
+    }
+}
+
+void Locallab::updateTrans()
+{
+    if (!batchMode) {
+        float nm, nM, nZ, nA, nB, nS;
+        nm = nextminiT;
+        nM = nextmaxiT;
+        nZ = nextmeanT;
+        nA = nextminT;
+        nB = nextmaxT;
+        nS = nextsigma;
+        {
+            transLabels->set_text(
+                Glib::ustring::compose(M("TP_RETINEX_TLABEL"),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nm),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nM),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nZ),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nS))
+            );
+            transLabels2->set_text(
+                Glib::ustring::compose(M("TP_RETINEX_TLABEL2"),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nA),
+                                       Glib::ustring::format(std::fixed, std::setprecision(1), nB))
+            );
+
+
+        }
+    }
+}
+
+
+
 
 void Locallab::refChanged(double huer, double lumar, double chromar)
 {

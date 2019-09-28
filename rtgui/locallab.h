@@ -415,9 +415,20 @@ private:
     ToolParamBlock * retiBox;
     ToolParamBlock * maskretiBox;
     LabGrid *labgrid;
+    Gtk::Label* mMLabels;
+    Gtk::Label* transLabels;
+    Gtk::Label* transLabels2;
     // Others
     Gtk::HBox* ctboxsoftmethod;
     Gtk::HBox* ctboxexpmethod;
+    double nextmin;
+    double nextmax;
+    double nextminiT;
+    double nextmaxiT;
+    double nextmeanT;
+    double nextminT;
+    double nextmaxT;
+    double nextsigma;
     /**
      * Used to store the default ProcParams when setDefaults function is called
      * When an other spot is selected, this default ProcParams is used to update adjusters default values
@@ -533,6 +544,9 @@ public:
     void writeOptions(std::vector<int> &tpOpen);
     void updateToolState(std::vector<int> &tpOpen);
     void refChanged(double huer, double lumar, double chromar);
+    void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;
+    void updateLabel();
+    void updateTrans();
 
     // Mask visibility management functions
     struct llMaskVisibility {
