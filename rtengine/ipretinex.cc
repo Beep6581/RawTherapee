@@ -1403,10 +1403,10 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
         }
 
-        if (scal == 1) {
+        if (scal != 1) {
             float mintran = luminance[0][0];
             float maxtran = mintran;
-            /*
+            
             #ifdef _OPENMP
                         #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
             #endif
@@ -1417,9 +1417,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                                 maxtran = rtengine::max(luminance[ir][jr], maxtran);
                             }
                         }
-            */
-            mintran = 0.f;
-            maxtran = 1.f;
+            
             float deltatran = maxtran - mintran;
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);
@@ -1433,7 +1431,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                     ble[i][j] = (luminance[i][j] + mintran) / deltatran;
                 }
 
-            double epsilmax = 1e-3;
+            double epsilmax = 1e-2;
             double epsilmin = 1e-4;
             float radi = loc.spots.at(sp).softradiusret;
 

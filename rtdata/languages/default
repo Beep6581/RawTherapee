@@ -2146,7 +2146,7 @@ TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_GUIDFILTER;Guided filter radius
-TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - reduce if non misty images 
+TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - can reduce or increase artifacts. 
 TP_LOCALLAB_LOC_CONTRAST;Local contrast
 TP_LOCALLAB_LAPLACEXP;Laplacian threshold
 TP_LOCALLAB_BALANEXP;PDE balance
@@ -2506,7 +2506,7 @@ TP_RETINEX_MEDIAN;Transmission median filter
 TP_RETINEX_METHOD;Method
 TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\nHighlights = Remove magenta in highlights.
 TP_RETINEX_MLABEL;Restored data Min=%1 Max=%2
-TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
+TP_RETINEX_MLABEL_TOOLTIP;'Should be' near min=0 max=32768 but others values are possible\nRestored image with no mixture.
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Reset
 TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.

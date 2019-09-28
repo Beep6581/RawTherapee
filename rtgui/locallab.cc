@@ -270,7 +270,7 @@ Locallab::Locallab():
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
     neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, 50., nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 0.1, 500., 0.1, 150.))),
-    offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -4000., 10000., 1., 0.))),
+    offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -10000., 20000., 1., 0.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
@@ -281,8 +281,8 @@ Locallab::Locallab():
     gammaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     scalereti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALERETI"), 1.0, 10.0, 1., 2.))),
-    darkness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DARKRETI"), 0.01, 4.0, 0.01, 2.0))),
-    lightnessreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTRETI"), 0.01, 3.0, 0.01, 1.))),
+    darkness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DARKRETI"), 0.01, 6.0, 0.01, 2.0))),
+    lightnessreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTRETI"), 0.01, 4.0, 0.01, 1.))),
     limd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESRETI"), 1.2, 100.0, 0.1, 8.))),
     // Sharpening
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
@@ -1526,7 +1526,7 @@ Locallab::Locallab():
     retiBox->pack_start(*offs);
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
-//    retiBox->pack_start(*softradiusret);
+    retiBox->pack_start(*softradiusret);
     retiBox->pack_start(*mMLabels);
     retiBox->pack_start(*transLabels);
     retiBox->pack_start(*transLabels2);
@@ -6560,10 +6560,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             if (scalereti->getValue() == 1) {
                 LocalcurveEditorgainT->hide();
                 LocalcurveEditortransT->hide();
+                softradiusret->hide();
                 retinexMethod->hide();
             } else {
                 LocalcurveEditorgainT->show();
                 LocalcurveEditortransT->show();
+                softradiusret->show();
                 retinexMethod->show();
             }
 
@@ -7407,10 +7409,12 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         if (pp->locallab.spots.at(index).scalereti == 1) {
             LocalcurveEditorgainT->hide();
             LocalcurveEditortransT->hide();
+            softradiusret->hide();
             retinexMethod->hide();
         } else {
             LocalcurveEditorgainT->show();
             LocalcurveEditortransT->show();
+            softradiusret->show();
             retinexMethod->show();
         }
 
