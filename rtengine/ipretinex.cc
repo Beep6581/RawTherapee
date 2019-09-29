@@ -876,6 +876,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         float ilimD = 1.f / limD;
         float threslum = loc.spots.at(sp).limd;
         const float elogt = 2.71828f;
+        float radi = loc.spots.at(sp).softradiusret;
 
         if (!logli) {
             useHslLin = true;
@@ -953,6 +954,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         for (int i = 0; i < H_L; i++) {
             out[i] = &outBuffer[i * W_L];
         }
+        float clipt = loc.spots.at(sp).cliptm;
 
         const float logBetaGain = xlogf(16384.f);
         float pond = logBetaGain / (float) scal;
@@ -1048,7 +1050,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                         for (int x = 0; x < W_L; ++x) {
                             float buf = (src[y][x] - out[y][x]) * value;
                             buf *= (buf > 0.f) ? lig : dar;
-                            out[y][x] = LIM(out[y][x] + buf, 0.f, 100000.f);
+                            out[y][x] = LIM(out[y][x] + buf, -100000.f, 100000.f);
                         }
                     }
                 }
@@ -1280,7 +1282,8 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         }
 //printf("ok 5\n");
 
-        if (scal != 1) {
+       // if (scal != 1) {
+        if (scal >= 1  && radi > 0.f) {
             float mintran = luminance[0][0];
             float maxtran = mintran;
 
@@ -1301,7 +1304,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 //here add GuidFilter for transmission map
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);
-            float clipt = loc.spots.at(sp).cliptm;
+//            float clipt = loc.spots.at(sp).cliptm;
             
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -1310,12 +1313,11 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
                     guid[i][j] = src[i][j] / 32768.f;
-                    ble[i][j] = LIM((luminance[i][j] + mintran) / deltatran, 0.002f * clipt, 1.f - 0.002f * clipt);
+                    ble[i][j] = LIM((luminance[i][j] - mintran) / deltatran, 0.f, 1.f);
                 }
 
             double epsilmax = 0.9;
             double epsilmin = 1e-5;
-            float radi = loc.spots.at(sp).softradiusret;
 
             if (radi > 0.f) {
                 double aepsil = (epsilmax - epsilmin) / 90.f;
@@ -1410,7 +1412,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
         }
 
-        if (scal == 1) {
+        if (scal == 1 && radi > 0.f) {
             float mintran = luminance[0][0];
             float maxtran = mintran;
             
@@ -1440,9 +1442,8 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
 
             double epsilmax = 0.9;
             double epsilmin = 1e-4;
-            float radi = loc.spots.at(sp).softradiusret;
 
-            if (loc.spots.at(sp).softradiusret > 0.f) {
+            if (radi > 0.f) {
                 double aepsil = (epsilmax - epsilmin) / 90.f;
                 double bepsil = epsilmax - 100.f * aepsil;
                 double epsil = aepsil * radi + bepsil;
@@ -1545,7 +1546,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 delta = 1.0f;
             }
 
-            float cdfactor = 32768.f / delta;
+            float cdfactor = (clipt * 32768.f) / delta;
             maxCD = -9999999.f;
             minCD = 9999999.f;
             //prepare work for curve gain

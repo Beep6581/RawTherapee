@@ -2587,7 +2587,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     depth(25),
     sensih(30),
     localTgaincurve{(double)FCT_MinMaxCPoints, 0.0, 0.12, 0.35, 0.35, 0.70, 0.50, 0.35, 0.35, 1.00, 0.12, 0.35, 0.35},
-    localTtranscurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.60, 0.75, 0.35, 0.35, 1.00, 0.50, 0.35, 0.35},
+    localTtranscurve{(double)FCT_MinMaxCPoints, 0.0, 0.50, 0.35, 0.35, 0.5, 0.5, 0.35, 0.35, 1.00, 0.50, 0.35, 0.35},
     inversret(false),
     equilret(true),
     loglin(false),
@@ -2607,7 +2607,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     darkness(2.0),
     lightnessreti(1.0),
     limd(8.0),
-    cliptm(0.0),
+    cliptm(1.0),
     fftwreti(false),
     // Sharpening
     expsharp(false),

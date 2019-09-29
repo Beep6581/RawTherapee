@@ -270,7 +270,7 @@ Locallab::Locallab():
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
     neigh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NEIGH"), MINNEIGH, MAXNEIGH, 0.5, 50., nullptr, nullptr, &retiSlider2neigh, &retiNeigh2Slider))),
     vart(Gtk::manage(new Adjuster(M("TP_LOCALLAB_VART"), 0.1, 500., 0.1, 150.))),
-    offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -2000., 10000., 1., 0.))),
+    offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -16386., 32768., 1., 0.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
@@ -283,8 +283,8 @@ Locallab::Locallab():
     scalereti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALERETI"), 1.0, 10.0, 1., 2.))),
     darkness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DARKRETI"), 0.01, 6.0, 0.01, 2.0))),
     lightnessreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTRETI"), 0.01, 4.0, 0.01, 1.))),
-    limd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESRETI"), 2., 100.0, 0.1, 8.))),
-    cliptm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLIPTM"), 0., 100.0, 0.1, 0.))),
+    limd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESRETI"), 1.2, 100.0, 0.1, 8.))),
+    cliptm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLIPTM"), 0.02, 2.0, 0.01, 1.))),
     // Sharpening
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
@@ -360,7 +360,7 @@ Locallab::Locallab():
     lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
-    fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
+    fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
     // Sharpening
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     // Local contrast
@@ -1375,20 +1375,17 @@ Locallab::Locallab():
 
     mMLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    mMLabels->set_tooltip_markup(M("TP_RETINEX_MLABEL_TOOLTIP"));
-    //  settingsGrid->attach (*mMLabels, 0, 0, 1, 1);
-//   mMLabels->show ();
-
+    if (showtooltip) {
+        mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
+    }
+    
     transLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    transLabels->set_tooltip_markup(M("TP_RETINEX_TLABEL_TOOLTIP"));
-    // settingsGrid->attach (*transLabels, 0, 1, 1, 1);
-//   transLabels->show ();
-
+    if (showtooltip) {
+        transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
+    }
     transLabels2 = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels2, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-//    settingsGrid->attach (*transLabels2, 0, 2, 1, 1);
-//    transLabels2->show ();
 
     LocalcurveEditortransT->setCurveListener(this);
     cTtransshape = static_cast<FlatCurveEditor*>(LocalcurveEditortransT->addCurve(CT_Flat, "", nullptr, false, false));
@@ -1396,7 +1393,7 @@ Locallab::Locallab():
     cTtransshape->setResetCurve(FlatCurveType(defSpot.localTtranscurve.at(0)), defSpot.localTtranscurve);
 
     if (showtooltip) {
-        cTtransshape->setTooltip(M("TP_RETINEX_TRANSMISSION_TOOLTIP"));
+        cTtransshape->setTooltip(M("TP_LOCALLAB_TRANSMISSION_TOOLTIP"));
     }
 
     LocalcurveEditortransT->curveListComplete();
@@ -1524,12 +1521,12 @@ Locallab::Locallab():
     retiBox->pack_start(*neigh);
     retiBox->pack_start(*vart);
     retiBox->pack_start(*scalereti);
-    retiBox->pack_start(*limd);
-//    retiBox->pack_start(*cliptm);
-    retiBox->pack_start(*offs);
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
 //    retiBox->pack_start(*softradiusret);
+    retiBox->pack_start(*limd);
+    retiBox->pack_start(*cliptm);
+    retiBox->pack_start(*offs);
     retiBox->pack_start(*mMLabels);
     retiBox->pack_start(*transLabels);
     retiBox->pack_start(*transLabels2);
@@ -2252,7 +2249,7 @@ void Locallab::updateLabel()
         nY = nextmax;
         {
             mMLabels->set_text(
-                Glib::ustring::compose(M("TP_RETINEX_MLABEL"),
+                Glib::ustring::compose(M("TP_LOCALLAB_MLABEL"),
                                        Glib::ustring::format(std::fixed, std::setprecision(0), nX),
                                        Glib::ustring::format(std::fixed, std::setprecision(0), nY))
             );
@@ -2272,7 +2269,7 @@ void Locallab::updateTrans()
         nS = nextsigma;
         {
             transLabels->set_text(
-                Glib::ustring::compose(M("TP_RETINEX_TLABEL"),
+                Glib::ustring::compose(M("TP_LOCALLAB_TLABEL"),
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nm),
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nM),
                                        Glib::ustring::format(std::fixed, std::setprecision(1), nZ),
