@@ -172,7 +172,12 @@ if(BUILD_SHARED_LIBS)
     install(TARGETS rtengine DESTINATION ${LIBDIR})
 endif()
 
-set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
+set_target_properties(rtengine
+    PROPERTIES
+        COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}"
+        VERSION "${RTENGINE_VERSION}"
+        SOVERSION "${RTENGINE_SOVERSION}"
+    )
 
 target_link_libraries(rtengine rtexif
     ${EXPAT_LIBRARIES}

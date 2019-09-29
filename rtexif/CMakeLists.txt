@@ -15,3 +15,9 @@ include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 if(BUILD_SHARED_LIBS)
     install(TARGETS rtexif DESTINATION ${LIBDIR})
 endif()
+
+set_target_properties(rtexif
+    PROPERTIES
+        VERSION "${RTEXIF_VERSION}"
+        SOVERSION "${RTEXIF_SOVERSION}"
+    )

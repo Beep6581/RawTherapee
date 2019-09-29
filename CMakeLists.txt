@@ -58,6 +58,14 @@ set(PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list a
 # Some Linux distros build with -O2 instead of -O3. We explicitly enable auto vectorization by using -ftree-vectorize
 set(RTENGINE_CXX_FLAGS "-ftree-vectorize" CACHE STRING "Special compilation flags for RTEngine")
 
+# Set VERSION and SOVERSION for rtengine library
+set(RTENGINE_VERSION "5.7.0")
+set(RTENGINE_SOVERSION "5")
+
+# Set VERSION and SOVERSION for rtexif library
+set(RTEXIF_VERSION "5.7.0")
+set(RTEXIF_SOVERSION "5")
+
 # Loads the ProcessorTargets list:
 include(ProcessorTargets.cmake)
 set(PROC_LABEL "undefined" CACHE STRING "Target processor label, unused if PROC_TARGET_NUMBER = 0 or 2")
