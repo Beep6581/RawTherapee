@@ -1481,6 +1481,13 @@ Camera constants:
         }
     },
 
+    { // Quality C
+        "make_model": "Nikon COOLPIX P1000",
+        "ranges": {
+            "black": 200
+        }
+    },
+
     { // Quality B, no LENR samples
         "make_model": "Nikon D5",
         "dcraw_matrix": [ 9200,-3522,-992,-5755,13803,2117,-753,1486,6338 ], // adobe dng_v9.5 d65
