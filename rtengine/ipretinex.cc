@@ -850,6 +850,210 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
     }
 }
 
+
+void maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip, const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, bool retiMasktmap, bool retiMask,
+                    const LocallabParams &loc, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread)
+{
+        array2D<float> loctemp(W_L, H_L);
+        array2D<float> ble(W_L, H_L);
+        array2D<float> guid(W_L, H_L);
+        std::unique_ptr<LabImage> bufmaskblurreti;
+        bufmaskblurreti.reset(new LabImage(W_L, H_L));
+        std::unique_ptr<LabImage> bufmaskorigreti;
+        bufmaskorigreti.reset(new LabImage(W_L, H_L));
+        printf("mask 1\n");
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int y = 0; y < H_L; y++) {
+            for (int x = 0; x < W_L; x++) {
+                if (before == 1 && retiMasktmap) {
+                    loctemp[y][x] = LIM(luminance[y][x], 0.f, 32768.f);
+                } else if(before == 0 && retiMasktmap ){
+                    loctemp[y][x] = out[y][x];
+                } else {
+                    loctemp[y][x] = bufreti->L[y][x];
+                }
+            }
+        }
+
+        printf("mask 2\n");
+
+        float fab = 4000.f;//value must be good in most cases
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int ir = 0; ir < H_L; ir++) {
+            for (int jr = 0; jr < W_L; jr++) {
+                float kmaskLexp = 0;
+                float kmaskCH = 0;
+
+                if (locllmasretiCurve  && llmasretiutili) {
+                    float ligh = loctemp[ir][jr] / 32768.f;
+                    kmaskLexp = 32768.f * LIM01(1.f - locllmasretiCurve[500.f * ligh]);
+                }
+
+
+                if (locllmasretiCurve  && llmasretiutili && retiMasktmap) {
+                }
+
+                if (llretiMask != 4) {
+                    if (locccmasretiCurve && lcmasretiutili) {
+                        float chromask = 0.0001f + sqrt(SQR((bufreti->a[ir][jr]) / fab) + SQR((bufreti->b[ir][jr]) / fab));
+                        kmaskCH = LIM01(1.f - locccmasretiCurve[500.f *  chromask]);
+                    }
+                }
+
+                if (lochhmasretiCurve && lhmasretiutili) {
+                    float huema = xatan2f(bufreti->b[ir][jr], bufreti->a[ir][jr]);
+                    float h = Color::huelab_to_huehsv2(huema);
+                    h += 1.f / 6.f;
+
+                    if (h > 1.f) {
+                        h -= 1.f;
+                    }
+
+                    float valHH = LIM01(1.f - lochhmasretiCurve[500.f *  h]);
+
+                    if (llretiMask != 4) {
+                        kmaskCH += valHH;
+                    }
+
+                    kmaskLexp += 32768.f * valHH;
+                }
+
+                bufmaskblurreti->L[ir][jr] = kmaskLexp;
+                bufmaskblurreti->a[ir][jr] = kmaskCH;
+                bufmaskblurreti->b[ir][jr] = kmaskCH;
+                ble[ir][jr] = bufmaskblurreti->L[ir][jr] / 32768.f;
+                guid[ir][jr] = bufreti->L[ir][jr] / 32768.f;
+
+            }
+        }
+
+        printf("mask 3\n");
+
+        if (loc.spots.at(sp).radmaskreti > 0.f) {
+            guidedFilter(guid, ble, ble, loc.spots.at(sp).radmaskreti * 10.f / skip, 0.001, multiThread, 4);
+        }
+
+        LUTf lutTonemaskreti(65536);
+        calcGammaLut(loc.spots.at(sp).gammaskreti, loc.spots.at(sp).slomaskreti, lutTonemaskreti);
+        float radiusb = 1.f / skip;
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+        for (int ir = 0; ir < H_L; ir++)
+            for (int jr = 0; jr < W_L; jr++) {
+                float L_;
+                bufmaskblurreti->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
+                L_ = 2.f * bufmaskblurreti->L[ir][jr];
+                bufmaskblurreti->L[ir][jr] = lutTonemaskreti[L_];
+            }
+
+        printf("mask 4\n");
+
+//blend
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(bufmaskblurreti->L, bufmaskorigreti->L, W_L, H_L, radiusb);
+            gaussianBlur(bufmaskblurreti->a, bufmaskorigreti->a, W_L, H_L, 1.f + (0.5f * loc.spots.at(sp).radmaskreti) / skip);
+            gaussianBlur(bufmaskblurreti->b, bufmaskorigreti->b, W_L, H_L, 1.f + (0.5f * loc.spots.at(sp).radmaskreti) / skip);
+        }
+
+        float modr = 0.01f * (float) loc.spots.at(sp).blendmaskreti;
+
+        if (llretiMask != 3 && retiMask) {
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < H_L; y++) {
+                for (int x = 0; x < W_L; x++) {
+                    if (before == 0 && retiMasktmap) {
+                        out[y][x] += fabs(modr) * bufmaskorigreti->L[y][x];
+                        out[y][x] = LIM(out[y][x], 0.f, 100000.f);
+                    } else {
+                        bufreti->L[y][x] +=  bufmaskorigreti->L[y][x] * modr;
+                        bufreti->L[y][x] = CLIPLOC(bufreti->L[y][x]);
+
+                    }
+
+                    bufreti->a[y][x] *= (1.f + bufmaskorigreti->a[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
+                    bufreti->b[y][x] *= (1.f + bufmaskorigreti->b[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
+                    bufreti->a[y][x] = CLIPC(bufreti->a[y][x]);
+                    bufreti->b[y][x] = CLIPC(bufreti->b[y][x]);
+                }
+            }
+
+            printf("mask 5\n");
+
+        }
+
+        if (!retiMasktmap  && retiMask) { //new original blur mask for deltaE
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < H_L; y++) {
+                for (int x = 0; x < W_L; x++) {
+
+                    buforig->L[y][x] += (modr * bufmaskorigreti->L[y][x]);
+                    buforig->a[y][x] *= (1.f + modr * bufmaskorigreti->a[y][x]);
+                    buforig->b[y][x] *= (1.f + modr * bufmaskorigreti->b[y][x]);
+
+                    buforig->L[y][x] = CLIP(buforig->L[y][x]);
+                    buforig->a[y][x] = CLIPC(buforig->a[y][x]);
+                    buforig->b[y][x] = CLIPC(buforig->b[y][x]);
+
+                    buforig->L[y][x] = CLIP(buforig->L[y][x] - bufmaskorigreti->L[y][x]);
+                    buforig->a[y][x] = CLIPC(buforig->a[y][x] * (1.f - bufmaskorigreti->a[y][x]));
+                    buforig->b[y][x] = CLIPC(buforig->b[y][x] * (1.f - bufmaskorigreti->b[y][x]));
+                }
+            }
+
+            float radius = 3.f / skip;
+
+#ifdef _OPENMP
+            #pragma omp parallel if (multiThread)
+#endif
+            {
+                gaussianBlur(buforig->L, buforigmas->L, W_L, H_L, radius);
+                gaussianBlur(buforig->a, buforigmas->a, W_L, H_L, radius);
+                gaussianBlur(buforig->b, buforigmas->b, W_L, H_L, radius);
+            }
+            printf("mask 6\n");
+
+        }
+
+        printf("mask 7\n");
+
+        if (llretiMask == 3) {
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < H_L; y++) {
+                for (int x = 0; x < W_L; x++) {
+                    bufmask->L[y][x] = 6000.f + CLIPLOC(bufmaskorigreti->L[y][x]);
+                    bufmask->a[y][x] = CLIPC(bufreti->a[y][x] * bufmaskorigreti->a[y][x]);
+                    bufmask->b[y][x] = CLIPC(bufreti->b[y][x] * bufmaskorigreti->b[y][x]);
+                }
+            }
+
+        }
+
+}
+
+
 void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, int bfwr, int bfhr, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                                const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, LabImage * transformed, bool retiMasktmap, bool retiMask)
 {
@@ -881,7 +1085,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         if (!logli) {
             useHslLin = true;
         }
-//printf("ok 1\n");
+
         //empirical skip evaluation : very difficult  because quasi all parameters interfere
         //to test on several images
         int nei = (int)(krad * loc.spots.at(sp).neigh);
@@ -954,6 +1158,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         for (int i = 0; i < H_L; i++) {
             out[i] = &outBuffer[i * W_L];
         }
+
         float clipt = loc.spots.at(sp).cliptm;
 
         const float logBetaGain = xlogf(16384.f);
@@ -962,7 +1167,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
         if (!useHslLin) {
             pond /= log(elogt);
         }
-//printf("ok 2\n");
 
         float *buffer = new float[W_L * H_L];
         float kr = 1.f;//on FFTW
@@ -1036,7 +1240,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                     }
                 }
             }
-//printf("ok 3\n");
 
             if (scale == 1) { //equalize last scale with darkness and lightness
 
@@ -1056,191 +1259,13 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
             }
 
+/*
             if (lum == 1 && scale == 1 && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) { //only mask with luminance on last scale
-                array2D<float> loctemp(W_L, H_L);
-                array2D<float> ble(W_L, H_L);
-                array2D<float> guid(W_L, H_L);
-                std::unique_ptr<LabImage> bufmaskblurreti;
-                bufmaskblurreti.reset(new LabImage(W_L, H_L));
-                std::unique_ptr<LabImage> bufmaskorigreti;
-                bufmaskorigreti.reset(new LabImage(W_L, H_L));
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int y = 0; y < H_L; y++) {
-                    for (int x = 0; x < W_L; x++) {
-                        if (retiMasktmap) {
-                            loctemp[y][x] = out[y][x];
-                        } else {
-                            loctemp[y][x] = bufreti->L[y][x];
-                        }
-                    }
-                }
-
-                float fab = 4000.f;//value must be good in most cases
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int ir = 0; ir < H_L; ir++) {
-                    for (int jr = 0; jr < W_L; jr++) {
-                        float kmaskLexp = 0;
-                        float kmaskCH = 0;
-
-                        if (locllmasretiCurve  && llmasretiutili) {
-                            float ligh = loctemp[ir][jr] / 32768.f;
-                            kmaskLexp = 32768.f * LIM01(1.f - locllmasretiCurve[500.f * ligh]);
-                        }
-
-
-                        if (locllmasretiCurve  && llmasretiutili && retiMasktmap) {
-                        }
-
-                        if (llretiMask != 4) {
-                            if (locccmasretiCurve && lcmasretiutili) {
-                                float chromask = 0.0001f + sqrt(SQR((bufreti->a[ir][jr]) / fab) + SQR((bufreti->b[ir][jr]) / fab));
-                                kmaskCH = LIM01(1.f - locccmasretiCurve[500.f *  chromask]);
-                            }
-                        }
-
-                        if (lochhmasretiCurve && lhmasretiutili) {
-                            float huema = xatan2f(bufreti->b[ir][jr], bufreti->a[ir][jr]);
-                            float h = Color::huelab_to_huehsv2(huema);
-                            h += 1.f / 6.f;
-
-                            if (h > 1.f) {
-                                h -= 1.f;
-                            }
-
-                            float valHH = LIM01(1.f - lochhmasretiCurve[500.f *  h]);
-
-                            if (llretiMask != 4) {
-                                kmaskCH += valHH;
-                            }
-
-                            kmaskLexp += 32768.f * valHH;
-                        }
-
-                        bufmaskblurreti->L[ir][jr] = kmaskLexp;
-                        bufmaskblurreti->a[ir][jr] = kmaskCH;
-                        bufmaskblurreti->b[ir][jr] = kmaskCH;
-                        ble[ir][jr] = bufmaskblurreti->L[ir][jr] / 32768.f;
-                        guid[ir][jr] = bufreti->L[ir][jr] / 32768.f;
-
-                    }
-                }
-
-                if (loc.spots.at(sp).radmaskreti > 0.f) {
-                    guidedFilter(guid, ble, ble, loc.spots.at(sp).radmaskreti * 10.f / skip, 0.001, multiThread, 4);
-                }
-
-                LUTf lutTonemaskreti(65536);
-                calcGammaLut(loc.spots.at(sp).gammaskreti, loc.spots.at(sp).slomaskreti, lutTonemaskreti);
-                float radiusb = 1.f / skip;
-
-#ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                for (int ir = 0; ir < H_L; ir++)
-                    for (int jr = 0; jr < W_L; jr++) {
-                        float L_;
-                        bufmaskblurreti->L[ir][jr] = LIM01(ble[ir][jr]) * 32768.f;
-                        L_ = 2.f * bufmaskblurreti->L[ir][jr];
-                        bufmaskblurreti->L[ir][jr] = lutTonemaskreti[L_];
-                    }
-
-//blend
-#ifdef _OPENMP
-                #pragma omp parallel
-#endif
-                {
-                    gaussianBlur(bufmaskblurreti->L, bufmaskorigreti->L, W_L, H_L, radiusb);
-                    gaussianBlur(bufmaskblurreti->a, bufmaskorigreti->a, W_L, H_L, 1.f + (0.5f * loc.spots.at(sp).radmaskreti) / skip);
-                    gaussianBlur(bufmaskblurreti->b, bufmaskorigreti->b, W_L, H_L, 1.f + (0.5f * loc.spots.at(sp).radmaskreti) / skip);
-                }
-
-                float modr = 0.01f * (float) loc.spots.at(sp).blendmaskreti;
-
-                if (llretiMask != 3 && retiMask) {
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < H_L; y++) {
-                        for (int x = 0; x < W_L; x++) {
-                            if (retiMasktmap) {
-                                out[y][x] += fabs(modr) * bufmaskorigreti->L[y][x];
-                                out[y][x] = LIM(out[y][x], 0.f, 100000.f);
-                            } else {
-                                bufreti->L[y][x] +=  bufmaskorigreti->L[y][x] * modr;
-                                bufreti->L[y][x] = CLIPLOC(bufreti->L[y][x]);
-
-                            }
-
-                            bufreti->a[y][x] *= (1.f + bufmaskorigreti->a[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
-                            bufreti->b[y][x] *= (1.f + bufmaskorigreti->b[y][x] * modr * (1.f + 0.01f * loc.spots.at(sp).chromaskreti));
-                            bufreti->a[y][x] = CLIPC(bufreti->a[y][x]);
-                            bufreti->b[y][x] = CLIPC(bufreti->b[y][x]);
-                        }
-                    }
-                }
-
-                if (!retiMasktmap  && retiMask) { //new original blur mask for deltaE
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < H_L; y++) {
-                        for (int x = 0; x < W_L; x++) {
-
-                            buforig->L[y][x] += (modr * bufmaskorigreti->L[y][x]);
-                            buforig->a[y][x] *= (1.f + modr * bufmaskorigreti->a[y][x]);
-                            buforig->b[y][x] *= (1.f + modr * bufmaskorigreti->b[y][x]);
-
-                            buforig->L[y][x] = CLIP(buforig->L[y][x]);
-                            buforig->a[y][x] = CLIPC(buforig->a[y][x]);
-                            buforig->b[y][x] = CLIPC(buforig->b[y][x]);
-
-                            buforig->L[y][x] = CLIP(buforig->L[y][x] - bufmaskorigreti->L[y][x]);
-                            buforig->a[y][x] = CLIPC(buforig->a[y][x] * (1.f - bufmaskorigreti->a[y][x]));
-                            buforig->b[y][x] = CLIPC(buforig->b[y][x] * (1.f - bufmaskorigreti->b[y][x]));
-                        }
-                    }
-
-                    float radius = 3.f / skip;
-
-#ifdef _OPENMP
-                    #pragma omp parallel if (multiThread)
-#endif
-                    {
-                        gaussianBlur(buforig->L, buforigmas->L, W_L, H_L, radius);
-                        gaussianBlur(buforig->a, buforigmas->a, W_L, H_L, radius);
-                        gaussianBlur(buforig->b, buforigmas->b, W_L, H_L, radius);
-                    }
-
-                }
-
-                if (llretiMask == 3) {
-
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                    for (int y = 0; y < H_L; y++) {
-                        for (int x = 0; x < W_L; x++) {
-                            bufmask->L[y][x] = 6000.f + CLIPLOC(bufmaskorigreti->L[y][x]);
-                            bufmask->a[y][x] = CLIPC(bufreti->a[y][x] * bufmaskorigreti->a[y][x]);
-                            bufmask->b[y][x] = CLIPC(bufreti->b[y][x] * bufmaskorigreti->b[y][x]);
-                        }
-                    }
-
-                }
+                int before = 0;
+                maskforretinex(sp, before, luminance, out, W_L, H_L, skip, locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
+                               loc, bufreti, bufmask, buforig, buforigmas, multiThread);
             }
-
-//printf("ok 4\n");
+*/
 
 #ifdef __SSE2__
             vfloat pondv = F2V(pond);
@@ -1280,10 +1305,8 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             }
 
         }
-//printf("ok 5\n");
 
-       // if (scal != 1) {
-        if (scal >= 1  && radi > 0.f) {
+        if (scal >= 1  && radi > 100000.f) {//always desactivated
             float mintran = luminance[0][0];
             float maxtran = mintran;
 
@@ -1305,7 +1328,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);
 //            float clipt = loc.spots.at(sp).cliptm;
-            
+
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -1341,7 +1364,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
             ble(0, 0);
             guid(0, 0);
         }
-//printf("ok 6\n");
 
 
         if (scal == 1) {
@@ -1369,7 +1391,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 for (int x = 0; x < W_L; ++x) {
                     float buf = (src[y][x] - out[y][x]) * value_1;
                     buf *= (buf > 0.f) ? lig : dar;
-                    luminance[y][x] = LIM(src[y][x] + (1.f + kval) * buf, 0.f, 32768.f);
+                    luminance[y][x] = LIM(src[y][x] + (1.f + kval) * buf, -32768.f, 32768.f);
                 }
             }
 
@@ -1412,21 +1434,21 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
         }
 
-        if (scal == 1 && radi > 0.f) {
+        if (scal == 1 && radi > 1000000.f) {//always desactivated
             float mintran = luminance[0][0];
             float maxtran = mintran;
-            
-            #ifdef _OPENMP
-                        #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
-            #endif
 
-                        for (int ir = 0; ir < H_L; ir++) {
-                            for (int jr = 0; jr < W_L; jr++) {
-                                mintran = rtengine::min(luminance[ir][jr], mintran);
-                                maxtran = rtengine::max(luminance[ir][jr], maxtran);
-                            }
-                        }
-            
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(min:mintran) reduction(max:maxtran) schedule(dynamic,16)
+#endif
+
+            for (int ir = 0; ir < H_L; ir++) {
+                for (int jr = 0; jr < W_L; jr++) {
+                    mintran = rtengine::min(luminance[ir][jr], mintran);
+                    maxtran = rtengine::max(luminance[ir][jr], maxtran);
+                }
+            }
+
             float deltatran = maxtran - mintran;
             array2D<float> ble(W_L, H_L);
             array2D<float> guid(W_L, H_L);
@@ -1523,7 +1545,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                         }
                 }
             }
-//printf("ok 7\n");
 
             float epsil = 0.1f;
 
@@ -1622,7 +1643,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                         luminance[i][j] = intp(str, clipretinex(cd, 0.f, maxclip), originalLuminance[i][j]);
                     }
 
-//printf("ok 8\n");
 
 
 #ifdef _OPENMP
@@ -1647,6 +1667,13 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, LabImage * bufreti, L
                 }
 
         }
+
+        if (lum == 1  && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) { //only mask with luminance on last scale
+            int before = 1;
+            maskforretinex(sp, before, luminance, nullptr, W_L, H_L, skip, locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
+                           loc, bufreti, bufmask, buforig, buforigmas, multiThread);
+        }
+
 
         Tmean = mean;
         Tsigma = stddv;

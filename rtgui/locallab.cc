@@ -1452,6 +1452,10 @@ Locallab::Locallab():
     enaretiMaskConn = enaretiMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaretiMaskChanged));
     enaretiMasktmapConn = enaretiMasktmap->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaretiMasktmapChanged));
 
+    if (showtooltip) {
+        enaretiMasktmap->set_tooltip_markup(M("TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP"));
+    }
+    
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
