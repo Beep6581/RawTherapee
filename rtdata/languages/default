@@ -902,7 +902,7 @@ HISTORY_MSG_653;Local - SH mask chroma
 HISTORY_MSG_654;Local - SH mask gamma
 HISTORY_MSG_655;Local - SH mask slope
 HISTORY_MSG_656;Local - Color soft radius
-HISTORY_MSG_657;Local - Retinex Guided Filter radius
+HISTORY_MSG_657;Local - Retinex Reduce artifacts
 HISTORY_MSG_658;Local - CBDL soft radius
 HISTORY_MSG_659;Local Spot transition-weakening
 HISTORY_MSG_660;Local - cbdl clarity
@@ -2212,6 +2212,8 @@ TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;Adapt these values according to images - if 
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated.\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\n
 TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\nOptimization not used in Preview
 TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP;If enabled Mask uses Restored Datas after Transmission Map instead of Original datas
+TP_LOCALLAB_SOFTRETI;Reduce artifact deltaE
+TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.\nYou can act on this curve to change Transmission and reduce the artifacts

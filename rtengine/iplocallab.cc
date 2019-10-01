@@ -67,6 +67,7 @@
 #define CLIP42_35(x) LIM(x, 0.42, 3.5)
 #define CLIP2_30(x) LIM(x, 0.2, 3.)
 #define CLIPMAX(x) LIM(x,0.f,500000.f)
+#define CLIPdE(x) LIM(x,0.3f,1.f)
 
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"
@@ -8806,6 +8807,46 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                 }
 
+                float raddE = params->locallab.spots.at(sp).softradiusret;
+
+                //calc dE and reduction to use in MSR to reduce artifacts
+                const int limscope = 80;
+                const float mindE = 4.f + MINSCOPE * lp.sensh * lp.thr;
+                const float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
+                const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+                const float refa = chromaref * cos(hueref);
+                const float refb = chromaref * sin(hueref);
+
+
+                float *reducDE[Hd] ALIGNED16;
+                float *reducDEBuffer = new float[Hd * Wd];
+
+                for (int i = 0; i < Hd; i++) {
+                    reducDE[i] = &reducDEBuffer[i * Wd];
+                }
+
+//                float minreduc = 1000000.f;
+//                float maxreduc = -1000000.f;
+                float ade = 0.01f * raddE;
+                float bde = 100.f - raddE;
+                float sensibefore = ade * lp.sensh + bde;//we can change sensitivity 0.1 90 or 0.3 70 or 0.4 60
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++)
+                    for (int x = 0; x < transformed->W; x++) {
+                        float dE = sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) +  SQR(lumaref - bufreti->b[y][x] / 327.68f));
+                        float reducdE;
+                        calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore, reducdE);
+                        reducDE[y][x] = CLIPdE(reducdE);
+//                           if(reducDE[y][x] > maxreduc) maxreduc = reducDE[y][x];
+//                           if(reducDE[y][x] < minreduc) minreduc = reducDE[y][x];
+
+                    }
+
+//                printf("reducdemax=%f reducmin=%f\n", maxreduc, minreduc);
                 float *orig[Hd] ALIGNED16;
                 float *origBuffer = new float[Hd * Wd];
 
@@ -8893,7 +8934,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bool fftw = lp.ftwreti;
                 //fftw = false;
                 //for Retinex Mask are incorporated in MSR
-                ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                ImProcFunctions::MSRLocal(sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -9021,7 +9062,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool fftw = false;
 
                     if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
-                        ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        ImProcFunctions::MSRLocal(sp, fftw, 0, nullptr, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
                     }
 
@@ -9098,6 +9139,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 delete tmpl;
+                delete [] reducDEBuffer;
                 delete [] origBuffer;
                 delete [] origBuffer1;
 
@@ -9273,6 +9315,41 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
+                float raddE = params->locallab.spots.at(sp).softradiusret;
+
+                //calc dE and reduction to use in MSR to reduce artifacts
+                const int limscope = 80;
+                const float mindE = 4.f + MINSCOPE * lp.sensh * lp.thr;
+                const float maxdE = 5.f + MAXSCOPE * lp.sensh * (1 + 0.1f * lp.thr);
+                const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+                const float refa = chromaref * cos(hueref);
+                const float refb = chromaref * sin(hueref);
+
+
+                float *reducDE[Hd] ALIGNED16;
+                float *reducDEBuffer = new float[Hd * Wd];
+
+                for (int i = 0; i < Hd; i++) {
+                    reducDE[i] = &reducDEBuffer[i * Wd];
+                }
+
+                float ade = 0.01f * raddE;
+                float bde = 100.f - raddE;
+                float sensibefore = ade * lp.sensh + bde;//we can change sensitivity 0.1 90 or 0.3 70 or 0.4 60
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = ystart; y < yend ; y++)
+                    for (int x = xstart; x < xend; x++) {
+                        float dE = sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) +  SQR(lumaref - bufreti->b[y - ystart][x - xstart] / 327.68f));
+                        float reducdE;
+                        calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore, reducdE);
+                        reducDE[y - ystart][x - xstart] = CLIPdE(reducdE);
+
+                    }
+
                 float *orig[Hd] ALIGNED16;
                 float *origBuffer = new float[Hd * Wd];
 
@@ -9358,7 +9435,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bool fftw = lp.ftwreti;
                 //for Retinex Mask are incorporated in MSR
 
-                ImProcFunctions::MSRLocal(sp, fftw, 1, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, bfwr, bfhr, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                ImProcFunctions::MSRLocal(sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, bfwr, bfhr, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
 
 #ifdef _OPENMP
@@ -9496,7 +9573,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bool fftw = false;
 
                     if (params->locallab.spots.at(sp).chrrt > 40.f) { //second step active Retinex Chroma
-                        ImProcFunctions::MSRLocal(sp, fftw, 0, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        ImProcFunctions::MSRLocal(sp, fftw, 0, nullptr, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1, Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, transformed, lp.enaretiMasktmap, lp.enaretiMask);
                     }
 
@@ -9573,6 +9650,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 delete tmpl;
+                delete [] reducDEBuffer;
                 delete [] origBuffer;
                 delete [] origBuffer1;
 

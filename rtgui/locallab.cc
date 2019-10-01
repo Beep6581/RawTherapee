@@ -273,8 +273,8 @@ Locallab::Locallab():
     offs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFS"), -16386., 32768., 1., 0.))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), 0, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
-    sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 30))),
-    softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDFILTER"), 0.0, 100.0, 0.5, 0.))),
+    sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 60))),
+    softradiusret(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRETI"), 0.0, 100.0, 0.5, 40.))),
     blendmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
     chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -1370,7 +1370,7 @@ Locallab::Locallab():
     softradiusret->setAdjusterListener(this);
 
     if (showtooltip) {
-        softradiusret->set_tooltip_text(M("TP_LOCALLAB_GUIDFILTER_TOOLTIP"));
+        softradiusret->set_tooltip_text(M("TP_LOCALLAB_SOFTRETI_TOOLTIP"));
     }
 
     mMLabels = Gtk::manage(new Gtk::Label("---"));
@@ -1527,7 +1527,7 @@ Locallab::Locallab():
     retiBox->pack_start(*scalereti);
     retiBox->pack_start(*darkness);
     retiBox->pack_start(*lightnessreti);
-//    retiBox->pack_start(*softradiusret);
+    retiBox->pack_start(*softradiusret);
     retiBox->pack_start(*limd);
     retiBox->pack_start(*cliptm);
     retiBox->pack_start(*offs);
