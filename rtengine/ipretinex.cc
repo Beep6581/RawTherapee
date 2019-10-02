@@ -1233,7 +1233,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
                 }
             }
 
-            if (scale == 1) { //equalize last scale with darkness and lightness
+            if (scale == 1) { //equalize last scale with darkness and lightness of course acts on TM!
 
                 if (dar != 1.f || lig != 1.f) {
 
@@ -1299,265 +1299,288 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
         }
 
 
-    if (scal == 1) {
-        float kval = 1.f;
+        if (scal == 1) {//only if user select scal = 1
+            float kval = 1.f;
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for
 #endif
 
-        for (int y = 0; y < H_L; ++y) {
-            for (int x = 0; x < W_L; ++x) {
-                float threslow = threslum * 163.f;
+            for (int y = 0; y < H_L; ++y) {
+                for (int x = 0; x < W_L; ++x) {
+                    float threslow = threslum * 163.f;
 
-                if (src[y][x] < threslow) {
-                    kval = src[y][x] / threslow;
+                    if (src[y][x] < threslow) {
+                        kval = src[y][x] / threslow;
+                    }
                 }
             }
-        }
 
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for
 #endif
 
-        for (int y = 0; y < H_L; ++y) {
-            for (int x = 0; x < W_L; ++x) {
-                float buf = (src[y][x] - out[y][x]) * value_1;
-                buf *= (buf > 0.f) ? lig : dar;
-                luminance[y][x] = LIM(src[y][x] + (1.f + kval) * buf, -32768.f, 32768.f);
+            for (int y = 0; y < H_L; ++y) {
+                for (int x = 0; x < W_L; ++x) {
+                    float buf = (src[y][x] - out[y][x]) * value_1;
+                    buf *= (buf > 0.f) ? lig : dar;
+                    luminance[y][x] = LIM(src[y][x] + (1.f + kval) * buf, -32768.f, 32768.f);
+                }
             }
-        }
 
-        double avg = 0.f;
-        int ng = 0;
+            double avg = 0.f;
+            int ng = 0;
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for
 #endif
 
-        for (int i = 0; i < H_L; i++) {
-            for (int j = 0; j < W_L; j++) {
-                avg += luminance[i][j];
-                ng++;
+            for (int i = 0; i < H_L; i++) {
+                for (int j = 0; j < W_L; j++) {
+                    avg += luminance[i][j];
+                    ng++;
+                }
             }
-        }
 
-        avg /= ng;
-        avg /= 32768.f;
-        avg = LIM01(avg);
-        float contreal = 0.5f * vart;
-        DiagonalCurve reti_contrast({
-            DCT_NURBS,
-            0, 0,
-            avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
-            avg + (1 - avg) * (0.6 - contreal / 250.0), avg + (1 - avg) * (0.6 + contreal / 250.0),
-            1, 1
-        });
+            avg /= ng;
+            avg /= 32768.f;
+            avg = LIM01(avg);
+            float contreal = 0.5f * vart;
+            DiagonalCurve reti_contrast({
+                DCT_NURBS,
+                0, 0,
+                avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
+                avg + (1 - avg) * (0.6 - contreal / 250.0), avg + (1 - avg) * (0.6 + contreal / 250.0),
+                1, 1
+            });
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for
 #endif
 
-        for (int i = 0; i < H_L; i++)
-            for (int j = 0; j < W_L; j++) {
-                float buf = LIM01(luminance[i][j] / 32768.f);
-                buf = reti_contrast.getVal(buf);
-                buf *= 32768.f;
-                luminance[i][j] = buf;
+            for (int i = 0; i < H_L; i++)
+                for (int j = 0; j < W_L; j++) {
+                    float buf = LIM01(luminance[i][j] / 32768.f);
+                    buf = reti_contrast.getVal(buf);
+                    buf *= 32768.f;
+                    luminance[i][j] = buf;
+                }
+        }
+
+
+        delete [] buffer;
+        delete [] outBuffer;
+        outBuffer = nullptr;
+        delete [] srcBuffer;
+        srcBuffer = nullptr;
+
+        float str = strength * (chrome == 0 ? 1.f : 0.8f * (chrT - 0.4f));
+        const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
+
+        if (scal != 1) {
+            mean = 0.f;
+            stddv = 0.f;
+
+            mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+            // printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+
+            if (locRETtransCcurve && mean != 0.f && stddv != 0.f) { //if curve
+                float asig = 0.166666f / stddv;
+                float bsig = 0.5f - asig * mean;
+                float amax = 0.333333f / (maxtr - mean - stddv);
+                float bmax = 1.f - amax * maxtr;
+                float amin = 0.333333f / (mean - stddv - mintr);
+                float bmin = -amin * mintr;
+
+                asig *= 500.f;
+                bsig *= 500.f;
+                amax *= 500.f;
+                bmax *= 500.f;
+                amin *= 500.f;
+                bmin *= 500.f;
+
+#ifdef _OPENMP
+                #pragma omp parallel
+#endif
+                {
+                    float absciss;
+#ifdef _OPENMP
+                    #pragma omp for schedule(dynamic,16)
+#endif
+
+                    for (int i = 0; i < H_L; i++)
+                        for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
+                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
+                                absciss = asig * luminance[i][j] + bsig;
+                            } else if (luminance[i][j] >= mean) {
+                                absciss = amax * luminance[i][j] + bmax;
+                            } else { /*if(luminance[i][j] <= mean - stddv)*/
+                                absciss = amin * luminance[i][j] + bmin;
+                            }
+
+                            //TODO : move multiplication by 4.f and subtraction of 1.f inside the curve
+                            luminance[i][j] *= (-1.f + 4.f * locRETtransCcurve[absciss]); //new transmission
+
+                        }
+                }
             }
-    }
+
+            mean = 0.f;
+            stddv = 0.f;
+            mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);//new calculation of mean...
+
+            float epsil = 0.1f;
+
+            mini = mean - vart * stddv;
+
+            if (mini < mintr) {
+                mini = mintr + epsil;
+            }
+
+            maxi = mean + vart * stddv;
+
+            if (maxi > maxtr) {
+                maxi = maxtr - epsil;
+            }
+
+            delta = maxi - mini;
+            //   printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
+
+            if (!delta) {
+                delta = 1.0f;
+            }
 
 
-    delete [] buffer;
-    delete [] outBuffer;
-    outBuffer = nullptr;
-    delete [] srcBuffer;
-    srcBuffer = nullptr;
+            float *copylum[H_L] ALIGNED16;
+            float *copylumBuffer = new float[H_L * W_L];
 
-    float str = strength * (chrome == 0 ? 1.f : 0.8f * (chrT - 0.4f));
-    const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
+            for (int i = 0; i < H_L; i++) {
+                copylum[i] = &copylumBuffer[i * W_L];
+            }
 
-    if (scal != 1) {
-        mean = 0.f;
-        stddv = 0.f;
+            float cdfactor = (clipt * 32768.f) / delta;
+            maxCD = -9999999.f;
+            minCD = 9999999.f;
+            //prepare work for curve gain
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
 
-        mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-        // printf("mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", mean, stddv, delta, maxtr, mintr);
+            for (int i = 0; i < H_L; i++) {
+                for (int j = 0; j < W_L; j++) {
+                    luminance[i][j] = luminance[i][j] - mini;
+                }
+            }
 
-        if (locRETtransCcurve && mean != 0.f && stddv != 0.f) { //if curve
-            float asig = 0.166666f / stddv;
-            float bsig = 0.5f - asig * mean;
-            float amax = 0.333333f / (maxtr - mean - stddv);
-            float bmax = 1.f - amax * maxtr;
-            float amin = 0.333333f / (mean - stddv - mintr);
-            float bmin = -amin * mintr;
+            mean = 0.f;
+            stddv = 0.f;
 
-            asig *= 500.f;
-            bsig *= 500.f;
-            amax *= 500.f;
-            bmax *= 500.f;
-            amin *= 500.f;
-            bmin *= 500.f;
+            mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
+//         printf("meanun=%f stdun=%f maxtr=%f mintr=%f\n", mean, stddv, maxtr, mintr);
+
+            float asig = 0.f, bsig = 0.f, amax = 0.f, bmax = 0.f, amin = 0.f, bmin = 0.f;
+            const bool hasRetGainCurve =  locRETgainCcurve && mean != 0.f && stddv != 0.f;
+
+            if (hasRetGainCurve) { //if curve
+                asig = 0.166666f / stddv;
+                bsig = 0.5f - asig * mean;
+                amax = 0.333333f / (maxtr - mean - stddv);
+                bmax = 1.f - amax * maxtr;
+                amin = 0.333333f / (mean - stddv - mintr);
+                bmin = -amin * mintr;
+
+                asig *= 500.f;
+                bsig *= 500.f;
+                amax *= 500.f;
+                bmax *= 500.f;
+                amin *= 500.f;
+                bmin *= 500.f;
+                cdfactor *= 2.f;
+            }
+
 
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
             {
-                float absciss;
+                //            float absciss;
+                float cdmax = -999999.f, cdmin = 999999.f;
+                float gan = 0.5f;
+
 #ifdef _OPENMP
                 #pragma omp for schedule(dynamic,16)
 #endif
 
-                for (int i = 0; i < H_L; i++)
-                    for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
-                        if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
-                            absciss = asig * luminance[i][j] + bsig;
-                        } else if (luminance[i][j] >= mean) {
-                            absciss = amax * luminance[i][j] + bmax;
-                        } else { /*if(luminance[i][j] <= mean - stddv)*/
-                            absciss = amin * luminance[i][j] + bmin;
+                for (int i = 0; i < H_L; i ++)
+                    for (int j = 0; j < W_L; j++) {
+
+                        if (hasRetGainCurve) {
+                            float absciss;
+
+                            if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
+                                absciss = asig * luminance[i][j] + bsig;
+                            } else if (luminance[i][j] >= mean) {
+                                absciss = amax * luminance[i][j] + bmax;
+                            } else {
+                                absciss = amin * luminance[i][j] + bmin;
+                            }
+
+                            gan = locRETgainCcurve[absciss]; //new gain function transmission
                         }
 
-                        //TODO : move multiplication by 4.f and subtraction of 1.f inside the curve
-                        luminance[i][j] *= (-1.f + 4.f * locRETtransCcurve[absciss]); //new transmission
+                        //but we don't update mean stddv for display only...
+                        copylum[i][j] = gan * luminance[i][j];//update datas for display
+                        float cd = gan * cdfactor * luminance[i][j] + offse;
 
+                        cdmax = cd > cdmax ? cd : cdmax;
+                        cdmin = cd < cdmin ? cd : cdmin;
+                        luminance[i][j] = intp(str * reducDE[i][j], clipretinex(cd, 0.f, maxclip), originalLuminance[i][j]);
                     }
-            }
-        }
 
-        float epsil = 0.1f;
-
-        mini = mean - vart * stddv;
-
-        if (mini < mintr) {
-            mini = mintr + epsil;
-        }
-
-        maxi = mean + vart * stddv;
-
-        if (maxi > maxtr) {
-            maxi = maxtr - epsil;
-        }
-
-        delta = maxi - mini;
-        //   printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
-
-        if (!delta) {
-            delta = 1.0f;
-        }
-
-        float cdfactor = (clipt * 32768.f) / delta;
-        maxCD = -9999999.f;
-        minCD = 9999999.f;
-        //prepare work for curve gain
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int i = 0; i < H_L; i++) {
-            for (int j = 0; j < W_L; j++) {
-                luminance[i][j] = luminance[i][j] - mini;
-            }
-        }
-
-        mean = 0.f;
-        stddv = 0.f;
-        // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
-
-        mean_stddv2(luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-        float asig = 0.f, bsig = 0.f, amax = 0.f, bmax = 0.f, amin = 0.f, bmin = 0.f;
-        const bool hasRetGainCurve =  locRETgainCcurve && mean != 0.f && stddv != 0.f;
-
-        if (hasRetGainCurve) { //if curve
-            asig = 0.166666f / stddv;
-            bsig = 0.5f - asig * mean;
-            amax = 0.333333f / (maxtr - mean - stddv);
-            bmax = 1.f - amax * maxtr;
-            amin = 0.333333f / (mean - stddv - mintr);
-            bmin = -amin * mintr;
-
-            asig *= 500.f;
-            bsig *= 500.f;
-            amax *= 500.f;
-            bmax *= 500.f;
-            amin *= 500.f;
-            bmin *= 500.f;
-            cdfactor *= 2.f;
-        }
 
 
 #ifdef _OPENMP
-        #pragma omp parallel
+                #pragma omp critical
 #endif
-        {
-            //            float absciss;
-            float cdmax = -999999.f, cdmin = 999999.f;
-            float gan = 0.5f;
+                {
+                    maxCD = maxCD > cdmax ? maxCD : cdmax;
+                    minCD = minCD < cdmin ? minCD : cdmin;
+                }
+            }
+            mean = 0.f;
+            stddv = 0.f;
 
+            mean_stddv2(copylum, mean, stddv, W_L, H_L, maxtr, mintr);
+            delete [] copylumBuffer;
+            copylumBuffer = nullptr;
+
+//         printf("mean=%f std=%f maxtr=%f mintr=%f\n", mean, stddv, maxtr, mintr);
+
+        } else {
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
 
             for (int i = 0; i < H_L; i ++)
                 for (int j = 0; j < W_L; j++) {
+                    luminance[i][j] =   LIM(luminance[i][j], 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
 
-                    if (hasRetGainCurve) {
-                        float absciss;
-
-                        if (LIKELY(fabsf(luminance[i][j] - mean) < stddv)) {
-                            absciss = asig * luminance[i][j] + bsig;
-                        } else if (luminance[i][j] >= mean) {
-                            absciss = amax * luminance[i][j] + bmax;
-                        } else {
-                            absciss = amin * luminance[i][j] + bmin;
-                        }
-
-                        gan = locRETgainCcurve[absciss]; //new gain function transmission
-                    }
-
-                    float cd = gan * cdfactor * luminance[i][j] + offse;
-
-                    cdmax = cd > cdmax ? cd : cdmax;
-                    cdmin = cd < cdmin ? cd : cdmin;
-                    luminance[i][j] = intp(str * reducDE[i][j], clipretinex(cd, 0.f, maxclip), originalLuminance[i][j]);
                 }
 
-
-
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            {
-                maxCD = maxCD > cdmax ? maxCD : cdmax;
-                minCD = minCD < cdmin ? minCD : cdmin;
-            }
         }
 
+        if (lum == 1  && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) { //only mask with luminance on last scale
+            int before = 1;
+            maskforretinex(sp, before, luminance, nullptr, W_L, H_L, skip, locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
+                           loc, bufreti, bufmask, buforig, buforigmas, multiThread);
+        }
 
-    } else {
-#ifdef _OPENMP
-        #pragma omp for schedule(dynamic,16)
-#endif
+        //mask does not interfered with datas displayed
 
-        for (int i = 0; i < H_L; i ++)
-            for (int j = 0; j < W_L; j++) {
-                luminance[i][j] =   LIM(luminance[i][j], 0.f, maxclip) * str + (1.f - str) * originalLuminance[i][j];
-
-            }
-
+        Tmean = mean;
+        Tsigma = stddv;
+        Tmin = mintr;
+        Tmax = maxtr;
     }
-
-    if (lum == 1  && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) { //only mask with luminance on last scale
-        int before = 1;
-        maskforretinex(sp, before, luminance, nullptr, W_L, H_L, skip, locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
-                       loc, bufreti, bufmask, buforig, buforigmas, multiThread);
-    }
-
-
-    Tmean = mean;
-    Tsigma = stddv;
-    Tmin = mintr;
-    Tmax = maxtr;
-}
 }
 }
