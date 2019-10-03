@@ -1028,6 +1028,7 @@ struct LocallabParams {
         std::vector<double> excurve;
         bool inversex;
         bool enaExpMask;
+        bool enaExpMaskaft;
         std::vector<double> CCmaskexpcurve;
         std::vector<double> LLmaskexpcurve;
         std::vector<double> HHmaskexpcurve;

@@ -294,6 +294,8 @@ private:
     // Exposure
     Gtk::CheckButton* const enaExpMask;
     sigc::connection enaExpMaskConn;
+    Gtk::CheckButton* const enaExpMaskaft;
+    sigc::connection enaExpMaskaftConn;
     Gtk::CheckButton* const inversex;
     sigc::connection inversexConn;
     //Shadows highlight
@@ -459,6 +461,7 @@ private:
     void enaColorMaskChanged();
     // Exposure
     void enaExpMaskChanged();
+    void enaExpMaskaftChanged();
     void inversexChanged();
     //Shadows Highlight
     void enaSHMaskChanged();

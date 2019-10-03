@@ -438,6 +438,7 @@ public:
         bool excurve;
         bool inversex;
         bool enaExpMask;
+        bool enaExpMaskaft;
         bool CCmaskexpcurve;
         bool LLmaskexpcurve;
         bool HHmaskexpcurve;

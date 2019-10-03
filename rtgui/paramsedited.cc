@@ -1020,6 +1020,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
                 locallab.spots.at(j).inversex = locallab.spots.at(j).inversex && pSpot.inversex == otherSpot.inversex;
                 locallab.spots.at(j).enaExpMask = locallab.spots.at(j).enaExpMask && pSpot.enaExpMask == otherSpot.enaExpMask;
+                locallab.spots.at(j).enaExpMaskaft = locallab.spots.at(j).enaExpMaskaft && pSpot.enaExpMaskaft == otherSpot.enaExpMaskaft;
                 locallab.spots.at(j).CCmaskexpcurve = locallab.spots.at(j).CCmaskexpcurve && pSpot.CCmaskexpcurve == otherSpot.CCmaskexpcurve;
                 locallab.spots.at(j).LLmaskexpcurve = locallab.spots.at(j).LLmaskexpcurve && pSpot.LLmaskexpcurve == otherSpot.LLmaskexpcurve;
                 locallab.spots.at(j).HHmaskexpcurve = locallab.spots.at(j).HHmaskexpcurve && pSpot.HHmaskexpcurve == otherSpot.HHmaskexpcurve;
@@ -2948,6 +2949,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).enaExpMask = mods.locallab.spots.at(i).enaExpMask;
         }
 
+        if (locallab.spots.at(i).enaExpMaskaft) {
+            toEdit.locallab.spots.at(i).enaExpMaskaft = mods.locallab.spots.at(i).enaExpMaskaft;
+        }
+
         if (locallab.spots.at(i).CCmaskexpcurve) {
             toEdit.locallab.spots.at(i).CCmaskexpcurve = mods.locallab.spots.at(i).CCmaskexpcurve;
         }
@@ -4718,6 +4723,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     excurve(v),
     inversex(v),
     enaExpMask(v),
+    enaExpMaskaft(v),
     CCmaskexpcurve(v),
     LLmaskexpcurve(v),
     HHmaskexpcurve(v),
@@ -4983,6 +4989,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     excurve = v;
     inversex = v;
     enaExpMask = v;
+    enaExpMaskaft = v;
     CCmaskexpcurve = v;
     LLmaskexpcurve = v;
     HHmaskexpcurve = v;

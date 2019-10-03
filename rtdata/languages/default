@@ -993,6 +993,7 @@ HISTORY_MSG_752;Local - Reti Offset
 HISTORY_MSG_753;Local - Reti Transmission map
 HISTORY_MSG_754;Local - Reti Clip
 HISTORY_MSG_755;Local - TM use tm mask
+HISTORY_MSG_756;Local - Exp use algo exposure mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2146,6 +2147,7 @@ TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot use recursive data.\nExcluding spot re
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXPOSE;Exposure
+TP_LOCALLAB_ENABLE_MASKAFT;Use all algorithms Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use the module "Shadows Highlights"
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_GUIDFILTER;Guided filter radius

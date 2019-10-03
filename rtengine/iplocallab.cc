@@ -2579,7 +2579,7 @@ void maskcalccol(int bfw, int bfh, int xstart, int ystart, int sk, int cx, int c
         }
 
         if (zero || modif || modmask || deltaE || enaMask) {
-            originalmaskcol->CopyFrom(transformed);
+            originalmaskcol->CopyFrom(bufcolorig);
             blendmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig, original, bufmaskblurcol, originalmaskcol, blendm, inv);
         }
     }
@@ -7573,6 +7573,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 return;
                             }
+
                             original->CopyFrom(orimask);
                         }
 
@@ -9773,8 +9774,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh));
+                std::unique_ptr<LabImage> bufexporigmas(new LabImage(bfw, bfh));
+                std::unique_ptr<LabImage> bufexpfinmas(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskblurexp;
                 std::unique_ptr<LabImage> originalmaskexp;
+                LabImage *orimask = nullptr;
+                orimask = new LabImage(original->W, original->H);
 
 
                 array2D<float> buflight(bfw, bfh);
@@ -9786,9 +9791,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                     float meansob = 0.f;
 
-                    if (lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
+                    if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 2  || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 5) {
                         bufmaskblurexp.reset(new LabImage(bfw, bfh));
                         originalmaskexp.reset(new LabImage(bfw, bfh));
+                        orimask->CopyFrom(original);
                     }
 
 #ifdef _OPENMP
@@ -9798,6 +9804,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int y = ystart; y < yend; y++) {
                         for (int x = xstart; x < xend; x++) {
                             bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                            bufexporigmas->L[y - ystart][x - xstart] = original->L[y][x];
                         }
                     }
 
@@ -9884,21 +9891,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float gamma = lp.gammaexp;
                     float slope = lp.slomaexp;
                     float blendm = lp.blendmaexp;
-                    maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, transformed, inv, lp,
-                                locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
 
-                    if (lp.showmaskexpmet == 3) {
-                        showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);
+                    if (!params->locallab.spots.at(sp).enaExpMaskaft) {
 
-                        return;
+                        maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, bufexporigmas.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, transformed, inv, lp,
+                                    locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
+                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+
+                        if (lp.showmaskexpmet == 3) {
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);
+
+                            return;
+                        }
                     }
 
                     if (lp.showmaskexpmet == 4) {
                         return;
                     }
 
-                    if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 1  || lp.showmaskexpmet == 2  || lp.showmaskexpmet == 5 || lp.enaExpMask) {
+                    if (lp.showmaskexpmet == 0 || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 1  || lp.showmaskexpmet == 2  || lp.showmaskexpmet == 5 || lp.enaExpMask) {
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -10044,6 +10055,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         if (params->locallab.spots.at(sp).warm != 0) {
                             ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
                         }
+
+
+                        bufexpfinmas->CopyFrom(bufexpfin.get());
+
+                        if (params->locallab.spots.at(sp).enaExpMaskaft) {
+                            blendm = -lp.blendmaexp;
+
+                            maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, bufexpfinmas.get(), bufmaskblurexp.get(), originalmaskexp.get(), orimask, transformed, inv, lp,
+                                        locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
+                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+
+                            if (lp.showmaskexpmet == 3) {
+                                showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexpfinmas.get(), transformed, bufmaskblurexp.get(), 0);
+
+                                return;
+                            }
+                        }
+
+                        delete orimask;
 
 
                         constexpr float ampli = 70.f;

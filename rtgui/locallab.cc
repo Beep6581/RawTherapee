@@ -339,6 +339,7 @@ Locallab::Locallab():
     enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     // Exposure
     enaExpMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    enaExpMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKAFT")))),
     inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     //Shadows Highlight
     enaSHMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -793,6 +794,7 @@ Locallab::Locallab():
     curveEditorG->curveListComplete();
 
     enaExpMaskConn = enaExpMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaExpMaskChanged));
+    enaExpMaskaftConn = enaExpMaskaft->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaExpMaskaftChanged));
 
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskexpMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -906,6 +908,7 @@ Locallab::Locallab():
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*showmaskexpMethodinv, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*enaExpMask, Gtk::PACK_SHRINK, 0);
+//    maskexpBox->pack_start(*enaExpMaskaft, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*maskexpCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskexpBox->pack_start(*blendmaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*radmaskexp, Gtk::PACK_SHRINK, 0);
@@ -1271,7 +1274,7 @@ Locallab::Locallab():
     ToolParamBlock* const masktmBox = Gtk::manage(new ToolParamBlock());
     masktmBox->pack_start(*showmasktmMethod, Gtk::PACK_SHRINK, 4);
     masktmBox->pack_start(*enatmMask, Gtk::PACK_SHRINK, 0);
-    masktmBox->pack_start(*enatmMaskaft, Gtk::PACK_SHRINK, 0);
+//    masktmBox->pack_start(*enatmMaskaft, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*masktmCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     masktmBox->pack_start(*blendmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*radmasktm, Gtk::PACK_SHRINK, 0);
@@ -3019,6 +3022,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).excurve = shapeexpos->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).inversex = inversex->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).enaExpMask = enaExpMask->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).enaExpMaskaft = enaExpMaskaft->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = LLmaskexpshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = CCmaskexpshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = HHmaskexpshape->getCurve();
@@ -3356,6 +3360,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).excurve = pe->locallab.spots.at(pp->locallab.selspot).excurve || !shapeexpos->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).inversex = pe->locallab.spots.at(pp->locallab.selspot).inversex || !inversex->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).enaExpMask = pe->locallab.spots.at(pp->locallab.selspot).enaExpMask || !enaExpMask->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).enaExpMaskaft = pe->locallab.spots.at(pp->locallab.selspot).enaExpMaskaft || !enaExpMaskaft->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve || !CCmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
@@ -3628,6 +3633,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).excurve = pedited->locallab.spots.at(pp->locallab.selspot).excurve || !shapeexpos->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).inversex = pedited->locallab.spots.at(pp->locallab.selspot).inversex || !inversex->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).enaExpMask = pedited->locallab.spots.at(pp->locallab.selspot).enaExpMask || !enaExpMask->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).enaExpMaskaft = pedited->locallab.spots.at(pp->locallab.selspot).enaExpMaskaft || !enaExpMaskaft->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).CCmaskexpcurve || !CCmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskexpcurve || !LLmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmaskexpcurve || !HHmaskexpshape->isUnChanged();
@@ -4680,6 +4686,30 @@ void Locallab::enaExpMaskChanged()
                 listener->panelChanged(EvLocallabEnaExpMask, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(EvLocallabEnaExpMask, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::enaExpMaskaftChanged()
+{
+    // printf("enaExpMaskChanged\n");
+
+    if (multiImage) {
+        if (enaExpMaskaft->get_inconsistent()) {
+            enaExpMaskaft->set_inconsistent(false);
+            enaExpMaskaftConn.block(true);
+            enaExpMaskaft->set_active(false);
+            enaExpMaskaftConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expexpose->getEnabled()) {
+        if (listener) {
+            if (enaExpMaskaft->get_active()) {
+                listener->panelChanged(EvLocallabEnaExpMaskaft, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvLocallabEnaExpMaskaft, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -7293,6 +7323,7 @@ void Locallab::enableListener()
     expMethodConn.block(false);
     exnoiseMethodConn.block(false);
     enaExpMaskConn.block(false);
+    enaExpMaskaftConn.block(false);
     // Shadow highlight
     enableshadhighConn.block(false);
     showmaskSHMethodConn.block(false);
@@ -7370,6 +7401,7 @@ void Locallab::disableListener()
     expMethodConn.block(true);
     exnoiseMethodConn.block(true);
     enaExpMaskConn.block(true);
+    enaExpMaskaftConn.block(true);
     // Shadow highlight
     enableshadhighConn.block(true);
     showmaskSHMethodConn.block(true);
@@ -7501,6 +7533,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         shapeexpos->setCurve(pp->locallab.spots.at(index).excurve);
         inversex->set_active(pp->locallab.spots.at(index).inversex);
         enaExpMask->set_active(pp->locallab.spots.at(index).enaExpMask);
+        enaExpMaskaft->set_active(pp->locallab.spots.at(index).enaExpMaskaft);
         CCmaskexpshape->setCurve(pp->locallab.spots.at(index).CCmaskexpcurve);
         LLmaskexpshape->setCurve(pp->locallab.spots.at(index).LLmaskexpcurve);
         HHmaskexpshape->setCurve(pp->locallab.spots.at(index).HHmaskexpcurve);
@@ -7862,6 +7895,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 shapeexpos->setUnChanged(!spotState->excurve);
                 inversex->set_inconsistent(multiImage && !spotState->inversex);
                 enaExpMask->set_inconsistent(multiImage && !spotState->enaExpMask);
+                enaExpMaskaft->set_inconsistent(multiImage && !spotState->enaExpMaskaft);
                 CCmaskexpshape->setUnChanged(!spotState->CCmaskexpcurve);
                 LLmaskexpshape->setUnChanged(!spotState->LLmaskexpcurve);
                 HHmaskexpshape->setUnChanged(!spotState->HHmaskexpcurve);
