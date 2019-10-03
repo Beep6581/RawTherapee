@@ -2249,42 +2249,42 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
-!FILEBROWSER_POPUPREMOVE;Delete permanently
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+FILEBROWSER_DELETEDIALOG_ALL;Você tem certeza que quer deletas <b>permanentemente</b> todos os <b>%1</b> arquivos na lixeira?
+FILEBROWSER_DELETEDIALOG_SELECTED;Você tem certeza que quer deletar <b>permanentemente</b> os <b>%1</b> arquivos selecionados?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Você tem certeza que quer deletar <b>permanentemente</b> os <b>%1</b> arquivos selecionados, <b>incluindo</b> a versão processada em fila?
+FILEBROWSER_EMPTYTRASHHINT;Deletar <b>permanentemente</b> todos os arquivos na lixeira.
+FILEBROWSER_POPUPREMOVE;Deletar permanentemente
+FILEBROWSER_POPUPREMOVEINCLPROC;Excluir permanentemente, incluindo a versão processada em fila
+FILEBROWSER_SHOWNOTTRASHHINT;Mostrar apenas imagens que não estão no lixo.
 !HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
 !HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 !HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
-!MAIN_FRAME_PLACES_DEL;Remove
+MAIN_FRAME_PLACES_DEL;Remover
 !PARTIALPASTE_FILMNEGATIVE;Film Negative
-!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Modo pseudo-HiDPI
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
 !PROGRESSBAR_DECODING;Decoding...
-!PROGRESSBAR_GREENEQUIL;Green equilibration...
-!PROGRESSBAR_HLREC;Highlight reconstruction...
+PROGRESSBAR_GREENEQUIL;Equilíbrio de verde...
+PROGRESSBAR_HLREC;Reconstrução de realces...
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
-!PROGRESSBAR_LINEDENOISE;Line noise filter...
+PROGRESSBAR_LINEDENOISE;Filtro de ruído de linha...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
-!QUEUE_LOCATION_TITLE;Output Location
+QUEUE_LOCATION_TITLE;Local da Saída 
 !TP_COLORTONING_LABREGION_OFFSET;Offset
 !TP_COLORTONING_LABREGION_POWER;Power
 !TP_CROP_PPI;PPI
-!TP_FILMNEGATIVE_BLUE;Blue ratio
+TP_FILMNEGATIVE_BLUE;Relação de azul
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
 !TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
-!TP_FILMNEGATIVE_RED;Red ratio
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
+TP_FILMNEGATIVE_PICK;Escolher os pontos brancos e pretos 
+TP_FILMNEGATIVE_RED;Relação de vermelho
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Selecionado automaticamente
+TP_LENSPROFILE_CORRECTION_MANUAL;Selecionado manualmente
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Lens Profile
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
+TP_LENSPROFILE_MODE_HEADER;Perfil da Lente
+TP_LENSPROFILE_USE_GEOMETRIC;Distorção geométrica
 !TP_LENSPROFILE_USE_HEADER;Correct
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
