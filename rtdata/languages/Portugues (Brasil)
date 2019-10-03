@@ -119,8 +119,12 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Etiqueta de cor.\n\nUse o menu suspenso ou atalho
 FILEBROWSER_COPYPROFILE;Copiar perfil
 FILEBROWSER_CURRENT_NAME;Nome atual:
 FILEBROWSER_DARKFRAME;Quadro escuro
+FILEBROWSER_DELETEDIALOG_ALL;Você tem certeza que quer deletas <b>permanentemente</b> todos os <b>%1</b> arquivos na lixeira?
 FILEBROWSER_DELETEDIALOG_HEADER;Confirmação de exclusão de arquivo
+FILEBROWSER_DELETEDIALOG_SELECTED;Você tem certeza que quer deletar <b>permanentemente</b> os <b>%1</b> arquivos selecionados?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Você tem certeza que quer deletar <b>permanentemente</b> os <b>%1</b> arquivos selecionados, <b>incluindo</b> a versão processada em fila?
 FILEBROWSER_EMPTYTRASH;Esvaziar lixeira
+FILEBROWSER_EMPTYTRASHHINT;Deletar <b>permanentemente</b> todos os arquivos na lixeira.
 FILEBROWSER_EXTPROGMENU;Abrir com
 FILEBROWSER_FLATFIELD;Flat-Field
 FILEBROWSER_MOVETODARKFDIR;Mover para o diretório de quadros escuros
@@ -154,6 +158,8 @@ FILEBROWSER_POPUPRANK2;Classificação 2 **
 FILEBROWSER_POPUPRANK3;Classificação 3 ***
 FILEBROWSER_POPUPRANK4;Classificação 4 ****
 FILEBROWSER_POPUPRANK5;Classificação 5 *****
+FILEBROWSER_POPUPREMOVE;Deletar permanentemente
+FILEBROWSER_POPUPREMOVEINCLPROC;Excluir permanentemente, incluindo a versão processada em fila
 FILEBROWSER_POPUPRENAME;Renomear
 FILEBROWSER_POPUPSELECTALL;Selecionar tudo
 FILEBROWSER_POPUPTRASH;Mover para a lixeira
@@ -180,6 +186,7 @@ FILEBROWSER_SHOWDIRHINT;Limpar todos os filtros.\nAtalho: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Mostrar imagens editadas.\nAtalho: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imagens não editadas.\nAtalho: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostrar informações Exif.\n\nAtalhos:\n<b>i</b> - Modo de Guias de Editores Múltiplos,\n<b>Alt-i</b> - Modo de Guia de Editor Único.
+FILEBROWSER_SHOWNOTTRASHHINT;Mostrar apenas imagens que não estão no lixo.
 FILEBROWSER_SHOWORIGINALHINT;Mostre somente imagens originais.\n\nQuando existem várias imagens com o mesmo nome de arquivo, mas extensões diferentes, a única considerada original é aquela cuja extensão está mais próxima da parte superior da lista de extensões analisadas em Preferências > Navegador de Arquivos > Extensões Analisadas.
 FILEBROWSER_SHOWRANK1HINT;Mostrar imagens classificadas com 1 estrela.\nAtalho: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Mostrar imagens classificadas com 2 estrelas.\nAtalho: <b>2</b>
@@ -870,6 +877,7 @@ MAIN_FRAME_FILEBROWSER;Navegador de Arquivos
 MAIN_FRAME_FILEBROWSER_TOOLTIP;Navegador de arquivos.\nAtalho: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Locais
 MAIN_FRAME_PLACES_ADD;Adicionar
+MAIN_FRAME_PLACES_DEL;Remover
 MAIN_FRAME_QUEUE;Fila
 MAIN_FRAME_QUEUE_TOOLTIP;Processando fila.\nAtalho: <b>Ctrl-F3</b>
 MAIN_FRAME_RECENT;Pastas Recentes
@@ -1029,6 +1037,7 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Fonte do seletor de cor
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Cor da máscara de corte
 PREFERENCES_APPEARANCE_MAINFONT;Fonte principal
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Cor do guia do navegador
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Modo pseudo-HiDPI
 PREFERENCES_APPEARANCE_THEME;Tema
 PREFERENCES_APPLNEXTSTARTUP;é necessário reiniciar
 PREFERENCES_AUTOMONPROFILE;Usar o perfil de cores do monitor principal do sistema operacional
@@ -1215,6 +1224,9 @@ PROFILEPANEL_TOOLTIPCOPY;Copie o perfil de processamento atual para a área de t
 PROFILEPANEL_TOOLTIPLOAD;Carregue um perfil do arquivo.\n<b>Ctrl-click</b> para selecionar os parâmetros a serem carregados.
 PROFILEPANEL_TOOLTIPPASTE;Cole o perfil da área de transferência.\n<b>Ctrl-click</b> para selecionar os parâmetros a serem colados.
 PROFILEPANEL_TOOLTIPSAVE;Salvar o perfil atual.\n<b>Ctrl-click</b> para selecionar os parâmetros a serem salvos.
+PROGRESSBAR_GREENEQUIL;Equilíbrio de verde...
+PROGRESSBAR_HLREC;Reconstrução de realces...
+PROGRESSBAR_LINEDENOISE;Filtro de ruído de linha...
 PROGRESSBAR_LOADING;Carregando imagem...
 PROGRESSBAR_LOADINGTHUMBS;Carregando miniaturas...
 PROGRESSBAR_LOADJPEG;Carregando arquivo JPEG...
@@ -1241,6 +1253,7 @@ QUEUE_FORMAT_TITLE;Formato de arquivo
 QUEUE_LOCATION_FOLDER;Salvar na pasta
 QUEUE_LOCATION_TEMPLATE;Use modelo
 QUEUE_LOCATION_TEMPLATE_TOOLTIP;Podes usar as seguintes sequências de formatação:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nEssas cadeias de formatação referem-se às diferentes partes do endereço do nome da foto, alguns atributos da foto ou um índice de sequência arbitrário no processamento em lote.\n\nPor exemplo, se a foto que está sendo processada tiver o seguinte endereço do nome:\n<b><i>/inicio/rodrigo/fotos/2010-10-31/dsc0042.nef</i></b>\no significado das cadeias de formatação são:\n<b>%d4</b> = <i>inicio</i>\n<b>%d3</b> = <i>rodrigo</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/inicio/rodrigo/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/inicio/rodrigo/fotos/</i>\n<b>%p3</b> = <i>/inicio/rodrigo/</i>\n<b>%p4</b> = <i>/inicio/</i>\n\n<b>%r</b> será substituído pela classificação da foto. Se a foto não tiver classificação, %r será substituído por '0'. Se a foto estiver na lixeira, %r será substituído por 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. será substituído por um índice de sequência que é preenchido entre 1 e 9 dígitos. O índice de sequência iniciará em 1 sempre que o processamento da fila for iniciado e será incrementado em 1 para cada imagem processada.\n\nSe quiseres salvar a imagem de saída no local onde se encontra a original, escreva:\n<b>%p1/%f</b>\n\nSe quiseres salvar a imagem de saída num diretório chamado "<i>convertido</i>" localizado no diretório da imagem aberta, escreva:\n<b>%p1/convertido/%f</b>\n\nSe quiseres salvar a imagem de saída num diretório chamado\n"<i>/inicio/rodrigo/fotos/convertido/2010-10-31</i>", escreva:\n<b>%p2/convertido/%d1/%f</b>
+QUEUE_LOCATION_TITLE;Local da Saída 
 QUEUE_STARTSTOP_TOOLTIP;Inicia ou para o processamento das imagens na fila.\n\nAtalho: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Formato de dados desconhecido
 SAMPLEFORMAT_1;8 bits sem assinatura
@@ -1612,6 +1625,9 @@ TP_EXPOSURE_TCMODE_STANDARD;Padrão
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Padrão Ponderado
 TP_EXPOS_BLACKPOINT_LABEL;Pontos Pretos Raw
 TP_EXPOS_WHITEPOINT_LABEL;Pontos Brancos Raw
+TP_FILMNEGATIVE_BLUE;Relação de azul
+TP_FILMNEGATIVE_PICK;Escolher os pontos brancos e pretos 
+TP_FILMNEGATIVE_RED;Relação de vermelho
 TP_FILMSIMULATION_LABEL;Simulação de Filme
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee está configurado para procurar por imagens Hald CLUT, que são usadas para a ferramenta Simulação de Filme, numa pasta que está demorando para carregar.\nVá para Preferências > Processamento de Imagem > Simulação de Filme\npara ver qual pasta está sendo usada. Deves apontar RawTherapee para uma pasta que contenha apenas imagens Hald CLUT e nada mais, ou para uma pasta vazia, se não quiseres usar a ferramenta Simulação de Filme.\n\nLeia o artigo sobre Simulação de Filme na RawPedia para mais informações.\n\nDesejas cancelar a verificação agora?
 TP_FILMSIMULATION_STRENGTH;Intensidade
@@ -1732,9 +1748,13 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Funciona no controle deslizante de cromaticidade e na
 TP_LENSGEOM_AUTOCROP;Corte automático
 TP_LENSGEOM_FILL;Preenchimento automático
 TP_LENSGEOM_LABEL;Lente / Geometria
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Selecionado automaticamente
 TP_LENSPROFILE_CORRECTION_LCPFILE;Ficheiro LCP
+TP_LENSPROFILE_CORRECTION_MANUAL;Selecionado manualmente
 TP_LENSPROFILE_LABEL;Correção de lente perfilada
+TP_LENSPROFILE_MODE_HEADER;Perfil da Lente
 TP_LENSPROFILE_USE_CA;Aberração cromática
+TP_LENSPROFILE_USE_GEOMETRIC;Distorção geométrica
 TP_LENSPROFILE_USE_VIGNETTING;Vinhetagem
 TP_LOCALCONTRAST_AMOUNT;Montante
 TP_LOCALCONTRAST_DARKNESS;Nível de escuridão
@@ -2249,45 +2269,39 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
-!FILEBROWSER_POPUPREMOVE;Delete permanently
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
 !HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
+!HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 !HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
-!MAIN_FRAME_PLACES_DEL;Remove
+!HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
+!HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+!HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
+!HISTORY_MSG_PDSHARPEN_GAMMA;CS - Gamma
+!HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
+!HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+!HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
+!HISTORY_MSG_SHARPENING_GAMMA;Sharpening - Gamma
 !PARTIALPASTE_FILMNEGATIVE;Film Negative
-!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
 !PROGRESSBAR_DECODING;Decoding...
-!PROGRESSBAR_GREENEQUIL;Green equilibration...
-!PROGRESSBAR_HLREC;Highlight reconstruction...
 !PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
-!PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
-!QUEUE_LOCATION_TITLE;Output Location
 !TP_COLORTONING_LABREGION_OFFSET;Offset
 !TP_COLORTONING_LABREGION_POWER;Power
 !TP_CROP_PPI;PPI
-!TP_FILMNEGATIVE_BLUE;Blue ratio
+!TP_DEHAZE_LUMINANCE;Luminance only
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
 !TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
-!TP_FILMNEGATIVE_RED;Red ratio
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
 !TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Lens Profile
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
 !TP_LENSPROFILE_USE_HEADER;Correct
+!TP_PDSHARPENING_LABEL;Capture Sharpening
 !TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
 !TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
 !TP_RAW_XTRANS;X-Trans
 !TP_RAW_XTRANSFAST;Fast X-Trans
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
+!TP_SHARPENING_GAMMA;Gamma
+!TP_SHARPENING_RADIUS_BOOST;Corner radius boost
