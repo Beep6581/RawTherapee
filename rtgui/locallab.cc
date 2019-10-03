@@ -353,6 +353,7 @@ Locallab::Locallab():
     //TM
     equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     enatmMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    enatmMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_AFTER_MASK")))),
     // Retinex
     equilret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
@@ -1242,6 +1243,7 @@ Locallab::Locallab():
 
     masktmCurveEditorG->curveListComplete();
     enatmMaskConn = enatmMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enatmMaskChanged));
+    enatmMaskaftConn = enatmMaskaft->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enatmMaskaftChanged));
 
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasktmMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -1269,6 +1271,7 @@ Locallab::Locallab():
     ToolParamBlock* const masktmBox = Gtk::manage(new ToolParamBlock());
     masktmBox->pack_start(*showmasktmMethod, Gtk::PACK_SHRINK, 4);
     masktmBox->pack_start(*enatmMask, Gtk::PACK_SHRINK, 0);
+    masktmBox->pack_start(*enatmMaskaft, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*masktmCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     masktmBox->pack_start(*blendmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*radmasktm, Gtk::PACK_SHRINK, 0);
@@ -3160,6 +3163,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).CCmasktmcurve = CCmasktmshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).HHmasktmcurve = HHmasktmshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).enatmMask = enatmMask->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).enatmMaskaft = enatmMaskaft->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).blendmasktm = blendmasktm->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).radmasktm = radmasktm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).chromasktm = chromasktm->getValue();
@@ -3443,6 +3447,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).LLmasktmcurve = pe->locallab.spots.at(pp->locallab.selspot).LLmasktmcurve || !LLmasktmshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).HHmasktmcurve = pe->locallab.spots.at(pp->locallab.selspot).HHmasktmcurve || !HHmasktmshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).enatmMask = pe->locallab.spots.at(pp->locallab.selspot).enatmMask || !enatmMask->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).enatmMaskaft = pe->locallab.spots.at(pp->locallab.selspot).enatmMaskaft || !enatmMask->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).blendmasktm = pe->locallab.spots.at(pp->locallab.selspot).blendmasktm || blendmasktm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).radmasktm = pe->locallab.spots.at(pp->locallab.selspot).radmasktm || radmasktm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).chromasktm = pe->locallab.spots.at(pp->locallab.selspot).chromasktm || chromasktm->getEditedState();
@@ -3716,6 +3721,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).LLmasktmcurve = pedited->locallab.spots.at(pp->locallab.selspot).LLmasktmcurve || !LLmasktmshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).HHmasktmcurve = pedited->locallab.spots.at(pp->locallab.selspot).HHmasktmcurve || !HHmasktmshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).enatmMask = pedited->locallab.spots.at(pp->locallab.selspot).enatmMask || !enatmMask->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).enatmMaskaft = pedited->locallab.spots.at(pp->locallab.selspot).enatmMaskaft || !enatmMaskaft->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).blendmasktm = pedited->locallab.spots.at(pp->locallab.selspot).blendmasktm || blendmasktm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).radmasktm = pedited->locallab.spots.at(pp->locallab.selspot).radmasktm || radmasktm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).chromasktm = pedited->locallab.spots.at(pp->locallab.selspot).chromasktm || chromasktm->getEditedState();
@@ -4748,6 +4754,30 @@ void Locallab::enatmMaskChanged()
                 listener->panelChanged(EvLocallabEnatmMask, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(EvLocallabEnatmMask, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
+
+void Locallab::enatmMaskaftChanged()
+{
+    printf("enatmmaskaftChanged\n");
+
+    if (multiImage) {
+        if (enatmMaskaft->get_inconsistent()) {
+            enatmMaskaft->set_inconsistent(false);
+            enatmMaskaftConn.block(true);
+            enatmMaskaft->set_active(false);
+            enatmMaskaftConn.block(false);
+        }
+    }
+
+    if (getEnabled() && exptonemap->getEnabled()) {
+        if (listener) {
+            if (enatmMaskaft->get_active()) {
+                listener->panelChanged(EvLocallabEnatmMaskaft, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(EvLocallabEnatmMaskaft, M("GENERAL_DISABLED"));
             }
         }
     }
@@ -7290,6 +7320,7 @@ void Locallab::enableListener()
     enabletonemapConn.block(false);
     equiltmConn.block(false);
     enatmMaskConn.block(false);
+    enatmMaskaftConn.block(false);
     showmasktmMethodConn.block(false);
     // Retinex
     enableretiConn.block(false);
@@ -7366,6 +7397,7 @@ void Locallab::disableListener()
     enabletonemapConn.block(true);
     equiltmConn.block(true);
     enatmMaskConn.block(true);
+    enatmMaskaftConn.block(true);
     showmasktmMethodConn.block(true);
     // Retinex
     enableretiConn.block(true);
@@ -7613,6 +7645,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         amount->setValue(pp->locallab.spots.at(index).amount);
         equiltm->set_active(pp->locallab.spots.at(index).equiltm);
         enatmMask->set_active(pp->locallab.spots.at(index).enatmMask);
+        enatmMaskaft->set_active(pp->locallab.spots.at(index).enatmMaskaft);
         blendmasktm->setValue(pp->locallab.spots.at(index).blendmasktm);
         radmasktm->setValue(pp->locallab.spots.at(index).radmasktm);
         chromasktm->setValue(pp->locallab.spots.at(index).chromasktm);
@@ -7945,6 +7978,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 LLmasktmshape->setUnChanged(!spotState->LLmasktmcurve);
                 HHmasktmshape->setUnChanged(!spotState->HHmasktmcurve);
                 enatmMask->set_inconsistent(multiImage && !spotState->enatmMask);
+                enatmMaskaft->set_inconsistent(multiImage && !spotState->enatmMaskaft);
                 blendmasktm->setEditedState(spotState->blendmasktm ? Edited : UnEdited);
                 radmasktm->setEditedState(spotState->radmasktm ? Edited : UnEdited);
                 chromasktm->setEditedState(spotState->chromasktm ? Edited : UnEdited);

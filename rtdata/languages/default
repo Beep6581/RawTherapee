@@ -992,6 +992,7 @@ HISTORY_MSG_751;Local - Reti Dehaze luminance
 HISTORY_MSG_752;Local - Reti Offset
 HISTORY_MSG_753;Local - Reti Transmission map
 HISTORY_MSG_754;Local - Reti Clip
+HISTORY_MSG_755;Local - TM use tm mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2233,6 +2234,7 @@ TP_LOCALLAB_SHOWDCT;Show process Fourier
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stages of the process.\nLaplace - builds the second derivative according to the threshold (first step).\nFourier -shows the transformed Laplacian with DCT.\nPoisson - show solution of Poisson DCE.\nNormalize - show result whithout normalization luminance.
 TP_LOCALLAB_SHOWNORMAL;Normalize luminance (no)
 TP_LOCALLAB_TM;Tone Mapping
+TP_LOCALLAB_ENABLE_AFTER_MASK;Use Tone Mapping
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\nif Strength Retinex >= 0.1 Dehaze is in luminance mode.

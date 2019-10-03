@@ -7468,14 +7468,19 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     JaggedArray<float> bufchro(bfw, bfh);
                     std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> tmp1(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> bufgbm(new LabImage(bfw, bfh));
+                    std::unique_ptr<LabImage> tmp1m(new LabImage(bfw, bfh));
                     std::unique_ptr<LabImage> bufmaskorigtm;
                     std::unique_ptr<LabImage> bufmaskblurtm;
                     std::unique_ptr<LabImage> originalmasktm;
+                    LabImage *orimask = nullptr;
+                    orimask = new LabImage(original->W, original->H);
 
-                    if (lp.showmasktmmet == 2  || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4) {
+                    if (lp.showmasktmmet == 0 || lp.showmasktmmet == 2  || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4) {
                         bufmaskorigtm.reset(new LabImage(bfw, bfh));
                         bufmaskblurtm.reset(new LabImage(bfw, bfh));
                         originalmasktm.reset(new LabImage(bfw, bfh));
+                        orimask->CopyFrom(original);
                     }
 
                     int itera = 0;
@@ -7493,6 +7498,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             bufgb->L[y - ystart][x - xstart] = original->L[y][x];
                             bufgb->a[y - ystart][x - xstart] = original->a[y][x];
                             bufgb->b[y - ystart][x - xstart] = original->b[y][x];
+                            bufgbm->L[y - ystart][x - xstart] = original->L[y][x];
+                            bufgbm->a[y - ystart][x - xstart] = original->a[y][x];
+                            bufgbm->b[y - ystart][x - xstart] = original->b[y][x];
                         }
                     }
 
@@ -7533,35 +7541,42 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float gamma = lp.gammatm;
                     float slope = lp.slomatm;
                     float blendm = lp.blendmatm;
-                    maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, bufgb.get(), bufmaskorigtm.get(), originalmasktm.get(), original, transformed, inv, lp,
-                                locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
 
-                    if (lp.showmasktmmet == 3) {
-                        showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgb.get(), transformed, bufmaskorigtm.get(), 0);
+                    if (!params->locallab.spots.at(sp).enatmMaskaft) {
+                        maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, bufgbm.get(), bufmaskorigtm.get(), originalmasktm.get(), original, transformed, inv, lp,
+                                    locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
+                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
 
-                        return;
+                        if (lp.showmasktmmet == 3) {
+                            showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgbm.get(), transformed, bufmaskorigtm.get(), 0);
+
+                            return;
+                        }
                     }
 
-
-                    if (lp.showmasktmmet == 0 || lp.showmasktmmet == 1  || lp.showmasktmmet == 2 || lp.showmasktmmet == 4 || lp.enatmMask) {
-
-#ifdef _OPENMP
-                        #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                        for (int y = 0; y < bfh ; y++) {
-                            for (int x = 0; x < bfw; x++) {
-                                bufgb->L[y][x] = original->L[y + ystart][x + xstart];
-                                bufgb->a[y][x] = original->a[y + ystart][x + xstart];
-                                bufgb->b[y][x] = original->b[y + ystart][x + xstart];
-                            }
-                        }
-
+                    if (lp.showmasktmmet == 0 || lp.showmasktmmet == 1  || lp.showmasktmmet == 2 || lp.showmasktmmet == 4 || lp.showmasktmmet == 3 || lp.enatmMask) {
 
 
 
                         ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
+
+                        tmp1m->CopyFrom(tmp1.get());
+
+                        if (params->locallab.spots.at(sp).enatmMaskaft) {
+
+                            maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, tmp1m.get(), bufmaskorigtm.get(), originalmasktm.get(), orimask, transformed, inv, lp,
+                                        locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
+                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+
+                            if (lp.showmasktmmet == 3) {
+                                showmask(lp, xstart, ystart, cx, cy, bfw, bfh, tmp1m.get(), transformed, bufmaskorigtm.get(), 0);
+
+                                return;
+                            }
+                            original->CopyFrom(orimask);
+                        }
+
+                        delete orimask;
 
                         float minL = tmp1->L[0][0] - bufgb->L[0][0];
                         float maxL = minL;

@@ -316,6 +316,8 @@ private:
     sigc::connection equiltmConn;
     Gtk::CheckButton* const enatmMask;
     sigc::connection enatmMaskConn;
+    Gtk::CheckButton* const enatmMaskaft;
+    sigc::connection enatmMaskaftConn;
     // Retinex
     Gtk::CheckButton* const equilret;
     sigc::connection equilretConn;
@@ -471,6 +473,7 @@ private:
     //TM
     void equiltmChanged();
     void enatmMaskChanged();
+    void enatmMaskaftChanged();
     // Retinex
     void equilretChanged();
     void loglinChanged();

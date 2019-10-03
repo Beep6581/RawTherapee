@@ -1119,6 +1119,7 @@ struct LocallabParams {
         std::vector<double> LLmasktmcurve;
         std::vector<double> HHmasktmcurve;
         bool enatmMask;
+        bool enatmMaskaft;
         int blendmasktm;
         double radmasktm;
         double chromasktm;

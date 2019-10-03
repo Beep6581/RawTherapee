@@ -529,6 +529,7 @@ public:
         bool LLmasktmcurve;
         bool HHmasktmcurve;
         bool enatmMask;
+        bool enatmMaskaft;
         bool blendmasktm;
         bool radmasktm;
         bool chromasktm;
