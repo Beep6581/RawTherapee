@@ -1258,7 +1258,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                	pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
+                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
                 }
 
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {

@@ -145,8 +145,8 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
     }
 
     outCurve *= 32767.f;
-	//printf("out500=%f out15000=%f\n", outCurve[500], outCurve[15000]);
-	//outCurve.dump("brig");
+    //printf("out500=%f out15000=%f\n", outCurve[500], outCurve[15000]);
+    //outCurve.dump("brig");
 }
 
 /**
