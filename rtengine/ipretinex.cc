@@ -876,7 +876,6 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             }
         }
     }
-                            printf("OK 2\n");
 
 
     float fab = 4000.f;//value must be good in most cases
@@ -933,7 +932,6 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 
         }
     }
-                            printf("OK 3\n");
 
     if (rad > 0.f) {
         guidedFilter(guid, ble, ble, rad * 10.f / skip, 0.001, multiThread, 4);
@@ -1031,7 +1029,6 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 
 
     if (llretiMask == 3) {
-                            printf("OK 4\n");
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
