@@ -549,6 +549,7 @@ struct CaptureSharpeningParams {
     double         contrast;
     double         gamma;
     double         deconvradius;
+    double         deconvradiusOffset;
     int            deconviter;
 
     CaptureSharpeningParams();
@@ -1342,6 +1343,7 @@ struct DehazeParams {
     int strength;
     bool showDepthMap;
     int depth;
+    bool luminance;
 
     DehazeParams();
 

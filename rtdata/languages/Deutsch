@@ -2371,3 +2371,21 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_494;Capture Sharpening
+!HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
+!HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
+!HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+!HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
+!HISTORY_MSG_PDSHARPEN_GAMMA;CS - Gamma
+!HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
+!HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+!HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
+!HISTORY_MSG_SHARPENING_GAMMA;Sharpening - Gamma
+!TP_DEHAZE_LUMINANCE;Luminance only
+!TP_PDSHARPENING_LABEL;Capture Sharpening
+!TP_SHARPENING_GAMMA;Gamma
+!TP_SHARPENING_RADIUS_BOOST;Corner radius boost

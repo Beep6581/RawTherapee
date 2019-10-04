@@ -77,8 +77,8 @@ bool channelsAvg(
     }
 
     std::array<int, 3> pxCount = {}; // Per-channel sample counts
-    for (int c = spotPos.x - spotSize; c < spotPos.x + spotSize; ++c) {
-        for (int r = spotPos.y - spotSize; r < spotPos.y + spotSize; ++r) {
+    for (int c = x1; c < x2; ++c) {
+        for (int r = y1; r < y2; ++r) {
             const int ch = ri->getSensorType() == rtengine::ST_BAYER ? ri->FC(r,c) : ri->XTRANSFC(r,c);
 
             ++pxCount[ch];

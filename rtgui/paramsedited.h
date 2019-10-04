@@ -205,6 +205,7 @@ struct CaptureSharpeningParamsEdited {
     bool autoRadius;
     bool gamma;
     bool deconvradius;
+    bool deconvradiusOffset;
     bool deconviter;
     bool isUnchanged() const;
 };
@@ -596,6 +597,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
+    bool luminance;
 };
 
 struct RAWParamsEdited {

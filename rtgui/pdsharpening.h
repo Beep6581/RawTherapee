@@ -28,12 +28,14 @@ protected:
     Adjuster* contrast;
     Adjuster* gamma;
     Adjuster* dradius;
+    Adjuster* dradiusOffset;
     Adjuster* diter;
 
     bool lastAutoContrast;
     bool lastAutoRadius;
     rtengine::ProcEvent EvPdShrContrast;
     rtengine::ProcEvent EvPdShrDRadius;
+    rtengine::ProcEvent EvPdShrDRadiusOffset;
     rtengine::ProcEvent EvPdSharpenGamma;
     rtengine::ProcEvent EvPdShrDIterations;
     rtengine::ProcEvent EvPdShrAutoContrast;

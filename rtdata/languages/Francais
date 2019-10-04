@@ -2266,8 +2266,18 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !FILEBROWSER_POPUPREMOVE;Delete permanently
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!HISTORY_MSG_494;Capture Sharpening
+!HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 !HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+!HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
+!HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+!HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
+!HISTORY_MSG_PDSHARPEN_GAMMA;CS - Gamma
+!HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
+!HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+!HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
+!HISTORY_MSG_SHARPENING_GAMMA;Sharpening - Gamma
 !MAIN_FRAME_PLACES_DEL;Remove
 !PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PROGRESSBAR_DECODING;Decoding...
@@ -2278,6 +2288,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
 !QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
+!TP_DEHAZE_LUMINANCE;Luminance only
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
 !TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
@@ -2289,5 +2300,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_LENSPROFILE_MODE_HEADER;Lens Profile
 !TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
 !TP_LENSPROFILE_USE_HEADER;Correct
+!TP_PDSHARPENING_LABEL;Capture Sharpening
 !TP_RAW_XTRANS;X-Trans
 !TP_RAW_XTRANSFAST;Fast X-Trans
+!TP_SHARPENING_GAMMA;Gamma
+!TP_SHARPENING_RADIUS_BOOST;Corner radius boost
