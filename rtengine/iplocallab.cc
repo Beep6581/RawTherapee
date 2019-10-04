@@ -2300,10 +2300,12 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
                         }
 
                         case 2: {
-
-                            original->L[y + ystart][x + xstart] = bufexporig->L[y][x];
-                            original->a[y + ystart][x + xstart] = bufexporig->a[y][x];
-                            original->b[y + ystart][x + xstart] = bufexporig->b[y][x];
+                            original->L[y + ystart][x + xstart] += (bl * bufmaskor->L[y][x]);
+                            original->a[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->a[y][x]);
+                            original->b[y + ystart][x + xstart] *= (1.f + bl * bufmaskor->b[y][x]);
+                            original->L[y + ystart][x + xstart] = CLIP(original->L[y + ystart][x + xstart]);
+                            original->a[y + ystart][x + xstart] = CLIPC(original->a[y + ystart][x + xstart]);
+                            original->b[y + ystart][x + xstart] = CLIPC(original->b[y + ystart][x + xstart]);
 
                         }
                     }
@@ -2453,6 +2455,7 @@ void maskcalccol(int bfw, int bfh, int xstart, int ystart, int sk, int cx, int c
     array2D<float> guid(bfw, bfh);
     float meanfab, fab;
     mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom);
+    meanfab = 5000.f;
 
     if (deltaE || modmask || enaMask || showmaske) {
 
@@ -7473,14 +7476,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     std::unique_ptr<LabImage> bufmaskorigtm;
                     std::unique_ptr<LabImage> bufmaskblurtm;
                     std::unique_ptr<LabImage> originalmasktm;
-                    LabImage *orimask = nullptr;
-                    orimask = new LabImage(original->W, original->H);
 
                     if (lp.showmasktmmet == 0 || lp.showmasktmmet == 2  || lp.enatmMask || lp.showmasktmmet == 3 || lp.showmasktmmet == 4) {
                         bufmaskorigtm.reset(new LabImage(bfw, bfh));
                         bufmaskblurtm.reset(new LabImage(bfw, bfh));
                         originalmasktm.reset(new LabImage(bfw, bfh));
-                        orimask->CopyFrom(original);
                     }
 
                     int itera = 0;
@@ -7560,24 +7560,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
-                        tmp1m->CopyFrom(tmp1.get());
+                        tmp1m->CopyFrom(tmp1.get());//save current result
+                        bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
 
-                        if (params->locallab.spots.at(sp).enatmMaskaft) {
-
-                            maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, tmp1m.get(), bufmaskorigtm.get(), originalmasktm.get(), orimask, transformed, inv, lp,
+                        if (enatmMasktmap) {
+                            //calculate new values for original, originalmasktm, bufmaskorigtm...in function of tmp1
+                            maskcalccol(bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, transformed, inv, lp,
                                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
                                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
 
-                            if (lp.showmasktmmet == 3) {
-                                showmask(lp, xstart, ystart, cx, cy, bfw, bfh, tmp1m.get(), transformed, bufmaskorigtm.get(), 0);
+                            if (lp.showmasktmmet == 3) {//dispaly mask
+                                showmask(lp, xstart, ystart, cx, cy, bfw, bfh, tmp1.get(), transformed, bufmaskorigtm.get(), 0);
 
                                 return;
                             }
 
-                            original->CopyFrom(orimask);
                         }
 
-                        delete orimask;
+                        tmp1->CopyFrom(tmp1m.get());//restore current result
+
 
                         float minL = tmp1->L[0][0] - bufgb->L[0][0];
                         float maxL = minL;
@@ -7631,8 +7632,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                                 }
                                             }
                         */
-                        bufgb.reset();
+                        //
+                        //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+
                         transit_shapedetect(8, tmp1.get(), originalmasktm.get(), buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                        bufgb.reset();
                     }
                 }
             }
