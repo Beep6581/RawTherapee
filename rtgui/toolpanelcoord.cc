@@ -1034,3 +1034,8 @@ bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rteng
 {
     return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps);
 }
+
+bool ToolPanelCoordinator::getFilmNegativeMedians(std::array<float, 3>& medians)
+{
+    return ipc && ipc->getFilmNegativeMedians(medians);
+}

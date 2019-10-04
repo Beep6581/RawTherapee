@@ -2808,7 +2808,10 @@ FilmNegativeParams::FilmNegativeParams() :
     enabled(false),
     redRatio(1.36),
     greenExp(1.5),
-    blueRatio(0.86)
+    blueRatio(0.86),
+    redMedian(0),
+    greenMedian(0),
+    blueMedian(0)
 {
 }
 
@@ -2816,9 +2819,12 @@ bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
 {
     return
         enabled == other.enabled
-        && redRatio   == other.redRatio
+        && redRatio == other.redRatio
         && greenExp == other.greenExp
-        && blueRatio  == other.blueRatio;
+        && blueRatio == other.blueRatio
+        && redMedian == other.redMedian
+        && greenMedian == other.greenMedian
+        && blueMedian == other.blueMedian;
 }
 
 bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
@@ -3676,6 +3682,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.redRatio, "Film Negative", "RedRatio", filmNegative.redRatio, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.medians, "Film Negative", "RedMedian", filmNegative.redMedian, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.medians, "Film Negative", "GreenMedian", filmNegative.greenMedian, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.medians, "Film Negative", "BlueMedian", filmNegative.blueMedian, keyFile);
 
 // EXIF change list
         if (!pedited || pedited->exif) {
@@ -5236,6 +5245,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Film Negative", "RedRatio", pedited, filmNegative.redRatio, pedited->filmNegative.redRatio);
             assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
             assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", pedited, filmNegative.blueRatio, pedited->filmNegative.blueRatio);
+            assignFromKeyfile(keyFile, "Film Negative", "RedMedian", pedited, filmNegative.redMedian, pedited->filmNegative.medians);
+            assignFromKeyfile(keyFile, "Film Negative", "GreenMedian", pedited, filmNegative.greenMedian, pedited->filmNegative.medians);
+            assignFromKeyfile(keyFile, "Film Negative", "BlueMedian", pedited, filmNegative.blueMedian, pedited->filmNegative.medians);
         }
 
         if (keyFile.has_group("MetaData")) {

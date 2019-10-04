@@ -47,54 +47,71 @@ void rtengine::Thumbnail::processFilmNegative(
     const float gexp = -params.filmNegative.greenExp;
     const float bexp = -params.filmNegative.blueRatio * params.filmNegative.greenExp;
 
-    // Need to calculate channel averages, to fake the same conditions
-    // found in rawimagesource, where get_ColorsCoeff is called with
-    // forceAutoWB=true.
-    float rsum = 0.f, gsum = 0.f, bsum = 0.f;
+    // Channel medians
+    float rmed = params.filmNegative.redMedian;
+    float gmed = params.filmNegative.greenMedian;
+    float bmed = params.filmNegative.blueMedian;
 
-    // Channel vectors to calculate medians
-    std::vector<float> rv, gv, bv;
+    // If channel medians are not set in params, use previous method
+    if (rmed == 0.f) {
 
-    for (int i = 0; i < rheight; i++) {
-        for (int j = 0; j < rwidth; j++) {
-            const float r = baseImg->r(i, j);
-            const float g = baseImg->g(i, j);
-            const float b = baseImg->b(i, j);
+        // Need to calculate channel averages, to fake the same conditions
+        // found in rawimagesource, where get_ColorsCoeff is called with
+        // forceAutoWB=true.
+        float rsum = 0.f, gsum = 0.f, bsum = 0.f;
 
-            rsum += r;
-            gsum += g;
-            bsum += b;
+        // Channel vectors to calculate medians
+        std::vector<float> rv, gv, bv;
 
-            rv.push_back(r);
-            gv.push_back(g);
-            bv.push_back(b);
+        for (int i = 0; i < rheight; i++) {
+            for (int j = 0; j < rwidth; j++) {
+                const float r = baseImg->r(i, j);
+                const float g = baseImg->g(i, j);
+                const float b = baseImg->b(i, j);
+
+                rsum += r;
+                gsum += g;
+                bsum += b;
+
+                rv.push_back(r);
+                gv.push_back(g);
+                bv.push_back(b);
+            }
         }
+
+        const float ravg = rsum / (rheight*rwidth);
+        const float gavg = gsum / (rheight*rwidth);
+        const float bavg = bsum / (rheight*rwidth);
+
+        // Shifting current WB multipliers, based on channel averages.
+        rmi /= (gavg/ravg);
+        // gmi /= (gAvg/gAvg);  green chosen as reference channel
+        bmi /= (gavg/bavg);
+
+
+        // Calculate channel medians from whole image
+        findMinMaxPercentile(rv.data(), rv.size(), 0.5f, rmed, 0.5f, rmed, true);
+        findMinMaxPercentile(gv.data(), gv.size(), 0.5f, gmed, 0.5f, gmed, true);
+        findMinMaxPercentile(bv.data(), bv.size(), 0.5f, bmed, 0.5f, bmed, true);
+
+        if (settings->verbose) {
+            printf("Thumbnail input medians: %g %g %g\n", rmed, gmed, bmed);
+        }
+
     }
 
-    const float ravg = rsum / (rheight*rwidth);
-    const float gavg = gsum / (rheight*rwidth);
-    const float bavg = bsum / (rheight*rwidth);
-
-    // Shifting current WB multipliers, based on channel averages.
-    rmi /= (gavg/ravg);
-    // gmi /= (gAvg/gAvg);  green chosen as reference channel
-    bmi /= (gavg/bavg);
-
-    float rmed, gmed, bmed;
-    findMinMaxPercentile(rv.data(), rv.size(), 0.5f, rmed, 0.5f, rmed, true);
-    findMinMaxPercentile(gv.data(), gv.size(), 0.5f, gmed, 0.5f, gmed, true);
-    findMinMaxPercentile(bv.data(), bv.size(), 0.5f, bmed, 0.5f, bmed, true);
-
+    // Calculate output medians and multipliers
     rmed = powf(rmed, rexp);
     gmed = powf(gmed, gexp);
     bmed = powf(bmed, bexp);
 
     const float MAX_OUT_VALUE = 65000.f;
-    const float rmult = (MAX_OUT_VALUE / (rmed * 24)) ;
-    const float gmult = (MAX_OUT_VALUE / (gmed * 24)) ;
-    const float bmult = (MAX_OUT_VALUE / (bmed * 24)) ;
+    const float rmult = MAX_OUT_VALUE / (rmed * 24);
+    const float gmult = MAX_OUT_VALUE / (gmed * 24);
+    const float bmult = MAX_OUT_VALUE / (bmed * 24);
 
     if (settings->verbose) {
+        printf("Thumbnail pre_muls: %g %g %g\n", (redMultiplier / camwbRed  ), (greenMultiplier / camwbGreen), (blueMultiplier / camwbBlue ));
         printf("Thumbnail channel medians: %g %g %g\n", rmed, gmed, bmed);
         printf("Thumbnail computed multipliers: %g %g %g\n", rmult, gmult, bmult);
     }

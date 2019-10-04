@@ -51,12 +51,14 @@ FilmNegative::FilmNegative() :
     EditSubscriber(ET_OBJECTS),
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
+    evFilmNegativeMedians(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_FILMNEGATIVE_MEDIANS")),
     fnp(nullptr),
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 1.5)),  // master exponent (green channel)
     redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 3, (2.04 / 1.5))), // ratio of red exponent to master exponent
     blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 3, (1.29 / 1.5))), // ratio of blue exponent to master exponent
     spotgrid(Gtk::manage(new Gtk::Grid())),
-    spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK"))))
+    spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
+    recalcCropMedians(Gtk::manage(new Gtk::Button(M("TP_FILMNEGATIVE_CROP_MEDIANS"))))
 {
     spotgrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -65,6 +67,8 @@ FilmNegative::FilmNegative() :
     spotbutton->get_style_context()->add_class("independent");
     spotbutton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
     spotbutton->set_image (*Gtk::manage (new RTImage ("color-picker-small.png")));
+
+    recalcCropMedians->set_tooltip_text(M("TP_FILMNEGATIVE_CROP_MEDIANS_TOOLTIP"));
 
     // TODO make spot size configurable ?
 
@@ -82,6 +86,7 @@ FilmNegative::FilmNegative() :
     // spotsize->append ("4");
 
     spotgrid->attach (*spotbutton, 0, 1, 1, 1);
+    spotgrid->attach (*recalcCropMedians, 0, 2, 1, 1);
     // spotgrid->attach (*slab, 1, 0, 1, 1);
     // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
@@ -92,6 +97,8 @@ FilmNegative::FilmNegative() :
 
     spotbutton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
     // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
+
+    recalcCropMedians->signal_clicked().connect(sigc::mem_fun(*this, &FilmNegative::recalcCropMediansClicked));
 
     // Editing geometry; create the spot rectangle
     Rectangle* const spotRect = new Rectangle();
@@ -134,6 +141,10 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     greenExp->setValue(pp->filmNegative.greenExp);
     blueRatio->setValue(pp->filmNegative.blueRatio);
 
+    channelMedians[0] = pp->filmNegative.redMedian;
+    channelMedians[1] = pp->filmNegative.greenMedian;
+    channelMedians[2] = pp->filmNegative.blueMedian;
+
     enableListener();
 }
 
@@ -142,12 +153,18 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     pp->filmNegative.redRatio = redRatio->getValue();
     pp->filmNegative.greenExp = greenExp->getValue();
     pp->filmNegative.blueRatio = blueRatio->getValue();
+    pp->filmNegative.redMedian = channelMedians[0];
+    pp->filmNegative.greenMedian = channelMedians[1];
+    pp->filmNegative.blueMedian = channelMedians[2];
     pp->filmNegative.enabled = getEnabled();
 
     if (pedited) {
         pedited->filmNegative.redRatio = redRatio->getEditedState();
         pedited->filmNegative.greenExp = greenExp->getEditedState();
         pedited->filmNegative.blueRatio = blueRatio->getEditedState();
+        pedited->filmNegative.medians = channelMedians[0] != pp->filmNegative.redMedian
+            || channelMedians[1] != pp->filmNegative.greenMedian
+            || channelMedians[2] != pp->filmNegative.blueMedian;
         pedited->filmNegative.enabled = !get_inconsistent();
     }
 }
@@ -310,4 +327,32 @@ void FilmNegative::editToggled()
         refSpotCoords.clear();
         unsubscribe();
     }
+}
+
+void FilmNegative::recalcCropMediansClicked()
+{
+    std::array<float, 3> newMedians = {1.f};
+
+    fnp->getFilmNegativeMedians(newMedians);
+
+    if (listener) {
+
+        disableListener();
+
+        channelMedians = newMedians;
+
+        enableListener();
+
+        if (listener && getEnabled()) {
+            listener->panelChanged(
+                evFilmNegativeMedians,
+                Glib::ustring::compose("R=%1\nG=%2\nB=%3",
+                    channelMedians[0], channelMedians[1], channelMedians[2]
+                )
+            );
+        }
+
+    }
+
+
 }

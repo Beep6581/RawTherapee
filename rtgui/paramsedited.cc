@@ -592,6 +592,7 @@ void ParamsEdited::set(bool v)
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
     filmNegative.blueRatio = v;
+    filmNegative.medians = v;
 
     exif = v;
     iptc = v;
@@ -1163,6 +1164,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
         filmNegative.blueRatio = filmNegative.blueRatio && p.filmNegative.blueRatio == other.filmNegative.blueRatio;
+        filmNegative.medians = filmNegative.medians && p.filmNegative.redMedian == other.filmNegative.redMedian
+                                                    && p.filmNegative.greenMedian == other.filmNegative.greenMedian
+                                                    && p.filmNegative.blueMedian == other.filmNegative.blueMedian;
 
 //      How the hell can we handle that???
 //      exif = exif && p.exif==other.exif
@@ -3244,6 +3248,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmNegative.blueRatio = mods.filmNegative.blueRatio;
     }
 
+    if (filmNegative.medians) {
+        toEdit.filmNegative.redMedian = mods.filmNegative.redMedian;
+        toEdit.filmNegative.greenMedian = mods.filmNegative.greenMedian;
+        toEdit.filmNegative.blueMedian = mods.filmNegative.blueMedian;
+    }
+
     // Exif changes are added to the existing ones
     if (exif) {
         for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); ++i) {
@@ -3290,7 +3300,7 @@ bool RetinexParamsEdited::isUnchanged() const
 
 bool FilmNegativeParamsEdited::isUnchanged() const
 {
-    return enabled && redRatio && greenExp && blueRatio;
+    return enabled && redRatio && greenExp && blueRatio && medians;
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

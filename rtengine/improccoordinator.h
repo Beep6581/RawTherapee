@@ -222,6 +222,8 @@ protected:
 
     ImProcFunctions ipf;
 
+    Coord2D translateCoord(int x, int y);
+
 public:
 
     ImProcCoordinator ();
@@ -272,6 +274,7 @@ public:
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
     bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) override;
+    bool getFilmNegativeMedians(std::array<float, 3>& medians) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
     bool getHighQualComputed() override;
     void setHighQualComputed() override;
