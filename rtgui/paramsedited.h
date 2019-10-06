@@ -565,6 +565,7 @@ public:
         bool chromaskreti;
         bool gammaskreti;
         bool slomaskreti;
+        bool lapmaskreti;
         bool scalereti;
         bool darkness;
         bool lightnessreti;

@@ -281,6 +281,7 @@ Locallab::Locallab():
     chromaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    lapmaskreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     scalereti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALERETI"), 1.0, 10.0, 1., 2.))),
     darkness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DARKRETI"), 0.01, 6.0, 0.01, 2.0))),
     lightnessreti(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTRETI"), 0.01, 4.0, 0.01, 1.))),
@@ -1264,6 +1265,10 @@ Locallab::Locallab():
 
     showmasktmMethodConn  = showmasktmMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmasktmMethodChanged));
 
+    if (showtooltip) {
+        radmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+    }
 
 
     blendmasktm->setAdjusterListener(this);
@@ -1480,6 +1485,10 @@ Locallab::Locallab():
 
     showmaskretiMethodConn  = showmaskretiMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskretiMethodChanged));
 
+    if (showtooltip) {
+        radmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+    }
 
 
     blendmaskreti->setAdjusterListener(this);
@@ -1487,6 +1496,7 @@ Locallab::Locallab():
     chromaskreti->setAdjusterListener(this);
     gammaskreti->setAdjusterListener(this);
     slomaskreti->setAdjusterListener(this);
+    lapmaskreti->setAdjusterListener(this);
     scalereti->setAdjusterListener(this);
     darkness->setAdjusterListener(this);
     lightnessreti->setAdjusterListener(this);
@@ -1499,6 +1509,7 @@ Locallab::Locallab():
     maskretiBox->pack_start(*maskretiCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskretiBox->pack_start(*blendmaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*radmaskreti, Gtk::PACK_SHRINK, 0);
+    maskretiBox->pack_start(*lapmaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*chromaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*gammaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*slomaskreti, Gtk::PACK_SHRINK, 0);
@@ -3213,6 +3224,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskreti = chromaskreti->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskreti = gammaskreti->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskreti = slomaskreti->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lapmaskreti = lapmaskreti->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).scalereti = scalereti->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).darkness = darkness->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lightnessreti = lightnessreti->getValue();
@@ -3491,6 +3503,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromaskreti = pe->locallab.spots.at(pp->locallab.selspot).chromaskreti || chromaskreti->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskreti = pe->locallab.spots.at(pp->locallab.selspot).gammaskreti || gammaskreti->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskreti = pe->locallab.spots.at(pp->locallab.selspot).slomaskreti || slomaskreti->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).lapmaskreti = pe->locallab.spots.at(pp->locallab.selspot).lapmaskreti || lapmaskreti->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).scalereti = pe->locallab.spots.at(pp->locallab.selspot).scalereti || scalereti->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).darkness = pe->locallab.spots.at(pp->locallab.selspot).darkness || darkness->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lightnessreti = pe->locallab.spots.at(pp->locallab.selspot).lightnessreti || lightnessreti->getEditedState();
@@ -3767,6 +3780,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromaskreti = pedited->locallab.spots.at(pp->locallab.selspot).chromaskreti || chromaskreti->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskreti = pedited->locallab.spots.at(pp->locallab.selspot).gammaskreti || gammaskreti->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskreti = pedited->locallab.spots.at(pp->locallab.selspot).slomaskreti || slomaskreti->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lapmaskreti = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskreti || lapmaskreti->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).scalereti = pedited->locallab.spots.at(pp->locallab.selspot).scalereti || scalereti->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).darkness = pedited->locallab.spots.at(pp->locallab.selspot).darkness || darkness->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lightnessreti = pedited->locallab.spots.at(pp->locallab.selspot).lightnessreti || lightnessreti->getEditedState();
@@ -5568,6 +5582,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromaskreti->setDefault(defSpot->chromaskreti);
     gammaskreti->setDefault(defSpot->gammaskreti);
     slomaskreti->setDefault(defSpot->slomaskreti);
+    lapmaskreti->setDefault(defSpot->lapmaskreti);
     scalereti->setDefault(defSpot->scalereti);
     darkness->setDefault(defSpot->darkness);
     lightnessreti->setDefault(defSpot->lightnessreti);
@@ -5734,6 +5749,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskreti->setDefaultEditedState(Irrelevant);
         gammaskreti->setDefaultEditedState(Irrelevant);
         slomaskreti->setDefaultEditedState(Irrelevant);
+        lapmaskreti->setDefaultEditedState(Irrelevant);
         scalereti->setDefaultEditedState(Irrelevant);
         darkness->setDefaultEditedState(Irrelevant);
         lightnessreti->setDefaultEditedState(Irrelevant);
@@ -5904,6 +5920,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskreti->setDefaultEditedState(defSpotState->chromaskreti ? Edited : UnEdited);
         gammaskreti->setDefaultEditedState(defSpotState->gammaskreti ? Edited : UnEdited);
         slomaskreti->setDefaultEditedState(defSpotState->slomaskreti ? Edited : UnEdited);
+        lapmaskreti->setDefaultEditedState(defSpotState->lapmaskreti ? Edited : UnEdited);
         scalereti->setDefaultEditedState(defSpotState->scalereti ? Edited : UnEdited);
         darkness->setDefaultEditedState(defSpotState->darkness ? Edited : UnEdited);
         lightnessreti->setDefaultEditedState(defSpotState->lightnessreti ? Edited : UnEdited);
@@ -6641,6 +6658,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == lapmaskreti) {
+            if (listener) {
+                listener->panelChanged(Evlocallablapmaskreti, lapmaskreti->getTextValue());
+            }
+        }
+
         if (a == scalereti) {
             if (scalereti->getValue() == 1) {
                 LocalcurveEditorgainT->hide();
@@ -7102,6 +7125,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromaskreti->showEditedCB();
     gammaskreti->showEditedCB();
     slomaskreti->showEditedCB();
+    lapmaskreti->showEditedCB();
     scalereti->showEditedCB();
     darkness->showEditedCB();
     lightnessreti->showEditedCB();
@@ -7741,6 +7765,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromaskreti->setValue(pp->locallab.spots.at(index).chromaskreti);
         gammaskreti->setValue(pp->locallab.spots.at(index).gammaskreti);
         slomaskreti->setValue(pp->locallab.spots.at(index).slomaskreti);
+        lapmaskreti->setValue(pp->locallab.spots.at(index).lapmaskreti);
         scalereti->setValue(pp->locallab.spots.at(index).scalereti);
         darkness->setValue(pp->locallab.spots.at(index).darkness);
         lightnessreti->setValue(pp->locallab.spots.at(index).lightnessreti);
@@ -8069,6 +8094,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromaskreti->setEditedState(spotState->chromaskreti ? Edited : UnEdited);
                 gammaskreti->setEditedState(spotState->gammaskreti ? Edited : UnEdited);
                 slomaskreti->setEditedState(spotState->slomaskreti ? Edited : UnEdited);
+                lapmaskreti->setEditedState(spotState->lapmaskreti ? Edited : UnEdited);
                 scalereti->setEditedState(spotState->scalereti ? Edited : UnEdited);
                 darkness->setEditedState(spotState->darkness ? Edited : UnEdited);
                 lightnessreti->setEditedState(spotState->lightnessreti ? Edited : UnEdited);

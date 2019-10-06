@@ -1147,6 +1147,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromaskreti = locallab.spots.at(j).chromaskreti && pSpot.chromaskreti == otherSpot.chromaskreti;
                 locallab.spots.at(j).gammaskreti = locallab.spots.at(j).gammaskreti && pSpot.gammaskreti == otherSpot.gammaskreti;
                 locallab.spots.at(j).slomaskreti = locallab.spots.at(j).slomaskreti && pSpot.slomaskreti == otherSpot.slomaskreti;
+                locallab.spots.at(j).lapmaskreti = locallab.spots.at(j).lapmaskreti && pSpot.lapmaskreti == otherSpot.lapmaskreti;
                 locallab.spots.at(j).scalereti = locallab.spots.at(j).scalereti && pSpot.scalereti == otherSpot.scalereti;
                 locallab.spots.at(j).darkness = locallab.spots.at(j).darkness && pSpot.darkness == otherSpot.darkness;
                 locallab.spots.at(j).lightnessreti = locallab.spots.at(j).lightnessreti && pSpot.lightnessreti == otherSpot.lightnessreti;
@@ -3440,6 +3441,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskreti = mods.locallab.spots.at(i).slomaskreti;
         }
 
+        if (locallab.spots.at(i).lapmaskreti) {
+            toEdit.locallab.spots.at(i).lapmaskreti = mods.locallab.spots.at(i).lapmaskreti;
+        }
+
         if (locallab.spots.at(i).scalereti) {
             toEdit.locallab.spots.at(i).scalereti = mods.locallab.spots.at(i).scalereti;
         }
@@ -4855,6 +4860,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromaskreti(v),
     gammaskreti(v),
     slomaskreti(v),
+    lapmaskreti(v),
     scalereti(v),
     darkness(v),
     lightnessreti(v),
@@ -5122,6 +5128,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromaskreti = v;
     gammaskreti = v;
     slomaskreti = v;
+    lapmaskreti = v;
     scalereti = v;
     darkness = v;
     lightnessreti = v;

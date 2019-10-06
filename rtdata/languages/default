@@ -995,6 +995,7 @@ HISTORY_MSG_754;Local - Reti Clip
 HISTORY_MSG_755;Local - TM use tm mask
 HISTORY_MSG_756;Local - Exp use algo exposure mask
 HISTORY_MSG_757;Local - Exp Laplacian mask
+HISTORY_MSG_758;Local - Reti Laplacian mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2219,6 +2220,7 @@ TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius, but incr
 TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP;If enabled Mask uses Restored Datas after Transmission Map instead of Original datas
 TP_LOCALLAB_SOFTRETI;Reduce artifact deltaE
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
+TP_LOCALLAB_LAPRAD_TOOLTIP;Avoid using Radius and Laplace Threshold simultaneously
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.\nYou can act on this curve to change Transmission and reduce the artifacts

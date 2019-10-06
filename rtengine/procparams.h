@@ -1155,6 +1155,7 @@ struct LocallabParams {
         double chromaskreti;
         double gammaskreti;
         double slomaskreti;
+        double lapmaskreti;
         double scalereti;
         double darkness;
         double lightnessreti;

@@ -2602,10 +2602,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     enaretiMask(false),
     enaretiMasktmap(true),
     blendmaskreti(0),
-    radmaskreti(10.0),
+    radmaskreti(0.0),
     chromaskreti(0.0),
     gammaskreti(1.0),
     slomaskreti(0.0),
+    lapmaskreti(0.0),
     scalereti(2.0),
     darkness(2.0),
     lightnessreti(1.0),
@@ -2876,6 +2877,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chromaskreti == other.chromaskreti
         && gammaskreti == other.gammaskreti
         && slomaskreti == other.slomaskreti
+        && lapmaskreti == other.lapmaskreti
         && scalereti == other.scalereti
         && darkness == other.darkness
         && lightnessreti == other.lightnessreti
@@ -4132,6 +4134,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskreti, "Locallab", "Chromaskreti_" + std::to_string(i), spot.chromaskreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskreti, "Locallab", "Gammaskreti_" + std::to_string(i), spot.gammaskreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskreti, "Locallab", "Slomaskreti_" + std::to_string(i), spot.slomaskreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskreti, "Locallab", "Lapmaskreti_" + std::to_string(i), spot.lapmaskreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).scalereti, "Locallab", "Scalereti_" + std::to_string(i), spot.scalereti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).darkness, "Locallab", "Darkness_" + std::to_string(i), spot.darkness, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lightnessreti, "Locallab", "Lightnessreti_" + std::to_string(i), spot.lightnessreti, keyFile);
@@ -5515,6 +5518,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskreti_" + std::to_string(i), pedited, spot.chromaskreti, spotEdited.chromaskreti);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskreti_" + std::to_string(i), pedited, spot.gammaskreti, spotEdited.gammaskreti);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskreti_" + std::to_string(i), pedited, spot.slomaskreti, spotEdited.slomaskreti);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskreti_" + std::to_string(i), pedited, spot.lapmaskreti, spotEdited.lapmaskreti);
                 assignFromKeyfile(keyFile, "Locallab", "Scalereti_" + std::to_string(i), pedited, spot.scalereti, spotEdited.scalereti);
                 assignFromKeyfile(keyFile, "Locallab", "Darkness_" + std::to_string(i), pedited, spot.darkness, spotEdited.darkness);
                 assignFromKeyfile(keyFile, "Locallab", "Lightnessreti_" + std::to_string(i), pedited, spot.lightnessreti, spotEdited.lightnessreti);

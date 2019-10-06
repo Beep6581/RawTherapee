@@ -231,6 +231,7 @@ private:
     Adjuster* const chromaskreti;
     Adjuster* const gammaskreti;
     Adjuster* const slomaskreti;
+    Adjuster* const lapmaskreti;
     Adjuster* const scalereti;
     Adjuster* const darkness;
     Adjuster* const lightnessreti;
