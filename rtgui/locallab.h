@@ -214,6 +214,7 @@ private:
     Adjuster* const chromasktm;
     Adjuster* const gammasktm;
     Adjuster* const slomasktm;
+    Adjuster* const lapmasktm;
     // Retinex
     Adjuster* const str;
     Adjuster* const chrrt;

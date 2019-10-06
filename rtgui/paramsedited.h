@@ -536,6 +536,7 @@ public:
         bool chromasktm;
         bool gammasktm;
         bool slomasktm;
+        bool lapmasktm;
         // Retinex
         bool expreti;
         bool retinexMethod;

@@ -261,10 +261,11 @@ Locallab::Locallab():
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
     satur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.1, 0.))),//by default satur = 0 ==> use Mantiuk value
     blendmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
+    radmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    lapmasktm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     // Retinex
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.1, 0.2))),
     chrrt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHRRT"), 0.0, 100.0, 0.1, 0.0))),
@@ -1270,6 +1271,7 @@ Locallab::Locallab():
     chromasktm->setAdjusterListener(this);
     gammasktm->setAdjusterListener(this);
     slomasktm->setAdjusterListener(this);
+    lapmasktm->setAdjusterListener(this);
 
     ToolParamBlock* const masktmBox = Gtk::manage(new ToolParamBlock());
     masktmBox->pack_start(*showmasktmMethod, Gtk::PACK_SHRINK, 4);
@@ -1277,6 +1279,7 @@ Locallab::Locallab():
     masktmBox->pack_start(*enatmMaskaft, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*masktmCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     masktmBox->pack_start(*blendmasktm, Gtk::PACK_SHRINK, 0);
+    masktmBox->pack_start(*lapmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*radmasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*chromasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
@@ -3173,6 +3176,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromasktm = chromasktm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammasktm = gammasktm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomasktm = slomasktm->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lapmasktm = lapmasktm->getValue();
                     // Retinex
                     pp->locallab.spots.at(pp->locallab.selspot).expreti = expreti->getEnabled();
 
@@ -3458,6 +3462,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromasktm = pe->locallab.spots.at(pp->locallab.selspot).chromasktm || chromasktm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammasktm = pe->locallab.spots.at(pp->locallab.selspot).gammasktm || gammasktm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomasktm = pe->locallab.spots.at(pp->locallab.selspot).slomasktm || slomasktm->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).lapmasktm = pe->locallab.spots.at(pp->locallab.selspot).lapmasktm || lapmasktm->getEditedState();
                         // Retinex
                         pe->locallab.spots.at(pp->locallab.selspot).expreti = pe->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).retinexMethod = pe->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -3733,6 +3738,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromasktm = pedited->locallab.spots.at(pp->locallab.selspot).chromasktm || chromasktm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammasktm = pedited->locallab.spots.at(pp->locallab.selspot).gammasktm || gammasktm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomasktm = pedited->locallab.spots.at(pp->locallab.selspot).slomasktm || slomasktm->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lapmasktm = pedited->locallab.spots.at(pp->locallab.selspot).lapmasktm || lapmasktm->getEditedState();
                         // Retinex
                         pedited->locallab.spots.at(pp->locallab.selspot).expreti = pedited->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod = pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -5546,6 +5552,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromasktm->setDefault(defSpot->chromasktm);
     gammasktm->setDefault(defSpot->gammasktm);
     slomasktm->setDefault(defSpot->slomasktm);
+    lapmasktm->setDefault(defSpot->lapmasktm);
     // Retinex
     str->setDefault(defSpot->str);
     chrrt->setDefault(defSpot->chrrt);
@@ -5711,6 +5718,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromasktm->setDefaultEditedState(Irrelevant);
         gammasktm->setDefaultEditedState(Irrelevant);
         slomasktm->setDefaultEditedState(Irrelevant);
+        lapmasktm->setDefaultEditedState(Irrelevant);
         // Retinex
         str->setDefaultEditedState(Irrelevant);
         chrrt->setDefaultEditedState(Irrelevant);
@@ -5880,6 +5888,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromasktm->setDefaultEditedState(defSpotState->chromasktm ? Edited : UnEdited);
         gammasktm->setDefaultEditedState(defSpotState->gammasktm ? Edited : UnEdited);
         slomasktm->setDefaultEditedState(defSpotState->slomasktm ? Edited : UnEdited);
+        lapmasktm->setDefaultEditedState(defSpotState->lapmasktm ? Edited : UnEdited);
         // Retinex
         str->setDefaultEditedState(defSpotState->str ? Edited : UnEdited);
         chrrt->setDefaultEditedState(defSpotState->chrrt ? Edited : UnEdited);
@@ -6531,6 +6540,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == lapmasktm) {
+            if (listener) {
+                listener->panelChanged(Evlocallablapmasktm, lapmasktm->getTextValue());
+            }
+        }
+
 
     }
 
@@ -7071,6 +7086,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromasktm->showEditedCB();
     gammasktm->showEditedCB();
     slomasktm->showEditedCB();
+    lapmasktm->showEditedCB();
     // Retinex
     str->showEditedCB();
     chrrt->showEditedCB();
@@ -7684,6 +7700,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromasktm->setValue(pp->locallab.spots.at(index).chromasktm);
         gammasktm->setValue(pp->locallab.spots.at(index).gammasktm);
         slomasktm->setValue(pp->locallab.spots.at(index).slomasktm);
+        lapmasktm->setValue(pp->locallab.spots.at(index).lapmasktm);
         CCmasktmshape->setCurve(pp->locallab.spots.at(index).CCmasktmcurve);
         LLmasktmshape->setCurve(pp->locallab.spots.at(index).LLmasktmcurve);
         HHmasktmshape->setCurve(pp->locallab.spots.at(index).HHmasktmcurve);
@@ -8018,6 +8035,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromasktm->setEditedState(spotState->chromasktm ? Edited : UnEdited);
                 gammasktm->setEditedState(spotState->gammasktm ? Edited : UnEdited);
                 slomasktm->setEditedState(spotState->slomasktm ? Edited : UnEdited);
+                lapmasktm->setEditedState(spotState->lapmasktm ? Edited : UnEdited);
 
                 // Retinex
                 expreti->set_inconsistent(!spotState->expreti);

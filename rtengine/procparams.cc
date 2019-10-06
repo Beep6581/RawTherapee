@@ -2573,10 +2573,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     enatmMask(false),
     enatmMaskaft(false),
     blendmasktm(0),
-    radmasktm(10.0),
+    radmasktm(0.0),
     chromasktm(0.0),
     gammasktm(1.0),
     slomasktm(0.0),
+    lapmasktm(0.0),
     // Retinex
     expreti(false),
     retinexMethod("high"),
@@ -2846,6 +2847,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chromasktm == other.chromasktm
         && gammasktm == other.gammasktm
         && slomasktm == other.slomasktm
+        && lapmasktm == other.lapmasktm
         // Retinex
         && expreti == other.expreti
         && retinexMethod == other.retinexMethod
@@ -4101,6 +4103,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromasktm, "Locallab", "Chromasktm_" + std::to_string(i), spot.chromasktm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammasktm, "Locallab", "Gammasktm_" + std::to_string(i), spot.gammasktm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomasktm, "Locallab", "Slomasktm_" + std::to_string(i), spot.slomasktm, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmasktm, "Locallab", "Lapmasktm_" + std::to_string(i), spot.lapmasktm, keyFile);
                 // Retinex
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expreti, "Locallab", "Expreti_" + std::to_string(i), spot.expreti, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).retinexMethod, "Locallab", "retinexMethod_" + std::to_string(i), spot.retinexMethod, keyFile);
@@ -5483,6 +5486,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromasktm_" + std::to_string(i), pedited, spot.chromasktm, spotEdited.chromasktm);
                 assignFromKeyfile(keyFile, "Locallab", "Gammasktm_" + std::to_string(i), pedited, spot.gammasktm, spotEdited.gammasktm);
                 assignFromKeyfile(keyFile, "Locallab", "Slomasktm_" + std::to_string(i), pedited, spot.slomasktm, spotEdited.slomasktm);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmasktm_" + std::to_string(i), pedited, spot.lapmasktm, spotEdited.lapmasktm);
                 // Retinex
                 assignFromKeyfile(keyFile, "Locallab", "Expreti_" + std::to_string(i), pedited, spot.expreti, spotEdited.expreti);
                 assignFromKeyfile(keyFile, "Locallab", "retinexMethod_" + std::to_string(i), pedited, spot.retinexMethod, spotEdited.retinexMethod);

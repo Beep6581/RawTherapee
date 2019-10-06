@@ -994,6 +994,7 @@ HISTORY_MSG_753;Local - Reti Transmission map
 HISTORY_MSG_754;Local - Reti Clip
 HISTORY_MSG_755;Local - TM use tm mask
 HISTORY_MSG_756;Local - Exp use algo exposure mask
+HISTORY_MSG_757;Local - Exp Laplacian mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2089,6 +2090,7 @@ TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_SLOMASKCOL;Slope mask
+TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_COFR;Color & Light - Small defects : red eyes, dust

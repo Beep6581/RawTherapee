@@ -1126,6 +1126,7 @@ struct LocallabParams {
         double chromasktm;
         double gammasktm;
         double slomasktm;
+        double lapmasktm;
         // Retinex
         bool expreti;
         Glib::ustring retinexMethod;

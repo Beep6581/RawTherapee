@@ -2447,9 +2447,89 @@ static void showmask(const local_params& lp, int xstart, int ystart, int cx, int
     }
 }
 
+static float *discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t)
+{
+    BENCHFUN
+
+    size_t i, j;
+    float *ptr_out;
+    float diff = 0.f;
+    /* pointers to the current and neighbour values */
+    const float *ptr_in, *ptr_in_xm1, *ptr_in_xp1, *ptr_in_ym1, *ptr_in_yp1;
+
+    if (NULL == data_in || NULL == data_out) {
+        fprintf(stderr, "a pointer is NULL and should not be so\n");
+        abort();
+    }
+
+    /* pointers to the data and neighbour values */
+    /*
+     *                 y-1
+     *             x-1 ptr x+1
+     *                 y+1
+     *    <---------------------nx------->
+     */
+    ptr_in = data_in;
+    ptr_in_xm1 = data_in - 1;
+    ptr_in_xp1 = data_in + 1;
+    ptr_in_ym1 = data_in - nx;
+    ptr_in_yp1 = data_in + nx;
+    ptr_out = data_out;
+
+    for (j = 0; j < ny; j++) {
+        for (i = 0; i < nx; i++) {
+            *ptr_out = 0.f;
+
+            /* row differences */
+            if (0 < i) {
+                diff = *ptr_in - *ptr_in_xm1;
+
+                if (fabs(diff) > t) {
+                    *ptr_out += diff;
+                }
+            }
+
+            if (nx - 1 > i) {
+                diff = *ptr_in - *ptr_in_xp1;
+
+                if (fabs(diff) > t) {
+                    *ptr_out += diff;
+                }
+            }
+
+            /* column differences */
+            if (0 < j) {
+                diff = *ptr_in - *ptr_in_ym1;
+
+                if (fabs(diff) > t) {
+                    *ptr_out += diff;
+                }
+            }
+
+            if (ny - 1 > j) {
+                diff = *ptr_in - *ptr_in_yp1;
+
+                if (fabs(diff) > t) {
+                    *ptr_out += diff;
+                }
+            }
+
+            ptr_in++;
+            ptr_in_xm1++;
+            ptr_in_xp1++;
+            ptr_in_ym1++;
+            ptr_in_yp1++;
+            ptr_out++;
+        }
+    }
+
+    return data_out;
+}
+
+
 void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, /*LabImage * transformed, */int inv, const struct local_params & lp,
                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, bool multiThread,
-                 bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float gamma, float slope, float blendm)
+                 bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm)
 {
     array2D<float> ble(bfw, bfh);
     array2D<float> guid(bfw, bfh);
@@ -2458,7 +2538,12 @@ void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk,
 //    meanfab = 5000.f;
     float kinv = 1.f;
     float kneg = 1.f;
-    if(invmask) {kinv = 0.f; kneg = -1.f;}
+
+    if (invmask) {
+        kinv = 0.f;
+        kneg = -1.f;
+    }
+
     if (deltaE || modmask || enaMask || showmaske) {
 
 #ifdef _OPENMP
@@ -2560,6 +2645,7 @@ void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk,
         LUTf lutTonemaskexp(65536);
         calcGammaLut(gamma, slope, lutTonemaskexp);
 
+
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -2568,6 +2654,37 @@ void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk,
             for (int jr = 0; jr < bfw; jr++) {
                 bufmaskblurcol->L[ir][jr] = lutTonemaskexp[LIM01(ble[ir][jr]) * 65536.f];
             }
+        }
+
+
+        if (lap > 0.f) {
+            float *datain = new float[bfh * bfw];
+            float *data_tmp = new float[bfh * bfw];
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int y = 0; y < bfh; y++) {
+                for (int x = 0; x < bfw; x++) {
+                    datain[y * bfw + x] =  bufmaskblurcol->L[y][x];
+                }
+            }
+
+            (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, 200.f * lap);
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int y = 0; y < bfh; y++) {
+                for (int x = 0; x < bfw; x++) {
+                    bufmaskblurcol->L[y][x] = data_tmp[y * bfw + x];
+                }
+            }
+
+            delete [] datain;
+            delete [] data_tmp;
+
         }
     }
 
@@ -4475,86 +4592,6 @@ static float *rex_poisson_dct(float * data, size_t nx, size_t ny, double m)
     return data;
 }
 
-
-
-static float *discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t)
-{
-    BENCHFUN
-
-    size_t i, j;
-    float *ptr_out;
-    float diff = 0.f;
-    /* pointers to the current and neighbour values */
-    const float *ptr_in, *ptr_in_xm1, *ptr_in_xp1, *ptr_in_ym1, *ptr_in_yp1;
-
-    if (NULL == data_in || NULL == data_out) {
-        fprintf(stderr, "a pointer is NULL and should not be so\n");
-        abort();
-    }
-
-    /* pointers to the data and neighbour values */
-    /*
-     *                 y-1
-     *             x-1 ptr x+1
-     *                 y+1
-     *    <---------------------nx------->
-     */
-    ptr_in = data_in;
-    ptr_in_xm1 = data_in - 1;
-    ptr_in_xp1 = data_in + 1;
-    ptr_in_ym1 = data_in - nx;
-    ptr_in_yp1 = data_in + nx;
-    ptr_out = data_out;
-
-    for (j = 0; j < ny; j++) {
-        for (i = 0; i < nx; i++) {
-            *ptr_out = 0.f;
-
-            /* row differences */
-            if (0 < i) {
-                diff = *ptr_in - *ptr_in_xm1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-
-            if (nx - 1 > i) {
-                diff = *ptr_in - *ptr_in_xp1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-
-            /* column differences */
-            if (0 < j) {
-                diff = *ptr_in - *ptr_in_ym1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-
-            if (ny - 1 > j) {
-                diff = *ptr_in - *ptr_in_yp1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-
-            ptr_in++;
-            ptr_in_xm1++;
-            ptr_in_xp1++;
-            ptr_in_ym1++;
-            ptr_in_yp1++;
-            ptr_out++;
-        }
-    }
-
-    return data_out;
-}
 
 void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int bfh, float thresh, float multy, float * dE, int show)
 {
@@ -7279,7 +7316,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmacb;
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
 
                     if (lp.showmaskcbmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get(), 0);
@@ -7544,11 +7581,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float gamma = lp.gammatm;
                     float slope = lp.slomatm;
                     float blendm = lp.blendmatm;
+                    float lap = params->locallab.spots.at(sp).lapmasktm;
 
                     if (!params->locallab.spots.at(sp).enatmMaskaft) {
                         maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufgbm.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                     locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
                         if (lp.showmasktmmet == 3) {
                             showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgbm.get(), transformed, bufmaskorigtm.get(), 0);
@@ -7570,7 +7608,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             //calculate new values for original, originalmasktm, bufmaskorigtm...in function of tmp1
                             maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
                             if (lp.showmasktmmet == 3) {//dispaly mask
                                 showmask(lp, xstart, ystart, cx, cy, bfw, bfh, tmp1.get(), transformed, bufmaskorigtm.get(), 0);
@@ -7725,7 +7763,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmaSH;
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
 
                     if (lp.showmaskSHmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskorigSH.get(), 0);
@@ -7818,7 +7856,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, inv, lp,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
 
 
             if (lp.showmaskSHmetinv == 1) {
@@ -9891,10 +9929,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float gamma = lp.gammaexp;
                     float slope = lp.slomaexp;
                     float blendm = lp.blendmaexp;
-                   // bool invmask = params->locallab.spots.at(sp).enaExpMaskaft;
+                    // bool invmask = params->locallab.spots.at(sp).enaExpMaskaft;
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
 
                     if (lp.showmaskexpmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);
@@ -10154,11 +10192,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float gamma = lp.gammaexp;
             float slope = lp.slomaexp;
             float blendm = lp.blendmaexp;
-           // bool invmask = params->locallab.spots.at(sp).enaExpMaskaft;
+            // bool invmask = params->locallab.spots.at(sp).enaExpMaskaft;
 
             maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                         locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
 
             if (lp.showmaskexpmetinv == 1) {
                 showmask(lp, 0, 0, cx, cy, GW, GH, bufexporig.get(), transformed, bufmaskblurexp.get(), inv);
@@ -10395,7 +10433,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmacol;
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
 
                     if (lp.showmaskcolmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
@@ -10596,7 +10634,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, gamma, slope, blendm);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
 
 
             if (lp.showmaskcolmetinv == 1) {
