@@ -157,6 +157,7 @@ private:
     Adjuster* const chromaskexp;
     Adjuster* const gammaskexp;
     Adjuster* const slomaskexp;
+    Adjuster* const lapmaskexp;
     Adjuster* const softradiusexp;
     Adjuster* const laplacexp;
     Adjuster* const balanexp;

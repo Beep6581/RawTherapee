@@ -447,6 +447,7 @@ public:
         bool chromaskexp;
         bool gammaskexp;
         bool slomaskexp;
+        bool lapmaskexp;
         bool softradiusexp;
         bool expMethod;
         bool exnoiseMethod;

@@ -9929,10 +9929,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float gamma = lp.gammaexp;
                     float slope = lp.slomaexp;
                     float blendm = lp.blendmaexp;
+                    float lap = params->locallab.spots.at(sp).lapmaskexp;
+                    
                     // bool invmask = params->locallab.spots.at(sp).enaExpMaskaft;
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
                     if (lp.showmaskexpmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);

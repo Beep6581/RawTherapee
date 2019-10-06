@@ -1029,6 +1029,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromaskexp = locallab.spots.at(j).chromaskexp && pSpot.chromaskexp == otherSpot.chromaskexp;
                 locallab.spots.at(j).gammaskexp = locallab.spots.at(j).gammaskexp && pSpot.gammaskexp == otherSpot.gammaskexp;
                 locallab.spots.at(j).slomaskexp = locallab.spots.at(j).slomaskexp && pSpot.slomaskexp == otherSpot.slomaskexp;
+                locallab.spots.at(j).lapmaskexp = locallab.spots.at(j).lapmaskexp && pSpot.lapmaskexp == otherSpot.lapmaskexp;
                 locallab.spots.at(j).softradiusexp = locallab.spots.at(j).softradiusexp && pSpot.softradiusexp == otherSpot.softradiusexp;
                 locallab.spots.at(j).expMethod = locallab.spots.at(j).expMethod && pSpot.expMethod == otherSpot.expMethod;
                 locallab.spots.at(j).exnoiseMethod = locallab.spots.at(j).exnoiseMethod && pSpot.exnoiseMethod == otherSpot.exnoiseMethod;
@@ -2987,6 +2988,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskexp = mods.locallab.spots.at(i).slomaskexp;
         }
 
+        if (locallab.spots.at(i).lapmaskexp) {
+            toEdit.locallab.spots.at(i).lapmaskexp = mods.locallab.spots.at(i).lapmaskexp;
+        }
+
         if (locallab.spots.at(i).softradiusexp) {
             toEdit.locallab.spots.at(i).softradiusexp = mods.locallab.spots.at(i).softradiusexp;
         }
@@ -4742,6 +4747,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromaskexp(v),
     gammaskexp(v),
     slomaskexp(v),
+    lapmaskexp(v),
     softradiusexp(v),
     expMethod(v),
     exnoiseMethod(v),
@@ -5010,6 +5016,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromaskexp = v;
     gammaskexp = v;
     slomaskexp = v;
+    lapmaskexp = v;
     softradiusexp = v;
     expMethod = v;
     exnoiseMethod = v;

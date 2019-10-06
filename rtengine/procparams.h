@@ -1037,6 +1037,7 @@ struct LocallabParams {
         double chromaskexp;
         double gammaskexp;
         double slomaskexp;
+        double lapmaskexp;
         double softradiusexp;
         Glib::ustring expMethod;
         Glib::ustring exnoiseMethod;
