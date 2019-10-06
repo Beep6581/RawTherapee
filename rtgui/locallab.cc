@@ -5013,7 +5013,7 @@ void Locallab::inversexChanged()
         exnoiseMethod->hide();
         showmaskexpMethod->hide();
         showmaskexpMethodinv->show();
-
+        expMethod->set_active(0);
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
@@ -8215,6 +8215,7 @@ void Locallab::updateSpecificGUIState()
         showmaskexpMethod->hide();
         softradiusexp->show();
 
+        expMethod->set_active(0);
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
