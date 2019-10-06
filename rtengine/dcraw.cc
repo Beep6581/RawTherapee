@@ -2431,8 +2431,6 @@ void CLASS hasselblad_load_raw()
     for (int c = 0; c < 3; ++c) {
         back[c] = back[4] + c * raw_width;
     }
-    const int sh = tiff_samples > 1;
-    cblack[6] >>= sh;
     const int shot = LIM(shot_select, 1, tiff_samples) - 1;
     for (int row = 0; row < raw_height; ++row) {
         for (int c = 0; c < 4; ++c) {
@@ -2459,14 +2457,14 @@ void CLASS hasselblad_load_raw()
                 if (col) {
                     pred = back[2][s - 2];
                     if (row > 1 && jh.psv == 11) {
-                        pred += back[0][s] / 2 - back[0][s - 2] / 2;
+                        pred += (back[0][s] - back[0][s - 2]) / 2;
                     }
                 } else {
                      pred = 0x8000 + load_flags;
                 }
                 for (int c = 0; c < tiff_samples; ++c) {
                     pred += diff[(s & 1) * tiff_samples + c];
-                    const unsigned upix = pred >> sh & 0xffff;
+                    const unsigned upix = pred & 0xffff;
                     if (raw_image && c == shot) {
                         RAW(row, s) = upix;
                     }
@@ -2479,8 +2477,10 @@ void CLASS hasselblad_load_raw()
                             *ip = c < 4 ? upix : (*ip + upix) >> 1;
                         }
                     }
+                    if (c == (tiff_samples-1)) {
+                      back[2][s] = static_cast<int>(upix);
+                    }
                 }
-                back[2][s] = pred;
             }
         }
     }
