@@ -1566,7 +1566,7 @@ Locallab::Locallab():
     retiBox->pack_start(*LocalcurveEditortransT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     retiBox->pack_start(*expmaskreti);
-    retiBox->pack_start(*inversret);
+//    retiBox->pack_start(*inversret);
     retitoolFrame->add(*retiBox);
     genBox->pack_start(*retitoolFrame);
     expreti->add(*genBox, false);

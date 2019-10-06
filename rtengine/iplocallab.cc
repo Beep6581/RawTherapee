@@ -8801,7 +8801,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
             }
         }
-
+lp.invret = false;
         if (lp.str >= 0.2f  && lp.retiena && call != 2) {
             int GW = transformed->W;
             int GH = transformed->H;
