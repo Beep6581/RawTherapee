@@ -5292,7 +5292,7 @@ void Locallab::equiltmChanged()
 
     if (getEnabled() && exptonemap->getEnabled()) {
         if (listener) {
-            if (inversret->get_active()) {
+            if (equiltm->get_active()) {
                 listener->panelChanged(Evlocallabequiltm, M("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged(Evlocallabequiltm, M("GENERAL_DISABLED"));
@@ -5399,7 +5399,7 @@ void Locallab::inversretChanged()
         dehaz->show();
         depth->show();
         softradiuscol->show();
-        expmaskreti->hide();
+        expmaskreti->show();
     } else {
         sensih->show();
         dehaz->show();
@@ -8423,7 +8423,7 @@ void Locallab::updateSpecificGUIState()
     } else if (inversret->get_active()) {
         sensih->show();
         softradiusret->show();
-        showmaskretiMethod->hide();
+        showmaskretiMethod->show();
         sensih->show();
         softradiusret->show();
     }
