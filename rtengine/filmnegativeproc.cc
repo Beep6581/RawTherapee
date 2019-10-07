@@ -178,14 +178,14 @@ bool rtengine::RawImageSource::getFilmNegativeMedians (Coord2D topLeft, Coord2D 
     x2 = CLAMP(x2 - border, 0, W);
     y2 = CLAMP(y2 - border, 0, H);
 
-    if(x1 > x2) std::swap(x1, x2);
-    if(y1 > y2) std::swap(y1, y2);
+    if (x1 > x2) { std::swap(x1, x2); }
+    if (y1 > y2) { std::swap(y1, y2); }
 
     if (settings->verbose) {
         printf("Transformed coords: %d,%d %d,%d\n", x1,y1, x2,y2);
     }
 
-    if(x2 - x1 < 8 || y2 - y1 < 8)
+    if (x2 - x1 < 8 || y2 - y1 < 8)
         return false;
 
     t1.set();
@@ -287,7 +287,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
     ri->get_colorsCoeff( thumb_pre_mul, thumb_scale_mul, dummy_c_black, false);
 
     // Get channel medians from params, if set
-    if(params.redMedian != 0.f) {
+    if (params.redMedian != 0.f) {
         medians[0] = params.redMedian;
         medians[1] = params.greenMedian;
         medians[2] = params.blueMedian;
@@ -304,7 +304,7 @@ void rtengine::RawImageSource::filmNegativeProcess(const procparams::FilmNegativ
         medians[c] = pow_F(rtengine::max(medians[c], 1.f), exps[c]);
 
         // If using the new method, also apply (reciprocal) scaling after exponentiation
-        if(params.redMedian != 0.f)
+        if (params.redMedian != 0.f)
             medians[c] = medians[c] * thumb_pre_mul[c] / ref_pre_mul[c];
 
         // Determine the channel multiplier so that N times the median becomes 65k. This clips away

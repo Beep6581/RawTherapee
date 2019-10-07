@@ -32,6 +32,24 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+namespace
+{
+
+using namespace rtengine;
+Coord2D translateCoord(ImProcFunctions& ipf, int fw, int fh, int x, int y) {
+    const std::vector<Coord2D> points = {Coord2D(x, y)};
+
+    std::vector<Coord2D> red;
+    std::vector<Coord2D> green;
+    std::vector<Coord2D> blue;
+    ipf.transCoord(fw, fh, points, red, green, blue);
+
+    return green[0];
+}
+
+}
+
 namespace rtengine
 {
 
@@ -1282,25 +1300,14 @@ void ImProcCoordinator::getSpotWB(int x, int y, int rect, double& temp, double& 
     }
 }
 
-Coord2D ImProcCoordinator::translateCoord(int x, int y) {
-    const std::vector<Coord2D> points = {Coord2D(x, y)};
-
-    std::vector<Coord2D> red;
-    std::vector<Coord2D> green;
-    std::vector<Coord2D> blue;
-    ipf.transCoord(fw, fh, points, red, green, blue);
-
-    return green[0];
-}
-
 bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps)
 {
     MyMutex::MyLock lock(mProcessing);
 
     const int tr = getCoarseBitMask(params->coarse);
 
-    const Coord2D p1 = translateCoord(xA, yA);
-    const Coord2D p2 = translateCoord(xB, yB);
+    const Coord2D p1 = translateCoord(ipf, fw, fh, xA, yA);
+    const Coord2D p2 = translateCoord(ipf, fw, fh, xB, yB);
 
     return imgsrc->getFilmNegativeExponents(p1, p2, tr, params->filmNegative, newExps);
 }
@@ -1314,13 +1321,13 @@ bool ImProcCoordinator::getFilmNegativeMedians(std::array<float, 3>& medians)
     const procparams::CropParams cr = params->crop;
     Coord2D p1;
     Coord2D p2;
-    if(cr.enabled) {
+    if (cr.enabled) {
         printf("Crop rect: %d,%d  %dx%d\n", cr.x,cr.y, cr.w,cr.h);
 
-        const Coord2D tl = translateCoord(cr.x, cr.y);
-        const Coord2D tr = translateCoord(cr.x + cr.w, cr.y);
-        const Coord2D br = translateCoord(cr.x + cr.w, cr.y + cr.h);
-        const Coord2D bl = translateCoord(cr.x, cr.y + cr.h);
+        const Coord2D tl = translateCoord(ipf, fw, fh, cr.x, cr.y);
+        const Coord2D tr = translateCoord(ipf, fw, fh, cr.x + cr.w, cr.y);
+        const Coord2D br = translateCoord(ipf, fw, fh, cr.x + cr.w, cr.y + cr.h);
+        const Coord2D bl = translateCoord(ipf, fw, fh, cr.x, cr.y + cr.h);
 
         p1 = Coord2D(std::max(tl.x,bl.x), std::max(tl.y,tr.y));
         p2 = Coord2D(std::min(tr.x,br.x), std::min(bl.y,br.y));

@@ -331,25 +331,25 @@ void FilmNegative::editToggled()
 
 void FilmNegative::recalcCropMediansClicked()
 {
-    std::array<float, 3> newMedians = {1.f};
-
-    fnp->getFilmNegativeMedians(newMedians);
-
     if (listener) {
 
         disableListener();
 
-        channelMedians = newMedians;
+        std::array<float, 3> newMedians = {};
+        if(fnp->getFilmNegativeMedians(newMedians)) {
 
-        enableListener();
+            channelMedians = newMedians;
 
-        if (listener && getEnabled()) {
-            listener->panelChanged(
-                evFilmNegativeMedians,
-                Glib::ustring::compose("R=%1\nG=%2\nB=%3",
-                    channelMedians[0], channelMedians[1], channelMedians[2]
-                )
-            );
+            enableListener();
+
+            if (listener && getEnabled()) {
+                listener->panelChanged(
+                    evFilmNegativeMedians,
+                    Glib::ustring::compose("R=%1\nG=%2\nB=%3",
+                        channelMedians[0], channelMedians[1], channelMedians[2]
+                    )
+                );
+            }
         }
 
     }

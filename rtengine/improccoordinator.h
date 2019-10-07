@@ -222,8 +222,6 @@ protected:
 
     ImProcFunctions ipf;
 
-    Coord2D translateCoord(int x, int y);
-
 public:
 
     ImProcCoordinator ();
