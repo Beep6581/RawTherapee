@@ -7090,7 +7090,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                             double thresM = 0.05 * lp.epsb;
-                            double thresm = 0.01 * lp.epsb;
+                            double thresm = 0.001 * lp.epsb;
                             softproc(bufgb.get(), tmp1.get(), 3.f * lp.guidb, bfh, bfw, thresM, thresm, 0.1f, sk, multiThread, 0);
                         }
 
@@ -7109,7 +7109,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
 
                             double thresM = 0.05 * lp.epsb;
-                            double thresm = 0.01 * lp.epsb;
+                            double thresm = 0.001 * lp.epsb;
                             softproc(tmp2.get(), tmp1.get(), 3.f * lp.guidb, GH, GW, thresM, thresm, 0.1f, sk, multiThread, 0);
                         }
 

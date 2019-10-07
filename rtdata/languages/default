@@ -2071,6 +2071,7 @@ TP_LOCALLAB_BALAN;Balance deltaE ab-L
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLUR;Gaussian Blur and Noise
+TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\nBlur the background by a RT-spot fully covering the image (scope #100).\nIsolate the foreground by an excluding RT-spot with the tools you want, you can use a mask to enhance and amplify the effects 
 TP_LOCALLAB_BLMED;Median
 TP_LOCALLAB_BLGUID;Guided Filter Luminance
 TP_LOCALLAB_GUIDBL;Soft radius

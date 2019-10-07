@@ -240,11 +240,11 @@ Locallab::Locallab():
     laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
     // Blur & Noise
-    radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.0, 100.0, 0.1, 1.0))),
+    radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.0, 300.0, 0.1, 1.0))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
-    guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 1, 100, 1, 1))),
-    epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), 1, 100, 1, 10))),
+    guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 1, 300, 1, 1))),
+    epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), 1, 500, 1, 10))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
@@ -1892,6 +1892,7 @@ Locallab::Locallab():
 
     if (showtooltip) {
 //        blMethod->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
+        expblur->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
     }
 
     blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::blMethodChanged));
