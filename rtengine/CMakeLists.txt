@@ -99,16 +99,6 @@ set(RTENGINESOURCEFILES
     ipwavelet.cc
     jdatasrc.cc
     jpeg_ijg/jpeg_memsrc.cc
-    klt/convolve.cc
-    klt/error.cc
-    klt/klt_util.cc
-    klt/klt.cc
-    klt/pnmio.cc
-    klt/pyramid.cc
-    klt/selectGoodFeatures.cc
-    klt/storeFeatures.cc
-    klt/trackFeatures.cc
-    klt/writeFeatures.cc
     labimage.cc
     lcp.cc
     lj92.c

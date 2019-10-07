@@ -168,7 +168,7 @@ RTWindow::RTWindow ()
             #endif
             //GTK318
             if (options.pseudoHiDPISupport) {
-            	fontScale = options.fontSize / (float)RTScalable::baseFontSize;
+                fontScale = options.fontSize / (float)RTScalable::baseFontSize;
             }
             if (options.rtSettings.verbose) {
                 printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
@@ -196,7 +196,7 @@ RTWindow::RTWindow ()
                     pt = fontSize / Pango::SCALE;
                 }
                 if (options.pseudoHiDPISupport) {
-                	fontScale = (float)pt / (float)RTScalable::baseFontSize;
+                    fontScale = (float)pt / (float)RTScalable::baseFontSize;
                 }
                 if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);

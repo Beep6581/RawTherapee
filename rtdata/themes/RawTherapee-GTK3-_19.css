@@ -46,7 +46,7 @@ GtkBox {
     border-style: none;
     border-radius: 0;
     margin: 0;
-	padding: 0;
+    padding: 0;
 }
 
 GtkGrid {
