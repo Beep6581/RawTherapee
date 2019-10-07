@@ -2447,10 +2447,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structcol(0),
     blurcolde(5),
     blendmaskcol(0),
-    radmaskcol(10.0),
+    radmaskcol(0.0),
     chromaskcol(0.0),
     gammaskcol(1.0),
     slomaskcol(0.0),
+    lapmaskcol(0.0),
     qualitycurveMethod("none"),
     gridMethod("one"),
     llcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
@@ -2484,7 +2485,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     LLmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     HHmaskexpcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.0, 1.0, 0.35, 0.35},
     blendmaskexp(0),
-    radmaskexp(10.0),
+    radmaskexp(0.0),
     chromaskexp(0.0),
     gammaskexp(1.0),
     slomaskexp(0.0),
@@ -2722,6 +2723,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chromaskcol == other.chromaskcol
         && gammaskcol == other.gammaskcol
         && slomaskcol == other.slomaskcol
+        && lapmaskcol == other.lapmaskcol
         && qualitycurveMethod == other.qualitycurveMethod
         && gridMethod == other.gridMethod
         && llcurve == other.llcurve
@@ -3981,6 +3983,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskcol, "Locallab", "Chromaskcol_" + std::to_string(i), spot.chromaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskcol, "Locallab", "Gammaskcol_" + std::to_string(i), spot.gammaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskcol, "Locallab", "Slomaskcol_" + std::to_string(i), spot.slomaskcol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskcol, "Locallab", "Lapmaskcol_" + std::to_string(i), spot.lapmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gridMethod, "Locallab", "gridMethod_" + std::to_string(i), spot.gridMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).llcurve, "Locallab", "LLCurve_" + std::to_string(i), spot.llcurve, keyFile);
@@ -5354,6 +5357,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcol_" + std::to_string(i), pedited, spot.chromaskcol, spotEdited.chromaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskcol_" + std::to_string(i), pedited, spot.gammaskcol, spotEdited.gammaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskcol_" + std::to_string(i), pedited, spot.slomaskcol, spotEdited.slomaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcol_" + std::to_string(i), pedited, spot.lapmaskcol, spotEdited.lapmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + std::to_string(i), pedited, spot.gridMethod, spotEdited.gridMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LLCurve_" + std::to_string(i), pedited, spot.llcurve, spotEdited.llcurve);

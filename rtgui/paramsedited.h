@@ -410,6 +410,7 @@ public:
         bool chromaskcol;
         bool gammaskcol;
         bool slomaskcol;
+        bool lapmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;
         bool llcurve;

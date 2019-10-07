@@ -998,6 +998,7 @@ struct LocallabParams {
         double chromaskcol;
         double gammaskcol;
         double slomaskcol;
+        double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;
         std::vector<double> llcurve;
