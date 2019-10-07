@@ -2537,7 +2537,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     softMethod("soft"),
     // Blur & Noise
     expblur(false),
-    radius(1.0),
+    radius(5.0),
     strength(0),
     sensibn(40),
     itera(1),

@@ -6929,7 +6929,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 
-        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+        if (((radius >= 5. * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             std::unique_ptr<LabImage> tmp1;
             std::unique_ptr<LabImage> tmp2;
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -6984,26 +6984,38 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
 
-                    if (lp.blurmet == 0  && lp.blmet == 0) {
+                    if (lp.blurmet == 0  && lp.blmet == 0  && radius >= (5. * GAUSS_SKIP)) {
 #ifdef _OPENMP
                         #pragma omp parallel
 #endif
 
                         {
-                            gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
-                            gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
-                            gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                            if(radius > 200.f) {//to test not optimize
+                                ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfw, bfh, radius, 0, 0);
+                                ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfw, bfh, radius, 0, 0);
+                                ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfw, bfh, radius, 0, 0);
+                            } else {
+                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                                gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
+                                gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
+                            }
                         }
 
-                    } else if (lp.blurmet == 1  && lp.blmet == 0) {
+                    } else if (lp.blurmet == 1  && lp.blmet == 0 && radius >= (5. * GAUSS_SKIP)) {
 
 #ifdef _OPENMP
                         #pragma omp parallel
 #endif
                         {
-                            gaussianBlur(original->L, tmp1->L, GW, GH, radius);
-                            gaussianBlur(original->a, tmp1->a, GW, GH, radius);
-                            gaussianBlur(original->b, tmp1->b, GW, GH, radius);
+                            if(radius > 200.f) {//to test not optimize
+                                ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, GW, GH, radius, 0, 0);
+                                ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, GW, GH, radius, 0, 0);
+                                ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, GW, GH, radius, 0, 0);
+                            } else {
+                                gaussianBlur(original->L, tmp1->L, GW, GH, radius);
+                                gaussianBlur(original->a, tmp1->a, GW, GH, radius);
+                                gaussianBlur(original->b, tmp1->b, GW, GH, radius);
+                            }
                         }
                     }
 
