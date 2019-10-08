@@ -1069,6 +1069,7 @@ struct LocallabParams {
         double chromaskSH;
         double gammaskSH;
         double slomaskSH;
+        double lapmaskSH;
         // Vibrance
         bool expvibrance;
         int saturated;

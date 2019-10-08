@@ -7773,9 +7773,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float gamma = lp.gammaSH;
                     float slope = lp.slomaSH;
                     float blendm = lp.blendmaSH;
+                    float lap = params->locallab.spots.at(sp).lapmaskSH;
+                    
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
                     if (lp.showmaskSHmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskorigSH.get(), 0);
@@ -7865,10 +7867,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float gamma = lp.gammaSH;
             float slope = lp.slomaSH;
             float blendm = lp.blendmaSH;
+            float lap = params->locallab.spots.at(sp).lapmaskSH;
 
             maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, inv, lp,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, 0.f, gamma, slope, blendm);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
 
             if (lp.showmaskSHmetinv == 1) {
@@ -9942,8 +9945,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomaexp;
                     float blendm = lp.blendmaexp;
                     float lap = params->locallab.spots.at(sp).lapmaskexp;
-                    
-                    // bool invmask = params->locallab.spots.at(sp).enaExpMaskaft;
+
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
@@ -10647,7 +10649,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float gamma = lp.gammacol;
             float slope = lp.slomacol;
             float blendm = lp.blendmacol;
-            float lap = params->locallab.spots.at(sp).lapmaskexp;
+            float lap = params->locallab.spots.at(sp).lapmaskcol;
 
             maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,

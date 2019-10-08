@@ -181,6 +181,7 @@ private:
     Adjuster* const chromaskSH;
     Adjuster* const gammaskSH;
     Adjuster* const slomaskSH;
+    Adjuster* const lapmaskSH;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;

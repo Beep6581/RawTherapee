@@ -479,6 +479,7 @@ public:
         bool chromaskSH;
         bool gammaskSH;
         bool slomaskSH;
+        bool lapmaskSH;
         // Vibrance
         bool expvibrance;
         bool saturated;
