@@ -6,7 +6,7 @@ add_library(rtexif STATIC
     olympusattribs.cc
     panasonicattribs.cc
     pentaxattribs.cc
-	rtexif.cc
+    rtexif.cc
     sonyminoltaattribs.cc
     stdattribs.cc
 )

@@ -529,13 +529,13 @@ int main (int argc, char **argv)
     int ret = 0;
 
     if (options.pseudoHiDPISupport) {
-		// Reading/updating GDK_SCALE early if it exists
-		const gchar *gscale = g_getenv("GDK_SCALE");
-		if (gscale && gscale[0] == '2') {
-			initialGdkScale = 2;
-		}
-		// HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
-		g_setenv("GDK_SCALE", "1", true);
+        // Reading/updating GDK_SCALE early if it exists
+        const gchar *gscale = g_getenv("GDK_SCALE");
+        if (gscale && gscale[0] == '2') {
+            initialGdkScale = 2;
+        }
+        // HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
+        g_setenv("GDK_SCALE", "1", true);
     }
 
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));

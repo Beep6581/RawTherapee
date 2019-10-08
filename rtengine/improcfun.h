@@ -67,14 +67,14 @@ class ImProcFunctions
     void transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap);
     void transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap);
 
-    bool needsCA();
-    bool needsDistortion();
-    bool needsRotation();
-    bool needsPerspective();
-    bool needsGradient();
-    bool needsVignetting();
-    bool needsLCP();
-    bool needsLensfun();
+    bool needsCA() const;
+    bool needsDistortion() const;
+    bool needsRotation() const;
+    bool needsPerspective() const;
+    bool needsGradient() const;
+    bool needsVignetting() const;
+    bool needsLCP() const;
+    bool needsLensfun() const;
 //   static cmsUInt8Number* Mempro = NULL;
 
 
@@ -99,8 +99,8 @@ public:
     }
     void setScale(double iscale);
 
-    bool needsTransform();
-    bool needsPCVignetting();
+    bool needsTransform() const;
+    bool needsPCVignetting() const;
 
     void firstAnalysis(const Imagefloat* const working, const procparams::ProcParams &params, LUTu & vhist16);
     void updateColorProfiles(const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck);
@@ -247,11 +247,11 @@ public:
     // CieImage *ciec;
     void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;
 
-    bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
-    bool transCoord(int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
+    bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;
+    bool transCoord(int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;
     static void getAutoExp(const LUTu & histogram, int histcompr, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
     static double getAutoDistor(const Glib::ustring& fname, int thumb_size);
-    double getTransformAutoFill(int oW, int oH, const LensCorrection *pLCPMap = nullptr);
+    double getTransformAutoFill(int oW, int oH, const LensCorrection *pLCPMap = nullptr) const;
     void rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
     void lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
 };
