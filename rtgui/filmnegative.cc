@@ -336,7 +336,7 @@ void FilmNegative::recalcCropMediansClicked()
         disableListener();
 
         std::array<float, 3> newMedians = {};
-        if(fnp->getFilmNegativeMedians(newMedians)) {
+        if (fnp->getFilmNegativeMedians(newMedians)) {
 
             channelMedians = newMedians;
 
