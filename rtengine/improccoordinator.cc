@@ -35,9 +35,9 @@
 
 namespace
 {
+using rtengine::Coord2D;
+Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int x, int y) {
 
-using namespace rtengine;
-Coord2D translateCoord(ImProcFunctions& ipf, int fw, int fh, int x, int y) {
     const std::vector<Coord2D> points = {Coord2D(x, y)};
 
     std::vector<Coord2D> red;
