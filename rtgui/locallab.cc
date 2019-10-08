@@ -370,7 +370,7 @@ Locallab::Locallab():
     // Sharpening
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     // Local contrast
-    fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
+    fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
     //CBDL
     enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
 

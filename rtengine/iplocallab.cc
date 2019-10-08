@@ -6990,7 +6990,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                         {
-                            if(radius > 200.f) {//to test not optimize
+                            if(radius > 200.f  && call == 2) {//to test not optimize
                                 ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfw, bfh, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfw, bfh, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfw, bfh, radius, 0, 0);
@@ -7007,7 +7007,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         #pragma omp parallel
 #endif
                         {
-                            if(radius > 200.f) {//to test not optimize
+                            if(radius > 200.f && call == 2) {//to test not optimize
                                 ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, GW, GH, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, GW, GH, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, GW, GH, radius, 0, 0);
@@ -8198,7 +8198,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     localContrastParams.lightness = params->locallab.spots.at(sp).lightness;
                     bool fftwlc = false;
 
-                    if (!lp.ftwlc) {
+                    if (!lp.ftwlc || (lp.ftwlc && call != 2)) {
                         ImProcFunctions::localContrast(tmp1.get(), tmp1->L, localContrastParams, fftwlc, sk);
                     } else {
                         std::unique_ptr<LabImage> tmpfftw(new LabImage(bfwr, bfhr));
