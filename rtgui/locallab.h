@@ -202,6 +202,7 @@ private:
     Adjuster* const chromaskbl;
     Adjuster* const gammaskbl;
     Adjuster* const slomaskbl;
+    Adjuster* const lapmaskbl;
     // Tone Mapping
     Adjuster* const stren;
     Adjuster* const gamma;

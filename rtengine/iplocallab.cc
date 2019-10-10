@@ -6893,6 +6893,41 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             }
 
+
+        float lap = params->locallab.spots.at(sp).lapmaskbl;
+
+        if (lap > 0.f && (lp.enablMask || lp.showmaskblmet == 3)) {
+            float *datain = new float[GH * GW];
+            float *data_tmp = new float[GH * GW];
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int y = 0; y < GH; y++) {
+                for (int x = 0; x < GW; x++) {
+                    datain[y * GW + x] =  bufmaskblurbl->L[y][x];
+                }
+            }
+
+            (void) discrete_laplacian_threshold(data_tmp, datain, GW, GH, 200.f * lap);
+
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int y = 0; y < GH; y++) {
+                for (int x = 0; x < GW; x++) {
+                    bufmaskblurbl->L[y][x] = data_tmp[y * GW + x];
+                }
+            }
+
+            delete [] datain;
+            delete [] data_tmp;
+
+        }
+
+
             float radiusb = 1.f / sk;
 
             if (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {

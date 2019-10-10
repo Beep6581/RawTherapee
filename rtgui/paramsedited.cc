@@ -1099,6 +1099,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromaskbl = locallab.spots.at(j).chromaskbl && pSpot.chromaskbl == otherSpot.chromaskbl;
                 locallab.spots.at(j).gammaskbl = locallab.spots.at(j).gammaskbl && pSpot.gammaskbl == otherSpot.gammaskbl;
                 locallab.spots.at(j).slomaskbl = locallab.spots.at(j).slomaskbl && pSpot.slomaskbl == otherSpot.slomaskbl;
+                locallab.spots.at(j).lapmaskbl = locallab.spots.at(j).lapmaskbl && pSpot.lapmaskbl == otherSpot.lapmaskbl;
                 // Tone Mapping
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
                 locallab.spots.at(j).stren = locallab.spots.at(j).stren && pSpot.stren == otherSpot.stren;
@@ -3259,6 +3260,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskbl = mods.locallab.spots.at(i).slomaskbl;
         }
 
+        if (locallab.spots.at(i).lapmaskbl) {
+            toEdit.locallab.spots.at(i).lapmaskbl = mods.locallab.spots.at(i).lapmaskbl;
+        }
+
         // Tone Mapping
         if (locallab.spots.at(i).exptonemap) {
             toEdit.locallab.spots.at(i).exptonemap = mods.locallab.spots.at(i).exptonemap;
@@ -4832,6 +4837,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromaskbl(v),
     gammaskbl(v),
     slomaskbl(v),
+    lapmaskbl(v),
     // Tone Mapping
     exptonemap(v),
     stren(v),
@@ -5104,6 +5110,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromaskbl = v;
     gammaskbl = v;
     slomaskbl = v;
+    lapmaskbl = v;
     // Tone Mapping
     exptonemap = v;
     stren = v;

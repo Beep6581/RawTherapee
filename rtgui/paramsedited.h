@@ -517,6 +517,7 @@ public:
         bool chromaskbl;
         bool gammaskbl;
         bool slomaskbl;
+        bool lapmaskbl;
         // Tone Mapping
         bool exptonemap;
         bool stren;

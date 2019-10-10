@@ -1000,6 +1000,7 @@ HISTORY_MSG_759;Local - Exp Laplacian mask
 HISTORY_MSG_760;Local - Color Laplacian mask
 HISTORY_MSG_761;Local - SH Laplacian mask
 HISTORY_MSG_762;Local - cbdl Laplacian mask
+HISTORY_MSG_763;Local - Blur Laplacian mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

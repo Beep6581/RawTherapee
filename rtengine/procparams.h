@@ -1107,6 +1107,7 @@ struct LocallabParams {
         double chromaskbl;
         double gammaskbl;
         double slomaskbl;
+        double lapmaskbl;
         // Tone Mapping
         bool exptonemap;
         double stren;

@@ -249,10 +249,11 @@ Locallab::Locallab():
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), 1, 500, 1, 10))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 10.))),
+    radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     // Tone Mapping
     stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
     gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
@@ -1834,6 +1835,10 @@ Locallab::Locallab():
 
     maskcbCurveEditorG->curveListComplete();
 
+    if (showtooltip) {
+        radmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+    }
 
 
     ToolParamBlock* const cbdlBox = Gtk::manage(new ToolParamBlock());
@@ -1981,6 +1986,11 @@ Locallab::Locallab():
 
     showmaskblMethodConn  = showmaskblMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::showmaskblMethodChanged));
 
+    if (showtooltip) {
+        radmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+    }
+
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_5X5"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_7X7"));
@@ -2011,6 +2021,7 @@ Locallab::Locallab():
     chromaskbl->setAdjusterListener(this);
     gammaskbl->setAdjusterListener(this);
     slomaskbl->setAdjusterListener(this);
+    lapmaskbl->setAdjusterListener(this);
 
     ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
     maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
@@ -2018,6 +2029,7 @@ Locallab::Locallab():
     maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*radmaskbl, Gtk::PACK_SHRINK, 0);
+    maskblBox->pack_start(*lapmaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*chromaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*gammaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*slomaskbl, Gtk::PACK_SHRINK, 0);
@@ -3191,6 +3203,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskbl = chromaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskbl = gammaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskbl = slomaskbl->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).lapmaskbl = lapmaskbl->getValue();
 
                     // Tone Mapping
                     pp->locallab.spots.at(pp->locallab.selspot).exptonemap = exptonemap->getEnabled();
@@ -3483,6 +3496,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromaskbl = pe->locallab.spots.at(pp->locallab.selspot).chromaskbl || chromaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskbl = pe->locallab.spots.at(pp->locallab.selspot).gammaskbl || gammaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskbl = pe->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
                         // Tone Mapping
                         pe->locallab.spots.at(pp->locallab.selspot).exptonemap = pe->locallab.spots.at(pp->locallab.selspot).activlum || !exptonemap->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).stren = pe->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
@@ -3762,6 +3776,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromaskbl = pedited->locallab.spots.at(pp->locallab.selspot).chromaskbl || chromaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskbl = pedited->locallab.spots.at(pp->locallab.selspot).gammaskbl || gammaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl = pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
                         // Tone Mapping
                         pedited->locallab.spots.at(pp->locallab.selspot).exptonemap = pedited->locallab.spots.at(pp->locallab.selspot).exptonemap || !exptonemap->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).stren = pedited->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
@@ -5590,6 +5605,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromaskbl->setDefault(defSpot->chromaskbl);
     gammaskbl->setDefault(defSpot->gammaskbl);
     slomaskbl->setDefault(defSpot->slomaskbl);
+    lapmaskbl->setDefault(defSpot->lapmaskbl);
     // Tone Mapping
     stren->setDefault(defSpot->stren);
     gamma->setDefault(defSpot->gamma);
@@ -5761,6 +5777,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskbl->setDefaultEditedState(Irrelevant);
         gammaskbl->setDefaultEditedState(Irrelevant);
         slomaskbl->setDefaultEditedState(Irrelevant);
+        lapmaskbl->setDefaultEditedState(Irrelevant);
         // Tone Mapping
         stren->setDefaultEditedState(Irrelevant);
         gamma->setDefaultEditedState(Irrelevant);
@@ -5936,6 +5953,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskbl->setDefaultEditedState(defSpotState->chromaskbl ? Edited : UnEdited);
         gammaskbl->setDefaultEditedState(defSpotState->gammaskbl ? Edited : UnEdited);
         slomaskbl->setDefaultEditedState(defSpotState->slomaskbl ? Edited : UnEdited);
+        lapmaskbl->setDefaultEditedState(defSpotState->lapmaskbl ? Edited : UnEdited);
         // Tone Mapping
         stren->setDefaultEditedState(defSpotState->stren ? Edited : UnEdited);
         gamma->setDefaultEditedState(defSpotState->gamma ? Edited : UnEdited);
@@ -6532,6 +6550,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == slomaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskbl, slomaskbl->getTextValue());
+            }
+        }
+
+        if (a == lapmaskbl) {
+            if (listener) {
+                listener->panelChanged(Evlocallablapmaskbl, lapmaskbl->getTextValue());
             }
         }
 
@@ -7169,6 +7193,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromaskbl->showEditedCB();
     gammaskbl->showEditedCB();
     slomaskbl->showEditedCB();
+    lapmaskbl->showEditedCB();
     // Tone Mapping
     stren->showEditedCB();
     gamma->showEditedCB();
@@ -7783,6 +7808,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromaskbl->setValue(pp->locallab.spots.at(index).chromaskbl);
         gammaskbl->setValue(pp->locallab.spots.at(index).gammaskbl);
         slomaskbl->setValue(pp->locallab.spots.at(index).slomaskbl);
+        lapmaskbl->setValue(pp->locallab.spots.at(index).lapmaskbl);
 
         // Tone Mapping
         exptonemap->setEnabled(pp->locallab.spots.at(index).exptonemap);
@@ -8120,6 +8146,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromaskbl->setEditedState(spotState->chromaskbl ? Edited : UnEdited);
                 gammaskbl->setEditedState(spotState->gammaskbl ? Edited : UnEdited);
                 slomaskbl->setEditedState(spotState->slomaskbl ? Edited : UnEdited);
+                lapmaskbl->setEditedState(spotState->lapmaskbl ? Edited : UnEdited);
 
                 // Tone Mapping
                 exptonemap->set_inconsistent(!spotState->exptonemap);
