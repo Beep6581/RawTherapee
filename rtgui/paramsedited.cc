@@ -1201,6 +1201,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromaskcb = locallab.spots.at(j).chromaskcb && pSpot.chromaskcb == otherSpot.chromaskcb;
                 locallab.spots.at(j).gammaskcb = locallab.spots.at(j).gammaskcb && pSpot.gammaskcb == otherSpot.gammaskcb;
                 locallab.spots.at(j).slomaskcb = locallab.spots.at(j).slomaskcb && pSpot.slomaskcb == otherSpot.slomaskcb;
+                locallab.spots.at(j).lapmaskcb = locallab.spots.at(j).lapmaskcb && pSpot.lapmaskcb == otherSpot.lapmaskcb;
                 locallab.spots.at(j).softradiuscb = locallab.spots.at(j).softradiuscb && pSpot.softradiuscb == otherSpot.softradiuscb;
                 locallab.spots.at(j).enacbMask = locallab.spots.at(j).enacbMask && pSpot.enacbMask == otherSpot.enacbMask;
                 locallab.spots.at(j).CCmaskcbcurve = locallab.spots.at(j).CCmaskcbcurve && pSpot.CCmaskcbcurve == otherSpot.CCmaskcbcurve;
@@ -3637,6 +3638,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskcb = mods.locallab.spots.at(i).slomaskcb;
         }
 
+        if (locallab.spots.at(i).lapmaskcb) {
+            toEdit.locallab.spots.at(i).lapmaskcb = mods.locallab.spots.at(i).lapmaskcb;
+        }
+
         if (locallab.spots.at(i).enacbMask) {
             toEdit.locallab.spots.at(i).enacbMask = mods.locallab.spots.at(i).enacbMask;
         }
@@ -4925,6 +4930,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromaskcb(v),
     gammaskcb(v),
     slomaskcb(v),
+    lapmaskcb(v),
     softradiuscb(v),
     enacbMask(v),
     CCmaskcbcurve(v),
@@ -5200,6 +5206,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromaskcb = v;
     gammaskcb = v;
     slomaskcb = v;
+    lapmaskcb = v;
     softradiuscb = v;
     enacbMask = v;
     CCmaskcbcurve = v;

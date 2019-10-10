@@ -615,6 +615,7 @@ public:
         bool chromaskcb;
         bool gammaskcb;
         bool slomaskcb;
+        bool lapmaskcb;
         bool softradiuscb;
         bool enacbMask;
         bool CCmaskcbcurve;

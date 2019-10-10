@@ -571,25 +571,12 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     float multi[6];
     float scalefl[6];
 
-    for (int lv = 0; lv < 6; lv++) {
-        scalefl[lv] = ((float) scalesloc[lv]) / (float) scaleprev;
-
-        if (lv >= 1) {
-            if (scalefl[lv] < 1.f) {
-                if (mult[lv] > 1.f) {
-                    multi[lv] = (atten123 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
-                }
-            } else {
-                multi[lv] = (float) mult[lv];
-            }
-        } else  {
-            if (scalefl[lv] < 1.f) {
-                if (mult[lv] > 1.f) {
-                    multi[lv] = (atten0 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
-                }
-            } else {
-                multi[lv] = (float) mult[lv];
-            }
+    for (int lv = 0; lv < 6; ++lv) {
+        if (scalesloc[lv] < scaleprev) {
+            const float factor = lv >= 1 ? atten123 : atten0;
+            multi[lv] = (factor * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+        } else {
+            multi[lv] = mult[lv];
         }
     }
 

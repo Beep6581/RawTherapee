@@ -275,6 +275,7 @@ private:
     Adjuster* const chromaskcb;
     Adjuster* const gammaskcb;
     Adjuster* const slomaskcb;
+    Adjuster* const lapmaskcb;
 
     // Denoise
     Adjuster* const noiselumf;

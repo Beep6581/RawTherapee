@@ -1210,6 +1210,7 @@ struct LocallabParams {
         double chromaskcb;
         double gammaskcb;
         double slomaskcb;
+        double lapmaskcb;
         // Denoise
         bool expdenoi;
         int noiselumf;
