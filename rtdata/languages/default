@@ -2273,8 +2273,13 @@ TP_LOCALLAB_SENSIBN;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_ENABLE_MASK;Enable mask
-TP_LOCALLAB_SHOW;Mask and modifications
-TP_LOCALLAB_SHOWPLUS;Mask and modifications - Smooth-Blur & Denoise
+TP_LOCALLAB_SHOWCB;2 - Mask and modifications
+TP_LOCALLAB_SHOWT;3 - Mask and modifications
+TP_LOCALLAB_SHOWS;4 - Mask and modifications
+TP_LOCALLAB_SHOWR;5 - Mask and modifications
+TP_LOCALLAB_SHOWE;6 - Mask and modifications
+TP_LOCALLAB_SHOWC;7 - Mask and modifications
+TP_LOCALLAB_SHOWPLUS;1 - Mask and modifications - Smooth-Blur & Denoise
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None
 TP_LOCALLAB_SHOWMODIF;Show modifications whithout mask

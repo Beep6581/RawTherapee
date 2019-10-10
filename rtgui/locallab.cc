@@ -141,12 +141,12 @@ Locallab::Locallab():
     expcontrast(Gtk::manage(new MyExpander(true, M("TP_LOCALLAB_LOC_CONTRAST")))),
     expcbdl(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
     expdenoi(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::HBox())))),
-    expmaskcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
-    expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
-    expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
-    expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
-    expmaskreti(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
-    expmasktm(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOW")))),
+    expmaskcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
+    expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
+    expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
+    expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
+    expmaskreti(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWR")))),
+    expmasktm(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWT")))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
 
     // CurveEditorGroup widgets
