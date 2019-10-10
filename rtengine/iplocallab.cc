@@ -6929,7 +6929,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 
-        if (((radius >= 5. * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             std::unique_ptr<LabImage> tmp1;
             std::unique_ptr<LabImage> tmp2;
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -6984,7 +6984,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
 
-                    if (lp.blurmet == 0  && lp.blmet == 0  && radius >= (5. * GAUSS_SKIP)) {
+                    if (lp.blurmet == 0  && lp.blmet == 0  && radius >= (1.5 * GAUSS_SKIP)) {
 #ifdef _OPENMP
                         #pragma omp parallel
 #endif
@@ -7001,7 +7001,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                    } else if (lp.blurmet == 1  && lp.blmet == 0 && radius >= (5. * GAUSS_SKIP)) {
+                    } else if (lp.blurmet == 1  && lp.blmet == 0 && radius >= (1.5 * GAUSS_SKIP)) {
 
 #ifdef _OPENMP
                         #pragma omp parallel
@@ -7088,6 +7088,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     if (lp.blurmet == 0  && lp.blmet == 2) {
+                        
                         if (lp.guidb > 1) {
                             lp.actsp = true;
 #ifdef _OPENMP
@@ -7143,6 +7144,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+                        if(coefC == 0.f) {
+                            coefC = 1.f;
+                        }
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -7169,6 +7173,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+                        if(coefC == 0.f) {
+                            coefC = 1.f;
+                        }
+                        
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -7184,7 +7192,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (lp.blurmet == 0) { //blur and noise (center)
 
                         if (tmp1.get()) {
-                            BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                        BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         }
                     } else if (lp.blurmet == 1) {
                         if (tmp1.get()) {

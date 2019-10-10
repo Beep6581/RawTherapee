@@ -242,7 +242,7 @@ Locallab::Locallab():
     laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 15))),
     // Blur & Noise
-    radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 5.0, 1000.0, 0.1, 5.0))),
+    radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.5, 1000.0, 0.1, 1.5))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 1, 300, 1, 1))),
