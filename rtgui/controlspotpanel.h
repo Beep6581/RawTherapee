@@ -66,6 +66,7 @@ public:
         double transitweak;
         double transitgrad;
         bool avoid;
+        bool laplac;
     };
 
     /**
@@ -97,6 +98,7 @@ public:
         bool transitweak;
         bool transitgrad;
         bool avoid;
+        bool laplac;
     };
 
     /**
@@ -263,6 +265,7 @@ private:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
     void avoidChanged();
+    void laplacChanged();
 
     void disableParamlistener(bool cond);
 
@@ -310,6 +313,7 @@ private:
         Gtk::TreeModelColumn<double> transitweak;
         Gtk::TreeModelColumn<double> transitgrad;
         Gtk::TreeModelColumn<bool> avoid;
+        Gtk::TreeModelColumn<bool> laplac;
     };
 
     class RenameDialog:
@@ -376,6 +380,8 @@ private:
 
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
+    Gtk::CheckButton* const laplac_;
+    sigc::connection laplacConn_;
 
     // Internal variables
     int lastObject_;

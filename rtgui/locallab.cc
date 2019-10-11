@@ -2595,6 +2595,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         r->transitweak = pp->locallab.spots.at(i).transitweak;
         r->transitgrad = pp->locallab.spots.at(i).transitgrad;
         r->avoid = pp->locallab.spots.at(i).avoid;
+        r->laplac = pp->locallab.spots.at(i).laplac;
 
         expsettings->addControlSpot(r);
     }
@@ -2722,6 +2723,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
             r->avoid = newSpot->avoid;
+            r->laplac = newSpot->laplac;
             expsettings->addControlSpot(r);
 
             // ProcParams update
@@ -2938,6 +2940,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
             r->avoid = newSpot->avoid;
+            r->laplac = newSpot->laplac;
             expsettings->addControlSpot(r);
 
             // ProcParams update
@@ -3052,6 +3055,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
                     pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
+                    pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;
                     // Color & Light
                     pp->locallab.spots.at(pp->locallab.selspot).expcolor = expcolor->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).curvactiv = curvactiv->get_active();
@@ -3412,6 +3416,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).transitgrad = pe->locallab.spots.at(pp->locallab.selspot).transitgrad || se->transitgrad;
                         pe->locallab.spots.at(pp->locallab.selspot).balan = pe->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
                         pe->locallab.spots.at(pp->locallab.selspot).avoid = pe->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
+                        pe->locallab.spots.at(pp->locallab.selspot).laplac = pe->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
                         // Color & Light
                         pe->locallab.spots.at(pp->locallab.selspot).expcolor = pe->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).curvactiv = pe->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -3693,6 +3698,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).transitweak = pedited->locallab.spots.at(pp->locallab.selspot).transitweak || se->transitweak;
                         pedited->locallab.spots.at(pp->locallab.selspot).transitgrad = pedited->locallab.spots.at(pp->locallab.selspot).transitgrad || se->transitgrad;
                         pedited->locallab.spots.at(pp->locallab.selspot).avoid = pedited->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
+                        pedited->locallab.spots.at(pp->locallab.selspot).laplac = pedited->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
                         // Color & Light
                         pedited->locallab.spots.at(pp->locallab.selspot).expcolor = pedited->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).curvactiv = pedited->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -8029,6 +8035,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->transitweak = spotState->transitweak;
                 se->transitgrad = spotState->transitgrad;
                 se->avoid = spotState->avoid;
+                se->laplac = spotState->laplac;
                 expsettings->setEditedStates(se);
 
                 // Color & Light

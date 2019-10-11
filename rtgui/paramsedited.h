@@ -391,6 +391,7 @@ public:
         bool transitweak;
         bool transitgrad;
         bool avoid;
+        bool laplac;
         // Color & Light
         bool expcolor;
         bool curvactiv;

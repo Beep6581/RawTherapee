@@ -2526,8 +2526,317 @@ static float *discrete_laplacian_threshold(float * data_out, const float * data_
     return data_out;
 }
 
+static double *cos_table(size_t size)
+{
+    double *table = NULL;
+    double pi_size;
+    size_t i;
 
-void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, /*LabImage * transformed, */int inv, const struct local_params & lp,
+    /* allocate the cosinus table */
+    if (NULL == (table = (double *) malloc(sizeof(double) * size))) {
+        fprintf(stderr, "allocation error\n");
+        abort();
+    }
+
+    /*
+     * fill the cosinus table,
+     * table[i] = cos(i Pi / n) for i in [0..n[
+     */
+    pi_size = rtengine::RT_PI / size;
+
+    for (i = 0; i < size; i++) {
+        table[i] = cos(pi_size * i);
+    }
+
+    return table;
+}
+
+
+
+static float *rex_poisson_dct(float * data, size_t nx, size_t ny, double m)
+{
+    /*
+     * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
+     *
+
+     * @file retinex_pde_lib.c discrete Poisson equation
+     * @brief laplacian, DFT and Poisson routines
+     *
+     * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+     * some adaptations for Rawtherapee
+     */
+    BENCHFUN
+
+    double *cosx = NULL, *cosy = NULL;
+    size_t i;
+    double m2;
+
+    /*
+     * get the cosinus tables
+     * cosx[i] = cos(i Pi / nx) for i in [0..nx[
+     * cosy[i] = cos(i Pi / ny) for i in [0..ny[
+     */
+    cosx = cos_table(nx);
+    cosy = cos_table(ny);
+
+    /*
+     * we will now multiply data[i, j] by
+     * m / (4 - 2 * cosx[i] - 2 * cosy[j]))
+     * and set data[0, 0] to 0
+     */
+    m2 = m / 2.;
+    /*
+     * handle the first value, data[0, 0] = 0
+     * after that, by construction, we always have
+     * cosx[] + cosy[] != 2.
+     */
+    data[0] = 0.;
+
+    /*
+     * continue with all the array:
+     * i % nx is the position on the x axis (column number)
+     * i / nx is the position on the y axis (row number)
+     */
+    for (i = 1; i < nx * ny; i++) {
+        data[i] *= m2 / (2. - cosx[i % nx] - cosy[i / nx]);
+    }
+
+    free(cosx);
+    free(cosy);
+
+    return data;
+}
+
+static void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p)
+{
+    double mean, dt;
+    const float *ptr_data;
+    size_t i;
+
+    mean = 0.;
+    dt = 0.;
+    ptr_data = data;
+
+    for (i = 0; i < size; i++) {
+        mean += *ptr_data;
+        dt += (*ptr_data) * (*ptr_data);
+        ptr_data++;
+    }
+
+    mean /= (double) size;
+    dt /= (double) size;
+    dt -= (mean * mean);
+    dt = sqrt(dt);
+
+    *mean_p = mean;
+    *dt_p = dt;
+
+    return;
+}
+
+void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod)
+{
+    /*
+     * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
+     *
+
+     * @file retinex_pde_lib.c discrete Poisson equation
+     * @brief laplacian, DFT and Poisson routines
+     *
+     * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+     * adapted for Rawtherapee - jacques Desmis july 2019
+     */
+
+    double mean_ref, mean_data, dt_ref, dt_data;
+    double a, b;
+    size_t i;
+    float *ptr_data;
+    float *ptr_dataold;
+
+    if (NULL == data || NULL == ref) {
+        fprintf(stderr, "a pointer is NULL and should not be so\n");
+        abort();
+    }
+
+    /* compute mean and variance of the two arrays */
+    mean_dt(ref, size, &mean_ref, &dt_ref);
+    mean_dt(data, size, &mean_data, &dt_data);
+
+    /* compute the normalization coefficients */
+    a = dt_ref / dt_data;
+    b = mean_ref - a * mean_data;
+
+    /* normalize the array */
+    ptr_data = data;
+    ptr_dataold = data;
+
+    for (i = 0; i < size; i++) {
+        *ptr_data = mod * (a * *ptr_data + b) + (1.f - mod) * *ptr_dataold;//normalize mean and stdv and balance PDE
+        ptr_data++;
+    }
+
+    return;
+}
+
+void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int bfh, float thresh, float multy, float * dE, int show, int dEenable, int normalize)
+{
+    /*
+     * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
+     *
+
+     * @file retinex_pde_lib.c discrete Poisson equation
+     * @brief laplacian, DFT and Poisson routines
+     *
+     * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
+     * adapted for Rawtherapee by Jacques Desmis 6-2019 <jdesmis@gmail.com>
+     */
+
+    BENCHFUN
+#ifdef _OPENMP
+
+    if (multiThread) {
+        fftwf_init_threads();
+        fftwf_plan_with_nthreads(omp_get_max_threads());
+    }
+
+#endif
+    fftwf_plan dct_fw, dct_fw04, dct_bw;
+    float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
+    float *datashow = nullptr;
+
+    if (show != 0) {
+        if (NULL == (datashow = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+            fprintf(stderr, "allocation error\n");
+            abort();
+        }
+    }
+
+    if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+        fprintf(stderr, "allocation error\n");
+        abort();
+    }
+
+    if (NULL == (data_tmp04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+        fprintf(stderr, "allocation error\n");
+        abort();
+    }
+
+    //first call to laplacian with plein strength
+    (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
+
+    if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+        fprintf(stderr, "allocation error\n");
+        abort();
+    }
+
+    if (show == 1) {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                datashow[y * bfw + x]   = data_tmp[y * bfw + x];
+            }
+        }
+    }
+
+    //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
+    (void) discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
+
+    if (NULL == (data_fft04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+        fprintf(stderr, "allocation error\n");
+        abort();
+    }
+
+    if (NULL == (data = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
+        fprintf(stderr, "allocation error\n");
+        abort();
+    }
+
+    //execute first
+    dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    fftwf_execute(dct_fw);
+
+    //execute second
+    if (dEenable == 1) {
+        dct_fw04 = fftwf_plan_r2r_2d(bfh, bfw, data_tmp04, data_fft04, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+        fftwf_execute(dct_fw04);
+    }
+
+    if (dEenable == 1) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref
+            for (int x = 0; x < bfw; x++) {
+                float prov = pow(dE[y * bfw + x], 4.5f);
+                data_fft[y * bfw + x] = prov * data_fft[y * bfw + x] + (1.f - prov) * data_fft04[y * bfw + x];
+            }
+        }
+    }
+
+    if (show == 2) {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                datashow[y * bfw + x]   = data_fft[y * bfw + x];
+            }
+        }
+    }
+
+    fftwf_free(data_fft04);
+    fftwf_free(data_tmp);
+    fftwf_free(data_tmp04);
+    if (dEenable == 1) {    
+        fftwf_destroy_plan(dct_fw04);
+    }
+    /* solve the Poisson PDE in Fourier space */
+    /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
+    (void) rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
+
+    if (show == 3) {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                datashow[y * bfw + x]   = data_fft[y * bfw + x];
+            }
+        }
+    }
+
+    dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
+    fftwf_execute(dct_bw);
+    fftwf_destroy_plan(dct_fw);
+    fftwf_destroy_plan(dct_bw);
+    fftwf_free(data_fft);
+    fftwf_cleanup();
+
+    if (multiThread) {
+        fftwf_cleanup_threads();
+    }
+
+    if (show != 4 && normalize == 1) {
+        normalize_mean_dt(data, datain, bfw * bfh, 1.f);
+    }
+
+    if (show == 0  || show == 4) {
+
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                dataout[y * bfw + x]   = CLIPLOC(multy * data[y * bfw + x]);
+            }
+        }
+    } else if (show == 1 || show == 2 || show == 3) {
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                dataout[y * bfw + x]   = CLIPLOC(multy * datashow[y * bfw + x]);
+            }
+        }
+
+        fftwf_free(datashow);
+    }
+}
+
+void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, /*LabImage * transformed, */int inv, const struct local_params & lp,
                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, bool multiThread,
                  bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm)
 {
@@ -2535,7 +2844,6 @@ void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk,
     array2D<float> guid(bfw, bfh);
     float meanfab, fab;
     mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom);
-//    meanfab = 5000.f;
     float kinv = 1.f;
     float kneg = 1.f;
 
@@ -2637,7 +2945,7 @@ void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk,
                 }
             }
         }
-
+        
         if (rad > 0.f) {
             guidedFilter(guid, ble, ble, rad * 10.f / sk, 0.001, multiThread, 4);
         }
@@ -2670,8 +2978,12 @@ void maskcalccol(bool invmask, int bfw, int bfh, int xstart, int ystart, int sk,
                     datain[y * bfw + x] =  bufmaskblurcol->L[y][x];
                 }
             }
-
-            (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, 200.f * lap);
+            if(!pde) {
+                (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, 200.f * lap);
+            } else {
+                ImProcFunctions::retinex_pde(datain, data_tmp, bfw, bfh, 12.f * lap, 1.f, nullptr, 0, 0, 1);
+            }
+           
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -4442,308 +4754,8 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
-static double *cos_table(size_t size)
-{
-    double *table = NULL;
-    double pi_size;
-    size_t i;
-
-    /* allocate the cosinus table */
-    if (NULL == (table = (double *) malloc(sizeof(double) * size))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    /*
-     * fill the cosinus table,
-     * table[i] = cos(i Pi / n) for i in [0..n[
-     */
-    pi_size = rtengine::RT_PI / size;
-
-    for (i = 0; i < size; i++) {
-        table[i] = cos(pi_size * i);
-    }
-
-    return table;
-}
-
-static void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p)
-{
-    double mean, dt;
-    const float *ptr_data;
-    size_t i;
-
-    mean = 0.;
-    dt = 0.;
-    ptr_data = data;
-
-    for (i = 0; i < size; i++) {
-        mean += *ptr_data;
-        dt += (*ptr_data) * (*ptr_data);
-        ptr_data++;
-    }
-
-    mean /= (double) size;
-    dt /= (double) size;
-    dt -= (mean * mean);
-    dt = sqrt(dt);
-
-    *mean_p = mean;
-    *dt_p = dt;
-
-    return;
-}
-
-void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod)
-{
-    /*
-     * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
-     *
-
-     * @file retinex_pde_lib.c discrete Poisson equation
-     * @brief laplacian, DFT and Poisson routines
-     *
-     * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
-     * adapted for Rawtherapee - jacques Desmis july 2019
-     */
-
-    double mean_ref, mean_data, dt_ref, dt_data;
-    double a, b;
-    size_t i;
-    float *ptr_data;
-    float *ptr_dataold;
-
-    if (NULL == data || NULL == ref) {
-        fprintf(stderr, "a pointer is NULL and should not be so\n");
-        abort();
-    }
-
-    /* compute mean and variance of the two arrays */
-    mean_dt(ref, size, &mean_ref, &dt_ref);
-    mean_dt(data, size, &mean_data, &dt_data);
-
-    /* compute the normalization coefficients */
-    a = dt_ref / dt_data;
-    b = mean_ref - a * mean_data;
-
-    /* normalize the array */
-    ptr_data = data;
-    ptr_dataold = data;
-
-    for (i = 0; i < size; i++) {
-        *ptr_data = mod * (a * *ptr_data + b) + (1.f - mod) * *ptr_dataold;//normalize mean and stdv and balance PDE
-        ptr_data++;
-    }
-
-    return;
-}
-
-static float *rex_poisson_dct(float * data, size_t nx, size_t ny, double m)
-{
-    /*
-     * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
-     *
-
-     * @file retinex_pde_lib.c discrete Poisson equation
-     * @brief laplacian, DFT and Poisson routines
-     *
-     * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
-     * some adaptations for Rawtherapee
-     */
-    BENCHFUN
-
-    double *cosx = NULL, *cosy = NULL;
-    size_t i;
-    double m2;
-
-    /*
-     * get the cosinus tables
-     * cosx[i] = cos(i Pi / nx) for i in [0..nx[
-     * cosy[i] = cos(i Pi / ny) for i in [0..ny[
-     */
-    cosx = cos_table(nx);
-    cosy = cos_table(ny);
-
-    /*
-     * we will now multiply data[i, j] by
-     * m / (4 - 2 * cosx[i] - 2 * cosy[j]))
-     * and set data[0, 0] to 0
-     */
-    m2 = m / 2.;
-    /*
-     * handle the first value, data[0, 0] = 0
-     * after that, by construction, we always have
-     * cosx[] + cosy[] != 2.
-     */
-    data[0] = 0.;
-
-    /*
-     * continue with all the array:
-     * i % nx is the position on the x axis (column number)
-     * i / nx is the position on the y axis (row number)
-     */
-    for (i = 1; i < nx * ny; i++) {
-        data[i] *= m2 / (2. - cosx[i % nx] - cosy[i / nx]);
-    }
-
-    free(cosx);
-    free(cosy);
-
-    return data;
-}
 
 
-void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int bfh, float thresh, float multy, float * dE, int show)
-{
-    /*
-     * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
-     *
-
-     * @file retinex_pde_lib.c discrete Poisson equation
-     * @brief laplacian, DFT and Poisson routines
-     *
-     * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
-     * adapted for Rawtherapee by Jacques Desmis 6-2019 <jdesmis@gmail.com>
-     */
-
-    BENCHFUN
-#ifdef _OPENMP
-
-    if (multiThread) {
-        fftwf_init_threads();
-        fftwf_plan_with_nthreads(omp_get_max_threads());
-    }
-
-#endif
-    fftwf_plan dct_fw, dct_fw04, dct_bw;
-    float *data_fft, *data_fft04, *data_tmp, *data, *data_tmp04;
-    float *datashow = nullptr;
-
-    if (show != 0) {
-        if (NULL == (datashow = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-            fprintf(stderr, "allocation error\n");
-            abort();
-        }
-    }
-
-    if (NULL == (data_tmp = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    if (NULL == (data_tmp04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    //first call to laplacian with plein strength
-    (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
-
-    if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    if (show == 1) {
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                datashow[y * bfw + x]   = data_tmp[y * bfw + x];
-            }
-        }
-    }
-
-    //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
-    (void) discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
-
-    if (NULL == (data_fft04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    if (NULL == (data = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
-        fprintf(stderr, "allocation error\n");
-        abort();
-    }
-
-    //execute first
-    dct_fw = fftwf_plan_r2r_2d(bfh, bfw, data_tmp, data_fft, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
-    fftwf_execute(dct_fw);
-    //execute second
-    dct_fw04 = fftwf_plan_r2r_2d(bfh, bfw, data_tmp04, data_fft04, FFTW_REDFT10, FFTW_REDFT10, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
-    fftwf_execute(dct_fw04);
-
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
-
-    for (int y = 0; y < bfh ; y++) {//mix two fftw Laplacian : plein if dE near ref
-        for (int x = 0; x < bfw; x++) {
-            float prov = pow(dE[y * bfw + x], 4.5f);
-            data_fft[y * bfw + x] = prov * data_fft[y * bfw + x] + (1.f - prov) * data_fft04[y * bfw + x];
-        }
-    }
-
-    if (show == 2) {
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                datashow[y * bfw + x]   = data_fft[y * bfw + x];
-            }
-        }
-    }
-
-    fftwf_free(data_fft04);
-    fftwf_free(data_tmp);
-    fftwf_free(data_tmp04);
-    fftwf_destroy_plan(dct_fw04);
-
-    /* solve the Poisson PDE in Fourier space */
-    /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
-    (void) rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
-
-    if (show == 3) {
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                datashow[y * bfw + x]   = data_fft[y * bfw + x];
-            }
-        }
-    }
-
-    dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
-    fftwf_execute(dct_bw);
-    fftwf_destroy_plan(dct_fw);
-    fftwf_destroy_plan(dct_bw);
-    fftwf_free(data_fft);
-    fftwf_cleanup();
-
-    if (multiThread) {
-        fftwf_cleanup_threads();
-    }
-
-    if (show != 4) {
-        normalize_mean_dt(data, datain, bfw * bfh, 1.f);
-    }
-
-    if (show == 0  || show == 4) {
-
-#ifdef _OPENMP
-        #pragma omp parallel for
-#endif
-
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x]   = CLIPLOC(multy * data[y * bfw + x]);
-            }
-        }
-    } else if (show == 1 || show == 2 || show == 3) {
-        for (int y = 0; y < bfh ; y++) {
-            for (int x = 0; x < bfw; x++) {
-                dataout[y * bfw + x]   = CLIPLOC(multy * datashow[y * bfw + x]);
-            }
-        }
-
-        fftwf_free(datashow);
-    }
-}
 
 
 
@@ -6895,6 +6907,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             float lap = params->locallab.spots.at(sp).lapmaskbl;
+            float pde = params->locallab.spots.at(sp).laplac;
 
             if (lap > 0.f && (lp.enablMask || lp.showmaskblmet == 3)) {
                 float *datain = new float[GH * GW];
@@ -6910,7 +6923,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                (void) discrete_laplacian_threshold(data_tmp, datain, GW, GH, 200.f * lap);
+                if(!pde) {
+                    (void) discrete_laplacian_threshold(data_tmp, datain, GW, GH, 200.f * lap);
+                } else {
+                    ImProcFunctions::retinex_pde(datain, data_tmp, GW, GH, 12.f * lap, 1.f, nullptr, 0, 0, 1);
+                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -7377,8 +7394,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomacb;
                     float blendm = lp.blendmacb;
                     float lap = params->locallab.spots.at(sp).lapmaskcb;
+                    float pde = params->locallab.spots.at(sp).laplac;
 
-                    maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
+                    maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -7650,9 +7668,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomatm;
                     float blendm = lp.blendmatm;
                     float lap = params->locallab.spots.at(sp).lapmasktm;
+                    float pde = params->locallab.spots.at(sp).laplac;
 
                     if (!params->locallab.spots.at(sp).enatmMaskaft) {
-                        maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufgbm.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
+                        maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufgbm.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                     locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
                                     enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -7674,7 +7693,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (enatmMasktmap) {
                             //calculate new values for original, originalmasktm, bufmaskorigtm...in function of tmp1
-                            maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
+                            maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
                                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -7839,8 +7858,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomaSH;
                     float blendm = lp.blendmaSH;
                     float lap = params->locallab.spots.at(sp).lapmaskSH;
+                    float pde = params->locallab.spots.at(sp).laplac;
 
-                    maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
+                    maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -7933,8 +7953,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float slope = lp.slomaSH;
             float blendm = lp.blendmaSH;
             float lap = params->locallab.spots.at(sp).lapmaskSH;
+            float pde = params->locallab.spots.at(sp).laplac;
 
-            maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, inv, lp,
+            maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, inv, lp,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -8099,7 +8120,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
                     }
 
-                    ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, lp.showmasksoftmet);
+                    ImProcFunctions::retinex_pde(datain, dataout, bfwr, bfhr, 8.f * lp.strng, 1.f, dE, lp.showmasksoftmet, 1, 1);
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -10032,8 +10053,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomaexp;
                     float blendm = lp.blendmaexp;
                     float lap = params->locallab.spots.at(sp).lapmaskexp;
+                    float pde = params->locallab.spots.at(sp).laplac;
 
-                    maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
+                    maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -10296,8 +10318,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float slope = lp.slomaexp;
             float blendm = lp.blendmaexp;
             float lap = params->locallab.spots.at(sp).lapmaskexp;
+            float pde = params->locallab.spots.at(sp).laplac;
 
-            maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
+            maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                         locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -10535,8 +10558,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomacol;
                     float blendm = lp.blendmacol;
                     float lap = params->locallab.spots.at(sp).lapmaskcol;
+                    float pde = params->locallab.spots.at(sp).laplac;
 
-                    maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
+                    maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 
@@ -10737,8 +10761,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float slope = lp.slomacol;
             float blendm = lp.blendmacol;
             float lap = params->locallab.spots.at(sp).lapmaskcol;
+            float pde = params->locallab.spots.at(sp).laplac;
 
-            maskcalccol(false, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
+            maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
 

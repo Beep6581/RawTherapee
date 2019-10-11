@@ -70,6 +70,7 @@ ControlSpotPanel::ControlSpotPanel():
     transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
 
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
+    laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
 
     lastObject_(-1),
     nbSpotChanged_(false),
@@ -271,6 +272,9 @@ ControlSpotPanel::ControlSpotPanel():
     avoidConn_  = avoid_->signal_toggled().connect(
             sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     pack_start(*avoid_);
+    laplacConn_  = laplac_->signal_toggled().connect(
+            sigc::mem_fun(*this, &ControlSpotPanel::laplacChanged));
+    pack_start(*laplac_);
 
     show_all();
 
@@ -575,6 +579,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     transitweak_->setValue((double)row[spots_.transitweak]);
     transitgrad_->setValue((double)row[spots_.transitgrad]);
     avoid_->set_active(row[spots_.avoid]);
+    laplac_->set_active(row[spots_.laplac]);
 }
 
 void ControlSpotPanel::controlspotChanged()
@@ -1040,6 +1045,41 @@ void ControlSpotPanel::avoidChanged()
     }
 }
 
+void ControlSpotPanel::laplacChanged()
+{
+    // printf("laplacChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    if (multiImage) {
+        if (laplac_->get_inconsistent()) {
+            laplac_->set_inconsistent(false);
+            laplacConn_.block(true);
+            laplac_->set_active(false);
+            laplacConn_.block(false);
+        }
+    }
+
+    row[spots_.laplac] = laplac_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (laplac_->get_active()) {
+            listener->panelChanged(Evlocallablaplac, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallablaplac, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 void ControlSpotPanel::disableParamlistener(bool cond)
 {
     // printf("disableParamlistener: %d\n", cond);
@@ -1071,6 +1111,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     transitweak_->block(cond);
     transitgrad_->block(cond);
     avoidConn_.block(cond);
+    laplacConn_.block(cond);
 }
 
 void ControlSpotPanel::setParamEditable(bool cond)
@@ -1098,6 +1139,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     transitweak_->set_sensitive(cond);
     transitgrad_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
+    laplac_->set_sensitive(cond);
 }
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
@@ -1731,6 +1773,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->transitweak = row[spots_.transitweak];
             r->transitgrad = row[spots_.transitgrad];
             r->avoid = row[spots_.avoid];
+            r->laplac = row[spots_.laplac];
 
             return r;
         }
@@ -1857,6 +1900,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.transitweak] = newSpot->transitweak;
     row[spots_.transitgrad] = newSpot->transitgrad;
     row[spots_.avoid] = newSpot->avoid;
+    row[spots_.laplac] = newSpot->laplac;
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -1902,6 +1946,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.transitweak] = spot->transitweak;
             row[spots_.transitgrad] = spot->transitgrad;
             row[spots_.avoid] = spot->avoid;
+            row[spots_.laplac] = spot->laplac;
 
             updateControlSpotCurve(row);
             updateParamVisibility();
@@ -1993,6 +2038,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->transitweak = transitweak_->getEditedState();
     se->transitgrad = transitgrad_->getEditedState();
     se->avoid = !avoid_->get_inconsistent();
+    se->laplac = !laplac_->get_inconsistent();
 
     return se;
 }
@@ -2062,6 +2108,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     transitweak_->setEditedState(se->transitweak ? Edited : UnEdited);
     transitgrad_->setEditedState(se->transitgrad ? Edited : UnEdited);
     avoid_->set_inconsistent(multiImage && !se->avoid);
+    laplac_->set_inconsistent(multiImage && !se->laplac);
 
     // Update Control Spot GUI according to widgets edited states
     updateParamVisibility();
@@ -2212,6 +2259,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(transitweak);
     add(transitgrad);
     add(avoid);
+    add(laplac);
 }
 
 //-----------------------------------------------------------------------------

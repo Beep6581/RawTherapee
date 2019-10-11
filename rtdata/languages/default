@@ -1001,6 +1001,7 @@ HISTORY_MSG_760;Local - Color Laplacian mask
 HISTORY_MSG_761;Local - SH Laplacian mask
 HISTORY_MSG_762;Local - cbdl Laplacian mask
 HISTORY_MSG_763;Local - Blur Laplacian mask
+HISTORY_MSG_764;Local - Solve PDE Laplacian mask
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2100,6 +2101,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
+TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE (except Retinex)
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_COFR;Color & Light - Small defects : red eyes, dust

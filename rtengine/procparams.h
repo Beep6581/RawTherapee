@@ -979,6 +979,7 @@ struct LocallabParams {
         double transitweak;
         double transitgrad;
         bool avoid;
+        bool laplac;
         // Color & Light
         bool expcolor;
         bool curvactiv;

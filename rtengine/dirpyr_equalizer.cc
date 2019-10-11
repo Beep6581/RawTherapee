@@ -569,7 +569,6 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     }
 
     float multi[6];
-    float scalefl[6];
 
     for (int lv = 0; lv < 6; ++lv) {
         if (scalesloc[lv] < scaleprev) {
