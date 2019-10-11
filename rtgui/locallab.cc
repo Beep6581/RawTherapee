@@ -149,6 +149,7 @@ Locallab::Locallab():
     expmasktm(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWT")))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
 
+
     // CurveEditorGroup widgets
     // Color & Light
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
@@ -450,6 +451,7 @@ Locallab::Locallab():
 
     LocallabParams::LocallabSpot defSpot;
 
+
     // Settings
     expsettings->getExpander()->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expsettings->getExpander()));
     expsettings->setLevel(2);
@@ -463,6 +465,15 @@ Locallab::Locallab():
     setExpandAlignProperties(expmaskcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskcol->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcol));
     expmaskcol->setLevel(2);
+    if (showtooltip) {
+        expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        expmaskexp->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK2_TOOLTIP"));
+        expmasktm->set_tooltip_markup(M("TP_LOCALLAB_MASK2_TOOLTIP"));
+        expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
     lightness->setAdjusterListener(this);
@@ -1411,15 +1422,18 @@ Locallab::Locallab():
 
     mMLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
     if (showtooltip) {
         mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
     }
-    
+
     transLabels = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
     if (showtooltip) {
         transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
     }
+
     transLabels2 = Gtk::manage(new Gtk::Label("---"));
     setExpandAlignProperties(transLabels2, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
@@ -1491,7 +1505,7 @@ Locallab::Locallab():
     if (showtooltip) {
         enaretiMasktmap->set_tooltip_markup(M("TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP"));
     }
-    
+
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -2135,6 +2149,8 @@ Locallab::Locallab():
     pack_start(*panel);
 
     setParamEditable(false);
+    
+    
 
     show_all();
 }
@@ -5085,6 +5101,7 @@ void Locallab::inversexChanged()
         showmaskexpMethod->hide();
         showmaskexpMethodinv->show();
         expMethod->set_active(0);
+
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();
@@ -8371,6 +8388,7 @@ void Locallab::updateSpecificGUIState()
         softradiusexp->show();
 
         expMethod->set_active(0);
+
         if (expMethod->get_active_row_number() == 0) {
             pdeFrame->hide();
             fatFrame->hide();

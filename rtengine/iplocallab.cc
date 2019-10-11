@@ -6894,38 +6894,38 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
 
-        float lap = params->locallab.spots.at(sp).lapmaskbl;
+            float lap = params->locallab.spots.at(sp).lapmaskbl;
 
-        if (lap > 0.f && (lp.enablMask || lp.showmaskblmet == 3)) {
-            float *datain = new float[GH * GW];
-            float *data_tmp = new float[GH * GW];
-
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int y = 0; y < GH; y++) {
-                for (int x = 0; x < GW; x++) {
-                    datain[y * GW + x] =  bufmaskblurbl->L[y][x];
-                }
-            }
-
-            (void) discrete_laplacian_threshold(data_tmp, datain, GW, GH, 200.f * lap);
+            if (lap > 0.f && (lp.enablMask || lp.showmaskblmet == 3)) {
+                float *datain = new float[GH * GW];
+                float *data_tmp = new float[GH * GW];
 
 #ifdef _OPENMP
-            #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
-            for (int y = 0; y < GH; y++) {
-                for (int x = 0; x < GW; x++) {
-                    bufmaskblurbl->L[y][x] = data_tmp[y * GW + x];
+                for (int y = 0; y < GH; y++) {
+                    for (int x = 0; x < GW; x++) {
+                        datain[y * GW + x] =  bufmaskblurbl->L[y][x];
+                    }
                 }
+
+                (void) discrete_laplacian_threshold(data_tmp, datain, GW, GH, 200.f * lap);
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int y = 0; y < GH; y++) {
+                    for (int x = 0; x < GW; x++) {
+                        bufmaskblurbl->L[y][x] = data_tmp[y * GW + x];
+                    }
+                }
+
+                delete [] datain;
+                delete [] data_tmp;
+
             }
-
-            delete [] datain;
-            delete [] data_tmp;
-
-        }
 
 
             float radiusb = 1.f / sk;
@@ -7025,11 +7025,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #endif
 
                         {
-                            if(radius > 200.f  && call == 2) {//to test not optimize
+                            if (radius > 200.f  && call == 2) //to test not optimize
+                            {
                                 ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfw, bfh, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfw, bfh, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfw, bfh, radius, 0, 0);
-                            } else {
+                            } else
+                            {
                                 gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
                                 gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
                                 gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
@@ -7042,11 +7044,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         #pragma omp parallel
 #endif
                         {
-                            if(radius > 200.f && call == 2) {//to test not optimize
+                            if (radius > 200.f && call == 2) //to test not optimize
+                            {
                                 ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, GW, GH, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, GW, GH, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, GW, GH, radius, 0, 0);
-                            } else {
+                            } else
+                            {
                                 gaussianBlur(original->L, tmp1->L, GW, GH, radius);
                                 gaussianBlur(original->a, tmp1->a, GW, GH, radius);
                                 gaussianBlur(original->b, tmp1->b, GW, GH, radius);
@@ -7123,7 +7127,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     if (lp.blurmet == 0  && lp.blmet == 2) {
-                        
+
                         if (lp.guidb > 1) {
                             lp.actsp = true;
 #ifdef _OPENMP
@@ -7179,9 +7183,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-                        if(coefC == 0.f) {
+
+                        if (coefC == 0.f) {
                             coefC = 1.f;
                         }
+
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -7208,10 +7214,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
-                        if(coefC == 0.f) {
+
+                        if (coefC == 0.f) {
                             coefC = 1.f;
                         }
-                        
+
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -7227,7 +7234,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (lp.blurmet == 0) { //blur and noise (center)
 
                         if (tmp1.get()) {
-                        BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                            BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         }
                     } else if (lp.blurmet == 1) {
                         if (tmp1.get()) {
@@ -7469,6 +7476,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
 
+                        if (coefC == 0.f) {
+                            coefC = 1.f;
+                        }
+
 
 
 
@@ -7701,6 +7712,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
                         float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
 
+                        if (coef == 0.f) {
+                            coef = 1.f;
+                        }
+
+                        if (coefC == 0.f) {
+                            coefC = 1.f;
+                        }
+
+
 #ifdef _OPENMP
                         #pragma omp parallel for
 #endif
@@ -7819,7 +7839,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomaSH;
                     float blendm = lp.blendmaSH;
                     float lap = params->locallab.spots.at(sp).lapmaskSH;
-                    
+
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
@@ -8849,6 +8869,14 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
                 float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
 
+                if (coef == 0.f) {
+                    coef = 1.f;
+                }
+
+                if (coefC == 0.f) {
+                    coefC = 1.f;
+                }
+
 
                 for (int ir = 0; ir < bfh; ir++) {
                     for (int jr = 0; jr < bfw; jr++) {
@@ -8861,7 +8889,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
             }
         }
+
         lp.invret = false;//always disabled inverse RETI   too complex todo !!
+
         if (lp.str >= 0.2f  && lp.retiena && call != 2) {
             int GW = transformed->W;
             int GH = transformed->H;
@@ -9225,7 +9255,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                        const float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+                        float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+
+                        if (coefC == 0.f) {
+                            coefC = 1.f;
+                        }
 
                         for (int ir = 0; ir < Hd; ir++) {
                             for (int jr = 0; jr < Wd; jr++) {
@@ -9615,6 +9649,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     float coef = 0.01f * (max(fabs(minL), fabs(maxL)));
 
+                    if (coef == 0.f) {
+                        coef = 1.f;
+                    }
+
 
                     for (int ir = 0; ir < Hd; ir++) {
                         for (int jr = 0; jr < Wd; jr++) {
@@ -9736,7 +9774,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             }
                         }
 
-                        const float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+                        float coefC = 0.01f * (max(fabs(minC), fabs(maxC)));
+
+                        if (coefC == 0.f) {
+                            coefC = 1.f;
+                        }
 
                         for (int ir = 0; ir < Hd; ir++) {
                             for (int jr = 0; jr < Wd; jr++) {
@@ -10493,7 +10535,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float slope = lp.slomacol;
                     float blendm = lp.blendmacol;
                     float lap = params->locallab.spots.at(sp).lapmaskcol;
-                    
+
                     maskcalccol(false, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm);
