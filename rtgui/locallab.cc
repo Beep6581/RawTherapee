@@ -467,12 +467,6 @@ Locallab::Locallab():
     expmaskcol->setLevel(2);
     if (showtooltip) {
         expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-        expmaskexp->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-        expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-        expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-        expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK2_TOOLTIP"));
-        expmasktm->set_tooltip_markup(M("TP_LOCALLAB_MASK2_TOOLTIP"));
-        expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
 
     curvactivConn = curvactiv->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::curvactivChanged));
@@ -503,6 +497,12 @@ Locallab::Locallab():
     slomaskcol->setAdjusterListener(this);
     softradiuscol->setAdjusterListener(this);
     lapmaskcol->setAdjusterListener(this);
+
+    if (showtooltip) {
+        radmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        chromaskcol->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+    }
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
@@ -751,6 +751,9 @@ Locallab::Locallab():
     setExpandAlignProperties(expmaskexp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskexp->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskexp));
     expmaskexp->setLevel(2);
+    if (showtooltip) {
+        expmaskexp->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     expcomp->setAdjusterListener(this);
 
@@ -800,6 +803,7 @@ Locallab::Locallab():
     if (showtooltip) {
         radmaskexp->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskexp->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        chromaskexp->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
     curveEditorG->setCurveListener(this);
@@ -964,6 +968,9 @@ Locallab::Locallab():
     setExpandAlignProperties(expmasksh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmasksh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmasksh));
     expmasksh->setLevel(2);
+    if (showtooltip) {
+        expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     highlights->setAdjusterListener(this);
     h_tonalwidth->setAdjusterListener(this);
@@ -1215,6 +1222,9 @@ Locallab::Locallab():
     setExpandAlignProperties(expmasktm, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmasktm->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmasktm));
     expmasktm->setLevel(2);
+    if (showtooltip) {
+        expmasktm->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     stren->setAdjusterListener(this);
 
@@ -1301,6 +1311,7 @@ Locallab::Locallab():
     if (showtooltip) {
         radmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        chromasktm->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
 
@@ -1368,6 +1379,9 @@ Locallab::Locallab():
     setExpandAlignProperties(expmaskreti, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskreti->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskreti));
     expmaskreti->setLevel(2);
+    if (showtooltip) {
+        expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     retinexMethod->append(M("TP_RETINEX_LOW"));
     retinexMethod->append(M("TP_RETINEX_UNIFORM"));
@@ -1524,6 +1538,7 @@ Locallab::Locallab():
     if (showtooltip) {
         radmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        chromaskreti->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
 
@@ -1758,6 +1773,9 @@ Locallab::Locallab():
     setExpandAlignProperties(expmaskcb, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskcb->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskcb));
     expmaskcb->setLevel(2);
+    if (showtooltip) {
+        expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     for (int i = 0; i < 6; i++) {
         Glib::ustring ss;
@@ -1852,6 +1870,7 @@ Locallab::Locallab():
     if (showtooltip) {
         radmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        chromaskcb->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
 
@@ -1948,6 +1967,9 @@ Locallab::Locallab():
     setExpandAlignProperties(expmaskbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmaskbl->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmaskbl));
     expmaskbl->setLevel(2);
+    if (showtooltip) {
+        expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+    }
 
     maskblCurveEditorG->setCurveListener(this);
 
@@ -2003,6 +2025,7 @@ Locallab::Locallab():
     if (showtooltip) {
         radmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        chromaskbl->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
     }
 
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
