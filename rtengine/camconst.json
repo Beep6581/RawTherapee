@@ -1481,6 +1481,12 @@ Camera constants:
         }
     },
 
+    { // Quality B
+        "make_model": "NIKON COOLPIX P1000",
+        "dcraw_matrix": [ 14294, -6116, -1333, -1628, 10219, 1637, -14, 1158, 5022 ], // ColorMatrix2 from Adobe DNG Converter 11.4
+        "ranges": { "black": 200, "white": 4093 }
+    },
+
     { // Quality B, no LENR samples
         "make_model": "Nikon D5",
         "dcraw_matrix": [ 9200,-3522,-992,-5755,13803,2117,-753,1486,6338 ], // adobe dng_v9.5 d65

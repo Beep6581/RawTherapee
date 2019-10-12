@@ -27,8 +27,6 @@
 #include "alignedbuffer.h"
 #include "rt_math.h"
 #include "opthelper.h"
-#include "StopWatch.h"
-
 
 namespace rtengine
 {
@@ -338,7 +336,7 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
     #pragma omp parallel if (multiThread)
 #endif
     {
-        std::unique_ptr<float> buffer(new float[std::max(W, 8 * H)]);
+        std::unique_ptr<float[]> buffer(new float[numCols * (radius + 1)]);
 
         //horizontal blur
         float* const lineBuffer = buffer.get();
@@ -362,15 +360,22 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
                 dst[row][col] = tempval;
                 ++len;
             }
-
+            int pos = 0;
             for (int col = radius + 1; col < W - radius; col++) {
-                lineBuffer[col] = src[row][col];
-                dst[row][col] = tempval = tempval + (src[row][col + radius] - lineBuffer[col - radius - 1]) / len;
+                const float oldVal = lineBuffer[pos];
+                lineBuffer[pos] = src[row][col];
+                tempval = tempval + (src[row][col + radius] - oldVal) / len;
+                dst[row][col] = tempval;
+                ++pos;
+                pos = pos <= radius ? pos : 0;
             }
 
             for (int col = W - radius; col < W; col++) {
-                dst[row][col] = tempval = (tempval * len - lineBuffer[col - radius - 1]) / (len - 1);
+                tempval = (tempval * len - lineBuffer[pos]) / (len - 1);
+                dst[row][col] = tempval;
                 --len;
+                ++pos;
+                pos = pos <= radius ? pos : 0;
             }
         }
 
@@ -414,23 +419,29 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
             }
 
             rlenv = onev / lenv;
-
+            int pos = 0;
             for (int row = radius + 1; row < H - radius; row++) {
-                rowBuffer[row][0] = LVFU(dst[row][col]);
-                rowBuffer[row][1] = LVFU(dst[row][col + 4]);
-                tempv = tempv + (LVFU(dst[row + radius][col]) - rowBuffer[row - radius - 1][0]) * rlenv ;
-                temp1v = temp1v + (LVFU(dst[row + radius][col + 4]) - rowBuffer[row - radius - 1][1]) * rlenv ;
+                vfloat oldVal0 = rowBuffer[pos][0];
+                vfloat oldVal1 = rowBuffer[pos][1];
+                rowBuffer[pos][0] = LVFU(dst[row][col]);
+                rowBuffer[pos][1] = LVFU(dst[row][col + 4]);
+                tempv = tempv + (LVFU(dst[row + radius][col]) - oldVal0) * rlenv ;
+                temp1v = temp1v + (LVFU(dst[row + radius][col + 4]) - oldVal1) * rlenv ;
                 STVFU(dst[row][col], tempv);
                 STVFU(dst[row][col + 4], temp1v);
+                ++pos;
+                pos = pos <= radius ? pos : 0;
             }
 
             for (int row = H - radius; row < H; row++) {
                 lenm1v = lenv - onev;
-                tempv = (tempv * lenv - rowBuffer[row - radius - 1][0]) / lenm1v;
-                temp1v = (temp1v * lenv - rowBuffer[row - radius - 1][1]) / lenm1v;
+                tempv = (tempv * lenv - rowBuffer[pos][0]) / lenm1v;
+                temp1v = (temp1v * lenv - rowBuffer[pos][1]) / lenm1v;
                 STVFU(dst[row][col], tempv);
                 STVFU(dst[row][col + 4], temp1v);
                 lenv = lenm1v;
+                ++pos;
+                pos = pos <= radius ? pos : 0;
             }
         }
 
@@ -466,19 +477,24 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
                 len ++;
             }
 
+            int pos = 0;
             for (int row = radius + 1; row < H - radius; row++) {
                 for(int k = 0; k < numCols; k++) {
-                    rowBuffer[row][k] = dst[row][col + k];
-                    dst[row][col + k] = dst[row - 1][col + k] + (dst[row + radius][col + k] - rowBuffer[row - radius - 1][k]) / len;
+                    float oldVal = rowBuffer[pos][k];
+                    rowBuffer[pos][k] = dst[row][col + k];
+                    dst[row][col + k] = dst[row - 1][col + k] + (dst[row + radius][col + k] - oldVal) / len;
                 }
+                ++pos;
+                pos = pos <= radius ? pos : 0;
             }
 
             for (int row = H - radius; row < H; row++) {
                 for(int k = 0; k < numCols; k++) {
-                    dst[row][col + k] = (dst[row - 1][col + k] * len - rowBuffer[row - radius - 1][k]) / (len - 1);
+                    dst[row][col + k] = (dst[row - 1][col + k] * len - rowBuffer[pos][k]) / (len - 1);
                 }
-
                 len --;
+                ++pos;
+                pos = pos <= radius ? pos : 0;
             }
         }
 
@@ -514,17 +530,23 @@ inline void boxblur (float** src, float** dst, int radius, int W, int H, bool mu
                     len ++;
                 }
                 const float rlen = 1.f / len;
+                int pos = 0;
                 for (int row = radius + 1; row < H - radius; ++row) {
                     for(int k = 0; k < remaining; ++k) {
-                        rowBuffer[row][k] = dst[row][col + k];
-                        dst[row][col + k] = dst[row - 1][col + k] + (dst[row + radius][col + k] - rowBuffer[row - radius - 1][k]) * rlen;
+                        float oldVal = rowBuffer[pos][k];
+                        rowBuffer[pos][k] = dst[row][col + k];
+                        dst[row][col + k] = dst[row - 1][col + k] + (dst[row + radius][col + k] - oldVal) * rlen;
                     }
+                    ++pos;
+                    pos = pos <= radius ? pos : 0;
                 }
                 for (int row = H - radius; row < H; ++row) {
                     for(int k = 0; k < remaining; ++k) {
-                        dst[row][col + k] = (dst[(row - 1)][col + k] * len - rowBuffer[row - radius - 1][k]) / (len - 1);
+                        dst[row][col + k] = (dst[(row - 1)][col + k] * len - rowBuffer[pos][k]) / (len - 1);
                     }
                     len --;
+                    ++pos;
+                    pos = pos <= radius ? pos : 0;
                 }
             }
         }
