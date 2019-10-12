@@ -2101,7 +2101,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
-TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE (except Retinex)
+TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_COFR;Color & Light - Small defects : red eyes, dust

@@ -851,7 +851,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
 
 void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip, const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, bool retiMasktmap, bool retiMask,
-                                     float rad, float lap, float gamm, float slop, float chro, float blend, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread)
+                                     float rad, float lap, bool pde, float gamm, float slop, float chro, float blend, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread)
 {
     array2D<float> loctemp(W_L, H_L);
     array2D<float> ble(W_L, H_L);
@@ -966,8 +966,12 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             }
         }
 
-        ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, W_L, H_L, 200.f * lap);
-        //     (void) discrete_laplacian_threshold_reti(data_tmp, datain, W_L, H_L, 200.f * lap);
+        if (!pde) {
+            ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, W_L, H_L, 200.f * lap);
+        } else {
+            ImProcFunctions::retinex_pde(datain, data_tmp, W_L, H_L, 12.f * lap, 1.f, nullptr, 0, 0, 1);
+        }
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -1603,11 +1607,12 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
         float blend = loc.spots.at(sp).blendmaskreti;
         float chro = loc.spots.at(sp).chromaskreti;
         float lap = loc.spots.at(sp).lapmaskreti;
+        bool pde = params->locallab.spots.at(sp).laplac;
 
         if (lum == 1  && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) { //only mask with luminance on last scale
             int before = 1;
             maskforretinex(sp, before, luminance, nullptr, W_L, H_L, skip, locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
-                           rad, lap, gamm, slop, chro, blend, bufreti, bufmask, buforig, buforigmas, multiThread);
+                           rad, lap, pde, gamm, slop, chro, blend, bufreti, bufmask, buforig, buforigmas, multiThread);
         }
 
         //mask does not interfered with datas displayed

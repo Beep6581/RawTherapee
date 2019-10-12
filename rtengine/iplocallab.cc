@@ -2523,10 +2523,9 @@ void ImProcFunctions::discrete_laplacian_threshold(float * data_out, const float
         }
     }
 
-//    return data_out;
 }
 
-static double *cos_table(size_t size)
+double *ImProcFunctions::cos_table(size_t size)
 {
     double *table = NULL;
     double pi_size;
@@ -2552,8 +2551,7 @@ static double *cos_table(size_t size)
 }
 
 
-
-static float *rex_poisson_dct(float * data, size_t nx, size_t ny, double m)
+void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double m)
 {
     /*
      * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -2576,6 +2574,7 @@ static float *rex_poisson_dct(float * data, size_t nx, size_t ny, double m)
      * cosx[i] = cos(i Pi / nx) for i in [0..nx[
      * cosy[i] = cos(i Pi / ny) for i in [0..ny[
      */
+     
     cosx = cos_table(nx);
     cosy = cos_table(ny);
 
@@ -2604,10 +2603,9 @@ static float *rex_poisson_dct(float * data, size_t nx, size_t ny, double m)
     free(cosx);
     free(cosy);
 
-    return data;
 }
 
-static void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p)
+void ImProcFunctions::mean_dt(const float * data, size_t size, double * mean_p, double * dt_p)
 {
     double mean, dt;
     const float *ptr_data;
@@ -2631,7 +2629,6 @@ static void mean_dt(const float * data, size_t size, double * mean_p, double * d
     *mean_p = mean;
     *dt_p = dt;
 
-    return;
 }
 
 void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod)
@@ -2675,7 +2672,6 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
         ptr_data++;
     }
 
-    return;
 }
 
 void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int bfh, float thresh, float multy, float * dE, int show, int dEenable, int normalize)
@@ -2791,7 +2787,7 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
 
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
-    (void) rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
+    ImProcFunctions::rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
 
     if (show == 3) {
         for (int y = 0; y < bfh ; y++) {
@@ -4804,7 +4800,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
-    (void) rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
+    ImProcFunctions::rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
 
     dct_bw = fftwf_plan_r2r_2d(bfh, bfw, data_fft, data, FFTW_REDFT01, FFTW_REDFT01, FFTW_ESTIMATE | FFTW_DESTROY_INPUT);
     fftwf_execute(dct_bw);
@@ -6910,7 +6906,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             float lap = params->locallab.spots.at(sp).lapmaskbl;
-            float pde = params->locallab.spots.at(sp).laplac;
+            bool pde = params->locallab.spots.at(sp).laplac;
 
             if (lap > 0.f && (lp.enablMask || lp.showmaskblmet == 3)) {
                 float *datain = new float[GH * GW];
