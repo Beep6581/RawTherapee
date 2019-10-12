@@ -1227,6 +1227,7 @@ struct LocallabParams {
         int adjblur;
         int bilateral;
         int sensiden;
+        int detailthr;
 
         LocallabSpot();
 

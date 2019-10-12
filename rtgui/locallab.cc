@@ -331,14 +331,15 @@ Locallab::Locallab():
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 1, 0))),
     noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 1, 0))),
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
-    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 80))),
+    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 0))),
     noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 1, 0))),
     noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
-    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 80))),
+    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 0))),
     adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 20))),
+    detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 0))),
 
     // ButtonCheck widgets
     // Color & Light
@@ -2122,7 +2123,7 @@ Locallab::Locallab():
     noiselumdetail->setAdjusterListener(this);
 
     if (showtooltip) {
-        noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_NOISEDETAIL_TOOLTIP"));
+//        noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_NOISEDETAIL_TOOLTIP"));
     }
 
     noiselequal->setAdjusterListener(this);
@@ -2138,7 +2139,7 @@ Locallab::Locallab():
     noisechrodetail->setAdjusterListener(this);
 
     if (showtooltip) {
-        noisechrodetail->set_tooltip_text(M("TP_LOCALLAB_NOISEDETAIL_TOOLTIP"));
+//        noisechrodetail->set_tooltip_text(M("TP_LOCALLAB_NOISEDETAIL_TOOLTIP"));
     }
 
     adjblur->setAdjusterListener(this);
@@ -2146,6 +2147,7 @@ Locallab::Locallab():
     bilateral->setAdjusterListener(this);
 
     sensiden->setAdjusterListener(this);
+    detailthr->setAdjusterListener(this);
 
     ToolParamBlock* const denoisBox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
@@ -2158,7 +2160,8 @@ Locallab::Locallab():
     wavBox->pack_start(*noiselequal);
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
-    wavBox->pack_start(*noisechrodetail); // Uncomment this line to use the noisechrodetail adjuster
+    wavBox->pack_start(*noisechrodetail);
+    wavBox->pack_start(*detailthr);
     wavBox->pack_start(*adjblur);
     wavFrame->add(*wavBox);
     denoisBox->pack_start(*wavFrame);
@@ -3387,6 +3390,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).adjblur = adjblur->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).bilateral = bilateral->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensiden = sensiden->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).detailthr = detailthr->getIntValue();
                 }
 
                 ControlSpotPanel::SpotEdited* const se = expsettings->getEditedStates();
@@ -3666,6 +3670,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).adjblur = pe->locallab.spots.at(pp->locallab.selspot).adjblur || adjblur->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).bilateral = pe->locallab.spots.at(pp->locallab.selspot).bilateral || bilateral->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensiden = pe->locallab.spots.at(pp->locallab.selspot).sensiden || sensiden->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).detailthr = pe->locallab.spots.at(pp->locallab.selspot).detailthr || detailthr->getEditedState();
                     }
                 }
 
@@ -3948,6 +3953,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).adjblur = pedited->locallab.spots.at(pp->locallab.selspot).adjblur || adjblur->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).bilateral = pedited->locallab.spots.at(pp->locallab.selspot).bilateral || bilateral->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensiden = pedited->locallab.spots.at(pp->locallab.selspot).sensiden || sensiden->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).detailthr = pedited->locallab.spots.at(pp->locallab.selspot).detailthr || detailthr->getEditedState();
                     }
                 }
             }
@@ -5742,6 +5748,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     adjblur->setDefault((double)defSpot->adjblur);
     bilateral->setDefault((double)defSpot->bilateral);
     sensiden->setDefault((double)defSpot->sensiden);
+    detailthr->setDefault((double)defSpot->detailthr);
 
     // Set default edited states for adjusters and threshold adjusters
     if (!pedited) {
@@ -5914,6 +5921,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         adjblur->setDefaultEditedState(Irrelevant);
         bilateral->setDefaultEditedState(Irrelevant);
         sensiden->setDefaultEditedState(Irrelevant);
+        detailthr->setDefaultEditedState(Irrelevant);
     } else {
         const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
 
@@ -6091,6 +6099,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         adjblur->setDefaultEditedState(defSpotState->adjblur ? Edited : UnEdited);
         bilateral->setDefaultEditedState(defSpotState->bilateral ? Edited : UnEdited);
         sensiden->setDefaultEditedState(defSpotState->sensiden ? Edited : UnEdited);
+        detailthr->setDefaultEditedState(defSpotState->detailthr ? Edited : UnEdited);
     }
 }
 
@@ -7130,6 +7139,13 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(Evlocallabsensiden, sensiden->getTextValue());
             }
         }
+
+        if (a == detailthr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdetailthr, detailthr->getTextValue());
+            }
+        }
+
     }
 }
 
@@ -7327,6 +7343,7 @@ void Locallab::setBatchMode(bool batchMode)
     adjblur->showEditedCB();
     bilateral->showEditedCB();
     sensiden->showEditedCB();
+    detailthr->showEditedCB();
 
     // Set batch mode for comboBoxText
     // Color & Light
@@ -7997,6 +8014,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         adjblur->setValue(pp->locallab.spots.at(index).adjblur);
         bilateral->setValue(pp->locallab.spots.at(index).bilateral);
         sensiden->setValue(pp->locallab.spots.at(index).sensiden);
+        detailthr->setValue(pp->locallab.spots.at(index).detailthr);
 
         if (pedited) {
             if (index < (int)pedited->locallab.spots.size()) {
@@ -8329,6 +8347,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 adjblur->setEditedState(spotState->adjblur ? Edited : UnEdited);
                 bilateral->setEditedState(spotState->bilateral ? Edited : UnEdited);
                 sensiden->setEditedState(spotState->sensiden ? Edited : UnEdited);
+                detailthr->setEditedState(spotState->detailthr ? Edited : UnEdited);
             }
         }
     }

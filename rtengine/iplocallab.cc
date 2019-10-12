@@ -30,6 +30,8 @@
 #include "color.h"
 #include "rt_math.h"
 #include "jaggedarray.h"
+#include "rt_algo.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -298,6 +300,7 @@ struct local_params {
     float noiself0;
     float noiself2;
     float noiseldetail;
+    int detailthr;
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -593,6 +596,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_noiselequal = locallab.spots.at(sp).noiselequal;
     float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
     int local_sensiden = locallab.spots.at(sp).sensiden;
+    float local_detailthr = (float)locallab.spots.at(sp).detailthr;
 
     float local_noisecf = ((float)locallab.spots.at(sp).noisechrof) / 10.f;
     float local_noisecc = ((float)locallab.spots.at(sp).noisechroc) / 10.f;
@@ -832,6 +836,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noiself0 = local_noiself0;
     lp.noiself2 = local_noiself2;
     lp.noiseldetail = local_noiseldetail;
+    lp.detailthr = local_detailthr;
     lp.noiselequal = local_noiselequal;
     lp.noisechrodetail = local_noisechrodetail;
     lp.noiselc = local_noiselc;
@@ -2574,7 +2579,7 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
      * cosx[i] = cos(i Pi / nx) for i in [0..nx[
      * cosy[i] = cos(i Pi / ny) for i in [0..ny[
      */
-     
+
     cosx = cos_table(nx);
     cosy = cos_table(ny);
 
@@ -5256,6 +5261,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
     float *Lbloxtmp  = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
     float *fLbloxtmp = reinterpret_cast<float*>(fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+    float params_Ldetail = 0.f;
 
     int nfwd[2] = {TS, TS};
 
@@ -5393,7 +5399,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             // now process the vblk row of blocks for noise reduction
 
-            float params_Ldetail = 0.f;
+//            float params_Ldetail = 0.f;
             float noisevar_Ldetail = 1.f;
 
             if (chrom == 0) {
@@ -5434,6 +5440,34 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     }
+    //Threshold DCT from Alberto Grigio
+    const int detail_thresh = lp.detailthr;
+    array2D<float> mask;
+    float scalea = 1.f;
+    if (detail_thresh > 0) {
+        mask(GW, GH);
+        float thr = log2lin(float(detail_thresh) / 200.f, 100.f);
+        buildBlendMask(tmp1, mask, GW, GH, thr);
+        float r = 20.f / scalea;
+
+        if (r > 0) {
+            float **m = mask;
+            gaussianBlur(m, m, GW, GH, r);
+        }
+
+        array2D<float> m2(GW, GH);
+        const float alfa = 0.856f;
+        const float beta = 1.f + std::sqrt(log2lin(thr, 100.f));
+        buildGradientsMask(GW, GH, tmp1, m2, params_Ldetail / 100.f, 7, 3, alfa, beta, multiThread);
+
+        for (int i = 0; i < GH; ++i) {
+            for (int j = 0; j < GW; ++j) {
+                mask[i][j] *= m2[i][j];
+            }
+        }
+    }
+
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #ifdef _OPENMP
 
@@ -5442,10 +5476,19 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
     for (int i = 0; i < GH; ++i) {
         for (int j = 0; j < GW; ++j) {
+            float d = Ldetail[i][j] / totwt[i][j];
+
+            if (detail_thresh > 0) {
+                d *= mask[i][j];
+            }
+
             //may want to include masking threshold for large hipass data to preserve edges/detail
-            tmp1[i][j] += Ldetail[i][j] / totwt[i][j]; //note that labdn initially stores the denoised hipass data
+            tmp1[i][j] += d;
         }
     }
+
+    mask.free();
+//end Threshold DCT
 
 
     delete Lin;

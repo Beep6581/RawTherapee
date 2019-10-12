@@ -2670,14 +2670,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     noiselumf0(0),
     noiselumf2(0),
     noiselumc(0),
-    noiselumdetail(80),
+    noiselumdetail(0),
     noiselequal(7),
     noisechrof(0),
     noisechroc(0),
-    noisechrodetail(80),
+    noisechrodetail(0),
     adjblur(0),
     bilateral(0),
-    sensiden(20)
+    sensiden(20),
+    detailthr(0)
 {
 }
 
@@ -2963,7 +2964,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && noisechrodetail == other.noisechrodetail
         && adjblur == other.adjblur
         && bilateral == other.bilateral
-        && sensiden == other.sensiden;
+        && sensiden == other.sensiden
+        && detailthr == other.detailthr;
 }
 
 bool LocallabParams::LocallabSpot::operator !=(const LocallabSpot& other) const
@@ -4222,6 +4224,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).adjblur, "Locallab", "Adjblur_" + std::to_string(i), spot.adjblur, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).bilateral, "Locallab", "Bilateral_" + std::to_string(i), spot.bilateral, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sensiden, "Locallab", "Sensiden_" + std::to_string(i), spot.sensiden, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detailthr, "Locallab", "Detailthr_" + std::to_string(i), spot.detailthr, keyFile);
             }
         }
 
@@ -5612,6 +5615,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Adjblur_" + std::to_string(i), pedited, spot.adjblur, spotEdited.adjblur);
                 assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + std::to_string(i), pedited, spot.bilateral, spotEdited.bilateral);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + std::to_string(i), pedited, spot.sensiden, spotEdited.sensiden);
+                assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + std::to_string(i), pedited, spot.detailthr, spotEdited.detailthr);
 
                 locallab.spots.at(i) = spot;
 

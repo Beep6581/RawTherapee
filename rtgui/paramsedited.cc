@@ -1223,6 +1223,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).adjblur = locallab.spots.at(j).adjblur && pSpot.adjblur == otherSpot.adjblur;
                 locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
+                locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
             }
         }
 
@@ -3724,6 +3725,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).sensiden) {
             toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
         }
+
+        if (locallab.spots.at(i).detailthr) {
+            toEdit.locallab.spots.at(i).detailthr = mods.locallab.spots.at(i).detailthr;
+        }
     }
 
 
@@ -4961,7 +4966,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     noisechrodetail(v),
     adjblur(v),
     bilateral(v),
-    sensiden(v)
+    sensiden(v),
+    detailthr(v)
 {
 }
 
@@ -5240,6 +5246,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     adjblur = v;
     bilateral = v;
     sensiden = v;
+    detailthr = v;
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

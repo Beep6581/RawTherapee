@@ -638,6 +638,7 @@ public:
         bool adjblur;
         bool bilateral;
         bool sensiden;
+        bool detailthr;
 
         LocallabSpotEdited(bool v);
 

@@ -291,6 +291,7 @@ private:
     Adjuster* const adjblur;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
+    Adjuster* const detailthr;
 
     // ButtonCheck widgets
     // Color & Light

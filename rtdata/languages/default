@@ -1002,6 +1002,7 @@ HISTORY_MSG_761;Local - SH Laplacian mask
 HISTORY_MSG_762;Local - cbdl Laplacian mask
 HISTORY_MSG_763;Local - Blur Laplacian mask
 HISTORY_MSG_764;Local - Solve PDE Laplacian mask
+HISTORY_MSG_765;Local - deNoise Detail threshold
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2182,11 +2183,12 @@ TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
 TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
 TP_LOCALLAB_NOISELUMFINETWO;Luminance fine 2 (Wav)
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
-TP_LOCALLAB_NOISELUMDETAIL;Luminance detail (DCT)
+TP_LOCALLAB_NOISELUMDETAIL;Luminance detail recovery(DCT)
 TP_LOCALLAB_NOISELEQUAL;Equalizer white-black
 TP_LOCALLAB_NOISECHROFINE;Chroma fine (Wav)
 TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
-TP_LOCALLAB_NOISECHRODETAIL;Chroma detail (DCT)
+TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery(DCT)
+TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=2
 TP_LOCALLAB_PREVIEWSEL;Preview selection deltaE
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator
