@@ -95,69 +95,6 @@ void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
     }
 }
 
-static float *discrete_laplacian_threshold_reti(float * data_out, const float * data_in, size_t nx, size_t ny, float t)
-{//same as in iplocallab.cc
-    BENCHFUN
-
-    size_t i, j;
-    float *ptr_out;
-    float diff = 0.f;
-    const float *ptr_in, *ptr_in_xm1, *ptr_in_xp1, *ptr_in_ym1, *ptr_in_yp1;
-
-    if (NULL == data_in || NULL == data_out) {
-        fprintf(stderr, "a pointer is NULL and should not be so\n");
-        abort();
-    }
-    ptr_in = data_in;
-    ptr_in_xm1 = data_in - 1;
-    ptr_in_xp1 = data_in + 1;
-    ptr_in_ym1 = data_in - nx;
-    ptr_in_yp1 = data_in + nx;
-    ptr_out = data_out;
-
-    for (j = 0; j < ny; j++) {
-        for (i = 0; i < nx; i++) {
-            *ptr_out = 0.f;
-
-            if (0 < i) {
-                diff = *ptr_in - *ptr_in_xm1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-            if (nx - 1 > i) {
-                diff = *ptr_in - *ptr_in_xp1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-            if (0 < j) {
-                diff = *ptr_in - *ptr_in_ym1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-            if (ny - 1 > j) {
-                diff = *ptr_in - *ptr_in_yp1;
-
-                if (fabs(diff) > t) {
-                    *ptr_out += diff;
-                }
-            }
-            ptr_in++;
-            ptr_in_xm1++;
-            ptr_in_xp1++;
-            ptr_in_ym1++;
-            ptr_in_yp1++;
-            ptr_out++;
-        }
-    }
-    return data_out;
-}
-
 void retinex_scales(float* scales, int nscales, int mode, int s, float high)
 {
     if (s < 3) {
@@ -914,7 +851,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 
 
 void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip, const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, bool retiMasktmap, bool retiMask,
-                    float rad, float lap, float gamm, float slop, float chro, float blend, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread)
+                                     float rad, float lap, float gamm, float slop, float chro, float blend, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread)
 {
     array2D<float> loctemp(W_L, H_L);
     array2D<float> ble(W_L, H_L);
@@ -1015,35 +952,36 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             bufmaskblurreti->L[ir][jr] = lutTonemaskreti[L_];
         }
 
-        if (lap > 0.f) {
-            float *datain = new float[H_L * W_L];
-            float *data_tmp = new float[H_L * W_L];
+    if (lap > 0.f) {
+        float *datain = new float[H_L * W_L];
+        float *data_tmp = new float[H_L * W_L];
 
 #ifdef _OPENMP
-            #pragma omp parallel for
+        #pragma omp parallel for
 #endif
 
-            for (int y = 0; y < H_L; y++) {
-                for (int x = 0; x < W_L; x++) {
-                    datain[y * W_L + x] =  bufmaskblurreti->L[y][x];
-                }
+        for (int y = 0; y < H_L; y++) {
+            for (int x = 0; x < W_L; x++) {
+                datain[y * W_L + x] =  bufmaskblurreti->L[y][x];
             }
-
-            (void) discrete_laplacian_threshold_reti(data_tmp, datain, W_L, H_L, 200.f * lap);
-#ifdef _OPENMP
-            #pragma omp parallel for
-#endif
-
-            for (int y = 0; y < H_L; y++) {
-                for (int x = 0; x < W_L; x++) {
-                    bufmaskblurreti->L[y][x] = data_tmp[y * W_L + x];
-                }
-            }
-
-            delete [] datain;
-            delete [] data_tmp;
-
         }
+
+        ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, W_L, H_L, 200.f * lap);
+        //     (void) discrete_laplacian_threshold_reti(data_tmp, datain, W_L, H_L, 200.f * lap);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int y = 0; y < H_L; y++) {
+            for (int x = 0; x < W_L; x++) {
+                bufmaskblurreti->L[y][x] = data_tmp[y * W_L + x];
+            }
+        }
+
+        delete [] datain;
+        delete [] data_tmp;
+
+    }
 
 //blend
 #ifdef _OPENMP
@@ -1658,6 +1596,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
                 }
 
         }
+
         float rad = loc.spots.at(sp).radmaskreti;
         float slop = loc.spots.at(sp).slomaskreti;
         float gamm = loc.spots.at(sp).gammaskreti;
@@ -1668,8 +1607,9 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
         if (lum == 1  && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) { //only mask with luminance on last scale
             int before = 1;
             maskforretinex(sp, before, luminance, nullptr, W_L, H_L, skip, locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
-                           rad, lap, gamm, slop, chro, blend , bufreti, bufmask, buforig, buforigmas, multiThread);
+                           rad, lap, gamm, slop, chro, blend, bufreti, bufmask, buforig, buforigmas, multiThread);
         }
+
         //mask does not interfered with datas displayed
 
         Tmean = mean;

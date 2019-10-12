@@ -2447,7 +2447,7 @@ static void showmask(const local_params& lp, int xstart, int ystart, int cx, int
     }
 }
 
-static float *discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t)
+void ImProcFunctions::discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t)
 {
     BENCHFUN
 
@@ -2523,7 +2523,7 @@ static float *discrete_laplacian_threshold(float * data_out, const float * data_
         }
     }
 
-    return data_out;
+//    return data_out;
 }
 
 static double *cos_table(size_t size)
@@ -2722,7 +2722,7 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
     }
 
     //first call to laplacian with plein strength
-    (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
+    ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
 
     if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
         fprintf(stderr, "allocation error\n");
@@ -2738,7 +2738,7 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
     }
 
     //second call to laplacian with 40% strength ==> reduce effect if we are far from ref (deltaE)
-    (void) discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
+    ImProcFunctions::discrete_laplacian_threshold(data_tmp04, datain, bfw, bfh, 0.4f * thresh);
 
     if (NULL == (data_fft04 = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
         fprintf(stderr, "allocation error\n");
@@ -2784,9 +2784,11 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
     fftwf_free(data_fft04);
     fftwf_free(data_tmp);
     fftwf_free(data_tmp04);
-    if (dEenable == 1) {    
+
+    if (dEenable == 1) {
         fftwf_destroy_plan(dct_fw04);
     }
+
     /* solve the Poisson PDE in Fourier space */
     /* 1. / (float) (bfw * bfh)) is the DCT normalisation term, see libfftw */
     (void) rex_poisson_dct(data_fft, bfw, bfh, 1. / (double)(bfw * bfh));
@@ -2837,8 +2839,8 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
 }
 
 void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, /*LabImage * transformed, */int inv, const struct local_params & lp,
-                 const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, bool multiThread,
-                 bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm)
+                                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, bool multiThread,
+                                  bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm)
 {
     array2D<float> ble(bfw, bfh);
     array2D<float> guid(bfw, bfh);
@@ -2945,7 +2947,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
         }
-        
+
         if (rad > 0.f) {
             guidedFilter(guid, ble, ble, rad * 10.f / sk, 0.001, multiThread, 4);
         }
@@ -2978,12 +2980,13 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     datain[y * bfw + x] =  bufmaskblurcol->L[y][x];
                 }
             }
-            if(!pde) {
-                (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, 200.f * lap);
+
+            if (!pde) {
+                ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, 200.f * lap);
             } else {
                 ImProcFunctions::retinex_pde(datain, data_tmp, bfw, bfh, 12.f * lap, 1.f, nullptr, 0, 0, 1);
             }
-           
+
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -4782,7 +4785,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
         abort();
     }
 
-    (void) discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
+    ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, bfw, bfh, thresh);
 
     if (NULL == (data_fft = (float *) fftwf_malloc(sizeof(float) * bfw * bfh))) {
         fprintf(stderr, "allocation error\n");
@@ -6923,8 +6926,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
                 }
 
-                if(!pde) {
-                    (void) discrete_laplacian_threshold(data_tmp, datain, GW, GH, 200.f * lap);
+                if (!pde) {
+                    ImProcFunctions::discrete_laplacian_threshold(data_tmp, datain, GW, GH, 200.f * lap);
                 } else {
                     ImProcFunctions::retinex_pde(datain, data_tmp, GW, GH, 12.f * lap, 1.f, nullptr, 0, 0, 1);
                 }
