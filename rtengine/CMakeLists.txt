@@ -11,7 +11,7 @@ include_directories(${EXTRA_INCDIR}
     ${LCMS_INCLUDE_DIRS}
     ${LENSFUN_INCLUDE_DIRS}
     ${RSVG_INCLUDE_DIRS}
-    )
+)
 
 link_directories("${PROJECT_SOURCE_DIR}/rtexif"
     ${EXPAT_LIBRARY_DIRS}
@@ -25,25 +25,22 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
     ${LCMS_LIBRARY_DIRS}
     ${LENSFUN_LIBRARY_DIRS}
     ${RSVG_LIBRARY_DIRS}
-    )
+)
 
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
-    badpixels.cc
-    CA_correct_RT.cc
-    capturesharpening.cc
-    EdgePreservingDecomposition.cc
-    FTblockDN.cc
-    PF_correct_RT.cc
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
-    cJSON.c
+    badpixels.cc
+    CA_correct_RT.cc
     calc_distort.cc
     camconst.cc
+    capturesharpening.cc
     cfa_linedn_RT.cc
     ciecam02.cc
     cieimage.cc
+    cJSON.c
     clutstore.cc
     color.cc
     colortemp.cc
@@ -60,14 +57,19 @@ set(RTENGINESOURCEFILES
     dual_demosaic_RT.cc
     dynamicprofile.cc
     eahd_demosaic.cc
+    EdgePreservingDecomposition.cc
     fast_demo.cc
     ffmanager.cc
     filmnegativeproc.cc
     filmnegativethumb.cc
     flatcurves.cc
+    FTblockDN.cc
+    gamutwarning.cc
     gauss.cc
     green_equil_RT.cc
+    guidedfilter.cc
     hilite_recon.cc
+    histmatching.cc
     hphd_demosaic_RT.cc
     iccjpeg.cc
     iccstore.cc
@@ -82,29 +84,27 @@ set(RTENGINESOURCEFILES
     improcfun.cc
     impulse_denoise.cc
     init.cc
+    ipdehaze.cc
     iplab2rgb.cc
+    iplabregions.cc
+    iplocalcontrast.cc
     ipresize.cc
     ipretinex.cc
+    ipshadowshighlights.cc
     ipsharpen.cc
+    ipsoftlight.cc
     iptransform.cc
     ipvibrance.cc
     ipwavelet.cc
     jdatasrc.cc
     jpeg_ijg/jpeg_memsrc.cc
-    klt/convolve.cc
-    klt/error.cc
-    klt/klt.cc
-    klt/klt_util.cc
-    klt/pnmio.cc
-    klt/pyramid.cc
-    klt/selectGoodFeatures.cc
-    klt/storeFeatures.cc
-    klt/trackFeatures.cc
-    klt/writeFeatures.cc
     labimage.cc
     lcp.cc
+    lj92.c
     loadinitial.cc
     myfile.cc
+    pdaflinesfilter.cc
+    PF_correct_RT.cc
     pipettebuffer.cc
     pixelshift.cc
     previewimage.cc
@@ -116,27 +116,17 @@ set(RTENGINESOURCEFILES
     rcd_demosaic.cc
     refreshmap.cc
     rt_algo.cc
+    rtlensfun.cc
     rtthumbnail.cc
     shmap.cc
     simpleprocess.cc
     slicer.cc
     stdimagesource.cc
-    utils.cc
-    rtlensfun.cc
     tmo_fattal02.cc
-    iplocalcontrast.cc
-    histmatching.cc
-    pdaflinesfilter.cc
-    gamutwarning.cc
-    ipshadowshighlights.cc
-    xtrans_demosaic.cc
+    utils.cc
     vng4_demosaic_RT.cc
-    ipsoftlight.cc
-    guidedfilter.cc
-    ipdehaze.cc
-    iplabregions.cc
-    lj92.c
-    )
+    xtrans_demosaic.cc
+)
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)
     set_source_files_properties(rtlensfun.cc PROPERTIES COMPILE_DEFINITIONS RT_LENSFUN_HAS_LOAD_DIRECTORY)
@@ -150,21 +140,22 @@ if(NOT WITH_SYSTEM_KLT)
     set(RTENGINESOURCEFILES ${RTENGINESOURCEFILES}
         klt/convolve.cc
         klt/error.cc
-        klt/klt.cc
         klt/klt_util.cc
+        klt/klt.cc
         klt/pnmio.cc
         klt/pyramid.cc
         klt/selectGoodFeatures.cc
         klt/storeFeatures.cc
         klt/trackFeatures.cc
         klt/writeFeatures.cc
-        )
+    )
     set(KLT_LIBRARIES)
 endif()
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
-add_library(rtengine ${RTENGINESOURCEFILES})
+add_library(rtengine STATIC ${RTENGINESOURCEFILES})
+
 add_dependencies(rtengine UpdateInfo)
 
 # It may be nice to store library version too
@@ -190,6 +181,6 @@ target_link_libraries(rtengine rtexif
     ${ZLIB_LIBRARIES}
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
-    )
+)
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

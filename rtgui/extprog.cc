@@ -58,7 +58,7 @@ bool ExtProgAction::execute (const std::vector<Glib::ustring>& fileNames) const
     }
 
     for (const auto& fileName : fileNames) {
-        cmdLine += " \"" + fileName + "\"";
+        cmdLine += " " + Glib::shell_quote(fileName);
     }
 
     return ExtProgStore::spawnCommandAsync (cmdLine);
@@ -256,7 +256,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 
 #else
 
-    auto cmdLine = Glib::ustring("gimp \"") + fileName + Glib::ustring("\"");
+    auto cmdLine = Glib::ustring("gimp ") + Glib::shell_quote(fileName);
     auto success = spawnCommandAsync (cmdLine);
 
 #endif
@@ -291,7 +291,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 
 #else
 
-    cmdLine = Glib::ustring("gimp-remote \"") + fileName + Glib::ustring("\"");
+    cmdLine = Glib::ustring("gimp-remote ") + Glib::shell_quote(fileName);
     success = ExtProgStore::spawnCommandAsync (cmdLine);
 
 #endif
@@ -312,7 +312,7 @@ bool ExtProgStore::openInPhotoshop (const Glib::ustring& fileName)
 
 #else
 
-    const auto cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir, "Photoshop.exe") + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+    const auto cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir, "Photoshop.exe") + "\" " + Glib::shell_quote(fileName);
 
 #endif
 
@@ -334,7 +334,7 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
 
 #else
 
-    const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+    const auto cmdLine = options.customEditorProg + Glib::ustring(" ") + Glib::shell_quote(fileName);
     return spawnCommandAsync (cmdLine);
 
 #endif

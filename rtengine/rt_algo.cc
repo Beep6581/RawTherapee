@@ -352,7 +352,7 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
                     contrastThreshold = calcContrastThreshold(luminance, minY, minX, tilesize);
                     break;
                 } else {
-                    // in second pass we allow a variance of 4
+                    // in second pass we allow a variance of 8
                     // we additionally scan the tiles +-skip pixels around the best tile from pass 2
                     // Means we scan (2 * skip + 1)^2 tiles in this step to get a better hit rate
                     // fortunately the scan is quite fast, so we use only one core and don't parallelize
