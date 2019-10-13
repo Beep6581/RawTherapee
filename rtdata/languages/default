@@ -2189,7 +2189,7 @@ TP_LOCALLAB_NOISECHROFINE;Chroma fine (Wav)
 TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse (Wav)
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery(DCT)
 TP_LOCALLAB_DETAILTHR;Detail threshold Luminance Chroma (DCT)
-TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=2
+TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
 TP_LOCALLAB_PREVIEWSEL;Preview selection deltaE
 TP_LOCALLAB_PDEFRA;PDE IPOL - Contrast attenuator
 TP_LOCALLAB_FATFRA;PDE Fattal - Dynamic Range Compression

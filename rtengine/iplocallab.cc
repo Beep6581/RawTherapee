@@ -5531,7 +5531,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
         }
 
 
-        if (lp.noisecf >= 0.1f || lp.noisecc >= 0.1f || aut == 1 || aut == 2) {
+        if (lp.noisecf >= 0.01f || lp.noisecc >= 0.01f || aut == 1 || aut == 2) {
             noiscfactiv = false;
             levred = 7;
         }
@@ -5724,7 +5724,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     printf("j=%i variL=%f\n", j, vari[j]);
                     }
                     */
-                    if ((lp.noiselc < 1.f && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
+                    if ((lp.noiselc < 0.02f && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                     } else {
                         WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
@@ -5938,7 +5938,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float k5 = 0.f;
                         float k6 = 0.f;
 
-                        if ((lp.noisecc == 0.1f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
+                        if ((lp.noisecc == 0.01f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
                             k4 = 0.f;
                             k5 = 0.0f;
                         } else if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
@@ -6026,7 +6026,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     printf("j=%i variC=%f\n", j, variC[j]);
                     }
                     */
-                    if ((lp.noisecc < 0.1f && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
+                    if ((lp.noisecc < 0.02f && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
 //                        printf("SANS SANS\n");
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
@@ -6062,7 +6062,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             }
 
             if (!Ldecomp.memoryAllocationFailed && aut == 0) {
-                if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f)  && levred == 7  && lp.noiseldetail != 100.f) {
+                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f)  && levred == 7  && lp.noiseldetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
@@ -6085,7 +6085,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (!adecomp.memoryAllocationFailed && aut == 0) {
-                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && levred == 7  && lp.noisechrodetail != 100.f) {
+                if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f)  && levred == 7  && lp.noisechrodetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
                 }
             }
@@ -6110,7 +6110,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
             if (!bdecomp.memoryAllocationFailed && aut == 0) {
-                if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f)  && levred == 7  && lp.noisechrodetail != 100.f) {
+                if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f)  && levred == 7  && lp.noisechrodetail != 100.f) {
                     fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
                 }
 
@@ -6300,7 +6300,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
 
 
-                        if ((lp.noiselc < 1.f  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
+                        if ((lp.noiselc < 0.02f  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                         } else {
                             WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
@@ -6513,7 +6513,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             float k5 = 0.f;
                             float k6 = 0.f;
 
-                            if ((lp.noisecc == 0.1f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
+                            if ((lp.noisecc == 0.01f && aut == 0) || (maxccoarse == 0.1f && aut == 1)) {
                                 k4 = 0.f;
                                 k5 = 0.0f;
                             } else if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
@@ -6595,7 +6595,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
 //                   printf("OK CHRO\n");
 
-                        if ((lp.noisecc < 0.1f && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
+                        if ((lp.noisecc < 0.02f && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
 //                       printf("SANS Shrink\n");
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
@@ -6633,7 +6633,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 if (!Ldecomp.memoryAllocationFailed && aut == 0) {
 
 
-                    if ((lp.noiself >= 0.1f ||  lp.noiself0 >= 0.1f ||  lp.noiself2 >= 0.1f || lp.noiselc >= 0.1f) && levred == 7 && lp.noiseldetail != 100.f) {
+                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
                     }
                 }
@@ -6656,7 +6656,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
                 if (!adecomp.memoryAllocationFailed && aut == 0) {
-                    if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
+                    if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
                     }
                 }
@@ -6679,7 +6679,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
                 if (!bdecomp.memoryAllocationFailed && aut == 0) {
-                    if ((lp.noisecf >= 0.1f ||  lp.noisecc >= 0.1f) && levred == 7  && lp.noisechrodetail != 100.f) {
+                    if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
                     }
                 }

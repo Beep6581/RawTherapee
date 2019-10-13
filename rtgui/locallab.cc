@@ -34,8 +34,8 @@
 #include "labgrid.h"
 
 #define MINCHRO 0.
-#define MAXCHRO 150
-#define MAXCHROCC 100
+#define MAXCHRO 150.
+#define MAXCHROCC 100.
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
 #define CENTERNEIGH 200
@@ -327,15 +327,15 @@ Locallab::Locallab():
     slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     // Denoise
-    noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 1, 0))),
-    noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 1, 0))),
-    noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 1, 0))),
-    noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
-    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0, 100, 1, 0))),
+    noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
+    noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 0.))),
     noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
-    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 1, 0))),
-    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 1, 0))),
-    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0, 100, 1, 0))),
+    noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
+    noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
+    noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 0.))),
     adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-red-small.png"))))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 20))),
@@ -3378,15 +3378,15 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
 
                     // Denoise
                     pp->locallab.spots.at(pp->locallab.selspot).expdenoi = expdenoi->getEnabled();
-                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf = noiselumf->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf0 = noiselumf0->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf2 = noiselumf2->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).noiselumc = noiselumc->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).noiselumdetail = noiselumdetail->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf = noiselumf->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf0 = noiselumf0->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noiselumf2 = noiselumf2->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noiselumc = noiselumc->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noiselumdetail = noiselumdetail->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).noiselequal = noiselequal->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).noisechrof = noisechrof->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).noisechroc = noisechroc->getIntValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).noisechrodetail = noisechrodetail->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noisechrof = noisechrof->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noisechroc = noisechroc->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).noisechrodetail = noisechrodetail->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).adjblur = adjblur->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).bilateral = bilateral->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).sensiden = sensiden->getIntValue();

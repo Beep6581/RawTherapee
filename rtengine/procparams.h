@@ -1215,15 +1215,15 @@ struct LocallabParams {
         double lapmaskcb;
         // Denoise
         bool expdenoi;
-        int noiselumf;
-        int noiselumf0;
-        int noiselumf2;
-        int noiselumc;
-        int noiselumdetail;
+        double noiselumf;
+        double noiselumf0;
+        double noiselumf2;
+        double noiselumc;
+        double noiselumdetail;
         int noiselequal;
-        int noisechrof;
-        int noisechroc;
-        int noisechrodetail;
+        double noisechrof;
+        double noisechroc;
+        double noisechrodetail;
         int adjblur;
         int bilateral;
         int sensiden;
