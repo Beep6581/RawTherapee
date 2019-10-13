@@ -246,8 +246,8 @@ Locallab::Locallab():
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), 1.5, 1000.0, 0.1, 1.5))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
-    guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 1, 300, 1, 1))),
-    epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), 1, 500, 1, 10))),
+    guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
+    epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
     blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -360,6 +360,7 @@ Locallab::Locallab():
     // Blur & Noise
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    fftwbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW2")))),
     //TM
     equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     enatmMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -1937,6 +1938,7 @@ Locallab::Locallab():
 
     expblur->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expblur));
     enableblurConn = expblur->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expblur));
+    fftwblConn  = fftwbl->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwblChanged));
 
     blMethod->append(M("TP_LOCALLAB_BLUR"));
     blMethod->append(M("TP_LOCALLAB_BLMED"));
@@ -2076,6 +2078,7 @@ Locallab::Locallab():
 
     ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
     blurrBox->pack_start(*blMethod);
+    blurrBox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
     blurrBox->pack_start(*radius);
     blurrBox->pack_start(*strength);
     blurrBox->pack_start(*medMethod);
@@ -3250,6 +3253,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskbl = gammaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskbl = slomaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskbl = lapmaskbl->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fftwbl = fftwbl->get_active();
 
                     // Tone Mapping
                     pp->locallab.spots.at(pp->locallab.selspot).exptonemap = exptonemap->getEnabled();
@@ -3545,6 +3549,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskbl = pe->locallab.spots.at(pp->locallab.selspot).gammaskbl || gammaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskbl = pe->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fftwbl = pe->locallab.spots.at(pp->locallab.selspot).fftwbl || !fftwbl->get_inconsistent();
                         // Tone Mapping
                         pe->locallab.spots.at(pp->locallab.selspot).exptonemap = pe->locallab.spots.at(pp->locallab.selspot).activlum || !exptonemap->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).stren = pe->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
@@ -3827,6 +3832,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskbl = pedited->locallab.spots.at(pp->locallab.selspot).gammaskbl || gammaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl = pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fftwbl = pedited->locallab.spots.at(pp->locallab.selspot).fftwbl || !fftwbl->get_inconsistent();
                         // Tone Mapping
                         pedited->locallab.spots.at(pp->locallab.selspot).exptonemap = pedited->locallab.spots.at(pp->locallab.selspot).exptonemap || !exptonemap->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).stren = pedited->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
@@ -4346,6 +4352,7 @@ void Locallab::blMethodChanged()
     // printf("blMethodChanged\n");
     if (blMethod->get_active_row_number() == 0) {
         radius->show();
+        fftwbl->show();
         strength->show();
         itera->hide();
         medMethod->hide();
@@ -4354,6 +4361,7 @@ void Locallab::blMethodChanged()
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
         radius->hide();
+        fftwbl->hide();
         strength->hide();
         itera->show();
         medMethod->show();
@@ -4362,6 +4370,7 @@ void Locallab::blMethodChanged()
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
         radius->hide();
+        fftwbl->hide();
         strength->hide();
         itera->hide();
         medMethod->hide();
@@ -4885,6 +4894,29 @@ void Locallab::enablMaskChanged()
     }
 }
 
+void Locallab::fftwblChanged()
+{
+    // printf("fftwblChanged\n");
+
+    if (multiImage) {
+        if (fftwbl->get_inconsistent()) {
+            fftwbl->set_inconsistent(false);
+            fftwblConn.block(true);
+            fftwbl->set_active(false);
+            fftwblConn.block(false);
+        }
+    }
+
+    if (getEnabled() && expblur->getEnabled()) {
+        if (listener) {
+            if (fftwbl->get_active()) {
+                listener->panelChanged(Evlocallabfftwbl, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged(Evlocallabfftwbl, M("GENERAL_DISABLED"));
+            }
+        }
+    }
+}
 
 
 void Locallab::enatmMaskChanged()
@@ -7550,6 +7582,7 @@ void Locallab::enableListener()
     medMethodConn.block(false);
     activlumConn.block(false);
     enablMaskConn.block(false);
+    fftwblConn.block(false);
     showmaskblMethodConn.block(false);
     // Tone Mapping
     enabletonemapConn.block(false);
@@ -7628,6 +7661,7 @@ void Locallab::disableListener()
     medMethodConn.block(true);
     activlumConn.block(true);
     enablMaskConn.block(true);
+    fftwblConn.block(true);
     showmaskblMethodConn.block(true);
     // Tone Mapping
     enabletonemapConn.block(true);
@@ -7872,6 +7906,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskbl->setValue(pp->locallab.spots.at(index).gammaskbl);
         slomaskbl->setValue(pp->locallab.spots.at(index).slomaskbl);
         lapmaskbl->setValue(pp->locallab.spots.at(index).lapmaskbl);
+        fftwbl->set_active(pp->locallab.spots.at(index).fftwbl);
 
         // Tone Mapping
         exptonemap->setEnabled(pp->locallab.spots.at(index).exptonemap);
@@ -8212,6 +8247,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gammaskbl->setEditedState(spotState->gammaskbl ? Edited : UnEdited);
                 slomaskbl->setEditedState(spotState->slomaskbl ? Edited : UnEdited);
                 lapmaskbl->setEditedState(spotState->lapmaskbl ? Edited : UnEdited);
+                fftwbl->set_inconsistent(multiImage && !spotState->fftwbl);
 
                 // Tone Mapping
                 exptonemap->set_inconsistent(!spotState->exptonemap);
@@ -8545,6 +8581,7 @@ void Locallab::updateSpecificGUIState()
 
     if (blMethod->get_active_row_number() == 0) {
         radius->show();
+        fftwbl->show();
         strength->show();
         itera->hide();
         medMethod->hide();
@@ -8553,6 +8590,7 @@ void Locallab::updateSpecificGUIState()
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
         radius->hide();
+        fftwbl->hide();
         strength->hide();
         itera->show();
         medMethod->show();
@@ -8561,6 +8599,7 @@ void Locallab::updateSpecificGUIState()
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
         radius->hide();
+        fftwbl->hide();
         strength->hide();
         itera->hide();
         medMethod->hide();

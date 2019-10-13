@@ -974,7 +974,7 @@ HISTORY_MSG_730;Local - Blur method
 HISTORY_MSG_731;Local - median method
 HISTORY_MSG_732;Local - median iterations
 HISTORY_MSG_733;Local - soft radius
-HISTORY_MSG_734;Local - threshold
+HISTORY_MSG_734;Local - detail
 HISTORY_MSG_738;Local - Local contrast Merge L
 HISTORY_MSG_739;Local - Local contrast Soft radius
 HISTORY_MSG_740;Local - Local contrast Merge C
@@ -1003,6 +1003,7 @@ HISTORY_MSG_762;Local - cbdl Laplacian mask
 HISTORY_MSG_763;Local - Blur Laplacian mask
 HISTORY_MSG_764;Local - Solve PDE Laplacian mask
 HISTORY_MSG_765;Local - deNoise Detail threshold
+HISTORY_MSG_766;Local - Blur Fast Fourier
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2083,7 +2084,7 @@ TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:
 TP_LOCALLAB_BLMED;Median
 TP_LOCALLAB_BLGUID;Guided Filter Luminance
 TP_LOCALLAB_GUIDBL;Soft radius
-TP_LOCALLAB_EPSBL;Threshold
+TP_LOCALLAB_EPSBL;Detail
 TP_LOCALLAB_SCALERETI;Scale
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
 TP_LOCALLAB_BLUFR;Smooth - Blur & Noise 

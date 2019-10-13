@@ -1101,6 +1101,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gammaskbl = locallab.spots.at(j).gammaskbl && pSpot.gammaskbl == otherSpot.gammaskbl;
                 locallab.spots.at(j).slomaskbl = locallab.spots.at(j).slomaskbl && pSpot.slomaskbl == otherSpot.slomaskbl;
                 locallab.spots.at(j).lapmaskbl = locallab.spots.at(j).lapmaskbl && pSpot.lapmaskbl == otherSpot.lapmaskbl;
+                locallab.spots.at(j).fftwbl = locallab.spots.at(j).fftwbl && pSpot.fftwbl == otherSpot.fftwbl;
                 // Tone Mapping
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
                 locallab.spots.at(j).stren = locallab.spots.at(j).stren && pSpot.stren == otherSpot.stren;
@@ -3246,6 +3247,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).enablMask = mods.locallab.spots.at(i).enablMask;
         }
 
+        if (locallab.spots.at(i).fftwbl) {
+            toEdit.locallab.spots.at(i).fftwbl = mods.locallab.spots.at(i).fftwbl;
+        }
+
         if (locallab.spots.at(i).blendmaskbl) {
             toEdit.locallab.spots.at(i).blendmaskbl = mods.locallab.spots.at(i).blendmaskbl;
         }
@@ -4843,6 +4848,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LLmaskblcurve(v),
     HHmaskblcurve(v),
     enablMask(v),
+    fftwbl(v),
     blendmaskbl(v),
     radmaskbl(v),
     chromaskbl(v),
@@ -5118,6 +5124,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LLmaskblcurve = v;
     HHmaskblcurve = v;
     enablMask = v;
+    fftwbl = v;
     blendmaskbl = v;
     radmaskbl = v;
     chromaskbl = v;

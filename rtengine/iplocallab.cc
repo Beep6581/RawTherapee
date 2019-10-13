@@ -772,7 +772,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.slomabl = slomaskbl;
     lp.it = itera;
     lp.guidb = guidbl;
-    lp.epsb = 0.01f * epsbl;
+    lp.epsb = epsbl;
     lp.struexp = structexpo;
     lp.blurexp = blurexpo;
     lp.blurcol = blurcolor;
@@ -6656,7 +6656,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
                 if (!adecomp.memoryAllocationFailed && aut == 0) {
-                    if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7  && lp.noisechrodetail != 100.f) {
+                    if ((lp.noisecf >= 0.001f ||  lp.noisecc >= 0.001f) && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
                     }
                 }
@@ -6679,7 +6679,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 }
 
                 if (!bdecomp.memoryAllocationFailed && aut == 0) {
-                    if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7  && lp.noisechrodetail != 100.f) {
+                    if ((lp.noisecf >= 0.001f ||  lp.noisecc >= 0.001f) && levred == 7  && lp.noisechrodetail != 100.f) {
                         fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
                     }
                 }
@@ -7023,7 +7023,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 
-        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             std::unique_ptr<LabImage> tmp1;
             std::unique_ptr<LabImage> tmp2;
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -7032,6 +7032,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int xend = std::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
+            bool fft = params->locallab.spots.at(sp).fftwbl;
 
             if (bfw >= mSP && bfh >= mSP) {
 
@@ -7082,9 +7083,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #ifdef _OPENMP
                         #pragma omp parallel
 #endif
-
                         {
-                            if (radius > 200.f  && call == 2) //to test not optimize
+                            if (fft  && call == 2)
                             {
                                 ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, bfw, bfh, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, bfw, bfh, radius, 0, 0);
@@ -7103,7 +7103,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         #pragma omp parallel
 #endif
                         {
-                            if (radius > 200.f && call == 2) //to test not optimize
+                            if (fft && call == 2)
                             {
                                 ImProcFunctions::fftw_convol_blur2(tmp1->L, tmp1->L, GW, GH, radius, 0, 0);
                                 ImProcFunctions::fftw_convol_blur2(tmp1->a, tmp1->a, GW, GH, radius, 0, 0);
@@ -7187,7 +7187,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (lp.blurmet == 0  && lp.blmet == 2) {
 
-                        if (lp.guidb > 1) {
+                        if (lp.guidb > 0) {
                             lp.actsp = true;
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
@@ -7200,28 +7200,63 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 }
                             }
 
-                            double thresM = 0.05 * lp.epsb;
-                            double thresm = 0.001 * lp.epsb;
-                            softproc(bufgb.get(), tmp1.get(), 3.f * lp.guidb, bfh, bfw, thresM, thresm, 0.1f, sk, multiThread, 0);
+                            array2D<float> LL(bfw, bfh);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+                            for (int y = 0; y < bfh ; y++) {
+                                for (int x = 0; x < bfw; x++) {
+                                    LL[y][x] = tmp1->L[y][x];
+                                }
+                            }
+                            int r = max(int(lp.guidb / sk), 1);
+                            
+                            const float epsil = 0.001f * std::pow(2, - lp.epsb);
+                            rtengine::guidedFilterLog(10.f, LL, r, epsil, multiThread);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+                            for (int y = 0; y < bfh ; y++) {
+                                for (int x = 0; x < bfw; x++) {
+                                    tmp1->L[y][x] = LL[y][x];
+                                }
+                            }
                         }
 
                     } else if (lp.blurmet == 1  && lp.blmet == 2) {
-                        if (lp.guidb > 1) {
+                        if (lp.guidb > 0) {
                             lp.actsp = true;
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                             for (int y = 0; y < GH ; y++) {
-                                for (int x = 0; x < GH; x++) {
+                                for (int x = 0; x < GW; x++) {
                                     tmp1->L[y][x] = original->L[y][x];
                                     tmp2->L[y][x] = original->L[y][x];
                                 }
                             }
-
-                            double thresM = 0.05 * lp.epsb;
-                            double thresm = 0.001 * lp.epsb;
-                            softproc(tmp2.get(), tmp1.get(), 3.f * lp.guidb, GH, GW, thresM, thresm, 0.1f, sk, multiThread, 0);
+                            array2D<float> LLI(GW, GH);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+                            for (int y = 0; y < GH ; y++) {
+                                for (int x = 0; x < GW; x++) {
+                                    LLI[y][x] = tmp1->L[y][x];
+                                }
+                            }
+                            
+                            int r = max(int(lp.guidb / sk), 1);
+                            const float epsil = 0.001f * std::pow(2, - lp.epsb);
+                            rtengine::guidedFilterLog(10.f, LLI, r, epsil, multiThread);
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+#endif
+                            for (int y = 0; y < GH ; y++) {
+                                for (int x = 0; x < GW; x++) {
+                                    tmp1->L[y][x] = LLI[y][x];
+                                }
+                            }
                         }
 
                     }

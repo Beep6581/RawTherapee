@@ -321,6 +321,8 @@ private:
     sigc::connection activlumConn;
     Gtk::CheckButton* const enablMask;
     sigc::connection enablMaskConn;
+    Gtk::CheckButton* const fftwbl;
+    sigc::connection fftwblConn;
     //Tone mapping
     Gtk::CheckButton* const equiltm;
     sigc::connection equiltmConn;
@@ -481,6 +483,7 @@ private:
     // Blur & Noise
     void activlumChanged();
     void enablMaskChanged();
+    void fftwblChanged();
     //TM
     void equiltmChanged();
     void enatmMaskChanged();
