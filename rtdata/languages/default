@@ -1004,6 +1004,9 @@ HISTORY_MSG_763;Local - Blur Laplacian mask
 HISTORY_MSG_764;Local - Solve PDE Laplacian mask
 HISTORY_MSG_765;Local - deNoise Detail threshold
 HISTORY_MSG_766;Local - Blur Fast Fourier
+HISTORY_MSG_767;Local - Grain Iso
+HISTORY_MSG_768;Local - Grain Strength
+HISTORY_MSG_769;Local - Grain Scale
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2079,7 +2082,7 @@ TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\nMasks with this ability are marked '+'\nThe number indicates the order of use of the masks.\n\nYou can combine the mask associated with the tool with an inverse mask.\nIn this case the new tool associated with the mask must be selected in inverse; you must use the tool with very small values (ex Exposure 0.01)
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_BLENDMASKCOL;Blend
-TP_LOCALLAB_BLUR;Gaussian Blur and Noise
+TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n*Blur the background by a RT-spot fully covering the image (high values for scope and transition) - normal or inverse.\n*Isolate the foreground by one or more excluding RT-spot with the tools you want (increse scope), you can use a mask to enhance and amplify the effects 
 TP_LOCALLAB_BLMED;Median
 TP_LOCALLAB_BLGUID;Guided Filter Luminance
@@ -2087,7 +2090,11 @@ TP_LOCALLAB_GUIDBL;Soft radius
 TP_LOCALLAB_EPSBL;Detail
 TP_LOCALLAB_SCALERETI;Scale
 TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct blur and noise with all settings.\nInverse - Inverse blur and noise without scope and whithout enhanced algorithm.\nSymmetric - inverse blur and noise with all settings. Be careful some results may be curious
-TP_LOCALLAB_BLUFR;Smooth - Blur & Noise 
+TP_LOCALLAB_BLUFR;Smooth - Blur - Noise - Grain
+TP_LOCALLAB_GRAINFRA;Film Grain   1:1
+TP_LOCALLAB_ISOGR;Coarseness (ISO)
+TP_LOCALLAB_STRENGR;Strength
+TP_LOCALLAB_SCALEGR;Scale
 TP_LOCALLAB_BLURDE;Blur Shape detection
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLINV;Inverse

@@ -1094,6 +1094,9 @@ struct LocallabParams {
         int sensibn;
         int itera;
         int guidbl;
+        int isogr;
+        int strengr;
+        int scalegr;
         int epsbl;
         Glib::ustring blMethod;
         Glib::ustring blurMethod;

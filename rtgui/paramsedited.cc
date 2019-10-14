@@ -1086,6 +1086,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensibn = locallab.spots.at(j).sensibn && pSpot.sensibn == otherSpot.sensibn;
                 locallab.spots.at(j).itera = locallab.spots.at(j).itera && pSpot.itera == otherSpot.itera;
                 locallab.spots.at(j).guidbl = locallab.spots.at(j).guidbl && pSpot.guidbl == otherSpot.guidbl;
+                locallab.spots.at(j).isogr = locallab.spots.at(j).isogr && pSpot.isogr == otherSpot.isogr;
+                locallab.spots.at(j).strengr = locallab.spots.at(j).strengr && pSpot.strengr == otherSpot.strengr;
                 locallab.spots.at(j).epsbl = locallab.spots.at(j).epsbl && pSpot.epsbl == otherSpot.epsbl;
                 locallab.spots.at(j).blMethod = locallab.spots.at(j).blMethod && pSpot.blMethod == otherSpot.blMethod;
                 locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
@@ -3211,6 +3213,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).guidbl = mods.locallab.spots.at(i).guidbl;
         }
 
+        if (locallab.spots.at(i).isogr) {
+            toEdit.locallab.spots.at(i).isogr = mods.locallab.spots.at(i).isogr;
+        }
+
+        if (locallab.spots.at(i).strengr) {
+            toEdit.locallab.spots.at(i).strengr = mods.locallab.spots.at(i).strengr;
+        }
+
+        if (locallab.spots.at(i).scalegr) {
+            toEdit.locallab.spots.at(i).scalegr = mods.locallab.spots.at(i).scalegr;
+        }
+
         if (locallab.spots.at(i).epsbl) {
             toEdit.locallab.spots.at(i).epsbl = mods.locallab.spots.at(i).epsbl;
         }
@@ -4838,6 +4852,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     strength(v),
     sensibn(v),
     itera(v),
+    isogr(v),
+    strengr(v),
+    scalegr(v),
     guidbl(v),
     epsbl(v),
     blMethod(v),
@@ -5114,6 +5131,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     strength = v;
     sensibn = v;
     itera = v;
+    isogr = v;
+    strengr = v;
+    scalegr = v;
     guidbl = v;
     epsbl = v;
     blMethod = v;

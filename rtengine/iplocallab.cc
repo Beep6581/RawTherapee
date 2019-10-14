@@ -5444,6 +5444,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
     const int detail_thresh = lp.detailthr;
     array2D<float> mask;
     float scalea = 1.f;
+
     if (detail_thresh > 0) {
         mask(GW, GH);
         float thr = log2lin(float(detail_thresh) / 200.f, 100.f);
@@ -6832,7 +6833,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         bool blurz = false;
 
-        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
+        if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
             blurz = true;
         }
 
@@ -7023,7 +7024,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         }
 
-        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+        if (((radius > 1.5 * GAUSS_SKIP  && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             std::unique_ptr<LabImage> tmp1;
             std::unique_ptr<LabImage> tmp2;
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -7033,6 +7034,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
             bool fft = params->locallab.spots.at(sp).fftwbl;
+            int isogr = params->locallab.spots.at(sp).isogr;
+            int strengr = params->locallab.spots.at(sp).strengr;
+            int scalegr = params->locallab.spots.at(sp).scalegr;
 
             if (bfw >= mSP && bfh >= mSP) {
 
@@ -7079,7 +7083,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
 
-                    if (lp.blurmet == 0  && lp.blmet == 0  && radius >= (1.5 * GAUSS_SKIP)) {
+                    if (lp.blurmet == 0  && lp.blmet == 0  && radius > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
 #ifdef _OPENMP
                         #pragma omp parallel
 #endif
@@ -7091,13 +7095,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 ImProcFunctions::fftw_convol_blur2(tmp1->b, tmp1->b, bfw, bfh, radius, 0, 0);
                             } else
                             {
-                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius);
+                                gaussianBlur(tmp1->L, tmp1->L, bfw, bfh, radius); 
                                 gaussianBlur(tmp1->a, tmp1->a, bfw, bfh, radius);
                                 gaussianBlur(tmp1->b, tmp1->b, bfw, bfh, radius);
                             }
                         }
 
-                    } else if (lp.blurmet == 1  && lp.blmet == 0 && radius >= (1.5 * GAUSS_SKIP)) {
+                    } else if (lp.blurmet == 1  && lp.blmet == 0 && radius > (1.5 * GAUSS_SKIP) && lp.rad > 1.6) {
 
 #ifdef _OPENMP
                         #pragma omp parallel
@@ -7118,11 +7122,48 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
 
-
+                    //add noise
                     if (tmp1.get() && lp.stren > 0.1f  && lp.blmet == 0) {
                         float mean = 0.f;//0 best result
                         float variance = lp.stren ;
                         addGaNoise(tmp1.get(), tmp1.get(), mean, variance, sk) ;
+                    }
+
+                    //add grain
+                    if (lp.blmet == 0 && strengr > 0) {
+                        int wi = bfw;
+                        int he = bfh;
+
+                        if (lp.blurmet == 1) {
+                            wi = GW;
+                            he = GH;
+                        }
+
+                        if (tmp1.get()) {
+                            Imagefloat *tmpImage = nullptr;
+                            tmpImage = new Imagefloat(wi, he);
+
+                            for (int y = 0; y < he ; y++) {
+                                for (int x = 0; x < wi; x++) {
+                                    tmpImage->g(y, x) = tmp1->L[y][x];
+                                    tmpImage->r(y, x) = tmp1->a[y][x];
+                                    tmpImage->b(y, x) = tmp1->b[y][x];
+                                }
+                            }
+
+
+                            filmGrain(tmpImage, isogr, strengr, scalegr, wi, he);
+
+                            for (int y = 0; y < he ; y++) {
+                                for (int x = 0; x < wi; x++) {
+                                    tmp1->L[y][x] = tmpImage->g(y, x);
+                                    tmp1->a[y][x] = tmpImage->r(y, x);
+                                    tmp1->b[y][x] = tmpImage->b(y, x);
+                                }
+                            }
+
+                            delete tmpImage;
+                        }
                     }
 
                     Median medianTypeL = Median::TYPE_3X3_STRONG;
@@ -7204,18 +7245,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
+
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     LL[y][x] = tmp1->L[y][x];
                                 }
                             }
+
                             int r = max(int(lp.guidb / sk), 1);
-                            
+
                             const float epsil = 0.001f * std::pow(2, - lp.epsb);
                             rtengine::guidedFilterLog(10.f, LL, r, epsil, multiThread);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
+
                             for (int y = 0; y < bfh ; y++) {
                                 for (int x = 0; x < bfw; x++) {
                                     tmp1->L[y][x] = LL[y][x];
@@ -7236,22 +7280,25 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                     tmp2->L[y][x] = original->L[y][x];
                                 }
                             }
+
                             array2D<float> LLI(GW, GH);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
+
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
                                     LLI[y][x] = tmp1->L[y][x];
                                 }
                             }
-                            
+
                             int r = max(int(lp.guidb / sk), 1);
                             const float epsil = 0.001f * std::pow(2, - lp.epsb);
                             rtengine::guidedFilterLog(10.f, LLI, r, epsil, multiThread);
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16)
 #endif
+
                             for (int y = 0; y < GH ; y++) {
                                 for (int x = 0; x < GW; x++) {
                                     tmp1->L[y][x] = LLI[y][x];

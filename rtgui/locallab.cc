@@ -255,6 +255,9 @@ Locallab::Locallab():
     gammaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
+    strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
+    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
     // Tone Mapping
     stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
     gamma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAM"), 0.4, 4.0, 0.11, 1.0))),
@@ -430,6 +433,7 @@ Locallab::Locallab():
     retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
     residFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RESID")))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
+    grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
 //    retiBox(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     retiBox(Gtk::manage(new ToolParamBlock())),
     maskretiBox(Gtk::manage(new ToolParamBlock())),
@@ -1962,6 +1966,9 @@ Locallab::Locallab():
     }
 
     sensibn->setAdjusterListener(this);
+    isogr->setAdjusterListener(this);
+    strengr->setAdjusterListener(this);
+    scalegr->setAdjusterListener(this);
 
     itera->setAdjusterListener(this);
     guidbl->setAdjusterListener(this);
@@ -2076,11 +2083,23 @@ Locallab::Locallab():
     expmaskbl->add(*maskblBox, false);
     panel->pack_start(*expmaskbl);
 
+
+    grainFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
+    grainBox->pack_start(*isogr);
+    grainBox->pack_start(*strengr);
+    grainBox->pack_start(*scalegr);
+
+    grainFrame->add(*grainBox);
+
+
+
     ToolParamBlock* const blurrBox = Gtk::manage(new ToolParamBlock());
     blurrBox->pack_start(*blMethod);
     blurrBox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
     blurrBox->pack_start(*radius);
     blurrBox->pack_start(*strength);
+    blurrBox->pack_start(*grainFrame);
     blurrBox->pack_start(*medMethod);
     blurrBox->pack_start(*itera);
     blurrBox->pack_start(*guidbl);
@@ -3216,6 +3235,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).itera = itera->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).guidbl = guidbl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).epsbl = epsbl->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).isogr = isogr->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).strengr = strengr->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).scalegr = scalegr->getIntValue();
 
                     if (blMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).blMethod = "blur";
@@ -3533,6 +3555,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).strength = pe->locallab.spots.at(pp->locallab.selspot).strength || strength->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).sensibn = pe->locallab.spots.at(pp->locallab.selspot).sensibn || sensibn->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).itera = pe->locallab.spots.at(pp->locallab.selspot).itera || itera->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).isogr = pe->locallab.spots.at(pp->locallab.selspot).isogr || isogr->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).strengr = pe->locallab.spots.at(pp->locallab.selspot).strengr || strengr->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).scalegr = pe->locallab.spots.at(pp->locallab.selspot).scalegr || scalegr->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).guidbl = pe->locallab.spots.at(pp->locallab.selspot).guidbl || guidbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).epsbl = pe->locallab.spots.at(pp->locallab.selspot).epsbl || epsbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).blMethod = pe->locallab.spots.at(pp->locallab.selspot).blMethod || blMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -3816,6 +3841,9 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).strength = pedited->locallab.spots.at(pp->locallab.selspot).strength || strength->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).sensibn = pedited->locallab.spots.at(pp->locallab.selspot).sensibn || sensibn->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).itera = pedited->locallab.spots.at(pp->locallab.selspot).itera || itera->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).isogr = pedited->locallab.spots.at(pp->locallab.selspot).isogr || isogr->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).strengr = pedited->locallab.spots.at(pp->locallab.selspot).strengr || strengr->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).scalegr = pedited->locallab.spots.at(pp->locallab.selspot).scalegr || scalegr->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).guidbl = pedited->locallab.spots.at(pp->locallab.selspot).guidbl || guidbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).epsbl = pedited->locallab.spots.at(pp->locallab.selspot).epsbl || epsbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).blMethod = pedited->locallab.spots.at(pp->locallab.selspot).blMethod || blMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -4355,6 +4383,10 @@ void Locallab::blMethodChanged()
         fftwbl->show();
         strength->show();
         itera->hide();
+        grainFrame->show();
+        isogr->show();
+        strengr->show();
+        scalegr->show();
         medMethod->hide();
         guidbl->hide();
         epsbl->hide();
@@ -4362,6 +4394,10 @@ void Locallab::blMethodChanged()
     } else if (blMethod->get_active_row_number() == 1) {
         radius->hide();
         fftwbl->hide();
+        grainFrame->hide();
+        isogr->hide();
+        strengr->hide();
+        scalegr->hide();
         strength->hide();
         itera->show();
         medMethod->show();
@@ -4372,6 +4408,10 @@ void Locallab::blMethodChanged()
         radius->hide();
         fftwbl->hide();
         strength->hide();
+        grainFrame->hide();
+        isogr->hide();
+        strengr->hide();
+        scalegr->hide();
         itera->hide();
         medMethod->hide();
         guidbl->show();
@@ -5682,6 +5722,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     strength->setDefault((double)defSpot->strength);
     sensibn->setDefault((double)defSpot->sensibn);
     itera->setDefault((double)defSpot->itera);
+    isogr->setDefault((double)defSpot->isogr);
+    strengr->setDefault((double)defSpot->strengr);
+    scalegr->setDefault((double)defSpot->scalegr);
     guidbl->setDefault((double)defSpot->guidbl);
     epsbl->setDefault((double)defSpot->epsbl);
     blendmaskbl->setDefault((double)defSpot->blendmaskbl);
@@ -5855,6 +5898,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         strength->setDefaultEditedState(Irrelevant);
         sensibn->setDefaultEditedState(Irrelevant);
         itera->setDefaultEditedState(Irrelevant);
+        isogr->setDefaultEditedState(Irrelevant);
+        strengr->setDefaultEditedState(Irrelevant);
+        scalegr->setDefaultEditedState(Irrelevant);
         guidbl->setDefaultEditedState(Irrelevant);
         epsbl->setDefaultEditedState(Irrelevant);
         blendmaskbl->setDefaultEditedState(Irrelevant);
@@ -6032,6 +6078,9 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         strength->setDefaultEditedState(defSpotState->strength ? Edited : UnEdited);
         sensibn->setDefaultEditedState(defSpotState->sensibn ? Edited : UnEdited);
         itera->setDefaultEditedState(defSpotState->itera ? Edited : UnEdited);
+        isogr->setDefaultEditedState(defSpotState->isogr ? Edited : UnEdited);
+        strengr->setDefaultEditedState(defSpotState->strengr ? Edited : UnEdited);
+        scalegr->setDefaultEditedState(defSpotState->scalegr ? Edited : UnEdited);
         guidbl->setDefaultEditedState(defSpotState->guidbl ? Edited : UnEdited);
         epsbl->setDefaultEditedState(defSpotState->epsbl ? Edited : UnEdited);
         blendmaskbl->setDefaultEditedState(defSpotState->blendmaskbl ? Edited : UnEdited);
@@ -6593,6 +6642,24 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == itera) {
             if (listener) {
                 listener->panelChanged(Evlocallabitera, itera->getTextValue());
+            }
+        }
+
+        if (a == isogr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabisogr, isogr->getTextValue());
+            }
+        }
+
+        if (a == strengr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrengr, strengr->getTextValue());
+            }
+        }
+
+        if (a == scalegr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabscalegr, scalegr->getTextValue());
             }
         }
 
@@ -7280,6 +7347,9 @@ void Locallab::setBatchMode(bool batchMode)
     strength->showEditedCB();
     sensibn->showEditedCB();
     itera->showEditedCB();
+    isogr->showEditedCB();
+    strengr->showEditedCB();
+    scalegr->showEditedCB();
     guidbl->showEditedCB();
     epsbl->showEditedCB();
     blendmaskbl->showEditedCB();
@@ -7866,6 +7936,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         strength->setValue(pp->locallab.spots.at(index).strength);
         sensibn->setValue(pp->locallab.spots.at(index).sensibn);
         itera->setValue(pp->locallab.spots.at(index).itera);
+        isogr->setValue(pp->locallab.spots.at(index).isogr);
+        strengr->setValue(pp->locallab.spots.at(index).strengr);
+        scalegr->setValue(pp->locallab.spots.at(index).scalegr);
         guidbl->setValue(pp->locallab.spots.at(index).guidbl);
         epsbl->setValue(pp->locallab.spots.at(index).epsbl);
 
@@ -8221,6 +8294,9 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 strength->setEditedState(spotState->strength ? Edited : UnEdited);
                 sensibn->setEditedState(spotState->sensibn ? Edited : UnEdited);
                 itera->setEditedState(spotState->itera ? Edited : UnEdited);
+                isogr->setEditedState(spotState->isogr ? Edited : UnEdited);
+                strengr->setEditedState(spotState->strengr ? Edited : UnEdited);
+                scalegr->setEditedState(spotState->scalegr ? Edited : UnEdited);
                 guidbl->setEditedState(spotState->guidbl ? Edited : UnEdited);
                 epsbl->setEditedState(spotState->epsbl ? Edited : UnEdited);
 
@@ -8584,6 +8660,10 @@ void Locallab::updateSpecificGUIState()
         fftwbl->show();
         strength->show();
         itera->hide();
+        isogr->show();
+        grainFrame->show();
+        strengr->show();
+        scalegr->show();
         medMethod->hide();
         guidbl->hide();
         epsbl->hide();
@@ -8592,6 +8672,10 @@ void Locallab::updateSpecificGUIState()
         radius->hide();
         fftwbl->hide();
         strength->hide();
+        grainFrame->hide();
+        isogr->hide();
+        strengr->hide();
+        scalegr->hide();
         itera->show();
         medMethod->show();
         guidbl->hide();
@@ -8601,6 +8685,10 @@ void Locallab::updateSpecificGUIState()
         radius->hide();
         fftwbl->hide();
         strength->hide();
+        isogr->hide();
+        grainFrame->hide();
+        strengr->hide();
+        scalegr->hide();
         itera->hide();
         medMethod->hide();
         guidbl->show();

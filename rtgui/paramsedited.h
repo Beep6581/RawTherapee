@@ -503,6 +503,9 @@ public:
         bool strength;
         bool sensibn;
         bool itera;
+        bool isogr;
+        bool strengr;
+        bool scalegr;
         bool guidbl;
         bool epsbl;
         bool blMethod;

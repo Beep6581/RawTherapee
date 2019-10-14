@@ -203,6 +203,9 @@ private:
     Adjuster* const gammaskbl;
     Adjuster* const slomaskbl;
     Adjuster* const lapmaskbl;
+    Adjuster* const isogr;
+    Adjuster* const strengr;
+    Adjuster* const scalegr;
     // Tone Mapping
     Adjuster* const stren;
     Adjuster* const gamma;
@@ -427,6 +430,7 @@ private:
     Gtk::Frame* retitoolFrame;
     Gtk::Frame* residFrame;
     Gtk::Frame* clariFrame;
+    Gtk::Frame* grainFrame;
     ToolParamBlock * retiBox;
     ToolParamBlock * maskretiBox;
     LabGrid *labgrid;
