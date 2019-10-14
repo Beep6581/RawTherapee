@@ -520,6 +520,26 @@ void CurveFactory::curveexLocal(bool & localexutili, const std::vector<double>& 
 
 }
 
+void CurveFactory::curvemaskLocal(bool & localmaskutili, const std::vector<double>& curvePoints, LUTf & LocalmaskCurve, int skip)
+{
+    bool needed = false;
+    std::unique_ptr<DiagonalCurve> dCurve;
+
+//    if (localexutili && !curvePoints.empty() && curvePoints[0] != 0) {
+    if (!curvePoints.empty() && curvePoints[0] != 0) {
+        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
+
+        if (dCurve && !dCurve->isIdentity()) {
+            needed = true;
+            localmaskutili = true;
+        }
+    }
+
+    fillCurveArray(dCurve.get(), LocalmaskCurve, skip, needed);
+
+}
+
+
 
 void CurveFactory::localLCurve(double br, double contr,  /*const std::vector<double>& curvePoints,*/
                                LUTu & histogram, LUTf & outCurve,

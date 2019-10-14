@@ -155,6 +155,7 @@ Locallab::Locallab():
     llCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LUM"))),
     HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
     maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     // Exposure
     curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
     maskexpCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
@@ -666,6 +667,24 @@ Locallab::Locallab():
     HHmaskshape->setBottomBarColorProvider(this, 6);
 
     maskCurveEditorG->curveListComplete();
+    
+    mask2CurveEditorG->setCurveListener(this);
+    Lmaskshape = static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"));
+    Lmaskshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskcurve.at(0)), defSpot.Lmaskcurve);
+
+    if (showtooltip) {
+        Lmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+
+    std::vector<GradientMilestone> mLmaskshape;
+    mLmaskshape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mLmaskshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    Lmaskshape->setBottomBarBgGradient(mLmaskshape);
+    Lmaskshape->setLeftBarBgGradient(mLmaskshape);
+    mask2CurveEditorG->curveListComplete();
+    
+    
+    
     labgrid = Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")));
 
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
@@ -708,6 +727,7 @@ Locallab::Locallab():
     maskcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
+    maskcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskcol->add(*maskcolBox, false);
     colorBox->pack_start(*expmaskcol);
 
@@ -2210,6 +2230,7 @@ Locallab::~Locallab()
     delete llCurveEditorG;
     delete HCurveEditorG;
     delete maskCurveEditorG;
+    delete mask2CurveEditorG;
     delete curveEditorG;
     delete maskexpCurveEditorG;
     delete maskSHCurveEditorG;
@@ -3125,6 +3146,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskcol = slomaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcol = lapmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = Lmaskshape->getCurve();
                     // Exposure
                     pp->locallab.spots.at(pp->locallab.selspot).expexpose = expexpose->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).expcomp = expcomp->getValue();
@@ -3476,6 +3498,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskcol = pe->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscol = pe->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         // Exposure
                         pe->locallab.spots.at(pp->locallab.selspot).expexpose = pe->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).expcomp = pe->locallab.spots.at(pp->locallab.selspot).expcomp || expcomp->getEditedState();
@@ -3762,6 +3785,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol = pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
                         // Exposure
                         pedited->locallab.spots.at(pp->locallab.selspot).expexpose = pedited->locallab.spots.at(pp->locallab.selspot).expexpose || !expexpose->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).expcomp = pedited->locallab.spots.at(pp->locallab.selspot).expcomp || expcomp->getEditedState();
@@ -4130,6 +4154,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == HHmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == Lmaskshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -7825,6 +7855,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         slomaskcol->setValue(pp->locallab.spots.at(index).slomaskcol);
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
         softradiuscol->setValue(pp->locallab.spots.at(index).softradiuscol);
+        Lmaskshape->setCurve(pp->locallab.spots.at(index).Lmaskcurve);
 
         // Exposure
         expexpose->setEnabled(pp->locallab.spots.at(index).expexpose);
@@ -8200,6 +8231,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 slomaskcol->setEditedState(spotState->slomaskcol ? Edited : UnEdited);
                 lapmaskcol->setEditedState(spotState->lapmaskcol ? Edited : UnEdited);
                 softradiuscol->setEditedState(spotState->softradiuscol ? Edited : UnEdited);
+                Lmaskshape->setUnChanged(!spotState->Lmaskcurve);
 
                 // Exposure
                 expexpose->set_inconsistent(!spotState->expexpose);

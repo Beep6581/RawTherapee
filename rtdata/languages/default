@@ -1007,6 +1007,7 @@ HISTORY_MSG_766;Local - Blur Fast Fourier
 HISTORY_MSG_767;Local - Grain Iso
 HISTORY_MSG_768;Local - Grain Strength
 HISTORY_MSG_769;Local - Grain Scale
+HISTORY_MSG_770;Local - Color Mask contrast curve
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2223,6 +2224,7 @@ TP_LOCALLAB_PROXI;DeltaE weakening
 TP_LOCALLAB_THRESDELTAE;Threshold deltaE-scope
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_MASK;Mask:
+TP_LOCALLAB_MASK2;Contrast curve mask
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_PDE;Laplacian & PDE  
 TP_LOCALLAB_RADIUS;Radius

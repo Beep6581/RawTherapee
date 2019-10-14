@@ -381,6 +381,7 @@ public:
     static void curveCCLocal(bool & localcutili, const std::vector<double>& curvePoints, LUTf & LocalCCurve, int skip);
     static void curveskLocal(bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip);
     static void curveexLocal(bool & localexutili, const std::vector<double>& curvePoints, LUTf & LocalexCurve, int skip);
+    static void curvemaskLocal(bool & localmaskutili, const std::vector<double>& curvePoints, LUTf & LocalmaskCurve, int skip);
 
     static void complexsgnCurve(bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
                                 const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,

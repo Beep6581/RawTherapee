@@ -189,7 +189,8 @@ public:
     //locallab
     void maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, /*LabImage * transformed, */int inv, const struct local_params & lp,
                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, bool multiThread,
-                 bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm);
+                 bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, LUTf & lmasklocalcurve, bool & localmaskutili
+);
     void discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t);
     void rex_poisson_dct(float * data, size_t nx, size_t ny, double m);
     void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p);
@@ -210,7 +211,8 @@ public:
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref(LabImage* spotbuffer, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp);
-    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve & locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, LUTf & lllocalcurve,  bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili, 
+    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve & locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, LUTf & lllocalcurve,  bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, LUTf & lmasklocalcurve, bool & localmaskutili,
+                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili, 
                   const LocCCmaskCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili, 
                   const LocCCmaskCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,
                   const LocCCmaskCurve & locccmascbCurve, bool &lcmascbutili, const  LocLLmaskCurve & locllmascbCurve, bool &llmascbutili, const  LocHHmaskCurve & lochhmascbCurve, bool & lhmascbutili,

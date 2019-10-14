@@ -1006,6 +1006,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).LLmaskcurve = locallab.spots.at(j).LLmaskcurve && pSpot.LLmaskcurve == otherSpot.LLmaskcurve;
                 locallab.spots.at(j).HHmaskcurve = locallab.spots.at(j).HHmaskcurve && pSpot.HHmaskcurve == otherSpot.HHmaskcurve;
                 locallab.spots.at(j).softradiuscol = locallab.spots.at(j).softradiuscol && pSpot.softradiuscol == otherSpot.softradiuscol;
+                locallab.spots.at(j).Lmaskcurve = locallab.spots.at(j).Lmaskcurve && pSpot.Lmaskcurve == otherSpot.Lmaskcurve;
                 // Exposure
                 locallab.spots.at(j).expexpose = locallab.spots.at(j).expexpose && pSpot.expexpose == otherSpot.expexpose;
                 locallab.spots.at(j).expcomp = locallab.spots.at(j).expcomp && pSpot.expcomp == otherSpot.expcomp;
@@ -2912,6 +2913,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).softradiuscol = mods.locallab.spots.at(i).softradiuscol;
         }
 
+        if (locallab.spots.at(i).Lmaskcurve) {
+            toEdit.locallab.spots.at(i).Lmaskcurve = mods.locallab.spots.at(i).Lmaskcurve;
+        }
+
         // Exposure
         if (locallab.spots.at(i).expexpose) {
             toEdit.locallab.spots.at(i).expexpose = mods.locallab.spots.at(i).expexpose;
@@ -4773,6 +4778,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LLmaskcurve(v),
     HHmaskcurve(v),
     softradiuscol(v),
+    Lmaskcurve(v),
     // Exposure
     expexpose(v),
     expcomp(v),
@@ -5052,6 +5058,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LLmaskcurve = v;
     HHmaskcurve = v;
     softradiuscol = v;
+    Lmaskcurve = v;
     // Exposure
     expexpose = v;
     expcomp = v;

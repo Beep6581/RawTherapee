@@ -1012,6 +1012,7 @@ struct LocallabParams {
         std::vector<double> LLmaskcurve;
         std::vector<double> HHmaskcurve;
         double softradiuscol;
+        std::vector<double> Lmaskcurve;
         // Exposure
         bool expexpose;
         //   int expcomp;

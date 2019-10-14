@@ -886,6 +886,8 @@ void Crop::update(int todo)
         LUTf cclocalcurve2(65536, 0);
         bool localexutili = parent->localexutili;
         LUTf exlocalcurve2(65536, 0);
+        bool localmaskutili = parent->localmaskutili;
+        LUTf lmasklocalcurve2(65536, 0);
         LUTf hltonecurveloc2(65536, 0); //65536
         LUTf shtonecurveloc2(65536, 0);
         LUTf tonecurveloc2(65536, 0);
@@ -985,6 +987,8 @@ void Crop::update(int todo)
                 localcutili = false;
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve2, sca);
                 CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve2, sca);
+                localmaskutili = false;
+                CurveFactory::curvemaskLocal(localmaskutili, params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve2, sca);
 
 
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1022,7 +1026,7 @@ void Crop::update(int todo)
                 // Locallab mask are only shown for selected spot
                 if (sp == params.locallab.selspot) {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, lllocalcurve2,locallutili,
-                                      loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                                      loclhCurve, lochhCurve, lmasklocalcurve2, localmaskutili, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                       locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                                       locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
@@ -1037,7 +1041,7 @@ void Crop::update(int todo)
                     }
                 } else {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve, lllocalcurve2,locallutili,
-                                      loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
+                                      loclhCurve, lochhCurve, lmasklocalcurve2, localmaskutili, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
                                       locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                       locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                                       locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,

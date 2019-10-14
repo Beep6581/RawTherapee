@@ -74,6 +74,8 @@ private:
     CurveEditorGroup* const llCurveEditorG;
     CurveEditorGroup* const HCurveEditorG;
     CurveEditorGroup* const maskCurveEditorG;
+    CurveEditorGroup* const mask2CurveEditorG;
+    DiagonalCurveEditor* Lmaskshape;
     DiagonalCurveEditor* llshape;
     DiagonalCurveEditor* ccshape;
     FlatCurveEditor* LHshape;

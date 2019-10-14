@@ -1124,6 +1124,7 @@ private:
             LUTf tonecurveloc(65536, 0);
             LUTf lightCurveloc(32770, 0);
             LUTf exlocalcurve(65536, 0);
+            LUTf lmasklocalcurve(65536, 0);
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
@@ -1144,6 +1145,9 @@ private:
                 bool localcutili = false;
                 bool localexutili = false;
                 bool llmasutili = false;
+                bool lhmasutili = false;
+                bool lcmasutili = false;
+                bool localmaskutili = false;
                 bool lcmasexputili = false;
                 bool lhmasexputili = false;
                 bool llmasexputili = false;
@@ -1163,8 +1167,6 @@ private:
                 bool lhmasblutili = false;
                 bool llmasblutili = false;
                 bool locwavutili = false;
-                bool lcmasutili = false;
-                bool lhmasutili = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
@@ -1194,6 +1196,7 @@ private:
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
                 CurveFactory::curveexLocal(localexutili, params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
+                CurveFactory::curvemaskLocal(localmaskutili, params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
                 double black = params.locallab.spots.at(sp).black;
@@ -1227,7 +1230,8 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve, locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                ipf.Lab_Local(2, sp, (float**)shbuffer, labView, labView, reservView, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve, lochhCurve, lmasklocalcurve, localmaskutili,
+                              locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                               locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
                               locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
