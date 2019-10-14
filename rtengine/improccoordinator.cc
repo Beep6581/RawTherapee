@@ -1059,6 +1059,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 lightCurveloc.clear();
                 cclocalcurve.clear();
                 exlocalcurve.clear();
+                lmasklocalcurve.clear();
                 hltonecurveloc.clear();
                 shtonecurveloc.clear();
                 tonecurveloc.clear();

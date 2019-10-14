@@ -1055,6 +1055,7 @@ void Crop::update(int todo)
                 lightCurveloc2.clear();
                 cclocalcurve2.clear();
                 exlocalcurve2.clear();
+                lmasklocalcurve2.clear();
                 hltonecurveloc2.clear();
                 shtonecurveloc2.clear();
                 tonecurveloc2.clear();

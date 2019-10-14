@@ -1247,6 +1247,7 @@ private:
                 cclocalcurve.clear();
                 exlocalcurve.clear();
                 hltonecurveloc.clear();
+                lmasklocalcurve.clear();
                 shtonecurveloc.clear();
                 tonecurveloc.clear();
                 lightCurveloc.clear();
