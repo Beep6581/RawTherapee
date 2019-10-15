@@ -118,6 +118,8 @@ private:
     CurveEditorGroup* const LocalcurveEditortransT;
     CurveEditorGroup* const LocalcurveEditorgainT;
     CurveEditorGroup* const maskretiCurveEditorG;
+    CurveEditorGroup* const mask2retiCurveEditorG;
+    DiagonalCurveEditor* Lmaskretishape;
     FlatCurveEditor* cTtransshape;
     FlatCurveEditor* cTgainshape;
     FlatCurveEditor* CCmaskretishape;

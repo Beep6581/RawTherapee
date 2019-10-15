@@ -237,6 +237,7 @@ protected:
     LUTf lmaskexplocalcurve;
     LUTf lmaskSHlocalcurve;
     LUTf lmasktmlocalcurve;
+    LUTf lmaskretilocalcurve;
 //    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
@@ -276,6 +277,7 @@ protected:
     bool localmaskexputili;
     bool localmaskSHutili;
     bool localmasktmutili;
+    bool localmaskretiutili;
     bool lcmasexputili;
     bool lhmasexputili;
     bool llmasexputili;

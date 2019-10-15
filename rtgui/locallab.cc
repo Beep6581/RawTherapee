@@ -175,6 +175,7 @@ Locallab::Locallab():
     LocalcurveEditortransT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONMAP"))),
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2retiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     //Local contrast
     LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
 
@@ -1366,10 +1367,7 @@ Locallab::Locallab():
     Lmasktmshape->setBottomBarBgGradient(mLmasktmshape);
     Lmasktmshape->setLeftBarBgGradient(mLmasktmshape);
     mask2tmCurveEditorG->curveListComplete();
-    
-    
-    
-    
+
     enatmMaskConn = enatmMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enatmMaskChanged));
     enatmMaskaftConn = enatmMaskaft->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enatmMaskaftChanged));
 
@@ -1594,6 +1592,22 @@ Locallab::Locallab():
     HHmaskretishape->setBottomBarColorProvider(this, 6);
 
     maskretiCurveEditorG->curveListComplete();
+
+    mask2retiCurveEditorG->setCurveListener(this);
+    Lmaskretishape = static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
+    Lmaskretishape->setResetCurve(DiagonalCurveType(defSpot.Lmaskreticurve.at(0)), defSpot.Lmaskreticurve);
+
+    if (showtooltip) {
+        Lmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+
+    std::vector<GradientMilestone> mLmaskretishape;
+    mLmaskretishape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mLmaskretishape.push_back(GradientMilestone(1., 1., 1., 1.));
+    Lmaskretishape->setBottomBarBgGradient(mLmaskretishape);
+    Lmaskretishape->setLeftBarBgGradient(mLmaskretishape);
+    mask2retiCurveEditorG->curveListComplete();
+
     enaretiMaskConn = enaretiMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaretiMaskChanged));
     enaretiMasktmapConn = enaretiMasktmap->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enaretiMasktmapChanged));
 
@@ -1645,6 +1659,7 @@ Locallab::Locallab():
     maskretiBox->pack_start(*chromaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*gammaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*slomaskreti, Gtk::PACK_SHRINK, 0);
+    maskretiBox->pack_start(*mask2retiCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskreti->add(*maskretiBox, false);
     ToolParamBlock* const auxBox = Gtk::manage(new ToolParamBlock());
 
@@ -2299,6 +2314,7 @@ Locallab::~Locallab()
     delete masktmCurveEditorG;
     delete maskblCurveEditorG;
     delete maskretiCurveEditorG;
+    delete mask2retiCurveEditorG;
     delete maskcbCurveEditorG;
 }
 void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
@@ -3426,6 +3442,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).limd = limd->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).cliptm = cliptm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwreti = fftwreti->get_active();
+                    pp->locallab.spots.at(pp->locallab.selspot).Lmaskreticurve = Lmaskretishape->getCurve();
                     // Sharpening
                     pp->locallab.spots.at(pp->locallab.selspot).expsharp = expsharp->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).sharcontrast = sharcontrast->getIntValue();
@@ -3720,6 +3737,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).limd = pe->locallab.spots.at(pp->locallab.selspot).limd || limd->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).cliptm = pe->locallab.spots.at(pp->locallab.selspot).cliptm || cliptm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fftwreti = pe->locallab.spots.at(pp->locallab.selspot).fftwreti || !fftwreti->get_inconsistent();
+                        pe->locallab.spots.at(pp->locallab.selspot).Lmaskreticurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskreticurve || !Lmaskretishape->isUnChanged();
                         // Sharpening
                         pe->locallab.spots.at(pp->locallab.selspot).expsharp = pe->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).sharcontrast = pe->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -4012,6 +4030,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).limd = pedited->locallab.spots.at(pp->locallab.selspot).limd || limd->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).cliptm = pedited->locallab.spots.at(pp->locallab.selspot).cliptm || cliptm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwreti = pedited->locallab.spots.at(pp->locallab.selspot).fftwreti || !fftwreti->get_inconsistent();
+                        pedited->locallab.spots.at(pp->locallab.selspot).Lmaskreticurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskreticurve || !Lmaskretishape->isUnChanged();
                         // Sharpening
                         pedited->locallab.spots.at(pp->locallab.selspot).expsharp = pedited->locallab.spots.at(pp->locallab.selspot).expsharp || !expsharp->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast = pedited->locallab.spots.at(pp->locallab.selspot).sharcontrast || sharcontrast->getEditedState();
@@ -4407,6 +4426,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == HHmaskretishape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskretishape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == Lmaskretishape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskretishape, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -8169,6 +8194,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         limd->setValue(pp->locallab.spots.at(index).limd);
         cliptm->setValue(pp->locallab.spots.at(index).cliptm);
         fftwreti->set_active(pp->locallab.spots.at(index).fftwreti);
+        Lmaskretishape->setCurve(pp->locallab.spots.at(index).Lmaskreticurve);
 
         // Sharpening
         expsharp->setEnabled(pp->locallab.spots.at(index).expsharp);
@@ -8513,6 +8539,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 limd->setEditedState(spotState->limd ? Edited : UnEdited);
                 cliptm->setEditedState(spotState->cliptm ? Edited : UnEdited);
                 fftwreti->set_inconsistent(multiImage && !spotState->fftwreti);
+                Lmaskretishape->setUnChanged(!spotState->Lmaskreticurve);
 
                 // Sharpening
                 expsharp->set_inconsistent(!spotState->expsharp);

@@ -205,12 +205,22 @@ public:
     void fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo);
     void fftw_convol_blur2(float **input2, float **output2, int bfw, int bfh, float radius, int fftkern, int algo);
     void fftw_tile_blur(int GW, int GH, int tilssize , int max_numblox_W, int min_numblox_W, float **tmp1, int numThreads, double radius);
-    void maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip, const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, bool retiMasktmap, bool retiMask,
-                float rad, float lap, bool pde, float gamm, float slop, float chro, float blend, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread);
+
+    void maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip,
+         const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
+         int llretiMask, bool retiMasktmap, bool retiMask, float rad, float lap, bool pde, float gamm, float slop, float chro, float blend,
+         LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+         LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread);
+
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
 
-    void MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-       const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, LabImage * transformed, bool retiMasktmap, bool retiMask);
+    void MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance,
+        const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
+        const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
+        const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask,
+        LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+        LabImage * transformed, bool retiMasktmap, bool retiMask);
+
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref(LabImage* spotbuffer, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp);
@@ -219,6 +229,7 @@ public:
                 LUTf & lmaskexplocalcurve, bool & localmaskexputili,
                 LUTf & lmaskSHlocalcurve, bool & localmaskSHutili,
                 LUTf & lmasktmlocalcurve, bool & localmasktmutili,
+                LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
                 const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili, 
                 const LocCCmaskCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili, 
                 const LocCCmaskCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,

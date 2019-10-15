@@ -850,8 +850,11 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 }
 
 
-void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip, const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, bool retiMasktmap, bool retiMask,
-                                     float rad, float lap, bool pde, float gamm, float slop, float chro, float blend, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread)
+void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, float ** out, int W_L, int H_L, int skip,
+                        const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
+                        int llretiMask, bool retiMasktmap, bool retiMask, float rad, float lap, bool pde, float gamm, float slop, float chro, float blend,
+                        LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+                        LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread)
 {
     array2D<float> loctemp(W_L, H_L);
     array2D<float> ble(W_L, H_L);
@@ -951,6 +954,18 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             L_ = 2.f * bufmaskblurreti->L[ir][jr];
             bufmaskblurreti->L[ir][jr] = lutTonemaskreti[L_];
         }
+
+        if (lmaskretilocalcurve && localmaskretiutili) {
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int ir = 0; ir < H_L; ir++)
+                for (int jr = 0; jr < W_L; jr++) {
+                    bufmaskblurreti->L[ir][jr] = 0.5f * lmaskretilocalcurve[2.f * bufmaskblurreti->L[ir][jr]];
+                }
+        }
+
 
     if (lap > 0.f) {
         float *datain = new float[H_L * W_L];
@@ -1079,8 +1094,14 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 }
 
 
-void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance, const int width, const int height, int bfwr, int bfhr, const LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-                               const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask, LabImage * transformed, bool retiMasktmap, bool retiMask)
+
+void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, float** templ, const float* const *originalLuminance,
+        const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
+        const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
+        const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask,
+        LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+        LabImage * transformed, bool retiMasktmap, bool retiMask)
+
 {
     BENCHFUN
     bool py = true;
@@ -1611,8 +1632,11 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
 
         if (lum == 1  && (llretiMask == 3 || llretiMask == 0 || llretiMask == 2 || llretiMask == 4)) { //only mask with luminance on last scale
             int before = 1;
-            maskforretinex(sp, before, luminance, nullptr, W_L, H_L, skip, locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
-                           rad, lap, pde, gamm, slop, chro, blend, bufreti, bufmask, buforig, buforigmas, multiThread);
+            maskforretinex(sp, before, luminance, nullptr, W_L, H_L, skip,
+                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
+                           rad, lap, pde, gamm, slop, chro, blend,
+                           lmaskretilocalcurve, localmaskretiutili,
+                           bufreti, bufmask, buforig, buforigmas, multiThread);
         }
 
         //mask does not interfered with datas displayed

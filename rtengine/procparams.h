@@ -1175,6 +1175,7 @@ struct LocallabParams {
         double limd;
         double cliptm;
         bool fftwreti;
+        std::vector<double> Lmaskreticurve;
         // Sharpening
         bool expsharp;
         int sharcontrast;

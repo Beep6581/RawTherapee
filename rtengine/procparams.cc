@@ -2626,6 +2626,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     limd(8.0),
     cliptm(1.0),
     fftwreti(false),
+    Lmaskreticurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     // Sharpening
     expsharp(false),
     sharcontrast(20),
@@ -2912,6 +2913,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && limd == other.limd
         && cliptm == other.cliptm
         && fftwreti == other.fftwreti
+        && Lmaskreticurve == other.Lmaskreticurve
         // Sharpening
         && expsharp == other.expsharp
         && sharcontrast == other.sharcontrast
@@ -4184,6 +4186,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).limd, "Locallab", "Limd_" + std::to_string(i), spot.limd, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).cliptm, "Locallab", "Cliptm_" + std::to_string(i), spot.cliptm, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwreti, "Locallab", "Fftwreti_" + std::to_string(i), spot.fftwreti, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskreticurve, "Locallab", "LmaskretiCurve_" + std::to_string(i), spot.Lmaskreticurve, keyFile);
                 // Sharpening
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expsharp, "Locallab", "Expsharp_" + std::to_string(i), spot.expsharp, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).sharcontrast, "Locallab", "Sharcontrast_" + std::to_string(i), spot.sharcontrast, keyFile);
@@ -5583,6 +5586,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Limd_" + std::to_string(i), pedited, spot.limd, spotEdited.limd);
                 assignFromKeyfile(keyFile, "Locallab", "Cliptm_" + std::to_string(i), pedited, spot.cliptm, spotEdited.cliptm);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwreti_" + std::to_string(i), pedited, spot.fftwreti, spotEdited.fftwreti);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskretiCurve_" + std::to_string(i), pedited, spot.Lmaskreticurve, spotEdited.Lmaskreticurve);
                 // Sharpening
                 assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + std::to_string(i), pedited, spot.expsharp, spotEdited.expsharp);
                 assignFromKeyfile(keyFile, "Locallab", "Sharcontrast_" + std::to_string(i), pedited, spot.sharcontrast, spotEdited.sharcontrast);

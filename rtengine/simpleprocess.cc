@@ -1128,6 +1128,7 @@ private:
             LUTf lmaskexplocalcurve(65536, 0);
             LUTf lmaskSHlocalcurve(65536, 0);
             LUTf lmasktmlocalcurve(65536, 0);
+            LUTf lmaskretilocalcurve(65536, 0);
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
@@ -1154,6 +1155,7 @@ private:
                 bool localmaskexputili = false;
                 bool localmaskSHutili = false;
                 bool localmasktmutili = false;
+                bool localmaskretiutili = false;
                 bool lcmasexputili = false;
                 bool lhmasexputili = false;
                 bool llmasexputili = false;
@@ -1206,6 +1208,7 @@ private:
                 CurveFactory::curvemaskLocal(localmaskexputili, params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskSHutili, params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmasktmutili, params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
+                CurveFactory::curvemaskLocal(localmaskretiutili, params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
                 double black = params.locallab.spots.at(sp).black;
@@ -1244,6 +1247,7 @@ private:
                      lmaskexplocalcurve, localmaskexputili,
                      lmaskSHlocalcurve, localmaskSHutili,
                      lmasktmlocalcurve, localmasktmutili,
+                     lmaskretilocalcurve, localmaskretiutili,
                      locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                      locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                      locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1264,6 +1268,8 @@ private:
                 lmasklocalcurve.clear();
                 lmaskexplocalcurve.clear();
                 lmaskSHlocalcurve.clear();
+                lmasktmlocalcurve.clear();
+                lmaskretilocalcurve.clear();
                 shtonecurveloc.clear();
                 tonecurveloc.clear();
                 lightCurveloc.clear();

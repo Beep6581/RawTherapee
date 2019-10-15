@@ -585,6 +585,7 @@ public:
         bool limd;
         bool cliptm;
         bool fftwreti;
+        bool Lmaskreticurve;
         // Sharpening
         bool expsharp;
         bool sharcontrast;
