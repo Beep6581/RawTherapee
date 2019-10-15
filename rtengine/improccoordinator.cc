@@ -173,6 +173,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lightCurveloc(32770, 0),
     lmasklocalcurve(65536, 0),
     lmaskexplocalcurve(65536, 0),
+    lmaskSHlocalcurve(65536, 0),
     locallutili(false), 
     localcutili(false), 
     localexutili(false),
@@ -181,6 +182,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lcmasutili(false),
     localmaskutili(false),
     localmaskexputili(false),
+    localmaskSHutili(false),
     lcmasexputili(false),
     lhmasexputili(false),
     llmasexputili(false),
@@ -922,7 +924,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 lcmasexputili = false;
                 lhmasexputili = false;
                 llmasexputili = false;
-                localmaskutili = false;
+                localmaskexputili = false;
+                localmaskSHutili = false;
                 lcmasSHutili = false;
                 lhmasSHutili = false;
                 llmasSHutili = false;
@@ -972,6 +975,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 CurveFactory::curveexLocal(localexutili, params->locallab.spots.at(sp).excurve, exlocalcurve, sca);
                 CurveFactory::curvemaskLocal(localmaskutili, params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
                 CurveFactory::curvemaskLocal(localmaskexputili, params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
+                CurveFactory::curvemaskLocal(localmaskSHutili, params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
                 double ecomp = params->locallab.spots.at(sp).expcomp;
                 double black = params->locallab.spots.at(sp).black;
                 double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1027,6 +1031,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
+                                lmaskSHlocalcurve, localmaskSHutili,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1045,6 +1050,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve, lllocalcurve, locallutili, loclhCurve,  lochhCurve, 
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
+                                lmaskSHlocalcurve, localmaskSHutili,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1069,6 +1075,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 exlocalcurve.clear();
                 lmasklocalcurve.clear();
                 lmaskexplocalcurve.clear();
+                lmaskSHlocalcurve.clear();
                 hltonecurveloc.clear();
                 shtonecurveloc.clear();
                 tonecurveloc.clear();

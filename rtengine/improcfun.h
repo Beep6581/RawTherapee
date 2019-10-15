@@ -217,6 +217,7 @@ public:
     void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve & locRETgainCcurve, const LocretitransCurve &locRETtransCcurve, LUTf & lllocalcurve,  bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                 LUTf & lmasklocalcurve, bool & localmaskutili,
                 LUTf & lmaskexplocalcurve, bool & localmaskexputili,
+                LUTf & lmaskSHlocalcurve, bool & localmaskSHutili,
                 const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili, 
                 const LocCCmaskCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili, 
                 const LocCCmaskCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,

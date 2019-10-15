@@ -162,6 +162,7 @@ Locallab::Locallab():
     mask2expCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     //Shadows Highlight
     maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2SHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     // Vibranceretinex
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     //Blur
@@ -1099,6 +1100,21 @@ Locallab::Locallab():
 
     maskSHCurveEditorG->curveListComplete();
 
+    mask2SHCurveEditorG->setCurveListener(this);
+    LmaskSHshape = static_cast<DiagonalCurveEditor*>(mask2SHCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
+    LmaskSHshape->setResetCurve(DiagonalCurveType(defSpot.LmaskSHcurve.at(0)), defSpot.LmaskSHcurve);
+
+    if (showtooltip) {
+        LmaskSHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+
+    std::vector<GradientMilestone> mLmaskSHshape;
+    mLmaskSHshape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mLmaskSHshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    LmaskSHshape->setBottomBarBgGradient(mLmaskSHshape);
+    LmaskSHshape->setLeftBarBgGradient(mLmaskSHshape);
+    mask2SHCurveEditorG->curveListComplete();
+
     ToolParamBlock* const shadhighBox = Gtk::manage(new ToolParamBlock());
     shadhighBox->pack_start(*highlights);
     shadhighBox->pack_start(*h_tonalwidth);
@@ -1121,6 +1137,7 @@ Locallab::Locallab():
     maskSHBox->pack_start(*chromaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*gammaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*slomaskSH, Gtk::PACK_SHRINK, 0);
+    maskSHBox->pack_start(*mask2SHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmasksh->add(*maskSHBox, false);
     shadhighBox->pack_start(*expmasksh);
 
@@ -2249,6 +2266,7 @@ Locallab::~Locallab()
     delete maskCurveEditorG;
     delete mask2CurveEditorG;
     delete mask2expCurveEditorG;
+    delete mask2SHCurveEditorG;
     delete curveEditorG;
     delete maskexpCurveEditorG;
     delete maskSHCurveEditorG;
@@ -3246,6 +3264,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskSH = gammaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskSH = slomaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskSH = lapmaskSH->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = LmaskSHshape->getCurve();
                     // Vibrance
                     pp->locallab.spots.at(pp->locallab.selspot).expvibrance = expvibrance->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).saturated = saturated->getIntValue();
@@ -3576,6 +3595,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskSH = pe->locallab.spots.at(pp->locallab.selspot).gammaskSH || gammaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskSH = pe->locallab.spots.at(pp->locallab.selspot).slomaskSH || slomaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskSH = pe->locallab.spots.at(pp->locallab.selspot).lapmaskSH || lapmaskSH->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = pe->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve || !LmaskSHshape->isUnChanged();
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -3864,6 +3884,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskSH = pedited->locallab.spots.at(pp->locallab.selspot).gammaskSH || gammaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskSH = pedited->locallab.spots.at(pp->locallab.selspot).slomaskSH || slomaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskSH || lapmaskSH->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = pedited->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve || !LmaskSHshape->isUnChanged();
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -4240,6 +4261,13 @@ void Locallab::curveChanged(CurveEditor* ce)
                 listener->panelChanged(EvlocallabHHmaskSHshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
+
+        if (ce == LmaskSHshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskSHshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
     }
 
     //CBDL
@@ -7966,6 +7994,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskSH->setValue(pp->locallab.spots.at(index).gammaskSH);
         slomaskSH->setValue(pp->locallab.spots.at(index).slomaskSH);
         lapmaskSH->setValue(pp->locallab.spots.at(index).lapmaskSH);
+        LmaskSHshape->setCurve(pp->locallab.spots.at(index).LmaskSHcurve);
 
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
@@ -8328,6 +8357,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gammaskSH->setEditedState(spotState->gammaskSH ? Edited : UnEdited);
                 slomaskSH->setEditedState(spotState->slomaskSH ? Edited : UnEdited);
                 lapmaskSH->setEditedState(spotState->lapmaskSH ? Edited : UnEdited);
+                LmaskSHshape->setUnChanged(!spotState->LmaskSHcurve);
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);

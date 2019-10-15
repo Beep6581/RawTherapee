@@ -483,6 +483,7 @@ public:
         bool gammaskSH;
         bool slomaskSH;
         bool lapmaskSH;
+        bool LmaskSHcurve;
         // Vibrance
         bool expvibrance;
         bool saturated;

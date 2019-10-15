@@ -94,6 +94,8 @@ private:
     FlatCurveEditor* HHmaskexpshape;
     //Shadows Highlight
     CurveEditorGroup* const maskSHCurveEditorG;
+    CurveEditorGroup* const mask2SHCurveEditorG;
+    DiagonalCurveEditor* LmaskSHshape;
     FlatCurveEditor* CCmaskSHshape;
     FlatCurveEditor* LLmaskSHshape;
     FlatCurveEditor* HHmaskSHshape;

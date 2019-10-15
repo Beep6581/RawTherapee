@@ -1073,6 +1073,7 @@ struct LocallabParams {
         double gammaskSH;
         double slomaskSH;
         double lapmaskSH;
+        std::vector<double> LmaskSHcurve;
         // Vibrance
         bool expvibrance;
         int saturated;
