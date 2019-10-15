@@ -632,6 +632,7 @@ public:
         bool CCmaskcbcurve;
         bool LLmaskcbcurve;
         bool HHmaskcbcurve;
+        bool Lmaskcbcurve;
 
         // Denoise
         bool expdenoi;

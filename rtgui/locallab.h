@@ -131,6 +131,8 @@ private:
 
     //Cbdl
     CurveEditorGroup* const maskcbCurveEditorG;
+    CurveEditorGroup* const mask2cbCurveEditorG;
+    DiagonalCurveEditor* Lmaskcbshape;
     FlatCurveEditor* CCmaskcbshape;
     FlatCurveEditor* LLmaskcbshape;
     FlatCurveEditor* HHmaskcbshape;

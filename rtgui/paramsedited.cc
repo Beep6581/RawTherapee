@@ -1217,6 +1217,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).CCmaskcbcurve = locallab.spots.at(j).CCmaskcbcurve && pSpot.CCmaskcbcurve == otherSpot.CCmaskcbcurve;
                 locallab.spots.at(j).LLmaskcbcurve = locallab.spots.at(j).LLmaskcbcurve && pSpot.LLmaskcbcurve == otherSpot.LLmaskcbcurve;
                 locallab.spots.at(j).HHmaskcbcurve = locallab.spots.at(j).HHmaskcbcurve && pSpot.HHmaskcbcurve == otherSpot.HHmaskcbcurve;
+                locallab.spots.at(j).Lmaskcbcurve = locallab.spots.at(j).Lmaskcbcurve && pSpot.Lmaskcbcurve == otherSpot.Lmaskcbcurve;
                 // Denoise
                 locallab.spots.at(j).expdenoi = locallab.spots.at(j).expdenoi && pSpot.expdenoi == otherSpot.expdenoi;
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
@@ -3717,6 +3718,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).softradiuscb = mods.locallab.spots.at(i).softradiuscb;
         }
 
+        if (locallab.spots.at(i).Lmaskcbcurve) {
+            toEdit.locallab.spots.at(i).Lmaskcbcurve = mods.locallab.spots.at(i).Lmaskcbcurve;
+        }
+
         // Denoise
         if (locallab.spots.at(i).expdenoi) {
             toEdit.locallab.spots.at(i).expdenoi = mods.locallab.spots.at(i).expdenoi;
@@ -5006,6 +5011,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     CCmaskcbcurve(v),
     LLmaskcbcurve(v),
     HHmaskcbcurve(v),
+    Lmaskcbcurve(v),
     // Denoise
     expdenoi(v),
     noiselumf(v),
@@ -5294,6 +5300,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     CCmaskcbcurve = v;
     LLmaskcbcurve = v;
     HHmaskcbcurve = v;
+    Lmaskcbcurve = v;
     // Denoise
     expdenoi = v;
     noiselumf = v;

@@ -181,6 +181,7 @@ Locallab::Locallab():
 
     //CBDL
     maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2cbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
 
     // Adjuster widgets
     // Color & Light
@@ -1963,6 +1964,22 @@ Locallab::Locallab():
 
     maskcbCurveEditorG->curveListComplete();
 
+    mask2cbCurveEditorG->setCurveListener(this);
+    Lmaskcbshape = static_cast<DiagonalCurveEditor*>(mask2cbCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
+    Lmaskcbshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskcbcurve.at(0)), defSpot.Lmaskcbcurve);
+
+    if (showtooltip) {
+        Lmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+
+    std::vector<GradientMilestone> mLmaskcbshape;
+    mLmaskcbshape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mLmaskcbshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    Lmaskcbshape->setBottomBarBgGradient(mLmaskcbshape);
+    Lmaskcbshape->setLeftBarBgGradient(mLmaskcbshape);
+    mask2cbCurveEditorG->curveListComplete();
+
+
     if (showtooltip) {
         radmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         lapmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
@@ -1994,6 +2011,7 @@ Locallab::Locallab():
     maskcbBox->pack_start(*chromaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*gammaskcb, Gtk::PACK_SHRINK, 0);
     maskcbBox->pack_start(*slomaskcb, Gtk::PACK_SHRINK, 0);
+    maskcbBox->pack_start(*mask2cbCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskcb->add(*maskcbBox, false);
 
     Gtk::HSeparator *separator = Gtk::manage(new  Gtk::HSeparator());
@@ -2316,6 +2334,7 @@ Locallab::~Locallab()
     delete maskretiCurveEditorG;
     delete mask2retiCurveEditorG;
     delete maskcbCurveEditorG;
+    delete mask2cbCurveEditorG;
 }
 void Locallab::foldAllButMe(GdkEventButton* event, MyExpander *expander)
 {
@@ -3501,6 +3520,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskcb = gammaskcb->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskcb = slomaskcb->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcb = lapmaskcb->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).Lmaskcbcurve = Lmaskcbshape->getCurve();
 
                     // Denoise
                     pp->locallab.spots.at(pp->locallab.selspot).expdenoi = expdenoi->getEnabled();
@@ -3790,6 +3810,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskcb = pe->locallab.spots.at(pp->locallab.selspot).gammaskcb || gammaskcb->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskcb = pe->locallab.spots.at(pp->locallab.selspot).slomaskcb || slomaskcb->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskcb = pe->locallab.spots.at(pp->locallab.selspot).lapmaskcb || lapmaskcb->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).Lmaskcbcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskcbcurve || !Lmaskcbshape->isUnChanged();
 
                         // Denoise
                         pe->locallab.spots.at(pp->locallab.selspot).expdenoi = pe->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
@@ -4082,6 +4103,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskcb = pedited->locallab.spots.at(pp->locallab.selspot).gammaskcb || gammaskcb->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskcb = pedited->locallab.spots.at(pp->locallab.selspot).slomaskcb || slomaskcb->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcb = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcb || lapmaskcb->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcbcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcbcurve || !Lmaskcbshape->isUnChanged();
 
                         // Denoise
                         pedited->locallab.spots.at(pp->locallab.selspot).expdenoi = pedited->locallab.spots.at(pp->locallab.selspot).expdenoi || !expdenoi->get_inconsistent();
@@ -4334,6 +4356,13 @@ void Locallab::curveChanged(CurveEditor* ce)
                 listener->panelChanged(EvlocallabHHmaskcbshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
+
+        if (ce == Lmaskcbshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskcbshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+        
     }
 
     // Vibrance
@@ -8254,6 +8283,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         CCmaskcbshape->setCurve(pp->locallab.spots.at(index).CCmaskcbcurve);
         LLmaskcbshape->setCurve(pp->locallab.spots.at(index).LLmaskcbcurve);
         HHmaskcbshape->setCurve(pp->locallab.spots.at(index).HHmaskcbcurve);
+        Lmaskcbshape->setCurve(pp->locallab.spots.at(index).Lmaskcbcurve);
 
         // Denoise
         expdenoi->setEnabled(pp->locallab.spots.at(index).expdenoi);
@@ -8596,6 +8626,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 CCmaskcbshape->setUnChanged(!spotState->CCmaskcbcurve);
                 LLmaskcbshape->setUnChanged(!spotState->LLmaskcbcurve);
                 HHmaskcbshape->setUnChanged(!spotState->HHmaskcbcurve);
+                Lmaskcbshape->setUnChanged(!spotState->Lmaskcbcurve);
 
                 // Denoise
                 expdenoi->set_inconsistent(!spotState->expdenoi);

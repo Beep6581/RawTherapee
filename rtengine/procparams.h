@@ -1222,6 +1222,7 @@ struct LocallabParams {
         double gammaskcb;
         double slomaskcb;
         double lapmaskcb;
+        std::vector<double> Lmaskcbcurve;
         // Denoise
         bool expdenoi;
         double noiselumf;

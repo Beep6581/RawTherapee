@@ -6717,6 +6717,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 LUTf & lmaskSHlocalcurve, bool & localmaskSHutili,
                                 LUTf & lmasktmlocalcurve, bool & localmasktmutili,
                                 LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+                                LUTf & lmaskcblocalcurve, bool & localmaskcbutili,
                                 const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili,
                                 const LocCCmaskCurve & locccmasexpCurve, bool & lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool & llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili,
                                 const LocCCmaskCurve & locccmasSHCurve, bool & lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool & llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,
@@ -7542,11 +7543,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmacb;
                     float lap = params->locallab.spots.at(sp).lapmaskcb;
                     float pde = params->locallab.spots.at(sp).laplac;
-                    LUTf dummy;
-                    bool uti;
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, dummy, uti);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskcblocalcurve, localmaskcbutili);
 
                     if (lp.showmaskcbmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get(), 0);

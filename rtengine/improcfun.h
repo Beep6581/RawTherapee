@@ -230,6 +230,7 @@ public:
                 LUTf & lmaskSHlocalcurve, bool & localmaskSHutili,
                 LUTf & lmasktmlocalcurve, bool & localmasktmutili,
                 LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
+                LUTf & lmaskcblocalcurve, bool & localmaskcbutili,
                 const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili, 
                 const LocCCmaskCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili, 
                 const LocCCmaskCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,
@@ -242,6 +243,7 @@ public:
                 double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref,
                 int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax);
+
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
     void InverseBlurNoise_Local(LabImage * originalmask, float **bufchro, const struct local_params& lp, const float hueref, const float chromaref,  const float lumaref, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy, int sk);
