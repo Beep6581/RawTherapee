@@ -86,6 +86,8 @@ private:
     // Exposure
     CurveEditorGroup* const curveEditorG;
     CurveEditorGroup* const maskexpCurveEditorG;
+    CurveEditorGroup* const mask2expCurveEditorG;
+    DiagonalCurveEditor* Lmaskexpshape;
     DiagonalCurveEditor* shapeexpos;
     FlatCurveEditor* CCmaskexpshape;
     FlatCurveEditor* LLmaskexpshape;

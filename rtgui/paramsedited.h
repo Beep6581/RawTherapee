@@ -452,6 +452,7 @@ public:
         bool slomaskexp;
         bool lapmaskexp;
         bool softradiusexp;
+        bool Lmaskexpcurve;
         bool expMethod;
         bool exnoiseMethod;
         bool laplacexp;

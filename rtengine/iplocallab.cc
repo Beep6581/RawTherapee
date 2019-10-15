@@ -2840,12 +2840,12 @@ void ImProcFunctions::retinex_pde(float * datain, float * dataout, int bfw, int 
 }
 
 void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int xstart, int ystart, int sk, int cx, int cy, LabImage* bufcolorig, LabImage* bufmaskblurcol, LabImage* originalmaskcol, LabImage* original, int inv, const struct local_params & lp,
-        const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, 
-        const LocLLmaskCurve & locllmasCurve, bool & llmasutili, 
-        const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili,
-        bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm,
-        LUTf & lmasklocalcurve, bool & localmaskutili
-)
+                                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili,
+                                  const LocLLmaskCurve & locllmasCurve, bool & llmasutili,
+                                  const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili,
+                                  bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm,
+                                  LUTf & lmasklocalcurve, bool & localmaskutili
+                                 )
 {
     array2D<float> ble(bfw, bfh);
     array2D<float> guid(bfw, bfh);
@@ -2971,7 +2971,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             }
         }
 
-//curve actually only for color and light
+
         if (lmasklocalcurve && localmaskutili) {
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16)
@@ -6711,19 +6711,21 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
 void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, int cx, int cy, int oW, int oH, int sk,
-        const LocretigainCurve & locRETgainCcurve, const LocretitransCurve & locRETtransCcurve, LUTf & lllocalcurve, bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
-        LUTf & lmasklocalcurve, bool & localmaskutili,
-        const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili,
-        const LocCCmaskCurve & locccmasexpCurve, bool & lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool & llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili,
-        const LocCCmaskCurve & locccmasSHCurve, bool & lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool & llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,
-        const LocCCmaskCurve & locccmascbCurve, bool & lcmascbutili, const  LocLLmaskCurve & locllmascbCurve, bool & llmascbutili, const  LocHHmaskCurve & lochhmascbCurve, bool & lhmascbutili,
-        const LocCCmaskCurve & locccmasretiCurve, bool & lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool & llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
-        const LocCCmaskCurve & locccmastmCurve, bool & lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool & llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
-        const LocCCmaskCurve & locccmasblCurve, bool & lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool & llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
-        const LocwavCurve & locwavCurve, bool & locwavutili,
-        bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref,
-        int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
-        float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+                                const LocretigainCurve & locRETgainCcurve, const LocretitransCurve & locRETtransCcurve, LUTf & lllocalcurve, bool & locallutili, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
+                                LUTf & lmasklocalcurve, bool & localmaskutili,
+                                LUTf & lmaskexplocalcurve, bool & localmaskexputili,
+                                const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili,
+                                const LocCCmaskCurve & locccmasexpCurve, bool & lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool & llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili,
+                                const LocCCmaskCurve & locccmasSHCurve, bool & lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool & llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,
+                                const LocCCmaskCurve & locccmascbCurve, bool & lcmascbutili, const  LocLLmaskCurve & locllmascbCurve, bool & llmascbutili, const  LocHHmaskCurve & lochhmascbCurve, bool & lhmascbutili,
+                                const LocCCmaskCurve & locccmasretiCurve, bool & lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool & llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
+                                const LocCCmaskCurve & locccmastmCurve, bool & lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool & llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
+                                const LocCCmaskCurve & locccmasblCurve, bool & lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool & llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
+                                const LocwavCurve & locwavCurve, bool & locwavutili,
+                                bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
+                                double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref,
+                                int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask,
+                                float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
     /* comment on processus deltaE
             * the algo uses 3 different ways to manage deltaE according to the type of intervention
@@ -10207,12 +10209,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmaexp;
                     float lap = params->locallab.spots.at(sp).lapmaskexp;
                     float pde = params->locallab.spots.at(sp).laplac;
-                    LUTf dummy;
-                    bool uti;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, dummy, uti);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili);
 
                     if (lp.showmaskexpmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);
@@ -10474,12 +10474,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float blendm = lp.blendmaexp;
             float lap = params->locallab.spots.at(sp).lapmaskexp;
             float pde = params->locallab.spots.at(sp).laplac;
-            LUTf dummy;
-            bool uti;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                         locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, dummy, uti);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili);
 
             if (lp.showmaskexpmetinv == 1) {
                 showmask(lp, 0, 0, cx, cy, GW, GH, bufexporig.get(), transformed, bufmaskblurexp.get(), inv);
@@ -10716,7 +10714,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmacol;
                     float lap = params->locallab.spots.at(sp).lapmaskcol;
                     float pde = params->locallab.spots.at(sp).laplac;
-//LUTf & lmasklocalcurve, bool & localmaskutili
+
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili);
@@ -10919,11 +10917,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float blendm = lp.blendmacol;
             float lap = params->locallab.spots.at(sp).lapmaskcol;
             float pde = params->locallab.spots.at(sp).laplac;
-            LUTf dummy;
-            bool uti;
+
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, dummy, uti);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili);
 
 
             if (lp.showmaskcolmetinv == 1) {

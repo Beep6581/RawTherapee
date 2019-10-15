@@ -234,6 +234,7 @@ protected:
     LUTf tonecurveloc;
     LUTf lightCurveloc;
     LUTf lmasklocalcurve;
+    LUTf lmaskexplocalcurve;
 //    LUTu lhist16loc;
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
@@ -270,6 +271,7 @@ protected:
     bool lhmasutili;
     bool lcmasutili;
     bool localmaskutili;
+    bool localmaskexputili;
     bool lcmasexputili;
     bool lhmasexputili;
     bool llmasexputili;

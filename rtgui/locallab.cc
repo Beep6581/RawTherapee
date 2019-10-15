@@ -159,6 +159,7 @@ Locallab::Locallab():
     // Exposure
     curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
     maskexpCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2expCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     //Shadows Highlight
     maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     // Vibranceretinex
@@ -912,6 +913,21 @@ Locallab::Locallab():
     HHmaskexpshape->setBottomBarColorProvider(this, 6);
 
     maskexpCurveEditorG->curveListComplete();
+    
+    mask2expCurveEditorG->setCurveListener(this);
+    Lmaskexpshape = static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
+    Lmaskexpshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskexpcurve.at(0)), defSpot.Lmaskexpcurve);
+
+    if (showtooltip) {
+        Lmaskexpshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+
+    std::vector<GradientMilestone> mLmaskexpshape;
+    mLmaskexpshape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mLmaskexpshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    Lmaskexpshape->setBottomBarBgGradient(mLmaskexpshape);
+    Lmaskexpshape->setLeftBarBgGradient(mLmaskexpshape);
+    mask2expCurveEditorG->curveListComplete();
 
 
     pdeFrame->set_label_align(0.025, 0.5);
@@ -973,6 +989,7 @@ Locallab::Locallab():
     maskexpBox->pack_start(*chromaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*gammaskexp, Gtk::PACK_SHRINK, 0);
     maskexpBox->pack_start(*slomaskexp, Gtk::PACK_SHRINK, 0);
+    maskexpBox->pack_start(*mask2expCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskexp->add(*maskexpBox, false);
     exposeBox->pack_start(*expmaskexp);
 
@@ -2231,6 +2248,7 @@ Locallab::~Locallab()
     delete HCurveEditorG;
     delete maskCurveEditorG;
     delete mask2CurveEditorG;
+    delete mask2expCurveEditorG;
     delete curveEditorG;
     delete maskexpCurveEditorG;
     delete maskSHCurveEditorG;
@@ -3174,6 +3192,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskexp = slomaskexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskexp = lapmaskexp->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiusexp = softradiusexp->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve = Lmaskexpshape->getCurve();
 
                     if (expMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).expMethod = "std";
@@ -3526,6 +3545,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskexp = pe->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskexp = pe->locallab.spots.at(pp->locallab.selspot).lapmaskexp || lapmaskexp->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiusexp = pe->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve || !Lmaskexpshape->isUnChanged();
                         pe->locallab.spots.at(pp->locallab.selspot).expMethod = pe->locallab.spots.at(pp->locallab.selspot).expMethod || expMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = pe->locallab.spots.at(pp->locallab.selspot).exnoiseMethod || exnoiseMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).laplacexp = pe->locallab.spots.at(pp->locallab.selspot).laplacexp || laplacexp->getEditedState();
@@ -3813,6 +3833,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp = pedited->locallab.spots.at(pp->locallab.selspot).slomaskexp || slomaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskexp = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskexp || lapmaskexp->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp = pedited->locallab.spots.at(pp->locallab.selspot).softradiusexp || softradiusexp->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskexpcurve || !Lmaskexpshape->isUnChanged();
                         pedited->locallab.spots.at(pp->locallab.selspot).expMethod = pedited->locallab.spots.at(pp->locallab.selspot).expMethod || expMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).exnoiseMethod = pedited->locallab.spots.at(pp->locallab.selspot).exnoiseMethod || exnoiseMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pedited->locallab.spots.at(pp->locallab.selspot).laplacexp = pedited->locallab.spots.at(pp->locallab.selspot).laplacexp || laplacexp->getEditedState();
@@ -4190,6 +4211,13 @@ void Locallab::curveChanged(CurveEditor* ce)
                 listener->panelChanged(EvlocallabHHmaskexpshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
+
+        if (ce == Lmaskexpshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskexpshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
     }
 
     //Shadows Highlight
@@ -7884,6 +7912,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         slomaskexp->setValue(pp->locallab.spots.at(index).slomaskexp);
         lapmaskexp->setValue(pp->locallab.spots.at(index).lapmaskexp);
         softradiusexp->setValue(pp->locallab.spots.at(index).softradiusexp);
+        Lmaskexpshape->setCurve(pp->locallab.spots.at(index).Lmaskexpcurve);
 
         if (pp->locallab.spots.at(index).expMethod == "std") {
             expMethod->set_active(0);
@@ -8260,6 +8289,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 slomaskexp->setEditedState(spotState->slomaskexp ? Edited : UnEdited);
                 lapmaskexp->setEditedState(spotState->lapmaskexp ? Edited : UnEdited);
                 softradiusexp->setEditedState(spotState->softradiusexp ? Edited : UnEdited);
+                Lmaskexpshape->setUnChanged(!spotState->Lmaskexpcurve);
 
                 if (!spotState->expMethod) {
                     expMethod->set_active_text(M("GENERAL_UNCHANGED"));
