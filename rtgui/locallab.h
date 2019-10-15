@@ -104,6 +104,8 @@ private:
     DiagonalCurveEditor* skinTonesCurve;
     //Blur and noise
     CurveEditorGroup* const maskblCurveEditorG;
+    CurveEditorGroup* const mask2blCurveEditorG;
+    DiagonalCurveEditor* Lmaskblshape;
     FlatCurveEditor* CCmaskblshape;
     FlatCurveEditor* LLmaskblshape;
     FlatCurveEditor* HHmaskblshape;

@@ -231,6 +231,7 @@ public:
                 LUTf & lmasktmlocalcurve, bool & localmasktmutili,
                 LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
                 LUTf & lmaskcblocalcurve, bool & localmaskcbutili,
+                LUTf & lmaskbllocalcurve, bool & localmaskblutili,
                 const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, const  LocLLmaskCurve & locllmasCurve, bool & llmasutili, const  LocHHmaskCurve & lochhmasCurve, bool & lhmasutili, 
                 const LocCCmaskCurve & locccmasexpCurve, bool &lcmasexputili, const  LocLLmaskCurve & locllmasexpCurve, bool &llmasexputili, const  LocHHmaskCurve & lochhmasexpCurve, bool & lhmasexputili, 
                 const LocCCmaskCurve & locccmasSHCurve, bool &lcmasSHutili, const  LocLLmaskCurve & locllmasSHCurve, bool &llmasSHutili, const  LocHHmaskCurve & lochhmasSHCurve, bool & lhmasSHutili,

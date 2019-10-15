@@ -1116,6 +1116,7 @@ struct LocallabParams {
         double gammaskbl;
         double slomaskbl;
         double lapmaskbl;
+        std::vector<double> Lmaskblcurve;
         // Tone Mapping
         bool exptonemap;
         double stren;
