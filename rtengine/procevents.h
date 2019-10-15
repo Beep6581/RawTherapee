@@ -799,6 +799,7 @@ enum ProcEventCode {
     EvlocallabLmaskshape = 769,
     EvlocallabLmaskexpshape = 770,
     EvlocallabLmaskSHshape = 771,
+    EvlocallabLmasktmshape = 772,
     NUMOFEVENTS
 };
 

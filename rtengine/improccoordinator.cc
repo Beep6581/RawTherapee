@@ -174,6 +174,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmasklocalcurve(65536, 0),
     lmaskexplocalcurve(65536, 0),
     lmaskSHlocalcurve(65536, 0),
+    lmasktmlocalcurve(65536, 0),
     locallutili(false), 
     localcutili(false), 
     localexutili(false),
@@ -183,6 +184,7 @@ ImProcCoordinator::ImProcCoordinator() :
     localmaskutili(false),
     localmaskexputili(false),
     localmaskSHutili(false),
+    localmasktmutili(false),
     lcmasexputili(false),
     lhmasexputili(false),
     llmasexputili(false),
@@ -926,6 +928,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 llmasexputili = false;
                 localmaskexputili = false;
                 localmaskSHutili = false;
+                localmasktmutili = false;
                 lcmasSHutili = false;
                 lhmasSHutili = false;
                 llmasSHutili = false;
@@ -976,6 +979,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 CurveFactory::curvemaskLocal(localmaskutili, params->locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, sca);
                 CurveFactory::curvemaskLocal(localmaskexputili, params->locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, sca);
                 CurveFactory::curvemaskLocal(localmaskSHutili, params->locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, sca);
+                CurveFactory::curvemaskLocal(localmasktmutili, params->locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, sca);
                 double ecomp = params->locallab.spots.at(sp).expcomp;
                 double black = params->locallab.spots.at(sp).black;
                 double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1032,6 +1036,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
                                 lmaskSHlocalcurve, localmaskSHutili,
+                                lmasktmlocalcurve, localmasktmutili,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1051,6 +1056,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 lmasklocalcurve, localmaskutili,
                                 lmaskexplocalcurve, localmaskexputili,
                                 lmaskSHlocalcurve, localmaskSHutili,
+                                lmasktmlocalcurve, localmasktmutili,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1076,6 +1082,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 lmasklocalcurve.clear();
                 lmaskexplocalcurve.clear();
                 lmaskSHlocalcurve.clear();
+                lmasktmlocalcurve.clear();
                 hltonecurveloc.clear();
                 shtonecurveloc.clear();
                 tonecurveloc.clear();

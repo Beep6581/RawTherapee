@@ -109,6 +109,8 @@ private:
     FlatCurveEditor* HHmaskblshape;
     // TM
     CurveEditorGroup* const masktmCurveEditorG;
+    CurveEditorGroup* const mask2tmCurveEditorG;
+    DiagonalCurveEditor* Lmasktmshape;
     FlatCurveEditor* CCmasktmshape;
     FlatCurveEditor* LLmasktmshape;
     FlatCurveEditor* HHmasktmshape;

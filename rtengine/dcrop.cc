@@ -889,9 +889,11 @@ void Crop::update(int todo)
         bool localmaskutili = parent->localmaskutili;
         bool localmaskexputili = parent->localmaskexputili;
         bool localmaskSHutili = parent->localmaskSHutili;
+        bool localmasktmutili = parent->localmasktmutili;
         LUTf lmasklocalcurve2(65536, 0);
         LUTf lmaskexplocalcurve2(65536, 0);
         LUTf lmaskSHlocalcurve2(65536, 0);
+        LUTf lmasktmlocalcurve2(65536, 0);
         LUTf hltonecurveloc2(65536, 0); //65536
         LUTf shtonecurveloc2(65536, 0);
         LUTf tonecurveloc2(65536, 0);
@@ -997,6 +999,8 @@ void Crop::update(int todo)
                 CurveFactory::curvemaskLocal(localmaskexputili, params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve2, sca);
                 localmaskSHutili = false;
                 CurveFactory::curvemaskLocal(localmaskSHutili, params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve2, sca);
+                localmasktmutili = false;
+                CurveFactory::curvemaskLocal(localmasktmutili, params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve2, sca);
 
 
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1038,6 +1042,7 @@ void Crop::update(int todo)
                             lmasklocalcurve2, localmaskutili, 
                             lmaskexplocalcurve2, localmaskexputili, 
                             lmaskSHlocalcurve2, localmaskSHutili, 
+                            lmasktmlocalcurve2, localmasktmutili, 
                             locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                             locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                             locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1058,6 +1063,7 @@ void Crop::update(int todo)
                             lmasklocalcurve2, localmaskutili,
                             lmaskexplocalcurve2, localmaskexputili, 
                             lmaskSHlocalcurve2, localmaskSHutili, 
+                            lmasktmlocalcurve2, localmasktmutili, 
                             locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
                             locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                             locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
@@ -1076,6 +1082,7 @@ void Crop::update(int todo)
                 lmasklocalcurve2.clear();
                 lmaskexplocalcurve2.clear();
                 lmaskSHlocalcurve2.clear();
+                lmasktmlocalcurve2.clear();
                 hltonecurveloc2.clear();
                 shtonecurveloc2.clear();
                 tonecurveloc2.clear();

@@ -163,13 +163,14 @@ Locallab::Locallab():
     //Shadows Highlight
     maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2SHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    // Vibranceretinex
+    // Vibrance
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     //Blur
     maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
 
     //TM
     masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2tmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     // Retinex
     LocalcurveEditortransT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONMAP"))),
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
@@ -1350,6 +1351,25 @@ Locallab::Locallab():
     HHmasktmshape->setBottomBarColorProvider(this, 6);
 
     masktmCurveEditorG->curveListComplete();
+
+    mask2tmCurveEditorG->setCurveListener(this);
+    Lmasktmshape = static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)"));
+    Lmasktmshape->setResetCurve(DiagonalCurveType(defSpot.Lmasktmcurve.at(0)), defSpot.Lmasktmcurve);
+
+    if (showtooltip) {
+        Lmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    }
+
+    std::vector<GradientMilestone> mLmasktmshape;
+    mLmasktmshape.push_back(GradientMilestone(0., 0., 0., 0.));
+    mLmasktmshape.push_back(GradientMilestone(1., 1., 1., 1.));
+    Lmasktmshape->setBottomBarBgGradient(mLmasktmshape);
+    Lmasktmshape->setLeftBarBgGradient(mLmasktmshape);
+    mask2tmCurveEditorG->curveListComplete();
+    
+    
+    
+    
     enatmMaskConn = enatmMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enatmMaskChanged));
     enatmMaskaftConn = enatmMaskaft->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::enatmMaskaftChanged));
 
@@ -1393,6 +1413,7 @@ Locallab::Locallab():
     masktmBox->pack_start(*chromasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*gammasktm, Gtk::PACK_SHRINK, 0);
     masktmBox->pack_start(*slomasktm, Gtk::PACK_SHRINK, 0);
+    masktmBox->pack_start(*mask2tmCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmasktm->add(*masktmBox, false);
 
 
@@ -2267,6 +2288,7 @@ Locallab::~Locallab()
     delete mask2CurveEditorG;
     delete mask2expCurveEditorG;
     delete mask2SHCurveEditorG;
+    delete mask2tmCurveEditorG;
     delete curveEditorG;
     delete maskexpCurveEditorG;
     delete maskSHCurveEditorG;
@@ -3360,6 +3382,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).gammasktm = gammasktm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomasktm = slomasktm->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmasktm = lapmasktm->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).Lmasktmcurve = Lmasktmshape->getCurve();
                     // Retinex
                     pp->locallab.spots.at(pp->locallab.selspot).expreti = expreti->getEnabled();
 
@@ -3661,6 +3684,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).gammasktm = pe->locallab.spots.at(pp->locallab.selspot).gammasktm || gammasktm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomasktm = pe->locallab.spots.at(pp->locallab.selspot).slomasktm || slomasktm->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmasktm = pe->locallab.spots.at(pp->locallab.selspot).lapmasktm || lapmasktm->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).Lmasktmcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmasktmcurve || !Lmasktmshape->isUnChanged();
                         // Retinex
                         pe->locallab.spots.at(pp->locallab.selspot).expreti = pe->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).retinexMethod = pe->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -3952,6 +3976,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).gammasktm = pedited->locallab.spots.at(pp->locallab.selspot).gammasktm || gammasktm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomasktm = pedited->locallab.spots.at(pp->locallab.selspot).slomasktm || slomasktm->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmasktm = pedited->locallab.spots.at(pp->locallab.selspot).lapmasktm || lapmasktm->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).Lmasktmcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmasktmcurve || !Lmasktmshape->isUnChanged();
                         // Retinex
                         pedited->locallab.spots.at(pp->locallab.selspot).expreti = pedited->locallab.spots.at(pp->locallab.selspot).expreti || !expreti->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod = pedited->locallab.spots.at(pp->locallab.selspot).retinexMethod || retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
@@ -4342,6 +4367,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == HHmasktmshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmasktmshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == Lmasktmshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmasktmshape, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -8093,6 +8124,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         CCmasktmshape->setCurve(pp->locallab.spots.at(index).CCmasktmcurve);
         LLmasktmshape->setCurve(pp->locallab.spots.at(index).LLmasktmcurve);
         HHmasktmshape->setCurve(pp->locallab.spots.at(index).HHmasktmcurve);
+        Lmasktmshape->setCurve(pp->locallab.spots.at(index).Lmasktmcurve);
 
         // Retinex
         expreti->setEnabled(pp->locallab.spots.at(index).expreti);
@@ -8440,6 +8472,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gammasktm->setEditedState(spotState->gammasktm ? Edited : UnEdited);
                 slomasktm->setEditedState(spotState->slomasktm ? Edited : UnEdited);
                 lapmasktm->setEditedState(spotState->lapmasktm ? Edited : UnEdited);
+                Lmasktmshape->setUnChanged(!spotState->Lmasktmcurve);
 
                 // Retinex
                 expreti->set_inconsistent(!spotState->expreti);

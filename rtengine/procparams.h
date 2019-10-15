@@ -1139,6 +1139,7 @@ struct LocallabParams {
         double gammasktm;
         double slomasktm;
         double lapmasktm;
+        std::vector<double> Lmasktmcurve;
         // Retinex
         bool expreti;
         Glib::ustring retinexMethod;

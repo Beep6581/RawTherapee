@@ -1127,6 +1127,7 @@ private:
             LUTf lmasklocalcurve(65536, 0);
             LUTf lmaskexplocalcurve(65536, 0);
             LUTf lmaskSHlocalcurve(65536, 0);
+            LUTf lmasktmlocalcurve(65536, 0);
 
            // int maxspot = 1;
             float** shbuffer = nullptr;
@@ -1152,6 +1153,7 @@ private:
                 bool localmaskutili = false;
                 bool localmaskexputili = false;
                 bool localmaskSHutili = false;
+                bool localmasktmutili = false;
                 bool lcmasexputili = false;
                 bool lhmasexputili = false;
                 bool llmasexputili = false;
@@ -1203,6 +1205,7 @@ private:
                 CurveFactory::curvemaskLocal(localmaskutili, params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskexputili, params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
                 CurveFactory::curvemaskLocal(localmaskSHutili, params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
+                CurveFactory::curvemaskLocal(localmasktmutili, params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
                 double black = params.locallab.spots.at(sp).black;
@@ -1240,6 +1243,7 @@ private:
                      lmasklocalcurve, localmaskutili,
                      lmaskexplocalcurve, localmaskexputili,
                      lmaskSHlocalcurve, localmaskSHutili,
+                     lmasktmlocalcurve, localmasktmutili,
                      locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                      locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
                      locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,

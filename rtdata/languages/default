@@ -1010,6 +1010,7 @@ HISTORY_MSG_769;Local - Grain Scale
 HISTORY_MSG_770;Local - Color Mask contrast curve
 HISTORY_MSG_771;Local - Exp Mask contrast curve
 HISTORY_MSG_772;Local - SH Mask contrast curve
+HISTORY_MSG_773;Local - TM Mask contrast curve
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
