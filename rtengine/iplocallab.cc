@@ -5263,6 +5263,120 @@ void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numbl
     fftwf_cleanup();
 }
 
+void ImProcFunctions::wavcontrast(float ** tmp, float contrast, int bfw, int bfh, int wavelet_level, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl)
+{                    
+                    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp[0], bfw, bfh, wavelet_level, 1, sk, numThreads, 6);
+
+                    if (wdspot->memoryAllocationFailed) {
+                        return;
+                    }
+
+                    maxlvl = wdspot->maxlevel();
+
+                    if (contrast != 0) {
+                        int W_L = wdspot->level_W(0);
+                        int H_L = wdspot->level_H(0);
+                        float *wav_L0 = wdspot->coeff0;
+
+                        double avedbl = 0.0; // use double precision for large summations
+
+#ifdef _OPENMP
+                        #pragma omp parallel for reduction(+:avedbl) if (multiThread)
+#endif
+
+                        for (int i = 0; i < W_L * H_L; i++) {
+                            avedbl += wav_L0[i];
+                        }
+
+                        float ave = avedbl / double(W_L * H_L);
+
+                        float avg = ave / 32768.f;
+                        avg = LIM01(avg);
+                        double contreal = 0.6 * contrast;
+                        DiagonalCurve resid_contrast({
+                            DCT_NURBS,
+                            0, 0,
+                            avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
+                            avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
+                            1, 1
+                        });
+#ifdef _OPENMP
+                        #pragma omp parallel for if (multiThread)
+#endif
+
+                        for (int i = 0; i < W_L * H_L; i++) {
+                            float buf = LIM01(wav_L0[i] / 32768.f);
+                            buf = resid_contrast.getVal(buf);
+                            buf *= 32768.f;
+                            wav_L0[i] = buf;
+                        }
+
+                    }
+
+
+                    float mean[10];
+                    float meanN[10];
+                    float sigma[10];
+                    float sigmaN[10];
+                    float MaxP[10];
+                    float MaxN[10];
+                    Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
+
+                    if (locwavCurve && locwavutili) {
+                        for (int dir = 1; dir < 4; dir++) {
+                            for (int level = 0; level < maxlvl; ++level) {
+                                int W_L = wdspot->level_W(level);
+                                int H_L = wdspot->level_H(level);
+                                float **wav_L = wdspot->level_coeffs(level);
+
+                                if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
+                                    float insigma = 0.666f; //SD
+                                    float logmax = log(MaxP[level]); //log Max
+                                    float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+                                    float inx = log(insigma);
+                                    float iny = log(rapX);
+                                    float rap = inx / iny; //koef
+                                    float asig = 0.166f / sigma[level];
+                                    float bsig = 0.5f - asig * mean[level];
+                                    float amean = 0.5f / mean[level];
+
+#ifdef _OPENMP
+                                    #pragma omp parallel for if (multiThread)
+#endif
+
+                                    for (int i = 0; i < W_L * H_L; i++) {
+                                        if (locwavCurve && locwavutili) {
+                                            float absciss;
+                                            float &val = wav_L[dir][i];
+
+                                            if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
+                                                float valcour = xlogf(fabsf(val));
+                                                float valc = valcour - logmax;
+                                                float vald = valc * rap;
+                                                absciss = xexpf(vald);
+                                            } else if (fabsf(val) >= mean[level]) {
+                                                absciss = asig * fabsf(val) + bsig;
+                                            } else {
+                                                absciss = amean * fabsf(val);
+                                            }
+
+                                            float kc = locwavCurve[absciss * 500.f] - 0.5f;
+                                            float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
+
+                                            float kinterm = 1.f + reduceeffect * kc;
+                                            kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+
+                                            val *=  kinterm;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    wdspot->reconstruct(tmp[0], 1.f);
+                    delete wdspot;
+}
 
 
 void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin, int numThreads, const struct local_params & lp, int chrom)
@@ -8665,119 +8779,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         wdspotresidb->reconstruct(tmpresid->b[0], 1.f);
                         delete wdspotresidb;
                     }
-
-                    wavelet_decomposition *wdspot = new wavelet_decomposition(tmp1->L[0], tmp1->W, tmp1->H, wavelet_level, 1, sk, numThreads, 6);
-
-                    if (wdspot->memoryAllocationFailed) {
-                        return;
-                    }
-
+                    int maxlvl;
                     const float contrast = params->locallab.spots.at(sp).residcont;
-                    int maxlvl = wdspot->maxlevel();
 
-                    if (contrast != 0) {
-                        int W_L = wdspot->level_W(0);
-                        int H_L = wdspot->level_H(0);
-                        float *wav_L0 = wdspot->coeff0;
-
-                        double avedbl = 0.0; // use double precision for large summations
-
-#ifdef _OPENMP
-                        #pragma omp parallel for reduction(+:avedbl) if (multiThread)
-#endif
-
-                        for (int i = 0; i < W_L * H_L; i++) {
-                            avedbl += wav_L0[i];
-                        }
-
-                        float ave = avedbl / double(W_L * H_L);
-
-                        float avg = ave / 32768.f;
-                        avg = LIM01(avg);
-                        double contreal = 0.6 * contrast;
-                        DiagonalCurve resid_contrast({
-                            DCT_NURBS,
-                            0, 0,
-                            avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
-                            avg + (1. - avg) * (0.6 - contreal / 250.0), avg + (1. - avg) * (0.6 + contreal / 250.0),
-                            1, 1
-                        });
-#ifdef _OPENMP
-                        #pragma omp parallel for if (multiThread)
-#endif
-
-                        for (int i = 0; i < W_L * H_L; i++) {
-                            float buf = LIM01(wav_L0[i] / 32768.f);
-                            buf = resid_contrast.getVal(buf);
-                            buf *= 32768.f;
-                            wav_L0[i] = buf;
-                        }
-
-                    }
-
-
-                    float mean[10];
-                    float meanN[10];
-                    float sigma[10];
-                    float sigmaN[10];
-                    float MaxP[10];
-                    float MaxN[10];
-                    Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN);
-
-                    if (locwavCurve && locwavutili) {
-                        for (int dir = 1; dir < 4; dir++) {
-                            for (int level = 0; level < maxlvl; ++level) {
-                                int W_L = wdspot->level_W(level);
-                                int H_L = wdspot->level_H(level);
-                                float **wav_L = wdspot->level_coeffs(level);
-
-                                if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
-                                    float insigma = 0.666f; //SD
-                                    float logmax = log(MaxP[level]); //log Max
-                                    float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
-                                    float inx = log(insigma);
-                                    float iny = log(rapX);
-                                    float rap = inx / iny; //koef
-                                    float asig = 0.166f / sigma[level];
-                                    float bsig = 0.5f - asig * mean[level];
-                                    float amean = 0.5f / mean[level];
-
-#ifdef _OPENMP
-                                    #pragma omp parallel for if (multiThread)
-#endif
-
-                                    for (int i = 0; i < W_L * H_L; i++) {
-                                        if (locwavCurve && locwavutili) {
-                                            float absciss;
-                                            float &val = wav_L[dir][i];
-
-                                            if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
-                                                float valcour = xlogf(fabsf(val));
-                                                float valc = valcour - logmax;
-                                                float vald = valc * rap;
-                                                absciss = xexpf(vald);
-                                            } else if (fabsf(val) >= mean[level]) {
-                                                absciss = asig * fabsf(val) + bsig;
-                                            } else {
-                                                absciss = amean * fabsf(val);
-                                            }
-
-                                            float kc = locwavCurve[absciss * 500.f] - 0.5f;
-                                            float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
-
-                                            float kinterm = 1.f + reduceeffect * kc;
-                                            kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                                            val *=  kinterm;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    wdspot->reconstruct(tmp1->L[0], 1.f);
-                    delete wdspot;
+                    wavcontrast(tmp1->L, contrast, tmp1->W, tmp1->H, wavelet_level, sk, numThreads, locwavCurve, locwavutili, maxlvl);
 
                     const float satur = params->locallab.spots.at(sp).residchro;
 
