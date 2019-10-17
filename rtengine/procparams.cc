@@ -2452,6 +2452,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromaskcol(0.0),
     gammaskcol(1.0),
     slomaskcol(0.0),
+    wavmaskcol(5),
     lapmaskcol(0.0),
     qualitycurveMethod("none"),
     gridMethod("one"),
@@ -2466,6 +2467,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     HHmaskcurve{(double)FCT_MinMaxCPoints, 0.0, 1.0, 0.35, 0.35, 0.50, 1.0, 0.35, 0.35, 1.00, 1.0, 0.35, 0.35 },
     softradiuscol(0.0),
     Lmaskcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
+    LLmaskcolcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     // Exposure
     expexpose(false),
     expcomp(0.0),
@@ -2742,6 +2744,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chromaskcol == other.chromaskcol
         && gammaskcol == other.gammaskcol
         && slomaskcol == other.slomaskcol
+        && wavmaskcol == other.wavmaskcol
         && lapmaskcol == other.lapmaskcol
         && qualitycurveMethod == other.qualitycurveMethod
         && gridMethod == other.gridMethod
@@ -2757,6 +2760,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurcolde == other.blurcolde
         && softradiuscol == other.softradiuscol
         && Lmaskcurve == other.Lmaskcurve
+        && LLmaskcolcurvewav == other.LLmaskcolcurvewav
         // Exposure
         && expexpose == other.expexpose
         && expcomp == other.expcomp
@@ -4020,6 +4024,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskcol, "Locallab", "Chromaskcol_" + std::to_string(i), spot.chromaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskcol, "Locallab", "Gammaskcol_" + std::to_string(i), spot.gammaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskcol, "Locallab", "Slomaskcol_" + std::to_string(i), spot.slomaskcol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavmaskcol, "Locallab", "Wavmaskcollevel_" + std::to_string(i), spot.wavmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskcol, "Locallab", "Lapmaskcol_" + std::to_string(i), spot.lapmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gridMethod, "Locallab", "gridMethod_" + std::to_string(i), spot.gridMethod, keyFile);
@@ -4034,6 +4039,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).HHmaskcurve, "Locallab", "HHmaskCurve_" + std::to_string(i), spot.HHmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiuscol, "Locallab", "Softradiuscol_" + std::to_string(i), spot.softradiuscol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskcurve, "Locallab", "LmaskCurve_" + std::to_string(i), spot.Lmaskcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcolcurvewav, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), spot.LLmaskcolcurvewav, keyFile);
                 // Exposure
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expexpose, "Locallab", "Expexpose_" + std::to_string(i), spot.expexpose, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcomp, "Locallab", "Expcomp_" + std::to_string(i), spot.expcomp, keyFile);
@@ -5412,6 +5418,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcol_" + std::to_string(i), pedited, spot.chromaskcol, spotEdited.chromaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskcol_" + std::to_string(i), pedited, spot.gammaskcol, spotEdited.gammaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskcol_" + std::to_string(i), pedited, spot.slomaskcol, spotEdited.slomaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "Wavmaskcollevel_" + std::to_string(i), pedited, spot.wavmaskcol, spotEdited.wavmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskcol_" + std::to_string(i), pedited, spot.lapmaskcol, spotEdited.lapmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + std::to_string(i), pedited, spot.gridMethod, spotEdited.gridMethod);
@@ -5426,6 +5433,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskCurve_" + std::to_string(i), pedited, spot.HHmaskcurve, spotEdited.HHmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscol_" + std::to_string(i), pedited, spot.softradiuscol, spotEdited.softradiuscol);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskCurve_" + std::to_string(i), pedited, spot.Lmaskcurve, spotEdited.Lmaskcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), pedited, spot.LLmaskcolcurvewav, spotEdited.LLmaskcolcurvewav);
                 // Exposure
                 assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + std::to_string(i), pedited, spot.expexpose, spotEdited.expexpose);
                 assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + std::to_string(i), pedited, spot.expcomp, spotEdited.expcomp);

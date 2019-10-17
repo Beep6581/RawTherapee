@@ -2844,7 +2844,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                   const LocLLmaskCurve & locllmasCurve, bool & llmasutili,
                                   const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili,
                                   bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm,
-                                  LUTf & lmasklocalcurve, bool & localmaskutili
+                                  LUTf & lmasklocalcurve, bool & localmaskutili,
+                                  const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int wavlevel
                                  )
 {
     array2D<float> ble(bfw, bfh);
@@ -2982,6 +2983,37 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     bufmaskblurcol->L[ir][jr] = 0.5f * lmasklocalcurve[2.f * bufmaskblurcol->L[ir][jr]];
                 }
         }
+
+            int wavelet_level = wavlevel;
+
+            int minwin = min(bfw, bfh);
+            int maxlevelspot = 9;
+            while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+                --maxlevelspot ;
+            }
+            wavelet_level = min(wavelet_level, maxlevelspot);
+            int maxlvl;
+            float contrast = 0.f;
+            bool wavcurvemask = false;
+
+            if (loclmasCurvecolwav && lmasutilicolwav) {
+                for (int i = 0; i < 500; i++) {
+                    if (loclmasCurvecolwav[i] != 0.5) {
+                        wavcurvemask = true;
+                    }
+                }
+            }
+            
+            if(wavcurvemask) {
+#ifdef _OPENMP
+                    const int numThreads = omp_get_max_threads();
+#else
+                    const int numThreads = 1;
+
+#endif
+                
+                wavcontrast(bufmaskblurcol->L, contrast, bfw, bfh, wavelet_level, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, maxlvl);
+            }
 
 
         if (lap > 0.f) {
@@ -6841,6 +6873,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskCurve & locccmastmCurve, bool & lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool & llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
                                 const LocCCmaskCurve & locccmasblCurve, bool & lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool & llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
                                 const LocwavCurve & loclmasCurveblwav, bool & lmasutiliblwav,
+                                const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav,
                                 const LocwavCurve & locwavCurve, bool & locwavutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                                 double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref,
@@ -7129,6 +7162,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 
                 wavcontrast(bufmaskblurbl->L, contrast, GW, GH, wavelet_level, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
             }
+
             float lap = params->locallab.spots.at(sp).lapmaskbl;
             bool pde = params->locallab.spots.at(sp).laplac;
 
@@ -7699,9 +7733,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmacb;
                     float lap = params->locallab.spots.at(sp).lapmaskcb;
                     float pde = params->locallab.spots.at(sp).laplac;
+                    LocwavCurve dummy;
+                    bool lmasutilicolwav = false;
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskcblocalcurve, localmaskcbutili);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskcblocalcurve, localmaskcbutili, dummy, lmasutilicolwav, 5);
 
                     if (lp.showmaskcbmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get(), 0);
@@ -7974,10 +8010,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float pde = params->locallab.spots.at(sp).laplac;
 
                     if (!params->locallab.spots.at(sp).enatmMaskaft) {
+                        LocwavCurve dummy;
+                        bool lmasutilicolwav = false;
 
                         maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufgbm.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                     locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili);
+                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 5);
 
                         if (lp.showmasktmmet == 3) {
                             showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgbm.get(), transformed, bufmaskorigtm.get(), 0);
@@ -7997,10 +8035,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (enatmMasktmap) {
                             //calculate new values for original, originalmasktm, bufmaskorigtm...in function of tmp1
+                            LocwavCurve dummy;
+                            bool lmasutilicolwav = false;
 
                             maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili);
+                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 5);
 
                             if (lp.showmasktmmet == 3) {//dispaly mask
                                 showmask(lp, xstart, ystart, cx, cy, bfw, bfh, tmp1.get(), transformed, bufmaskorigtm.get(), 0);
@@ -8164,10 +8204,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmaSH;
                     float lap = params->locallab.spots.at(sp).lapmaskSH;
                     float pde = params->locallab.spots.at(sp).laplac;
+                    LocwavCurve dummy;
+                    bool lmasutilicolwav = false;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 5);
 
                     if (lp.showmaskSHmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskorigSH.get(), 0);
@@ -8259,10 +8301,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float blendm = lp.blendmaSH;
             float lap = params->locallab.spots.at(sp).lapmaskSH;
             float pde = params->locallab.spots.at(sp).laplac;
+            LocwavCurve dummy;
+            bool lmasutilicolwav = false;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, inv, lp,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 5);
 
 
             if (lp.showmaskSHmetinv == 1) {
@@ -10223,10 +10267,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmaexp;
                     float lap = params->locallab.spots.at(sp).lapmaskexp;
                     float pde = params->locallab.spots.at(sp).laplac;
+                    LocwavCurve dummy;
+                    bool lmasutilicolwav = false;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 5);
 
                     if (lp.showmaskexpmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);
@@ -10488,10 +10534,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float blendm = lp.blendmaexp;
             float lap = params->locallab.spots.at(sp).lapmaskexp;
             float pde = params->locallab.spots.at(sp).laplac;
+            LocwavCurve dummy;
+            bool lmasutilicolwav = false;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                         locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 5);
 
             if (lp.showmaskexpmetinv == 1) {
                 showmask(lp, 0, 0, cx, cy, GW, GH, bufexporig.get(), transformed, bufmaskblurexp.get(), inv);
@@ -10728,10 +10776,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmacol;
                     float lap = params->locallab.spots.at(sp).lapmaskcol;
                     float pde = params->locallab.spots.at(sp).laplac;
+                    int wavlevel = params->locallab.spots.at(sp).wavmaskcol;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav, wavlevel);
 
                     if (lp.showmaskcolmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
@@ -10931,10 +10980,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float blendm = lp.blendmacol;
             float lap = params->locallab.spots.at(sp).lapmaskcol;
             float pde = params->locallab.spots.at(sp).laplac;
+            int wavlevel = params->locallab.spots.at(sp).wavmaskcol;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav, wavlevel);
 
 
             if (lp.showmaskcolmetinv == 1) {

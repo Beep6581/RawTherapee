@@ -411,6 +411,7 @@ public:
         bool chromaskcol;
         bool gammaskcol;
         bool slomaskcol;
+        bool wavmaskcol;
         bool lapmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;
@@ -425,6 +426,7 @@ public:
         bool HHmaskcurve;
         bool softradiuscol;
         bool Lmaskcurve;
+        bool LLmaskcolcurvewav;
         // Exposure
         bool expexpose;
         bool expcomp;

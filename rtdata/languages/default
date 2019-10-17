@@ -1016,6 +1016,8 @@ HISTORY_MSG_775;Local - CBDL Mask contrast curve
 HISTORY_MSG_776;Local - Blur Denoise Mask contrast curve
 HISTORY_MSG_777;Local - Blur Mask local contrast curve
 HISTORY_MSG_778;Local - Blur Mask Wavelet level
+HISTORY_MSG_779;Local - Color Mask local contrast curve
+HISTORY_MSG_780;Local - Color Mask Wavelet level
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2303,7 +2305,7 @@ TP_LOCALLAB_SHOWT;3 - Mask and modifications
 TP_LOCALLAB_SHOWS;4+ - Mask and modifications
 TP_LOCALLAB_SHOWR;5 - Mask and modifications
 TP_LOCALLAB_SHOWE;6+ - Mask and modifications
-TP_LOCALLAB_SHOWC;7+ - Mask and modifications
+TP_LOCALLAB_SHOWC;7+* - Mask and modifications
 TP_LOCALLAB_SHOWPLUS;1+* - Mask and modifications - Smooth-Blur & Denoise
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None

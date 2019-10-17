@@ -805,6 +805,8 @@ enum ProcEventCode {
     EvlocallabLmaskblshape = 775,
     EvlocallabLLmaskblshapewav = 776,
     Evlocallabwavmaskbl = 777,
+    EvlocallabLLmaskcolshapewav = 778,
+    Evlocallabwavmaskcol = 779,
     NUMOFEVENTS
 };
 

@@ -75,6 +75,7 @@ private:
     CurveEditorGroup* const HCurveEditorG;
     CurveEditorGroup* const maskCurveEditorG;
     CurveEditorGroup* const mask2CurveEditorG;
+    CurveEditorGroup* const mask2CurveEditorGwav;
     DiagonalCurveEditor* Lmaskshape;
     DiagonalCurveEditor* llshape;
     DiagonalCurveEditor* ccshape;
@@ -83,6 +84,7 @@ private:
     FlatCurveEditor* CCmaskshape;
     FlatCurveEditor* LLmaskshape;
     FlatCurveEditor* HHmaskshape;
+    FlatCurveEditor* LLmaskcolshapewav;
     // Exposure
     CurveEditorGroup* const curveEditorG;
     CurveEditorGroup* const maskexpCurveEditorG;
@@ -156,6 +158,7 @@ private:
     Adjuster* const gammaskcol;
     Adjuster* const slomaskcol;
     Adjuster* const lapmaskcol;
+    Adjuster* const wavmaskcol;
     Adjuster* const softradiuscol;
     // Exposure
     Adjuster* const expcomp;

@@ -993,6 +993,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromaskcol = locallab.spots.at(j).chromaskcol && pSpot.chromaskcol == otherSpot.chromaskcol;
                 locallab.spots.at(j).gammaskcol = locallab.spots.at(j).gammaskcol && pSpot.gammaskcol == otherSpot.gammaskcol;
                 locallab.spots.at(j).slomaskcol = locallab.spots.at(j).slomaskcol && pSpot.slomaskcol == otherSpot.slomaskcol;
+                locallab.spots.at(j).wavmaskcol = locallab.spots.at(j).wavmaskcol && pSpot.wavmaskcol == otherSpot.wavmaskcol;
                 locallab.spots.at(j).lapmaskcol = locallab.spots.at(j).lapmaskcol && pSpot.lapmaskcol == otherSpot.lapmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).gridMethod = locallab.spots.at(j).gridMethod && pSpot.gridMethod == otherSpot.gridMethod;
@@ -1007,6 +1008,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).HHmaskcurve = locallab.spots.at(j).HHmaskcurve && pSpot.HHmaskcurve == otherSpot.HHmaskcurve;
                 locallab.spots.at(j).softradiuscol = locallab.spots.at(j).softradiuscol && pSpot.softradiuscol == otherSpot.softradiuscol;
                 locallab.spots.at(j).Lmaskcurve = locallab.spots.at(j).Lmaskcurve && pSpot.Lmaskcurve == otherSpot.Lmaskcurve;
+                locallab.spots.at(j).LLmaskcolcurvewav = locallab.spots.at(j).LLmaskcolcurvewav && pSpot.LLmaskcolcurvewav == otherSpot.LLmaskcolcurvewav;
                 // Exposure
                 locallab.spots.at(j).expexpose = locallab.spots.at(j).expexpose && pSpot.expexpose == otherSpot.expexpose;
                 locallab.spots.at(j).expcomp = locallab.spots.at(j).expcomp && pSpot.expcomp == otherSpot.expcomp;
@@ -2869,6 +2871,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskcol = mods.locallab.spots.at(i).slomaskcol;
         }
 
+        if (locallab.spots.at(i).wavmaskcol) {
+            toEdit.locallab.spots.at(i).wavmaskcol = mods.locallab.spots.at(i).wavmaskcol;
+        }
+
         if (locallab.spots.at(i).lapmaskcol) {
             toEdit.locallab.spots.at(i).lapmaskcol = mods.locallab.spots.at(i).lapmaskcol;
         }
@@ -2923,6 +2929,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).Lmaskcurve) {
             toEdit.locallab.spots.at(i).Lmaskcurve = mods.locallab.spots.at(i).Lmaskcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskcolcurvewav) {
+            toEdit.locallab.spots.at(i).LLmaskcolcurvewav = mods.locallab.spots.at(i).LLmaskcolcurvewav;
         }
 
         // Exposure
@@ -4805,6 +4815,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromaskcol(v),
     gammaskcol(v),
     slomaskcol(v),
+    wavmaskcol(v),
     lapmaskcol(v),
     qualitycurveMethod(v),
     gridMethod(v),
@@ -4819,6 +4830,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     HHmaskcurve(v),
     softradiuscol(v),
     Lmaskcurve(v),
+    LLmaskcolcurvewav(v),
     // Exposure
     expexpose(v),
     expcomp(v),
@@ -5093,6 +5105,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromaskcol = v;
     gammaskcol = v;
     slomaskcol = v;
+    wavmaskcol = v;
     lapmaskcol = v;
     qualitycurveMethod = v;
     gridMethod = v;
@@ -5107,6 +5120,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     HHmaskcurve = v;
     softradiuscol = v;
     Lmaskcurve = v;
+    LLmaskcolcurvewav = v;
     // Exposure
     expexpose = v;
     expcomp = v;

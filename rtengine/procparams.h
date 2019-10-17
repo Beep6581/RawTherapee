@@ -999,6 +999,7 @@ struct LocallabParams {
         double chromaskcol;
         double gammaskcol;
         double slomaskcol;
+        int wavmaskcol;
         double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;
@@ -1013,6 +1014,7 @@ struct LocallabParams {
         std::vector<double> HHmaskcurve;
         double softradiuscol;
         std::vector<double> Lmaskcurve;
+        std::vector<double> LLmaskcolcurvewav;
         // Exposure
         bool expexpose;
         //   int expcomp;
