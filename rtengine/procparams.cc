@@ -2567,7 +2567,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gammaskbl(1.0),
     slomaskbl(0.0),
     lapmaskbl(0.0),
+    wavmaskbl(5),
     Lmaskblcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
+    LLmaskblcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
     // Tone Mapping
     exptonemap(false),
     stren(0.5),
@@ -2856,7 +2858,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gammaskbl == other.gammaskbl
         && slomaskbl == other.slomaskbl
         && lapmaskbl == other.lapmaskbl
+        && wavmaskbl == other.wavmaskbl
         && Lmaskblcurve == other.Lmaskblcurve
+        && LLmaskblcurvewav == other.LLmaskblcurvewav
         // Tone Mapping
         && exptonemap == other.exptonemap
         && stren == other.stren
@@ -4131,7 +4135,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskbl, "Locallab", "Gammaskbl_" + std::to_string(i), spot.gammaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskbl, "Locallab", "Slomaskbl_" + std::to_string(i), spot.slomaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskbl, "Locallab", "Lapmaskbl_" + std::to_string(i), spot.lapmaskbl, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavmaskbl, "Locallab", "Wavmaskbllevel_" + std::to_string(i), spot.wavmaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskblcurve, "Locallab", "LmaskblCurve_" + std::to_string(i), spot.Lmaskblcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskblcurvewav, "Locallab", "LLmaskblCurvewav_" + std::to_string(i), spot.LLmaskblcurvewav, keyFile);
                 // Tone Mapping
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).exptonemap, "Locallab", "Exptonemap_" + std::to_string(i), spot.exptonemap, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).stren, "Locallab", "Stren_" + std::to_string(i), spot.stren, keyFile);
@@ -5533,7 +5539,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskbl_" + std::to_string(i), pedited, spot.gammaskbl, spotEdited.gammaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskbl_" + std::to_string(i), pedited, spot.slomaskbl, spotEdited.slomaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskbl_" + std::to_string(i), pedited, spot.lapmaskbl, spotEdited.lapmaskbl);
+                assignFromKeyfile(keyFile, "Locallab", "Wavmaskbllevel_" + std::to_string(i), pedited, spot.wavmaskbl, spotEdited.wavmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + std::to_string(i), pedited, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + std::to_string(i), pedited, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);
                 // Tone Mapping
                 assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + std::to_string(i), pedited, spot.exptonemap, spotEdited.exptonemap);
                 assignFromKeyfile(keyFile, "Locallab", "Stren_" + std::to_string(i), pedited, spot.stren, spotEdited.stren);

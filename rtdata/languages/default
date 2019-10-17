@@ -1014,6 +1014,8 @@ HISTORY_MSG_773;Local - TM Mask contrast curve
 HISTORY_MSG_774;Local - Reti Mask contrast curve
 HISTORY_MSG_775;Local - CBDL Mask contrast curve
 HISTORY_MSG_776;Local - Blur Denoise Mask contrast curve
+HISTORY_MSG_777;Local - Blur Mask local contrast curve
+HISTORY_MSG_778;Local - Blur Mask Wavelet level
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2086,7 +2088,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;Increase deltaE Weakening improve shape detection, but
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;Balance deltaE ab-L
 TP_LOCALLAB_BILATERAL;Bilateral filter
-TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\nMasks with this ability are marked '+'\nThe number indicates the order of use of the masks.\n\nYou can combine the mask associated with the tool with an inverse mask.\nIn this case the new tool associated with the mask must be selected in inverse; you must use the tool with very small values (ex Exposure 0.01)
+TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\nMasks with this ability are marked '+'\nMasks with additional features are marked '*'\nThe number indicates the order of use of the masks.\n\nYou can combine the mask associated with the tool with an inverse mask.\nIn this case the new tool associated with the mask must be selected in inverse; you must use the tool with very small values (ex Exposure 0.01)
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_BLENDMASKCOL;Blend
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
@@ -2117,6 +2119,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
+TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
@@ -2301,7 +2304,7 @@ TP_LOCALLAB_SHOWS;4+ - Mask and modifications
 TP_LOCALLAB_SHOWR;5 - Mask and modifications
 TP_LOCALLAB_SHOWE;6+ - Mask and modifications
 TP_LOCALLAB_SHOWC;7+ - Mask and modifications
-TP_LOCALLAB_SHOWPLUS;1+ - Mask and modifications - Smooth-Blur & Denoise
+TP_LOCALLAB_SHOWPLUS;1+* - Mask and modifications - Smooth-Blur & Denoise
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display modifications.\nBeware, you can only view one modification (color and light or Exposure or Shadows-Highlight or TM or CBDL or Retinex MSR or Blur).\n\nUse Mask is before algorihtm shape detection  
 TP_LOCALLAB_SHOWMNONE;None
 TP_LOCALLAB_SHOWMODIF;Show modifications whithout mask
@@ -2325,6 +2328,7 @@ TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_WAVE;Wavelet
 TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_WAV;Levels local contrast
+TP_LOCALLAB_WAVMASK;Mask Levels local contrast
 TP_LOCALLAB_LEVELWAV;Wavelets Levels
 TP_LOCALLAB_RESIDCONT;Residual image Contrast
 TP_LOCALLAB_RESIDCHRO;Residual image Chroma

@@ -1106,8 +1106,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gammaskbl = locallab.spots.at(j).gammaskbl && pSpot.gammaskbl == otherSpot.gammaskbl;
                 locallab.spots.at(j).slomaskbl = locallab.spots.at(j).slomaskbl && pSpot.slomaskbl == otherSpot.slomaskbl;
                 locallab.spots.at(j).lapmaskbl = locallab.spots.at(j).lapmaskbl && pSpot.lapmaskbl == otherSpot.lapmaskbl;
+                locallab.spots.at(j).wavmaskbl = locallab.spots.at(j).wavmaskbl && pSpot.wavmaskbl == otherSpot.wavmaskbl;
                 locallab.spots.at(j).fftwbl = locallab.spots.at(j).fftwbl && pSpot.fftwbl == otherSpot.fftwbl;
                 locallab.spots.at(j).Lmaskblcurve = locallab.spots.at(j).Lmaskblcurve && pSpot.Lmaskblcurve == otherSpot.Lmaskblcurve;
+                locallab.spots.at(j).LLmaskblcurvewav = locallab.spots.at(j).LLmaskblcurvewav && pSpot.LLmaskblcurvewav == otherSpot.LLmaskblcurvewav;
                 // Tone Mapping
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
                 locallab.spots.at(j).stren = locallab.spots.at(j).stren && pSpot.stren == otherSpot.stren;
@@ -3308,8 +3310,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lapmaskbl = mods.locallab.spots.at(i).lapmaskbl;
         }
 
+        if (locallab.spots.at(i).wavmaskbl) {
+            toEdit.locallab.spots.at(i).wavmaskbl = mods.locallab.spots.at(i).wavmaskbl;
+        }
+
         if (locallab.spots.at(i).Lmaskblcurve) {
             toEdit.locallab.spots.at(i).Lmaskblcurve = mods.locallab.spots.at(i).Lmaskblcurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskblcurvewav) {
+            toEdit.locallab.spots.at(i).LLmaskblcurvewav = mods.locallab.spots.at(i).LLmaskblcurvewav;
         }
 
         // Tone Mapping
@@ -4910,7 +4920,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gammaskbl(v),
     slomaskbl(v),
     lapmaskbl(v),
+    wavmaskbl(v),
     Lmaskblcurve(v),
+    LLmaskblcurvewav(v),
     // Tone Mapping
     exptonemap(v),
     stren(v),
@@ -5196,7 +5208,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gammaskbl = v;
     slomaskbl = v;
     lapmaskbl = v;
+    wavmaskbl = v;
     Lmaskblcurve = v;
+    LLmaskblcurvewav = v;
     // Tone Mapping
     exptonemap = v;
     stren = v;

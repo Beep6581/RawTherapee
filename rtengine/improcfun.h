@@ -239,6 +239,7 @@ public:
                 const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
                 const LocCCmaskCurve & locccmastmCurve, bool &lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool &llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
                 const LocCCmaskCurve & locccmasblCurve, bool &lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool &llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
+                const LocwavCurve & loclmasCurveblwav, bool & lmasutiliblwav,
                 const LocwavCurve & locwavCurve, bool & locwavutili,
                 bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                 double & huerefblur, double &chromarefblur, double & lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref,

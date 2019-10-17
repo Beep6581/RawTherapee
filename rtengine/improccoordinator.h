@@ -268,6 +268,7 @@ protected:
     LocLLmaskCurve locllmasblCurve;
     LocHHmaskCurve lochhmasblCurve;
     LocwavCurve locwavCurve;
+    LocwavCurve loclmasCurveblwav;
 
     bool locallutili;
     bool localcutili;
@@ -301,6 +302,7 @@ protected:
     bool lhmasblutili;
     bool llmasblutili;
     bool locwavutili;
+    bool lmasutiliblwav;
     bool LHutili;
     bool HHutili;
     LUTf huerefs;

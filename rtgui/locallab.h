@@ -105,10 +105,12 @@ private:
     //Blur and noise
     CurveEditorGroup* const maskblCurveEditorG;
     CurveEditorGroup* const mask2blCurveEditorG;
+    CurveEditorGroup* const mask2blCurveEditorGwav;
     DiagonalCurveEditor* Lmaskblshape;
     FlatCurveEditor* CCmaskblshape;
     FlatCurveEditor* LLmaskblshape;
     FlatCurveEditor* HHmaskblshape;
+    FlatCurveEditor* LLmaskblshapewav;
     // TM
     CurveEditorGroup* const masktmCurveEditorG;
     CurveEditorGroup* const mask2tmCurveEditorG;
@@ -217,6 +219,7 @@ private:
     Adjuster* const gammaskbl;
     Adjuster* const slomaskbl;
     Adjuster* const lapmaskbl;
+    Adjuster* const wavmaskbl;
     Adjuster* const isogr;
     Adjuster* const strengr;
     Adjuster* const scalegr;

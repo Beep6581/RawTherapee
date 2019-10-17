@@ -526,7 +526,9 @@ public:
         bool gammaskbl;
         bool slomaskbl;
         bool lapmaskbl;
+        bool wavmaskbl;
         bool Lmaskblcurve;
+        bool LLmaskblcurvewav;
         // Tone Mapping
         bool exptonemap;
         bool stren;

@@ -6840,6 +6840,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 const LocCCmaskCurve & locccmasretiCurve, bool & lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool & llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
                                 const LocCCmaskCurve & locccmastmCurve, bool & lcmastmutili, const  LocLLmaskCurve & locllmastmCurve, bool & llmastmutili, const  LocHHmaskCurve & lochhmastmCurve, bool & lhmastmutili,
                                 const LocCCmaskCurve & locccmasblCurve, bool & lcmasblutili, const  LocLLmaskCurve & locllmasblCurve, bool & llmasblutili, const  LocHHmaskCurve & lochhmasblCurve, bool & lhmasblutili,
+                                const LocwavCurve & loclmasCurveblwav, bool & lmasutiliblwav,
                                 const LocwavCurve & locwavCurve, bool & locwavutili,
                                 bool & LHutili, bool & HHutili, LUTf & cclocalcurve, bool & localcutili, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & lightCurveloc,
                                 double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref,
@@ -7098,7 +7099,36 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     bufmaskblurbl->L[ir][jr] = 0.5f * lmaskbllocalcurve[2.f * bufmaskblurbl->L[ir][jr]];
                 }
         }
+            int wavelet_level = params->locallab.spots.at(sp).wavmaskbl;
 
+            int minwin = min(GW, GH);
+            int maxlevelspot = 9;
+            while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+                --maxlevelspot ;
+            }
+            wavelet_level = min(wavelet_level, maxlevelspot);
+            int maxlvl;
+            float contrast = 0.f;
+            bool wavcurvemask = false;
+
+            if (loclmasCurveblwav && lmasutiliblwav) {
+                for (int i = 0; i < 500; i++) {
+                    if (loclmasCurveblwav[i] != 0.5) {
+                        wavcurvemask = true;
+                    }
+                }
+            }
+            
+            if(wavcurvemask) {
+#ifdef _OPENMP
+                    const int numThreads = omp_get_max_threads();
+#else
+                    const int numThreads = 1;
+
+#endif
+                
+                wavcontrast(bufmaskblurbl->L, contrast, GW, GH, wavelet_level, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
+            }
             float lap = params->locallab.spots.at(sp).lapmaskbl;
             bool pde = params->locallab.spots.at(sp).laplac;
 
@@ -8606,51 +8636,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const int numThreads = 1;
 
 #endif
-
+                    // adap maximum level wavelet to size of RT-spot
                     int minwin = min(bfw, bfh);
                     int maxlevelspot = 9;
-
-                    // adap maximum level wavelet to size of RT-spot
-                    if (minwin * sk < 1024) {
-                        maxlevelspot = 9;    //sampling wavelet 512
+                    while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+                        --maxlevelspot ;
                     }
-
-                    if (minwin * sk < 512) {
-                        maxlevelspot = 8;    //sampling wavelet 256
-                    }
-
-                    if (minwin * sk < 256) {
-                        maxlevelspot = 7;    //sampling 128
-                    }
-
-                    if (minwin * sk < 128) {
-                        maxlevelspot = 6;
-                    }
-
-                    if (minwin * sk < 64) {
-                        maxlevelspot = 5;
-                    }
-
-                    if (minwin * sk < 32) {
-                        maxlevelspot = 4;
-                    }
-
-                    if (minwin * sk < 16) {
-                        maxlevelspot = 3;
-                    }
-
-                    if (minwin * sk < 8) {
-                        maxlevelspot = 2;
-                    }
-
-                    if (minwin * sk < 4) {
-                        maxlevelspot = 1;
-                    }
-
-                    if (minwin * sk < 2) {
-                        maxlevelspot = 0;
-                    }
-
 
                     wavelet_level = min(wavelet_level, maxlevelspot);
 

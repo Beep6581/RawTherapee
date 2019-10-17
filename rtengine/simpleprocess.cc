@@ -1116,6 +1116,7 @@ private:
             LocCCmaskCurve locccmasblCurve;
             LocLLmaskCurve locllmasblCurve;
             LocHHmaskCurve lochhmasblCurve;
+            LocwavCurve loclmasCurveblwav;
             LocwavCurve locwavCurve;
             LUTf lllocalcurve(65536, 0);
             LUTf cclocalcurve(65536, 0);
@@ -1179,6 +1180,7 @@ private:
                 bool lhmasblutili = false;
                 bool llmasblutili = false;
                 bool locwavutili = false;
+                bool lmasutiliblwav = false;
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
                 loclhCurve.Set(params.locallab.spots.at(sp).LHcurve, LHutili);
@@ -1204,6 +1206,8 @@ private:
                 locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve, lcmasblutili);
                 locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve, llmasblutili);
                 lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve, lhmasblutili);
+                loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav, lmasutiliblwav);
+
                 locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve, locwavutili);
                 CurveFactory::curveLocal(locallutili, params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal(localcutili, params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
@@ -1262,6 +1266,7 @@ private:
                      locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
                      locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                      locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
+                     loclmasCurveblwav,lmasutiliblwav,
                      locwavCurve, locwavutili,
                      LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                      huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

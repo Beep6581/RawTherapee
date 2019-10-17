@@ -168,6 +168,7 @@ Locallab::Locallab():
     //Blur
     maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     mask2blCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
 
     //TM
     masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
@@ -262,6 +263,7 @@ Locallab::Locallab():
     gammaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.05, 5.0, 0.01, 1.))),
     slomaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    wavmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WAMASKCOL"), 1, 9, 1, 5))),
     isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
     strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
     scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
@@ -2139,6 +2141,20 @@ Locallab::Locallab():
     Lmaskblshape->setBottomBarBgGradient(mLmaskblshape);
     Lmaskblshape->setLeftBarBgGradient(mLmaskblshape);
     mask2blCurveEditorG->curveListComplete();
+
+    mask2blCurveEditorGwav->setCurveListener(this);
+    LLmaskblshapewav = static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false));
+    LLmaskblshapewav->setIdentityValue(0.);
+    LLmaskblshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskblcurvewav.at(0)), defSpot.LLmaskblcurvewav);
+
+    if (showtooltip) {
+        LLmaskblshapewav->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    }
+
+    LLmaskblshapewav->setBottomBarBgGradient(mllshape);
+    
+    
+    mask2blCurveEditorGwav->curveListComplete();
     
     
     
@@ -2196,6 +2212,7 @@ Locallab::Locallab():
     gammaskbl->setAdjusterListener(this);
     slomaskbl->setAdjusterListener(this);
     lapmaskbl->setAdjusterListener(this);
+    wavmaskbl->setAdjusterListener(this);
 
     ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
     maskblBox->pack_start(*showmaskblMethod, Gtk::PACK_SHRINK, 4);
@@ -2208,6 +2225,8 @@ Locallab::Locallab():
     maskblBox->pack_start(*gammaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*slomaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*mask2blCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskblBox->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskblBox->pack_start(*wavmaskbl, Gtk::PACK_SHRINK, 0);
     expmaskbl->add(*maskblBox, false);
     panel->pack_start(*expmaskbl);
 
@@ -2352,6 +2371,7 @@ Locallab::~Locallab()
     delete masktmCurveEditorG;
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
+    delete mask2blCurveEditorGwav;
     delete maskretiCurveEditorG;
     delete mask2retiCurveEditorG;
     delete maskcbCurveEditorG;
@@ -3413,8 +3433,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskbl = gammaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskbl = slomaskbl->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskbl = lapmaskbl->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).wavmaskbl = wavmaskbl->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwbl = fftwbl->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve = Lmaskblshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav = LLmaskblshapewav->getCurve();
 
                     // Tone Mapping
                     pp->locallab.spots.at(pp->locallab.selspot).exptonemap = exptonemap->getEnabled();
@@ -3719,8 +3741,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskbl = pe->locallab.spots.at(pp->locallab.selspot).gammaskbl || gammaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskbl = pe->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pe->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).wavmaskbl = pe->locallab.spots.at(pp->locallab.selspot).wavmaskbl || wavmaskbl->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fftwbl = pe->locallab.spots.at(pp->locallab.selspot).fftwbl || !fftwbl->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve || !Lmaskblshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav = pe->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav || !LLmaskblshapewav->isUnChanged();
                         // Tone Mapping
                         pe->locallab.spots.at(pp->locallab.selspot).exptonemap = pe->locallab.spots.at(pp->locallab.selspot).activlum || !exptonemap->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).stren = pe->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
@@ -4012,8 +4036,10 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskbl = pedited->locallab.spots.at(pp->locallab.selspot).gammaskbl || gammaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl = pedited->locallab.spots.at(pp->locallab.selspot).slomaskbl || slomaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskbl || lapmaskbl->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).wavmaskbl = pedited->locallab.spots.at(pp->locallab.selspot).wavmaskbl || wavmaskbl->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwbl = pedited->locallab.spots.at(pp->locallab.selspot).fftwbl || !fftwbl->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskblcurve || !Lmaskblshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav = pedited->locallab.spots.at(pp->locallab.selspot).LLmaskblcurvewav || !LLmaskblshapewav->isUnChanged();
                         // Tone Mapping
                         pedited->locallab.spots.at(pp->locallab.selspot).exptonemap = pedited->locallab.spots.at(pp->locallab.selspot).exptonemap || !exptonemap->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).stren = pedited->locallab.spots.at(pp->locallab.selspot).stren || stren->getEditedState();
@@ -4422,6 +4448,12 @@ void Locallab::curveChanged(CurveEditor* ce)
         if (ce == Lmaskblshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskblshape, M("HISTORY_CUSTOMCURVE"));
+            }
+        }
+
+        if (ce == LLmaskblshapewav) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskblshapewav, M("HISTORY_CUSTOMCURVE"));
             }
         }
 
@@ -5934,6 +5966,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     gammaskbl->setDefault(defSpot->gammaskbl);
     slomaskbl->setDefault(defSpot->slomaskbl);
     lapmaskbl->setDefault(defSpot->lapmaskbl);
+    wavmaskbl->setDefault(defSpot->wavmaskbl);
     // Tone Mapping
     stren->setDefault(defSpot->stren);
     gamma->setDefault(defSpot->gamma);
@@ -6110,6 +6143,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         gammaskbl->setDefaultEditedState(Irrelevant);
         slomaskbl->setDefaultEditedState(Irrelevant);
         lapmaskbl->setDefaultEditedState(Irrelevant);
+        wavmaskbl->setDefaultEditedState(Irrelevant);
         // Tone Mapping
         stren->setDefaultEditedState(Irrelevant);
         gamma->setDefaultEditedState(Irrelevant);
@@ -6290,6 +6324,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         gammaskbl->setDefaultEditedState(defSpotState->gammaskbl ? Edited : UnEdited);
         slomaskbl->setDefaultEditedState(defSpotState->slomaskbl ? Edited : UnEdited);
         lapmaskbl->setDefaultEditedState(defSpotState->lapmaskbl ? Edited : UnEdited);
+        wavmaskbl->setDefaultEditedState(defSpotState->wavmaskbl ? Edited : UnEdited);
         // Tone Mapping
         stren->setDefaultEditedState(defSpotState->stren ? Edited : UnEdited);
         gamma->setDefaultEditedState(defSpotState->gamma ? Edited : UnEdited);
@@ -6911,6 +6946,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == lapmaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskbl, lapmaskbl->getTextValue());
+            }
+        }
+
+        if (a == wavmaskbl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwavmaskbl, wavmaskbl->getTextValue());
             }
         }
 
@@ -7559,6 +7600,7 @@ void Locallab::setBatchMode(bool batchMode)
     gammaskbl->showEditedCB();
     slomaskbl->showEditedCB();
     lapmaskbl->showEditedCB();
+    wavmaskbl->showEditedCB();
     // Tone Mapping
     stren->showEditedCB();
     gamma->showEditedCB();
@@ -8183,8 +8225,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskbl->setValue(pp->locallab.spots.at(index).gammaskbl);
         slomaskbl->setValue(pp->locallab.spots.at(index).slomaskbl);
         lapmaskbl->setValue(pp->locallab.spots.at(index).lapmaskbl);
+        wavmaskbl->setValue(pp->locallab.spots.at(index).wavmaskbl);
         fftwbl->set_active(pp->locallab.spots.at(index).fftwbl);
         Lmaskblshape->setCurve(pp->locallab.spots.at(index).Lmaskblcurve);
+        LLmaskblshapewav->setCurve(pp->locallab.spots.at(index).LLmaskblcurvewav);
 
         // Tone Mapping
         exptonemap->setEnabled(pp->locallab.spots.at(index).exptonemap);
@@ -8534,8 +8578,10 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gammaskbl->setEditedState(spotState->gammaskbl ? Edited : UnEdited);
                 slomaskbl->setEditedState(spotState->slomaskbl ? Edited : UnEdited);
                 lapmaskbl->setEditedState(spotState->lapmaskbl ? Edited : UnEdited);
+                wavmaskbl->setEditedState(spotState->wavmaskbl ? Edited : UnEdited);
                 fftwbl->set_inconsistent(multiImage && !spotState->fftwbl);
                 Lmaskblshape->setUnChanged(!spotState->Lmaskblcurve);
+                LLmaskblshapewav->setUnChanged(!spotState->LLmaskblcurvewav);
 
                 // Tone Mapping
                 exptonemap->set_inconsistent(!spotState->exptonemap);
