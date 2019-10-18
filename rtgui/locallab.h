@@ -429,6 +429,7 @@ private:
     //local contrast
     MyComboBoxText* const localcontMethod;
     sigc::connection localcontMethodConn;
+    ThresholdAdjuster* const csThreshold;
     //CBDL
     MyComboBoxText* const showmaskcbMethod;
     sigc::connection showmaskcbMethodConn;

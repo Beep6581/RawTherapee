@@ -2658,6 +2658,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fftwlc(false),
     localcontMethod("loc"),
     locwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
+    csthreshold(1, 1, 5, 5, false),
     // Contrast by detail levels
     expcbdl(false),
     mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
@@ -2951,6 +2952,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && fftwlc == other.fftwlc
         && localcontMethod == other.localcontMethod
         && locwavcurve == other.locwavcurve
+        && csthreshold == other.csthreshold
         // Constrast by detail levels
         && expcbdl == other.expcbdl
         && [this, &other]()->bool {
@@ -4230,6 +4232,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fftwlc, "Locallab", "Fftwlc_" + std::to_string(i), spot.fftwlc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).localcontMethod, "Locallab", "localcontMethod_" + std::to_string(i), spot.localcontMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).locwavcurve, "Locallab", "LocwavCurve_" + std::to_string(i), spot.locwavcurve, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthreshold, "Locallab", "CSThreshold_" + std::to_string(i), spot.csthreshold.toVector(), keyFile);
                 // Contrast by detail levels
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcbdl, "Locallab", "Expcbdl_" + std::to_string(i), spot.expcbdl, keyFile);
 
@@ -5636,6 +5639,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + std::to_string(i), pedited, spot.fftwlc, spotEdited.fftwlc);
                 assignFromKeyfile(keyFile, "Locallab", "localcontMethod_" + std::to_string(i), pedited, spot.localcontMethod, spotEdited.localcontMethod);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurve_" + std::to_string(i), pedited, spot.locwavcurve, spotEdited.locwavcurve);
+                if (keyFile.has_key("Locallab", "CSThreshold_" + std::to_string(i))) {
+
+                    const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThreshold_" + std::to_string(i));
+
+                    if (thresh.size() >= 4) {
+                        spot.csthreshold.setValues(thresh[0], thresh[1], min(thresh[2], 10), min(thresh[3], 10));
+                    }
+
+                    if (pedited) {
+                        spotEdited.csthreshold = true;
+                    }
+                }
+
                 // Contrast by detail levels
                 assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + std::to_string(i), pedited, spot.expcbdl, spotEdited.expcbdl);
 

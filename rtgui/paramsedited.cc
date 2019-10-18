@@ -1198,6 +1198,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
                 locallab.spots.at(j).localcontMethod = locallab.spots.at(j).localcontMethod && pSpot.localcontMethod == otherSpot.localcontMethod;
                 locallab.spots.at(j).locwavcurve = locallab.spots.at(j).locwavcurve && pSpot.locwavcurve == otherSpot.locwavcurve;
+                locallab.spots.at(j).csthreshold = locallab.spots.at(j).csthreshold && pSpot.csthreshold == otherSpot.csthreshold;
                 // Contrast by detail levels
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
 
@@ -3664,6 +3665,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).locwavcurve = mods.locallab.spots.at(i).locwavcurve;
         }
 
+        if (locallab.spots.at(i).csthreshold) {
+            toEdit.locallab.spots.at(i).csthreshold = mods.locallab.spots.at(i).csthreshold;
+        }
+
         // Contrast by detail levels
         if (locallab.spots.at(i).expcbdl) {
             toEdit.locallab.spots.at(i).expcbdl = mods.locallab.spots.at(i).expcbdl;
@@ -5021,6 +5026,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fftwlc(v),
     localcontMethod(v),
     locwavcurve(v),
+    csthreshold(v),
     // Contrast by detail levels
     expcbdl(v),
     mult{v, v, v, v, v, v},
@@ -5311,6 +5317,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     fftwlc = v;
     localcontMethod = v;
     locwavcurve = v;
+    csthreshold = v;
     // Contrast by detail levels
     expcbdl = v;
 

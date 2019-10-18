@@ -617,6 +617,7 @@ public:
         bool fftwlc;
         bool localcontMethod;
         bool locwavcurve;
+        bool csthreshold;
         // Contrast by detail levels
         bool expcbdl;
         bool mult[6];

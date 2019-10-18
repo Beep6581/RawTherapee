@@ -424,7 +424,8 @@ Locallab::Locallab():
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
     //Local contrast
     localcontMethod(Gtk::manage(new MyComboBoxText())),
-    //CBDL
+    csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 1, 9, 1, 1, 5, 5, 0, false))),
+   //CBDL
     showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
 
     // ThresholdAdjuster widgets
@@ -1789,6 +1790,7 @@ Locallab::Locallab():
     expcontrast->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expcontrast));
     enablecontrastConn = expcontrast->signal_enabled_toggled().connect(sigc::bind(sigc::mem_fun(this, &Locallab::enableToggled), expcontrast));
     fftwlcConn  = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &Locallab::fftwlcChanged));
+    csThreshold->setAdjusterListener(this);
 
     if (showtooltip) {
         fftwlc->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
@@ -1856,7 +1858,8 @@ Locallab::Locallab():
     contrastBox->pack_start(*lcdarkness);
     contrastBox->pack_start(*lclightness);
     contrastBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4);
-    contrastBox->pack_start(*levelwav);
+//    contrastBox->pack_start(*levelwav);
+    contrastBox->pack_start(*csThreshold);
     contrastBox->pack_start(*residcont);
     contrastBox->pack_start(*residchro);
     contrastBox->pack_start(*clariFrame);
@@ -3552,6 +3555,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).sensilc = sensilc->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fftwlc = fftwlc->get_active();
                     pp->locallab.spots.at(pp->locallab.selspot).locwavcurve = wavshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).csthreshold = csThreshold->getValue<int>();
 
                     if (localcontMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).localcontMethod = "loc";
@@ -3854,6 +3858,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).fftwlc = pe->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).localcontMethod = pe->locallab.spots.at(pp->locallab.selspot).localcontMethod || localcontMethod->get_active_text() != M("GENERAL_UNCHANGED");
                         pe->locallab.spots.at(pp->locallab.selspot).locwavcurve = pe->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).csthreshold = pe->locallab.spots.at(pp->locallab.selspot).csthreshold || csThreshold->getEditedState();
                         // Contrast by detail levels
                         pe->locallab.spots.at(pp->locallab.selspot).expcbdl = pe->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -4152,6 +4157,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).sensilc = pedited->locallab.spots.at(pp->locallab.selspot).sensilc || sensilc->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fftwlc = pedited->locallab.spots.at(pp->locallab.selspot).fftwlc || !fftwlc->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve = pedited->locallab.spots.at(pp->locallab.selspot).locwavcurve || !wavshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).csthreshold = pedited->locallab.spots.at(pp->locallab.selspot).csthreshold || csThreshold->getEditedState();
                         // Contrast by detail levels
                         pedited->locallab.spots.at(pp->locallab.selspot).expcbdl = pedited->locallab.spots.at(pp->locallab.selspot).expcbdl || !expcbdl->get_inconsistent();
 
@@ -6056,6 +6062,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     claricres->setDefault(defSpot->claricres);
     clarisoft->setDefault(defSpot->clarisoft);
     sensilc->setDefault((double)defSpot->sensilc);
+    csThreshold->setDefault<int>(defSpot->csthreshold);
 
     // Contrast by detail levels
     for (int i = 0; i < 6; i++) {
@@ -6234,6 +6241,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         claricres->setDefaultEditedState(Irrelevant);
         clarisoft->setDefaultEditedState(Irrelevant);
         sensilc->setDefaultEditedState(Irrelevant);
+        csThreshold->setDefaultEditedState(Irrelevant);
 
         // Contrast by detail levels
         for (int i = 0; i < 6; i++) {
@@ -6416,6 +6424,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         claricres->setDefaultEditedState(defSpotState->claricres ? Edited : UnEdited);
         clarisoft->setDefaultEditedState(defSpotState->clarisoft ? Edited : UnEdited);
         sensilc->setDefaultEditedState(defSpotState->sensilc ? Edited : UnEdited);
+        csThreshold->setDefaultEditedState(defSpotState->csthreshold ? Edited : UnEdited);
 
         // Contrast by detail levels
         for (int i = 0; i < 6; i++) {
@@ -6475,7 +6484,12 @@ void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newT
 
 void Locallab::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
-    // Not used
+    if (getEnabled() && expcontrast->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabcsThreshold, csThreshold->getHistoryString());
+        }
+    }
+
 }
 
 void Locallab::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
@@ -7696,6 +7710,7 @@ void Locallab::setBatchMode(bool batchMode)
     clarilres->showEditedCB();
     claricres->showEditedCB();
     clarisoft->showEditedCB();
+    csThreshold->showEditedCB();
     sensilc->showEditedCB();
 
     // Contrast by detail levels
@@ -8368,6 +8383,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         clarisoft->setValue(pp->locallab.spots.at(index).clarisoft);
         sensilc->setValue(pp->locallab.spots.at(index).sensilc);
         fftwlc->set_active(pp->locallab.spots.at(index).fftwlc);
+        csThreshold->setValue<int>(pp->locallab.spots.at(index).csthreshold);
 
         if (pp->locallab.spots.at(index).localcontMethod == "loc") {
             localcontMethod->set_active(0);
@@ -8720,6 +8736,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 sensilc->setEditedState(spotState->sensilc ? Edited : UnEdited);
                 fftwlc->set_inconsistent(multiImage && !spotState->fftwlc);
                 wavshape->setUnChanged(!spotState->locwavcurve);
+                csThreshold->setEditedState(spotState->csthreshold ? Edited : UnEdited);
 
                 if (!spotState->retinexMethod) {
                     localcontMethod->set_active_text(M("GENERAL_UNCHANGED"));

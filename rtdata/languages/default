@@ -1018,6 +1018,7 @@ HISTORY_MSG_777;Local - Blur Mask local contrast curve
 HISTORY_MSG_778;Local - Blur Mask Wavelet level
 HISTORY_MSG_779;Local - Color Mask local contrast curve
 HISTORY_MSG_780;Local - Color Mask Wavelet level
+HISTORY_MSG_781;Local - Local contrast Wavelet level
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2332,6 +2333,7 @@ TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_WAV;Levels local contrast
 TP_LOCALLAB_WAVMASK;Mask Levels local contrast
 TP_LOCALLAB_LEVELWAV;Wavelets Levels
+TP_LOCALLAB_CSTHRESHOLD;Wavelets Levels
 TP_LOCALLAB_RESIDCONT;Residual image Contrast
 TP_LOCALLAB_RESIDCHRO;Residual image Chroma
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
