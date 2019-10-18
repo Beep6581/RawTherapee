@@ -2572,6 +2572,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavmaskbl(5),
     Lmaskblcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskblcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
+    csthresholdblur(1, 1, 5, 5, false),
     // Tone Mapping
     exptonemap(false),
     stren(0.5),
@@ -2866,7 +2867,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && wavmaskbl == other.wavmaskbl
         && Lmaskblcurve == other.Lmaskblcurve
         && LLmaskblcurvewav == other.LLmaskblcurvewav
-        // Tone Mapping
+         && csthresholdblur == other.csthresholdblur
+       // Tone Mapping
         && exptonemap == other.exptonemap
         && stren == other.stren
         && gamma == other.gamma
@@ -4146,6 +4148,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavmaskbl, "Locallab", "Wavmaskbllevel_" + std::to_string(i), spot.wavmaskbl, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskblcurve, "Locallab", "LmaskblCurve_" + std::to_string(i), spot.Lmaskblcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskblcurvewav, "Locallab", "LLmaskblCurvewav_" + std::to_string(i), spot.LLmaskblcurvewav, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthresholdblur, "Locallab", "CSThresholdblur_" + std::to_string(i), spot.csthresholdblur.toVector(), keyFile);
                 // Tone Mapping
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).exptonemap, "Locallab", "Exptonemap_" + std::to_string(i), spot.exptonemap, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).stren, "Locallab", "Stren_" + std::to_string(i), spot.stren, keyFile);
@@ -5553,6 +5556,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Wavmaskbllevel_" + std::to_string(i), pedited, spot.wavmaskbl, spotEdited.wavmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskblCurve_" + std::to_string(i), pedited, spot.Lmaskblcurve, spotEdited.Lmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskblCurvewav_" + std::to_string(i), pedited, spot.LLmaskblcurvewav, spotEdited.LLmaskblcurvewav);
+                if (keyFile.has_key("Locallab", "CSThresholdblur_" + std::to_string(i))) {
+
+                    const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdblur_" + std::to_string(i));
+
+                    if (thresh.size() >= 4) {
+                        spot.csthresholdblur.setValues(thresh[0], thresh[1], min(thresh[2], 10), min(thresh[3], 10));
+                    }
+
+                    if (pedited) {
+                        spotEdited.csthresholdblur = true;
+                    }
+                }
                 // Tone Mapping
                 assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + std::to_string(i), pedited, spot.exptonemap, spotEdited.exptonemap);
                 assignFromKeyfile(keyFile, "Locallab", "Stren_" + std::to_string(i), pedited, spot.stren, spotEdited.stren);

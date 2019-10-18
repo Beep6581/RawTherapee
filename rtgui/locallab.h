@@ -418,6 +418,7 @@ private:
     sigc::connection medMethodConn;
     MyComboBoxText* const showmaskblMethod;
     sigc::connection showmaskblMethodConn;
+    ThresholdAdjuster* const csThresholdblur;
     //TM
     MyComboBoxText* const showmasktmMethod;
     sigc::connection showmasktmMethodConn;

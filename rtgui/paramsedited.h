@@ -531,6 +531,7 @@ public:
         bool wavmaskbl;
         bool Lmaskblcurve;
         bool LLmaskblcurvewav;
+        bool csthresholdblur;
         // Tone Mapping
         bool exptonemap;
         bool stren;

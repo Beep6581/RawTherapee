@@ -1121,6 +1121,7 @@ struct LocallabParams {
         int wavmaskbl;
         std::vector<double> Lmaskblcurve;
         std::vector<double> LLmaskblcurvewav;
+        Threshold<int> csthresholdblur;
         // Tone Mapping
         bool exptonemap;
         double stren;

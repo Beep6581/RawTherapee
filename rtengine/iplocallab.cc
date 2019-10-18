@@ -7310,15 +7310,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
             }
 
-            if (wavcurvemask) {
+            if (wavcurvemask && (lp.enablMask || lp.showmaskblmet == 3)) {
 #ifdef _OPENMP
                 const int numThreads = omp_get_max_threads();
 #else
                 const int numThreads = 1;
 
 #endif
+                int level_bl = params->locallab.spots.at(sp).csthresholdblur.getBottomLeft();
+                int level_hl = params->locallab.spots.at(sp).csthresholdblur.getTopLeft();
+                int level_br = params->locallab.spots.at(sp).csthresholdblur.getBottomRight();
+                int level_hr = params->locallab.spots.at(sp).csthresholdblur.getTopRight();
 
-                wavcontrast(bufmaskblurbl->L, contrast, GW, GH, wavelet_level, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
+
+                wavcontrast4(bufmaskblurbl->L, contrast, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
             }
 
             float lap = params->locallab.spots.at(sp).lapmaskbl;
