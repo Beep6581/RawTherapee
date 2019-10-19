@@ -2468,6 +2468,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     softradiuscol(0.0),
     Lmaskcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskcolcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
+    csthresholdcol(1, 1, 6, 5, false),
     // Exposure
     expexpose(false),
     expcomp(0.0),
@@ -2572,7 +2573,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavmaskbl(5),
     Lmaskblcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskblcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
-    csthresholdblur(1, 1, 5, 5, false),
+    csthresholdblur(1, 1, 6, 5, false),
     // Tone Mapping
     exptonemap(false),
     stren(0.5),
@@ -2763,6 +2764,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && softradiuscol == other.softradiuscol
         && Lmaskcurve == other.Lmaskcurve
         && LLmaskcolcurvewav == other.LLmaskcolcurvewav
+        && csthresholdcol == other.csthresholdcol
         // Exposure
         && expexpose == other.expexpose
         && expcomp == other.expcomp
@@ -2867,7 +2869,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && wavmaskbl == other.wavmaskbl
         && Lmaskblcurve == other.Lmaskblcurve
         && LLmaskblcurvewav == other.LLmaskblcurvewav
-         && csthresholdblur == other.csthresholdblur
+        && csthresholdblur == other.csthresholdblur
        // Tone Mapping
         && exptonemap == other.exptonemap
         && stren == other.stren
@@ -4044,6 +4046,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).softradiuscol, "Locallab", "Softradiuscol_" + std::to_string(i), spot.softradiuscol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).Lmaskcurve, "Locallab", "LmaskCurve_" + std::to_string(i), spot.Lmaskcurve, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LLmaskcolcurvewav, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), spot.LLmaskcolcurvewav, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).csthresholdcol, "Locallab", "CSThresholdcol_" + std::to_string(i), spot.csthresholdcol.toVector(), keyFile);
                 // Exposure
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expexpose, "Locallab", "Expexpose_" + std::to_string(i), spot.expexpose, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcomp, "Locallab", "Expcomp_" + std::to_string(i), spot.expcomp, keyFile);
@@ -5440,6 +5443,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Softradiuscol_" + std::to_string(i), pedited, spot.softradiuscol, spotEdited.softradiuscol);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskCurve_" + std::to_string(i), pedited, spot.Lmaskcurve, spotEdited.Lmaskcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcolCurvewav_" + std::to_string(i), pedited, spot.LLmaskcolcurvewav, spotEdited.LLmaskcolcurvewav);
+                if (keyFile.has_key("Locallab", "CSThresholdcol_" + std::to_string(i))) {
+
+                    const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdcol_" + std::to_string(i));
+
+                    if (thresh.size() >= 4) {
+                        spot.csthresholdcol.setValues(thresh[0], thresh[1], min(thresh[2], 10), min(thresh[3], 10));
+                    }
+
+                    if (pedited) {
+                        spotEdited.csthresholdcol = true;
+                    }
+                }
                 // Exposure
                 assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + std::to_string(i), pedited, spot.expexpose, spotEdited.expexpose);
                 assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + std::to_string(i), pedited, spot.expcomp, spotEdited.expcomp);

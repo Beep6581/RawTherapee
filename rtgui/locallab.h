@@ -389,6 +389,7 @@ private:
     sigc::connection showmaskcolMethodConn;
     MyComboBoxText* const showmaskcolMethodinv;
     sigc::connection showmaskcolMethodConninv;
+    ThresholdAdjuster* const csThresholdcol;
     //Exposure
     MyComboBoxText* const showmaskexpMethod;
     sigc::connection showmaskexpMethodConn;

@@ -193,7 +193,7 @@ public:
                  const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, 
                  bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm,
                  LUTf & lmasklocalcurve, bool & localmaskutili,
-                 const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int wavlevel
+                 const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr
 );
     void discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t);
     void rex_poisson_dct(float * data, size_t nx, size_t ny, double m);
@@ -255,7 +255,7 @@ public:
     void BlurNoise_Local(LabImage* tmp1, LabImage * originalmask, float **bufchro, const float hueref, const float chromaref, const float lumaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
     static void strcurv_data(std::string retistr, int *s_datc, int &siz);
     void blendstruc(int bfw, int bfh, LabImage* bufcolorig, float radius, float stru, array2D<float> & blend2, int sk, bool multiThread);
-    void wavcontrast(float ** tmp, float contrast, int bfw, int bfh, int wavelet_level, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl);
+
     void wavcontrast4(float ** tmp, float contrast, int bfw, int bfh, int level_bl, int level_hl, int level_br, int level_hr, int sk, bool numThreads, const LocwavCurve & locwavCurve, bool & locwavutili, int & maxlvl);
 
     void transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref,  const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);

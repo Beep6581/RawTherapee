@@ -1015,6 +1015,7 @@ struct LocallabParams {
         double softradiuscol;
         std::vector<double> Lmaskcurve;
         std::vector<double> LLmaskcolcurvewav;
+        Threshold<int> csthresholdcol;
         // Exposure
         bool expexpose;
         //   int expcomp;
@@ -1022,7 +1023,6 @@ struct LocallabParams {
         int hlcompr;
         int hlcomprthresh;
         int black;
-
         int shadex;
         int shcompr;
         int expchroma;

@@ -1020,6 +1020,7 @@ HISTORY_MSG_779;Local - Color Mask local contrast curve
 HISTORY_MSG_780;Local - Color Mask Wavelet level
 HISTORY_MSG_781;Local - Local contrast Wavelet level
 HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
+HISTORY_MSG_783;Local - Color Mask Wavelet levels
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction

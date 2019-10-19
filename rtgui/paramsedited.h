@@ -427,6 +427,7 @@ public:
         bool softradiuscol;
         bool Lmaskcurve;
         bool LLmaskcolcurvewav;
+        bool csthresholdcol;
         // Exposure
         bool expexpose;
         bool expcomp;
