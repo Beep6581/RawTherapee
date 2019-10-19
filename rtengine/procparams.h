@@ -980,6 +980,7 @@ struct LocallabParams {
         double transitgrad;
         bool avoid;
         bool laplac;
+        bool deltae;
         // Color & Light
         bool expcolor;
         bool curvactiv;
@@ -999,7 +1000,7 @@ struct LocallabParams {
         double chromaskcol;
         double gammaskcol;
         double slomaskcol;
-        int wavmaskcol;
+        int shadmaskcol;
         double lapmaskcol;
         Glib::ustring qualitycurveMethod;
         Glib::ustring gridMethod;

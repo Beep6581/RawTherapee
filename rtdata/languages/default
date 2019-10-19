@@ -1017,10 +1017,11 @@ HISTORY_MSG_776;Local - Blur Denoise Mask contrast curve
 HISTORY_MSG_777;Local - Blur Mask local contrast curve
 HISTORY_MSG_778;Local - Blur Mask Wavelet level
 HISTORY_MSG_779;Local - Color Mask local contrast curve
-HISTORY_MSG_780;Local - Color Mask Wavelet level
+HISTORY_MSG_780;Local - Color Mask shadows
 HISTORY_MSG_781;Local - Local contrast Wavelet level
 HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 HISTORY_MSG_783;Local - Color Mask Wavelet levels
+HISTORY_MSG_784;Local - Mask DeltaE
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2123,10 +2124,12 @@ TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMASKCOL;Chroma mask
 TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_SLOMASKCOL;Slope mask
+TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level
 TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE
+TP_LOCALLAB_DELTAEC;Mask DeltaE Image
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_COFR;Color & Light - Small defects : red eyes, dust

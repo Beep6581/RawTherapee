@@ -2433,6 +2433,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitgrad(0.0),
     avoid(false),
     laplac(false),
+    deltae(false),
     // Color & Light
     expcolor(false),
     curvactiv(false),
@@ -2452,7 +2453,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     chromaskcol(0.0),
     gammaskcol(1.0),
     slomaskcol(0.0),
-    wavmaskcol(5),
+    shadmaskcol(0),
     lapmaskcol(0.0),
     qualitycurveMethod("none"),
     gridMethod("one"),
@@ -2729,6 +2730,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && transitgrad == other.transitgrad
         && avoid == other.avoid
         && laplac == other.laplac
+        && deltae == other.deltae
         // Color & Light
         && expcolor == other.expcolor
         && curvactiv == other.curvactiv
@@ -2747,7 +2749,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chromaskcol == other.chromaskcol
         && gammaskcol == other.gammaskcol
         && slomaskcol == other.slomaskcol
-        && wavmaskcol == other.wavmaskcol
+        && shadmaskcol == other.shadmaskcol
         && lapmaskcol == other.lapmaskcol
         && qualitycurveMethod == other.qualitycurveMethod
         && gridMethod == other.gridMethod
@@ -4011,6 +4013,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transitgrad, "Locallab", "Transitgrad_" + std::to_string(i), spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoid, "Locallab", "Avoid_" + std::to_string(i), spot.avoid, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).laplac, "Locallab", "Laplac_" + std::to_string(i), spot.laplac, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).deltae, "Locallab", "Deltae_" + std::to_string(i), spot.deltae, keyFile);
                 // Color & Light
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcolor, "Locallab", "Expcolor_" + std::to_string(i), spot.expcolor, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).curvactiv, "Locallab", "Curvactiv_" + std::to_string(i), spot.curvactiv, keyFile);
@@ -4030,7 +4033,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).chromaskcol, "Locallab", "Chromaskcol_" + std::to_string(i), spot.chromaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskcol, "Locallab", "Gammaskcol_" + std::to_string(i), spot.gammaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskcol, "Locallab", "Slomaskcol_" + std::to_string(i), spot.slomaskcol, keyFile);
-                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).wavmaskcol, "Locallab", "Wavmaskcollevel_" + std::to_string(i), spot.wavmaskcol, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shadmaskcol, "Locallab", "shadmaskcol_" + std::to_string(i), spot.shadmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskcol, "Locallab", "Lapmaskcol_" + std::to_string(i), spot.lapmaskcol, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).qualitycurveMethod, "Locallab", "QualityCurveMethod_" + std::to_string(i), spot.qualitycurveMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gridMethod, "Locallab", "gridMethod_" + std::to_string(i), spot.gridMethod, keyFile);
@@ -5408,6 +5411,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + std::to_string(i), pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
                 assignFromKeyfile(keyFile, "Locallab", "Laplac_" + std::to_string(i), pedited, spot.laplac, spotEdited.laplac);
+                assignFromKeyfile(keyFile, "Locallab", "Deltae_" + std::to_string(i), pedited, spot.deltae, spotEdited.deltae);
                 // Color & Light
                 assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, spot.expcolor, spotEdited.expcolor);
                 assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + std::to_string(i), pedited, spot.curvactiv, spotEdited.curvactiv);
@@ -5427,7 +5431,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcol_" + std::to_string(i), pedited, spot.chromaskcol, spotEdited.chromaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Gammaskcol_" + std::to_string(i), pedited, spot.gammaskcol, spotEdited.gammaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskcol_" + std::to_string(i), pedited, spot.slomaskcol, spotEdited.slomaskcol);
-                assignFromKeyfile(keyFile, "Locallab", "Wavmaskcollevel_" + std::to_string(i), pedited, spot.wavmaskcol, spotEdited.wavmaskcol);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskcol_" + std::to_string(i), pedited, spot.shadmaskcol, spotEdited.shadmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskcol_" + std::to_string(i), pedited, spot.lapmaskcol, spotEdited.lapmaskcol);
                 assignFromKeyfile(keyFile, "Locallab", "QualityCurveMethod_" + std::to_string(i), pedited, spot.qualitycurveMethod, spotEdited.qualitycurveMethod);
                 assignFromKeyfile(keyFile, "Locallab", "gridMethod_" + std::to_string(i), pedited, spot.gridMethod, spotEdited.gridMethod);

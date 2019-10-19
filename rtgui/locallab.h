@@ -158,7 +158,7 @@ private:
     Adjuster* const gammaskcol;
     Adjuster* const slomaskcol;
     Adjuster* const lapmaskcol;
-    Adjuster* const wavmaskcol;
+    Adjuster* const shadmaskcol;
     Adjuster* const softradiuscol;
     // Exposure
     Adjuster* const expcomp;

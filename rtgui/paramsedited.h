@@ -392,6 +392,7 @@ public:
         bool transitgrad;
         bool avoid;
         bool laplac;
+        bool deltae;
         // Color & Light
         bool expcolor;
         bool curvactiv;
@@ -411,7 +412,7 @@ public:
         bool chromaskcol;
         bool gammaskcol;
         bool slomaskcol;
-        bool wavmaskcol;
+        bool shadmaskcol;
         bool lapmaskcol;
         bool qualitycurveMethod;
         bool gridMethod;

@@ -201,7 +201,7 @@ Locallab::Locallab():
     gammaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    wavmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WAMASKCOL"), 1, 9, 1, 5))),
+    shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     // Exposure
     expcomp(Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -2.0, 4.0, 0.05, 0.0))),
@@ -515,7 +515,7 @@ Locallab::Locallab():
     chromaskcol->setAdjusterListener(this);
     gammaskcol->setAdjusterListener(this);
     slomaskcol->setAdjusterListener(this);
-    wavmaskcol->setAdjusterListener(this);
+    shadmaskcol->setAdjusterListener(this);
     softradiuscol->setAdjusterListener(this);
     lapmaskcol->setAdjusterListener(this);
 
@@ -755,9 +755,9 @@ Locallab::Locallab():
     maskcolBox->pack_start(*chromaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*gammaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*slomaskcol, Gtk::PACK_SHRINK, 0);
+//    maskcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-//    maskcolBox->pack_start(*wavmaskcol, Gtk::PACK_SHRINK, 0);
     maskcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
     expmaskcol->add(*maskcolBox, false);
     colorBox->pack_start(*expmaskcol);
@@ -2806,6 +2806,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         r->transitgrad = pp->locallab.spots.at(i).transitgrad;
         r->avoid = pp->locallab.spots.at(i).avoid;
         r->laplac = pp->locallab.spots.at(i).laplac;
+        r->deltae = pp->locallab.spots.at(i).deltae;
 
         expsettings->addControlSpot(r);
     }
@@ -2934,6 +2935,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transitgrad = newSpot->transitgrad;
             r->avoid = newSpot->avoid;
             r->laplac = newSpot->laplac;
+            r->deltae = newSpot->deltae;
             expsettings->addControlSpot(r);
 
             // ProcParams update
@@ -3151,6 +3153,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transitgrad = newSpot->transitgrad;
             r->avoid = newSpot->avoid;
             r->laplac = newSpot->laplac;
+            r->deltae = newSpot->deltae;
             expsettings->addControlSpot(r);
 
             // ProcParams update
@@ -3266,6 +3269,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
                     pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;
+                    pp->locallab.spots.at(pp->locallab.selspot).deltae = r->deltae;
                     // Color & Light
                     pp->locallab.spots.at(pp->locallab.selspot).expcolor = expcolor->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).curvactiv = curvactiv->get_active();
@@ -3308,7 +3312,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).chromaskcol = chromaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskcol = gammaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskcol = slomaskcol->getValue();
-                    pp->locallab.spots.at(pp->locallab.selspot).wavmaskcol = wavmaskcol->getIntValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).shadmaskcol = shadmaskcol->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskcol = lapmaskcol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).softradiuscol = softradiuscol->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = Lmaskshape->getCurve();
@@ -3646,6 +3650,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).balan = pe->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
                         pe->locallab.spots.at(pp->locallab.selspot).avoid = pe->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
                         pe->locallab.spots.at(pp->locallab.selspot).laplac = pe->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
+                        pe->locallab.spots.at(pp->locallab.selspot).deltae = pe->locallab.spots.at(pp->locallab.selspot).deltae || se->deltae;
                         // Color & Light
                         pe->locallab.spots.at(pp->locallab.selspot).expcolor = pe->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).curvactiv = pe->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -3673,7 +3678,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).chromaskcol = pe->locallab.spots.at(pp->locallab.selspot).chromaskcol || chromaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskcol = pe->locallab.spots.at(pp->locallab.selspot).gammaskcol || gammaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskcol = pe->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
-                        pe->locallab.spots.at(pp->locallab.selspot).wavmaskcol = pe->locallab.spots.at(pp->locallab.selspot).wavmaskcol || wavmaskcol->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).shadmaskcol = pe->locallab.spots.at(pp->locallab.selspot).shadmaskcol || shadmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pe->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).softradiuscol = pe->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pe->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
@@ -3947,6 +3952,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).transitgrad = pedited->locallab.spots.at(pp->locallab.selspot).transitgrad || se->transitgrad;
                         pedited->locallab.spots.at(pp->locallab.selspot).avoid = pedited->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
                         pedited->locallab.spots.at(pp->locallab.selspot).laplac = pedited->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
+                        pedited->locallab.spots.at(pp->locallab.selspot).deltae = pedited->locallab.spots.at(pp->locallab.selspot).deltae || se->deltae;
                         // Color & Light
                         pedited->locallab.spots.at(pp->locallab.selspot).expcolor = pedited->locallab.spots.at(pp->locallab.selspot).expcolor || !expcolor->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).curvactiv = pedited->locallab.spots.at(pp->locallab.selspot).curvactiv || !curvactiv->get_inconsistent();
@@ -3973,7 +3979,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).chromaskcol = pedited->locallab.spots.at(pp->locallab.selspot).chromaskcol || chromaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskcol = pedited->locallab.spots.at(pp->locallab.selspot).gammaskcol || gammaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol = pedited->locallab.spots.at(pp->locallab.selspot).slomaskcol || slomaskcol->getEditedState();
-                        pedited->locallab.spots.at(pp->locallab.selspot).wavmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).wavmaskcol || wavmaskcol->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).shadmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).shadmaskcol || shadmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskcol || lapmaskcol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol = pedited->locallab.spots.at(pp->locallab.selspot).softradiuscol || softradiuscol->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve = pedited->locallab.spots.at(pp->locallab.selspot).Lmaskcurve || !Lmaskshape->isUnChanged();
@@ -5949,7 +5955,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     chromaskcol->setDefault(defSpot->chromaskcol);
     gammaskcol->setDefault(defSpot->gammaskcol);
     slomaskcol->setDefault(defSpot->slomaskcol);
-    wavmaskcol->setDefault(defSpot->wavmaskcol);
+    shadmaskcol->setDefault(defSpot->shadmaskcol);
     lapmaskcol->setDefault(defSpot->lapmaskcol);
     softradiuscol->setDefault(defSpot->softradiuscol);
     csThresholdcol->setDefault<int>(defSpot->csthresholdcol);
@@ -6130,7 +6136,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskcol->setDefaultEditedState(Irrelevant);
         gammaskcol->setDefaultEditedState(Irrelevant);
         slomaskcol->setDefaultEditedState(Irrelevant);
-        wavmaskcol->setDefaultEditedState(Irrelevant);
+        shadmaskcol->setDefaultEditedState(Irrelevant);
         lapmaskcol->setDefaultEditedState(Irrelevant);
         softradiuscol->setDefaultEditedState(Irrelevant);
         csThresholdcol->setDefaultEditedState(Irrelevant);
@@ -6315,7 +6321,7 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         chromaskcol->setDefaultEditedState(defSpotState->chromaskcol ? Edited : UnEdited);
         gammaskcol->setDefaultEditedState(defSpotState->gammaskcol ? Edited : UnEdited);
         slomaskcol->setDefaultEditedState(defSpotState->slomaskcol ? Edited : UnEdited);
-        wavmaskcol->setDefaultEditedState(defSpotState->wavmaskcol ? Edited : UnEdited);
+        shadmaskcol->setDefaultEditedState(defSpotState->shadmaskcol ? Edited : UnEdited);
         lapmaskcol->setDefaultEditedState(defSpotState->lapmaskcol ? Edited : UnEdited);
         softradiuscol->setDefaultEditedState(defSpotState->softradiuscol ? Edited : UnEdited);
         csThresholdcol->setDefaultEditedState(defSpotState->csthresholdcol ? Edited : UnEdited);
@@ -6613,9 +6619,9 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
-        if (a == wavmaskcol) {
+        if (a == shadmaskcol) {
             if (listener) {
-                listener->panelChanged(Evlocallabwavmaskcol, wavmaskcol->getTextValue());
+                listener->panelChanged(Evlocallabshadmaskcol, shadmaskcol->getTextValue());
             }
         }
 
@@ -7617,7 +7623,7 @@ void Locallab::setBatchMode(bool batchMode)
     chromaskcol->showEditedCB();
     gammaskcol->showEditedCB();
     slomaskcol->showEditedCB();
-    wavmaskcol->showEditedCB();
+    shadmaskcol->showEditedCB();
     lapmaskcol->showEditedCB();
     softradiuscol->showEditedCB();
     csThresholdcol->showEditedCB();
@@ -8156,7 +8162,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         chromaskcol->setValue(pp->locallab.spots.at(index).chromaskcol);
         gammaskcol->setValue(pp->locallab.spots.at(index).gammaskcol);
         slomaskcol->setValue(pp->locallab.spots.at(index).slomaskcol);
-        wavmaskcol->setValue(pp->locallab.spots.at(index).wavmaskcol);
+        shadmaskcol->setValue(pp->locallab.spots.at(index).shadmaskcol);
         lapmaskcol->setValue(pp->locallab.spots.at(index).lapmaskcol);
         softradiuscol->setValue(pp->locallab.spots.at(index).softradiuscol);
         Lmaskshape->setCurve(pp->locallab.spots.at(index).Lmaskcurve);
@@ -8509,6 +8515,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->transitgrad = spotState->transitgrad;
                 se->avoid = spotState->avoid;
                 se->laplac = spotState->laplac;
+                se->deltae = spotState->deltae;
                 expsettings->setEditedStates(se);
 
                 // Color & Light
@@ -8545,7 +8552,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 chromaskcol->setEditedState(spotState->chromaskcol ? Edited : UnEdited);
                 gammaskcol->setEditedState(spotState->gammaskcol ? Edited : UnEdited);
                 slomaskcol->setEditedState(spotState->slomaskcol ? Edited : UnEdited);
-                wavmaskcol->setEditedState(spotState->wavmaskcol ? Edited : UnEdited);
+                shadmaskcol->setEditedState(spotState->shadmaskcol ? Edited : UnEdited);
                 lapmaskcol->setEditedState(spotState->lapmaskcol ? Edited : UnEdited);
                 softradiuscol->setEditedState(spotState->softradiuscol ? Edited : UnEdited);
                 Lmaskshape->setUnChanged(!spotState->Lmaskcurve);

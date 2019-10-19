@@ -10830,7 +10830,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float blendm = lp.blendmacol;
                     float lap = params->locallab.spots.at(sp).lapmaskcol;
                     float pde = params->locallab.spots.at(sp).laplac;
-//                    int wavlevel = params->locallab.spots.at(sp).wavmaskcol;
+//                    int wavlevel = params->locallab.spots.at(sp).shadmaskcol;
 
                     int level_bl = params->locallab.spots.at(sp).csthresholdcol.getBottomLeft();
                     int level_hl = params->locallab.spots.at(sp).csthresholdcol.getTopLeft();
@@ -11040,7 +11040,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float blendm = lp.blendmacol;
             float lap = params->locallab.spots.at(sp).lapmaskcol;
             float pde = params->locallab.spots.at(sp).laplac;
-//            int wavlevel = params->locallab.spots.at(sp).wavmaskcol;
+//            int wavlevel = params->locallab.spots.at(sp).shadmaskcol;
             int level_bl = params->locallab.spots.at(sp).csthresholdcol.getBottomLeft();
             int level_hl = params->locallab.spots.at(sp).csthresholdcol.getTopLeft();
             int level_br = params->locallab.spots.at(sp).csthresholdcol.getBottomRight();

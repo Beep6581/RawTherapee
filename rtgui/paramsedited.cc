@@ -974,6 +974,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
+                locallab.spots.at(j).deltae = locallab.spots.at(j).deltae && pSpot.deltae == otherSpot.deltae;
                 // Color & Light
                 locallab.spots.at(j).expcolor = locallab.spots.at(j).expcolor && pSpot.expcolor == otherSpot.expcolor;
                 locallab.spots.at(j).curvactiv = locallab.spots.at(j).curvactiv && pSpot.curvactiv == otherSpot.curvactiv;
@@ -993,7 +994,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chromaskcol = locallab.spots.at(j).chromaskcol && pSpot.chromaskcol == otherSpot.chromaskcol;
                 locallab.spots.at(j).gammaskcol = locallab.spots.at(j).gammaskcol && pSpot.gammaskcol == otherSpot.gammaskcol;
                 locallab.spots.at(j).slomaskcol = locallab.spots.at(j).slomaskcol && pSpot.slomaskcol == otherSpot.slomaskcol;
-                locallab.spots.at(j).wavmaskcol = locallab.spots.at(j).wavmaskcol && pSpot.wavmaskcol == otherSpot.wavmaskcol;
+                locallab.spots.at(j).shadmaskcol = locallab.spots.at(j).shadmaskcol && pSpot.shadmaskcol == otherSpot.shadmaskcol;
                 locallab.spots.at(j).lapmaskcol = locallab.spots.at(j).lapmaskcol && pSpot.lapmaskcol == otherSpot.lapmaskcol;
                 locallab.spots.at(j).qualitycurveMethod = locallab.spots.at(j).qualitycurveMethod && pSpot.qualitycurveMethod == otherSpot.qualitycurveMethod;
                 locallab.spots.at(j).gridMethod = locallab.spots.at(j).gridMethod && pSpot.gridMethod == otherSpot.gridMethod;
@@ -2801,6 +2802,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).laplac = mods.locallab.spots.at(i).laplac;
         }
 
+        if (locallab.spots.at(i).deltae) {
+            toEdit.locallab.spots.at(i).deltae = mods.locallab.spots.at(i).deltae;
+        }
+
         // Color & Light
         if (locallab.spots.at(i).expcolor) {
             toEdit.locallab.spots.at(i).expcolor = mods.locallab.spots.at(i).expcolor;
@@ -2874,8 +2879,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slomaskcol = mods.locallab.spots.at(i).slomaskcol;
         }
 
-        if (locallab.spots.at(i).wavmaskcol) {
-            toEdit.locallab.spots.at(i).wavmaskcol = mods.locallab.spots.at(i).wavmaskcol;
+        if (locallab.spots.at(i).shadmaskcol) {
+            toEdit.locallab.spots.at(i).shadmaskcol = mods.locallab.spots.at(i).shadmaskcol;
         }
 
         if (locallab.spots.at(i).lapmaskcol) {
@@ -4811,6 +4816,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     transitgrad(v),
     avoid(v),
     laplac(v),
+    deltae(v),
     // Color & Light
     expcolor(v),
     curvactiv(v),
@@ -4830,7 +4836,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     chromaskcol(v),
     gammaskcol(v),
     slomaskcol(v),
-    wavmaskcol(v),
+    shadmaskcol(v),
     lapmaskcol(v),
     qualitycurveMethod(v),
     gridMethod(v),
@@ -5104,6 +5110,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     transitgrad = v;
     avoid = v;
     laplac = v;
+    deltae = v;
     // Color & Light
     expcolor = v;
     curvactiv = v;
@@ -5123,7 +5130,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     chromaskcol = v;
     gammaskcol = v;
     slomaskcol = v;
-    wavmaskcol = v;
+    shadmaskcol = v;
     lapmaskcol = v;
     qualitycurveMethod = v;
     gridMethod = v;
