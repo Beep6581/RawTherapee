@@ -1120,7 +1120,7 @@ struct LocallabParams {
         double gammaskbl;
         double slomaskbl;
         double lapmaskbl;
-        int wavmaskbl;
+        int shadmaskbl;
         std::vector<double> Lmaskblcurve;
         std::vector<double> LLmaskblcurvewav;
         Threshold<int> csthresholdblur;

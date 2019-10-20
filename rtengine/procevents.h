@@ -804,7 +804,7 @@ enum ProcEventCode {
     EvlocallabLmaskcbshape = 774,
     EvlocallabLmaskblshape = 775,
     EvlocallabLLmaskblshapewav = 776,
-    Evlocallabwavmaskbl = 777,
+    Evlocallabshadmaskbl = 777,
     EvlocallabLLmaskcolshapewav = 778,
     Evlocallabshadmaskcol = 779,
     EvlocallabcsThreshold = 780,

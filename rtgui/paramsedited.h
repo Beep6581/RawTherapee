@@ -531,7 +531,7 @@ public:
         bool gammaskbl;
         bool slomaskbl;
         bool lapmaskbl;
-        bool wavmaskbl;
+        bool shadmaskbl;
         bool Lmaskblcurve;
         bool LLmaskblcurvewav;
         bool csthresholdblur;

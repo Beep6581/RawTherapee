@@ -222,7 +222,7 @@ private:
     Adjuster* const gammaskbl;
     Adjuster* const slomaskbl;
     Adjuster* const lapmaskbl;
-    Adjuster* const wavmaskbl;
+    Adjuster* const shadmaskbl;
     Adjuster* const isogr;
     Adjuster* const strengr;
     Adjuster* const scalegr;
