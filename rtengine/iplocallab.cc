@@ -7315,7 +7315,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
-            if (delt && (lp.enablMask || lp.showmaskblmet == 3)) {
+            if (delt && lp.blurmet == 0 && (lp.enablMask || lp.showmaskblmet == 3)) {
                 float *rdE[GH] ALIGNED16;
                 float *rdEBuffer = new float[GH * GW];
 
@@ -8536,7 +8536,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float pde = params->locallab.spots.at(sp).laplac;
             LocwavCurve dummy;
             bool lmasutilicolwav = false;
-            bool delt = params->locallab.spots.at(sp).deltae;
+          //  bool delt = params->locallab.spots.at(sp).deltae;
+            bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
 
             const int limscope = 80;
@@ -10824,7 +10825,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float pde = params->locallab.spots.at(sp).laplac;
             LocwavCurve dummy;
             bool lmasutilicolwav = false;
-            bool delt = params->locallab.spots.at(sp).deltae;
+         //   bool delt = params->locallab.spots.at(sp).deltae;
+            bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
             int shado = 0;
 
@@ -11301,7 +11303,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int level_hl = params->locallab.spots.at(sp).csthresholdcol.getTopLeft();
             int level_br = params->locallab.spots.at(sp).csthresholdcol.getBottomRight();
             int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
-            bool delt = params->locallab.spots.at(sp).deltae;
+         //   bool delt = params->locallab.spots.at(sp).deltae;
+            bool delt = false;
             int sco = params->locallab.spots.at(sp).scopemask;
 
             const int limscope = 80;
