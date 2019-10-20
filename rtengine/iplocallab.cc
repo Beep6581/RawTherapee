@@ -2359,6 +2359,54 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
     }
 }
 
+void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
+                                    float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope)
+{
+    const float refa = chromaref * cos(hueref);
+    const float refb = chromaref * sin(hueref);
+    const float refL = lumaref;
+
+    float reducdE = 1.f;
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+
+    for (int y = 0; y < bfh; y++) {
+        for (int x = 0; x < bfw; x++) {
+            float tempdE = sqrt((SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f)) +  SQR(refL - bufcolorig->L[y][x] / 327.68f));
+
+            if (tempdE > maxdE) {
+                reducdE = 0.f;
+            } else if (tempdE > mindE && tempdE <= maxdE) {
+                const float ar = 1.f / (mindE - maxdE);
+                const float br = - ar * maxdE;
+                reducdE = pow(ar * tempdE + br, iterat);
+            } else {
+                reducdE = 1.f;
+            }
+
+            if (scope > limscope) {
+                if (tempdE > maxdElim) {
+                    reducdE = 0.f;
+                } else if (tempdE > mindElim && tempdE <= maxdElim) {
+                    const float arlim = 1.f / (mindElim - maxdElim);
+                    const float brlim = - arlim * maxdElim;
+                    const float reducdElim = pow(arlim * tempdE + brlim, iterat);
+                    const float aalim = (1.f - reducdElim) / 20.f;
+                    const float bblim = 1.f - 100.f * aalim;
+                    reducdE = aalim * scope  +  bblim;
+                } else {
+                    reducdE = 1.f;
+                }
+            }
+
+//            if(scope == 100) reducdE = 1.f;
+            rdE[y][x] = reducdE ;
+        }
+    }
+}
+
+
 
 static void deltaEforLaplace(float *dE, const local_params& lp, int bfw, int bfh, LabImage* bufexporig, const float hueref, const float chromaref, const float lumaref)
 {
@@ -2845,7 +2893,9 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                   const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili,
                                   bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm,
                                   LUTf & lmasklocalcurve, bool & localmaskutili,
-                                  const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr
+                                  const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
+                                  bool delt, const float hueref, const float chromaref, const float lumaref,
+                                  float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope
                                  )
 {
     array2D<float> ble(bfw, bfh);
@@ -2953,6 +3003,9 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
         }
+        std::unique_ptr<LabImage> bufprov(new LabImage(bfw, bfh));
+
+        bufprov->CopyFrom(bufmaskblurcol);
 
         if (rad > 0.f) {
             guidedFilter(guid, ble, ble, rad * 10.f / sk, 0.001, multiThread, 4);
@@ -3017,6 +3070,35 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         }
 
+        if (delt) {
+            float *rdE[bfh] ALIGNED16;
+            float *rdEBuffer = new float[bfh * bfw];
+
+            for (int i = 0; i < bfh; i++) {
+                rdE[i] = &rdEBuffer[i * bfw];
+            }
+
+            deltaEforMask(rdE, bfw, bfh, bufcolorig, hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope);
+            // printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
+            std::unique_ptr<LabImage> delta(new LabImage(bfw, bfh));
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    delta->L[ir][jr] = bufmaskblurcol->L[ir][jr] - bufprov->L[ir][jr];
+                    delta->a[ir][jr] = bufmaskblurcol->a[ir][jr] - bufprov->a[ir][jr];
+                    delta->b[ir][jr] = bufmaskblurcol->b[ir][jr] - bufprov->b[ir][jr];
+
+                    bufmaskblurcol->L[ir][jr] = bufprov->L[ir][jr] + rdE[ir][jr] * delta->L[ir][jr];
+                    bufmaskblurcol->a[ir][jr] = bufprov->a[ir][jr] + rdE[ir][jr] * delta->a[ir][jr];
+                    bufmaskblurcol->b[ir][jr] = bufprov->b[ir][jr] + rdE[ir][jr] * delta->b[ir][jr];
+                }
+
+            delete [] rdEBuffer;
+
+        }
 
         if (lap > 0.f) {
             float *datain = new float[bfh * bfw];
@@ -5359,8 +5441,8 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, int bfw, int bf
     float blow = 0.f;
 
     if (level_hl != level_bl) {
-    //    alow = 0.5f / (level_hl - level_bl);//to test with 0.5
-    //    blow = 0.5f -alow * level_bl;
+        //    alow = 0.5f / (level_hl - level_bl);//to test with 0.5
+        //    blow = 0.5f -alow * level_bl;
         alow = 1.f / (level_hl - level_bl);
         blow = -alow * level_bl;
     }
@@ -5369,8 +5451,8 @@ void ImProcFunctions::wavcontrast4(float ** tmp, float contrast, int bfw, int bf
     float bhigh = 0.f;
 
     if (level_hr != level_br) {
-     //   ahigh = 0.5f / (level_hr - level_br);//to test with 0.5
-     //   bhigh = 0.5f -ahigh * level_br;
+        //   ahigh = 0.5f / (level_hr - level_br);//to test with 0.5
+        //   bhigh = 0.5f -ahigh * level_br;
         ahigh = 1.f / (level_hr - level_br);
         bhigh =  -ahigh * level_br;
     }
@@ -7056,6 +7138,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         std::unique_ptr<LabImage> bufmaskorigbl;
         std::unique_ptr<LabImage> bufmaskblurbl;
         std::unique_ptr<LabImage> bufgb;
+        std::unique_ptr<LabImage> bufprov;
 
         if (denoiz || blurz || lp.denoiena || lp.blurena) {
             bufgb.reset(new LabImage(GW, GH));
@@ -7063,6 +7146,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
                 bufmaskorigbl.reset(new LabImage(GW, GH));
                 bufmaskblurbl.reset(new LabImage(GW, GH));
+                bufprov.reset(new LabImage(GW, GH));
                 originalmaskbl = new LabImage(GW, GH);
             }
 
@@ -7135,9 +7219,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         guid[ir][jr] = Y / 32768.f;
 
-
+                        bufprov->L[ir][jr] = bufmaskblurbl->L[ir][jr];
+                        bufprov->a[ir][jr] = bufmaskblurbl->a[ir][jr];
+                        bufprov->b[ir][jr] = bufmaskblurbl->b[ir][jr];
                     }
                 }
+
 
                 if (lp.radmabl > 0.f) {
                     guidedFilter(guid, ble, ble, lp.radmabl * 10.f / sk, 0.001, multiThread, 4);
@@ -7210,6 +7297,47 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 wavcontrast4(bufmaskblurbl->L, contrast, GW, GH, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurveblwav, lmasutiliblwav, maxlvl);
             }
 
+// deltae Mask with scope
+            bool delt = params->locallab.spots.at(sp).deltae;
+            int sco = params->locallab.spots.at(sp).scopemask;
+            const int limscope = 80;
+            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+
+            if (delt) {
+                float *rdE[GH] ALIGNED16;
+                float *rdEBuffer = new float[GH * GW];
+
+                for (int i = 0; i < GH; i++) {
+                    rdE[i] = &rdEBuffer[i * GW];
+                }
+
+                deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco);
+                // printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
+                std::unique_ptr<LabImage> delta(new LabImage(GW, GH));
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int ir = 0; ir < GH; ir++)
+                    for (int jr = 0; jr < GW; jr++) {
+                        delta->L[ir][jr] = bufmaskblurbl->L[ir][jr] - bufprov->L[ir][jr];
+                        delta->a[ir][jr] = bufmaskblurbl->a[ir][jr] - bufprov->a[ir][jr];
+                        delta->b[ir][jr] = bufmaskblurbl->b[ir][jr] - bufprov->b[ir][jr];
+
+                        bufmaskblurbl->L[ir][jr] = bufprov->L[ir][jr] + rdE[ir][jr] * delta->L[ir][jr];
+                        bufmaskblurbl->a[ir][jr] = bufprov->a[ir][jr] + rdE[ir][jr] * delta->a[ir][jr];
+                        bufmaskblurbl->b[ir][jr] = bufprov->b[ir][jr] + rdE[ir][jr] * delta->b[ir][jr];
+                    }
+
+                delete [] rdEBuffer;
+
+            }
+
+
+//
             float lap = params->locallab.spots.at(sp).lapmaskbl;
             bool pde = params->locallab.spots.at(sp).laplac;
 
@@ -7781,10 +7909,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float lap = params->locallab.spots.at(sp).lapmaskcb;
                     float pde = params->locallab.spots.at(sp).laplac;
                     LocwavCurve dummy;
+                    bool delt = params->locallab.spots.at(sp).deltae;
+                    int sco = params->locallab.spots.at(sp).scopemask;
+
+                    const int limscope = 80;
+                    const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+                    const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                    const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                    const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
                     bool lmasutilicolwav = false;
+
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskcblocalcurve, localmaskcbutili, dummy, lmasutilicolwav, 1, 1, 5, 5);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskcblocalcurve, localmaskcbutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                delt, hueref, chromaref, lumaref,
+                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                               );
 
                     if (lp.showmaskcbmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, loctemp.get(), transformed, bufmaskorigcb.get(), 0);
@@ -8060,10 +8200,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     if (!params->locallab.spots.at(sp).enatmMaskaft) {
                         LocwavCurve dummy;
                         bool lmasutilicolwav = false;
+                        bool delt = params->locallab.spots.at(sp).deltae;
+                        int sco = params->locallab.spots.at(sp).scopemask;
+
+                        const int limscope = 80;
+                        const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+                        const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
                         maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufgbm.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                     locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5);
+                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                    delt, hueref, chromaref, lumaref,
+                                    maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                                   );
 
                         if (lp.showmasktmmet == 3) {
                             showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufgbm.get(), transformed, bufmaskorigtm.get(), 0);
@@ -8085,10 +8236,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             //calculate new values for original, originalmasktm, bufmaskorigtm...in function of tmp1
                             LocwavCurve dummy;
                             bool lmasutilicolwav = false;
+                            bool delt = params->locallab.spots.at(sp).deltae;
+                            int sco = params->locallab.spots.at(sp).scopemask;
+
+                            const int limscope = 80;
+                            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+                            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
                             maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5);
+                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                        delt, hueref, chromaref, lumaref,
+                                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                                       );
 
                             if (lp.showmasktmmet == 3) {//dispaly mask
                                 showmask(lp, xstart, ystart, cx, cy, bfw, bfh, tmp1.get(), transformed, bufmaskorigtm.get(), 0);
@@ -8254,10 +8416,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float pde = params->locallab.spots.at(sp).laplac;
                     LocwavCurve dummy;
                     bool lmasutilicolwav = false;
+                    bool delt = params->locallab.spots.at(sp).deltae;
+                    int sco = params->locallab.spots.at(sp).scopemask;
+
+                    const int limscope = 80;
+                    const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+                    const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                    const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                    const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                delt, hueref, chromaref, lumaref,
+                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                               );
 
                     if (lp.showmaskSHmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskorigSH.get(), 0);
@@ -8351,10 +8524,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float pde = params->locallab.spots.at(sp).laplac;
             LocwavCurve dummy;
             bool lmasutilicolwav = false;
+            bool delt = params->locallab.spots.at(sp).deltae;
+            int sco = params->locallab.spots.at(sp).scopemask;
+
+            const int limscope = 80;
+            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, inv, lp,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                        delt, hueref, chromaref, lumaref,
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                       );
 
 
             if (lp.showmaskSHmetinv == 1) {
@@ -10323,10 +10507,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float pde = params->locallab.spots.at(sp).laplac;
                     LocwavCurve dummy;
                     bool lmasutilicolwav = false;
+                    bool delt = params->locallab.spots.at(sp).deltae;
+                    int sco = params->locallab.spots.at(sp).scopemask;
+
+                    const int limscope = 80;
+                    const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+                    const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                    const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                    const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5);
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                delt, hueref, chromaref, lumaref,
+                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                               );
 
                     if (lp.showmaskexpmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskblurexp.get(), 0);
@@ -10590,10 +10785,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             float pde = params->locallab.spots.at(sp).laplac;
             LocwavCurve dummy;
             bool lmasutilicolwav = false;
+            bool delt = params->locallab.spots.at(sp).deltae;
+            int sco = params->locallab.spots.at(sp).scopemask;
+
+            const int limscope = 80;
+            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                         locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                        delt, hueref, chromaref, lumaref,
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                       );
 
             if (lp.showmaskexpmetinv == 1) {
                 showmask(lp, 0, 0, cx, cy, GW, GH, bufexporig.get(), transformed, bufmaskblurexp.get(), inv);
@@ -10831,16 +11037,26 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     float lap = params->locallab.spots.at(sp).lapmaskcol;
                     float pde = params->locallab.spots.at(sp).laplac;
 //                    int wavlevel = params->locallab.spots.at(sp).shadmaskcol;
-
+                    bool delt = params->locallab.spots.at(sp).deltae;
+                    int sco = params->locallab.spots.at(sp).scopemask;
                     int level_bl = params->locallab.spots.at(sp).csthresholdcol.getBottomLeft();
                     int level_hl = params->locallab.spots.at(sp).csthresholdcol.getTopLeft();
                     int level_br = params->locallab.spots.at(sp).csthresholdcol.getBottomRight();
                     int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
 
+                    const int limscope = 80;
+                    const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+                    const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                    const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                    const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
                                 enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
-                                level_bl, level_hl, level_br, level_hr);
+                                level_bl, level_hl, level_br, level_hr,
+                                delt, hueref, chromaref, lumaref,
+                                maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                               );
 
                     if (lp.showmaskcolmet == 3) {
                         showmask(lp, xstart, ystart, cx, cy, bfw, bfh, bufcolorig.get(), transformed, bufmaskblurcol.get(), 0);
@@ -11045,11 +11261,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int level_hl = params->locallab.spots.at(sp).csthresholdcol.getTopLeft();
             int level_br = params->locallab.spots.at(sp).csthresholdcol.getBottomRight();
             int level_hr = params->locallab.spots.at(sp).csthresholdcol.getTopRight();
+            bool delt = params->locallab.spots.at(sp).deltae;
+            int sco = params->locallab.spots.at(sp).scopemask;
+
+            const int limscope = 80;
+            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav, 
-                        level_bl, level_hl, level_br, level_hr);
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
+                        level_bl, level_hl, level_br, level_hr,
+                        delt, hueref, chromaref, lumaref,
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
+                       );
 
 
             if (lp.showmaskcolmetinv == 1) {

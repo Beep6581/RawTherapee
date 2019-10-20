@@ -393,6 +393,7 @@ public:
         bool avoid;
         bool laplac;
         bool deltae;
+        bool scopemask;
         // Color & Light
         bool expcolor;
         bool curvactiv;

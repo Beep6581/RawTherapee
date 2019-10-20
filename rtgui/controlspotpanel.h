@@ -65,6 +65,7 @@ public:
         double balan;
         double transitweak;
         double transitgrad;
+        int scopemask;
         bool avoid;
         bool laplac;
         bool deltae;
@@ -98,6 +99,7 @@ public:
         bool balan;
         bool transitweak;
         bool transitgrad;
+        bool scopemask;
         bool avoid;
         bool laplac;
         bool deltae;
@@ -315,6 +317,7 @@ private:
         Gtk::TreeModelColumn<double> balan;
         Gtk::TreeModelColumn<double> transitweak;
         Gtk::TreeModelColumn<double> transitgrad;
+        Gtk::TreeModelColumn<int> scopemask;
         Gtk::TreeModelColumn<bool> avoid;
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
@@ -381,6 +384,7 @@ private:
     Adjuster* const balan_;
     Adjuster* const transitweak_;
     Adjuster* const transitgrad_;
+    Adjuster* const scopemask_;
 
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;

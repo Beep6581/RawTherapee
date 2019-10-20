@@ -1022,6 +1022,7 @@ HISTORY_MSG_781;Local - Local contrast Wavelet level
 HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 HISTORY_MSG_783;Local - Color Mask Wavelet levels
 HISTORY_MSG_784;Local - Mask DeltaE
+HISTORY_MSG_785;Local - Mask Scope DeltaE
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2126,6 +2127,9 @@ TP_LOCALLAB_GAMMASKCOL;Gamma mask
 TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
+TP_LOCALLAB_SCOPEMASK;Scope Mask DeltaE Image
+TP_LOCALLAB_MASFRAME;Mask
+TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves are used
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_CSTHRESHOLDBLUR;Mask Wavelet level
 TP_LOCALLAB_LAPLACC;Mask Laplacian solve PDE

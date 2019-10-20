@@ -193,8 +193,12 @@ public:
                  const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, 
                  bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm,
                  LUTf & lmasklocalcurve, bool & localmaskutili,
-                 const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr
-);
+                 const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
+                 bool delt, const float hueref, const float chromaref, const float lumaref,
+                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope);
+                 
+    void deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
+                          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope);
     void discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t);
     void rex_poisson_dct(float * data, size_t nx, size_t ny, double m);
     void mean_dt(const float * data, size_t size, double * mean_p, double * dt_p);

@@ -975,6 +975,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
                 locallab.spots.at(j).deltae = locallab.spots.at(j).deltae && pSpot.deltae == otherSpot.deltae;
+                locallab.spots.at(j).scopemask = locallab.spots.at(j).scopemask && pSpot.scopemask == otherSpot.scopemask;
                 // Color & Light
                 locallab.spots.at(j).expcolor = locallab.spots.at(j).expcolor && pSpot.expcolor == otherSpot.expcolor;
                 locallab.spots.at(j).curvactiv = locallab.spots.at(j).curvactiv && pSpot.curvactiv == otherSpot.curvactiv;
@@ -2792,6 +2793,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).transitgrad) {
             toEdit.locallab.spots.at(i).transitgrad = mods.locallab.spots.at(i).transitgrad;
+        }
+
+        if (locallab.spots.at(i).scopemask) {
+            toEdit.locallab.spots.at(i).scopemask = mods.locallab.spots.at(i).scopemask;
         }
 
         if (locallab.spots.at(i).avoid) {
@@ -4817,6 +4822,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     avoid(v),
     laplac(v),
     deltae(v),
+    scopemask(v),
     // Color & Light
     expcolor(v),
     curvactiv(v),
@@ -5111,6 +5117,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     avoid = v;
     laplac = v;
     deltae = v;
+    scopemask = v;
     // Color & Light
     expcolor = v;
     curvactiv = v;
