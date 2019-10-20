@@ -2128,6 +2128,7 @@ TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
 TP_LOCALLAB_SCOPEMASK;Scope Mask DeltaE Image
+TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if Mask DeltaE Image is enabled.\nLow values avoid retouching selected area
 TP_LOCALLAB_MASFRAME;Mask
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and contrast curves and levels contrasts curves are used
 TP_LOCALLAB_WAMASKCOL;Mask Wavelet level

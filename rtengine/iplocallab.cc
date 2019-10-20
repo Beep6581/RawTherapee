@@ -9545,11 +9545,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bool fftw = lp.ftwreti;
                 //fftw = false;
                 //for Retinex Mask are incorporated in MSR
+                bool delt = params->locallab.spots.at(sp).deltae;
+                int sco = params->locallab.spots.at(sp).scopemask;
+                const int limscope2 = 80;
+                const float mindE2 = 2.f + MINSCOPE * sco * lp.thr;
+                const float maxdE2 = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                const float mindElim2 = 2.f + MINSCOPE * limscope2 * lp.thr;
+                const float maxdElim2 = 5.f + MAXSCOPE * limscope2 * (1 + 0.1f * lp.thr);
                 ImProcFunctions::MSRLocal(sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1,
                                           Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                           lmaskretilocalcurve, localmaskretiutili,
-                                          transformed, lp.enaretiMasktmap, lp.enaretiMask);
+                                          transformed, lp.enaretiMasktmap, lp.enaretiMask,
+                                          delt, hueref, chromaref, lumaref,
+                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco);
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
@@ -9680,7 +9689,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                                   Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                                   lmaskretilocalcurve, localmaskretiutili,
-                                                  transformed, lp.enaretiMasktmap, lp.enaretiMask);
+                                                  transformed, lp.enaretiMasktmap, lp.enaretiMask,
+                                                  false, 1.f, 1.f, 1.f,
+                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50);
+
                     }
 
                     if (!lp.invret && call == 1) {
@@ -10055,12 +10067,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 //   float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
                 bool fftw = lp.ftwreti;
                 //for Retinex Mask are incorporated in MSR
+                bool delt = params->locallab.spots.at(sp).deltae;
+                int sco = params->locallab.spots.at(sp).scopemask;
+
+                const int limscope2 = 80;
+                const float mindE2 = 2.f + MINSCOPE * sco * lp.thr;
+                const float maxdE2 = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                const float mindElim2 = 2.f + MINSCOPE * limscope2 * lp.thr;
+                const float maxdElim2 = 5.f + MAXSCOPE * limscope2 * (1 + 0.1f * lp.thr);
 
                 ImProcFunctions::MSRLocal(sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, tmpl->L, orig1,
                                           Wd, Hd, bfwr, bfhr, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                           locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                           lmaskretilocalcurve, localmaskretiutili,
-                                          transformed, lp.enaretiMasktmap, lp.enaretiMask);
+                                          transformed, lp.enaretiMasktmap, lp.enaretiMask,
+                                          delt, hueref, chromaref, lumaref,
+                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco);
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -10205,7 +10227,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                                   Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                                   locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                                   lmaskretilocalcurve, localmaskretiutili,
-                                                  transformed, lp.enaretiMasktmap, lp.enaretiMask);
+                                                  transformed, lp.enaretiMasktmap, lp.enaretiMask,
+                                                  false, 1.f, 1.f, 1.f,
+                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50);
+
                     }
 
                     if (!lp.invret && call == 2) {

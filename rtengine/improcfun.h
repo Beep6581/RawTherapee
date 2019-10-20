@@ -215,7 +215,9 @@ public:
          const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili,
          int llretiMask, bool retiMasktmap, bool retiMask, float rad, float lap, bool pde, float gamm, float slop, float chro, float blend,
          LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
-         LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread);
+         LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread,
+         bool delt, const float hueref, const float chromaref, const float lumaref,
+         float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope);
 
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
 
@@ -224,7 +226,10 @@ public:
         const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
         const LocCCmaskCurve & locccmasretiCurve, bool &lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool &llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool & lhmasretiutili, int llretiMask,
         LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
-        LabImage * transformed, bool retiMasktmap, bool retiMask);
+        LabImage * transformed, bool retiMasktmap, bool retiMask,
+        bool delt, const float hueref, const float chromaref, const float lumaref,
+        float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope);
+
 
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
