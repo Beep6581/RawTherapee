@@ -2427,11 +2427,9 @@ void CLASS hasselblad_load_raw()
     ph1_bithuff_t ph1_bithuff(this, ifp, order);
     hb_bits(-1);
     const int shot = LIM(shot_select, 1, tiff_samples) - 1;
+    const int predictor_init = static_cast<int>(0x8000 + load_flags);
     for (int row = 0; row < raw_height; ++row) {
-        int stashed_predictors[2] = {
-          static_cast<int>(0x8000 + load_flags),
-          static_cast<int>(0x8000 + load_flags)
-        };
+        int stashed_predictors[2] = {predictor_init, predictor_init};
         for (int col = 0; col < raw_width; col += 2) {
             for (int s = 0; s < tiff_samples * 2; s += 2) {
                 const int len[2]= {
@@ -2449,7 +2447,7 @@ void CLASS hasselblad_load_raw()
                 }
             }
             for (int s = col; s < col + 2; ++s) {
-                int pred = stashed_predictors[s % 2];
+                int pred = stashed_predictors[s & 1];
                 for (int c = 0; c < tiff_samples; ++c) {
                     pred += diff[(s & 1) * tiff_samples + c];
                     const unsigned upix = pred & 0xffff;
@@ -2466,7 +2464,7 @@ void CLASS hasselblad_load_raw()
                         }
                     }
                     if (c == (tiff_samples-1)) {
-                      stashed_predictors[s % 2] = pred;
+                      stashed_predictors[s & 1] = pred;
                     }
                 }
             }
