@@ -7303,7 +7303,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int shado = params->locallab.spots.at(sp).shadmaskbl;
 
             if (shado > 0  && (lp.enablMask || lp.showmaskblmet == 3)) {
-                ImProcFunctions::shadowsHighlights(bufmaskblurbl.get(), true, 1, 0, shado, 40, sk, 0, lp.shcomp);
+                ImProcFunctions::shadowsHighlights(bufmaskblurbl.get(), true, 1, shado, 0, 40, sk, lp.shcomp, 0);
             }
 
 // deltae Mask with scope

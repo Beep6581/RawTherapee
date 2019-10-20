@@ -2433,7 +2433,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitgrad(0.0),
     avoid(false),
     laplac(false),
-    deltae(true),
+    deltae(false),
     scopemask(50),
     // Color & Light
     expcolor(false),
