@@ -2360,11 +2360,14 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 }
 
 void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
-                                    float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope)
+                                    float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance)
 {
     const float refa = chromaref * cos(hueref);
     const float refb = chromaref * sin(hueref);
     const float refL = lumaref;
+    float kL = balance; //lp.balance;
+    float kab = 1.f;
+    balancedeltaE(kL, kab);
 
     float reducdE = 1.f;
 #ifdef _OPENMP
@@ -2373,7 +2376,7 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-            float tempdE = sqrt((SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f)) +  SQR(refL - bufcolorig->L[y][x] / 327.68f));
+            float tempdE = sqrt(kab * (SQR(refa - bufcolorig->a[y][x] / 327.68f) + SQR(refb - bufcolorig->b[y][x] / 327.68f)) +  kL * SQR(refL - bufcolorig->L[y][x] / 327.68f));
 
             if (tempdE > maxdE) {
                 reducdE = 0.f;
@@ -3038,7 +3041,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         }
 
         if (shado > 0) {
-            ImProcFunctions::shadowsHighlights(bufmaskblurcol, true, 1, 0, shado, 40, sk, 0, lp.shcomp);
+            ImProcFunctions::shadowsHighlights(bufmaskblurcol, true, 1, 0, shado, 40, sk, 0, 30);
         }
 
         int wavelet_level = level_br;
@@ -3082,7 +3085,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 rdE[i] = &rdEBuffer[i * bfw];
             }
 
-            deltaEforMask(rdE, bfw, bfh, bufcolorig, hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope);
+            deltaEforMask(rdE, bfw, bfh, bufcolorig, hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance);
             // printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
             std::unique_ptr<LabImage> delta(new LabImage(bfw, bfh));
 #ifdef _OPENMP
@@ -7323,7 +7326,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     rdE[i] = &rdEBuffer[i * GW];
                 }
 
-                deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco);
+                deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.balance);
                 // printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
                 std::unique_ptr<LabImage> delta(new LabImage(GW, GH));
 #ifdef _OPENMP
@@ -9572,7 +9575,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                           lmaskretilocalcurve, localmaskretiutili,
                                           transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                           delt, hueref, chromaref, lumaref,
-                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco);
+                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance);
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
@@ -9705,7 +9708,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                                   lmaskretilocalcurve, localmaskretiutili,
                                                   transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                                   false, 1.f, 1.f, 1.f,
-                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50);
+                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50, 1.f);
 
                     }
 
@@ -10096,7 +10099,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                           lmaskretilocalcurve, localmaskretiutili,
                                           transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                           delt, hueref, chromaref, lumaref,
-                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco);
+                                          maxdE2, mindE2, maxdElim2, mindElim2, lp.iterat, limscope2, sco, lp.balance);
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -10243,7 +10246,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                                   lmaskretilocalcurve, localmaskretiutili,
                                                   transformed, lp.enaretiMasktmap, lp.enaretiMask,
                                                   false, 1.f, 1.f, 1.f,
-                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50);
+                                                  1.f, 1.f, 1.f,  1.f, 1.f, 1.f, 50, 1.f);
 
                     }
 

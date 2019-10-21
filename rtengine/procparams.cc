@@ -2434,7 +2434,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     avoid(false),
     laplac(false),
     deltae(true),
-    scopemask(50),
+    scopemask(60),
     // Color & Light
     expcolor(false),
     curvactiv(false),
