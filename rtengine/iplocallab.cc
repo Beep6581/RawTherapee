@@ -7303,7 +7303,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             int shado = params->locallab.spots.at(sp).shadmaskbl;
 
             if (shado > 0  && (lp.enablMask || lp.showmaskblmet == 3)) {
-                ImProcFunctions::shadowsHighlights(bufmaskblurbl.get(), true, 1, shado, 0, 40, sk, lp.shcomp, 0);
+                ImProcFunctions::shadowsHighlights(bufmaskblurbl.get(), true, 1, shado, 0, 40, sk, 50, 0);//50 middle value for highlight tonal width
             }
 
 // deltae Mask with scope
@@ -10772,7 +10772,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
         }
 
 //inverse
-        else if (lp.invex  && (lp.expcomp != 0.0 || lp.war != 0 || (exlocalcurve  && localexutili)) && lp.exposena) {
+
+        else if (lp.invex  && (lp.expcomp != 0.0 || lp.war != 0 || lp.laplacexp > 0.1f || params->locallab.spots.at(sp).fatamount > 1.f|| (exlocalcurve  && localexutili) || lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 3 || lp.showmaskexpmet == 4  || lp.showmaskexpmet == 5) && lp.exposena) {
             float adjustr = 2.f;
             std::unique_ptr<LabImage> bufmaskblurexp;
             std::unique_ptr<LabImage> originalmaskexp;
