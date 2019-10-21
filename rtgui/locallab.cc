@@ -400,7 +400,7 @@ Locallab::Locallab():
     gridMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
-    csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 1, 9, 1, 1, 6, 5, 0, false))),
+    csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
     //Exposure
     showmaskexpMethod(Gtk::manage(new MyComboBoxText())),
     showmaskexpMethodinv(Gtk::manage(new MyComboBoxText())),
@@ -418,7 +418,7 @@ Locallab::Locallab():
     blMethod(Gtk::manage(new MyComboBoxText())),
     medMethod(Gtk::manage(new MyComboBoxText())),
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
-    csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 1, 9, 1, 1, 6, 5, 0, false))),
+    csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
     //TM
     showmasktmMethod(Gtk::manage(new MyComboBoxText())),
     // Retinex
@@ -426,7 +426,7 @@ Locallab::Locallab():
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
     //Local contrast
     localcontMethod(Gtk::manage(new MyComboBoxText())),
-    csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 1, 9, 1, 1, 5, 5, 0, false))),
+    csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 5, 5, 0, false))),
    //CBDL
     showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
 

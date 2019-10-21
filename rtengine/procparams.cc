@@ -2470,7 +2470,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     softradiuscol(0.0),
     Lmaskcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskcolcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
-    csthresholdcol(1, 1, 6, 5, false),
+    csthresholdcol(0, 0, 6, 5, false),
     // Exposure
     expexpose(false),
     expcomp(0.0),
@@ -2575,7 +2575,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shadmaskbl(0),
     Lmaskblcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     LLmaskblcurvewav{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
-    csthresholdblur(1, 1, 6, 5, false),
+    csthresholdblur(0, 0, 6, 5, false),
     // Tone Mapping
     exptonemap(false),
     stren(0.5),
@@ -2662,7 +2662,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fftwlc(false),
     localcontMethod("loc"),
     locwavcurve{(double)FCT_MinMaxCPoints, 0.0, 0.5, 0.35, 0.35, 1., 0.5, 0.35, 0.35},
-    csthreshold(1, 1, 5, 5, false),
+    csthreshold(0, 0, 5, 5, false),
     // Contrast by detail levels
     expcbdl(false),
     mult{1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
