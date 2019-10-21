@@ -346,13 +346,13 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
             } else if (isLastSavedSelected()) {
                 toSave = lastsaved;
             } else {
-                const ProfileStoreEntry* entry = profiles->getSelectedEntry();
+                const auto entry = profiles->getSelectedEntry();
                 toSave = entry ? ProfileStore::getInstance()->getProfile(entry) : nullptr;
             }
 
             if (toSave) {
                 int retCode;
-                if (event->state & Gdk::CONTROL_MASK) {
+                if (isPartial) {
                     // Build partial profile
                     PartialProfile ppTemp(true);
                     partialProfileDlg->applyPaste(ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
