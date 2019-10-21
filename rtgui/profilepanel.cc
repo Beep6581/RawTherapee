@@ -278,23 +278,24 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     // If it's a partial profile, it's more intuitive to first allow the user
     // to choose which parameters to save before showing the Save As dialog
     // #5491
-    if (event->state & Gdk::CONTROL_MASK) {
-        if(!partialProfileDlg) {
-            partialProfileDlg = new PartialPasteDlg (Glib::ustring (), parent);
+    const auto isPartial = event->state & Gdk::CONTROL_MASK;
+    if (isPartial) {
+        if (!partialProfileDlg) {
+            partialProfileDlg = new PartialPasteDlg(Glib::ustring(), parent);
         }
 
         partialProfileDlg->set_title(M("PROFILEPANEL_SAVEPPASTE"));
-        int i = partialProfileDlg->run();
+        const auto response = partialProfileDlg->run();
         partialProfileDlg->hide();
 
-        if (i != Gtk::RESPONSE_OK) {
+        if (response != Gtk::RESPONSE_OK) {
             return;
         }
     }
 
-    Gtk::FileChooserDialog dialog (getToplevelWindow (this), M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    bindCurrentFolder (dialog, options.loadSaveProfilePath);
-    dialog.set_current_name (lastFilename);
+    Gtk::FileChooserDialog dialog(getToplevelWindow(this), M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    bindCurrentFolder(dialog, options.loadSaveProfilePath);
+    dialog.set_current_name(lastFilename);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
     try {
@@ -311,33 +312,32 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_OK);
 
     //Add filters, so that only certain file types can be selected:
-    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    auto filter_pp = Gtk::FileFilter::create();
     filter_pp->set_name(M("FILECHOOSER_FILTER_PP"));
     filter_pp->add_pattern("*" + paramFileExtension);
     dialog.add_filter(filter_pp);
 
-    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    auto filter_any = Gtk::FileFilter::create();
     filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
     filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
-    bool done = false;
+    bool done = true;
 
     do {
         if (dialog.run() == Gtk::RESPONSE_OK) {
 
             std::string fname = dialog.get_filename();
-            Glib::ustring ext = getExtension (fname);
 
-            if (("." + ext) != paramFileExtension) {
+            if (("." + getExtension(fname)) != paramFileExtension) {
                 fname += paramFileExtension;
             }
 
-            if (!confirmOverwrite (dialog, fname)) {
+            if (!confirmOverwrite(dialog, fname)) {
                 continue;
             }
 
-            lastFilename = Glib::path_get_basename (fname);
+            lastFilename = Glib::path_get_basename(fname);
 
             const PartialProfile* toSave;
 
@@ -347,7 +347,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
                 toSave = lastsaved;
             } else {
                 const ProfileStoreEntry* entry = profiles->getSelectedEntry();
-                toSave = entry ? ProfileStore::getInstance()->getProfile (profiles->getSelectedEntry()) : nullptr;
+                toSave = entry ? ProfileStore::getInstance()->getProfile(entry) : nullptr;
             }
 
             if (toSave) {
@@ -355,33 +355,27 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
                 if (event->state & Gdk::CONTROL_MASK) {
                     // Build partial profile
                     PartialProfile ppTemp(true);
-                    partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
+                    partialProfileDlg->applyPaste(ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
                     // Save partial profile
-                    retCode = ppTemp.pparams->save (fname, "", true, ppTemp.pedited);
+                    retCode = ppTemp.pparams->save(fname, "", true, ppTemp.pedited);
                     // Cleanup
                     ppTemp.deleteInstance();
                 } else {
                     // Save full profile
-                    retCode = toSave->pparams->save (fname);
+                    retCode = toSave->pparams->save(fname);
                 }
 
                 if (!retCode) {
-                    done = true;
-                    bool ccPrevState = changeconn.block(true);
+                    const auto ccPrevState = changeconn.block(true);
                     ProfileStore::getInstance()->parseProfiles();
-                    changeconn.block (ccPrevState);
+                    changeconn.block(ccPrevState);
                 } else {
+                    done = false;
                     writeFailed(dialog, fname);
                 }
-            } else {
-                done = true;
             }
-        } else {
-            done = true;
         }
     } while (!done);
-
-    return;
 }
 
 /*
