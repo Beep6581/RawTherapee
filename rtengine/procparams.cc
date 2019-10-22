@@ -2510,6 +2510,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fatanchor(50.0),
     fatlevel(2),
     // Shadow highlight
+    shMethod("std"),
+    multsh{0, 0, 0, 0, 0},
     expshadhigh(false),
     highlights(0),
     h_tonalwidth(70),
@@ -2529,6 +2531,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gammaskSH(1.0),
     slomaskSH(0.0),
     lapmaskSH(0.0),
+    detailSH(0),
     LmaskSHcurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     // Vibrance
     expvibrance(false),
@@ -2808,6 +2811,17 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && fatanchor == other.fatanchor
         && fatlevel == other.fatlevel
         // Shadow highlight
+        && shMethod == other.shMethod
+        && [this, &other]()->bool {
+            for (int i = 0; i < 5; i++)
+            {
+                if (multsh[i] != other.multsh[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }()
         && expshadhigh == other.expshadhigh
         && highlights == other.highlights
         && h_tonalwidth == other.h_tonalwidth
@@ -2827,6 +2841,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gammaskSH == other.gammaskSH
         && slomaskSH == other.slomaskSH
         && lapmaskSH == other.lapmaskSH
+        && detailSH == other.detailSH
         && LmaskSHcurve == other.LmaskSHcurve
         // Vibrance
         && expvibrance == other.expvibrance
@@ -4092,6 +4107,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatanchor, "Locallab", "Fatanchor_" + std::to_string(i), spot.fatanchor, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).fatlevel, "Locallab", "Fatlevel_" + std::to_string(i), spot.fatlevel, keyFile);
                 // Shadow highlight
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shMethod, "Locallab", "ShMethod_" + std::to_string(i), spot.shMethod, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expshadhigh, "Locallab", "Expshadhigh_" + std::to_string(i), spot.expshadhigh, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).highlights, "Locallab", "highlights_" + std::to_string(i), spot.highlights, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).h_tonalwidth, "Locallab", "h_tonalwidth_" + std::to_string(i), spot.h_tonalwidth, keyFile);
@@ -4111,7 +4127,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).gammaskSH, "Locallab", "GammaskSH_" + std::to_string(i), spot.gammaskSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).slomaskSH, "Locallab", "SlomaskSH_" + std::to_string(i), spot.slomaskSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lapmaskSH, "Locallab", "LapmaskSH_" + std::to_string(i), spot.lapmaskSH, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).detailSH, "Locallab", "DetailSH_" + std::to_string(i), spot.detailSH, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).LmaskSHcurve, "Locallab", "LmaskSHCurve_" + std::to_string(i), spot.LmaskSHcurve, keyFile);
+                for (int j = 0; j < 5; j++) {
+                    saveToKeyfile(!pedited || pedited->locallab.spots.at(i).multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + std::to_string(i), spot.multsh[j], keyFile);
+                }
                 // Vibrance
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expvibrance, "Locallab", "Expvibrance_" + std::to_string(i), spot.expvibrance, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).saturated, "Locallab", "Saturated_" + std::to_string(i), spot.saturated, keyFile);
@@ -5502,6 +5522,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Fatanchor_" + std::to_string(i), pedited, spot.fatanchor, spotEdited.fatanchor);
                 assignFromKeyfile(keyFile, "Locallab", "Fatlevel_" + std::to_string(i), pedited, spot.fatlevel, spotEdited.fatlevel);
                 // Shadow highlight
+                assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + std::to_string(i), pedited, spot.shMethod, spotEdited.shMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + std::to_string(i), pedited, spot.expshadhigh, spotEdited.expshadhigh);
                 assignFromKeyfile(keyFile, "Locallab", "highlights_" + std::to_string(i), pedited, spot.highlights, spotEdited.highlights);
                 assignFromKeyfile(keyFile, "Locallab", "h_tonalwidth_" + std::to_string(i), pedited, spot.h_tonalwidth, spotEdited.h_tonalwidth);
@@ -5521,7 +5542,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "GammaskSH_" + std::to_string(i), pedited, spot.gammaskSH, spotEdited.gammaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + std::to_string(i), pedited, spot.slomaskSH, spotEdited.slomaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "LapmaskSH_" + std::to_string(i), pedited, spot.lapmaskSH, spotEdited.lapmaskSH);
+                assignFromKeyfile(keyFile, "Locallab", "DetailSH_" + std::to_string(i), pedited, spot.detailSH, spotEdited.detailSH);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskSHCurve_" + std::to_string(i), pedited, spot.LmaskSHcurve, spotEdited.LmaskSHcurve);
+                for (int j = 0; j < 5; j ++) {
+                    assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + std::to_string(i), pedited, spot.multsh[j], spotEdited.multsh[j]);
+                }
                 // Vibrance
                 assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + std::to_string(i), pedited, spot.expvibrance, spotEdited.expvibrance);
                 assignFromKeyfile(keyFile, "Locallab", "Saturated_" + std::to_string(i), pedited, spot.saturated, spotEdited.saturated);

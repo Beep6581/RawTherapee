@@ -469,6 +469,8 @@ public:
         bool fatanchor;
         bool fatlevel;
         // Shadow highlight
+        bool shMethod;
+        bool multsh[6];
         bool expshadhigh;
         bool highlights;
         bool h_tonalwidth;
@@ -488,6 +490,7 @@ public:
         bool gammaskSH;
         bool slomaskSH;
         bool lapmaskSH;
+        bool detailSH;
         bool LmaskSHcurve;
         // Vibrance
         bool expvibrance;

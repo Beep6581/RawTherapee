@@ -1023,6 +1023,8 @@ HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 HISTORY_MSG_783;Local - Color Mask Wavelet levels
 HISTORY_MSG_784;Local - Mask DeltaE
 HISTORY_MSG_785;Local - Mask Scope DeltaE
+HISTORY_MSG_787;Local - Equalizer multiplier
+HISTORY_MSG_788;Local - Equalizer detail
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2128,6 +2130,11 @@ TP_LOCALLAB_SLOMASKCOL;Slope mask
 TP_LOCALLAB_SHAMASKCOL;Shadows mask
 TP_LOCALLAB_HIGHMASKCOL;Highlights mask
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold mask
+TP_LOCALLAB_LUMADARKEST;Darkest
+TP_LOCALLAB_LUMAWHITESEST;Whiteest
+TP_LOCALLAB_SH1;Shadows Highlights
+TP_LOCALLAB_SH2;Equalizer
+TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
 TP_LOCALLAB_SCOPEMASK;Scope Mask DeltaE Image

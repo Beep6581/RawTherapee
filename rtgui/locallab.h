@@ -188,6 +188,7 @@ private:
     Adjuster* const fatanchor;
     Adjuster* const fatlevel;
     //Shadow highlight
+    Adjuster* multipliersh[5];
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;
     Adjuster* const shadows;
@@ -201,6 +202,7 @@ private:
     Adjuster* const gammaskSH;
     Adjuster* const slomaskSH;
     Adjuster* const lapmaskSH;
+    Adjuster* const detailSH;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;
@@ -400,6 +402,8 @@ private:
     MyComboBoxText* const exnoiseMethod;
     sigc::connection exnoiseMethodConn;
     //Shadows Highlight
+    MyComboBoxText* const shMethod;
+    sigc::connection shMethodConn;
     MyComboBoxText* const showmaskSHMethod;
     sigc::connection showmaskSHMethodConn;
     MyComboBoxText* const showmaskSHMethodinv;
@@ -541,6 +545,7 @@ private:
     void expMethodChanged();
     void exnoiseMethodChanged();
     //Shadows Highlight
+    void shMethodChanged();
     void showmaskSHMethodChanged();
     void showmaskSHMethodChangedinv();
     // Blur & Noise

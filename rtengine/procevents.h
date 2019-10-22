@@ -812,6 +812,9 @@ enum ProcEventCode {
     EvlocallabcsThresholdcol = 782,
     Evlocallabdeltae = 783,
     EvLocallabSpotscopemask = 784,
+    EvlocallabshMethod = 785,
+    EvlocallabEqualizersh = 786,
+    EvlocallabdetailSH = 787,
     NUMOFEVENTS
 };
 

@@ -244,6 +244,7 @@ Locallab::Locallab():
     gammaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    detailSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILSH"), -5, 5, 1, 0))),
     // Vibrance
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
@@ -407,6 +408,7 @@ Locallab::Locallab():
     expMethod(Gtk::manage(new MyComboBoxText())),
     exnoiseMethod(Gtk::manage(new MyComboBoxText())),
     //Shadows Highlight
+    shMethod(Gtk::manage(new MyComboBoxText())),
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
     showmaskSHMethodinv(Gtk::manage(new MyComboBoxText())),
     // Blur & Noise
@@ -1038,12 +1040,41 @@ Locallab::Locallab():
         expshadhigh->set_tooltip_text(M("TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP"));
     }
 
+    shMethod->append(M("TP_LOCALLAB_SH1"));
+    shMethod->append(M("TP_LOCALLAB_SH2"));
+    shMethod->set_active(0);
+    shMethodConn  = shMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallab::shMethodChanged));
+
+    if (showtooltip) {
+        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
+    }
+/*
+    ctboxshmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelshmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
+    ctboxshmethod->pack_start(*labelshmethod, Gtk::PACK_SHRINK, 4);
+*/
     setExpandAlignProperties(expmasksh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     expmasksh->signal_button_release_event().connect_notify(sigc::bind(sigc::mem_fun(this, &Locallab::foldAllButMe), expmasksh));
     expmasksh->setLevel(2);
     if (showtooltip) {
         expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
     }
+
+    for (int i = 0; i < 5; i++) {
+        Glib::ustring ss;
+        ss = Glib::ustring::format(i);
+
+        if (i == 0) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
+        } else if (i == 5) {
+            ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMAWHITESEST"));
+        }
+
+        multipliersh[i] = Gtk::manage(new Adjuster(std::move(ss), -100, 100, 1, 0));
+        multipliersh[i]->setAdjusterListener(this);
+    }
+
+
 
     highlights->setAdjusterListener(this);
     h_tonalwidth->setAdjusterListener(this);
@@ -1058,6 +1089,7 @@ Locallab::Locallab():
     gammaskSH->setAdjusterListener(this);
     slomaskSH->setAdjusterListener(this);
     lapmaskSH->setAdjusterListener(this);
+    detailSH->setAdjusterListener(this);
 
     if (showtooltip) {
         radmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
@@ -1145,6 +1177,11 @@ Locallab::Locallab():
     mask2SHCurveEditorG->curveListComplete();
 
     ToolParamBlock* const shadhighBox = Gtk::manage(new ToolParamBlock());
+//    shadhighBox->pack_start(*shMethod);
+//    for (int i = 0; i < 5; i++) {
+//        shadhighBox->pack_start(*multipliersh[i]);
+//    }
+//    shadhighBox->pack_start(*detailSH);
     shadhighBox->pack_start(*highlights);
     shadhighBox->pack_start(*h_tonalwidth);
     shadhighBox->pack_start(*shadows);
@@ -3403,7 +3440,17 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).gammaskSH = gammaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).slomaskSH = slomaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskSH = lapmaskSH->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).detailSH = detailSH->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = LmaskSHshape->getCurve();
+                    if (shMethod->get_active_row_number() == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).shMethod = "std";
+                    } else if (shMethod->get_active_row_number() == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).shMethod = "tone";
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        pp->locallab.spots.at(pp->locallab.selspot).multsh[i] = multipliersh[i]->getIntValue();
+                    }
+
                     // Vibrance
                     pp->locallab.spots.at(pp->locallab.selspot).expvibrance = expvibrance->getEnabled();
                     pp->locallab.spots.at(pp->locallab.selspot).saturated = saturated->getIntValue();
@@ -3747,7 +3794,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).gammaskSH = pe->locallab.spots.at(pp->locallab.selspot).gammaskSH || gammaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).slomaskSH = pe->locallab.spots.at(pp->locallab.selspot).slomaskSH || slomaskSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).lapmaskSH = pe->locallab.spots.at(pp->locallab.selspot).lapmaskSH || lapmaskSH->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).detailSH = pe->locallab.spots.at(pp->locallab.selspot).detailSH || detailSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = pe->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve || !LmaskSHshape->isUnChanged();
+                        pe->locallab.spots.at(pp->locallab.selspot).shMethod = pe->locallab.spots.at(pp->locallab.selspot).shMethod || shMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        for (int i = 0; i < 5; i++) {
+                            pe->locallab.spots.at(pp->locallab.selspot).multsh[i] = pe->locallab.spots.at(pp->locallab.selspot).multsh[i] || multipliersh[i]->getEditedState();
+                        }
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pe->locallab.spots.at(pp->locallab.selspot).saturated = pe->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -4049,7 +4101,12 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).gammaskSH = pedited->locallab.spots.at(pp->locallab.selspot).gammaskSH || gammaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).slomaskSH = pedited->locallab.spots.at(pp->locallab.selspot).slomaskSH || slomaskSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).lapmaskSH = pedited->locallab.spots.at(pp->locallab.selspot).lapmaskSH || lapmaskSH->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).detailSH = pedited->locallab.spots.at(pp->locallab.selspot).detailSH || detailSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = pedited->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve || !LmaskSHshape->isUnChanged();
+                        pedited->locallab.spots.at(pp->locallab.selspot).shMethod = pedited->locallab.spots.at(pp->locallab.selspot).shMethod || shMethod->get_active_text() != M("GENERAL_UNCHANGED");
+                        for (int i = 0; i < 5; i++) {
+                            pedited->locallab.spots.at(pp->locallab.selspot).multsh[i] = pedited->locallab.spots.at(pp->locallab.selspot).multsh[i] || multipliersh[i]->getEditedState();
+                        }
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
                         pedited->locallab.spots.at(pp->locallab.selspot).saturated = pedited->locallab.spots.at(pp->locallab.selspot).saturated || saturated->getEditedState();
@@ -4910,6 +4967,24 @@ void Locallab::exnoiseMethodChanged()
     if (getEnabled() && expexpose->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabexnoiseMethod, exnoiseMethod->get_active_text());
+        }
+    }
+}
+
+void Locallab::shMethodChanged()
+{
+    //  printf("expMethodChanged\n");
+    disableListener();
+
+    if (shMethod->get_active_row_number() == 0) {
+    } else if (shMethod->get_active_row_number() == 1) {
+    }
+
+    enableListener();
+
+    if (getEnabled() && expshadhigh->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshMethod, shMethod->get_active_text());
         }
     }
 }
@@ -6006,6 +6081,10 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     gammaskSH->setDefault(defSpot->gammaskSH);
     slomaskSH->setDefault(defSpot->slomaskSH);
     lapmaskSH->setDefault(defSpot->lapmaskSH);
+    detailSH->setDefault(defSpot->detailSH);
+    for (int i = 0; i < 5; i++) {
+        multipliersh[i]->setDefault(defSpot->multsh[i]);
+    }
     // Vibrance
     saturated->setDefault((double)defSpot->saturated);
     pastels->setDefault((double)defSpot->pastels);
@@ -6187,6 +6266,10 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         gammaskSH->setDefaultEditedState(Irrelevant);
         slomaskSH->setDefaultEditedState(Irrelevant);
         lapmaskSH->setDefaultEditedState(Irrelevant);
+        detailSH->setDefaultEditedState(Irrelevant);
+        for (int i = 0; i < 5; i++) {
+            multipliersh[i]->setDefaultEditedState(Irrelevant);
+        }
         // Vibrance
         saturated->setDefaultEditedState(Irrelevant);
         pastels->setDefaultEditedState(Irrelevant);
@@ -6372,6 +6455,10 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         gammaskSH->setDefaultEditedState(defSpotState->gammaskSH ? Edited : UnEdited);
         slomaskSH->setDefaultEditedState(defSpotState->slomaskSH ? Edited : UnEdited);
         lapmaskSH->setDefaultEditedState(defSpotState->lapmaskSH ? Edited : UnEdited);
+        detailSH->setDefaultEditedState(defSpotState->detailSH ? Edited : UnEdited);
+        for (int i = 0; i < 5; i++) {
+            multipliersh[i]->setDefaultEditedState(defSpotState->multsh[i] ? Edited : UnEdited);
+        }
         // Vibrance
         saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
         pastels->setDefaultEditedState(defSpotState->pastels ? Edited : UnEdited);
@@ -6825,6 +6912,19 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
 
     if (getEnabled() && expshadhigh->getEnabled()) {
 
+        if (a == multipliersh[0] || a == multipliersh[1] || a == multipliersh[2] || a == multipliersh[3] || a == multipliersh[4]) {
+            if (listener) {
+                listener->panelChanged(EvlocallabEqualizersh,
+                                       Glib::ustring::compose("%1, %2, %3, %4, %5",
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[0]->getIntValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[1]->getIntValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[2]->getIntValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[3]->getIntValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue())));
+            }
+        }
+
+
         if (a == highlights) {
             if (listener) {
                 listener->panelChanged(Evlocallabhighlights, highlights->getTextValue());
@@ -6900,6 +7000,12 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
         if (a == lapmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallablapmaskSH, lapmaskSH->getTextValue());
+            }
+        }
+
+        if (a == detailSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabdetailSH, detailSH->getTextValue());
             }
         }
 
@@ -7674,6 +7780,10 @@ void Locallab::setBatchMode(bool batchMode)
     gammaskSH->showEditedCB();
     slomaskSH->showEditedCB();
     lapmaskSH->showEditedCB();
+    detailSH->showEditedCB();
+    for (int i = 0; i < 5; i++) {
+        multipliersh[i]->showEditedCB();
+    }
     // Vibrance
     saturated->showEditedCB();
     pastels->showEditedCB();
@@ -7800,6 +7910,7 @@ void Locallab::setBatchMode(bool batchMode)
     expMethod->append(M("GENERAL_UNCHANGED"));
     exnoiseMethod->append(M("GENERAL_UNCHANGED"));
     // softlight
+    shMethod->append(M("GENERAL_UNCHANGED"));
     softMethod->append(M("GENERAL_UNCHANGED"));
     // Blur & Noise
     blMethod->append(M("GENERAL_UNCHANGED"));
@@ -7976,6 +8087,7 @@ void Locallab::enableListener()
     enaExpMaskConn.block(false);
     enaExpMaskaftConn.block(false);
     // Shadow highlight
+    shMethodConn.block(false);
     enableshadhighConn.block(false);
     showmaskSHMethodConn.block(false);
     showmaskSHMethodConninv.block(false);
@@ -8055,6 +8167,7 @@ void Locallab::disableListener()
     enaExpMaskConn.block(true);
     enaExpMaskaftConn.block(true);
     // Shadow highlight
+    shMethodConn.block(true);
     enableshadhighConn.block(true);
     showmaskSHMethodConn.block(true);
     showmaskSHMethodConninv.block(true);
@@ -8256,7 +8369,16 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         gammaskSH->setValue(pp->locallab.spots.at(index).gammaskSH);
         slomaskSH->setValue(pp->locallab.spots.at(index).slomaskSH);
         lapmaskSH->setValue(pp->locallab.spots.at(index).lapmaskSH);
+        detailSH->setValue(pp->locallab.spots.at(index).detailSH);
         LmaskSHshape->setCurve(pp->locallab.spots.at(index).LmaskSHcurve);
+        if (pp->locallab.spots.at(index).shMethod == "std") {
+            shMethod->set_active(0);
+        } else if (pp->locallab.spots.at(index).shMethod == "tone") {
+            shMethod->set_active(1);
+        }
+        for (int i = 0; i < 5; i++) {
+            multipliersh[i]->setValue(pp->locallab.spots.at(index).multsh[i]);
+        }
 
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
@@ -8632,7 +8754,14 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 gammaskSH->setEditedState(spotState->gammaskSH ? Edited : UnEdited);
                 slomaskSH->setEditedState(spotState->slomaskSH ? Edited : UnEdited);
                 lapmaskSH->setEditedState(spotState->lapmaskSH ? Edited : UnEdited);
+                detailSH->setEditedState(spotState->detailSH ? Edited : UnEdited);
                 LmaskSHshape->setUnChanged(!spotState->LmaskSHcurve);
+                if (!spotState->shMethod) {
+                    shMethod->set_active_text(M("GENERAL_UNCHANGED"));
+                }
+                for (int i = 0; i < 5; i++) {
+                    multipliersh[i]->setEditedState(spotState->multsh[i] ? Edited : UnEdited);
+                }
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);

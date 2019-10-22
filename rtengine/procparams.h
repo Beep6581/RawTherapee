@@ -1058,6 +1058,8 @@ struct LocallabParams {
         double fatanchor;
         int fatlevel;
         // Shadow highlight
+        Glib::ustring shMethod;
+        int multsh[5];
         bool expshadhigh;
         int highlights;
         int h_tonalwidth;
@@ -1077,6 +1079,7 @@ struct LocallabParams {
         double gammaskSH;
         double slomaskSH;
         double lapmaskSH;
+        int detailSH;
         std::vector<double> LmaskSHcurve;
         // Vibrance
         bool expvibrance;

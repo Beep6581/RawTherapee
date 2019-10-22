@@ -1051,6 +1051,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).fatanchor = locallab.spots.at(j).fatanchor && pSpot.fatanchor == otherSpot.fatanchor;
                 locallab.spots.at(j).fatlevel = locallab.spots.at(j).fatlevel && pSpot.fatlevel == otherSpot.fatlevel;
                 // Shadow highlight
+                locallab.spots.at(j).shMethod = locallab.spots.at(j).shMethod && pSpot.shMethod == otherSpot.shMethod;
                 locallab.spots.at(j).expshadhigh = locallab.spots.at(j).expshadhigh && pSpot.expshadhigh == otherSpot.expshadhigh;
                 locallab.spots.at(j).highlights = locallab.spots.at(j).highlights && pSpot.highlights == otherSpot.highlights;
                 locallab.spots.at(j).h_tonalwidth = locallab.spots.at(j).h_tonalwidth && pSpot.h_tonalwidth == otherSpot.h_tonalwidth;
@@ -1070,7 +1071,11 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gammaskSH = locallab.spots.at(j).gammaskSH && pSpot.gammaskSH == otherSpot.gammaskSH;
                 locallab.spots.at(j).slomaskSH = locallab.spots.at(j).slomaskSH && pSpot.slomaskSH == otherSpot.slomaskSH;
                 locallab.spots.at(j).lapmaskSH = locallab.spots.at(j).lapmaskSH && pSpot.lapmaskSH == otherSpot.lapmaskSH;
+                locallab.spots.at(j).detailSH = locallab.spots.at(j).detailSH && pSpot.detailSH == otherSpot.detailSH;
                 locallab.spots.at(j).LmaskSHcurve = locallab.spots.at(j).LmaskSHcurve && pSpot.LmaskSHcurve == otherSpot.LmaskSHcurve;
+                for (int k = 0; k < 5; k++) {
+                    locallab.spots.at(j).multsh[k] = locallab.spots.at(j).multsh[k] && pSpot.multsh[k] == otherSpot.multsh[k];
+                }
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -3098,6 +3103,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         }
 
         // Shadow highlight
+        if (locallab.spots.at(i).shMethod) {
+            toEdit.locallab.spots.at(i).shMethod = mods.locallab.spots.at(i).shMethod;
+        }
+
         if (locallab.spots.at(i).expshadhigh) {
             toEdit.locallab.spots.at(i).expshadhigh = mods.locallab.spots.at(i).expshadhigh;
         }
@@ -3174,8 +3183,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lapmaskSH = mods.locallab.spots.at(i).lapmaskSH;
         }
 
+        if (locallab.spots.at(i).detailSH) {
+            toEdit.locallab.spots.at(i).detailSH = mods.locallab.spots.at(i).detailSH;
+        }
+
         if (locallab.spots.at(i).LmaskSHcurve) {
             toEdit.locallab.spots.at(i).LmaskSHcurve = mods.locallab.spots.at(i).LmaskSHcurve;
+        }
+
+        for (int j = 0; j < 5; j++) {
+            if (locallab.spots.at(i).multsh[j]) {
+                toEdit.locallab.spots.at(i).multsh[j] = mods.locallab.spots.at(i).multsh[j];
+            }
         }
 
         // Vibrance
@@ -4898,6 +4917,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fatanchor(v),
     fatlevel(v),
     // Shadow highlight
+    shMethod(v),
+    multsh{v, v, v, v, v, v},
     expshadhigh(v),
     highlights(v),
     h_tonalwidth(v),
@@ -4917,6 +4938,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gammaskSH(v),
     slomaskSH(v),
     lapmaskSH(v),
+    detailSH(v),
     LmaskSHcurve(v),
     // Vibrance
     expvibrance(v),
@@ -5193,6 +5215,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     fatanchor = v;
     fatlevel = v;
     // Shadow highlight
+    shMethod = v;
+    for (int i = 0; i < 5; i++) {
+        multsh[i] = v;
+    }
     expshadhigh = v;
     highlights = v;
     h_tonalwidth = v;
@@ -5212,6 +5238,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gammaskSH = v;
     slomaskSH = v;
     lapmaskSH = v;
+    detailSH = v;
     LmaskSHcurve = v;
     // Vibrance
     expvibrance = v;
