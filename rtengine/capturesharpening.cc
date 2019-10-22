@@ -810,6 +810,7 @@ BENCHFUN
     if (plistener) {
         plistener->setProgress(1.0);
     }
+    rgbSourceModified = false;
 }
 
 } /* namespace */

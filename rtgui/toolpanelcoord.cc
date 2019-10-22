@@ -182,7 +182,6 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
     advancedPanelSW    = Gtk::manage (new MyScrolledWindow ());
     locallabPanelSW     = Gtk::manage(new MyScrolledWindow());    
-    updateVScrollbars (options.hideTPVScrollbar);
 
     // load panel endings
     for (int i = 0; i < 8; i++) {
@@ -198,6 +197,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         favoritePanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
         favoritePanel->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
     }
+    updateVScrollbars(options.hideTPVScrollbar);
 
     exposurePanelSW->add  (*exposurePanel);
     exposurePanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
