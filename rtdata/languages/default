@@ -2337,7 +2337,7 @@ TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWSTRUC;Show structure
 TP_LOCALLAB_USEMASK;Use mask
-TP_LOCALLAB_SHADHIGH;Shadows Highlights - Gradient
+TP_LOCALLAB_SHADHIGH;Shadows Highlights - Gradient - Tone Equalizer
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
 TP_LOCALLAB_SOFT;Soft Light and Original Retinex
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.
