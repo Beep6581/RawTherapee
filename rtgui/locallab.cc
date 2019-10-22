@@ -1177,11 +1177,11 @@ Locallab::Locallab():
     mask2SHCurveEditorG->curveListComplete();
 
     ToolParamBlock* const shadhighBox = Gtk::manage(new ToolParamBlock());
-//    shadhighBox->pack_start(*shMethod);
-//    for (int i = 0; i < 5; i++) {
-//        shadhighBox->pack_start(*multipliersh[i]);
-//    }
-//    shadhighBox->pack_start(*detailSH);
+    shadhighBox->pack_start(*shMethod);
+    for (int i = 0; i < 5; i++) {
+        shadhighBox->pack_start(*multipliersh[i]);
+    }
+    shadhighBox->pack_start(*detailSH);
     shadhighBox->pack_start(*highlights);
     shadhighBox->pack_start(*h_tonalwidth);
     shadhighBox->pack_start(*shadows);
@@ -4977,7 +4977,28 @@ void Locallab::shMethodChanged()
     disableListener();
 
     if (shMethod->get_active_row_number() == 0) {
+        for (int i = 0; i < 5; i++) {
+            multipliersh[i]->hide();
+        }
+        detailSH->hide();
+        highlights->show();
+        h_tonalwidth->show();
+        shadows->show();
+        s_tonalwidth->show();
+        sh_radius->show();
+//        blurSHde->show();
     } else if (shMethod->get_active_row_number() == 1) {
+        for (int i = 0; i < 5; i++) {
+            multipliersh[i]->show();
+        }
+        detailSH->show();
+        highlights->hide();
+        h_tonalwidth->hide();
+        shadows->hide();
+        s_tonalwidth->hide();
+        sh_radius->hide();
+//        blurSHde->hide();
+
     }
 
     enableListener();
@@ -5661,6 +5682,7 @@ void Locallab::inversshChanged()
         blurSHde->show();
         showmaskSHMethod->hide();
         showmaskSHMethodinv->show();
+        shMethod->set_active(0);
 
     } else {
         //   printf("Pas Inv SH\n");
@@ -9100,6 +9122,30 @@ void Locallab::updateSpecificGUIState()
         expmasksh->show();
         showmaskSHMethodinv->show();
         showmaskSHMethod->hide();
+        shMethod->set_active(0);
+
+        if (shMethod->get_active_row_number() == 0) {
+            for (int i = 0; i < 5; i++) {
+                multipliersh[i]->hide();
+            }
+            detailSH->hide();
+            highlights->show();
+            h_tonalwidth->show();
+            shadows->show();
+            s_tonalwidth->show();
+            sh_radius->show();
+        } else if (shMethod->get_active_row_number() == 1) {
+            for (int i = 0; i < 5; i++) {
+                multipliersh[i]->hide();
+            }
+            detailSH->hide();
+            highlights->hide();
+            h_tonalwidth->hide();
+            shadows->hide();
+            s_tonalwidth->hide();
+            sh_radius->hide();
+
+        }
 
     } else {
         //  printf("GUI NON inv SH\n");
@@ -9158,6 +9204,28 @@ void Locallab::updateSpecificGUIState()
         ctboxsoftmethod->show();
     }
 
+    if (shMethod->get_active_row_number() == 0) {
+        for (int i = 0; i < 5; i++) {
+            multipliersh[i]->hide();
+        }
+        detailSH->hide();
+        highlights->show();
+        h_tonalwidth->show();
+        shadows->show();
+        s_tonalwidth->show();
+        sh_radius->show();
+    } else if (shMethod->get_active_row_number() == 1) {
+        for (int i = 0; i < 5; i++) {
+            multipliersh[i]->show();
+        }
+        detailSH->show();
+        highlights->hide();
+        h_tonalwidth->hide();
+        shadows->hide();
+        s_tonalwidth->hide();
+        sh_radius->hide();
+
+    }
 
     if (blMethod->get_active_row_number() == 0) {
         radius->show();

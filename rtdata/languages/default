@@ -1023,6 +1023,7 @@ HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 HISTORY_MSG_783;Local - Color Mask Wavelet levels
 HISTORY_MSG_784;Local - Mask DeltaE
 HISTORY_MSG_785;Local - Mask Scope DeltaE
+HISTORY_MSG_786;Local - SH method
 HISTORY_MSG_787;Local - Equalizer multiplier
 HISTORY_MSG_788;Local - Equalizer detail
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
