@@ -140,7 +140,6 @@ public:
 
     void        processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4]);
     void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData  );
-    void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData); // raw for cblack
 
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw) override;

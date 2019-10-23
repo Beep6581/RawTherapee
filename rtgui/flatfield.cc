@@ -54,7 +54,7 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     flatFieldBlurRadius->show();
 
     Gtk::HBox* hbffbt = Gtk::manage (new Gtk::HBox ());
-    hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_FLATFIELD_BLURTYPE") + ":")));
+    hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_FLATFIELD_BLURTYPE") + ":")), Gtk::PACK_SHRINK, 4);
     hbffbt->set_spacing(4);
     flatFieldBlurType = Gtk::manage (new MyComboBoxText ());
     flatFieldBlurType->append(M("TP_FLATFIELD_BT_AREA"));
