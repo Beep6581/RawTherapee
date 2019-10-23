@@ -1154,49 +1154,50 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
         float c = process_pixel(y);
         lut[i] = c;
     }
-/*
-#ifdef __SSE2__
-    vfloat vfactors[12];
-    vfloat vcenters[12];
 
-    for (int i = 0; i < 12; ++i) {
-        vfactors[i] = F2V(factors[i]);
-        vcenters[i] = F2V(centers[i]);
-    }
+    /*
+    #ifdef __SSE2__
+        vfloat vfactors[12];
+        vfloat vcenters[12];
 
-    const auto vgauss =
-    [](vfloat b, vfloat x) -> vfloat {
-        static const vfloat fourv = F2V(4.f);
-        return xexpf((-SQR(x - b) / fourv));
-    };
-
-    vfloat zerov = F2V(0.f);
-    vfloat vw_sum = F2V(w_sum);
-
-    const vfloat noisev = F2V(-18.f);
-    const vfloat xlog2v = F2V(xlogf(2.f));
-
-    const auto vprocess_pixel =
-    [&](vfloat y) -> vfloat {
-        const vfloat luma = vmaxf(xlogf(vmaxf(y, zerov)) / xlog2v, noisev);
-
-        vfloat correction = zerov;
-
-        for (int c = 0; c < 12; ++c)
-        {
-            correction += vgauss(vcenters[c], luma) * vfactors[c];
+        for (int i = 0; i < 12; ++i) {
+            vfactors[i] = F2V(factors[i]);
+            vcenters[i] = F2V(centers[i]);
         }
 
-        correction /= vw_sum;
+        const auto vgauss =
+        [](vfloat b, vfloat x) -> vfloat {
+            static const vfloat fourv = F2V(4.f);
+            return xexpf((-SQR(x - b) / fourv));
+        };
 
-        return correction;
-    };
-   
+        vfloat zerov = F2V(0.f);
+        vfloat vw_sum = F2V(w_sum);
 
-//    vfloat v1 = F2V(1.f);
-//    vfloat v65535 = F2V(65535.f);
-#endif // __SSE2__
-*/
+        const vfloat noisev = F2V(-18.f);
+        const vfloat xlog2v = F2V(xlogf(2.f));
+
+        const auto vprocess_pixel =
+        [&](vfloat y) -> vfloat {
+            const vfloat luma = vmaxf(xlogf(vmaxf(y, zerov)) / xlog2v, noisev);
+
+            vfloat correction = zerov;
+
+            for (int c = 0; c < 12; ++c)
+            {
+                correction += vgauss(vcenters[c], luma) * vfactors[c];
+            }
+
+            correction /= vw_sum;
+
+            return correction;
+        };
+
+
+    //    vfloat v1 = F2V(1.f);
+    //    vfloat v65535 = F2V(65535.f);
+    #endif // __SSE2__
+    */
 
 #ifdef _OPENMP
     #   pragma omp parallel for if (multithread)
@@ -1204,8 +1205,9 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 
     for (int y = 0; y < H; ++y) {
         int x = 0;
+
         /*
-#ifdef __SSE2__
+        #ifdef __SSE2__
 
         for (; x < W - 3; x += 4) {
             vfloat cY = LVFU(Y[y][x]);
@@ -1223,8 +1225,8 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
             STVF(B[y][x], LVF(B[y][x]) * corr);
         }
 
-#endif // __SSE2__
-*/
+        #endif // __SSE2__
+        */
         for (; x < W; ++x) {
             float cY = Y[y][x];
             float corr = cY > 1.f ? process_pixel(cY) : lut[cY * 65535.f];
@@ -1233,6 +1235,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
             B[y][x] *= corr;
         }
     }
+
     printf("OK 18\n");
 
 }
@@ -4518,8 +4521,58 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype,  struct loca
             }
         }
 
-        ImProcFunctions::shadowsHighlights(temp, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
+        if (params->locallab.spots.at(sp).shMethod == "std") {
+            ImProcFunctions::shadowsHighlights(temp, lp.hsena, 1, lp.highlihs, lp.shadowhs, lp.radiushs, sk, lp.hltonalhs, lp.shtonalhs);
+        }
+
+        if (params->locallab.spots.at(sp).shMethod == "tone") {
+            int GH = transformed->H;
+            int GW = transformed->W;
+
+//            printf("OK 1 invers \n");
+            array2D<float> Rtemp;
+            Rtemp(GW, GH);
+            array2D<float> Gtemp;
+            Gtemp(GW, GH);
+            array2D<float> Btemp;
+            Btemp(GW, GH);
+            double scal = (double)(sk);
+            Imagefloat *tmpImage = nullptr;
+            tmpImage = new Imagefloat(GW, GH);
+            lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < GH ; y++) {
+                for (int x = 0; x < GW; x++) {
+                    Rtemp[y][x] = LIM01(tmpImage->r(y, x) / 65536.f);
+                    Gtemp[y][x] = LIM01(tmpImage->g(y, x) / 65536.f);
+                    Btemp[y][x] = LIM01(tmpImage->b(y, x) / 65536.f);
+                }
+            }
+
+            tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < GH ; y++) {
+                for (int x = 0; x < GW; x++) {
+                    tmpImage->r(y, x) = 65536.f * Rtemp[y][x];
+                    tmpImage->g(y, x) = 65536.f * Gtemp[y][x];
+                    tmpImage->b(y, x) = 65536.f * Btemp[y][x];
+                }
+            }
+
+            rgb2lab(*tmpImage, *temp, params->icm.workingProfile);
+
+            delete tmpImage;
+        }
+
     }
+
 
     if (senstype == 1) { //exposure
         temp = new LabImage(GW, GH);
@@ -8728,7 +8781,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             Gtemp(bfw, bfh);
                             array2D<float> Btemp;
                             Btemp(bfw, bfh);
-                            double scal = (double) (sk);
+                            double scal = (double)(sk);
                             Imagefloat *tmpImage = nullptr;
                             tmpImage = new Imagefloat(bfw, bfh);
                             lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
