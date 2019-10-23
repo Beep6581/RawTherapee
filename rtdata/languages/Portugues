@@ -916,8 +916,8 @@ MAIN_TOOLTIP_BACKCOLOR2;Cor de fundo da pré-visualização: <b>branco</b>\nAtal
 MAIN_TOOLTIP_BACKCOLOR3;Cor de fundo da pré-visualização: <b>cinza médio</b>\nAtalho: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Bloquear</b> / <b>desbloquear</b> a visualização <b>antes</b>\n\n<b>Bloquear</b>: manter a visualização <b>antes</b> inalterada.\nÚtil para avaliar o efeito cumulativo de várias ferramentas.\nAlém disso, podem ser feitas comparações a qualquer momento no histórico.\n\n<b>Desbloquear</b>: a visualização <b>antes</b> seguirá a visualização <b>depois</b> um passo antes, mostrando a imagem antes do efeito da ferramenta atualmente utilizada.
 MAIN_TOOLTIP_HIDEHP;Mostrar o painel esquerdo (incluindo o histórico).\nAtalho: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Ver altas luzes cortadas.\nAtalho: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Ver sombras cortadas.\nAtalho: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Ver altas luzes cortadas.\nAtalho: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Ver sombras cortadas.\nAtalho: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Pré-visualizar o <b>canal azul</b>.\nAtalho: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Pré-visualizar a <b>máscara de foco</b>.\nAtalho: <b>Shift-f</b>\n\nMais preciso em imagens com pouca profundidade de campo, baixo ruído e níveis de zoom mais altos.\n\nUtilize um zoom menor entre 10-30% para melhorar a precisão da deteção de imagens com muito ruído.
 MAIN_TOOLTIP_PREVIEWG;Pré-visualizar o <b>canal verde</b>.\nAtalho: <b>g</b>

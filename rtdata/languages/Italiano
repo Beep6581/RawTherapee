@@ -519,8 +519,8 @@ MAIN_TOOLTIP_BACKCOLOR1;Colore di sfondo dell'anteprima: <b>Nero</b>\nScorciatoi
 MAIN_TOOLTIP_BACKCOLOR2;Colore di sfondo dell'anteprima: <b>Bianco</b>\nScorciatoia: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Blocca</b>/<b>Sblocca</b> la vista <b>Prima</b>\n\n<b>Blocca</b>: Conserva la vista <b>Prima</b>.\nUtile per valutare l'effetto cumulativo di diversi strumenti.\nIn più, possono essere confrontati diversi passi della cronologia.\n\n<b>Sblocca</b>: la vista <b>Prima</b> segue di un passo la vista <b>Dopo</b>, mostrando l'immagine prima dell'effetto dello strumento corrente.
 MAIN_TOOLTIP_HIDEHP;Mostra/Nascondi il pannello sinistro (inclusa la cronologia)\nScorciatoia: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Indicazione delle alteluci tosate.\nScorciatoia: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Indicazione delle ombre tosate.\nScorciatoia: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Indicazione delle alteluci tosate.\nScorciatoia: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Indicazione delle ombre tosate.\nScorciatoia: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Anteprima del <b>Canale Blu</b>.\nScorciatoia: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Anteprima della <b>Focus Mask</b>.\nScorciatoia: <b>Maiuscolo-F</b>\n\nPiù accurato su immagini con bassa profondità di campo, poco rumore e ad elevati livelli di zoom.\n\nPer aumentare l'accuratezza della rilevazione su immagini con molto rumore, riduci le dimensioni del 10-30%.
 MAIN_TOOLTIP_PREVIEWG;Anteprima del <b>Canale Verde</b>.\nScorciatoia: <b>g</b>

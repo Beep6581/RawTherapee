@@ -923,8 +923,8 @@ MAIN_TOOLTIP_BACKCOLOR2;Cor de fundo da pré-visualização: <b>Branco</b>\nAtal
 MAIN_TOOLTIP_BACKCOLOR3;Cor de fundo da pré-visualização: <b>Cinza médio</b>\nAtalho: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Travar</b> / <b>Destravar</b> a <b>Antes</b> visualização\n\n<b>Travar</b>: mantenha o <b>Antes</b> visualização inalterada.\nÚtil para avaliar o efeito cumulativo de várias ferramentas.\nAlém disso, comparações podem ser feitas a qualquer momento.\n\n<b>Destravar</b>: o <b>Antes</b> visualização seguinte <b>Depois</b> visualização anterior, mostrando a imagem antes do efeito da ferramenta atualmente utilizada.
 MAIN_TOOLTIP_HIDEHP;Mostrar/Ocultar o painel esquerdo (incluindo o histórico).\nAtalho: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Indicação de realce recortado.\nAtalho: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Indicação de sombra recortada.\nAtalho: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Indicação de realce recortado.\nAtalho: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Indicação de sombra recortada.\nAtalho: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Pré-visualize o <b>Canal Azul</b>.\nAtalho: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Pré-visualize a <b>Máscara de Foco</b>.\nAtalho: <b>Shift-f</b>\n\nMais preciso em imagens com pouca profundidade de campo, baixo ruído e níveis de zoom mais altos.\n\nPara melhorar a precisão da detecção de imagens ruidosas, avalie com zoom menor, cerca de 10-30%.
 MAIN_TOOLTIP_PREVIEWG;Pré-visualize o <b>Canal verde</b>.\nAtalho: <b>g</b>

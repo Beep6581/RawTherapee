@@ -788,8 +788,8 @@ MAIN_TOOLTIP_BACKCOLOR1;Achtergrond kleur van het voorbeeld: <b>Zwart</b>\nSnelt
 MAIN_TOOLTIP_BACKCOLOR2;Achtergrond kleur van het voorbeeld: <b>Wit</b>\nSneltoets: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vergrendel</b> / <b>Ontgrendel</b> de <b>Voor</b>afbeelding.\n\n<b>Vergrendel</b>: hou de <b>Voor</b>afbeelding ongewijzigd.\nDit is handig om het cumulatieve effect van meerdere gereedschappen te beoordelen.\nBovendien kan er worden vergeleken met elke stap in de geschiedenislijst.\n\n<b>Ontgrendel</b>: de <b>Voor</b>afbeelding volgt een stap achter de <b>Na</b>afbeelding en laat de afbeelding zien zonder het effect van het huidige gereedschap.
 MAIN_TOOLTIP_HIDEHP;Toon/verberg linkerpaneel (geschiedenis).\nSneltoets: <b>H</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Overbelichtingsindicatie.\nSneltoets: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Onderbelichtingsindicatie.\nSneltoets: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Overbelichtingsindicatie.\nSneltoets: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Onderbelichtingsindicatie.\nSneltoets: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Bekijk het <b>Blauwe kanaal</b>.\nSneltoets: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Bekijk het <b>Focus Masker</b>.\nSneltoets: <b>Shift-F</b>\n\nAccurater bij afbeeldingen met geringe scherptediepte, weinig ruis en hogere zoomniveaus.\n\nBekijk de afbeelding op lagere zoomniveaus (10-30%) om de accuratesse te vergroten bij afbeeldingen met veel ruis.\n\nHet voorbeeld wordt langzamer aangemaakt als Focus Masker aanstaat.
 MAIN_TOOLTIP_PREVIEWG;Bekijk het <b>Groene kanaal</b>.\nSneltoets: <b>g</b>
