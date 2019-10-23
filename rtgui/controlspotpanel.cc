@@ -73,6 +73,7 @@ ControlSpotPanel::ControlSpotPanel():
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
     laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
     deltae_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_DELTAEC")))),
+    shortc_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SHORTC")))),
 
     lastObject_(-1),
     nbSpotChanged_(false),
@@ -247,6 +248,7 @@ ControlSpotPanel::ControlSpotPanel():
     if(showtooltip) transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
     if(showtooltip) transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
     if(showtooltip) scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
+    if(showtooltip) shortc_->set_tooltip_text(M("TP_LOCALLAB_SHORTCMASK_TOOLTIP"));
     transit_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
     transitgrad_->setAdjusterListener(this);
@@ -287,8 +289,11 @@ ControlSpotPanel::ControlSpotPanel():
     maskBox->pack_start(*laplac_);
     deltaeConn_  = deltae_->signal_toggled().connect(
             sigc::mem_fun(*this, &ControlSpotPanel::deltaeChanged));
+    shortcConn_  = shortc_->signal_toggled().connect(
+            sigc::mem_fun(*this, &ControlSpotPanel::shortcChanged));
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
+    maskBox->pack_start(*shortc_);
     maskFrame->add(*maskBox);
     pack_start(*maskFrame);
 
@@ -598,6 +603,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     avoid_->set_active(row[spots_.avoid]);
     laplac_->set_active(row[spots_.laplac]);
     deltae_->set_active(row[spots_.deltae]);
+    shortc_->set_active(row[spots_.shortc]);
 }
 
 void ControlSpotPanel::controlspotChanged()
@@ -1142,6 +1148,41 @@ void ControlSpotPanel::deltaeChanged()
     }
 }
 
+void ControlSpotPanel::shortcChanged()
+{
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    if (multiImage) {
+        if (shortc_->get_inconsistent()) {
+            shortc_->set_inconsistent(false);
+            shortcConn_.block(true);
+            shortc_->set_active(false);
+            shortcConn_.block(false);
+        }
+    }
+
+    row[spots_.shortc] = shortc_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (shortc_->get_active()) {
+            listener->panelChanged(Evlocallabshortc, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallabshortc, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 void ControlSpotPanel::disableParamlistener(bool cond)
 {
     // printf("disableParamlistener: %d\n", cond);
@@ -1176,6 +1217,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     avoidConn_.block(cond);
     laplacConn_.block(cond);
     deltaeConn_.block(cond);
+    shortcConn_.block(cond);
 }
 
 void ControlSpotPanel::setParamEditable(bool cond)
@@ -1206,6 +1248,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     avoid_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
     deltae_->set_sensitive(cond);
+    shortc_->set_sensitive(cond);
 }
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
@@ -1842,6 +1885,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->avoid = row[spots_.avoid];
             r->laplac = row[spots_.laplac];
             r->deltae = row[spots_.deltae];
+            r->shortc = row[spots_.shortc];
 
             return r;
         }
@@ -1971,6 +2015,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.avoid] = newSpot->avoid;
     row[spots_.laplac] = newSpot->laplac;
     row[spots_.deltae] = newSpot->deltae;
+    row[spots_.shortc] = newSpot->shortc;
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -2019,6 +2064,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.avoid] = spot->avoid;
             row[spots_.laplac] = spot->laplac;
             row[spots_.deltae] = spot->deltae;
+            row[spots_.shortc] = spot->shortc;
 
             updateControlSpotCurve(row);
             updateParamVisibility();
@@ -2113,6 +2159,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->avoid = !avoid_->get_inconsistent();
     se->laplac = !laplac_->get_inconsistent();
     se->deltae = !deltae_->get_inconsistent();
+    se->shortc = !shortc_->get_inconsistent();
 
     return se;
 }
@@ -2185,6 +2232,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     avoid_->set_inconsistent(multiImage && !se->avoid);
     laplac_->set_inconsistent(multiImage && !se->laplac);
     deltae_->set_inconsistent(multiImage && !se->deltae);
+    shortc_->set_inconsistent(multiImage && !se->shortc);
 
     // Update Control Spot GUI according to widgets edited states
     updateParamVisibility();
@@ -2342,6 +2390,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(avoid);
     add(laplac);
     add(deltae);
+    add(shortc);
 }
 
 //-----------------------------------------------------------------------------

@@ -1028,6 +1028,7 @@ HISTORY_MSG_787;Local - Equalizer multiplier
 HISTORY_MSG_788;Local - Equalizer detail
 HISTORY_MSG_789;Local - SH mask amount
 HISTORY_MSG_790;Local - SH mask anchor
+HISTORY_MSG_791;Local - Mask Short L curves
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2325,6 +2326,8 @@ TP_LOCALLAB_SENSIBN;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_ENABLE_MASK;Enable mask
+TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
+TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7
 TP_LOCALLAB_SHOWCB;2+ - Mask and modifications
 TP_LOCALLAB_SHOWT;3 - Mask and modifications
 TP_LOCALLAB_SHOWS;4+* - Mask and modifications

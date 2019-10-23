@@ -817,6 +817,7 @@ enum ProcEventCode {
     EvlocallabdetailSH = 787,
     EvlocallabfatamountSH = 788,
     EvlocallabfatanchorSH = 789,
+    Evlocallabshortc = 790,
     NUMOFEVENTS
 };
 
