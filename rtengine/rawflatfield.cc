@@ -15,7 +15,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
+
 #include <cmath>
 #include <new>
 
@@ -73,7 +74,7 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
             #pragma omp for
 #endif
 
-            for (int row = 0; row < H; row++) {
+            for (int row = 0; row < H; ++row) {
                 int len = boxW / 2 + 1;
                 cfatmp[row * W + 0] = riFlatFile[row][0] / len;
                 cfatmp[row * W + 1] = riFlatFile[row][1] / len;
@@ -199,7 +200,7 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
             #pragma omp single
 #endif
 
-            for (int col = W - (W % 8); col < W; col++) {
+            for (int col = W - (W % 8); col < W; ++col) {
                 int len = boxH / 2 + 1;
                 cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
                 cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
@@ -215,7 +216,7 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     len ++;
                 }
 
-                for (int row = boxH + 2; row < H - boxH; row++) {
+                for (int row = boxH + 2; row < H - boxH; ++row) {
                     cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (srcVertical[(row + boxH) * W + col] - srcVertical[(row - boxH - 2) * W + col]) / len;
                 }
 
@@ -235,7 +236,7 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
             #pragma omp for
 #endif
 
-            for (int col = 0; col < W; col++) {
+            for (int col = 0; col < W; ++col) {
                 int len = boxH / 2 + 1;
                 cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
                 cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
@@ -251,7 +252,7 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     len ++;
                 }
 
-                for (int row = boxH + 2; row < H - boxH; row++) {
+                for (int row = boxH + 2; row < H - boxH; ++row) {
                     cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (srcVertical[(row + boxH) * W + col] - srcVertical[(row - boxH - 2) * W + col]) / len;
                 }
 
