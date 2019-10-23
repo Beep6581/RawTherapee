@@ -1026,6 +1026,8 @@ HISTORY_MSG_785;Local - Mask Scope DeltaE
 HISTORY_MSG_786;Local - SH method
 HISTORY_MSG_787;Local - Equalizer multiplier
 HISTORY_MSG_788;Local - Equalizer detail
+HISTORY_MSG_789;Local - SH mask amount
+HISTORY_MSG_790;Local - SH mask anchor
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2325,7 +2327,7 @@ TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_ENABLE_MASK;Enable mask
 TP_LOCALLAB_SHOWCB;2+ - Mask and modifications
 TP_LOCALLAB_SHOWT;3 - Mask and modifications
-TP_LOCALLAB_SHOWS;4+ - Mask and modifications
+TP_LOCALLAB_SHOWS;4+* - Mask and modifications
 TP_LOCALLAB_SHOWR;5 - Mask and modifications
 TP_LOCALLAB_SHOWE;6+ - Mask and modifications
 TP_LOCALLAB_SHOWC;7+* - Mask and modifications
@@ -2355,6 +2357,7 @@ TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_WAV;Levels local contrast
 TP_LOCALLAB_WAVMASK;Mask Levels local contrast
 TP_LOCALLAB_LEVELWAV;Wavelets Levels
+TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask
 TP_LOCALLAB_CSTHRESHOLD;Wavelets Levels
 TP_LOCALLAB_RESIDCONT;Residual image Contrast
 TP_LOCALLAB_RESIDCHRO;Residual image Chroma

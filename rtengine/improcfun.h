@@ -191,7 +191,7 @@ public:
                  const LocCCmaskCurve & locccmasCurve, bool & lcmasutili, 
                  const LocLLmaskCurve & locllmasCurve, bool & llmasutili, 
                  const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili, 
-                 bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, int shado,
+                 bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, int shado, float amountcd, float anchorcd,
                  LUTf & lmasklocalcurve, bool & localmaskutili,
                  const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                  bool delt, const float hueref, const float chromaref, const float lumaref,

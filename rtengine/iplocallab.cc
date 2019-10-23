@@ -3137,7 +3137,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                                   const LocCCmaskCurve & locccmasCurve, bool & lcmasutili,
                                   const LocLLmaskCurve & locllmasCurve, bool & llmasutili,
                                   const LocHHmaskCurve & lochhmasCurve, bool &lhmasutili,
-                                  bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, int shado,
+                                  bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, int shado, float amountcd, float anchorcd, 
                                   LUTf & lmasklocalcurve, bool & localmaskutili,
                                   const LocwavCurve & loclmasCurvecolwav, bool & lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                                   bool delt, const float hueref, const float chromaref, const float lumaref,
@@ -3284,7 +3284,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         }
 
         if (shado > 0) {
-            ImProcFunctions::shadowsHighlights(bufmaskblurcol, true, 1, 0, shado, 40, sk, 0, 30);
+            ImProcFunctions::shadowsHighlights(bufmaskblurcol, true, 1, 0, shado, 40, sk, 0, 60);
         }
 
         int wavelet_level = level_br;
@@ -3318,6 +3318,22 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 #endif
             wavcontrast4(bufmaskblurcol->L, contrast, bfw, bfh, level_bl, level_hl, level_br, level_hr, sk, numThreads, loclmasCurvecolwav, lmasutilicolwav, maxlvl);
 
+        }
+
+
+        if(amountcd > 1.f) {//dynamic range compression for Mask
+            FattalToneMappingParams fatParams;
+            fatParams.enabled = true;
+            fatParams.threshold = 100.f;
+            fatParams.amount = amountcd;
+            fatParams.anchor = anchorcd;
+            int nlev = 1;
+            Imagefloat *tmpImagefat = nullptr;
+            tmpImagefat = new Imagefloat(bfw, bfh);
+            lab2rgb(*bufmaskblurcol, *tmpImagefat, params->icm.workingProfile);
+            ToneMapFattal02(tmpImagefat, fatParams, nlev);
+            rgb2lab(*tmpImagefat, *bufmaskblurcol, params->icm.workingProfile);
+            delete tmpImagefat;
         }
 
         if (delt) {
@@ -8224,10 +8240,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
                     const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
                     bool lmasutilicolwav = false;
-
+                    float amountcd = 0.f;
+                    float anchorcd = 50.f;
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, loctemp.get(), bufmaskorigcb.get(), originalmaskcb.get(), original, inv, lp,
                                 locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmaskcblocalcurve, localmaskcbutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskcblocalcurve, localmaskcbutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                                 delt, hueref, chromaref, lumaref,
                                 maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                                );
@@ -8515,10 +8532,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
                         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
                         int shado = 0;
+                        float amountcd = 0.f;
+                        float anchorcd = 50.f;
 
                         maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufgbm.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                     locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                    enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                                     delt, hueref, chromaref, lumaref,
                                     maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                                    );
@@ -8552,10 +8571,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
                             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
                             int shado = 0;
+                            float amountcd = 0.f;
+                            float anchorcd = 50.f;
 
                             maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, tmp1.get(), bufmaskorigtm.get(), originalmasktm.get(), original, inv, lp,
                                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili, multiThread,
-                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasktmlocalcurve, localmasktmutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                                         delt, hueref, chromaref, lumaref,
                                         maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                                        );
@@ -8738,10 +8759,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
                     const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
                     int shado = 0;
+                    float amountcd = params->locallab.spots.at(sp).fatamountSH;
+                    float anchorcd = params->locallab.spots.at(sp).fatanchorSH;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigSH.get(), originalmaskSH.get(), original, inv, lp,
                                 locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                                 delt, hueref, chromaref, lumaref,
                                 maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                                );
@@ -8893,10 +8916,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
             int shado = 0;
+            float amountcd = params->locallab.spots.at(sp).fatamountSH;
+            float anchorcd = params->locallab.spots.at(sp).fatanchorSH;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskSH.get(), original, inv, lp,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskSHlocalcurve, localmaskSHutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                         delt, hueref, chromaref, lumaref,
                         maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                        );
@@ -10902,10 +10927,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
                     const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+                    float amountcd = 0.f;
+                    float anchorcd = 50.f;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                                 locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                                 delt, hueref, chromaref, lumaref,
                                 maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                                );
@@ -11183,10 +11210,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+            float amountcd = 0.f;
+            float anchorcd = 50.f;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufexporig.get(), bufmaskblurexp.get(), originalmaskexp.get(), original, inv, lp,
                         locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmaskexplocalcurve, localmaskexputili, dummy, lmasutilicolwav, 1, 1, 5, 5,
                         delt, hueref, chromaref, lumaref,
                         maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
                        );
@@ -11439,10 +11468,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
                     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
                     const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+                    float amountcd = 0.f;
+                    float anchorcd = 50.f;
 
                     maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                                 locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
+                                enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
                                 level_bl, level_hl, level_br, level_hr,
                                 delt, hueref, chromaref, lumaref,
                                 maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco
@@ -11660,10 +11691,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+            float amountcd = 0.f;
+            float anchorcd = 50.f;
 
             maskcalccol(false, pde, GW, GH, 0, 0, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, inv, lp,
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, shado, amountcd, anchorcd, lmasklocalcurve, localmaskutili, loclmasCurvecolwav, lmasutilicolwav,
                         level_bl, level_hl, level_br, level_hr,
                         delt, hueref, chromaref, lumaref,
                         maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco

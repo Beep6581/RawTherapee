@@ -492,6 +492,8 @@ public:
         bool lapmaskSH;
         bool detailSH;
         bool LmaskSHcurve;
+        bool fatamountSH;
+        bool fatanchorSH;
         // Vibrance
         bool expvibrance;
         bool saturated;

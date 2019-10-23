@@ -245,6 +245,8 @@ Locallab::Locallab():
     slomaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     lapmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     detailSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILSH"), -5, 5, 1, 0))),
+    fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
+    fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     // Vibrance
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
@@ -444,6 +446,7 @@ Locallab::Locallab():
     gridFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABGRID")))),
     pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
     fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
+    fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
     dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
     retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
@@ -1094,6 +1097,8 @@ Locallab::Locallab():
     slomaskSH->setAdjusterListener(this);
     lapmaskSH->setAdjusterListener(this);
     detailSH->setAdjusterListener(this);
+    fatamountSH->setAdjusterListener(this);
+    fatanchorSH->setAdjusterListener(this);
 
     if (showtooltip) {
         radmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
@@ -1197,6 +1202,17 @@ Locallab::Locallab():
     shadhighBox->pack_start(*blurSHde);
     shadhighBox->pack_start(*inverssh);
 
+    fatSHFrame->set_label_align(0.025, 0.5);
+
+//    if (showtooltip) {
+//        fatSHFrame->set_tooltip_text(M("TP_LOCALLAB_FATSHFRAME_TOOLTIP"));
+//    }
+
+
+    ToolParamBlock* const fatSHBox = Gtk::manage(new ToolParamBlock());
+    fatSHBox->pack_start(*fatamountSH);
+    fatSHBox->pack_start(*fatanchorSH);
+    fatSHFrame->add(*fatSHBox);
 
     ToolParamBlock* const maskSHBox = Gtk::manage(new ToolParamBlock());
     maskSHBox->pack_start(*showmaskSHMethod, Gtk::PACK_SHRINK, 4);
@@ -1210,8 +1226,10 @@ Locallab::Locallab():
     maskSHBox->pack_start(*gammaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*slomaskSH, Gtk::PACK_SHRINK, 0);
     maskSHBox->pack_start(*mask2SHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    maskSHBox->pack_start(*fatSHFrame);
     expmasksh->add(*maskSHBox, false);
     shadhighBox->pack_start(*expmasksh);
+
 
     expshadhigh->add(*shadhighBox, false);
     expshadhigh->setLevel(2);
@@ -3452,6 +3470,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).lapmaskSH = lapmaskSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).detailSH = detailSH->getIntValue();
                     pp->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = LmaskSHshape->getCurve();
+                    pp->locallab.spots.at(pp->locallab.selspot).fatamountSH = fatamountSH->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).fatanchorSH = fatanchorSH->getValue();
 
                     if (shMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shMethod = "std";
@@ -3813,6 +3833,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         for (int i = 0; i < 5; i++) {
                             pe->locallab.spots.at(pp->locallab.selspot).multsh[i] = pe->locallab.spots.at(pp->locallab.selspot).multsh[i] || multipliersh[i]->getEditedState();
                         }
+                        pe->locallab.spots.at(pp->locallab.selspot).fatamountSH = pe->locallab.spots.at(pp->locallab.selspot).fatamountSH || fatamountSH->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).fatanchorSH = pe->locallab.spots.at(pp->locallab.selspot).fatanchorSH || fatanchorSH->getEditedState();
 
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
@@ -4122,6 +4144,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         for (int i = 0; i < 5; i++) {
                             pedited->locallab.spots.at(pp->locallab.selspot).multsh[i] = pedited->locallab.spots.at(pp->locallab.selspot).multsh[i] || multipliersh[i]->getEditedState();
                         }
+                        pedited->locallab.spots.at(pp->locallab.selspot).fatamountSH = pedited->locallab.spots.at(pp->locallab.selspot).fatamountSH || fatamountSH->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).fatanchorSH = pedited->locallab.spots.at(pp->locallab.selspot).fatanchorSH || fatanchorSH->getEditedState();
 
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
@@ -6126,6 +6150,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     for (int i = 0; i < 5; i++) {
         multipliersh[i]->setDefault(defSpot->multsh[i]);
     }
+    fatamountSH->setDefault(defSpot->fatamountSH);
+    fatanchorSH->setDefault(defSpot->fatanchorSH);
 
     // Vibrance
     saturated->setDefault((double)defSpot->saturated);
@@ -6313,6 +6339,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setDefaultEditedState(Irrelevant);
         }
+        fatamountSH->setDefaultEditedState(Irrelevant);
+        fatanchorSH->setDefaultEditedState(Irrelevant);
 
         // Vibrance
         saturated->setDefaultEditedState(Irrelevant);
@@ -6504,6 +6532,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setDefaultEditedState(defSpotState->multsh[i] ? Edited : UnEdited);
         }
+        fatamountSH->setDefaultEditedState(defSpotState->fatamountSH ? Edited : UnEdited);
+        fatanchorSH->setDefaultEditedState(defSpotState->fatanchorSH ? Edited : UnEdited);
 
         // Vibrance
         saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
@@ -7054,6 +7084,20 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
                 listener->panelChanged(EvlocallabdetailSH, detailSH->getTextValue());
             }
         }
+
+        if (a == fatamountSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabfatamountSH, fatamountSH->getTextValue());
+            }
+        }
+
+
+        if (a == fatanchorSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabfatanchorSH, fatanchorSH->getTextValue());
+            }
+        }
+
 
     }
 
@@ -7831,6 +7875,8 @@ void Locallab::setBatchMode(bool batchMode)
     for (int i = 0; i < 5; i++) {
         multipliersh[i]->showEditedCB();
     }
+    fatamountSH->showEditedCB();
+    fatanchorSH->showEditedCB();
 
     // Vibrance
     saturated->showEditedCB();
@@ -8429,6 +8475,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setValue(pp->locallab.spots.at(index).multsh[i]);
         }
+        fatamountSH->setValue(pp->locallab.spots.at(index).fatamountSH);
+        fatanchorSH->setValue(pp->locallab.spots.at(index).fatanchorSH);
 
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
@@ -8814,6 +8862,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 for (int i = 0; i < 5; i++) {
                     multipliersh[i]->setEditedState(spotState->multsh[i] ? Edited : UnEdited);
                 }
+                fatamountSH->setEditedState(spotState->fatamountSH ? Edited : UnEdited);
+                fatanchorSH->setEditedState(spotState->fatanchorSH ? Edited : UnEdited);
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);

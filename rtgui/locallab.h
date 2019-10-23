@@ -203,6 +203,8 @@ private:
     Adjuster* const slomaskSH;
     Adjuster* const lapmaskSH;
     Adjuster* const detailSH;
+    Adjuster* const fatamountSH;
+    Adjuster* const fatanchorSH;
     // Vibrance
     Adjuster* const saturated;
     Adjuster* const pastels;
@@ -452,6 +454,7 @@ private:
     Gtk::Frame* gridFrame;
     Gtk::Frame* pdeFrame;
     Gtk::Frame* fatFrame;
+    Gtk::Frame* fatSHFrame;
     Gtk::Frame* dehaFrame;
     Gtk::Frame* retiFrame;
     Gtk::Frame* retitoolFrame;
