@@ -11377,7 +11377,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 } else if (params->icm.workingProfile == "BruceRGB")   {
                     adjustr = 1.8f;
                 }
-
                 if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                     float meansob = 0.f;
                     bufcolorig.reset(new LabImage(bfw, bfh));
@@ -11395,7 +11394,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     for (int y = 0; y < bfh ; y++) {
                         for (int x = 0; x < bfw; x++) {
                             bufcolorig->L[y][x] = original->L[y + ystart][x + xstart];
+                            bufcolorig->a[y][x] = original->a[y + ystart][x + xstart];
+                            bufcolorig->b[y][x] = original->b[y + ystart][x + xstart];
                             bufcolfin->L[y][x] = original->L[y + ystart][x + xstart];
+                            bufcolfin->a[y][x] = original->a[y + ystart][x + xstart];
+                            bufcolfin->b[y][x] = original->b[y + ystart][x + xstart];
                         }
                     }
 
@@ -11602,11 +11605,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                                 //      }
                             }
+printf("OK 4\n");
 
                         if (lp.softradiuscol > 0.f) {
                             softproc(bufcolorig.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.0001, 0.00001, 0.1f, sk, multiThread, 0);
                             //  softprocess(bufcolorig.get(), buflight, lp.softradiuscol, bfh, bfw, sk, multiThread);
                         }
+printf("OK 5\n");
 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16)
