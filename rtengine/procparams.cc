@@ -2436,6 +2436,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     deltae(true),
     shortc(false),
     scopemask(60),
+    lumask(10),
     // Color & Light
     expcolor(false),
     curvactiv(false),
@@ -2740,6 +2741,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && deltae == other.deltae
         && shortc == other.shortc
         && scopemask == other.scopemask
+        && lumask == other.lumask
         // Color & Light
         && expcolor == other.expcolor
         && curvactiv == other.curvactiv
@@ -4039,6 +4041,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).deltae, "Locallab", "Deltae_" + std::to_string(i), spot.deltae, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shortc, "Locallab", "Shortc_" + std::to_string(i), spot.shortc, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).scopemask, "Locallab", "Scopemask_" + std::to_string(i), spot.scopemask, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).lumask, "Locallab", "Lumask_" + std::to_string(i), spot.lumask, keyFile);
                 // Color & Light
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).expcolor, "Locallab", "Expcolor_" + std::to_string(i), spot.expcolor, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).curvactiv, "Locallab", "Curvactiv_" + std::to_string(i), spot.curvactiv, keyFile);
@@ -5446,6 +5449,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Deltae_" + std::to_string(i), pedited, spot.deltae, spotEdited.deltae);
                 assignFromKeyfile(keyFile, "Locallab", "Shortc_" + std::to_string(i), pedited, spot.shortc, spotEdited.shortc);
                 assignFromKeyfile(keyFile, "Locallab", "Scopemask_" + std::to_string(i), pedited, spot.scopemask, spotEdited.scopemask);
+                assignFromKeyfile(keyFile, "Locallab", "Lumask_" + std::to_string(i), pedited, spot.lumask, spotEdited.lumask);
                 // Color & Light
                 assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + std::to_string(i), pedited, spot.expcolor, spotEdited.expcolor);
                 assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + std::to_string(i), pedited, spot.curvactiv, spotEdited.curvactiv);

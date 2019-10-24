@@ -69,6 +69,7 @@ ControlSpotPanel::ControlSpotPanel():
     transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 10.0, 0.1, 1.0))),
     transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
+    lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), 0, 30, 1, 10))),
 
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
     laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
@@ -248,11 +249,13 @@ ControlSpotPanel::ControlSpotPanel():
     if(showtooltip) transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
     if(showtooltip) transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
     if(showtooltip) scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
+//    if(showtooltip) lumask_->set_tooltip_text(M("TP_LOCALLAB_LUMASK_TOOLTIP"));
     if(showtooltip) shortc_->set_tooltip_text(M("TP_LOCALLAB_SHORTCMASK_TOOLTIP"));
     transit_->setAdjusterListener(this);
     transitweak_->setAdjusterListener(this);
     transitgrad_->setAdjusterListener(this);
     scopemask_->setAdjusterListener(this);
+    lumask_->setAdjusterListener(this);
 
     transitBox->pack_start(*transit_);
     transitBox->pack_start(*transitweak_);
@@ -283,10 +286,9 @@ ControlSpotPanel::ControlSpotPanel():
     maskFrame->set_label_align(0.025, 0.5);
     if(showtooltip) maskFrame->set_tooltip_text(M("TP_LOCALLAB_MASFRAME_TOOLTIP"));
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
-    
+    maskBox->pack_start(*laplac_);
     laplacConn_  = laplac_->signal_toggled().connect(
             sigc::mem_fun(*this, &ControlSpotPanel::laplacChanged));
-    maskBox->pack_start(*laplac_);
     deltaeConn_  = deltae_->signal_toggled().connect(
             sigc::mem_fun(*this, &ControlSpotPanel::deltaeChanged));
     shortcConn_  = shortc_->signal_toggled().connect(
@@ -294,6 +296,7 @@ ControlSpotPanel::ControlSpotPanel():
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
     maskBox->pack_start(*shortc_);
+    maskBox->pack_start(*lumask_);
     maskFrame->add(*maskBox);
     pack_start(*maskFrame);
 
@@ -600,6 +603,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     transitweak_->setValue((double)row[spots_.transitweak]);
     transitgrad_->setValue((double)row[spots_.transitgrad]);
     scopemask_->setValue((double)row[spots_.scopemask]);
+    lumask_->setValue((double)row[spots_.lumask]);
     avoid_->set_active(row[spots_.avoid]);
     laplac_->set_active(row[spots_.laplac]);
     deltae_->set_active(row[spots_.deltae]);
@@ -1040,6 +1044,14 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == lumask_) {
+        row[spots_.lumask] = lumask_->getIntValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotlumask, lumask_->getTextValue());
+        }
+    }
+
 }
 
 void ControlSpotPanel::avoidChanged()
@@ -1214,6 +1226,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     transitweak_->block(cond);
     transitgrad_->block(cond);
     scopemask_->block(cond);
+    lumask_->block(cond);
     avoidConn_.block(cond);
     laplacConn_.block(cond);
     deltaeConn_.block(cond);
@@ -1245,6 +1258,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     transitweak_->set_sensitive(cond);
     transitgrad_->set_sensitive(cond);
     scopemask_->set_sensitive(cond);
+    lumask_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
     deltae_->set_sensitive(cond);
@@ -1882,6 +1896,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->transitweak = row[spots_.transitweak];
             r->transitgrad = row[spots_.transitgrad];
             r->scopemask = row[spots_.scopemask];
+            r->lumask = row[spots_.lumask];
             r->avoid = row[spots_.avoid];
             r->laplac = row[spots_.laplac];
             r->deltae = row[spots_.deltae];
@@ -2012,6 +2027,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.transitweak] = newSpot->transitweak;
     row[spots_.transitgrad] = newSpot->transitgrad;
     row[spots_.scopemask] = newSpot->scopemask;
+    row[spots_.lumask] = newSpot->lumask;
     row[spots_.avoid] = newSpot->avoid;
     row[spots_.laplac] = newSpot->laplac;
     row[spots_.deltae] = newSpot->deltae;
@@ -2061,6 +2077,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.transitweak] = spot->transitweak;
             row[spots_.transitgrad] = spot->transitgrad;
             row[spots_.scopemask] = spot->scopemask;
+            row[spots_.lumask] = spot->lumask;
             row[spots_.avoid] = spot->avoid;
             row[spots_.laplac] = spot->laplac;
             row[spots_.deltae] = spot->deltae;
@@ -2156,6 +2173,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->transitweak = transitweak_->getEditedState();
     se->transitgrad = transitgrad_->getEditedState();
     se->scopemask = scopemask_->getEditedState();
+    se->lumask = lumask_->getEditedState();
     se->avoid = !avoid_->get_inconsistent();
     se->laplac = !laplac_->get_inconsistent();
     se->deltae = !deltae_->get_inconsistent();
@@ -2229,6 +2247,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     transitweak_->setEditedState(se->transitweak ? Edited : UnEdited);
     transitgrad_->setEditedState(se->transitgrad ? Edited : UnEdited);
     scopemask_->setEditedState(se->scopemask ? Edited : UnEdited);
+    lumask_->setEditedState(se->lumask ? Edited : UnEdited);
     avoid_->set_inconsistent(multiImage && !se->avoid);
     laplac_->set_inconsistent(multiImage && !se->laplac);
     deltae_->set_inconsistent(multiImage && !se->deltae);
@@ -2278,6 +2297,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
     transitweak_->setDefault(defSpot->transitweak);
     transitgrad_->setDefault(defSpot->transitgrad);
     scopemask_->setDefault(defSpot->scopemask);
+    lumask_->setDefault(defSpot->lumask);
 
     // Set default edited states for adjusters
     if (!pedited) {
@@ -2298,6 +2318,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         transitweak_->setDefaultEditedState(Irrelevant);
         transitgrad_->setDefaultEditedState(Irrelevant);
         scopemask_->setDefaultEditedState(Irrelevant);
+        lumask_->setDefaultEditedState(Irrelevant);
     } else {
         const LocallabParamsEdited::LocallabSpotEdited* defSpotState = new LocallabParamsEdited::LocallabSpotEdited(true);
 
@@ -2322,6 +2343,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         transitweak_->setDefaultEditedState(defSpotState->transitweak ? Edited : UnEdited);
         transitgrad_->setDefaultEditedState(defSpotState->transitgrad ? Edited : UnEdited);
         scopemask_->setDefaultEditedState(defSpotState->scopemask ? Edited : UnEdited);
+        lumask_->setDefaultEditedState(defSpotState->lumask ? Edited : UnEdited);
     }
 }
 
@@ -2347,6 +2369,7 @@ void ControlSpotPanel::setBatchMode(bool batchMode)
     transitweak_->showEditedCB();
     transitgrad_->showEditedCB();
     scopemask_->showEditedCB();
+    lumask_->showEditedCB();
 
     // Set batch mode for comboBoxText
     shape_->append(M("GENERAL_UNCHANGED"));
@@ -2387,6 +2410,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(transitweak);
     add(transitgrad);
     add(scopemask);
+    add(lumask);
     add(avoid);
     add(laplac);
     add(deltae);

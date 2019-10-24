@@ -217,7 +217,7 @@ public:
          LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
          LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread,
          bool delt, const float hueref, const float chromaref, const float lumaref,
-         float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance);
+         float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float lumask);
 
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
 
@@ -228,7 +228,7 @@ public:
         LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
         LabImage * transformed, bool retiMasktmap, bool retiMask,
         bool delt, const float hueref, const float chromaref, const float lumaref,
-        float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance);
+        float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float lumask);
 
 
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg);

@@ -856,7 +856,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
                                      LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
                                      LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread,
                                      bool delt, const float hueref, const float chromaref, const float lumaref,
-                                     float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance)
+                                     float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float lumask)
 {
     array2D<float> loctemp(W_L, H_L);
     array2D<float> ble(W_L, H_L);
@@ -1123,7 +1123,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 
         for (int y = 0; y < H_L; y++) {
             for (int x = 0; x < W_L; x++) {
-                bufmask->L[y][x] = 6000.f + CLIPLOC(bufmaskorigreti->L[y][x]);
+                bufmask->L[y][x] = (lumask * 400.f) + CLIPLOC(bufmaskorigreti->L[y][x]);
                 bufmask->a[y][x] = CLIPC(bufreti->a[y][x] * bufmaskorigreti->a[y][x]);
                 bufmask->b[y][x] = CLIPC(bufreti->b[y][x] * bufmaskorigreti->b[y][x]);
             }
@@ -1141,7 +1141,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
                                LUTf & lmaskretilocalcurve, bool & localmaskretiutili,
                                LabImage * transformed, bool retiMasktmap, bool retiMask,
                                bool delt, const float hueref, const float chromaref, const float lumaref,
-                               float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance)
+                               float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float lumask)
 
 {
     BENCHFUN
@@ -1679,7 +1679,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
                            lmaskretilocalcurve, localmaskretiutili,
                            bufreti, bufmask, buforig, buforigmas, multiThread,
                            delt, hueref, chromaref, lumaref,
-                           maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, balance
+                           maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, balance, lumask
                           );
         }
 

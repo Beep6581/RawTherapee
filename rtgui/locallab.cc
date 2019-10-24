@@ -2870,6 +2870,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         r->transitweak = pp->locallab.spots.at(i).transitweak;
         r->transitgrad = pp->locallab.spots.at(i).transitgrad;
         r->scopemask = pp->locallab.spots.at(i).scopemask;
+        r->lumask = pp->locallab.spots.at(i).lumask;
         r->avoid = pp->locallab.spots.at(i).avoid;
         r->laplac = pp->locallab.spots.at(i).laplac;
         r->deltae = pp->locallab.spots.at(i).deltae;
@@ -3001,6 +3002,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
             r->scopemask = newSpot->scopemask;
+            r->lumask = newSpot->lumask;
             r->avoid = newSpot->avoid;
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
@@ -3221,6 +3223,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->transitweak = newSpot->transitweak;
             r->transitgrad = newSpot->transitgrad;
             r->scopemask = newSpot->scopemask;
+            r->lumask = newSpot->lumask;
             r->avoid = newSpot->avoid;
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
@@ -3339,6 +3342,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).transitweak = r->transitweak;
                     pp->locallab.spots.at(pp->locallab.selspot).transitgrad = r->transitgrad;
                     pp->locallab.spots.at(pp->locallab.selspot).scopemask = r->scopemask;
+                    pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
                     pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;
                     pp->locallab.spots.at(pp->locallab.selspot).deltae = r->deltae;
@@ -3735,6 +3739,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).transitweak = pe->locallab.spots.at(pp->locallab.selspot).transitweak || se->transitweak;
                         pe->locallab.spots.at(pp->locallab.selspot).transitgrad = pe->locallab.spots.at(pp->locallab.selspot).transitgrad || se->transitgrad;
                         pe->locallab.spots.at(pp->locallab.selspot).scopemask = pe->locallab.spots.at(pp->locallab.selspot).scopemask || se->scopemask;
+                        pe->locallab.spots.at(pp->locallab.selspot).lumask = pe->locallab.spots.at(pp->locallab.selspot).lumask || se->lumask;
                         pe->locallab.spots.at(pp->locallab.selspot).balan = pe->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
                         pe->locallab.spots.at(pp->locallab.selspot).avoid = pe->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
                         pe->locallab.spots.at(pp->locallab.selspot).laplac = pe->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
@@ -4049,6 +4054,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).transitweak = pedited->locallab.spots.at(pp->locallab.selspot).transitweak || se->transitweak;
                         pedited->locallab.spots.at(pp->locallab.selspot).transitgrad = pedited->locallab.spots.at(pp->locallab.selspot).transitgrad || se->transitgrad;
                         pedited->locallab.spots.at(pp->locallab.selspot).scopemask = pedited->locallab.spots.at(pp->locallab.selspot).scopemask || se->scopemask;
+                        pedited->locallab.spots.at(pp->locallab.selspot).lumask = pedited->locallab.spots.at(pp->locallab.selspot).lumask || se->lumask;
                         pedited->locallab.spots.at(pp->locallab.selspot).avoid = pedited->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
                         pedited->locallab.spots.at(pp->locallab.selspot).laplac = pedited->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
                         pedited->locallab.spots.at(pp->locallab.selspot).deltae = pedited->locallab.spots.at(pp->locallab.selspot).deltae || se->deltae;
@@ -8746,6 +8752,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->transitweak = spotState->transitweak;
                 se->transitgrad = spotState->transitgrad;
                 se->scopemask = spotState->scopemask;
+                se->lumask = spotState->lumask;
                 se->avoid = spotState->avoid;
                 se->laplac = spotState->laplac;
                 se->deltae = spotState->deltae;

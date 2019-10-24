@@ -395,6 +395,7 @@ public:
         bool deltae;
         bool shortc;
         bool scopemask;
+        bool lumask;
         // Color & Light
         bool expcolor;
         bool curvactiv;
