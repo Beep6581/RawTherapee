@@ -1157,7 +1157,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
         lut[i] = c;
     }
 
-    /*
+    
     #ifdef __SSE2__
         vfloat vfactors[12];
         vfloat vcenters[12];
@@ -1196,10 +1196,10 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
         };
 
 
-    //    vfloat v1 = F2V(1.f);
-    //    vfloat v65535 = F2V(65535.f);
+        vfloat v1 = F2V(1.f);
+        vfloat v65535 = F2V(65535.f);
     #endif // __SSE2__
-    */
+    
 
 #ifdef _OPENMP
     #   pragma omp parallel for if (multithread)
@@ -1208,7 +1208,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
     for (int y = 0; y < H; ++y) {
         int x = 0;
 
-        /*
+        
         #ifdef __SSE2__
 
         for (; x < W - 3; x += 4) {
@@ -1228,7 +1228,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
         }
 
         #endif // __SSE2__
-        */
+        
         for (; x < W; ++x) {
             float cY = Y[y][x];
             float corr = cY > 1.f ? process_pixel(cY) : lut[cY * 65535.f];
@@ -1237,8 +1237,6 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
             B[y][x] *= corr;
         }
     }
-
-//    printf("OK 18\n");
 
 }
 
@@ -4550,43 +4548,17 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype,  struct loca
             int GH = transformed->H;
             int GW = transformed->W;
 
-//            printf("OK 1 invers \n");
-            array2D<float> Rtemp;
-            Rtemp(GW, GH);
-            array2D<float> Gtemp;
-            Gtemp(GW, GH);
-            array2D<float> Btemp;
-            Btemp(GW, GH);
             double scal = (double)(sk);
             Imagefloat *tmpImage = nullptr;
             tmpImage = new Imagefloat(GW, GH);
             lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-#endif
+            tmpImage->normalizeFloatTo1();
 
-            for (int y = 0; y < GH ; y++) {
-                for (int x = 0; x < GW; x++) {
-                    Rtemp[y][x] = LIM01(tmpImage->r(y, x) / 65536.f);
-                    Gtemp[y][x] = LIM01(tmpImage->g(y, x) / 65536.f);
-                    Btemp[y][x] = LIM01(tmpImage->b(y, x) / 65536.f);
-                }
-            }
-
+            array2D<float> Rtemp(GW, GH, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);                            
+            array2D<float> Gtemp(GW, GH, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);                            
+            array2D<float> Btemp(GW, GH, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);                            
             tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
-
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-            for (int y = 0; y < GH ; y++) {
-                for (int x = 0; x < GW; x++) {
-                    tmpImage->r(y, x) = 65536.f * Rtemp[y][x];
-                    tmpImage->g(y, x) = 65536.f * Gtemp[y][x];
-                    tmpImage->b(y, x) = 65536.f * Btemp[y][x];
-                }
-            }
-
+            tmpImage->normalizeFloatTo65535();
             rgb2lab(*tmpImage, *temp, params->icm.workingProfile);
 
             delete tmpImage;
@@ -8812,42 +8784,17 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         if (params->locallab.spots.at(sp).shMethod == "tone") {
-                            array2D<float> Rtemp;
-                            Rtemp(bfw, bfh);
-                            array2D<float> Gtemp;
-                            Gtemp(bfw, bfh);
-                            array2D<float> Btemp;
-                            Btemp(bfw, bfh);
                             double scal = (double)(sk);
                             Imagefloat *tmpImage = nullptr;
                             tmpImage = new Imagefloat(bfw, bfh);
                             lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
-#endif
+                            tmpImage->normalizeFloatTo1();
 
-                            for (int y = 0; y < bfh ; y++) {
-                                for (int x = 0; x < bfw; x++) {
-                                    Rtemp[y][x] = LIM01(tmpImage->r(y, x) / 65536.f);
-                                    Gtemp[y][x] = LIM01(tmpImage->g(y, x) / 65536.f);
-                                    Btemp[y][x] = LIM01(tmpImage->b(y, x) / 65536.f);
-                                }
-                            }
-
+                            array2D<float> Rtemp(bfw, bfh, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);                            
+                            array2D<float> Gtemp(bfw, bfh, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);                            
+                            array2D<float> Btemp(bfw, bfh, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);                            
                             tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
-
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-                            for (int y = 0; y < bfh ; y++) {
-                                for (int x = 0; x < bfw; x++) {
-                                    tmpImage->r(y, x) = 65536.f * Rtemp[y][x];
-                                    tmpImage->g(y, x) = 65536.f * Gtemp[y][x];
-                                    tmpImage->b(y, x) = 65536.f * Btemp[y][x];
-                                }
-                            }
-
+                            tmpImage->normalizeFloatTo65535();
                             rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                             delete tmpImage;
