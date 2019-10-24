@@ -1032,6 +1032,8 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 */
 
 {
+        BENCHFUN
+
     const int W = R.width();
     const int H = R.height();
     array2D<float> Y(W, H);
@@ -1236,7 +1238,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
         }
     }
 
-    printf("OK 18\n");
+//    printf("OK 18\n");
 
 }
 
@@ -8810,7 +8812,6 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         if (params->locallab.spots.at(sp).shMethod == "tone") {
-                            printf("OK 1 \n");
                             array2D<float> Rtemp;
                             Rtemp(bfw, bfh);
                             array2D<float> Gtemp;
@@ -8867,7 +8868,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     transit_shapedetect(9, bufexpfin.get(), originalmaskSH.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
                 }
             }
-        } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f) && call < 3  && lp.hsena) {
+        } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ) && call < 3  && lp.hsena) {
             std::unique_ptr<LabImage> bufmaskblurcol;
             std::unique_ptr<LabImage> originalmaskSH;
             std::unique_ptr<LabImage> bufcolorig;
