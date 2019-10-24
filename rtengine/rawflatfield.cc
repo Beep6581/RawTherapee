@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2017 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2019 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,12 +17,11 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
+#include <cstring>
+#include <memory>
 #include <new>
 
-#include "rtengine.h"
 #include "rawimagesource.h"
-#include "rawimage.h"
 #include "procparams.h"
 //#define BENCHMARK
 //#include "StopWatch.h"
@@ -30,37 +29,25 @@
 
 namespace {
 
-void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, int W)
+void cfaboxblur(const float* const * riFlatFile, float* cfablur, int boxH, int boxW, int H, int W)
 {
-
     if (boxW < 0 || boxH < 0 || (boxW == 0 && boxH == 0)) { // nothing to blur or negative values
         memcpy(cfablur, riFlatFile[0], W * H * sizeof(float));
         return;
     }
 
-    float *tmpBuffer = nullptr;
-    float *cfatmp = nullptr;
-    float *srcVertical = nullptr;
+    std::unique_ptr<float []> tmpBuffer;
+    float *cfatmp = cfablur;
 
 
     if (boxH > 0 && boxW > 0) {
         // we need a temporary buffer if we have to blur both directions
-        tmpBuffer = (float (*)) calloc (H * W, sizeof * tmpBuffer);
+        tmpBuffer.reset(new float [H * W]);
+        cfatmp = tmpBuffer.get();
     }
 
-    if (boxH == 0) {
-        // if boxH == 0 we can skip the vertical blur and process the horizontal blur from riFlatFile to cfablur without using a temporary buffer
-        cfatmp = cfablur;
-    } else {
-        cfatmp = tmpBuffer;
-    }
-
-    if (boxW == 0) {
-        // if boxW == 0 we can skip the horizontal blur and process the vertical blur from riFlatFile to cfablur without using a temporary buffer
-        srcVertical = riFlatFile[0];
-    } else {
-        srcVertical = cfatmp;
-    }
+    // if boxW == 0 we can skip the horizontal blur and process the vertical blur from riFlatFile to cfablur without using a temporary buffer
+    const float* srcVertical = boxW == 0 ? riFlatFile[0] : cfatmp;
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -76,11 +63,11 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
 
             for (int row = 0; row < H; ++row) {
                 int len = boxW / 2 + 1;
-                cfatmp[row * W + 0] = riFlatFile[row][0] / len;
+                cfatmp[row * W] = riFlatFile[row][0] / len;
                 cfatmp[row * W + 1] = riFlatFile[row][1] / len;
 
                 for (int j = 2; j <= boxW; j += 2) {
-                    cfatmp[row * W + 0] += riFlatFile[row][j] / len;
+                    cfatmp[row * W] += riFlatFile[row][j] / len;
                     cfatmp[row * W + 1] += riFlatFile[row][j + 1] / len;
                 }
 
@@ -90,8 +77,9 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     len ++;
                 }
 
+                const float rlen = 1.f / len;
                 for (int col = boxW + 2; col < W - boxW; col++) {
-                    cfatmp[row * W + col] = cfatmp[row * W + col - 2] + (riFlatFile[row][boxW + col] - cfatmp[row * W + col - boxW - 2]) / len;
+                    cfatmp[row * W + col] = cfatmp[row * W + col - 2] + (riFlatFile[row][boxW + col] - cfatmp[row * W + col - boxW - 2]) * rlen;
                 }
 
                 for (int col = W - boxW; col < W; col += 2) {
@@ -117,10 +105,10 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
 
             for (int col = 0; col < W - 7; col += 8) {
                 vfloat lenv = leninitv;
-                vfloat temp1v = LVFU(srcVertical[0 * W + col]) / lenv;
-                vfloat temp2v = LVFU(srcVertical[1 * W + col]) / lenv;
-                vfloat temp3v = LVFU(srcVertical[0 * W + col + 4]) / lenv;
-                vfloat temp4v = LVFU(srcVertical[1 * W + col + 4]) / lenv;
+                vfloat temp1v = LVFU(srcVertical[col]) / lenv;
+                vfloat temp2v = LVFU(srcVertical[W + col]) / lenv;
+                vfloat temp3v = LVFU(srcVertical[col + 4]) / lenv;
+                vfloat temp4v = LVFU(srcVertical[W + col + 4]) / lenv;
 
                 for (int i = 2; i < boxH + 2; i += 2) {
                     temp1v += LVFU(srcVertical[i * W + col]) / lenv;
@@ -129,10 +117,10 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     temp4v += LVFU(srcVertical[(i + 1) * W + col + 4]) / lenv;
                 }
 
-                STVFU(cfablur[0 * W + col], temp1v);
-                STVFU(cfablur[1 * W + col], temp2v);
-                STVFU(cfablur[0 * W + col + 4], temp3v);
-                STVFU(cfablur[1 * W + col + 4], temp4v);
+                STVFU(cfablur[col], temp1v);
+                STVFU(cfablur[W + col], temp2v);
+                STVFU(cfablur[col + 4], temp3v);
+                STVFU(cfablur[W + col + 4], temp4v);
 
                 int row;
                 for (row = 2; row < boxH + 2; row += 2) {
@@ -142,9 +130,9 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     temp3v = (temp3v * lenv + LVFU(srcVertical[(row + boxH) * W + col + 4])) / lenp1v;
                     temp4v = (temp4v * lenv + LVFU(srcVertical[(row + boxH + 1) * W + col + 4])) / lenp1v;
                     STVFU(cfablur[row * W + col], temp1v);
-                    STVFU(cfablur[(row + 1)*W + col], temp2v);
+                    STVFU(cfablur[(row + 1) * W + col], temp2v);
                     STVFU(cfablur[row * W + col + 4], temp3v);
-                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
+                    STVFU(cfablur[(row + 1) * W + col + 4], temp4v);
                     lenv = lenp1v;
                 }
 
@@ -154,9 +142,9 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     temp3v = temp3v + (LVFU(srcVertical[(row + boxH) * W + col + 4]) - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenv;
                     temp4v = temp4v + (LVFU(srcVertical[(row + 1 + boxH) * W + col + 4]) - LVFU(srcVertical[(row + 1 - boxH - 2) * W + col + 4])) / lenv;
                     STVFU(cfablur[row * W + col], temp1v);
-                    STVFU(cfablur[(row + 1)*W + col], temp2v);
+                    STVFU(cfablur[(row + 1) * W + col], temp2v);
                     STVFU(cfablur[row * W + col + 4], temp3v);
-                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
+                    STVFU(cfablur[(row + 1) * W + col + 4], temp4v);
                 }
 
                 if (row < H - boxH) {
@@ -180,9 +168,9 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     temp3v = (temp3v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenm1v;
                     temp4v = (temp4v * lenv - LVFU(srcVertical[(row - boxH - 1) * W + col + 4])) / lenm1v;
                     STVFU(cfablur[row * W + col], temp1v);
-                    STVFU(cfablur[(row + 1)*W + col], temp2v);
+                    STVFU(cfablur[(row + 1) * W + col], temp2v);
                     STVFU(cfablur[row * W + col + 4], temp3v);
-                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
+                    STVFU(cfablur[(row + 1) * W + col + 4], temp4v);
                     lenv = lenm1v;
                 }
 
@@ -190,8 +178,8 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     vfloat lenm1v = lenv - onev;
                     temp1v = (temp1v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenm1v;
                     temp3v = (temp3v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenm1v;
-                    STVFU(cfablur[(row)*W + col], temp1v);
-                    STVFU(cfablur[(row)*W + col + 4], temp3v);
+                    STVFU(cfablur[row * W + col], temp1v);
+                    STVFU(cfablur[row * W + col + 4], temp3v);
                 }
 
             }
@@ -202,18 +190,18 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
 
             for (int col = W - (W % 8); col < W; ++col) {
                 int len = boxH / 2 + 1;
-                cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
-                cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
+                cfablur[col] = srcVertical[col] / len;
+                cfablur[W + col] = srcVertical[W + col] / len;
 
                 for (int i = 2; i < boxH + 2; i += 2) {
-                    cfablur[0 * W + col] += srcVertical[i * W + col] / len;
-                    cfablur[1 * W + col] += srcVertical[(i + 1) * W + col] / len;
+                    cfablur[col] += srcVertical[i * W + col] / len;
+                    cfablur[W + col] += srcVertical[(i + 1) * W + col] / len;
                 }
 
                 for (int row = 2; row < boxH + 2; row += 2) {
                     cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + srcVertical[(row + boxH) * W + col]) / (len + 1);
-                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
-                    len ++;
+                    cfablur[(row + 1) * W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
+                    ++len;
                 }
 
                 for (int row = boxH + 2; row < H - boxH; ++row) {
@@ -224,10 +212,9 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - srcVertical[(row - boxH - 2) * W + col]) / (len - 1);
 
                     if (row + 1 < H) {
-                        cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
+                        cfablur[(row + 1) * W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
                     }
-
-                    len --;
+                    --len;
                 }
             }
 
@@ -238,18 +225,18 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
 
             for (int col = 0; col < W; ++col) {
                 int len = boxH / 2 + 1;
-                cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
-                cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
+                cfablur[col] = srcVertical[col] / len;
+                cfablur[W + col] = srcVertical[W + col] / len;
 
                 for (int i = 2; i < boxH + 2; i += 2) {
-                    cfablur[0 * W + col] += srcVertical[i * W + col] / len;
-                    cfablur[1 * W + col] += srcVertical[(i + 1) * W + col] / len;
+                    cfablur[col] += srcVertical[i * W + col] / len;
+                    cfablur[W + col] += srcVertical[(i + 1) * W + col] / len;
                 }
 
                 for (int row = 2; row < boxH + 2; row += 2) {
                     cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + srcVertical[(row + boxH) * W + col]) / (len + 1);
-                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
-                    len ++;
+                    cfablur[(row + 1) * W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
+                    ++len;
                 }
 
                 for (int row = boxH + 2; row < H - boxH; ++row) {
@@ -260,19 +247,13 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
                     cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - srcVertical[(row - boxH - 2) * W + col]) / (len - 1);
 
                     if (row + 1 < H) {
-                        cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
+                        cfablur[(row + 1) * W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
                     }
-
-                    len --;
+                    --len;
                 }
             }
-
 #endif
         }
-    }
-
-    if (tmpBuffer) {
-        free (tmpBuffer);
     }
 }
 
@@ -281,22 +262,23 @@ void cfaboxblur(float** riFlatFile, float* cfablur, int boxH, int boxW, int H, i
 namespace rtengine
 {
 
-void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4])
+void RawImageSource::processFlatField(const RAWParams &raw, const RawImage *riFlatFile, const unsigned short black[4])
 {
 //    BENCHFUN
-    float *cfablur = new float[H * W];
-    int BS = raw.ff_BlurRadius;
-    BS += BS & 1;
+    const float fblack[4] = {static_cast<float>(black[0]), static_cast<float>(black[1]), static_cast<float>(black[2]), static_cast<float>(black[3])};
+    std::unique_ptr<float[]> cfablur(new float[H * W]);
+
+    const int BS = raw.ff_BlurRadius + (raw.ff_BlurRadius & 1);
 
     if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::V)) {
-        cfaboxblur(riFlatFile->data, cfablur, 2 * BS, 0, H, W);
+        cfaboxblur(riFlatFile->data, cfablur.get(), 2 * BS, 0, H, W);
     } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::H)) {
-        cfaboxblur(riFlatFile->data, cfablur, 0, 2 * BS, H, W);
+        cfaboxblur(riFlatFile->data, cfablur.get(), 0, 2 * BS, H, W);
     } else if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-        cfaboxblur(riFlatFile->data, cfablur, BS, BS, H, W);    //first do area blur to correct vignette
+        cfaboxblur(riFlatFile->data, cfablur.get(), BS, BS, H, W);    //first do area blur to correct vignette
     } else { //(raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::area_ff))
-        cfaboxblur(riFlatFile->data, cfablur, BS, BS, H, W);
+        cfaboxblur(riFlatFile->data, cfablur.get(), BS, BS, H, W);
     }
 
     if (ri->getSensorType() == ST_BAYER || ri->get_colors() == 1) {
@@ -309,7 +291,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                 const int col = 2 * (W >> 2) + n;
                 const int c  = ri->get_colors() != 1 ? FC(row, col) : 0;
                 const int c4 = ri->get_colors() != 1 ? ((c == 1 && !(row & 1)) ? 3 : c) : 0;
-                refcolor[m][n] = std::max(0.0f, cfablur[row * W + col] - black[c4]);
+                refcolor[m][n] = std::max(0.0f, cfablur[row * W + col] - fblack[c4]);
             }
 
         float limitFactor = 1.f;
@@ -332,16 +314,16 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                                 clippedBefore = true;
                                 break;
                             }
-                            const float tempval = (rawVal - black[c4]) * (refcolor[m][n] / std::max(1e-5f, cfablur[(row + m) * W + col + n] - black[c4]));
+                            const float tempval = (rawVal - fblack[c4]) * (refcolor[m][n] / std::max(1e-5f, cfablur[(row + m) * W + col + n] - fblack[c4]));
                             maxval = std::max(maxval, tempval);
                         }
                     }
 
                     // now we have the max value for the channel
                     // if it clips, calculate factor to avoid clipping
-                    if (maxval + black[c4] >= ri->get_white(c4)) {
+                    if (maxval + fblack[c4] >= ri->get_white(c4)) {
                         if (!clippedBefore) {
-                            limitFactor = std::min(limitFactor, ri->get_white(c4) / (maxval + black[c4]));
+                            limitFactor = std::min(limitFactor, ri->get_white(c4) / (maxval + fblack[c4]));
                         } else {
                             limitFactor = 1.f;
                         }
@@ -350,7 +332,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             }
             flatFieldAutoClipValue = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
         } else {
-            limitFactor = std::max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
+            limitFactor = std::max((100 - raw.ff_clipControl) / 100.f, 0.01f);
         }
 
         for (int m = 0; m < 2; ++m)
@@ -378,8 +360,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         const vfloat refcolorv[2] = {_mm_set_ps(refcolor[0][1], refcolor[0][0], refcolor[0][1], refcolor[0][0]),
                                      _mm_set_ps(refcolor[1][1], refcolor[1][0], refcolor[1][1], refcolor[1][0])
                                     };
-        const vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
-                                  _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
+        const vfloat blackv[2] = {_mm_set_ps(fblack[c4[0][1]], fblack[c4[0][0]], fblack[c4[0][1]], fblack[c4[0][0]]),
+                                  _mm_set_ps(fblack[c4[1][1]], fblack[c4[1][0]], fblack[c4[1][1]], fblack[c4[1][0]])
                                  };
 
         const vfloat onev = F2V(1.f);
@@ -396,7 +378,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             const vfloat rowRefcolorv = refcolorv[row & 1];
 
             for (; col < W - 3; col += 4) {
-                const vfloat blurv = LVFU(cfablur[(row) * W + col]) - rowBlackv;
+                const vfloat blurv = LVFU(cfablur[row * W + col]) - rowBlackv;
                 vfloat vignettecorrv = rowRefcolorv / blurv;
                 vignettecorrv = vself(vmaskf_le(blurv, minValuev), onev, vignettecorrv);
                 const vfloat valv = LVFU(rawData[row][col]) - rowBlackv;
@@ -406,9 +388,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 #endif
 
             for (; col < W; ++col) {
-                const float blur = cfablur[(row) * W + col] - black[c4[row & 1][col & 1]];
+                const float blur = cfablur[row * W + col] - fblack[c4[row & 1][col & 1]];
                 const float vignettecorr = blur <= minValue ? 1.f : refcolor[row & 1][col & 1] / blur;
-                rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * vignettecorr + black[c4[row & 1][col & 1]];
+                rawData[row][col] = (rawData[row][col] - fblack[c4[row & 1][col & 1]]) * vignettecorr + fblack[c4[row & 1][col & 1]];
             }
         }
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
@@ -421,7 +403,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                 const int row = 2 * (H >> 2) + m;
                 const int col = 2 * (W >> 2) + n;
                 const int c  = riFlatFile->XTRANSFC(row, col);
-                refcolor[c] += std::max(0.0f, cfablur[row * W + col] - black[c]);
+                refcolor[c] += std::max(0.0f, cfablur[row * W + col] - fblack[c]);
                 cCount[c] ++;
             }
 
@@ -447,14 +429,14 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                         clippedBefore = true;
                         break;
                     }
-                    const float tempval = (rawVal - black[0]) * (refcolor[ri->XTRANSFC(row, col)] / std::max(1e-5f, cfablur[(row) * W + col] - black[0]));
+                    const float tempval = (rawVal - fblack[0]) * (refcolor[ri->XTRANSFC(row, col)] / std::max(1e-5f, cfablur[(row) * W + col] - fblack[0]));
                     maxval = std::max(maxval, tempval);
                 }
             }
 
             // there's only one white level for xtrans
-            if (!clippedBefore && maxval + black[0] > ri->get_white(0)) {
-                limitFactor = ri->get_white(0) / (maxval + black[0]);
+            if (!clippedBefore && maxval + fblack[0] > ri->get_white(0)) {
+                limitFactor = ri->get_white(0) / (maxval + fblack[0]);
                 flatFieldAutoClipValue = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
             }
         } else {
@@ -475,19 +457,19 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         for (int row = 0; row < H; ++row) {
             for (int col = 0; col < W; ++col) {
                 const int c = ri->XTRANSFC(row, col);
-                const float blur = cfablur[(row) * W + col] - black[c];
+                const float blur = cfablur[(row) * W + col] - fblack[c];
                 const float vignettecorr = blur <= minValue ? 1.f : refcolor[c] / blur;
-                rawData[row][col] = (rawData[row][col] - black[c]) * vignettecorr + black[c];
+                rawData[row][col] = (rawData[row][col] - fblack[c]) * vignettecorr + fblack[c];
             }
         }
     }
 
     if (raw.ff_BlurType == RAWParams::getFlatFieldBlurTypeString(RAWParams::FlatFieldBlurType::VH)) {
-        float *cfablur1 = new float[H * W];
-        float *cfablur2 = new float[H * W];
+        std::unique_ptr<float []> cfablur1(new float[H * W]);
+        std::unique_ptr<float []> cfablur2(new float[H * W]);
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-        cfaboxblur(riFlatFile->data, cfablur1, 0, 2 * BS, H, W); //now do horizontal blur
-        cfaboxblur(riFlatFile->data, cfablur2, 2 * BS, 0, H, W); //now do vertical blur
+        cfaboxblur(riFlatFile->data, cfablur1.get(), 0, 2 * BS, H, W); //now do horizontal blur
+        cfaboxblur(riFlatFile->data, cfablur2.get(), 2 * BS, 0, H, W); //now do vertical blur
 
         if (ri->getSensorType() == ST_BAYER || ri->get_colors() == 1) {
             unsigned int c[2][2] {};
@@ -505,8 +487,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             }
 
 #ifdef __SSE2__
-            const vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
-                                      _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
+            const vfloat blackv[2] = {_mm_set_ps(fblack[c4[0][1]], fblack[c4[0][0]], fblack[c4[0][1]], fblack[c4[0][0]]),
+                                      _mm_set_ps(fblack[c4[1][1]], fblack[c4[1][0]], fblack[c4[1][1]], fblack[c4[1][0]])
                                      };
 
             const vfloat epsv = F2V(1e-5f);
@@ -530,9 +512,9 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 #endif
 
                 for (; col < W; ++col) {
-                    const float linecorr = SQR(std::max(1e-5f, cfablur[row * W + col] - black[c4[row & 1][col & 1]])) /
-                                           (std::max(1e-5f, cfablur1[row * W + col] - black[c4[row & 1][col & 1]]) * std::max(1e-5f, cfablur2[row * W + col] - black[c4[row & 1][col & 1]]));
-                    rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * linecorr + black[c4[row & 1][col & 1]];
+                    const float linecorr = SQR(std::max(1e-5f, cfablur[row * W + col] - fblack[c4[row & 1][col & 1]])) /
+                                           (std::max(1e-5f, cfablur1[row * W + col] - fblack[c4[row & 1][col & 1]]) * std::max(1e-5f, cfablur2[row * W + col] - fblack[c4[row & 1][col & 1]]));
+                    rawData[row][col] = (rawData[row][col] - fblack[c4[row & 1][col & 1]]) * linecorr + fblack[c4[row & 1][col & 1]];
                 }
             }
         } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
@@ -543,18 +525,12 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             for (int row = 0; row < H; ++row) {
                 for (int col = 0; col < W; ++col) {
                     const int c  = ri->XTRANSFC(row, col);
-                    const float hlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - black[c]) / std::max(1e-5f, cfablur1[(row) * W + col] - black[c]);
-                    const float vlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - black[c]) / std::max(1e-5f, cfablur2[(row) * W + col] - black[c]);
-                    rawData[row][col] = (rawData[row][col] - black[c]) * hlinecorr * vlinecorr + black[c];
+                    const float hlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - fblack[c]) / std::max(1e-5f, cfablur1[(row) * W + col] - fblack[c]);
+                    const float vlinecorr = std::max(1e-5f, cfablur[(row) * W + col] - fblack[c]) / std::max(1e-5f, cfablur2[(row) * W + col] - fblack[c]);
+                    rawData[row][col] = (rawData[row][col] - fblack[c]) * hlinecorr * vlinecorr + fblack[c];
                 }
             }
-
         }
-
-        delete [] cfablur1;
-        delete [] cfablur2;
     }
-
-    delete [] cfablur;
 }
 } /* namespace */
