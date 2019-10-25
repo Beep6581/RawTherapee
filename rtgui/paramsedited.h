@@ -496,6 +496,8 @@ public:
         bool LmaskSHcurve;
         bool fatamountSH;
         bool fatanchorSH;
+        bool gamSH;
+        bool sloSH;
         // Vibrance
         bool expvibrance;
         bool saturated;

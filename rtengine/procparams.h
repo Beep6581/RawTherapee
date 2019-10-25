@@ -1085,6 +1085,8 @@ struct LocallabParams {
         std::vector<double> LmaskSHcurve;
         double fatamountSH;
         double fatanchorSH;
+        double gamSH;
+        double sloSH;
         // Vibrance
         bool expvibrance;
         int saturated;

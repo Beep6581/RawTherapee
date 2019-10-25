@@ -5,6 +5,7 @@
  *
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
+ *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
@@ -247,6 +248,8 @@ Locallab::Locallab():
     detailSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILSH"), -5, 5, 1, 0))),
     fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 5.0, 0.01, 2.4))),
+    sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 20.0, 0.01, 12.92))),
     // Vibrance
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
@@ -447,6 +450,7 @@ Locallab::Locallab():
     pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
     fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
     fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
+    gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
     dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
     retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
@@ -1099,6 +1103,8 @@ Locallab::Locallab():
     detailSH->setAdjusterListener(this);
     fatamountSH->setAdjusterListener(this);
     fatanchorSH->setAdjusterListener(this);
+    gamSH->setAdjusterListener(this);
+    sloSH->setAdjusterListener(this);
 
     if (showtooltip) {
         radmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
@@ -1191,8 +1197,14 @@ Locallab::Locallab():
     for (int i = 0; i < 5; i++) {
         shadhighBox->pack_start(*multipliersh[i]);
     }
+    gamFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gammBox = Gtk::manage(new ToolParamBlock());
+    gammBox->pack_start(*gamSH);
+    gammBox->pack_start(*sloSH);
+    gamFrame->add(*gammBox);
 
     shadhighBox->pack_start(*detailSH);
+    shadhighBox->pack_start(*gamFrame);
     shadhighBox->pack_start(*highlights);
     shadhighBox->pack_start(*h_tonalwidth);
     shadhighBox->pack_start(*shadows);
@@ -3480,6 +3492,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).LmaskSHcurve = LmaskSHshape->getCurve();
                     pp->locallab.spots.at(pp->locallab.selspot).fatamountSH = fatamountSH->getValue();
                     pp->locallab.spots.at(pp->locallab.selspot).fatanchorSH = fatanchorSH->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).gamSH = gamSH->getValue();
+                    pp->locallab.spots.at(pp->locallab.selspot).sloSH = sloSH->getValue();
 
                     if (shMethod->get_active_row_number() == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).shMethod = "std";
@@ -3845,6 +3859,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         }
                         pe->locallab.spots.at(pp->locallab.selspot).fatamountSH = pe->locallab.spots.at(pp->locallab.selspot).fatamountSH || fatamountSH->getEditedState();
                         pe->locallab.spots.at(pp->locallab.selspot).fatanchorSH = pe->locallab.spots.at(pp->locallab.selspot).fatanchorSH || fatanchorSH->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).gamSH = pe->locallab.spots.at(pp->locallab.selspot).gamSH || gamSH->getEditedState();
+                        pe->locallab.spots.at(pp->locallab.selspot).sloSH = pe->locallab.spots.at(pp->locallab.selspot).sloSH || sloSH->getEditedState();
 
                         // Vibrance
                         pe->locallab.spots.at(pp->locallab.selspot).expvibrance = pe->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
@@ -4158,6 +4174,8 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         }
                         pedited->locallab.spots.at(pp->locallab.selspot).fatamountSH = pedited->locallab.spots.at(pp->locallab.selspot).fatamountSH || fatamountSH->getEditedState();
                         pedited->locallab.spots.at(pp->locallab.selspot).fatanchorSH = pedited->locallab.spots.at(pp->locallab.selspot).fatanchorSH || fatanchorSH->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).gamSH = pedited->locallab.spots.at(pp->locallab.selspot).gamSH || gamSH->getEditedState();
+                        pedited->locallab.spots.at(pp->locallab.selspot).sloSH = pedited->locallab.spots.at(pp->locallab.selspot).sloSH || sloSH->getEditedState();
 
                         // Vibrance
                         pedited->locallab.spots.at(pp->locallab.selspot).expvibrance = pedited->locallab.spots.at(pp->locallab.selspot).expvibrance || !expvibrance->get_inconsistent();
@@ -5034,6 +5052,7 @@ void Locallab::shMethodChanged()
         }
 
         detailSH->hide();
+        gamFrame->hide();
         highlights->show();
         h_tonalwidth->show();
         shadows->show();
@@ -5046,6 +5065,7 @@ void Locallab::shMethodChanged()
         }
 
         detailSH->show();
+        gamFrame->show();
         highlights->hide();
         h_tonalwidth->hide();
         shadows->hide();
@@ -6164,6 +6184,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
     }
     fatamountSH->setDefault(defSpot->fatamountSH);
     fatanchorSH->setDefault(defSpot->fatanchorSH);
+    gamSH->setDefault(defSpot->gamSH);
+    sloSH->setDefault(defSpot->sloSH);
 
     // Vibrance
     saturated->setDefault((double)defSpot->saturated);
@@ -6353,6 +6375,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         }
         fatamountSH->setDefaultEditedState(Irrelevant);
         fatanchorSH->setDefaultEditedState(Irrelevant);
+        gamSH->setDefaultEditedState(Irrelevant);
+        sloSH->setDefaultEditedState(Irrelevant);
 
         // Vibrance
         saturated->setDefaultEditedState(Irrelevant);
@@ -6546,6 +6570,8 @@ void Locallab::setDefaults(const ProcParams * defParams, const ParamsEdited * pe
         }
         fatamountSH->setDefaultEditedState(defSpotState->fatamountSH ? Edited : UnEdited);
         fatanchorSH->setDefaultEditedState(defSpotState->fatanchorSH ? Edited : UnEdited);
+        gamSH->setDefaultEditedState(defSpotState->gamSH ? Edited : UnEdited);
+        sloSH->setDefaultEditedState(defSpotState->sloSH ? Edited : UnEdited);
 
         // Vibrance
         saturated->setDefaultEditedState(defSpotState->saturated ? Edited : UnEdited);
@@ -7110,6 +7136,17 @@ void Locallab::adjusterChanged(Adjuster * a, double newval)
             }
         }
 
+        if (a == gamSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabgamSH, gamSH->getTextValue());
+            }
+        }
+
+        if (a == sloSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabsloSH, sloSH->getTextValue());
+            }
+        }
 
     }
 
@@ -7889,6 +7926,8 @@ void Locallab::setBatchMode(bool batchMode)
     }
     fatamountSH->showEditedCB();
     fatanchorSH->showEditedCB();
+    gamSH->showEditedCB();
+    sloSH->showEditedCB();
 
     // Vibrance
     saturated->showEditedCB();
@@ -8489,6 +8528,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
         }
         fatamountSH->setValue(pp->locallab.spots.at(index).fatamountSH);
         fatanchorSH->setValue(pp->locallab.spots.at(index).fatanchorSH);
+        gamSH->setValue(pp->locallab.spots.at(index).gamSH);
+        sloSH->setValue(pp->locallab.spots.at(index).sloSH);
 
         // Vibrance
         expvibrance->setEnabled(pp->locallab.spots.at(index).expvibrance);
@@ -8878,6 +8919,8 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 }
                 fatamountSH->setEditedState(spotState->fatamountSH ? Edited : UnEdited);
                 fatanchorSH->setEditedState(spotState->fatanchorSH ? Edited : UnEdited);
+                gamSH->setEditedState(spotState->gamSH ? Edited : UnEdited);
+                sloSH->setEditedState(spotState->sloSH ? Edited : UnEdited);
 
                 // Vibrance
                 expvibrance->set_inconsistent(!spotState->expvibrance);
@@ -9224,6 +9267,7 @@ void Locallab::updateSpecificGUIState()
             }
 
             detailSH->hide();
+            gamFrame->hide();
             highlights->show();
             h_tonalwidth->show();
             shadows->show();
@@ -9233,6 +9277,7 @@ void Locallab::updateSpecificGUIState()
             for (int i = 0; i < 5; i++) {
                 multipliersh[i]->show();
             }
+            gamFrame->show();
 
             detailSH->show();
             highlights->hide();
@@ -9306,6 +9351,7 @@ void Locallab::updateSpecificGUIState()
         }
 
         detailSH->hide();
+        gamFrame->hide();
         highlights->show();
         h_tonalwidth->show();
         shadows->show();
@@ -9317,6 +9363,7 @@ void Locallab::updateSpecificGUIState()
         }
 
         detailSH->show();
+        gamFrame->show();
         highlights->hide();
         h_tonalwidth->hide();
         shadows->hide();

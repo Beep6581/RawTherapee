@@ -1080,6 +1080,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 }
                 locallab.spots.at(j).fatamountSH = locallab.spots.at(j).fatamountSH && pSpot.fatamountSH == otherSpot.fatamountSH;
                 locallab.spots.at(j).fatanchorSH = locallab.spots.at(j).fatanchorSH && pSpot.fatanchorSH == otherSpot.fatanchorSH;
+                locallab.spots.at(j).gamSH = locallab.spots.at(j).gamSH && pSpot.gamSH == otherSpot.gamSH;
+                locallab.spots.at(j).sloSH = locallab.spots.at(j).sloSH && pSpot.sloSH == otherSpot.sloSH;
                 // Vibrance
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
@@ -3217,6 +3219,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).fatanchorSH = mods.locallab.spots.at(i).fatanchorSH;
         }
 
+        if (locallab.spots.at(i).gamSH) {
+            toEdit.locallab.spots.at(i).gamSH = mods.locallab.spots.at(i).gamSH;
+        }
+
+        if (locallab.spots.at(i).sloSH) {
+            toEdit.locallab.spots.at(i).sloSH = mods.locallab.spots.at(i).sloSH;
+        }
+
+
         // Vibrance
         if (locallab.spots.at(i).expvibrance) {
             toEdit.locallab.spots.at(i).expvibrance = mods.locallab.spots.at(i).expvibrance;
@@ -4964,6 +4975,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LmaskSHcurve(v),
     fatamountSH(v),
     fatanchorSH(v),
+    gamSH(v),
+    sloSH(v),
     // Vibrance
     expvibrance(v),
     saturated(v),
@@ -5268,6 +5281,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LmaskSHcurve = v;
     fatamountSH = v;
     fatanchorSH = v;
+    gamSH = v;
+    sloSH = v;
     // Vibrance
     expvibrance = v;
     saturated = v;

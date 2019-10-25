@@ -4500,7 +4500,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     }
 }
 
-void ImProcFunctions::InverseColorLight_Local(int sp, int senstype,  struct local_params & lp, LabImage * originalmask, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & exlocalcurve, LUTf & cclocalcurve, float adjustr, bool localcutili, LUTf & lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
+void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp, int senstype,  struct local_params & lp, LabImage * originalmask, LUTf & lightCurveloc, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, LUTf & exlocalcurve, LUTf & cclocalcurve, float adjustr, bool localcutili, LUTf & lllocalcurve, bool locallutili, LabImage * original, LabImage * transformed, int cx, int cy, const float hueref, const float chromaref, const float lumaref, int sk)
 {
     // BENCHFUN
     float ach = (float)lp.trans / 100.f;
@@ -4553,13 +4553,21 @@ void ImProcFunctions::InverseColorLight_Local(int sp, int senstype,  struct loca
             Imagefloat *tmpImage = nullptr;
             tmpImage = new Imagefloat(GW, GH);
             lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
-            tmpImage->normalizeFloatTo1();
-
-            array2D<float> Rtemp(GW, GH, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
-            array2D<float> Gtemp(GW, GH, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
-            array2D<float> Btemp(GW, GH, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
-            tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
-            tmpImage->normalizeFloatTo65535();
+            if(tonecurv) {//Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
+                float gamtone = params->locallab.spots.at(sp).gamSH;
+                float slotone = params->locallab.spots.at(sp).sloSH;
+                cmsHTRANSFORM dummy = nullptr;
+                workingtrc(tmpImage, tmpImage, GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
+                workingtrc(tmpImage, tmpImage, GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+            }
+            if(tonequ) {
+                tmpImage->normalizeFloatTo1();
+                array2D<float> Rtemp(GW, GH, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
+                array2D<float> Gtemp(GW, GH, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
+                array2D<float> Btemp(GW, GH, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
+                tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
+                tmpImage->normalizeFloatTo65535();
+            }
             rgb2lab(*tmpImage, *temp, params->icm.workingProfile);
 
             delete tmpImage;
@@ -8659,7 +8667,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             tonequ = true;
         }
 
-        if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) && call < 3  && lp.hsena) {
+        bool tonecurv = false;
+
+        if(params->locallab.spots.at(sp).gamSH != 2.4 || params->locallab.spots.at(sp).sloSH != 12.92) {
+            tonecurv = true;
+        }
+        
+        if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) && call < 3  && lp.hsena) {
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             const int xstart = std::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -8789,13 +8803,21 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             Imagefloat *tmpImage = nullptr;
                             tmpImage = new Imagefloat(bfw, bfh);
                             lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-                            tmpImage->normalizeFloatTo1();
-
-                            array2D<float> Rtemp(bfw, bfh, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
-                            array2D<float> Gtemp(bfw, bfh, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
-                            array2D<float> Btemp(bfw, bfh, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
-                            tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
-                            tmpImage->normalizeFloatTo65535();
+                            if(tonecurv) {//Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
+                                float gamtone = params->locallab.spots.at(sp).gamSH;
+                                float slotone = params->locallab.spots.at(sp).sloSH;
+                                cmsHTRANSFORM dummy = nullptr;
+                                workingtrc(tmpImage, tmpImage, bfw, bfh, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
+                                workingtrc(tmpImage, tmpImage, bfw, bfh, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+                            }
+                            if(tonequ) {
+                                tmpImage->normalizeFloatTo1();
+                                array2D<float> Rtemp(bfw, bfh, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
+                                array2D<float> Gtemp(bfw, bfh, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
+                                array2D<float> Btemp(bfw, bfh, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
+                                tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
+                                tmpImage->normalizeFloatTo65535();
+                            }
                             rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                             delete tmpImage;
@@ -8816,7 +8838,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     transit_shapedetect(9, bufexpfin.get(), originalmaskSH.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
                 }
             }
-        } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ  || lp.showmaskSHmetinv == 1 || lp.enaSHMaskinv) && call < 3  && lp.hsena) {
+        } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ  || tonecurv || lp.showmaskSHmetinv == 1 || lp.enaSHMaskinv) && call < 3  && lp.hsena) {
             std::unique_ptr<LabImage> bufmaskblurcol;
             std::unique_ptr<LabImage> originalmaskSH;
             std::unique_ptr<LabImage> bufcolorig;
@@ -8898,7 +8920,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             float adjustr = 2.f;
-            InverseColorLight_Local(sp, 2, lp, originalmaskSH.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+            InverseColorLight_Local(tonequ, tonecurv, sp, 2, lp, originalmaskSH.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 
@@ -11197,7 +11219,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 return;
             }
 
-            InverseColorLight_Local(sp, 1, lp, originalmaskexp.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+            InverseColorLight_Local(false, false, sp, 1, lp, originalmaskexp.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
         }
 
 
@@ -11687,7 +11709,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             if (lp.showmaskcolmetinv == 0 || lp.enaColorMaskinv) {
-                InverseColorLight_Local(sp, 0, lp, originalmaskcol.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+                InverseColorLight_Local(false, false, sp, 0, lp, originalmaskcol.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
             }
         }
 
