@@ -32,7 +32,6 @@
 #include "improcfun.h"
 #include "LUT.h"
 #include "array2D.h"
-#include "boxblur.h"
 #include "rt_math.h"
 #include "mytime.h"
 #include "sleef.c"
