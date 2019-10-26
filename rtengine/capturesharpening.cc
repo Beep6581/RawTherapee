@@ -668,7 +668,7 @@ BENCHFUN
         buildClipMaskBayer(rawData, W, H, clipMask, whites);
         const unsigned int fc[2] = {FC(0,0), FC(1,0)};
         if (sharpeningParams.autoRadius) {
-            radius = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+            radius = std::min(calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc), 1.15f);
         }
     } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         float whites[6][6];
@@ -696,14 +696,14 @@ BENCHFUN
             }
         }
         if (sharpeningParams.autoRadius) {
-            radius = calcRadiusXtrans(rawData, W, H, 1000.f, clipVal, i, j);
+            radius = std::min(calcRadiusXtrans(rawData, W, H, 1000.f, clipVal, i, j), 1.15f);
         }
 
     } else if (ri->get_colors() == 1) {
         buildClipMaskMono(rawData, W, H, clipMask, (ri->get_white(0) - c_black[0]) * scale_mul[0] * clipLimit);
         if (sharpeningParams.autoRadius) {
             const unsigned int fc[2] = {0, 0};
-            radius = calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc);
+            radius = std::min(calcRadiusBayer(rawData, W, H, 1000.f, clipVal, fc), 1.15f);
         }
     }
 
