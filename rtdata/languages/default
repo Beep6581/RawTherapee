@@ -2246,7 +2246,7 @@ TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATLEVEL;Detail levels
-TP_LOCALLAB_GAMFRA;Tone response curve
+TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_QUAL_METHOD;Global quality
@@ -2349,7 +2349,7 @@ TP_LOCALLAB_SHOWMODIFMASK;Show modifications whith mask
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWSTRUC;Show structure
 TP_LOCALLAB_USEMASK;Use mask
-TP_LOCALLAB_SHADHIGH;Shadows Highlights - Gradient - Tone Equalizer
+TP_LOCALLAB_SHADHIGH;Shadows Highlights-Gradient- Tone Equalizer-TRC
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
 TP_LOCALLAB_SOFT;Soft Light and Original Retinex
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.
