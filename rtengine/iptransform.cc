@@ -208,7 +208,7 @@ namespace rtengine
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 
 bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef,
-                                  const LensCorrection *pLCPMap)
+                                  const LensCorrection *pLCPMap) const
 {
 
     bool clipped = false;
@@ -310,7 +310,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
 }
 
 // Transform all corners and critical sidelines of an image
-bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef, const LensCorrection *pLCPMap)
+bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef, const LensCorrection *pLCPMap) const
 {
     const int DivisionsPerBorder = 32;
 
@@ -1113,7 +1113,7 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
 }
 
 
-double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LensCorrection *pLCPMap)
+double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LensCorrection *pLCPMap) const
 {
     if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == nullptr)) {
         return 1;
@@ -1137,52 +1137,52 @@ double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LensCorrecti
     return scaleL;
 }
 
-bool ImProcFunctions::needsCA ()
+bool ImProcFunctions::needsCA () const
 {
     return fabs (params->cacorrection.red) > 1e-15 || fabs (params->cacorrection.blue) > 1e-15;
 }
 
-bool ImProcFunctions::needsDistortion ()
+bool ImProcFunctions::needsDistortion () const
 {
     return fabs (params->distortion.amount) > 1e-15;
 }
 
-bool ImProcFunctions::needsRotation ()
+bool ImProcFunctions::needsRotation () const
 {
     return fabs (params->rotate.degree) > 1e-15;
 }
 
-bool ImProcFunctions::needsPerspective ()
+bool ImProcFunctions::needsPerspective () const
 {
     return params->perspective.horizontal || params->perspective.vertical;
 }
 
-bool ImProcFunctions::needsGradient ()
+bool ImProcFunctions::needsGradient () const
 {
     return params->gradient.enabled && fabs (params->gradient.strength) > 1e-15;
 }
 
-bool ImProcFunctions::needsPCVignetting ()
+bool ImProcFunctions::needsPCVignetting () const
 {
     return params->pcvignette.enabled && fabs (params->pcvignette.strength) > 1e-15;
 }
 
-bool ImProcFunctions::needsVignetting ()
+bool ImProcFunctions::needsVignetting () const
 {
     return params->vignetting.amount;
 }
 
-bool ImProcFunctions::needsLCP ()
+bool ImProcFunctions::needsLCP () const
 {
     return params->lensProf.useLcp();
 }
 
-bool ImProcFunctions::needsLensfun()
+bool ImProcFunctions::needsLensfun() const
 {
     return params->lensProf.useLensfun();
 }
 
-bool ImProcFunctions::needsTransform ()
+bool ImProcFunctions::needsTransform () const
 {
     return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsLensfun();
 }

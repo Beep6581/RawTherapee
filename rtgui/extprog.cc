@@ -334,7 +334,7 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
 
 #else
 
-    const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + "\" " + Glib::shell_quote(fileName);
+    const auto cmdLine = options.customEditorProg + Glib::ustring(" ") + Glib::shell_quote(fileName);
     return spawnCommandAsync (cmdLine);
 
 #endif
