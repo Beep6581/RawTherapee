@@ -85,21 +85,14 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     if (!hq) {
         fillLuminance( img, map, lumi);
 
-        float *buffer = nullptr;
-
-        if(radius > 40.) {
-            // When we pass another buffer to gaussianBlur, it will use iterated boxblur which is less prone to artifacts
-            buffer = new float[W * H];
-        }
+        const bool useBoxBlur = radius > 40.0; // boxblur is less prone to artifacts for large radi
 
 #ifdef _OPENMP
-        #pragma omp parallel
+        #pragma omp parallel if (!useBoxBlur)
 #endif
         {
-            gaussianBlur (map, map, W, H, radius, buffer);
+            gaussianBlur (map, map, W, H, radius, useBoxBlur);
         }
-
-        delete [] buffer;
     }
 
     else {

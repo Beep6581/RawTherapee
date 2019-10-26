@@ -1950,8 +1950,8 @@ void RawImageSource::retinexPrepareCurves(const RetinexParams &retinexParams, LU
         CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
     }
 
-    CurveFactory::mapcurve (mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
-
+    CurveFactory::mapcurve(mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
+    mapcurve *= 0.5f;
     retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
 

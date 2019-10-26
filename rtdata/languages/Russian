@@ -613,8 +613,8 @@ MAIN_TOOLTIP_BACKCOLOR1;Фоновый цвет предпросмотра: <b>�
 MAIN_TOOLTIP_BACKCOLOR2;Фоновый цвет предпросмотра: <b>Белый</b>\nГорячая клавиша: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Заблокировать</b> / <b>Разблокировать</b> <b>предыдущий</b> вид\n\n<b>Заблокировать</b>: сохраняет <b>предыдущий</b> вид неизменным.\nПолезно для оценки общего эффекта от применения нескольких инструментов.\nК тому же, сравнения могут быть произведены на любом состоянии истории\n\n<b>Разблокировать</b>: <b>предыдущий</b> вид будет следовать сразу за <b>следующим</b>, показывая состояние изображения до применения текущего инструмента.
 MAIN_TOOLTIP_HIDEHP;Показать/скрыть левую панель (включая историю).\nГорячая клавиша <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Индикатор пересветов.\nГорячая клавиша: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Индикатор затемнений.\nГорячая клавиша: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Индикатор пересветов.\nГорячая клавиша: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Индикатор затемнений.\nГорячая клавиша: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Просмотреть <b>канал синего</b>.\nГорячая клавиша: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Просмотреть <b>Маску резкости</b>.\nГорячая клавиша: <b>Shift-F</b>\n\nБолее точна на изображениях с небольшой глубиной резкости, малым шумом и при большем приближении изображения\n\nДля улучшения определения на шумных изображениях используйте на маленьком зуме 10-30%
 MAIN_TOOLTIP_PREVIEWG;Просмотреть <b>канал зеленого</b>.\nГорячая клавиша: <b>g</b>
@@ -1990,9 +1990,9 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_FLATFIELD_CLIPCONTROL;Clip control

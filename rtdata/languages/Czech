@@ -961,8 +961,8 @@ MAIN_TOOLTIP_BACKCOLOR2;Barva pozadí náhledu: <b>bílá</b>\nZkratka: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR3;Barva pozadí náhledu: <b>středně šedá</b>\nZkratka: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zamknout</b> / <b>Odemknout</b> pohled <b>Před</b>\n\n<b>Zamknout</b>: ponechá pohled <b>Před</b> nezměněn.\nUžitečné pro posouzení výsledného efektu po použití více nástrojů.\nNavíc může být porovnání provedeno proti kterémukoli stavu v historii.\n\n<b>Odemknout</b>: pohled <b>Před</b> bude následovat pohled <b>Poté</b>, vždy jen o jeden krok zpět, představí vliv právě použitého nástroje.
 MAIN_TOOLTIP_HIDEHP;Zobrazit či schovat levý panel (obsahující historii).\nZkratka: <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Zvýraznit oříznutá světla.\nZkratka: <b>&lt;</b>
-MAIN_TOOLTIP_INDCLIPPEDS;Zvýraznit oříznuté stíny.\nZkratka: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Zvýraznit oříznutá světla.\nZkratka: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Zvýraznit oříznuté stíny.\nZkratka: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Náhled <b>modrého kanálu</b>.\nZkratka: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Náhled <b>masky zaostření</b>.\nZkratka: <b>Shift-f</b>\n\nVíce přesné u snímků s nízkou hloubkou ostrosti, nízkým šumem a na vyšších úrovních zvětšení.\n\nPoužijte přiblížení v rozsahu 10 až 30% pro zlepšení přesnosti detekce u zašuměných snímků.
 MAIN_TOOLTIP_PREVIEWG;Náhled <b>zeleného kanálu</b>.\nZkratka: <b>g</b>
@@ -2340,9 +2340,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_DEHAZE_LUMINANCE;Luminance only
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_PDSHARPENING_LABEL;Capture Sharpening
 !TP_SHARPENING_GAMMA;Gamma

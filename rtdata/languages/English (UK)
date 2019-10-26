@@ -88,6 +88,7 @@ TP_DIRPYREQUALIZER_ALGO;Skin Colour Range
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colours of the skin, minimizing the action on other colours\nLarge: avoid more artifacts.
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colours (hue, chroma, luma) and the rest of the image.
 TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colours
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no colour) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to colour cast.
 TP_GRADIENT_CENTER;Centre
 TP_GRADIENT_CENTER_X;Centre X
@@ -1022,8 +1023,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
-!MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&lt;</b>
-!MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
+!MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&gt;</b>
+!MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&lt;</b>
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>blue channel</b>.\nShortcut: <b>b</b>
 !MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>focus mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\nZoom out to 10-30% to improve detection accuracy on noisy images.
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>green channel</b>.\nShortcut: <b>g</b>
@@ -1681,9 +1682,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 !TP_FILMNEGATIVE_BLUE;Blue ratio
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Calculate exponents by picking two neutral reference spots in the image; one white (light gray) and one black (dark gray). The order does not matter. The exponents will be updated after the second spot is picked.
 !TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick white and black spots
+!TP_FILMNEGATIVE_PICK;Pick neutral spots
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMSIMULATION_LABEL;Film Simulation
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?

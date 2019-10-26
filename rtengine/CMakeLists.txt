@@ -33,6 +33,7 @@ set(RTENGINESOURCEFILES
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
     badpixels.cc
+    boxblur.cc
     CA_correct_RT.cc
     calc_distort.cc
     camconst.cc
