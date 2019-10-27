@@ -152,7 +152,7 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
         [multithread](array2D<float> &d, array2D<float> &s, int rad) -> void
         {
             rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
-            boxblur(s, d, rad, s.width(), s.height(), multithread);
+            boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.width(), s.height(), multithread);
         };
 
     array2D<float> I1(w, h);

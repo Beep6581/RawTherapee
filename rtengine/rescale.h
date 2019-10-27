@@ -21,6 +21,7 @@
 #pragma once
 
 #include "array2D.h"
+#include "rt_math.h"
 
 namespace rtengine {
 

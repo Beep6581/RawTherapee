@@ -207,13 +207,13 @@ BENCHFUN
         for (int k = 0; k < sharpenParam.deconviter; k++) {
             if (!needdamp) {
                 // apply gaussian blur and divide luminance by result of gaussian blur
-                gaussianBlur(tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+                gaussianBlur(tmpI, tmp, W, H, sigma, false, GAUSS_DIV, luminance);
             } else {
                 // apply gaussian blur + damping
                 gaussianBlur(tmpI, tmp, W, H, sigma);
                 dcdamping(tmp, luminance, damping, W, H);
             }
-            gaussianBlur(tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
+            gaussianBlur(tmp, tmpI, W, H, sigma, false, GAUSS_MULT);
         } // end for
 
 #ifdef _OPENMP
@@ -304,14 +304,15 @@ void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W
         for (int k = 0; k < itera; k++) {
             if (!needdamp) {
                 // apply gaussian blur and divide luminance by result of gaussian blur
-                gaussianBlur (tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+            //    gaussianBlur (tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+                gaussianBlur(tmpI, tmp, W, H, sigma, false, GAUSS_DIV, luminance);
             } else {
                 // apply gaussian blur + damping
                 gaussianBlur (tmpI, tmp, W, H, sigma);
                 dcdamping (tmp, luminance, damping, W, H);
             }
 
-            gaussianBlur (tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
+            gaussianBlur (tmp, tmpI, W, H, sigma, false, GAUSS_MULT);
         } // end for
 
 

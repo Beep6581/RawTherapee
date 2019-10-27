@@ -1963,7 +1963,7 @@ void RawImageSource::retinexPrepareCurves(const RetinexParams &retinexParams, LU
     }
 
     CurveFactory::mapcurve(mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
-
+    mapcurve *= 0.5f;
     retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
 

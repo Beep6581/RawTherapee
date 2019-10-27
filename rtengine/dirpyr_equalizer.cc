@@ -274,7 +274,8 @@ void idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** b
 #ifdef _OPENMP
             #pragma omp parallel if (multiThread)
 #endif            
-            rtengine::boxblur<float, float>(buffer, buffer, blurbufcbdl.data, rad, rad, width, height);
+//            rtengine::boxblur<float, float>(buffer, buffer, blurbufcbdl.data, rad, rad, width, height);
+            rtengine::boxblur(buffer, buffer, rad, width, height, false);
             blurbufcbdl.resize(0); 
         }
 

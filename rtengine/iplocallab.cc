@@ -5907,11 +5907,9 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 #else
         int subThread = 0;
 #endif
-        float blurbuffer[TS * TS] ALIGNED64;
         float *Lblox = LbloxArray[subThread];
         float *fLblox = fLbloxArray[subThread];
         float pBuf[GW + TS + 2 * blkrad * offset] ALIGNED16;
-        float nbrwt[TS * TS] ALIGNED64;
 #ifdef _OPENMP
         #pragma omp for
 #endif
@@ -6001,7 +5999,8 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
             for (int hblk = 0; hblk < numblox_W; ++hblk) {
-                ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail, nbrwt, blurbuffer);
+                  ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail);
+
             }//end of horizontal block loop
 
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
