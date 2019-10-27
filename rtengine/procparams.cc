@@ -2643,7 +2643,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightnessreti(1.0),
     limd(8.0),
     cliptm(1.0),
-    fftwreti(true),
+    fftwreti(false),
     Lmaskreticurve{(double)DCT_NURBS, 0.0, 0.0, 1.0, 1.0},
     // Sharpening
     expsharp(false),

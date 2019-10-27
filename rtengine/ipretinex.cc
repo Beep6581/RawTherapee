@@ -1145,14 +1145,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
 
         const int H_L = height;
         const int W_L = width;
-        /*
-                float *src[H_L] ALIGNED16;
-                float *srcBuffer = new float[H_L * W_L];
-
-                for (int i = 0; i < H_L; i++) {
-                    src[i] = &srcBuffer[i * W_L];
-                }
-                */
         std::unique_ptr<JaggedArray<float>> srcBuffer(new JaggedArray<float>(W_L, H_L));
         float** src = *(srcBuffer.get());
 
@@ -1245,7 +1237,6 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
             }
 
             if (scale == 1) { //equalize last scale with darkness and lightness of course acts on TM!
-
                 if (dar != 1.f || lig != 1.f) {
 
 #ifdef _OPENMP
@@ -1260,6 +1251,7 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
                         }
                     }
                 }
+                
             }
 
 #ifdef _OPENMP
@@ -1299,10 +1291,11 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
 
         }
 
-        srcBuffer.reset();
+//        srcBuffer.reset();
 
 
         if (scal == 1) {//only if user select scal = 1
+
             float kval = 1.f;
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -1368,8 +1361,10 @@ void ImProcFunctions::MSRLocal(int sp, bool fftw, int lum, float** reducDE, LabI
                     buf *= 32768.f;
                     luminance[i][j] = buf;
                 }
+      
         }
 
+        srcBuffer.reset();
 
         float str = strength * (chrome == 0 ? 1.f : 0.8f * (chrT - 0.4f));
         const float maxclip = (chrome == 0 ? 32768.f : 50000.f);
