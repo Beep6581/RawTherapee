@@ -66,7 +66,12 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
     enum Op {MUL, DIVEPSILON, SUBMUL};
 
     const auto apply =
+#ifdef _OPENMP
         [multithread, epsilon](Op op, array2D<float> &res, const array2D<float> &a, const array2D<float> &b, const array2D<float> &c=array2D<float>()) -> void
+#else
+        // removed multithread to fix clang warning on msys2 clang builds, which don't support OpenMp
+        [epsilon](Op op, array2D<float> &res, const array2D<float> &a, const array2D<float> &b, const array2D<float> &c=array2D<float>()) -> void
+#endif
         {
             const int w = res.width();
             const int h = res.height();
