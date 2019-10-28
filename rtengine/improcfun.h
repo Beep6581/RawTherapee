@@ -31,12 +31,13 @@
 #include "lcp.h"
 #include "dcp.h"
 #include "curves.h"
-#include "cplx_wavelet_dec.h"
 #include "pipettebuffer.h"
 #include "gamutwarning.h"
 
 namespace rtengine
 {
+
+class wavelet_decomposition;
 
 namespace procparams
 {
