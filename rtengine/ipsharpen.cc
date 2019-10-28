@@ -19,6 +19,7 @@
 
 #include "improcfun.h"
 #include "cieimage.h"
+#include "labimage.h"
 #include "gauss.h"
 #include "bilateral2.h"
 #include "jaggedarray.h"

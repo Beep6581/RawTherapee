@@ -31,6 +31,7 @@ using namespace procparams;
 
 class Image8;
 class Image16;
+class LabImage;
 
 /*
  * Image type used by most tools; expected range: [0.0 ; 65535.0]

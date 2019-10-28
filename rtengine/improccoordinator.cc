@@ -18,6 +18,7 @@
  */
 #include "improccoordinator.h"
 #include "cieimage.h"
+#include "labimage.h"
 #include "curves.h"
 #include "mytime.h"
 #include "refreshmap.h"

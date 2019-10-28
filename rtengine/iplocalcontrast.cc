@@ -28,6 +28,7 @@
 
 #include "array2D.h"
 #include "gauss.h"
+#include "labimage.h"
 #include "improcfun.h"
 #include "procparams.h"
 

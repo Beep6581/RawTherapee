@@ -24,7 +24,6 @@
 
 #include "rt_math.h"
 #include "LUT.h"
-#include "labimage.h"
 #include "iccmatrices.h"
 #include "lcms2.h"
 #include "sleef.c"

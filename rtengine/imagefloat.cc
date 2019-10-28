@@ -20,6 +20,7 @@
 #include "imagefloat.h"
 #include "image16.h"
 #include "image8.h"
+#include "labimage.h"
 #include <cstring>
 #include "rtengine.h"
 #include "mytime.h"

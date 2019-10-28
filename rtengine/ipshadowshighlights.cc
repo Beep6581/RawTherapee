@@ -22,6 +22,7 @@
 
 #include "gauss.h"
 #include "guidedfilter.h"
+#include "labimage.h"
 #include "opthelper.h"
 #include "procparams.h"
 #include "sleef.c"

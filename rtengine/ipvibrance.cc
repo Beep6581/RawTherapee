@@ -23,6 +23,7 @@
 #include "rtengine.h"
 #include "improcfun.h"
 #include "iccstore.h"
+#include "labimage.h"
 #include "mytime.h"
 #include "../rtgui/thresholdselector.h"
 #include "curves.h"

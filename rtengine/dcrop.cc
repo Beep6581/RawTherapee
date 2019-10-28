@@ -19,6 +19,7 @@
  */
 
 #include "cieimage.h"
+#include "labimage.h"
 #include "curves.h"
 #include "dcrop.h"
 #include "mytime.h"

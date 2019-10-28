@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "cieimage.h"
+#include "labimage.h"
 #include "rtengine.h"
 #include "rtthumbnail.h"
 #include "../rtgui/options.h"

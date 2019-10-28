@@ -23,6 +23,7 @@
 #endif
 
 #include "improcfun.h"
+#include "labimage.h"
 #include "guidedfilter.h"
 #include "procparams.h"
 //#define BENCHMARK

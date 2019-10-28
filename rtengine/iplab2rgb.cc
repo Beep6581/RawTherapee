@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "rtengine.h"
+#include "labimage.h"
 #include "improcfun.h"
 #include <glibmm.h>
 #include "iccstore.h"

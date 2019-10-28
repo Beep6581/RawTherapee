@@ -20,6 +20,7 @@
  */
 
 #include "improcfun.h"
+#include "labimage.h"
 
 #include "procparams.h"
 

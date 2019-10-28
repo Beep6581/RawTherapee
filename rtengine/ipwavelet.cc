@@ -30,6 +30,7 @@
 
 #include "rtengine.h"
 #include "improcfun.h"
+#include "labimage.h"
 #include "LUT.h"
 #include "array2D.h"
 #include "rt_math.h"
