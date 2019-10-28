@@ -7345,7 +7345,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             levred = 7;
             noiscfactiv = false;
         }
-
+//lastsav for save restore image
+        lastsav = 0;
 
         if (lp.excmet == 1  && call <= 3) {//exclude
             const int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
