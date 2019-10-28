@@ -71,6 +71,7 @@ public:
         bool laplac;
         bool deltae;
         bool shortc;
+        bool savrest;
     };
 
     /**
@@ -107,6 +108,7 @@ public:
         bool laplac;
         bool deltae;
         bool shortc;
+        bool savrest;
     };
 
     /**
@@ -276,6 +278,7 @@ private:
     void laplacChanged();
     void deltaeChanged();
     void shortcChanged();
+    void savrestChanged();
 
     void disableParamlistener(bool cond);
 
@@ -328,6 +331,7 @@ private:
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
         Gtk::TreeModelColumn<bool> shortc;
+        Gtk::TreeModelColumn<bool> savrest;
     };
 
     class RenameDialog:
@@ -402,6 +406,8 @@ private:
     sigc::connection deltaeConn_;
     Gtk::CheckButton* const shortc_;
     sigc::connection shortcConn_;
+    Gtk::CheckButton* const savrest_;
+    sigc::connection savrestConn_;
 
     // Internal variables
     int lastObject_;

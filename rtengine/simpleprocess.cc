@@ -1236,6 +1236,7 @@ private:
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
+                int lastsav;
                 float avge;
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView, reservView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
@@ -1273,7 +1274,7 @@ private:
                      loclmasCurvecolwav,lmasutilicolwav,
                      locwavCurve, locwavutili,
                      LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                     huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                      minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
 

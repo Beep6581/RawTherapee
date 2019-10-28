@@ -205,6 +205,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmasutilicolwav(false),
     LHutili(false), 
     HHutili(false),
+    lastsavrests(500, -10000),
     huerefs(500, -100000.f),
     huerefblurs(500, -100000.f),
     chromarefblurs(500, -100000.f),
@@ -220,6 +221,7 @@ ImProcCoordinator::ImProcCoordinator() :
     chromar(0),
     lumar(0),
     sobeler(0),
+    lastsav(0),
     avg(0),
     lastspotdup(false),
     locallColorMask(0),
@@ -919,6 +921,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             float **shbuffer = nullptr;
             int sca = 1;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
+         //   int lastsavee;
             float avge;
 
             for (int sp = 0; sp < params->locallab.nbspot && sp < (int)params->locallab.spots.size(); sp++) {
@@ -1016,6 +1019,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge);
                 }
+                /*
+                printf("lastorig=%i sp=%i\n", lastsavrests[sp], sp);
+
+                if(params->locallab.spots.at(sp).savrest && (lastsavrests[sp] == 0)) {
+                    lastsavrests[sp] = 2;//save image flag=2
+                } else if(params->locallab.spots.at(sp).savrest && lastsavrests[sp] == 2){
+                    lastsavrests[sp] = 1; // let image save with no changes flag = 1
+                } else if(!params->locallab.spots.at(sp).savrest && (lastsavrests[sp] == 2 || lastsavrests[sp] == 1)) {
+                    lastsavrests[sp] = -1; // restore image only if image create, set flag -1
+                } else if(!params->locallab.spots.at(sp).savrest && (lastsavrests[sp] != 2 && lastsavrests[sp] != 1)) {
+                    lastsavrests[sp] = 0; // does nothing if image was not save
+                }
+                lastsav = lastsavrests[sp];
+                printf("lastsav=%i sp=%i\n", lastsav, sp);
+                */
 
 //                printf("improc avg=%f\n", avg);
                 huerblu = huerefblurs[sp] = huerefblu;
@@ -1070,7 +1088,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 loclmasCurvecolwav,lmasutilicolwav,
                                 locwavCurve, locwavutili,
                                 LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, 
+                                huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav,
                                 locallColorMask, locallColorMaskinv, locallExpMask, locallExpMaskinv, locallSHMask, locallSHMaskinv, locallcbMask, locallretiMask, locallsoftMask, localltmMask, locallblMask,
                                 minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                     if (locallListener) {
@@ -1095,7 +1113,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 loclmasCurvecolwav,lmasutilicolwav,
                                 locwavCurve, locwavutili,
                                 LHutili, HHutili, cclocalcurve, localcutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                                huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 }
                 //recalculate references after

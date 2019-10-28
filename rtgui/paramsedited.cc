@@ -976,6 +976,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
                 locallab.spots.at(j).deltae = locallab.spots.at(j).deltae && pSpot.deltae == otherSpot.deltae;
                 locallab.spots.at(j).shortc = locallab.spots.at(j).shortc && pSpot.shortc == otherSpot.shortc;
+                locallab.spots.at(j).savrest = locallab.spots.at(j).savrest && pSpot.savrest == otherSpot.savrest;
                 locallab.spots.at(j).scopemask = locallab.spots.at(j).scopemask && pSpot.scopemask == otherSpot.scopemask;
                 locallab.spots.at(j).lumask = locallab.spots.at(j).lumask && pSpot.lumask == otherSpot.lumask;
                 // Color & Light
@@ -2828,6 +2829,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).shortc) {
             toEdit.locallab.spots.at(i).shortc = mods.locallab.spots.at(i).shortc;
+        }
+
+        if (locallab.spots.at(i).savrest) {
+            toEdit.locallab.spots.at(i).savrest = mods.locallab.spots.at(i).savrest;
         }
 
         // Color & Light
@@ -4873,6 +4878,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     laplac(v),
     deltae(v),
     shortc(v),
+    savrest(v),
     scopemask(v),
     lumask(v),
     // Color & Light
@@ -5177,6 +5183,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     laplac = v;
     deltae = v;
     shortc = v;
+    savrest = v;
     scopemask = v;
     lumask = v;
     // Color & Light

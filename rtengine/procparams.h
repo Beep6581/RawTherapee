@@ -982,6 +982,7 @@ struct LocallabParams {
         bool laplac;
         bool deltae;
         bool shortc;
+        bool savrest;
         int scopemask;
         int lumask;
         // Color & Light

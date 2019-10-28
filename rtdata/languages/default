@@ -1032,6 +1032,7 @@ HISTORY_MSG_791;Local - Mask Short L curves
 HISTORY_MSG_792;Local - Mask Luminance Background
 HISTORY_MSG_793;Local - SH TRC gamma
 HISTORY_MSG_794;Local - SH TRC slope
+HISTORY_MSG_795;Local - Mask save restore image
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2144,6 +2145,7 @@ TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
+TP_LOCALLAB_SAVREST;Save - Restore Current Image
 TP_LOCALLAB_SCOPEMASK;Scope Mask DeltaE Image
 TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if Mask DeltaE Image is enabled.\nLow values avoid retouching selected area
 TP_LOCALLAB_MASFRAME;Mask

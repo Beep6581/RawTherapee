@@ -394,6 +394,7 @@ public:
         bool laplac;
         bool deltae;
         bool shortc;
+        bool savrest;
         bool scopemask;
         bool lumask;
         // Color & Light

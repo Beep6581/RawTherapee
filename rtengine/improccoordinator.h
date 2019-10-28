@@ -307,6 +307,7 @@ protected:
     bool lmasutilicolwav;
     bool LHutili;
     bool HHutili;
+    LUTu lastsavrests;
     LUTf huerefs;
     LUTf huerefblurs;
     LUTf chromarefblurs;
@@ -316,6 +317,7 @@ protected:
     LUTf sobelrefs;
     LUTf avgs;
     double huer, huerblu, chromarblu, lumarblu, chromar, lumar, sobeler;
+    int lastsav;
     float avg;
     bool lastspotdup;
     int locallColorMask;

@@ -1034,6 +1034,7 @@ void Crop::update(int todo)
 
                 double cont = params.locallab.spots.at(sp).contrast;
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
+                int lastsav;
                 float avge;
                 huerefblu = parent->huerefblurs[sp];
                 chromarefblu = parent->chromarefblurs[sp];
@@ -1043,6 +1044,9 @@ void Crop::update(int todo)
                 lumare = parent->lumarefs[sp];
                 sobelre = parent->sobelrefs[sp];
                 avge = parent->avgs[sp];
+                
+                lastsav = parent->lastsavrests[sp];
+                
                 float minCD;
                 float maxCD;
                 float mini;
@@ -1075,7 +1079,7 @@ void Crop::update(int todo)
                             loclmasCurvecolwav,lmasutilicolwav,
                             locwavCurve, locwavutili,
                             LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
-                            huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 
+                            huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                             parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                             minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                     if (parent->locallListener) {
@@ -1101,7 +1105,7 @@ void Crop::update(int todo)
                             loclmasCurvecolwav,lmasutilicolwav,
                             locwavCurve, locwavutili,
                             LHutili, HHutili, cclocalcurve2, localcutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
-                            huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                             minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 }
                 lllocalcurve2.clear();

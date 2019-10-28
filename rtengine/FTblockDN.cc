@@ -2695,7 +2695,7 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
 
     float * sfave = buffer[0] + 32;
     float * sfaved = buffer[1] + 64;
-    float * blurBuffer = buffer[2] + 96;
+//    float * blurBuffer = buffer[2] + 96;
 
     const int W_L = WaveletCoeffs_L.level_W(level);
     const int H_L = WaveletCoeffs_L.level_H(level);
@@ -2734,34 +2734,6 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
 
     }
 
-    /*
-                    float kinterm = epsi + noiseLCurve[xdivf(LLum, 15) * 500.f];
-                    kinterm *= 100.f;
-                    kinterm += noiseluma;
-                    lumcalc[ii][jj] = SQR((kinterm / 125.f) * (1.f + kinterm / 25.f));
-
-    //TO DO perhaps needs ci=urve for L ??  ==> same as in shrinkallab
-        float noisevarfc;
-
-        float *nvc = nullptr;
-        nvc = new float[ H_ab * W_ab];
-
-        if ((local == 2 || local == 3) && variC  && useNoiseCCurve) {
-            noisevarfc = variC[level];
-
-            for (int p = 0; p < H_ab * W_ab; p++) {
-                nvc[p] = 10.f * sqrt(variC[level]) * SQR(1.f + 4.f * noisevarchrom[p]);
-            }
-
-        } else {
-            noisevarfc = noisevar_ab;
-
-            for (int p = 0; p < H_ab * W_ab; p++) {
-                nvc[p] = noisevarchrom[p];
-            }
-
-        }
-    */
     int i = 0;
 #ifdef __SSE2__
     const vfloat levelFactorv = F2V(levelFactor);
@@ -2802,48 +2774,6 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
 
 }
 
-/*
-    for (int i = 0; i < W_L * H_L; ++i) {
-
-        float mag = SQR(WavCoeffs_L[dir][i]);
-        float shrinkfactor = mag / (mag + levelFactor * nvl[i] * xexpf(-mag / (9 * levelFactor * nvl[i])) + eps);
-        sfave[i] = shrinkfactor;
-    }
-
-#endif
-    boxblur(sfave, sfaved, blurBuffer, level + 2, level + 2, W_L, H_L); //increase smoothness by locally averaging shrinkage
-    delete [] nvl;
-
-#ifdef __SSE2__
-    __m128  sfv;
-
-    for (i = 0; i < W_L * H_L - 3; i += 4) {
-        sfv = LVFU(sfave[i]);
-        //use smoothed shrinkage unless local shrinkage is much less
-        _mm_storeu_ps(&WavCoeffs_L[dir][i], _mm_loadu_ps(&WavCoeffs_L[dir][i]) * (SQRV(LVFU(sfaved[i])) + SQRV(sfv)) / (LVFU(sfaved[i]) + sfv + epsv));
-    }
-
-    // few remaining pixels
-    for (; i < W_L * H_L; ++i) {
-        float sf = sfave[i];
-
-        //use smoothed shrinkage unless local shrinkage is much less
-        WavCoeffs_L[dir][i] *= (SQR(sfaved[i]) + SQR(sf)) / (sfaved[i] + sf + eps);
-    }//now luminance coefficients are denoised
-
-#else
-
-    for (int i = 0; i < W_L * H_L; ++i) {
-        float sf = sfave[i];
-
-        //use smoothed shrinkage unless local shrinkage is much less
-        WavCoeffs_L[dir][i] *= (SQR(sfaved[i]) + SQR(sf)) / (sfaved[i] + sf + eps);
-
-    }//now luminance coefficients are denoised
-
-#endif
-}
-*/
 
 void ImProcFunctions::ShrinkAllAB(const wavelet_decomposition & WaveletCoeffs_L, const wavelet_decomposition & WaveletCoeffs_ab, float **buffer, int level, int dir,
         float * noisevarchrom, float noisevar_ab,  const bool useNoiseCCurve, bool autoch,
