@@ -3341,12 +3341,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         }
 
         if (delt) {
-            float *rdE[bfh] ALIGNED16;
-            float *rdEBuffer = new float[bfh * bfw];
-
-            for (int i = 0; i < bfh; i++) {
-                rdE[i] = &rdEBuffer[i * bfw];
-            }
+            std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
+            float** rdE = *(rdEBuffer.get());
 
             deltaEforMask(rdE, bfw, bfh, bufcolorig, hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance);
             // printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
@@ -3366,7 +3362,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     bufmaskblurcol->b[ir][jr] = bufprov->b[ir][jr] + rdE[ir][jr] * delta->b[ir][jr];
                 }
 
-            delete [] rdEBuffer;
+            rdEBuffer.reset();
 
         }
 
@@ -4553,14 +4549,16 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             Imagefloat *tmpImage = nullptr;
             tmpImage = new Imagefloat(GW, GH);
             lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
-            if(tonecurv) {//Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
+
+            if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
                 float gamtone = params->locallab.spots.at(sp).gamSH;
                 float slotone = params->locallab.spots.at(sp).sloSH;
                 cmsHTRANSFORM dummy = nullptr;
                 workingtrc(tmpImage, tmpImage, GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
                 workingtrc(tmpImage, tmpImage, GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
             }
-            if(tonequ) {
+
+            if (tonequ) {
                 tmpImage->normalizeFloatTo1();
                 array2D<float> Rtemp(GW, GH, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
                 array2D<float> Gtemp(GW, GH, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
@@ -4568,6 +4566,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
                 tmpImage->normalizeFloatTo65535();
             }
+
             rgb2lab(*tmpImage, *temp, params->icm.workingProfile);
 
             delete tmpImage;
@@ -5999,7 +5998,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 
             for (int hblk = 0; hblk < numblox_W; ++hblk) {
-                  ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail);
+                ImProcFunctions::RGBtile_denoise(fLblox, hblk, noisevar_Ldetail);
 
             }//end of horizontal block loop
 
@@ -7614,12 +7613,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
             if (delt && lp.blurmet == 0 && (lp.enablMask || lp.showmaskblmet == 3)) {
-                float *rdE[GH] ALIGNED16;
-                float *rdEBuffer = new float[GH * GW];
-
-                for (int i = 0; i < GH; i++) {
-                    rdE[i] = &rdEBuffer[i * GW];
-                }
+                std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(GW, GH));
+                float** rdE = *(rdEBuffer.get());
 
                 deltaEforMask(rdE, GW, GH, bufgb.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.balance);
                 // printf("rde1=%f rde2=%f\n", rdE[1][1], rdE[100][100]);
@@ -7639,7 +7634,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         bufmaskblurbl->b[ir][jr] = bufprov->b[ir][jr] + rdE[ir][jr] * delta->b[ir][jr];
                     }
 
-                delete [] rdEBuffer;
+                rdEBuffer.reset();
 
             }
 
@@ -8668,10 +8663,10 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         bool tonecurv = false;
 
-        if(params->locallab.spots.at(sp).gamSH != 2.4 || params->locallab.spots.at(sp).sloSH != 12.92) {
+        if (params->locallab.spots.at(sp).gamSH != 2.4 || params->locallab.spots.at(sp).sloSH != 12.92) {
             tonecurv = true;
         }
-        
+
         if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4) && call < 3  && lp.hsena) {
             const int ystart = std::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = std::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -8802,14 +8797,16 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                             Imagefloat *tmpImage = nullptr;
                             tmpImage = new Imagefloat(bfw, bfh);
                             lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-                            if(tonecurv) {//Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
+
+                            if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
                                 float gamtone = params->locallab.spots.at(sp).gamSH;
                                 float slotone = params->locallab.spots.at(sp).sloSH;
                                 cmsHTRANSFORM dummy = nullptr;
                                 workingtrc(tmpImage, tmpImage, bfw, bfh, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
                                 workingtrc(tmpImage, tmpImage, bfw, bfh, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
                             }
-                            if(tonequ) {
+
+                            if (tonequ) {
                                 tmpImage->normalizeFloatTo1();
                                 array2D<float> Rtemp(bfw, bfh, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
                                 array2D<float> Gtemp(bfw, bfh, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
@@ -8817,6 +8814,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                                 tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
                                 tmpImage->normalizeFloatTo65535();
                             }
+
                             rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                             delete tmpImage;
@@ -9800,13 +9798,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const float refa = chromaref * cos(hueref);
                 const float refb = chromaref * sin(hueref);
 
-
-                float *reducDE[Hd] ALIGNED16;
-                float *reducDEBuffer = new float[Hd * Wd];
-
-                for (int i = 0; i < Hd; i++) {
-                    reducDE[i] = &reducDEBuffer[i * Wd];
-                }
+                std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
+                float** reducDE = *(reducDEBuffer.get());
 
 //                float minreduc = 1000000.f;
 //                float maxreduc = -1000000.f;
@@ -9829,19 +9822,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
 //                printf("reducdemax=%f reducmin=%f\n", maxreduc, minreduc);
-                float *orig[Hd] ALIGNED16;
-                float *origBuffer = new float[Hd * Wd];
+                std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
+                float** orig = *(origBuffer.get());
 
-                for (int i = 0; i < Hd; i++) {
-                    orig[i] = &origBuffer[i * Wd];
-                }
-
-                float *orig1[Hd] ALIGNED16;
-                float *origBuffer1 = new float[Hd * Wd];
-
-                for (int i = 0; i < Hd; i++) {
-                    orig1[i] = &origBuffer1[i * Wd];
-                }
+                std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
+                float** orig1 = *(origBuffer1.get());
 
 
 
@@ -10145,9 +10130,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 delete tmpl;
-                delete [] reducDEBuffer;
-                delete [] origBuffer;
-                delete [] origBuffer1;
+                reducDEBuffer.reset();
+                origBuffer.reset();
+                origBuffer1.reset();
 
                 if (bufmask) {
                     delete bufmask;
@@ -10332,14 +10317,8 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 const float refa = chromaref * cos(hueref);
                 const float refb = chromaref * sin(hueref);
 
-
-                float *reducDE[Hd] ALIGNED16;
-                float *reducDEBuffer = new float[Hd * Wd];
-
-                for (int i = 0; i < Hd; i++) {
-                    reducDE[i] = &reducDEBuffer[i * Wd];
-                }
-
+                std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
+                float** reducDE = *(reducDEBuffer.get());
                 float ade = 0.01f * raddE;
                 float bde = 100.f - raddE;
                 float sensibefore = ade * lp.sensh + bde;//we can change sensitivity 0.1 90 or 0.3 70 or 0.4 60
@@ -10356,19 +10335,11 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     }
 
-                float *orig[Hd] ALIGNED16;
-                float *origBuffer = new float[Hd * Wd];
+                std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
+                float** orig = *(origBuffer.get());
 
-                for (int i = 0; i < Hd; i++) {
-                    orig[i] = &origBuffer[i * Wd];
-                }
-
-                float *orig1[Hd] ALIGNED16;
-                float *origBuffer1 = new float[Hd * Wd];
-
-                for (int i = 0; i < Hd; i++) {
-                    orig1[i] = &origBuffer1[i * Wd];
-                }
+                std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
+                float** orig1 = *(origBuffer1.get());
 
                 LabImage *tmpl = nullptr;
 
@@ -10684,9 +10655,9 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 }
 
                 delete tmpl;
-                delete [] reducDEBuffer;
-                delete [] origBuffer;
-                delete [] origBuffer1;
+                origBuffer.reset();
+                origBuffer1.reset();
+                reducDEBuffer.reset();
 
                 if (bufmask) {
                     delete bufmask;
