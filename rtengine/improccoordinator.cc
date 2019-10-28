@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "improccoordinator.h"
+#include "cieimage.h"
 #include "curves.h"
 #include "mytime.h"
 #include "refreshmap.h"

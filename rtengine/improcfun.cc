@@ -24,6 +24,7 @@
 #endif
 
 #include "alignedbuffer.h"
+#include "cieimage.h"
 #include "rtengine.h"
 #include "improcfun.h"
 #include "curves.h"

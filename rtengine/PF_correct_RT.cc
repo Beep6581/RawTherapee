@@ -29,6 +29,7 @@
 
 #include "gauss.h"
 #include "improcfun.h"
+#include "cieimage.h"
 #include "sleef.c"
 #include "../rtgui/myflatcurve.h"
 #include "rt_math.h"

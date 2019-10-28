@@ -26,7 +26,6 @@
 #include "coord2d.h"
 #include "color.h"
 #include "labimage.h"
-#include "cieimage.h"
 #include "LUT.h"
 #include "lcp.h"
 #include "dcp.h"
@@ -36,7 +35,7 @@
 
 namespace rtengine
 {
-
+class CieImage;
 class wavelet_decomposition;
 
 namespace procparams

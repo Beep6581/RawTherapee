@@ -20,6 +20,8 @@
 
 #include <cstddef>
 #include <cmath>
+
+#include "cieimage.h"
 #include "improcfun.h"
 #include "array2D.h"
 #include "rt_math.h"
