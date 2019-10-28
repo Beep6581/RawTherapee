@@ -22,6 +22,7 @@
 #include <omp.h>
 #endif
 
+#include "imagefloat.h"
 #include "improcfun.h"
 
 #include "mytime.h"

@@ -23,6 +23,16 @@
 
 namespace rtengine
 {
+namespace procparams
+{
+
+class ProcParams;
+
+struct ToneCurveParams;
+struct RAWParams;
+struct ColorManagementParams;
+
+}
 
 class StdImageSource : public ImageSource
 {
@@ -43,7 +53,7 @@ public:
     ~StdImageSource () override;
 
     int         load        (const Glib::ustring &fname) override;
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw) override;
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw) override;
     ColorTemp   getWB       () const override
     {
         return wb;
@@ -87,8 +97,8 @@ public:
         plistener = pl;
     }
 
-    void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb) override;// RAWParams raw will not be used for non-raw files (see imagesource.h)
-    static void colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
+    void        convertColorSpace(Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) override;// RAWParams raw will not be used for non-raw files (see imagesource.h)
+    static void colorSpaceConversion (Imagefloat* im, const procparams::ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
 
     bool        isRGBSourceModified() const override
     {

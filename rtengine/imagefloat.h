@@ -19,11 +19,9 @@
 //
 // A class representing a 16 bit rgb image with separate planes and 16 byte aligned data
 //
-#ifndef _IMAGEFLOAT_
-#define _IMAGEFLOAT_
+#pragma once
 
 #include "imageio.h"
-#include "rtengine.h"
 
 namespace rtengine
 {
@@ -228,4 +226,3 @@ public:
 };
 
 }
-#endif

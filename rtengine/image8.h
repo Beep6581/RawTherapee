@@ -24,10 +24,10 @@
 
 #include "imageio.h"
 #include "rtengine.h"
-#include "imagefloat.h"
 
 namespace rtengine
 {
+class Imagefloat;
 
 class Image8 : public IImage8, public ImageIO
 {

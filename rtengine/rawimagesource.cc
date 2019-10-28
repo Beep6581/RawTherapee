@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "rtengine.h"
+#include "imagefloat.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"

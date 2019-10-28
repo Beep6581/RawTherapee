@@ -20,6 +20,7 @@
 #include "improcfun.h"
 
 #include "alignedbuffer.h"
+#include "imagefloat.h"
 #include "labimage.h"
 #include "opthelper.h"
 #include "rt_math.h"

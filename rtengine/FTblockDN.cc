@@ -30,6 +30,7 @@
 #include "LUT.h"
 #include "array2D.h"
 #include "iccmatrices.h"
+#include "imagefloat.h"
 #include "labimage.h"
 #include "boxblur.h"
 #include "rt_math.h"

@@ -29,11 +29,19 @@
 #include <expat.h>
 
 #include "cache.h"
-#include "imagefloat.h"
 #include "opthelper.h"
 
 namespace rtengine
 {
+
+namespace procparams
+{
+
+class ProcParams;
+
+struct CoarseTransformParams;
+
+}
 
 enum class LCPCorrectionMode {
     VIGNETTE,
@@ -185,7 +193,7 @@ public:
         bool useCADistP,
         int fullWidth,
         int fullHeight,
-        const CoarseTransformParams& coarse,
+        const procparams::CoarseTransformParams& coarse,
         int rawRotationDeg
     );
 

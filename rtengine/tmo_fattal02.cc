@@ -66,6 +66,7 @@
 #include <fftw3.h>
 
 #include "array2D.h"
+#include "imagefloat.h"
 #include "improcfun.h"
 #include "settings.h"
 #include "iccstore.h"

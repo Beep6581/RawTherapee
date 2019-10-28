@@ -19,7 +19,6 @@
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
 
-#include "imagefloat.h"
 #include "image16.h"
 #include "image8.h"
 #include "shmap.h"
@@ -35,6 +34,7 @@
 namespace rtengine
 {
 class CieImage;
+class Imagefloat;
 class LabImage;
 class wavelet_decomposition;
 
@@ -57,7 +57,7 @@ class ImProcFunctions
     cmsHTRANSFORM monitorTransform;
     std::unique_ptr<GamutWarning> gamutWarning;
 
-    const ProcParams* params;
+    const procparams::ProcParams* params;
     double scale;
     bool multiThread;
 
@@ -90,7 +90,7 @@ public:
 
     double lumimul[3];
 
-    explicit ImProcFunctions(const ProcParams* iparams, bool imultiThread = true)
+    explicit ImProcFunctions(const procparams::ProcParams* iparams, bool imultiThread = true)
         : monitorTransform(nullptr), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions();
     bool needsLuminanceOnly()
@@ -122,7 +122,7 @@ public:
     void moyeqt(Imagefloat* working, float &moyS, float &eqty);
 
     void luminanceCurve(LabImage* lold, LabImage* lnew, LUTf &curve);
-    void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
+    void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
                         LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
                         bool showSharpMask = false);
@@ -132,7 +132,7 @@ public:
     void sharpening(LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask = false);
     void sharpeningcam(CieImage* ncie, float** buffer, bool showMask = false);
     void transform(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const FramesMetaData *metadata, int rawRotationDeg, bool fullImage);
-    float resizeScale(const ProcParams* params, int fw, int fh, int &imw, int &imh);
+    float resizeScale(const procparams::ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb(LabImage* lab, Image8* image);
     void resize(Imagefloat* src, Imagefloat* dst, float dScale);
     void Lanczos(const LabImage* src, LabImage* dst, float scale);

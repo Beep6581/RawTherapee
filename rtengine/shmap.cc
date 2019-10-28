@@ -18,6 +18,7 @@
  */
 #include "shmap.h"
 #include "gauss.h"
+#include "imagefloat.h"
 #include "rtengine.h"
 #include "rt_math.h"
 #include "rawimagesource.h"

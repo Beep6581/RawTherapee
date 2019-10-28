@@ -98,7 +98,7 @@ bool channelsAvg(
 
 }
 
-bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
+bool rtengine::RawImageSource::getFilmNegativeExponents(Coord2D spotA, Coord2D spotB, int tran, const procparams::FilmNegativeParams &currentParams, std::array<float, 3>& newExps)
 {
     newExps = {
         static_cast<float>(currentParams.redRatio * currentParams.greenExp),

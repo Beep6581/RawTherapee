@@ -295,7 +295,7 @@ void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUTu *histo
 
 using namespace std;
 using namespace rtengine;
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const procparams::RAWParams &rawParamsIn, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection)
 {
 BENCHFUN
     if(numFrames != 4) { // fallback for non pixelshift files
@@ -303,15 +303,15 @@ BENCHFUN
         return;
     }
 
-    RAWParams::BayerSensor bayerParams = rawParamsIn.bayersensor;
+    procparams::RAWParams::BayerSensor bayerParams = rawParamsIn.bayersensor;
 
     bool motionDetection = true;
 
-    if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::AUTO) {
+    if(bayerParams.pixelShiftMotionCorrectionMethod == procparams::RAWParams::BayerSensor::PSMotionCorrectionMethod::AUTO) {
         bool pixelShiftEqualBright = bayerParams.pixelShiftEqualBright;
         bayerParams.setPixelShiftDefaults();
         bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
-    } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::PSMotionCorrectionMethod::OFF) {
+    } else if(bayerParams.pixelShiftMotionCorrectionMethod == procparams::RAWParams::BayerSensor::PSMotionCorrectionMethod::OFF) {
         motionDetection = false;
         bayerParams.pixelShiftShowMotion = false;
     }
@@ -323,9 +323,9 @@ BENCHFUN
     if(motionDetection) {
         if(!showOnlyMask) {
             if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
-                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
-                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
                     dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.dualDemosaicContrast, true);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue, options.chunkSizeAMAZE, options.measure);
@@ -335,9 +335,9 @@ BENCHFUN
                 multi_array2D<float, 3> blueTmp(winw, winh);
 
                 for(int i = 0; i < 3; i++) {
-                    if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
+                    if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                         lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.lmmse_iterations);
-                    } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
                         dual_demosaic_RT (true, rawParamsIn, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.dualDemosaicContrast, true);
                     } else {
                         amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], options.chunkSizeAMAZE, options.measure);
@@ -362,11 +362,11 @@ BENCHFUN
                     }
                 }
             } else {
-                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
+                if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
-                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
-                    RAWParams rawParamsTmp = rawParamsIn;
-                    rawParamsTmp.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4);
+                } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
+                    procparams::RAWParams rawParamsTmp = rawParamsIn;
+                    rawParamsTmp.bayersensor.method = procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEVNG4);
                     dual_demosaic_RT (true, rawParamsTmp, winw, winh, rawData, red, green, blue, bayerParams.dualDemosaicContrast, true);
                 } else {
                     amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);

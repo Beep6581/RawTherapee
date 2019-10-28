@@ -19,6 +19,7 @@
  */
 
 #include "cieimage.h"
+#include "imagefloat.h"
 #include "labimage.h"
 #include "curves.h"
 #include "dcrop.h"

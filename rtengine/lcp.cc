@@ -31,6 +31,7 @@
 
 #include "procparams.h"
 #include "settings.h"
+#include "utils.h"
 
 namespace rtengine
 {
@@ -984,7 +985,7 @@ rtengine::LCPMapper::LCPMapper(
     bool useCADistP,
     int fullWidth,
     int fullHeight,
-    const CoarseTransformParams& coarse,
+    const procparams::CoarseTransformParams& coarse,
     int rawRotationDeg
 ) :
     enableCA(false),

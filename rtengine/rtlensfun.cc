@@ -19,6 +19,7 @@
  */
 
 #include "rtlensfun.h"
+#include "imagedata.h"
 #include "procparams.h"
 #include "settings.h"
 #include <iostream>
@@ -500,7 +501,7 @@ std::unique_ptr<LFModifier> LFDatabase::getModifier(const LFCamera &camera, cons
 }
 
 
-std::unique_ptr<LFModifier> LFDatabase::findModifier(const LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg)
+std::unique_ptr<LFModifier> LFDatabase::findModifier(const procparams::LensProfParams &lensProf, const FramesMetaData *idata, int width, int height, const procparams::CoarseTransformParams &coarse, int rawRotationDeg)
 {
     Glib::ustring make, model, lens;
     float focallen = idata->getFocalLen();

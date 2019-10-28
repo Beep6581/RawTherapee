@@ -34,7 +34,7 @@ using namespace std;
 
 namespace {
 
-void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** blend, int W, int H, const SharpeningParams &sharpenParam)
+void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** blend, int W, int H, const procparams::SharpeningParams &sharpenParam)
 {
 
     const float scale = (100.f - sharpenParam.halocontrol_amount) * 0.01f;
@@ -160,7 +160,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, const float * const * blend, int W, int H, const SharpeningParams &sharpenParam, double Scale)
+void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, const float * const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale)
 {
     if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25f) {
         return;
@@ -243,7 +243,7 @@ BENCHFUN
     delete blurbuffer;
 }
 
-void ImProcFunctions::sharpening (LabImage* lab, const SharpeningParams &sharpenParam, bool showMask)
+void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)
 {
 
     if ((!sharpenParam.enabled) || sharpenParam.amount < 1 || lab->W < 8 || lab->H < 8) {

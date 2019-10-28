@@ -19,6 +19,7 @@
 #include <cstring>
 #include <cstdio>
 #include "image8.h"
+#include "imagefloat.h"
 #include "rtengine.h"
 
 using namespace rtengine;
