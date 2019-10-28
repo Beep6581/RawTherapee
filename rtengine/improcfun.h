@@ -19,7 +19,6 @@
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
 
-#include "image16.h"
 #include "image8.h"
 #include "shmap.h"
 #include "coord2d.h"

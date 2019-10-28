@@ -26,7 +26,6 @@
 #include "colortemp.h"
 #include "coord2d.h"
 #include "dcp.h"
-#include "image16.h"
 #include "image8.h"
 #include "imagedata.h"
 #include "LUT.h"

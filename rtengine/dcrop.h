@@ -22,7 +22,6 @@
 #include "rtengine.h"
 #include "improcfun.h"
 #include "image8.h"
-#include "image16.h"
 #include "imagesource.h"
 #include "procevents.h"
 #include "pipettebuffer.h"

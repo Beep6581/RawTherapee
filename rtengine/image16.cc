@@ -16,11 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <cstdio>
+
 #include "image16.h"
 #include "imagefloat.h"
 #include "image8.h"
-#include <cstdio>
-#include "rtengine.h"
+#include "rt_math.h"
 
 namespace
 {
