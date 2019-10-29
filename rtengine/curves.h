@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef __CURVES_H__
-#define __CURVES_H__
+#pragma once
 
 #include <map>
 #include <string>
@@ -1311,5 +1310,3 @@ inline void SatAndValueBlendingToneCurve::Apply (float& ir, float& ig, float& ib
 }
 
 #undef CLIPI
-
-#endif

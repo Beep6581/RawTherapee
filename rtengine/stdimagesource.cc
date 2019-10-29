@@ -19,7 +19,6 @@
 #include "stdimagesource.h"
 
 #include "color.h"
-#include "curves.h"
 #include "iccstore.h"
 #include "image8.h"
 #include "image16.h"

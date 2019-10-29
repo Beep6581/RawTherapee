@@ -29,6 +29,7 @@
 #include "rtengine.h"
 #include "improcfun.h"
 #include "curves.h"
+#include "dcp.h"
 #include "mytime.h"
 #include "iccstore.h"
 #include "imagesource.h"

@@ -28,7 +28,6 @@
 #include "iccmatrices.h"
 #include "iccstore.h"
 #include "imagefloat.h"
-#include "improcfun.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
 

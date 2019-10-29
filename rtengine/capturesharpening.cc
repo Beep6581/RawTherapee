@@ -22,7 +22,6 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#include "improcfun.h"
 #include "procparams.h"
 #include "color.h"
 #include "gauss.h"
@@ -605,13 +604,13 @@ BENCHFUN
                     // special handling for small tiles at end of row or column
                     for (int k = border, ii = endOfCol ? H - fullTileSize - border : i - border; k < fullTileSize - border; ++k) {
                         for (int l = border, jj = endOfRow ? W - fullTileSize - border : j - border; l < fullTileSize - border; ++l) {
-                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
+                            luminance[ii + k][jj + l] = rtengine::intp(blend[ii + k][jj + l], std::max(tmpIThr[k][l], 0.0f), luminance[ii + k][jj + l]);
                         }
                     }
                 } else {
                     for (int ii = border; ii < fullTileSize - border; ++ii) {
                         for (int jj = border; jj < fullTileSize - border; ++jj) {
-                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], max(tmpIThr[ii][jj], 0.0f), luminance[i + ii - border][j + jj - border]);
+                            luminance[i + ii - border][j + jj - border] = rtengine::intp(blend[i + ii - border][j + jj - border], std::max(tmpIThr[ii][jj], 0.0f), luminance[i + ii - border][j + jj - border]);
                         }
                     }
                 }

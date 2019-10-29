@@ -26,7 +26,6 @@
 #include "iccmatrices.h"
 #include "../rtgui/options.h"
 #include "settings.h"
-#include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
 #include "procparams.h"

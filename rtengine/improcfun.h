@@ -25,12 +25,20 @@
 #include "LUT.h"
 #include "lcp.h"
 #include "dcp.h"
-#include "curves.h"
 #include "pipettebuffer.h"
 #include "gamutwarning.h"
 
 namespace rtengine
 {
+class ColorGradientCurve;
+class OpacityCurve;
+class ToneCurve;
+class WavCurve;
+class WavOpacityCurveRG;
+class WavOpacityCurveBY;
+class WavOpacityCurveW;
+class WavOpacityCurveWL;
+
 class CieImage;
 class Image8;
 class Imagefloat;

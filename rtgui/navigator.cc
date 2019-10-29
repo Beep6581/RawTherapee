@@ -21,7 +21,6 @@
 #include "toolpanel.h"
 #include "../rtengine/iccmatrices.h"
 #include "../rtengine/iccstore.h"
-#include "../rtengine/curves.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
 #include "options.h"

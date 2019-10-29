@@ -25,8 +25,6 @@
 #include "array2D.h"
 #include "color.h"
 #include "colortemp.h"
-#include "curves.h"
-#include "dcp.h"
 #include "iimage.h"
 #include "imagesource.h"
 #include "pixelsmap.h"
@@ -35,6 +33,10 @@
 
 namespace rtengine
 {
+
+class DiagonalCurve;
+class RetinextransmissionCurve;
+class RetinexgaintransmissionCurve;
 
 class RawImageSource : public ImageSource
 {

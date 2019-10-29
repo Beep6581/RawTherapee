@@ -33,6 +33,8 @@ namespace rtengine
 {
 class ColorTemp;
 class Imagefloat;
+class RetinextransmissionCurve;
+class RetinexgaintransmissionCurve;
 
 namespace procparams
 {
