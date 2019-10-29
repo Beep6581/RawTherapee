@@ -18,7 +18,7 @@
  */
 #include <cmath>
 #include <glib.h>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -46,7 +46,6 @@
 #include "StopWatch.h"
 #include "procparams.h"
 #include "../rtgui/ppversion.h"
-#include "../rtgui/guiutils.h"
 #include "../rtgui/editcallbacks.h"
 
 #undef CLIPD

@@ -21,7 +21,7 @@
 
 
 #include <gtkmm.h>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <cairomm/cairomm.h>
 #include "../rtengine/LUT.h"
 #include "../rtengine/improccoordinator.h"

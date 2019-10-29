@@ -23,7 +23,7 @@
 #include <memory>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include <lensfun.h>
 

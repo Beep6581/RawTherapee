@@ -26,6 +26,8 @@
 #include <shlobj.h>
 #endif
 
+#include <gtkmm.h>
+
 #include "options.h"
 #include "multilangmgr.h"
 

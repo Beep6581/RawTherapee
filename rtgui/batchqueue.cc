@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <glib/gstdio.h>
 #include <cstring>
 #include <functional>

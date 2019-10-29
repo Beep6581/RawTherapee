@@ -20,7 +20,7 @@
 #include "rtscalable.h"
 #include <glib/gstdio.h>
 #include <regex>
-#include <glibmm.h>
+#include <gtkmm.h>
 #include <iostream>
 #include <librsvg/rsvg.h>
 #include "options.h"

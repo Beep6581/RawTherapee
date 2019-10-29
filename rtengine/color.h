@@ -20,7 +20,7 @@
 #pragma once
 
 #include <array>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 #include "LUT.h"

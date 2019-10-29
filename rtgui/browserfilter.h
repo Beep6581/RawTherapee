@@ -19,8 +19,9 @@
 #ifndef _BROWSERFILTER_
 #define _BROWSERFILTER_
 
+#include <vector>
+
 #include "exiffiltersettings.h"
-#include <glibmm.h>
 
 class BrowserFilter
 {

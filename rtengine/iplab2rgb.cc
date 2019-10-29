@@ -21,7 +21,7 @@
 #include "imagefloat.h"
 #include "labimage.h"
 #include "improcfun.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "iccstore.h"
 #include "iccmatrices.h"
 #include "../rtgui/options.h"

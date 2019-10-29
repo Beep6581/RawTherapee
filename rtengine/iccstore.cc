@@ -18,7 +18,9 @@
  */
 #include <cstring>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
 #include <glib/gstdio.h>
 
 #ifdef WIN32

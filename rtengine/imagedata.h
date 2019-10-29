@@ -22,7 +22,7 @@
 #include <cstdio>
 #include <memory>
 #include <string>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "../rtexif/rtexif.h"
 #include <libiptcdata/iptc-data.h>
 #include "rtengine.h"

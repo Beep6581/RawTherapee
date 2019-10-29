@@ -26,7 +26,6 @@
 #include "coloredbar.h"
 #include "coordinateadjuster.h"
 #include "../rtengine/LUT.h"
-#include "guiutils.h"
 #include "options.h"
 #include "../rtengine/noncopyable.h"
 

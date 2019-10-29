@@ -21,7 +21,7 @@
 
 #include <map>
 #include <vector>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "../rtengine/rtengine.h"
 #include "../rtengine/profilestore.h"

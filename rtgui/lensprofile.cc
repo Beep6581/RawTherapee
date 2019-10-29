@@ -18,9 +18,10 @@
 */
 #include <map>
 #include <set>
+#include <iostream>
 #include <sstream>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "lensprofile.h"
 

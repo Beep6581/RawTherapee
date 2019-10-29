@@ -23,7 +23,6 @@
 #include "../rtengine/mytime.h"
 #include <cstdio>
 #include <cstdlib>
-#include <glibmm.h>
 #include "../rtengine/colortemp.h"
 #include "../rtengine/imagedata.h"
 #include "../rtengine/procparams.h"

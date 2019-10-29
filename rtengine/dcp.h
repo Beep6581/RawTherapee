@@ -24,7 +24,7 @@
 #include <array>
 #include <memory>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "../rtgui/threadutils.h"
 

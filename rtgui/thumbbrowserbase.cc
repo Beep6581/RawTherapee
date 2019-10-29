@@ -16,7 +16,7 @@
  */
 #include <numeric>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "multilangmgr.h"
 #include "options.h"

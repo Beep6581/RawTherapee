@@ -28,7 +28,7 @@
 #include "clutstore.h"
 #include "processingjob.h"
 #include "procparams.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "../rtgui/options.h"
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"

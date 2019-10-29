@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <map>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "filebrowser.h"
 

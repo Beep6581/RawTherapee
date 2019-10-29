@@ -17,10 +17,11 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../rtengine/dynamicprofile.h"
+#include "dynamicprofile.h"
 
 #include <stdlib.h>
 #include <glibmm/regex.h>
+#include <glibmm/miscutils.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;

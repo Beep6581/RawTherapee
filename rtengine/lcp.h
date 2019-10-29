@@ -25,7 +25,7 @@
 #include <string>
 #include <sstream>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <expat.h>
 
 #include "cache.h"

@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 #include "../rtgui/mycurve.h"

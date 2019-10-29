@@ -20,7 +20,7 @@
 #define __TOOLPANEL__
 
 #include <gtkmm.h>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "../rtengine/rtengine.h"
 #include "editbuffer.h"
 #include "guiutils.h"

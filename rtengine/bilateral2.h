@@ -22,7 +22,6 @@
 #include <cmath>
 #include <cstring>
 #include <cstdio>
-#include <glibmm.h>
 
 #include "rtengine.h"
 #include "rt_math.h"

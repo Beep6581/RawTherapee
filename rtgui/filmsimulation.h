@@ -2,7 +2,7 @@
 #define FILM_SIMULATION_INCLUDED
 
 #include <gtkmm.h>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <memory>
 #include "toolpanel.h"
 #include "guiutils.h"

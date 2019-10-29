@@ -4,8 +4,9 @@
 #ifndef __CAMCONST__
 #define __CAMCONST__
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <map>
+#include <vector>
 
 namespace rtengine
 {

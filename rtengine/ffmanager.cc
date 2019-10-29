@@ -16,6 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <giomm/file.h>
+#include <glibmm/miscutils.h>
+
 #include "ffmanager.h"
 #include "../rtgui/options.h"
 #include "rawimage.h"

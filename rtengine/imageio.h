@@ -30,7 +30,7 @@
 
 #include <memory>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <libiptcdata/iptc-data.h>
 #include "rtengine.h"
 #include "imageformat.h"

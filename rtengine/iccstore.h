@@ -19,10 +19,11 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include <lcms2.h>
 

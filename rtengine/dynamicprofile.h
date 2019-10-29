@@ -19,7 +19,7 @@
 #ifndef _DYNAMICPROFILE_H_
 #define _DYNAMICPROFILE_H_
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <vector>
 #include "../rtgui/options.h"
 

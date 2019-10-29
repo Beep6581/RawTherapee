@@ -19,7 +19,6 @@
 #ifndef _THUMBIMAGEUPDATER_
 #define _THUMBIMAGEUPDATER_
 
-#include <glibmm.h>
 #include <glib.h>
 
 #include "../rtengine/rtengine.h"

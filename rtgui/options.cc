@@ -19,6 +19,7 @@
 #include "options.h"
 #include <cstdio>
 #include <glib/gstdio.h>
+#include <iostream>
 #include <sstream>
 #include "multilangmgr.h"
 #include "addsetids.h"

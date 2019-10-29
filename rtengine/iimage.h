@@ -19,7 +19,7 @@
 #ifndef _IIMAGE_
 #define _IIMAGE_
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include <vector>
 #include "rt_math.h"
 #include "alignedbuffer.h"

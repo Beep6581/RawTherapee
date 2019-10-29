@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <cstring>
 
+#include <glibmm/ustring.h>
+#include <glibmm/fileutils.h>
 #include <glib/gstdio.h>
 
 #ifdef WIN32

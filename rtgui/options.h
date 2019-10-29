@@ -20,7 +20,7 @@
 #define _OPTIONS_
 
 #include <set>
-#include <gtkmm.h>
+#include <gtkmm/enums.h>
 #include "../rtengine/rtengine.h"
 #include <exception>
 

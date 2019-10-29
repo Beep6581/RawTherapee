@@ -24,7 +24,7 @@
 #include "image8.h"
 #include <lcms2.h>
 #include "curves.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "improcfun.h"
 #include "colortemp.h"
 #include "mytime.h"

@@ -20,7 +20,7 @@
 #define _PPARAMSCHANGELISTENER_
 
 #include "../rtengine/rtengine.h"
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "paramsedited.h"
 
 class PParamsChangeListener

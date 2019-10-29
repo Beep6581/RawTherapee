@@ -22,7 +22,7 @@
 #include <memory>
 #include <string>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "cachemanager.h"
 #include "options.h"
 #include "../rtengine/rtengine.h"

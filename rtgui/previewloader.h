@@ -20,7 +20,7 @@
 #define _PREVIEWLOADER_
 
 #include <set>
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "../rtengine/noncopyable.h"
 

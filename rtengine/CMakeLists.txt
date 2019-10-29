@@ -121,7 +121,6 @@ set(RTENGINESOURCEFILES
     rtthumbnail.cc
     shmap.cc
     simpleprocess.cc
-    slicer.cc
     stdimagesource.cc
     tmo_fattal02.cc
     utils.cc

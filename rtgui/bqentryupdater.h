@@ -19,7 +19,8 @@
 #ifndef _BQENTRYUPDATER_
 #define _BQENTRYUPDATER_
 
-#include <glibmm.h>
+#include <glibmm/thread.h>
+
 #include "../rtengine/rtengine.h"
 #include "threadutils.h"
 #include "thumbnail.h"

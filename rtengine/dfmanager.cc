@@ -19,7 +19,6 @@
 #include "dfmanager.h"
 #include "../rtgui/options.h"
 #include <giomm.h>
-#include "../rtgui/guiutils.h"
 #include "rawimage.h"
 #include <sstream>
 #include <iostream>

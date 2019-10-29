@@ -19,7 +19,7 @@
 #ifndef _PREVIEWIMAGE_
 #define _PREVIEWIMAGE_
 
-#include <gtkmm.h>
+#include <glibmm/ustring.h>
 #include <cairomm/cairomm.h>
 
 namespace rtengine

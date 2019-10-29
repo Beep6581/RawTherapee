@@ -21,7 +21,7 @@
 #include <array>
 #include <vector>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include "coord2d.h"
 #include "dcp.h"

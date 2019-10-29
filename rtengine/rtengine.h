@@ -22,7 +22,7 @@
 #include <ctime>
 #include <string>
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 
 #include <lcms2.h>
 

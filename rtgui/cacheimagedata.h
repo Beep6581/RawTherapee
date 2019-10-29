@@ -19,7 +19,7 @@
 #ifndef _CACHEIMAGEDATA_
 #define _CACHEIMAGEDATA_
 
-#include <glibmm.h>
+#include <glibmm/ustring.h>
 #include "options.h"
 #include "../rtengine/rtengine.h"
 #include "../rtengine/imageformat.h"
