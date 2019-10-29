@@ -23,6 +23,7 @@
 #include <omp.h>
 #endif
 
+#include "rawimage.h"
 #include "rawimagesource.h"
 
 #include "mytime.h"

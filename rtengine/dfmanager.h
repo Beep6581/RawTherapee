@@ -30,6 +30,7 @@
 namespace rtengine
 {
 
+class RawImage;
 class dfInfo
 {
 public:

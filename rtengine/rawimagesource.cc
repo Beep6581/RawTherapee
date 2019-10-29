@@ -21,6 +21,7 @@
 
 #include "rtengine.h"
 #include "imagefloat.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
@@ -499,6 +500,26 @@ RawImageSource::~RawImageSource ()
     if (embProfile) {
         cmsCloseProfile (embProfile);
     }
+}
+
+unsigned RawImageSource::FC(int row, int col) const
+{
+    return ri->FC(row, col);
+}
+
+eSensorType RawImageSource::getSensorType () const
+{
+    return ri != nullptr ? ri->getSensorType() : ST_NONE;
+}
+
+bool RawImageSource::isMono() const
+{
+    return ri->get_colors() == 1;
+}
+
+int RawImageSource::getRotateDegree() const
+{
+    return ri->get_rotateDegree();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

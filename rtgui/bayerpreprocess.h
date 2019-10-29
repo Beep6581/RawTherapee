@@ -22,7 +22,6 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
-#include "../rtengine/rawimage.h"
 
 class BayerPreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {

@@ -33,7 +33,7 @@
 
 namespace rtengine
 {
-
+class RawImage;
 class DiagonalCurve;
 class RetinextransmissionCurve;
 class RetinexgaintransmissionCurve;
@@ -110,10 +110,7 @@ protected:
     void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
-    unsigned FC(int row, int col) const
-    {
-        return ri->FC(row, col);
-    }
+    unsigned FC(int row, int col) const;
     inline void getRowStartEnd (int x, int &start, int &end);
     static void getProfilePreprocParams(cmsHPROFILE in, float& gammafac, float& lineFac, float& lineSum);
 
@@ -147,15 +144,9 @@ public:
     void        scaleColors (int winx, int winy, int winw, int winh, const procparams::RAWParams &raw, array2D<float> &rawData); // raw for cblack
 
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw) override;
-    eSensorType getSensorType () const override
-    {
-        return ri != nullptr ? ri->getSensorType() : ST_NONE;
-    }
-    bool        isMono () const override
-    {
-        return ri->get_colors() == 1;
-    }
-    ColorTemp   getWB       () const override
+    eSensorType getSensorType () const override;
+    bool        isMono () const override;
+    ColorTemp   getWB () const override
     {
         return camera_wb;
     }
@@ -173,10 +164,7 @@ public:
 
     void        getFullSize (int& w, int& h, int tr = TR_NONE) override;
     void        getSize     (const PreviewProps &pp, int& w, int& h) override;
-    int         getRotateDegree() const override
-    {
-        return ri->get_rotateDegree();
-    }
+    int         getRotateDegree() const override;
 
     ImageMatrices* getImageMatrices () override
     {

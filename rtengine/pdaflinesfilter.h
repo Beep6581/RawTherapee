@@ -26,6 +26,8 @@
 
 namespace rtengine {
 
+class RawImage;
+
 class PDAFLinesFilter: public rtengine::NonCopyable
 {
 public:

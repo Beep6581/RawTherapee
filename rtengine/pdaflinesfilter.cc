@@ -19,6 +19,7 @@
  */
 
 #include "pdaflinesfilter.h"
+#include "rawimage.h"
 #include "settings.h"
 #include <iostream>
 #include "camconst.h"

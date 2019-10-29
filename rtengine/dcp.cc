@@ -21,6 +21,7 @@
 #include <cstdio>
 #include <cstring>
 #include <functional>
+#include <glib/gstdio.h>
 
 #include "dcp.h"
 

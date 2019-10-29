@@ -21,7 +21,6 @@
 
 #include <cstdio>
 #include <memory>
-#include "rawimage.h"
 #include <string>
 #include <glibmm.h>
 #include "../rtexif/rtexif.h"

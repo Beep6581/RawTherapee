@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "rtengine.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "procparams.h"

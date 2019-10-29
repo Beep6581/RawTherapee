@@ -50,6 +50,13 @@ inline ffInfo& ffInfo::operator =(const ffInfo &o)
     return *this;
 }
 
+ffInfo::~ffInfo()
+{
+    if( ri ) {
+        delete ri;
+    }
+}
+
 bool ffInfo::operator <(const ffInfo &e2) const
 {
     if( this->maker.compare( e2.maker) >= 0 ) {

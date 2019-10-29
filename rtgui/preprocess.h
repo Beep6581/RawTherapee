@@ -24,7 +24,6 @@
 #include "toolpanel.h"
 #include "adjuster.h"
 #include "guiutils.h"
-#include "../rtengine/rawimage.h"
 
 class PreProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {

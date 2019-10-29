@@ -20,6 +20,7 @@
 #include <cmath>
 
 #include "color.h"
+#include "rawimage.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "jaggedarray.h"
