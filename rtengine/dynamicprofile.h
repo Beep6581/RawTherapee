@@ -21,7 +21,7 @@
 
 #include <glibmm/ustring.h>
 #include <vector>
-#include "../rtgui/options.h"
+#include "../rtengine/rtengine.h"
 
 class DynamicProfileRule
 {

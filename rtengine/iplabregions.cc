@@ -22,6 +22,7 @@
 #include <omp.h>
 #endif
 
+#include "iccstore.h"
 #include "improcfun.h"
 #include "labimage.h"
 #include "guidedfilter.h"

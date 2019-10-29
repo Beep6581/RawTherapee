@@ -24,6 +24,7 @@
 #include "addsetids.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
+#include "../rtengine/iccstore.h"
 #include <sstream>
 #include "rtimage.h"
 #ifdef _OPENMP

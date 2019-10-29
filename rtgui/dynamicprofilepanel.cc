@@ -18,6 +18,7 @@
  */
 
 #include "dynamicprofilepanel.h"
+#include "options.h"
 #include "multilangmgr.h"
 #include "../rtengine/profilestore.h"
 #include "../rtengine/rtengine.h"

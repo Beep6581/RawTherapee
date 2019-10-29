@@ -19,8 +19,6 @@
 #include <iomanip>
 #include "navigator.h"
 #include "toolpanel.h"
-#include "../rtengine/iccmatrices.h"
-#include "../rtengine/iccstore.h"
 #include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
 #include "options.h"

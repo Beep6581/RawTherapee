@@ -23,7 +23,6 @@
 #include "previewwindow.h"
 #include "pointermotionlistener.h"
 #include "options.h"
-#include "../rtengine/iccstore.h"
 
 class Navigator : public Gtk::Frame, public PointerMotionListener
 {

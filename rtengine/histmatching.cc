@@ -23,7 +23,6 @@
 #include "curves.h"
 #include "color.h"
 #include "rt_math.h"
-#include "iccstore.h"
 #include "procparams.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "improcfun.h"

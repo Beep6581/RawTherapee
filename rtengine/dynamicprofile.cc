@@ -23,6 +23,8 @@
 #include <glibmm/regex.h>
 #include <glibmm/miscutils.h>
 
+#include "../rtgui/options.h"
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 

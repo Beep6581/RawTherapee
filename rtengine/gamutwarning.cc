@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "gamutwarning.h"
+#include "iccstore.h"
 #include "image8.h"
 
 namespace rtengine {

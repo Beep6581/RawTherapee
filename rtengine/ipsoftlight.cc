@@ -19,6 +19,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "iccstore.h"
 #include "improcfun.h"
 #include "labimage.h"
 

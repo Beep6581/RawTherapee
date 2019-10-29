@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "iccstore.h"
+#include <lcms2.h>
+
 #include "noncopyable.h"
 
 namespace rtengine {

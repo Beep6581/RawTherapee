@@ -33,6 +33,7 @@
 #include <vector>
 
 #include "guidedfilter.h"
+#include "iccstore.h"
 #include "imagefloat.h"
 #include "improcfun.h"
 #include "procparams.h"
