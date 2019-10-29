@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "improccoordinator.h"
+
 #include "cieimage.h"
 #include "image8.h"
 #include "imagefloat.h"

@@ -23,7 +23,6 @@
 
 #include <glibmm.h>
 
-#include "colortemp.h"
 #include "coord2d.h"
 #include "dcp.h"
 #include "imagedata.h"
@@ -32,6 +31,7 @@
 
 namespace rtengine
 {
+class ColorTemp;
 class Imagefloat;
 
 namespace procparams

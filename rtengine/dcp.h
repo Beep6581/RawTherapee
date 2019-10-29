@@ -29,12 +29,12 @@
 #include "../rtgui/threadutils.h"
 
 #include "curves.h"
-#include "colortemp.h"
 #include "noncopyable.h"
 
 namespace rtengine
 {
 
+class ColorTemp;
 class Imagefloat;
 
 class DCPProfile final

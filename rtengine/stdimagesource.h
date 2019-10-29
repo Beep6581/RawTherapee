@@ -19,6 +19,7 @@
 #ifndef _STDIMAGESOURCE_
 #define _STDIMAGESOURCE_
 
+#include "colortemp.h"
 #include "imagesource.h"
 
 namespace rtengine

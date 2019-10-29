@@ -18,6 +18,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "colortemp.h"
 #include "cieimage.h"
 #include "image8.h"
 #include "imagefloat.h"

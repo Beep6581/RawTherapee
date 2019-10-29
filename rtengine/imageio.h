@@ -37,11 +37,11 @@
 #include "../rtexif/rtexif.h"
 #include "imagedimensions.h"
 #include "iimage.h"
-#include "colortemp.h"
 
 namespace rtengine
 {
 
+class ColorTemp;
 class ProgressListener;
 class Imagefloat;
 

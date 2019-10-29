@@ -24,6 +24,7 @@
 
 #include "array2D.h"
 #include "color.h"
+#include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
 #include "iimage.h"

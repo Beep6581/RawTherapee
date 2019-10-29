@@ -18,6 +18,7 @@
  */
 #include <cstdio>
 
+#include "colortemp.h"
 #include "image16.h"
 #include "imagefloat.h"
 #include "image8.h"

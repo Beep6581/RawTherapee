@@ -21,6 +21,7 @@
 
 #include <memory>
 
+#include "colortemp.h"
 #include "rtengine.h"
 #include "improcfun.h"
 #include "imagesource.h"
