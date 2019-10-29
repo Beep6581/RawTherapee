@@ -1122,11 +1122,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg);
                 }
+
                 if (sp == params->locallab.selspot  && params->locallab.spots.at(sp).recurs) {
-                    if (locallListener) {
+                    if (locallListener) {//change GUI ref for masks
                         locallListener->refChanged(huer, lumar, chromar);
                     }
                 }
+                //restore ref values
+                huerefs[sp] = huer;
+                chromarefs[sp] = chromar;
+                lumarefs[sp] = lumar ;
+                sobelrefs[sp] = sobeler;
 
                 lllocalcurve.clear();
                 lightCurveloc.clear();
