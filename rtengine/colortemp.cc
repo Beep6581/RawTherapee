@@ -16,8 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <glibmm/ustring.h>
+
 #include "colortemp.h"
-#include "rtengine.h"
+#include "iccmatrices.h"
+#include "rt_math.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

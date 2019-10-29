@@ -23,7 +23,6 @@
 #include <cstring>
 #include <cstdio>
 
-#include "rtengine.h"
 #include "rt_math.h"
 #include "mytime.h"
 

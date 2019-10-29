@@ -23,9 +23,9 @@
 #include <memory>
 #include <string>
 #include <glibmm/ustring.h>
+#include "imageio.h"
 #include "../rtexif/rtexif.h"
 #include <libiptcdata/iptc-data.h>
-#include "rtengine.h"
 
 namespace rtengine
 {

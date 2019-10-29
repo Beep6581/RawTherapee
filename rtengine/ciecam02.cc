@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "ciecam02.h"
-#include "rtengine.h"
+#include "rt_math.h"
 #include "curves.h"
 #include <math.h>
 #include "sleef.c"
