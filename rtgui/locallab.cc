@@ -2884,6 +2884,7 @@ void Locallab::read(const ProcParams* pp, const ParamsEdited* pedited)
         r->scopemask = pp->locallab.spots.at(i).scopemask;
         r->lumask = pp->locallab.spots.at(i).lumask;
         r->avoid = pp->locallab.spots.at(i).avoid;
+        r->recurs = pp->locallab.spots.at(i).recurs;
         r->laplac = pp->locallab.spots.at(i).laplac;
         r->deltae = pp->locallab.spots.at(i).deltae;
         r->shortc = pp->locallab.spots.at(i).shortc;
@@ -3017,6 +3018,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->scopemask = newSpot->scopemask;
             r->lumask = newSpot->lumask;
             r->avoid = newSpot->avoid;
+            r->recurs = newSpot->recurs;
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
             r->shortc = newSpot->shortc;
@@ -3239,6 +3241,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
             r->scopemask = newSpot->scopemask;
             r->lumask = newSpot->lumask;
             r->avoid = newSpot->avoid;
+            r->recurs = newSpot->recurs;
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
             r->shortc = newSpot->shortc;
@@ -3359,6 +3362,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                     pp->locallab.spots.at(pp->locallab.selspot).scopemask = r->scopemask;
                     pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
+                    pp->locallab.spots.at(pp->locallab.selspot).recurs = r->recurs;
                     pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;
                     pp->locallab.spots.at(pp->locallab.selspot).deltae = r->deltae;
                     pp->locallab.spots.at(pp->locallab.selspot).shortc = r->shortc;
@@ -3760,6 +3764,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pe->locallab.spots.at(pp->locallab.selspot).lumask = pe->locallab.spots.at(pp->locallab.selspot).lumask || se->lumask;
                         pe->locallab.spots.at(pp->locallab.selspot).balan = pe->locallab.spots.at(pp->locallab.selspot).balan || se->balan;
                         pe->locallab.spots.at(pp->locallab.selspot).avoid = pe->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
+                        pe->locallab.spots.at(pp->locallab.selspot).recurs = pe->locallab.spots.at(pp->locallab.selspot).recurs || se->recurs;
                         pe->locallab.spots.at(pp->locallab.selspot).laplac = pe->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
                         pe->locallab.spots.at(pp->locallab.selspot).deltae = pe->locallab.spots.at(pp->locallab.selspot).deltae || se->deltae;
                         pe->locallab.spots.at(pp->locallab.selspot).shortc = pe->locallab.spots.at(pp->locallab.selspot).shortc || se->shortc;
@@ -4077,6 +4082,7 @@ void Locallab::write(ProcParams* pp, ParamsEdited* pedited)
                         pedited->locallab.spots.at(pp->locallab.selspot).scopemask = pedited->locallab.spots.at(pp->locallab.selspot).scopemask || se->scopemask;
                         pedited->locallab.spots.at(pp->locallab.selspot).lumask = pedited->locallab.spots.at(pp->locallab.selspot).lumask || se->lumask;
                         pedited->locallab.spots.at(pp->locallab.selspot).avoid = pedited->locallab.spots.at(pp->locallab.selspot).avoid || se->avoid;
+                        pedited->locallab.spots.at(pp->locallab.selspot).recurs = pedited->locallab.spots.at(pp->locallab.selspot).recurs || se->recurs;
                         pedited->locallab.spots.at(pp->locallab.selspot).laplac = pedited->locallab.spots.at(pp->locallab.selspot).laplac || se->laplac;
                         pedited->locallab.spots.at(pp->locallab.selspot).deltae = pedited->locallab.spots.at(pp->locallab.selspot).deltae || se->deltae;
                         pedited->locallab.spots.at(pp->locallab.selspot).shortc = pedited->locallab.spots.at(pp->locallab.selspot).shortc || se->shortc;
@@ -8803,6 +8809,7 @@ void Locallab::updateLocallabGUI(const rtengine::procparams::ProcParams* pp, con
                 se->scopemask = spotState->scopemask;
                 se->lumask = spotState->lumask;
                 se->avoid = spotState->avoid;
+                se->recurs = spotState->recurs;
                 se->laplac = spotState->laplac;
                 se->deltae = spotState->deltae;
                 se->shortc = spotState->shortc;

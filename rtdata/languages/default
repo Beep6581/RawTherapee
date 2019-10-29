@@ -1033,6 +1033,7 @@ HISTORY_MSG_792;Local - Mask Luminance Background
 HISTORY_MSG_793;Local - SH TRC gamma
 HISTORY_MSG_794;Local - SH TRC slope
 HISTORY_MSG_795;Local - Mask save restore image
+HISTORY_MSG_796;Local - Recursive references
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -2202,6 +2203,7 @@ TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scop
 TP_LOCALLAB_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
 TP_LOCALLAB_LABGRID;Color correction grid
 TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4
+TP_LOCALLAB_RECURS;Recursive references
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope

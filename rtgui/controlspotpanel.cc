@@ -72,6 +72,7 @@ ControlSpotPanel::ControlSpotPanel():
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), 0, 30, 1, 10))),
 
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
+    recurs_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_RECURS")))),
     laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
     deltae_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_DELTAEC")))),
     shortc_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SHORTC")))),
@@ -283,6 +284,9 @@ ControlSpotPanel::ControlSpotPanel():
     avoidConn_  = avoid_->signal_toggled().connect(
             sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     pack_start(*avoid_);
+    recursConn_  = recurs_->signal_toggled().connect(
+            sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
+    pack_start(*recurs_);
     
     Gtk::Frame* const maskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MASFRAME")));
     maskFrame->set_label_align(0.025, 0.5);
@@ -610,6 +614,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     scopemask_->setValue((double)row[spots_.scopemask]);
     lumask_->setValue((double)row[spots_.lumask]);
     avoid_->set_active(row[spots_.avoid]);
+    recurs_->set_active(row[spots_.recurs]);
     laplac_->set_active(row[spots_.laplac]);
     deltae_->set_active(row[spots_.deltae]);
     shortc_->set_active(row[spots_.shortc]);
@@ -1095,6 +1100,42 @@ void ControlSpotPanel::avoidChanged()
     }
 }
 
+void ControlSpotPanel::recursChanged()
+{
+    // printf("recursChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    if (multiImage) {
+        if (recurs_->get_inconsistent()) {
+            recurs_->set_inconsistent(false);
+            recursConn_.block(true);
+            recurs_->set_active(false);
+            recursConn_.block(false);
+        }
+    }
+
+    row[spots_.recurs] = recurs_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (recurs_->get_active()) {
+            listener->panelChanged(Evlocallabrecurs, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallabrecurs, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 void ControlSpotPanel::laplacChanged()
 {
     // printf("laplacChanged\n");
@@ -1268,6 +1309,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     scopemask_->block(cond);
     lumask_->block(cond);
     avoidConn_.block(cond);
+    recursConn_.block(cond);
     laplacConn_.block(cond);
     deltaeConn_.block(cond);
     shortcConn_.block(cond);
@@ -1301,6 +1343,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     scopemask_->set_sensitive(cond);
     lumask_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
+    recurs_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
     deltae_->set_sensitive(cond);
     shortc_->set_sensitive(cond);
@@ -1940,6 +1983,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int id)
             r->scopemask = row[spots_.scopemask];
             r->lumask = row[spots_.lumask];
             r->avoid = row[spots_.avoid];
+            r->recurs = row[spots_.recurs];
             r->laplac = row[spots_.laplac];
             r->deltae = row[spots_.deltae];
             r->shortc = row[spots_.shortc];
@@ -2072,6 +2116,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.scopemask] = newSpot->scopemask;
     row[spots_.lumask] = newSpot->lumask;
     row[spots_.avoid] = newSpot->avoid;
+    row[spots_.recurs] = newSpot->recurs;
     row[spots_.laplac] = newSpot->laplac;
     row[spots_.deltae] = newSpot->deltae;
     row[spots_.shortc] = newSpot->shortc;
@@ -2123,6 +2168,7 @@ int ControlSpotPanel::updateControlSpot(SpotRow* spot)
             row[spots_.scopemask] = spot->scopemask;
             row[spots_.lumask] = spot->lumask;
             row[spots_.avoid] = spot->avoid;
+            row[spots_.recurs] = spot->recurs;
             row[spots_.laplac] = spot->laplac;
             row[spots_.deltae] = spot->deltae;
             row[spots_.shortc] = spot->shortc;
@@ -2220,6 +2266,7 @@ ControlSpotPanel::SpotEdited* ControlSpotPanel::getEditedStates()
     se->scopemask = scopemask_->getEditedState();
     se->lumask = lumask_->getEditedState();
     se->avoid = !avoid_->get_inconsistent();
+    se->recurs = !recurs_->get_inconsistent();
     se->laplac = !laplac_->get_inconsistent();
     se->deltae = !deltae_->get_inconsistent();
     se->shortc = !shortc_->get_inconsistent();
@@ -2295,6 +2342,7 @@ void ControlSpotPanel::setEditedStates(SpotEdited* se)
     scopemask_->setEditedState(se->scopemask ? Edited : UnEdited);
     lumask_->setEditedState(se->lumask ? Edited : UnEdited);
     avoid_->set_inconsistent(multiImage && !se->avoid);
+    recurs_->set_inconsistent(multiImage && !se->recurs);
     laplac_->set_inconsistent(multiImage && !se->laplac);
     deltae_->set_inconsistent(multiImage && !se->deltae);
     shortc_->set_inconsistent(multiImage && !se->shortc);
@@ -2459,6 +2507,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(scopemask);
     add(lumask);
     add(avoid);
+    add(recurs);
     add(laplac);
     add(deltae);
     add(shortc);

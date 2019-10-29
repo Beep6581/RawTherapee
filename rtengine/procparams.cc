@@ -2432,6 +2432,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitweak(1.0),
     transitgrad(0.0),
     avoid(false),
+    recurs(true),
     laplac(false),
     deltae(true),
     shortc(false),
@@ -2740,6 +2741,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && transitweak == other.transitweak
         && transitgrad == other.transitgrad
         && avoid == other.avoid
+        && recurs == other.recurs
         && laplac == other.laplac
         && deltae == other.deltae
         && shortc == other.shortc
@@ -4043,6 +4045,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transitweak, "Locallab", "Transitweak_" + std::to_string(i), spot.transitweak, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).transitgrad, "Locallab", "Transitgrad_" + std::to_string(i), spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).avoid, "Locallab", "Avoid_" + std::to_string(i), spot.avoid, keyFile);
+                saveToKeyfile(!pedited || pedited->locallab.spots.at(i).recurs, "Locallab", "Recurs_" + std::to_string(i), spot.recurs, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).laplac, "Locallab", "Laplac_" + std::to_string(i), spot.laplac, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).deltae, "Locallab", "Deltae_" + std::to_string(i), spot.deltae, keyFile);
                 saveToKeyfile(!pedited || pedited->locallab.spots.at(i).shortc, "Locallab", "Shortc_" + std::to_string(i), spot.shortc, keyFile);
@@ -5454,6 +5457,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + std::to_string(i), pedited, spot.transitweak, spotEdited.transitweak);
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + std::to_string(i), pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + std::to_string(i), pedited, spot.avoid, spotEdited.avoid);
+                assignFromKeyfile(keyFile, "Locallab", "Recurs_" + std::to_string(i), pedited, spot.recurs, spotEdited.recurs);
                 assignFromKeyfile(keyFile, "Locallab", "Laplac_" + std::to_string(i), pedited, spot.laplac, spotEdited.laplac);
                 assignFromKeyfile(keyFile, "Locallab", "Deltae_" + std::to_string(i), pedited, spot.deltae, spotEdited.deltae);
                 assignFromKeyfile(keyFile, "Locallab", "Shortc_" + std::to_string(i), pedited, spot.shortc, spotEdited.shortc);

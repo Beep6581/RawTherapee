@@ -7345,6 +7345,7 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             levred = 7;
             noiscfactiv = false;
         }
+
 //lastsav for save restore image
         lastsav = 0;
 
@@ -8069,10 +8070,22 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         if (tmp1.get()) {
                             BlurNoise_Local(tmp1.get(), originalmaskbl, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+
+                            if (params->locallab.spots.at(sp).recurs) {
+                                original->CopyFrom(transformed);
+                                float avge;
+                                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                            }
                         }
                     } else if (lp.blurmet == 1) {
                         if (tmp1.get()) {
                             InverseBlurNoise_Local(originalmaskbl, bufchroi, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+
+                            if (params->locallab.spots.at(sp).recurs) {
+                                original->CopyFrom(transformed);
+                                float avge;
+                                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                            }
                         }
                     }
 
@@ -8121,6 +8134,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, *(bufwv.get()), cx, cy, sk);
+
+            if (params->locallab.spots.at(sp).recurs) {
+                original->CopyFrom(transformed);
+                float avge;
+                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+            }
         }
 
 //local denoise
@@ -8131,6 +8150,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
         if (lp.denoiena) {
             DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
+
+            if (params->locallab.spots.at(sp).recurs) {
+                original->CopyFrom(transformed);
+                float avge;
+                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+            }
         }
 
         if (denoiz || blurz || lp.denoiena || lp.blurena) {
@@ -8346,6 +8371,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                         }
 
                         transit_shapedetect(7, loctemp.get(), nullptr, buflight, bufchrom, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+
+                        if (params->locallab.spots.at(sp).recurs) {
+                            original->CopyFrom(transformed);
+                            float avge;
+                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                        }
                     }
                 }
             }
@@ -8410,6 +8441,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     bufexpfin.reset();
                     transit_shapedetect(2, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
                 }
             }
         }
@@ -8647,6 +8684,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                         transit_shapedetect(8, tmp1.get(), originalmasktm.get(), buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                         bufgb.reset();
+
+                        if (params->locallab.spots.at(sp).recurs) {
+                            original->CopyFrom(transformed);
+                            float avge;
+                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                        }
                     }
                 }
             }
@@ -8834,6 +8877,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     }
 
                     transit_shapedetect(9, bufexpfin.get(), originalmaskSH.get(), buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
                 }
             }
         } else  if (lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ  || tonecurv || lp.showmaskSHmetinv == 1 || lp.enaSHMaskinv) && call < 3  && lp.hsena) {
@@ -8919,6 +8968,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             float adjustr = 2.f;
             InverseColorLight_Local(tonequ, tonecurv, sp, 2, lp, originalmaskSH.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+
+            if (params->locallab.spots.at(sp).recurs) {
+                original->CopyFrom(transformed);
+                float avge;
+                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+            }
         }
 
 
@@ -9101,6 +9156,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 bufexpfin.reset();
                 transit_shapedetect(3, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+
+                if (params->locallab.spots.at(sp).recurs) {
+                    original->CopyFrom(transformed);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                }
             }
         }
 
@@ -9564,6 +9625,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                 bufgb.reset();
                 transit_shapedetect(10, tmp1.get(), nullptr, buflight, bufchro, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();
+
+                if (params->locallab.spots.at(sp).recurs) {
+                    original->CopyFrom(transformed);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                }
             }
         }
 
@@ -9604,6 +9671,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             //sharpen ellipse and transition
             Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
+            if (params->locallab.spots.at(sp).recurs) {
+                original->CopyFrom(transformed);
+                float avge;
+                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+            }
+
         } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) {
             int GW = original->W;
             int GH = original->H;
@@ -9613,6 +9686,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
 
             InverseSharp_Local(loctemp, hueref, lumaref, chromaref, lp, original, transformed, cx, cy, sk);
+
+            if (params->locallab.spots.at(sp).recurs) {
+                original->CopyFrom(transformed);
+                float avge;
+                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+            }
         }
 
         //      }
@@ -9717,6 +9796,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                 bufexpfin.reset();
                 transit_shapedetect(30, bufexporig.get(), nullptr, buflight, bufl_ab, nullptr, nullptr, nullptr, false, hueref, chromaref, lumaref, sobelref, 0.f,  nullptr, lp, original, transformed, cx, cy, sk);
+
+                if (params->locallab.spots.at(sp).recurs) {
+                    original->CopyFrom(transformed);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                }
             }
         }
 
@@ -9981,8 +10066,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
+
                 } else {
                     InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
+
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
                 }
 
 
@@ -10124,8 +10221,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (!lp.invret) {
                         transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+
+                        if (params->locallab.spots.at(sp).recurs) {
+                            original->CopyFrom(transformed);
+                            float avge;
+                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                        }
                     } else {
                         InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
+
+                        if (params->locallab.spots.at(sp).recurs) {
+                            original->CopyFrom(transformed);
+                            float avge;
+                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                        }
                     }
 
                 }
@@ -10507,8 +10616,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     */
                     transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
+
                 } else {
                     InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 0, sk);
+
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
                 }
 
                 if (params->locallab.spots.at(sp).chrrt > 0) {
@@ -10649,8 +10770,20 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     if (!lp.invret) {
                         transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+
+                        if (params->locallab.spots.at(sp).recurs) {
+                            original->CopyFrom(transformed);
+                            float avge;
+                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                        }
                     } else {
                         InverseReti_Local(lp, hueref, chromaref, lumaref, original, transformed, tmpl, cx, cy, 1, sk);
+
+                        if (params->locallab.spots.at(sp).recurs) {
+                            original->CopyFrom(transformed);
+                            float avge;
+                            calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                        }
                     }
 
                 }
@@ -11103,10 +11236,15 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
                     transit_shapedetect(1, bufexporig.get(), originalmaskexp.get(), buflight, bufl_ab, buf_a_cat, buf_b_cat, nullptr, false, hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     bufexporig.reset();
 
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
+
                 }
             }
         }
-
 //inverse
 
         else if (lp.invex  && (lp.expcomp != 0.0 || lp.war != 0 || lp.laplacexp > 0.1f || params->locallab.spots.at(sp).fatamount > 1.f || (exlocalcurve  && localexutili) || lp.enaExpMaskinv || lp.showmaskexpmetinv == 1) && lp.exposena) {
@@ -11191,6 +11329,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
             }
 
             InverseColorLight_Local(false, false, sp, 1, lp, originalmaskexp.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+
+            if (params->locallab.spots.at(sp).recurs) {
+                original->CopyFrom(transformed);
+                float avge;
+                calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+            }
+
         }
 
 
@@ -11571,6 +11716,12 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
                     transit_shapedetect(0, bufcolorig.get(), originalmaskcol.get(), buflight, bufchro, buf_a, buf_b, bufhh, HHutili, hueref, chromaref, lumaref, sobelref, meansob, temp, lp, original, transformed, cx, cy, sk);
 
+                    if (params->locallab.spots.at(sp).recurs) {
+                        original->CopyFrom(transformed);
+                        float avge;
+                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                    }
+
                 }
             }
         }
@@ -11681,6 +11832,13 @@ void ImProcFunctions::Lab_Local(int call, int sp, float** shbuffer, LabImage * o
 
             if (lp.showmaskcolmetinv == 0 || lp.enaColorMaskinv) {
                 InverseColorLight_Local(false, false, sp, 0, lp, originalmaskcol.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
+
+                if (params->locallab.spots.at(sp).recurs) {
+                    original->CopyFrom(transformed);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge);
+                }
+
             }
         }
 

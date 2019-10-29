@@ -68,6 +68,7 @@ public:
         int scopemask;
         int lumask;
         bool avoid;
+        bool recurs;
         bool laplac;
         bool deltae;
         bool shortc;
@@ -105,6 +106,7 @@ public:
         bool scopemask;
         bool lumask;
         bool avoid;
+        bool recurs;
         bool laplac;
         bool deltae;
         bool shortc;
@@ -275,6 +277,7 @@ private:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
     void avoidChanged();
+    void recursChanged();
     void laplacChanged();
     void deltaeChanged();
     void shortcChanged();
@@ -328,6 +331,7 @@ private:
         Gtk::TreeModelColumn<int> scopemask;
         Gtk::TreeModelColumn<int> lumask;
         Gtk::TreeModelColumn<bool> avoid;
+        Gtk::TreeModelColumn<bool> recurs;
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
         Gtk::TreeModelColumn<bool> shortc;
@@ -400,6 +404,8 @@ private:
 
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
+    Gtk::CheckButton* const recurs_;
+    sigc::connection recursConn_;
     Gtk::CheckButton* const laplac_;
     sigc::connection laplacConn_;
     Gtk::CheckButton* const deltae_;
