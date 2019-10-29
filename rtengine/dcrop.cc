@@ -19,6 +19,7 @@
  */
 
 #include "cieimage.h"
+#include "image8.h"
 #include "imagefloat.h"
 #include "labimage.h"
 #include "curves.h"

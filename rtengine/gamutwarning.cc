@@ -23,8 +23,10 @@
  * also distributed under the GPL V3+
  */
 
-#include "gamutwarning.h"
 #include <iostream>
+
+#include "gamutwarning.h"
+#include "image8.h"
 
 namespace rtengine {
 

@@ -23,6 +23,9 @@
 
 namespace rtengine
 {
+
+class ImageIO;
+
 namespace procparams
 {
 

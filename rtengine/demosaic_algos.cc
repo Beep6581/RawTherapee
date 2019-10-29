@@ -22,7 +22,6 @@
 #include "rawimagesource.h"
 #include "rawimage.h"
 #include "mytime.h"
-#include "image8.h"
 #include "rt_math.h"
 #include "color.h"
 #include "../rtgui/multilangmgr.h"

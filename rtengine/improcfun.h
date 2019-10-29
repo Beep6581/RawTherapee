@@ -19,7 +19,6 @@
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
 
-#include "image8.h"
 #include "shmap.h"
 #include "coord2d.h"
 #include "color.h"
@@ -33,6 +32,7 @@
 namespace rtengine
 {
 class CieImage;
+class Image8;
 class Imagefloat;
 class LabImage;
 class wavelet_decomposition;

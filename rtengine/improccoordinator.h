@@ -23,7 +23,6 @@
 
 #include "rtengine.h"
 #include "improcfun.h"
-#include "image8.h"
 #include "imagesource.h"
 #include "procevents.h"
 #include "dcrop.h"
@@ -32,6 +31,8 @@
 
 namespace rtengine
 {
+
+class Image8;
 
 using namespace procparams;
 
