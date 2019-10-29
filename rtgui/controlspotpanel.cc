@@ -287,6 +287,7 @@ ControlSpotPanel::ControlSpotPanel():
     recursConn_  = recurs_->signal_toggled().connect(
             sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
     pack_start(*recurs_);
+    if(showtooltip) recurs_->set_tooltip_text(M("TP_LOCALLAB_RECURS_TOOLTIP"));
     
     Gtk::Frame* const maskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MASFRAME")));
     maskFrame->set_label_align(0.025, 0.5);
